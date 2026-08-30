@@ -1,0 +1,368 @@
+"""Validate the hand-owned King's Field retail executable censuses."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import struct
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable
+
+
+IMAGE_ORDER = {"PSX.EXE": 0, "GAME.EXE": 1, "OPEN.EXE": 2}
+
+
+@dataclass(frozen=True)
+class ImageLayout:
+    name: str
+    sha256: str
+    file_size: int
+    entry: int
+    load_address: int
+    load_size: int
+
+    @property
+    def load_end(self) -> int:
+        return self.load_address + self.load_size
+
+    def contains(self, address: int, size: int = 1) -> bool:
+        return size >= 0 and self.load_address <= address and address + size <= self.load_end
+
+    def file_offset(self, address: int) -> int:
+        return 0x800 + address - self.load_address
+
+
+IMAGE_LAYOUTS = {
+    "PSX.EXE": ImageLayout(
+        "PSX.EXE",
+        "670f0ca702570fdb814a73ffa840b97a6584d2753072ea3b55c35541a7cec276",
+        0x1000,
+        0x80010100,
+        0x80010000,
+        0x800,
+    ),
+    "GAME.EXE": ImageLayout(
+        "GAME.EXE",
+        "394ba335c0a179073c0b7bee306513785fdb3bbc162dbd024a57e82130f3cdb8",
+        0x46800,
+        0x8003AC5C,
+        0x80012000,
+        0x46000,
+    ),
+    "OPEN.EXE": ImageLayout(
+        "OPEN.EXE",
+        "34e1cc4a9b73f7721e36b4d6249aa023966ca0130b4c302a6b75a81a10a0e329",
+        0x26000,
+        0x8001AA7C,
+        0x80012000,
+        0x25800,
+    ),
+}
+
+
+FUNCTION_FIELDS = (
+    "image",
+    "va",
+    "file_offset",
+    "size",
+    "body_size",
+    "fragments",
+    "kind",
+    "confidence",
+    "name",
+    "labels",
+    "provenance",
+    "note",
+)
+DATA_FIELDS = (
+    "image",
+    "va",
+    "file_offset",
+    "size",
+    "kind",
+    "confidence",
+    "name",
+    "datatype",
+    "provenance",
+    "note",
+)
+RELOC_FIELDS = (
+    "image",
+    "site_va",
+    "site_file_offset",
+    "paired_site_va",
+    "kind",
+    "channel",
+    "target_va",
+    "target_region",
+    "target_name",
+    "opcode",
+    "register",
+    "confidence",
+    "status",
+    "provenance",
+)
+
+
+def parse_int(value: str) -> int:
+    return int(value, 0)
+
+
+def format_hex(value: int) -> str:
+    return f"0x{value:08x}"
+
+
+def format_size(value: int) -> str:
+    return f"0x{value:x}"
+
+
+def sha256_path(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        while chunk := stream.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def read_tsv(path: Path) -> tuple[tuple[str, ...], list[dict[str, str]]]:
+    lines = [line for line in path.read_text(encoding="utf-8").splitlines()
+             if line and not line.startswith("#")]
+    if not lines:
+        raise ValueError(f"{path}: missing TSV header")
+    reader = csv.DictReader(lines, delimiter="\t")
+    fields = tuple(reader.fieldnames or ())
+    return fields, list(reader)
+
+
+def write_tsv(
+    path: Path,
+    fields: Iterable[str],
+    rows: Iterable[dict[str, object]],
+    comments: Iterable[str],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        for comment in comments:
+            stream.write(f"# {comment}\n")
+        writer = csv.DictWriter(
+            stream,
+            tuple(fields),
+            delimiter="\t",
+            lineterminator="\n",
+            extrasaction="raise",
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def parse_psx_exe(path: Path) -> ImageLayout:
+    data = path.read_bytes()
+    if len(data) < 0x800 or data[:8] != b"PS-X EXE":
+        raise ValueError(f"{path}: not a PS-X EXE")
+    entry, _gp, load_address, load_size = struct.unpack_from("<4I", data, 0x10)
+    if len(data) < 0x800 + load_size:
+        raise ValueError(f"{path}: truncated load image")
+    return ImageLayout(
+        path.name.upper(), sha256_path(path), len(data), entry, load_address, load_size
+    )
+
+
+def _require_fields(path: Path, actual: tuple[str, ...], expected: tuple[str, ...]) -> None:
+    if actual != expected:
+        raise ValueError(f"{path}: fields {actual!r}, expected {expected!r}")
+
+
+def _require_sorted(path: Path, rows: list[dict[str, str]], key) -> None:
+    keys = [key(row) for row in rows]
+    if keys != sorted(keys):
+        raise ValueError(f"{path}: rows are not canonically sorted")
+
+
+def _validate_image(row: dict[str, str], path: Path) -> ImageLayout:
+    image = row["image"]
+    try:
+        return IMAGE_LAYOUTS[image]
+    except KeyError as error:
+        raise ValueError(f"{path}: unknown image {image!r}") from error
+
+
+def _merged_coverage(intervals: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    merged: list[tuple[int, int]] = []
+    for start, end in sorted(intervals):
+        if start >= end:
+            continue
+        if merged and start <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        else:
+            merged.append((start, end))
+    return merged
+
+
+def validate_config(config_dir: Path, exe_dir: Path | None = None) -> dict[str, int]:
+    function_path = config_dir / "functions.tsv"
+    data_path = config_dir / "data.tsv"
+    reloc_path = config_dir / "relocs.tsv"
+    function_fields, functions = read_tsv(function_path)
+    data_fields, data = read_tsv(data_path)
+    reloc_fields, relocs = read_tsv(reloc_path)
+    _require_fields(function_path, function_fields, FUNCTION_FIELDS)
+    _require_fields(data_path, data_fields, DATA_FIELDS)
+    _require_fields(reloc_path, reloc_fields, RELOC_FIELDS)
+
+    _require_sorted(
+        function_path,
+        functions,
+        lambda row: (IMAGE_ORDER[row["image"]], parse_int(row["va"])),
+    )
+    _require_sorted(
+        data_path,
+        data,
+        lambda row: (IMAGE_ORDER[row["image"]], parse_int(row["va"]), row["kind"]),
+    )
+    _require_sorted(
+        reloc_path,
+        relocs,
+        lambda row: (
+            IMAGE_ORDER[row["image"]],
+            parse_int(row["site_va"]),
+            parse_int(row["paired_site_va"]) if row["paired_site_va"] else -1,
+            row["kind"],
+            parse_int(row["target_va"]),
+        ),
+    )
+
+    starts: set[tuple[str, int]] = set()
+    function_intervals: dict[str, list[tuple[int, int]]] = {
+        image: [] for image in IMAGE_LAYOUTS
+    }
+    coverage: dict[str, list[tuple[int, int]]] = {image: [] for image in IMAGE_LAYOUTS}
+    for row in functions:
+        layout = _validate_image(row, function_path)
+        address = parse_int(row["va"])
+        size = parse_int(row["size"])
+        body_size = parse_int(row["body_size"])
+        fragments = int(row["fragments"])
+        if address & 3:
+            raise ValueError(f"{function_path}: unaligned function {row['image']} {row['va']}")
+        if not layout.contains(address, size) or size <= 0:
+            raise ValueError(f"{function_path}: invalid extent {row!r}")
+        if body_size <= 0 or body_size > size or fragments <= 0:
+            raise ValueError(f"{function_path}: invalid body metrics {row!r}")
+        if parse_int(row["file_offset"]) != layout.file_offset(address):
+            raise ValueError(f"{function_path}: wrong file offset {row!r}")
+        key = (row["image"], address)
+        if key in starts:
+            raise ValueError(f"{function_path}: duplicate start {key!r}")
+        starts.add(key)
+        function_intervals[row["image"]].append((address, address + size))
+        coverage[row["image"]].append((address, address + size))
+
+    for image, layout in IMAGE_LAYOUTS.items():
+        if (image, layout.entry) not in starts:
+            raise ValueError(f"{function_path}: missing {image} entry {layout.entry:#x}")
+        previous_end = -1
+        for start, end in sorted(function_intervals[image]):
+            if start < previous_end:
+                raise ValueError(
+                    f"{function_path}: overlapping {image} function at {start:#x}"
+                )
+            previous_end = end
+
+    data_keys: set[tuple[str, int, str]] = set()
+    data_intervals: dict[str, list[tuple[int, int]]] = {
+        image: [] for image in IMAGE_LAYOUTS
+    }
+    for row in data:
+        layout = _validate_image(row, data_path)
+        address = parse_int(row["va"])
+        size = parse_int(row["size"])
+        if not layout.contains(address, size) or size <= 0:
+            raise ValueError(f"{data_path}: invalid extent {row!r}")
+        if parse_int(row["file_offset"]) != layout.file_offset(address):
+            raise ValueError(f"{data_path}: wrong file offset {row!r}")
+        key = (row["image"], address, row["kind"])
+        if key in data_keys:
+            raise ValueError(f"{data_path}: duplicate row {key!r}")
+        data_keys.add(key)
+        data_intervals[row["image"]].append((address, address + size))
+        coverage[row["image"]].append((address, address + size))
+
+    for image, intervals in data_intervals.items():
+        previous_end = -1
+        for start, end in sorted(intervals):
+            if start < previous_end:
+                raise ValueError(f"{data_path}: overlapping {image} data at {start:#x}")
+            previous_end = end
+
+    for image, layout in IMAGE_LAYOUTS.items():
+        merged = _merged_coverage(coverage[image])
+        if merged != [(layout.load_address, layout.load_end)]:
+            raise ValueError(
+                f"{config_dir}: {image} payload is not fully accounted for: {merged!r}"
+            )
+
+    reloc_keys: set[tuple[object, ...]] = set()
+    for row in relocs:
+        layout = _validate_image(row, reloc_path)
+        site = parse_int(row["site_va"])
+        target = parse_int(row["target_va"])
+        paired = parse_int(row["paired_site_va"]) if row["paired_site_va"] else None
+        if site & 3 or not layout.contains(site, 4):
+            raise ValueError(f"{reloc_path}: invalid site {row!r}")
+        if parse_int(row["site_file_offset"]) != layout.file_offset(site):
+            raise ValueError(f"{reloc_path}: wrong site file offset {row!r}")
+        if paired is not None and (paired & 3 or not layout.contains(paired, 4)):
+            raise ValueError(f"{reloc_path}: invalid paired site {row!r}")
+        key = (row["image"], site, paired, row["kind"], target)
+        if key in reloc_keys:
+            raise ValueError(f"{reloc_path}: duplicate candidate {key!r}")
+        reloc_keys.add(key)
+        if row["status"] not in {"candidate", "reviewed", "rejected"}:
+            raise ValueError(f"{reloc_path}: invalid status {row['status']!r}")
+        if (
+            row["status"] != "rejected"
+            and row["kind"] == "mips26"
+            and row["opcode"] == "jal"
+            and row["channel"] == "reachable-code"
+            and row["target_region"] == "load"
+            and (row["image"], target) not in starts
+        ):
+            raise ValueError(
+                f"{reloc_path}: reachable call target lacks a function row {row!r}"
+            )
+
+    if exe_dir is not None:
+        for name, expected in IMAGE_LAYOUTS.items():
+            actual = parse_psx_exe(exe_dir / name)
+            if actual != expected:
+                raise ValueError(f"{exe_dir / name}: retail identity/layout mismatch")
+
+    return {
+        "functions": len(functions),
+        "data": len(data),
+        "relocs": len(relocs),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "config_dir",
+        nargs="?",
+        type=Path,
+        default=Path("config/retail"),
+    )
+    parser.add_argument("--exe-dir", type=Path)
+    args = parser.parse_args()
+    counts = validate_config(args.config_dir, args.exe_dir)
+    print(
+        "retail census valid: "
+        + ", ".join(f"{name}={count}" for name, count in counts.items())
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

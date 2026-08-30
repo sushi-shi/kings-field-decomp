@@ -1,0 +1,29 @@
+[project]
+name = "kings-field-re"
+version = "0.0.0"
+description = "Pinned Python analysis tools for King's Field"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "capstone==5.0.6",
+  "colorama==0.4.6",
+  "crunch64==0.5.3",
+  "intervaltree==3.1.0",
+  "n64img==0.3.3",
+  "pyelftools==0.32",
+  "pygfxd==1.0.5",
+  "pyyaml==6.0.3",
+  "rabbitizer==1.16.2",
+  "spimdisasm==1.42.4",
+  "splat64==0.50.0",
+  "tqdm==4.67.1",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
