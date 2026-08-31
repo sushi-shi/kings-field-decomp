@@ -169,10 +169,28 @@ Given a hash-identical extraction containing all three executables:
 
 ```sh
 nix develop
-kf-retail-validate --exe-dir /path/to/retail
-kf-delink --exe-dir /path/to/retail
-kf-objdiff-project
+kf init --retail-dir /path/to/retail
+kf build
+kf status
 ```
+
+`kf init` stores the validated absolute path in ignored `build/local.toml`.
+An explicit `--retail-dir` takes precedence, followed by `KF_RETAIL_DIR`, then
+the local file. `kf configure` validates `config/units.toml` and emits the
+incremental Ninja graph. The normal commands are:
+
+| Command | Behavior |
+| --- | --- |
+| `kf build [all\|base\|target\|compare\|verify]` | configure if needed, then build all or selected `--image` targets; `--retail-dir` overrides local configuration |
+| `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
+| `kf status [--json] [--all]` | report current state without building or writing |
+| `kf check [--strict]` | fail on unchanged-input regressions, lost banked rows, or invalid/stale reports |
+| `kf bank [--dirty]` | manually update `config/match_baseline.tsv` from fresh reports |
+
+Status separates eligible, manifested, compiled, scored, and exact functions.
+The default exact threshold is strictly `100%`. `--loose` is available on
+status and match for a `99.995%` navigation threshold, but the ledger always
+stores the full unrounded value.
 
 The delinker verifies each full executable hash and PS-X header before reading
 any bytes. A focused iteration can select an image and function:
@@ -193,8 +211,9 @@ build/objdiff/<image>/base/<same target-object filename>
 
 Only non-vendored objects become units. `vendored_excluded.tsv` records every
 provider-owned target intentionally omitted from the project. Until a game
-reconstruction object exists, a selected unit uses a synthetic MIPS
-`missing-base.o`; `pairings.tsv` makes that state explicit. Regenerate the
+reconstruction exists, `pairings.tsv` records the function as `unstarted`; it
+does not enter the objdiff project. A manifested source whose build object is
+absent is separately recorded as `manifest-missing-base`. Regenerate the
 project after adding a base object, then run:
 
 ```sh

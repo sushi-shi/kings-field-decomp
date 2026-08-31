@@ -427,6 +427,15 @@ def _comments(description: str, policy: str) -> tuple[str, ...]:
     )
 
 
+def _write_bytes_if_changed(path: Path, content: bytes) -> None:
+    if path.is_file() and path.read_bytes() == content:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp")
+    temporary.write_bytes(content)
+    temporary.replace(path)
+
+
 def delink(
     exe_dir: Path,
     config_dir: Path,
@@ -522,7 +531,7 @@ def delink(
 
             object_name = f"{function.va:08x}_{function.symbol}.o"
             object_relative = Path("objects") / object_name
-            (object_output / object_name).write_bytes(write_mips_elf(
+            _write_bytes_if_changed(object_output / object_name, write_mips_elf(
                 bytes(blob),
                 function.symbol,
                 function.body_size,
@@ -542,6 +551,11 @@ def delink(
                 "confidence": function.confidence,
                 "provenance": function.provenance,
             })
+
+        live_objects = {Path(str(row["object"])).name for row in object_rows}
+        for old_object in object_output.glob("*.o"):
+            if old_object.name not in live_objects:
+                old_object.unlink()
 
         write_tsv(
             image_output / "objects.tsv",

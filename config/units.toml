@@ -1,0 +1,20 @@
+# Explicit reconstruction build units. Compiler profiles are named probes until
+# the historical compiler and flags are proven.
+
+[profiles.probe-gcc260-o2-g0]
+language = "c"
+compiler = "gcc260-native"
+optimization = "O2"
+small_data = 0
+aspsx_version = "1.07"
+cc1_flags = []
+
+[profiles.asm-r3000-g0]
+language = "assembly"
+compiler = "gnu-as"
+small_data = 0
+aspsx_version = "1.07"
+cc1_flags = []
+
+# Add one [[unit]] only after its source exists. Initial units remain one
+# contiguous, non-vendored function each; TU grouping needs separate evidence.

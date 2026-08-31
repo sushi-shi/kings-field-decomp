@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import struct
 from dataclasses import dataclass
 from pathlib import Path
@@ -167,19 +168,25 @@ def write_tsv(
     rows: Iterable[dict[str, object]],
     comments: Iterable[str],
 ) -> None:
+    stream = io.StringIO(newline="")
+    for comment in comments:
+        stream.write(f"# {comment}\n")
+    writer = csv.DictWriter(
+        stream,
+        tuple(fields),
+        delimiter="\t",
+        lineterminator="\n",
+        extrasaction="raise",
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    content = stream.getvalue()
+    if path.is_file() and path.read_text(encoding="utf-8") == content:
+        return
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as stream:
-        for comment in comments:
-            stream.write(f"# {comment}\n")
-        writer = csv.DictWriter(
-            stream,
-            tuple(fields),
-            delimiter="\t",
-            lineterminator="\n",
-            extrasaction="raise",
-        )
-        writer.writeheader()
-        writer.writerows(rows)
+    temporary = path.with_name(f".{path.name}.tmp")
+    temporary.write_text(content, encoding="utf-8", newline="")
+    temporary.replace(path)
 
 
 def parse_psx_exe(path: Path) -> ImageLayout:

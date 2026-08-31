@@ -325,6 +325,25 @@
         '';
       };
 
+      kfCli = pkgs.writeShellApplication {
+        name = "kf";
+        runtimeInputs = [
+          analysisPython
+          cc1psx260
+          cpppsx260
+          maspsx
+          mipsBinutilsAliases
+          objdiff-cli
+          pkgs.git
+          pkgs.ninja
+        ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.cli "$@"
+        '';
+      };
+
       shell = pkgs.mkShell {
         name = "kings-field";
         packages = [
@@ -347,6 +366,7 @@
           objdiffProject
           objdiffReport
           sourceCompile
+          kfCli
           ghidraWithPlugins
           objdiff-cli
           objdiff
@@ -418,7 +438,7 @@
           echo "[kings-field] assembly        : maspsx + mipsel-linux-gnu-as" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
           echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-vendored-seed" >&2
-          echo "[kings-field] matching        : kf-delink; kf-compile; kf-objdiff-project/report; objdiff GUI" >&2
+          echo "[kings-field] matching        : kf init/build/match/status/check/bank; objdiff GUI" >&2
         '';
       };
 
@@ -428,6 +448,7 @@
         mkdir project
         cp -r ${./scripts} project/scripts
         cp -r ${./tests} project/tests
+        cp -r ${./config} project/config
         cd project
         python3 -m unittest discover -s tests -v
         touch "$out"
@@ -473,7 +494,7 @@
       '';
     in {
       packages.${system} = {
-        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed retailDelink objdiffProject objdiffReport sourceCompile;
+        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed retailDelink objdiffProject objdiffReport sourceCompile kfCli;
         default = psyqToolchain;
       };
 

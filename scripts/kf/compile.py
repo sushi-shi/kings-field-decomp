@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import subprocess
+import struct
 from pathlib import Path
 
 from scripts.kf.delink import image_key
@@ -31,6 +32,31 @@ def _run(arguments: list[str], *, input_data: bytes | None = None) -> bytes:
         details = (process.stderr or process.stdout).decode(errors="replace")
         raise RuntimeError(f"command failed ({process.returncode}): {details}")
     return process.stdout
+
+
+def _write_bytes_if_changed(path: Path, content: bytes) -> bool:
+    if path.is_file() and path.read_bytes() == content:
+        return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        temporary.write_bytes(content)
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return True
+
+
+def _write_text_if_changed(path: Path, content: str) -> bool:
+    return _write_bytes_if_changed(path, content.encode("utf-8"))
+
+
+def _validate_mips_elf(data: bytes, output: Path) -> None:
+    if len(data) < 52 or data[:7] != b"\x7fELF\x01\x01\x01":
+        raise RuntimeError(f"compiler produced an incomplete/non-ELF object for {output}")
+    machine = struct.unpack_from("<H", data, 18)[0]
+    if machine != 8:
+        raise RuntimeError(f"compiler produced ELF machine {machine}, expected MIPS (8)")
 
 
 def _target_names(delink_dir: Path, image: str) -> set[str]:
@@ -65,6 +91,9 @@ def compile_source(
             f"{object_name}: no non-vendored target with this filename for {image}"
         )
     output.parent.mkdir(parents=True, exist_ok=True)
+    scratch = output.parent / ".tmp" / str(os.getpid()) / output.stem
+    scratch.mkdir(parents=True, exist_ok=True)
+    staged = scratch / output.name
     suffix = source.suffix.lower()
     metadata: dict[str, object] = {
         "image": image,
@@ -80,7 +109,7 @@ def compile_source(
             "-mabi=32",
             "-G0",
             "-o",
-            str(output),
+            str(staged),
             str(source),
         ])
         metadata.update({
@@ -96,7 +125,7 @@ def compile_source(
         preprocessor = _tool("cpppsx-260")
         compiler = _tool("cc1psx-260")
         maspsx = _tool("maspsx")
-        intermediate = output.parent / ".intermediates"
+        intermediate = scratch / "intermediates"
         intermediate.mkdir(parents=True, exist_ok=True)
         preprocessed = intermediate / f"{source.stem}.i"
         assembly = intermediate / f"{source.stem}.s"
@@ -131,7 +160,7 @@ def compile_source(
             "-march=r3000",
             "-mabi=32",
             "-o",
-            str(output),
+            str(staged),
         ]
         _run(assembler_arguments, input_data=assembly.read_bytes())
         metadata.update({
@@ -146,8 +175,12 @@ def compile_source(
     else:
         raise ValueError(f"unsupported source suffix {source.suffix!r}")
 
+    object_data = staged.read_bytes()
+    _validate_mips_elf(object_data, output)
+    _write_bytes_if_changed(output, object_data)
     metadata_path = output.with_suffix(output.suffix + ".json")
-    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    _write_text_if_changed(metadata_path, json.dumps(metadata, indent=2) + "\n")
+    shutil.rmtree(scratch.parent, ignore_errors=True)
     return output
 
 

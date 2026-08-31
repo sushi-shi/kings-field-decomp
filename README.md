@@ -75,19 +75,38 @@ objdiff project. Tooling, evidence, headers, and proven shared source stay
 common.
 
 The initial TSV-driven delinker emits conservative ELF32 little-endian MIPS
-objects and a complete used/withheld relocation audit:
+objects and a complete used/withheld relocation audit. Configure the local,
+hash-verified extraction once, then use the unified build loop:
 
 ```sh
-kf-delink --exe-dir /path/to/hash-identical/retail
-kf-objdiff-project
-kf-objdiff-report --project-dir build/objdiff/game
+kf init --retail-dir /path/to/hash-identical/retail
+kf build
+kf match
+kf status
 ```
 
-Reconstructed objects go under `build/objdiff/{psx,game,open}/base` with the
-same filename as the corresponding carved target. The pinned `objdiff-cli` and
-GUI are both included in `nix develop`.
+`kf build [all|base|target|compare|verify]` accepts repeatable
+`--image psx|game|open`, `--retail-dir`, `-j`, and `-v`. It configures
+`build/build.ninja` when needed and is content-incremental; a no-op second
+build runs no commands.
+`kf match` builds and reports changed reconstruction objects. `kf status` is
+read-only, `kf check` enforces the manually owned high-water ledger, and
+`kf bank` is the only command that updates it.
+
+Exact means exactly `100%`. `kf status --loose` and `kf match --loose` use a
+`99.995%` navigation threshold; loose mode never rounds the banked score.
+
+Reconstruction units are explicit in `config/units.toml`. Each unit binds one
+source, image, retail VA, and fully named compiler-probe profile. Reconstructed
+objects go under `build/objdiff/{psx,game,open}/base`. Unstarted functions stay
+in the 1,096-function coverage denominator but do not enter objdiff through a
+dummy placeholder. The pinned `objdiff-cli` and GUI are included in
+`nix develop`; the earlier low-level commands remain available for focused
+experiments.
 
 See [docs/decompilation-layout.md](docs/decompilation-layout.md) for the
 three-target architecture and
 [docs/delinking-and-matching.md](docs/delinking-and-matching.md) for relocation
-policy, artifacts, commands, and the Vostok/Gruntz boundary.
+policy, artifacts, commands, and the Vostok/Gruntz boundary. See
+[docs/build-system.md](docs/build-system.md) for manifest, graph, and ledger
+contracts.

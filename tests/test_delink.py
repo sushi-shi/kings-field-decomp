@@ -189,8 +189,10 @@ class ObjdiffProjectTests(unittest.TestCase):
             )
             self.assertEqual(results["GAME.EXE"][1:], (0, 1, 1))
             project = json.loads((output / "game/objdiff.json").read_text())
-            self.assertEqual(project["units"][0]["base_path"], "./missing-base.o")
+            self.assertEqual(project["units"], [])
             self.assertNotIn("library_test", json.dumps(project))
+            pairings = (output / "game/pairings.tsv").read_text()
+            self.assertIn("unstarted", pairings)
             excluded = (output / "game/vendored_excluded.tsv").read_text()
             self.assertIn("library_test", excluded)
 
