@@ -50,4 +50,5 @@ retail functions, data, relocations, and library attribution live under
 - [Delinking and objdiff matching](docs/delinking-and-matching.md)
 - [Toolchain evidence](docs/toolchain.md)
 - [Ghidra environment](docs/ghidra.md)
+- [Semantic navigation](docs/semantic-navigation.md)
 - [Vendored-function evidence](docs/vendored-functions.md)

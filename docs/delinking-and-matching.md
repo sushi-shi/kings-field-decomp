@@ -10,7 +10,9 @@ The implementation is `scripts/kf/delink.py`. It consumes the manually owned
 `functions.tsv`, `functions_vendored.tsv`, `data.tsv`, and `relocs.tsv`, carves
 retail bytes, and emits ELF32 little-endian MIPS target objects. These objects
 are comparison artifacts; the historical linker still consumed native Psy-Q
-objects.
+objects. Pure decode, validation, and implicit-addend rules live in
+`scripts/kf/relocations.py` and are shared with the semantic navigator, so a
+reference shown as `validated` uses the same proof boundary as safe delinking.
 
 ## First-pass topology
 

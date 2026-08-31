@@ -127,11 +127,23 @@ def parser() -> argparse.ArgumentParser:
 
     bank_parser = subs.add_parser("bank", help="manually update the score high-water ledger")
     bank_parser.add_argument("--dirty", action="store_true")
+
+    sema_parser = subs.add_parser(
+        "sema",
+        add_help=False,
+        help="query one retail executable's semantic inventories",
+    )
+    sema_parser.add_argument("sema_args", nargs=argparse.REMAINDER)
     return root
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = parser().parse_args(argv)
+    raw = list(sys.argv[1:] if argv is None else argv)
+    if raw and raw[0] == "sema":
+        from scripts.kf.sema import main as sema_main
+
+        return sema_main(raw[1:])
+    args = parser().parse_args(raw)
     try:
         if args.command == "init":
             retail = initialize(args.retail_dir)
