@@ -484,7 +484,12 @@
       retailConfigTests = pkgs.runCommand "kings-field-retail-config-tests" {
         nativeBuildInputs = [ pkgs.python3 ];
       } ''
-        python3 ${./scripts/kf/retail.py} ${./config/retail}
+        mkdir project
+        cp -r ${./scripts} project/scripts
+        cp -r ${./config} project/config
+        cd project
+        python3 scripts/kf/retail.py config/retail
+        python3 -m scripts.kf.inventory check --config-dir config/retail
         touch "$out"
       '';
 

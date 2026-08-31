@@ -46,3 +46,12 @@ These are plugin wildcard signatures, not a Ghidra FID database; the TSV keeps
 the evidence type explicit. `kf-fid-census` separately builds and compares a
 project-owned function-ID corpus directly from the pinned Release 2.5 OBJ/LIB
 files. That primary path is independent of Ghidra and its `.fidb` format.
+
+For game-code identity work, `kf inventory ghidra --image psx|game|open`
+creates persistent ignored projects below `build/ghidra-inventory` and exports
+one JSON dossier per image. Each row includes Ghidra's inferred prototype,
+structured parameter/storage information, decompiled C, and non-flow memory
+references. The exporter applies admitted starts and reviewed semantic names
+inside its private project, but never writes `config/retail`. Its output is a
+proposal lane to review with the MIPS/xref evidence described in
+[`function-and-data-inventory.md`](function-and-data-inventory.md).

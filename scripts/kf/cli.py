@@ -140,6 +140,12 @@ def parser() -> argparse.ArgumentParser:
         help="verify cross-overlay order and Psy-Q archive anchors",
     )
     lineage_parser.add_argument("lineage_args", nargs=argparse.REMAINDER)
+    inventory_parser = subs.add_parser(
+        "inventory",
+        add_help=False,
+        help="validate or propose function/global semantic identities",
+    )
+    inventory_parser.add_argument("inventory_args", nargs=argparse.REMAINDER)
     return root
 
 
@@ -153,6 +159,10 @@ def main(argv: list[str] | None = None) -> int:
         from scripts.kf.lineage import main as lineage_main
 
         return lineage_main(raw[1:])
+    if raw and raw[0] == "inventory":
+        from scripts.kf.inventory import main as inventory_main
+
+        return inventory_main(raw[1:])
     args = parser().parse_args(raw)
     try:
         if args.command == "init":

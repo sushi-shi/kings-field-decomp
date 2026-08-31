@@ -11,6 +11,7 @@ from scripts.kf.delink import (
     Catalog,
     Function,
     _apply_relocation,
+    _competes_for_site,
     decode_hi_lo_target,
     decode_mips26_target,
     encode_hi_lo_addend,
@@ -42,6 +43,15 @@ def elf_sections(data: bytes) -> dict[str, tuple[int, ...]]:
 
 
 class MipsElfTests(unittest.TestCase):
+    def test_unreviewed_bss_candidate_does_not_compete_in_safe_policy(self) -> None:
+        candidate = {"status": "candidate", "target_region": "bss"}
+        reviewed = {"status": "reviewed", "target_region": "bss"}
+        load = {"status": "candidate", "target_region": "load"}
+        self.assertFalse(_competes_for_site(candidate, "safe"))
+        self.assertTrue(_competes_for_site(reviewed, "safe"))
+        self.assertTrue(_competes_for_site(load, "safe"))
+        self.assertTrue(_competes_for_site(candidate, "all"))
+
     def test_elf_relocations_and_function_extent(self) -> None:
         data = write_mips_elf(
             b"\0" * 12,

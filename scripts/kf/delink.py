@@ -284,6 +284,16 @@ def _withheld(row: dict[str, str], owner: Function | None, reason: str) -> dict[
     }
 
 
+def _competes_for_site(row: dict[str, str], policy: str) -> bool:
+    if row["status"] == "rejected":
+        return False
+    if policy == "all":
+        return True
+    if policy == "reviewed":
+        return row["status"] == "reviewed"
+    return row["target_region"] == "load" or row["status"] == "reviewed"
+
+
 def _apply_relocation(
     blob: bytearray,
     function: Function,
@@ -431,6 +441,8 @@ def delink(
             function_relocations: list[MipsRelocation] = []
             occupied = Counter()
             for row in rows_by_owner[function.va]:
+                if not _competes_for_site(row, policy):
+                    continue
                 occupied[parse_int(row["site_va"])] += 1
                 if row["paired_site_va"]:
                     occupied[parse_int(row["paired_site_va"])] += 1

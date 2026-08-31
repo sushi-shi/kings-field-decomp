@@ -124,6 +124,13 @@
 
 - `config/retail/{functions,data,relocs}.tsv` are manually curated WIP inputs.
   Seed/audit outputs under `build/` are proposals, never automatic truth.
+- Source-level function names/signatures and global/static identities live in
+  `function_identities.tsv` and `data_identities.tsv`. Preserve address-derived
+  unresolved names until asm, xrefs, calls, strings, or headers support a
+  semantic replacement; methods use `owner_action`.
+- Run `kf inventory propose` for MIPS/xref dossiers and `kf inventory ghidra`
+  for decompiler candidates. Neither generated report may overwrite a curated
+  identity TSV.
 - The safe delinker and semantic navigator share validation rules in
   `scripts/kf/relocations.py`. If retail evidence disproves the contract, fix
   the shared rule and add an integration control.

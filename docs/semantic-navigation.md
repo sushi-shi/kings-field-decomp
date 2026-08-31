@@ -157,8 +157,10 @@ printf '%s\n' \
 The navigator reflects the current WIP inventories; it is not a claim that all
 function boundaries, data types, or relocation rows are correct. Use it to find
 and compare evidence, then curate `config/retail/functions.tsv`, `data.tsv`,
-`relocs.tsv`, or the separate label overlays. Regenerate or audit inventories
-with the existing census tools before admitting discoveries. Ghidra remains
-useful for interactive analysis and type work, but `kf sema` has no Ghidra
-database dependency and is deterministic from committed configuration plus the
-hash-verified retail bytes.
+`relocs.tsv`, `function_identities.tsv`, or `data_identities.tsv`. The semantic
+function/global overlays are described in
+[`function-and-data-inventory.md`](function-and-data-inventory.md). Regenerate
+or audit inventories with the existing census tools before admitting
+discoveries. Ghidra remains useful for interactive analysis and type work, but
+`kf sema` has no Ghidra database dependency and is deterministic from committed
+configuration plus the hash-verified retail bytes.

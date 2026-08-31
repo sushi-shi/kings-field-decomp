@@ -7,6 +7,7 @@ from contextlib import redirect_stdout
 from scripts.kf.cli import main as cli_main
 from scripts.kf.sema import Context
 from scripts.kf.sema.cfg import build_graph
+from scripts.kf.sema.evidence import Evidence
 from scripts.kf.sema.image import RetailImage
 from scripts.kf.sema.index import Binding, index
 from scripts.kf.sema.mips import (
@@ -19,6 +20,12 @@ from scripts.kf.sema.strings import decode_string
 
 class FakeIndex:
     def function(self, _va: int):
+        return None
+
+    def function_owner(self, _va: int):
+        return None
+
+    def data_owner(self, _va: int):
         return None
 
 
@@ -42,6 +49,30 @@ def words(*values: int) -> bytes:
 
 
 class SemanticToolTests(unittest.TestCase):
+    def test_reviewed_xref_outranks_overlapping_candidate(self) -> None:
+        evidence = object.__new__(Evidence)
+        evidence.image = "GAME.EXE"
+        evidence.idx = FakeIndex()
+        evidence.rows = [
+            {
+                "image": "GAME.EXE",
+                "site_va": "0x80010000",
+                "paired_site_va": "0x80010004",
+                "kind": "mips_hi16_lo16",
+                "target_va": "0x80090000",
+                "status": status,
+                "channel": "test",
+                "confidence": status,
+                "provenance": "test",
+            }
+            for status in ("reviewed", "candidate")
+        ]
+        evidence._byte_reason = lambda _row, _owner: None
+        references = evidence._relocation_references()
+        reasons = {row.origins[0].status: row.origins[0].reason for row in references}
+        self.assertEqual(reasons["reviewed"], "site-outside-function")
+        self.assertEqual(reasons["candidate"], "ambiguous-overlapping-candidates")
+
     def test_mips_control_and_load_delay_decode(self) -> None:
         branch = 0x10000002  # beq $zero,$zero,+2
         self.assertEqual(branch_target(0x1004, branch), 0x1010)
@@ -133,6 +164,14 @@ class SemanticToolTests(unittest.TestCase):
         with redirect_stdout(output):
             self.assertEqual(cli_main(["sema", "--help"]), 0)
         self.assertIn("kf sema --image game", output.getvalue())
+
+    def test_cli_forwards_inventory_options_without_consuming_them(self) -> None:
+        output = io.StringIO()
+        with redirect_stdout(output):
+            with self.assertRaises(SystemExit) as raised:
+                cli_main(["inventory", "ghidra", "--help"])
+        self.assertEqual(raised.exception.code, 0)
+        self.assertIn("--image", output.getvalue())
 
 
 if __name__ == "__main__":

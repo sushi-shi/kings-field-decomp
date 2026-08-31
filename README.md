@@ -51,5 +51,6 @@ retail functions, data, relocations, and library attribution live under
 - [Toolchain evidence](docs/toolchain.md)
 - [Ghidra environment](docs/ghidra.md)
 - [Semantic navigation](docs/semantic-navigation.md)
+- [Function, global, and static identities](docs/function-and-data-inventory.md)
 - [Vendored-function evidence](docs/vendored-functions.md)
 - [Recovered object placement and link order](docs/object-link-order.md)

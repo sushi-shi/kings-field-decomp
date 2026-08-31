@@ -1,13 +1,17 @@
 # Retail executable censuses
 
-These four TSVs are the admitted, manually curated work-in-progress model of
+These six TSVs are the admitted, manually curated work-in-progress model of
 the original Japanese `SLPS-00017` executables:
 
 - `functions.tsv`: current function starts and explicit WIP extents;
 - `functions_vendored.tsv`: provider/library ownership layered over those
   structural functions;
-- `data.tsv`: defined data plus `unclassified` gaps; and
-- `relocs.tsv`: reconstructed relocation candidates and their review status.
+- `data.tsv`: defined data plus `unclassified` gaps;
+- `relocs.tsv`: reconstructed relocation candidates and their review status;
+- `function_identities.tsv`: source-level names, owners, actions, return types,
+  and named parameters for all carveable non-vendored functions; and
+- `data_identities.tsv`: source-level names, extents, storage, linkage scope,
+  types, and owners for initialized globals/statics and referenced BSS.
 
 `PSX.EXE`, `GAME.EXE`, and `OPEN.EXE` are separate linked programs. Every row
 therefore carries an `image` even where `GAME.EXE` and `OPEN.EXE` reuse the
@@ -47,6 +51,10 @@ member offset, version witness, evidence channel, and confidence. This is a
 second hand-owned list, so later seeds are diffs to review rather than truth.
 It is also the matching exclusion list: provider-owned rows may be carved as
 reference objects, but are never emitted as objdiff reconstruction units.
+
+The two identity TSVs are overlays: they do not rename delink symbols or alter
+the matching graph. Address-derived names explicitly mean unresolved. See
+`docs/function-and-data-inventory.md` for the evidence and review workflow.
 
 The vendored inventory contains 750 functions: 8 in `PSX.EXE`, 379 in
 `GAME.EXE`, and 363 in `OPEN.EXE`. Of these, 661 have Release 2.5 evidence:

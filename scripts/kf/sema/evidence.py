@@ -137,10 +137,17 @@ class Evidence:
 
     def _relocation_references(self) -> list[Reference]:
         occupied = Counter()
+        reviewed = Counter()
         for row in self.rows:
-            occupied[parse_int(row["site_va"])] += 1
+            if row["status"] == "rejected":
+                continue
+            sites = [parse_int(row["site_va"])]
             if row["paired_site_va"]:
-                occupied[parse_int(row["paired_site_va"])] += 1
+                sites.append(parse_int(row["paired_site_va"]))
+            for site in sites:
+                occupied[site] += 1
+                if row["status"] == "reviewed":
+                    reviewed[site] += 1
 
         out: list[Reference] = []
         for row in self.rows:
@@ -152,7 +159,11 @@ class Evidence:
             reason = ""
             tier = "candidate"
             byte_reason = self._byte_reason(row, owner)
-            overlaps = occupied[site] > 1 or (paired is not None and occupied[paired] > 1)
+            overlap_counts = reviewed if row["status"] == "reviewed" else occupied
+            overlaps = (
+                overlap_counts[site] > 1
+                or paired is not None and overlap_counts[paired] > 1
+            )
             if row["status"] == "rejected":
                 tier, reason = "rejected", "candidate-rejected"
             elif byte_reason:

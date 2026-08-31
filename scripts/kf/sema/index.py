@@ -38,6 +38,13 @@ class Binding:
     provider: str = ""
     library: str = ""
     unit: str = ""
+    link_name: str = ""
+    owner_type: str = ""
+    action: str = ""
+    return_type: str = ""
+    parameters: str = ""
+    identity_confidence: str = ""
+    signature_confidence: str = ""
     aliases: tuple[Alias, ...] = field(default_factory=tuple)
 
     @property
@@ -80,6 +87,13 @@ class Binding:
             "provider": self.provider or None,
             "library": self.library or None,
             "unit": self.unit or None,
+            "link_name": self.link_name or self.name,
+            "owner_type": self.owner_type or None,
+            "action": self.action or None,
+            "return_type": self.return_type or None,
+            "parameters": self.parameters or None,
+            "identity_confidence": self.identity_confidence or None,
+            "signature_confidence": self.signature_confidence or None,
             "fragments": self.fragments,
             "aliases": [
                 {"name": alias.name, "va": alias.va, "source": alias.source}
@@ -125,6 +139,13 @@ class Index:
         self._by_name = self._name_index()
 
     def _load(self) -> tuple[tuple[Binding, ...], tuple[Binding, ...]]:
+        from scripts.kf.inventory import (
+            load_data_identities,
+            load_function_identities,
+        )
+
+        function_identities = load_function_identities(self.config_dir)
+        data_identities = load_data_identities(self.config_dir)
         _, vendored_rows = read_tsv(self.config_dir / "functions_vendored.tsv")
         vendored = {
             (row["image"], parse_int(row["va"])): row
@@ -144,9 +165,18 @@ class Index:
                 continue
             va = parse_int(row["va"])
             provider = vendored.get((self.image, va), {})
-            curated = row["name"] or provider.get("name", "")
-            name = sanitize_symbol(curated, f"func_{va:08x}")
+            structural_name = row["name"] or provider.get("name", "")
+            link_name = sanitize_symbol(structural_name, f"func_{va:08x}")
+            identity = function_identities.get((self.image, va))
+            curated = (
+                identity.name
+                if identity is not None and not identity.unresolved
+                else structural_name
+            )
+            name = sanitize_symbol(curated, link_name)
             aliases = _labels(row["labels"], va)
+            if name != link_name:
+                aliases.append(Alias(link_name, va, "link-name"))
             for alias in provider.get("aliases", "").split(";"):
                 alias = alias.strip()
                 if alias:
@@ -167,28 +197,82 @@ class Index:
                 provider=provider.get("provider", ""),
                 library=provider.get("library", ""),
                 unit=units.get((self.image, va), ""),
+                link_name=link_name,
+                owner_type=identity.owner if identity else "",
+                action=identity.action if identity else "",
+                return_type=identity.return_type if identity else "",
+                parameters=identity.parameters if identity else "",
+                identity_confidence=identity.name_confidence if identity else "",
+                signature_confidence=(
+                    identity.signature_confidence if identity else ""
+                ),
                 aliases=tuple(aliases),
             ))
 
         _, data_rows = read_tsv(self.config_dir / "data.tsv")
         data: list[Binding] = []
+        structural_data_starts: set[int] = set()
         for row in data_rows:
             if row["image"] != self.image:
                 continue
             va = parse_int(row["va"])
-            curated = row["name"]
+            structural_data_starts.add(va)
+            link_name = sanitize_symbol(row["name"], f"DAT_{va:08x}")
+            identity = data_identities.get((self.image, va))
+            curated = (
+                identity.name
+                if identity is not None and identity.confidence != "address-only"
+                else row["name"]
+            )
             data.append(Binding(
                 image=self.image,
                 va=va,
                 size=parse_int(row["size"]),
                 space="data",
                 kind=row["kind"],
-                name=sanitize_symbol(curated, f"DAT_{va:08x}"),
+                name=sanitize_symbol(curated, link_name),
                 curated_name=curated,
                 confidence=row["confidence"],
                 provenance=row["provenance"],
                 note=row["note"],
-                datatype=row["datatype"],
+                datatype=(identity.datatype if identity and identity.datatype else row["datatype"]),
+                link_name=link_name,
+                owner_type=identity.owner if identity else "",
+                identity_confidence=identity.confidence if identity else "",
+                aliases=(
+                    (Alias(link_name, va, "link-name"),)
+                    if sanitize_symbol(curated, link_name) != link_name else ()
+                ),
+            ))
+        for (identity_image, va), identity in data_identities.items():
+            if (
+                identity_image != self.image
+                or va in structural_data_starts
+                or identity.storage != "bss"
+            ):
+                continue
+            link_name = f"DAT_{va:08x}"
+            name = sanitize_symbol(identity.name, link_name)
+            data.append(Binding(
+                image=self.image,
+                va=va,
+                size=identity.size,
+                space="data",
+                kind="bss",
+                name=name,
+                curated_name=(
+                    identity.name if identity.confidence != "address-only" else ""
+                ),
+                confidence=identity.confidence,
+                provenance=identity.evidence,
+                note=identity.note,
+                datatype=identity.datatype,
+                link_name=link_name,
+                owner_type=identity.owner,
+                identity_confidence=identity.confidence,
+                aliases=(
+                    (Alias(link_name, va, "link-name"),) if name != link_name else ()
+                ),
             ))
         return (
             tuple(sorted(functions, key=lambda item: item.va)),

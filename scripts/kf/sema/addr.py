@@ -89,6 +89,28 @@ def _render(ctx: Context, row: dict[str, object]) -> str:
                 f"body: 0x{binding['body_size']:x} B; fragments={binding['fragments']}; "
                 f"in_body={row['in_body']}"
             )
+            if binding["return_type"] or binding["parameters"]:
+                signature = (
+                    f"{binding['return_type'] or 'unknown'} {binding['name']}"
+                    f"({binding['parameters'] or 'void'})"
+                )
+                lines.append(
+                    f"identity: {signature} "
+                    f"[{binding['signature_confidence'] or 'unreviewed'}]"
+                )
+            if binding["owner_type"]:
+                lines.append(
+                    f"method: owner={binding['owner_type']} action={binding['action']}"
+                )
+        elif binding["datatype"] or binding["owner_type"]:
+            details = []
+            if binding["datatype"]:
+                details.append(f"type={binding['datatype']}")
+            if binding["owner_type"]:
+                details.append(f"owner={binding['owner_type']}")
+            lines.append("identity: " + " ".join(details))
+        if binding["link_name"] != binding["name"]:
+            lines.append(f"link name: {binding['link_name']}")
         if binding["provider"]:
             lines.append(
                 f"vendored: {binding['provider']} / {binding['library'] or '?'}"
