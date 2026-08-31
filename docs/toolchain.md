@@ -37,6 +37,11 @@ execution, but ASPSX is key-protected. maspsx and GNU MIPS binutils provide the
 practical, scriptable assembly route while we compare their output against the
 retail programs and the original tools.
 
+`tests/psylink_order_smoke.py` runs the original pinned PSYLINK 1.17 under
+headless DOSBox against preserved Release 2.5 objects. It verifies direct input
+ordering separately from lazy archive extraction and is part of
+`nix flake check`; see `vendored-functions.md` for the conclusions and limits.
+
 The shell also exposes `cc1psx-260` and `cpppsx-260`. These are native Linux
 rebuilds of the GCC 2.6.0 PSX target from Decompals old-gcc 0.17, pinned by
 archive SHA-256. They enable the live C -> assembly -> maspsx -> ELF matching

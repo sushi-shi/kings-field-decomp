@@ -494,6 +494,23 @@
         python3 compiler_mips_smoke.py
         touch "$out"
       '';
+
+      psylinkOrderTests = pkgs.runCommand "kings-field-psylink-order-tests" {
+        nativeBuildInputs = [
+          pkgs.python3
+          pkgs.dosbox-x
+          psy-k
+        ];
+        PSYLINK_DOSBOX = "${pkgs.dosbox-x}/bin/dosbox-x";
+        PSYQ_BIN = "${psyqToolchain}/psyq/bin";
+        PSYQ_LIB = "${psyqToolchain}/psyq/lib";
+      } ''
+        export HOME="$TMPDIR/home"
+        export XDG_CONFIG_HOME="$TMPDIR/config"
+        mkdir -p "$HOME" "$XDG_CONFIG_HOME"
+        python3 ${./tests/psylink_order_smoke.py}
+        touch "$out"
+      '';
     in {
       packages.${system} = {
         inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed retailDelink objdiffProject objdiffReport sourceCompile kfCli;
@@ -512,6 +529,7 @@
         ghidra-psx-loader-discovery = ghidraPluginTests;
         retail-config = retailConfigTests;
         objdiff-mips = objdiffMipsTests;
+        psylink-order = psylinkOrderTests;
       };
     };
 }

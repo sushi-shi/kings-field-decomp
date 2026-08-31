@@ -60,10 +60,9 @@ lane, but it must preserve the same version/provenance distinction.
 ## Cross-overlay order evidence
 
 Psy-Q order is useful evidence, but it is not MSVC incremental-link metadata.
-The project does not currently make a generic claim about PSYLINK object or
-archive extraction order. Those behaviours still need a controlled PSYLINK
-1.17 experiment; archive membership and address order alone are not that test.
-Addresses are therefore never treated as identities by themselves.
+The project does not treat archive storage order or addresses as identities.
+The controlled PSYLINK 1.17 results below establish narrower behaviours instead
+of relying on an MSVC analogy.
 
 What has been tested is narrower:
 
@@ -72,8 +71,9 @@ What has been tested is narrower:
 | Does the available GCC 2.6.0 PSX code-generation probe preserve C definition order within one object? | `tests/compiler_mips_smoke.py` compiles deliberately non-alphabetical exported functions at `-O0` and `-O2`; both preserve their relative source order. | This calibrates the pinned Decompals rebuild, not the still-unproven retail compiler binary/profile. An explicit inline body may be deferred to the end at `-O0`, so even this is not a universal all-function rule. |
 | Can optimization remove a function body and shift later offsets? | The same probe observes an explicitly inline static body at `-O0`, its omission at `-O2`, and changed offsets for later functions. | This demonstrates why VA is not identity; it does not identify King's Field's optimization flags. |
 | Did one actual linked sequence keep the same order in both overlays? | `kf lineage` verifies the retail chain described below. | This proves only the admitted chain, not a universal linker rule. |
-| Does input-object order or lazy archive extraction determine retail order? | Not yet directly tested under PSYLINK 1.17. | Do not infer source-file boundaries or archive extraction history from adjacency alone. |
-| Is this MSVC incremental RVA behaviour? | No corresponding incremental-link metadata or padding mechanism has been identified, and none is used by the tooling. | Treat the MSVC analogy as rejected, not as a matching rule. |
+| Does direct input-object order affect linked order? | `tests/psylink_order_smoke.py` links pinned `A02.OBJ`/`A03.OBJ` in both orders with the actual PSYLINK 1.17; their symbol addresses reverse with the command line. Reversing two root objects does the same. | This supports order reasoning only after an object boundary/input sequence is independently known. |
+| Does archive member storage order determine lazy-extraction placement? | The same test creates `A02,A03,A04` and `A03,A02,A04` archives. With identical unresolved roots, their CPE and symbol outputs are byte-identical (`GetRCnt`, `SetRCnt`, `StartRCnt` order). | No: do not infer linked order from the archive's member listing. The exact internal extraction algorithm remains outside this fixture's claim. |
+| Is this MSVC incremental RVA behaviour? | No. Reordering direct inputs changes addresses, while no corresponding incremental-link metadata or padding mechanism has been identified or used by the tooling. | Treat the MSVC analogy as rejected, not as a matching rule. |
 
 `config/evidence/overlay_lineage.tsv` captures an observed stronger case. A
 contiguous 16-function audio-related chain appears in both `GAME.EXE` and
