@@ -93,6 +93,25 @@ build runs no commands.
 read-only, `kf check` enforces the manually owned high-water ledger, and
 `kf bank` is the only command that updates it.
 
+With no `--image` selector, `kf status` reads all three generated objdiff
+reports and prints one row for each independently linked executable plus a
+combined total:
+
+```text
+$ kf status
+exact threshold: 100.000%
+image  eligible  started   built  scored   exact   coverage  fuzzy/built
+psx           1        0       0       0       0     0.000%       0.000%
+game        673        0       0       0       0     0.000%       0.000%
+open        422        0       0       0       0     0.000%       0.000%
+total      1096        0       0       0       0     0.000%       0.000%
+ledger: no changes
+```
+
+Use `kf status --image psx`, `--image game`, or `--image open` for one
+executable. Repeat `--image` to select any combination, and add `--json` for a
+machine-readable document containing the same per-image and total fields.
+
 Exact means exactly `100%`. `kf status --loose` and `kf match --loose` use a
 `99.995%` navigation threshold; loose mode never rounds the banked score.
 
