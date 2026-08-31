@@ -125,31 +125,10 @@ source = "src/game/func_80036e30.c"
 profile = "probe-gcc260-o2-g0"
 
 [[unit]]
-unit = "game.func_8003b4b8"
-image = "GAME.EXE"
-va = 0x8003b4b8
-source = "src/game/func_8003b4b8.c"
-profile = "probe-gcc260-o2-g0"
-
-[[unit]]
-unit = "game.func_8003d050"
-image = "GAME.EXE"
-va = 0x8003d050
-source = "src/game/func_8003d050.c"
-profile = "probe-gcc260-o2-g0"
-
-[[unit]]
 unit = "game.func_8003ee54"
 image = "GAME.EXE"
 va = 0x8003ee54
 source = "src/game/func_8003ee54.c"
-profile = "probe-gcc260-o2-g0"
-
-[[unit]]
-unit = "game.func_80041040"
-image = "GAME.EXE"
-va = 0x80041040
-source = "src/game/func_80041040.c"
 profile = "probe-gcc260-o2-g0"
 
 [[unit]]

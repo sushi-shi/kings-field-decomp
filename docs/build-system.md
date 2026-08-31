@@ -38,7 +38,7 @@ prunes its orphan base object at configure time.
 ## Status and banking
 
 The status universe is every contiguous, non-vendored target object: currently
-1 PSX, 671 GAME, and 420 OPEN functions. Only manifested units with real base
+1 PSX, 557 GAME, and 306 OPEN functions. Only manifested units with real base
 objects enter objdiff. This keeps an absent reconstruction distinct from a
 real 0% comparison and prevents zero-total dummy objects from reporting 100%.
 

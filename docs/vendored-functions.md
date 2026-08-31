@@ -10,18 +10,20 @@ KFIII executable contributes to this list.
 
 ## Current result
 
-| image | Release 2.5 exact | Psy-Q 2.60 signature | manual SDK lineage | total |
+| image | Release 2.5 exact object | Release 2.5 FID-only | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 8 |
-| `GAME.EXE` | 184 | 77 | 2 | 263 |
-| `OPEN.EXE` | 183 | 62 | 2 | 247 |
-| **total** | **375** | **139** | **4** | **518** |
+| `GAME.EXE` | 184 | 143 | 52 | 379 |
+| `OPEN.EXE` | 183 | 143 | 37 | 363 |
+| **total** | **375** | **286** | **89** | **750** |
 
-The 518 rows comprise 504 named functions and 14 anonymous internal functions
-whose containing Sony object is known. Provider counts are: 116 `LIBGTE`, 110
-`LIBGPU`, 100 `LIBCD`, 91 `LIBAPI`, 59 `LIBSND`, 36 `LIBSPU`, two `LIBSN`, and
-four startup functions attributed to `NONE2.OBJ`. No zlib or other third-party
-library has been identified, so none is claimed in the TSV.
+The 750 rows comprise 738 named functions and 12 anonymous internal functions
+whose containing Sony object is known. Provider counts are: 188 `LIBGPU`, 148
+`LIBGTE`, 128 `LIBCD`, 117 `LIBSND`, 91 `LIBAPI`, 62 `LIBSPU`, four startup
+functions attributed to `NONE2.OBJ`, two each from `LIBSN` and `LIBETC`, and
+eight fully fixed `memcpy` copies whose exact member remains ambiguous across
+`LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party library has been
+identified, so none is claimed in the TSV.
 
 These rows are an exclusion boundary as well as attribution evidence.
 `kf-delink` may carve them to preserve the linked executable model and resolve
@@ -38,6 +40,24 @@ the retail bytes. It validates object size, compared-bit count, relocation
 count, executable occurrence count, and XDEF offsets. Six `PSX.EXE` `LIBAPI`
 stubs use separately reviewed complete 16-byte object matches.
 
+The project-owned Release 2.5 function-ID lane does not require Ghidra. It
+extracts every object from the hash-pinned Psy-Q libraries with `psy-k`, splits
+each `.text` section using compiler debug Function records when present and
+XDEF/local-symbol boundaries otherwise, and records the function bytes plus an
+exact bit mask for linker-owned relocations. The resulting corpus currently
+contains 1,226 usable function signatures. Each signature is tried at every
+admitted retail function start; a `HIGH` result must be substantial, resolve to
+one SDK object identity at that address, and occur no more than once in each
+separately linked image. `GAME.EXE` and `OPEN.EXE` are checked independently.
+
+The current run finds 971 raw matches: 581 `HIGH`, 364 `AMBIG`, and 26 `SHORT`.
+Of the high-confidence matches, 303 corroborate an existing exact-object row
+and 278 add provider rows that the whole-object lane could not see. Eight more
+rows are admitted from one fully fixed 0x30-byte `memcpy` FID: its bytes and
+normalized name agree across three Sony objects, although the precise archive
+member does not. Other ambiguous or short hits remain report-only. Corpus and
+match reports are generated under `build/fid-census` with SHA-256 provenance.
+
 The secondary lane consumes the Psy-Q 2.60 wildcard JSON signatures bundled by
 the pinned `ghidra_psx_ldr`. A match is proposed only if:
 
@@ -53,9 +73,10 @@ These rows identify likely Sony library code, but they do not prove that the
 linked archive was version 2.60.
 
 The plugin does not ship a Ghidra `.fidb` for this material. Its JSON wildcard
-objects are therefore described as signatures, not FIDs. A future FID database
-generated from the hash-pinned Release 2.5 objects can be another candidate
-lane, but it must preserve the same version/provenance distinction.
+objects are therefore described as signatures, not FIDs. The project-owned
+Release 2.5 FID corpus is a standalone TSV pipeline and preserves library,
+module, function-boundary, object hash, function hash, and source-version
+provenance without depending on Ghidra's database format.
 
 ## Cross-overlay order evidence
 
@@ -87,18 +108,21 @@ kf lineage
 ```
 
 The command also asserts the corrected `lui`/`lw` prefix in both executables,
-the four SSCALL provider rows, and all four direct helper callsites. The helper
-must have exactly two direct `jal` callers per overlay, both inside
-`SsSeqCalledTbyT`.
+all four direct helper callsites, the helper's ambiguous-provider FID row, and
+the dispatcher's absence from the provider-exclusion TSV. The helper must have
+exactly two direct `jal` callers per overlay, both inside the candidate
+`SsSeqCalledTbyT` body.
 
-That repeated order proves common linked code, not Sony ownership on its own.
-The `SSCALL` promotion adds independent SDK evidence: the pinned Psy-Q corpus
-names `SsSeqCalledTbyT` in `LIBSND.LIB/SSCALL.OBJ`, the retail dispatcher has
-the same sound-event call sequence, and its leading `lui`/`lw` pair corrects a
-previously missed eight-byte function prefix in both overlays. The private
-0x30-byte copy helper is byte-identical across overlays, immediately precedes
-the dispatcher, and is called only from that dispatcher. Those combined facts
-are the basis for `manual-sdk-lineage` ownership.
+That repeated order proves common linked code, not Sony ownership. The FID pass
+specifically prevents the earlier overreach here: Release 2.5
+`LIBSND.LIB/SSCALL.OBJ` contains a named 0x244-byte `SsSeqCalledTbyT`, but it
+does not match either 0x2f8-byte retail dispatcher. The preceding 0x30-byte
+helper exactly matches `memcpy`/`_memcpy`-shaped functions from three SDK object
+identities, and the same body occurs four times per retail image. That proves a
+Sony `memcpy` body while leaving the exact archive member ambiguous, so all
+eight copies use `fid-release25-ambiguous`. The dispatcher itself is not
+classified as vendored. Its structural name and cross-overlay lineage remain a
+useful WIP hypothesis, kept separate from provider ownership.
 
 ## TSV contract
 
@@ -114,11 +138,12 @@ The confidence channels are intentionally mechanical:
 - `exact-release25-short`: unique but smaller exact section match;
 - `exact-release25-ambiguous`: exact bytes with multiple archive members;
 - `exact-release25-complete`: reviewed complete tiny object;
+- `fid-release25`: unique substantial relocation-masked function ID built from
+  the pinned Release 2.5 objects;
+- `fid-release25-ambiguous`: fully fixed function ID with one normalized name
+  but multiple possible Release 2.5 archive identities;
 - `psyq260-signature`: unique later-corpus wildcard match; and
-- `psyq260-signature-ambiguous`: later signature shared by archive members; and
-- `manual-sdk-lineage`: reviewed ownership based on a named SDK symbol/control-
-  flow lineage plus reproducible cross-overlay instruction-shape evidence, used
-  when version skew prevents an exact archive-object match.
+- `psyq260-signature-ambiguous`: later signature shared by archive members.
 
 `kf-retail-validate` rejects provider rows without a structural function,
 changed sizes, duplicate addresses, invalid confidence, or missing provenance.
@@ -129,6 +154,9 @@ It does not promote signature candidates to exact claims.
 Run the reproducible candidate pass inside the default Nix shell:
 
 ```sh
+kf-fid-census \
+  --exe-dir /path/to/kings-field-japan-retail/disc
+
 kf-vendored-seed \
   --exe-dir /path/to/kings-field-japan-retail/disc
 ```
@@ -136,5 +164,7 @@ kf-vendored-seed \
 The output is written below `build/vendored-seed`; writing directly under
 `config/retail` is refused. Diff the generated rows against the hand-owned TSV,
 review new or missing boundaries in `functions.tsv`, then admit only the rows
-whose ownership evidence survives inspection. This preserves manual edits when
-the structural census or signature corpus changes.
+whose ownership evidence survives inspection. The seeder runs the standalone
+FID lane by default; `--no-fids` exists for isolating the older evidence lanes.
+This preserves manual edits when the structural census or signature corpus
+changes.

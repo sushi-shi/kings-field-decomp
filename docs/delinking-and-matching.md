@@ -97,21 +97,23 @@ non-reachable-code candidates, 2,501 sites outside current function extents,
 130 candidates owned by the seven fragmented functions, and one unsigned-low
 HI/LO pair.
 
-Carving the whole image is not the same as selecting decomp work. The 518
+Carving the whole image is not the same as selecting decomp work. The 750
 functions in `functions_vendored.tsv` are excluded when objdiff projects are
 generated:
 
 | Target | Carved target/reference objects | Vendored objects excluded | Non-vendored match units |
 | --- | ---: | ---: | ---: |
 | `PSX.EXE` | 9 | 8 | 1 |
-| `GAME.EXE` | 934 | 263 | 671 |
-| `OPEN.EXE` | 667 | 247 | 420 |
-| **Total** | **1,610** | **518** | **1,092** |
+| `GAME.EXE` | 934 | 377 | 557 |
+| `OPEN.EXE` | 667 | 361 | 306 |
+| **Total** | **1,610** | **746** | **864** |
 
-The match-unit counts also exclude the seven fragmented non-vendored
-functions. Vendored objects exist only to preserve executable topology,
-provider evidence, symbol identities, and call relocation targets. They do not
-count as source reconstruction or progress.
+The provider inventory has four additional fragmented functions—two per
+overlay—which have no carved object. The match-unit counts also exclude the
+remaining three fragmented non-vendored functions. Vendored objects exist only
+to preserve executable topology, provider evidence, symbol identities, and
+call relocation targets. They do not count as source reconstruction or
+progress.
 
 ## MIPS analysis implications
 

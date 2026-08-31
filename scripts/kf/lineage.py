@@ -240,7 +240,7 @@ def verify_sscall_boundary_and_calls(
     functions_path: Path = RETAIL_CONFIG / "functions.tsv",
     vendored_path: Path = RETAIL_CONFIG / "functions_vendored.tsv",
 ) -> int:
-    """Check the corrected SSCALL prefix, provider rows, and direct callers."""
+    """Check the memcpy FID, SSCALL-shaped dispatcher, and direct calls."""
     _fields, raw_functions = read_tsv(functions_path)
     functions = [
         (row["image"], parse_int(row["va"]), parse_int(row["size"]))
@@ -260,20 +260,20 @@ def verify_sscall_boundary_and_calls(
         if function_sizes.get((image, dispatcher)) != 0x2F8:
             raise ValueError(f"{image}: SsSeqCalledTbyT boundary differs")
         helper_vendor = vendored.get((image, helper), {})
-        dispatcher_vendor = vendored.get((image, dispatcher), {})
         if (
-            helper_vendor.get("library"),
-            helper_vendor.get("module"),
-            helper_vendor.get("member_offset"),
-        ) != ("LIBSND.LIB", "SSCALL", "0x0"):
-            raise ValueError(f"{image}: SSCALL helper provider evidence differs")
-        if (
-            dispatcher_vendor.get("name"),
-            dispatcher_vendor.get("library"),
-            dispatcher_vendor.get("module"),
-            dispatcher_vendor.get("member_offset"),
-        ) != ("SsSeqCalledTbyT", "LIBSND.LIB", "SSCALL", "0x30"):
-            raise ValueError(f"{image}: SsSeqCalledTbyT provider evidence differs")
+            helper_vendor.get("name"),
+            helper_vendor.get("evidence"),
+            helper_vendor.get("confidence"),
+        ) != (
+            "memcpy",
+            "exact-function-id-multiobject",
+            "fid-release25-ambiguous",
+        ):
+            raise ValueError(
+                f"{image}: repeated memcpy helper FID evidence differs"
+            )
+        if (image, dispatcher) in vendored:
+            raise ValueError(f"{image}: unmatched SSCALL dispatcher must stay in scope")
 
         payload = _load_payload(exe_dir, image)
         prefix = _words(payload, image, dispatcher, 8)
@@ -339,7 +339,10 @@ def main(arguments: Sequence[str] | None = None) -> int:
             f"exact words, {result.shape_words}/{result.total_words} instruction shapes"
         )
     print(f"archive anchors verified: {anchors}")
-    print(f"SSCALL corrected boundaries and direct helper calls verified: {direct_calls}")
+    print(
+        "ambiguous-provider memcpy FIDs and unpromoted SSCALL dispatcher "
+        f"verified with direct helper calls: {direct_calls}"
+    )
     return 0
 
 

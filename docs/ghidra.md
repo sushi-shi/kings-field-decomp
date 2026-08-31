@@ -43,5 +43,6 @@ lane. It requires a unique executable occurrence and a meaningful signature
 label aligned to an admitted function start. Resulting rows retain
 `psyq260-signature*` confidence and never override a Release 2.5 object claim.
 These are plugin wildcard signatures, not a Ghidra FID database; the TSV keeps
-the evidence type explicit so a future generated FID corpus can be compared
-without conflating the two mechanisms.
+the evidence type explicit. `kf-fid-census` separately builds and compares a
+project-owned function-ID corpus directly from the pinned Release 2.5 OBJ/LIB
+files. That primary path is independent of Ghidra and its `.fidb` format.

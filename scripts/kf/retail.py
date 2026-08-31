@@ -123,13 +123,14 @@ VENDORED_FUNCTION_FIELDS = (
 )
 
 VENDORED_CONFIDENCE = {
+    "fid-release25",
+    "fid-release25-ambiguous",
     "exact-release25",
     "exact-release25-short",
     "exact-release25-ambiguous",
     "exact-release25-complete",
     "psyq260-signature",
     "psyq260-signature-ambiguous",
-    "manual-sdk-lineage",
 }
 
 

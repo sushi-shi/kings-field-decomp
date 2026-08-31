@@ -278,6 +278,19 @@
         '';
       };
 
+      fidCensus = pkgs.writeShellApplication {
+        name = "kf-fid-census";
+        runtimeInputs = [ analysisPython pkgs.git psy-k ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.fid_census \
+            --psyk ${psy-k}/bin/psyk \
+            --sdk-lib-dir ${psyqToolchain}/psyq/lib \
+            "$@"
+        '';
+      };
+
       retailDelink = pkgs.writeShellApplication {
         name = "kf-delink";
         runtimeInputs = [ analysisPython pkgs.git ];
@@ -362,6 +375,7 @@
           functionAudit
           functionPropose
           vendoredSeed
+          fidCensus
           retailDelink
           objdiffProject
           objdiffReport
@@ -437,7 +451,7 @@
           echo "[kings-field] analysis        : ghidra + PSX loader, pyghidra, psy-k, radare2, mipsel binutils" >&2
           echo "[kings-field] assembly        : maspsx + mipsel-linux-gnu-as" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
-          echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-vendored-seed" >&2
+          echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-fid-census; kf-vendored-seed" >&2
           echo "[kings-field] matching        : kf init/build/match/status/check/bank; objdiff GUI" >&2
         '';
       };
@@ -513,7 +527,7 @@
       '';
     in {
       packages.${system} = {
-        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed retailDelink objdiffProject objdiffReport sourceCompile kfCli;
+        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
         default = psyqToolchain;
       };
 

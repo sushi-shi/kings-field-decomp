@@ -48,12 +48,12 @@ second hand-owned list, so later seeds are diffs to review rather than truth.
 It is also the matching exclusion list: provider-owned rows may be carved as
 reference objects, but are never emitted as objdiff reconstruction units.
 
-The vendored inventory contains 518 functions: 8 in `PSX.EXE`, 263 in
-`GAME.EXE`, and 247 in `OPEN.EXE`. Of these, 375 have Release 2.5 evidence
-(369 within relocation-masked exact object sections and six reviewed complete
-16-byte objects). The remaining 139 are candidates from unique matches against
+The vendored inventory contains 750 functions: 8 in `PSX.EXE`, 379 in
+`GAME.EXE`, and 363 in `OPEN.EXE`. Of these, 661 have Release 2.5 evidence:
+375 from exact object matching and 286 additional rows from the project-built
+function-ID corpus. The remaining 89 are candidates from unique matches against
 the later Psy-Q 2.60 wildcard signature corpus bundled by `ghidra_psx_ldr`.
-That version boundary is explicit in every row. There are 502 symbol-named
+That version boundary is explicit in every row. There are 738 symbol-named
 rows and 12 anonymous functions whose containing object is nevertheless known.
 
 `library` and `module` use `|` for unresolved archive aliases. For example,
@@ -126,19 +126,28 @@ plugin-generated GTE datatypes as retail data authority.
 The Release 2.5 match spans and reviewed tiny complete objects are preserved in
 `config/evidence`. The seeder reconstructs the object bytes and relocation
 masks, rechecks each executable occurrence, and reads XDEF names live from the
-exact SDK archive members. A second lane scans the hash-verified executable
+exact SDK archive members. A second, Ghidra-independent lane extracts functions
+from every pinned Release 2.5 object and compares relocation-masked function
+IDs at admitted retail starts. A third lane scans the hash-verified executable
 payloads against the Psy-Q 2.60 JSON signatures supplied by the pinned Ghidra
 plugin:
 
 ```sh
+kf-fid-census \
+  --exe-dir /path/to/kings-field-japan-retail/disc
+
 kf-vendored-seed \
   --exe-dir /path/to/kings-field-japan-retail/disc
 ```
 
 The command writes `build/vendored-seed/functions_vendored.tsv` and refuses to
 write under `config/retail`. Review that proposed diff, then manually admit the
-desired rows. A 2.60 signature hit is accepted only when it is unique in an
-image and at least one meaningful signature label lands on an existing
+desired rows. Substantial, per-image-unique, single-object-identity Release 2.5
+FIDs receive `HIGH` confidence. A fully fixed body may retain an ambiguous
+archive identity only when every candidate has the same normalized function
+name; other ambiguous and short hits stay in the generated report. A 2.60
+signature hit is accepted only when it is unique
+in an image and at least one meaningful signature label lands on an existing
 structural function start; this rejects short incidental byte matches inside
 game code. It is still a WIP inference, not proof that the linked member came
 from Psy-Q 2.60.

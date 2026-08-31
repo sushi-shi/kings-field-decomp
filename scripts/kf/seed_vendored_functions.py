@@ -1,10 +1,12 @@
 """Propose Sony/Psy-Q ownership for functions in the retail census.
 
 The structural function list remains the authority for starts and WIP extents.
-This command layers two independent kinds of library evidence over it:
+This command layers three independent kinds of library evidence over it:
 
 * relocation-masked exact Psy-Q Release 2.5 object-section matches, with XDEF
   names read from the matching archive members; and
+* project-built, function-level Release 2.5 FIDs derived from every supplied
+  archive member; and
 * the wildcarded Psy-Q 2.60 object signatures bundled by ``ghidra_psx_ldr``.
 
 Release 2.5 matches establish the actual linked input.  The later signatures
@@ -747,6 +749,135 @@ def apply_signature_rows(
         }
 
 
+def apply_fid_rows(
+    fid_rows: Sequence[dict[str, str]],
+    rows: dict[tuple[str, int], dict[str, object]],
+) -> None:
+    """Promote strong project-built function IDs.
+
+    Exact containing-object matches remain the primary row when both channels
+    agree; the function ID is appended as independent provenance.  HIGH IDs are
+    admitted directly.  A repeated AMBIG ID is admitted only when its entire
+    body is fixed and every candidate has the same normalized function name;
+    this preserves possible SDK member identities without confusing them with
+    conflicting short-wrapper signatures.
+    """
+    for fid in fid_rows:
+        if fid["confidence"] != "HIGH":
+            continue
+        key = (fid["image"], parse_int(fid["va"]))
+        witness = (
+            f"psyq-release25-fid:{fid['fid_sha256'][:12]}:"
+            f"{fid['object_sha256'][:12]}"
+        )
+        if key in rows:
+            row = rows[key]
+            if (
+                fid["library"] not in str(row["library"]).split("|")
+                or fid["module"] not in str(row["module"]).split("|")
+            ):
+                continue
+            provenance = str(row["provenance"])
+            if witness not in provenance.split(";"):
+                row["provenance"] = provenance + ";" + witness
+                row["note"] = (
+                    str(row["note"])
+                    + f"; corroborated by unique {fid['boundary']} function FID"
+                )
+            continue
+
+        rows[key] = {
+            "image": fid["image"],
+            "va": fid["va"],
+            "size": fid["size"],
+            "name": fid["name"],
+            "aliases": fid["aliases"],
+            "provider": "Sony Computer Entertainment",
+            "library": fid["library"],
+            "module": fid["module"],
+            "member_offset": fid["member_offset"],
+            "source_version": "Psy-Q Release 2.5",
+            "evidence": "relocation-masked-function-id",
+            "confidence": "fid-release25",
+            "provenance": witness,
+            "note": (
+                f"unique substantial {fid['boundary']} FID; "
+                f"{fid['fixed_bits']} fixed instruction bits"
+            ),
+        }
+
+    ambiguous: dict[tuple[str, int], list[dict[str, str]]] = {}
+    for fid in fid_rows:
+        if fid["confidence"] != "AMBIG":
+            continue
+        key = (fid["image"], parse_int(fid["va"]))
+        ambiguous.setdefault(key, []).append(fid)
+
+    for key, candidates in ambiguous.items():
+        if key in rows:
+            continue
+        sizes = {parse_int(fid["size"]) for fid in candidates}
+        hashes = {fid["fid_sha256"] for fid in candidates}
+        names = {
+            name
+            for fid in candidates
+            for name in (fid["name"], *fid["aliases"].split(";"))
+            if name
+        }
+        normalized_names = {name.removeprefix("_") for name in names}
+        if (
+            len(sizes) != 1
+            or next(iter(sizes)) < 0x20
+            or len(hashes) != 1
+            or len(normalized_names) != 1
+            or any(
+                int(fid["fixed_bits"]) != parse_int(fid["size"]) * 8
+                for fid in candidates
+            )
+        ):
+            continue
+
+        size = next(iter(sizes))
+        normalized_name = next(iter(normalized_names))
+        name = normalized_name if normalized_name in names else sorted(names)[0]
+        identities = sorted({
+            (
+                fid["library"], fid["module"], fid["member_offset"],
+                fid["object_sha256"],
+            )
+            for fid in candidates
+        })
+        witnesses = sorted({
+            f"psyq-release25-fid:{fid['fid_sha256'][:12]}:"
+            f"{fid['object_sha256'][:12]}"
+            for fid in candidates
+        })
+        mappings = ", ".join(
+            f"{library}/{module}@{offset}"
+            for library, module, offset, _object_hash in identities
+        )
+        offsets = {offset for _library, _module, offset, _hash in identities}
+        rows[key] = {
+            "image": candidates[0]["image"],
+            "va": candidates[0]["va"],
+            "size": f"0x{size:x}",
+            "name": name,
+            "aliases": ";".join(sorted(names - {name})),
+            "provider": "Sony Computer Entertainment",
+            "library": "|".join(sorted({item[0] for item in identities})),
+            "module": "|".join(sorted({item[1] for item in identities})),
+            "member_offset": next(iter(offsets)) if len(offsets) == 1 else "0x0",
+            "source_version": "Psy-Q Release 2.5",
+            "evidence": "exact-function-id-multiobject",
+            "confidence": "fid-release25-ambiguous",
+            "provenance": ";".join(witnesses),
+            "note": (
+                f"fully fixed {size:#x}-byte FID shared by {len(identities)} "
+                "SDK identities; candidate-specific offsets: " + mappings
+            ),
+        }
+
+
 def signature_directory_from_environment() -> Path | None:
     if root := os.environ.get("GHIDRA_PSX_LOADER"):
         candidate = Path(root) / "data" / "psyq" / "260"
@@ -791,6 +922,7 @@ def parse_args(arguments: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--exe-dir", type=Path)
     parser.add_argument("--signature-dir", type=Path, default=signature_directory_from_environment())
+    parser.add_argument("--no-fids", action="store_true")
     parser.add_argument("--no-signatures", action="store_true")
     parser.add_argument(
         "--output",
@@ -834,6 +966,22 @@ def main(arguments: Sequence[str] | None = None) -> int:
         functions, args.complete_object_evidence, symbols, images, rows
     )
 
+    if not args.no_fids:
+        # Kept local to avoid making the standalone FID tool depend on this
+        # command's CLI initialization path.
+        from scripts.kf.fid_census import (
+            build_corpus,
+            classify_hits,
+            find_hits,
+            load_retail_functions,
+        )
+
+        corpus = build_corpus(resolve_tool(args.psyk, "psyk"), args.sdk_lib_dir)
+        fid_rows = classify_hits(find_hits(
+            corpus, load_retail_functions(args.functions), images
+        ))
+        apply_fid_rows(fid_rows, rows)
+
     if not args.no_signatures:
         if args.signature_dir is None:
             raise SystemExit(
@@ -853,7 +1001,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
         ordered,
         (
             "Candidate Sony/Psy-Q ownership layered over config/retail/functions.tsv.",
-            "Release 2.5 exact object evidence outranks version-skewed Psy-Q 2.60 signatures.",
+            "Release 2.5 exact objects and project-built FIDs outrank version-skewed Psy-Q 2.60 signatures.",
             "Review before mechanically admitting changes to config/retail/functions_vendored.tsv.",
         ),
     )
