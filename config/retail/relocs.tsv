@@ -6798,24 +6798,40 @@ GAME.EXE	0x8004a204	0x38a04		mips26	instruction-word	0x8004415c	load		jal		range
 GAME.EXE	0x8004a300	0x38b00		mips26	reachable-code	0x8004415c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004a308	0x38b08		mips26	reachable-code	0x8004a334	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004a3ec	0x38bec		mips26	instruction-word	0x8004452c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a588	0x38d88	0x8004a58c	mips_hi16_lo16	instruction-word	0x80057d08	load		lui+lw	a1	paired-pattern	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a598	0x38d98		mips26	instruction-word	0x8004a52c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a5a8	0x38da8		mips26	instruction-word	0x8005033c	load	setjmp	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a5d0	0x38dd0		mips26	instruction-word	0x8004a618	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a5e4	0x38de4		mips26	instruction-word	0x8004a618	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a610	0x38e10		mips26	instruction-word	0x800503dc	load	longjmp	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a618	0x38e18		mips26	instruction-word	0x80043ee0	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a694	0x38e94		mips26	instruction-word	0x8004ae04	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a6bc	0x38ebc		mips26	instruction-word	0x8004ae30	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a6e4	0x38ee4		mips26	instruction-word	0x8004a854	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a70c	0x38f0c		mips26	instruction-word	0x8004b458	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a734	0x38f34		mips26	instruction-word	0x8004b458	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a75c	0x38f5c		mips26	instruction-word	0x8004b360	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a784	0x38f84		mips26	instruction-word	0x8004ad9c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a7b0	0x38fb0		mips26	instruction-word	0x8004a3c8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a7fc	0x38ffc	0x8004a800	mips_hi16_lo16	instruction-word	0x80057d08	load		lui+lw	a0	paired-pattern	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a80c	0x3900c		mips26	instruction-word	0x8004a52c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a82c	0x3902c		mips26	instruction-word	0x800503dc	load	longjmp	jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004a55c	0x38d5c	0x8004a560	mips_hi16_lo16	reachable-code	0x8009a740	outside-load	DAT_8009a740	lui+lw	v1	manual-paired-pattern	reviewed	manual:SsSeqCalledTbyT-boundary
+GAME.EXE	0x8004a588	0x38d88	0x8004a58c	mips_hi16_lo16	reachable-code	0x80057d08	load	DAT_80057d08	lui+lw	a1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a590	0x38d90	0x8004a594	mips_hi16_lo16	reachable-code	0x80058010	outside-load	DAT_80058010	lui+addiu	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a598	0x38d98		mips26	reachable-code	0x8004a52c	load	func_8004a52c	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5a0	0x38da0	0x8004a5a4	mips_hi16_lo16	reachable-code	0x8005b270	outside-load	DAT_8005b270	lui+addiu	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5a8	0x38da8		mips26	reachable-code	0x8005033c	load	setjmp	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5d0	0x38dd0		mips26	reachable-code	0x8004a618	load		j		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5e4	0x38de4		mips26	reachable-code	0x8004a618	load		j		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5ec	0x38dec	0x8004a5f0	mips_hi16_lo16	reachable-code	0x8005b274	outside-load	DAT_8005b274	lui+addiu	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5f8	0x38df8	0x8004a5fc	mips_hi16_lo16	reachable-code	0x80063278	outside-load	DAT_80063278	lui+addiu	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a608	0x38e08	0x8004a60c	mips_hi16_lo16	reachable-code	0x80058018	outside-load	DAT_80058018	lui+sw	at	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a610	0x38e10		mips26	reachable-code	0x800503dc	load	longjmp	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a618	0x38e18		mips26	reachable-code	0x80043ee0	load	func_80043ee0	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a620	0x38e20	0x8004a624	mips_hi16_lo16	reachable-code	0x800a0770	outside-load	DAT_800a0770	lui+lh	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a634	0x38e34	0x8004a638	mips_hi16_lo16	reachable-code	0x800a06e0	outside-load	DAT_800a06e0	lui+addiu	s4	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a63c	0x38e3c	0x8004a640	mips_hi16_lo16	reachable-code	0x8009a728	outside-load	DAT_8009a728	lui+lw	v1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a658	0x38e58	0x8004a65c	mips_hi16_lo16	reachable-code	0x800a0778	outside-load	DAT_800a0778	lui+lh	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a694	0x38e94		mips26	reachable-code	0x8004ae04	load	Snd_play	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a6bc	0x38ebc		mips26	reachable-code	0x8004ae30	load	func_8004ae30	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a6e4	0x38ee4		mips26	reachable-code	0x8004a854	load	func_8004a854	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a70c	0x38f0c		mips26	reachable-code	0x8004b458	load	func_8004b458	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a734	0x38f34		mips26	reachable-code	0x8004b458	load	func_8004b458	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a75c	0x38f5c		mips26	reachable-code	0x8004b360	load	func_8004b360	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a784	0x38f84		mips26	reachable-code	0x8004ad9c	load	func_8004ad9c	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a7b0	0x38fb0		mips26	reachable-code	0x8004a3c8	load	func_8004a3c8	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a7b8	0x38fb8	0x8004a7bc	mips_hi16_lo16	reachable-code	0x800a0778	outside-load	DAT_800a0778	lui+lh	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a7d0	0x38fd0	0x8004a7d4	mips_hi16_lo16	reachable-code	0x800a0770	outside-load	DAT_800a0770	lui+lh	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a7e8	0x38fe8	0x8004a7ec	mips_hi16_lo16	reachable-code	0x8009a740	outside-load	DAT_8009a740	lui+lw	v1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a7fc	0x38ffc	0x8004a800	mips_hi16_lo16	reachable-code	0x80057d08	load	DAT_80057d08	lui+lw	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a804	0x39004	0x8004a808	mips_hi16_lo16	reachable-code	0x80058010	outside-load	DAT_80058010	lui+addiu	a1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a80c	0x3900c		mips26	reachable-code	0x8004a52c	load	func_8004a52c	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a814	0x39014	0x8004a818	mips_hi16_lo16	reachable-code	0x8005b274	outside-load	DAT_8005b274	lui+addiu	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a81c	0x3901c	0x8004a820	mips_hi16_lo16	reachable-code	0x80058018	outside-load	DAT_80058018	lui+lw	v1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a82c	0x3902c		mips26	reachable-code	0x800503dc	load	longjmp	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a94c	0x3914c		mips26	instruction-word	0x800442b4	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004a978	0x39178		mips26	instruction-word	0x8004ac24	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004a994	0x39194		mips26	instruction-word	0x8004415c	load		jal		range-filtered	candidate	investigation:relocs.tsv
@@ -10809,6 +10825,7 @@ OPEN.EXE	0x80029fd8	0x187d8		mips26	instruction-word	0x80023f7c	load		jal		range
 OPEN.EXE	0x8002a0d4	0x188d4		mips26	reachable-code	0x80023f7c	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a0dc	0x188dc		mips26	reachable-code	0x8002a108	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a1c0	0x189c0		mips26	instruction-word	0x8002434c	load		jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002a330	0x18b30	0x8002a334	mips_hi16_lo16	reachable-code	0x80073098	outside-load	DAT_80073098	lui+lw	v1	manual-paired-pattern	reviewed	manual:SsSeqCalledTbyT-boundary
 OPEN.EXE	0x8002a35c	0x18b5c	0x8002a360	mips_hi16_lo16	instruction-word	0x80037478	load		lui+lw	a1	paired-pattern	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a364	0x18b64	0x8002a368	mips_hi16_lo16	instruction-word	0x80037750	load		lui+addiu	a0	paired-pattern	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a36c	0x18b6c		mips26	instruction-word	0x8002a300	load		jal		range-filtered	candidate	investigation:relocs.tsv

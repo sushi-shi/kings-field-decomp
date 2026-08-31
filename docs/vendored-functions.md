@@ -10,16 +10,16 @@ KFIII executable contributes to this list.
 
 ## Current result
 
-| image | Release 2.5 exact evidence | Psy-Q 2.60 signature candidates | total |
-|---|---:|---:|---:|
-| `PSX.EXE` | 8 | 0 | 8 |
-| `GAME.EXE` | 184 | 77 | 261 |
-| `OPEN.EXE` | 183 | 62 | 245 |
-| **total** | **375** | **139** | **514** |
+| image | Release 2.5 exact | Psy-Q 2.60 signature | manual SDK lineage | total |
+|---|---:|---:|---:|---:|
+| `PSX.EXE` | 8 | 0 | 0 | 8 |
+| `GAME.EXE` | 184 | 77 | 2 | 263 |
+| `OPEN.EXE` | 183 | 62 | 2 | 247 |
+| **total** | **375** | **139** | **4** | **518** |
 
-The 514 rows comprise 502 named functions and 12 anonymous internal functions
+The 518 rows comprise 504 named functions and 14 anonymous internal functions
 whose containing Sony object is known. Provider counts are: 116 `LIBGTE`, 110
-`LIBGPU`, 100 `LIBCD`, 91 `LIBAPI`, 55 `LIBSND`, 36 `LIBSPU`, two `LIBSN`, and
+`LIBGPU`, 100 `LIBCD`, 91 `LIBAPI`, 59 `LIBSND`, 36 `LIBSPU`, two `LIBSN`, and
 four startup functions attributed to `NONE2.OBJ`. No zlib or other third-party
 library has been identified, so none is claimed in the TSV.
 
@@ -57,6 +57,49 @@ objects are therefore described as signatures, not FIDs. A future FID database
 generated from the hash-pinned Release 2.5 objects can be another candidate
 lane, but it must preserve the same version/provenance distinction.
 
+## Cross-overlay order evidence
+
+Psy-Q order is useful evidence, but it is not MSVC incremental-link metadata.
+The project does not currently make a generic claim about PSYLINK object or
+archive extraction order. Those behaviours still need a controlled PSYLINK
+1.17 experiment; archive membership and address order alone are not that test.
+Addresses are therefore never treated as identities by themselves.
+
+What has been tested is narrower:
+
+| question | test and result | evidentiary limit |
+|---|---|---|
+| Does the available GCC 2.6.0 PSX code-generation probe preserve C definition order within one object? | `tests/compiler_mips_smoke.py` compiles deliberately non-alphabetical exported functions at `-O0` and `-O2`; both preserve their relative source order. | This calibrates the pinned Decompals rebuild, not the still-unproven retail compiler binary/profile. An explicit inline body may be deferred to the end at `-O0`, so even this is not a universal all-function rule. |
+| Can optimization remove a function body and shift later offsets? | The same probe observes an explicitly inline static body at `-O0`, its omission at `-O2`, and changed offsets for later functions. | This demonstrates why VA is not identity; it does not identify King's Field's optimization flags. |
+| Did one actual linked sequence keep the same order in both overlays? | `kf lineage` verifies the retail chain described below. | This proves only the admitted chain, not a universal linker rule. |
+| Does input-object order or lazy archive extraction determine retail order? | Not yet directly tested under PSYLINK 1.17. | Do not infer source-file boundaries or archive extraction history from adjacency alone. |
+| Is this MSVC incremental RVA behaviour? | No corresponding incremental-link metadata or padding mechanism has been identified, and none is used by the tooling. | Treat the MSVC analogy as rejected, not as a matching rule. |
+
+`config/evidence/overlay_lineage.tsv` captures an observed stronger case. A
+contiguous 16-function audio-related chain appears in both `GAME.EXE` and
+`OPEN.EXE` with the same sizes and a constant `0x2022c` address delta. Across
+1,509 instructions, 1,509 preserve the same opcode/register shape and 1,338 are
+word-identical before masking linked immediates. Run the executable-backed and
+archive-backed regression check with:
+
+```sh
+kf lineage
+```
+
+The command also asserts the corrected `lui`/`lw` prefix in both executables,
+the four SSCALL provider rows, and all four direct helper callsites. The helper
+must have exactly two direct `jal` callers per overlay, both inside
+`SsSeqCalledTbyT`.
+
+That repeated order proves common linked code, not Sony ownership on its own.
+The `SSCALL` promotion adds independent SDK evidence: the pinned Psy-Q corpus
+names `SsSeqCalledTbyT` in `LIBSND.LIB/SSCALL.OBJ`, the retail dispatcher has
+the same sound-event call sequence, and its leading `lui`/`lw` pair corrects a
+previously missed eight-byte function prefix in both overlays. The private
+0x30-byte copy helper is byte-identical across overlays, immediately precedes
+the dispatcher, and is called only from that dispatcher. Those combined facts
+are the basis for `manual-sdk-lineage` ownership.
+
 ## TSV contract
 
 Every provider row must match one `(image, va, size)` in `functions.tsv`.
@@ -72,7 +115,10 @@ The confidence channels are intentionally mechanical:
 - `exact-release25-ambiguous`: exact bytes with multiple archive members;
 - `exact-release25-complete`: reviewed complete tiny object;
 - `psyq260-signature`: unique later-corpus wildcard match; and
-- `psyq260-signature-ambiguous`: later signature shared by archive members.
+- `psyq260-signature-ambiguous`: later signature shared by archive members; and
+- `manual-sdk-lineage`: reviewed ownership based on a named SDK symbol/control-
+  flow lineage plus reproducible cross-overlay instruction-shape evidence, used
+  when version skew prevents an exact archive-object match.
 
 `kf-retail-validate` rejects provider rows without a structural function,
 changed sizes, duplicate addresses, invalid confidence, or missing provenance.

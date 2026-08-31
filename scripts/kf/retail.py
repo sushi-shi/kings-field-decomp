@@ -129,6 +129,7 @@ VENDORED_CONFIDENCE = {
     "exact-release25-complete",
     "psyq260-signature",
     "psyq260-signature-ambiguous",
+    "manual-sdk-lineage",
 }
 
 

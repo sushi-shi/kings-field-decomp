@@ -48,8 +48,8 @@ second hand-owned list, so later seeds are diffs to review rather than truth.
 It is also the matching exclusion list: provider-owned rows may be carved as
 reference objects, but are never emitted as objdiff reconstruction units.
 
-The initial vendored inventory contains 514 functions: 8 in `PSX.EXE`, 261 in
-`GAME.EXE`, and 245 in `OPEN.EXE`. Of these, 375 have Release 2.5 evidence
+The vendored inventory contains 518 functions: 8 in `PSX.EXE`, 263 in
+`GAME.EXE`, and 247 in `OPEN.EXE`. Of these, 375 have Release 2.5 evidence
 (369 within relocation-masked exact object sections and six reviewed complete
 16-byte objects). The remaining 139 are candidates from unique matches against
 the later Psy-Q 2.60 wildcard signature corpus bundled by `ghidra_psx_ldr`.

@@ -126,7 +126,11 @@ def validate_relocation(
         return RelocationValidation(site, target, offset, word=word)
 
     if row["kind"] == "mips_hi16_lo16":
-        if row["target_region"] != "load" and policy != "all":
+        if (
+            row["target_region"] != "load"
+            and row["status"] != "reviewed"
+            and policy != "all"
+        ):
             raise ValueError("target-outside-load-image")
         if not row["paired_site_va"]:
             raise ValueError("missing-paired-site")

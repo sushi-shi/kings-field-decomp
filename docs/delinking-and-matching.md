@@ -50,6 +50,9 @@ claim:
 - an external J/JAL target must be an admitted function start;
 - a HI/LO pair must remain inside one function extent, consume the LUI register,
   decode to the recorded address, and use a sign-extending low instruction;
+- an out-of-load HI/LO pair remains withheld unless a human has promoted that
+  exact decoded pair to `status=reviewed`; this is the path for RAM/BSS symbols
+  whose addresses are real but whose storage is absent from the PS-X EXE payload;
 - raw range-only pointer words and instruction-word scans are withheld; and
 - rejected, overlapping, malformed, cross-fragment, or unsupported candidates
   are withheld with a machine-readable reason.
@@ -94,16 +97,16 @@ non-reachable-code candidates, 2,501 sites outside current function extents,
 130 candidates owned by the seven fragmented functions, and one unsigned-low
 HI/LO pair.
 
-Carving the whole image is not the same as selecting decomp work. The 514
+Carving the whole image is not the same as selecting decomp work. The 518
 functions in `functions_vendored.tsv` are excluded when objdiff projects are
 generated:
 
 | Target | Carved target/reference objects | Vendored objects excluded | Non-vendored match units |
 | --- | ---: | ---: | ---: |
 | `PSX.EXE` | 9 | 8 | 1 |
-| `GAME.EXE` | 934 | 261 | 673 |
-| `OPEN.EXE` | 667 | 245 | 422 |
-| **Total** | **1,610** | **514** | **1,096** |
+| `GAME.EXE` | 934 | 263 | 671 |
+| `OPEN.EXE` | 667 | 247 | 420 |
+| **Total** | **1,610** | **518** | **1,092** |
 
 The match-unit counts also exclude the seven fragmented non-vendored
 functions. Vendored objects exist only to preserve executable topology,

@@ -613,7 +613,7 @@ GAME.EXE	0x8004a344	0x38b44	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4
 GAME.EXE	0x8004a374	0x38b74	0x54	0x54	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 GAME.EXE	0x8004a3c8	0x38bc8	0x164	0x164	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004a52c	0x38d2c	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004a564	0x38d64	0x2f0	0x2f0	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
+GAME.EXE	0x8004a55c	0x38d5c	0x2f8	0x2f8	1	function	manual-sdk-lineage	SsSeqCalledTbyT		config/evidence/overlay_lineage.tsv;LIBSND/SSCALL	boundary corrected eight bytes earlier; leading LUI+LW defines live v1 before the stack frame
 GAME.EXE	0x8004a854	0x39054	0x548	0x548	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004ad9c	0x3959c	0x68	0x68	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004ae04	0x39604	0x2c	0x2c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
@@ -1297,7 +1297,7 @@ OPEN.EXE	0x8002a118	0x18918	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4
 OPEN.EXE	0x8002a148	0x18948	0x54	0x54	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x8002a19c	0x1899c	0x164	0x164	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002a300	0x18b00	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002a338	0x18b38	0x2f0	0x2f0	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
+OPEN.EXE	0x8002a330	0x18b30	0x2f8	0x2f8	1	function	manual-sdk-lineage	SsSeqCalledTbyT		config/evidence/overlay_lineage.tsv;LIBSND/SSCALL	boundary corrected eight bytes earlier; leading LUI+LW defines live v1 before the stack frame
 OPEN.EXE	0x8002a628	0x18e28	0x548	0x548	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002ab70	0x19370	0x68	0x68	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002abd8	0x193d8	0x2c	0x2c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary

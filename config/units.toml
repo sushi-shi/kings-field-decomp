@@ -46,3 +46,129 @@ image = "GAME.EXE"
 va = 0x8003ee4c
 source = "src/game/func_8003ee4c.c"
 profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80014268"
+image = "GAME.EXE"
+va = 0x80014268
+source = "src/game/func_80014268.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80014f40"
+image = "GAME.EXE"
+va = 0x80014f40
+source = "src/game/func_80014f40.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80014f6c"
+image = "GAME.EXE"
+va = 0x80014f6c
+source = "src/game/func_80014f6c.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80015128"
+image = "GAME.EXE"
+va = 0x80015128
+source = "src/game/func_80015128.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8001b3e4"
+image = "GAME.EXE"
+va = 0x8001b3e4
+source = "src/game/func_8001b3e4.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8001fae4"
+image = "GAME.EXE"
+va = 0x8001fae4
+source = "src/game/func_8001fae4.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8002cc54"
+image = "GAME.EXE"
+va = 0x8002cc54
+source = "src/game/func_8002cc54.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80031784"
+image = "GAME.EXE"
+va = 0x80031784
+source = "src/game/func_80031784.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80033de8"
+image = "GAME.EXE"
+va = 0x80033de8
+source = "src/game/func_80033de8.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_800346a0"
+image = "GAME.EXE"
+va = 0x800346a0
+source = "src/game/func_800346a0.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80036e30"
+image = "GAME.EXE"
+va = 0x80036e30
+source = "src/game/func_80036e30.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8003b4b8"
+image = "GAME.EXE"
+va = 0x8003b4b8
+source = "src/game/func_8003b4b8.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8003d050"
+image = "GAME.EXE"
+va = 0x8003d050
+source = "src/game/func_8003d050.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8003ee54"
+image = "GAME.EXE"
+va = 0x8003ee54
+source = "src/game/func_8003ee54.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80041040"
+image = "GAME.EXE"
+va = 0x80041040
+source = "src/game/func_80041040.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80044154"
+image = "GAME.EXE"
+va = 0x80044154
+source = "src/game/func_80044154.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80045f7c"
+image = "GAME.EXE"
+va = 0x80045f7c
+source = "src/game/func_80045f7c.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_80045f98"
+image = "GAME.EXE"
+va = 0x80045f98
+source = "src/game/func_80045f98.c"
+profile = "probe-gcc260-o2-g0"

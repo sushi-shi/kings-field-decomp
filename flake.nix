@@ -444,6 +444,7 @@
 
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
         nativeBuildInputs = [ pkgs.python3 ];
+        GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts

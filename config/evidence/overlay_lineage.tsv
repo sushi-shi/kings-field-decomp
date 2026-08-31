@@ -1,0 +1,19 @@
+# MANUALLY MANAGED - cross-overlay instruction/order evidence, verified by `kf lineage`.
+# Instruction shape preserves opcode/register fields while masking linked immediates.
+lineage	left_image	left_va	right_image	right_va	size	address_delta	exact_words	total_words	shape_words	archive_library	archive_module	archive_symbol	note
+shared-audio-link-order	GAME.EXE	0x8004a21c	OPEN.EXE	0x80029ff0	0x128	0x2022c	70	74	74				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004a344	OPEN.EXE	0x8002a118	0x30	0x2022c	10	12	12				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004a374	OPEN.EXE	0x8002a148	0x54	0x2022c	19	21	21				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004a3c8	OPEN.EXE	0x8002a19c	0x164	0x2022c	86	89	89				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004a52c	OPEN.EXE	0x8002a300	0x30	0x2022c	12	12	12	LIBSND.LIB	SSCALL.OBJ		private helper immediately preceding and called only by SsSeqCalledTbyT
+shared-audio-link-order	GAME.EXE	0x8004a55c	OPEN.EXE	0x8002a330	0x2f8	0x2022c	138	190	190	LIBSND.LIB	SSCALL.OBJ	SsSeqCalledTbyT	boundary includes leading LUI+LW; symbol and dispatch lineage corroborate ownership
+shared-audio-link-order	GAME.EXE	0x8004a854	OPEN.EXE	0x8002a628	0x548	0x2022c	304	338	338				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004ad9c	OPEN.EXE	0x8002ab70	0x68	0x2022c	24	26	26				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004ae04	OPEN.EXE	0x8002abd8	0x2c	0x2022c	10	11	11	LIBSND.LIB	PLAY.OBJ	Snd_play	Psy-Q signature and SSCALL call order identify the PLAY member
+shared-audio-link-order	GAME.EXE	0x8004ae30	OPEN.EXE	0x8002ac04	0x530	0x2022c	299	332	332				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004b360	OPEN.EXE	0x8002b134	0x94	0x2022c	34	37	37				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004b3f4	OPEN.EXE	0x8002b1c8	0x64	0x2022c	23	25	25				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004b458	OPEN.EXE	0x8002b22c	0x24c	0x2022c	139	147	147				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004b6a4	OPEN.EXE	0x8002b478	0x3c	0x2022c	14	15	15	LIBSND.LIB	SESKOFF.OBJ	SsVoKeyOff	Psy-Q signature identifies the SESKOFF member
+shared-audio-link-order	GAME.EXE	0x8004b6e0	OPEN.EXE	0x8002b4b4	0x168	0x2022c	78	90	90				common linked-code sequence; ownership not inferred from order alone
+shared-audio-link-order	GAME.EXE	0x8004b848	OPEN.EXE	0x8002b61c	0x168	0x2022c	78	90	90				common linked-code sequence; ownership not inferred from order alone

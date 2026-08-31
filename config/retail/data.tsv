@@ -2519,7 +2519,6 @@ GAME.EXE	0x80048f9a	0x3779a	0x4	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x800494fd	0x37cfd	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: =!$!
 GAME.EXE	0x80049df7	0x385f7	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0!0\x20
 GAME.EXE	0x8004a0ab	0x388ab	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0%@D
-GAME.EXE	0x8004a55c	0x38d5c	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x8004a5fb	0x38dfb	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: <x2B$
 GAME.EXE	0x8004a7aa	0x38faa	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: 1&! @
 GAME.EXE	0x8004addb	0x395db	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!0F
@@ -5229,7 +5228,6 @@ OPEN.EXE	0x80029c31	0x18431	0x4	string	byte-pattern		ascii	investigation:string-
 OPEN.EXE	0x80029e7f	0x1867f	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0%@D
 OPEN.EXE	0x8002a125	0x18925	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: X!$!
 OPEN.EXE	0x8002a171	0x18971	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: X!$!
-OPEN.EXE	0x8002a330	0x18b30	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x8002a377	0x18b77	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <@塘$(
 OPEN.EXE	0x8002a3c3	0x18bc3	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <D塘$
 OPEN.EXE	0x8002a3df	0x18bdf	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <Xw#

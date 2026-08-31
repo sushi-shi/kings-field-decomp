@@ -126,6 +126,66 @@ class MipsElfTests(unittest.TestCase):
         self.assertEqual(struct.unpack_from("<I", blob)[0] & 0x03FFFFFF, 2)
         self.assertEqual(used["action"], "local-section")
 
+    def test_reviewed_outside_load_hi_lo_pair_is_safe(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
+        )
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": ()},
+        )
+        target = 0x800A0770
+        blob = bytearray(struct.pack("<2I", 0x3C02800A, 0x84420770))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "reachable-code",
+            "target_va": f"{target:#x}",
+            "target_region": "outside-load",
+            "target_name": "DAT_800a0770",
+            "opcode": "lui+lh",
+            "confidence": "manual-paired-pattern",
+            "status": "reviewed",
+        }
+        relocations, used = _apply_relocation(blob, function, row, catalog, "safe")
+        self.assertEqual(
+            relocations,
+            [
+                MipsRelocation(0, "R_MIPS_HI16", "DAT_800a0770"),
+                MipsRelocation(4, "R_MIPS_LO16", "DAT_800a0770"),
+            ],
+        )
+        self.assertEqual(used["action"], "paired-symbol")
+
+    def test_candidate_outside_load_hi_lo_pair_remains_withheld(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
+        )
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": ()},
+        )
+        blob = bytearray(struct.pack("<2I", 0x3C02800A, 0x84420770))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "reachable-code",
+            "target_va": "0x800a0770",
+            "target_region": "outside-load",
+            "target_name": "DAT_800a0770",
+            "opcode": "lui+lh",
+            "confidence": "paired-pattern",
+            "status": "candidate",
+        }
+        with self.assertRaisesRegex(ValueError, "target-outside-load-image"):
+            _apply_relocation(blob, function, row, catalog, "safe")
+
 
 class ObjdiffProjectTests(unittest.TestCase):
     def test_missing_and_present_base_pairings(self) -> None:
