@@ -78,6 +78,10 @@ Release 2.5 FID corpus is a standalone TSV pipeline and preserves library,
 module, function-boundary, object hash, function hash, and source-version
 provenance without depending on Ghidra's database format.
 
+The exact object spans also establish a partial final linked order. The full
+per-image placement tables, boundaries, gaps, and contiguous chains are kept in
+[object-link-order.md](object-link-order.md).
+
 ## Cross-overlay order evidence
 
 Psy-Q order is useful evidence, but it is not MSVC incremental-link metadata.

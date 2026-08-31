@@ -52,3 +52,4 @@ retail functions, data, relocations, and library attribution live under
 - [Ghidra environment](docs/ghidra.md)
 - [Semantic navigation](docs/semantic-navigation.md)
 - [Vendored-function evidence](docs/vendored-functions.md)
+- [Recovered object placement and link order](docs/object-link-order.md)
