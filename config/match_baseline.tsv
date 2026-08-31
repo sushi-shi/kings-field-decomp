@@ -1,2 +1,7 @@
 # Manually updated only by `kf bank`; (image, va) is the stable identity.
+# Scores retain full precision; --loose affects display classification only.
 image	va	unit	name	input_sha256	best_pct	hist_pct	banked_pct	code_size
+GAME.EXE	0x80014fa8	game.func_80014fa8	func_80014fa8	acd44718f7fc72a0d60767bdbe660319c80b84f4de1841a3b02d14311773d9b0	100.000000000	100.000000000	100.000000000	16
+GAME.EXE	0x8002cec8	game.func_8002cec8	func_8002cec8	9b2f6ad4c69edad731b4079bdc238b911a86bd3a8616a9bb21b738925a834cc2	100.000000000	100.000000000	100.000000000	12
+GAME.EXE	0x800342e4	game.func_800342e4	func_800342e4	b8271d500b362984e8f96ef9870d84c2f107656e275340803c3a5b019c7756ce	100.000000000	100.000000000	100.000000000	8
+GAME.EXE	0x8003ee4c	game.func_8003ee4c	func_8003ee4c	ac0713adcbdf9c0b7b11ba87c11848622ce472bad8a6450bc41ec2ae1c2fd3cc	100.000000000	100.000000000	100.000000000	8

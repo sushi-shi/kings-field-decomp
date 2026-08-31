@@ -449,6 +449,7 @@
         cp -r ${./scripts} project/scripts
         cp -r ${./tests} project/tests
         cp -r ${./config} project/config
+        cp -r ${./src} project/src
         cd project
         python3 -m unittest discover -s tests -v
         touch "$out"

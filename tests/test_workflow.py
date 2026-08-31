@@ -37,10 +37,16 @@ def sample_current(percent: float | None) -> Current:
 
 
 class ManifestTests(unittest.TestCase):
-    def test_repository_manifest_allows_an_empty_unit_list(self) -> None:
+    def test_repository_manifest_has_valid_reconstruction_units(self) -> None:
         manifest = load_manifest()
-        self.assertEqual(manifest.units, ())
         self.assertIn("probe-gcc260-o2-g0", manifest.profiles)
+        self.assertGreater(len(manifest.units), 0)
+        self.assertEqual(
+            len({unit.unit for unit in manifest.units}),
+            len(manifest.units),
+        )
+        self.assertTrue(all(unit.source_path.is_file() for unit in manifest.units))
+        self.assertTrue(all(unit.function.scope == "decomp" for unit in manifest.units))
 
 
 class ProgressTests(unittest.TestCase):

@@ -18,3 +18,31 @@ cc1_flags = []
 
 # Add one [[unit]] only after its source exists. Initial units remain one
 # contiguous, non-vendored function each; TU grouping needs separate evidence.
+
+[[unit]]
+unit = "game.func_80014fa8"
+image = "GAME.EXE"
+va = 0x80014fa8
+source = "src/game/func_80014fa8.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8002cec8"
+image = "GAME.EXE"
+va = 0x8002cec8
+source = "src/game/func_8002cec8.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_800342e4"
+image = "GAME.EXE"
+va = 0x800342e4
+source = "src/game/func_800342e4.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.func_8003ee4c"
+image = "GAME.EXE"
+va = 0x8003ee4c
+source = "src/game/func_8003ee4c.c"
+profile = "probe-gcc260-o2-g0"
