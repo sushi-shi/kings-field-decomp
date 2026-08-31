@@ -258,7 +258,11 @@ def _resolve_symbol(
     if target_function is not None:
         return target_function.symbol, 0
     if target_name:
-        return sanitize_symbol(target_name, f"DAT_{target:08x}"), 0
+        symbol = sanitize_symbol(target_name, f"DAT_{target:08x}")
+        address_name = re.fullmatch(r"DAT_([0-9A-Fa-f]{8})", symbol)
+        if address_name is not None:
+            return symbol, target - int(address_name.group(1), 16)
+        return symbol, 0
     target_data = _containing_data(catalog, function.image, target)
     if target_data is not None:
         return target_data.symbol, target - target_data.va

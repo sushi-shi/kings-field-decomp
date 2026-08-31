@@ -160,6 +160,43 @@ class MipsElfTests(unittest.TestCase):
         )
         self.assertEqual(used["action"], "paired-symbol")
 
+    def test_address_named_symbol_preserves_interior_addend(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
+        )
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": ()},
+        )
+        target = 0x800A0796
+        blob = bytearray(struct.pack("<2I", 0x3C02800A, 0x24420796))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "reachable-code",
+            "target_va": f"{target:#x}",
+            "target_region": "outside-load",
+            "target_name": "DAT_800a0770",
+            "opcode": "lui+addiu",
+            "confidence": "manual-paired-pattern",
+            "status": "reviewed",
+        }
+        relocations, used = _apply_relocation(blob, function, row, catalog, "safe")
+        self.assertEqual(
+            relocations,
+            [
+                MipsRelocation(0, "R_MIPS_HI16", "DAT_800a0770"),
+                MipsRelocation(4, "R_MIPS_LO16", "DAT_800a0770"),
+            ],
+        )
+        high, low = struct.unpack("<2I", blob)
+        self.assertEqual(high & 0xFFFF, 0)
+        self.assertEqual(low & 0xFFFF, 0x26)
+        self.assertEqual(used["addend"], "0x00000026")
+
     def test_candidate_outside_load_hi_lo_pair_remains_withheld(self) -> None:
         function = Function(
             "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"

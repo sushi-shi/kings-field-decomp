@@ -281,6 +281,30 @@ be grouped into a unit and its base should be compiled once. Until then, the
 one-function layout keeps relocation and code-generation experiments local and
 auditable.
 
+## First GAME.EXE campaign
+
+The first related campaign reconstructs 30 non-vendored functions covering
+fixed-point/vector helpers, asset copies, lighting/fog setup, a 12-entry state
+pool, GPU primitives, memory-card control, and audio wrappers. Every target is
+absent from both `functions_vendored.tsv` and the Release 2.5 FID census. The
+per-function pre-edit evidence, recovered widths/referents, final score, and
+verdict are retained in `config/evidence/game_match_campaign_30.tsv`.
+
+Seven of the 30 are strict 100% matches with the current probe:
+`0x800150a8`, `0x800150fc`, `0x8002059c`, `0x80020978`, `0x800209a8`,
+`0x80020b04`, and `0x8003329c`. The campaign also reviewed missing BSS
+HI16/LO16 pairs, direct SDK/game calls, and the angle helper's two internal
+`j` relocations. Those rows now make target-object comparisons describe the C
+and code generation rather than absent referent metadata.
+
+The other 23 retain complete evidence-backed C but are not exact. Repeated
+observable residues include multiply/load placement, register choice, prologue
+save order, argument setup, and the non-leaf epilogue ordering. In particular,
+several otherwise identical wrappers use `lw ra; nop; jr ra; addiu sp` in
+retail while the current GCC 2.6.0 probe emits `lw ra; addiu sp; jr ra; nop`.
+This is useful compiler-attribution evidence, but it is not yet a named
+compiler wall: the exact compiler/profile and backend cause remain unproven.
+
 ## Validation
 
 `tests/objdiff_mips_smoke.py` uses only synthetic functions. One checks ordinary
