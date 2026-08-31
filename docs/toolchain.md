@@ -30,11 +30,18 @@ The Nix flake therefore exposes a **candidate matrix**:
 | `PSYQ_GCC241_DIR` | Release 2.5 extensionless GCC 2.4.1 frontends |
 | `PSYQ_GCC260_RELEASE25_DIR` | Release 2.5 DOS/COFF GCC 2.6.0 frontends |
 | `PSYQ_GCC260_DISK_DIR` | Independent GNU C 2.60 disk frontends |
+| `KF_GCC260_NATIVE` | Decompals old-gcc 0.17 native GCC 2.6.0 PSX rebuild |
 
 The old host tools are DOS executables. DOSBox is included for controlled
 execution, but ASPSX is key-protected. maspsx and GNU MIPS binutils provide the
 practical, scriptable assembly route while we compare their output against the
 retail programs and the original tools.
+
+The shell also exposes `cc1psx-260` and `cpppsx-260`. These are native Linux
+rebuilds of the GCC 2.6.0 PSX target from Decompals old-gcc 0.17, pinned by
+archive SHA-256. They enable the live C -> assembly -> maspsx -> ELF matching
+loop. They do not collapse the two historical 2.6.0 distributions into one,
+prove host-binary identity, or prove that the retail game used GCC 2.6.0.
 
 The initializer keeps the useful verification half of the Gruntz project
 pattern, without its derived release archive:
@@ -47,7 +54,9 @@ pattern, without its derived release archive:
    the first `nix develop` initializes the historical toolchain and later loads
    reuse Nix's cached result.
 
-The two source files total 6.3 MiB and the staged output is 7.7 MiB. Gruntz's
+The two historical source files total 6.3 MiB and the staged output is 7.7 MiB.
+The optional native GCC 2.6.0 probe adds a 3.18 MiB compressed fixed-output
+archive. Gruntz's
 separate release artifact avoided repeatedly fetching much larger Visual
 Studio, service-pack, and DirectX media; that indirection has no useful payoff
 at this size.

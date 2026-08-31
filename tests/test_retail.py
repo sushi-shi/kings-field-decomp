@@ -7,8 +7,15 @@ import unittest
 from pathlib import Path
 
 from scripts.kf.retail import ImageLayout, _merged_coverage, parse_psx_exe
-from scripts.kf.seed_retail import escape_trailing_spaces
 from scripts.kf.propose_function_admission import subtract_interval
+from scripts.kf.seed_retail import escape_trailing_spaces
+from scripts.kf.seed_vendored_functions import (
+    SignaturePattern,
+    find_masked_bytes,
+    find_signature,
+    parse_object_symbols,
+    parse_signature,
+)
 
 
 class RetailTests(unittest.TestCase):
@@ -47,6 +54,44 @@ class RetailTests(unittest.TestCase):
                 0x20,
             ),
         )
+
+    def test_parse_interleaved_object_symbols(self) -> None:
+        parsed = parse_object_symbols(
+            "\n".join((
+                "16 : Section symbol number f000 '.text' in group 0 alignment 8",
+                "16 : Section symbol number f001 '.data' in group 0 alignment 8",
+                "6 : Switch to section f000",
+                "2 : Code 12 bytes",
+                "0000: 00 01 02 03 04 05 06 07 08 09 0a 0b",
+                "6 : Switch to section f001",
+                "2 : Code 4 bytes",
+                "0000: aa bb cc dd",
+                "6 : Switch to section f000",
+                "2 : Code 8 bytes",
+                "0000: 10 11 12 13 14 15 16 17",
+                "10 : Patch type 74 at offset 0",
+                "12 : XDEF symbol number 1 'first' at offset 0 in section f000",
+                "12 : XDEF symbol number 2 'second' at offset c in section f000",
+            ))
+        )
+        self.assertEqual(parsed.text_size, 20)
+        self.assertEqual(parsed.relocation_count, 1)
+        self.assertEqual(parsed.compared_bits, 134)
+        self.assertEqual(parsed.xdefs, ((0, "first"), (12, "second")))
+
+    def test_wildcard_signature_matching(self) -> None:
+        data, mask = parse_signature("11 22 ?? 44 55 66 77 88 99 AA BB CC DD EE FF 00")
+        pattern = SignaturePattern("LIB.LIB", "MEMBER.OBJ", data, mask, ())
+        payload = b"pad!" + bytes.fromhex(
+            "11 22 33 44 55 66 77 88 99 aa bb cc dd ee ff 00"
+        )
+        self.assertEqual(find_signature(pattern, payload), [4])
+
+    def test_masked_object_matching(self) -> None:
+        data = bytes.fromhex("01 02 03 04 05 06 07 08 09 0a 0b 0c")
+        mask = b"\xff" * 8 + b"\x00" * 4
+        payload = b"xxxx" + data[:8] + b"WXYZ"
+        self.assertEqual(find_masked_bytes(data, mask, payload), [4])
 
 
 if __name__ == "__main__":

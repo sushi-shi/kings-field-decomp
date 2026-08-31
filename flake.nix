@@ -41,6 +41,22 @@
         hash = "sha256-B6+f7NFIzUI0Ec65En7T8+kUmhFRoaJU3z4rjwwzuuc=";
       };
 
+      # Native Decompals rebuild used only as a practical code-generation probe.
+      # It corresponds to GCC 2.6.0's PSX target, but is not evidence that this
+      # rebuilt host binary (or either staged historical 2.6.0 binary) built KF.
+      gcc260NativeArchive = pkgs.fetchurl {
+        name = "decompals-old-gcc-0.17-gcc-2.6.0-psx.tar.gz";
+        url = "https://github.com/decompals/old-gcc/releases/download/0.17/gcc-2.6.0-psx.tar.gz";
+        hash = "sha256-NY2slJ8PVmr5xq+Tu6DUrATVbKnfgMWL1m2Bu7UN7Os=";
+      };
+      gcc260Native = pkgs.runCommand "decompals-gcc-2.6.0-psx-0.17" {
+        nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
+      } ''
+        mkdir -p "$out/bin"
+        tar -xzf ${gcc260NativeArchive} -C "$out/bin"
+        chmod +x "$out/bin"/*
+      '';
+
       # Keep the verifier/stager in the default shell so the historical tools
       # are an actual first-load dependency, not a README-only prerequisite.
       psyqToolchain = pkgs.runCommand "kings-field-toolchain-psyq-candidates" {
@@ -75,6 +91,16 @@
         text = ''
           exec python3 ${maspsx-src}/maspsx.py "$@"
         '';
+      };
+
+      cc1psx260 = pkgs.writeShellApplication {
+        name = "cc1psx-260";
+        text = ''exec ${gcc260Native}/bin/cc1 "$@"'';
+      };
+
+      cpppsx260 = pkgs.writeShellApplication {
+        name = "cpppsx-260";
+        text = ''exec ${gcc260Native}/bin/cpp "$@"'';
       };
 
       ghidraPsxLoader = pkgs.stdenvNoCC.mkDerivation {
@@ -119,6 +145,42 @@
       # NIX_GHIDRAHOME while retaining the base installation as the primary
       # root. This avoids copying Ghidra or colliding with its built-in modules.
       ghidraWithPlugins = pkgs.ghidra.withExtensions (_: [ ghidraPsxLoader ]);
+
+      objdiffVersion = "3.7.3";
+      objdiffUrl = name:
+        "https://github.com/encounter/objdiff/releases/download/v${objdiffVersion}/${name}";
+      objdiff-cli = pkgs.stdenv.mkDerivation {
+        pname = "objdiff-cli";
+        version = objdiffVersion;
+        src = pkgs.fetchurl {
+          url = objdiffUrl "objdiff-cli-linux-x86_64";
+          hash = "sha256-HIp1ZJcOhrVI8JIZCNNuW1Rkb+cvhuXIK4wOumQCDOo=";
+        };
+        dontUnpack = true;
+        nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+        buildInputs = [ pkgs.stdenv.cc.cc.lib ];
+        installPhase = "install -Dm755 $src $out/bin/objdiff-cli";
+      };
+      objdiffGuiLibs = with pkgs; [
+        libGL libxkbcommon wayland fontconfig freetype
+        libx11 libxcursor libxi libxrandr libxcb
+      ];
+      objdiff = pkgs.stdenv.mkDerivation {
+        pname = "objdiff";
+        version = objdiffVersion;
+        src = pkgs.fetchurl {
+          url = objdiffUrl "objdiff-linux-x86_64";
+          hash = "sha256-1pzhzJUl/BJQP2XS333KIfkx1YYi8ZyRdPMv5MnJGyA=";
+        };
+        dontUnpack = true;
+        nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.makeWrapper ];
+        buildInputs = [ pkgs.stdenv.cc.cc.lib ] ++ objdiffGuiLibs;
+        installPhase = ''
+          install -Dm755 $src $out/bin/objdiff
+          wrapProgram $out/bin/objdiff \
+            --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath objdiffGuiLibs}"
+        '';
+      };
 
       crossBinutils = pkgs.pkgsCross.mipsel-linux-gnu.buildPackages.binutils;
       mipsBinutilsAliases = pkgs.runCommand "mipsel-linux-gnu-binutils-aliases" { } ''
@@ -202,12 +264,75 @@
         '';
       };
 
+      vendoredSeed = pkgs.writeShellApplication {
+        name = "kf-vendored-seed";
+        runtimeInputs = [ analysisPython pkgs.git psy-k ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.seed_vendored_functions \
+            --psyk ${psy-k}/bin/psyk \
+            --sdk-lib-dir ${psyqToolchain}/psyq/lib \
+            --signature-dir ${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr/data/psyq/260 \
+            "$@"
+        '';
+      };
+
+      retailDelink = pkgs.writeShellApplication {
+        name = "kf-delink";
+        runtimeInputs = [ analysisPython pkgs.git ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.delink "$@"
+        '';
+      };
+
+      objdiffProject = pkgs.writeShellApplication {
+        name = "kf-objdiff-project";
+        runtimeInputs = [ analysisPython pkgs.git ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.objdiff project "$@"
+        '';
+      };
+
+      objdiffReport = pkgs.writeShellApplication {
+        name = "kf-objdiff-report";
+        runtimeInputs = [ analysisPython objdiff-cli pkgs.git ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.objdiff report "$@"
+        '';
+      };
+
+      sourceCompile = pkgs.writeShellApplication {
+        name = "kf-compile";
+        runtimeInputs = [
+          analysisPython
+          cc1psx260
+          cpppsx260
+          maspsx
+          mipsBinutilsAliases
+          pkgs.git
+        ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          cd "$repo"
+          exec python3 -m scripts.kf.compile "$@"
+        '';
+      };
+
       shell = pkgs.mkShell {
         name = "kings-field";
         packages = [
           psyqToolchain
           psy-k
           maspsx
+          cc1psx260
+          cpppsx260
           crossBinutils
           mipsBinutilsAliases
           analysisPython
@@ -217,7 +342,14 @@
           retailSeed
           functionAudit
           functionPropose
+          vendoredSeed
+          retailDelink
+          objdiffProject
+          objdiffReport
+          sourceCompile
           ghidraWithPlugins
+          objdiff-cli
+          objdiff
         ] ++ (with pkgs; [
           # Binary analysis and emulation.
           jdk21
@@ -271,6 +403,7 @@
           export PSYQ_GCC241_DIR="$PSYQ_DIR/compilers/gcc-2.4.1"
           export PSYQ_GCC260_RELEASE25_DIR="$PSYQ_DIR/compilers/gcc-2.6.0-release-2.5"
           export PSYQ_GCC260_DISK_DIR="$PSYQ_DIR/compilers/gcc-2.6.0-disk-1"
+          export KF_GCC260_NATIVE="${gcc260Native}"
           export GHIDRA_INSTALL_DIR="${pkgs.ghidra}/lib/ghidra"
           export NIX_GHIDRAHOME="${ghidraWithPlugins}/lib/ghidra/Ghidra"
           export GHIDRA_PSX_LOADER="${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr"
@@ -280,10 +413,12 @@
 
           echo "[kings-field] Psy-Q candidates: $PSYQ_DIR" >&2
           echo "[kings-field] compiler probes : GCC 2.4.1; two distinct GCC 2.6.0 builds" >&2
+          echo "[kings-field] native C probe   : cc1psx-260/cpppsx-260 (Decompals rebuild 0.17)" >&2
           echo "[kings-field] analysis        : ghidra + PSX loader, pyghidra, psy-k, radare2, mipsel binutils" >&2
           echo "[kings-field] assembly        : maspsx + mipsel-linux-gnu-as" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
-          echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose" >&2
+          echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-vendored-seed" >&2
+          echo "[kings-field] matching        : kf-delink; kf-compile; kf-objdiff-project/report; objdiff GUI" >&2
         '';
       };
 
@@ -315,9 +450,30 @@
         python3 ${./scripts/kf/retail.py} ${./config/retail}
         touch "$out"
       '';
+
+      objdiffMipsTests = pkgs.runCommand "kings-field-objdiff-mips-tests" {
+        nativeBuildInputs = [
+          pkgs.python3
+          crossBinutils
+          mipsBinutilsAliases
+          objdiff-cli
+          cc1psx260
+          cpppsx260
+          maspsx
+        ];
+      } ''
+        mkdir project
+        cp -r ${./scripts} project/scripts
+        cp ${./tests/objdiff_mips_smoke.py} project/objdiff_mips_smoke.py
+        cp ${./tests/compiler_mips_smoke.py} project/compiler_mips_smoke.py
+        cd project
+        python3 objdiff_mips_smoke.py
+        python3 compiler_mips_smoke.py
+        touch "$out"
+      '';
     in {
       packages.${system} = {
-        inherit psyqToolchain psy-k maspsx mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins retailValidate retailSeed functionAudit functionPropose;
+        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed retailDelink objdiffProject objdiffReport sourceCompile;
         default = psyqToolchain;
       };
 
@@ -332,6 +488,7 @@
         ghidra-psx-loader = ghidraPsxLoader;
         ghidra-psx-loader-discovery = ghidraPluginTests;
         retail-config = retailConfigTests;
+        objdiff-mips = objdiffMipsTests;
       };
     };
 }

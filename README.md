@@ -42,16 +42,53 @@ the important signature-version boundary.
 ## Retail executable model
 
 The admitted WIP inventories live in `config/retail/functions.tsv`,
-`config/retail/data.tsv`, and `config/retail/relocs.tsv`. They cover the three
-separate linked programs and intentionally retain confidence/provenance rather
-than presenting machine-assisted recovery as final truth.
+`config/retail/functions_vendored.tsv`, `config/retail/data.tsv`, and
+`config/retail/relocs.tsv`. They cover the three separate linked programs and
+intentionally retain confidence/provenance rather than presenting
+machine-assisted recovery as final truth.
 
 The current function census contains 1,617 starts: 9 in `PSX.EXE`, 939 in
 `GAME.EXE`, and 669 in `OPEN.EXE`. It combines the Ghidra baseline with an
 independent MIPS frame/return carving pass; both sources remain explicit in the
 confidence and provenance columns.
 
+The separate vendored-function layer currently identifies 514 Sony/Psy-Q
+functions. It distinguishes 375 Release 2.5 exact-object claims from 139
+version-skewed Psy-Q 2.60 signature candidates. Regenerate a review seed with
+`kf-vendored-seed --exe-dir /path/to/retail/disc`; the command cannot overwrite
+the hand-owned list.
+
 Run `kf-retail-validate` to check schemas, sorting, virtual/file offsets, and
 complete payload accounting. See
 [`config/retail/README.md`](config/retail/README.md) for the manual-curation and
-future label-provider contract.
+provider-layer contract, and [docs/vendored-functions.md](docs/vendored-functions.md)
+for the evidence rules and current breakdown.
+
+## Three decompilation targets
+
+This is three decomps in one repository. `PSX.EXE` is the bootstrap/loader,
+`GAME.EXE` is the main game, and `OPEN.EXE` is the opening/title program.
+`GAME.EXE` and `OPEN.EXE` reuse the same RAM window at different times, so each
+has an independent address namespace, link graph, target-object set, and
+objdiff project. Tooling, evidence, headers, and proven shared source stay
+common.
+
+The initial TSV-driven delinker emits conservative ELF32 little-endian MIPS
+objects and a complete used/withheld relocation audit:
+
+```sh
+kf-delink --exe-dir /path/to/hash-identical/retail
+kf-compile --image PSX.EXE \
+  --source src/psx/800101c4_EnterCriticalSection.s
+kf-objdiff-project
+kf-objdiff-report --project-dir build/objdiff/game
+```
+
+Reconstructed objects go under `build/objdiff/{psx,game,open}/base` with the
+same filename as the corresponding carved target. The pinned `objdiff-cli` and
+GUI are both included in `nix develop`.
+
+See [docs/decompilation-layout.md](docs/decompilation-layout.md) for the
+three-target architecture and
+[docs/delinking-and-matching.md](docs/delinking-and-matching.md) for relocation
+policy, artifacts, commands, and the Vostok/Gruntz boundary.

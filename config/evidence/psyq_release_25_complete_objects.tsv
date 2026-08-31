@@ -1,0 +1,8 @@
+# Reviewed complete-object matches too small for the 32-byte section matcher.
+image	va	object_size	library	module	name	note
+PSX.EXE	0x800101c4	0x10	LIBAPI.LIB	A36	EnterCriticalSection	all 16 member bytes match
+PSX.EXE	0x800101d4	0x10	LIBAPI.LIB	C113	_96_init	all 16 member bytes match
+PSX.EXE	0x800101e4	0x10	LIBAPI.LIB	C57	InitHeap	all 16 member bytes match
+PSX.EXE	0x800101f4	0x10	LIBAPI.LIB	C66	Load	all 16 member bytes match
+PSX.EXE	0x80010204	0x10	LIBAPI.LIB	C67	Exec	all 16 member bytes match
+PSX.EXE	0x80010214	0x10	LIBAPI.LIB	C114	_96_remove	all 16 member bytes match

@@ -104,6 +104,31 @@ RELOC_FIELDS = (
     "status",
     "provenance",
 )
+VENDORED_FUNCTION_FIELDS = (
+    "image",
+    "va",
+    "size",
+    "name",
+    "aliases",
+    "provider",
+    "library",
+    "module",
+    "member_offset",
+    "source_version",
+    "evidence",
+    "confidence",
+    "provenance",
+    "note",
+)
+
+VENDORED_CONFIDENCE = {
+    "exact-release25",
+    "exact-release25-short",
+    "exact-release25-ambiguous",
+    "exact-release25-complete",
+    "psyq260-signature",
+    "psyq260-signature-ambiguous",
+}
 
 
 def parse_int(value: str) -> int:
@@ -234,6 +259,7 @@ def validate_config(config_dir: Path, exe_dir: Path | None = None) -> dict[str, 
     )
 
     starts: set[tuple[str, int]] = set()
+    functions_by_start: dict[tuple[str, int], dict[str, str]] = {}
     function_intervals: dict[str, list[tuple[int, int]]] = {
         image: [] for image in IMAGE_LAYOUTS
     }
@@ -256,6 +282,7 @@ def validate_config(config_dir: Path, exe_dir: Path | None = None) -> dict[str, 
         if key in starts:
             raise ValueError(f"{function_path}: duplicate start {key!r}")
         starts.add(key)
+        functions_by_start[key] = row
         function_intervals[row["image"]].append((address, address + size))
         coverage[row["image"]].append((address, address + size))
 
@@ -339,11 +366,59 @@ def validate_config(config_dir: Path, exe_dir: Path | None = None) -> dict[str, 
             if actual != expected:
                 raise ValueError(f"{exe_dir / name}: retail identity/layout mismatch")
 
-    return {
+    counts = {
         "functions": len(functions),
         "data": len(data),
         "relocs": len(relocs),
     }
+    vendored_path = config_dir / "functions_vendored.tsv"
+    if vendored_path.is_file():
+        vendored_fields, vendored = read_tsv(vendored_path)
+        _require_fields(vendored_path, vendored_fields, VENDORED_FUNCTION_FIELDS)
+        _require_sorted(
+            vendored_path,
+            vendored,
+            lambda row: (IMAGE_ORDER[row["image"]], parse_int(row["va"])),
+        )
+        vendored_keys: set[tuple[str, int]] = set()
+        for row in vendored:
+            layout = _validate_image(row, vendored_path)
+            address = parse_int(row["va"])
+            size = parse_int(row["size"])
+            key = (row["image"], address)
+            if key in vendored_keys:
+                raise ValueError(f"{vendored_path}: duplicate provider row {key!r}")
+            vendored_keys.add(key)
+            try:
+                structural = functions_by_start[key]
+            except KeyError as error:
+                raise ValueError(
+                    f"{vendored_path}: provider row lacks structural function {key!r}"
+                ) from error
+            if size != parse_int(structural["size"]):
+                raise ValueError(
+                    f"{vendored_path}: size differs from structural function {row!r}"
+                )
+            if not layout.contains(address, size):
+                raise ValueError(f"{vendored_path}: invalid extent {row!r}")
+            if parse_int(row["member_offset"]) < 0:
+                raise ValueError(f"{vendored_path}: negative member offset {row!r}")
+            for field in (
+                "provider", "library", "module", "source_version", "evidence",
+                "confidence", "provenance", "note",
+            ):
+                if not row[field]:
+                    raise ValueError(f"{vendored_path}: empty {field} in {row!r}")
+            if row["confidence"] not in VENDORED_CONFIDENCE:
+                raise ValueError(
+                    f"{vendored_path}: invalid confidence {row['confidence']!r}"
+                )
+            names = [row["name"], *row["aliases"].split(";")]
+            nonempty_names = [name for name in names if name]
+            if len(nonempty_names) != len(set(nonempty_names)):
+                raise ValueError(f"{vendored_path}: duplicate names in {row!r}")
+        counts["vendored_functions"] = len(vendored)
+    return counts
 
 
 def main() -> int:

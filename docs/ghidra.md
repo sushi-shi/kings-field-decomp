@@ -37,3 +37,11 @@ The bundled signature sets currently start at Psy-Q 2.60. They are useful for
 later-library comparison but must not be treated as signatures for the
 Release 2.5 libraries matched in King's Field; our hash-pinned 2.5 libraries
 remain the primary evidence for those bodies.
+
+`kf-vendored-seed` uses the 2.60 JSON corpus as a secondary byte-signature
+lane. It requires a unique executable occurrence and a meaningful signature
+label aligned to an admitted function start. Resulting rows retain
+`psyq260-signature*` confidence and never override a Release 2.5 object claim.
+These are plugin wildcard signatures, not a Ghidra FID database; the TSV keeps
+the evidence type explicit so a future generated FID corpus can be compared
+without conflating the two mechanisms.

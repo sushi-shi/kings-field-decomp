@@ -1,15 +1,22 @@
 # Retail executable censuses
 
-These three TSVs are the admitted, manually curated work-in-progress model of
+These four TSVs are the admitted, manually curated work-in-progress model of
 the original Japanese `SLPS-00017` executables:
 
 - `functions.tsv`: current function starts and explicit WIP extents;
+- `functions_vendored.tsv`: provider/library ownership layered over those
+  structural functions;
 - `data.tsv`: defined data plus `unclassified` gaps; and
 - `relocs.tsv`: reconstructed relocation candidates and their review status.
 
 `PSX.EXE`, `GAME.EXE`, and `OPEN.EXE` are separate linked programs. Every row
 therefore carries an `image` even where `GAME.EXE` and `OPEN.EXE` reuse the
 same virtual address. Never merge rows on address alone.
+
+The same rule extends to decompilation output: the repository holds three link
+graphs and generates `build/delink/{psx,game,open}` plus three corresponding
+objdiff projects. See `docs/decompilation-layout.md` and
+`docs/delinking-and-matching.md`.
 
 ## Authority
 
@@ -33,10 +40,24 @@ the original 1,048-function Ghidra baseline. These rows use
 review or retract.
 
 The `name` and `labels` columns preserve labels already established during the
-investigation. Ghidra-supplied names remain `ghidra-analysis` candidates. As
-library and game ownership improves, dedicated provider TSVs such as
-`functions_psyq.tsv` and `data_psyq.tsv` can carry identity/ownership claims
-while these three files remain the structural census.
+investigation. Ghidra-supplied names remain `ghidra-analysis` candidates.
+Library identity is kept out of the structural census: `functions_vendored.tsv`
+references an existing `(image, va, size)` and adds provider, archive member,
+member offset, version witness, evidence channel, and confidence. This is a
+second hand-owned list, so later seeds are diffs to review rather than truth.
+
+The initial vendored inventory contains 514 functions: 8 in `PSX.EXE`, 261 in
+`GAME.EXE`, and 245 in `OPEN.EXE`. Of these, 375 have Release 2.5 evidence
+(369 within relocation-masked exact object sections and six reviewed complete
+16-byte objects). The remaining 139 are candidates from unique matches against
+the later Psy-Q 2.60 wildcard signature corpus bundled by `ghidra_psx_ldr`.
+That version boundary is explicit in every row. There are 502 symbol-named
+rows and 12 anonymous functions whose containing object is nevertheless known.
+
+`library` and `module` use `|` for unresolved archive aliases. For example,
+identical members can prove Sony ownership while leaving the precise member
+name ambiguous. `member_offset` is relative to the matched `.text` section or
+signature start, not to the PS-X EXE.
 
 ## Editing rules
 
@@ -47,6 +68,12 @@ while these three files remain the structural census.
   an owned jump table or literal pool.
 - A relocation candidate is promoted by setting `status=reviewed`. A disproven
   row becomes `status=rejected` so the false positive remains documented.
+- Generated target objects never edit these lists. `kf-delink` consumes them
+  and records applied and withheld decisions under `build/delink`; a correction
+  to a missing function, datum, or relocation is curated here first.
+- A provider claim is added only after the structural function exists. Prefer
+  Release 2.5 object evidence; keep later-signature guesses in their explicit
+  `psyq260-signature*` confidence channel.
 - Keep rows sorted by image and address. `GAME.EXE` and `OPEN.EXE` are sorted
   independently.
 - Confidence and provenance describe evidence; neither is a substitute for
@@ -91,3 +118,25 @@ The current upstream PSX analyzer emits a non-fatal exception while looking up
 one GTE datatype in headless mode. Executable loading, Sleigh disassembly, and
 function discovery complete; the seed deliberately does not treat those
 plugin-generated GTE datatypes as retail data authority.
+
+## Vendored-function seed
+
+The Release 2.5 match spans and reviewed tiny complete objects are preserved in
+`config/evidence`. The seeder reconstructs the object bytes and relocation
+masks, rechecks each executable occurrence, and reads XDEF names live from the
+exact SDK archive members. A second lane scans the hash-verified executable
+payloads against the Psy-Q 2.60 JSON signatures supplied by the pinned Ghidra
+plugin:
+
+```sh
+kf-vendored-seed \
+  --exe-dir /path/to/kings-field-japan-retail/disc
+```
+
+The command writes `build/vendored-seed/functions_vendored.tsv` and refuses to
+write under `config/retail`. Review that proposed diff, then manually admit the
+desired rows. A 2.60 signature hit is accepted only when it is unique in an
+image and at least one meaningful signature label lands on an existing
+structural function start; this rejects short incidental byte matches inside
+game code. It is still a WIP inference, not proof that the linked member came
+from Psy-Q 2.60.
