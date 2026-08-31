@@ -45,6 +45,8 @@ Library identity is kept out of the structural census: `functions_vendored.tsv`
 references an existing `(image, va, size)` and adds provider, archive member,
 member offset, version witness, evidence channel, and confidence. This is a
 second hand-owned list, so later seeds are diffs to review rather than truth.
+It is also the matching exclusion list: provider-owned rows may be carved as
+reference objects, but are never emitted as objdiff reconstruction units.
 
 The initial vendored inventory contains 514 functions: 8 in `PSX.EXE`, 261 in
 `GAME.EXE`, and 245 in `OPEN.EXE`. Of these, 375 have Release 2.5 evidence

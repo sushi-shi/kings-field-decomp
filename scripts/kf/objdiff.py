@@ -25,6 +25,15 @@ PAIRING_FIELDS = (
     "target",
     "base_status",
 )
+EXCLUDED_FIELDS = (
+    "image",
+    "va",
+    "name",
+    "provider",
+    "library",
+    "target",
+    "reason",
+)
 
 
 def _relative(path: Path, directory: Path) -> str:
@@ -38,15 +47,23 @@ def generate_projects(
     delink_dir: Path,
     output_dir: Path,
     images: Iterable[str] = IMAGE_LAYOUTS,
-) -> dict[str, tuple[Path, int, int]]:
-    results: dict[str, tuple[Path, int, int]] = {}
+) -> dict[str, tuple[Path, int, int, int]]:
+    results: dict[str, tuple[Path, int, int, int]] = {}
     for image in images:
         key = image_key(image)
         target_dir = delink_dir / key
         manifest = target_dir / "objects.tsv"
         if not manifest.is_file():
             raise ValueError(f"{manifest}: run kf-delink first")
-        _, objects = read_tsv(manifest)
+        _, all_objects = read_tsv(manifest)
+        objects = [
+            row for row in all_objects
+            if row.get("scope", "decomp") == "decomp"
+        ]
+        excluded = [
+            row for row in all_objects
+            if row.get("scope", "decomp") == "vendored"
+        ]
 
         project_dir = output_dir / key
         base_dir = project_dir / "base"
@@ -102,7 +119,24 @@ def generate_projects(
                 "Missing reconstructions pair with a synthetic MIPS placeholder.",
             ),
         )
-        results[image] = project_path, paired, len(units)
+        write_tsv(
+            project_dir / "vendored_excluded.tsv",
+            EXCLUDED_FIELDS,
+            ({
+                "image": image,
+                "va": row["va"],
+                "name": row["name"],
+                "provider": row.get("provider", ""),
+                "library": row.get("library", ""),
+                "target": _relative(target_dir / row["object"], project_dir),
+                "reason": "vendored-library-code",
+            } for row in excluded),
+            (
+                "GENERATED - provider-identified functions excluded from matching.",
+                "They remain target/reference objects but never count as decomp units.",
+            ),
+        )
+        results[image] = project_path, paired, len(units), len(excluded)
     return results
 
 
@@ -160,8 +194,11 @@ def main() -> int:
             args.output_dir,
             args.image or IMAGE_LAYOUTS,
         )
-        for image, (path, paired, total) in results.items():
-            print(f"{image}: {path} ({paired}/{total} reconstructed bases present)")
+        for image, (path, paired, total, excluded) in results.items():
+            print(
+                f"{image}: {path} ({paired}/{total} reconstructed bases present; "
+                f"{excluded} vendored targets excluded)"
+            )
     else:
         print(generate_report(args.project_dir, args.output))
     return 0

@@ -15,22 +15,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
 
 
-ASSEMBLY = """\
+LEAF_ASSEMBLY = """\
 .set noreorder
 .set noat
 .text
-.globl EnterCriticalSection
-.type EnterCriticalSection,@function
-EnterCriticalSection:
-  addiu $a0,$zero,1
-  syscall 0
+.globl calibration_leaf
+.type calibration_leaf,@function
+calibration_leaf:
+  addiu $v0,$a0,1
   jr $ra
-   nop
-.size EnterCriticalSection,.-EnterCriticalSection
+   addu $v0,$v0,$a1
+  nop
+.size calibration_leaf,.-calibration_leaf
 """
 
-RETAIL_TEXT = bytes.fromhex(
-    "01 00 04 24 0c 00 00 00 08 00 e0 03 00 00 00 00"
+LEAF_TEXT = bytes.fromhex(
+    "01 00 82 24 08 00 e0 03 21 10 45 00 00 00 00 00"
 )
 
 RELOCATION_ASSEMBLY = """\
@@ -122,15 +122,15 @@ def main() -> int:
         base = root / "base.o"
         target = root / "target.o"
         output = root / "diff.json"
-        source.write_text(ASSEMBLY, encoding="utf-8")
+        source.write_text(LEAF_ASSEMBLY, encoding="utf-8")
         target.write_bytes(write_mips_elf(
-            RETAIL_TEXT, "EnterCriticalSection", len(RETAIL_TEXT)
+            LEAF_TEXT, "calibration_leaf", len(LEAF_TEXT)
         ))
         subprocess.run(
             [assembler, "-march=r3000", "-mabi=32", "-o", str(base), str(source)],
             check=True,
         )
-        _run_diff(objdiff, target, base, "EnterCriticalSection", output)
+        _run_diff(objdiff, target, base, "calibration_leaf", output)
 
         source.write_text(RELOCATION_ASSEMBLY, encoding="utf-8")
         target.write_bytes(write_mips_elf(
@@ -150,7 +150,7 @@ def main() -> int:
         )
         _run_diff(objdiff, target, base, "relocation_test", output)
     print(
-        "objdiff MIPS calibration: EnterCriticalSection and relocation_test=100.0%"
+        "objdiff MIPS calibration: calibration_leaf and relocation_test=100.0%"
     )
     return 0
 

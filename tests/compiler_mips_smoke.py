@@ -38,8 +38,9 @@ def main() -> int:
         write_tsv(
             manifest,
             (
-                "image", "va", "size", "body_size", "name", "object",
-                "relocations", "confidence", "provenance",
+                "image", "va", "size", "body_size", "name", "scope",
+                "provider", "library", "object", "relocations", "confidence",
+                "provenance",
             ),
             ({
                 "image": "GAME.EXE",
@@ -47,6 +48,9 @@ def main() -> int:
                 "size": "0x4",
                 "body_size": "0x4",
                 "name": "add",
+                "scope": "decomp",
+                "provider": "",
+                "library": "",
                 "object": "objects/simple.o",
                 "relocations": 0,
                 "confidence": "test",

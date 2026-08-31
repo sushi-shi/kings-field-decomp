@@ -38,7 +38,11 @@ def _target_names(delink_dir: Path, image: str) -> set[str]:
     if not manifest.is_file():
         raise ValueError(f"{manifest}: run kf-delink first")
     _, rows = read_tsv(manifest)
-    return {Path(row["object"]).name for row in rows}
+    return {
+        Path(row["object"]).name
+        for row in rows
+        if row.get("scope", "decomp") == "decomp"
+    }
 
 
 def compile_source(
@@ -58,7 +62,7 @@ def compile_source(
     object_name = output.name
     if object_name not in _target_names(delink_dir, image):
         raise ValueError(
-            f"{object_name}: no carved target with this filename for {image}"
+            f"{object_name}: no non-vendored target with this filename for {image}"
         )
     output.parent.mkdir(parents=True, exist_ok=True)
     suffix = source.suffix.lower()

@@ -35,6 +35,9 @@ OBJECT_FIELDS = (
     "size",
     "body_size",
     "name",
+    "scope",
+    "provider",
+    "library",
     "object",
     "relocations",
     "confidence",
@@ -99,6 +102,8 @@ class Function:
     symbol: str
     confidence: str
     provenance: str
+    provider: str = ""
+    library: str = ""
 
     @property
     def end(self) -> int:
@@ -106,6 +111,10 @@ class Function:
 
     def contains(self, address: int, size: int = 1) -> bool:
         return self.va <= address and address + size <= self.end
+
+    @property
+    def scope(self) -> str:
+        return "vendored" if self.provider else "decomp"
 
 
 @dataclass(frozen=True)
@@ -185,26 +194,28 @@ def _put_word(data: bytearray, offset: int, word: int) -> None:
     struct.pack_into("<I", data, offset, word & 0xFFFFFFFF)
 
 
-def _preferred_function_names(config_dir: Path) -> dict[tuple[str, int], str]:
-    names: dict[tuple[str, int], str] = {}
+def _vendored_functions(
+    config_dir: Path,
+) -> dict[tuple[str, int], dict[str, str]]:
+    functions: dict[tuple[str, int], dict[str, str]] = {}
     path = config_dir / "functions_vendored.tsv"
     if path.is_file():
         _, rows = read_tsv(path)
         for row in rows:
-            if row["name"]:
-                names[(row["image"], parse_int(row["va"]))] = row["name"]
-    return names
+            functions[(row["image"], parse_int(row["va"]))] = row
+    return functions
 
 
 def load_catalog(config_dir: Path) -> Catalog:
-    vendored_names = _preferred_function_names(config_dir)
+    vendored = _vendored_functions(config_dir)
     _, function_rows = read_tsv(config_dir / "functions.tsv")
 
     preferred: dict[tuple[str, int], str] = {}
     for row in function_rows:
         key = row["image"], parse_int(row["va"])
+        provider_row = vendored.get(key, {})
         preferred[key] = sanitize_symbol(
-            row["name"] or vendored_names.get(key, ""),
+            row["name"] or provider_row.get("name", ""),
             f"func_{key[1]:08x}",
         )
     duplicate_names = {
@@ -220,6 +231,7 @@ def load_catalog(config_dir: Path) -> Catalog:
     for row in function_rows:
         image = row["image"]
         va = parse_int(row["va"])
+        provider_row = vendored.get((image, va), {})
         symbol = preferred[(image, va)]
         if duplicate_names[image][symbol] > 1:
             symbol = f"{symbol}_{va:08x}"
@@ -232,6 +244,8 @@ def load_catalog(config_dir: Path) -> Catalog:
             symbol=symbol,
             confidence=row["confidence"],
             provenance=row["provenance"],
+            provider=provider_row.get("provider", ""),
+            library=provider_row.get("library", ""),
         )
         functions[image].append(function)
         starts[image][va] = function
@@ -520,6 +534,9 @@ def delink(
                 "size": format_size(function.size),
                 "body_size": format_size(function.body_size),
                 "name": function.symbol,
+                "scope": function.scope,
+                "provider": function.provider,
+                "library": function.library,
                 "object": object_relative.as_posix(),
                 "relocations": len(function_relocations),
                 "confidence": function.confidence,

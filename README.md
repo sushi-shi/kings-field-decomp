@@ -56,7 +56,8 @@ The separate vendored-function layer currently identifies 514 Sony/Psy-Q
 functions. It distinguishes 375 Release 2.5 exact-object claims from 139
 version-skewed Psy-Q 2.60 signature candidates. Regenerate a review seed with
 `kf-vendored-seed --exe-dir /path/to/retail/disc`; the command cannot overwrite
-the hand-owned list.
+the hand-owned list. Vendored functions remain reference evidence and call
+targets; they are excluded from objdiff units and decomp progress.
 
 Run `kf-retail-validate` to check schemas, sorting, virtual/file offsets, and
 complete payload accounting. See
@@ -78,8 +79,6 @@ objects and a complete used/withheld relocation audit:
 
 ```sh
 kf-delink --exe-dir /path/to/hash-identical/retail
-kf-compile --image PSX.EXE \
-  --source src/psx/800101c4_EnterCriticalSection.s
 kf-objdiff-project
 kf-objdiff-report --project-dir build/objdiff/game
 ```

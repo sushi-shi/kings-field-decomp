@@ -92,6 +92,22 @@ non-reachable-code candidates, 2,501 sites outside current function extents,
 130 candidates owned by the seven fragmented functions, and one unsigned-low
 HI/LO pair.
 
+Carving the whole image is not the same as selecting decomp work. The 514
+functions in `functions_vendored.tsv` are excluded when objdiff projects are
+generated:
+
+| Target | Carved target/reference objects | Vendored objects excluded | Non-vendored match units |
+| --- | ---: | ---: | ---: |
+| `PSX.EXE` | 9 | 8 | 1 |
+| `GAME.EXE` | 934 | 261 | 673 |
+| `OPEN.EXE` | 667 | 245 | 422 |
+| **Total** | **1,610** | **514** | **1,096** |
+
+The match-unit counts also exclude the seven fragmented non-vendored
+functions. Vendored objects exist only to preserve executable topology,
+provider evidence, symbol identities, and call relocation targets. They do not
+count as source reconstruction or progress.
+
 ## MIPS analysis implications
 
 R3000 code has no universal function marker. A conventional non-leaf function
@@ -175,8 +191,10 @@ The generated objdiff project pairs every target object with:
 build/objdiff/<image>/base/<same target-object filename>
 ```
 
-Until a reconstruction object exists, the unit uses a synthetic MIPS
-`missing-base.o`. `pairings.tsv` makes that state explicit. Regenerate the
+Only non-vendored objects become units. `vendored_excluded.tsv` records every
+provider-owned target intentionally omitted from the project. Until a game
+reconstruction object exists, a selected unit uses a synthetic MIPS
+`missing-base.o`; `pairings.tsv` makes that state explicit. Regenerate the
 project after adding a base object, then run:
 
 ```sh
@@ -205,14 +223,15 @@ claim. The two historical 2.6.0 binaries remain distinct evidence candidates.
 GNU `as` is used here as an object container; it is not a claim that the retail
 game was historically linked from GNU ELF objects.
 
-`kf-compile` maps a source basename to the corresponding carved target-object
-filename and writes the base object directly into the appropriate objdiff
-project. Assembly is direct:
+`kf-compile` maps a source basename to the corresponding non-vendored carved
+target-object filename and writes the base object directly into the appropriate
+objdiff project. It refuses a basename whose target is provider-owned. Assembly
+reconstructions use the same command shape as C, without an optimization flag:
 
 ```sh
 kf-compile \
-  --image PSX.EXE \
-  --source src/psx/800101c4_EnterCriticalSection.s
+  --image GAME.EXE \
+  --source src/game/80014268_func_80014268.s
 ```
 
 C experiments must state their optimization profile rather than inheriting an
@@ -238,12 +257,12 @@ auditable.
 
 ## Validation
 
-`tests/objdiff_mips_smoke.py` independently assembles the exact 16 retail bytes
-of `EnterCriticalSection`, builds the synthetic target object, and requires
-objdiff to report a 100% function match. A second 100% calibration covers an
-external JAL, a local `.text` J relocation, and an external HI16/LO16 pair with
-a nonzero addend. The normal Python tests also parse the ELF headers, symbols,
-relocation types, function extent, MIPS26 addend, and HI16/LO16 carry behavior.
+`tests/objdiff_mips_smoke.py` uses only synthetic functions. One checks ordinary
+instruction matching; a second 100% calibration covers an external JAL, a
+local `.text` J relocation, and an external HI16/LO16 pair with a nonzero
+addend. No vendored retail routine is presented as decompiled source. The normal
+Python tests also parse the ELF headers, symbols, relocation types, function
+extent, MIPS26 addend, and HI16/LO16 carry behavior.
 `tests/compiler_mips_smoke.py` compiles a simple C function with GCC 2.6.0,
 passes its assembly through maspsx, and verifies the resulting MIPS ELF and
 symbol.

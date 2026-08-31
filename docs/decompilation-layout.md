@@ -55,10 +55,12 @@ They do not need suffixes merely because another executable uses the same name.
 
 Data and relocation ownership will eventually be assigned to translation
 units. That ownership is not inferable from the linked image alone, so the
-initial pipeline deliberately uses one object per contiguous function. It is a
-calibration topology, not a claim that the original source had 1,610 one-function
-files. Seven functions currently have multiple fragments but no fragment-range
-manifest; they are withheld rather than guessed.
+initial pipeline deliberately carves one object per contiguous function. It is
+a calibration topology, not a claim that the original source had 1,610
+one-function files. The 514 provider-identified Sony/Psy-Q functions remain
+reference objects and relocation referents, but never become reconstruction or
+objdiff units. Seven non-vendored functions currently have multiple fragments
+but no fragment-range manifest; they are withheld rather than guessed.
 
 ## Matching tiers
 

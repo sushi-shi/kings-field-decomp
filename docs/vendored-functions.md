@@ -23,6 +23,12 @@ whose containing Sony object is known. Provider counts are: 116 `LIBGTE`, 110
 four startup functions attributed to `NONE2.OBJ`. No zlib or other third-party
 library has been identified, so none is claimed in the TSV.
 
+These rows are an exclusion boundary as well as attribution evidence.
+`kf-delink` may carve them to preserve the linked executable model and resolve
+calls from game code, but `kf-objdiff-project` never creates matching units for
+them and `kf-compile` rejects their target filenames. Vendored code therefore
+does not inflate decomp progress or invite source reconstruction work.
+
 ## Evidence channels
 
 Release 2.5 exact evidence is primary. For each preserved object-section match,

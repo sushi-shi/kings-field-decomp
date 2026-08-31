@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from scripts.kf.compile import _target_names
 from scripts.kf.delink import (
     Catalog,
     Function,
@@ -134,41 +135,71 @@ class ObjdiffProjectTests(unittest.TestCase):
             object_dir = target_dir / "objects"
             object_dir.mkdir(parents=True)
             object_name = "80010000_test.o"
+            vendored_name = "80010004_library_test.o"
             object_data = write_mips_elf(b"\0\0\0\0", "test", 4)
             (object_dir / object_name).write_bytes(object_data)
+            (object_dir / vendored_name).write_bytes(
+                write_mips_elf(b"\0\0\0\0", "library_test", 4)
+            )
             write_tsv(
                 target_dir / "objects.tsv",
                 (
-                    "image", "va", "size", "body_size", "name", "object",
-                    "relocations", "confidence", "provenance",
+                    "image", "va", "size", "body_size", "name", "scope",
+                    "provider", "library", "object", "relocations", "confidence",
+                    "provenance",
                 ),
-                ({
-                    "image": "GAME.EXE",
-                    "va": "0x80010000",
-                    "size": "0x4",
-                    "body_size": "0x4",
-                    "name": "test",
-                    "object": f"objects/{object_name}",
-                    "relocations": 0,
-                    "confidence": "test",
-                    "provenance": "test",
-                },),
+                (
+                    {
+                        "image": "GAME.EXE",
+                        "va": "0x80010000",
+                        "size": "0x4",
+                        "body_size": "0x4",
+                        "name": "test",
+                        "scope": "decomp",
+                        "provider": "",
+                        "library": "",
+                        "object": f"objects/{object_name}",
+                        "relocations": 0,
+                        "confidence": "test",
+                        "provenance": "test",
+                    },
+                    {
+                        "image": "GAME.EXE",
+                        "va": "0x80010004",
+                        "size": "0x4",
+                        "body_size": "0x4",
+                        "name": "library_test",
+                        "scope": "vendored",
+                        "provider": "Sony",
+                        "library": "LIBTEST",
+                        "object": f"objects/{vendored_name}",
+                        "relocations": 0,
+                        "confidence": "test",
+                        "provenance": "test",
+                    },
+                ),
                 (),
             )
             output = root / "objdiff"
+            self.assertEqual(
+                _target_names(root / "delink", "GAME.EXE"), {object_name}
+            )
             results = generate_projects(
                 root / "delink", output, ("GAME.EXE",)
             )
-            self.assertEqual(results["GAME.EXE"][1:], (0, 1))
+            self.assertEqual(results["GAME.EXE"][1:], (0, 1, 1))
             project = json.loads((output / "game/objdiff.json").read_text())
             self.assertEqual(project["units"][0]["base_path"], "./missing-base.o")
+            self.assertNotIn("library_test", json.dumps(project))
+            excluded = (output / "game/vendored_excluded.tsv").read_text()
+            self.assertIn("library_test", excluded)
 
             base = output / "game/base" / object_name
             base.write_bytes(object_data)
             results = generate_projects(
                 root / "delink", output, ("GAME.EXE",)
             )
-            self.assertEqual(results["GAME.EXE"][1:], (1, 1))
+            self.assertEqual(results["GAME.EXE"][1:], (1, 1, 1))
             project = json.loads((output / "game/objdiff.json").read_text())
             self.assertEqual(project["units"][0]["base_path"], f"./base/{object_name}")
 
