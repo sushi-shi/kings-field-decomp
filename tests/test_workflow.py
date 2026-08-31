@@ -11,6 +11,7 @@ from scripts.kf.graph import _build_line, _write_generator
 from scripts.kf.manifest import Unit, load as load_manifest
 from scripts.kf.objdiff import generate_report
 from scripts.kf.progress import Current, Target, _report_scores, _summary, classifications
+from scripts.kf.readme import END, START, render_block, write_block
 
 
 def sample_current(percent: float | None) -> Current:
@@ -124,6 +125,36 @@ class GraphTests(unittest.TestCase):
             os.utime(path, ns=(1_000_000_000, 1_000_000_000))
             _write_generator(path, "same\n")
             self.assertGreater(path.stat().st_mtime_ns, 1_000_000_000)
+
+
+class ReadmeTests(unittest.TestCase):
+    def test_generated_block_contains_all_three_images(self) -> None:
+        summary = {
+            "eligible_functions": 1,
+            "manifested_functions": 0,
+            "exact_functions": 0,
+            "coverage_percent": 0.0,
+            "fuzzy_overall_percent": 0.0,
+        }
+        document = {
+            "images": {key: dict(summary) for key in ("psx", "game", "open")},
+            "total": dict(summary),
+        }
+        block = render_block(document)
+        self.assertIn("`PSX.EXE`", block)
+        self.assertIn("`GAME.EXE`", block)
+        self.assertIn("`OPEN.EXE`", block)
+        self.assertIn("Exact requires 100%", block)
+
+    def test_replacement_preserves_everything_outside_markers(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "README.md"
+            path.write_text(f"# Intro\n\n{START}\nold\n{END}\n\n## Tail\n")
+            self.assertTrue(write_block(f"{START}\nnew\n{END}", path))
+            self.assertEqual(
+                path.read_text(),
+                f"# Intro\n\n{START}\nnew\n{END}\n\n## Tail\n",
+            )
 
 
 if __name__ == "__main__":

@@ -353,6 +353,10 @@ def check(
     ]
     if strict:
         bad = bad or bool(strict_changed)
+    from scripts.kf.readme import refresh as refresh_readme
+
+    if refresh_readme():
+        print("README match-status block refreshed")
     if bad:
         reasons = []
         if failures:
@@ -430,5 +434,9 @@ def bank(*, allow_dirty: bool = False) -> int:
             "Scores retain full precision; --loose affects display classification only.",
         ),
     )
+    from scripts.kf.readme import refresh as refresh_readme
+
+    refreshed = refresh_readme()
     print(f"banked {len(output)} scored function(s) in {BASELINE.relative_to(REPO)}")
+    print(f"README match-status block {'refreshed' if refreshed else 'unchanged'}")
     return 0

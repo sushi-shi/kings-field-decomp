@@ -62,3 +62,23 @@ Studio, service-pack, and DirectX media; that indirection has no useful payoff
 at this size.
 
 No generated SDK binary, retail game image, or executable belongs in Git.
+
+## Analysis tools
+
+`nix develop` provides the historical compiler candidates and practical PSX
+build path above, plus Ghidra/PyGhidra, DOSBox, little-endian MIPS GNU
+binutils, maspsx, psy-k, disc-image utilities, objdiff, and the normal
+C/C++/Python build tools. Ghidra plugin packaging is documented separately in
+[`ghidra.md`](ghidra.md).
+
+Splat, Rabbitizer, and spimdisasm use the separately locked Python environment
+because the latter two are not available in the pinned Nixpkgs revision. The
+shell wrappers keep both setup and execution on that project lock:
+
+```sh
+kf-python-sync
+splat --help
+```
+
+The first command is the one-time `uv sync --frozen --no-install-project`
+step; `splat` delegates to `uv run --frozen` thereafter.
