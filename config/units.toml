@@ -98,6 +98,12 @@ source = "src/game/player_death_800184b0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.collision"
+image = "GAME.EXE"
+source = "src/game/collision.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8001b3e4"
 image = "GAME.EXE"
 source = "src/game/func_8001b3e4.c"

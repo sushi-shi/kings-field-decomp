@@ -42,7 +42,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3456)
+        self.assertEqual(counts["data"], 3458)
         self.assertGreaterEqual(counts["functions_named"], 187)
         self.assertGreaterEqual(counts["data_named"], 144)
         self.assertEqual(counts["structures"], 36)
