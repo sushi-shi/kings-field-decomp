@@ -3045,7 +3045,11 @@ GAME.EXE	0x80056a4c	0x4524c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 GAME.EXE	0x80056a50	0x45250	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80056a54	0x45254	0x26b	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80056cbf	0x454bf	0x1f	string	byte-pattern		ascii	investigation:string-census	escaped text: \t|\tv\to\ti\tb\t\\\tU\tO\tI\tC\t<\t6\t0\t*\t$\t
-GAME.EXE	0x80056cde	0x454de	0x312	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80056cde	0x454de	0x82	unclassified	coverage-gap			payload-complement	padding or unclassified SDK data before LIBGTE MTX state
+GAME.EXE	0x80056d60	0x45560	0x4	data	cross-overlay-sdk-lineage	libgte_mtx_saved_ra	u32	config/evidence/overlay_lineage.tsv	LIBGTE MTX private error-path return-address save
+GAME.EXE	0x80056d64	0x45564	0x8	unclassified	coverage-gap			payload-complement	padding between LIBGTE MTX private objects
+GAME.EXE	0x80056d6c	0x4556c	0x4	data	cross-overlay-sdk-lineage	libgte_mtx_stack_offset	s32	config/evidence/overlay_lineage.tsv	byte offset into the 20-entry matrix stack
+GAME.EXE	0x80056d70	0x45570	0x280	data	cross-overlay-sdk-lineage	libgte_mtx_stack	MATRIX[20]	config/evidence/overlay_lineage.tsv	20 entries of 0x20 bytes, bounded by PushMatrix's 0x280 check and following error string
 GAME.EXE	0x80056ff0	0x457f0	0x2f	string	byte-pattern		ascii	investigation:string-census	escaped text: Error: Can't push matrix,stack(max 20) is full!
 GAME.EXE	0x8005701f	0x4581f	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057021	0x45821	0x27	string	byte-pattern		ascii	investigation:string-census	escaped text: Error: Can't pop matrix,stack is empty!
@@ -5443,7 +5447,11 @@ OPEN.EXE	0x800361c4	0x249c4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 OPEN.EXE	0x800361c8	0x249c8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800361cc	0x249cc	0x26b	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80036437	0x24c37	0x1f	string	byte-pattern		ascii	investigation:string-census	escaped text: \t|\tv\to\ti\tb\t\\\tU\tO\tI\tC\t<\t6\t0\t*\t$\t
-OPEN.EXE	0x80036456	0x24c56	0x312	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80036456	0x24c56	0x82	unclassified	coverage-gap			payload-complement	padding or unclassified SDK data before LIBGTE MTX state
+OPEN.EXE	0x800364d8	0x24cd8	0x4	data	cross-overlay-sdk-lineage	libgte_mtx_saved_ra	u32	config/evidence/overlay_lineage.tsv	LIBGTE MTX private error-path return-address save
+OPEN.EXE	0x800364dc	0x24cdc	0x8	unclassified	coverage-gap			payload-complement	padding between LIBGTE MTX private objects
+OPEN.EXE	0x800364e4	0x24ce4	0x4	data	cross-overlay-sdk-lineage	libgte_mtx_stack_offset	s32	config/evidence/overlay_lineage.tsv	byte offset into the 20-entry matrix stack
+OPEN.EXE	0x800364e8	0x24ce8	0x280	data	cross-overlay-sdk-lineage	libgte_mtx_stack	MATRIX[20]	config/evidence/overlay_lineage.tsv	20 entries of 0x20 bytes, bounded by PushMatrix's 0x280 check and following error string
 OPEN.EXE	0x80036768	0x24f68	0x2f	string	byte-pattern		ascii	investigation:string-census	escaped text: Error: Can't push matrix,stack(max 20) is full!
 OPEN.EXE	0x80036797	0x24f97	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80036799	0x24f99	0x27	string	byte-pattern		ascii	investigation:string-census	escaped text: Error: Can't pop matrix,stack is empty!

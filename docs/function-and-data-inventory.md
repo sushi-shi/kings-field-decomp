@@ -5,16 +5,17 @@ layer records the current source-level interpretation without changing delink
 symbols or pretending that WIP names are original symbols:
 
 - `config/retail/function_identities.tsv` has exactly one row for each
-  carveable non-vendored function: 1 PSX, 557 GAME, and 306 OPEN rows;
+  carveable non-vendored function: 1 PSX, 497 GAME, and 246 OPEN rows;
 - `config/retail/data_identities.tsv` tracks initialized objects and referenced
   BSS objects that may become C globals, file-local statics, or
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-The current first pass contains 3,840 data identities, including 969
+The current first pass contains 3,846 data identities, including 969
 non-overlapping BSS extents. Of those BSS rows, 11 have semantic review from
-the initial matching campaign; the remaining direct-access extents deliberately
-retain address-only names.
+the initial matching campaign. Six initialized-data identities describe the
+private GAME/OPEN `LIBGTE/MTX` matrix stacks, offsets, and error-path scratch
+words; the remaining direct-access extents deliberately retain address-only names.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
@@ -44,7 +45,7 @@ kf sema --image game disasm vector2s_scale_shift11 --blocks
 
 - `build/function-inventory/evidence.tsv` combines MIPS live-in signature
   hints, callers, callees, indirect calls, strings, data references, and basic
-  instruction-shape counts for all 864 functions;
+  instruction-shape counts for all 744 functions;
 - `build/function-inventory/data-evidence.tsv` lists confirmed/candidate users,
   read/write/address counts, and tentative scope/owner hints for every tracked
   datum;

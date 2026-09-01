@@ -38,8 +38,9 @@ run is a proposed diff, not authority.
 
 The first independent MIPS carving pass added 569 anonymous WIP starts that
 Ghidra had not created: 228 stack-framed routines and 341 routines delimited by
-clean return sequences. The admitted census is therefore 1,617 functions, not
-the original 1,048-function Ghidra baseline. These rows use
+clean return sequences. Four supposed starts were later retracted as internal
+`PushMatrix`/`PopMatrix` branch labels. The admitted census is therefore 1,613
+functions, not the original 1,048-function Ghidra baseline. These rows use
 `mips-frame-carve` or `mips-return-carve` confidence so they remain easy to
 review or retract.
 
@@ -56,12 +57,14 @@ The two identity TSVs are overlays: they do not rename delink symbols or alter
 the matching graph. Address-derived names explicitly mean unresolved. See
 `docs/function-and-data-inventory.md` for the evidence and review workflow.
 
-The vendored inventory contains 750 functions: 8 in `PSX.EXE`, 379 in
-`GAME.EXE`, and 363 in `OPEN.EXE`. Of these, 661 have Release 2.5 evidence:
+The vendored inventory contains 866 functions: 8 in `PSX.EXE`, 437 in
+`GAME.EXE`, and 421 in `OPEN.EXE`. Of these, 661 have Release 2.5 evidence:
 375 from exact object matching and 286 additional rows from the project-built
-function-ID corpus. The remaining 89 are candidates from unique matches against
+function-ID corpus. Another 116 are version-skewed `LIBGTE` routines supported
+by exact GAME/OPEN lineage, public-symbol order, and GTE instruction semantics.
+The remaining 89 are candidates from unique matches against
 the later Psy-Q 2.60 wildcard signature corpus bundled by `ghidra_psx_ldr`.
-That version boundary is explicit in every row. There are 738 symbol-named
+That version boundary is explicit in every row. There are 854 symbol-named
 rows and 12 anonymous functions whose containing object is nevertheless known.
 
 `library` and `module` use `|` for unresolved archive aliases. For example,

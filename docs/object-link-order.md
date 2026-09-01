@@ -14,13 +14,16 @@ from the `.text` spans listed here.
 
 The current evidence anchors 44 unique relocation-masked `.text` spans and six
 tiny complete objects: seven placements in `PSX.EXE`, 22 in `GAME.EXE`, and 21
-in `OPEN.EXE`. `contiguous` means that the preceding proven span ends exactly
-at the next proven span. A numeric gap contains code not assigned by this
-exact-object inventory; its ownership remains open.
+in `OPEN.EXE`. Three additional `LIBGTE` object spans per overlay are supported
+by exact cross-overlay function order and archive XDEF order while their exact
+SDK revision remains unresolved. `contiguous` means that the preceding listed
+span ends exactly at the next span. A numeric gap contains code not assigned by
+the listed inventory; its ownership remains open.
 
 The source rows are
 `config/evidence/psyq_release_25_text_sections.tsv` and
-`config/evidence/psyq_release_25_complete_objects.tsv`.
+`config/evidence/psyq_release_25_complete_objects.tsv`; the version-skewed GTE
+rows come from `config/evidence/overlay_lineage.tsv`.
 
 ## Proven contiguous chains
 
@@ -37,9 +40,13 @@ GAME.EXE and OPEN.EXE:
 
 GAME.EXE only at current confidence:
   SCSMVOL -> SESKON
+  REG -> MTX -> SMP -> [8-byte alignment] -> CMB -> [12-byte alignment] -> GEO
 
 OPEN.EXE only at current confidence:
   COR -> REG
+
+GAME.EXE and OPEN.EXE, version-skewed GTE lineage:
+  MTX -> SMP -> [8-byte alignment] -> CMB -> [12-byte alignment] -> GEO
 ```
 
 `S_R|S_W` means the bytes prove Sony/Psy-Q ownership but cannot distinguish the
@@ -83,7 +90,10 @@ placements.
 | `0x80049fd0` | `0x8004a0b8` | `0xe8` | `0x36f8` | `LIBSND.LIB/ADSR.OBJ` | `strong_unique` |
 | `0x8004b9b0` | `0x8004c22c` | `0x87c` | `0x18f8` | `LIBGTE.LIB/COR.OBJ` | `strong_unique` |
 | `0x8004c9ac` | `0x8004cc4c` | `0x2a0` | `0x780` | `LIBGTE.LIB/REG.OBJ` | `strong_unique` |
-| `0x8004e94c` | `0x8004fa00` | `0x10b4` | `0x1d00` | `LIBGTE.LIB/GEO.OBJ` | `strong_unique` |
+| `0x8004cc4c` | `0x8004da4c` | `0xe00` | contiguous | `LIBGTE.LIB/MTX.OBJ` | `sdk-lineage-supported` |
+| `0x8004da4c` | `0x8004dfd4` | `0x588` | contiguous | `LIBGTE.LIB/SMP.OBJ` | `sdk-lineage-supported` |
+| `0x8004dfdc` | `0x8004e940` | `0x964` | `0x8` | `LIBGTE.LIB/CMB.OBJ` | `sdk-lineage-supported` |
+| `0x8004e94c` | `0x8004fa00` | `0x10b4` | `0xc` | `LIBGTE.LIB/GEO.OBJ` | `strong_unique` |
 | `0x800529a0` | `0x800540dc` | `0x173c` | `0x2fa0` | `LIBGPU.LIB/TMD.OBJ` | `strong_unique` |
 | `0x800540dc` | `0x800547a0` | `0x6c4` | contiguous | `LIBGPU.LIB/PRIM.OBJ` | `strong_unique` |
 | `0x800547a0` | `0x800549ac` | `0x20c` | contiguous | `LIBGPU.LIB/EXT.OBJ` | `strong_unique` |
@@ -109,7 +119,10 @@ placements.
 | `0x80029da4` | `0x80029e8c` | `0xe8` | `0x36f8` | `LIBSND.LIB/ADSR.OBJ` | `strong_unique` |
 | `0x8002b784` | `0x8002c000` | `0x87c` | `0x18f8` | `LIBGTE.LIB/COR.OBJ` | `strong_unique` |
 | `0x8002c000` | `0x8002c2a0` | `0x2a0` | contiguous | `LIBGTE.LIB/REG.OBJ` | `strong_unique` |
-| `0x8002e720` | `0x8002f7d4` | `0x10b4` | `0x2480` | `LIBGTE.LIB/GEO.OBJ` | `strong_unique` |
+| `0x8002ca20` | `0x8002d820` | `0xe00` | `0x780` | `LIBGTE.LIB/MTX.OBJ` | `sdk-lineage-supported` |
+| `0x8002d820` | `0x8002dda8` | `0x588` | contiguous | `LIBGTE.LIB/SMP.OBJ` | `sdk-lineage-supported` |
+| `0x8002ddb0` | `0x8002e714` | `0x964` | `0x8` | `LIBGTE.LIB/CMB.OBJ` | `sdk-lineage-supported` |
+| `0x8002e720` | `0x8002f7d4` | `0x10b4` | `0xc` | `LIBGTE.LIB/GEO.OBJ` | `strong_unique` |
 | `0x80032684` | `0x80033dc0` | `0x173c` | `0x2eb0` | `LIBGPU.LIB/TMD.OBJ` | `strong_unique` |
 | `0x80033dc0` | `0x80034484` | `0x6c4` | contiguous | `LIBGPU.LIB/PRIM.OBJ` | `strong_unique` |
 | `0x80034484` | `0x80034690` | `0x20c` | contiguous | `LIBGPU.LIB/EXT.OBJ` | `strong_unique` |
@@ -124,4 +137,3 @@ clusters are useful candidates for extending this order, but an individual FID
 does not prove the original object's end, omitted functions, or alignment.
 Consequently, FID-derived object placements are not mixed into the exact tables
 above until their offsets agree and the complete proposed span is reviewed.
-

@@ -702,10 +702,8 @@ GAME.EXE	0x8004d784	0x3bf84	0x30	0x30	1	function	ghidra-analysis	SetRotMatrix		G
 GAME.EXE	0x8004d7b4	0x3bfb4	0x30	0x30	1	function	ghidra-analysis	SetLightMatrix		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004d7e4	0x3bfe4	0x30	0x30	1	function	ghidra-analysis	SetColorMatrix		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004d814	0x3c014	0x20	0x20	1	function	ghidra-analysis	SetTransMatrix		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004d834	0x3c034	0x3c	0x3c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-GAME.EXE	0x8004d870	0x3c070	0x64	0x64	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-GAME.EXE	0x8004d8d4	0x3c0d4	0x38	0x38	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-GAME.EXE	0x8004d90c	0x3c10c	0x68	0x68	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
+GAME.EXE	0x8004d834	0x3c034	0xa0	0xa0	1	function	cross-overlay-sdk-lineage	PushMatrix		config/evidence/overlay_lineage.tsv;LIBGTE/MTX	branch target 0x8004d870 is an internal success path, not a function start
+GAME.EXE	0x8004d8d4	0x3c0d4	0xa0	0xa0	1	function	cross-overlay-sdk-lineage	PopMatrix		config/evidence/overlay_lineage.tsv;LIBGTE/MTX	branch target 0x8004d90c is an internal success path, not a function start
 GAME.EXE	0x8004d974	0x3c174	0x48	0x48	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 GAME.EXE	0x8004d9bc	0x3c1bc	0x48	0x48	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 GAME.EXE	0x8004da04	0x3c204	0x48	0x48	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
@@ -1386,10 +1384,8 @@ OPEN.EXE	0x8002d558	0x1bd58	0x30	0x30	1	function	ghidra-analysis	SetRotMatrix		G
 OPEN.EXE	0x8002d588	0x1bd88	0x30	0x30	1	function	ghidra-analysis	SetLightMatrix		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002d5b8	0x1bdb8	0x30	0x30	1	function	ghidra-analysis	SetColorMatrix		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002d5e8	0x1bde8	0x20	0x20	1	function	ghidra-analysis	SetTransMatrix		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002d608	0x1be08	0x3c	0x3c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002d644	0x1be44	0x64	0x64	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002d6a8	0x1bea8	0x38	0x38	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002d6e0	0x1bee0	0x68	0x68	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
+OPEN.EXE	0x8002d608	0x1be08	0xa0	0xa0	1	function	cross-overlay-sdk-lineage	PushMatrix		config/evidence/overlay_lineage.tsv;LIBGTE/MTX	branch target 0x8002d644 is an internal success path, not a function start
+OPEN.EXE	0x8002d6a8	0x1bea8	0xa0	0xa0	1	function	cross-overlay-sdk-lineage	PopMatrix		config/evidence/overlay_lineage.tsv;LIBGTE/MTX	branch target 0x8002d6e0 is an internal success path, not a function start
 OPEN.EXE	0x8002d748	0x1bf48	0x48	0x48	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x8002d790	0x1bf90	0x48	0x48	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x8002d7d8	0x1bfd8	0x48	0x48	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code

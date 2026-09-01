@@ -10,16 +10,16 @@ KFIII executable contributes to this list.
 
 ## Current result
 
-| image | Release 2.5 exact object | Release 2.5 FID-only | Psy-Q 2.60 signature | total |
-|---|---:|---:|---:|---:|
-| `PSX.EXE` | 8 | 0 | 0 | 8 |
-| `GAME.EXE` | 184 | 143 | 52 | 379 |
-| `OPEN.EXE` | 183 | 143 | 37 | 363 |
-| **total** | **375** | **286** | **89** | **750** |
+| image | Release 2.5 exact object | Release 2.5 FID-only | GTE lineage | Psy-Q 2.60 signature | total |
+|---|---:|---:|---:|---:|---:|
+| `PSX.EXE` | 8 | 0 | 0 | 0 | 8 |
+| `GAME.EXE` | 184 | 143 | 58 | 52 | 437 |
+| `OPEN.EXE` | 183 | 143 | 58 | 37 | 421 |
+| **total** | **375** | **286** | **116** | **89** | **866** |
 
-The 750 rows comprise 738 named functions and 12 anonymous internal functions
-whose containing Sony object is known. Provider counts are: 188 `LIBGPU`, 148
-`LIBGTE`, 128 `LIBCD`, 117 `LIBSND`, 91 `LIBAPI`, 62 `LIBSPU`, four startup
+The 866 rows comprise 854 named functions and 12 anonymous internal functions
+whose containing Sony object is known. Provider counts are: 264 `LIBGTE`, 188
+`LIBGPU`, 128 `LIBCD`, 117 `LIBSND`, 91 `LIBAPI`, 62 `LIBSPU`, four startup
 functions attributed to `NONE2.OBJ`, two each from `LIBSN` and `LIBETC`, and
 eight fully fixed `memcpy` copies whose exact member remains ambiguous across
 `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party library has been
@@ -78,6 +78,17 @@ Release 2.5 FID corpus is a standalone TSV pipeline and preserves library,
 module, function-boundary, object hash, function hash, and source-version
 provenance without depending on Ghidra's database format.
 
+The third evidence lane covers a version-skewed GTE block that the exact 2.5
+FIDs could only identify in patches. In each overlay, `MTX`, `SMP`, and `CMB`
+appear between independently anchored `REG` and `GEO` code. All 68 public
+functions keep the same order and size in GAME and OPEN at a constant
+`0x2022c` delta. `SMP` and `CMB` are word-identical across overlays; `MTX`
+preserves every instruction shape, with only its private-data and `printf`
+references changing. Public names follow the archived 2.5/2.60 XDEF order and
+the bodies use the corresponding GTE operations, but their sizes and some GTE
+encodings differ from pinned Release 2.5. They therefore use the explicit
+`sdk-lineage-supported` channel and do not claim an exact SDK revision.
+
 The exact object spans also establish a partial final linked order. The full
 per-image placement tables, boundaries, gaps, and contiguous chains are kept in
 [object-link-order.md](object-link-order.md).
@@ -110,6 +121,11 @@ archive-backed regression check with:
 ```sh
 kf lineage
 ```
+
+The same command verifies the three GTE object chains: 21 `MTX`, 29 `SMP`, and
+18 `CMB` function pairs. It also verifies that the apparent starts inside
+`PushMatrix` and `PopMatrix` are branch destinations in the same routine, and
+that both overlays expose the same 20-entry private matrix-stack layout.
 
 The command also asserts the corrected `lui`/`lw` prefix in both executables,
 all four direct helper callsites, the helper's ambiguous-provider FID row, and
@@ -147,7 +163,9 @@ The confidence channels are intentionally mechanical:
 - `fid-release25-ambiguous`: fully fixed function ID with one normalized name
   but multiple possible Release 2.5 archive identities;
 - `psyq260-signature`: unique later-corpus wildcard match; and
-- `psyq260-signature-ambiguous`: later signature shared by archive members.
+- `psyq260-signature-ambiguous`: later signature shared by archive members; and
+- `sdk-lineage-supported`: exact cross-overlay body/order plus archive-symbol
+  and instruction-semantic agreement, with the exact source revision unresolved.
 
 `kf-retail-validate` rejects provider rows without a structural function,
 changed sizes, duplicate addresses, invalid confidence, or missing provenance.

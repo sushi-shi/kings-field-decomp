@@ -86,27 +86,27 @@ produced:
 | Target | Objects | Functions withheld | Candidate rows applied | ELF relocations emitted | Candidate rows withheld |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | `PSX.EXE` | 9 | 0 | 24 | 33 | 2 |
-| `GAME.EXE` | 934 | 5 | 2,815 | 3,696 | 4,789 |
-| `OPEN.EXE` | 667 | 2 | 1,559 | 2,159 | 2,475 |
-| **Total** | **1,610** | **7** | **4,398** | **5,888** | **7,266** |
+| `GAME.EXE` | 932 | 5 | 2,883 | 3,803 | 7,185 |
+| `OPEN.EXE` | 665 | 2 | 1,560 | 2,161 | 3,221 |
+| **Total** | **1,606** | **7** | **4,467** | **5,997** | **10,408** |
 
 A HI16/LO16 candidate produces two ELF relocation entries, which is why the
 applied-row and emitted-relocation columns differ. Applied plus withheld rows
-equals the full 11,664-row census. The withheld reasons were 4,634
+equals the full 14,875-row census. The withheld reasons are 4,599
 non-reachable-code candidates, 2,501 sites outside current function extents,
-130 candidates owned by the seven fragmented functions, and one unsigned-low
-HI/LO pair.
+3,177 candidate BSS targets outside the loaded image, 130 candidates owned by
+the seven fragmented functions, and one unsigned-low HI/LO pair.
 
-Carving the whole image is not the same as selecting decomp work. The 750
+Carving the whole image is not the same as selecting decomp work. The 866
 functions in `functions_vendored.tsv` are excluded when objdiff projects are
 generated:
 
 | Target | Carved target/reference objects | Vendored objects excluded | Non-vendored match units |
 | --- | ---: | ---: | ---: |
 | `PSX.EXE` | 9 | 8 | 1 |
-| `GAME.EXE` | 934 | 377 | 557 |
-| `OPEN.EXE` | 667 | 361 | 306 |
-| **Total** | **1,610** | **746** | **864** |
+| `GAME.EXE` | 932 | 435 | 497 |
+| `OPEN.EXE` | 665 | 419 | 246 |
+| **Total** | **1,606** | **862** | **744** |
 
 The provider inventory has four additional fragmented functions—two per
 overlay—which have no carved object. The match-unit counts also exclude the
