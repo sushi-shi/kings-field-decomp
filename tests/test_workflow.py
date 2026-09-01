@@ -21,10 +21,9 @@ def sample_current(percent: float | None) -> Current:
     unit = Unit(
         "game_sample",
         "GAME.EXE",
-        function.va,
         "src/game/sample.c",
         "probe-gcc260-o2-g0",
-        function,
+        (function,),
     )
     return Current(
         Target("GAME.EXE", function.va, function.symbol, function.body_size),
@@ -51,7 +50,18 @@ class ManifestTests(unittest.TestCase):
             len(manifest.units),
         )
         self.assertTrue(all(unit.source_path.is_file() for unit in manifest.units))
-        self.assertTrue(all(unit.function.scope == "decomp" for unit in manifest.units))
+        self.assertTrue(all(
+            function.scope == "decomp"
+            for unit in manifest.units for function in unit.functions
+        ))
+        # Units follow the linked order inside each image, and every unit is a
+        # contiguous run of ascending claims.
+        for image in {unit.image for unit in manifest.units}:
+            starts = [unit.va for unit in manifest.units if unit.image == image]
+            self.assertEqual(starts, sorted(starts))
+        for unit in manifest.units:
+            for previous, following in zip(unit.functions, unit.functions[1:]):
+                self.assertEqual(previous.va + previous.size, following.va)
 
 
 class ProgressTests(unittest.TestCase):

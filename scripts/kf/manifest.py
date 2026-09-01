@@ -7,7 +7,8 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-from scripts.kf.delink import Function, load_catalog
+from scripts.kf.delink import Function, Module, load_catalog
+from scripts.kf.model import Claim, identity_names, scan_claims, write_bindings
 from scripts.kf.paths import REPO, RETAIL_CONFIG, UNITS_MANIFEST
 from scripts.kf.retail import IMAGE_LAYOUTS
 
@@ -38,20 +39,39 @@ C_COMPILERS = ("gcc260-native", "gcc257-native")
 
 @dataclass(frozen=True)
 class Unit:
+    """One reconstructed translation unit: a source and its claimed functions.
+
+    ``functions`` ascend by address and cover a contiguous retail run, so the
+    unit's target object is that run carved as one section. ``va`` is the
+    first function's address; the ledger still keys progress per function.
+    """
+
     unit: str
     image: str
-    va: int
     source: str
     profile: str
-    function: Function
+    functions: tuple[Function, ...]
+
+    @property
+    def va(self) -> int:
+        return self.functions[0].va
+
+    @property
+    def function(self) -> Function:
+        return self.functions[0]
 
     @property
     def image_key(self) -> str:
         return self.image.removesuffix(".EXE").lower()
 
     @property
+    def stem(self) -> str:
+        prefix = f"{self.image_key}."
+        return self.unit[len(prefix):] if self.unit.startswith(prefix) else self.unit
+
+    @property
     def object_name(self) -> str:
-        return f"{self.va:08x}_{self.function.symbol}.o"
+        return f"{self.va:08x}_{self.stem}.o"
 
     @property
     def source_path(self) -> Path:
@@ -66,8 +86,18 @@ class Manifest:
     def by_name(self) -> dict[str, Unit]:
         return {unit.unit: unit for unit in self.units}
 
+    def modules(self) -> tuple[Module, ...]:
+        return tuple(
+            Module(unit.image, unit.unit, unit.stem, tuple(f.va for f in unit.functions))
+            for unit in self.units
+        )
+
     def by_identity(self) -> dict[tuple[str, int], Unit]:
-        return {(unit.image, unit.va): unit for unit in self.units}
+        return {
+            (unit.image, function.va): unit
+            for unit in self.units
+            for function in unit.functions
+        }
 
 
 def _profile(name: str, row: object) -> Profile:
@@ -123,11 +153,70 @@ def _profile(name: str, row: object) -> Profile:
     )
 
 
+def _bind_claims(
+    path: Path,
+    unit: str,
+    image: str,
+    source: Path,
+    claims: tuple[Claim, ...],
+    catalog,
+    identities: dict[tuple[str, int], str],
+    claimed: dict[tuple[str, int], str],
+) -> tuple[Function, ...]:
+    """Validate one source's claims and return its admitted functions in order."""
+    functions: list[Function] = []
+    starts = catalog.function_starts[image]
+    for claim in claims:
+        where = f"{source}:{claim.line}"
+        function = starts.get(claim.va)
+        if function is None:
+            raise ValueError(f"{where}: ADDRESS({claim.va:#x}) is not an admitted {image} function")
+        if function.scope == "vendored":
+            raise ValueError(f"{where}: {function.symbol} is vendored library code")
+        if function.fragments != 1:
+            raise ValueError(f"{where}: {function.symbol} is fragmented")
+        expected = identities.get((image, claim.va), function.symbol)
+        if claim.name != expected:
+            raise ValueError(
+                f"{where}: ADDRESS({claim.va:#x}) defines {claim.name!r} but the identity "
+                f"inventory names it {expected!r}"
+            )
+        owner = claimed.get((image, claim.va))
+        if owner is not None:
+            raise ValueError(f"{where}: {function.symbol} is already claimed by unit {owner!r}")
+        if functions and function.va <= functions[-1].va:
+            raise ValueError(
+                f"{where}: ADDRESS({claim.va:#x}) does not ascend after "
+                f"{functions[-1].va:#x}; sources follow the linked order"
+            )
+        claimed[(image, claim.va)] = unit
+        functions.append(function)
+    # A unit owns a contiguous run: every admitted function between its first
+    # and last claim must be claimed by the same source.
+    ordered = [function for function in catalog.functions[image]
+               if functions[0].va <= function.va <= functions[-1].va]
+    for function in ordered:
+        if function.va not in {item.va for item in functions}:
+            raise ValueError(
+                f"{path}: unit {unit!r} spans {function.symbol} at {function.va:#x} "
+                f"without claiming it; split the unit or reconstruct that function"
+            )
+    for previous, following in zip(functions, functions[1:]):
+        if previous.va + previous.size != following.va:
+            raise ValueError(
+                f"{path}: unit {unit!r}: {previous.symbol} ends at "
+                f"{previous.va + previous.size:#x} but {following.symbol} starts at "
+                f"{following.va:#x}; the run is not contiguous"
+            )
+    return tuple(functions)
+
+
 def load(
     path: Path = UNITS_MANIFEST,
     *,
     config_dir: Path = RETAIL_CONFIG,
     require_sources: bool = True,
+    write_bindings_file: bool = False,
 ) -> Manifest:
     try:
         with path.open("rb") as stream:
@@ -145,15 +234,21 @@ def load(
         raise ValueError(f"{path}: [[unit]] entries must be an array of tables")
 
     catalog = load_catalog(config_dir)
+    identities = identity_names(config_dir)
     units: list[Unit] = []
     seen_names: set[str] = set()
-    seen_identities: set[tuple[str, int]] = set()
+    claimed: dict[tuple[str, int], str] = {}
+    binding_rows: list[dict[str, object]] = []
     for index, row in enumerate(raw_units, 1):
         if not isinstance(row, dict):
             raise ValueError(f"{path}: unit #{index} is not a table")
-        required = {"unit", "image", "va", "source", "profile"}
+        required = {"unit", "image", "source", "profile"}
         missing = required - set(row)
         extra = set(row) - required
+        if "va" in extra:
+            raise ValueError(
+                f"{path}: unit #{index} carries `va`; addresses live only in ADDRESS() claims"
+            )
         if missing or extra:
             raise ValueError(
                 f"{path}: unit #{index} missing={sorted(missing)} unknown={sorted(extra)}"
@@ -167,18 +262,6 @@ def load(
         image = str(row["image"]).upper()
         if image not in IMAGE_LAYOUTS:
             raise ValueError(f"{path}: unit {name!r} has unknown image {image!r}")
-        va = int(row["va"])
-        identity = image, va
-        if identity in seen_identities:
-            raise ValueError(f"{path}: duplicate target {image}:{va:#x}")
-        seen_identities.add(identity)
-        function = catalog.function_starts[image].get(va)
-        if function is None:
-            raise ValueError(f"{path}: unit {name!r} target {image}:{va:#x} is not admitted")
-        if function.scope == "vendored":
-            raise ValueError(f"{path}: unit {name!r} targets vendored function {function.symbol}")
-        if function.fragments != 1:
-            raise ValueError(f"{path}: unit {name!r} targets a fragmented function")
         profile_name = str(row["profile"])
         if profile_name not in profiles:
             raise ValueError(f"{path}: unit {name!r} references unknown profile {profile_name!r}")
@@ -186,12 +269,35 @@ def load(
         if source.is_absolute() or ".." in source.parts:
             raise ValueError(f"{path}: unit {name!r} source must be repo-relative")
         source_path = REPO / source
-        if require_sources and not source_path.is_file():
-            raise ValueError(f"{path}: unit {name!r} source is missing: {source}")
         profile = profiles[profile_name]
         if source.suffix.lower() not in LANGUAGE_SUFFIXES[profile.language]:
             raise ValueError(
                 f"{path}: unit {name!r} source suffix does not match {profile.language}"
             )
-        units.append(Unit(name, image, va, source.as_posix(), profile_name, function))
+        if not source_path.is_file():
+            if require_sources:
+                raise ValueError(f"{path}: unit {name!r} source is missing: {source}")
+            continue
+        claims = scan_claims(source_path)
+        if not claims:
+            raise ValueError(f"{path}: unit {name!r} source has no ADDRESS() claim: {source}")
+        functions = _bind_claims(path, name, image, source, claims, catalog, identities, claimed)
+        if units and units[-1].image == image and units[-1].va >= functions[0].va:
+            raise ValueError(
+                f"{path}: unit {name!r} at {functions[0].va:#x} is listed after "
+                f"{units[-1].unit!r} at {units[-1].va:#x}; units follow the linked order"
+            )
+        units.append(Unit(name, image, source.as_posix(), profile_name, functions))
+        for ordinal, (claim, function) in enumerate(zip(claims, functions)):
+            binding_rows.append({
+                "image": image,
+                "va": f"{function.va:#x}",
+                "name": function.symbol,
+                "unit": name,
+                "source": source.as_posix(),
+                "line": claim.line,
+                "ordinal": ordinal,
+            })
+    if write_bindings_file:
+        write_bindings(binding_rows)
     return Manifest(profiles, tuple(units))

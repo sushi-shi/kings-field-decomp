@@ -11,8 +11,10 @@ from scripts.kf.delink import (
     Catalog,
     DataObject,
     Function,
+    Module,
     _apply_relocation,
     _competes_for_site,
+    _module_object,
     decode_hi_lo_target,
     decode_mips26_target,
     encode_hi_lo_addend,
@@ -285,15 +287,18 @@ class ObjdiffProjectTests(unittest.TestCase):
             object_dir.mkdir(parents=True)
             object_name = "80010000_test.o"
             vendored_name = "80010004_library_test.o"
+            module_name = "80010000_unit.o"
             object_data = write_mips_elf(b"\0\0\0\0", "test", 4)
             (object_dir / object_name).write_bytes(object_data)
             (object_dir / vendored_name).write_bytes(
                 write_mips_elf(b"\0\0\0\0", "library_test", 4)
             )
+            (target_dir / "modules").mkdir()
+            (target_dir / "modules" / module_name).write_bytes(object_data)
             write_tsv(
                 target_dir / "objects.tsv",
                 (
-                    "image", "va", "size", "body_size", "name", "scope",
+                    "image", "va", "size", "body_size", "name", "unit", "scope",
                     "provider", "library", "object", "relocations", "confidence",
                     "provenance",
                 ),
@@ -303,7 +308,23 @@ class ObjdiffProjectTests(unittest.TestCase):
                         "va": "0x80010000",
                         "size": "0x4",
                         "body_size": "0x4",
+                        "name": "unit",
+                        "unit": "game.unit",
+                        "scope": "module",
+                        "provider": "",
+                        "library": "",
+                        "object": f"modules/{module_name}",
+                        "relocations": 0,
+                        "confidence": "test",
+                        "provenance": "config/units.toml",
+                    },
+                    {
+                        "image": "GAME.EXE",
+                        "va": "0x80010000",
+                        "size": "0x4",
+                        "body_size": "0x4",
                         "name": "test",
+                        "unit": "",
                         "scope": "decomp",
                         "provider": "",
                         "library": "",
@@ -318,6 +339,7 @@ class ObjdiffProjectTests(unittest.TestCase):
                         "size": "0x4",
                         "body_size": "0x4",
                         "name": "library_test",
+                        "unit": "",
                         "scope": "vendored",
                         "provider": "Sony",
                         "library": "LIBTEST",
@@ -331,7 +353,7 @@ class ObjdiffProjectTests(unittest.TestCase):
             )
             output = root / "objdiff"
             self.assertEqual(
-                _target_names(root / "delink", "GAME.EXE"), {object_name}
+                _target_names(root / "delink", "GAME.EXE"), {object_name, module_name}
             )
             results = generate_projects(
                 root / "delink", output, ("GAME.EXE",)
@@ -345,18 +367,18 @@ class ObjdiffProjectTests(unittest.TestCase):
             excluded = (output / "game/vendored_excluded.tsv").read_text()
             self.assertIn("library_test", excluded)
 
-            base = output / "game/base" / object_name
+            base = output / "game/base" / module_name
             base.write_bytes(object_data)
             results = generate_projects(
                 root / "delink", output, ("GAME.EXE",)
             )
             self.assertEqual(results["GAME.EXE"][1:], (1, 1, 1))
             project = json.loads((output / "game/objdiff.json").read_text())
-            self.assertEqual(project["units"][0]["base_path"], f"./base/{object_name}")
-
-
-if __name__ == "__main__":
-    unittest.main()
+            self.assertEqual(project["units"][0]["name"], "game.unit")
+            self.assertEqual(project["units"][0]["base_path"], f"./base/{module_name}")
+            self.assertEqual(
+                project["units"][0]["target_path"], f"../../delink/game/modules/{module_name}"
+            )
 
 
 FUNCTION_COLUMNS = (
@@ -452,3 +474,36 @@ class CatalogNamingTests(unittest.TestCase):
         starts = catalog.function_starts["GAME.EXE"]
         self.assertEqual(starts[0x80050000].symbol, "memset_80050000")
         self.assertEqual(starts[0x80050100].symbol, "memset_80050100")
+
+
+class ModuleObjectTests(unittest.TestCase):
+    def test_module_concatenates_functions_and_rebases_section_jumps(self) -> None:
+        first = Function("GAME.EXE", 0x80010000, 8, 8, 1, "first", "test", "test")
+        second = Function("GAME.EXE", 0x80010008, 12, 8, 1, "second", "test", "test")
+        # second: `j 0x80010008` (own start, section-relative addend 0) + nop + pad
+        second_text = struct.pack("<3I", 0x08000000 | (0x80010008 >> 2), 0, 0)
+        carved = {
+            0x80010000: (struct.pack("<2I", 0x03E00008, 0), []),
+            0x80010008: (
+                second_text,
+                [MipsRelocation(0, "R_MIPS_26", ".text")],
+            ),
+        }
+        # the delinker stores the section-relative addend inside the word
+        rebased = bytearray(second_text)
+        rebased[0:4] = struct.pack("<I", encode_mips26_addend(0x08000000, 0))
+        carved[0x80010008] = (bytes(rebased), carved[0x80010008][1])
+        module = Module("GAME.EXE", "game.pair", "pair", (0x80010000, 0x80010008))
+        data, relocations, size, body = _module_object(
+            module, {first.va: first, second.va: second}, carved
+        )
+        self.assertEqual(size, 20)
+        self.assertEqual(body, 16)
+        self.assertEqual(relocations, [MipsRelocation(8, "R_MIPS_26", ".text")])
+        sections = elf_sections(data)
+        text = data[sections[".text"][4]:sections[".text"][4] + sections[".text"][5]]
+        word = struct.unpack_from("<I", text, 8)[0]
+        self.assertEqual((word & 0x03FFFFFF) << 2, 8)  # rebased to the module offset
+
+if __name__ == "__main__":
+    unittest.main()

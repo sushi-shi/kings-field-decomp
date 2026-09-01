@@ -29,502 +29,226 @@ small_data = 0
 aspsx_version = "1.07"
 cc1_flags = []
 
-# Add one [[unit]] only after its source exists. Initial units remain one
-# contiguous, non-vendored function each; TU grouping needs separate evidence.
-
-[[unit]]
-unit = "game.func_80014fa8"
-image = "GAME.EXE"
-va = 0x80014fa8
-source = "src/game/func_80014fa8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002cec8"
-image = "GAME.EXE"
-va = 0x8002cec8
-source = "src/game/func_8002cec8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800342e4"
-image = "GAME.EXE"
-va = 0x800342e4
-source = "src/game/func_800342e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8003ee4c"
-image = "GAME.EXE"
-va = 0x8003ee4c
-source = "src/game/func_8003ee4c.c"
-profile = "probe-gcc257-o2-g0"
+# Add one 
 
 [[unit]]
 unit = "game.func_80014268"
 image = "GAME.EXE"
-va = 0x80014268
 source = "src/game/func_80014268.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80014f40"
+unit = "game.game"
 image = "GAME.EXE"
-va = 0x80014f40
-source = "src/game/func_80014f40.c"
+source = "src/game/game.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80014f6c"
+unit = "game.matrix_rotation"
 image = "GAME.EXE"
-va = 0x80014f6c
-source = "src/game/func_80014f6c.c"
+source = "src/game/matrix_rotation.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80015128"
+unit = "game.vector_math"
 image = "GAME.EXE"
-va = 0x80015128
-source = "src/game/func_80015128.c"
+source = "src/game/vector_math.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.fixed_vector2"
+image = "GAME.EXE"
+source = "src/game/fixed_vector2.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_weapon"
+image = "GAME.EXE"
+source = "src/game/player_weapon.c"
+profile = "probe-gcc260-o2-g0"
+
+[[unit]]
+unit = "game.asset_aux_block"
+image = "GAME.EXE"
+source = "src/game/asset_aux_block.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_8001564c"
+image = "GAME.EXE"
+source = "src/game/player_8001564c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_800167e4"
+image = "GAME.EXE"
+source = "src/game/player_800167e4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.func_8001b3e4"
 image = "GAME.EXE"
-va = 0x8001b3e4
 source = "src/game/func_8001b3e4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.func_8001fae4"
 image = "GAME.EXE"
-va = 0x8001fae4
 source = "src/game/func_8001fae4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8002cc54"
+unit = "game.matrix"
 image = "GAME.EXE"
-va = 0x8002cc54
-source = "src/game/func_8002cc54.c"
+source = "src/game/matrix.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80031784"
+unit = "game.asset_registry"
 image = "GAME.EXE"
-va = 0x80031784
-source = "src/game/func_80031784.c"
+source = "src/game/asset_registry.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80033de8"
+unit = "game.pool_80020978"
 image = "GAME.EXE"
-va = 0x80033de8
-source = "src/game/func_80033de8.c"
+source = "src/game/pool_80020978.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.pool_80020b04"
+image = "GAME.EXE"
+source = "src/game/pool_80020b04.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.primitive_buffer"
+image = "GAME.EXE"
+source = "src/game/primitive_buffer.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.game_state"
+image = "GAME.EXE"
+source = "src/game/game_state.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.memory_card_8002b2d4"
+image = "GAME.EXE"
+source = "src/game/memory_card_8002b2d4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.memory_card_8002b480"
+image = "GAME.EXE"
+source = "src/game/memory_card_8002b480.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.save_workspace"
+image = "GAME.EXE"
+source = "src/game/save_workspace.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.actor_pool_8002ca78"
+image = "GAME.EXE"
+source = "src/game/actor_pool_8002ca78.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.actor"
+image = "GAME.EXE"
+source = "src/game/actor.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.actor_pool_8002ce88"
+image = "GAME.EXE"
+source = "src/game/actor_pool_8002ce88.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.actor_definitions"
+image = "GAME.EXE"
+source = "src/game/actor_definitions.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_object_definitions"
+image = "GAME.EXE"
+source = "src/game/map_object_definitions.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_object"
+image = "GAME.EXE"
+source = "src/game/map_object.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.audio_80032c78"
+image = "GAME.EXE"
+source = "src/game/audio_80032c78.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.audio_80032fb8"
+image = "GAME.EXE"
+source = "src/game/audio_80032fb8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.angle_8003329c"
+image = "GAME.EXE"
+source = "src/game/angle_8003329c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_event"
+image = "GAME.EXE"
+source = "src/game/map_event.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.lighting"
+image = "GAME.EXE"
+source = "src/game/lighting.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_800342e4"
+image = "GAME.EXE"
+source = "src/game/func_800342e4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.func_800346a0"
 image = "GAME.EXE"
-va = 0x800346a0
 source = "src/game/func_800346a0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.func_80036e30"
 image = "GAME.EXE"
-va = 0x80036e30
 source = "src/game/func_80036e30.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8003ee54"
+unit = "game.func_8003ee4c"
 image = "GAME.EXE"
-va = 0x8003ee54
-source = "src/game/func_8003ee54.c"
+source = "src/game/func_8003ee4c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.func_80044154"
 image = "GAME.EXE"
-va = 0x80044154
 source = "src/game/func_80044154.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.func_80045f7c"
 image = "GAME.EXE"
-va = 0x80045f7c
 source = "src/game/func_80045f7c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80045f98"
-image = "GAME.EXE"
-va = 0x80045f98
-source = "src/game/func_80045f98.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014e08"
-image = "GAME.EXE"
-va = 0x80014e08
-source = "src/game/func_80014e08.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014e48"
-image = "GAME.EXE"
-va = 0x80014e48
-source = "src/game/func_80014e48.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014ea4"
-image = "GAME.EXE"
-va = 0x80014ea4
-source = "src/game/func_80014ea4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014ee4"
-image = "GAME.EXE"
-va = 0x80014ee4
-source = "src/game/func_80014ee4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80015068"
-image = "GAME.EXE"
-va = 0x80015068
-source = "src/game/func_80015068.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800150a8"
-image = "GAME.EXE"
-va = 0x800150a8
-source = "src/game/func_800150a8.c"
-profile = "probe-gcc260-o2-g0"
-
-[[unit]]
-unit = "game.func_800150fc"
-image = "GAME.EXE"
-va = 0x800150fc
-source = "src/game/func_800150fc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80020364"
-image = "GAME.EXE"
-va = 0x80020364
-source = "src/game/func_80020364.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80020390"
-image = "GAME.EXE"
-va = 0x80020390
-source = "src/game/func_80020390.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800203bc"
-image = "GAME.EXE"
-va = 0x800203bc
-source = "src/game/func_800203bc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80020400"
-image = "GAME.EXE"
-va = 0x80020400
-source = "src/game/func_80020400.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002055c"
-image = "GAME.EXE"
-va = 0x8002055c
-source = "src/game/func_8002055c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002059c"
-image = "GAME.EXE"
-va = 0x8002059c
-source = "src/game/func_8002059c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80020978"
-image = "GAME.EXE"
-va = 0x80020978
-source = "src/game/func_80020978.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800209a8"
-image = "GAME.EXE"
-va = 0x800209a8
-source = "src/game/func_800209a8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800209e4"
-image = "GAME.EXE"
-va = 0x800209e4
-source = "src/game/func_800209e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80020b04"
-image = "GAME.EXE"
-va = 0x80020b04
-source = "src/game/func_80020b04.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002accc"
-image = "GAME.EXE"
-va = 0x8002accc
-source = "src/game/func_8002accc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002ad1c"
-image = "GAME.EXE"
-va = 0x8002ad1c
-source = "src/game/func_8002ad1c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002af0c"
-image = "GAME.EXE"
-va = 0x8002af0c
-source = "src/game/func_8002af0c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002b2d4"
-image = "GAME.EXE"
-va = 0x8002b2d4
-source = "src/game/func_8002b2d4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002b334"
-image = "GAME.EXE"
-va = 0x8002b334
-source = "src/game/func_8002b334.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002b36c"
-image = "GAME.EXE"
-va = 0x8002b36c
-source = "src/game/func_8002b36c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002b480"
-image = "GAME.EXE"
-va = 0x8002b480
-source = "src/game/func_8002b480.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80032c78"
-image = "GAME.EXE"
-va = 0x80032c78
-source = "src/game/func_80032c78.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80032cb0"
-image = "GAME.EXE"
-va = 0x80032cb0
-source = "src/game/func_80032cb0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80032fb8"
-image = "GAME.EXE"
-va = 0x80032fb8
-source = "src/game/func_80032fb8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80032fe8"
-image = "GAME.EXE"
-va = 0x80032fe8
-source = "src/game/func_80032fe8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800330ac"
-image = "GAME.EXE"
-va = 0x800330ac
-source = "src/game/func_800330ac.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8003329c"
-image = "GAME.EXE"
-va = 0x8003329c
-source = "src/game/func_8003329c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80033014"
-image = "GAME.EXE"
-va = 0x80033014
-source = "src/game/func_80033014.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002c2e4"
-image = "GAME.EXE"
-va = 0x8002c2e4
-source = "src/game/func_8002c2e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8003379c"
-image = "GAME.EXE"
-va = 0x8003379c
-source = "src/game/func_8003379c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800149d4"
-image = "GAME.EXE"
-va = 0x800149d4
-source = "src/game/func_800149d4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80030a6c"
-image = "GAME.EXE"
-va = 0x80030a6c
-source = "src/game/func_80030a6c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80030fdc"
-image = "GAME.EXE"
-va = 0x80030fdc
-source = "src/game/func_80030fdc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8001499c"
-image = "GAME.EXE"
-va = 0x8001499c
-source = "src/game/func_8001499c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002ca78"
-image = "GAME.EXE"
-va = 0x8002ca78
-source = "src/game/func_8002ca78.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002ce88"
-image = "GAME.EXE"
-va = 0x8002ce88
-source = "src/game/func_8002ce88.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014b2c"
-image = "GAME.EXE"
-va = 0x80014b2c
-source = "src/game/func_80014b2c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800156bc"
-image = "GAME.EXE"
-va = 0x800156bc
-source = "src/game/func_800156bc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8001564c"
-image = "GAME.EXE"
-va = 0x8001564c
-source = "src/game/func_8001564c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800167e4"
-image = "GAME.EXE"
-va = 0x800167e4
-source = "src/game/func_800167e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8003303c"
-image = "GAME.EXE"
-va = 0x8003303c
-source = "src/game/func_8003303c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014b7c"
-image = "GAME.EXE"
-va = 0x80014b7c
-source = "src/game/func_80014b7c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014bec"
-image = "GAME.EXE"
-va = 0x80014bec
-source = "src/game/func_80014bec.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014c5c"
-image = "GAME.EXE"
-va = 0x80014c5c
-source = "src/game/func_80014c5c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80014ccc"
-image = "GAME.EXE"
-va = 0x80014ccc
-source = "src/game/func_80014ccc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800202fc"
-image = "GAME.EXE"
-va = 0x800202fc
-source = "src/game/func_800202fc.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80033d80"
-image = "GAME.EXE"
-va = 0x80033d80
-source = "src/game/func_80033d80.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800149f4"
-image = "GAME.EXE"
-va = 0x800149f4
-source = "src/game/func_800149f4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8002c27c"
-image = "GAME.EXE"
-va = 0x8002c27c
-source = "src/game/func_8002c27c.c"
 profile = "probe-gcc257-o2-g0"

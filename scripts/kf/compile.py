@@ -84,7 +84,7 @@ def _target_names(delink_dir: Path, image: str) -> set[str]:
     return {
         Path(row["object"]).name
         for row in rows
-        if row.get("scope", "decomp") == "decomp"
+        if row.get("scope", "decomp") in {"decomp", "module"}
     }
 
 

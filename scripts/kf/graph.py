@@ -247,7 +247,12 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
             delink_stamp,
             "delink",
             inputs=[executable],
-            implicit=config_inputs + scripts,
+            implicit=[
+                *config_inputs,
+                *scripts,
+                str(UNITS_MANIFEST.relative_to(REPO)),
+                *[unit.source for unit in units],
+            ],
             variables={"image": image},
         )
         for unit in units:
@@ -340,7 +345,9 @@ def _directory_digest(path: Path) -> str:
 
 
 def edge_delink(image: str, retail_dir: Path, stamp: Path) -> int:
-    delink(retail_dir, RETAIL_CONFIG, BUILD / "delink", (image,), (), "safe")
+    manifest = load_manifest(write_bindings_file=True)
+    modules = tuple(module for module in manifest.modules() if module.image == image)
+    delink(retail_dir, RETAIL_CONFIG, BUILD / "delink", (image,), (), "safe", modules)
     _write_if_changed(stamp, _directory_digest(stamp.parent))
     return 0
 

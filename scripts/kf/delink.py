@@ -17,7 +17,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
-from scripts.kf.mips_elf import MipsRelocation, SECTION_SYMBOL, write_mips_elf
+from scripts.kf.mips_elf import (
+    STT_FUNC, DefinedSymbol, MipsRelocation, SECTION_SYMBOL, write_mips_elf,
+)
 from scripts.kf.relocations import (
     decode_hi_lo_target,
     decode_mips26_target,
@@ -50,6 +52,7 @@ OBJECT_FIELDS = (
     "size",
     "body_size",
     "name",
+    "unit",
     "scope",
     "provider",
     "library",
@@ -205,18 +208,37 @@ def _game_call_targets(
     return targets
 
 
+def _identity_names(config_dir: Path, filename: str) -> dict[tuple[str, int], str]:
+    """Curated source-level names keyed by exact (image, va)."""
+    path = config_dir / filename
+    if not path.is_file():
+        return {}
+    _, rows = read_tsv(path)
+    return {
+        (row["image"], parse_int(row["va"])): row["name"]
+        for row in rows
+        if row.get("name")
+    }
+
+
 def load_catalog(config_dir: Path) -> Catalog:
     vendored = _vendored_functions(config_dir)
     _, function_rows = read_tsv(config_dir / "functions.tsv")
+    # Reconstructed source spells labelled functions and data by their curated
+    # identities, so target objects carry the same symbols. Address-derived
+    # identities remain the explicit unresolved spelling.
+    function_identities = _identity_names(config_dir, "function_identities.tsv")
+    data_identities = _identity_names(config_dir, "data_identities.tsv")
 
     preferred: dict[tuple[str, int], str] = {}
     for row in function_rows:
         key = row["image"], parse_int(row["va"])
         provider_row = vendored.get(key, {})
-        preferred[key] = sanitize_symbol(
-            row["name"] or provider_row.get("name", ""),
-            f"func_{key[1]:08x}",
-        )
+        if key in vendored:
+            name = row["name"] or provider_row.get("name", "")
+        else:
+            name = function_identities.get(key) or row["name"]
+        preferred[key] = sanitize_symbol(name, f"func_{key[1]:08x}")
     duplicate_names = {
         image: Counter(
             name for (candidate_image, _), name in preferred.items()
@@ -271,7 +293,10 @@ def load_catalog(config_dir: Path) -> Catalog:
             image=row["image"],
             va=va,
             size=parse_int(row["size"]),
-            symbol=sanitize_symbol(row["name"], f"DAT_{va:08x}"),
+            symbol=sanitize_symbol(
+                data_identities.get((row["image"], va)) or row["name"],
+                f"DAT_{va:08x}",
+            ),
         ))
     identity_path = config_dir / "data_identities.tsv"
     identity_rows = read_tsv(identity_path)[1] if identity_path.is_file() else []
@@ -327,7 +352,17 @@ def _resolve_symbol(
         symbol = sanitize_symbol(target_name, f"DAT_{target:08x}")
         address_name = re.fullmatch(r"DAT_([0-9A-Fa-f]{8})", symbol)
         if address_name is not None:
-            return symbol, target - int(address_name.group(1), 16)
+            # An address-derived owner spelling names the datum, not its
+            # symbol: a curated identity at that address wins so the target
+            # carries the same name reconstructed source uses.
+            owner_va = int(address_name.group(1), 16)
+            owner = next(
+                (item for item in catalog.data[function.image] if item.va == owner_va),
+                None,
+            )
+            if owner is not None:
+                return owner.symbol, target - owner_va
+            return symbol, target - owner_va
         target_data = _containing_data(catalog, function.image, target)
         if target_data is not None and target_data.symbol == symbol:
             return symbol, target - target_data.va
@@ -440,6 +475,88 @@ def _write_bytes_if_changed(path: Path, content: bytes) -> None:
     temporary.replace(path)
 
 
+@dataclass(frozen=True)
+class Module:
+    """A manifested unit: one contiguous run of admitted functions."""
+
+    image: str
+    unit: str
+    stem: str
+    vas: tuple[int, ...]
+
+    @property
+    def object_name(self) -> str:
+        return f"{self.vas[0]:08x}_{self.stem}.o"
+
+
+def _get_word(blob: bytes | bytearray, offset: int) -> int:
+    return struct.unpack_from("<I", blob, offset)[0]
+
+
+def _rebase_section_relocations(
+    blob: bytearray, relocations: list[MipsRelocation], offset: int
+) -> None:
+    """Add ``offset`` to every implicit addend that is relative to ``.text``."""
+    pending_hi: MipsRelocation | None = None
+    for item in relocations:
+        if item.symbol != SECTION_SYMBOL:
+            continue
+        if item.kind == "R_MIPS_26":
+            word = _get_word(blob, item.offset)
+            addend = (word & 0x03FFFFFF) << 2
+            _put_word(blob, item.offset, encode_mips26_addend(word, addend + offset))
+        elif item.kind == "R_MIPS_HI16":
+            pending_hi = item
+        elif item.kind == "R_MIPS_LO16" and pending_hi is not None:
+            hi_word = _get_word(blob, pending_hi.offset)
+            lo_word = _get_word(blob, item.offset)
+            addend = decode_hi_lo_target(hi_word, lo_word)
+            new_hi, new_lo = encode_hi_lo_addend(hi_word, lo_word, addend + offset)
+            _put_word(blob, pending_hi.offset, new_hi)
+            _put_word(blob, item.offset, new_lo)
+            pending_hi = None
+
+
+def _module_object(
+    module: Module,
+    functions: dict[int, Function],
+    carved: dict[int, tuple[bytes, list[MipsRelocation]]],
+) -> tuple[bytes, list[MipsRelocation], int, int]:
+    """Concatenate a module's carved functions into one .text section."""
+    text = bytearray()
+    relocations: list[MipsRelocation] = []
+    symbols: list[DefinedSymbol] = []
+    body_total = 0
+    for va in module.vas:
+        function = functions[va]
+        if function.va != module.vas[0] + len(text):
+            raise ValueError(
+                f"module {module.unit}: {function.symbol} at {va:#x} is not contiguous "
+                f"with the preceding function"
+            )
+        blob, function_relocations = carved[va]
+        offset = len(text)
+        rebased = bytearray(blob)
+        # Section-relative addends were written relative to the function's own
+        # object; inside the module section they are relative to the run start.
+        if offset:
+            _rebase_section_relocations(rebased, function_relocations, offset)
+        relocations.extend(
+            MipsRelocation(item.offset + offset, item.kind, item.symbol)
+            for item in function_relocations
+        )
+        symbols.append(DefinedSymbol(function.symbol, offset, function.body_size, STT_FUNC))
+        text += rebased
+        body_total += function.body_size
+    first = symbols[0]
+    return (
+        write_mips_elf(bytes(text), first.name, first.size, relocations, symbols[1:]),
+        relocations,
+        len(text),
+        body_total,
+    )
+
+
 def delink(
     exe_dir: Path,
     config_dir: Path,
@@ -447,9 +564,13 @@ def delink(
     images: Iterable[str] = IMAGE_LAYOUTS,
     vas: Iterable[int] = (),
     policy: str = "safe",
+    modules: Iterable[Module] = (),
 ) -> dict[str, dict[str, int]]:
     selected_images = tuple(dict.fromkeys(images))
     selected_vas = set(vas)
+    modules_by_image: dict[str, list[Module]] = defaultdict(list)
+    for module in modules:
+        modules_by_image[module.image].append(module)
     catalog = load_catalog(config_dir)
     _, relocation_rows = read_tsv(config_dir / "relocs.tsv")
     rows_by_image: dict[str, list[dict[str, str]]] = defaultdict(list)
@@ -488,6 +609,7 @@ def delink(
         object_rows: list[dict[str, object]] = []
         used_rows: list[dict[str, object]] = []
         withheld_functions: list[dict[str, object]] = []
+        carved: dict[int, tuple[bytes, list[MipsRelocation]]] = {}
         for function in functions:
             if function.fragments != 1:
                 withheld_functions.append({
@@ -537,6 +659,7 @@ def delink(
 
             object_name = f"{function.va:08x}_{function.symbol}.o"
             object_relative = Path("objects") / object_name
+            carved[function.va] = (bytes(blob), function_relocations)
             _write_bytes_if_changed(object_output / object_name, write_mips_elf(
                 bytes(blob),
                 function.symbol,
@@ -549,6 +672,7 @@ def delink(
                 "size": format_size(function.size),
                 "body_size": format_size(function.body_size),
                 "name": function.symbol,
+                "unit": "",
                 "scope": function.scope,
                 "provider": function.provider,
                 "library": function.library,
@@ -562,6 +686,43 @@ def delink(
         for old_object in object_output.glob("*.o"):
             if old_object.name not in live_objects:
                 old_object.unlink()
+
+        # Manifested units are carved again as one contiguous section each, so
+        # objdiff compares a translation unit against the retail run it claims.
+        module_output = image_output / "modules"
+        module_output.mkdir(parents=True, exist_ok=True)
+        live_modules: set[str] = set()
+        for module in modules_by_image[image]:
+            if selected_vas and not set(module.vas) <= selected_vas:
+                continue
+            if any(va not in carved for va in module.vas):
+                missing = [f"{va:#x}" for va in module.vas if va not in carved]
+                raise ValueError(f"module {module.unit}: functions not carved: {missing}")
+            data, module_relocations, size, body_total = _module_object(
+                module, catalog.function_starts[image], carved
+            )
+            _write_bytes_if_changed(module_output / module.object_name, data)
+            live_modules.add(module.object_name)
+            first = catalog.function_starts[image][module.vas[0]]
+            object_rows.append({
+                "image": image,
+                "va": format_hex(module.vas[0]),
+                "size": format_size(size),
+                "body_size": format_size(body_total),
+                "name": module.stem,
+                "unit": module.unit,
+                "scope": "module",
+                "provider": "",
+                "library": "",
+                "object": (Path("modules") / module.object_name).as_posix(),
+                "relocations": len(module_relocations),
+                "confidence": first.confidence,
+                "provenance": "config/units.toml",
+            })
+        if not selected_vas:
+            for old_object in module_output.glob("*.o"):
+                if old_object.name not in live_modules:
+                    old_object.unlink()
 
         write_tsv(
             image_output / "objects.tsv",
@@ -619,7 +780,18 @@ def main() -> int:
         choices=("safe", "reviewed", "all"),
         default="safe",
     )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        help="unit manifest whose modules are carved as well (default: config/units.toml)",
+    )
     args = parser.parse_args()
+    modules: tuple[Module, ...] = ()
+    manifest_path = args.manifest or Path("config/units.toml")
+    if manifest_path.is_file():
+        from scripts.kf.manifest import load as load_manifest
+
+        modules = load_manifest(manifest_path, config_dir=args.config_dir).modules()
     results = delink(
         args.exe_dir,
         args.config_dir,
@@ -627,6 +799,7 @@ def main() -> int:
         args.image or IMAGE_LAYOUTS,
         args.va,
         args.policy,
+        modules,
     )
     for image, counts in results.items():
         print(image + ": " + ", ".join(

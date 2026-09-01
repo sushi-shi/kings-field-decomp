@@ -57,8 +57,15 @@
   falsification, when an independently evidenced source fact moved code toward
   retail. The final kept source must be humane and must not regress a banked
   function.
-- Keep one function per unit until original TU grouping is independently
-  supported. Contiguous linking is not sufficient TU evidence.
+- A unit source claims each function with `ADDRESS(0xVA)` (see
+  `include/kf/address.h`), spells labelled functions and data by their curated
+  identities, lists claims in ascending address order, and owns the whole
+  contiguous run between its first and last claim. Combine functions into
+  such modules as gaps are filled; module names stay WIP because contiguity
+  alone does not prove the original file boundary.
+- `config/units.toml` lists units in linked (ascending address) order per
+  image and carries no addresses; a function's address lives only in its
+  claim.
 
 ## Game code versus vendored code
 
@@ -125,9 +132,10 @@
 - `config/retail/{functions,data,relocs}.tsv` are manually curated WIP inputs.
   Seed/audit outputs under `build/` are proposals, never automatic truth.
 - Source-level function names/signatures and global/static identities live in
-  `function_identities.tsv` and `data_identities.tsv`. Preserve address-derived
-  unresolved names until asm, xrefs, calls, strings, or headers support a
-  semantic replacement; methods use `owner_action`.
+  `function_identities.tsv` and `data_identities.tsv`; the delinker names
+  target symbols from them, so a source must use the identity spelling.
+  Preserve address-derived unresolved names until asm, xrefs, calls, strings,
+  or headers support a semantic replacement; methods use `owner_action`.
 - Run `kf inventory propose` for MIPS/xref dossiers and `kf inventory ghidra`
   for decompiler candidates. Neither generated report may overwrite a curated
   identity TSV.

@@ -5,18 +5,40 @@ an explicit unit manifest, a generated Ninja graph, content-aware artifacts,
 and a manual high-water ledger. It does not import Gruntz's PE/PDB model,
 COFF normalization, source-label extraction, Windows linker, or C++ gates.
 
-## Unit manifest
+## Unit manifest and ADDRESS() claims
 
 `config/units.toml` is the only source-enrolment mechanism. A unit has a stable
-ID, one of the three canonical executable names, an admitted retail function
-VA, a repo-relative source, and a named complete profile. Duplicate IDs or
-`(image, va)` identities, missing sources, fragmented functions, and Sony/Psy-Q
-vendored functions are errors.
+ID, one of the three canonical executable names, a repo-relative source, and a
+named complete profile. It carries no address: every function a source
+reconstructs claims its retail address in the source itself,
 
-The first topology remains one contiguous function per unit. This is a
-calibration topology, not a claim about original translation units. Grouping
-functions and data must wait for ownership evidence and a target-object model
-that can represent it.
+```c
+#include <kf/address.h>
+
+ADDRESS(0x8001499c)
+void game_shutdown(void)
+```
+
+`ADDRESS()` expands to nothing; `scripts/kf/model.py` reads the claims and the
+manifest loader binds them (`build/gen/bindings.tsv` records the result). The
+binding rules are structural, in the spirit of Gruntz's `RVA()`:
+
+- a claim must name an admitted, non-vendored, non-fragmented function of the
+  unit's image, spelled exactly as `function_identities.tsv` names it, so a
+  labelled function is never called by an address-derived name in source;
+- claims inside one source ascend by address, and a unit owns every admitted
+  function between its first and last claim, so a source file is a contiguous
+  run of the linked image (address-order incrementalism);
+- units are listed in ascending address order within each image, so the
+  manifest itself reads as the recovered link order; and
+- an address is claimed by at most one unit.
+
+A unit with several claims is a module: a translation-unit hypothesis whose
+target object is the whole run carved as one section. Address proximity alone
+does not prove the original file boundary, so module names stay WIP (a class
+name, with an address suffix while a class is split by unreconstructed gaps)
+and modules merge as gaps are filled. Data ownership is not yet part of the
+model.
 
 Profile names are deliberately non-attributive. `probe-gcc260-o2-g0` keeps
 the original GCC 2.6.0/maspsx route reproducible; `probe-gcc257-o2-g0` is the
@@ -38,15 +60,18 @@ Addresses and objdiff reports never cross image boundaries.
 
 The graph tracks retail executables, curated TSVs, source files, transitive
 repo-local headers, manifest profiles, analysis scripts, and a generated
-toolchain identity. Target objects, reconstruction objects, TSVs, projects,
+toolchain identity. The delink edge also depends on the manifest and unit
+sources because module target objects are carved from their claims. Target objects, reconstruction objects, TSVs, projects,
 and empty reports are written only when content changes. Removing a unit
 prunes its orphan base object at configure time.
 
 ## Status and banking
 
-The status universe is every contiguous, non-vendored target object: currently
-1 PSX, 497 GAME, and 246 OPEN functions. Only manifested units with real base
-objects enter objdiff. This keeps an absent reconstruction distinct from a
+The status universe is every contiguous, non-vendored function: currently
+1 PSX, 497 GAME, and 246 OPEN functions. Progress is counted per function even
+when several functions share a module unit; the objdiff report lists each
+function inside its unit. Only manifested units with real base objects enter
+objdiff. This keeps an absent reconstruction distinct from a
 real 0% comparison and prevents zero-total dummy objects from reporting 100%.
 
 The committed `config/match_baseline.tsv` is keyed by `(image, va)`. Its input

@@ -171,7 +171,8 @@ Every image directory contains:
 | `relocations_used.tsv` | every emitted relocation, symbol, and implicit addend |
 | `relocations_withheld.tsv` | every in-scope candidate not used, with reason |
 | `functions_withheld.tsv` | functions that could not be represented safely |
-| `objects/*.o` | synthetic target MIPS ELF objects |
+| `objects/*.o` | synthetic target MIPS ELF objects, one per function |
+| `modules/*.o` | one object per manifested unit: its contiguous run of functions carved as a single `.text` with per-function symbols and rebased section-relative addends |
 
 Candidates in data rather than a current function extent are also retained in
 the withheld audit. They will move into data/translation-unit objects once
@@ -282,11 +283,14 @@ Each compiled object receives an adjacent `.o.json` provenance record. The
 default maspsx model is ASPSX 1.07 because that is the Release 2.5 candidate;
 `--aspsx-version` remains explicit and overridable during attribution tests.
 
-Translation-unit ownership is the next metadata layer. Once a source file is
-shown to own several functions and data objects, those target sections should
-be grouped into a unit and its base should be compiled once. Until then, the
-one-function layout keeps relocation and code-generation experiments local and
-auditable.
+Translation-unit hypotheses are expressed directly by the sources: a unit
+source claims one contiguous run of functions with `ADDRESS()` and is compiled
+once against the module object carved for that run (see
+`build-system.md`). Function symbols in target objects follow
+`function_identities.tsv`, and data symbols follow `data_identities.tsv`, so
+reconstructed source uses curated names and address-derived names remain the
+explicit spelling of unresolved identities. Data ownership per unit is still
+open.
 
 ## First GAME.EXE campaign
 

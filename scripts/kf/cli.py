@@ -75,9 +75,9 @@ def _match(args: argparse.Namespace) -> int:
     )
     if args.unit:
         _manifest, _universe, rows, _failures = current_state(selected)
-        row = next(item for item in rows if item.unit.unit == args.unit)
-        pct = "not scored" if row.pct is None else f"{row.pct:.9f}%"
-        print(f"[match] {args.unit}: {pct}")
+        for row in (item for item in rows if item.unit.unit == args.unit):
+            pct = "not scored" if row.pct is None else f"{row.pct:.9f}%"
+            print(f"[match] {args.unit} {row.target.name}: {pct}")
     return print_status(selected, loose=args.loose, show_all=args.all)
 
 

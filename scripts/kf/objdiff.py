@@ -66,6 +66,10 @@ def generate_projects(
             row for row in all_objects
             if row.get("scope", "decomp") == "vendored"
         ]
+        module_rows = {
+            row["unit"]: row for row in all_objects
+            if row.get("scope") == "module"
+        }
 
         project_dir = output_dir / key
         base_dir = project_dir / "base"
@@ -73,32 +77,53 @@ def generate_projects(
         # Older projects paired missing reconstruction with this dummy. It made
         # zero-total units look matched, so it is no longer part of scoring.
         (project_dir / "missing-base.o").unlink(missing_ok=True)
-        selected = {
-            (unit.image, unit.va): unit
-            for unit in manifest.units
-        } if manifest is not None else {}
-
+        selected = manifest.by_identity() if manifest is not None else {}
+        # Every manifested unit pairs its module object with base/<same name>.
+        # Without a manifest, any module row whose base exists is paired, which
+        # keeps the standalone project generator usable for experiments.
         units = []
-        pairing_rows = []
         paired = 0
-        for row in objects:
-            target = target_dir / row["object"]
-            base = base_dir / Path(row["object"]).name
-            identity = image, int(row["va"], 0)
-            selected_unit = selected.get(identity) if manifest is not None else None
-            admitted = selected_unit is not None if manifest is not None else base.is_file()
-            present = admitted and base.is_file()
-            paired += int(present)
-            unit_name = (
-                selected_unit.unit if selected_unit is not None
-                else (f"{key}:{row['va']}:{row['name']}" if admitted else "")
-            )
-            if present:
+        module_units: list[tuple[str, Path, Path]] = []
+        if manifest is not None:
+            for unit in manifest.units:
+                if unit.image != image:
+                    continue
+                module_row = module_rows.get(unit.unit)
+                if module_row is None:
+                    raise ValueError(
+                        f"{object_manifest}: unit {unit.unit!r} has no module object; "
+                        "re-run the delink with the current manifest"
+                    )
+                module_units.append(
+                    (unit.unit, target_dir / module_row["object"], base_dir / unit.object_name)
+                )
+        else:
+            for unit_name, module_row in module_rows.items():
+                target = target_dir / module_row["object"]
+                module_units.append((unit_name, target, base_dir / target.name))
+        for unit_name, target, base in module_units:
+            if base.is_file():
+                paired += 1
                 units.append({
                     "name": unit_name,
                     "base_path": _relative(base, project_dir),
                     "target_path": _relative(target, project_dir),
                 })
+        pairing_rows = []
+        for row in objects:
+            identity = image, int(row["va"], 0)
+            selected_unit = selected.get(identity)
+            if selected_unit is not None:
+                target = target_dir / module_rows[selected_unit.unit]["object"]
+                base = base_dir / selected_unit.object_name
+                unit_name = selected_unit.unit
+                admitted = True
+            else:
+                target = target_dir / row["object"]
+                base = base_dir / Path(row["object"]).name
+                unit_name = ""
+                admitted = False
+            present = admitted and base.is_file()
             pairing_rows.append({
                 "image": image,
                 "va": row["va"],
@@ -135,7 +160,7 @@ def generate_projects(
             pairing_rows,
             (
                 "GENERATED - one objdiff project per independently linked program.",
-                "Place reconstructed objects under base/ using the target object filename.",
+                "Manifested units pair their module object under modules/ with base/<same name>.",
                 "Only manifested units with real base objects enter objdiff scoring.",
             ),
         )
@@ -156,7 +181,7 @@ def generate_projects(
                 "They remain target/reference objects but never count as decomp units.",
             ),
         )
-        results[image] = project_path, paired, len(objects), len(excluded)
+        results[image] = project_path, paired, len(module_rows), len(excluded)
     return results
 
 

@@ -99,6 +99,7 @@ def _percent(row: dict) -> float:
 
 
 def _report_scores(document: dict | None) -> tuple[dict[str, float], list[str]]:
+    """Size-weighted score per report unit (used for unit-level summaries)."""
     if document is None:
         return {}, []
     scores: dict[str, float] = {}
@@ -125,6 +126,20 @@ def _report_scores(document: dict | None) -> tuple[dict[str, float], list[str]]:
     return scores, failures
 
 
+def _report_function_scores(document: dict | None) -> dict[str, dict[str, float]]:
+    """Per-function fuzzy score keyed by report unit and function symbol."""
+    if document is None:
+        return {}
+    scores: dict[str, dict[str, float]] = {}
+    for unit in document.get("units", []):
+        name = str(unit.get("name", "")).split("/")[-1]
+        scores[name] = {
+            str(function.get("name", "")): _percent(function)
+            for function in unit.get("functions", [])
+        }
+    return scores
+
+
 def _report_is_stale(image: str, manifest: Manifest) -> bool:
     key = image_key(image)
     report = BUILD / "objdiff" / key / "report.json"
@@ -146,14 +161,14 @@ def current_state(
     manifest = load_manifest()
     universe = _target_universe()
     scanner = IncludeScanner()
-    report_scores: dict[str, dict[str, float]] = {}
+    report_scores: dict[str, dict[str, dict[str, float]]] = {}
     failures: list[str] = []
     for image in selected:
         report, error = _load_report(image)
         if error:
             failures.append(error)
-        scores, report_failures = _report_scores(report)
-        report_scores[image] = scores
+        _scores, report_failures = _report_scores(report)
+        report_scores[image] = _report_function_scores(report)
         failures.extend(f"{image}: {failure}" for failure in report_failures)
         image_units = [unit for unit in manifest.units if unit.image == image]
         if image_units and any(_base_path(unit).is_file() for unit in image_units):
@@ -166,17 +181,24 @@ def current_state(
     for unit in manifest.units:
         if unit.image not in selected:
             continue
-        target = universe[(unit.image, unit.va)]
         base = _base_path(unit)
-        pct = report_scores.get(unit.image, {}).get(unit.unit)
-        rows.append(Current(
-            target,
-            unit,
-            input_hash(unit, manifest, scanner),
-            pct,
-            base.is_file(),
-            pct is not None,
-        ))
+        digest = input_hash(unit, manifest, scanner)
+        unit_scores = report_scores.get(unit.image, {}).get(unit.unit)
+        for function in unit.functions:
+            target = universe[(unit.image, function.va)]
+            pct = None if unit_scores is None else unit_scores.get(function.symbol)
+            if unit_scores is not None and pct is None:
+                failures.append(
+                    f"{unit.image}: report unit {unit.unit!r} lacks function {function.symbol}"
+                )
+            rows.append(Current(
+                target,
+                unit,
+                digest,
+                pct,
+                base.is_file(),
+                pct is not None,
+            ))
     return manifest, universe, rows, failures
 
 
