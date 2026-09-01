@@ -41,8 +41,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
         self.assertEqual(counts["data"], 3772)
-        self.assertGreaterEqual(counts["functions_named"], 120)
-        self.assertGreaterEqual(counts["data_named"], 54)
+        self.assertGreaterEqual(counts["functions_named"], 129)
+        self.assertGreaterEqual(counts["data_named"], 57)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -156,6 +156,19 @@ class InventoryTests(unittest.TestCase):
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         self.assertEqual(len(rows), 8)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_map_runtime_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_map_runtime.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 9)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -284,14 +297,18 @@ class InventoryTests(unittest.TestCase):
             ),
             ("map_copy_regions", "KfMapCopyRegion[4]", 0x18),
         )
-        map_object_metadata = game.datum(0x8006E8E0)
+        map_object_definitions = game.datum(0x8006E8E0)
         self.assertEqual(
             (
-                map_object_metadata.name,
-                map_object_metadata.datatype,
-                map_object_metadata.size,
+                map_object_definitions.name,
+                map_object_definitions.datatype,
+                map_object_definitions.size,
             ),
-            ("map_object_metadata", "u8[0x500]", 0x500),
+            (
+                "map_object_definitions",
+                "KfMapObjectDefinition[160]",
+                0x500,
+            ),
         )
         map_object_pool = game.datum(0x8006EDE0)
         self.assertEqual(
@@ -318,6 +335,29 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             data_identities[("GAME.EXE", 0x8006EDE0)].scope,
             "global",
+        )
+        effect_sequences = tuple(
+            game.datum(va) for va in (0x80070E92, 0x80070E94, 0x80070E96)
+        )
+        self.assertEqual(
+            tuple(datum.name for datum in effect_sequences),
+            (
+                "map_object_effect_sequence_160",
+                "map_object_effect_sequence_170",
+                "map_object_effect_sequence_180",
+            ),
+        )
+        self.assertEqual(
+            {
+                data_identities[("GAME.EXE", va)].scope
+                for va in (0x80070E92, 0x80070E94, 0x80070E96)
+            },
+            {"unknown"},
+        )
+        object_action = game.function(0x80031784)
+        self.assertEqual(
+            (object_action.name, object_action.signature_confidence),
+            ("map_object_start_action_if_idle", "proven"),
         )
         actor_update = game.function(0x80030818)
         self.assertEqual(

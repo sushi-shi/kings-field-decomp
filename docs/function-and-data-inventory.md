@@ -11,7 +11,7 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 120 of 744 functions: 117 GAME, one PSX, and two
+Current semantic coverage is 129 of 744 functions: 126 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -19,17 +19,17 @@ awareness, placement loading, and map-object setup. Their per-function evidence
 is in the
 `game_semantic_math_lifecycle.tsv`, `game_semantic_save_system.tsv`,
 `game_semantic_screen_talk.tsv`, `game_semantic_actor_core.tsv`,
-`game_semantic_actor_ai.tsv`, `game_semantic_actor_actions.tsv`, and
-`game_semantic_map_objects.tsv` files under `config/evidence/`. The recovered
-subsystems and
+`game_semantic_actor_ai.tsv`, `game_semantic_actor_actions.tsv`,
+`game_semantic_map_objects.tsv`, and `game_semantic_map_runtime.tsv` files
+under `config/evidence/`. The recovered subsystems and
 remaining unknowns are described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), and
 [`actor-system.md`](actor-system.md), and
 [`map-objects.md`](map-objects.md).
 
 The current first pass contains 3,772 data identities, including 891
-non-overlapping BSS extents. Fifty-four data identities have semantic review:
-23 in loaded storage and 31 in BSS. Eight loaded identities are candidate or
+non-overlapping BSS extents. Fifty-seven data identities have semantic review:
+23 in loaded storage and 34 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -55,12 +55,14 @@ shared BSS progression flag set by the scripted death sequence. The initialized
 objects retain `scope=unknown`; direct usage proves their role, not whether the
 original declarations had internal linkage.
 
-The map-object pass adds four six-byte map-copy descriptors and replaces 36
-field-level BSS candidates with one `0x500`-byte metadata blob and one
-190-record `KfMapObject` pool. Placement records are loaded at a `0x14` stride,
-while live objects have a proven `0x2c` stride. The copy descriptors and
-metadata retain `scope=unknown`; the object pool is shared by initialization,
-collision, and runtime update families and is recorded as global.
+The map-object passes add four six-byte map-copy descriptors and replace 36
+field-level BSS candidates with 160 eight-byte `KfMapObjectDefinition` records
+and one 190-record `KfMapObject` pool. Placement records are loaded at a `0x14`
+stride, while live objects have a proven `0x2c` stride. The runtime pass also
+names the wrapping allocation sequences for reserved effect slots 160..169,
+170..179, and 180..189. The copy descriptors, definitions, and counters retain
+`scope=unknown`; the object pool is shared by initialization, collision, and
+runtime update families and is recorded as global.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
@@ -71,7 +73,8 @@ datatype, and owner.
 Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
 `KfActorActionProfile`, `SoundRef`, `KfActor`, `KfActorPlacement`,
-`KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObject`,
+`KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObjectDefinition`,
+`KfMapObject`,
 `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
 `KfSavePayload` live in `include/kf/semantic_types.h` with compile-time size
 checks; established reconstruction types such as `KfMatrix` remain in

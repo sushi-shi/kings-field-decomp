@@ -138,6 +138,14 @@ typedef struct KfMapObjectPlacement {
     u8 bytes[0x14];
 } KfMapObjectPlacement;
 
+typedef struct KfMapObjectDefinition {
+    u8 behavior_type;
+    u8 unknown_01;
+    u16 collision_radius;
+    u16 interaction_radius;
+    u8 unknown_06[2];
+} KfMapObjectDefinition;
+
 typedef struct KfMapObject {
     u8 object_id;
     u8 unknown_01;
@@ -147,13 +155,17 @@ typedef struct KfMapObject {
     s32 position_x;
     s32 position_y;
     s32 position_z;
-    u8 unknown_14[6];
-    u16 yaw;
-    u8 unknown_1c[4];
-    u32 unknown_20;
-    u32 unknown_24;
-    u8 state_28;
-    u8 unknown_29[3];
+    u8 unknown_14[4];
+    struct KfEulerAngles rotation;
+    u16 unknown_1e;
+    u8 link_id;
+    u8 unknown_21;
+    u16 spawn_sequence;
+    s16 vertical_velocity;
+    u8 unknown_26[2];
+    u8 action;
+    u8 unknown_29;
+    u16 action_timer;
 } KfMapObject;
 
 /*
@@ -210,6 +222,8 @@ typedef char KfMapCopyRegion_size_is_6[
     (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
 typedef char KfMapObjectPlacement_size_is_20[
     (sizeof(KfMapObjectPlacement) == 0x14) ? 1 : -1];
+typedef char KfMapObjectDefinition_size_is_8[
+    (sizeof(KfMapObjectDefinition) == 0x08) ? 1 : -1];
 typedef char KfMapObject_size_is_44[
     (sizeof(KfMapObject) == 0x2c) ? 1 : -1];
 
