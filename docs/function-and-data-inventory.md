@@ -11,7 +11,7 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 146 of 740 functions: 143 GAME, one PSX, and two
+Current semantic coverage is 153 of 740 functions: 150 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -22,17 +22,19 @@ per-function evidence is in the
 `game_semantic_screen_talk.tsv`, `game_semantic_actor_core.tsv`,
 `game_semantic_actor_ai.tsv`, `game_semantic_actor_actions.tsv`,
 `game_semantic_map_objects.tsv`, `game_semantic_map_runtime.tsv`, and
-`game_semantic_audio_control.tsv`, `game_semantic_audio_spatial.tsv`, and
-`game_semantic_camera_events.tsv` files
+`game_semantic_audio_control.tsv`, `game_semantic_audio_spatial.tsv`,
+`game_semantic_camera_events.tsv`, and
+`game_semantic_event_queries_matrix.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
 [`map-objects.md`](map-objects.md), [`audio-system.md`](audio-system.md), and
-[`camera-and-map-events.md`](camera-and-map-events.md).
+[`camera-and-map-events.md`](camera-and-map-events.md), and
+[`event-queries-and-matrix-effects.md`](event-queries-and-matrix-effects.md).
 
-The current first pass contains 3,622 data identities, including 838
-non-overlapping BSS extents. Seventy-three data identities have semantic review:
-26 in loaded storage and 47 in BSS. Eight loaded identities are candidate or
+The current first pass contains 3,621 data identities, including 837
+non-overlapping BSS extents. Seventy-four data identities have semantic review:
+26 in loaded storage and 48 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -93,6 +95,13 @@ five objects retain `scope=unknown`: multiple xrefs prove shared state but not
 external versus file-local linkage. Six instruction-word false positives are
 preserved as rejected relocation rows rather than accepted as callers.
 
+The following query/matrix pass names three map-event queries, the generic
+3x3 matrix interpolator, two color-effect helpers, and the player restoration
+effect. It also corrects both GTE matrix-wrapper signatures and merges two
+scalar candidates into `player_vitals`, whose four halfwords are maximum and
+current HP followed by maximum and current MP. Its linkage and the meanings of
+the neighboring player flag bits remain unresolved.
+
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
 declarations so argument names and widths can be refined independently. Data
@@ -105,7 +114,7 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfActorPlacement`,
 `KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObjectDefinition`,
 `KfMapObject`, `KfCameraPathPoint`, `KfCameraPathState`,
-`KfMapEventDefinition`, `KfMapEvent`, `KfMapProgressState`,
+`KfMapEventDefinition`, `KfMapEvent`, `KfMapProgressState`, `KfPlayerVitals`,
 `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
 `KfSavePayload` live in `include/kf/semantic_types.h` with compile-time size
 checks; established reconstruction types such as `KfMatrix` remain in

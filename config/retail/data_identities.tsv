@@ -2230,8 +2230,7 @@ GAME.EXE	0x800a0780	0x4	DAT_800a0780	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x800a0784	0x4	DAT_800a0784	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0788	0x4	map_progress_state	unknown	bss	KfMapProgressState	map_progress	supported	game_semantic_camera_events.tsv;asm;xrefs;initialization;monotonic-update	contains the current map index and highest reached map index; the first two bytes remain unresolved and source linkage is unknown
 GAME.EXE	0x800a078c	0x4	DAT_800a078c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a0790	0x4	DAT_800a0790	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a0794	0x4	DAT_800a0794	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a0790	0x8	player_vitals	unknown	bss	KfPlayerVitals	player	supported	game_semantic_event_queries_matrix.tsv;asm;xrefs;HUD;save-summary;death-path	maximum/current HP and maximum/current MP are proven by initialization, clamped adjustment, HUD ratios, save ordering, the zero-HP death path, and full restoration; source linkage remains unresolved
 GAME.EXE	0x800a0798	0x4	DAT_800a0798	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a079c	0x4	DAT_800a079c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07a0	0x2	DAT_800a07a0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

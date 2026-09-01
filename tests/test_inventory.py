@@ -40,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3622)
-        self.assertGreaterEqual(counts["functions_named"], 146)
-        self.assertGreaterEqual(counts["data_named"], 73)
+        self.assertEqual(counts["data"], 3621)
+        self.assertGreaterEqual(counts["functions_named"], 153)
+        self.assertGreaterEqual(counts["data_named"], 74)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -208,6 +208,19 @@ class InventoryTests(unittest.TestCase):
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         self.assertEqual(len(rows), 7)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_event_query_matrix_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_event_queries_matrix.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 9)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -570,6 +583,13 @@ class InventoryTests(unittest.TestCase):
             (current_event.name, current_event.datatype, current_event.size),
             ("current_map_event", "KfMapEvent *", 4),
         )
+        player_vitals = game.datum(0x800A0790)
+        current_mp_owner = game.data_owner(0x800A0796)
+        self.assertEqual(
+            (player_vitals.name, player_vitals.datatype, player_vitals.size),
+            ("player_vitals", "KfPlayerVitals", 8),
+        )
+        self.assertEqual(current_mp_owner, player_vitals)
         self.assertEqual(
             {
                 data_identities[("GAME.EXE", va)].scope
@@ -577,6 +597,7 @@ class InventoryTests(unittest.TestCase):
                     0x8009DB88,
                     0x8009DDA8,
                     0x800A0788,
+                    0x800A0790,
                     0x800A0824,
                     0x800A0838,
                 )

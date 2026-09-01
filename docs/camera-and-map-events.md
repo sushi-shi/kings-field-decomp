@@ -35,6 +35,10 @@ stores the current-record pointer. `map_event_advance_rotation_blocking`
 increments the halfword rotation phase at offset `0x12`, renders, and waits for
 the frame pacer until the requested target is reached.
 
+The next reviewed band adds the event distance, cone-selection, and overlap
+queries and proves the runtime/definition `radius` field. See
+[`event-queries-and-matrix-effects.md`](event-queries-and-matrix-effects.md).
+
 The 16-byte setter has four byte-identical Psy-Q FID candidates, including
 `GsSetWorkBase`. That short match is ambiguous: the stored word is consumed as
 a `KfMapEvent *` by two game update routines and immediately follows the

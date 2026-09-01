@@ -220,7 +220,7 @@ typedef struct KfMapEventDefinition {
     s16 position_z_offset;
     s16 position_x_offset;
     u16 initial_rotation;
-    u16 unknown_14;
+    u16 radius;
     u16 unknown_16;
 } KfMapEventDefinition;
 
@@ -244,7 +244,7 @@ typedef struct KfMapEvent {
     s32 position_z;
     u16 cell_x;
     u16 cell_z;
-    u16 unknown_20;
+    u16 radius;
     u16 unknown_22;
     s32 reference_x;
     s32 position_y;
@@ -264,6 +264,18 @@ typedef struct KfMapProgressState {
     u8 current_map_index;
     u8 highest_map_index;
 } KfMapProgressState;
+
+/*
+ * The HUD, save summary, adjustment helpers, and full-restoration effect all
+ * agree on these four adjacent unsigned halfwords.  Linked bytes do not
+ * establish whether the original object had external or internal linkage.
+ */
+typedef struct KfPlayerVitals {
+    u16 maximum_hp;
+    u16 current_hp;
+    u16 maximum_mp;
+    u16 current_mp;
+} KfPlayerVitals;
 
 /*
  * The memory-card file starts with the standard 0x200-byte PlayStation save
@@ -331,6 +343,8 @@ typedef char KfMapEventDefinition_size_is_24[
     (sizeof(KfMapEventDefinition) == 0x18) ? 1 : -1];
 typedef char KfMapEventDefinition_initial_rotation_offset_is_18[
     (KF_OFFSET_OF(KfMapEventDefinition, initial_rotation) == 0x12) ? 1 : -1];
+typedef char KfMapEventDefinition_radius_offset_is_20[
+    (KF_OFFSET_OF(KfMapEventDefinition, radius) == 0x14) ? 1 : -1];
 typedef char KfMapEvent_size_is_68[
     (sizeof(KfMapEvent) == 0x44) ? 1 : -1];
 typedef char KfMapEvent_rotation_phase_offset_is_18[
@@ -339,12 +353,22 @@ typedef char KfMapEvent_position_x_offset_is_20[
     (KF_OFFSET_OF(KfMapEvent, position_x) == 0x14) ? 1 : -1];
 typedef char KfMapEvent_cell_x_offset_is_28[
     (KF_OFFSET_OF(KfMapEvent, cell_x) == 0x1c) ? 1 : -1];
+typedef char KfMapEvent_radius_offset_is_32[
+    (KF_OFFSET_OF(KfMapEvent, radius) == 0x20) ? 1 : -1];
 typedef char KfMapEvent_rotation_offset_is_54[
     (KF_OFFSET_OF(KfMapEvent, rotation) == 0x36) ? 1 : -1];
 typedef char KfMapEvent_rotation_target_offset_is_64[
     (KF_OFFSET_OF(KfMapEvent, rotation_target) == 0x40) ? 1 : -1];
 typedef char KfMapProgressState_size_is_4[
     (sizeof(KfMapProgressState) == 4) ? 1 : -1];
+typedef char KfPlayerVitals_size_is_8[
+    (sizeof(KfPlayerVitals) == 8) ? 1 : -1];
+typedef char KfPlayerVitals_current_hp_offset_is_2[
+    (KF_OFFSET_OF(KfPlayerVitals, current_hp) == 2) ? 1 : -1];
+typedef char KfPlayerVitals_maximum_mp_offset_is_4[
+    (KF_OFFSET_OF(KfPlayerVitals, maximum_mp) == 4) ? 1 : -1];
+typedef char KfPlayerVitals_current_mp_offset_is_6[
+    (KF_OFFSET_OF(KfPlayerVitals, current_mp) == 6) ? 1 : -1];
 #undef KF_OFFSET_OF
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];
