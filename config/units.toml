@@ -19,7 +19,7 @@ compiler = "gcc257-native"
 optimization = "O2"
 small_data = 0
 aspsx_version = "1.07"
-cc1_flags = []
+cc1_flags = ["-mcpu=r2000"]
 maspsx_flags = ["--expand-div"]
 
 [profiles.asm-r3000-g0]
@@ -134,21 +134,9 @@ source = "src/game/game_state.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.memory_card_8002b2d4"
+unit = "game.save_system"
 image = "GAME.EXE"
-source = "src/game/memory_card_8002b2d4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.memory_card_8002b480"
-image = "GAME.EXE"
-source = "src/game/memory_card_8002b480.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.save_workspace"
-image = "GAME.EXE"
-source = "src/game/save_workspace.c"
+source = "src/game/save_system.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

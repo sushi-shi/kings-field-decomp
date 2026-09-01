@@ -25,9 +25,10 @@ KfPlayerMotionState	0x0a	supported	semantic_types.h;game_semantic_player_motion_
 KfPlayerProgressState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
 KfPlayerVitals	0x08	supported	semantic_types.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
 KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xrefs	generic allocation-pool record
+KfPrimitiveBuffer	0xc	candidate	semantic_types.h;primitive_buffer_commit_poly_ft4;menu_load_message_image	render-buffer state behind the primitive_buffer pointer; only the free-primitive pointer at +8 is named and the extent is a lower bound
 KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
 KfSaveHeader	0x280	supported	semantic_types.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
-KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	serialized game-slot payload extent; fields remain opaque
+KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
 KfSaveSlotSummary	0x18	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	six summary words with unresolved individual meanings
 KfVec3i	0x0c	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates
