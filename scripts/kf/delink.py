@@ -366,6 +366,15 @@ def _resolve_symbol(
         target_data = _containing_data(catalog, function.image, target)
         if target_data is not None and target_data.symbol == symbol:
             return symbol, target - target_data.va
+        # A reviewed row may name an owner the target lies outside of, e.g. a
+        # folded `grid[z - 1]` row base 100 bytes before the array: keep the
+        # named symbol and the (negative) distance as the implicit addend.
+        named = next(
+            (item for item in catalog.data[function.image] if item.symbol == symbol),
+            None,
+        )
+        if named is not None:
+            return symbol, target - named.va
         return symbol, 0
     target_data = _containing_data(catalog, function.image, target)
     if target_data is not None:

@@ -26,6 +26,7 @@ from scripts.kf.paths import BUILD, REPO
 INSTRUCTION_RE = re.compile(r"^\s*([0-9a-f]+):\s+[0-9a-f]{8}\s+(.*)$")
 RELOCATION_RE = re.compile(r"^\s*([0-9a-f]+):\s+(R_MIPS\S+)\s+(.*)$")
 SYMBOL_RE = re.compile(r"^[0-9a-f]+ <([^>]+)>:$")
+BRANCH_TARGET_RE = re.compile(r"\b[0-9a-f]+ <")
 
 
 def listing(path: Path) -> dict[str, list[str]]:
@@ -47,7 +48,10 @@ def listing(path: Path) -> dict[str, list[str]]:
             continue
         instruction = INSTRUCTION_RE.match(line)
         if instruction:
-            current.append(instruction.group(2).strip())
+            # Branch targets print as `<section offset> <symbol+delta>`; inside
+            # a module the absolute offset shifts whenever an earlier function
+            # changes size, so keep only the symbol-relative form.
+            current.append(BRANCH_TARGET_RE.sub("<", instruction.group(2).strip()))
             continue
         relocation = RELOCATION_RE.match(line)
         if relocation:

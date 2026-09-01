@@ -42,12 +42,13 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3524)
+        self.assertEqual(counts["data"], 3519)
         self.assertGreaterEqual(counts["functions_named"], 187)
-        self.assertGreaterEqual(counts["data_named"], 144)
-        self.assertEqual(counts["structures"], 35)
-        self.assertEqual(counts["structure_fields"], 224)
-        self.assertEqual(counts["structure_fields_named"], 167)
+        # Eight audio identities folded into the audio_state aggregate.
+        self.assertGreaterEqual(counts["data_named"], 139)
+        self.assertEqual(counts["structures"], 37)
+        self.assertEqual(counts["structure_fields"], 235)
+        self.assertEqual(counts["structure_fields_named"], 175)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -738,43 +739,17 @@ class InventoryTests(unittest.TestCase):
                 0x158,
             ),
         )
-        sequence_buffer = game.datum(0x80095870)
+        # The audio runtime state is one aggregate: audio_initialize derives the
+        # voice-id slot address from the sequence-buffer field.
+        audio_state = game.datum(0x80095868)
         self.assertEqual(
-            (sequence_buffer.name, sequence_buffer.datatype),
-            ("audio_sequence_buffer", "u8 *"),
-        )
-        sequence_id = game.datum(0x80095874)
-        self.assertEqual(
-            (sequence_id.name, sequence_id.datatype),
-            ("audio_sequence_id", "s16"),
+            (audio_state.name, audio_state.datatype, audio_state.size),
+            ("audio_state", "KfAudioState", 0x90),
         )
         voice_index = game.datum(0x80057B84)
         self.assertEqual(
             (voice_index.name, voice_index.datatype, voice_index.size),
             ("audio_voice_slot_index", "s32", 4),
-        )
-        listener_position = game.datum(0x8009587C)
-        listener_rotation = game.datum(0x8009588C)
-        self.assertEqual(
-            (
-                listener_position.name,
-                listener_position.datatype,
-                listener_position.size,
-            ),
-            ("audio_listener_position", "KfVec4i", 0x10),
-        )
-        self.assertEqual(
-            (
-                listener_rotation.name,
-                listener_rotation.datatype,
-                listener_rotation.size,
-            ),
-            ("audio_listener_rotation", "KfVec4s", 8),
-        )
-        voice_slots = game.datum(0x80095894)
-        self.assertEqual(
-            (voice_slots.name, voice_slots.datatype, voice_slots.size),
-            ("audio_voice_slots", "KfAudioVoiceSlots", 0x64),
         )
         effects_enabled = game.datum(0x800A0816)
         music_enabled = game.datum(0x800A0817)
@@ -787,13 +762,6 @@ class InventoryTests(unittest.TestCase):
                     0x80059738,
                     0x80057B84,
                     0x80095868,
-                    0x8009586C,
-                    0x80095870,
-                    0x80095874,
-                    0x80095878,
-                    0x8009587C,
-                    0x8009588C,
-                    0x80095894,
                     0x800A0816,
                     0x800A0817,
                 )

@@ -5,6 +5,7 @@ KfActor	0x48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	l
 KfActorActionProfile	0x0a	supported	semantic_types.h;game_semantic_actor_ai.tsv;asm;xrefs	five-halfword actor action weighting record
 KfActorDefinition	0x98	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
 KfActorPlacement	0x10	supported	semantic_types.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
+KfAudioState	0x90	supported	semantic_types.h;game_semantic_audio_control.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate; audio_initialize addresses the voice-id slots relative to the sequence-buffer field
 KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
 KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
@@ -14,6 +15,7 @@ KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv
 KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
+KfMapEventTag	0x05	supported	semantic_types.h;game_semantic_camera_events.tsv;asm	five opaque bytes copied as one block by map_event_pool_load
 KfMapObject	0x2c	supported	semantic_types.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
 KfMapObjectDefinition	0x08	supported	semantic_types.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
 KfMapObjectPlacement	0x14	supported	semantic_types.h;game_semantic_map_objects.tsv;runtime-stride	placement record extent; fields remain opaque

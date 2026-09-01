@@ -54,6 +54,16 @@ KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	semantic_types.h;
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	semantic_types.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	unknown_96	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActorPlacement	0x00	0x10	bytes	u8[16]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
+KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
+KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
+KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	semantic_types.h;asm;xrefs	allocated SEQ buffer
+KfAudioState	0x0c	0x02	sequence_id	s16	supported	semantic_types.h;asm;xrefs	open sequence identifier
+KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
+KfAudioState	0x10	0x04	sequence_active	s32	supported	semantic_types.h;asm;xrefs	one while a map sequence plays
+KfAudioState	0x14	0x10	listener_position	KfVec4i	supported	semantic_types.h;asm;xrefs	listener position for spatial voices
+KfAudioState	0x24	0x08	listener_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	listener rotation for spatial voices
+KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	semantic_types.h;asm;xrefs	ten voice slots
 KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
 KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
 KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers
@@ -91,7 +101,7 @@ KfMapCopyRegion	0x05	0x01	height	u8	supported	semantic_types.h;asm;xrefs	region 
 KfMapEvent	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	active state
 KfMapEvent	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
 KfMapEvent	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
-KfMapEvent	0x03	0x05	unknown_03	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied from the definition tag
 KfMapEvent	0x08	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
 KfMapEvent	0x09	0x01	image_index	u8	supported	semantic_types.h;asm;xrefs	current image index
 KfMapEvent	0x0a	0x01	image_dirty	u8	supported	semantic_types.h;asm;xrefs	image refresh flag
@@ -124,7 +134,7 @@ KfMapEventDefinition	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	even
 KfMapEventDefinition	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
 KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	semantic_types.h;asm;xrefs	map cell z
 KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapEventDefinition	0x05	0x05	unknown_05	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied into the runtime slot
 KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
 KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
@@ -134,6 +144,7 @@ KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	semantic_types.h;
 KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	semantic_types.h;asm;xrefs	initial rotation
 KfMapEventDefinition	0x14	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
 KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObject	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
