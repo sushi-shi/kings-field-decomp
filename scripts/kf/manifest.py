@@ -15,6 +15,7 @@ from scripts.kf.model import (
     data_identities,
     identity_names,
     scan_source,
+    stale_address_names,
     write_bindings,
 )
 from scripts.kf.paths import REPO, RETAIL_CONFIG, UNITS_MANIFEST
@@ -346,6 +347,14 @@ def load(
             if require_sources:
                 raise ValueError(f"{path}: unit {name!r} source is missing: {source}")
             continue
+        stale = stale_address_names(
+            source_path, image, identities, {key: item.name for key, item in curated_data.items()}
+        )
+        if stale:
+            shown = ", ".join(f"{token} -> {name}" for token, name in stale)
+            raise ValueError(
+                f"{source}: address-derived spellings of labelled identities: {shown}"
+            )
         claims, data_claims = scan_source(source_path)
         if not claims:
             raise ValueError(f"{path}: unit {name!r} source has no ADDRESS() claim: {source}")

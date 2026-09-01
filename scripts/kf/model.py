@@ -115,12 +115,42 @@ def scan_data_claims(source: Path) -> tuple[DataClaim, ...]:
     return scan_source(source)[1]
 
 
+ADDRESS_NAME_RE = re.compile(r"\b(func|DAT)_([0-9a-fA-F]{8})\b")
+
+
+def stale_address_names(
+    source: Path,
+    image: str,
+    functions: dict[tuple[str, int], str],
+    data: dict[tuple[str, int], str],
+) -> list[tuple[str, str]]:
+    """Address-derived spellings whose identity already has a curated name.
+
+    Labelled functions and data are spelled by their identities in source; an
+    address-derived token for a labelled item is stale and would no longer
+    match the symbol the delinker emits.
+    """
+    stale: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for match in ADDRESS_NAME_RE.finditer(source.read_text(encoding="utf-8")):
+        token = match.group(0)
+        if token in seen:
+            continue
+        seen.add(token)
+        table = functions if match.group(1) == "func" else data
+        name = table.get((image, int(match.group(2), 16)))
+        if name and name != token:
+            stale.append((token, name))
+    return stale
+
+
 def identity_names(config_dir: Path) -> dict[tuple[str, int], str]:
     path = config_dir / "function_identities.tsv"
     if not path.is_file():
         return {}
     _, rows = read_tsv(path)
     return {(row["image"], int(row["va"], 0)): row["name"] for row in rows if row.get("name")}
+
 
 
 @dataclass(frozen=True)

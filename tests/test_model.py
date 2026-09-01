@@ -6,7 +6,14 @@ from pathlib import Path
 
 from scripts.kf.delink import Catalog, Function
 from scripts.kf.manifest import _bind_claims, _bind_data_claims
-from scripts.kf.model import Claim, DataClaim, DataIdentity, scan_claims, scan_source
+from scripts.kf.model import (
+    Claim,
+    DataClaim,
+    DataIdentity,
+    scan_claims,
+    scan_source,
+    stale_address_names,
+)
 
 
 def _function(va: int, size: int, name: str) -> Function:
@@ -166,6 +173,25 @@ class DataClaimBindingTests(unittest.TestCase):
             self._bind((
                 DataClaim(0x800A0000, 0x10, "buffer", 1), DataClaim(0x80057b0c, 4, "counter", 4),
             ))
+
+
+
+class StaleNameTests(unittest.TestCase):
+    def test_address_spelling_of_labelled_identity_is_reported(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kf-model-") as directory:
+            source = Path(directory) / "unit.c"
+            source.write_text(
+                "extern void func_80010000(void);\nextern int DAT_80020000;\n"
+                "extern void func_80010010(void);\n",
+                encoding="utf-8",
+            )
+            stale = stale_address_names(
+                source,
+                "GAME.EXE",
+                {("GAME.EXE", 0x80010000): "named", ("GAME.EXE", 0x80010010): "func_80010010"},
+                {("GAME.EXE", 0x80020000): "counter"},
+            )
+        self.assertEqual(stale, [("func_80010000", "named"), ("DAT_80020000", "counter")])
 
 
 if __name__ == "__main__":

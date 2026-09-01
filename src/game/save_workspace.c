@@ -3,16 +3,16 @@
 
 extern KfSaveHeader *save_header_buffer;
 extern KfSavePayload *save_payload_buffer;
-extern void *func_8001ac0c(s32 size);
+extern void *memory_allocate(s32 size);
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
 extern void *memset();
 
-extern void func_8001ac8c(void);
+extern void memory_release_last(void);
 
 ADDRESS(0x8002c27c, 0x68)
 s32 save_workspace_allocate(void)
 {
-    save_header_buffer = func_8001ac0c(0x2800);
+    save_header_buffer = memory_allocate(0x2800);
     if (save_header_buffer == 0) {
         return -1;
     }
@@ -25,5 +25,5 @@ s32 save_workspace_allocate(void)
 ADDRESS(0x8002c2e4, 0x20)
 void save_workspace_release(void)
 {
-    func_8001ac8c();
+    memory_release_last();
 }
