@@ -82,7 +82,11 @@ def policy_reason(row: dict[str, str], policy: str) -> str | None:
         return "candidate-rejected"
     if policy == "reviewed" and row["status"] != "reviewed":
         return "not-manually-reviewed"
-    if policy in {"safe", "reviewed"} and row["channel"] != "reachable-code":
+    if (
+        policy in {"safe", "reviewed"}
+        and row["channel"] != "reachable-code"
+        and row["status"] != "reviewed"
+    ):
         return "non-reachable-code-channel"
     return None
 

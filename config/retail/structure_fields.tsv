@@ -214,8 +214,8 @@ KfPlayerState	0x48	0x02	player_status_effect0_timer	s16	supported	semantic_types
 KfPlayerState	0x4a	0x02	player_status_effect1_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
 KfPlayerState	0x4c	0x02	player_status_effect2_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
 KfPlayerState	0x4e	0x02	player_status_effect3_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x50	0x02	unknown_50	s16	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x52	0x02	unknown_52	s16	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x50	0x02	player_status_effect4_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
+KfPlayerState	0x52	0x02	player_light_effect_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
 KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x58	0x04	unknown_58	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x5c	0x01	player_selected_magic_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name

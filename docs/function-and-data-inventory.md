@@ -13,7 +13,7 @@ symbols or pretending that WIP names are original symbols:
   target sizes and every field offset/extent, including opaque ranges; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 221 of 734 functions: 201 GAME, one PSX, and 19
+Current semantic coverage is 226 of 734 functions: 206 GAME, one PSX, and 19
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -28,8 +28,8 @@ per-function evidence is in the
 `game_semantic_camera_events.tsv`, `game_semantic_event_queries_matrix.tsv`,
 `game_semantic_player_death.tsv`, `game_semantic_player_combat.tsv`,
 `game_semantic_player_stats.tsv`, `game_semantic_player_motion_attack.tsv`,
-`game_semantic_player_interactions.tsv`, `game_semantic_display_tmd.tsv`, and
-`game_open_semantic_memory_allocator.tsv` files
+`game_semantic_player_interactions.tsv`, `game_semantic_player_update.tsv`,
+`game_semantic_display_tmd.tsv`, and `game_open_semantic_memory_allocator.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
@@ -41,13 +41,14 @@ described in [`save-system.md`](save-system.md),
 [`player-stats-and-equipment.md`](player-stats-and-equipment.md),
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md),
 [`player-interactions-and-collision.md`](player-interactions-and-collision.md),
+[`player-update-and-lighting.md`](player-update-and-lighting.md),
 [`display-and-tmd.md`](display-and-tmd.md),
 [`memory-allocator.md`](memory-allocator.md), and
 [`structure-layouts.md`](structure-layouts.md).
 
 The current first pass contains 3,441 data identities. The lower row count is
 progress: field-sized and pointer-sized seeds are merged when evidence proves
-an owning table or structure. 179 data identities now have semantic review.
+an owning table or structure. 181 data identities now have semantic review.
 Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
@@ -127,9 +128,10 @@ address-named rather than being falsely claimed as death-private storage.
 The player-combat pass names the five-component damage formula, direct and
 radial player-damage paths, and the bounded player-distance query. It also
 names the status-effect flag word, five numbered component defenses, the one
-directly observed status resistance, and four signed status timers. All eleven
-objects retain unknown source linkage, and their adjacency is not treated as
-proof of one original structure. Component and effect lore remains numbered.
+directly observed status resistance, and four signed status timers. These
+member identities retain unknown source linkage, while the later common-base
+and complete-clear evidence supports their placement inside `KfPlayerState`.
+Component and effect lore remains numbered.
 
 The player stats/equipment pass names experience and level growth, hidden
 physical-power and magic training, combat-stat recalculation, and magic,
@@ -154,6 +156,12 @@ the former `asset_block` into sixteen `KfWeaponRecord` objects and separate the
 following `KfCollisionTarget`; its known transform and radius fields are typed
 while the six-byte tail remains opaque.
 
+The player-update pass names the `0x1a1c`-byte main player update, three
+lighting-preset wrappers, and the leaf that installs status effect 4. It maps
+two previously opaque signed halfwords to `KfPlayerState` timer fields at
+`+0x50` and `+0x52`. The four small reconstructed functions are strict exact
+matches; the large update remains a separately planned reconstruction.
+
 The shared GAME/OPEN display and TMD pass names 22 functions across eleven
 cross-overlay pairs. It promotes two complete primitive-buffer records per
 image to `KfPrimitiveBuffer[2]`, records both Psy-Q draw/display-environment
@@ -170,8 +178,8 @@ declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
 
-The structure inventory currently covers 38 types and 322 fields. 244 fields
-have semantic names and 78 exact ranges remain explicitly opaque. `kf inventory
+The structure inventory currently covers 38 types and 322 fields. 246 fields
+have semantic names and 76 exact ranges remain explicitly opaque. `kf inventory
 check` derives the 32-bit layouts from the checked C headers and rejects any
 TSV disagreement in size, offset, extent, name, or datatype.
 

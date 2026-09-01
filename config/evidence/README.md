@@ -53,6 +53,12 @@ weapon load destination to `KfWeaponRecord[16]`, separates the following
 `KfCollisionTarget`, and reviews both item switch tables and the campaign's
 decoded relocations.
 
+`game_semantic_player_update.tsv` records the large player-update identity,
+three adjacent lighting-preset wrappers, and status-effect helper 4. It ties
+the two recovered signed timers to `KfPlayerState` offsets `0x50` and `0x52`
+and records the relocation-only causes behind three initially non-exact helper
+objects.
+
 `game_semantic_display_tmd.tsv` records eleven related GAME/OPEN function
 pairs for frame submission, view transforms, TMD registration/access, and
 primitive-index preparation. It supports complete `KfPrimitiveBuffer` and

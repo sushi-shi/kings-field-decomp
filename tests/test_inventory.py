@@ -43,11 +43,11 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 494)
         self.assertEqual(counts["data"], 3441)
-        self.assertGreaterEqual(counts["functions_named"], 221)
-        self.assertGreaterEqual(counts["data_named"], 179)
+        self.assertGreaterEqual(counts["functions_named"], 226)
+        self.assertGreaterEqual(counts["data_named"], 181)
         self.assertEqual(counts["structures"], 38)
         self.assertEqual(counts["structure_fields"], 322)
-        self.assertEqual(counts["structure_fields_named"], 244)
+        self.assertEqual(counts["structure_fields_named"], 246)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -111,6 +111,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(player_state_fields["player_vitals"].offset, 0x10)
         self.assertEqual(player_state_fields["camera_position"].offset, 0xA4)
         self.assertEqual(player_state_fields["player_motion_state"].offset, 0xC0)
+        self.assertEqual(player_state_fields["player_status_effect4_timer"].offset, 0x50)
+        self.assertEqual(player_state_fields["player_light_effect_timer"].offset, 0x52)
+        self.assertEqual(
+            player_state_fields["player_light_effect_timer"].meaning_confidence,
+            "supported",
+        )
         self.assertEqual(player_state_fields["unknown_ce"].meaning_confidence, "opaque")
         primitive_fields = {
             row.name: row for row in fields if row.structure == "KfPrimitiveBuffer"
@@ -398,7 +404,7 @@ class InventoryTests(unittest.TestCase):
             for row in rows
             if row["provenance"] == "manual:game_semantic_player_interactions"
         )
-        self.assertEqual(len(campaign_rows), 249)
+        self.assertEqual(len(campaign_rows), 248)
         self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
@@ -424,6 +430,38 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             by_site[0x8002E9D4]["target_name"],
             "collision_query_world",
+        )
+
+    def test_player_update_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_update.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 5)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_update_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_player_update"
+        )
+        self.assertEqual(len(campaign_rows), 26)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        for site in (0x800187B8, 0x80018804, 0x80018838):
+            self.assertEqual(by_site[site]["target_name"], "color_matrix_table")
+        self.assertEqual(by_site[0x8001882C]["channel"], "instruction-word")
+        self.assertEqual(
+            by_site[0x80023600]["target_name"],
+            "player_status_apply_effect4",
         )
 
     def test_player_motion_data_owners_are_queryable(self) -> None:

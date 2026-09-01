@@ -189,6 +189,41 @@ class MipsElfTests(unittest.TestCase):
         )
         self.assertEqual(used["action"], "paired-symbol")
 
+    def test_reviewed_instruction_word_pair_is_safe(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
+        )
+        target = 0x800A0770
+        datum = DataObject("GAME.EXE", target, 4, "player_value")
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": (datum,)},
+        )
+        blob = bytearray(struct.pack("<2I", 0x3C02800A, 0x84420770))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "instruction-word",
+            "target_va": f"{target:#x}",
+            "target_region": "bss",
+            "target_name": "player_value",
+            "opcode": "lui+lh",
+            "confidence": "paired-reviewed",
+            "status": "reviewed",
+        }
+        relocations, used = _apply_relocation(blob, function, row, catalog, "safe")
+        self.assertEqual(
+            relocations,
+            [
+                MipsRelocation(0, "R_MIPS_HI16", "player_value"),
+                MipsRelocation(4, "R_MIPS_LO16", "player_value"),
+            ],
+        )
+        self.assertEqual(used["source_channel"], "instruction-word")
+
     def test_address_named_symbol_preserves_interior_addend(self) -> None:
         function = Function(
             "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"

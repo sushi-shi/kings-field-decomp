@@ -98,6 +98,30 @@ source = "src/game/player_death_800184b0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.lighting_weapon9_environment"
+image = "GAME.EXE"
+source = "src/game/lighting_weapon9_environment.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.lighting_timed_player_effect"
+image = "GAME.EXE"
+source = "src/game/lighting_timed_player_effect.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.lighting_color_preset6"
+image = "GAME.EXE"
+source = "src/game/lighting_color_preset6.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_status_effect4"
+image = "GAME.EXE"
+source = "src/game/player_status_effect4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.collision"
 image = "GAME.EXE"
 source = "src/game/collision.c"

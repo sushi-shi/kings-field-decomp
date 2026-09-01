@@ -26,7 +26,7 @@ extern void func_800365f8(void);
 extern void func_80014674(u32 arg0);
 extern s32 save_file_cleanup_temporary(void);
 extern void func_8001b7b0(char object);
-extern void func_80018880(void);
+extern void player_update(void);
 extern void player_update_transform_snapshot(
     struct KfVec4i *position_out, struct KfVec4s *rotation_out);
 extern void audio_set_listener_transform(
@@ -118,7 +118,7 @@ void game_main_loop(void)
     }
     game_exit_code = 0;
     for (;;) {
-        func_80018880();
+        player_update();
         if (game_exit_code != 0) {
             break;
         }

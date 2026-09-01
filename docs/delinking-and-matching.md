@@ -41,12 +41,13 @@ without being falsely scored as part of the function body.
 ## Why reconstructed relocations are conditional
 
 The executable does not say which words the linker once relocated. The
-11,664 rows in `relocs.tsv` are candidates from instruction forms and range
-tests, and currently all retain `status=candidate`. The default policy applies
-only candidates whose retail instruction bytes independently validate the TSV
-claim:
+14,908 rows in `relocs.tsv` are working claims from instruction forms, range
+tests, and manual review; candidate, reviewed, and rejected status remain
+explicit. The default policy applies only rows whose retail instruction bytes
+independently validate the TSV claim:
 
-- the row must come from `reachable-code`;
+- a candidate row must come from `reachable-code`; a manually reviewed MIPS26
+  or HI16/LO16 row may retain its original `instruction-word` discovery channel;
 - a J/JAL opcode and its decoded target must agree with the row;
 - an external J/JAL target must be an admitted function start;
 - a HI/LO pair must remain inside one function extent, consume the LUI register,
@@ -54,7 +55,9 @@ claim:
 - an out-of-load HI/LO pair remains withheld unless a human has promoted that
   exact decoded pair to `status=reviewed`; this is the path for RAM/BSS symbols
   whose addresses are real but whose storage is absent from the PS-X EXE payload;
-- raw range-only pointer words and instruction-word scans are withheld; and
+- candidate raw range-only pointer words and instruction-word scans are
+  withheld; reviewed instruction-word rows still pass every byte/target check,
+  while raw MIPS32 words remain exploratory-only; and
 - rejected, overlapping, malformed, cross-fragment, or unsupported candidates
   are withheld with a machine-readable reason.
 
@@ -81,7 +84,7 @@ The available policies are:
 
 | Policy | Meaning |
 | --- | --- |
-| `safe` | default; validated reachable-code candidates, whether still candidate or reviewed |
+| `safe` | default; validated reachable-code candidates plus manually reviewed MIPS26/HI16/LO16 rows from any discovery channel |
 | `reviewed` | same structural checks, but only rows manually promoted to `status=reviewed` |
 | `all` | exploratory; also admits supported raw/instruction-word candidates after byte validation |
 

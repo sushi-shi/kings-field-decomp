@@ -15,7 +15,7 @@ also compiles the header's size/offset assertions with the pinned target
 compiler.
 
 The current inventory contains 38 structures and 322 fields. Of those fields,
-244 have candidate-or-better meanings; 78 ranges are explicitly `opaque`.
+246 have candidate-or-better meanings; 76 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
 
@@ -99,6 +99,10 @@ known subobjects and scalars retain the existing data-identity names, while
 unresolved gaps remain explicit opaque arrays/scalars. Individual data rows
 are deliberately retained for relocation and source-linkage curation; the
 structure is the common layout that prevents incompatible per-function views.
+The player-update pass identifies its signed fields at `+0x50` and `+0x52` as
+`player_status_effect4_timer` and `player_light_effect_timer`; their complete
+set/use/countdown xrefs are documented in
+[`player-update-and-lighting.md`](player-update-and-lighting.md).
 
 The motion, map-cell, and partially decoded weapon-record fields are shown in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).

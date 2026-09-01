@@ -588,8 +588,8 @@ typedef struct KfPlayerState {
     s16 player_status_effect1_timer;
     s16 player_status_effect2_timer;
     s16 player_status_effect3_timer;
-    s16 unknown_50;
-    s16 unknown_52;
+    s16 player_status_effect4_timer;
+    s16 player_light_effect_timer;
     u8 unknown_54[0x4];
     u32 unknown_58;
     u8 player_selected_magic_id;
