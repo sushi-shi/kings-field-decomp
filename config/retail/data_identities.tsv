@@ -1693,8 +1693,8 @@ GAME.EXE	0x80057ab0	0x4	DAT_80057ab0	unknown	load	undefined *		address-only	data
 GAME.EXE	0x80057acc	0x4	DAT_80057acc	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057ad0	0x4	DAT_80057ad0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057ad4	0x4	DAT_80057ad4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057b0c	0x4	DAT_80057b0c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057b10	0x4	DAT_80057b10	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057b0c	0x4	frame_pacer_vsync_count	static	load	u32	frame_pacer	candidate	game_semantic_math_lifecycle.tsv;asm;xrefs;Psy-Q-2.5-KERNEL.H:RCntCNT3	zero-initialized counter incremented by the vertical-sync handler; static linkage is a TU-ownership candidate
+GAME.EXE	0x80057b10	0x4	frame_pacer_last_vsync	static	load	u32	frame_pacer	candidate	game_semantic_math_lifecycle.tsv;asm;xrefs	last vertical-sync count admitted by frame_pacer_wait; static linkage is a TU-ownership candidate
 GAME.EXE	0x80057b14	0x4	DAT_80057b14	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b18	0x4	DAT_80057b18	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b1c	0x4	DAT_80057b1c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2335,7 +2335,7 @@ GAME.EXE	0x800958a8	0x2	DAT_800958a8	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x800958bc	0x2	DAT_800958bc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800958d0	0x2	DAT_800958d0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800958e4	0x2	DAT_800958e4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800958f8	0x4	DAT_800958f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800958f8	0x4	game_exit_code	global	bss	u32	game	supported	game_semantic_math_lifecycle.tsv;asm;xrefs	main-loop exit flag/status copied by game_entry into entry_args[1]
 GAME.EXE	0x800968f5	0x1	DAT_800968f5	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80098010	0x4	DAT_80098010	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009a728	0x4	DAT_8009a728	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

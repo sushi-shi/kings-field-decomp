@@ -11,17 +11,33 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
+Current semantic coverage is 52 of 744 functions: 49 GAME, one PSX, and two
+OPEN identities. The latest reviewed GAME family names the linked entry,
+main loop, shutdown path, vertical-sync frame pacer, angle/vector helpers, and
+the compact game-owned rotation-matrix constructors. Their per-function
+evidence is in `config/evidence/game_semantic_math_lifecycle.tsv`.
+
 The current first pass contains 3,846 data identities, including 969
-non-overlapping BSS extents. Of those BSS rows, 11 have semantic review from
-the initial matching campaign. Six initialized-data identities describe the
-private GAME/OPEN `LIBGTE/MTX` matrix stacks, offsets, and error-path scratch
-words; the remaining direct-access extents deliberately retain address-only names.
+non-overlapping BSS extents. Thirty-one data identities have semantic review:
+19 in loaded storage and 12 in BSS. Eight loaded identities are candidate or
+supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
+stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
+state. `game_exit_code` is the newly named BSS status shared by the GAME entry
+and main loop. The remaining direct-access extents deliberately retain
+address-only names.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
 declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
+
+Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
+`KfPitchYaw`, and `KfEulerAngles` live in `include/kf/semantic_types.h` with
+compile-time size checks; established reconstruction types such as `KfMatrix`
+remain in `include/kf/game_types.h`. A type name records only fields and extents
+supported by the current MIPS access pattern; it does not claim the original
+source spelling.
 
 The confidence values are `address-only`, `candidate`, `supported`, and
 `proven`. `proven` is reserved for a recovered source symbol/signature or an

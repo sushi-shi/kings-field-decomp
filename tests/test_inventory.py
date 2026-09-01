@@ -6,9 +6,11 @@ from scripts.kf.inventory import (
     _data_access,
     _ghidra_type,
     _signature_hints,
+    load_function_identities,
     validate,
 )
-from scripts.kf.paths import RETAIL_CONFIG
+from scripts.kf.paths import CONFIG, RETAIL_CONFIG
+from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
 
 
@@ -38,8 +40,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
         self.assertEqual(counts["data"], 3846)
-        self.assertGreaterEqual(counts["functions_named"], 35)
-        self.assertGreaterEqual(counts["data_named"], 22)
+        self.assertGreaterEqual(counts["functions_named"], 52)
+        self.assertGreaterEqual(counts["data_named"], 31)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -51,6 +53,21 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(parameters, "unknown *object;unknown arg1")
         self.assertEqual(result, "unknown")
         self.assertIn("loads=1", shape)
+
+    def test_semantic_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_math_lifecycle.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 17)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = (
+                f"{identity.return_type} {identity.name}({parameters})"
+            )
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
 
     def test_data_access_uses_low_instruction_opcode(self) -> None:
         reference = FakeReference()
@@ -84,6 +101,21 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             (candidate.name, candidate.kind, candidate.size),
             ("DAT_80058000", "bss", 4),
+        )
+        matrix = game.function(0x80014CCC)
+        self.assertEqual(
+            (matrix.name, matrix.owner_type, matrix.action),
+            ("matrix_set_rotation_yxz", "matrix", "set_rotation_yxz"),
+        )
+        frame_counter = game.datum(0x80057B0C)
+        self.assertEqual(
+            (frame_counter.name, frame_counter.datatype, frame_counter.owner_type),
+            ("frame_pacer_vsync_count", "u32", "frame_pacer"),
+        )
+        exit_code = game.datum(0x800958F8)
+        self.assertEqual(
+            (exit_code.name, exit_code.datatype, exit_code.owner_type),
+            ("game_exit_code", "u32", "game"),
         )
 
 

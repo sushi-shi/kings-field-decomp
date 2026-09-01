@@ -1,7 +1,15 @@
-# Vendored-library evidence
+# Reviewed evidence
 
 This directory preserves the small, reviewable inputs behind
-`config/retail/functions_vendored.tsv`; it does not contain Sony binaries.
+the curated retail inventories; it does not contain Sony binaries.
+
+`game_match_campaign_30.tsv` records the pre-edit MIPS evidence and final
+matching verdicts for the first GAME reconstruction campaign.
+`game_semantic_math_lifecycle.tsv` records the assembly, CFG, xref, SDK-header,
+and vendored-negative-control evidence behind the first lifecycle/frame-pacer
+and fixed-point helper names. These campaign tables support identities in
+`function_identities.tsv` and `data_identities.tsv`; they are not recovered
+original symbols.
 
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
