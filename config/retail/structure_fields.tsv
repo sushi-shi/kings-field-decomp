@@ -199,7 +199,12 @@ KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	rese
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
 KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	semantic_types.h;PlayStation-save-format	standard save header and icons
 KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	semantic_types.h;asm;xrefs	King's Field directory
-KfSavePayload	0x00	0x2580	bytes	u8[9600]	opaque	semantic_types.h;asm;xrefs	serialized payload fields unresolved
+KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
+KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	semantic_types.h;asm	not touched by the write/read pair
+KfSavePayload	0x30c	0x2134	world_state	u32[2125]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the DAT_8009ddb4 block; word-aligned copy loop plus one word
+KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;alignment-checked-copy	verbatim copy of the DAT_800652a8 block; runtime-alignment-checked copy loop
+KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
+KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	semantic_types.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
 KfTmdObject	0x00	0x04	vertex_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
 KfTmdObject	0x04	0x04	vertex_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record

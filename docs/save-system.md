@@ -115,3 +115,17 @@ remains a candidate pending a caller or translation-unit boundary.
   each Ghidra-split pointer as an independent source global.
 - Reconstruct the functions in C and require 100% objdiff before banking any
   new match; semantic identity does not imply byte equality.
+
+## Reconstruction status
+
+The band is reconstructed as the single module `src/game/save_system.c`
+(unit `game.save_system`, 24 claimed functions, `0x8002b078..0x8002ca78`).
+Fourteen functions are strict 100%; the remaining ten carry recorded residues
+listed under "save" in [`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md):
+unit-local `.rdata` referents (jump tables, the card title, the message
+template), the player and display state structs that retail addresses as one
+object each, and two scheduling/allocation placements. `KfSavePayload` now
+names the four copied ranges by their copy-loop alignment. The two reverse
+ordering tables at `0x80070ebc` are addressed only relative to
+`asset_load_buffer`, so they still lack the relocation evidence the identity
+checker requires and remain a declaration inside the module.

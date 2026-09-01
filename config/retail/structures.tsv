@@ -28,7 +28,7 @@ KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xr
 KfPrimitiveBuffer	0x0c	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	primitive allocation range and current cursor; two complete records exist in each overlay
 KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
 KfSaveHeader	0x280	supported	semantic_types.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
-KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	serialized game-slot payload extent; fields remain opaque
+KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
 KfSaveSlotSummary	0x18	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	six summary words with unresolved individual meanings
 KfTmdObject	0x1c	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	standard TMD object-table record; object stride and primitive fields are exercised by both overlays
 KfVec3i	0x0c	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates

@@ -386,8 +386,19 @@ typedef struct KfSaveHeader {
     KfSaveDirectory directory;
 } KfSaveHeader;
 
+/*
+ * The write/read pair copies four ranges verbatim.  The two word-aligned
+ * ranges are moved with aligned word loops and the 0xf0-byte range with a
+ * runtime-alignment-checked loop, which fixes the member alignments; the
+ * meanings of the serialized bytes remain unresolved.
+ */
 typedef struct KfSavePayload {
-    u8 bytes[0x2580];
+    u32 player_state[56];
+    u8 unknown_0e0[556];
+    u32 world_state[2125];
+    u8 unknown_2440[240];
+    u8 magic_flags[24];
+    u8 unknown_2548[56];
 } KfSavePayload;
 
 typedef char KfVecXZs_size_is_4[(sizeof(struct KfVecXZs) == 4) ? 1 : -1];
@@ -531,5 +542,6 @@ typedef char KfPlayerMotionState_size_is_10[
     (sizeof(KfPlayerMotionState) == 0x0a) ? 1 : -1];
 typedef char KfWeaponRecord_size_is_44[
     (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
+
 
 #endif
