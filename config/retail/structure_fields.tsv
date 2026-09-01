@@ -191,12 +191,19 @@ KfPoolRecord	0x06	0x02	unknown_06	s16	opaque	game_types.h;asm;xrefs	meaning unre
 KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
 KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
 KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer
+KfPrimitiveBuffer	0x00	0x08	unknown_00	u8[8]	opaque	semantic_types.h;asm	leading render-buffer state
+KfPrimitiveBuffer	0x08	0x04	next_primitive	void *	supported	semantic_types.h;primitive_buffer_commit_poly_ft4;menu_load_message_image	free-primitive pointer; borrowed as a scratch load address by the menu image loader
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
 KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	semantic_types.h;PlayStation-save-format	standard save header and icons
 KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	semantic_types.h;asm;xrefs	King's Field directory
-KfSavePayload	0x00	0x2580	bytes	u8[9600]	opaque	semantic_types.h;asm;xrefs	serialized payload fields unresolved
+KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
+KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	semantic_types.h;asm	not touched by the write/read pair
+KfSavePayload	0x30c	0x2134	world_state	u32[2125]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the DAT_8009ddb4 block; word-aligned copy loop plus one word
+KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;alignment-checked-copy	verbatim copy of the DAT_800652a8 block; runtime-alignment-checked copy loop
+KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
+KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	semantic_types.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
 KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
