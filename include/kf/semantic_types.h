@@ -177,6 +177,95 @@ typedef struct KfMapObject {
 } KfMapObject;
 
 /*
+ * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte
+ * runtime interpolator.  The fourth vector lane and two trailing halfwords
+ * are retained because their meanings are not yet evidenced.
+ */
+typedef struct KfCameraPathPoint {
+    struct KfVec4i position;
+    struct KfVec4s rotation;
+    s16 speed;
+    s16 unknown_1a;
+} KfCameraPathPoint;
+
+typedef struct KfCameraPathState {
+    const KfCameraPathPoint *points;
+    struct KfVec4i position;
+    struct KfVec4s rotation;
+    struct KfVec4i position_fixed;
+    struct KfVec4i rotation_fixed;
+    struct KfVec4i position_delta;
+    struct KfVec4i rotation_delta;
+    s16 point_index;
+    s16 unknown_5e;
+    s32 frames_remaining;
+} KfCameraPathState;
+
+/*
+ * Map-event definitions are expanded from a 0x18-byte resource record into
+ * one of eight 0x44-byte runtime slots.  Only fields supported by the loader
+ * and reviewed update routines are named.
+ */
+typedef struct KfMapEventDefinition {
+    u8 state;
+    u8 kind;
+    u8 variant;
+    u8 cell_z;
+    u8 cell_x;
+    u8 unknown_05[5];
+    u8 image_limit;
+    u8 unknown_0b;
+    u8 unknown_0c;
+    u8 unknown_0d;
+    s16 position_z_offset;
+    s16 position_x_offset;
+    u16 initial_rotation;
+    u16 unknown_14;
+    u16 unknown_16;
+} KfMapEventDefinition;
+
+typedef struct KfMapEvent {
+    u8 state;
+    u8 kind;
+    u8 variant;
+    u8 unknown_03[5];
+    u8 image_limit;
+    u8 image_index;
+    u8 image_dirty;
+    u8 image_delay;
+    u8 unknown_0c;
+    u8 unknown_0d;
+    u8 unknown_0e;
+    u8 unknown_0f;
+    u8 unknown_10;
+    u8 unknown_11;
+    u16 rotation_phase;
+    s32 position_x;
+    s32 position_z;
+    u16 cell_x;
+    u16 cell_z;
+    u16 unknown_20;
+    u16 unknown_22;
+    s32 reference_x;
+    s32 position_y;
+    s32 reference_z;
+    u8 unknown_30[4];
+    u16 unknown_34;
+    u16 rotation;
+    u16 unknown_38;
+    u8 unknown_3a[6];
+    u16 rotation_target;
+    u16 unknown_42;
+} KfMapEvent;
+
+typedef struct KfMapProgressState {
+    u8 unknown_00;
+    u8 unknown_01;
+    u8 current_map_index;
+    u8 highest_map_index;
+} KfMapProgressState;
+
+/*
  * The memory-card file starts with the standard 0x200-byte PlayStation save
  * header (one header frame plus three icon frames).  King's Field appends a
  * 0x80-byte directory and stores each serialized game slot in 0x2580 bytes.
@@ -222,6 +311,40 @@ typedef char KfAudioVoiceSlots_tones_offset_is_60[
     (KF_OFFSET_OF(KfAudioVoiceSlots, tones) == 0x3c) ? 1 : -1];
 typedef char KfAudioVoiceSlots_notes_offset_is_80[
     (KF_OFFSET_OF(KfAudioVoiceSlots, notes) == 0x50) ? 1 : -1];
+typedef char KfCameraPathPoint_size_is_28[
+    (sizeof(KfCameraPathPoint) == 0x1c) ? 1 : -1];
+typedef char KfCameraPathPoint_speed_offset_is_24[
+    (KF_OFFSET_OF(KfCameraPathPoint, speed) == 0x18) ? 1 : -1];
+typedef char KfCameraPathState_size_is_100[
+    (sizeof(KfCameraPathState) == 0x64) ? 1 : -1];
+typedef char KfCameraPathState_rotation_offset_is_20[
+    (KF_OFFSET_OF(KfCameraPathState, rotation) == 0x14) ? 1 : -1];
+typedef char KfCameraPathState_position_fixed_offset_is_28[
+    (KF_OFFSET_OF(KfCameraPathState, position_fixed) == 0x1c) ? 1 : -1];
+typedef char KfCameraPathState_position_delta_offset_is_60[
+    (KF_OFFSET_OF(KfCameraPathState, position_delta) == 0x3c) ? 1 : -1];
+typedef char KfCameraPathState_point_index_offset_is_92[
+    (KF_OFFSET_OF(KfCameraPathState, point_index) == 0x5c) ? 1 : -1];
+typedef char KfCameraPathState_frames_remaining_offset_is_96[
+    (KF_OFFSET_OF(KfCameraPathState, frames_remaining) == 0x60) ? 1 : -1];
+typedef char KfMapEventDefinition_size_is_24[
+    (sizeof(KfMapEventDefinition) == 0x18) ? 1 : -1];
+typedef char KfMapEventDefinition_initial_rotation_offset_is_18[
+    (KF_OFFSET_OF(KfMapEventDefinition, initial_rotation) == 0x12) ? 1 : -1];
+typedef char KfMapEvent_size_is_68[
+    (sizeof(KfMapEvent) == 0x44) ? 1 : -1];
+typedef char KfMapEvent_rotation_phase_offset_is_18[
+    (KF_OFFSET_OF(KfMapEvent, rotation_phase) == 0x12) ? 1 : -1];
+typedef char KfMapEvent_position_x_offset_is_20[
+    (KF_OFFSET_OF(KfMapEvent, position_x) == 0x14) ? 1 : -1];
+typedef char KfMapEvent_cell_x_offset_is_28[
+    (KF_OFFSET_OF(KfMapEvent, cell_x) == 0x1c) ? 1 : -1];
+typedef char KfMapEvent_rotation_offset_is_54[
+    (KF_OFFSET_OF(KfMapEvent, rotation) == 0x36) ? 1 : -1];
+typedef char KfMapEvent_rotation_target_offset_is_64[
+    (KF_OFFSET_OF(KfMapEvent, rotation_target) == 0x40) ? 1 : -1];
+typedef char KfMapProgressState_size_is_4[
+    (sizeof(KfMapProgressState) == 4) ? 1 : -1];
 #undef KF_OFFSET_OF
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];

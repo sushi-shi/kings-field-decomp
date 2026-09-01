@@ -7,10 +7,11 @@ is a flat linked MIPS load image with no retained relocation directory, and
 this project has TSV evidence instead of a PDB.
 
 The implementation is `scripts/kf/delink.py`. It consumes the manually owned
-`functions.tsv`, `functions_vendored.tsv`, `data.tsv`, and `relocs.tsv`, carves
-retail bytes, and emits ELF32 little-endian MIPS target objects. These objects
-are comparison artifacts; the historical linker still consumed native Psy-Q
-objects. Pure decode, validation, and implicit-addend rules live in
+`functions.tsv`, `functions_vendored.tsv`, `data.tsv`,
+`data_identities.tsv`, and `relocs.tsv`, carves retail bytes, and emits ELF32
+little-endian MIPS target objects. These objects are comparison artifacts; the
+historical linker still consumed native Psy-Q objects. Pure decode, validation,
+and implicit-addend rules live in
 `scripts/kf/relocations.py` and are shared with the semantic navigator, so a
 reference shown as `validated` uses the same proof boundary as safe delinking.
 
@@ -69,6 +70,12 @@ object addends before recording the relocation. A normal signed HI/LO pair uses
 the carry-adjusted high half `(addend + 0x8000) >> 16`. Inferred `lui` + `ori`
 pairs are withheld by the safe policy because ELF HI16/LO16 semantics do not
 faithfully model an unsigned low half in every address range.
+
+Curated BSS aggregates supply the owner symbol and extent for this calculation.
+When a reviewed row names that semantic owner but targets an interior field,
+the emitted relocation keeps the owner symbol and encodes `target - owner` as
+its implicit addend. This lets reconstructed C use a typed struct global rather
+than introducing a fake symbol for each referenced field.
 
 The available policies are:
 

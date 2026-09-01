@@ -212,10 +212,25 @@ def load_catalog(config_dir: Path) -> Catalog:
 
     _, data_rows = read_tsv(config_dir / "data.tsv")
     data: dict[str, list[DataObject]] = {image: [] for image in IMAGE_LAYOUTS}
+    data_starts: set[tuple[str, int]] = set()
     for row in data_rows:
         va = parse_int(row["va"])
+        data_starts.add((row["image"], va))
         data[row["image"]].append(DataObject(
             image=row["image"],
+            va=va,
+            size=parse_int(row["size"]),
+            symbol=sanitize_symbol(row["name"], f"DAT_{va:08x}"),
+        ))
+    identity_path = config_dir / "data_identities.tsv"
+    identity_rows = read_tsv(identity_path)[1] if identity_path.is_file() else []
+    for row in identity_rows:
+        image = row["image"]
+        va = parse_int(row["va"])
+        if row["storage"] != "bss" or (image, va) in data_starts:
+            continue
+        data[image].append(DataObject(
+            image=image,
             va=va,
             size=parse_int(row["size"]),
             symbol=sanitize_symbol(row["name"], f"DAT_{va:08x}"),
@@ -262,6 +277,9 @@ def _resolve_symbol(
         address_name = re.fullmatch(r"DAT_([0-9A-Fa-f]{8})", symbol)
         if address_name is not None:
             return symbol, target - int(address_name.group(1), 16)
+        target_data = _containing_data(catalog, function.image, target)
+        if target_data is not None and target_data.symbol == symbol:
+            return symbol, target - target_data.va
         return symbol, 0
     target_data = _containing_data(catalog, function.image, target)
     if target_data is not None:

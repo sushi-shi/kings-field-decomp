@@ -9,6 +9,7 @@ from pathlib import Path
 from scripts.kf.compile import _target_names
 from scripts.kf.delink import (
     Catalog,
+    DataObject,
     Function,
     _apply_relocation,
     _competes_for_site,
@@ -206,6 +207,46 @@ class MipsElfTests(unittest.TestCase):
         self.assertEqual(high & 0xFFFF, 0)
         self.assertEqual(low & 0xFFFF, 0x26)
         self.assertEqual(used["addend"], "0x00000026")
+
+    def test_semantic_bss_owner_preserves_interior_addend(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
+        )
+        progress = DataObject(
+            "GAME.EXE", 0x800A0788, 4, "map_progress_state"
+        )
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": (progress,)},
+        )
+        target = progress.va + 3
+        blob = bytearray(struct.pack("<2I", 0x3C02800A, 0x2442078B))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "reachable-code",
+            "target_va": f"{target:#x}",
+            "target_region": "bss",
+            "target_name": "map_progress_state",
+            "opcode": "lui+addiu",
+            "confidence": "paired-reviewed",
+            "status": "reviewed",
+        }
+        relocations, used = _apply_relocation(blob, function, row, catalog, "safe")
+        self.assertEqual(
+            relocations,
+            [
+                MipsRelocation(0, "R_MIPS_HI16", "map_progress_state"),
+                MipsRelocation(4, "R_MIPS_LO16", "map_progress_state"),
+            ],
+        )
+        high, low = struct.unpack("<2I", blob)
+        self.assertEqual(high & 0xFFFF, 0)
+        self.assertEqual(low & 0xFFFF, 3)
+        self.assertEqual(used["addend"], "0x00000003")
 
     def test_candidate_outside_load_hi_lo_pair_remains_withheld(self) -> None:
         function = Function(

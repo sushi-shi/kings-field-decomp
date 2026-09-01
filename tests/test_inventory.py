@@ -40,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3666)
-        self.assertGreaterEqual(counts["functions_named"], 139)
-        self.assertGreaterEqual(counts["data_named"], 68)
+        self.assertEqual(counts["data"], 3622)
+        self.assertGreaterEqual(counts["functions_named"], 146)
+        self.assertGreaterEqual(counts["data_named"], 73)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -202,6 +202,40 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_camera_event_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_camera_events.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 7)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_camera_event_false_calls_remain_rejected(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        rejected = {
+            parse_int(row["site_va"]): row
+            for row in rows
+            if row["image"] == "GAME.EXE" and row["status"] == "rejected"
+        }
+        for site in (
+            0x80035070,
+            0x800350A4,
+            0x800350D0,
+            0x800350F4,
+            0x80035110,
+            0x800359A4,
+        ):
+            self.assertEqual(rejected[site]["confidence"], "not-control-flow")
+            self.assertEqual(
+                rejected[site]["provenance"],
+                "manual:game_semantic_camera_events",
+            )
 
     def test_vmanager_key_utilities_are_vendored_in_both_overlays(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
@@ -509,6 +543,46 @@ class InventoryTests(unittest.TestCase):
         )
         talk_path = game.datum(0x8005606C)
         self.assertEqual(talk_path.name, "talk_image_path_template")
+        camera_position = game.datum(0x800A0824)
+        camera_rotation = game.datum(0x800A0838)
+        self.assertEqual(
+            (camera_position.name, camera_position.datatype, camera_position.size),
+            ("camera_position", "KfVec4i", 0x10),
+        )
+        self.assertEqual(
+            (camera_rotation.name, camera_rotation.datatype, camera_rotation.size),
+            ("camera_rotation", "KfVec4s", 8),
+        )
+        map_progress = game.datum(0x800A0788)
+        self.assertEqual(
+            (map_progress.name, map_progress.datatype, map_progress.size),
+            ("map_progress_state", "KfMapProgressState", 4),
+        )
+        map_events = game.datum(0x8009DB88)
+        interior_event = game.data_owner(0x8009DC8A)
+        self.assertEqual(
+            (map_events.name, map_events.datatype, map_events.size),
+            ("map_event_pool", "KfMapEvent[8]", 0x220),
+        )
+        self.assertEqual(interior_event, map_events)
+        current_event = game.datum(0x8009DDA8)
+        self.assertEqual(
+            (current_event.name, current_event.datatype, current_event.size),
+            ("current_map_event", "KfMapEvent *", 4),
+        )
+        self.assertEqual(
+            {
+                data_identities[("GAME.EXE", va)].scope
+                for va in (
+                    0x8009DB88,
+                    0x8009DDA8,
+                    0x800A0788,
+                    0x800A0824,
+                    0x800A0838,
+                )
+            },
+            {"unknown"},
+        )
 
 
 if __name__ == "__main__":
