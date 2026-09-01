@@ -172,7 +172,7 @@ Every image directory contains:
 | `relocations_withheld.tsv` | every in-scope candidate not used, with reason |
 | `functions_withheld.tsv` | functions that could not be represented safely |
 | `objects/*.o` | synthetic target MIPS ELF objects, one per function |
-| `modules/*.o` | one object per manifested unit: its contiguous run of functions carved as a single `.text` with per-function symbols and rebased section-relative addends |
+| `modules/*.o` | one object per manifested unit: its contiguous run of functions carved as a single `.text` with per-function symbols and rebased section-relative addends, plus `.data`/`.bss` for the globals the unit claims with `DATA()` |
 
 Candidates in data rather than a current function extent are also retained in
 the withheld audit. They will move into data/translation-unit objects once
@@ -285,13 +285,15 @@ default maspsx model is ASPSX 1.07 because that is the Release 2.5 candidate;
 `--aspsx-version` remains explicit and overridable during attribution tests.
 
 Translation-unit hypotheses are expressed directly by the sources: a unit
-source claims one contiguous run of functions with `ADDRESS()` and is compiled
-once against the module object carved for that run (see
-`build-system.md`). Function symbols in target objects follow
-`function_identities.tsv`, and data symbols follow `data_identities.tsv`, so
-reconstructed source uses curated names and address-derived names remain the
-explicit spelling of unresolved identities. Data ownership per unit is still
-open.
+source claims one contiguous run of functions with `ADDRESS()` and the globals
+it owns with `DATA()`, and is compiled once against the module object carved
+for that run (see `build-system.md`). Function symbols in target objects
+follow `function_identities.tsv`, and data symbols follow
+`data_identities.tsv`, so reconstructed source uses curated names and
+address-derived names remain the explicit spelling of unresolved identities.
+Claimed load data is carved by bytes; the relocation candidates inside it are
+raw pointer words that the safe policy still withholds, so pointer tables
+compare byte-for-byte until their rows are reviewed.
 
 ## First GAME.EXE campaign
 

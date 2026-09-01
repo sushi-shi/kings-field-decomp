@@ -18,7 +18,14 @@ from pathlib import Path
 from typing import Iterable
 
 from scripts.kf.mips_elf import (
-    STT_FUNC, DefinedSymbol, MipsRelocation, SECTION_SYMBOL, write_mips_elf,
+    STB_GLOBAL,
+    STB_LOCAL,
+    STT_FUNC,
+    STT_OBJECT,
+    DefinedSymbol,
+    MipsRelocation,
+    SECTION_SYMBOL,
+    write_mips_elf,
 )
 from scripts.kf.relocations import (
     decode_hi_lo_target,
@@ -58,6 +65,8 @@ OBJECT_FIELDS = (
     "library",
     "object",
     "relocations",
+    "data_size",
+    "bss_size",
     "confidence",
     "provenance",
 )
@@ -131,6 +140,49 @@ class DataObject:
     @property
     def end(self) -> int:
         return self.va + self.size
+
+
+@dataclass(frozen=True)
+class Datum:
+    """A global a unit claims with DATA(); ``storage`` is load or bss."""
+
+    va: int
+    size: int
+    symbol: str
+    storage: str
+    scope: str = ""
+
+    @property
+    def end(self) -> int:
+        return self.va + self.size
+
+    @property
+    def binding(self) -> int:
+        return STB_LOCAL if self.scope == "static" else STB_GLOBAL
+
+    @property
+    def alignment(self) -> int:
+        # The retail address is the compiler's own alignment evidence.
+        for candidate in (4, 2):
+            if self.va % candidate == 0:
+                return candidate
+        return 1
+
+
+class _DataOwner:
+    """Structural stand-in for a claimed datum while validating rows sited in it.
+
+    ``contains`` always answers False so a target inside the datum resolves
+    through the catalog to the datum's own symbol instead of a code section.
+    """
+
+    def __init__(self, image: str, datum: Datum) -> None:
+        self.image = image
+        self.va = datum.va
+        self.size = datum.size
+
+    def contains(self, address: int, size: int = 1) -> bool:
+        return False
 
 
 @dataclass(frozen=True)
@@ -483,6 +535,7 @@ class Module:
     unit: str
     stem: str
     vas: tuple[int, ...]
+    data: tuple[Datum, ...] = ()
 
     @property
     def object_name(self) -> str:
@@ -517,12 +570,61 @@ def _rebase_section_relocations(
             pending_hi = None
 
 
+@dataclass(frozen=True)
+class ModuleImage:
+    """One module target object plus the sizes recorded in objects.tsv."""
+
+    data: bytes
+    relocations: list[MipsRelocation]
+    size: int
+    body_size: int
+    data_size: int
+    bss_size: int
+
+
+def _module_data(
+    module: Module,
+    data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]],
+) -> tuple[bytes, list[DefinedSymbol], list[MipsRelocation], int, list[DefinedSymbol]]:
+    """Lay out a module's claimed data (.data bytes) and bss (sizes only)."""
+    data = bytearray()
+    data_symbols: list[DefinedSymbol] = []
+    data_relocations: list[MipsRelocation] = []
+    bss_size = 0
+    bss_symbols: list[DefinedSymbol] = []
+    for datum in module.data:
+        if datum.storage == "load":
+            blob, relocations = data_blobs[datum.va]
+            offset = (len(data) + datum.alignment - 1) & -datum.alignment
+            data.extend(b"\0" * (offset - len(data)))
+            data_relocations.extend(
+                MipsRelocation(item.offset + offset, item.kind, item.symbol)
+                for item in relocations
+            )
+            data_symbols.append(
+                DefinedSymbol(datum.symbol, offset, datum.size, STT_OBJECT, datum.binding)
+            )
+            data.extend(blob)
+        else:
+            offset = (bss_size + datum.alignment - 1) & -datum.alignment
+            bss_symbols.append(
+                DefinedSymbol(datum.symbol, offset, datum.size, STT_OBJECT, datum.binding)
+            )
+            bss_size = offset + datum.size
+    return bytes(data), data_symbols, data_relocations, bss_size, bss_symbols
+
+
 def _module_object(
     module: Module,
     functions: dict[int, Function],
     carved: dict[int, tuple[bytes, list[MipsRelocation]]],
-) -> tuple[bytes, list[MipsRelocation], int, int]:
-    """Concatenate a module's carved functions into one .text section."""
+    data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]] | None = None,
+) -> ModuleImage:
+    """Concatenate a module's carved functions into one .text section.
+
+    Claimed data follows in ``.data``/``.bss`` so the object compares the whole
+    translation-unit hypothesis, not only its code.
+    """
     text = bytearray()
     relocations: list[MipsRelocation] = []
     symbols: list[DefinedSymbol] = []
@@ -549,11 +651,27 @@ def _module_object(
         text += rebased
         body_total += function.body_size
     first = symbols[0]
-    return (
-        write_mips_elf(bytes(text), first.name, first.size, relocations, symbols[1:]),
-        relocations,
+    data, data_symbols, data_relocations, bss_size, bss_symbols = _module_data(
+        module, data_blobs or {}
+    )
+    return ModuleImage(
+        write_mips_elf(
+            bytes(text),
+            first.name,
+            first.size,
+            relocations,
+            symbols[1:],
+            data=data,
+            data_symbols=data_symbols,
+            data_relocations=data_relocations,
+            bss_size=bss_size,
+            bss_symbols=bss_symbols,
+        ),
+        [*relocations, *data_relocations],
         len(text),
         body_total,
+        len(data),
+        bss_size,
     )
 
 
@@ -595,12 +713,28 @@ def delink(
             if not selected_vas or function.va in selected_vas
         ]
         selected_function_starts = {function.va for function in functions}
+        selected_modules = [
+            module for module in modules_by_image[image]
+            if not selected_vas or set(module.vas) <= selected_vas
+        ]
+        claimed_load_data = sorted(
+            (datum for module in selected_modules for datum in module.data
+             if datum.storage == "load"),
+            key=lambda item: item.va,
+        )
         rows_by_owner: dict[int, list[dict[str, str]]] = defaultdict(list)
+        rows_by_datum: dict[int, list[dict[str, str]]] = defaultdict(list)
         withheld_rows: list[dict[str, object]] = []
         for row in rows_by_image[image]:
-            owner = _containing_function(catalog, image, parse_int(row["site_va"]))
+            site = parse_int(row["site_va"])
+            owner = _containing_function(catalog, image, site)
             if owner is None:
-                if not selected_vas:
+                datum = next(
+                    (item for item in claimed_load_data if item.va <= site < item.end), None
+                )
+                if datum is not None:
+                    rows_by_datum[datum.va].append(row)
+                elif not selected_vas:
                     withheld_rows.append(_withheld(row, None, "site-outside-function"))
                 continue
             if owner.va in selected_function_starts:
@@ -678,9 +812,32 @@ def delink(
                 "library": function.library,
                 "object": object_relative.as_posix(),
                 "relocations": len(function_relocations),
+                "data_size": "0x0",
+                "bss_size": "0x0",
                 "confidence": function.confidence,
                 "provenance": function.provenance,
             })
+
+        # Claimed load data is carved from the image the same way; every
+        # relocation candidate sited inside it goes through the shared
+        # validator, so raw pointer words stay withheld under the safe policy.
+        data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]] = {}
+        for datum in claimed_load_data:
+            start = expected.file_offset(datum.va)
+            blob = bytearray(executable[start:start + datum.size])
+            if len(blob) != datum.size:
+                raise ValueError(f"{exe_path}: truncated datum {datum.va:#x}")
+            owner = _DataOwner(image, datum)
+            datum_relocations: list[MipsRelocation] = []
+            for row in rows_by_datum[datum.va]:
+                try:
+                    relocations, used = _apply_relocation(blob, owner, row, catalog, policy)
+                except ValueError as error:
+                    withheld_rows.append(_withheld(row, None, f"data:{error}"))
+                    continue
+                datum_relocations.extend(relocations)
+                used_rows.append(used)
+            data_blobs[datum.va] = (bytes(blob), datum_relocations)
 
         live_objects = {Path(str(row["object"])).name for row in object_rows}
         for old_object in object_output.glob("*.o"):
@@ -692,30 +849,28 @@ def delink(
         module_output = image_output / "modules"
         module_output.mkdir(parents=True, exist_ok=True)
         live_modules: set[str] = set()
-        for module in modules_by_image[image]:
-            if selected_vas and not set(module.vas) <= selected_vas:
-                continue
+        for module in selected_modules:
             if any(va not in carved for va in module.vas):
                 missing = [f"{va:#x}" for va in module.vas if va not in carved]
                 raise ValueError(f"module {module.unit}: functions not carved: {missing}")
-            data, module_relocations, size, body_total = _module_object(
-                module, catalog.function_starts[image], carved
-            )
-            _write_bytes_if_changed(module_output / module.object_name, data)
+            built = _module_object(module, catalog.function_starts[image], carved, data_blobs)
+            _write_bytes_if_changed(module_output / module.object_name, built.data)
             live_modules.add(module.object_name)
             first = catalog.function_starts[image][module.vas[0]]
             object_rows.append({
                 "image": image,
                 "va": format_hex(module.vas[0]),
-                "size": format_size(size),
-                "body_size": format_size(body_total),
+                "size": format_size(built.size),
+                "body_size": format_size(built.body_size),
                 "name": module.stem,
                 "unit": module.unit,
                 "scope": "module",
                 "provider": "",
                 "library": "",
                 "object": (Path("modules") / module.object_name).as_posix(),
-                "relocations": len(module_relocations),
+                "relocations": len(built.relocations),
+                "data_size": format_size(built.data_size),
+                "bss_size": format_size(built.bss_size),
                 "confidence": first.confidence,
                 "provenance": "config/units.toml",
             })

@@ -29,6 +29,16 @@ int ratio(int value, int span) { return (value << 6) / (span + 1) + 1; }
 void framed(int value) { callee(value); callee(value + 1); }
 """
 
+DATA_CLAIM_SOURCE = """\
+#define DATA(va, size)
+typedef unsigned long u32;
+DATA(0x80057b0c, 0x4)
+static u32 counter = 0;
+DATA(0x80057b10, 0x10)
+u32 table[4] = {1, 2, 3, 4};
+void tick(void) { counter += table[1]; }
+"""
+
 
 def text_words(path: Path) -> list[int]:
     data = subprocess.run(
@@ -38,6 +48,22 @@ def text_words(path: Path) -> list[int]:
         check=True,
     ).stdout
     return list(struct.unpack(f"<{len(data) // 4}I", data[: len(data) // 4 * 4]))
+
+
+def object_symbols(path: Path) -> dict[str, tuple[str, int, str]]:
+    """name -> (binding, size, section) for OBJECT-typed symbols."""
+    output = subprocess.run(
+        ["mipsel-linux-gnu-readelf", "-s", "-W", str(path)],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    symbols = {}
+    for line in output.splitlines():
+        parts = line.split()
+        if len(parts) >= 8 and parts[3] == "OBJECT":
+            symbols[parts[7]] = (parts[4], int(parts[2]), parts[6])
+    return symbols
 
 
 def function_symbols(path: Path) -> list[tuple[int, str]]:
@@ -77,6 +103,8 @@ def main() -> int:
         order_o2 = root / "order-o2.o"
         probe_source = root / "probe257.c"
         probe_257 = root / "probe257.o"
+        claim_source = root / "claims.c"
+        claim_object = root / "claims.o"
         manifest = root / "delink/game/objects.tsv"
         source.write_text(
             "int add(int left, int right) { return left + right; }\n",
@@ -103,7 +131,7 @@ def main() -> int:
                 "confidence": "test",
                 "provenance": "test",
             } for index, name in enumerate((
-                "simple.o", "order-o0.o", "order-o2.o", "probe257.o",
+                "simple.o", "order-o0.o", "order-o2.o", "probe257.o", "claims.o",
             ))),
             (),
         )
@@ -194,10 +222,31 @@ def main() -> int:
             )
         if 0x0007000D not in words:
             raise RuntimeError("--expand-div did not emit the break 7 divide check")
+
+        # DATA() claims: the compiler prints no data sizes, so kf-compile
+        # annotates claimed symbols with the claimed size and object type.
+        claim_source.write_text(DATA_CLAIM_SOURCE, encoding="utf-8")
+        compile_source(
+            claim_source,
+            "GAME.EXE",
+            claim_object,
+            root / "delink",
+            optimization="O2",
+            compiler="gcc257-native",
+            maspsx_flags=("--expand-div",),
+        )
+        objects = object_symbols(claim_object)
+        if objects.get("counter") != ("LOCAL", 4, "3"):
+            raise RuntimeError(f"claimed static datum is not a sized local object: {objects}")
+        if objects.get("table", ("", 0, ""))[:2] != ("GLOBAL", 16):
+            raise RuntimeError(f"claimed initialized table is not a sized global: {objects}")
+        if objects["table"][2] != objects["counter"][2]:
+            raise RuntimeError("claimed data did not land in one .data section")
     print(
         "GCC 2.6.0 PSX C calibration: MIPS ELF, source-order emission at O0/O2, "
         "O2 inlined-static omission, and downstream offset shifts; "
-        "GCC 2.5.7 probe: delay-slot $sp restore and checked div expansion"
+        "GCC 2.5.7 probe: delay-slot $sp restore, checked div expansion, "
+        "sized DATA() claim symbols"
     )
     return 0
 

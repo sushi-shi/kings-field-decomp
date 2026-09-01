@@ -19,6 +19,7 @@ SCHEMA = "https://raw.githubusercontent.com/encounter/objdiff/main/config.schema
 PAIRING_FIELDS = (
     "image",
     "va",
+    "kind",
     "name",
     "body_size",
     "unit",
@@ -127,6 +128,7 @@ def generate_projects(
             pairing_rows.append({
                 "image": image,
                 "va": row["va"],
+                "kind": "function",
                 "name": row["name"],
                 "body_size": row["body_size"],
                 "unit": unit_name,
@@ -138,6 +140,26 @@ def generate_projects(
                     "unstarted"
                 ),
             })
+        # Claimed data pairs through the same module object; the row records
+        # which unit owns the datum and whether its base exists.
+        if manifest is not None:
+            for unit in manifest.units:
+                if unit.image != image or not unit.data:
+                    continue
+                target = target_dir / module_rows[unit.unit]["object"]
+                base = base_dir / unit.object_name
+                for datum in unit.data:
+                    pairing_rows.append({
+                        "image": image,
+                        "va": f"{datum.va:#x}",
+                        "kind": f"data-{datum.storage}",
+                        "name": datum.symbol,
+                        "body_size": f"{datum.size:#x}",
+                        "unit": unit.unit,
+                        "base": _relative(base, project_dir),
+                        "target": _relative(target, project_dir),
+                        "base_status": "present" if base.is_file() else "manifest-missing-base",
+                    })
 
         project = {
             "$schema": SCHEMA,
@@ -160,7 +182,8 @@ def generate_projects(
             pairing_rows,
             (
                 "GENERATED - one objdiff project per independently linked program.",
-                "Manifested units pair their module object under modules/ with base/<same name>.",
+                "Manifested units pair their module object under modules/ with base/<same name>;",
+                "claimed data rows (kind data-load/data-bss) share their unit's objects.",
                 "Only manifested units with real base objects enter objdiff scoring.",
             ),
         )

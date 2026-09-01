@@ -10,6 +10,7 @@ from scripts.kf.compile import _target_names
 from scripts.kf.delink import (
     Catalog,
     DataObject,
+    Datum,
     Function,
     Module,
     _apply_relocation,
@@ -24,6 +25,20 @@ from scripts.kf.delink import (
 from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
 from scripts.kf.objdiff import generate_projects
 from scripts.kf.retail import write_tsv
+
+
+def elf_symbols(data: bytes) -> list[tuple[str, tuple[int, ...]]]:
+    """(name, (name_off, value, size, info, other, shndx)) for every symbol."""
+    sections = elf_sections(data)
+    symtab = sections[".symtab"]
+    strtab = sections[".strtab"]
+    strings = data[strtab[4]:strtab[4] + strtab[5]]
+    symbols = []
+    for offset in range(0, symtab[5], 16):
+        record = struct.unpack_from("<IIIBBH", data, symtab[4] + offset)
+        end = strings.index(b"\0", record[0])
+        symbols.append((strings[record[0]:end].decode(), record))
+    return symbols
 
 
 def elf_sections(data: bytes) -> dict[str, tuple[int, ...]]:
@@ -494,16 +509,67 @@ class ModuleObjectTests(unittest.TestCase):
         rebased[0:4] = struct.pack("<I", encode_mips26_addend(0x08000000, 0))
         carved[0x80010008] = (bytes(rebased), carved[0x80010008][1])
         module = Module("GAME.EXE", "game.pair", "pair", (0x80010000, 0x80010008))
-        data, relocations, size, body = _module_object(
-            module, {first.va: first, second.va: second}, carved
-        )
-        self.assertEqual(size, 20)
-        self.assertEqual(body, 16)
-        self.assertEqual(relocations, [MipsRelocation(8, "R_MIPS_26", ".text")])
-        sections = elf_sections(data)
-        text = data[sections[".text"][4]:sections[".text"][4] + sections[".text"][5]]
+        built = _module_object(module, {first.va: first, second.va: second}, carved)
+        self.assertEqual(built.size, 20)
+        self.assertEqual(built.body_size, 16)
+        self.assertEqual(built.relocations, [MipsRelocation(8, "R_MIPS_26", ".text")])
+        self.assertEqual((built.data_size, built.bss_size), (0, 0))
+        sections = elf_sections(built.data)
+        self.assertNotIn(".data", sections)
+        self.assertNotIn(".bss", sections)
+        text = built.data[sections[".text"][4]:sections[".text"][4] + sections[".text"][5]]
         word = struct.unpack_from("<I", text, 8)[0]
         self.assertEqual((word & 0x03FFFFFF) << 2, 8)  # rebased to the module offset
+
+    def test_module_carries_claimed_data_and_bss(self) -> None:
+        function = Function("GAME.EXE", 0x80010000, 8, 8, 1, "only", "test", "test")
+        carved = {0x80010000: (struct.pack("<2I", 0x03E00008, 0), [])}
+        module = Module(
+            "GAME.EXE", "game.unit", "unit", (0x80010000,),
+            (
+                Datum(0x80050000, 4, "counter", "load", "static"),
+                Datum(0x80050005, 1, "flag", "load", ""),
+                Datum(0x80050008, 4, "word", "load", ""),
+                Datum(0x800A0000, 0x10, "buffer", "bss", ""),
+                Datum(0x800A0011, 1, "byte", "bss", "static"),
+                Datum(0x800A0014, 4, "last", "bss", ""),
+            ),
+        )
+        blobs = {
+            0x80050000: (b"\x01\x02\x03\x04", [MipsRelocation(0, "R_MIPS_32", "callee")]),
+            0x80050005: (b"\x05", []),
+            0x80050008: (b"\x09\x0a\x0b\x0c", []),
+        }
+        built = _module_object(module, {function.va: function}, carved, blobs)
+        # Claims pack in order with their retail alignment: the byte follows the
+        # word directly, the next word waits for a 4-byte boundary.
+        self.assertEqual(built.data_size, 12)
+        self.assertEqual(built.bss_size, 0x18)
+        self.assertEqual(built.relocations, [MipsRelocation(0, "R_MIPS_32", "callee")])
+        sections = elf_sections(built.data)
+        data_header = sections[".data"]
+        self.assertEqual(built.data[data_header[4]:data_header[4] + data_header[5]],
+                         b"\x01\x02\x03\x04\x05\0\0\0\x09\x0a\x0b\x0c")
+        self.assertEqual(sections[".bss"][1], 8)  # SHT_NOBITS
+        self.assertEqual(sections[".bss"][5], 0x18)
+        rel_data = sections[".rel.data"]
+        self.assertEqual(rel_data[5], 8)
+        symbols = elf_symbols(built.data)
+        names = {name: symbol for name, symbol in symbols}
+        self.assertEqual(names["counter"][3] >> 4, 0)   # STB_LOCAL from scope=static
+        self.assertEqual(names["counter"][3] & 0xF, 1)  # STT_OBJECT
+        self.assertEqual((names["counter"][1], names["counter"][2]), (0, 4))
+        self.assertEqual(names["flag"][3] >> 4, 1)      # STB_GLOBAL
+        self.assertEqual((names["flag"][1], names["flag"][2]), (4, 1))
+        self.assertEqual((names["word"][1], names["word"][2]), (8, 4))
+        self.assertEqual((names["buffer"][1], names["buffer"][2]), (0, 0x10))
+        self.assertEqual((names["byte"][1], names["byte"][2]), (0x10, 1))
+        self.assertEqual((names["last"][1], names["last"][2]), (0x14, 4))
+        section_names = list(sections)
+        self.assertEqual(names["flag"][5], section_names.index(".data") + 1)
+        self.assertEqual(names["buffer"][5], section_names.index(".bss") + 1)
+        self.assertEqual(names["only"][5], section_names.index(".text") + 1)
+        self.assertEqual(names["callee"][5], 0)  # undefined
 
 if __name__ == "__main__":
     unittest.main()

@@ -66,6 +66,10 @@
 - `config/units.toml` lists units in linked (ascending address) order per
   image and carries no addresses; a function's address lives only in its
   claim.
+- A global lives in the module that owns it, defined under
+  `DATA(0xVA, size)` with its curated identity name; every other unit declares
+  it `extern`. Load-image data is explicitly initialized in source, and data
+  claims ascend inside a source like function claims.
 
 ## Game code versus vendored code
 
