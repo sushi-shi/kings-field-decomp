@@ -159,7 +159,7 @@ typedef struct KfMapObject {
     struct KfEulerAngles rotation;
     u16 unknown_1e;
     u8 link_id;
-    u8 unknown_21;
+    u8 action_parameter;
     u16 spawn_sequence;
     s16 vertical_velocity;
     u8 unknown_26[2];

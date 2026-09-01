@@ -40,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 744)
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
-        self.assertEqual(counts["data"], 3772)
-        self.assertGreaterEqual(counts["functions_named"], 129)
-        self.assertGreaterEqual(counts["data_named"], 57)
+        self.assertEqual(counts["data"], 3675)
+        self.assertGreaterEqual(counts["functions_named"], 130)
+        self.assertGreaterEqual(counts["data_named"], 59)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -168,7 +168,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/game_semantic_map_runtime.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(rows), 9)
+        self.assertEqual(len(rows), 10)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -297,6 +297,20 @@ class InventoryTests(unittest.TestCase):
             ),
             ("map_copy_regions", "KfMapCopyRegion[4]", 0x18),
         )
+        action_jump_table = game.datum(0x80012888)
+        self.assertEqual(
+            (
+                action_jump_table.name,
+                action_jump_table.datatype,
+                action_jump_table.size,
+            ),
+            ("map_object_action_jump_table", "code pointer[99]", 0x18C),
+        )
+        gameplay_sounds = game.datum(0x80056188)
+        self.assertEqual(
+            (gameplay_sounds.name, gameplay_sounds.datatype, gameplay_sounds.size),
+            ("gameplay_sound_refs", "SoundRef[13]", 0x27),
+        )
         map_object_definitions = game.datum(0x8006E8E0)
         self.assertEqual(
             (
@@ -323,6 +337,15 @@ class InventoryTests(unittest.TestCase):
                 map_object_loader.action,
             ),
             ("map_object_pool_load", "map_object_pool", "load"),
+        )
+        map_object_updater = game.function(0x80031CC8)
+        self.assertEqual(
+            (
+                map_object_updater.name,
+                map_object_updater.owner_type,
+                map_object_updater.action,
+            ),
+            ("map_object_pool_update", "map_object_pool", "update"),
         )
         self.assertEqual(
             data_identities[("GAME.EXE", 0x800561B0)].scope,

@@ -1,7 +1,7 @@
 # Map objects and copy regions
 
-These GAME inventory passes cover the setup and runtime helper blocks at
-`0x800308c0..0x80031cc8`. The names describe behavior established by retail
+These GAME inventory passes cover the setup, runtime helpers, and dispatcher at
+`0x800308c0..0x800328e0`. The names describe behavior established by retail
 MIPS, callers, data references, and loop bounds; they do not claim original
 FromSoftware spellings.
 
@@ -9,6 +9,8 @@ FromSoftware spellings.
 
 | Address | Extent | Identity | Evidence |
 | --- | ---: | --- | --- |
+| `0x80012888` | `0x18c` | `map_object_action_jump_table[99]` | compiler-emitted switch targets indexed by action values zero through 98 |
+| `0x80056188` | `0x27` | `gameplay_sound_refs[13]` | packed three-byte `SoundRef` records; eleven entries have direct users across map-object and other gameplay code |
 | `0x800561b0` | `0x18` | `map_copy_regions[4]` | four six-byte source/destination rectangle descriptors |
 | `0x8006e8e0` | `0x500` | `map_object_definitions[160]` | destination of one `0x140`-word resource copy; every runtime consumer indexes eight-byte records by object ID |
 | `0x8006ede0` | `0x20a8` | `map_object_pool[190]` | clear/load loops use 190 records at a `0x2c` stride |
@@ -35,9 +37,11 @@ Serialized actor and map-object placement records use proven `0x10` and `0x14`
 strides. They remain opaque `KfActorPlacement` and `KfMapObjectPlacement`
 types until individual fields are corroborated by the resource producer or
 additional consumers. The partial live `KfMapObject` layout records only the
-object ID, cell and world coordinates, rotation, link byte, effect allocation
-sequence, vertical velocity, action, and action timer used by the reviewed
-blocks; unknown bytes remain explicit.
+object ID, cell and world coordinates, rotation, link byte, action parameter,
+effect allocation sequence, vertical velocity, action, and action timer used by
+the reviewed blocks; unknown bytes remain explicit. The action parameter has
+case-specific meanings, including linked-object, map-copy-region, and
+world-state indices.
 
 ## Reviewed operations
 
@@ -64,6 +68,16 @@ band, and allocation chooses a free slot or the oldest wrapping sequence. Their
 effects are supported, but their source linkage remains `unknown` rather than
 guessing file-local `static` from the executable alone.
 
+`map_object_pool_update` is called once per frame immediately after
+`actor_pool_update`. It walks all 190 records, skips action `0xff`, rejects
+values above 98, and dispatches the remaining action byte through the 99-entry
+table. The raw table contains internal labels for actions 0, 2, 10, 11, 12,
+80 through 83, and 96 through 98; all other entries select the common tail.
+The table is a compiler switch artifact rather than evidence for an original C
+global, so its identity is useful for binary navigation while source linkage is
+explicitly inapplicable. The adjacent 39 initialized bytes are thirteen packed
+gameplay sound references followed by one padding byte before `map_copy_regions`.
+
 Per-function CFG, call, signature, initialized-byte, Ghidra, and
 vendor-negative evidence is recorded in
 `config/evidence/game_semantic_map_objects.tsv` and
@@ -75,8 +89,8 @@ vendor-negative evidence is recorded in
   consumers.
 - Name remaining live-object fields from movement, interaction, and render
   consumers.
-- Resolve action and behavior-type numeric values and the special-object switch
-  table near `0x80012738`.
+- Resolve the semantic meanings of the action and behavior-type numeric values,
+  and the separate special-object switch table near `0x80012738`.
 - Recover translation-unit boundaries before deciding whether the map-copy
   table, definition array, and effect sequences had external or file-local
   linkage.

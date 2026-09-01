@@ -11,7 +11,7 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 129 of 744 functions: 126 GAME, one PSX, and two
+Current semantic coverage is 130 of 744 functions: 127 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -27,9 +27,9 @@ remaining unknowns are described in [`save-system.md`](save-system.md),
 [`actor-system.md`](actor-system.md), and
 [`map-objects.md`](map-objects.md).
 
-The current first pass contains 3,772 data identities, including 891
-non-overlapping BSS extents. Fifty-seven data identities have semantic review:
-23 in loaded storage and 34 in BSS. Eight loaded identities are candidate or
+The current first pass contains 3,675 data identities, including 891
+non-overlapping BSS extents. Fifty-nine data identities have semantic review:
+25 in loaded storage and 34 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -60,9 +60,12 @@ field-level BSS candidates with 160 eight-byte `KfMapObjectDefinition` records
 and one 190-record `KfMapObject` pool. Placement records are loaded at a `0x14`
 stride, while live objects have a proven `0x2c` stride. The runtime pass also
 names the wrapping allocation sequences for reserved effect slots 160..169,
-170..179, and 180..189. The copy descriptors, definitions, and counters retain
-`scope=unknown`; the object pool is shared by initialization, collision, and
-runtime update families and is recorded as global.
+170..179, and 180..189. Its dispatcher pass collapses 99 false scalar pointer
+identities into one compiler-emitted action jump table and types thirteen
+adjacent packed gameplay sound references. The copy descriptors, definitions,
+sound references, and counters retain `scope=unknown`; the object pool is
+shared by initialization, collision, and runtime update families and is
+recorded as global.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
