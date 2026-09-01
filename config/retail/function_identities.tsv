@@ -84,7 +84,7 @@ GAME.EXE	0x8001ac0c	func_8001ac0c			void *	s32 size	address-only	supported	mips-
 GAME.EXE	0x8001ac8c	func_8001ac8c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001acf0	func_8001acf0			u32	void * arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001ae60	func_8001ae60			u32	void * arg0;s32 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8001af9c	func_8001af9c			u32	u32 object	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+GAME.EXE	0x8001af9c	func_8001af9c			s32	u8 *buffer;const char *path	address-only	supported	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate;asm;xrefs;player_equip_weapon	player_equip_weapon passes the weapon asset buffer and the digit-patched image path and exits on a nonzero result; body still unreviewed
 GAME.EXE	0x8001b100	func_8001b100			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001b180	func_8001b180			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001b390	func_8001b390			void	char arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review

@@ -13,13 +13,17 @@ cc1_flags = []
 # hoisting above the frame allocation, and -O2 schedule reproduce retail forms
 # that the 2.6.0 probe cannot emit. `--expand-div` selects the checked ASPSX
 # div/rem expansion (`break 7`/`break 6`) that retail contains. Still a probe.
+# `-mcpu=r3000` selects the R3000 scheduling model explicitly: the rebuilt
+# cc1 reports Cpu 3000 but schedules with the generic latencies unless the
+# flag is passed, and the explicit model reproduces retail's argument setup
+# and load placement (ten additional exact units, no regressions).
 [profiles.probe-gcc257-o2-g0]
 language = "c"
 compiler = "gcc257-native"
 optimization = "O2"
 small_data = 0
 aspsx_version = "1.07"
-cc1_flags = []
+cc1_flags = ["-mcpu=r3000"]
 maspsx_flags = ["--expand-div"]
 
 [profiles.asm-r3000-g0]
@@ -86,15 +90,33 @@ source = "src/game/player_80015f28.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.player_80016058"
+image = "GAME.EXE"
+source = "src/game/player_80016058.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.player_8001627c"
 image = "GAME.EXE"
 source = "src/game/player_8001627c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.player_800166b4"
+image = "GAME.EXE"
+source = "src/game/player_800166b4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.player_800167e4"
 image = "GAME.EXE"
 source = "src/game/player_800167e4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016a30"
+image = "GAME.EXE"
+source = "src/game/player_80016a30.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -107,6 +129,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.player_80016e24"
 image = "GAME.EXE"
 source = "src/game/player_80016e24.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017040"
+image = "GAME.EXE"
+source = "src/game/player_80017040.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

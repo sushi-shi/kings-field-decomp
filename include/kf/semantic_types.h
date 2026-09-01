@@ -507,8 +507,8 @@ typedef char KfWeaponRecord_size_is_44[
  * their former identity spellings; unknown_ spans remain opaque.
  */
 typedef struct KfPlayerState {
-    u32 experience;
-    u32 next_level_experience;
+    s32 experience;
+    s32 next_level_experience;
     KfPlayerProgressState progress_state;
     u8 unknown_0c[0x1];
     u8 unknown_0d[0x1];
@@ -524,7 +524,7 @@ typedef struct KfPlayerState {
     u16 physical_power;
     u16 magic;
     u16 status_effect_flags;
-    u8 unknown_2c[0x4];
+    u32 unknown_2c;
     u16 attack_component0;
     u16 attack_component1;
     u16 attack_component2;
@@ -541,10 +541,10 @@ typedef struct KfPlayerState {
     s16 status_effect1_timer;
     s16 status_effect2_timer;
     s16 status_effect3_timer;
-    u8 unknown_50[0x2];
-    u8 unknown_52[0x2];
+    u16 unknown_50;
+    u16 unknown_52;
     u8 unknown_54[0x4];
-    u8 unknown_58[0x4];
+    u32 unknown_58;
     u8 selected_magic_id;
     u8 unknown_5d[0x3];
     const void *selected_magic_record;
@@ -554,7 +554,7 @@ typedef struct KfPlayerState {
     u8 *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[0x2];
-    u8 unknown_74[0x4];
+    u32 unknown_74;
     u8 unknown_78[0x1];
     u8 unknown_79[0x1];
     u8 weapon_attack_fully_charged;

@@ -40,3 +40,34 @@ Open residues recorded during the same campaign (not steered):
 | independent stores emitted in a non-ascending field order | GCC keeps source order for independent stores; write the assignments in retail order (`z, y, x` for the camera rotation, `yaw, pitch, speed, forward, strafe` for the motion clear) | `game_initialize_session` `0x80016e24`, `player_clear_motion` `0x80016eb8` |
 | a computed value stored to a global and passed to a call from the same register | compute into a local, store it, pass the local; re-reading the global instead reloads it into the argument register | `player_update_view_bob` `0x80017a24` |
 | `lhu v0 = field; lhu v1 = field` twice before a store and compare | `committed = current; if (current == N) ...` with plain member reads; the compiler does not CSE across the intervening store | `player_begin_weapon_attack` `0x80016b24` |
+| `beq falloff,0x1000,<else>` with the computed path falling through | `if (x != CONST) { compute } else { simple }`: the compiler places the first branch of the source first | `player_apply_radial_damage` `0x800166b4` |
+| an ALU instruction from before a branch sitting in that branch's delay slot | put the statement before the `if` in source (`dx >>= 3;` ahead of the y-test); reorg only takes slot fills from the preceding block or the target | `player_distance_to_point` `0x80017108` |
+
+### Scheduling model: `-mcpu=r3000` (profile change, 2026-09-02)
+
+The rebuilt `cc1psx-257` banner reports `Cpu = 3000`, but the instruction
+scheduler used the generic latency model unless `-mcpu=r3000` is passed. With
+the flag, argument setup and load placement follow retail (`li a1,0xffff`
+before the two `lw` loads in `player_distance_to_point_in_cone`; `move v0,a0`
+before the stack-argument loads in `player_apply_radial_damage`). Applied to
+every enrolled unit it produced no regressions and made ten more units exact:
+`matrix_set_rotation_yxz`, the four vector scale helpers,
+`primitive_buffer_commit_poly_ft4`, `game_state_acknowledge_pending`
+(previously exact only under 2.6.0 without the second scheduling pass),
+`save_workspace_allocate`, `audio_play_spatial_range`, `sound_ref_play`.
+`probe-gcc257-o2-g0` now carries `cc1_flags = ["-mcpu=r3000"]`.
+
+Open residues recorded in the player campaign (not steered):
+
+- `player_add_experience` `0x80016058`: inside the level-up `while` loop the
+  probe hoists `la s2,player_level_growth_table+0x1d4` and schedules the
+  extrapolation loads early; retail keeps every growth-table access as a
+  direct `lui/lhu` pair in statement order. Both 2.5.7 and 2.6.0 hoist the
+  anchor for any source-level loop containing two related constant
+  addresses (`build/probe/hoist.c`), and a goto-formed loop loses the
+  retail `s0`/`s1` player anchors, so the shape is unexplained.
+- `player_distance_to_point` `0x80017108`: the last range check keeps an
+  inline `j` to the epilogue instead of the shared `bnez` form, and the
+  final distance lands in `a0` instead of `v1`.
+- `player_distance_to_point_in_cone` `0x80017040`: the early-return branch
+  slot holds `nop` instead of `move v0,s1`.

@@ -2026,9 +2026,9 @@ GAME.EXE	0x80016644	0x4e44	0x80016648	mips_hi16_lo16	reachable-code	0x800a0792	b
 GAME.EXE	0x80016660	0x4e60	0x80016664	mips_hi16_lo16	reachable-code	0x800a0792	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_combat
 GAME.EXE	0x80016668	0x4e68	0x8001666c	mips_hi16_lo16	reachable-code	0x800a0822	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_combat
 GAME.EXE	0x8001667c	0x4e7c	0x80016680	mips_hi16_lo16	reachable-code	0x800a0822	bss	player_state	lui+sb	v0	paired-reviewed	reviewed	manual:game_semantic_player_combat
-GAME.EXE	0x80016718	0x4f18		mips26	instruction-word	0x80017108	load	player_distance_to_point	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
-GAME.EXE	0x80016780	0x4f80		mips26	instruction-word	0x8001678c	load		j		manual-control-flow	reviewed	manual:game_semantic_player_combat
-GAME.EXE	0x800167ac	0x4fac		mips26	instruction-word	0x80016324	load	player_apply_damage	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
+GAME.EXE	0x80016718	0x4f18		mips26	reachable-code	0x80017108	load	player_distance_to_point	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
+GAME.EXE	0x80016780	0x4f80		mips26	reachable-code	0x8001678c	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
+GAME.EXE	0x800167ac	0x4fac		mips26	reachable-code	0x80016324	load	player_apply_damage	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
 GAME.EXE	0x800167e4	0x4fe4	0x800167e8	mips_hi16_lo16	reachable-code	0x800a079c	bss	player_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800167ec	0x4fec	0x800167f0	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+sb	a0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016804	0x5004	0x80016808	mips_hi16_lo16	reachable-code	0x800a07e0	bss	player_state	lui+sw	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -2175,10 +2175,10 @@ GAME.EXE	0x8001700c	0x580c		mips26	reachable-code	0x8001a4e8	load		jal		control-
 GAME.EXE	0x80017018	0x5818	0x8001701c	mips_hi16_lo16	reachable-code	0x80095064	bss	DAT_80095064	lui+sb	v0	paired-reviewed	reviewed	manual:game_semantic_player_motion_attack
 GAME.EXE	0x80017020	0x5820	0x80017024	mips_hi16_lo16	reachable-code	0x800a085e	bss	player_state	lui+sb	zero	paired-reviewed	reviewed	manual:game_semantic_player_motion_attack
 GAME.EXE	0x80017028	0x5828	0x8001702c	mips_hi16_lo16	reachable-code	0x800a085c	bss	player_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_player_motion_attack
-GAME.EXE	0x80017078	0x5878		mips26	instruction-word	0x80017108	load	player_distance_to_point	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
+GAME.EXE	0x80017078	0x5878		mips26	reachable-code	0x80017108	load	player_distance_to_point	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
 GAME.EXE	0x80017090	0x5890	0x80017094	mips_hi16_lo16	reachable-code	0x800a0824	bss	player_state	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_player_motion_attack
 GAME.EXE	0x800170a0	0x58a0	0x800170a4	mips_hi16_lo16	reachable-code	0x800a082c	bss	player_state	lui+lw	a1	paired-reviewed	reviewed	manual:game_semantic_player_motion_attack
-GAME.EXE	0x800170ac	0x58ac		mips26	instruction-word	0x80014fb8	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_motion_attack
+GAME.EXE	0x800170ac	0x58ac		mips26	reachable-code	0x80014fb8	load	vector_xz_to_angle	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_motion_attack
 GAME.EXE	0x8001711c	0x591c	0x80017120	mips_hi16_lo16	reachable-code	0x800a0824	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_player_combat
 GAME.EXE	0x80017144	0x5944	0x80017148	mips_hi16_lo16	reachable-code	0x800a082c	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_player_combat
 GAME.EXE	0x80017184	0x5984	0x80017188	mips_hi16_lo16	reachable-code	0x800a0834	bss	player_state	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_player_combat
