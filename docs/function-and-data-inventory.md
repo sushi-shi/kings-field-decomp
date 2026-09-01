@@ -45,9 +45,9 @@ described in [`save-system.md`](save-system.md),
 [`memory-allocator.md`](memory-allocator.md), and
 [`structure-layouts.md`](structure-layouts.md).
 
-The current first pass contains 3,507 data identities. The lower row count is
+The current first pass contains 3,441 data identities. The lower row count is
 progress: field-sized and pointer-sized seeds are merged when evidence proves
-an owning table or structure. 176 data identities now have semantic review.
+an owning table or structure. 179 data identities now have semantic review.
 Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
@@ -170,8 +170,8 @@ declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
 
-The structure inventory currently covers 37 types and 234 fields. 177 fields
-have semantic names and 57 exact ranges remain explicitly opaque. `kf inventory
+The structure inventory currently covers 38 types and 322 fields. 244 fields
+have semantic names and 78 exact ranges remain explicitly opaque. `kf inventory
 check` derives the 32-bit layouts from the checked C headers and rejects any
 TSV disagreement in size, offset, extent, name, or datatype.
 
@@ -183,8 +183,8 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfMapObject`, `KfCameraPathPoint`, `KfCameraPathState`,
 `KfMapEventDefinition`, `KfMapEvent`, `KfMapCell`, `KfPlayerProgressState`,
 `KfPlayerLevelGrowth`, `KfPlayerMotionState`, `KfPlayerVitals`,
-`KfPlayerAttackChargeState`, `KfWeaponRecord`, `KfCollisionTarget`,
-`KfPrimitiveBuffer`, `KfTmdObject`,
+`KfPlayerAttackChargeState`, `KfPlayerState`, `KfWeaponRecord`,
+`KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`,
 `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
 `KfSavePayload` live in `include/kf/semantic_types.h` with compile-time size
 checks; established reconstruction types such as `KfMatrix` remain in

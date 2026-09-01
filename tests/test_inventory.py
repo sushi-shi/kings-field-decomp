@@ -43,8 +43,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 494)
         self.assertEqual(counts["data"], 3441)
-        self.assertGreaterEqual(counts["functions_named"], 187)
-        self.assertGreaterEqual(counts["data_named"], 144)
+        self.assertGreaterEqual(counts["functions_named"], 221)
+        self.assertGreaterEqual(counts["data_named"], 179)
         self.assertEqual(counts["structures"], 38)
         self.assertEqual(counts["structure_fields"], 322)
         self.assertEqual(counts["structure_fields_named"], 244)
@@ -58,6 +58,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfPlayerMotionState"].size, 0x0A)
         self.assertEqual(structures["KfWeaponRecord"].size, 0x2C)
         self.assertEqual(structures["KfCollisionTarget"].size, 0x20)
+        self.assertEqual(structures["KfPlayerState"].size, 0xE0)
+        self.assertEqual(structures["KfPrimitiveBuffer"].size, 0x0C)
+        self.assertEqual(structures["KfTmdObject"].size, 0x1C)
         growth_fields = {
             row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)
             for row in fields
@@ -102,6 +105,24 @@ class InventoryTests(unittest.TestCase):
             collision_fields["unknown_1a"].meaning_confidence,
             "opaque",
         )
+        player_state_fields = {
+            row.name: row for row in fields if row.structure == "KfPlayerState"
+        }
+        self.assertEqual(player_state_fields["player_vitals"].offset, 0x10)
+        self.assertEqual(player_state_fields["camera_position"].offset, 0xA4)
+        self.assertEqual(player_state_fields["player_motion_state"].offset, 0xC0)
+        self.assertEqual(player_state_fields["unknown_ce"].meaning_confidence, "opaque")
+        primitive_fields = {
+            row.name: row for row in fields if row.structure == "KfPrimitiveBuffer"
+        }
+        self.assertEqual(primitive_fields["end"].offset, 0x04)
+        self.assertEqual(primitive_fields["cursor"].offset, 0x08)
+        tmd_fields = {
+            row.name: row for row in fields if row.structure == "KfTmdObject"
+        }
+        self.assertEqual(tmd_fields["primitive_offset"].offset, 0x10)
+        self.assertEqual(tmd_fields["primitive_count"].offset, 0x14)
+        self.assertEqual(tmd_fields["scale"].offset, 0x18)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(

@@ -14,8 +14,8 @@ any disagreement in size, offset, extent, name, or datatype. A full `kf build`
 also compiles the header's size/offset assertions with the pinned target
 compiler.
 
-The current inventory contains 37 structures and 234 fields. Of those fields,
-177 have candidate-or-better meanings; 57 ranges are explicitly `opaque`.
+The current inventory contains 38 structures and 322 fields. Of those fields,
+244 have candidate-or-better meanings; 78 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
 
@@ -32,6 +32,7 @@ being mislabeled as independent globals.
 | `KfPitchYaw` | `0x04` | `KfPlayerAttackChargeState` | `0x04` |
 | `KfPlayerLevelGrowth` | `0x0c` | `KfPlayerMotionState` | `0x0a` |
 | `KfPlayerProgressState` | `0x04` | `KfPlayerVitals` | `0x08` |
+| `KfPlayerState` | `0xe0` |  |  |
 | `KfPoolRecord` | `0x14` | `KfPrimitiveBuffer` | `0x0c` |
 | `KfSaveDirectory` | `0x80` | `KfTmdObject` | `0x1c` |
 | `KfSaveHeader` | `0x280` | `KfSavePayload` | `0x2580` |
@@ -89,6 +90,15 @@ The primitive-buffer extent is proved by complete initialization of two
 is supported by the standard format, the exact 0x1c lookup stride, and the
 primitive stream fields read at `+0x10` and `+0x14`. See
 [`display-and-tmd.md`](display-and-tmd.md).
+
+`KfPlayerState` provides a checked complete view of the contiguous
+`0x800a0780..0x800a0860` GAME player-state block. `game_main_loop` clears the
+whole `0xe0`-byte extent and addresses later members from the same base; the
+last typed member ends exactly at `+0xdf`. Its 83 fields preserve every byte:
+known subobjects and scalars retain the existing data-identity names, while
+unresolved gaps remain explicit opaque arrays/scalars. Individual data rows
+are deliberately retained for relocation and source-linkage curation; the
+structure is the common layout that prevents incompatible per-function views.
 
 The motion, map-cell, and partially decoded weapon-record fields are shown in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).
