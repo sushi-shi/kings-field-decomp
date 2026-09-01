@@ -15,7 +15,7 @@ reconstructs claims its retail address in the source itself,
 ```c
 #include <kf/address.h>
 
-ADDRESS(0x8001499c)
+ADDRESS(0x8001499c, 0x38)
 void game_shutdown(void)
 ```
 
@@ -25,7 +25,9 @@ binding rules are structural, in the spirit of Gruntz's `RVA()`:
 
 - a claim must name an admitted, non-vendored, non-fragmented function of the
   unit's image, spelled exactly as `function_identities.tsv` names it, so a
-  labelled function is never called by an address-derived name in source;
+  labelled function is never called by an address-derived name in source, and
+  its size must equal the admitted retail body size, so the claim and the
+  census cannot drift apart silently;
 - claims inside one source ascend by address, and a unit owns every admitted
   function between its first and last claim, so a source file is a contiguous
   run of the linked image (address-order incrementalism);

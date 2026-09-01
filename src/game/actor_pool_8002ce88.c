@@ -3,7 +3,7 @@
 
 extern KfActor actor_pool[128];
 
-ADDRESS(0x8002ce88)
+ADDRESS(0x8002ce88, 0x40)
 void actor_pool_clear(void)
 {
     KfActor *actor = actor_pool;
@@ -16,7 +16,7 @@ void actor_pool_clear(void)
     }
 }
 
-ADDRESS(0x8002cec8)
+ADDRESS(0x8002cec8, 0xc)
 void actor_set_action(KfActor *actor, u8 action)
 {
     actor->action = action;

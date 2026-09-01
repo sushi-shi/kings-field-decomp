@@ -10,7 +10,7 @@ extern s32 audio_vab_header;
 extern s16 audio_active_vab_id;
 extern void SsVabClose(s16 vab_id);
 
-ADDRESS(0x80032c78)
+ADDRESS(0x80032c78, 0x38)
 void audio_shutdown(void)
 {
     audio_close_vab();
@@ -18,7 +18,7 @@ void audio_shutdown(void)
     SsEnd();
 }
 
-ADDRESS(0x80032cb0)
+ADDRESS(0x80032cb0, 0x40)
 void audio_close_vab(void)
 {
     s16 *vab_id = &audio_active_vab_id;

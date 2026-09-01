@@ -3,7 +3,7 @@
 
 extern KfActor actor_pool[128];
 
-ADDRESS(0x8002ca78)
+ADDRESS(0x8002ca78, 0x3c)
 KfActor *actor_pool_find_free(void)
 {
     KfActor *actor = actor_pool;

@@ -3,7 +3,7 @@
 
 extern struct KfPoolRecord pool_records[];
 
-ADDRESS(0x80020b04)
+ADDRESS(0x80020b04, 0x48)
 struct KfPoolRecord *pool_allocate(void)
 {
     struct KfPoolRecord *record = pool_records;

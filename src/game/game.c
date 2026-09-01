@@ -12,7 +12,7 @@ extern u32 frame_pacer_last_vsync;
 extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);
 
-ADDRESS(0x8001499c)
+ADDRESS(0x8001499c, 0x38)
 void game_shutdown(void)
 {
     memory_card_shutdown_events();
@@ -21,13 +21,13 @@ void game_shutdown(void)
     func_80050544(3);
 }
 
-ADDRESS(0x800149d4)
+ADDRESS(0x800149d4, 0x20)
 void frame_pacer_vsync_callback(void)
 {
     frame_pacer_vsync_count++;
 }
 
-ADDRESS(0x800149f4)
+ADDRESS(0x800149f4, 0x70)
 void frame_pacer_wait(void)
 {
     for (;;) {

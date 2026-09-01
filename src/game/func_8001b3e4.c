@@ -1,6 +1,6 @@
 #include <kf/address.h>
 
-ADDRESS(0x8001b3e4)
+ADDRESS(0x8001b3e4, 0x30)
 unsigned int *func_8001b3e4(
     unsigned int *destination,
     unsigned int *source,

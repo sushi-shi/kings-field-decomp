@@ -3,7 +3,7 @@
 
 extern KfWeaponRecord weapon_records[16];
 
-ADDRESS(0x800150a8)
+ADDRESS(0x800150a8, 0x54)
 void player_weapon_load_records_and_mirror_angles(const u32 *source)
 {
     u32 *destination = (u32 *)weapon_records;

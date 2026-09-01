@@ -3,7 +3,7 @@
 
 extern s32 SquareRoot0(s32 value);
 
-ADDRESS(0x80015068)
+ADDRESS(0x80015068, 0x40)
 s32 fixed_vector2_length(s32 x, s32 y)
 {
     x >>= 3;

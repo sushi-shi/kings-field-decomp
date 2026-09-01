@@ -10,7 +10,7 @@ struct Fields80031784 {
     s16 counter;
 };
 
-ADDRESS(0x80031784)
+ADDRESS(0x80031784, 0x20)
 void map_object_start_action_if_idle(struct Fields80031784 *object, u8 state)
 {
     if (object->state == 0xff) {

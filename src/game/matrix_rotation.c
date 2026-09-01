@@ -15,14 +15,14 @@ extern void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix);
 extern void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix);
 extern void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix);
 
-ADDRESS(0x80014b2c)
+ADDRESS(0x80014b2c, 0x50)
 void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction)
 {
     direction->x = -rsin(angle);
     direction->z = -rcos(angle);
 }
 
-ADDRESS(0x80014b7c)
+ADDRESS(0x80014b7c, 0x70)
 void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix)
 {
     s32 sin = rsin(angle);
@@ -39,7 +39,7 @@ void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix)
     matrix->m[2][2] = cos;
 }
 
-ADDRESS(0x80014bec)
+ADDRESS(0x80014bec, 0x70)
 void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix)
 {
     s32 sin = rsin(angle);
@@ -56,7 +56,7 @@ void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix)
     matrix->m[2][2] = cos;
 }
 
-ADDRESS(0x80014c5c)
+ADDRESS(0x80014c5c, 0x70)
 void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix)
 {
     s32 sin = rsin(angle);
@@ -73,7 +73,7 @@ void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix)
     matrix->m[2][2] = 0x1000;
 }
 
-ADDRESS(0x80014ccc)
+ADDRESS(0x80014ccc, 0x68)
 void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, struct KfMatrix *matrix)
 {
     struct KfMatrix temporary;

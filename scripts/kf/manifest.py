@@ -175,6 +175,11 @@ def _bind_claims(
             raise ValueError(f"{where}: {function.symbol} is vendored library code")
         if function.fragments != 1:
             raise ValueError(f"{where}: {function.symbol} is fragmented")
+        if claim.size != function.body_size:
+            raise ValueError(
+                f"{where}: ADDRESS({claim.va:#x}, {claim.size:#x}) disagrees with the "
+                f"admitted body size {function.body_size:#x} of {function.symbol}"
+            )
         expected = identities.get((image, claim.va), function.symbol)
         if claim.name != expected:
             raise ValueError(

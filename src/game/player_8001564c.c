@@ -4,7 +4,7 @@
 extern KfPlayerVitals player_vitals;
 extern void player_death_begin(void);
 
-ADDRESS(0x8001564c)
+ADDRESS(0x8001564c, 0x70)
 void player_adjust_hp(s32 delta)
 {
     s32 value = player_vitals.current_hp;
@@ -23,7 +23,7 @@ void player_adjust_hp(s32 delta)
     }
 }
 
-ADDRESS(0x800156bc)
+ADDRESS(0x800156bc, 0x58)
 void player_adjust_mp(s32 delta)
 {
     s32 value = player_vitals.current_mp;

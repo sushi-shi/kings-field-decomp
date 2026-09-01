@@ -31,19 +31,19 @@ class ClaimScanTests(unittest.TestCase):
     def test_claim_binds_the_definition_that_follows(self) -> None:
         claims = self._scan(
             "#include <kf/address.h>\n\n"
-            "ADDRESS(0x80010000)\n"
+            "ADDRESS(0x80010000, 0x10)\n"
             "void first(void)\n{\n}\n\n"
-            "ADDRESS(0x80010010) /* second */\n"
+            "ADDRESS(0x80010010, 32) /* second */\n"
             "struct KfActor *second(\n    int argument)\n{\n    return 0;\n}\n"
         )
         self.assertEqual(
             claims,
-            (Claim(0x80010000, "first", 3), Claim(0x80010010, "second", 8)),
+            (Claim(0x80010000, 0x10, "first", 3), Claim(0x80010010, 0x20, "second", 8)),
         )
 
     def test_claim_without_definition_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
-            self._scan("ADDRESS(0x80010000)\nextern int x;\n")
+            self._scan("ADDRESS(0x80010000, 0x10)\nextern int x;\n")
 
 
 class ClaimBindingTests(unittest.TestCase):
@@ -61,24 +61,28 @@ class ClaimBindingTests(unittest.TestCase):
         )
 
     def test_contiguous_ascending_run_binds(self) -> None:
-        functions = self._bind((Claim(0x80010000, "first", 1), Claim(0x80010010, "second", 5)))
+        functions = self._bind((Claim(0x80010000, 0x10, "first", 1), Claim(0x80010010, 0x20, "second", 5)))
         self.assertEqual([f.va for f in functions], [0x80010000, 0x80010010])
 
     def test_descending_claims_are_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "does not ascend"):
-            self._bind((Claim(0x80010010, "second", 1), Claim(0x80010000, "first", 5)))
+            self._bind((Claim(0x80010010, 0x20, "second", 1), Claim(0x80010000, 0x10, "first", 5)))
 
     def test_identity_name_mismatch_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "identity"):
-            self._bind((Claim(0x80010010, "func_80010010", 1),))
+            self._bind((Claim(0x80010010, 0x20, "func_80010010", 1),))
 
     def test_unclaimed_interior_function_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "without claiming"):
-            self._bind((Claim(0x80010000, "first", 1), Claim(0x80010030, "third", 9)))
+            self._bind((Claim(0x80010000, 0x10, "first", 1), Claim(0x80010030, 0x10, "third", 9)))
+
+    def test_size_mismatch_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "body size"):
+            self._bind((Claim(0x80010000, 0x14, "first", 1),))
 
     def test_double_claim_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "already claimed"):
-            self._bind((Claim(0x80010000, "first", 1),), {("GAME.EXE", 0x80010000): "other"})
+            self._bind((Claim(0x80010000, 0x10, "first", 1),), {("GAME.EXE", 0x80010000): "other"})
 
 
 if __name__ == "__main__":

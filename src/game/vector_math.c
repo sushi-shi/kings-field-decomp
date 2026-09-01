@@ -12,7 +12,7 @@ struct VecXZ16 {
     s16 z;
 };
 
-ADDRESS(0x80014e08)
+ADDRESS(0x80014e08, 0x40)
 void vector2s_scale_shift11(s16 scale, s16 *vector)
 {
     s32 x = vector[0] * scale;
@@ -22,7 +22,7 @@ void vector2s_scale_shift11(s16 scale, s16 *vector)
     vector[1] = y >> 11;
 }
 
-ADDRESS(0x80014e48)
+ADDRESS(0x80014e48, 0x5c)
 void vector3s_scale_shift12(s16 scale, s16 *vector)
 {
     s32 x = vector[0] * scale;
@@ -34,7 +34,7 @@ void vector3s_scale_shift12(s16 scale, s16 *vector)
     vector[2] = z >> 12;
 }
 
-ADDRESS(0x80014ea4)
+ADDRESS(0x80014ea4, 0x40)
 void vector2s_scale_shift12(s16 scale, s16 *vector)
 {
     s32 x = vector[0] * scale;
@@ -44,7 +44,7 @@ void vector2s_scale_shift12(s16 scale, s16 *vector)
     vector[1] = y >> 12;
 }
 
-ADDRESS(0x80014ee4)
+ADDRESS(0x80014ee4, 0x5c)
 void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
 {
     s32 x = vector[0] * scale;
@@ -56,14 +56,14 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
     vector[2] = z >> 12;
 }
 
-ADDRESS(0x80014f40)
+ADDRESS(0x80014f40, 0x2c)
 void vector3i_add_xz(struct VecXZ32 *destination, const struct VecXZ16 *delta)
 {
     destination->x += delta->x;
     destination->z += delta->z;
 }
 
-ADDRESS(0x80014f6c)
+ADDRESS(0x80014f6c, 0x3c)
 int angle_within_tolerance(int lhs, int rhs, s16 range)
 {
     int delta = (lhs - rhs) & 0xfff;
@@ -71,7 +71,7 @@ int angle_within_tolerance(int lhs, int rhs, s16 range)
     return range < delta && 0x1000 - range <= delta;
 }
 
-ADDRESS(0x80014fa8)
+ADDRESS(0x80014fa8, 0x10)
 int angle_mod_delta_le_half_turn(int lhs, int rhs)
 {
     return ((lhs - rhs) & 0xfff) < 0x801;

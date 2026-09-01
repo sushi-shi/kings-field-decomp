@@ -5,7 +5,7 @@ extern struct KfPoolRecord pool_records[];
 
 extern void free(void *allocation);
 
-ADDRESS(0x80020978)
+ADDRESS(0x80020978, 0x30)
 void pool_reset(void)
 {
     struct KfPoolRecord *record = pool_records;
@@ -18,7 +18,7 @@ void pool_reset(void)
     } while (--count != 0);
 }
 
-ADDRESS(0x800209a8)
+ADDRESS(0x800209a8, 0x3c)
 void pool_mark_allocated(void)
 {
     struct KfPoolRecord *record = pool_records;
@@ -32,7 +32,7 @@ void pool_mark_allocated(void)
     } while (--count != 0);
 }
 
-ADDRESS(0x800209e4)
+ADDRESS(0x800209e4, 0x48)
 void pool_record_release(struct KfPoolRecord *record)
 {
     record->state = 0;

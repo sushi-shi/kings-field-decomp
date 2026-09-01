@@ -24,7 +24,7 @@ extern void audio_play_voice(
     s16 left_volume,
     s16 right_volume);
 
-ADDRESS(0x80032fb8)
+ADDRESS(0x80032fb8, 0x30)
 void audio_play_spatial_default_range(
     const SoundRef *sound,
     const struct KfVec4i *position,
@@ -33,7 +33,7 @@ void audio_play_spatial_default_range(
     audio_play_spatial(sound, position, volume, 0x3e80, 0x6d60);
 }
 
-ADDRESS(0x80032fe8)
+ADDRESS(0x80032fe8, 0x2c)
 void audio_play_spatial_range(
     const SoundRef *sound,
     const struct KfVec4i *position,
@@ -49,13 +49,13 @@ void audio_play_spatial_range(
         attenuation_distance);
 }
 
-ADDRESS(0x80033014)
+ADDRESS(0x80033014, 0x28)
 void audio_key_off_mask(const u8 *voice_mask)
 {
     SsVoKeyOff(voice_mask[0], voice_mask[2] << 8);
 }
 
-ADDRESS(0x8003303c)
+ADDRESS(0x8003303c, 0x70)
 void audio_set_listener_transform(
     const struct KfVec4i *position_or_null,
     const struct KfVec4s *rotation_or_null)
@@ -68,7 +68,7 @@ void audio_set_listener_transform(
     }
 }
 
-ADDRESS(0x800330ac)
+ADDRESS(0x800330ac, 0x48)
 void sound_ref_play(const SoundRef *sound, s16 volume)
 {
     audio_play_voice(

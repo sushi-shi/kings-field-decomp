@@ -1,7 +1,7 @@
 """Bind reconstructed functions to retail addresses from ADDRESS() claims.
 
 Each unit source annotates every function it reconstructs with
-``ADDRESS(0xVA)`` on the line before the definition. This module extracts those
+``ADDRESS(0xVA, size)`` on the line before the definition. This module extracts those
 claims, checks them against the admitted retail census and the curated
 identities, enforces address-order incrementalism inside a source, and writes
 ``build/gen/bindings.tsv`` for audit. The claims are the only place a source
@@ -18,7 +18,9 @@ from scripts.kf.paths import REPO
 from scripts.kf.retail import read_tsv, write_tsv
 
 
-CLAIM_RE = re.compile(r"^\s*ADDRESS\(\s*(0x[0-9A-Fa-f]+)\s*\)\s*(?:/\*.*\*/\s*)?$")
+CLAIM_RE = re.compile(
+    r"^\s*ADDRESS\(\s*(0x[0-9A-Fa-f]+)\s*,\s*(0x[0-9A-Fa-f]+|[0-9]+)\s*\)\s*(?:/\*.*\*/\s*)?$"
+)
 DEFINITION_NAME_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)\s*\(")
 BINDING_FIELDS = ("image", "va", "name", "unit", "source", "line", "ordinal")
 
@@ -26,6 +28,7 @@ BINDING_FIELDS = ("image", "va", "name", "unit", "source", "line", "ordinal")
 @dataclass(frozen=True)
 class Claim:
     va: int
+    size: int
     name: str
     line: int
 
@@ -39,6 +42,7 @@ def scan_claims(source: Path) -> tuple[Claim, ...]:
         if match is None:
             continue
         va = int(match.group(1), 16)
+        size = int(match.group(2), 0)
         definition = ""
         for following in lines[index + 1:index + 6]:
             stripped = following.strip()
@@ -51,7 +55,7 @@ def scan_claims(source: Path) -> tuple[Claim, ...]:
             raise ValueError(
                 f"{source}:{index + 1}: ADDRESS({va:#x}) is not followed by a function definition"
             )
-        claims.append(Claim(va, names[-1], index + 1))
+        claims.append(Claim(va, size, names[-1], index + 1))
     return tuple(claims)
 
 

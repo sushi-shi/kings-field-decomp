@@ -7,7 +7,7 @@ extern s32 memory_card_new_device_event;
 extern s32 memory_card_error_event;
 extern s32 UnDeliverEvent(s32 event);
 
-ADDRESS(0x8002b480)
+ADDRESS(0x8002b480, 0x58)
 void memory_card_undeliver_events(void)
 {
     UnDeliverEvent(memory_card_io_end_event);

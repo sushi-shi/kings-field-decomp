@@ -5,7 +5,7 @@ extern void lighting_set_color_matrix(const struct KfMatrix *from, const struct 
 extern void func_8001fde4(s32 first, s32 second);
 extern void frame_pacer_wait(void);
 
-ADDRESS(0x80033d80)
+ADDRESS(0x80033d80, 0x68)
 void lighting_transition_color_matrix(const struct KfMatrix *from, const struct KfMatrix *to)
 {
     s32 blend = 0;
@@ -18,7 +18,7 @@ void lighting_transition_color_matrix(const struct KfMatrix *from, const struct 
     } while (blend <= 0x1000);
 }
 
-ADDRESS(0x80033de8)
+ADDRESS(0x80033de8, 0x28)
 void color_matrix_set_rgb(s16 red, s16 green, s16 blue, struct KfMatrix *matrix)
 {
     matrix->m[0][2] = red;

@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
 
-ADDRESS(0x8003329c)
+ADDRESS(0x8003329c, 0x48)
 s16 angle_shortest_delta(s32 first, s32 second)
 {
     s32 difference;

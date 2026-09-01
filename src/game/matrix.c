@@ -18,7 +18,7 @@ extern void SetLightMatrix(struct KfMatrix *matrix);
 extern s32 fog_near_distance;
 extern void SetFogNear(s32 distance, s32 projection);
 
-ADDRESS(0x800202fc)
+ADDRESS(0x800202fc, 0x68)
 void matrix_interpolate(
     const struct KfMatrix *from,
     const struct KfMatrix *to,
@@ -38,7 +38,7 @@ void matrix_interpolate(
     } while (--count != -1);
 }
 
-ADDRESS(0x80020364)
+ADDRESS(0x80020364, 0x2c)
 void lighting_set_color_matrix(
     const struct KfMatrix *from,
     const struct KfMatrix *to,
@@ -50,7 +50,7 @@ void lighting_set_color_matrix(
     SetColorMatrix(&matrix);
 }
 
-ADDRESS(0x80020390)
+ADDRESS(0x80020390, 0x2c)
 void lighting_set_light_matrix(
     const struct KfMatrix *from,
     const struct KfMatrix *to,
@@ -62,7 +62,7 @@ void lighting_set_light_matrix(
     SetLightMatrix(&matrix);
 }
 
-ADDRESS(0x800203bc)
+ADDRESS(0x800203bc, 0x44)
 void fog_interpolate_near(s32 start, s32 end, s32 ratio)
 {
     s32 distance = start;
@@ -73,7 +73,7 @@ void fog_interpolate_near(s32 start, s32 end, s32 ratio)
     SetFogNear(distance, 200);
 }
 
-ADDRESS(0x80020400)
+ADDRESS(0x80020400, 0x28)
 void fog_set_near(s32 distance)
 {
     fog_near_distance = distance;

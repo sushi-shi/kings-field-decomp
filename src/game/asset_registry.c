@@ -12,7 +12,7 @@ struct AssetHeader8002059c {
 extern struct AssetHeader8002059c *asset_registry_entries[];
 extern void *current_asset_data;
 
-ADDRESS(0x8002055c)
+ADDRESS(0x8002055c, 0x40)
 void asset_registry_set(u16 index, void *asset)
 {
     asset_registry_entries[index] = asset;
@@ -20,7 +20,7 @@ void asset_registry_set(u16 index, void *asset)
     func_8001c2b0();
 }
 
-ADDRESS(0x8002059c)
+ADDRESS(0x8002059c, 0x38)
 void asset_registry_select(u16 index)
 {
     struct AssetHeader8002059c *asset = asset_registry_entries[index];

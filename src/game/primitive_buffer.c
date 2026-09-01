@@ -22,7 +22,7 @@ extern u32 *ordering_table;
 extern struct PrimitiveBuffer8002ad1c *primitive_buffer;
 extern void AddPrim(u32 *ordering_table, void *primitive);
 
-ADDRESS(0x8002accc)
+ADDRESS(0x8002accc, 0x50)
 void primitive_buffer_begin_poly_ft4(void)
 {
     SetPolyFT4(current_poly_ft4);
@@ -31,7 +31,7 @@ void primitive_buffer_begin_poly_ft4(void)
     current_poly_ft4->b0 = 0x60;
 }
 
-ADDRESS(0x8002ad1c)
+ADDRESS(0x8002ad1c, 0x50)
 void primitive_buffer_commit_poly_ft4(s32 depth)
 {
     depth <<= 2;

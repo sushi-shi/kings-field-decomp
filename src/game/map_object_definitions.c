@@ -3,7 +3,7 @@
 
 extern KfMapObjectDefinition map_object_definitions[160];
 
-ADDRESS(0x80030fdc)
+ADDRESS(0x80030fdc, 0x2c)
 void map_object_definitions_load(const KfMapObjectDefinition *definitions)
 {
     const u32 *source = (const u32 *)definitions;

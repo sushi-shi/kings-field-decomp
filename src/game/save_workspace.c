@@ -9,7 +9,7 @@ extern void *memset();
 
 extern void func_8001ac8c(void);
 
-ADDRESS(0x8002c27c)
+ADDRESS(0x8002c27c, 0x68)
 s32 save_workspace_allocate(void)
 {
     save_header_buffer = func_8001ac0c(0x2800);
@@ -22,7 +22,7 @@ s32 save_workspace_allocate(void)
     return 0;
 }
 
-ADDRESS(0x8002c2e4)
+ADDRESS(0x8002c2e4, 0x20)
 void save_workspace_release(void)
 {
     func_8001ac8c();

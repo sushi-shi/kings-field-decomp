@@ -7,7 +7,7 @@ extern const void *player_selected_magic_record;
 /* Unresolved table of 20-byte magic records; only its base identity is known. */
 extern const u8 DAT_8009ce60[];
 
-ADDRESS(0x800167e4)
+ADDRESS(0x800167e4, 0x64)
 void player_select_magic(u8 magic_id)
 {
     player_magic_charge = 0;

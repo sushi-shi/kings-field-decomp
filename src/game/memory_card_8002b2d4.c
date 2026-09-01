@@ -14,7 +14,7 @@ extern s32 memory_card_wait_event(void);
 
 extern s32 TestEvent(s32 event);
 
-ADDRESS(0x8002b2d4)
+ADDRESS(0x8002b2d4, 0x60)
 void memory_card_shutdown_events(void)
 {
     StopCARD2();
@@ -24,7 +24,7 @@ void memory_card_shutdown_events(void)
     CloseEvent(memory_card_error_event);
 }
 
-ADDRESS(0x8002b334)
+ADDRESS(0x8002b334, 0x38)
 s32 memory_card_begin_status_check(void)
 {
     memory_card_clear_events();
@@ -34,7 +34,7 @@ s32 memory_card_begin_status_check(void)
     return 0;
 }
 
-ADDRESS(0x8002b36c)
+ADDRESS(0x8002b36c, 0x58)
 void memory_card_clear_events(void)
 {
     TestEvent(memory_card_io_end_event);
