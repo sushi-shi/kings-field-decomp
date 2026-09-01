@@ -73,6 +73,7 @@ static u32 frame_pacer_vsync_count = 0;
 
 DATA(0x80057b10, 0x4)
 static u32 frame_pacer_last_vsync = 0;
+/*
  * The player state block is one aggregate in the original source (see
  * KfPlayerState); the inventory still names its members separately, so it is
  * viewed through its first member until the aggregate identity exists.

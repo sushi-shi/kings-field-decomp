@@ -81,7 +81,6 @@ extern u32 ordering_tables[2][0x4000];
 extern u32 *ordering_table;
 extern DRAWENV display_draw_environments[2];
 
-extern s32 VSync(s32 mode);
 extern void *memory_allocate(s32 size);
 extern void memory_release_last(void);
 extern s32 func_8001af9c(void *buffer, const char *path);
