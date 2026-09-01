@@ -77,3 +77,48 @@ Recorded residues (not steered):
   `&talk_image_path_template[6]` and derives the call argument as `-6`; the
   probe anchors on the first store (`[0xa]`); chained assignments did not
   change it.
+## game-math-death
+
+Shapes that decided exact matches in the game entry, main loop, math helper
+and player-death band:
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `jal __main` as the first call, SNMAIN `start` tail-calls the body | the function is `main`; GCC inserts the hook only for that name | `main` `0x8001428c` |
+| `lui/ori` address formation without relocations | numeric address constants in source (BSS start, heap base) | `main` |
+| store inside a loop that never advances the pointer | plain `int *`; a `volatile` view hoists nothing but changes the loop form | `func_80014268` `0x80014268` |
+| `sll/sra` of a divided value before `*100`, `andi 0xffff` at each grid access | `s32 cell = x / 2000 + (s16)(z / 2000) * 100` indexed as `(u16)cell` | `collision_query_world` `0x8001a5ac` |
+| a `bne` to a trailing block for the uncommon case, `j loop` at its end | nested `if`/`else` blocks, not `continue` | `game_main_loop` `0x800146b8` |
+| `beq` on two `lhu` values, copies done as two `lbu`/`sb` pairs | `*(u16 *)&a != *(u16 *)&b` compare with byte-wise member copies | `game_main_loop` |
+| four-way branch on 12-bit angle distance, wrapped results masked with `0xfff` | the `angle_approach` body in `matrix_rotation.c` | `angle_approach` `0x80014a64` |
+| `li v0,-1` shared between `sh` stores of `u16` and `s16` objects | the halfwords are `s16` (assigning `0xffff` to a `u16` emits `li 0xffff`) | `game_state_initialize` `0x800151cc` |
+| `lbu/addiu/sb` through one address register for a flag that is tested, decremented and stored | an element of one byte array (`DAT_800652a8[0x2f]`), not a separate global | `player_death_restart` `0x800154b0` |
+| `s0` loaded by `lbu` and compared without `andi 0xff` | an `s32` local holding a byte field | `player_death_restart` |
+| a loaded operand kept in `a0`/`a1` and the same address used by `lh`/`sh` | a pointer to the halfword taken once (`s16 *bob = &...`) | `player_death_update_reverse_fade` `0x800186c4` |
+| `addiu a1,a0,-128` / `-32` between matrix arguments | one `KfMatrix[7]` table indexed `[4]`, `[3]`, `[0]` | `player_death_apply_visual_fade` `0x800184b0` |
+
+Open residues recorded during the same campaign (not steered):
+
+- `game_main_loop`: retail reaches five player-block bytes through one base
+  register holding `player_experience + 0xd`; GCC forms such a base only for
+  offsets of one symbol. The block is one aggregate in the original source
+  (`KfPlayerState`); a direct-member view through `player_experience`
+  reaches 91% and a byte-pointer view 95%, neither exact.
+- `collision_query_world`: retail reads `actor_definitions[id].collision_radius`
+  and `map_object_definitions[id].collision_radius` relative to the pool base
+  register (`lhu -1702(a0)`), so each definition table and its pool are one
+  aggregate too. The rest of the residue is callee-saved register assignment
+  (`x` in `s2`, `flags` in `s0` in retail).
+- Scheduling class, no probe reproduces it: retail keeps loads in source
+  order instead of hoisting them across earlier stores or `mult`/`mflo`
+  (`vector2s_scale_shift11`, `game_state_initialize` growth-table loads,
+  `player_death_restart`), keeps `sw ra` at the top of the prologue
+  (`player_death_restart`), keeps parameter copies adjacent
+  (`matrix_set_rotation_yxz`, `pitch_yaw_to_forward_vector`), and forms an
+  argument address before the first call's other operands
+  (`player_death_update_reverse_fade`, `player_death_apply_visual_fade`).
+- `player_death_update`: retail has an 8-byte larger frame with no stack
+  traffic and loads `camera_rotation.x` with `lhu` before subtracting, so the
+  original field is unsigned or accessed through a different type.
+- `angle_within_tolerance`: retail materialises the result through a branch
+  (`li v1,1` on the true path); every expression form tried folds to `xori`.

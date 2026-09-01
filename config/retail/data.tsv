@@ -2687,7 +2687,8 @@ GAME.EXE	0x80055848	0x44048	0xe	string	direct-references	person_image_path_templ
 GAME.EXE	0x80055856	0x44056	0x22	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055878	0x44078	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x8005587c	0x4407c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055880	0x44080	0x270	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055880	0x44080	0x38	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x800558b8	0x440b8	0x238	defined	reviewed	map_cell_attribute_height_table	s16[284]	manual:game_semantic_player_interactions	per-attribute height offsets indexed by map_cell_attribute_grid values; extent is the remaining span and stays WIP
 GAME.EXE	0x80055af0	0x442f0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055af4	0x442f4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055af8	0x442f8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -2775,16 +2776,8 @@ GAME.EXE	0x80055dae	0x445ae	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4
 GAME.EXE	0x80055db0	0x445b0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055db4	0x445b4	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055db6	0x445b6	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055db8	0x445b8	0x64	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055e1c	0x4461c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e20	0x44620	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e24	0x44624	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e28	0x44628	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e2c	0x4462c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e30	0x44630	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e34	0x44634	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e38	0x44638	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e3c	0x4463c	0x60	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055db8	0x445b8	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055dbc	0x445bc	0xe0	defined	reviewed	color_matrix_table	KfMatrix[7]	manual:game_semantic_player_death	seven 32-byte colour matrices indexed by base plus 32/128 from player_death fades
 GAME.EXE	0x80055e9c	0x4469c	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055e9e	0x4469e	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055e9f	0x4469f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

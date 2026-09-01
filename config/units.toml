@@ -32,9 +32,9 @@ cc1_flags = []
 # Add one 
 
 [[unit]]
-unit = "game.func_80014268"
+unit = "game.main"
 image = "GAME.EXE"
-source = "src/game/func_80014268.c"
+source = "src/game/main.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -74,6 +74,12 @@ source = "src/game/asset_aux_block.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.player_death"
+image = "GAME.EXE"
+source = "src/game/player_death.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.player_8001564c"
 image = "GAME.EXE"
 source = "src/game/player_8001564c.c"
@@ -83,6 +89,18 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.player_800167e4"
 image = "GAME.EXE"
 source = "src/game/player_800167e4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_death_800184b0"
+image = "GAME.EXE"
+source = "src/game/player_death_800184b0.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.collision"
+image = "GAME.EXE"
+source = "src/game/collision.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

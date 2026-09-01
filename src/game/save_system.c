@@ -81,7 +81,7 @@ extern u32 ordering_tables[2][0x4000];
 extern u32 *ordering_table;
 extern DRAWENV display_draw_environments[2];
 
-extern s32 func_800555e0(s32 arg0);
+extern s32 VSync(s32 mode);
 extern void *memory_allocate(s32 size);
 extern void memory_release_last(void);
 extern s32 func_8001af9c(void *buffer, const char *path);
@@ -147,7 +147,7 @@ void menu_play_input_sound(s32 cue)
         sound.note = 0x3f;
     }
     SsVoKeyOn(sound.program, sound.note << 8, 0x40, 0x40);
-    func_800555e0(0);
+    VSync(0);
     SsVoKeyOff(sound.program, sound.note << 8);
 }
 

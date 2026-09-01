@@ -21,7 +21,7 @@ instructions admitted by this campaign.
 | set view transform | `0x8001c184` | `0x80016f04` | `void render_set_view_transform(const KfVec4i *, const KfVec4s *)` |
 | prepare primitive indices | `0x8001c2b0` | `0x80017030` | `void tmd_prepare_primitive_indices(void)` |
 | register TMD | `0x8001c5b0` | `0x80017330` | `void tmd_register(u16 slot, u8 *tmd)` |
-| release last allocation | `0x8001c5ec` | `0x8001736c` | `void tmd_release_last_allocation(void)` |
+| release last allocation | `0x8001c5ec` | `0x8001736c` | `void tmd_release_last_allocation(s32 slot)` |
 
 `display_begin_frame` toggles a byte selector, selects a 0x0c-byte primitive
 buffer, derives its ordering-table pointer, calls `ClearOTagR` for 0x4000
@@ -96,6 +96,11 @@ before the current payload, whereas OPEN has two. The shared payload retains
 the existing `current_asset_data` source identity because the reconstructed
 asset registry also owns it; the TMD interpretation is a supported use, not a
 reason to create an overlapping global or force a source rename.
+
+GAME's only caller passes slot `4` to `tmd_release_last_allocation`, but the
+wrapper itself never reads `$a0`; OPEN has no confirmed caller. The parameter
+is therefore retained as a candidate `s32 slot` call contract rather than
+erased from the signature or assigned a stronger semantic role.
 
 ## `VSync` exclusion boundary
 

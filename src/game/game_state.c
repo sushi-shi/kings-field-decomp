@@ -2,7 +2,7 @@
 #include <kf/game_types.h>
 
 extern s32 pending_game_state;
-extern void tmd_release_last_allocation(s32 value);
+extern void tmd_release_last_allocation(s32 slot);
 
 ADDRESS(0x8002af0c, 0x3c)
 void game_state_acknowledge_pending(void)
