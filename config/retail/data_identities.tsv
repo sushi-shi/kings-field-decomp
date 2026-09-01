@@ -1600,6 +1600,7 @@ GAME.EXE	0x80055ea2	0x2	DAT_80055ea2	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80055ea4	0x1	DAT_80055ea4	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055ea5	0x1	DAT_80055ea5	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055ea6	0x1	DAT_80055ea6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80056080	0x104	actor_action_profiles	unknown	load	KfActorActionProfile[26]	actor	supported	data.tsv:direct-references;game_semantic_actor_ai.tsv;asm;26x0x0a-stride	twenty-six action-selection profiles; source linkage remains unresolved
 GAME.EXE	0x8005630c	0x4	DAT_8005630c	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056310	0x4	DAT_80056310	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056314	0x4	DAT_80056314	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2135,7 +2136,7 @@ GAME.EXE	0x8006e8d0	0x4	current_actor_definition	global	bss	KfActorDefinition *	
 GAME.EXE	0x8006e8d4	0x4	current_actor	global	bss	KfActor *	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current;xrefs	actor currently bound for the update/action routines
 GAME.EXE	0x8006e8d8	0x2	current_actor_index	global	bss	u16	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current;0x48-stride	pool index derived from current_actor
 GAME.EXE	0x8006e8da	0x2	current_actor_definition_id	global	bss	u16	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current	zero-extended definition ID cached for the bound actor
-GAME.EXE	0x8006e8dc	0x4	DAT_8006e8dc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8006e8dc	0x4	player_target_actor	global	bss	KfActor *	actor	supported	game_semantic_actor_ai.tsv;asm;xrefs;actor_pool_find_target_in_cone	actor selected by player-facing target searches and consumed by actor ground-action selection
 GAME.EXE	0x8006e8e0	0x4	DAT_8006e8e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006e8e4	0x4	DAT_8006e8e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006ede0	0x1	DAT_8006ede0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

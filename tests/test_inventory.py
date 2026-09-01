@@ -6,6 +6,7 @@ from scripts.kf.inventory import (
     _data_access,
     _ghidra_type,
     _signature_hints,
+    load_data_identities,
     load_function_identities,
     validate,
 )
@@ -39,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 744)
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
-        self.assertEqual(counts["data"], 3802)
-        self.assertGreaterEqual(counts["functions_named"], 87)
-        self.assertGreaterEqual(counts["data_named"], 46)
+        self.assertEqual(counts["data"], 3803)
+        self.assertGreaterEqual(counts["functions_named"], 102)
+        self.assertGreaterEqual(counts["data_named"], 48)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -124,6 +125,19 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
+    def test_actor_ai_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_actor_ai.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 15)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")
         function = game.function(0x80014E08)
@@ -189,6 +203,29 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             (current_actor.name, current_actor.datatype),
             ("current_actor", "KfActor *"),
+        )
+        target_actor = game.datum(0x8006E8DC)
+        self.assertEqual(
+            (target_actor.name, target_actor.datatype, target_actor.owner_type),
+            ("player_target_actor", "KfActor *", "actor"),
+        )
+        action_profiles = game.datum(0x80056080)
+        self.assertEqual(
+            (
+                action_profiles.name,
+                action_profiles.datatype,
+                action_profiles.size,
+            ),
+            (
+                "actor_action_profiles",
+                "KfActorActionProfile[26]",
+                0x104,
+            ),
+        )
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        self.assertEqual(
+            data_identities[("GAME.EXE", 0x80056080)].scope,
+            "unknown",
         )
         talk_path = game.datum(0x8005606C)
         self.assertEqual(talk_path.name, "talk_image_path_template")

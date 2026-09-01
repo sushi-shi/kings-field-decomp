@@ -58,14 +58,25 @@ typedef struct KfActorDefinition {
     u8 unknown_00[0x11];
     s8 hit_action;
     s8 death_action;
-    u8 unknown_13[0x6d];
+    u8 unknown_13[0x67];
+    u16 collision_radius;
+    u16 collision_height;
+    u16 awareness_distance;
     u16 initial_health;
     u8 unknown_82[0x02];
     u16 death_sound;
-    u8 unknown_86[0x06];
+    u16 attack_components[3];
     u16 defenses[5];
     u8 unknown_96[0x02];
 } KfActorDefinition;
+
+typedef struct KfActorActionProfile {
+    s16 far_distance;
+    s16 far_weight;
+    s16 near_distance;
+    s16 middle_weight;
+    s16 near_weight;
+} KfActorActionProfile;
 
 typedef struct KfActor {
     u8 slot_state;
@@ -83,7 +94,7 @@ typedef struct KfActor {
     u8 unknown_0c[2];
     s16 local_x;
     s16 local_z;
-    s16 unknown_12;
+    u16 animation_phase;
     u16 health;
     s16 cell_x;
     s16 cell_z;
@@ -93,8 +104,10 @@ typedef struct KfActor {
     struct KfEulerAngles rotation;
     u16 unknown_32;
     u32 unknown_34;
-    u8 action_timer;
-    u8 unknown_39[7];
+    s8 action_timer;
+    u8 unknown_39[3];
+    s16 animation_step;
+    s16 unknown_3e;
     s16 impulse_x;
     s16 impulse_z;
     u8 unknown_44[4];
@@ -145,5 +158,7 @@ typedef char KfSavePayload_size_is_9600[
 typedef char KfActorDefinition_size_is_152[
     (sizeof(KfActorDefinition) == 0x98) ? 1 : -1];
 typedef char KfActor_size_is_72[(sizeof(KfActor) == 0x48) ? 1 : -1];
+typedef char KfActorActionProfile_size_is_10[
+    (sizeof(KfActorActionProfile) == 0x0a) ? 1 : -1];
 
 #endif
