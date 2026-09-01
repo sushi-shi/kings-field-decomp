@@ -46,6 +46,13 @@ map-position synchronization, grounded view bob, and vertical floor-following
 state machine. It supports complete `KfPlayerMotionState`, `KfMapCell`, and
 partially decoded `KfWeaponRecord` layouts plus three 100-by-100 map grids.
 
+`game_semantic_player_interactions.tsv` records horizontal collision movement,
+floor-entry warping, player transform snapshots, actor/person image display,
+item dispatch, and the shared world-collision query. It also corrects the
+weapon load destination to `KfWeaponRecord[16]`, separates the following
+`KfCollisionTarget`, and reviews both item switch tables and the campaign's
+decoded relocations.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a

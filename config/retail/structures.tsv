@@ -8,6 +8,7 @@ KfActorPlacement	0x10	supported	semantic_types.h;game_semantic_actor_core.tsv;ru
 KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
 KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
+KfCollisionTarget	0x20	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
 KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
 KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle

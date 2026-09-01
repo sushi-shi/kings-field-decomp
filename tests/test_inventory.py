@@ -42,12 +42,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3594)
-        self.assertGreaterEqual(counts["functions_named"], 180)
-        self.assertGreaterEqual(counts["data_named"], 138)
-        self.assertEqual(counts["structures"], 34)
-        self.assertEqual(counts["structure_fields"], 218)
-        self.assertEqual(counts["structure_fields_named"], 163)
+        self.assertEqual(counts["data"], 3524)
+        self.assertGreaterEqual(counts["functions_named"], 187)
+        self.assertGreaterEqual(counts["data_named"], 144)
+        self.assertEqual(counts["structures"], 35)
+        self.assertEqual(counts["structure_fields"], 224)
+        self.assertEqual(counts["structure_fields_named"], 167)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -57,6 +57,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfMapCell"].size, 0x02)
         self.assertEqual(structures["KfPlayerMotionState"].size, 0x0A)
         self.assertEqual(structures["KfWeaponRecord"].size, 0x2C)
+        self.assertEqual(structures["KfCollisionTarget"].size, 0x20)
         growth_fields = {
             row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)
             for row in fields
@@ -87,6 +88,20 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(weapon_fields["attack_components"].size, 0x0A)
         self.assertEqual(weapon_fields["attack_z_offset"].offset, 0x12)
         self.assertEqual(weapon_fields["unknown_14"].meaning_confidence, "opaque")
+        self.assertEqual(weapon_fields["mirrored_angle"].offset, 0x26)
+        self.assertEqual(
+            weapon_fields["mirrored_angle"].meaning_confidence,
+            "candidate",
+        )
+        collision_fields = {
+            row.name: row for row in fields if row.structure == "KfCollisionTarget"
+        }
+        self.assertEqual(collision_fields["rotation"].offset, 0x10)
+        self.assertEqual(collision_fields["radius"].offset, 0x18)
+        self.assertEqual(
+            collision_fields["unknown_1a"].meaning_confidence,
+            "opaque",
+        )
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -342,6 +357,54 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x80019134]["target_name"], "player_begin_weapon_attack")
         self.assertEqual(by_site[0x8002EF78]["target_name"], "player_distance_to_point_in_cone")
 
+    def test_player_interaction_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_interactions.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 8)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_interaction_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_player_interactions"
+        )
+        self.assertEqual(len(campaign_rows), 249)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(by_site[0x80012048]["confidence"], "pointer-reviewed")
+        self.assertEqual(
+            by_site[0x80017D40]["target_name"],
+            "floor_entry_cells-0x2",
+        )
+        self.assertEqual(by_site[0x80017E3C]["target_name"], "camera_position")
+        self.assertEqual(
+            by_site[0x80017E94]["target_name"],
+            "player_view_rotation_offset",
+        )
+        self.assertEqual(
+            by_site[0x80018104]["target_name"],
+            "player_item_use_jump_table",
+        )
+        self.assertEqual(by_site[0x8001A7A8]["target_name"], "collision_target")
+        self.assertEqual(
+            by_site[0x8001B2A4]["target_name"],
+            "player_weapon_load_records_and_mirror_angles",
+        )
+        self.assertEqual(
+            by_site[0x8002E9D4]["target_name"],
+            "collision_query_world",
+        )
+
     def test_player_motion_data_owners_are_queryable(self) -> None:
         game = index("GAME.EXE")
         motion = game.datum(0x800A0840)
@@ -357,6 +420,22 @@ class InventoryTests(unittest.TestCase):
         )
         weapon = game.datum(0x800A07E8)
         self.assertEqual(weapon.datatype, "const KfWeaponRecord *")
+        weapon_records = game.datum(0x8009FF10)
+        self.assertEqual(
+            (weapon_records.name, weapon_records.datatype, weapon_records.size),
+            ("weapon_records", "KfWeaponRecord[16]", 0x2C0),
+        )
+        self.assertEqual(game.data_owner(0x800A00DC), weapon_records)
+        collision_target = game.datum(0x800A01D0)
+        self.assertEqual(
+            (
+                collision_target.name,
+                collision_target.datatype,
+                collision_target.size,
+            ),
+            ("collision_target", "KfCollisionTarget", 0x20),
+        )
+        self.assertEqual(game.data_owner(0x800A01E8), collision_target)
         floor_grid = game.datum(0x80095900)
         collision_grid = game.datum(0x80098018)
         attribute_grid = game.datum(0x8009A748)

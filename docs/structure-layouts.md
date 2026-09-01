@@ -14,8 +14,8 @@ any disagreement in size, offset, extent, name, or datatype. A full `kf build`
 also compiles the header's size/offset assertions with the pinned target
 compiler.
 
-The current inventory contains 34 structures and 218 fields. Of those fields,
-163 have candidate-or-better meanings; 55 ranges are explicitly `opaque`.
+The current inventory contains 35 structures and 224 fields. Of those fields,
+167 have candidate-or-better meanings; 57 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
 
@@ -37,7 +37,8 @@ being mislabeled as independent globals.
 | `KfSaveSlotSummary` | `0x18` | `KfVec3i` | `0x0c` |
 | `KfVec3s` | `0x06` | `KfVec4i` | `0x10` |
 | `KfVec4s` | `0x08` | `KfVecXZs` | `0x04` |
-| `KfWeaponRecord` | `0x2c` | `SoundRef` | `0x03` |
+| `KfWeaponRecord` | `0x2c` | `KfCollisionTarget` | `0x20` |
+| `SoundRef` | `0x03` |  |  |
 
 For example, `KfPlayerLevelGrowth` is represented exactly as:
 
@@ -54,5 +55,20 @@ means the target layout and interpretation agree with reviewed MIPS accesses,
 callers, xrefs, or format/SDK evidence. It does not prove the original name or
 translation-unit ownership.
 
+The collision-query output is represented exactly as:
+
+| Offset | Size | Field | Type | Meaning |
+| ---: | ---: | --- | --- | --- |
+| `0x00` | `0x10` | `position` | `KfVec4i` | supported |
+| `0x10` | `0x08` | `rotation` | `KfVec4s` | supported |
+| `0x18` | `0x02` | `radius` | `u16` | supported |
+| `0x1a` | `0x06` | `unknown_1a` | `u8[6]` | opaque |
+
+The `0x20` extent ends at the next independently referenced state. The opaque
+tail prevents those bytes from being advertised as known fields while keeping
+the complete object boundary explicit.
+
 The motion, map-cell, and partially decoded weapon-record fields are shown in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).
+The corrected weapon-array boundary and collision output are documented in
+[`player-interactions-and-collision.md`](player-interactions-and-collision.md).

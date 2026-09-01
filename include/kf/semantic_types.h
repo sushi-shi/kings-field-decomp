@@ -49,6 +49,20 @@ struct KfEulerAngles {
     s16 z;
 };
 
+/*
+ * Optional output from the world collision query.  The query copies a
+ * transform from the selected player, actor, map object, or map event and
+ * records the selected object's collision radius.  The final six bytes are
+ * retained because the next independently referenced state begins at +0x20;
+ * their meaning is not yet known.
+ */
+typedef struct KfCollisionTarget {
+    struct KfVec4i position;
+    struct KfVec4s rotation;
+    u16 radius;
+    u8 unknown_1a[0x06];
+} KfCollisionTarget;
+
 typedef struct SoundRef {
     u8 program;
     u8 tone;
@@ -324,7 +338,9 @@ typedef struct KfWeaponRecord {
     u16 attack_components[5];
     u8 unknown_0c[0x06];
     u16 attack_z_offset;
-    u8 unknown_14[0x18];
+    u8 unknown_14[0x12];
+    u16 mirrored_angle;
+    u8 unknown_28[0x04];
 } KfWeaponRecord;
 
 /*
@@ -361,6 +377,8 @@ typedef char KfVec4i_size_is_16[(sizeof(struct KfVec4i) == 16) ? 1 : -1];
 typedef char KfPitchYaw_size_is_4[(sizeof(struct KfPitchYaw) == 4) ? 1 : -1];
 typedef char KfEulerAngles_size_is_6[
     (sizeof(struct KfEulerAngles) == 6) ? 1 : -1];
+typedef char KfCollisionTarget_size_is_32[
+    (sizeof(KfCollisionTarget) == 0x20) ? 1 : -1];
 typedef char SoundRef_size_is_3[(sizeof(SoundRef) == 3) ? 1 : -1];
 typedef char KfAudioVoiceSlots_size_is_100[
     (sizeof(KfAudioVoiceSlots) == 0x64) ? 1 : -1];
@@ -443,6 +461,12 @@ typedef char KfWeaponRecord_attack_components_offset_is_2[
     (KF_OFFSET_OF(KfWeaponRecord, attack_components) == 2) ? 1 : -1];
 typedef char KfWeaponRecord_attack_z_offset_is_18[
     (KF_OFFSET_OF(KfWeaponRecord, attack_z_offset) == 0x12) ? 1 : -1];
+typedef char KfWeaponRecord_mirrored_angle_offset_is_38[
+    (KF_OFFSET_OF(KfWeaponRecord, mirrored_angle) == 0x26) ? 1 : -1];
+typedef char KfCollisionTarget_rotation_offset_is_16[
+    (KF_OFFSET_OF(KfCollisionTarget, rotation) == 0x10) ? 1 : -1];
+typedef char KfCollisionTarget_radius_offset_is_24[
+    (KF_OFFSET_OF(KfCollisionTarget, radius) == 0x18) ? 1 : -1];
 #undef KF_OFFSET_OF
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];

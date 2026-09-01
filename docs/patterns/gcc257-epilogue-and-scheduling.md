@@ -61,7 +61,7 @@ normalized instruction plus relocation listings against the carved targets
 | 2.91.66 `-O2` | 12 |
 
 Two units discriminate in opposite directions and keep the attribution
-open: `asset_block_load_and_mirror_angles` (`0x800150a8`) is exact only
+open: `player_weapon_load_records_and_mirror_angles` (`0x800150a8`) is exact only
 under 2.6.0 (`move v1,a1` scheduled before the loop load), while
 `game_state_acknowledge_pending` (`0x8002af0c`) is exact only under 2.6.0
 with `-fno-schedule-insns2`. 2.5.7 matches every other unit that 2.6.0
