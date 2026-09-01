@@ -7,8 +7,16 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-from scripts.kf.delink import Function, Module, load_catalog
-from scripts.kf.model import Claim, identity_names, scan_claims, write_bindings
+from scripts.kf.delink import Datum, Function, Module, load_catalog
+from scripts.kf.model import (
+    Claim,
+    DataClaim,
+    DataIdentity,
+    data_identities,
+    identity_names,
+    scan_source,
+    write_bindings,
+)
 from scripts.kf.paths import REPO, RETAIL_CONFIG, UNITS_MANIFEST
 from scripts.kf.retail import IMAGE_LAYOUTS
 
@@ -51,6 +59,7 @@ class Unit:
     source: str
     profile: str
     functions: tuple[Function, ...]
+    data: tuple[Datum, ...] = ()
 
     @property
     def va(self) -> int:
@@ -88,7 +97,13 @@ class Manifest:
 
     def modules(self) -> tuple[Module, ...]:
         return tuple(
-            Module(unit.image, unit.unit, unit.stem, tuple(f.va for f in unit.functions))
+            Module(
+                unit.image,
+                unit.unit,
+                unit.stem,
+                tuple(f.va for f in unit.functions),
+                unit.data,
+            )
             for unit in self.units
         )
 
@@ -216,6 +231,52 @@ def _bind_claims(
     return tuple(functions)
 
 
+def _bind_data_claims(
+    unit: str,
+    image: str,
+    source: Path,
+    claims: tuple[DataClaim, ...],
+    identities: dict[tuple[str, int], DataIdentity],
+    claimed: dict[tuple[str, int], str],
+) -> tuple[Datum, ...]:
+    """Validate one source's DATA() claims against the curated data identities."""
+    data: list[Datum] = []
+    for claim in claims:
+        where = f"{source}:{claim.line}"
+        identity = identities.get((image, claim.va))
+        if identity is None:
+            raise ValueError(
+                f"{where}: DATA({claim.va:#x}) is not a curated {image} datum in "
+                "data_identities.tsv"
+            )
+        if claim.name != identity.name:
+            raise ValueError(
+                f"{where}: DATA({claim.va:#x}) defines {claim.name!r} but the identity "
+                f"inventory names it {identity.name!r}"
+            )
+        if claim.size != identity.size:
+            raise ValueError(
+                f"{where}: DATA({claim.va:#x}, {claim.size:#x}) disagrees with the curated "
+                f"size {identity.size:#x} of {identity.name}"
+            )
+        if identity.storage not in {"load", "bss"}:
+            raise ValueError(
+                f"{where}: {identity.name} has storage {identity.storage!r}; only load and "
+                "bss data can be claimed"
+            )
+        owner = claimed.get((image, claim.va))
+        if owner is not None:
+            raise ValueError(f"{where}: {identity.name} is already claimed by unit {owner!r}")
+        if data and claim.va <= data[-1].va:
+            raise ValueError(
+                f"{where}: DATA({claim.va:#x}) does not ascend after {data[-1].va:#x}; "
+                "data claims follow the linked order"
+            )
+        claimed[(image, claim.va)] = unit
+        data.append(Datum(claim.va, claim.size, identity.name, identity.storage, identity.scope))
+    return tuple(data)
+
+
 def load(
     path: Path = UNITS_MANIFEST,
     *,
@@ -240,9 +301,11 @@ def load(
 
     catalog = load_catalog(config_dir)
     identities = identity_names(config_dir)
+    curated_data = data_identities(config_dir)
     units: list[Unit] = []
     seen_names: set[str] = set()
     claimed: dict[tuple[str, int], str] = {}
+    claimed_data: dict[tuple[str, int], str] = {}
     binding_rows: list[dict[str, object]] = []
     for index, row in enumerate(raw_units, 1):
         if not isinstance(row, dict):
@@ -283,21 +346,34 @@ def load(
             if require_sources:
                 raise ValueError(f"{path}: unit {name!r} source is missing: {source}")
             continue
-        claims = scan_claims(source_path)
+        claims, data_claims = scan_source(source_path)
         if not claims:
             raise ValueError(f"{path}: unit {name!r} source has no ADDRESS() claim: {source}")
         functions = _bind_claims(path, name, image, source, claims, catalog, identities, claimed)
+        data = _bind_data_claims(name, image, source, data_claims, curated_data, claimed_data)
         if units and units[-1].image == image and units[-1].va >= functions[0].va:
             raise ValueError(
                 f"{path}: unit {name!r} at {functions[0].va:#x} is listed after "
                 f"{units[-1].unit!r} at {units[-1].va:#x}; units follow the linked order"
             )
-        units.append(Unit(name, image, source.as_posix(), profile_name, functions))
+        units.append(Unit(name, image, source.as_posix(), profile_name, functions, data))
         for ordinal, (claim, function) in enumerate(zip(claims, functions)):
             binding_rows.append({
                 "image": image,
                 "va": f"{function.va:#x}",
+                "kind": "function",
                 "name": function.symbol,
+                "unit": name,
+                "source": source.as_posix(),
+                "line": claim.line,
+                "ordinal": ordinal,
+            })
+        for ordinal, (claim, datum) in enumerate(zip(data_claims, data)):
+            binding_rows.append({
+                "image": image,
+                "va": f"{datum.va:#x}",
+                "kind": "data",
+                "name": datum.symbol,
                 "unit": name,
                 "source": source.as_posix(),
                 "line": claim.line,

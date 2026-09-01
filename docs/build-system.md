@@ -39,8 +39,45 @@ A unit with several claims is a module: a translation-unit hypothesis whose
 target object is the whole run carved as one section. Address proximity alone
 does not prove the original file boundary, so module names stay WIP (a class
 name, with an address suffix while a class is split by unreconstructed gaps)
-and modules merge as gaps are filled. Data ownership is not yet part of the
-model.
+and modules merge as gaps are filled.
+
+### DATA() claims
+
+A module owns a global by defining it under a `DATA()` claim; every other unit
+declares the same global `extern`:
+
+```c
+DATA(0x80057b0c, 0x4)
+static u32 frame_pacer_vsync_count = 0;
+```
+
+The claim binds the declarator to the `data_identities.tsv` row at that
+address: the name and size must match, the storage must be `load` or `bss`, a
+datum is claimed by one unit only, and data claims ascend inside a source.
+Data need not be contiguous with the unit's code. The bindings file records
+data claims with `kind=data`.
+
+The delinker carves claimed `load` data from the retail image into the module
+object's `.data` section (claims packed in order, each at the alignment its
+retail address implies) and claimed `bss` data as `.bss` sizes, with
+`STT_OBJECT` symbols whose binding follows the identity's `scope` (`static`
+becomes a local symbol). Relocation candidates sited inside claimed data go
+through the shared validator; under the safe policy the raw pointer words of
+tables remain withheld (`data:` reasons in `relocations_withheld.tsv`), so a
+pointer table compares by bytes only until its rows are reviewed.
+
+On the compiled side, GCC 2.5.7 prints an uninitialized global as
+`.comm name,size` (size rounded up to 8) and a `static` one as `.lcomm`;
+maspsx's default rewrites both into `.bss` definitions (`--use-comm-section`
+would leave COMMON symbols, which objdiff cannot pair with a section symbol).
+An explicitly initialized global (`= 0` included) is emitted into `.data`,
+which is how retail placed the zero-initialized frame pacer counters in the
+load image. GCC 2.5.7 also prints no `.size` for data, so `kf-compile` appends
+`.type`/`.size` directives for every `DATA()` claim (the curated size, recorded
+in the `.o.json`); without them objdiff would infer the last datum's extent
+from the assembler's 16-byte section padding. objdiff pairs data symbols by
+name inside the unit and reports the `.data`/`.bss` sections next to the
+functions; progress and banking still count functions only.
 
 Profile names are deliberately non-attributive. `probe-gcc260-o2-g0` keeps
 the original GCC 2.6.0/maspsx route reproducible; `probe-gcc257-o2-g0` is the

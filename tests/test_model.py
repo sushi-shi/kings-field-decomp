@@ -5,8 +5,8 @@ import unittest
 from pathlib import Path
 
 from scripts.kf.delink import Catalog, Function
-from scripts.kf.manifest import _bind_claims
-from scripts.kf.model import Claim, scan_claims
+from scripts.kf.manifest import _bind_claims, _bind_data_claims
+from scripts.kf.model import Claim, DataClaim, DataIdentity, scan_claims, scan_source
 
 
 def _function(va: int, size: int, name: str) -> Function:
@@ -44,6 +44,37 @@ class ClaimScanTests(unittest.TestCase):
     def test_claim_without_definition_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
             self._scan("ADDRESS(0x80010000, 0x10)\nextern int x;\n")
+
+    def _scan_data(self, text: str) -> tuple[DataClaim, ...]:
+        with tempfile.TemporaryDirectory(prefix="kf-model-") as directory:
+            source = Path(directory) / "unit.c"
+            source.write_text(text, encoding="utf-8")
+            return scan_source(source)[1]
+
+    def test_data_claim_binds_the_declarator_that_follows(self) -> None:
+        claims = self._scan_data(
+            "DATA(0x80057b0c, 0x4)\n"
+            "static u32 counter = 0;\n\n"
+            "DATA(0x80057b10, 0x10)\n"
+            "u32 table[4] = {\n    1, 2, 3, 4,\n};\n\n"
+            "DATA(0x80057b20, 0x4)\n"
+            "struct KfActor *current;\n\n"
+            "DATA(0x80057b24, 0x4)\n"
+            "void (*handler)(s32 argument);\n"
+        )
+        self.assertEqual(
+            [(claim.va, claim.size, claim.name) for claim in claims],
+            [
+                (0x80057b0c, 4, "counter"),
+                (0x80057b10, 0x10, "table"),
+                (0x80057b20, 4, "current"),
+                (0x80057b24, 4, "handler"),
+            ],
+        )
+
+    def test_data_claim_before_extern_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "global definition"):
+            self._scan_data("DATA(0x80057b0c, 0x4)\nextern u32 counter;\n")
 
 
 class ClaimBindingTests(unittest.TestCase):
@@ -83,6 +114,58 @@ class ClaimBindingTests(unittest.TestCase):
     def test_double_claim_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "already claimed"):
             self._bind((Claim(0x80010000, 0x10, "first", 1),), {("GAME.EXE", 0x80010000): "other"})
+
+
+
+class DataClaimBindingTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.identities = {
+            ("GAME.EXE", 0x80057b0c): DataIdentity("counter", 4, "load", "static"),
+            ("GAME.EXE", 0x800A0000): DataIdentity("buffer", 0x10, "bss", ""),
+            ("GAME.EXE", 0x80012000): DataIdentity("table", 8, "text", ""),
+        }
+
+    def _bind(self, claims: tuple[DataClaim, ...], claimed: dict | None = None):
+        return _bind_data_claims(
+            "game.unit", "GAME.EXE", Path("src/game/unit.c"), claims, self.identities,
+            claimed if claimed is not None else {},
+        )
+
+    def test_load_and_bss_claims_bind_with_storage_and_scope(self) -> None:
+        data = self._bind((
+            DataClaim(0x80057b0c, 4, "counter", 1), DataClaim(0x800A0000, 0x10, "buffer", 4),
+        ))
+        self.assertEqual([(d.va, d.symbol, d.storage, d.scope) for d in data], [
+            (0x80057b0c, "counter", "load", "static"),
+            (0x800A0000, "buffer", "bss", ""),
+        ])
+
+    def test_unknown_datum_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "not a curated"):
+            self._bind((DataClaim(0x80057b00, 4, "other", 1),))
+
+    def test_name_mismatch_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "identity"):
+            self._bind((DataClaim(0x80057b0c, 4, "DAT_80057b0c", 1),))
+
+    def test_size_mismatch_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "curated size"):
+            self._bind((DataClaim(0x80057b0c, 8, "counter", 1),))
+
+    def test_unsupported_storage_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "storage"):
+            self._bind((DataClaim(0x80012000, 8, "table", 1),))
+
+    def test_double_claim_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "already claimed"):
+            self._bind((DataClaim(0x80057b0c, 4, "counter", 1),),
+                       {("GAME.EXE", 0x80057b0c): "game.other"})
+
+    def test_descending_data_claims_are_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "does not ascend"):
+            self._bind((
+                DataClaim(0x800A0000, 0x10, "buffer", 1), DataClaim(0x80057b0c, 4, "counter", 4),
+            ))
 
 
 if __name__ == "__main__":

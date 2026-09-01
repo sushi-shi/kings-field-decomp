@@ -11,6 +11,7 @@ import struct
 from pathlib import Path
 
 from scripts.kf.delink import image_key
+from scripts.kf.model import scan_data_claims
 from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv
 
 
@@ -174,6 +175,16 @@ def compile_source(
             str(assembly),
         ]
         _run(compiler_arguments)
+        data_claims = scan_data_claims(source)
+        if data_claims:
+            # GCC 2.5.7 prints no `.size` for data, so objdiff would infer the
+            # last claimed datum's extent from the assembler's section padding.
+            # The claim states the curated size; annotating the symbol with it
+            # only fixes the comparison extent and never changes code or bytes.
+            with assembly.open("a", encoding="utf-8") as stream:
+                for claim in data_claims:
+                    stream.write(f"\t.type\t{claim.name},@object\n")
+                    stream.write(f"\t.size\t{claim.name},{claim.size}\n")
         assembler_arguments = [
             maspsx,
             f"--aspsx-version={aspsx_version}",
@@ -194,6 +205,10 @@ def compile_source(
             "small_data": small_data,
             "cc1_flags": list(cc1_flags),
             "maspsx_flags": list(maspsx_flags),
+            "data_claims": [
+                {"name": claim.name, "va": f"{claim.va:#x}", "size": claim.size}
+                for claim in data_claims
+            ],
             "assembler_model": f"maspsx ASPSX {aspsx_version} -> GNU mipsel as",
             "attribution": "candidate probe; exact retail compiler/profile unproven",
         })

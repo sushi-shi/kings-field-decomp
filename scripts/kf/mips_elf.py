@@ -1,7 +1,8 @@
 """Minimal deterministic ELF32 little-endian MIPS relocatable-object writer.
 
 The King's Field delinker needs only a small subset of ELF: one executable
-``.text`` section, function/undefined symbols, and MIPS REL relocations.  Keeping
+``.text`` section, optional ``.data``/``.bss`` sections for the data a module
+claims, function/object/undefined symbols, and MIPS REL relocations.  Keeping
 this writer in-tree makes target objects independent of host assembler quirks;
 reconstructed source objects still come from CC1PSX -> maspsx -> GNU ``as``.
 """
@@ -26,8 +27,10 @@ SHT_NULL = 0
 SHT_PROGBITS = 1
 SHT_SYMTAB = 2
 SHT_STRTAB = 3
+SHT_NOBITS = 8
 SHT_REL = 9
 
+SHF_WRITE = 0x1
 SHF_ALLOC = 0x2
 SHF_EXECINSTR = 0x4
 
@@ -54,6 +57,8 @@ RELOCATION_TYPES = {
     "R_MIPS_GPREL16": R_MIPS_GPREL16,
 }
 SECTION_SYMBOL = ".text"
+DATA_SECTION_SYMBOL = ".data"
+BSS_SECTION_SYMBOL = ".bss"
 
 
 @dataclass(frozen=True)
@@ -69,6 +74,7 @@ class DefinedSymbol:
     value: int
     size: int = 0
     kind: int = STT_NOTYPE
+    binding: int = STB_GLOBAL
 
 
 @dataclass(frozen=True)
@@ -118,74 +124,140 @@ def _symbol(
     )
 
 
+def _check_relocations(
+    relocations: Iterable[MipsRelocation], section_size: int, section: str
+) -> tuple[MipsRelocation, ...]:
+    ordered = tuple(sorted(relocations, key=lambda item: (item.offset, item.kind)))
+    for relocation in ordered:
+        if relocation.kind not in RELOCATION_TYPES:
+            raise ValueError(f"unsupported relocation {relocation.kind!r}")
+        if not 0 <= relocation.offset <= section_size - 4 or relocation.offset & 3:
+            raise ValueError(f"invalid {section} relocation offset {relocation.offset:#x}")
+    return ordered
+
+
+def _check_symbols(
+    symbols: Iterable[DefinedSymbol], section_size: int, section: str
+) -> tuple[DefinedSymbol, ...]:
+    ordered = tuple(sorted(symbols, key=lambda item: (item.value, item.name)))
+    for symbol in ordered:
+        if not 0 <= symbol.value <= section_size:
+            raise ValueError(f"defined symbol {symbol.name!r} lies outside {section}")
+        if symbol.size < 0 or symbol.value + symbol.size > section_size:
+            raise ValueError(f"defined symbol {symbol.name!r} has invalid size")
+        if symbol.binding not in (STB_LOCAL, STB_GLOBAL):
+            raise ValueError(f"defined symbol {symbol.name!r} has invalid binding")
+    return ordered
+
+
 def write_mips_elf(
     text: bytes,
     function_name: str,
     function_size: int,
     relocations: Iterable[MipsRelocation] = (),
     defined_symbols: Iterable[DefinedSymbol] = (),
+    *,
+    data: bytes = b"",
+    data_symbols: Iterable[DefinedSymbol] = (),
+    data_relocations: Iterable[MipsRelocation] = (),
+    bss_size: int = 0,
+    bss_symbols: Iterable[DefinedSymbol] = (),
 ) -> bytes:
     """Build a deterministic MIPS-I/O32 relocatable object.
 
-    Relocation addends are implicit in ``text`` because MIPS ELF uses REL, not
-    RELA. Callers must rewrite relocated instruction fields before invoking the
+    Relocation addends are implicit in ``text``/``data`` because MIPS ELF uses
+    REL, not RELA. Callers must rewrite relocated fields before invoking the
     writer. ``function_size`` may be smaller than the section when the retail
-    extent contains linker padding after the body.
+    extent contains linker padding after the body. ``data``/``bss_size`` and
+    their symbols describe the data a module claims; the sections are omitted
+    when empty so single-function objects keep their historical shape.
     """
     if not function_name:
         raise ValueError("function name must not be empty")
     if not 0 < function_size <= len(text):
         raise ValueError("function size must lie within .text")
+    if bss_size < 0:
+        raise ValueError("bss size must be non-negative")
 
-    relocations = tuple(sorted(relocations, key=lambda item: (item.offset, item.kind)))
-    defined_symbols = tuple(sorted(defined_symbols, key=lambda item: (item.value, item.name)))
-    for relocation in relocations:
-        if relocation.kind not in RELOCATION_TYPES:
-            raise ValueError(f"unsupported relocation {relocation.kind!r}")
-        if not 0 <= relocation.offset <= len(text) - 4 or relocation.offset & 3:
-            raise ValueError(f"invalid relocation offset {relocation.offset:#x}")
-    for symbol in defined_symbols:
-        if not 0 <= symbol.value <= len(text):
-            raise ValueError(f"defined symbol {symbol.name!r} lies outside .text")
-        if symbol.size < 0 or symbol.value + symbol.size > len(text):
-            raise ValueError(f"defined symbol {symbol.name!r} has invalid size")
+    relocations = _check_relocations(relocations, len(text), ".text")
+    defined_symbols = _check_symbols(defined_symbols, len(text), ".text")
+    data_relocations = _check_relocations(data_relocations, len(data), ".data")
+    data_symbols = _check_symbols(data_symbols, len(data), ".data")
+    bss_symbols = _check_symbols(bss_symbols, bss_size, ".bss")
+    has_data = bool(data) or bool(data_symbols) or bool(data_relocations)
+    has_bss = bss_size > 0 or bool(bss_symbols)
 
-    defined_names = {function_name, *(symbol.name for symbol in defined_symbols)}
-    if SECTION_SYMBOL in defined_names:
-        raise ValueError(f"{SECTION_SYMBOL!r} is reserved for the section symbol")
-    if len(defined_names) != len(defined_symbols) + 1:
+    # Section order: .text, .rel.text, [.data, [.rel.data]], [.bss], .symtab,
+    # .strtab, .shstrtab. Indices are assigned as the list is built.
+    sections: list[_Section] = [
+        _Section(".text", SHT_PROGBITS, SHF_ALLOC | SHF_EXECINSTR, text, alignment=4),
+        _Section(".rel.text", SHT_REL, 0, b"", alignment=4, entry_size=REL_SIZE),
+    ]
+    text_index = 1
+    data_index = 0
+    bss_index = 0
+    if has_data:
+        sections.append(_Section(".data", SHT_PROGBITS, SHF_ALLOC | SHF_WRITE, data, alignment=4))
+        data_index = len(sections)
+        if data_relocations:
+            sections.append(
+                _Section(".rel.data", SHT_REL, 0, b"", alignment=4, entry_size=REL_SIZE)
+            )
+    if has_bss:
+        sections.append(_Section(".bss", SHT_NOBITS, SHF_ALLOC | SHF_WRITE, b"", alignment=4))
+        bss_index = len(sections)
+    symtab_index = len(sections) + 1
+    strtab_index = symtab_index + 1
+    shstrtab_index = strtab_index + 1
+
+    section_symbols = [(SECTION_SYMBOL, text_index)]
+    if has_data:
+        section_symbols.append((DATA_SECTION_SYMBOL, data_index))
+    if has_bss:
+        section_symbols.append((BSS_SECTION_SYMBOL, bss_index))
+    section_symbol_names = {name for name, _ in section_symbols}
+
+    placed = [
+        (DefinedSymbol(function_name, 0, function_size, STT_FUNC), text_index),
+        *((symbol, text_index) for symbol in defined_symbols if symbol.name != function_name),
+        *((symbol, data_index) for symbol in data_symbols),
+        *((symbol, bss_index) for symbol in bss_symbols),
+    ]
+    defined_names = [symbol.name for symbol, _ in placed]
+    if any(name in section_symbol_names for name in defined_names):
+        raise ValueError("section symbol names are reserved")
+    if len(set(defined_names)) != len(defined_names):
         raise ValueError("defined symbol names must be unique")
     undefined_names = sorted(
-        {relocation.symbol for relocation in relocations}
-        - defined_names
-        - {SECTION_SYMBOL}
+        {item.symbol for item in (*relocations, *data_relocations)}
+        - set(defined_names)
+        - section_symbol_names
     )
-    global_names = [
-        function_name,
-        *(symbol.name for symbol in defined_symbols if symbol.name != function_name),
+    locals_placed = [item for item in placed if item[0].binding == STB_LOCAL]
+    globals_placed = [item for item in placed if item[0].binding == STB_GLOBAL]
+    strtab, string_offsets = _string_table([
+        *(symbol.name for symbol, _ in locals_placed),
+        *(symbol.name for symbol, _ in globals_placed),
         *undefined_names,
-    ]
-    strtab, string_offsets = _string_table(global_names)
+    ])
 
-    # Symbol 0 is null; symbol 1 is the sole local section symbol. All remaining
-    # symbols are global so objdiff can pair them with compiler-produced names.
-    symbol_records = [
-        b"\0" * SYMBOL_SIZE,
-        _symbol(0, 0, 0, STB_LOCAL, STT_SECTION, 1),
-        _symbol(string_offsets[function_name], 0, function_size, STB_GLOBAL, STT_FUNC, 1),
-    ]
-    symbol_indices = {SECTION_SYMBOL: 1, function_name: 2}
-    for symbol in defined_symbols:
-        if symbol.name == function_name:
-            continue
+    # Symbol 0 is null; section symbols and local data follow; every remaining
+    # symbol is global so objdiff can pair them with compiler-produced names.
+    symbol_records = [b"\0" * SYMBOL_SIZE]
+    symbol_indices: dict[str, int] = {}
+    for name, index in section_symbols:
+        symbol_indices[name] = len(symbol_records)
+        symbol_records.append(_symbol(0, 0, 0, STB_LOCAL, STT_SECTION, index))
+    for symbol, index in locals_placed:
         symbol_indices[symbol.name] = len(symbol_records)
         symbol_records.append(_symbol(
-            string_offsets[symbol.name],
-            symbol.value,
-            symbol.size,
-            STB_GLOBAL,
-            symbol.kind,
-            1,
+            string_offsets[symbol.name], symbol.value, symbol.size, STB_LOCAL, symbol.kind, index,
+        ))
+    first_global = len(symbol_records)
+    for symbol, index in globals_placed:
+        symbol_indices[symbol.name] = len(symbol_records)
+        symbol_records.append(_symbol(
+            string_offsets[symbol.name], symbol.value, symbol.size, STB_GLOBAL, symbol.kind, index,
         ))
     for name in undefined_names:
         symbol_indices[name] = len(symbol_records)
@@ -194,65 +266,65 @@ def write_mips_elf(
         )
     symtab = b"".join(symbol_records)
 
-    rel_text = b"".join(
-        struct.pack(
-            "<II",
-            relocation.offset,
-            (symbol_indices[relocation.symbol] << 8)
-            | RELOCATION_TYPES[relocation.kind],
+    def rel_section(entries: tuple[MipsRelocation, ...]) -> bytes:
+        return b"".join(
+            struct.pack(
+                "<II",
+                relocation.offset,
+                (symbol_indices[relocation.symbol] << 8) | RELOCATION_TYPES[relocation.kind],
+            )
+            for relocation in entries
         )
-        for relocation in relocations
-    )
 
-    section_names = (".text", ".rel.text", ".symtab", ".strtab", ".shstrtab")
-    shstrtab, section_name_offsets = _string_table(section_names)
-    sections = (
-        _Section(".text", SHT_PROGBITS, SHF_ALLOC | SHF_EXECINSTR, text, alignment=4),
-        _Section(
-            ".rel.text",
-            SHT_REL,
-            0,
-            rel_text,
-            link=3,
-            info=1,
-            alignment=4,
-            entry_size=REL_SIZE,
-        ),
-        _Section(
-            ".symtab",
-            SHT_SYMTAB,
-            0,
-            symtab,
-            link=4,
-            info=2,
-            alignment=4,
-            entry_size=SYMBOL_SIZE,
-        ),
-        _Section(".strtab", SHT_STRTAB, 0, strtab),
-        _Section(".shstrtab", SHT_STRTAB, 0, shstrtab),
+    resolved: list[_Section] = []
+    for section in sections:
+        if section.section_type == SHT_REL:
+            is_text = section.name == ".rel.text"
+            section = _Section(
+                section.name,
+                SHT_REL,
+                0,
+                rel_section(relocations if is_text else data_relocations),
+                link=symtab_index,
+                info=text_index if is_text else data_index,
+                alignment=4,
+                entry_size=REL_SIZE,
+            )
+        resolved.append(section)
+    sections = resolved
+    sections.append(_Section(
+        ".symtab", SHT_SYMTAB, 0, symtab, link=strtab_index, info=first_global,
+        alignment=4, entry_size=SYMBOL_SIZE,
+    ))
+    sections.append(_Section(".strtab", SHT_STRTAB, 0, strtab))
+    shstrtab, section_name_offsets = _string_table(
+        [section.name for section in sections] + [".shstrtab"]
     )
+    sections.append(_Section(".shstrtab", SHT_STRTAB, 0, shstrtab))
 
-    data = bytearray(b"\0" * ELF_HEADER_SIZE)
+    blob = bytearray(b"\0" * ELF_HEADER_SIZE)
     section_offsets: list[int] = []
     for section in sections:
-        offset = _align(len(data), section.alignment)
-        data.extend(b"\0" * (offset - len(data)))
+        offset = _align(len(blob), section.alignment)
+        blob.extend(b"\0" * (offset - len(blob)))
         section_offsets.append(offset)
-        data.extend(section.data)
-    section_header_offset = _align(len(data), 4)
-    data.extend(b"\0" * (section_header_offset - len(data)))
+        if section.section_type != SHT_NOBITS:
+            blob.extend(section.data)
+    section_header_offset = _align(len(blob), 4)
+    blob.extend(b"\0" * (section_header_offset - len(blob)))
 
     # Null section header.
-    data.extend(b"\0" * SECTION_HEADER_SIZE)
+    blob.extend(b"\0" * SECTION_HEADER_SIZE)
     for section, offset in zip(sections, section_offsets, strict=True):
-        data.extend(struct.pack(
+        size = bss_size if section.section_type == SHT_NOBITS else len(section.data)
+        blob.extend(struct.pack(
             "<IIIIIIIIII",
             section_name_offsets[section.name],
             section.section_type,
             section.flags,
             0,
             offset,
-            len(section.data),
+            size,
             section.link,
             section.info,
             section.alignment,
@@ -276,7 +348,7 @@ def write_mips_elf(
         0,
         SECTION_HEADER_SIZE,
         len(sections) + 1,
-        5,
+        shstrtab_index,
     )
-    data[:ELF_HEADER_SIZE] = header
-    return bytes(data)
+    blob[:ELF_HEADER_SIZE] = header
+    return bytes(blob)
