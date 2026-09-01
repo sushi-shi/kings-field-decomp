@@ -197,6 +197,7 @@ incremental Ninja graph. The normal commands are:
 | Command | Behavior |
 | --- | --- |
 | `kf build [all\|base\|target\|compare\|verify]` | configure if needed, then build all or selected `--image` targets; `--retail-dir` overrides local configuration |
+| `kf try --unit ID [--source FILE]` | compile one unit into a scratch object and diff it per function against its module target without touching the build tree |
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
 | `kf check [--strict]` | fail on unchanged-input regressions, lost banked rows, or invalid/stale reports |

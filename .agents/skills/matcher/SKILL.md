@@ -61,7 +61,9 @@ hypotheses, but each function keeps its own final verdict.
 3. Model MIPS-visible types: signed/unsigned byte and halfword loads, extension,
    comparison form, stack arguments, and structure offsets.
 4. Preserve branch/jump/return delay slots and explain load-delay scheduling.
-5. Compile the cleanest evidence-backed C shape with `kf match --unit <unit>`.
+5. Claim the function with `ADDRESS(va, body_size)` in its module source
+   (identity spelling, ascending order, contiguous run), iterate with
+   `kf try --unit <unit>`, then record with `kf match --unit <unit>`.
 6. Compare both objects from the first real divergence. Use objdiff plus raw
    MIPS disassembly and relocation tables; fuzzy percentage is insufficient.
 7. Change one source-level cause at a time unless composing independently

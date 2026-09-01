@@ -99,6 +99,12 @@ def parser() -> argparse.ArgumentParser:
     build.add_argument("--reconfigure", action="store_true")
     build.add_argument("--retail-dir", type=Path)
 
+    trial = subs.add_parser(
+        "try", help="compile one unit and diff it per function against its module target"
+    )
+    trial.add_argument("--unit", required=True)
+    trial.add_argument("--source", type=Path)
+    trial.add_argument("--context", type=int, default=2)
     match = subs.add_parser("match", help="build and summarize changed reconstruction units")
     match.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
     match.add_argument("--unit")
@@ -173,6 +179,10 @@ def main(argv: list[str] | None = None) -> int:
             return _configure(args)
         if args.command == "build":
             return _build(args)
+        if args.command == "try":
+            from scripts.kf.trial import compare
+
+            return compare(args.unit, args.source, args.context)
         if args.command == "match":
             return _match(args)
         if args.command == "status":
