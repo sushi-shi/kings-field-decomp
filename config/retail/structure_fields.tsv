@@ -76,6 +76,8 @@ KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
+KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
+KfMapCell	0x01	0x01	x	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
 KfMapCopyRegion	0x01	0x01	source_z	u8	supported	semantic_types.h;asm;xrefs	source z
 KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	semantic_types.h;asm;xrefs	destination x
@@ -165,6 +167,11 @@ KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xref
 KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	semantic_types.h;asm;xrefs	physical-power increment
 KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	semantic_types.h;asm;xrefs	magic increment
 KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	semantic_types.h;asm;xrefs	cumulative level threshold
+KfPlayerMotionState	0x00	0x02	strafe_velocity	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
+KfPlayerMotionState	0x02	0x02	forward_velocity	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
+KfPlayerMotionState	0x04	0x02	movement_speed	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
+KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
+KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
 KfPlayerProgressState	0x00	0x01	level	u8	supported	semantic_types.h;asm;xrefs	player level
 KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	semantic_types.h;asm;xrefs	current dungeon floor
@@ -203,6 +210,12 @@ KfVec4s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
 KfVec4s	0x06	0x02	pad	s16	opaque	semantic_types.h;asm;xrefs	fourth lane meaning unresolved
 KfVecXZs	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVecXZs	0x02	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
+KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
+KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
+KfWeaponRecord	0x0c	0x06	unknown_0c	u8[6]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
+KfWeaponRecord	0x14	0x18	unknown_14	u8[24]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 SoundRef	0x00	0x01	program	u8	supported	semantic_types.h;Psy-Q-LIBSND	program number
 SoundRef	0x01	0x01	tone	u8	supported	semantic_types.h;Psy-Q-LIBSND	tone number
 SoundRef	0x02	0x01	note	u8	supported	semantic_types.h;Psy-Q-LIBSND	note number

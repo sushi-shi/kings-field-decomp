@@ -63,6 +63,13 @@ pointer. Five armor categories have both IDs and resolved record pointers;
 the accessory slot has an ID but applies direct effects rather than retaining
 a record pointer. Empty selections use ID `0xff` and a null pointer.
 
+The weapon pointer is now typed as `const KfWeaponRecord *`. Its `0x2c` stride,
+five attack-component halfwords at `+0x02`, charge-rate byte at `+0x01`, and
+attack z offset at `+0x12` are supported by stat recalculation and the reviewed
+attack update. All remaining bytes stay explicitly opaque; the complete table
+is in
+[`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).
+
 The six-slot switch covers shield, head, body, arm, leg, and accessory. The
 item-ID ranges independently agree with the retail category tables: shield
 `0x0d..0x12`, head `0x13..0x19`, body `0x1a..0x1f`, arm `0x20..0x22`, leg

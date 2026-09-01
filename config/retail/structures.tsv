@@ -9,6 +9,7 @@ KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.ts
 KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
+KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
 KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
@@ -19,6 +20,7 @@ KfMatrix	0x20	supported	game_types.h;Psy-Q-LIBGTE;asm;xrefs	PlayStation 3x3 rota
 KfPitchYaw	0x04	supported	semantic_types.h;asm;xrefs	two signed halfword angles
 KfPlayerAttackChargeState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
 KfPlayerLevelGrowth	0x0c	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
+KfPlayerMotionState	0x0a	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	five-halfword movement and camera-input state cleared as one complete group
 KfPlayerProgressState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
 KfPlayerVitals	0x08	supported	semantic_types.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
 KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xrefs	generic allocation-pool record
@@ -31,4 +33,5 @@ KfVec3s	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword coordina
 KfVec4i	0x10	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates plus retained fourth lane
 KfVec4s	0x08	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates plus retained fourth lane
 KfVecXZs	0x04	supported	semantic_types.h;asm;xrefs	two signed horizontal halfword coordinates
+KfWeaponRecord	0x2c	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
 SoundRef	0x03	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	packed LIBSND program/tone/note reference

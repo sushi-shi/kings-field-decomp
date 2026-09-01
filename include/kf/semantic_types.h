@@ -133,6 +133,11 @@ typedef struct KfActor {
     u8 unknown_46[2];
 } KfActor;
 
+typedef struct KfMapCell {
+    u8 z;
+    u8 x;
+} KfMapCell;
+
 typedef struct KfMapCopyRegion {
     u8 source_x;
     u8 source_z;
@@ -296,6 +301,33 @@ typedef struct KfPlayerAttackChargeState {
 } KfPlayerAttackChargeState;
 
 /*
+ * The player input loop ramps the two signed movement components, derives the
+ * unsigned horizontal speed, and independently ramps the yaw and pitch steps.
+ * The grouped clear routine proves the complete five-halfword extent.
+ */
+typedef struct KfPlayerMotionState {
+    s16 strafe_velocity;
+    s16 forward_velocity;
+    u16 movement_speed;
+    s16 yaw_step;
+    s16 pitch_step;
+} KfPlayerMotionState;
+
+/*
+ * Equipped weapons use a 0x2c-byte runtime-loaded record.  Reviewed combat
+ * and attack code establishes only the fields below; the remaining resource
+ * bytes deliberately retain opaque identities.
+ */
+typedef struct KfWeaponRecord {
+    u8 unknown_00;
+    u8 charge_rate;
+    u16 attack_components[5];
+    u8 unknown_0c[0x06];
+    u16 attack_z_offset;
+    u8 unknown_14[0x18];
+} KfWeaponRecord;
+
+/*
  * The memory-card file starts with the standard 0x200-byte PlayStation save
  * header (one header frame plus three icon frames).  King's Field appends a
  * 0x80-byte directory and stores each serialized game slot in 0x2580 bytes.
@@ -397,6 +429,20 @@ typedef char KfPlayerAttackChargeState_size_is_4[
     (sizeof(KfPlayerAttackChargeState) == 4) ? 1 : -1];
 typedef char KfPlayerAttackChargeState_committed_offset_is_2[
     (KF_OFFSET_OF(KfPlayerAttackChargeState, committed) == 2) ? 1 : -1];
+typedef char KfMapCell_x_offset_is_1[
+    (KF_OFFSET_OF(KfMapCell, x) == 1) ? 1 : -1];
+typedef char KfPlayerMotionState_movement_speed_offset_is_4[
+    (KF_OFFSET_OF(KfPlayerMotionState, movement_speed) == 4) ? 1 : -1];
+typedef char KfPlayerMotionState_yaw_step_offset_is_6[
+    (KF_OFFSET_OF(KfPlayerMotionState, yaw_step) == 6) ? 1 : -1];
+typedef char KfPlayerMotionState_pitch_step_offset_is_8[
+    (KF_OFFSET_OF(KfPlayerMotionState, pitch_step) == 8) ? 1 : -1];
+typedef char KfWeaponRecord_charge_rate_offset_is_1[
+    (KF_OFFSET_OF(KfWeaponRecord, charge_rate) == 1) ? 1 : -1];
+typedef char KfWeaponRecord_attack_components_offset_is_2[
+    (KF_OFFSET_OF(KfWeaponRecord, attack_components) == 2) ? 1 : -1];
+typedef char KfWeaponRecord_attack_z_offset_is_18[
+    (KF_OFFSET_OF(KfWeaponRecord, attack_z_offset) == 0x12) ? 1 : -1];
 #undef KF_OFFSET_OF
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];
@@ -413,6 +459,7 @@ typedef char KfActorActionProfile_size_is_10[
     (sizeof(KfActorActionProfile) == 0x0a) ? 1 : -1];
 typedef char KfActorPlacement_size_is_16[
     (sizeof(KfActorPlacement) == 0x10) ? 1 : -1];
+typedef char KfMapCell_size_is_2[(sizeof(KfMapCell) == 0x02) ? 1 : -1];
 typedef char KfMapCopyRegion_size_is_6[
     (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
 typedef char KfMapObjectPlacement_size_is_20[
@@ -421,5 +468,9 @@ typedef char KfMapObjectDefinition_size_is_8[
     (sizeof(KfMapObjectDefinition) == 0x08) ? 1 : -1];
 typedef char KfMapObject_size_is_44[
     (sizeof(KfMapObject) == 0x2c) ? 1 : -1];
+typedef char KfPlayerMotionState_size_is_10[
+    (sizeof(KfPlayerMotionState) == 0x0a) ? 1 : -1];
+typedef char KfWeaponRecord_size_is_44[
+    (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
 
 #endif

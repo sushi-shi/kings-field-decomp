@@ -42,18 +42,21 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3593)
-        self.assertGreaterEqual(counts["functions_named"], 172)
-        self.assertGreaterEqual(counts["data_named"], 123)
-        self.assertEqual(counts["structures"], 31)
-        self.assertEqual(counts["structure_fields"], 205)
-        self.assertEqual(counts["structure_fields_named"], 153)
+        self.assertEqual(counts["data"], 3594)
+        self.assertGreaterEqual(counts["functions_named"], 180)
+        self.assertGreaterEqual(counts["data_named"], 138)
+        self.assertEqual(counts["structures"], 34)
+        self.assertEqual(counts["structure_fields"], 218)
+        self.assertEqual(counts["structure_fields_named"], 163)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
         fields = load_structure_field_identities(RETAIL_CONFIG)
         self.assertEqual(structures["KfActor"].size, 0x48)
         self.assertEqual(structures["KfPlayerLevelGrowth"].size, 0x0C)
+        self.assertEqual(structures["KfMapCell"].size, 0x02)
+        self.assertEqual(structures["KfPlayerMotionState"].size, 0x0A)
+        self.assertEqual(structures["KfWeaponRecord"].size, 0x2C)
         growth_fields = {
             row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)
             for row in fields
@@ -72,6 +75,18 @@ class InventoryTests(unittest.TestCase):
             row.name: row for row in fields if row.structure == "KfActorDefinition"
         }
         self.assertEqual(definition_fields["experience_reward"].offset, 0x84)
+        motion_fields = {
+            row.name: row for row in fields if row.structure == "KfPlayerMotionState"
+        }
+        self.assertEqual(motion_fields["movement_speed"].offset, 0x04)
+        self.assertEqual(motion_fields["pitch_step"].offset, 0x08)
+        weapon_fields = {
+            row.name: row for row in fields if row.structure == "KfWeaponRecord"
+        }
+        self.assertEqual(weapon_fields["charge_rate"].offset, 0x01)
+        self.assertEqual(weapon_fields["attack_components"].size, 0x0A)
+        self.assertEqual(weapon_fields["attack_z_offset"].offset, 0x12)
+        self.assertEqual(weapon_fields["unknown_14"].meaning_confidence, "opaque")
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -296,6 +311,61 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_motion_attack_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_motion_attack.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 8)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_motion_attack_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_player_motion_attack"
+        )
+        self.assertEqual(len(campaign_rows), 146)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(by_site[0x80016F80]["target_name"], "map_floor_height_grid")
+        self.assertEqual(by_site[0x80017414]["target_name"], "map_collision_grid")
+        self.assertEqual(by_site[0x80017B24]["target_name"], "map_cell_attribute_grid")
+        self.assertEqual(by_site[0x80019134]["target_name"], "player_begin_weapon_attack")
+        self.assertEqual(by_site[0x8002EF78]["target_name"], "player_distance_to_point_in_cone")
+
+    def test_player_motion_data_owners_are_queryable(self) -> None:
+        game = index("GAME.EXE")
+        motion = game.datum(0x800A0840)
+        self.assertEqual(
+            (motion.name, motion.datatype, motion.size),
+            ("player_motion_state", "KfPlayerMotionState", 0x0A),
+        )
+        self.assertEqual(game.data_owner(0x800A0848), motion)
+        map_cell = game.datum(0x800A084A)
+        self.assertEqual(
+            (map_cell.name, map_cell.datatype, map_cell.size),
+            ("player_map_cell", "KfMapCell", 2),
+        )
+        weapon = game.datum(0x800A07E8)
+        self.assertEqual(weapon.datatype, "const KfWeaponRecord *")
+        floor_grid = game.datum(0x80095900)
+        collision_grid = game.datum(0x80098018)
+        attribute_grid = game.datum(0x8009A748)
+        self.assertEqual(
+            tuple(datum.size for datum in (floor_grid, collision_grid, attribute_grid)),
+            (0x2710, 0x2710, 0x2710),
+        )
+        self.assertEqual(game.data_owner(0x800968F5), floor_grid)
+        self.assertEqual(game.data_owner(0x8009C6B4), attribute_grid)
 
     def test_player_stats_relocations_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

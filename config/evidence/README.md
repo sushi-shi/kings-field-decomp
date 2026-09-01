@@ -41,6 +41,11 @@ combat-stat recalculation, and magic/weapon/equipment selection. It also
 records the two compiler switch tables, the runtime-loaded 40-record level
 growth table, packed sound references, and mutable weapon-image path.
 
+`game_semantic_player_motion_attack.tsv` records the weapon swing/charge path,
+map-position synchronization, grounded view bob, and vertical floor-following
+state machine. It supports complete `KfPlayerMotionState`, `KfMapCell`, and
+partially decoded `KfWeaponRecord` layouts plus three 100-by-100 map grids.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a
