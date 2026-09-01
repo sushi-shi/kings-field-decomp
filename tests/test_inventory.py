@@ -40,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3621)
-        self.assertGreaterEqual(counts["functions_named"], 153)
-        self.assertGreaterEqual(counts["data_named"], 74)
+        self.assertEqual(counts["data"], 3622)
+        self.assertGreaterEqual(counts["functions_named"], 161)
+        self.assertGreaterEqual(counts["data_named"], 78)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -228,6 +228,37 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_death_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_death.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 8)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_death_matrix_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        matrix_rows = {
+            parse_int(row["site_va"]): row
+            for row in rows
+            if row["image"] == "GAME.EXE"
+            and parse_int(row["target_va"]) == 0x80058060
+        }
+        self.assertEqual(
+            set(matrix_rows),
+            {0x80015198, 0x8001866C, 0x800186A4},
+        )
+        for row in matrix_rows.values():
+            self.assertEqual(row["target_name"], "player_death_saved_color_matrix")
+            self.assertEqual(row["confidence"], "paired-reviewed")
+            self.assertEqual(row["status"], "reviewed")
+            self.assertEqual(row["provenance"], "manual:game_semantic_player_death")
 
     def test_camera_event_false_calls_remain_rejected(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
@@ -590,6 +621,30 @@ class InventoryTests(unittest.TestCase):
             ("player_vitals", "KfPlayerVitals", 8),
         )
         self.assertEqual(current_mp_owner, player_vitals)
+        saved_fog = game.datum(0x80057E78)
+        saved_color_matrix = game.datum(0x80058060)
+        death_pitch_step = game.datum(0x800A0858)
+        death_blend = game.datum(0x800A085A)
+        self.assertEqual(
+            (saved_fog.name, saved_fog.datatype, saved_fog.size),
+            ("player_death_saved_fog_near", "s32", 4),
+        )
+        self.assertEqual(
+            (
+                saved_color_matrix.name,
+                saved_color_matrix.datatype,
+                saved_color_matrix.size,
+            ),
+            ("player_death_saved_color_matrix", "KfMatrix", 0x20),
+        )
+        self.assertEqual(
+            (death_pitch_step.name, death_pitch_step.datatype, death_pitch_step.size),
+            ("player_death_camera_pitch_step", "u16", 2),
+        )
+        self.assertEqual(
+            (death_blend.name, death_blend.datatype, death_blend.size),
+            ("player_death_visual_blend", "s16", 2),
+        )
         self.assertEqual(
             {
                 data_identities[("GAME.EXE", va)].scope
@@ -600,6 +655,10 @@ class InventoryTests(unittest.TestCase):
                     0x800A0790,
                     0x800A0824,
                     0x800A0838,
+                    0x80058060,
+                    0x80057E78,
+                    0x800A0858,
+                    0x800A085A,
                 )
             },
             {"unknown"},

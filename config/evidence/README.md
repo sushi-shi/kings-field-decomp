@@ -29,6 +29,12 @@ ambiguous short FID on the current-event setter, and six rejected false
 control-flow xrefs. The two families share an investigation band, not proven
 translation-unit ownership.
 
+`game_semantic_player_death.tsv` records player HP/MP adjustment, broad game
+state initialization, restart policy, and the two-phase death transition. It
+also supports four global/static identities, including the previously missing
+saved-color-matrix BSS extent and its three carry-adjusted relocation pairs.
+The fourth `lui`/`ori` construction is retained as address evidence only.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a
