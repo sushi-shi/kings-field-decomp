@@ -39,9 +39,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 744)
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
-        self.assertEqual(counts["data"], 3846)
-        self.assertGreaterEqual(counts["functions_named"], 70)
-        self.assertGreaterEqual(counts["data_named"], 33)
+        self.assertEqual(counts["data"], 3802)
+        self.assertGreaterEqual(counts["functions_named"], 87)
+        self.assertGreaterEqual(counts["data_named"], 46)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -98,6 +98,32 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
+    def test_screen_talk_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 2)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_actor_core_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_actor_core.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 16)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")
         function = game.function(0x80014E08)
@@ -149,6 +175,23 @@ class InventoryTests(unittest.TestCase):
         )
         save_path = game.datum(0x80056034)
         self.assertEqual(save_path.name, "save_main_file_path")
+        actor_pool = game.datum(0x8006C4B8)
+        self.assertEqual(
+            (actor_pool.name, actor_pool.datatype, actor_pool.size),
+            ("actor_pool", "KfActor[128]", 0x2400),
+        )
+        actor_definition = game.datum(0x8006BD98)
+        self.assertEqual(
+            (actor_definition.name, actor_definition.datatype),
+            ("actor_definitions", "KfActorDefinition[12]"),
+        )
+        current_actor = game.datum(0x8006E8D4)
+        self.assertEqual(
+            (current_actor.name, current_actor.datatype),
+            ("current_actor", "KfActor *"),
+        )
+        talk_path = game.datum(0x8005606C)
+        self.assertEqual(talk_path.name, "talk_image_path_template")
 
 
 if __name__ == "__main__":

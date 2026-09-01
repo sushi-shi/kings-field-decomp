@@ -1,19 +1,12 @@
-typedef signed short s16;
-
-struct Fields8002cc54 {
-    unsigned char unknown[44];
-    s16 first;
-    s16 second;
-    s16 third;
-};
+#include <kf/semantic_types.h>
 
 void func_8002cc54(
-    struct Fields8002cc54 *object,
-    s16 first,
-    s16 second,
-    s16 third)
+    KfActor *actor,
+    s16 x,
+    s16 y,
+    s16 z)
 {
-    object->first = first;
-    object->second = second;
-    object->third = third;
+    actor->rotation.x = x;
+    actor->rotation.y = y;
+    actor->rotation.z = z;
 }

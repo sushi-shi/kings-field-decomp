@@ -2031,6 +2031,8 @@ GAME.EXE	0x80065078	0x2	DAT_80065078	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80065080	0x4	DAT_80065080	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065088	0x2	DAT_80065088	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065090	0x2	DAT_80065090	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80065098	0x8	player_rotation_snapshot	global	bss	KfVec4s	player	supported	game_semantic_actor_core.tsv;ghidra-12.0.4-memory-xref;asm;main-loop;xrefs	per-frame rotation snapshot copied into actor and other subsystem contexts
+GAME.EXE	0x800650a0	0x10	player_position_snapshot	global	bss	KfVec4i	player	supported	game_semantic_actor_core.tsv;ghidra-12.0.4-memory-xref;asm;main-loop;xrefs	per-frame position snapshot copied into actor and other subsystem contexts
 GAME.EXE	0x800650b0	0x4	DAT_800650b0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800650b4	0x4	DAT_800650b4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800650b8	0x4	DAT_800650b8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -2125,51 +2127,14 @@ GAME.EXE	0x8006b734	0x4	DAT_8006b734	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x8006bd70	0x4	DAT_8006bd70	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006bd88	0x4	DAT_8006bd88	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006bd90	0x4	DAT_8006bd90	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006bd98	0x4	DAT_8006bd98	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006bd9c	0x4	DAT_8006bd9c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c1d0	0x1	DAT_8006c1d0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c1d6	0x1	DAT_8006c1d6	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c1d7	0x1	DAT_8006c1d7	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c1d8	0x1	DAT_8006c1d8	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c1d9	0x1	DAT_8006c1d9	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4b8	0x1	DAT_8006c4b8	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4b9	0x1	DAT_8006c4b9	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4ba	0x1	DAT_8006c4ba	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4bb	0x1	DAT_8006c4bb	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4bc	0x1	DAT_8006c4bc	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4bd	0x1	DAT_8006c4bd	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4be	0x1	DAT_8006c4be	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4bf	0x1	DAT_8006c4bf	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4c0	0x1	DAT_8006c4c0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4c1	0x1	DAT_8006c4c1	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4c6	0x2	DAT_8006c4c6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4c8	0x2	DAT_8006c4c8	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4ce	0x2	DAT_8006c4ce	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4d0	0x2	DAT_8006c4d0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4d4	0x4	DAT_8006c4d4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4d8	0x4	DAT_8006c4d8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4dc	0x4	DAT_8006c4dc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c4ec	0x4	DAT_8006c4ec	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c500	0x1	DAT_8006c500	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c501	0x1	DAT_8006c501	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c502	0x1	DAT_8006c502	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c504	0x1	DAT_8006c504	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c505	0x1	DAT_8006c505	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c506	0x1	DAT_8006c506	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c508	0x1	DAT_8006c508	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c516	0x2	DAT_8006c516	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c518	0x2	DAT_8006c518	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006c534	0x4	DAT_8006c534	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8b8	0x4	DAT_8006e8b8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8bc	0x4	DAT_8006e8bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8c0	0x4	DAT_8006e8c0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8c4	0x4	DAT_8006e8c4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8c8	0x4	DAT_8006e8c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8cc	0x4	DAT_8006e8cc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8d0	0x4	DAT_8006e8d0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8d4	0x4	DAT_8006e8d4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8d8	0x2	DAT_8006e8d8	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006e8da	0x2	DAT_8006e8da	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8006bd98	0x720	actor_definitions	global	bss	KfActorDefinition[12]	actor	supported	game_semantic_actor_core.tsv;asm;main-loop-memset;0x720-copy;0x98-stride	twelve map-loaded actor definitions; reviewed fields remain partial
+GAME.EXE	0x8006c4b8	0x2400	actor_pool	global	bss	KfActor[128]	actor	supported	game_semantic_actor_core.tsv;asm;main-loop-memset;128x0x48-loops	the field-level Ghidra candidates are members of this array, not separate globals
+GAME.EXE	0x8006e8b8	0x10	actor_player_position	global	bss	KfVec4i	actor	supported	game_semantic_actor_core.tsv;asm;main-loop;xrefs	per-frame player position copied for actor AI and visibility calculations
+GAME.EXE	0x8006e8c8	0x8	actor_player_rotation	global	bss	KfVec4s	actor	supported	game_semantic_actor_core.tsv;asm;main-loop;xrefs	per-frame player rotation copied into actor-system context
+GAME.EXE	0x8006e8d0	0x4	current_actor_definition	global	bss	KfActorDefinition *	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current;0x98-stride	definition pointer derived from current_actor definition_id
+GAME.EXE	0x8006e8d4	0x4	current_actor	global	bss	KfActor *	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current;xrefs	actor currently bound for the update/action routines
+GAME.EXE	0x8006e8d8	0x2	current_actor_index	global	bss	u16	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current;0x48-stride	pool index derived from current_actor
+GAME.EXE	0x8006e8da	0x2	current_actor_definition_id	global	bss	u16	actor	supported	game_semantic_actor_core.tsv;asm;actor_bind_current	zero-extended definition ID cached for the bound actor
 GAME.EXE	0x8006e8dc	0x4	DAT_8006e8dc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006e8e0	0x4	DAT_8006e8e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006e8e4	0x4	DAT_8006e8e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -2210,24 +2175,15 @@ GAME.EXE	0x80070b5e	0x2	DAT_80070b5e	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80070e92	0x2	DAT_80070e92	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80070e94	0x2	DAT_80070e94	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80070e96	0x2	DAT_80070e96	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80070e98	0x1	DAT_80070e98	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80070e9c	0x4	DAT_80070e9c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80070e98	0x1	display_buffer_index	global	bss	u8	display	supported	game_semantic_screen_talk.tsv;asm;xrefs;double-buffer-selection	current display buffer selector; callers commonly render through its boolean complement
+GAME.EXE	0x80070e9c	0x4	asset_load_buffer	global	bss	void *	asset_loader	supported	game_semantic_screen_talk.tsv;asm;xrefs;CdRead;TIM-upload	reusable CD asset destination used by the reviewed full-screen image path
 GAME.EXE	0x80070ea0	0x4	DAT_80070ea0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80070ea4	0x4	DAT_80070ea4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80070eac	0x4	DAT_80070eac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80070eb0	0x4	DAT_80070eb0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80070eb8	0x4	primitive_buffer	global	bss	PrimitiveBuffer *	primitive_buffer	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	current render-buffer state
 GAME.EXE	0x80090ebc	0x4	ordering_table	global	bss	u32 *	primitive_buffer	supported	game_match_campaign_30.tsv;reviewed-reloc;AddPrim	primitive ordering table
-GAME.EXE	0x80090ed6	0x1	DAT_80090ed6	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090ed8	0x1	DAT_80090ed8	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090ed9	0x1	DAT_80090ed9	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090eda	0x1	DAT_80090eda	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090edb	0x1	DAT_80090edb	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090f32	0x1	DAT_80090f32	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090f34	0x1	DAT_80090f34	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090f35	0x1	DAT_80090f35	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090f36	0x1	DAT_80090f36	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80090f37	0x1	DAT_80090f37	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80090ec0	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_screen_talk.tsv;ghidra-12.0.4-memory-xref;asm;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
 GAME.EXE	0x80090fc8	0x4	current_asset_data	global	bss	void *	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	selected asset payload address
 GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	AssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	indexed asset-header pointer table
 GAME.EXE	0x800910bc	0x4	DAT_800910bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

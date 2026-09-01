@@ -11,17 +11,21 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 70 of 744 functions: 67 GAME, one PSX, and two
+Current semantic coverage is 87 of 744 functions: 84 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
-fixed-point math helpers, and the memory-card/save-file subsystem through its
-menu-facing wrappers. Their per-function evidence is in
+fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
+image path, and actor core through damage application. Their per-function evidence is in
 `config/evidence/game_semantic_math_lifecycle.tsv` and
-`config/evidence/game_semantic_save_system.tsv`; the recovered save format and
-remaining unknowns are described in [`save-system.md`](save-system.md).
+`config/evidence/game_semantic_save_system.tsv`,
+`config/evidence/game_semantic_screen_talk.tsv`, and
+`config/evidence/game_semantic_actor_core.tsv`. The recovered subsystems and
+remaining unknowns are described in [`save-system.md`](save-system.md),
+[`screen-images.md`](screen-images.md), and
+[`actor-system.md`](actor-system.md).
 
-The current first pass contains 3,846 data identities, including 969
-non-overlapping BSS extents. Thirty-three data identities have semantic review:
-19 in loaded storage and 14 in BSS. Eight loaded identities are candidate or
+The current first pass contains 3,802 data identities, including 925
+non-overlapping BSS extents. Forty-six data identities have semantic review:
+19 in loaded storage and 27 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -31,6 +35,12 @@ in `data.tsv`. Their external versus file-local linkage remains unresolved
 where the executable cannot decide it. The remaining direct-access extents
 deliberately retain address-only names.
 
+The actor pass replaces field-level BSS candidates with the owning arrays:
+twelve `0x98`-byte `KfActorDefinition` records and 128 `0x48`-byte `KfActor`
+records. It also names the actor player-transform context, bound-actor globals,
+player snapshots, display selector/load buffer, and the two-record Psy-Q
+`DRAWENV` array. The mutable TALK path is named directly in `data.tsv`.
+
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
 declarations so argument names and widths can be refined independently. Data
@@ -38,10 +48,11 @@ rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
 
 Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
-`KfPitchYaw`, `KfEulerAngles`, `KfSaveSlotSummary`, `KfSaveDirectory`,
-`KfSaveHeader`, and `KfSavePayload` live in `include/kf/semantic_types.h` with
-compile-time size checks; established reconstruction types such as `KfMatrix`
-remain in `include/kf/game_types.h`. A type name records only fields and extents
+`KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
+`KfActor`, `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
+`KfSavePayload` live in `include/kf/semantic_types.h` with compile-time size
+checks; established reconstruction types such as `KfMatrix` remain in
+`include/kf/game_types.h`. A type name records only fields and extents
 supported by the current MIPS access pattern; it does not claim the original
 source spelling.
 

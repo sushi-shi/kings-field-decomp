@@ -1,5 +1,7 @@
-void func_8002cec8(unsigned char *object, unsigned char value)
+#include <kf/semantic_types.h>
+
+void func_8002cec8(KfActor *actor, u8 action)
 {
-    object[8] = value;
-    object[0x38] = 0;
+    actor->action = action;
+    actor->action_timer = 0;
 }

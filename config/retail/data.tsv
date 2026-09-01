@@ -2980,7 +2980,7 @@ GAME.EXE	0x80056034	0x44834	0x19	string	byte-pattern	save_main_file_path	ascii	i
 GAME.EXE	0x8005604d	0x4484d	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80056050	0x44850	0x19	string	byte-pattern	save_temporary_file_path	ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KFTMP\x20\x20\x20
 GAME.EXE	0x80056069	0x44869	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x8005606c	0x4486c	0x13	string	byte-pattern		ascii	investigation:string-census	escaped text: TALK\\C00\\T00000.TIM
+GAME.EXE	0x8005606c	0x4486c	0x13	string	byte-pattern	talk_image_path_template	ascii	investigation:string-census;game_semantic_screen_talk.tsv	mutable path template patched by talk_show_indexed_image: TALK\\C00\\T00000.TIM
 GAME.EXE	0x8005607f	0x4487f	0x105	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80056184	0x44984	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: XXXX\t
 GAME.EXE	0x80056189	0x44989	0x27	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
