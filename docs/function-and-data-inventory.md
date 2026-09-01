@@ -11,7 +11,7 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 161 of 740 functions: 158 GAME, one PSX, and two
+Current semantic coverage is 165 of 740 functions: 162 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -21,22 +21,22 @@ per-function evidence is in the
 `game_semantic_math_lifecycle.tsv`, `game_semantic_save_system.tsv`,
 `game_semantic_screen_talk.tsv`, `game_semantic_actor_core.tsv`,
 `game_semantic_actor_ai.tsv`, `game_semantic_actor_actions.tsv`,
-`game_semantic_map_objects.tsv`, `game_semantic_map_runtime.tsv`, and
+`game_semantic_map_objects.tsv`, `game_semantic_map_runtime.tsv`,
 `game_semantic_audio_control.tsv`, `game_semantic_audio_spatial.tsv`,
-`game_semantic_camera_events.tsv`, and
-`game_semantic_event_queries_matrix.tsv`, and
-`game_semantic_player_death.tsv` files
+`game_semantic_camera_events.tsv`, `game_semantic_event_queries_matrix.tsv`,
+`game_semantic_player_death.tsv`, and `game_semantic_player_combat.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
-[`map-objects.md`](map-objects.md), [`audio-system.md`](audio-system.md), and
-[`camera-and-map-events.md`](camera-and-map-events.md), and
+[`map-objects.md`](map-objects.md), [`audio-system.md`](audio-system.md),
+[`camera-and-map-events.md`](camera-and-map-events.md),
 [`event-queries-and-matrix-effects.md`](event-queries-and-matrix-effects.md),
-and [`player-vitals-and-death.md`](player-vitals-and-death.md).
+[`player-vitals-and-death.md`](player-vitals-and-death.md), and
+[`player-combat.md`](player-combat.md).
 
 The current first pass contains 3,622 data identities, including 838
-non-overlapping BSS extents. Seventy-eight data identities have semantic review:
-27 in loaded storage and 51 in BSS. Eight loaded identities are candidate or
+non-overlapping BSS extents. Eighty-nine data identities have semantic review:
+27 in loaded storage and 62 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -111,6 +111,13 @@ distance, camera-pitch step, and Q12 visual blend. These four identities retain
 unknown source linkage. The player action-state byte remains inside its
 unresolved four-byte owner, and nearby general camera/render fields remain
 address-named rather than being falsely claimed as death-private storage.
+
+The player-combat pass names the five-component damage formula, direct and
+radial player-damage paths, and the bounded player-distance query. It also
+names the status-effect flag word, five numbered component defenses, the one
+directly observed status resistance, and four signed status timers. All eleven
+objects retain unknown source linkage, and their adjacency is not treated as
+proof of one original structure. Component and effect lore remains numbered.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C

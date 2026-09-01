@@ -41,8 +41,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
         self.assertEqual(counts["data"], 3622)
-        self.assertGreaterEqual(counts["functions_named"], 161)
-        self.assertGreaterEqual(counts["data_named"], 78)
+        self.assertGreaterEqual(counts["functions_named"], 165)
+        self.assertGreaterEqual(counts["data_named"], 89)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -241,6 +241,48 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_combat_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_combat.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 4)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_combat_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_player_combat"
+        )
+        self.assertEqual(len(campaign_rows), 52)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(
+            by_site[0x800164BC]["target_name"],
+            "player_calculate_damage_component",
+        )
+        self.assertEqual(by_site[0x800167AC]["target_name"], "player_apply_damage")
+        self.assertEqual(
+            by_site[0x80039694]["target_name"],
+            "player_apply_radial_damage",
+        )
+        self.assertEqual(
+            by_site[0x8001711C]["target_name"],
+            "camera_position",
+        )
+        self.assertEqual(
+            by_site[0x8001640C]["target_name"],
+            "player_status_effect2_resistance",
+        )
 
     def test_player_death_matrix_relocations_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
@@ -645,6 +687,42 @@ class InventoryTests(unittest.TestCase):
             (death_blend.name, death_blend.datatype, death_blend.size),
             ("player_death_visual_blend", "s16", 2),
         )
+        status_data = tuple(
+            game.datum(va)
+            for va in (
+                0x800A07AA,
+                0x800A07BC,
+                0x800A07BE,
+                0x800A07C0,
+                0x800A07C2,
+                0x800A07C4,
+                0x800A07C6,
+                0x800A07C8,
+                0x800A07CA,
+                0x800A07CC,
+                0x800A07CE,
+            )
+        )
+        self.assertEqual(
+            tuple(datum.name for datum in status_data),
+            (
+                "player_status_effect_flags",
+                "player_damage_defense_component0",
+                "player_damage_defense_component1",
+                "player_damage_defense_component2",
+                "player_status_effect2_resistance",
+                "player_damage_defense_component3",
+                "player_damage_defense_component4",
+                "player_status_effect0_timer",
+                "player_status_effect1_timer",
+                "player_status_effect2_timer",
+                "player_status_effect3_timer",
+            ),
+        )
+        self.assertEqual(
+            tuple(datum.datatype for datum in status_data),
+            ("u16",) * 7 + ("s16",) * 4,
+        )
         self.assertEqual(
             {
                 data_identities[("GAME.EXE", va)].scope
@@ -659,6 +737,17 @@ class InventoryTests(unittest.TestCase):
                     0x80057E78,
                     0x800A0858,
                     0x800A085A,
+                    0x800A07AA,
+                    0x800A07BC,
+                    0x800A07BE,
+                    0x800A07C0,
+                    0x800A07C2,
+                    0x800A07C4,
+                    0x800A07C6,
+                    0x800A07C8,
+                    0x800A07CA,
+                    0x800A07CC,
+                    0x800A07CE,
                 )
             },
             {"unknown"},

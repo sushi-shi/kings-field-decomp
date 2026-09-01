@@ -2239,23 +2239,23 @@ GAME.EXE	0x800a07a2	0x2	DAT_800a07a2	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x800a07a4	0x2	DAT_800a07a4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07a6	0x2	DAT_800a07a6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07a8	0x2	DAT_800a07a8	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07aa	0x2	DAT_800a07aa	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a07aa	0x2	player_status_effect_flags	unknown	bss	u16	player_status	supported	game_semantic_player_combat.tsv;asm;xrefs;status-update	bits 0..3 are set by player_apply_damage and cleared as their corresponding timers expire; higher-bit meanings and source linkage remain unresolved
 GAME.EXE	0x800a07ac	0x4	DAT_800a07ac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07b0	0x2	DAT_800a07b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07b2	0x2	DAT_800a07b2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07b4	0x2	DAT_800a07b4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07b6	0x2	DAT_800a07b6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07b8	0x2	DAT_800a07b8	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07bc	0x2	DAT_800a07bc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07be	0x2	DAT_800a07be	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07c0	0x2	DAT_800a07c0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07c2	0x2	DAT_800a07c2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07c4	0x2	DAT_800a07c4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07c6	0x2	DAT_800a07c6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07c8	0x2	DAT_800a07c8	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07ca	0x2	DAT_800a07ca	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07cc	0x2	DAT_800a07cc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a07ce	0x2	DAT_800a07ce	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a07bc	0x2	player_damage_defense_component0	unknown	bss	u16	player_combat	supported	game_semantic_player_combat.tsv;asm;xrefs;equipment-recalculation	first of five component defenses consumed by player_apply_damage; component lore and source linkage remain unresolved
+GAME.EXE	0x800a07be	0x2	player_damage_defense_component1	unknown	bss	u16	player_combat	supported	game_semantic_player_combat.tsv;asm;xrefs;equipment-recalculation	second of five component defenses consumed by player_apply_damage; component lore and source linkage remain unresolved
+GAME.EXE	0x800a07c0	0x2	player_damage_defense_component2	unknown	bss	u16	player_combat	supported	game_semantic_player_combat.tsv;asm;xrefs;equipment-recalculation	third of five component defenses consumed by player_apply_damage; component lore and source linkage remain unresolved
+GAME.EXE	0x800a07c2	0x2	player_status_effect2_resistance	unknown	bss	u16	player_status	supported	game_semantic_player_combat.tsv;asm;xrefs;equipment-recalculation;rand	compared with the random threshold before status-effect bit 2 is admitted; lore name and source linkage remain unresolved
+GAME.EXE	0x800a07c4	0x2	player_damage_defense_component3	unknown	bss	u16	player_combat	supported	game_semantic_player_combat.tsv;asm;xrefs;equipment-recalculation	fourth of five component defenses consumed by player_apply_damage; component lore and source linkage remain unresolved
+GAME.EXE	0x800a07c6	0x2	player_damage_defense_component4	unknown	bss	u16	player_combat	supported	game_semantic_player_combat.tsv;asm;xrefs;equipment-recalculation	fifth of five component defenses consumed by player_apply_damage; component lore and source linkage remain unresolved
+GAME.EXE	0x800a07c8	0x2	player_status_effect0_timer	unknown	bss	s16	player_status	supported	game_semantic_player_combat.tsv;asm;xrefs;status-update	set to 600 for status bit 0 and decremented by the main player update; source linkage remains unresolved
+GAME.EXE	0x800a07ca	0x2	player_status_effect1_timer	unknown	bss	s16	player_status	supported	game_semantic_player_combat.tsv;asm;xrefs;status-update	uses -1 as inactive, is extended toward 970 or 1000 for status bit 1, and is decremented by the main player update
+GAME.EXE	0x800a07cc	0x2	player_status_effect2_timer	unknown	bss	s16	player_status	supported	game_semantic_player_combat.tsv;asm;xrefs;status-update	set to 600 after the resisted random check for status bit 2 and decremented by the main player update
+GAME.EXE	0x800a07ce	0x2	player_status_effect3_timer	unknown	bss	s16	player_status	supported	game_semantic_player_combat.tsv;asm;xrefs;status-update	set to 300 for status bit 3 and decremented by the main player update; source linkage remains unresolved
 GAME.EXE	0x800a07d0	0x2	DAT_800a07d0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07d2	0x2	DAT_800a07d2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a07d8	0x4	DAT_800a07d8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
