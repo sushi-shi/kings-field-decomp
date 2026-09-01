@@ -6,7 +6,7 @@
 image	va	name	owner	action	return_type	parameters	name_confidence	signature_confidence	evidence	note
 PSX.EXE	0x80010028	main			void		supported	candidate	functions.tsv:exact-linked-xref;mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80014268	func_80014268			void	void * arg0;s32 arg1;u32 arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8001428c	game_entry	game	entry	void	s32 entry_arg0;u32 *entry_args	supported	candidate	game_semantic_math_lifecycle.tsv;start-tail;asm;xrefs	linked entry initializes heap/CD/card services, runs the game loop, and returns game_exit_code through entry_args[1]; exact loader ABI remains unresolved
+GAME.EXE	0x8001428c	main			void	s32 entry_arg0;u32 *entry_args	supported	supported	game_semantic_math_lifecycle.tsv;start-tail;asm;xrefs;gcc-__main-hook	linked entry initializes heap/CD/card services, runs the game loop, and returns game_exit_code through entry_args[1]; exact loader ABI remains unresolved
 GAME.EXE	0x80014314	func_80014314			void	s16 * arg0;char * arg1;u16 arg2;u16 arg3;u8 * arg4;u32 arg5	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800144d4	func_800144d4			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80014674	func_80014674			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review

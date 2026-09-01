@@ -497,4 +497,103 @@ typedef char KfPlayerMotionState_size_is_10[
 typedef char KfWeaponRecord_size_is_44[
     (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
 
+/* === game-math-death layouts === */
+
+/*
+ * The 0xe0-byte player state block at 0x800a0780. game_main_loop addresses
+ * several of these objects through one base register, which the compiler
+ * emits only for offsets of a single symbol: the block is one aggregate in
+ * the original source. The inventory still names each object separately, so
+ * until it carries the aggregate, sources view the block through
+ * player_experience (its first member).
+ */
+typedef struct KfPlayerState {
+    u32 player_experience;
+    u32 player_next_level_experience;
+    KfPlayerProgressState player_progress_state;
+    u8 unknown_0c;
+    u8 unknown_0d;
+    u8 player_weapon_charge_delay;
+    u8 unknown_0f;
+    KfPlayerVitals player_vitals;
+    KfPlayerAttackChargeState player_attack_charge_state;
+    u16 player_magic_charge;
+    u16 player_physical_power_training;
+    u16 player_magic_training;
+    u16 player_base_physical_power;
+    u16 player_base_magic;
+    u16 player_physical_power;
+    u16 player_magic;
+    u16 player_status_effect_flags;
+    u32 unknown_2c;
+    u16 player_attack_component0;
+    u16 player_attack_component1;
+    u16 player_attack_component2;
+    u16 player_attack_component3;
+    u16 player_attack_component4;
+    u8 unknown_3a[0x2];
+    u16 player_damage_defense_component0;
+    u16 player_damage_defense_component1;
+    u16 player_damage_defense_component2;
+    u16 player_status_effect2_resistance;
+    u16 player_damage_defense_component3;
+    u16 player_damage_defense_component4;
+    s16 player_status_effect0_timer;
+    s16 player_status_effect1_timer;
+    s16 player_status_effect2_timer;
+    s16 player_status_effect3_timer;
+    s16 unknown_50;
+    s16 unknown_52;
+    u8 unknown_54[0x4];
+    u32 unknown_58;
+    u8 player_selected_magic_id;
+    u8 unknown_5d[0x3];
+    const void *player_selected_magic_record;
+    u8 player_equipped_weapon_id;
+    u8 unknown_65[0x3];
+    const KfWeaponRecord *player_equipped_weapon_record;
+    u8 *player_weapon_asset_buffer;
+    s16 player_weapon_attack_phase;
+    u8 unknown_72[0x2];
+    u32 unknown_74;
+    u8 unknown_78;
+    u8 unknown_79;
+    u8 player_weapon_attack_fully_charged;
+    u8 unknown_7b[0x1];
+    const void *player_equipped_shield_record;
+    const void *player_equipped_head_armor_record;
+    const void *player_equipped_body_armor_record;
+    const void *player_equipped_arm_armor_record;
+    const void *player_equipped_leg_armor_record;
+    u8 player_equipped_shield_id;
+    u8 player_equipped_head_armor_id;
+    u8 player_equipped_body_armor_id;
+    u8 player_equipped_arm_armor_id;
+    u8 player_equipped_leg_armor_id;
+    u8 player_equipped_accessory_id;
+    u8 audio_effects_enabled;
+    u8 audio_music_enabled;
+    u8 unknown_98[2];
+    struct KfVec4s player_view_rotation_offset;
+    u8 player_update_state;
+    u8 unknown_a3;
+    struct KfVec4i camera_position;
+    s32 player_floor_height;
+    struct KfVec4s camera_rotation;
+    KfPlayerMotionState player_motion_state;
+    KfMapCell player_map_cell;
+    KfMapCell player_previous_map_cell;
+    u8 unknown_ce[0x6];
+    s16 player_view_bob_offset;
+    u16 player_view_bob_phase;
+    u16 player_death_camera_pitch_step;
+    s16 player_death_visual_blend;
+    s16 player_vertical_velocity;
+    u8 player_vertical_state;
+    u8 unknown_df[0x1];
+} KfPlayerState;
+typedef char KfPlayerState_size_is_0xe0[(sizeof(KfPlayerState) == 0xe0) ? 1 : -1];
+
+/* === end game-math-death === */
+
 #endif
