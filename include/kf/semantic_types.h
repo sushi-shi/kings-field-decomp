@@ -84,8 +84,8 @@ typedef struct KfAudioVoiceSlots {
  */
 typedef struct KfActorDefinition {
     u8 unknown_00[0x11];
-    s8 hit_action;
-    s8 death_action;
+    u8 hit_action;
+    u8 death_action;
     u8 unknown_13[0x67];
     u16 collision_radius;
     u16 collision_height;
@@ -128,15 +128,15 @@ typedef struct KfActor {
     s16 local_z;
     u16 animation_phase;
     u16 health;
-    s16 cell_x;
-    s16 cell_z;
+    u16 cell_x;
+    u16 cell_z;
     s16 unknown_1a;
     struct KfVec3i position;
     u32 unknown_28;
     struct KfEulerAngles rotation;
     u16 unknown_32;
     u32 unknown_34;
-    s8 action_timer;
+    u8 action_timer;
     u8 collision_state;
     s16 movement_yaw;
     s16 animation_step;
@@ -496,5 +496,23 @@ typedef char KfPlayerMotionState_size_is_10[
     (sizeof(KfPlayerMotionState) == 0x0a) ? 1 : -1];
 typedef char KfWeaponRecord_size_is_44[
     (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
+
+/* === actor layouts === */
+
+/*
+ * The twelve definitions and the 128 live actors are one object: several
+ * actor routines address a definition as the actor array base minus 0x720
+ * (`addiu ...,-1824`), arithmetic the compiler only emits inside one
+ * aggregate.
+ */
+typedef struct KfActorTable {
+    KfActorDefinition definitions[12];
+    KfActor actors[128];
+} KfActorTable;
+
+typedef char KfActorTable_size_is_0x2b20[
+    (sizeof(KfActorTable) == 0x2b20) ? 1 : -1];
+
+/* === end actor === */
 
 #endif

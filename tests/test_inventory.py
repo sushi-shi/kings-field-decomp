@@ -42,12 +42,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3524)
+        self.assertEqual(counts["data"], 3523)
         self.assertGreaterEqual(counts["functions_named"], 187)
-        self.assertGreaterEqual(counts["data_named"], 144)
-        self.assertEqual(counts["structures"], 35)
-        self.assertEqual(counts["structure_fields"], 224)
-        self.assertEqual(counts["structure_fields_named"], 167)
+        self.assertGreaterEqual(counts["data_named"], 143)
+        self.assertEqual(counts["structures"], 36)
+        self.assertEqual(counts["structure_fields"], 226)
+        self.assertEqual(counts["structure_fields_named"], 169)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -604,15 +604,10 @@ class InventoryTests(unittest.TestCase):
         )
         save_path = game.datum(0x80056034)
         self.assertEqual(save_path.name, "save_main_file_path")
-        actor_pool = game.datum(0x8006C4B8)
+        actor_table = game.datum(0x8006BD98)
         self.assertEqual(
-            (actor_pool.name, actor_pool.datatype, actor_pool.size),
-            ("actor_pool", "KfActor[128]", 0x2400),
-        )
-        actor_definition = game.datum(0x8006BD98)
-        self.assertEqual(
-            (actor_definition.name, actor_definition.datatype),
-            ("actor_definitions", "KfActorDefinition[12]"),
+            (actor_table.name, actor_table.datatype, actor_table.size),
+            ("actor_table", "KfActorTable", 0x2B20),
         )
         current_actor = game.datum(0x8006E8D4)
         self.assertEqual(
