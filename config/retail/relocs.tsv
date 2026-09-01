@@ -6271,6 +6271,7 @@ GAME.EXE	0x80032840	0x21040	0x80032844	mips_hi16_lo16	instruction-word	0x8005619
 GAME.EXE	0x80032848	0x21048		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x80032864	0x21064		mips26	instruction-word	0x80032894	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x800328e8	0x210e8		mips26	reachable-code	0x8003e350	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x800328f0	0x210f0	0x800328f4	mips_hi16_lo16	reachable-code	0x80059738	bss	DAT_80059738	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_audio_control
 GAME.EXE	0x800328fc	0x210fc		mips26	reachable-code	0x8003e440	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80032904	0x21104		mips26	reachable-code	0x8003e5ec	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003290c	0x2110c		mips26	reachable-code	0x8003e6c8	load		jal		control-flow	candidate	investigation:relocs.tsv

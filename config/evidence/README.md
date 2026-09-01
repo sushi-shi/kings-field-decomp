@@ -11,6 +11,11 @@ and fixed-point helper names. These campaign tables support identities in
 `function_identities.tsv` and `data_identities.tsv`; they are not recovered
 original symbols.
 
+`game_semantic_audio_control.tsv` records the per-function retail, caller,
+string, shared-state, and Psy-Q 2.5 header evidence for GAME audio
+initialization, VAB loading, and sequence lifecycle policy. API-name candidates
+without an exact FID remain explicitly qualified in that ledger.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a

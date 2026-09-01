@@ -11,25 +11,25 @@ symbols or pretending that WIP names are original symbols:
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 130 of 744 functions: 127 GAME, one PSX, and two
+Current semantic coverage is 135 of 744 functions: 132 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
-awareness, placement loading, and map-object setup. Their per-function evidence
-is in the
+awareness, placement loading, map-object runtime, and audio control. Their
+per-function evidence is in the
 `game_semantic_math_lifecycle.tsv`, `game_semantic_save_system.tsv`,
 `game_semantic_screen_talk.tsv`, `game_semantic_actor_core.tsv`,
 `game_semantic_actor_ai.tsv`, `game_semantic_actor_actions.tsv`,
-`game_semantic_map_objects.tsv`, and `game_semantic_map_runtime.tsv` files
-under `config/evidence/`. The recovered subsystems and
-remaining unknowns are described in [`save-system.md`](save-system.md),
-[`screen-images.md`](screen-images.md), and
-[`actor-system.md`](actor-system.md), and
-[`map-objects.md`](map-objects.md).
+`game_semantic_map_objects.tsv`, `game_semantic_map_runtime.tsv`, and
+`game_semantic_audio_control.tsv` files
+under `config/evidence/`. The recovered subsystems and remaining unknowns are
+described in [`save-system.md`](save-system.md),
+[`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
+[`map-objects.md`](map-objects.md), and [`audio-system.md`](audio-system.md).
 
-The current first pass contains 3,675 data identities, including 891
-non-overlapping BSS extents. Fifty-nine data identities have semantic review:
-25 in loaded storage and 34 in BSS. Eight loaded identities are candidate or
+The current first pass contains 3,674 data identities, including 890
+non-overlapping BSS extents. Sixty-five data identities have semantic review:
+25 in loaded storage and 40 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -66,6 +66,13 @@ adjacent packed gameplay sound references. The copy descriptors, definitions,
 sound references, and counters retain `scope=unknown`; the object pool is
 shared by initialization, collision, and runtime update families and is
 recorded as global.
+
+The audio-control pass names five game-owned lifecycle functions and corrects
+the shared VAB header, VAB ID, sequence buffer, sequence ID, active flag,
+effects/music settings, and ten-element voice-ID owner. It also admits the
+previously missing 344-byte sequence table from its reviewed HI16/LO16 pair and
+the Psy-Q 2.5 `SS_SEQ_TABSIZ` contract. These state objects retain
+`scope=unknown`; adjacency and shared use do not prove external linkage.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C

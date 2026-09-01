@@ -40,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 744)
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
-        self.assertEqual(counts["data"], 3675)
-        self.assertGreaterEqual(counts["functions_named"], 130)
-        self.assertGreaterEqual(counts["data_named"], 59)
+        self.assertEqual(counts["data"], 3674)
+        self.assertGreaterEqual(counts["functions_named"], 135)
+        self.assertGreaterEqual(counts["data_named"], 65)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -169,6 +169,19 @@ class InventoryTests(unittest.TestCase):
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         self.assertEqual(len(rows), 10)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_audio_control_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_audio_control.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 5)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -350,6 +363,53 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             data_identities[("GAME.EXE", 0x800561B0)].scope,
             "unknown",
+        )
+        sequence_path = game.datum(0x80012A48)
+        self.assertEqual(sequence_path.name, "audio_sequence_path_template")
+        sequence_table = game.datum(0x80059738)
+        self.assertEqual(
+            (sequence_table.name, sequence_table.datatype, sequence_table.size),
+            (
+                "audio_sequence_table",
+                "u8[SS_SEQ_TABSIZ * 2]",
+                0x158,
+            ),
+        )
+        sequence_buffer = game.datum(0x80095870)
+        self.assertEqual(
+            (sequence_buffer.name, sequence_buffer.datatype),
+            ("audio_sequence_buffer", "u8 *"),
+        )
+        sequence_id = game.datum(0x80095874)
+        self.assertEqual(
+            (sequence_id.name, sequence_id.datatype),
+            ("audio_sequence_id", "s16"),
+        )
+        voice_ids = game.datum(0x80095894)
+        self.assertEqual(
+            (voice_ids.name, voice_ids.datatype, voice_ids.size),
+            ("audio_voice_ids", "s16[10]", 0x14),
+        )
+        effects_enabled = game.datum(0x800A0816)
+        music_enabled = game.datum(0x800A0817)
+        self.assertEqual(effects_enabled.name, "audio_effects_enabled")
+        self.assertEqual(music_enabled.name, "audio_music_enabled")
+        self.assertEqual(
+            {
+                data_identities[("GAME.EXE", va)].scope
+                for va in (
+                    0x80059738,
+                    0x80095868,
+                    0x8009586C,
+                    0x80095870,
+                    0x80095874,
+                    0x80095878,
+                    0x80095894,
+                    0x800A0816,
+                    0x800A0817,
+                )
+            },
+            {"unknown"},
         )
         self.assertEqual(
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,

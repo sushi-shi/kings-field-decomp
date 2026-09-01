@@ -533,7 +533,7 @@ GAME.EXE	0x80012a14	0x1214	0x17	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x80012a2b	0x122b	0x5	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80012a30	0x1230	0x14	string	byte-pattern		ascii	investigation:string-census	escaped text: VAB body open failed
 GAME.EXE	0x80012a44	0x1244	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012a48	0x1248	0xb	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\SND0.SEQ
+GAME.EXE	0x80012a48	0x1248	0xb	string	byte-pattern	audio_sequence_path_template	ascii	investigation:string-census;game_semantic_audio_control.tsv	mutable stack template: B0\\SND0.SEQ; byte one selects map bank and byte six selects sequence
 GAME.EXE	0x80012a53	0x1253	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80012a54	0x1254	0x13	string	byte-pattern		ascii	investigation:string-census	escaped text: TALK\\C17\\T55171.TIM
 GAME.EXE	0x80012a67	0x1267	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
