@@ -53,6 +53,14 @@ weapon load destination to `KfWeaponRecord[16]`, separates the following
 `KfCollisionTarget`, and reviews both item switch tables and the campaign's
 decoded relocations.
 
+`game_semantic_display_tmd.tsv` records eleven related GAME/OPEN function
+pairs for frame submission, view transforms, TMD registration/access, and
+primitive-index preparation. It supports complete `KfPrimitiveBuffer` and
+`KfTmdObject` layouts, the image-qualified display/TMD state, and the explicit
+negative control that moves four version-skewed `LIBGPU/VSYNC` functions to the
+vendored inventory. `overlay_lineage.tsv` independently checks the shared
+instruction shapes and both overlay deltas.
+
 `game_open_semantic_memory_allocator.tsv` records the seven-function LIFO
 allocator duplicated in GAME and OPEN, including its signed interfaces, two
 allocation modes, 16-entry state array, all direct calls, and the intentional

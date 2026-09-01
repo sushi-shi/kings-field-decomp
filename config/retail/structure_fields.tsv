@@ -191,6 +191,9 @@ KfPoolRecord	0x06	0x02	unknown_06	s16	opaque	game_types.h;asm;xrefs	meaning unre
 KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
 KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
 KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer
+KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
+KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
+KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
@@ -198,6 +201,13 @@ KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	semantic_types.h;Pl
 KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	semantic_types.h;asm;xrefs	King's Field directory
 KfSavePayload	0x00	0x2580	bytes	u8[9600]	opaque	semantic_types.h;asm;xrefs	serialized payload fields unresolved
 KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
+KfTmdObject	0x00	0x04	vertex_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
+KfTmdObject	0x04	0x04	vertex_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record
+KfTmdObject	0x08	0x04	normal_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	offset from the TMD object-table base to the normal array
+KfTmdObject	0x0c	0x04	normal_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	normal count in the standard object record
+KfTmdObject	0x10	0x04	primitive_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
+KfTmdObject	0x14	0x04	primitive_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop
+KfTmdObject	0x18	0x04	scale	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
 KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
 KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate

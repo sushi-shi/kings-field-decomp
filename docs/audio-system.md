@@ -88,8 +88,10 @@ is in `config/evidence/overlay_lineage.tsv`.
 ## Next questions
 
 - Establish exact Release 2.5/version-skew evidence for the currently anonymous
-  `SsInit`, `SsSetTableSize`, `SsVabOpenHead`, `SsSeqOpen`, `SsSeqStop`,
-  `SsSeqClose`, and `VSync` targets before adding them to the vendored census.
+  `SsInit`, `SsSetTableSize`, `SsVabOpenHead`, `SsSeqOpen`, `SsSeqStop`, and
+  `SsSeqClose` targets before adding them to the vendored census. `VSync` and
+  its private worker are now admitted through cross-overlay `LIBGPU/VSYNC`
+  lineage; their exact SDK revision remains unresolved.
 - Resolve the three-byte voice-mask layout and any indirect caller of
   `audio_key_off_mask`; no pointer to the function appears in loaded GAME data.
 - Recover translation-unit boundaries before assigning global versus `static`

@@ -10,16 +10,16 @@ KFIII executable contributes to this list.
 
 ## Current result
 
-| image | Release 2.5 exact object | Release 2.5 FID-only | GTE lineage | Psy-Q 2.60 signature | total |
-|---|---:|---:|---:|---:|---:|
-| `PSX.EXE` | 8 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 184 | 143 | 58 | 52 | 437 |
-| `OPEN.EXE` | 183 | 143 | 58 | 37 | 421 |
-| **total** | **375** | **286** | **116** | **89** | **866** |
+| image | Release 2.5 exact object | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
+|---|---:|---:|---:|---:|---:|---:|
+| `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
+| `GAME.EXE` | 185 | 143 | 4 | 58 | 52 | 442 |
+| `OPEN.EXE` | 184 | 143 | 4 | 58 | 37 | 426 |
+| **total** | **377** | **286** | **8** | **116** | **89** | **876** |
 
-The 866 rows comprise 854 named functions and 12 anonymous internal functions
-whose containing Sony object is known. Provider counts are: 264 `LIBGTE`, 188
-`LIBGPU`, 128 `LIBCD`, 117 `LIBSND`, 91 `LIBAPI`, 62 `LIBSPU`, four startup
+The 876 rows comprise 862 named functions and 14 anonymous internal functions
+whose containing Sony object is known. Provider counts are: 264 `LIBGTE`, 192
+`LIBGPU`, 128 `LIBCD`, 121 `LIBSND`, 93 `LIBAPI`, 62 `LIBSPU`, four startup
 functions attributed to `NONE2.OBJ`, two each from `LIBSN` and `LIBETC`, and
 eight fully fixed `memcpy` copies whose exact member remains ambiguous across
 `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party library has been
@@ -78,7 +78,7 @@ Release 2.5 FID corpus is a standalone TSV pipeline and preserves library,
 module, function-boundary, object hash, function hash, and source-version
 provenance without depending on Ghidra's database format.
 
-The third evidence lane covers a version-skewed GTE block that the exact 2.5
+The third evidence lane covers version-skewed SDK code that the exact 2.5
 FIDs could only identify in patches. In each overlay, `MTX`, `SMP`, and `CMB`
 appear between independently anchored `REG` and `GEO` code. All 68 public
 functions keep the same order and size in GAME and OPEN at a constant
@@ -88,6 +88,16 @@ references changing. Public names follow the archived 2.5/2.60 XDEF order and
 the bodies use the corresponding GTE operations, but their sizes and some GTE
 encodings differ from pinned Release 2.5. They therefore use the explicit
 `sdk-lineage-supported` channel and do not claim an exact SDK revision.
+
+The same confidence channel now covers `LIBSND/VMANAGER`'s four
+`SsUtKeyOn`/`SsUtKeyOff` rows and `LIBGPU/VSYNC`'s four public/private rows.
+The VMANAGER names combine exact GAME/OPEN instruction shapes with archive
+order, header prototypes, and neighboring exact anchors. The two retail VSYNC
+functions per overlay preserve every instruction shape, implement the public
+`VSync(int mode)` behavior plus its private hardware/root-counter worker, carry
+the same `vsync.c` revision string, and occupy the expected library sequence.
+Their exact Release 2.5 object boundaries differ, so none is advertised as an
+exact archive match.
 
 The exact object spans also establish a partial final linked order. The full
 per-image placement tables, boundaries, gaps, and contiguous chains are kept in
@@ -127,6 +137,10 @@ The same command verifies the three GTE object chains: 21 `MTX`, 29 `SMP`, and
 `PushMatrix` and `PopMatrix` are branch destinations in the same routine, and
 that both overlays expose the same 20-entry private matrix-stack layout.
 
+It additionally verifies eleven display/TMD pairs at delta `0x5280` and both
+VSYNC pairs at delta `0x2031c`. The display/TMD functions remain game-owned;
+only the independently evidenced VSYNC pair enters the provider exclusion.
+
 The command also asserts the corrected `lui`/`lw` prefix in both executables,
 all four direct helper callsites, the helper's ambiguous-provider FID row, and
 the dispatcher's absence from the provider-exclusion TSV. The helper must have
@@ -164,8 +178,9 @@ The confidence channels are intentionally mechanical:
   but multiple possible Release 2.5 archive identities;
 - `psyq260-signature`: unique later-corpus wildcard match; and
 - `psyq260-signature-ambiguous`: later signature shared by archive members; and
-- `sdk-lineage-supported`: exact cross-overlay body/order plus archive-symbol
-  and instruction-semantic agreement, with the exact source revision unresolved.
+- `sdk-lineage-supported`: exact cross-overlay instruction shape/order plus
+  SDK archive/header and instruction-semantic agreement, with the exact source
+  revision unresolved.
 
 `kf-retail-validate` rejects provider rows without a structural function,
 changed sizes, duplicate addresses, invalid confidence, or missing provenance.

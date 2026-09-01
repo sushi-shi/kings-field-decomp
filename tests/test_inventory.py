@@ -38,16 +38,16 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 738)
-        self.assertEqual(counts["signatures_started"], 738)
-        self.assertEqual(counts["typed_returns"], 738)
-        self.assertEqual(counts["parameterized"], 496)
-        self.assertEqual(counts["data"], 3528)
-        self.assertGreaterEqual(counts["functions_named"], 199)
-        self.assertGreaterEqual(counts["data_named"], 158)
-        self.assertEqual(counts["structures"], 35)
-        self.assertEqual(counts["structure_fields"], 224)
-        self.assertEqual(counts["structure_fields_named"], 167)
+        self.assertEqual(counts["functions"], 734)
+        self.assertEqual(counts["signatures_started"], 734)
+        self.assertEqual(counts["typed_returns"], 734)
+        self.assertEqual(counts["parameterized"], 492)
+        self.assertEqual(counts["data"], 3507)
+        self.assertGreaterEqual(counts["functions_named"], 221)
+        self.assertGreaterEqual(counts["data_named"], 176)
+        self.assertEqual(counts["structures"], 37)
+        self.assertEqual(counts["structure_fields"], 234)
+        self.assertEqual(counts["structure_fields_named"], 177)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -58,6 +58,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfPlayerMotionState"].size, 0x0A)
         self.assertEqual(structures["KfWeaponRecord"].size, 0x2C)
         self.assertEqual(structures["KfCollisionTarget"].size, 0x20)
+        self.assertEqual(structures["KfPrimitiveBuffer"].size, 0x0C)
+        self.assertEqual(structures["KfTmdObject"].size, 0x1C)
         growth_fields = {
             row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)
             for row in fields
@@ -102,6 +104,17 @@ class InventoryTests(unittest.TestCase):
             collision_fields["unknown_1a"].meaning_confidence,
             "opaque",
         )
+        primitive_fields = {
+            row.name: row for row in fields if row.structure == "KfPrimitiveBuffer"
+        }
+        self.assertEqual(primitive_fields["end"].offset, 0x04)
+        self.assertEqual(primitive_fields["cursor"].offset, 0x08)
+        tmd_fields = {
+            row.name: row for row in fields if row.structure == "KfTmdObject"
+        }
+        self.assertEqual(tmd_fields["primitive_offset"].offset, 0x10)
+        self.assertEqual(tmd_fields["primitive_count"].offset, 0x14)
+        self.assertEqual(tmd_fields["scale"].offset, 0x18)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(

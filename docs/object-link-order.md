@@ -14,9 +14,10 @@ from the `.text` spans listed here.
 
 The current evidence anchors 44 unique relocation-masked `.text` spans and eight
 tiny complete objects: seven placements in `PSX.EXE`, 23 in `GAME.EXE`, and 22
-in `OPEN.EXE`. Three additional `LIBGTE` object spans per overlay are supported
-by exact cross-overlay function order and archive XDEF order while their exact
-SDK revision remains unresolved. `contiguous` means that the preceding listed
+in `OPEN.EXE`. Three additional `LIBGTE` spans and one `LIBGPU/VSYNC` span per
+overlay are supported by cross-overlay instruction order plus archive/header
+evidence while their exact SDK revisions remain unresolved. `contiguous` means
+that the preceding listed
 span ends exactly at the next span. A numeric gap contains code not assigned by
 the listed inventory; its ownership remains open.
 
@@ -37,6 +38,7 @@ GAME.EXE and OPEN.EXE:
   EVENT -> 96VEC
   S_SR -> S_ITC -> S_STM -> S_STSA -> S_R|S_W -> S_WP
   TMD -> PRIM -> EXT -> OTAG -> SPRINTF
+  SPRINTF -> [three tiny LIBAPI functions and padding] -> VSYNC
 
 GAME.EXE only at current confidence:
   SCSMVOL -> SESKON
@@ -100,6 +102,7 @@ placements.
 | `0x800547a0` | `0x800549ac` | `0x20c` | contiguous | `LIBGPU.LIB/EXT.OBJ` | `strong_unique` |
 | `0x800549ac` | `0x80054d20` | `0x374` | contiguous | `LIBGPU.LIB/OTAG.OBJ` | `strong_unique` |
 | `0x80054d20` | `0x800555b0` | `0x890` | contiguous | `LIBGPU.LIB/SPRINTF.OBJ` | `strong_unique` |
+| `0x800555e0` | `0x80055800` | `0x220` | `0x30` | `LIBGPU.LIB/VSYNC` | `sdk-lineage-supported` |
 
 ## `OPEN.EXE`
 
@@ -130,6 +133,7 @@ placements.
 | `0x80034484` | `0x80034690` | `0x20c` | contiguous | `LIBGPU.LIB/EXT.OBJ` | `strong_unique` |
 | `0x80034690` | `0x80034a04` | `0x374` | contiguous | `LIBGPU.LIB/OTAG.OBJ` | `strong_unique` |
 | `0x80034a04` | `0x80035294` | `0x890` | contiguous | `LIBGPU.LIB/SPRINTF.OBJ` | `strong_unique` |
+| `0x800352c4` | `0x800354e4` | `0x220` | `0x30` | `LIBGPU.LIB/VSYNC` | `sdk-lineage-supported` |
 
 ## Boundaries inferred from individual FIDs
 

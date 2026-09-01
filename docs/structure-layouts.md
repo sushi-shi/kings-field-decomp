@@ -14,8 +14,8 @@ any disagreement in size, offset, extent, name, or datatype. A full `kf build`
 also compiles the header's size/offset assertions with the pinned target
 compiler.
 
-The current inventory contains 35 structures and 224 fields. Of those fields,
-167 have candidate-or-better meanings; 57 ranges are explicitly `opaque`.
+The current inventory contains 37 structures and 234 fields. Of those fields,
+177 have candidate-or-better meanings; 57 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
 
@@ -32,7 +32,8 @@ being mislabeled as independent globals.
 | `KfPitchYaw` | `0x04` | `KfPlayerAttackChargeState` | `0x04` |
 | `KfPlayerLevelGrowth` | `0x0c` | `KfPlayerMotionState` | `0x0a` |
 | `KfPlayerProgressState` | `0x04` | `KfPlayerVitals` | `0x08` |
-| `KfPoolRecord` | `0x14` | `KfSaveDirectory` | `0x80` |
+| `KfPoolRecord` | `0x14` | `KfPrimitiveBuffer` | `0x0c` |
+| `KfSaveDirectory` | `0x80` | `KfTmdObject` | `0x1c` |
 | `KfSaveHeader` | `0x280` | `KfSavePayload` | `0x2580` |
 | `KfSaveSlotSummary` | `0x18` | `KfVec3i` | `0x0c` |
 | `KfVec3s` | `0x06` | `KfVec4i` | `0x10` |
@@ -67,6 +68,27 @@ The collision-query output is represented exactly as:
 The `0x20` extent ends at the next independently referenced state. The opaque
 tail prevents those bytes from being advertised as known fields while keeping
 the complete object boundary explicit.
+
+The display/TMD campaign adds two more complete layouts:
+
+| Structure | Offset | Size | Field | Type |
+| --- | ---: | ---: | --- | --- |
+| `KfPrimitiveBuffer` | `0x00` | `0x04` | `start` | `u8 *` |
+| `KfPrimitiveBuffer` | `0x04` | `0x04` | `end` | `u8 *` |
+| `KfPrimitiveBuffer` | `0x08` | `0x04` | `cursor` | `u8 *` |
+| `KfTmdObject` | `0x00` | `0x04` | `vertex_offset` | `u32` |
+| `KfTmdObject` | `0x04` | `0x04` | `vertex_count` | `u32` |
+| `KfTmdObject` | `0x08` | `0x04` | `normal_offset` | `u32` |
+| `KfTmdObject` | `0x0c` | `0x04` | `normal_count` | `u32` |
+| `KfTmdObject` | `0x10` | `0x04` | `primitive_offset` | `u32` |
+| `KfTmdObject` | `0x14` | `0x04` | `primitive_count` | `u32` |
+| `KfTmdObject` | `0x18` | `0x04` | `scale` | `s32` |
+
+The primitive-buffer extent is proved by complete initialization of two
+0x0c-byte records followed by indexed frame selection. The TMD object extent
+is supported by the standard format, the exact 0x1c lookup stride, and the
+primitive stream fields read at `+0x10` and `+0x14`. See
+[`display-and-tmd.md`](display-and-tmd.md).
 
 The motion, map-cell, and partially decoded weapon-record fields are shown in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).

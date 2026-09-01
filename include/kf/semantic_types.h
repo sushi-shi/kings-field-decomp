@@ -50,6 +50,27 @@ struct KfEulerAngles {
 };
 
 /*
+ * Each display buffer owns one primitive allocation interval. Frame begin
+ * selects one of two 0x0c-byte records and resets cursor to start.
+ */
+typedef struct KfPrimitiveBuffer {
+    u8 *start;
+    u8 *end;
+    u8 *cursor;
+} KfPrimitiveBuffer;
+
+/* Standard 0x1c-byte object-table record in an unlinked TMD payload. */
+typedef struct KfTmdObject {
+    u32 vertex_offset;
+    u32 vertex_count;
+    u32 normal_offset;
+    u32 normal_count;
+    u32 primitive_offset;
+    u32 primitive_count;
+    s32 scale;
+} KfTmdObject;
+
+/*
  * Optional output from the world collision query.  The query copies a
  * transform from the selected player, actor, map object, or map event and
  * records the selected object's collision radius.  The final six bytes are
@@ -383,6 +404,20 @@ typedef char SoundRef_size_is_3[(sizeof(SoundRef) == 3) ? 1 : -1];
 typedef char KfAudioVoiceSlots_size_is_100[
     (sizeof(KfAudioVoiceSlots) == 0x64) ? 1 : -1];
 #define KF_OFFSET_OF(type, member) ((u32)&(((type *)0)->member))
+typedef char KfPrimitiveBuffer_size_is_12[
+    (sizeof(KfPrimitiveBuffer) == 0x0c) ? 1 : -1];
+typedef char KfPrimitiveBuffer_end_offset_is_4[
+    (KF_OFFSET_OF(KfPrimitiveBuffer, end) == 0x04) ? 1 : -1];
+typedef char KfPrimitiveBuffer_cursor_offset_is_8[
+    (KF_OFFSET_OF(KfPrimitiveBuffer, cursor) == 0x08) ? 1 : -1];
+typedef char KfTmdObject_size_is_28[
+    (sizeof(KfTmdObject) == 0x1c) ? 1 : -1];
+typedef char KfTmdObject_primitive_offset_offset_is_16[
+    (KF_OFFSET_OF(KfTmdObject, primitive_offset) == 0x10) ? 1 : -1];
+typedef char KfTmdObject_primitive_count_offset_is_20[
+    (KF_OFFSET_OF(KfTmdObject, primitive_count) == 0x14) ? 1 : -1];
+typedef char KfTmdObject_scale_offset_is_24[
+    (KF_OFFSET_OF(KfTmdObject, scale) == 0x18) ? 1 : -1];
 typedef char KfAudioVoiceSlots_vab_ids_offset_is_20[
     (KF_OFFSET_OF(KfAudioVoiceSlots, vab_ids) == 0x14) ? 1 : -1];
 typedef char KfAudioVoiceSlots_programs_offset_is_40[

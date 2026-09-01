@@ -104,16 +104,16 @@ non-reachable-code candidates, 2,501 sites outside current function extents,
 3,177 candidate BSS targets outside the loaded image, 130 candidates owned by
 the seven fragmented functions, and one unsigned-low HI/LO pair.
 
-Carving the whole image is not the same as selecting decomp work. The 866
+Carving the whole image is not the same as selecting decomp work. The 876
 functions in `functions_vendored.tsv` are excluded when objdiff projects are
 generated:
 
 | Target | Carved target/reference objects | Vendored objects excluded | Non-vendored match units |
 | --- | ---: | ---: | ---: |
 | `PSX.EXE` | 9 | 8 | 1 |
-| `GAME.EXE` | 932 | 435 | 497 |
-| `OPEN.EXE` | 665 | 419 | 246 |
-| **Total** | **1,606** | **862** | **744** |
+| `GAME.EXE` | 932 | 440 | 492 |
+| `OPEN.EXE` | 665 | 424 | 241 |
+| **Total** | **1,606** | **872** | **734** |
 
 The provider inventory has four additional fragmented functions—two per
 overlay—which have no carved object. The match-unit counts also exclude the

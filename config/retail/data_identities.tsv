@@ -1950,16 +1950,15 @@ GAME.EXE	0x80070e94	0x2	map_object_effect_sequence_170	unknown	bss	u16	map_objec
 GAME.EXE	0x80070e96	0x2	map_object_effect_sequence_180	unknown	bss	u16	map_object_effect_pool	supported	game_semantic_map_runtime.tsv;asm;pool-clear;slots-180-189	wrapping allocation sequence for reserved map-object effect slots 180 through 189; source linkage remains unresolved
 GAME.EXE	0x80070e98	0x1	display_buffer_index	global	bss	u8	display	supported	game_semantic_screen_talk.tsv;asm;xrefs;double-buffer-selection	current display buffer selector; callers commonly render through its boolean complement
 GAME.EXE	0x80070e9c	0x4	asset_load_buffer	global	bss	void *	asset_loader	supported	game_semantic_screen_talk.tsv;asm;xrefs;CdRead;TIM-upload	reusable CD asset destination used by the reviewed full-screen image path
-GAME.EXE	0x80070ea0	0x4	DAT_80070ea0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80070ea4	0x4	DAT_80070ea4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80070eac	0x4	DAT_80070eac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80070eb0	0x4	DAT_80070eb0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80070eb8	0x4	primitive_buffer	global	bss	PrimitiveBuffer *	primitive_buffer	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	current render-buffer state
+GAME.EXE	0x80070ea0	0x18	primitive_buffers	global	bss	KfPrimitiveBuffer[2]	primitive_buffer	supported	game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	two complete 0x0c-byte records initialized with contiguous overlay-specific allocation ranges
+GAME.EXE	0x80070eb8	0x4	primitive_buffer	global	bss	KfPrimitiveBuffer *	primitive_buffer	supported	game_semantic_display_tmd.tsv;game_match_campaign_30.tsv;reviewed-reloc;asm	current render-buffer record selected by display_begin_frame
 GAME.EXE	0x80090ebc	0x4	ordering_table	global	bss	u32 *	primitive_buffer	supported	game_match_campaign_30.tsv;reviewed-reloc;AddPrim	primitive ordering table
 GAME.EXE	0x80090ec0	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_screen_talk.tsv;ghidra-12.0.4-memory-xref;asm;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
+GAME.EXE	0x80090f78	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
+GAME.EXE	0x80090fa8	0x20	tmd_slots	global	bss	u8 *[8]	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs;eight-entry-indexed-table	eight registered TMD payload pointers in GAME
 GAME.EXE	0x80090fc8	0x4	current_asset_data	global	bss	void *	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	selected asset payload address
 GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	AssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	indexed asset-header pointer table
-GAME.EXE	0x800910bc	0x4	DAT_800910bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800910bc	0x4	current_tmd_vertices	global	bss	KfVec4s *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 GAME.EXE	0x800910c0	0xf0	pool_records	global	bss	KfPoolRecord[12]	pool	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	12 records of stride 20
 GAME.EXE	0x800911b0	0x2	DAT_800911b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800911b2	0x2	DAT_800911b2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -2037,12 +2036,8 @@ GAME.EXE	0x80095734	0x4	DAT_80095734	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x80095738	0x4	DAT_80095738	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009573c	0x4	DAT_8009573c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095740	0x4	fog_near_distance	global	bss	s32	fog	supported	game_match_campaign_30.tsv;reviewed-reloc;SetFogNear	current near-fog distance
-GAME.EXE	0x80095744	0x4	DAT_80095744	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095748	0x4	DAT_80095748	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009574c	0x4	DAT_8009574c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095750	0x4	DAT_80095750	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095754	0x4	DAT_80095754	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095758	0x4	DAT_80095758	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80095744	0x10	render_view_position	global	bss	KfVec4i	render	supported	game_semantic_display_tmd.tsv;asm;xrefs;four-word-copy	persistent four-word view position copied from an optional input
+GAME.EXE	0x80095754	0x8	render_view_rotation	global	bss	KfVec4s	render	supported	game_semantic_display_tmd.tsv;asm;xrefs;four-halfword-copy	persistent four-halfword view rotation copied from an optional input
 GAME.EXE	0x8009575c	0x2	DAT_8009575c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009575e	0x2	DAT_8009575e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095860	0x4	DAT_80095860	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3399,28 +3394,16 @@ OPEN.EXE	0x80049944	0x2	DAT_80049944	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x80049a42	0x2	DAT_80049a42	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049a44	0x2	DAT_80049a44	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049a46	0x2	DAT_80049a46	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a48	0x1	DAT_80049a48	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a4c	0x4	DAT_80049a4c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a50	0x4	DAT_80049a50	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a54	0x4	DAT_80049a54	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a5c	0x4	DAT_80049a5c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a60	0x4	DAT_80049a60	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049a68	0x4	DAT_80049a68	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a6c	0x4	DAT_80069a6c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a86	0x1	DAT_80069a86	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a87	0x1	DAT_80069a87	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a88	0x1	DAT_80069a88	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a89	0x1	DAT_80069a89	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a8a	0x1	DAT_80069a8a	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069a8b	0x1	DAT_80069a8b	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069ae2	0x1	DAT_80069ae2	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069ae3	0x1	DAT_80069ae3	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069ae4	0x1	DAT_80069ae4	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069ae5	0x1	DAT_80069ae5	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069ae6	0x1	DAT_80069ae6	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069ae7	0x1	DAT_80069ae7	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069b60	0x4	DAT_80069b60	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069b68	0x4	DAT_80069b68	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80049a48	0x1	display_buffer_index	global	bss	u8	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;double-buffer-selection	current display buffer selector
+OPEN.EXE	0x80049a4c	0x4	asset_load_buffer	global	bss	void *	asset_loader	supported	game_semantic_display_tmd.tsv;asm;xrefs	reusable asset destination allocated by the renderer initialization path
+OPEN.EXE	0x80049a50	0x18	primitive_buffers	global	bss	KfPrimitiveBuffer[2]	primitive_buffer	supported	game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	two complete 0x0c-byte records initialized with contiguous overlay-specific allocation ranges
+OPEN.EXE	0x80049a68	0x4	primitive_buffer	global	bss	KfPrimitiveBuffer *	primitive_buffer	supported	game_semantic_display_tmd.tsv;asm;xrefs	current render-buffer record selected by display_begin_frame
+OPEN.EXE	0x80069a6c	0x4	ordering_table	global	bss	u32 *	primitive_buffer	supported	game_semantic_display_tmd.tsv;asm;xrefs;ClearOTagR;DrawOTag	primitive ordering table
+OPEN.EXE	0x80069a70	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
+OPEN.EXE	0x80069b28	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
+OPEN.EXE	0x80069b58	0x8	tmd_slots	global	bss	u8 *[2]	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs;two-entry-indexed-table	two registered TMD payload pointers in OPEN
+OPEN.EXE	0x80069b60	0x4	current_asset_data	global	bss	void *	asset_registry	supported	game_semantic_display_tmd.tsv;asm;xrefs	selected TMD/asset payload address
+OPEN.EXE	0x80069b68	0x4	current_tmd_vertices	global	bss	KfVec4s *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 OPEN.EXE	0x80069b84	0x2	DAT_80069b84	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80069b86	0x2	DAT_80069b86	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da28	0x2	DAT_8006da28	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3455,12 +3438,8 @@ OPEN.EXE	0x8006e09c	0x4	DAT_8006e09c	unknown	bss	u32		address-only	ghidra-12.0.4
 OPEN.EXE	0x8006e0a0	0x4	DAT_8006e0a0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e0a4	0x4	DAT_8006e0a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e0a8	0x4	DAT_8006e0a8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e0ac	0x4	DAT_8006e0ac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e0b0	0x4	DAT_8006e0b0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e0b4	0x4	DAT_8006e0b4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e0b8	0x4	DAT_8006e0b8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e0bc	0x4	DAT_8006e0bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e0c0	0x4	DAT_8006e0c0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x8006e0ac	0x10	render_view_position	global	bss	KfVec4i	render	supported	game_semantic_display_tmd.tsv;asm;xrefs;four-word-copy	persistent four-word view position copied from an optional input
+OPEN.EXE	0x8006e0bc	0x8	render_view_rotation	global	bss	KfVec4s	render	supported	game_semantic_display_tmd.tsv;asm;xrefs;four-halfword-copy	persistent four-halfword view rotation copied from an optional input
 OPEN.EXE	0x8006e0c4	0x2	DAT_8006e0c4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e0c6	0x2	DAT_8006e0c6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e1c8	0x4	DAT_8006e1c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

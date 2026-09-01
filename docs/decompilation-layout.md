@@ -6,8 +6,8 @@ decompilation targets:
 | Target | Retail role | Load window | Current function census |
 | --- | --- | --- | ---: |
 | `PSX.EXE` | bootstrap and overlay loader | `0x80010000..0x80010800` | 9 |
-| `GAME.EXE` | main game program | `0x80012000..0x80058000` | 939 |
-| `OPEN.EXE` | opening/title program | `0x80012000..0x80037800` | 669 |
+| `GAME.EXE` | main game program | `0x80012000..0x80058000` | 937 |
+| `OPEN.EXE` | opening/title program | `0x80012000..0x80037800` | 667 |
 
 `GAME.EXE` and `OPEN.EXE` occupy the same RAM window at different times. They
 are not sections of one executable. The same virtual address can name unrelated
@@ -57,10 +57,10 @@ Data and relocation ownership will eventually be assigned to translation
 units. That ownership is not inferable from the linked image alone, so the
 initial pipeline deliberately carves one object per contiguous function. It is
 a calibration topology, not a claim that the original source had 1,606
-one-function files. The 866 provider-identified Sony/Psy-Q functions never
+one-function files. The 876 provider-identified Sony/Psy-Q functions never
 become reconstruction or objdiff units. Of the seven functions with multiple
 fragments and no fragment-range manifest, four are now provider-identified and
-three remain non-vendored; all seven are withheld rather than guessed. The 862
+three remain non-vendored; all seven are withheld rather than guessed. The 872
 contiguous provider functions remain reference objects and relocation
 referents.
 
