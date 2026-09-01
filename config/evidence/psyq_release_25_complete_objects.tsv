@@ -6,3 +6,5 @@ PSX.EXE	0x800101e4	0x10	LIBAPI.LIB	C57	InitHeap	all 16 member bytes match
 PSX.EXE	0x800101f4	0x10	LIBAPI.LIB	C66	Load	all 16 member bytes match
 PSX.EXE	0x80010204	0x10	LIBAPI.LIB	C67	Exec	all 16 member bytes match
 PSX.EXE	0x80010214	0x10	LIBAPI.LIB	C114	_96_remove	all 16 member bytes match
+GAME.EXE	0x800502dc	0x10	LIBAPI.LIB	C51	malloc	all 12 function bytes plus four following zero padding bytes match the full 16-byte member
+OPEN.EXE	0x80030050	0x10	LIBAPI.LIB	C51	malloc	all 12 function bytes plus four following zero padding bytes match the full 16-byte member

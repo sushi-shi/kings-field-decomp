@@ -5,7 +5,7 @@ layer records the current source-level interpretation without changing delink
 symbols or pretending that WIP names are original symbols:
 
 - `config/retail/function_identities.tsv` has exactly one row for each
-  carveable non-vendored function: 1 PSX, 495 GAME, and 244 OPEN rows;
+  carveable non-vendored function: 1 PSX, 494 GAME, and 243 OPEN rows;
 - `config/retail/data_identities.tsv` tracks initialized objects and referenced
   BSS objects that may become C globals, file-local statics, or
   function-local statics;
@@ -13,7 +13,7 @@ symbols or pretending that WIP names are original symbols:
   target sizes and every field offset/extent, including opaque ranges; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 187 of 740 functions: 184 GAME, one PSX, and two
+Current semantic coverage is 199 of 738 functions: 190 GAME, one PSX, and eight
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -28,7 +28,8 @@ per-function evidence is in the
 `game_semantic_camera_events.tsv`, `game_semantic_event_queries_matrix.tsv`,
 `game_semantic_player_death.tsv`, `game_semantic_player_combat.tsv`,
 `game_semantic_player_stats.tsv`, `game_semantic_player_motion_attack.tsv`,
-and `game_semantic_player_interactions.tsv` files
+`game_semantic_player_interactions.tsv`, and
+`game_open_semantic_memory_allocator.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
@@ -40,11 +41,12 @@ described in [`save-system.md`](save-system.md),
 [`player-stats-and-equipment.md`](player-stats-and-equipment.md),
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md),
 [`player-interactions-and-collision.md`](player-interactions-and-collision.md),
-and [`structure-layouts.md`](structure-layouts.md).
+[`memory-allocator.md`](memory-allocator.md), and
+[`structure-layouts.md`](structure-layouts.md).
 
-The current first pass contains 3,524 data identities. The lower row count is
+The current first pass contains 3,528 data identities. The lower row count is
 progress: field-sized and pointer-sized seeds are merged when evidence proves
-an owning table or structure. 144 data identities now have semantic review.
+an owning table or structure. 158 data identities now have semantic review.
 Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
@@ -200,7 +202,7 @@ kf sema --image game disasm vector2s_scale_shift11 --blocks
 
 - `build/function-inventory/evidence.tsv` combines MIPS live-in signature
   hints, callers, callees, indirect calls, strings, data references, and basic
-  instruction-shape counts for all 740 functions;
+  instruction-shape counts for all 738 functions;
 - `build/function-inventory/data-evidence.tsv` lists confirmed/candidate users,
   read/write/address counts, and tentative scope/owner hints for every tracked
   datum;

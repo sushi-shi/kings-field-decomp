@@ -72,3 +72,10 @@ The motion, map-cell, and partially decoded weapon-record fields are shown in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).
 The corrected weapon-array boundary and collision output are documented in
 [`player-interactions-and-collision.md`](player-interactions-and-collision.md).
+
+The allocator campaign deliberately does **not** add a structure. Retail proves
+seven adjacent state objects per overlay, including a `u32[16]` LIFO array,
+but it addresses the array as `&memory_allocation_depth + 1`; adjacency and
+derived-address arithmetic alone do not prove an enclosing source aggregate.
+The separate typed extents and the evidence needed for a future promotion are
+documented in [`memory-allocator.md`](memory-allocator.md).

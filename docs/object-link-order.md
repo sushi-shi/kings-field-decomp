@@ -12,8 +12,8 @@ command line, imply that unmatched gaps are padding, or establish archive
 storage order. Object data and BSS contributions may also be placed separately
 from the `.text` spans listed here.
 
-The current evidence anchors 44 unique relocation-masked `.text` spans and six
-tiny complete objects: seven placements in `PSX.EXE`, 22 in `GAME.EXE`, and 21
+The current evidence anchors 44 unique relocation-masked `.text` spans and eight
+tiny complete objects: seven placements in `PSX.EXE`, 23 in `GAME.EXE`, and 22
 in `OPEN.EXE`. Three additional `LIBGTE` object spans per overlay are supported
 by exact cross-overlay function order and archive XDEF order while their exact
 SDK revision remains unresolved. `contiguous` means that the preceding listed
@@ -94,7 +94,8 @@ placements.
 | `0x8004da4c` | `0x8004dfd4` | `0x588` | contiguous | `LIBGTE.LIB/SMP.OBJ` | `sdk-lineage-supported` |
 | `0x8004dfdc` | `0x8004e940` | `0x964` | `0x8` | `LIBGTE.LIB/CMB.OBJ` | `sdk-lineage-supported` |
 | `0x8004e94c` | `0x8004fa00` | `0x10b4` | `0xc` | `LIBGTE.LIB/GEO.OBJ` | `strong_unique` |
-| `0x800529a0` | `0x800540dc` | `0x173c` | `0x2fa0` | `LIBGPU.LIB/TMD.OBJ` | `strong_unique` |
+| `0x800502dc` | `0x800502ec` | `0x10` | `0x8dc` | `LIBAPI.LIB/C51.OBJ` | `complete-byte-match` |
+| `0x800529a0` | `0x800540dc` | `0x173c` | `0x26b4` | `LIBGPU.LIB/TMD.OBJ` | `strong_unique` |
 | `0x800540dc` | `0x800547a0` | `0x6c4` | contiguous | `LIBGPU.LIB/PRIM.OBJ` | `strong_unique` |
 | `0x800547a0` | `0x800549ac` | `0x20c` | contiguous | `LIBGPU.LIB/EXT.OBJ` | `strong_unique` |
 | `0x800549ac` | `0x80054d20` | `0x374` | contiguous | `LIBGPU.LIB/OTAG.OBJ` | `strong_unique` |
@@ -123,7 +124,8 @@ placements.
 | `0x8002d820` | `0x8002dda8` | `0x588` | contiguous | `LIBGTE.LIB/SMP.OBJ` | `sdk-lineage-supported` |
 | `0x8002ddb0` | `0x8002e714` | `0x964` | `0x8` | `LIBGTE.LIB/CMB.OBJ` | `sdk-lineage-supported` |
 | `0x8002e720` | `0x8002f7d4` | `0x10b4` | `0xc` | `LIBGTE.LIB/GEO.OBJ` | `strong_unique` |
-| `0x80032684` | `0x80033dc0` | `0x173c` | `0x2eb0` | `LIBGPU.LIB/TMD.OBJ` | `strong_unique` |
+| `0x80030050` | `0x80030060` | `0x10` | `0x87c` | `LIBAPI.LIB/C51.OBJ` | `complete-byte-match` |
+| `0x80032684` | `0x80033dc0` | `0x173c` | `0x2624` | `LIBGPU.LIB/TMD.OBJ` | `strong_unique` |
 | `0x80033dc0` | `0x80034484` | `0x6c4` | contiguous | `LIBGPU.LIB/PRIM.OBJ` | `strong_unique` |
 | `0x80034484` | `0x80034690` | `0x20c` | contiguous | `LIBGPU.LIB/EXT.OBJ` | `strong_unique` |
 | `0x80034690` | `0x80034a04` | `0x374` | contiguous | `LIBGPU.LIB/OTAG.OBJ` | `strong_unique` |

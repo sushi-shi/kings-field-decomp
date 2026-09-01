@@ -2116,10 +2116,13 @@ GAME.EXE	0x8009fef8	0x4	DAT_8009fef8	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x8009ff00	0x4	DAT_8009ff00	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009ff10	0x2c0	weapon_records	global	bss	KfWeaponRecord[16]	player_weapon	supported	game_match_campaign_30.tsv;game_semantic_player_interactions.tsv;reviewed-reloc;asm;16x0x2c-stride	exact 176-word load extent; the former asset_block identity incorrectly swallowed the following collision target
 GAME.EXE	0x800a01d0	0x20	collision_target	unknown	bss	KfCollisionTarget	collision	supported	game_semantic_player_interactions.tsv;asm;xrefs;collision_query_world	optional transform and radius output filled when collision-query flag 0x800 is set; source linkage remains unresolved
-GAME.EXE	0x800a01f8	0x4	DAT_800a01f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a01fc	0x4	DAT_800a01fc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a0240	0x4	DAT_800a0240	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a0244	0x4	DAT_800a0244	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a01f0	0x4	memory_arena_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	base restored by memory_allocation_reset; separate symbol retained because no enclosing source object is proved
+GAME.EXE	0x800a01f4	0x4	memory_arena_end	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	inclusive arena end; mode 0 sets 0x801effff and mode 1 derives it from the cursor
+GAME.EXE	0x800a01f8	0x4	memory_arena_cursor	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	null selects checked Psy-Q heap allocation; nonnull selects four-byte-aligned linear allocation
+GAME.EXE	0x800a01fc	0x4	memory_allocation_depth	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	index and count for the 16-entry LIFO array; reset to zero before use
+GAME.EXE	0x800a0200	0x40	memory_allocation_entries	unknown	bss	u32[16]	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;indexed-extent;cross-overlay-lineage;ghidra-12.0.4-memory-xref	LIFO entries are returned pointers in system-heap mode and aligned byte counts in arena mode; no enclosing struct is claimed
+GAME.EXE	0x800a0240	0x4	memory_system_heap_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	one byte past memory_arena_end and the first argument to InitHeap
+GAME.EXE	0x800a0244	0x4	memory_system_heap_size	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	signed byte count from memory_system_heap_start through 0x801f7fff
 GAME.EXE	0x800a0248	0x498	asset_aux_block	global	bss	u32[294]	asset_aux_block	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	294-word copied asset block
 GAME.EXE	0x800a06e0	0x4	DAT_800a06e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a06e4	0x4	DAT_800a06e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3512,12 +3515,13 @@ OPEN.EXE	0x80075828	0x4	DAT_80075828	unknown	bss	u32		address-only	ghidra-12.0.4
 OPEN.EXE	0x8007582c	0x4	DAT_8007582c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075834	0x2	DAT_80075834	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075838	0x4	DAT_80075838	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075848	0x4	DAT_80075848	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8007584c	0x4	DAT_8007584c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075850	0x4	DAT_80075850	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075854	0x4	DAT_80075854	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075898	0x4	DAT_80075898	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8007589c	0x4	DAT_8007589c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80075848	0x4	memory_arena_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	base restored by memory_allocation_reset; separate symbol retained because no enclosing source object is proved
+OPEN.EXE	0x8007584c	0x4	memory_arena_end	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	inclusive arena end; mode 0 sets 0x801effff and mode 1 derives it from the cursor
+OPEN.EXE	0x80075850	0x4	memory_arena_cursor	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	null selects checked Psy-Q heap allocation; nonnull selects four-byte-aligned linear allocation
+OPEN.EXE	0x80075854	0x4	memory_allocation_depth	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	index and count for the 16-entry LIFO array; reset to zero before use
+OPEN.EXE	0x80075858	0x40	memory_allocation_entries	unknown	bss	u32[16]	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;indexed-extent;cross-overlay-lineage;ghidra-12.0.4-memory-xref	LIFO entries are returned pointers in system-heap mode and aligned byte counts in arena mode; no enclosing struct is claimed
+OPEN.EXE	0x80075898	0x4	memory_system_heap_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	one byte past memory_arena_end and the first argument to InitHeap
+OPEN.EXE	0x8007589c	0x4	memory_system_heap_size	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	signed byte count from memory_system_heap_start through 0x801f7fff
 OPEN.EXE	0x800758a0	0x4	DAT_800758a0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800758a4	0x4	DAT_800758a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075920	0x4	DAT_80075920	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

@@ -61,14 +61,16 @@ The identity/layout TSVs are overlays: they do not rename delink symbols or
 alter the matching graph. Address-derived names explicitly mean unresolved. See
 `docs/function-and-data-inventory.md` for the evidence and review workflow.
 
-The vendored inventory contains 866 functions: 8 in `PSX.EXE`, 437 in
-`GAME.EXE`, and 421 in `OPEN.EXE`. Of these, 661 have Release 2.5 evidence:
-375 from exact object matching and 286 additional rows from the project-built
-function-ID corpus. Another 116 are version-skewed `LIBGTE` routines supported
-by exact GAME/OPEN lineage, public-symbol order, and GTE instruction semantics.
-The remaining 89 are candidates from unique matches against
-the later Psy-Q 2.60 wildcard signature corpus bundled by `ghidra_psx_ldr`.
-That version boundary is explicit in every row. There are 854 symbol-named
+The vendored inventory contains 872 functions: 8 in `PSX.EXE`, 440 in
+`GAME.EXE`, and 424 in `OPEN.EXE`. Of these, 663 have direct Release 2.5
+evidence: 377 from exact object matching and 286 additional rows from the
+project-built function-ID corpus. Four more SDK functions have Release 2.5
+lineage evidence but an unresolved exact revision. Another 116 are
+version-skewed `LIBGTE` routines supported by exact GAME/OPEN lineage,
+public-symbol order, and GTE instruction semantics. The remaining 89 are
+candidates from unique matches against the later Psy-Q 2.60 wildcard signature
+corpus bundled by `ghidra_psx_ldr`.
+That version boundary is explicit in every row. There are 860 symbol-named
 rows and 12 anonymous functions whose containing object is nevertheless known.
 
 `library` and `module` use `|` for unresolved archive aliases. For example,

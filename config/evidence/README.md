@@ -53,15 +53,23 @@ weapon load destination to `KfWeaponRecord[16]`, separates the following
 `KfCollisionTarget`, and reviews both item switch tables and the campaign's
 decoded relocations.
 
+`game_open_semantic_memory_allocator.tsv` records the seven-function LIFO
+allocator duplicated in GAME and OPEN, including its signed interfaces, two
+allocation modes, 16-entry state array, all direct calls, and the intentional
+overlay-specific arena spans. `overlay_lineage.tsv` independently checks the
+constant address delta and all 144 instruction shapes. The adjacent state is
+kept as separate globals because no enclosing C object has yet been proved.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a
 Psy-Q object and comparing every remaining bit against a hash-verified retail
 PS-X EXE. Duplicate `S_R`/`S_W` rows intentionally retain an archive ambiguity.
 
-`psyq_release_25_complete_objects.tsv` records six reviewed 16-byte `LIBAPI`
-members in `PSX.EXE`. These were below the original matcher's 32-byte cutoff,
-so their complete-byte comparisons were reviewed separately.
+`psyq_release_25_complete_objects.tsv` records eight reviewed 16-byte `LIBAPI`
+members: six in `PSX.EXE` plus the identical `C51` `malloc` members in GAME
+and OPEN. These were below the original matcher's 32-byte cutoff, so their
+complete-byte comparisons were reviewed separately.
 
 `kf-vendored-seed` does not blindly trust either table. It extracts the named
 members from the hash-pinned Release 2.5 archive with `psy-k`, reconstructs

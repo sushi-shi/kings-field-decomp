@@ -68,6 +68,17 @@ with `-fno-schedule-insns2`. 2.5.7 matches every other unit that 2.6.0
 matched. The retail compiler is therefore a 2.5/2.6-era MIPS GCC whose
 epilogue is emitted in the 2.5.7 form; the exact build is still unproven.
 
+## GCC 2.5.8 control
+
+GCC 2.5.8 (built from the GNU archive tarball with the same PSX patch set as
+the Decompals 2.5.7 rebuild, static i386) differs from 2.5.7 only in
+`combine.c`, `cse.c`, `jump.c`, and nine lines of `mips.h`; `sched.c`,
+`reorg.c`, `mips.c`, and `mips.md` are byte-identical. Substituted for
+`cc1psx-257` under `kf try` across all 37 modules it reproduced exactly the
+same 53 exact and 18 non-exact functions, so the 2.5.x point release is not
+the missing discriminator and the remaining residues are not explained by
+the combiner either.
+
 ## Consequences
 
 - `probe-gcc257-o2-g0` (`cc1psx-257`, `-O2 -G0`, maspsx ASPSX 1.07 with

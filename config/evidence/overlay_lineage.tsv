@@ -1,6 +1,13 @@
 # MANUALLY MANAGED - cross-overlay instruction/order evidence, verified by `kf lineage`.
 # Instruction shape preserves opcode/register fields while masking linked immediates.
 lineage	left_image	left_va	right_image	right_va	size	address_delta	exact_words	total_words	shape_words	archive_library	archive_module	archive_symbol	note
+memory-allocator	GAME.EXE	0x8001aab0	OPEN.EXE	0x80015dd4	0x38	0x4cdc	13	14	14				identical instruction shape proves the checked malloc wrapper is shared game source across overlays; linked malloc target differs by image
+memory-allocator	GAME.EXE	0x8001aae8	OPEN.EXE	0x80015e0c	0x20	0x4cdc	2	8	8				identical instruction shape and state access order prove the allocator reset pair
+memory-allocator	GAME.EXE	0x8001ab08	OPEN.EXE	0x80015e2c	0xa8	0x4cdc	24	42	42				identical instruction shape proves the three-mode allocator setup pair; mode 1 deliberately uses different overlay-specific span constants
+memory-allocator	GAME.EXE	0x8001abb0	OPEN.EXE	0x80015ed4	0x20	0x4cdc	4	8	8				identical instruction shape and state access order prove the heap-start capture pair
+memory-allocator	GAME.EXE	0x8001abd0	OPEN.EXE	0x80015ef4	0x3c	0x4cdc	10	15	15				identical instruction shape proves the InitHeap reset pair; linked InitHeap target and BSS addresses differ by image
+memory-allocator	GAME.EXE	0x8001ac0c	OPEN.EXE	0x80015f30	0x80	0x4cdc	26	32	32				identical instruction shape and indexed state accesses prove the dual-mode LIFO allocator pair
+memory-allocator	GAME.EXE	0x8001ac8c	OPEN.EXE	0x80015fb0	0x64	0x4cdc	17	25	25				identical instruction shape proves the LIFO release pair; linked free target and BSS addresses differ by image
 vmanager-key-utilities	GAME.EXE	0x80044fac	OPEN.EXE	0x80024dcc	0x3cc	0x201e0	151	243	243	LIBSND.LIB	VMANAGER.OBJ	SsUtKeyOn	identical cross-overlay instruction shape and seven-short body semantics identify the VMANAGER function between exact Release 2.5 note2pitch2 and SsUtPitchBend anchors; exact revision remains unresolved
 vmanager-key-utilities	GAME.EXE	0x80045378	OPEN.EXE	0x80025198	0x124	0x201e0	55	73	73	LIBSND.LIB	VMANAGER.OBJ	SsUtKeyOff	identical cross-overlay instruction shape and five-short body semantics identify the next VMANAGER function; its retail extent is 0x1c larger than Release 2.5 before the exact SsUtPitchBend anchor
 shared-audio-link-order	GAME.EXE	0x8004a21c	OPEN.EXE	0x80029ff0	0x128	0x2022c	70	74	74				common linked-code sequence; ownership not inferred from order alone
