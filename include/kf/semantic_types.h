@@ -84,6 +84,10 @@ typedef struct KfActorActionProfile {
     s16 near_weight;
 } KfActorActionProfile;
 
+typedef struct KfActorPlacement {
+    u8 bytes[0x10];
+} KfActorPlacement;
+
 typedef struct KfActor {
     u8 slot_state;
     u8 definition_id;
@@ -120,6 +124,37 @@ typedef struct KfActor {
     s16 movement_y;
     u8 unknown_46[2];
 } KfActor;
+
+typedef struct KfMapCopyRegion {
+    u8 source_x;
+    u8 source_z;
+    u8 destination_x;
+    u8 destination_z;
+    u8 width;
+    u8 height;
+} KfMapCopyRegion;
+
+typedef struct KfMapObjectPlacement {
+    u8 bytes[0x14];
+} KfMapObjectPlacement;
+
+typedef struct KfMapObject {
+    u8 object_id;
+    u8 unknown_01;
+    u16 cell_x;
+    u16 cell_z;
+    u8 unknown_06[2];
+    s32 position_x;
+    s32 position_y;
+    s32 position_z;
+    u8 unknown_14[6];
+    u16 yaw;
+    u8 unknown_1c[4];
+    u32 unknown_20;
+    u32 unknown_24;
+    u8 state_28;
+    u8 unknown_29[3];
+} KfMapObject;
 
 /*
  * The memory-card file starts with the standard 0x200-byte PlayStation save
@@ -169,5 +204,13 @@ typedef char KfActorDefinition_size_is_152[
 typedef char KfActor_size_is_72[(sizeof(KfActor) == 0x48) ? 1 : -1];
 typedef char KfActorActionProfile_size_is_10[
     (sizeof(KfActorActionProfile) == 0x0a) ? 1 : -1];
+typedef char KfActorPlacement_size_is_16[
+    (sizeof(KfActorPlacement) == 0x10) ? 1 : -1];
+typedef char KfMapCopyRegion_size_is_6[
+    (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
+typedef char KfMapObjectPlacement_size_is_20[
+    (sizeof(KfMapObjectPlacement) == 0x14) ? 1 : -1];
+typedef char KfMapObject_size_is_44[
+    (sizeof(KfMapObject) == 0x2c) ? 1 : -1];
 
 #endif
