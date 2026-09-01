@@ -497,4 +497,103 @@ typedef char KfPlayerMotionState_size_is_10[
 typedef char KfWeaponRecord_size_is_44[
     (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
 
+/* === player layouts === */
+
+/*
+ * The saved player object. save_file_write_slot copies exactly 0xe0 bytes
+ * from 0x800a0780 into the save payload with the compiler's inline struct
+ * loop, and the player routines address these members from a registered
+ * base; both prove one object rather than adjacent globals. Field names keep
+ * their former identity spellings; unknown_ spans remain opaque.
+ */
+typedef struct KfPlayerState {
+    u32 experience;
+    u32 next_level_experience;
+    KfPlayerProgressState progress_state;
+    u8 unknown_0c[0x1];
+    u8 unknown_0d[0x1];
+    u8 weapon_charge_delay;
+    u8 unknown_0f[0x1];
+    KfPlayerVitals vitals;
+    KfPlayerAttackChargeState attack_charge_state;
+    u16 magic_charge;
+    u16 physical_power_training;
+    u16 magic_training;
+    u16 base_physical_power;
+    u16 base_magic;
+    u16 physical_power;
+    u16 magic;
+    u16 status_effect_flags;
+    u8 unknown_2c[0x4];
+    u16 attack_component0;
+    u16 attack_component1;
+    u16 attack_component2;
+    u16 attack_component3;
+    u16 attack_component4;
+    u8 unknown_3a[0x2];
+    u16 damage_defense_component0;
+    u16 damage_defense_component1;
+    u16 damage_defense_component2;
+    u16 status_effect2_resistance;
+    u16 damage_defense_component3;
+    u16 damage_defense_component4;
+    s16 status_effect0_timer;
+    s16 status_effect1_timer;
+    s16 status_effect2_timer;
+    s16 status_effect3_timer;
+    u8 unknown_50[0x2];
+    u8 unknown_52[0x2];
+    u8 unknown_54[0x4];
+    u8 unknown_58[0x4];
+    u8 selected_magic_id;
+    u8 unknown_5d[0x3];
+    const void *selected_magic_record;
+    u8 equipped_weapon_id;
+    u8 unknown_65[0x3];
+    const KfWeaponRecord *equipped_weapon_record;
+    u8 *weapon_asset_buffer;
+    s16 weapon_attack_phase;
+    u8 unknown_72[0x2];
+    u8 unknown_74[0x4];
+    u8 unknown_78[0x1];
+    u8 unknown_79[0x1];
+    u8 weapon_attack_fully_charged;
+    u8 unknown_7b[0x1];
+    const void *equipped_shield_record;
+    const void *equipped_head_armor_record;
+    const void *equipped_body_armor_record;
+    const void *equipped_arm_armor_record;
+    const void *equipped_leg_armor_record;
+    u8 equipped_shield_id;
+    u8 equipped_head_armor_id;
+    u8 equipped_body_armor_id;
+    u8 equipped_arm_armor_id;
+    u8 equipped_leg_armor_id;
+    u8 equipped_accessory_id;
+    u8 audio_effects_enabled;
+    u8 audio_music_enabled;
+    u8 unknown_98[0x2];
+    struct KfVec4s view_rotation_offset;
+    u8 update_state;
+    u8 unknown_a3[0x1];
+    struct KfVec4i camera_position;
+    s32 floor_height;
+    struct KfVec4s camera_rotation;
+    KfPlayerMotionState motion_state;
+    KfMapCell map_cell;
+    KfMapCell previous_map_cell;
+    u8 unknown_ce[0x6];
+    s16 view_bob_offset;
+    u16 view_bob_phase;
+    u16 death_camera_pitch_step;
+    s16 death_visual_blend;
+    s16 vertical_velocity;
+    u8 vertical_state;
+    u8 unknown_df[0x1];
+} KfPlayerState;
+
+typedef char KfPlayerState_size_is_0xe0[(sizeof(KfPlayerState) == 0xe0) ? 1 : -1];
+
+/* === end player === */
+
 #endif

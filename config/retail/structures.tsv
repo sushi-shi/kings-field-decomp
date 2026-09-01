@@ -23,6 +23,7 @@ KfPlayerAttackChargeState	0x04	supported	semantic_types.h;game_semantic_player_s
 KfPlayerLevelGrowth	0x0c	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
 KfPlayerMotionState	0x0a	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	five-halfword movement and camera-input state cleared as one complete group
 KfPlayerProgressState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
+KfPlayerState	0xe0	supported	semantic_types.h;save_file_write_slot:0xe0-copy;asm;xrefs	saved player object; unaccessed spans remain opaque unknown_ bytes
 KfPlayerVitals	0x08	supported	semantic_types.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
 KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xrefs	generic allocation-pool record
 KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
