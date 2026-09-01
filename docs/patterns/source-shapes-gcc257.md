@@ -17,6 +17,8 @@ other compilers.
 | `lhu` then separate `sll/sra` on both operands of a difference | `u16` element loads with explicit `(s16)` casts on the difference; a direct `s16` load folds into `lh` | `matrix_interpolate` |
 | `jal f; li a3,imm` | argument constant filled by the compiler's own delay-slot pass; no source action | `audio_play_spatial_default_range` `0x80032fb8` |
 | `sh v0,off(s1)` runs after both `rsin`/`rcos` calls with `move s0,v0` in the second call's slot | compute both trig values into locals first, then assign the nine cells in row order | `matrix_set_rotation_x/y/z` `0x80014b7c` |
+| `li v0,0xfffe; addu a0,a0,v0`, followed by `andi` only at the bounds test | `u16 cell_x; cell_x -= 2;` where every later use needs only the low 16 bits | `collision_adjust_cell_occupancy` `0x8001a4e8` |
+| persistent pointer in `t1`, `move a0,t1` at the outer-loop head, and `addiu t1,a0,100` in the bounds-branch delay slot | keep `next_row` across iterations, set a block-local `cell = next_row`, then advance `next_row = cell + 100` at the top | `collision_adjust_cell_occupancy` `0x8001a4e8` |
 
 Open residues recorded during the same campaign (not steered):
 

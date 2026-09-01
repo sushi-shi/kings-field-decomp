@@ -13,7 +13,7 @@ symbols or pretending that WIP names are original symbols:
   target sizes and every field offset/extent, including opaque ranges; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 226 of 734 functions: 206 GAME, one PSX, and 19
+Current semantic coverage is 229 of 734 functions: 209 GAME, one PSX, and 19
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -29,6 +29,7 @@ per-function evidence is in the
 `game_semantic_player_death.tsv`, `game_semantic_player_combat.tsv`,
 `game_semantic_player_stats.tsv`, `game_semantic_player_motion_attack.tsv`,
 `game_semantic_player_interactions.tsv`, `game_semantic_player_update.tsv`,
+`game_semantic_collision_grid.tsv`,
 `game_semantic_display_tmd.tsv`, and `game_open_semantic_memory_allocator.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
@@ -42,13 +43,14 @@ described in [`save-system.md`](save-system.md),
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md),
 [`player-interactions-and-collision.md`](player-interactions-and-collision.md),
 [`player-update-and-lighting.md`](player-update-and-lighting.md),
+[`collision-grid.md`](collision-grid.md),
 [`display-and-tmd.md`](display-and-tmd.md),
 [`memory-allocator.md`](memory-allocator.md), and
 [`structure-layouts.md`](structure-layouts.md).
 
-The current first pass contains 3,441 data identities. The lower row count is
+The current first pass contains 3,442 data identities. The lower row count is
 progress: field-sized and pointer-sized seeds are merged when evidence proves
-an owning table or structure. 181 data identities now have semantic review.
+an owning table or structure. 182 data identities now have semantic review.
 Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
@@ -161,6 +163,13 @@ lighting-preset wrappers, and the leaf that installs status effect 4. It maps
 two previously opaque signed halfwords to `KfPlayerState` timer fields at
 `+0x50` and `+0x52`. The four small reconstructed functions are strict exact
 matches; the large update remains a separately planned reconstruction.
+
+The collision-grid pass names and exactly reconstructs the cell floor-height
+query, its `KfVec4i` position wrapper, and the 5x5 occupancy updater. It admits
+the fourth 100-by-100 map grid at `0x80069018`, proves unsigned cell-coordinate
+arguments from thirteen lifecycle call sites, and keeps all four grids as
+separate arrays because their common extent does not prove an enclosing map
+structure.
 
 The shared GAME/OPEN display and TMD pass names 22 functions across eleven
 cross-overlay pairs. It promotes two complete primitive-buffer records per

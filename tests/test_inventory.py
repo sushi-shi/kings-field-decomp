@@ -42,7 +42,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 734)
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3441)
+        self.assertEqual(counts["data"], 3442)
         self.assertGreaterEqual(counts["functions_named"], 226)
         self.assertGreaterEqual(counts["data_named"], 181)
         self.assertEqual(counts["structures"], 38)
@@ -462,6 +462,56 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             by_site[0x80023600]["target_name"],
             "player_status_apply_effect4",
+        )
+
+    def test_collision_grid_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_collision_grid.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 3)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_collision_grid_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_collision_grid"
+        )
+        self.assertEqual(len(campaign_rows), 17)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(by_site[0x8001A2A0]["target_name"], "map_floor_height_grid")
+        self.assertEqual(by_site[0x8001A2E8]["target_name"], "map_cell_orientation_grid")
+        self.assertEqual(
+            by_site[0x8001A4D0]["target_name"],
+            "map_floor_height_for_cell_position",
+        )
+        self.assertEqual(
+            by_site[0x800346FC]["target_name"],
+            "collision_adjust_cell_occupancy",
+        )
+        self.assertEqual(by_site[0x800346FC]["channel"], "instruction-word")
+
+    def test_collision_grid_data_owners_are_queryable(self) -> None:
+        game = index("GAME.EXE")
+        orientation = game.datum(0x80069018)
+        occupancy = game.datum(0x800668E8)
+        self.assertEqual(
+            (orientation.name, orientation.datatype, orientation.size),
+            ("map_cell_orientation_grid", "u8[100][100]", 0x2710),
+        )
+        self.assertEqual(game.data_owner(0x8006B727), orientation)
+        self.assertEqual(
+            (occupancy.name, occupancy.datatype, occupancy.size),
+            ("map_collision_flag_grid", "u8[100][100]", 0x2710),
         )
 
     def test_player_motion_data_owners_are_queryable(self) -> None:

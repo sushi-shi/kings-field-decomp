@@ -1,7 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
-extern s32 func_8001a29c(u32 cell, s32 point_x, s32 point_z);
+extern s32 map_floor_height_for_cell_position(
+    u16 cell_index, s32 point_x, s32 point_z);
 extern s32 player_distance_to_point(
     s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height);
 extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
@@ -50,7 +51,8 @@ u32 collision_query_world(
             return kind | 0x10000;
         }
         if (point_y != 0xffff) {
-            floor_height = func_8001a29c((u16)cell, point_x, point_z);
+            floor_height = map_floor_height_for_cell_position(
+                (u16)cell, point_x, point_z);
             if (floor_height < point_y) {
                 return 0x1fff0;
             }
