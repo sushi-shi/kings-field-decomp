@@ -1797,10 +1797,10 @@ GAME.EXE	0x80057e80	0x1	DAT_80057e80	unknown	load	undefined1		address-only	data.
 GAME.EXE	0x80057e81	0x1	DAT_80057e81	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057e82	0x1	DAT_80057e82	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057e88	0x4	current_poly_ft4	global	load	POLY_FT4 *	primitive_buffer	supported	game_match_campaign_30.tsv;asm;SetPolyFT4;AddPrim	current textured-quad allocation cursor
-GAME.EXE	0x80057e90	0x4	memory_card_event_0	global	load	s32	memory_card	supported	game_match_campaign_30.tsv;CloseEvent;TestEvent;UnDeliverEvent	first card event handle
-GAME.EXE	0x80057e98	0x4	memory_card_event_1	global	load	s32	memory_card	supported	game_match_campaign_30.tsv;CloseEvent;TestEvent;UnDeliverEvent	second card event handle
-GAME.EXE	0x80057ea0	0x4	memory_card_event_2	global	load	s32	memory_card	supported	game_match_campaign_30.tsv;CloseEvent;TestEvent;UnDeliverEvent	third card event handle
-GAME.EXE	0x80057ea8	0x4	memory_card_event_3	global	load	s32	memory_card	supported	game_match_campaign_30.tsv;CloseEvent;TestEvent;UnDeliverEvent	fourth card event handle
+GAME.EXE	0x80057e90	0x4	memory_card_io_end_event	global	load	s32	memory_card	supported	game_semantic_save_system.tsv;KERNEL.H:EvSpIOE;OpenEvent;CloseEvent;TestEvent;UnDeliverEvent	HwCARD end-of-I/O event handle opened with spec 0x0004
+GAME.EXE	0x80057e98	0x4	memory_card_timeout_event	global	load	s32	memory_card	supported	game_semantic_save_system.tsv;KERNEL.H:EvSpTIMOUT;OpenEvent;CloseEvent;TestEvent;UnDeliverEvent	HwCARD timeout event handle opened with spec 0x0100
+GAME.EXE	0x80057ea0	0x4	memory_card_new_device_event	global	load	s32	memory_card	supported	game_semantic_save_system.tsv;KERNEL.H:EvSpNEW;OpenEvent;CloseEvent;TestEvent;UnDeliverEvent	HwCARD new-device event handle opened with spec 0x2000
+GAME.EXE	0x80057ea8	0x4	memory_card_error_event	global	load	s32	memory_card	supported	game_semantic_save_system.tsv;KERNEL.H:EvSpERROR;OpenEvent;CloseEvent;TestEvent;UnDeliverEvent	HwCARD error event handle opened with spec 0x8000
 GAME.EXE	0x80057eb0	0x1	DAT_80057eb0	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057eb1	0x1	DAT_80057eb1	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057eb2	0x1	DAT_80057eb2	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2116,8 +2116,8 @@ GAME.EXE	0x80065bf8	0x4	DAT_80065bf8	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x80065bfc	0x4	DAT_80065bfc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065c00	0x4	DAT_80065c00	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065c04	0x4	DAT_80065c04	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800668d8	0x4	DAT_800668d8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800668e0	0x4	DAT_800668e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800668d8	0x4	save_header_buffer	unknown	bss	KfSaveHeader *	save_workspace	supported	game_semantic_save_system.tsv;asm;xrefs;0x280	shared pointer rebound to either the base of a 0x2800 arena allocation or the caller's stack workspace; linkage scope is not yet proved
+GAME.EXE	0x800668e0	0x4	save_payload_buffer	unknown	bss	KfSavePayload *	save_workspace	supported	game_semantic_save_system.tsv;asm;xrefs;0x2580	shared pointer rebound to save_header_buffer plus 0x280 or the corresponding caller stack slice; linkage scope is not yet proved
 GAME.EXE	0x80069000	0x4	DAT_80069000	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80069008	0x4	DAT_80069008	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006b728	0x4	DAT_8006b728	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

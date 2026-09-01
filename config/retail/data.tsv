@@ -265,13 +265,13 @@ GAME.EXE	0x80012410	0xc10	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghid
 GAME.EXE	0x80012414	0xc14	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80012418	0xc18	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x8001241c	0xc1c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012420	0xc20	0x34	string	byte-pattern		shift_jis	investigation:string-census	escaped text: 　　　　　　＜＜　　ＫＩＮＧ’Ｓ　ＦＩＥＬＤ　　＞＞
+GAME.EXE	0x80012420	0xc20	0x34	string	byte-pattern	save_title_text	shift_jis	investigation:string-census	escaped text: 　　　　　　＜＜　　ＫＩＮＧ’Ｓ　ＦＩＥＬＤ　　＞＞; copied into the PlayStation memory-card header
 GAME.EXE	0x80012454	0xc54	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012458	0xc58	0xc	string	byte-pattern		ascii	investigation:string-census	escaped text: TIM\\ICO1.TIM
+GAME.EXE	0x80012458	0xc58	0xc	string	byte-pattern	save_icon_frame_1_path	ascii	investigation:string-census	escaped text: TIM\\ICO1.TIM
 GAME.EXE	0x80012464	0xc64	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012468	0xc68	0xc	string	byte-pattern		ascii	investigation:string-census	escaped text: TIM\\ICO2.TIM
+GAME.EXE	0x80012468	0xc68	0xc	string	byte-pattern	save_icon_frame_2_path	ascii	investigation:string-census	escaped text: TIM\\ICO2.TIM
 GAME.EXE	0x80012474	0xc74	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012478	0xc78	0xc	string	byte-pattern		ascii	investigation:string-census	escaped text: TIM\\ICO3.TIM
+GAME.EXE	0x80012478	0xc78	0xc	string	byte-pattern	save_icon_frame_3_path	ascii	investigation:string-census	escaped text: TIM\\ICO3.TIM
 GAME.EXE	0x80012484	0xc84	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x8001248c	0xc8c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80012490	0xc90	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -288,7 +288,7 @@ GAME.EXE	0x800124b8	0xcb8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghid
 GAME.EXE	0x800124bc	0xcbc	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x800124c0	0xcc0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x800124c4	0xcc4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x800124c8	0xcc8	0x9	string	byte-pattern		ascii	investigation:string-census	escaped text: TIM\\M000.
+GAME.EXE	0x800124c8	0xcc8	0x9	string	byte-pattern	memory_card_message_path_template	ascii	investigation:string-census	escaped text: TIM\\M000.; decimal message ID overwrites the three zeroes
 GAME.EXE	0x800124d1	0xcd1	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x800124d2	0xcd2	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x800124d4	0xcd4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -2976,9 +2976,9 @@ GAME.EXE	0x80055ea4	0x446a4	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4
 GAME.EXE	0x80055ea5	0x446a5	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055ea6	0x446a6	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055ea7	0x446a7	0x18d	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80056034	0x44834	0x19	string	byte-pattern		ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KF\x20\x20\x20\x20\x20\x20
+GAME.EXE	0x80056034	0x44834	0x19	string	byte-pattern	save_main_file_path	ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KF\x20\x20\x20\x20\x20\x20
 GAME.EXE	0x8005604d	0x4484d	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80056050	0x44850	0x19	string	byte-pattern		ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KFTMP\x20\x20\x20
+GAME.EXE	0x80056050	0x44850	0x19	string	byte-pattern	save_temporary_file_path	ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KFTMP\x20\x20\x20
 GAME.EXE	0x80056069	0x44869	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x8005606c	0x4486c	0x13	string	byte-pattern		ascii	investigation:string-census	escaped text: TALK\\C00\\T00000.TIM
 GAME.EXE	0x8005607f	0x4487f	0x105	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -3147,7 +3147,7 @@ GAME.EXE	0x80057b6c	0x4636c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 GAME.EXE	0x80057b70	0x46370	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b72	0x46372	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057b74	0x46374	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057b78	0x46378	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: bu00:
+GAME.EXE	0x80057b78	0x46378	0x5	string	byte-pattern	memory_card_root_path	ascii	investigation:string-census	escaped text: bu00:
 GAME.EXE	0x80057b7d	0x4637d	0x7	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b84	0x46384	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057b88	0x46388	0x14	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

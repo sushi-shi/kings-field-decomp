@@ -40,8 +40,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
         self.assertEqual(counts["data"], 3846)
-        self.assertGreaterEqual(counts["functions_named"], 52)
-        self.assertGreaterEqual(counts["data_named"], 31)
+        self.assertGreaterEqual(counts["functions_named"], 70)
+        self.assertGreaterEqual(counts["data_named"], 33)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -83,6 +83,21 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(_ghidra_type("undefined2 *"), "u16 *")
         self.assertEqual(_ghidra_type("short *"), "s16 *")
 
+    def test_save_system_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_save_system.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 22)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = (
+                f"{identity.return_type} {identity.name}({parameters})"
+            )
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")
         function = game.function(0x80014E08)
@@ -117,6 +132,23 @@ class InventoryTests(unittest.TestCase):
             (exit_code.name, exit_code.datatype, exit_code.owner_type),
             ("game_exit_code", "u32", "game"),
         )
+        save_writer = game.function(0x8002B73C)
+        self.assertEqual(
+            (save_writer.name, save_writer.owner_type, save_writer.action),
+            ("save_file_write_slot", "save_file", "write_slot"),
+        )
+        save_header = game.datum(0x800668D8)
+        self.assertEqual(
+            (save_header.name, save_header.datatype, save_header.owner_type),
+            ("save_header_buffer", "KfSaveHeader *", "save_workspace"),
+        )
+        card_error = game.datum(0x80057EA8)
+        self.assertEqual(
+            (card_error.name, card_error.datatype, card_error.owner_type),
+            ("memory_card_error_event", "s32", "memory_card"),
+        )
+        save_path = game.datum(0x80056034)
+        self.assertEqual(save_path.name, "save_main_file_path")
 
 
 if __name__ == "__main__":
