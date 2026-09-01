@@ -49,6 +49,12 @@ struct KfEulerAngles {
     s16 z;
 };
 
+typedef struct SoundRef {
+    u8 bank;
+    u8 program;
+    u8 note;
+} SoundRef;
+
 /*
  * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
  * pool of 128 0x48-byte live actors.  Only fields exercised by the reviewed
@@ -89,8 +95,8 @@ typedef struct KfActor {
     u8 unknown_07;
     u8 action;
     u8 unknown_09;
-    u8 unknown_0a;
-    u8 unknown_0b;
+    u8 animation_id;
+    u8 vertical_state;
     u8 unknown_0c[2];
     s16 local_x;
     s16 local_z;
@@ -105,12 +111,14 @@ typedef struct KfActor {
     u16 unknown_32;
     u32 unknown_34;
     s8 action_timer;
-    u8 unknown_39[3];
+    u8 collision_state;
+    s16 movement_yaw;
     s16 animation_step;
-    s16 unknown_3e;
-    s16 impulse_x;
-    s16 impulse_z;
-    u8 unknown_44[4];
+    s16 vertical_velocity;
+    s16 movement_x;
+    s16 movement_z;
+    s16 movement_y;
+    u8 unknown_46[2];
 } KfActor;
 
 /*
@@ -147,6 +155,7 @@ typedef char KfVec4i_size_is_16[(sizeof(struct KfVec4i) == 16) ? 1 : -1];
 typedef char KfPitchYaw_size_is_4[(sizeof(struct KfPitchYaw) == 4) ? 1 : -1];
 typedef char KfEulerAngles_size_is_6[
     (sizeof(struct KfEulerAngles) == 6) ? 1 : -1];
+typedef char SoundRef_size_is_3[(sizeof(SoundRef) == 3) ? 1 : -1];
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];
 typedef char KfSaveDirectory_size_is_128[

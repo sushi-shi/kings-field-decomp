@@ -40,9 +40,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 744)
         self.assertEqual(counts["typed_returns"], 744)
         self.assertEqual(counts["parameterized"], 498)
-        self.assertEqual(counts["data"], 3803)
-        self.assertGreaterEqual(counts["functions_named"], 102)
-        self.assertGreaterEqual(counts["data_named"], 48)
+        self.assertEqual(counts["data"], 3805)
+        self.assertGreaterEqual(counts["functions_named"], 112)
+        self.assertGreaterEqual(counts["data_named"], 51)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -138,6 +138,19 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
+    def test_actor_actions_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_actor_actions.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 10)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")
         function = game.function(0x80014E08)
@@ -218,14 +231,41 @@ class InventoryTests(unittest.TestCase):
             ),
             (
                 "actor_action_profiles",
-                "KfActorActionProfile[26]",
-                0x104,
+                "KfActorActionProfile[25]",
+                0xFA,
             ),
         )
         data_identities = load_data_identities(RETAIL_CONFIG)
         self.assertEqual(
             data_identities[("GAME.EXE", 0x80056080)].scope,
             "unknown",
+        )
+        phase_sounds = game.datum(0x8005617C)
+        self.assertEqual(
+            (phase_sounds.name, phase_sounds.datatype, phase_sounds.size),
+            ("boss_death_phase_sounds", "SoundRef[4]", 0xC),
+        )
+        loop_sound = game.datum(0x80057B80)
+        self.assertEqual(
+            (loop_sound.name, loop_sound.datatype, loop_sound.size),
+            ("boss_death_loop_sound", "SoundRef", 3),
+        )
+        boss_flag = game.datum(0x8009F847)
+        self.assertEqual(
+            (boss_flag.name, boss_flag.datatype, boss_flag.owner_type),
+            ("boss_defeat_complete", "u8", "actor"),
+        )
+        self.assertEqual(
+            {
+                data_identities[("GAME.EXE", va)].scope
+                for va in (0x8005617C, 0x80057B80, 0x8009F847)
+            },
+            {"unknown"},
+        )
+        actor_update = game.function(0x80030818)
+        self.assertEqual(
+            (actor_update.name, actor_update.owner_type, actor_update.action),
+            ("actor_pool_update", "actor_pool", "update"),
         )
         talk_path = game.datum(0x8005606C)
         self.assertEqual(talk_path.name, "talk_image_path_template")

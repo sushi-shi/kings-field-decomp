@@ -1600,7 +1600,8 @@ GAME.EXE	0x80055ea2	0x2	DAT_80055ea2	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80055ea4	0x1	DAT_80055ea4	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055ea5	0x1	DAT_80055ea5	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055ea6	0x1	DAT_80055ea6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80056080	0x104	actor_action_profiles	unknown	load	KfActorActionProfile[26]	actor	supported	data.tsv:direct-references;game_semantic_actor_ai.tsv;asm;26x0x0a-stride	twenty-six action-selection profiles; source linkage remains unresolved
+GAME.EXE	0x80056080	0xfa	actor_action_profiles	unknown	load	KfActorActionProfile[25]	actor	supported	data.tsv:direct-references;game_semantic_actor_ai.tsv;game_semantic_actor_actions.tsv;asm;25x0x0a-stride	twenty-five action-selection profiles; source linkage remains unresolved
+GAME.EXE	0x8005617c	0xc	boss_death_phase_sounds	unknown	load	SoundRef[4]	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;packed-3-byte-records	four phase sound references; entries one through three are directly addressed by the boss death handler
 GAME.EXE	0x8005630c	0x4	DAT_8005630c	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056310	0x4	DAT_80056310	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056314	0x4	DAT_80056314	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1709,6 +1710,7 @@ GAME.EXE	0x80057b5f	0x1	DAT_80057b5f	unknown	load	undefined1		address-only	data.
 GAME.EXE	0x80057b63	0x1	DAT_80057b63	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b6c	0x4	pending_game_state	global	load	s32	game_state	candidate	game_match_campaign_30.tsv;asm;xrefs	state one is acknowledged and cleared
 GAME.EXE	0x80057b72	0x2	DAT_80057b72	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057b80	0x3	boss_death_loop_sound	unknown	load	SoundRef	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;sound_ref_play	periodic sound used by the boss death sequence; source linkage remains unresolved
 GAME.EXE	0x80057b84	0x4	DAT_80057b84	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057ba4	0x4	DAT_80057ba4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057bff	0x1	DAT_80057bff	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2384,7 +2386,7 @@ GAME.EXE	0x8009eafc	0x1	DAT_8009eafc	unknown	bss	u8		address-only	ghidra-12.0.4-
 GAME.EXE	0x8009f844	0x1	DAT_8009f844	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009f845	0x1	DAT_8009f845	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009f846	0x1	DAT_8009f846	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009f847	0x1	DAT_8009f847	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009f847	0x1	boss_defeat_complete	unknown	bss	u8	actor	supported	game_semantic_actor_actions.tsv;asm;xrefs;map-progression	set by the special actor death sequence and read by map-transition gating; source linkage remains unresolved
 GAME.EXE	0x8009feec	0x4	DAT_8009feec	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009fef0	0x2	DAT_8009fef0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009fef2	0x2	DAT_8009fef2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
