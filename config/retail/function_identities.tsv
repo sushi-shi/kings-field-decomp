@@ -80,7 +80,7 @@ GAME.EXE	0x8001aae8	func_8001aae8			void		address-only	candidate	mips-live-in-he
 GAME.EXE	0x8001ab08	func_8001ab08			void	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001abb0	func_8001abb0			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001abd0	func_8001abd0			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8001ac0c	func_8001ac0c			u32	s32 object	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+GAME.EXE	0x8001ac0c	func_8001ac0c			void *	s32 size	address-only	supported	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate;asm;xrefs;save_workspace_allocate	result is stored into save_header_buffer and null-checked by save_workspace_allocate, which passes the byte count 0x2800; body still unreviewed
 GAME.EXE	0x8001ac8c	func_8001ac8c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001acf0	func_8001acf0			u32	void * arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001ae60	func_8001ae60			u32	void * arg0;s32 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review

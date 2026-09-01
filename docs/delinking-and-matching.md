@@ -304,13 +304,27 @@ HI16/LO16 pairs, direct SDK/game calls, and the angle helper's two internal
 `j` relocations. Those rows now make target-object comparisons describe the C
 and code generation rather than absent referent metadata.
 
-The other 23 retain complete evidence-backed C but are not exact. Repeated
-observable residues include multiply/load placement, register choice, prologue
-save order, argument setup, and the non-leaf epilogue ordering. In particular,
-several otherwise identical wrappers use `lw ra; nop; jr ra; addiu sp` in
-retail while the current GCC 2.6.0 probe emits `lw ra; addiu sp; jr ra; nop`.
-This is useful compiler-attribution evidence, but it is not yet a named
-compiler wall: the exact compiler/profile and backend cause remain unproven.
+The other 23 retained complete evidence-backed C but were not exact under
+the 2.6.0 probe. The dominant residue was the framed epilogue: every retail
+frame restores `$sp` in the `jr $ra` delay slot (`lw ra; nop; jr ra; addiu
+sp`), while GCC 2.6.0 prints `lw $31; addu $sp; j $31` in reorder mode and
+no modelled assembler swaps it. The GCC 2.5.7 probe prints that epilogue
+itself, and with maspsx `--expand-div` it moved the same 49-unit corpus from
+20 to 34 exact without any source change; the evidence is recorded in
+[`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md).
+
+## Second GAME.EXE campaign
+
+Under `probe-gcc257-o2-g0`, a class-by-class campaign added 22 units
+(frame pacer, game shutdown, actor pool and definitions, map-object
+definitions, map events, audio listener and key-off, matrix rotations and
+interpolation, lighting transition, player HP/MP/magic selection, and save
+workspace). It also promoted the relocation rows those bodies need:
+`jal` sites inside carved functions whose rows still carried the
+`instruction-word` channel, and BSS HI16/LO16 pairs whose owners have curated
+identities. The exact count reached 53 of 71 enrolled units, 46 of them
+functions with semantic names; the source shapes that decided the matches
+are in [`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md).
 
 ## Validation
 
