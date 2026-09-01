@@ -2,7 +2,7 @@
 #include <kf/game_types.h>
 
 extern void asset_registry_select(u16 index);
-extern void func_8001c2b0(void);
+extern void tmd_prepare_primitive_indices(void);
 
 struct AssetHeader8002059c {
     u8 unknown_00[8];
@@ -17,7 +17,7 @@ void asset_registry_set(u16 index, void *asset)
 {
     asset_registry_entries[index] = asset;
     asset_registry_select(index);
-    func_8001c2b0();
+    tmd_prepare_primitive_indices();
 }
 
 ADDRESS(0x8002059c, 0x38)
