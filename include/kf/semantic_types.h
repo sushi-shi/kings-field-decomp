@@ -50,10 +50,18 @@ struct KfEulerAngles {
 };
 
 typedef struct SoundRef {
-    u8 bank;
     u8 program;
+    u8 tone;
     u8 note;
 } SoundRef;
+
+typedef struct KfAudioVoiceSlots {
+    s16 voice_ids[10];
+    s16 vab_ids[10];
+    s16 programs[10];
+    s16 tones[10];
+    s16 notes[10];
+} KfAudioVoiceSlots;
 
 /*
  * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
@@ -203,6 +211,18 @@ typedef char KfPitchYaw_size_is_4[(sizeof(struct KfPitchYaw) == 4) ? 1 : -1];
 typedef char KfEulerAngles_size_is_6[
     (sizeof(struct KfEulerAngles) == 6) ? 1 : -1];
 typedef char SoundRef_size_is_3[(sizeof(SoundRef) == 3) ? 1 : -1];
+typedef char KfAudioVoiceSlots_size_is_100[
+    (sizeof(KfAudioVoiceSlots) == 0x64) ? 1 : -1];
+#define KF_OFFSET_OF(type, member) ((u32)&(((type *)0)->member))
+typedef char KfAudioVoiceSlots_vab_ids_offset_is_20[
+    (KF_OFFSET_OF(KfAudioVoiceSlots, vab_ids) == 0x14) ? 1 : -1];
+typedef char KfAudioVoiceSlots_programs_offset_is_40[
+    (KF_OFFSET_OF(KfAudioVoiceSlots, programs) == 0x28) ? 1 : -1];
+typedef char KfAudioVoiceSlots_tones_offset_is_60[
+    (KF_OFFSET_OF(KfAudioVoiceSlots, tones) == 0x3c) ? 1 : -1];
+typedef char KfAudioVoiceSlots_notes_offset_is_80[
+    (KF_OFFSET_OF(KfAudioVoiceSlots, notes) == 0x50) ? 1 : -1];
+#undef KF_OFFSET_OF
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];
 typedef char KfSaveDirectory_size_is_128[

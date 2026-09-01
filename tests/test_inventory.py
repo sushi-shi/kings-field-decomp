@@ -36,13 +36,13 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 744)
-        self.assertEqual(counts["signatures_started"], 744)
-        self.assertEqual(counts["typed_returns"], 744)
-        self.assertEqual(counts["parameterized"], 498)
-        self.assertEqual(counts["data"], 3674)
-        self.assertGreaterEqual(counts["functions_named"], 135)
-        self.assertGreaterEqual(counts["data_named"], 65)
+        self.assertEqual(counts["functions"], 740)
+        self.assertEqual(counts["signatures_started"], 740)
+        self.assertEqual(counts["typed_returns"], 740)
+        self.assertEqual(counts["parameterized"], 494)
+        self.assertEqual(counts["data"], 3666)
+        self.assertGreaterEqual(counts["functions_named"], 139)
+        self.assertGreaterEqual(counts["data_named"], 68)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -189,6 +189,40 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_audio_spatial_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_audio_spatial.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 4)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_vmanager_key_utilities_are_vendored_in_both_overlays(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in rows
+        }
+        expected = {
+            ("GAME.EXE", 0x80044FAC): "SsUtKeyOn",
+            ("GAME.EXE", 0x80045378): "SsUtKeyOff",
+            ("OPEN.EXE", 0x80024DCC): "SsUtKeyOn",
+            ("OPEN.EXE", 0x80025198): "SsUtKeyOff",
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        for key, name in expected.items():
+            self.assertEqual(vendored[key]["name"], name)
+            self.assertEqual(
+                vendored[key]["confidence"],
+                "sdk-lineage-supported",
+            )
+            self.assertNotIn(key, identities)
 
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")
@@ -385,10 +419,33 @@ class InventoryTests(unittest.TestCase):
             (sequence_id.name, sequence_id.datatype),
             ("audio_sequence_id", "s16"),
         )
-        voice_ids = game.datum(0x80095894)
+        voice_index = game.datum(0x80057B84)
         self.assertEqual(
-            (voice_ids.name, voice_ids.datatype, voice_ids.size),
-            ("audio_voice_ids", "s16[10]", 0x14),
+            (voice_index.name, voice_index.datatype, voice_index.size),
+            ("audio_voice_slot_index", "s32", 4),
+        )
+        listener_position = game.datum(0x8009587C)
+        listener_rotation = game.datum(0x8009588C)
+        self.assertEqual(
+            (
+                listener_position.name,
+                listener_position.datatype,
+                listener_position.size,
+            ),
+            ("audio_listener_position", "KfVec4i", 0x10),
+        )
+        self.assertEqual(
+            (
+                listener_rotation.name,
+                listener_rotation.datatype,
+                listener_rotation.size,
+            ),
+            ("audio_listener_rotation", "KfVec4s", 8),
+        )
+        voice_slots = game.datum(0x80095894)
+        self.assertEqual(
+            (voice_slots.name, voice_slots.datatype, voice_slots.size),
+            ("audio_voice_slots", "KfAudioVoiceSlots", 0x64),
         )
         effects_enabled = game.datum(0x800A0816)
         music_enabled = game.datum(0x800A0817)
@@ -399,11 +456,14 @@ class InventoryTests(unittest.TestCase):
                 data_identities[("GAME.EXE", va)].scope
                 for va in (
                     0x80059738,
+                    0x80057B84,
                     0x80095868,
                     0x8009586C,
                     0x80095870,
                     0x80095874,
                     0x80095878,
+                    0x8009587C,
+                    0x8009588C,
                     0x80095894,
                     0x800A0816,
                     0x800A0817,

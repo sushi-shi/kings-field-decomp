@@ -332,11 +332,10 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
     data_starts = set(structural_data_by_start)
     _, relocations = read_tsv(config_dir / "relocs.tsv")
     bss_starts = {
-        (row["image"], int(row["target_name"][4:], 16))
+        (row["image"], parse_int(row["target_va"]))
         for row in relocations
         if row["target_region"] == "bss"
         and row["status"] != "rejected"
-        and re.fullmatch(r"DAT_[0-9A-Fa-f]{8}", row["target_name"])
     }
     data = load_data_identities(config_dir)
     data_path = config_dir / "data_identities.tsv"

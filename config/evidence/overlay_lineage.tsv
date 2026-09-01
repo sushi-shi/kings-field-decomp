@@ -1,6 +1,8 @@
 # MANUALLY MANAGED - cross-overlay instruction/order evidence, verified by `kf lineage`.
 # Instruction shape preserves opcode/register fields while masking linked immediates.
 lineage	left_image	left_va	right_image	right_va	size	address_delta	exact_words	total_words	shape_words	archive_library	archive_module	archive_symbol	note
+vmanager-key-utilities	GAME.EXE	0x80044fac	OPEN.EXE	0x80024dcc	0x3cc	0x201e0	151	243	243	LIBSND.LIB	VMANAGER.OBJ	SsUtKeyOn	identical cross-overlay instruction shape and seven-short body semantics identify the VMANAGER function between exact Release 2.5 note2pitch2 and SsUtPitchBend anchors; exact revision remains unresolved
+vmanager-key-utilities	GAME.EXE	0x80045378	OPEN.EXE	0x80025198	0x124	0x201e0	55	73	73	LIBSND.LIB	VMANAGER.OBJ	SsUtKeyOff	identical cross-overlay instruction shape and five-short body semantics identify the next VMANAGER function; its retail extent is 0x1c larger than Release 2.5 before the exact SsUtPitchBend anchor
 shared-audio-link-order	GAME.EXE	0x8004a21c	OPEN.EXE	0x80029ff0	0x128	0x2022c	70	74	74				common linked-code sequence; ownership not inferred from order alone
 shared-audio-link-order	GAME.EXE	0x8004a344	OPEN.EXE	0x8002a118	0x30	0x2022c	10	12	12				common linked-code sequence; ownership not inferred from order alone
 shared-audio-link-order	GAME.EXE	0x8004a374	OPEN.EXE	0x8002a148	0x54	0x2022c	19	21	21				common linked-code sequence; ownership not inferred from order alone

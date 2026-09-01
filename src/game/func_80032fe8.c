@@ -1,8 +1,23 @@
-#include <kf/game_types.h>
+#include <kf/semantic_types.h>
 
-extern void func_80032cf0(s32 first, s32 second, s16 third, s32 fourth, s32 fifth);
+extern u32 func_80032cf0(
+    const SoundRef *sound,
+    const struct KfVec4i *position,
+    s16 volume,
+    s32 max_distance,
+    s32 attenuation_distance);
 
-void func_80032fe8(s32 first, s32 second, s16 third, s32 fourth, s32 fifth)
+void func_80032fe8(
+    const SoundRef *sound,
+    const struct KfVec4i *position,
+    s16 volume,
+    s32 max_distance,
+    s32 attenuation_distance)
 {
-    func_80032cf0(first, second, third, fourth, fifth);
+    func_80032cf0(
+        sound,
+        position,
+        volume,
+        max_distance,
+        attenuation_distance);
 }

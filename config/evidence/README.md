@@ -16,6 +16,12 @@ string, shared-state, and Psy-Q 2.5 header evidence for GAME audio
 initialization, VAB loading, and sequence lifecycle policy. API-name candidates
 without an exact FID remain explicitly qualified in that ledger.
 
+`game_semantic_audio_spatial.tsv` records positional sound, listener snapshots,
+and the ten-slot voice manager. The companion `vmanager-key-utilities` rows in
+`overlay_lineage.tsv` prove that the called `SsUtKeyOn`/`SsUtKeyOff` bodies are
+shared SDK code in GAME and OPEN even though their version-skewed bytes evade
+the exact Release 2.5 FIDs.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a

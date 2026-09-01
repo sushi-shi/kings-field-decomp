@@ -1615,7 +1615,7 @@ GAME.EXE	0x80057b63	0x1	DAT_80057b63	unknown	load	undefined1		address-only	data.
 GAME.EXE	0x80057b6c	0x4	pending_game_state	global	load	s32	game_state	candidate	game_match_campaign_30.tsv;asm;xrefs	state one is acknowledged and cleared
 GAME.EXE	0x80057b72	0x2	DAT_80057b72	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b80	0x3	boss_death_loop_sound	unknown	load	SoundRef	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;sound_ref_play	periodic sound used by the boss death sequence; source linkage remains unresolved
-GAME.EXE	0x80057b84	0x4	DAT_80057b84	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057b84	0x4	audio_voice_slot_index	unknown	load	s32	audio	supported	data.tsv:direct-references;game_semantic_audio_spatial.tsv;asm;xrefs;retail-initial-value-9	managed sound-effect ring index advanced modulo ten before each voice; source linkage remains unresolved
 GAME.EXE	0x80057ba4	0x4	DAT_80057ba4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057bff	0x1	DAT_80057bff	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057c00	0x4	DAT_80057c00	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2152,17 +2152,9 @@ GAME.EXE	0x8009586c	0x2	audio_active_vab_id	unknown	bss	s16	audio	supported	game
 GAME.EXE	0x80095870	0x4	audio_sequence_buffer	unknown	bss	u8 *	audio	supported	game_semantic_audio_control.tsv;asm;xrefs;0x3000-allocation;file-load;SsSeqOpen	allocated sequence-file buffer shared by initialization and map-sequence playback; source linkage remains unresolved
 GAME.EXE	0x80095874	0x2	audio_sequence_id	unknown	bss	s16	audio	supported	game_match_campaign_30.tsv;game_semantic_audio_control.tsv;asm;xrefs;SsSeqOpen;SsSeqPlay;SsSeqSetVol;SsSeqClose	active sequence access number returned by SsSeqOpen; source linkage remains unresolved
 GAME.EXE	0x80095878	0x4	audio_sequence_active	unknown	bss	s32	audio	supported	game_semantic_audio_control.tsv;asm;xrefs;sequence-lifecycle	word-sized flag set after SsSeqPlay and cleared after stop/close; source linkage remains unresolved
-GAME.EXE	0x8009587c	0x4	DAT_8009587c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095880	0x4	DAT_80095880	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095884	0x4	DAT_80095884	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095888	0x4	DAT_80095888	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009588c	0x4	DAT_8009588c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095890	0x4	DAT_80095890	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095894	0x14	audio_voice_ids	unknown	bss	s16[10]	audio	supported	game_semantic_audio_control.tsv;asm;10x2-initialization;indexed-audio-use	ten rotating sound-effect voice identifiers initialized to minus one; source linkage remains unresolved
-GAME.EXE	0x800958a8	0x2	DAT_800958a8	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800958bc	0x2	DAT_800958bc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800958d0	0x2	DAT_800958d0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800958e4	0x2	DAT_800958e4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009587c	0x10	audio_listener_position	unknown	bss	KfVec4i	audio	supported	game_semantic_audio_spatial.tsv;asm;xrefs;game_main_loop;player_position_snapshot	listener position copied independently from the per-frame player snapshot; source linkage remains unresolved
+GAME.EXE	0x8009588c	0x8	audio_listener_rotation	unknown	bss	KfVec4s	audio	supported	game_semantic_audio_spatial.tsv;asm;xrefs;game_main_loop;player_rotation_snapshot	listener rotation copied independently from the per-frame player snapshot; yaw at offset two drives panning, source linkage remains unresolved
+GAME.EXE	0x80095894	0x64	audio_voice_slots	unknown	bss	KfAudioVoiceSlots	audio	supported	game_semantic_audio_control.tsv;game_semantic_audio_spatial.tsv;asm;xrefs;five-10x-s16-lanes;SsUtKeyOn;SsUtKeyOff	ten managed slots containing voice, VAB, program, tone, and note IDs at proven offsets 0x00/0x14/0x28/0x3c/0x50; source linkage remains unresolved
 GAME.EXE	0x800958f8	0x4	game_exit_code	global	bss	u32	game	supported	game_semantic_math_lifecycle.tsv;asm;xrefs	main-loop exit flag/status copied by game_entry into entry_args[1]
 GAME.EXE	0x800968f5	0x1	DAT_800968f5	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80098010	0x4	DAT_80098010	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

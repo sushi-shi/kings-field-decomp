@@ -5,13 +5,13 @@ layer records the current source-level interpretation without changing delink
 symbols or pretending that WIP names are original symbols:
 
 - `config/retail/function_identities.tsv` has exactly one row for each
-  carveable non-vendored function: 1 PSX, 497 GAME, and 246 OPEN rows;
+  carveable non-vendored function: 1 PSX, 495 GAME, and 244 OPEN rows;
 - `config/retail/data_identities.tsv` tracks initialized objects and referenced
   BSS objects that may become C globals, file-local statics, or
   function-local statics; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 135 of 744 functions: 132 GAME, one PSX, and two
+Current semantic coverage is 139 of 740 functions: 136 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -21,15 +21,15 @@ per-function evidence is in the
 `game_semantic_screen_talk.tsv`, `game_semantic_actor_core.tsv`,
 `game_semantic_actor_ai.tsv`, `game_semantic_actor_actions.tsv`,
 `game_semantic_map_objects.tsv`, `game_semantic_map_runtime.tsv`, and
-`game_semantic_audio_control.tsv` files
+`game_semantic_audio_control.tsv` and `game_semantic_audio_spatial.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
 [`map-objects.md`](map-objects.md), and [`audio-system.md`](audio-system.md).
 
-The current first pass contains 3,674 data identities, including 890
-non-overlapping BSS extents. Sixty-five data identities have semantic review:
-25 in loaded storage and 40 in BSS. Eight loaded identities are candidate or
+The current first pass contains 3,666 data identities, including 882
+non-overlapping BSS extents. Sixty-eight data identities have semantic review:
+26 in loaded storage and 42 in BSS. Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -67,12 +67,19 @@ sound references, and counters retain `scope=unknown`; the object pool is
 shared by initialization, collision, and runtime update families and is
 recorded as global.
 
-The audio-control pass names five game-owned lifecycle functions and corrects
-the shared VAB header, VAB ID, sequence buffer, sequence ID, active flag,
-effects/music settings, and ten-element voice-ID owner. It also admits the
-previously missing 344-byte sequence table from its reviewed HI16/LO16 pair and
-the Psy-Q 2.5 `SS_SEQ_TABSIZ` contract. These state objects retain
-`scope=unknown`; adjacency and shared use do not prove external linkage.
+The audio passes name nine game-owned lifecycle, listener, spatialization, and
+managed-voice functions. They correct the shared VAB/sequence state, settings,
+listener position/rotation, loaded voice-ring index, and one complete
+`KfAudioVoiceSlots` aggregate with five ten-element lanes. The control pass also
+admits the previously missing 344-byte sequence table from its reviewed
+HI16/LO16 pair and the Psy-Q 2.5 `SS_SEQ_TABSIZ` contract. These state objects
+retain `scope=unknown`; adjacency and shared use do not prove external linkage.
+
+The spatial pass also removes four false game candidates: GAME and OPEN each
+contain the same instruction-shape-identical `SsUtKeyOn`/`SsUtKeyOff` VMANAGER
+pair between exact Release 2.5 archive anchors. They are recorded as
+`sdk-lineage-supported` vendored functions, so version-skewed SDK code is not
+counted as game progress merely because its exact Release 2.5 FID missed.
 
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
@@ -82,7 +89,8 @@ datatype, and owner.
 
 Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
-`KfActorActionProfile`, `SoundRef`, `KfActor`, `KfActorPlacement`,
+`KfActorActionProfile`, `SoundRef`, `KfAudioVoiceSlots`, `KfActor`,
+`KfActorPlacement`,
 `KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObjectDefinition`,
 `KfMapObject`,
 `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
@@ -114,7 +122,7 @@ kf sema --image game disasm vector2s_scale_shift11 --blocks
 
 - `build/function-inventory/evidence.tsv` combines MIPS live-in signature
   hints, callers, callees, indirect calls, strings, data references, and basic
-  instruction-shape counts for all 744 functions;
+  instruction-shape counts for all 740 functions;
 - `build/function-inventory/data-evidence.tsv` lists confirmed/candidate users,
   read/write/address counts, and tentative scope/owner hints for every tracked
   datum;

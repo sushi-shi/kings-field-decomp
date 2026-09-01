@@ -2886,8 +2886,8 @@ GAME.EXE	0x8005606c	0x4486c	0x13	string	byte-pattern	talk_image_path_template	as
 GAME.EXE	0x8005607f	0x4487f	0x1	unclassified	coverage-gap			payload-complement	alignment byte before actor action profiles
 GAME.EXE	0x80056080	0x44880	0xfa	data	direct-references	actor_action_profiles	KfActorActionProfile[25]	game_semantic_actor_ai.tsv;game_semantic_actor_actions.tsv	25 ten-byte distance/weight profiles; the former 26th record was a false overlap with packed sound references
 GAME.EXE	0x8005617a	0x4497a	0x2	unclassified	coverage-gap			payload-complement	padding between actor action profiles and boss-death sound references
-GAME.EXE	0x8005617c	0x4497c	0xc	data	direct-references	boss_death_phase_sounds	SoundRef[4]	game_semantic_actor_actions.tsv	four packed bank/program/note references; the death handler directly uses entries one through three
-GAME.EXE	0x80056188	0x44988	0x27	data	direct-references	gameplay_sound_refs	SoundRef[13]	game_semantic_map_runtime.tsv	thirteen packed bank/program/note references shared by map-object actions and other gameplay systems
+GAME.EXE	0x8005617c	0x4497c	0xc	data	direct-references	boss_death_phase_sounds	SoundRef[4]	game_semantic_actor_actions.tsv;game_semantic_audio_spatial.tsv	four packed program/tone/note references; the death handler directly uses entries one through three
+GAME.EXE	0x80056188	0x44988	0x27	data	direct-references	gameplay_sound_refs	SoundRef[13]	game_semantic_map_runtime.tsv;game_semantic_audio_spatial.tsv	thirteen packed program/tone/note references shared by map-object actions and other gameplay systems
 GAME.EXE	0x800561af	0x449af	0x1	unclassified	coverage-gap			payload-complement	padding before map_copy_regions
 GAME.EXE	0x800561b0	0x449b0	0x18	data	direct-references	map_copy_regions	KfMapCopyRegion[4]	game_semantic_map_objects.tsv	four six-byte source/destination rectangle descriptors; former short strings were false byte patterns inside the table
 GAME.EXE	0x800561c8	0x449c8	0x70	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -3052,9 +3052,9 @@ GAME.EXE	0x80057b72	0x46372	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4
 GAME.EXE	0x80057b74	0x46374	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b78	0x46378	0x5	string	byte-pattern	memory_card_root_path	ascii	investigation:string-census	escaped text: bu00:
 GAME.EXE	0x80057b7d	0x4637d	0x3	unclassified	coverage-gap			payload-complement	unclassified bytes before boss-death loop sound
-GAME.EXE	0x80057b80	0x46380	0x3	data	direct-references	boss_death_loop_sound	SoundRef	game_semantic_actor_actions.tsv	bank/program/note reference played periodically during the boss death sequence
+GAME.EXE	0x80057b80	0x46380	0x3	data	direct-references	boss_death_loop_sound	SoundRef	game_semantic_actor_actions.tsv;game_semantic_audio_spatial.tsv	program/tone/note reference played periodically during the boss death sequence
 GAME.EXE	0x80057b83	0x46383	0x1	unclassified	coverage-gap			payload-complement	padding after boss-death loop sound
-GAME.EXE	0x80057b84	0x46384	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057b84	0x46384	0x4	defined	direct-references	audio_voice_slot_index	s32	game_semantic_audio_spatial.tsv	loaded ring index initialized to nine and advanced modulo ten before each managed sound-effect voice
 GAME.EXE	0x80057b88	0x46388	0x14	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b9c	0x4639c	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: none
 GAME.EXE	0x80057ba0	0x463a0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

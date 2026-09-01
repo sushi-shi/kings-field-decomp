@@ -6332,38 +6332,38 @@ GAME.EXE	0x80032c98	0x21498		mips26	reachable-code	0x8003e940	load		jal		control
 GAME.EXE	0x80032cbc	0x214bc	0x80032cc0	mips_hi16_lo16	reachable-code	0x8009586c	bss	DAT_8009586c	lui+addiu	s0	paired-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x80032cc8	0x214c8		mips26	reachable-code	0x800445c0	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80032cd8	0x214d8	0x80032cdc	mips_hi16_lo16	reachable-code	0x80095868	bss	DAT_80095868	lui+sw	at	paired-reviewed	reviewed	manual-match:game_match_campaign_30
-GAME.EXE	0x80032d18	0x21518	0x80032d1c	mips_hi16_lo16	reachable-code	0x8009587c	bss	DAT_8009587c	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032d34	0x21534	0x80032d38	mips_hi16_lo16	reachable-code	0x80095880	bss	DAT_80095880	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032d54	0x21554	0x80032d58	mips_hi16_lo16	reachable-code	0x80095884	bss	DAT_80095884	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032d8c	0x2158c		mips26	reachable-code	0x8004c6bc	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x80032d18	0x21518	0x80032d1c	mips_hi16_lo16	reachable-code	0x8009587c	bss	audio_listener_position	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032d34	0x21534	0x80032d38	mips_hi16_lo16	reachable-code	0x80095880	bss	audio_listener_position+0x4	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032d54	0x21554	0x80032d58	mips_hi16_lo16	reachable-code	0x80095884	bss	audio_listener_position+0x8	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032d8c	0x2158c		mips26	reachable-code	0x8004c6bc	load	SquareRoot0	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
 GAME.EXE	0x80032da4	0x215a4		mips26	reachable-code	0x80032f94	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80032e00	0x21600		mips26	reachable-code	0x80032e14	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80032e18	0x21618	0x80032e1c	mips_hi16_lo16	reachable-code	0x8009587c	bss	DAT_8009587c	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032e20	0x21620	0x80032e24	mips_hi16_lo16	reachable-code	0x80095884	bss	DAT_80095884	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032e30	0x21630		mips26	reachable-code	0x80014fb8	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80032e38	0x21638	0x80032e3c	mips_hi16_lo16	reachable-code	0x8009588e	bss	DAT_8009588c	lui+lh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032ebc	0x216bc		mips26	reachable-code	0x8004f27c	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80032f14	0x21714		mips26	reachable-code	0x8004f384	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80032f80	0x21780	0x80032f84	mips_hi16_lo16	reachable-code	0x8009586c	bss	DAT_8009586c	lui+lh	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80032f88	0x21788		mips26	reachable-code	0x800330f4	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80032fd0	0x217d0		mips26	reachable-code	0x80032cf0	load	func_80032cf0	jal		control-flow-reviewed	reviewed	manual-match:game_match_campaign_30
-GAME.EXE	0x80032ffc	0x217fc		mips26	reachable-code	0x80032cf0	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033024	0x21824		mips26	instruction-word	0x8004b6a4	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033048	0x21848	0x8003304c	mips_hi16_lo16	reachable-code	0x8009587c	bss	DAT_8009587c	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8003307c	0x2187c	0x80033080	mips_hi16_lo16	reachable-code	0x8009588c	bss	DAT_8009588c	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x800330b8	0x218b8	0x800330bc	mips_hi16_lo16	reachable-code	0x8009586c	bss	DAT_8009586c	lui+lh	v0	paired-reviewed	reviewed	manual-match:game_match_campaign_30
-GAME.EXE	0x800330dc	0x218dc		mips26	reachable-code	0x800330f4	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003314c	0x2194c	0x80033150	mips_hi16_lo16	reachable-code	0x800a0816	bss	DAT_800a0816	lui+lbu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80033160	0x21960	0x80033164	mips_hi16_lo16	reachable-code	0x80057b84	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033170	0x21970	0x80033174	mips_hi16_lo16	reachable-code	0x80057b84	load		lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033180	0x21980	0x80033184	mips_hi16_lo16	reachable-code	0x80057b84	load		lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033188	0x21988	0x8003318c	mips_hi16_lo16	reachable-code	0x80057b84	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033190	0x21990	0x80033194	mips_hi16_lo16	reachable-code	0x80095894	bss	DAT_80095894	lui+addiu	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8003319c	0x2199c	0x800331a0	mips_hi16_lo16	reachable-code	0x80095894	bss	DAT_80095894	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x800331d8	0x219d8		mips26	reachable-code	0x80045378	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033200	0x21a00	0x80033204	mips_hi16_lo16	reachable-code	0x80057b84	load		lui+lw	v1	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033254	0x21a54		mips26	reachable-code	0x80044fac	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003325c	0x21a5c	0x80033260	mips_hi16_lo16	reachable-code	0x80057b84	load		lui+lw	v1	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x80032e18	0x21618	0x80032e1c	mips_hi16_lo16	reachable-code	0x8009587c	bss	audio_listener_position	lui+lw	a0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032e20	0x21620	0x80032e24	mips_hi16_lo16	reachable-code	0x80095884	bss	audio_listener_position+0x8	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032e30	0x21630		mips26	reachable-code	0x80014fb8	load	vector_xz_to_angle	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032e38	0x21638	0x80032e3c	mips_hi16_lo16	reachable-code	0x8009588e	bss	audio_listener_rotation+0x2	lui+lh	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032ebc	0x216bc		mips26	reachable-code	0x8004f27c	load	rsin	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032f14	0x21714		mips26	reachable-code	0x8004f384	load	rcos	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032f80	0x21780	0x80032f84	mips_hi16_lo16	reachable-code	0x8009586c	bss	audio_active_vab_id	lui+lh	a0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032f88	0x21788		mips26	reachable-code	0x800330f4	load	audio_play_voice	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032fd0	0x217d0		mips26	reachable-code	0x80032cf0	load	audio_play_spatial	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80032ffc	0x217fc		mips26	reachable-code	0x80032cf0	load	audio_play_spatial	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033024	0x21824		mips26	instruction-word	0x8004b6a4	load	SsVoKeyOff	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033048	0x21848	0x8003304c	mips_hi16_lo16	reachable-code	0x8009587c	bss	audio_listener_position	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x8003307c	0x2187c	0x80033080	mips_hi16_lo16	reachable-code	0x8009588c	bss	audio_listener_rotation	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x800330b8	0x218b8	0x800330bc	mips_hi16_lo16	reachable-code	0x8009586c	bss	audio_active_vab_id	lui+lh	v0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x800330dc	0x218dc		mips26	reachable-code	0x800330f4	load	audio_play_voice	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x8003314c	0x2194c	0x80033150	mips_hi16_lo16	reachable-code	0x800a0816	bss	audio_effects_enabled	lui+lbu	v0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033160	0x21960	0x80033164	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033170	0x21970	0x80033174	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033180	0x21980	0x80033184	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033188	0x21988	0x8003318c	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033190	0x21990	0x80033194	mips_hi16_lo16	reachable-code	0x80095894	bss	audio_voice_slots	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x8003319c	0x2199c	0x800331a0	mips_hi16_lo16	reachable-code	0x80095894	bss	audio_voice_slots	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x800331d8	0x219d8		mips26	reachable-code	0x80045378	load	SsUtKeyOff	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033200	0x21a00	0x80033204	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x80033254	0x21a54		mips26	reachable-code	0x80044fac	load	SsUtKeyOn	jal		control-flow-reviewed	reviewed	manual:game_semantic_audio_spatial
+GAME.EXE	0x8003325c	0x21a5c	0x80033260	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
 GAME.EXE	0x800332bc	0x21abc		mips26	reachable-code	0x800332d4	load		j		control-flow-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x800332cc	0x21acc		mips26	reachable-code	0x800332dc	load		j		control-flow-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x80033338	0x21b38		mips26	instruction-word	0x800335a0	load		j		range-filtered	candidate	investigation:relocs.tsv
