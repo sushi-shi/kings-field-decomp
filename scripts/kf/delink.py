@@ -166,6 +166,45 @@ def _vendored_functions(
     return functions
 
 
+def _game_call_targets(
+    config_dir: Path,
+    function_rows: list[dict[str, str]],
+    vendored: dict[tuple[str, int], dict[str, str]],
+) -> dict[str, set[int]]:
+    """Direct-call targets of admitted ``jal`` candidates sited in game code.
+
+    The linked image resolves a duplicated library name to exactly one body.
+    Calls from non-vendored functions are the retail evidence for which body
+    that was; rejected rows and calls from inside vendored code do not count.
+    """
+    targets: dict[str, set[int]] = {image: set() for image in IMAGE_LAYOUTS}
+    path = config_dir / "relocs.tsv"
+    if not path.is_file():
+        return targets
+    extents: dict[str, list[tuple[int, int]]] = {image: [] for image in IMAGE_LAYOUTS}
+    for row in function_rows:
+        extents[row["image"]].append((parse_int(row["va"]), parse_int(row["size"])))
+    for image in extents:
+        extents[image].sort()
+    _, rows = read_tsv(path)
+    for row in rows:
+        if row.get("kind") != "mips26" or row.get("opcode") != "jal":
+            continue
+        if row.get("status") == "rejected":
+            continue
+        image = row["image"]
+        site = parse_int(row["site_va"])
+        starts = extents.get(image, [])
+        index = bisect.bisect_right(starts, (site, 0xFFFFFFFF)) - 1
+        if index < 0:
+            continue
+        start, size = starts[index]
+        if not start <= site < start + size or (image, start) in vendored:
+            continue
+        targets[image].add(parse_int(row["target_va"]))
+    return targets
+
+
 def load_catalog(config_dir: Path) -> Catalog:
     vendored = _vendored_functions(config_dir)
     _, function_rows = read_tsv(config_dir / "functions.tsv")
@@ -185,6 +224,18 @@ def load_catalog(config_dir: Path) -> Catalog:
         )
         for image in IMAGE_LAYOUTS
     }
+    # Several bodies can share one library name (LIBAPI and LIBGPU both carry a
+    # memset). Only the single instance that admitted game code calls keeps the
+    # plain name; every other copy stays address-qualified so reconstructed
+    # source can name the linked symbol without inventing one.
+    game_calls = _game_call_targets(config_dir, function_rows, vendored)
+    plain_duplicate: dict[tuple[str, str], int] = {}
+    for (candidate_image, candidate_va), name in preferred.items():
+        if duplicate_names[candidate_image][name] > 1 and candidate_va in game_calls[candidate_image]:
+            plain_duplicate.setdefault((candidate_image, name), []).append(candidate_va)
+    plain_duplicate = {
+        key: called[0] for key, called in plain_duplicate.items() if len(called) == 1
+    }
 
     functions: dict[str, list[Function]] = {image: [] for image in IMAGE_LAYOUTS}
     starts: dict[str, dict[int, Function]] = {image: {} for image in IMAGE_LAYOUTS}
@@ -193,7 +244,7 @@ def load_catalog(config_dir: Path) -> Catalog:
         va = parse_int(row["va"])
         provider_row = vendored.get((image, va), {})
         symbol = preferred[(image, va)]
-        if duplicate_names[image][symbol] > 1:
+        if duplicate_names[image][symbol] > 1 and plain_duplicate.get((image, symbol)) != va:
             symbol = f"{symbol}_{va:08x}"
         function = Function(
             image=image,

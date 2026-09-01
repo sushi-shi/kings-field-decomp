@@ -17,6 +17,7 @@ from scripts.kf.delink import (
     decode_mips26_target,
     encode_hi_lo_addend,
     encode_mips26_addend,
+    load_catalog,
 )
 from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
 from scripts.kf.objdiff import generate_projects
@@ -356,3 +357,98 @@ class ObjdiffProjectTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+FUNCTION_COLUMNS = (
+    "image", "va", "file_offset", "size", "body_size", "fragments", "kind",
+    "confidence", "name", "labels", "provenance", "note",
+)
+VENDORED_COLUMNS = (
+    "image", "va", "size", "name", "aliases", "provider", "library", "module",
+    "member_offset", "source_version", "evidence", "confidence", "provenance",
+    "note",
+)
+RELOC_COLUMNS = (
+    "image", "site_va", "site_file_offset", "paired_site_va", "kind", "channel",
+    "target_va", "target_region", "target_name", "opcode", "register",
+    "confidence", "status", "provenance",
+)
+DATA_COLUMNS = (
+    "image", "va", "file_offset", "size", "kind", "confidence", "name",
+    "datatype", "provenance", "note",
+)
+
+
+def _function_row(va: int, name: str) -> dict[str, str]:
+    return {
+        "image": "GAME.EXE", "va": f"{va:#x}", "file_offset": f"{va - 0x8000f800:#x}",
+        "size": "0x10", "body_size": "0x10", "fragments": "1", "kind": "function",
+        "confidence": "test", "name": name, "labels": "", "provenance": "test",
+        "note": "",
+    }
+
+
+def _vendored_row(va: int, name: str, library: str) -> dict[str, str]:
+    return {
+        "image": "GAME.EXE", "va": f"{va:#x}", "size": "0x10", "name": name,
+        "aliases": "", "provider": "Sony", "library": library, "module": "X",
+        "member_offset": "0x0", "source_version": "test", "evidence": "test",
+        "confidence": "test", "provenance": "test", "note": "",
+    }
+
+
+def _jal_row(site: int, target: int, status: str = "candidate") -> dict[str, str]:
+    return {
+        "image": "GAME.EXE", "site_va": f"{site:#x}",
+        "site_file_offset": f"{site - 0x8000f800:#x}", "paired_site_va": "",
+        "kind": "mips26", "channel": "reachable-code", "target_va": f"{target:#x}",
+        "target_region": "load", "target_name": "", "opcode": "jal", "register": "",
+        "confidence": "control-flow", "status": status, "provenance": "test",
+    }
+
+
+class CatalogNamingTests(unittest.TestCase):
+    def _catalog(self, relocation_rows: tuple[dict[str, str], ...]) -> Catalog:
+        directory = tempfile.mkdtemp(prefix="kf-catalog-")
+        config = Path(directory)
+        write_tsv(config / "functions.tsv", FUNCTION_COLUMNS, (
+            _function_row(0x80010000, "game_caller"),
+            _function_row(0x80050000, "memset"),
+            _function_row(0x80050100, "memset"),
+            _function_row(0x80050200, "helper"),
+        ), ())
+        write_tsv(config / "functions_vendored.tsv", VENDORED_COLUMNS, (
+            _vendored_row(0x80050000, "memset", "LIBAPI.LIB"),
+            _vendored_row(0x80050100, "memset", "LIBGPU.LIB"),
+            _vendored_row(0x80050200, "helper", "LIBGPU.LIB"),
+        ), ())
+        write_tsv(config / "relocs.tsv", RELOC_COLUMNS, relocation_rows, ())
+        write_tsv(config / "data.tsv", DATA_COLUMNS, (), ())
+        return load_catalog(config)
+
+    def test_duplicate_name_goes_to_the_instance_game_code_calls(self) -> None:
+        catalog = self._catalog((
+            _jal_row(0x80010004, 0x80050000),
+            _jal_row(0x80050204, 0x80050100),  # a vendored-internal call does not count
+        ))
+        starts = catalog.function_starts["GAME.EXE"]
+        self.assertEqual(starts[0x80050000].symbol, "memset")
+        self.assertEqual(starts[0x80050100].symbol, "memset_80050100")
+        self.assertEqual(starts[0x80050200].symbol, "helper")
+
+    def test_duplicate_name_without_game_call_evidence_stays_qualified(self) -> None:
+        catalog = self._catalog((
+            _jal_row(0x80010004, 0x80050000, status="rejected"),
+        ))
+        starts = catalog.function_starts["GAME.EXE"]
+        self.assertEqual(starts[0x80050000].symbol, "memset_80050000")
+        self.assertEqual(starts[0x80050100].symbol, "memset_80050100")
+
+    def test_duplicate_name_called_at_both_bodies_stays_qualified(self) -> None:
+        catalog = self._catalog((
+            _jal_row(0x80010004, 0x80050000),
+            _jal_row(0x80010008, 0x80050100),
+        ))
+        starts = catalog.function_starts["GAME.EXE"]
+        self.assertEqual(starts[0x80050000].symbol, "memset_80050000")
+        self.assertEqual(starts[0x80050100].symbol, "memset_80050100")

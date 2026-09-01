@@ -1,4 +1,4 @@
-"""End-to-end native GCC 2.6.0 PSX -> maspsx -> GNU-as smoke test."""
+"""End-to-end native GCC 2.6.0/2.5.7 PSX -> maspsx -> GNU-as smoke test."""
 
 from __future__ import annotations
 
@@ -23,6 +23,23 @@ int second(int value) { return first(value) - 2; }
 """
 
 
+PROBE_257_SOURCE = """\
+extern void callee(int value);
+int ratio(int value, int span) { return (value << 6) / (span + 1) + 1; }
+void framed(int value) { callee(value); callee(value + 1); }
+"""
+
+
+def text_words(path: Path) -> list[int]:
+    data = subprocess.run(
+        ["mipsel-linux-gnu-objcopy", "-O", "binary", "--only-section=.text",
+         str(path), "/dev/stdout"],
+        capture_output=True,
+        check=True,
+    ).stdout
+    return list(struct.unpack(f"<{len(data) // 4}I", data[: len(data) // 4 * 4]))
+
+
 def function_symbols(path: Path) -> list[tuple[int, str]]:
     output = subprocess.run(
         ["mipsel-linux-gnu-nm", "-n", "--defined-only", str(path)],
@@ -42,6 +59,8 @@ def main() -> int:
     for tool in (
         "cpppsx-260",
         "cc1psx-260",
+        "cpppsx-257",
+        "cc1psx-257",
         "maspsx",
         "mipsel-linux-gnu-as",
         "mipsel-linux-gnu-nm",
@@ -56,6 +75,8 @@ def main() -> int:
         order_source = root / "order.c"
         order_o0 = root / "order-o0.o"
         order_o2 = root / "order-o2.o"
+        probe_source = root / "probe257.c"
+        probe_257 = root / "probe257.o"
         manifest = root / "delink/game/objects.tsv"
         source.write_text(
             "int add(int left, int right) { return left + right; }\n",
@@ -81,7 +102,9 @@ def main() -> int:
                 "relocations": 0,
                 "confidence": "test",
                 "provenance": "test",
-            } for index, name in enumerate(("simple.o", "order-o0.o", "order-o2.o"))),
+            } for index, name in enumerate((
+                "simple.o", "order-o0.o", "order-o2.o", "probe257.o",
+            ))),
             (),
         )
         compile_source(
@@ -142,9 +165,39 @@ def main() -> int:
                 "optimization did not move either downstream function offset; "
                 "the shift calibration is ineffective"
             )
+
+        # GCC 2.5.7 probe calibration against two retail-observed forms: every
+        # framed GAME.EXE epilogue restores $sp in the `jr $ra` delay slot, and
+        # signed division carries the checked ASPSX expansion (`break 7`).
+        probe_source.write_text(PROBE_257_SOURCE, encoding="utf-8")
+        compile_source(
+            probe_source,
+            "GAME.EXE",
+            probe_257,
+            root / "delink",
+            optimization="O2",
+            compiler="gcc257-native",
+            maspsx_flags=("--expand-div",),
+        )
+        words = text_words(probe_257)
+        jr_ra = 0x03E00008
+        returns = [index for index, word in enumerate(words) if word == jr_ra]
+        if not returns:
+            raise RuntimeError("GCC 2.5.7 probe object has no jr $ra")
+        framed = [
+            index for index in returns
+            if index + 1 < len(words) and words[index + 1] >> 16 == 0x27BD
+        ]
+        if not framed:
+            raise RuntimeError(
+                "GCC 2.5.7 probe did not restore $sp in the jr $ra delay slot"
+            )
+        if 0x0007000D not in words:
+            raise RuntimeError("--expand-div did not emit the break 7 divide check")
     print(
         "GCC 2.6.0 PSX C calibration: MIPS ELF, source-order emission at O0/O2, "
-        "O2 inlined-static omission, and downstream offset shifts"
+        "O2 inlined-static omission, and downstream offset shifts; "
+        "GCC 2.5.7 probe: delay-slot $sp restore and checked div expansion"
     )
     return 0
 

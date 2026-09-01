@@ -107,8 +107,8 @@ class IncludeScanner:
 
 def toolchain_identity() -> str:
     tools = (
-        "cc1psx-260", "cpppsx-260", "maspsx", "mipsel-linux-gnu-as",
-        "objdiff-cli",
+        "cc1psx-260", "cpppsx-260", "cc1psx-257", "cpppsx-257", "maspsx",
+        "mipsel-linux-gnu-as", "objdiff-cli",
     )
     rows = []
     for tool in tools:
@@ -364,6 +364,8 @@ def edge_compile(unit_name: str, output: Path) -> int:
         profile.aspsx_version,
         tuple(includes),
         profile.cc1_flags,
+        profile.compiler,
+        profile.maspsx_flags,
     )
     return 0
 

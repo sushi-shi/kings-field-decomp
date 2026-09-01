@@ -18,9 +18,16 @@ calibration topology, not a claim about original translation units. Grouping
 functions and data must wait for ownership evidence and a target-object model
 that can represent it.
 
-The current `probe-gcc260-o2-g0` name is deliberately non-attributive. It makes
-the practical GCC 2.6.0/maspsx route reproducible without claiming that the
-historical compiler, optimization profile, assembler, or linker is proven.
+Profile names are deliberately non-attributive. `probe-gcc260-o2-g0` keeps
+the original GCC 2.6.0/maspsx route reproducible; `probe-gcc257-o2-g0` is the
+default for new units because the GCC 2.5.7 rebuild natively emits the retail
+framed epilogue and load hoisting, and its `maspsx_flags = ["--expand-div"]`
+selects the checked `div` expansion retail contains. Neither name claims that
+the historical compiler, optimization profile, assembler, or linker is proven;
+the evidence and corpus numbers are in
+[`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md).
+A profile may set `compiler` to any listed native probe and may pass extra
+`cc1_flags` and `maspsx_flags`; every field is part of the unit fingerprint.
 
 ## Incremental graph
 

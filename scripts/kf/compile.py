@@ -14,6 +14,23 @@ from scripts.kf.delink import image_key
 from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv
 
 
+# Native probe compilers: tool basenames and provenance labels. The labels are
+# recorded in every .o.json so a base object always names the probe that made
+# it; none of them is a historical attribution claim.
+C_COMPILERS = {
+    "gcc260-native": (
+        "cpppsx-260",
+        "cc1psx-260",
+        "Decompals old-gcc 0.17 GCC 2.6.0 PSX rebuild",
+    ),
+    "gcc257-native": (
+        "cpppsx-257",
+        "cc1psx-257",
+        "Decompals old-gcc 0.17 GCC 2.5.7 PSX rebuild",
+    ),
+}
+
+
 def _tool(name: str) -> str:
     path = shutil.which(name)
     if path is None:
@@ -81,6 +98,8 @@ def compile_source(
     aspsx_version: str = "1.07",
     include_dirs: tuple[Path, ...] = (),
     cc1_flags: tuple[str, ...] = (),
+    compiler: str = "gcc260-native",
+    maspsx_flags: tuple[str, ...] = (),
 ) -> Path:
     source = source.resolve()
     if not source.is_file():
@@ -122,8 +141,11 @@ def compile_source(
                 "C compilation requires --optimization because the retail profile "
                 "is not yet proven"
             )
-        preprocessor = _tool("cpppsx-260")
-        compiler = _tool("cc1psx-260")
+        if compiler not in C_COMPILERS:
+            raise ValueError(f"unknown C compiler probe {compiler!r}")
+        cpp_name, cc1_name, compiler_label = C_COMPILERS[compiler]
+        preprocessor = _tool(cpp_name)
+        cc1 = _tool(cc1_name)
         maspsx = _tool("maspsx")
         intermediate = scratch / "intermediates"
         intermediate.mkdir(parents=True, exist_ok=True)
@@ -142,7 +164,7 @@ def compile_source(
         preprocessed.write_bytes(_run(cpp_arguments))
 
         compiler_arguments = [
-            compiler,
+            cc1,
             "-quiet",
             f"-{optimization}",
             f"-G{small_data}",
@@ -155,6 +177,7 @@ def compile_source(
         assembler_arguments = [
             maspsx,
             f"--aspsx-version={aspsx_version}",
+            *maspsx_flags,
             "--run-assembler",
             "--force-stdin",
             "-march=r3000",
@@ -165,10 +188,12 @@ def compile_source(
         _run(assembler_arguments, input_data=assembly.read_bytes())
         metadata.update({
             "language": "c",
-            "compiler": "Decompals old-gcc 0.17 GCC 2.6.0 PSX rebuild",
+            "compiler": compiler_label,
+            "compiler_probe": compiler,
             "optimization": optimization,
             "small_data": small_data,
             "cc1_flags": list(cc1_flags),
+            "maspsx_flags": list(maspsx_flags),
             "assembler_model": f"maspsx ASPSX {aspsx_version} -> GNU mipsel as",
             "attribution": "candidate probe; exact retail compiler/profile unproven",
         })
@@ -197,6 +222,10 @@ def main() -> int:
     parser.add_argument("--aspsx-version", default="1.07")
     parser.add_argument("--include", action="append", type=Path, default=[])
     parser.add_argument("--cc1-flag", action="append", default=[])
+    parser.add_argument(
+        "--compiler", choices=tuple(C_COMPILERS), default="gcc260-native"
+    )
+    parser.add_argument("--maspsx-flag", action="append", default=[])
     args = parser.parse_args()
 
     key = image_key(args.image)
@@ -220,6 +249,8 @@ def main() -> int:
         args.aspsx_version,
         tuple(include_dirs),
         tuple(args.cc1_flag),
+        args.compiler,
+        tuple(args.maspsx_flag),
     )
     print(result)
     return 0

@@ -28,6 +28,12 @@ class Profile:
     small_data: int
     aspsx_version: str
     cc1_flags: tuple[str, ...]
+    maspsx_flags: tuple[str, ...] = ()
+
+
+# Native probe compilers. Each is a Decompals old-gcc rebuild of a PSX GCC
+# target; neither is proven to be the historical King's Field compiler.
+C_COMPILERS = ("gcc260-native", "gcc257-native")
 
 
 @dataclass(frozen=True)
@@ -69,7 +75,7 @@ def _profile(name: str, row: object) -> Profile:
         raise ValueError(f"profile {name!r} must be a TOML table")
     allowed = {
         "language", "compiler", "optimization", "small_data",
-        "aspsx_version", "cc1_flags",
+        "aspsx_version", "cc1_flags", "maspsx_flags",
     }
     extra = set(row) - allowed
     if extra:
@@ -80,9 +86,10 @@ def _profile(name: str, row: object) -> Profile:
             f"profile {name!r}: language must be one of {sorted(LANGUAGE_SUFFIXES)}"
         )
     compiler = str(row.get("compiler", ""))
-    if language == "c" and compiler != "gcc260-native":
+    if language == "c" and compiler not in C_COMPILERS:
         raise ValueError(
-            f"profile {name!r}: only the explicit gcc260-native probe is supported"
+            f"profile {name!r}: C compiler must be one of the explicit probes "
+            f"{C_COMPILERS}"
         )
     if language == "assembly" and compiler != "gnu-as":
         raise ValueError(f"profile {name!r}: assembly compiler must be gnu-as")
@@ -97,6 +104,13 @@ def _profile(name: str, row: object) -> Profile:
     flags = row.get("cc1_flags", [])
     if not isinstance(flags, list) or not all(isinstance(flag, str) for flag in flags):
         raise ValueError(f"profile {name!r}: cc1_flags must be an array of strings")
+    maspsx_flags = row.get("maspsx_flags", [])
+    if not isinstance(maspsx_flags, list) or not all(
+        isinstance(flag, str) for flag in maspsx_flags
+    ):
+        raise ValueError(f"profile {name!r}: maspsx_flags must be an array of strings")
+    if language == "assembly" and maspsx_flags:
+        raise ValueError(f"profile {name!r}: assembly profiles do not run maspsx")
     return Profile(
         name=name,
         language=language,
@@ -105,6 +119,7 @@ def _profile(name: str, row: object) -> Profile:
         small_data=small_data,
         aspsx_version=str(row.get("aspsx_version", "1.07")),
         cc1_flags=tuple(flags),
+        maspsx_flags=tuple(maspsx_flags),
     )
 
 

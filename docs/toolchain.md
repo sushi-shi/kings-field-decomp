@@ -42,11 +42,19 @@ headless DOSBox against preserved Release 2.5 objects. It verifies direct input
 ordering separately from lazy archive extraction and is part of
 `nix flake check`; see `vendored-functions.md` for the conclusions and limits.
 
-The shell also exposes `cc1psx-260` and `cpppsx-260`. These are native Linux
-rebuilds of the GCC 2.6.0 PSX target from Decompals old-gcc 0.17, pinned by
-archive SHA-256. They enable the live C -> assembly -> maspsx -> ELF matching
-loop. They do not collapse the two historical 2.6.0 distributions into one,
-prove host-binary identity, or prove that the retail game used GCC 2.6.0.
+The shell also exposes `cc1psx-260`/`cpppsx-260` and `cc1psx-257`/`cpppsx-257`.
+These are native Linux rebuilds of the GCC 2.6.0 and GCC 2.5.7 PSX targets
+from Decompals old-gcc 0.17, pinned by archive SHA-256 (`KF_GCC260_NATIVE`,
+`KF_GCC257_NATIVE`). They enable the live C -> assembly -> maspsx -> ELF
+matching loop. They do not collapse the two historical 2.6.0 distributions
+into one, prove host-binary identity, or prove which GCC built the retail
+game. A controlled probe on 2026-09-01 ran both historical DOS `CC1PSX` 2.6.0
+binaries under headless DOSBox and obtained assembly identical to the native
+2.6.0 rebuild, while the 2.5.7 rebuild reproduces retail's framed epilogue
+and load hoisting; see
+[`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md).
+The Release 2.5 GCC 2.4.1 frontend is a raw DJGPP v1 COFF image that needs a
+`GO32` extender the media does not include, so it has not been executed.
 
 The initializer keeps the useful verification half of the Gruntz project
 pattern, without its derived release archive:

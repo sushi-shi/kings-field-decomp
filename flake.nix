@@ -57,6 +57,22 @@
         chmod +x "$out/bin"/*
       '';
 
+      # Second native probe. GCC 2.5.7 is the closest available rebuild to the
+      # 1994 Psy-Q compiler family; its text epilogue and load hoisting match
+      # retail forms that 2.6.0 cannot emit, but it is still a probe.
+      gcc257NativeArchive = pkgs.fetchurl {
+        name = "decompals-old-gcc-0.17-gcc-2.5.7-psx.tar.gz";
+        url = "https://github.com/decompals/old-gcc/releases/download/0.17/gcc-2.5.7-psx.tar.gz";
+        hash = "sha256-DbH7QDx2blGwlDVLmhNqbB8BRXqkHMyiisRXt8tn2HE=";
+      };
+      gcc257Native = pkgs.runCommand "decompals-gcc-2.5.7-psx-0.17" {
+        nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
+      } ''
+        mkdir -p "$out/bin"
+        tar -xzf ${gcc257NativeArchive} -C "$out/bin"
+        chmod +x "$out/bin"/*
+      '';
+
       # Keep the verifier/stager in the default shell so the historical tools
       # are an actual first-load dependency, not a README-only prerequisite.
       psyqToolchain = pkgs.runCommand "kings-field-toolchain-psyq-candidates" {
@@ -101,6 +117,16 @@
       cpppsx260 = pkgs.writeShellApplication {
         name = "cpppsx-260";
         text = ''exec ${gcc260Native}/bin/cpp "$@"'';
+      };
+
+      cc1psx257 = pkgs.writeShellApplication {
+        name = "cc1psx-257";
+        text = ''exec ${gcc257Native}/bin/cc1 "$@"'';
+      };
+
+      cpppsx257 = pkgs.writeShellApplication {
+        name = "cpppsx-257";
+        text = ''exec ${gcc257Native}/bin/cpp "$@"'';
       };
 
       ghidraPsxLoader = pkgs.stdenvNoCC.mkDerivation {
@@ -327,6 +353,8 @@
           analysisPython
           cc1psx260
           cpppsx260
+          cc1psx257
+          cpppsx257
           maspsx
           mipsBinutilsAliases
           pkgs.git
@@ -344,6 +372,8 @@
           analysisPython
           cc1psx260
           cpppsx260
+          cc1psx257
+          cpppsx257
           maspsx
           mipsBinutilsAliases
           objdiff-cli
@@ -365,6 +395,8 @@
           maspsx
           cc1psx260
           cpppsx260
+          cc1psx257
+          cpppsx257
           crossBinutils
           mipsBinutilsAliases
           analysisPython
@@ -438,6 +470,7 @@
           export PSYQ_GCC260_RELEASE25_DIR="$PSYQ_DIR/compilers/gcc-2.6.0-release-2.5"
           export PSYQ_GCC260_DISK_DIR="$PSYQ_DIR/compilers/gcc-2.6.0-disk-1"
           export KF_GCC260_NATIVE="${gcc260Native}"
+          export KF_GCC257_NATIVE="${gcc257Native}"
           export GHIDRA_INSTALL_DIR="${pkgs.ghidra}/lib/ghidra"
           export NIX_GHIDRAHOME="${ghidraWithPlugins}/lib/ghidra/Ghidra"
           export GHIDRA_PSX_LOADER="${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr"
@@ -447,7 +480,7 @@
 
           echo "[kings-field] Psy-Q candidates: $PSYQ_DIR" >&2
           echo "[kings-field] compiler probes : GCC 2.4.1; two distinct GCC 2.6.0 builds" >&2
-          echo "[kings-field] native C probe   : cc1psx-260/cpppsx-260 (Decompals rebuild 0.17)" >&2
+          echo "[kings-field] native C probes  : cc1psx-260/cpppsx-260 and cc1psx-257/cpppsx-257 (Decompals rebuild 0.17)" >&2
           echo "[kings-field] analysis        : ghidra + PSX loader, pyghidra, psy-k, radare2, mipsel binutils" >&2
           echo "[kings-field] assembly        : maspsx + mipsel-linux-gnu-as" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
@@ -503,6 +536,8 @@
           objdiff-cli
           cc1psx260
           cpppsx260
+          cc1psx257
+          cpppsx257
           maspsx
         ];
       } ''
@@ -534,7 +569,7 @@
       '';
     in {
       packages.${system} = {
-        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
+        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
         default = psyqToolchain;
       };
 
