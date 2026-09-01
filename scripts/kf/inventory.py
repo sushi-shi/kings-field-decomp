@@ -5,6 +5,7 @@ WIP source identities over those rows without changing delinking symbols:
 
 * ``function_identities.tsv`` covers every carveable non-vendored function;
 * ``data_identities.tsv`` contains reviewed global/static identities; and
+* ``structures.tsv`` plus ``structure_fields.tsv`` describe checked C layouts;
 * ``propose`` writes instruction/xref/string dossiers under ``build/`` only.
 
 Address-derived names are explicit unresolved identities, not semantic claims.
@@ -19,7 +20,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from scripts.kf.paths import BUILD, RETAIL_CONFIG
+from scripts.kf.paths import BUILD, REPO, RETAIL_CONFIG
 from scripts.kf.retail import (
     IMAGE_LAYOUTS,
     IMAGE_ORDER,
@@ -55,6 +56,23 @@ DATA_IDENTITY_FIELDS = (
     "datatype",
     "owner",
     "confidence",
+    "evidence",
+    "note",
+)
+STRUCTURE_FIELDS = (
+    "name",
+    "size",
+    "layout_confidence",
+    "evidence",
+    "note",
+)
+STRUCTURE_FIELD_FIELDS = (
+    "structure",
+    "offset",
+    "size",
+    "name",
+    "datatype",
+    "meaning_confidence",
     "evidence",
     "note",
 )
@@ -105,6 +123,8 @@ GHIDRA_DATA_XREF_FIELDS = (
     "admitted_sites",
 )
 CONFIDENCE = {"address-only", "candidate", "supported", "proven"}
+LAYOUT_CONFIDENCE = {"candidate", "supported", "proven"}
+FIELD_CONFIDENCE = {"opaque", "candidate", "supported", "proven"}
 SCOPES = {"unknown", "global", "static", "function-static"}
 IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 REGISTER_NAMES = (
@@ -193,6 +213,42 @@ class DataIdentity:
         }
 
 
+@dataclass(frozen=True)
+class StructureIdentity:
+    name: str
+    size: int
+    layout_confidence: str
+    evidence: str
+    note: str
+
+
+@dataclass(frozen=True)
+class StructureFieldIdentity:
+    structure: str
+    offset: int
+    size: int
+    name: str
+    datatype: str
+    meaning_confidence: str
+    evidence: str
+    note: str
+
+
+@dataclass(frozen=True)
+class HeaderFieldLayout:
+    offset: int
+    size: int
+    name: str
+    datatype: str
+
+
+@dataclass(frozen=True)
+class HeaderStructureLayout:
+    size: int
+    alignment: int
+    fields: tuple[HeaderFieldLayout, ...]
+
+
 def _function_universe(config_dir: Path) -> dict[tuple[str, int], dict[str, str]]:
     _, functions = read_tsv(config_dir / "functions.tsv")
     _, vendors = read_tsv(config_dir / "functions_vendored.tsv")
@@ -271,6 +327,127 @@ def load_data_identities(
     return result
 
 
+def load_structure_identities(
+    config_dir: Path = RETAIL_CONFIG,
+) -> dict[str, StructureIdentity]:
+    path = config_dir / "structures.tsv"
+    fields, rows = read_tsv(path)
+    if fields != STRUCTURE_FIELDS:
+        raise ValueError(f"{path}: fields {fields!r}, expected {STRUCTURE_FIELDS!r}")
+    result = {}
+    for row in rows:
+        identity = StructureIdentity(
+            name=row["name"],
+            size=parse_int(row["size"]),
+            layout_confidence=row["layout_confidence"],
+            evidence=row["evidence"],
+            note=row["note"],
+        )
+        if identity.name in result:
+            raise ValueError(f"{path}: duplicate structure {identity.name!r}")
+        result[identity.name] = identity
+    return result
+
+
+def load_structure_field_identities(
+    config_dir: Path = RETAIL_CONFIG,
+) -> tuple[StructureFieldIdentity, ...]:
+    path = config_dir / "structure_fields.tsv"
+    fields, rows = read_tsv(path)
+    if fields != STRUCTURE_FIELD_FIELDS:
+        raise ValueError(
+            f"{path}: fields {fields!r}, expected {STRUCTURE_FIELD_FIELDS!r}"
+        )
+    return tuple(
+        StructureFieldIdentity(
+            structure=row["structure"],
+            offset=parse_int(row["offset"]),
+            size=parse_int(row["size"]),
+            name=row["name"],
+            datatype=row["datatype"],
+            meaning_confidence=row["meaning_confidence"],
+            evidence=row["evidence"],
+            note=row["note"],
+        )
+        for row in rows
+    )
+
+
+def _align(value: int, alignment: int) -> int:
+    return (value + alignment - 1) // alignment * alignment
+
+
+def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
+    """Calculate the target's 32-bit C layouts from the two checked headers."""
+    primitive_layouts = {
+        "s8": (1, 1),
+        "u8": (1, 1),
+        "s16": (2, 2),
+        "u16": (2, 2),
+        "s32": (4, 4),
+        "u32": (4, 4),
+    }
+    layouts: dict[str, HeaderStructureLayout] = {}
+    definition_pattern = re.compile(
+        r"(?:typedef\s+)?struct\s+([A-Za-z_]\w*)\s*\{(.*?)\}\s*"
+        r"(?:[A-Za-z_]\w*)?\s*;",
+        re.DOTALL,
+    )
+    declaration_pattern = re.compile(
+        r"(.+?)\s+(\**)([A-Za-z_]\w*)((?:\s*\[\s*(?:0x[0-9a-fA-F]+|\d+)\s*\])*)"
+    )
+    array_pattern = re.compile(r"\[\s*(0x[0-9a-fA-F]+|\d+)\s*\]")
+    for path in (REPO / "include/kf/game_types.h", REPO / "include/kf/semantic_types.h"):
+        text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
+        for match in definition_pattern.finditer(text):
+            name, body = match.groups()
+            offset = 0
+            alignment = 1
+            fields = []
+            for declaration in body.split(";"):
+                declaration = " ".join(declaration.split())
+                if not declaration:
+                    continue
+                field_match = declaration_pattern.fullmatch(declaration)
+                if field_match is None:
+                    raise ValueError(
+                        f"{path}: cannot parse {name} declaration {declaration!r}"
+                    )
+                datatype, pointer, field_name, arrays = field_match.groups()
+                datatype = datatype.removeprefix("const ").removeprefix("struct ")
+                if pointer:
+                    base_size, base_alignment = 4, 4
+                    display_type = f"{datatype} {'*' * len(pointer)}"
+                elif datatype in primitive_layouts:
+                    base_size, base_alignment = primitive_layouts[datatype]
+                    display_type = datatype
+                elif datatype in layouts:
+                    nested = layouts[datatype]
+                    base_size, base_alignment = nested.size, nested.alignment
+                    display_type = datatype
+                else:
+                    raise ValueError(
+                        f"{path}: unknown field type {datatype!r} in {name}.{field_name}"
+                    )
+                count = 1
+                dimensions = array_pattern.findall(arrays)
+                for dimension in dimensions:
+                    count *= int(dimension, 0)
+                size = base_size * count
+                offset = _align(offset, base_alignment)
+                if dimensions:
+                    display_type += "".join(f"[{int(value, 0)}]" for value in dimensions)
+                fields.append(HeaderFieldLayout(offset, size, field_name, display_type))
+                offset += size
+                alignment = max(alignment, base_alignment)
+            layouts[name] = HeaderStructureLayout(
+                size=_align(offset, alignment),
+                alignment=alignment,
+                fields=tuple(fields),
+            )
+    return layouts
+
+
 def _check_identifier(path: Path, field: str, value: str, key: tuple[str, int]) -> None:
     if value and IDENTIFIER.fullmatch(value) is None:
         raise ValueError(f"{path}: invalid {field} {value!r} at {key!r}")
@@ -291,7 +468,81 @@ def _check_parameters(path: Path, value: str, key: tuple[str, int]) -> None:
             raise ValueError(f"{path}: invalid parameter {parameter!r} at {key!r}")
 
 
+def _validate_structure_identities(config_dir: Path) -> dict[str, int]:
+    structures_path = config_dir / "structures.tsv"
+    fields_path = config_dir / "structure_fields.tsv"
+    structures = load_structure_identities(config_dir)
+    fields = load_structure_field_identities(config_dir)
+    header_layouts = _header_structure_layouts()
+    if set(structures) != set(header_layouts):
+        missing = sorted(set(header_layouts) - set(structures))
+        extra = sorted(set(structures) - set(header_layouts))
+        raise ValueError(
+            f"{structures_path}: coverage differs from checked C layouts "
+            f"(missing={missing!r}, extra={extra!r})"
+        )
+    if list(structures) != sorted(structures):
+        raise ValueError(f"{structures_path}: rows are not canonically sorted")
+    for name, identity in structures.items():
+        _check_identifier(structures_path, "name", name, ("structure", 0))
+        if identity.size <= 0 or identity.layout_confidence not in LAYOUT_CONFIDENCE:
+            raise ValueError(f"{structures_path}: invalid structure {name!r}")
+        if identity.size != header_layouts[name].size:
+            raise ValueError(
+                f"{structures_path}: {name} size is {identity.size:#x}, "
+                f"header layout is {header_layouts[name].size:#x}"
+            )
+        if not identity.evidence:
+            raise ValueError(f"{structures_path}: {name} lacks evidence")
+
+    ordered = [(row.structure, row.offset) for row in fields]
+    if ordered != sorted(ordered):
+        raise ValueError(f"{fields_path}: rows are not canonically sorted")
+    fields_by_structure: dict[str, list[StructureFieldIdentity]] = {}
+    for row in fields:
+        if row.structure not in structures:
+            raise ValueError(
+                f"{fields_path}: field belongs to unknown structure {row.structure!r}"
+            )
+        _check_identifier(fields_path, "name", row.name, (row.structure, row.offset))
+        if (
+            row.offset < 0
+            or row.size <= 0
+            or row.offset + row.size > structures[row.structure].size
+            or row.meaning_confidence not in FIELD_CONFIDENCE
+            or not row.datatype
+            or not row.evidence
+        ):
+            raise ValueError(
+                f"{fields_path}: invalid field {row.structure}.{row.name}"
+            )
+        fields_by_structure.setdefault(row.structure, []).append(row)
+
+    for name, header in header_layouts.items():
+        actual = fields_by_structure.get(name, [])
+        expected = header.fields
+        actual_shape = tuple(
+            (row.offset, row.size, row.name, row.datatype) for row in actual
+        )
+        expected_shape = tuple(
+            (row.offset, row.size, row.name, row.datatype) for row in expected
+        )
+        if actual_shape != expected_shape:
+            raise ValueError(
+                f"{fields_path}: {name} fields differ from checked C layout; "
+                f"actual={actual_shape!r}, expected={expected_shape!r}"
+            )
+    return {
+        "structures": len(structures),
+        "structure_fields": len(fields),
+        "structure_fields_named": sum(
+            row.meaning_confidence != "opaque" for row in fields
+        ),
+    }
+
+
 def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
+    structure_counts = _validate_structure_identities(config_dir)
     universe = _function_universe(config_dir)
     functions = load_function_identities(config_dir, required=True)
     path = config_dir / "function_identities.tsv"
@@ -400,6 +651,7 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
         "parameterized": sum(bool(row.parameters) for row in functions.values()),
         "data": len(data),
         "data_named": sum(row.confidence != "address-only" for row in data.values()),
+        **structure_counts,
     }
 
 

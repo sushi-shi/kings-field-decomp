@@ -8,10 +8,12 @@ symbols or pretending that WIP names are original symbols:
   carveable non-vendored function: 1 PSX, 495 GAME, and 244 OPEN rows;
 - `config/retail/data_identities.tsv` tracks initialized objects and referenced
   BSS objects that may become C globals, file-local statics, or
-  function-local statics; and
+  function-local statics;
+- `config/retail/structures.tsv` and `structure_fields.tsv` track complete
+  target sizes and every field offset/extent, including opaque ranges; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 165 of 740 functions: 162 GAME, one PSX, and two
+Current semantic coverage is 172 of 740 functions: 169 GAME, one PSX, and two
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -24,7 +26,8 @@ per-function evidence is in the
 `game_semantic_map_objects.tsv`, `game_semantic_map_runtime.tsv`,
 `game_semantic_audio_control.tsv`, `game_semantic_audio_spatial.tsv`,
 `game_semantic_camera_events.tsv`, `game_semantic_event_queries_matrix.tsv`,
-`game_semantic_player_death.tsv`, and `game_semantic_player_combat.tsv` files
+`game_semantic_player_death.tsv`, `game_semantic_player_combat.tsv`, and
+`game_semantic_player_stats.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
 [`screen-images.md`](screen-images.md), [`actor-system.md`](actor-system.md),
@@ -32,11 +35,14 @@ described in [`save-system.md`](save-system.md),
 [`camera-and-map-events.md`](camera-and-map-events.md),
 [`event-queries-and-matrix-effects.md`](event-queries-and-matrix-effects.md),
 [`player-vitals-and-death.md`](player-vitals-and-death.md), and
-[`player-combat.md`](player-combat.md).
+[`player-combat.md`](player-combat.md),
+[`player-stats-and-equipment.md`](player-stats-and-equipment.md), and
+[`structure-layouts.md`](structure-layouts.md).
 
-The current first pass contains 3,622 data identities, including 838
-non-overlapping BSS extents. Eighty-nine data identities have semantic review:
-27 in loaded storage and 62 in BSS. Eight loaded identities are candidate or
+The current first pass contains 3,593 data identities. The lower row count is
+progress: field-sized and pointer-sized seeds are merged when evidence proves
+an owning table or structure. 123 data identities now have semantic review.
+Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick
 state. The save pass adds typed shared pointers for the 0x280-byte header and
@@ -91,7 +97,7 @@ counted as game progress merely because its exact Release 2.5 FID missed.
 The camera/event pass names three functions operating on a caller-owned
 `KfCameraPathState` and four functions operating on map-event state. It replaces
 41 field-sized BSS candidates with `map_event_pool`, names the following
-`current_map_event` pointer and four-byte `map_progress_state`, and aggregates
+`current_map_event` pointer and four-byte `player_progress_state`, and aggregates
 the live camera transform into `camera_position` and `camera_rotation`. These
 five objects retain `scope=unknown`: multiple xrefs prove shared state but not
 external versus file-local linkage. Six instruction-word false positives are
@@ -119,11 +125,23 @@ directly observed status resistance, and four signed status timers. All eleven
 objects retain unknown source linkage, and their adjacency is not treated as
 proof of one original structure. Component and effect lore remains numbered.
 
+The player stats/equipment pass names experience and level growth, hidden
+physical-power and magic training, combat-stat recalculation, and magic,
+weapon, and six-slot equipment selection. It aggregates both compiler switch
+tables, the forty-record runtime level-growth table, POWER charge state, and
+packed sound references. Component lore and unresolved record fields remain
+numbered or opaque.
+
 Functions owned by an object family use `owner_action`, with the same parts in
 the `owner` and `action` columns. Signatures use semicolon-separated C
 declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
+
+The structure inventory currently covers 31 types and 205 fields. 153 fields
+have semantic names and 52 exact ranges remain explicitly opaque. `kf inventory
+check` derives the 32-bit layouts from the checked C headers and rejects any
+TSV disagreement in size, offset, extent, name, or datatype.
 
 Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
@@ -131,7 +149,8 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfActorPlacement`,
 `KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObjectDefinition`,
 `KfMapObject`, `KfCameraPathPoint`, `KfCameraPathState`,
-`KfMapEventDefinition`, `KfMapEvent`, `KfMapProgressState`, `KfPlayerVitals`,
+`KfMapEventDefinition`, `KfMapEvent`, `KfPlayerProgressState`,
+`KfPlayerLevelGrowth`, `KfPlayerVitals`, `KfPlayerAttackChargeState`,
 `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
 `KfSavePayload` live in `include/kf/semantic_types.h` with compile-time size
 checks; established reconstruction types such as `KfMatrix` remain in

@@ -53,7 +53,7 @@ The pass replaces field-sized candidates with five reviewed objects:
 | --- | --- | --- | --- |
 | `0x8009db88` | `map_event_pool` | `KfMapEvent[8]` | fixed eight-record loader and repeated `0x44` strides |
 | `0x8009dda8` | `current_map_event` | `KfMapEvent *` | setter plus two typed consumers |
-| `0x800a0788` | `map_progress_state` | `KfMapProgressState` | initialization, transition update, and event image clamp |
+| `0x800a0788` | `player_progress_state` | `KfPlayerProgressState` | level-up, floor transition, and event image clamp |
 | `0x800a0824` | `camera_position` | `KfVec4i` | render calls and camera-path copies |
 | `0x800a0838` | `camera_rotation` | `KfVec4s` | render calls and camera-path copies |
 

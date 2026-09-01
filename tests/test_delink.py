@@ -213,7 +213,7 @@ class MipsElfTests(unittest.TestCase):
             "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
         )
         progress = DataObject(
-            "GAME.EXE", 0x800A0788, 4, "map_progress_state"
+            "GAME.EXE", 0x800A0788, 4, "player_progress_state"
         )
         catalog = Catalog(
             functions={"GAME.EXE": (function,)},
@@ -230,7 +230,7 @@ class MipsElfTests(unittest.TestCase):
             "channel": "reachable-code",
             "target_va": f"{target:#x}",
             "target_region": "bss",
-            "target_name": "map_progress_state",
+            "target_name": "player_progress_state",
             "opcode": "lui+addiu",
             "confidence": "paired-reviewed",
             "status": "reviewed",
@@ -239,8 +239,8 @@ class MipsElfTests(unittest.TestCase):
         self.assertEqual(
             relocations,
             [
-                MipsRelocation(0, "R_MIPS_HI16", "map_progress_state"),
-                MipsRelocation(4, "R_MIPS_LO16", "map_progress_state"),
+                MipsRelocation(0, "R_MIPS_HI16", "player_progress_state"),
+                MipsRelocation(4, "R_MIPS_LO16", "player_progress_state"),
             ],
         )
         high, low = struct.unpack("<2I", blob)

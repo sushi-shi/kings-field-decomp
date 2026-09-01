@@ -35,6 +35,12 @@ also supports four global/static identities, including the previously missing
 saved-color-matrix BSS extent and its three carry-adjusted relocation pairs.
 The fourth `lui`/`ori` construction is retained as address evidence only.
 
+`game_semantic_player_stats.tsv` records player experience and level growth,
+base/effective physical-power and magic state, POWER/MAGIC/training counters,
+combat-stat recalculation, and magic/weapon/equipment selection. It also
+records the two compiler switch tables, the runtime-loaded 40-record level
+growth table, packed sound references, and mutable weapon-image path.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a

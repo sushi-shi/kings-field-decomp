@@ -78,7 +78,7 @@ typedef struct KfActorDefinition {
     u16 awareness_distance;
     u16 initial_health;
     u8 unknown_82[0x02];
-    u16 death_sound;
+    u16 experience_reward;
     u16 attack_components[3];
     u16 defenses[5];
     u8 unknown_96[0x02];
@@ -258,12 +258,25 @@ typedef struct KfMapEvent {
     u16 unknown_42;
 } KfMapEvent;
 
-typedef struct KfMapProgressState {
-    u8 unknown_00;
+typedef struct KfPlayerProgressState {
+    u8 level;
     u8 unknown_01;
-    u8 current_map_index;
-    u8 highest_map_index;
-} KfMapProgressState;
+    u8 current_floor;
+    u8 highest_floor;
+} KfPlayerProgressState;
+
+/*
+ * Record zero seeds a new player's values.  Later records provide the next
+ * absolute HP/MP values, stat steps, and cumulative experience threshold.
+ * After level 40 the game extrapolates from the final two records.
+ */
+typedef struct KfPlayerLevelGrowth {
+    u16 maximum_hp;
+    u16 maximum_mp;
+    u16 physical_power_step;
+    u16 magic_step;
+    u32 experience_threshold;
+} KfPlayerLevelGrowth;
 
 /*
  * The HUD, save summary, adjustment helpers, and full-restoration effect all
@@ -276,6 +289,11 @@ typedef struct KfPlayerVitals {
     u16 maximum_mp;
     u16 current_mp;
 } KfPlayerVitals;
+
+typedef struct KfPlayerAttackChargeState {
+    u16 current;
+    u16 committed;
+} KfPlayerAttackChargeState;
 
 /*
  * The memory-card file starts with the standard 0x200-byte PlayStation save
@@ -359,8 +377,14 @@ typedef char KfMapEvent_rotation_offset_is_54[
     (KF_OFFSET_OF(KfMapEvent, rotation) == 0x36) ? 1 : -1];
 typedef char KfMapEvent_rotation_target_offset_is_64[
     (KF_OFFSET_OF(KfMapEvent, rotation_target) == 0x40) ? 1 : -1];
-typedef char KfMapProgressState_size_is_4[
-    (sizeof(KfMapProgressState) == 4) ? 1 : -1];
+typedef char KfPlayerProgressState_size_is_4[
+    (sizeof(KfPlayerProgressState) == 4) ? 1 : -1];
+typedef char KfPlayerProgressState_current_floor_offset_is_2[
+    (KF_OFFSET_OF(KfPlayerProgressState, current_floor) == 2) ? 1 : -1];
+typedef char KfPlayerLevelGrowth_size_is_12[
+    (sizeof(KfPlayerLevelGrowth) == 0x0c) ? 1 : -1];
+typedef char KfPlayerLevelGrowth_experience_threshold_offset_is_8[
+    (KF_OFFSET_OF(KfPlayerLevelGrowth, experience_threshold) == 8) ? 1 : -1];
 typedef char KfPlayerVitals_size_is_8[
     (sizeof(KfPlayerVitals) == 8) ? 1 : -1];
 typedef char KfPlayerVitals_current_hp_offset_is_2[
@@ -369,6 +393,10 @@ typedef char KfPlayerVitals_maximum_mp_offset_is_4[
     (KF_OFFSET_OF(KfPlayerVitals, maximum_mp) == 4) ? 1 : -1];
 typedef char KfPlayerVitals_current_mp_offset_is_6[
     (KF_OFFSET_OF(KfPlayerVitals, current_mp) == 6) ? 1 : -1];
+typedef char KfPlayerAttackChargeState_size_is_4[
+    (sizeof(KfPlayerAttackChargeState) == 4) ? 1 : -1];
+typedef char KfPlayerAttackChargeState_committed_offset_is_2[
+    (KF_OFFSET_OF(KfPlayerAttackChargeState, committed) == 2) ? 1 : -1];
 #undef KF_OFFSET_OF
 typedef char KfSaveSlotSummary_size_is_24[
     (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];

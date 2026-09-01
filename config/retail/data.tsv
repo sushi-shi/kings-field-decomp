@@ -11,24 +11,9 @@ PSX.EXE	0x8001022c	0xa2c	0x4	data	exact-linked-symbol	_stacksize		LIBSN/SNDEF	XD
 PSX.EXE	0x80010230	0xa30	0x4	bss	exact-linked-section	SNMAIN_sbss		LIBSN/SNMAIN	startup zeroes exact four-byte sbss section
 PSX.EXE	0x80010234	0xa34	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 PSX.EXE	0x80010238	0xa38	0x5c8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012000	0x800	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012004	0x804	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012008	0x808	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x8001200c	0x80c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012010	0x810	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012014	0x814	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012018	0x818	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x8001201c	0x81c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012020	0x820	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012024	0x824	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012028	0x828	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80012000	0x800	0x2c	pointer-table	direct-references	player_combat_stat_effect_jump_table	code pointer[11]	game_semantic_player_stats.tsv	eleven compiler-emitted case targets for equipped item IDs 0x2a through 0x34
 GAME.EXE	0x8001202c	0x82c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012030	0x830	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012034	0x834	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012038	0x838	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x8001203c	0x83c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012040	0x840	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80012044	0x844	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80012030	0x830	0x18	pointer-table	direct-references	player_equipment_slot_jump_table	code pointer[6]	game_semantic_player_stats.tsv	six compiler-emitted case targets for the armor/accessory slot selector
 GAME.EXE	0x80012048	0x848	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x8001204c	0x84c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80012050	0x850	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -2762,8 +2747,10 @@ GAME.EXE	0x8005577b	0x43f7b	0x4	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x800557a3	0x43fa3	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <d~c
 GAME.EXE	0x800557bf	0x43fbf	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <d~#
 GAME.EXE	0x800557db	0x43fdb	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <d~c
-GAME.EXE	0x8005580c	0x4400c	0x10	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x8005581c	0x4401c	0xf	string	byte-pattern		ascii	investigation:string-census	escaped text: WEPON\\WEP00.MIM
+GAME.EXE	0x8005580c	0x4400c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055810	0x44010	0x9	data	direct-bytes	player_sound_refs	SoundRef[3]	game_semantic_player_stats.tsv	packed weapon-attack, death, and level-up sound references
+GAME.EXE	0x80055819	0x44019	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x8005581c	0x4401c	0xf	string	byte-pattern	weapon_image_path_template	ascii	game_semantic_player_stats.tsv	escaped text: WEPON\\WEP00.MIM; the two decimal digits are rewritten for the equipped weapon
 GAME.EXE	0x8005582b	0x4402b	0xd	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055838	0x44038	0xd	string	byte-pattern		ascii	investigation:string-census	escaped text: ENE0\\EI00.TIM
 GAME.EXE	0x80055845	0x44045	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

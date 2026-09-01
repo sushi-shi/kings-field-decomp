@@ -8,6 +8,8 @@ from scripts.kf.inventory import (
     _signature_hints,
     load_data_identities,
     load_function_identities,
+    load_structure_field_identities,
+    load_structure_identities,
     validate,
 )
 from scripts.kf.paths import CONFIG, RETAIL_CONFIG
@@ -40,9 +42,36 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3622)
-        self.assertGreaterEqual(counts["functions_named"], 165)
-        self.assertGreaterEqual(counts["data_named"], 89)
+        self.assertEqual(counts["data"], 3593)
+        self.assertGreaterEqual(counts["functions_named"], 172)
+        self.assertGreaterEqual(counts["data_named"], 123)
+        self.assertEqual(counts["structures"], 31)
+        self.assertEqual(counts["structure_fields"], 205)
+        self.assertEqual(counts["structure_fields_named"], 153)
+
+    def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
+        structures = load_structure_identities(RETAIL_CONFIG)
+        fields = load_structure_field_identities(RETAIL_CONFIG)
+        self.assertEqual(structures["KfActor"].size, 0x48)
+        self.assertEqual(structures["KfPlayerLevelGrowth"].size, 0x0C)
+        growth_fields = {
+            row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)
+            for row in fields
+            if row.structure == "KfPlayerLevelGrowth"
+        }
+        self.assertEqual(
+            growth_fields["experience_threshold"],
+            (0x08, 4, "u32", "supported"),
+        )
+        actor_fields = {
+            row.name: row for row in fields if row.structure == "KfActor"
+        }
+        self.assertEqual(actor_fields["position"].offset, 0x1C)
+        self.assertEqual(actor_fields["unknown_28"].meaning_confidence, "opaque")
+        definition_fields = {
+            row.name: row for row in fields if row.structure == "KfActorDefinition"
+        }
+        self.assertEqual(definition_fields["experience_reward"].offset, 0x84)
 
     def test_static_signature_hint_tracks_live_arguments_and_result(self) -> None:
         parameters, result, shape = _signature_hints(words(
@@ -254,6 +283,37 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_stats_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_stats.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 7)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_player_stats_relocations_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_player_stats"
+        )
+        self.assertEqual(len(campaign_rows), 269)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(by_site[0x80015F30]["target_name"], "player_physical_power_training")
+        self.assertEqual(by_site[0x800160E4]["target_name"], "player_level_growth_table")
+        self.assertEqual(by_site[0x80016864]["target_name"], "player_equipment_slot_jump_table")
+        self.assertEqual(by_site[0x80016B0C]["target_name"], "player_recalculate_combat_stats")
+        self.assertEqual(by_site[0x80016AAC]["target_name"], "weapon_image_path_template")
+        self.assertEqual(by_site[0x80012000]["confidence"], "pointer-reviewed")
 
     def test_player_combat_relocations_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
@@ -642,7 +702,7 @@ class InventoryTests(unittest.TestCase):
         map_progress = game.datum(0x800A0788)
         self.assertEqual(
             (map_progress.name, map_progress.datatype, map_progress.size),
-            ("map_progress_state", "KfMapProgressState", 4),
+            ("player_progress_state", "KfPlayerProgressState", 4),
         )
         map_events = game.datum(0x8009DB88)
         interior_event = game.data_owner(0x8009DC8A)

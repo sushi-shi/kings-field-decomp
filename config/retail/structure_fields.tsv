@@ -1,0 +1,208 @@
+# MANUALLY MANAGED - exact target offsets/extents for every field in structures.tsv.
+# opaque means the byte range is modeled for layout but has no supported semantic meaning yet.
+structure	offset	size	name	datatype	meaning_confidence	evidence	note
+KfActor	0x00	0x01	slot_state	u8	supported	semantic_types.h;asm;xrefs	allocation/activity state
+KfActor	0x01	0x01	definition_id	u8	supported	semantic_types.h;asm;xrefs	index into actor definitions
+KfActor	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	actor variant selector
+KfActor	0x03	0x01	heading_quadrant	u8	supported	semantic_types.h;asm;xrefs	coarse heading selector
+KfActor	0x04	0x01	tile_x	u8	supported	semantic_types.h;asm;xrefs	map tile x
+KfActor	0x05	0x01	tile_z	u8	supported	semantic_types.h;asm;xrefs	map tile z
+KfActor	0x06	0x01	lifecycle	u8	supported	semantic_types.h;asm;xrefs	actor lifecycle state
+KfActor	0x07	0x01	unknown_07	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x08	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
+KfActor	0x09	0x01	unknown_09	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x0a	0x01	animation_id	u8	supported	semantic_types.h;asm;xrefs	animation selector
+KfActor	0x0b	0x01	vertical_state	u8	supported	semantic_types.h;asm;xrefs	vertical movement selector
+KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x0e	0x02	local_x	s16	supported	semantic_types.h;asm;xrefs	local horizontal coordinate
+KfActor	0x10	0x02	local_z	s16	supported	semantic_types.h;asm;xrefs	local horizontal coordinate
+KfActor	0x12	0x02	animation_phase	u16	supported	semantic_types.h;asm;xrefs	animation phase/progress
+KfActor	0x14	0x02	health	u16	supported	semantic_types.h;asm;xrefs	current actor health
+KfActor	0x16	0x02	cell_x	s16	supported	semantic_types.h;asm;xrefs	map cell x
+KfActor	0x18	0x02	cell_z	s16	supported	semantic_types.h;asm;xrefs	map cell z
+KfActor	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x1c	0x0c	position	KfVec3i	supported	semantic_types.h;asm;xrefs	world position
+KfActor	0x28	0x04	unknown_28	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	actor rotation
+KfActor	0x32	0x02	unknown_32	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x34	0x04	unknown_34	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActor	0x38	0x01	action_timer	s8	supported	semantic_types.h;asm;xrefs	signed action countdown
+KfActor	0x39	0x01	collision_state	u8	supported	semantic_types.h;asm;xrefs	collision result/state
+KfActor	0x3a	0x02	movement_yaw	s16	supported	semantic_types.h;asm;xrefs	movement heading
+KfActor	0x3c	0x02	animation_step	s16	supported	semantic_types.h;asm;xrefs	animation increment
+KfActor	0x3e	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;xrefs	vertical velocity
+KfActor	0x40	0x02	movement_x	s16	supported	semantic_types.h;asm;xrefs	x movement component
+KfActor	0x42	0x02	movement_z	s16	supported	semantic_types.h;asm;xrefs	z movement component
+KfActor	0x44	0x02	movement_y	s16	supported	semantic_types.h;asm;xrefs	y movement component
+KfActor	0x46	0x02	unknown_46	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorActionProfile	0x00	0x02	far_distance	s16	supported	semantic_types.h;asm;xrefs	far distance threshold
+KfActorActionProfile	0x02	0x02	far_weight	s16	supported	semantic_types.h;asm;xrefs	far action weight
+KfActorActionProfile	0x04	0x02	near_distance	s16	supported	semantic_types.h;asm;xrefs	near distance threshold
+KfActorActionProfile	0x06	0x02	middle_weight	s16	supported	semantic_types.h;asm;xrefs	middle action weight
+KfActorActionProfile	0x08	0x02	near_weight	s16	supported	semantic_types.h;asm;xrefs	near action weight
+KfActorDefinition	0x00	0x11	unknown_00	u8[17]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x11	0x01	hit_action	s8	supported	semantic_types.h;asm;xrefs	action selected on hit
+KfActorDefinition	0x12	0x01	death_action	s8	supported	semantic_types.h;asm;xrefs	action selected on death
+KfActorDefinition	0x13	0x67	unknown_13	u8[103]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x7a	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
+KfActorDefinition	0x7c	0x02	collision_height	u16	supported	semantic_types.h;asm;xrefs	collision height
+KfActorDefinition	0x7e	0x02	awareness_distance	u16	supported	semantic_types.h;asm;xrefs	awareness range
+KfActorDefinition	0x80	0x02	initial_health	u16	supported	semantic_types.h;asm;xrefs	spawn health
+KfActorDefinition	0x82	0x02	unknown_82	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x84	0x02	experience_reward	u16	supported	semantic_types.h;asm;xrefs	passed to player_add_experience when the actor dies
+KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	semantic_types.h;asm;xrefs	three attack components
+KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	semantic_types.h;asm;xrefs	five defense components
+KfActorDefinition	0x96	0x02	unknown_96	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorPlacement	0x00	0x10	bytes	u8[16]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
+KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
+KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers
+KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	semantic_types.h;asm;xrefs	tone numbers
+KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	semantic_types.h;asm;xrefs	note numbers
+KfCameraPathPoint	0x00	0x10	position	KfVec4i	supported	semantic_types.h;asm;xrefs	path position
+KfCameraPathPoint	0x10	0x08	rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	path rotation
+KfCameraPathPoint	0x18	0x02	speed	s16	supported	semantic_types.h;asm;xrefs	segment speed
+KfCameraPathPoint	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfCameraPathState	0x00	0x04	points	KfCameraPathPoint *	supported	semantic_types.h;asm;xrefs	path point cursor/base
+KfCameraPathState	0x04	0x10	position	KfVec4i	supported	semantic_types.h;asm;xrefs	current integer position
+KfCameraPathState	0x14	0x08	rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	current integer rotation
+KfCameraPathState	0x1c	0x10	position_fixed	KfVec4i	supported	semantic_types.h;asm;xrefs	fixed-point position
+KfCameraPathState	0x2c	0x10	rotation_fixed	KfVec4i	supported	semantic_types.h;asm;xrefs	fixed-point rotation
+KfCameraPathState	0x3c	0x10	position_delta	KfVec4i	supported	semantic_types.h;asm;xrefs	per-frame position delta
+KfCameraPathState	0x4c	0x10	rotation_delta	KfVec4i	supported	semantic_types.h;asm;xrefs	per-frame rotation delta
+KfCameraPathState	0x5c	0x02	point_index	s16	supported	semantic_types.h;asm;xrefs	current path point index
+KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;xrefs	segment frame countdown
+KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
+KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
+KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
+KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
+KfMapCopyRegion	0x01	0x01	source_z	u8	supported	semantic_types.h;asm;xrefs	source z
+KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	semantic_types.h;asm;xrefs	destination x
+KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	semantic_types.h;asm;xrefs	destination z
+KfMapCopyRegion	0x04	0x01	width	u8	supported	semantic_types.h;asm;xrefs	region width
+KfMapCopyRegion	0x05	0x01	height	u8	supported	semantic_types.h;asm;xrefs	region height
+KfMapEvent	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	active state
+KfMapEvent	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
+KfMapEvent	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
+KfMapEvent	0x03	0x05	unknown_03	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x08	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
+KfMapEvent	0x09	0x01	image_index	u8	supported	semantic_types.h;asm;xrefs	current image index
+KfMapEvent	0x0a	0x01	image_dirty	u8	supported	semantic_types.h;asm;xrefs	image refresh flag
+KfMapEvent	0x0b	0x01	image_delay	u8	supported	semantic_types.h;asm;xrefs	image refresh delay
+KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0e	0x01	unknown_0e	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x10	0x01	unknown_10	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x11	0x01	unknown_11	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x12	0x02	rotation_phase	u16	supported	semantic_types.h;asm;xrefs	animated rotation phase
+KfMapEvent	0x14	0x04	position_x	s32	supported	semantic_types.h;asm;xrefs	world x
+KfMapEvent	0x18	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world z
+KfMapEvent	0x1c	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
+KfMapEvent	0x1e	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z
+KfMapEvent	0x20	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
+KfMapEvent	0x22	0x02	unknown_22	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x24	0x04	reference_x	s32	supported	semantic_types.h;asm;xrefs	query reference x
+KfMapEvent	0x28	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
+KfMapEvent	0x2c	0x04	reference_z	s32	supported	semantic_types.h;asm;xrefs	query reference z
+KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x34	0x02	unknown_34	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x36	0x02	rotation	u16	supported	semantic_types.h;asm;xrefs	current rotation
+KfMapEvent	0x38	0x02	unknown_38	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x40	0x02	rotation_target	u16	supported	semantic_types.h;asm;xrefs	target rotation
+KfMapEvent	0x42	0x02	unknown_42	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	initial state
+KfMapEventDefinition	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
+KfMapEventDefinition	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
+KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	semantic_types.h;asm;xrefs	map cell z
+KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	semantic_types.h;asm;xrefs	map cell x
+KfMapEventDefinition	0x05	0x05	unknown_05	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
+KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	semantic_types.h;asm;xrefs	z position offset
+KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	semantic_types.h;asm;xrefs	x position offset
+KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	semantic_types.h;asm;xrefs	initial rotation
+KfMapEventDefinition	0x14	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
+KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;xrefs	object definition ID
+KfMapObject	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x02	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
+KfMapObject	0x04	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z
+KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x08	0x04	position_x	s32	supported	semantic_types.h;asm;xrefs	world x
+KfMapObject	0x0c	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
+KfMapObject	0x10	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world z
+KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	object rotation
+KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x20	0x01	link_id	u8	supported	semantic_types.h;asm;xrefs	linked object/event ID
+KfMapObject	0x21	0x01	action_parameter	u8	supported	semantic_types.h;asm;xrefs	action parameter
+KfMapObject	0x22	0x02	spawn_sequence	u16	supported	semantic_types.h;asm;xrefs	spawn/order sequence
+KfMapObject	0x24	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;xrefs	vertical velocity
+KfMapObject	0x26	0x02	unknown_26	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x28	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
+KfMapObject	0x29	0x01	unknown_29	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x2a	0x02	action_timer	u16	supported	semantic_types.h;asm;xrefs	action timer
+KfMapObjectDefinition	0x00	0x01	behavior_type	u8	supported	semantic_types.h;asm;xrefs	behavior selector
+KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
+KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
+KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObjectPlacement	0x00	0x14	bytes	u8[20]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfMatrix	0x00	0x12	m	s16[3][3]	supported	game_types.h;Psy-Q-LIBGTE	3x3 rotation matrix
+KfMatrix	0x12	0x02	pad	s16	opaque	game_types.h;Psy-Q-LIBGTE	alignment/reserved lane
+KfMatrix	0x14	0x0c	t	s32[3]	supported	game_types.h;Psy-Q-LIBGTE	translation vector
+KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
+KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle
+KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	semantic_types.h;asm;xrefs	current POWER charge
+KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	semantic_types.h;asm;xrefs	attack-time POWER snapshot
+KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	level maximum HP
+KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	level maximum MP
+KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	semantic_types.h;asm;xrefs	physical-power increment
+KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	semantic_types.h;asm;xrefs	magic increment
+KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	semantic_types.h;asm;xrefs	cumulative level threshold
+KfPlayerProgressState	0x00	0x01	level	u8	supported	semantic_types.h;asm;xrefs	player level
+KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	semantic_types.h;asm;xrefs	current dungeon floor
+KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	semantic_types.h;asm;xrefs	highest reached floor
+KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	maximum HP
+KfPlayerVitals	0x02	0x02	current_hp	u16	supported	semantic_types.h;asm;xrefs	current HP
+KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	maximum MP
+KfPlayerVitals	0x06	0x02	current_mp	u16	supported	semantic_types.h;asm;xrefs	current MP
+KfPoolRecord	0x00	0x02	state	s16	supported	game_types.h;asm;xrefs	allocation state
+KfPoolRecord	0x02	0x02	unknown_02	s16	opaque	game_types.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x04	0x02	value_04	s16	candidate	game_types.h;asm;xrefs	accessed value; exact meaning unresolved
+KfPoolRecord	0x06	0x02	unknown_06	s16	opaque	game_types.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
+KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer
+KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
+KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	reserved/unknown header range
+KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
+KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	semantic_types.h;PlayStation-save-format	standard save header and icons
+KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	semantic_types.h;asm;xrefs	King's Field directory
+KfSavePayload	0x00	0x2580	bytes	u8[9600]	opaque	semantic_types.h;asm;xrefs	serialized payload fields unresolved
+KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
+KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
+KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
+KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate
+KfVec3s	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
+KfVec3s	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y coordinate
+KfVec3s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
+KfVec4i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
+KfVec4i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
+KfVec4i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate
+KfVec4i	0x0c	0x04	pad	s32	opaque	semantic_types.h;asm;xrefs	fourth lane meaning unresolved
+KfVec4s	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
+KfVec4s	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y coordinate
+KfVec4s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
+KfVec4s	0x06	0x02	pad	s16	opaque	semantic_types.h;asm;xrefs	fourth lane meaning unresolved
+KfVecXZs	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
+KfVecXZs	0x02	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
+SoundRef	0x00	0x01	program	u8	supported	semantic_types.h;Psy-Q-LIBSND	program number
+SoundRef	0x01	0x01	tone	u8	supported	semantic_types.h;Psy-Q-LIBSND	tone number
+SoundRef	0x02	0x01	note	u8	supported	semantic_types.h;Psy-Q-LIBSND	note number

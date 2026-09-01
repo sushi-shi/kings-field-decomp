@@ -464,6 +464,7 @@
         cp -r ${./scripts} project/scripts
         cp -r ${./tests} project/tests
         cp -r ${./config} project/config
+        cp -r ${./include} project/include
         cp -r ${./src} project/src
         cd project
         python3 -m unittest discover -s tests -v
@@ -487,6 +488,7 @@
         mkdir project
         cp -r ${./scripts} project/scripts
         cp -r ${./config} project/config
+        cp -r ${./include} project/include
         cd project
         python3 scripts/kf/retail.py config/retail
         python3 -m scripts.kf.inventory check --config-dir config/retail

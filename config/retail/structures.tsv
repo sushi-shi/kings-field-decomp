@@ -1,0 +1,34 @@
+# MANUALLY MANAGED - target C layouts used by semantic function/data identities.
+# A supported layout proves current size/offset modeling, not an original typedef spelling.
+name	size	layout_confidence	evidence	note
+KfActor	0x48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	live actor record; several field meanings remain opaque
+KfActorActionProfile	0x0a	supported	semantic_types.h;game_semantic_actor_ai.tsv;asm;xrefs	five-halfword actor action weighting record
+KfActorDefinition	0x98	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
+KfActorPlacement	0x10	supported	semantic_types.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
+KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
+KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
+KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
+KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
+KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
+KfMapEvent	0x44	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
+KfMapEventDefinition	0x18	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
+KfMapObject	0x2c	supported	semantic_types.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
+KfMapObjectDefinition	0x08	supported	semantic_types.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
+KfMapObjectPlacement	0x14	supported	semantic_types.h;game_semantic_map_objects.tsv;runtime-stride	placement record extent; fields remain opaque
+KfMatrix	0x20	supported	game_types.h;Psy-Q-LIBGTE;asm;xrefs	PlayStation 3x3 rotation plus translation matrix layout
+KfPitchYaw	0x04	supported	semantic_types.h;asm;xrefs	two signed halfword angles
+KfPlayerAttackChargeState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
+KfPlayerLevelGrowth	0x0c	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
+KfPlayerProgressState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
+KfPlayerVitals	0x08	supported	semantic_types.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
+KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xrefs	generic allocation-pool record
+KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
+KfSaveHeader	0x280	supported	semantic_types.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
+KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	serialized game-slot payload extent; fields remain opaque
+KfSaveSlotSummary	0x18	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	six summary words with unresolved individual meanings
+KfVec3i	0x0c	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates
+KfVec3s	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates
+KfVec4i	0x10	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates plus retained fourth lane
+KfVec4s	0x08	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates plus retained fourth lane
+KfVecXZs	0x04	supported	semantic_types.h;asm;xrefs	two signed horizontal halfword coordinates
+SoundRef	0x03	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	packed LIBSND program/tone/note reference
