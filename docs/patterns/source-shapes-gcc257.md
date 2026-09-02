@@ -635,3 +635,55 @@ Residues recorded in the module (not steered):
   re-forms `lui/addiu` per access. Both are the allocation / registered-base
   classes shared with `func_80021afc` and the documented `player_state`
   residues, not structural errors.
+
+## menu sub-panels (map / magic / options)
+
+Witnesses come from `src/game/menu_panels.c` (`game.menu_panels`, the contiguous
+`0x80022d7c..0x800238d8` run directly after `menu.c`): the map-item viewer
+`func_80022d7c` (drawn from the item panel), the magic-cast panel
+`func_8002317c` (hub option 1), and the option sub-menu dispatcher
+`func_800236ac` (hub option 2). The unit owns `RODATA(0x800122e4, 0x2c)`: the
+`"MAP\M00."` path literal followed by `func_800236ac`'s eight-entry switch table.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `lui s3,&bank+120; addiu s5,s3,-120` hoisted into the preheader, each `AddPrim` target formed as `buffer*160 + (s3 - k*40)` | model the untyped disc-loaded sprite bank as a typed 2-D array `POLY_FT4 DAT_800580e8[2][4]` and index `&DAT_800580e8[buffer][k]`; loop.c hoists `&bank[0][3]` (the highest element, +120) as the giv base and derives the lower rows by subtraction. A `(POLY_FT4(*)[4])` pointer local keeps the +0 base and adds, and never hoists | `func_80022d7c` `0x80022d7c` (exact) |
+| a shared `j loop; addiu frame,1` reached from the `frame<2` and `frame==2` arms, `frame>2` reaching the loop head without the increment | `if (frame < 2) { frame++; } else if (frame == 2) { wait; frame++; } else { if (poll()==0) continue; wait; return; }` — an explicit per-arm `frame++`; a single trailing `frame++` after the `if` chain leaves a dead cross-jumped `j loop; addiu` copy | same |
+| `move s2,zero` (the frame counter) scheduled as the second instruction, ahead of the `char path` literal copy and its `memset` | declare `s32 frame = 0;` *before* the `char path[16]` string local: GCC emits the counter's `li 0` at function entry only when its initializer precedes the block move; declared after, the scheduler sinks it below `memset` | same |
+| `char path[16] = "MAP\\M00.";` -> 9-byte `lwl/lwr`+`lb` copy then `memset(path+9, 0, 7)` | the 9-byte string literal is carved by the `RODATA` claim as a `.rodata`-local reference (addend 0), matching for a literal that begins the section | same |
+
+Delinker/reloc curation learned here:
+
+- `func_8002317c` reads `magic_records[selection].mp_cost` twice (the affordability
+  test and the deduction). Both are raw `lui 0x800a; addiu -12688` in the linked
+  image; the census carried no rows, so both need hand-added `mips_hi16_lo16`
+  pairs to `magic_records` (`+16`). The delinker withholds a pair as
+  `instruction-pair-mismatch:HI site is not LUI` when `site_va` is put on the
+  preceding `lhu` instead of the `lui` — the HI site must be the exact `lui`.
+- The map sprite bank base is likewise unrelocated in the census: `func_80022d7c`
+  forms `&DAT_800580e8[0][3]` as `lui 0x8006; addiu -32416` with no row. Adding
+  the `mips_hi16_lo16` pair to `DAT_800580e8` (`+120`) resolves it once the
+  source hoists the same `+120` base.
+
+Residues recorded in the module (not steered):
+
+- Jump-table `.align 3` (toolchain, `func_800236ac`, blocks exact): `cc1psx-257`
+  emits `.align 3` before the switch jump table, so with the `"MAP\M00."` string
+  (9 bytes) leading the unit's one `.rodata` claim the table lands at offset 16.
+  The retail object placed the table at offset 12 (its `.rodata` starts at the
+  4-mod-8 address `0x800122e4`, so `.align 3` and `.align 2` coincide there, but
+  its section alignment of 4 proves the original used `.align 2`). Referents,
+  calls, CFG and register allocation otherwise match; the switch load's addend
+  (`+16` vs `+12`) and the four `.rodata` padding bytes are the only residue.
+  Unattributed — the same open compiler-build question as the register
+  permutation class, not steerable from C.
+- `func_800236ac` also leaves `selection = -1` in the `jal func_8002abb4` delay
+  slot where retail fills the preceding `bne result,-99` delay slot with it; the
+  reorg heuristic differs when a call immediately follows the reset store.
+- `func_8002317c` `0x8002317c` (95.9%): the magic panel clones the `func_80022608`
+  consumable panel and inherits its classes — the `selection = -99` default
+  scheduled early instead of into the `func_80028380 != -1` test's delay slot,
+  the spell-list build's two givs (`name` pointer, `magic_records[code]` offset)
+  incremented in the opposite order, and the window-cursor `if (window != 0)`
+  test inverted with its arms swapped. Referents, calls, constants, the MP
+  affordability/deduction and the four spell effects all match.
