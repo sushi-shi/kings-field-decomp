@@ -522,9 +522,21 @@ source = "src/game/lighting.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map_floor_scripts"
+image = "GAME.EXE"
+source = "src/game/map_floor_scripts.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_800342e4"
 image = "GAME.EXE"
 source = "src/game/func_800342e4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_floor_scripts_b"
+image = "GAME.EXE"
+source = "src/game/map_floor_scripts_b.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
