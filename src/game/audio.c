@@ -1,12 +1,11 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfPlayerState player_state;
+
 extern KfAudioState audio_state;
 extern u8 audio_sequence_table[];
-extern u8 audio_music_enabled;
-extern u8 audio_effects_enabled;
 extern s32 audio_voice_slot_index;
-extern KfPlayerProgressState player_progress_state;
 extern const char DAT_80012a14[];
 extern const char DAT_80012a30[];
 
@@ -103,9 +102,9 @@ void audio_play_map_sequence(u8 sequence_id)
     char path[20] = "B0\\SND0.SEQ";
 
     audio_stop_sequence_fade();
-    if (audio_music_enabled) {
+    if (player_state.audio_music_enabled) {
         path[6] = sequence_id + '0';
-        path[1] = player_progress_state.current_floor + '0';
+        path[1] = player_state.progress_state.current_floor + '0';
         if (cd_file_load_into(audio_state.sequence_buffer, path) == 0) {
             audio_state.sequence_id =
                 func_800468d8(audio_state.sequence_buffer, audio_state.active_vab_id);
@@ -298,7 +297,7 @@ void audio_play_voice(
     if (program == 0 && tone == 0 && note == 0) {
         return;
     }
-    if (!audio_effects_enabled) {
+    if (!player_state.audio_effects_enabled) {
         return;
     }
     audio_voice_slot_index++;

@@ -1,9 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfPlayerState player_state;
+
 extern KfActorState actor_state;
 
-extern KfPlayerProgressState player_progress_state;
 extern KfActorActionProfile actor_action_profiles[25];
 extern u8 map_floor_height_grid[100][100];
 /* Unresolved flag consulted before damaging definition 7 on floor 5. */
@@ -285,7 +286,7 @@ void actor_apply_damage(
     s32 health;
     s32 remaining;
 
-    if (player_progress_state.current_floor == 5 && actor->definition_id == 7
+    if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7
         && DAT_8009f846 == 0) {
         return;
     }
@@ -655,7 +656,7 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     if (!actor_animation_crossed_phase(actor, phase)) {
         return;
     }
-    if (player_progress_state.current_floor == 5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
         audio_play_spatial_range(
             sound, (const struct KfVec4i *)&actor->position, 0x7f, 20000, 60000);
     } else {

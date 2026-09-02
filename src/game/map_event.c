@@ -1,9 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfPlayerState player_state;
+
 extern KfMapEvent *current_map_event;
 extern KfMapEvent map_event_pool[8];
-extern KfPlayerProgressState player_progress_state;
 extern u8 map_floor_height_grid[100][100];
 extern void func_8001fde4(s32 first, s32 second);
 extern void frame_pacer_wait(void);
@@ -26,9 +27,9 @@ ADDRESS(0x800337ac, 0x74)
 void map_event_refresh_image_for_progress(KfMapEvent *event)
 {
     if (event->image_index < event->image_limit) {
-        if (player_progress_state.highest_floor < event->image_limit) {
-            if (event->image_index != player_progress_state.highest_floor) {
-                event->image_index = player_progress_state.highest_floor;
+        if (player_state.progress_state.highest_floor < event->image_limit) {
+            if (event->image_index != player_state.progress_state.highest_floor) {
+                event->image_index = player_state.progress_state.highest_floor;
                 event->image_dirty = 1;
                 event->image_delay = 0;
             }

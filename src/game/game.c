@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfActorState actor_state;
+
 extern KfPlayerState player_state;
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
@@ -53,7 +55,6 @@ extern void frame_pacer_wait(void);
 extern void game_shutdown(void);
 
 extern u8 display_buffer_index;
-extern KfActorDefinition actor_definitions[12];
 extern KfMapObjectDefinition map_object_definitions[160];
 extern u32 DAT_8009ce60;
 extern KfMapEvent map_event_pool[8];
@@ -89,7 +90,7 @@ void game_main_loop(void)
     s32 vsync_event;
 
     memset(&display_buffer_index, 0, 0x249cc);
-    memset(actor_definitions, 0, 0x2b48);
+    memset(actor_state.definitions, 0, 0x2b48);
     memset(map_object_definitions, 0, 0x25b8);
     memset(&DAT_8009ce60, 0, 0xd28);
     memset(map_event_pool, 0, 0x2360);

@@ -1,16 +1,16 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
-extern struct KfVec4i camera_position;
-extern struct KfVec4s camera_rotation;
+extern KfPlayerState player_state;
+
 extern void camera_path_compute_segment(KfCameraPathState *path);
 
 ADDRESS(0x800335c0, 0xc0)
 void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points)
 {
     path->points = points;
-    path->position = camera_position;
-    path->rotation = camera_rotation;
+    path->position = player_state.camera_position;
+    path->rotation = player_state.camera_rotation;
     path->point_index = 0;
     path->position_fixed.x = path->position.x << 4;
     path->position_fixed.y = path->position.y << 4;

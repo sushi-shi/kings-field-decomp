@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfActorState actor_state;
+
 extern KfPlayerState player_state;
 
 extern s32 map_floor_height_for_cell_position(
@@ -16,8 +18,6 @@ extern u8 map_cell_attribute_grid[100][100];
 extern s16 map_cell_attribute_height_table[284];
 extern u8 map_collision_flag_grid[100][100];
 extern KfCollisionTarget collision_target;
-extern KfActor actor_pool[128];
-extern KfActorDefinition actor_definitions[12];
 extern KfMapObject map_object_pool[190];
 extern KfMapObjectDefinition map_object_definitions[160];
 extern KfMapEvent map_event_pool[8];
@@ -89,12 +89,12 @@ u32 collision_query_world(
         hit = actor_pool_find_overlap(point_x, point_y, point_z, radius, height);
         if (hit != -1) {
             if (flags & 0x800) {
-                KfActor *actor = &actor_pool[hit];
+                KfActor *actor = &actor_state.actors[hit];
 
                 collision_target.position = *(struct KfVec4i *)&actor->position;
                 collision_target.rotation = *(struct KfVec4s *)&actor->rotation;
                 collision_target.radius =
-                    actor_definitions[actor->definition_id].collision_radius;
+                    actor_state.definitions[actor->definition_id].collision_radius;
             }
             return hit | 0x100000;
         }
