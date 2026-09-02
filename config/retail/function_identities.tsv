@@ -124,7 +124,7 @@ GAME.EXE	0x8001ed38	func_8001ed38			void		address-only	candidate	mips-live-in-he
 GAME.EXE	0x8001ed90	func_8001ed90			void	u16 * arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001eedc	func_8001eedc			void	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001f0c4	func_8001f0c4			void	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8001f218	func_8001f218			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+GAME.EXE	0x8001f218	render_entities	render	entities	void		supported	candidate	asm;cfg;xrefs;render_frame-caller;pool-sweep-cell-cull	per-frame entity dispatcher: sweeps the map-object, actor, floor-item, actor-sprite, and map-event pools, culls each against the visible cell window, and calls the per-entity emitters
 GAME.EXE	0x8001f798	func_8001f798			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001f8b0	func_8001f8b0			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8001f9d4	func_8001f9d4			void	char * arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
