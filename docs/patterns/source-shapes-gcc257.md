@@ -342,3 +342,20 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `beqz s8` loop entry test, `li s8,1` in the delay slot, `li s8,2` conditional | `repeat = 1; if (code & 0x20) repeat = 2; for (i = 0; i < repeat; i++)` | same |
 | jump table at `0x800124d4` for codes 5..24 (20 entries) | a `switch (effect_code)` listing cases 5, 7..13, 22..24 with an empty default; the table is claimed with `RODATA(0x800124d4, 0x50)` | same |
 | `bnez s6 -> L; addiu v0,a0,-1500 (delay); addiu v0,a0,1500; L: sh` | `if (i == 0) offset.x += 1500; else offset.x -= 1500;` reorg hoists the else arm's instruction into the delay slot because the fallthrough overwrites it | same |
+
+### Action dispatcher (`actor_update_current_action`, 90%)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| `lbu; sh zero,18; sb v0,10` init idiom | `timer = 1; animation_id = a[k]; animation_phase = 0;` in that order: the scheduler fills the load delay with the independent halfword store. Phase first leaves `sh; lbu; nop; sb`, because a load cannot move above a store through a different base pointer (alias analysis assumes a conflict) | `actor_update_current_action` `0x8002fa88` |
+| `lbu v0,21(s1)` hoisted above seven zero stores, `sb v0,10` last | the animation assignment is the second statement; the dependent `sb` becomes ready last and trails the independent stores | same |
+| case 2: `beqz -> L0; beq 1 -> L1; j default` with bodies after | a nested `switch (actor->action_timer)` with `case 0`, `case 1`, `default`; the single `actor_advance_animation_wrapped` call sits after the inner switch and the blocked path leaves with `goto` to the vertical section. Duplicating the call per case merges the copies first and the compiler-made label then hides the shared aim call from cross-jumping (`jump_chain` only covers original labels) | same |
+| case 33's timer==0 path jumps into the far branch's aim call | one `move(1, 0); wrapped(steps[1])` tail after the if/else chain; the near-home branch leaves with `break` | same |
+| vertical switch through a 5-entry jump table | `case 0: break;` is listed explicitly: four cases stay below `CASE_VALUES_THRESHOLD` (5 without `casesi`) and compile to compares | same |
+| cases 2..4 jump back into case 1's land/fall blocks | `goto land` / `goto fall` into labels inside case 1. Duplicated blocks always lose the earlier copy. Case 2/3 is `if (next_y >= floor_height) goto land; goto fall;`: the jump-around-a-jump inversion yields `beqz -> land; j fall`, and with `<` the inverted `bnez -> fall; j land` cross-jumps into case 1's branch | same |
+| `beq -> A; beq -> B; j end; A; B` on `result & 0xffff` | a nested `switch (result & 0xffff)` with cases 0xfff0 and 0xfff1; the two-case dispatch is emitted ahead of the bodies | same |
+| `beq v1,0x10 -> stagger` into the damage block | `goto stagger` to a label after the `player_apply_damage` call inside the 0x80 branch | same |
+| `lh a1,54(s1)` / `lhu a1,60(s1)` passed without extension | `actor_try_attack_player`, `actor_advance_animation_clamped` and `actor_advance_animation_wrapped` are declared without prototypes in this unit, so halfword fields are promoted as `int` | same |
+| `move a0,v0; sra v1,a0,16` for the vertical collision result | a separate local for the vertical query. Sharing one `result` across three sites gives it nine references and a higher priority than the shifted copy, which swaps `a0` and `v1` | same |
+| `lui/addiu DAT_80055880+0x36` | `map_cell_attribute_height_table[attribute - 1]`; the reviewed relocation row names the table in `target_name` so the delinker measures the addend from it | same |
+| residue: `lbu v0,5; ... sll v1,v0,5` (tile load in `v0`, product chain in `v1`) | ours loads the tile into `v1` and accumulates in `v0`, costing two `nop`s on the following `lh a0,14`. Every multiply spelling, named-local variant and the 2.6.0 probe allocate the same way: local-alloc ranks the in-place accumulator (4 refs in 2 insns) above the load. Unattributed | same |

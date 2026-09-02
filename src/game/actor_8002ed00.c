@@ -22,7 +22,7 @@ extern s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_o
 
 /* Turns the current actor toward its movement yaw and steps along it; a negative DIRECTION walks backwards. */
 ADDRESS(0x8002ed00, 0xd4)
-void actor_move_along_heading(s32 direction, s32 stop_on_collision)
+s32 actor_move_along_heading(s32 direction, s32 stop_on_collision)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
@@ -41,7 +41,7 @@ void actor_move_along_heading(s32 direction, s32 stop_on_collision)
         delta.x = -delta.x;
         delta.z = -delta.z;
     }
-    actor_move_xz_with_collision(&delta, stop_on_collision);
+    return actor_move_xz_with_collision(&delta, stop_on_collision);
 }
 
 /*

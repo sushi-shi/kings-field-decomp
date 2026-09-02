@@ -279,7 +279,7 @@ typedef struct KfActorDefinition {
     u8 move_speed;
     u8 action_animations[16];
     u8 turn_rate;
-    u8 unknown_1f[0x09];
+    SoundRef sounds[3];
     struct KfVec3s attachment_offsets[2];
     s16 unknown_34;
     s16 unknown_36;
@@ -294,7 +294,7 @@ typedef struct KfActorDefinition {
     u16 experience_reward;
     u16 attack_components[3];
     u16 defenses[5];
-    u8 unknown_96[0x02];
+    u16 unknown_96;
 } KfActorDefinition;
 
 #define KF_ACTOR_ACTION_INDEX(action) ((action) - 2)

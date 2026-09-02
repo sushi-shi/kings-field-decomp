@@ -4,32 +4,6 @@
 # PS-X EXE retains no relocation directory: candidate does not mean linker truth.
 # BSS pair-scan rows remain withheld by safe delinking until individually reviewed.
 image	site_va	site_file_offset	paired_site_va	kind	channel	target_va	target_region	target_name	opcode	register	confidence	status	provenance
-PSX.EXE	0x80010034	0x834		mips26	reachable-code	0x800100f8	load	__main	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x8001003c	0x83c		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x8001004c	0x84c	0x80010050	mips_hi16_lo16	reachable-code	0x80010224	load	overlay_path_table	lui+addiu	s1	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x8001005c	0x85c		mips26	reachable-code	0x800101d4	load	_96_init	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010068	0x868		mips26	reachable-code	0x800101f4	load	Load	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010078	0x878		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010084	0x884		mips26	reachable-code	0x800101c4	load	EnterCriticalSection	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010094	0x894		mips26	reachable-code	0x80010204	load	Exec	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x8001009c	0x89c		mips26	reachable-code	0x800101d4	load	_96_init	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x800100a8	0x8a8		mips26	reachable-code	0x800101f4	load	Load	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x800100b8	0x8b8		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x800100c4	0x8c4		mips26	reachable-code	0x800101c4	load	EnterCriticalSection	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x800100d4	0x8d4		mips26	reachable-code	0x80010204	load	Exec	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x800100dc	0x8dc		mips26	reachable-code	0x80010054	load		j		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010100	0x900	0x80010104	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+addiu	v0	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010108	0x908	0x8001010c	mips_hi16_lo16	reachable-code	0x80010234	load		lui+addiu	v1	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010138	0x938	0x8001013c	mips_hi16_lo16	reachable-code	0x800101b4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010158	0x958	0x8001015c	mips_hi16_lo16	reachable-code	0x80010234	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010168	0x968	0x8001016c	mips_hi16_lo16	reachable-code	0x8001022c	load	_stacksize	lui+lw	v1	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010180	0x980	0x80010184	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010188	0x988	0x8001018c	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+addiu	gp	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010194	0x994		mips26	reachable-code	0x800101e4	load	InitHeap	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x8001019c	0x99c	0x800101a0	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+lw	ra	paired-reachable	candidate	investigation:relocs.tsv
-PSX.EXE	0x800101a8	0x9a8		mips26	reachable-code	0x80010028	load	main	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010224	0xa24		mips32_candidate	raw-word	0x80010014	load	overlay_path_OPEN	.word		range-only	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010228	0xa28		mips32_candidate	raw-word	0x80010000	load	overlay_path_GAME	.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80012000	0x800		mips32_candidate	raw-word	0x80015d88	load		.word		pointer-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80012004	0x804		mips32_candidate	raw-word	0x80015db4	load		.word		pointer-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80012008	0x808		mips32_candidate	raw-word	0x80015db4	load		.word		pointer-reviewed	reviewed	manual:game_semantic_player_stats
@@ -6008,130 +5982,131 @@ GAME.EXE	0x8002f9e8	0x1e1e8		mips26	instruction-word	0x8005049c	load	rand	jal		r
 GAME.EXE	0x8002fa18	0x1e218		mips26	instruction-word	0x80036f44	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002fa64	0x1e264	0x8002fa68	mips_hi16_lo16	instruction-word	0x80057b80	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002fa6c	0x1e26c		mips26	instruction-word	0x800330ac	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
-GAME.EXE	0x8002faa0	0x1e2a0	0x8002faa4	mips_hi16_lo16	reachable-code	0x8006e8d4	bss	actor_state	lui+lw	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002faa8	0x1e2a8	0x8002faac	mips_hi16_lo16	reachable-code	0x8006e8d0	bss	actor_state	lui+lw	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8002faa0	0x1e2a0	0x8002faa4	mips_hi16_lo16	reachable-code	0x8006e8d4	bss	actor_state	lui+lw	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002faa8	0x1e2a8	0x8002faac	mips_hi16_lo16	reachable-code	0x8006e8d0	bss	actor_state	lui+lw	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002fab8	0x1e2b8		mips26	reachable-code	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
-GAME.EXE	0x8002fad4	0x1e2d4	0x8002fad8	mips_hi16_lo16	reachable-code	0x80012524	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fb14	0x1e314		mips26	instruction-word	0x80030528	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fb4c	0x1e34c		mips26	instruction-word	0x8002fb78	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fb64	0x1e364		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fb78	0x1e378		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fb80	0x1e380		mips26	instruction-word	0x80030514	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fba0	0x1e3a0		mips26	instruction-word	0x8002fc3c	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fbcc	0x1e3cc		mips26	instruction-word	0x8002fc10	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fbd4	0x1e3d4		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fbe4	0x1e3e4		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fbf4	0x1e3f4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fbfc	0x1e3fc		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fc10	0x1e410	0x8002fc14	mips_hi16_lo16	reachable-code	0x8006e8b8	bss	actor_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002fc1c	0x1e41c	0x8002fc20	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002fc2c	0x1e42c		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fc34	0x1e434		mips26	instruction-word	0x80030524	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fc3c	0x1e43c		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fc6c	0x1e46c		mips26	instruction-word	0x80030524	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fc98	0x1e498		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fca4	0x1e4a4		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fcac	0x1e4ac		mips26	instruction-word	0x80030618	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fcd8	0x1e4d8		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fce4	0x1e4e4		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8002fad4	0x1e2d4	0x8002fad8	mips_hi16_lo16	reachable-code	0x80012524	load		lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fb14	0x1e314		mips26	instruction-word	0x80030528	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fb4c	0x1e34c		mips26	instruction-word	0x8002fb78	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fb64	0x1e364		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fb78	0x1e378		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fb80	0x1e380		mips26	instruction-word	0x80030514	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fba0	0x1e3a0		mips26	instruction-word	0x8002fc3c	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fbcc	0x1e3cc		mips26	instruction-word	0x8002fc10	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fbd4	0x1e3d4		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fbe4	0x1e3e4		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fbf4	0x1e3f4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fbfc	0x1e3fc		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc10	0x1e410	0x8002fc14	mips_hi16_lo16	reachable-code	0x8006e8b8	bss	actor_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc1c	0x1e41c	0x8002fc20	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc2c	0x1e42c		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc34	0x1e434		mips26	instruction-word	0x80030524	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc3c	0x1e43c		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc6c	0x1e46c		mips26	instruction-word	0x80030524	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fc98	0x1e498		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fca4	0x1e4a4		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fcac	0x1e4ac		mips26	instruction-word	0x80030618	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fcd8	0x1e4d8		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fce4	0x1e4e4		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002fcec	0x1e4ec	0x8002fcf0	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8002fd10	0x1e510		mips26	instruction-word	0x8002f8cc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fd18	0x1e518		mips26	instruction-word	0x800307fc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fd24	0x1e524		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fd34	0x1e534		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fd70	0x1e570		mips26	instruction-word	0x800319c8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fda8	0x1e5a8		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fdcc	0x1e5cc		mips26	instruction-word	0x8002fdec	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fdf0	0x1e5f0		mips26	instruction-word	0x80031834	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fe18	0x1e618		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fe58	0x1e658	0x8002fe5c	mips_hi16_lo16	reachable-code	0x8006e8b8	bss	actor_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002fe64	0x1e664	0x8002fe68	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002fe74	0x1e674		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fe84	0x1e684		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fe94	0x1e694		mips26	instruction-word	0x80030634	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fec0	0x1e6c0		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002fecc	0x1e6cc		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ff04	0x1e704		mips26	instruction-word	0x80030610	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8002fd10	0x1e510		mips26	instruction-word	0x8002f8cc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fd18	0x1e518		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fd24	0x1e524		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fd34	0x1e534		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fd70	0x1e570		mips26	instruction-word	0x800319c8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fda8	0x1e5a8		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fdcc	0x1e5cc		mips26	instruction-word	0x8002fdec	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fdf0	0x1e5f0		mips26	instruction-word	0x80031834	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fe18	0x1e618		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fe58	0x1e658	0x8002fe5c	mips_hi16_lo16	reachable-code	0x8006e8b8	bss	actor_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fe64	0x1e664	0x8002fe68	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fe74	0x1e674		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fe84	0x1e684		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fe94	0x1e694		mips26	instruction-word	0x80030634	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fec0	0x1e6c0		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002fecc	0x1e6cc		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff04	0x1e704		mips26	instruction-word	0x80030610	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002ff0c	0x1e70c	0x8002ff10	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8002ff30	0x1e730		mips26	instruction-word	0x80036d3c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ff38	0x1e738		mips26	instruction-word	0x8002cc64	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ff40	0x1e740		mips26	instruction-word	0x800307fc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ff6c	0x1e76c		mips26	instruction-word	0x800307fc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ff88	0x1e788		mips26	instruction-word	0x800307fc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ff90	0x1e790		mips26	instruction-word	0x800307fc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ffa4	0x1e7a4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030004	0x1e804	0x80030008	mips_hi16_lo16	instruction-word	0x800558b6	load		lui+addiu	at	paired-pattern	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030030	0x1e830		mips26	instruction-word	0x80030048	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030048	0x1e848		mips26	instruction-word	0x8002f228	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030050	0x1e850		mips26	instruction-word	0x8002f31c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030088	0x1e888		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800300b0	0x1e8b0		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800300c4	0x1e8c4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800300dc	0x1e8dc		mips26	instruction-word	0x8002f228	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800300e8	0x1e8e8		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800300f4	0x1e8f4		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003010c	0x1e90c		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030118	0x1e918		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8002ff30	0x1e730		mips26	instruction-word	0x80036d3c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff38	0x1e738		mips26	instruction-word	0x8002cc64	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff40	0x1e740		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff6c	0x1e76c		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff88	0x1e788		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff90	0x1e790		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ffa4	0x1e7a4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ffcc	0x1e7cc	0x8002ffd0	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:actor_actions;admitted-missing-site
+GAME.EXE	0x80030004	0x1e804	0x80030008	mips_hi16_lo16	instruction-word	0x800558b6	load	map_cell_attribute_height_table	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030030	0x1e830		mips26	instruction-word	0x80030048	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030048	0x1e848		mips26	instruction-word	0x8002f228	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030050	0x1e850		mips26	instruction-word	0x8002f31c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030088	0x1e888		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800300b0	0x1e8b0		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800300c4	0x1e8c4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800300dc	0x1e8dc		mips26	instruction-word	0x8002f228	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800300e8	0x1e8e8		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800300f4	0x1e8f4		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003010c	0x1e90c		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030118	0x1e918		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x80030154	0x1e954		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80030180	0x1e980		mips26	instruction-word	0x8003062c	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800301ac	0x1e9ac		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800301b8	0x1e9b8		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800301f0	0x1e9f0		mips26	instruction-word	0x80030610	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80030180	0x1e980		mips26	instruction-word	0x8003062c	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800301ac	0x1e9ac		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800301b8	0x1e9b8		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800301f0	0x1e9f0		mips26	instruction-word	0x80030610	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x80030234	0x1ea34		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80030260	0x1ea60		mips26	instruction-word	0x80014b2c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003026c	0x1ea6c		mips26	instruction-word	0x80014e08	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030278	0x1ea78		mips26	instruction-word	0x80014f40	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030290	0x1ea90		mips26	instruction-word	0x8002da6c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800302b0	0x1eab0		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800302bc	0x1eabc		mips26	instruction-word	0x8002e2e8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800302c4	0x1eac4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030308	0x1eb08		mips26	instruction-word	0x8002f558	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030310	0x1eb10		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030348	0x1eb48		mips26	instruction-word	0x80030378	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030394	0x1eb94		mips26	instruction-word	0x80030528	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003039c	0x1eb9c		mips26	instruction-word	0x8002f468	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800303a4	0x1eba4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800303ac	0x1ebac		mips26	instruction-word	0x8002f468	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800303b4	0x1ebb4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800303bc	0x1ebbc		mips26	instruction-word	0x8002f468	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800303c4	0x1ebc4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800303fc	0x1ebfc		mips26	instruction-word	0x80030500	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030498	0x1ec98		mips26	instruction-word	0x80014a64	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800304cc	0x1eccc		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800304e4	0x1ece4		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800304ec	0x1ecec		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003050c	0x1ed0c		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003051c	0x1ed1c		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030528	0x1ed28		mips26	instruction-word	0x8002dc3c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030530	0x1ed30		mips26	instruction-word	0x80030668	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003055c	0x1ed5c		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030568	0x1ed68		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030574	0x1ed74		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030588	0x1ed88		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003059c	0x1ed9c		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800305b0	0x1edb0		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800305c8	0x1edc8		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800305d4	0x1edd4		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800305ec	0x1edec		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800305f8	0x1edf8		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030610	0x1ee10		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030648	0x1ee48	0x8003064c	mips_hi16_lo16	reachable-code	0x8006e8b8	bss	actor_state	lui+lw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80030650	0x1ee50	0x80030654	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	a3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80030658	0x1ee58		mips26	instruction-word	0x8002d97c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030660	0x1ee60		mips26	instruction-word	0x8002e2e8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003067c	0x1ee7c	0x80030680	mips_hi16_lo16	reachable-code	0x80012724	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030698	0x1ee98		mips26	instruction-word	0x8001a44c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800306c4	0x1eec4		mips26	instruction-word	0x800307ec	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800306d8	0x1eed8		mips26	instruction-word	0x800307ec	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800306e0	0x1eee0		mips26	instruction-word	0x8001a44c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030704	0x1ef04		mips26	instruction-word	0x800306cc	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80030260	0x1ea60		mips26	instruction-word	0x80014b2c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003026c	0x1ea6c		mips26	instruction-word	0x80014e08	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030278	0x1ea78		mips26	instruction-word	0x80014f40	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030290	0x1ea90		mips26	instruction-word	0x8002da6c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800302b0	0x1eab0		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800302bc	0x1eabc		mips26	instruction-word	0x8002e2e8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800302c4	0x1eac4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030308	0x1eb08		mips26	instruction-word	0x8002f558	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030310	0x1eb10		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030348	0x1eb48		mips26	instruction-word	0x80030378	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030394	0x1eb94		mips26	instruction-word	0x80030528	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003039c	0x1eb9c		mips26	instruction-word	0x8002f468	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800303a4	0x1eba4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800303ac	0x1ebac		mips26	instruction-word	0x8002f468	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800303b4	0x1ebb4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800303bc	0x1ebbc		mips26	instruction-word	0x8002f468	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800303c4	0x1ebc4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800303fc	0x1ebfc		mips26	instruction-word	0x80030500	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030498	0x1ec98		mips26	instruction-word	0x80014a64	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800304cc	0x1eccc		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800304e4	0x1ece4		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800304ec	0x1ecec		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003050c	0x1ed0c		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003051c	0x1ed1c		mips26	instruction-word	0x8002ed00	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030528	0x1ed28		mips26	instruction-word	0x8002dc3c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030530	0x1ed30		mips26	instruction-word	0x80030668	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003055c	0x1ed5c		mips26	instruction-word	0x8002dc70	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030568	0x1ed68		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030574	0x1ed74		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030588	0x1ed88		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003059c	0x1ed9c		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800305b0	0x1edb0		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800305c8	0x1edc8		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800305d4	0x1edd4		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800305ec	0x1edec		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800305f8	0x1edf8		mips26	instruction-word	0x8002dccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030610	0x1ee10		mips26	instruction-word	0x8002d6a0	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030648	0x1ee48	0x8003064c	mips_hi16_lo16	reachable-code	0x8006e8b8	bss	actor_state	lui+lw	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030650	0x1ee50	0x80030654	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	a3	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030658	0x1ee58		mips26	instruction-word	0x8002d97c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030660	0x1ee60		mips26	instruction-word	0x8002e2e8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8003067c	0x1ee7c	0x80030680	mips_hi16_lo16	reachable-code	0x80012724	load		lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030698	0x1ee98		mips26	instruction-word	0x8001a44c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800306c4	0x1eec4		mips26	instruction-word	0x800307ec	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800306d8	0x1eed8		mips26	instruction-word	0x800307ec	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800306e0	0x1eee0		mips26	instruction-word	0x8001a44c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x80030704	0x1ef04		mips26	instruction-word	0x800306cc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x80030734	0x1ef34		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8003077c	0x1ef7c		mips26	instruction-word	0x80016324	load	player_apply_damage	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_combat
-GAME.EXE	0x80030794	0x1ef94		mips26	instruction-word	0x800307ec	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800307bc	0x1efbc		mips26	instruction-word	0x800307ec	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800307c4	0x1efc4		mips26	instruction-word	0x8001a44c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800307cc	0x1efcc		mips26	instruction-word	0x800306bc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800307dc	0x1efdc		mips26	instruction-word	0x800307ec	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80030794	0x1ef94		mips26	instruction-word	0x800307ec	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800307bc	0x1efbc		mips26	instruction-word	0x800307ec	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800307c4	0x1efc4		mips26	instruction-word	0x8001a44c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800307cc	0x1efcc		mips26	instruction-word	0x800306bc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x800307dc	0x1efdc		mips26	instruction-word	0x800307ec	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x800307f4	0x1eff4		mips26	reachable-code	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
 GAME.EXE	0x80030834	0x1f034	0x80030838	mips_hi16_lo16	reachable-code	0x8006c4b8	bss	actor_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_pool;carved-body-reviewed
 GAME.EXE	0x8003084c	0x1f04c		mips26	reachable-code	0x8002dbb0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
@@ -14956,3 +14931,29 @@ OPEN.EXE	0x80037224	0x25a24		mips32_candidate	raw-word	0x8003755c	load		.word		r
 OPEN.EXE	0x80037228	0x25a28		mips32_candidate	raw-word	0x80037558	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80037498	0x25c98		mips32_candidate	raw-word	0x800370c0	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8003749c	0x25c9c		mips32_candidate	raw-word	0x80030090	load	printf	.word		range-only	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010034	0x834		mips26	reachable-code	0x800100f8	load	__main	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x8001003c	0x83c		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x8001004c	0x84c	0x80010050	mips_hi16_lo16	reachable-code	0x80010224	load	overlay_path_table	lui+addiu	s1	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x8001005c	0x85c		mips26	reachable-code	0x800101d4	load	_96_init	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010068	0x868		mips26	reachable-code	0x800101f4	load	Load	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010078	0x878		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010084	0x884		mips26	reachable-code	0x800101c4	load	EnterCriticalSection	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010094	0x894		mips26	reachable-code	0x80010204	load	Exec	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x8001009c	0x89c		mips26	reachable-code	0x800101d4	load	_96_init	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x800100a8	0x8a8		mips26	reachable-code	0x800101f4	load	Load	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x800100b8	0x8b8		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x800100c4	0x8c4		mips26	reachable-code	0x800101c4	load	EnterCriticalSection	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x800100d4	0x8d4		mips26	reachable-code	0x80010204	load	Exec	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x800100dc	0x8dc		mips26	reachable-code	0x80010054	load		j		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010100	0x900	0x80010104	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+addiu	v0	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010108	0x908	0x8001010c	mips_hi16_lo16	reachable-code	0x80010234	load		lui+addiu	v1	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010138	0x938	0x8001013c	mips_hi16_lo16	reachable-code	0x800101b4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010158	0x958	0x8001015c	mips_hi16_lo16	reachable-code	0x80010234	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010168	0x968	0x8001016c	mips_hi16_lo16	reachable-code	0x8001022c	load	_stacksize	lui+lw	v1	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010180	0x980	0x80010184	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010188	0x988	0x8001018c	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+addiu	gp	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010194	0x994		mips26	reachable-code	0x800101e4	load	InitHeap	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x8001019c	0x99c	0x800101a0	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+lw	ra	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x800101a8	0x9a8		mips26	reachable-code	0x80010028	load	main	jal		control-flow	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010224	0xa24		mips32_candidate	raw-word	0x80010014	load	overlay_path_OPEN	.word		range-only	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010228	0xa28		mips32_candidate	raw-word	0x80010000	load	overlay_path_GAME	.word		range-only	candidate	investigation:relocs.tsv
