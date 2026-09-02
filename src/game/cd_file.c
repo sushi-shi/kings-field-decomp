@@ -1,6 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <LIBCD.H>
+#include <kf/psyq_audio.h>
 #include <MEMORY.H>
 
 /* Psy-Q Release 2.5 headers declare strcat without a prototype. */

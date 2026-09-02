@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_audio.h>
 
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
@@ -22,22 +23,6 @@ extern void func_8004a344(s16 sequence_id);
 extern void func_8004b6e0(s16 sequence_id);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
-extern void SsSetTickMode(s32 tick_mode);
-extern void SsStart(void);
-extern void SsEnd(void);
-extern void SsSetMVol(s16 left, s16 right);
-extern s16 SsUtSetReverbType(s16 type);
-extern void SsUtReverbOn(void);
-extern void SsUtSetReverbDepth(s16 left, s16 right);
-extern s16 SsVabTransBody(u8 *body, s16 vab_id);
-extern s16 SsVabTransCompleted(s16 immediate);
-extern void SsVabClose(s16 vab_id);
-extern void SsSeqSetVol(s16 sequence_id, s16 left, s16 right);
-extern void SsSeqPlay(s16 sequence_id, s8 play_mode, s16 loop_count);
-extern s16 SsUtKeyOn(
-    s16 vab_id, s16 program, s16 tone, s16 note, s16 fine, s16 left, s16 right);
-extern s16 SsUtKeyOff(s16 voice, s16 vab_id, s16 program, s16 tone, s16 note);
-extern s32 SsVoKeyOff(s32 voice, s32 program_tone);
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern int printf();

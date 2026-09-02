@@ -12,7 +12,7 @@
  * so Ss and Cd routines keep explicit declarations. MEMORY.H is left out so
  * memcpy and memset remain GCC builtins.
  */
-#include <SYS/TYPES.H>
+#include <sys/types.h>
 #include <LIBGTE.H>
 #include <LIBGPU.H>
 #include <LIBETC.H>

@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_audio.h>
 #include <KERNEL.H>
 
 extern KfDisplayState display_state;
@@ -32,8 +33,6 @@ extern s32 read(s32 file, void *buffer, s32 length);
 extern s32 write(s32 file, const void *buffer, s32 length);
 extern s32 erase(const char *name);
 /* LIBSND.H: int SsVoKeyOn(long, long, unsigned short, unsigned short); */
-extern s32 SsVoKeyOn(s32 voice, s32 program_tone, u16 left_volume, u16 right_volume);
-extern s32 SsVoKeyOff(s32 voice, s32 program_tone);
 
 /*
  * SYS/FILE.H maps these to the FCNTL.H FREAD/FWRITE/FCREAT bits; that header
