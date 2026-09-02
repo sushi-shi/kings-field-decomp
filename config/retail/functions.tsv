@@ -581,7 +581,7 @@ GAME.EXE	0x80046804	0x35004	0x30	0x30	1	function	mips-frame-carve			scripts/kf/a
 GAME.EXE	0x80046834	0x35034	0x58	0x58	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004688c	0x3508c	0x4c	0x4c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x800468d8	0x350d8	0xb0	0xb0	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x80046990	0x35190	0x104	0x104	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
+GAME.EXE	0x80046988	0x35188	0x10c	0x10c	1	function	manual-hoisted-load-entry			manual:audio-sequence-set-open	entry hoists the open-mask load above the frame; frame-carve missed the leading 8 bytes
 GAME.EXE	0x80046a94	0x35294	0x710	0x710	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return+relocation-candidate
 GAME.EXE	0x800471a4	0x359a4	0x544	0x544	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x800476e8	0x35ee8	0x1dc	0x1dc	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
