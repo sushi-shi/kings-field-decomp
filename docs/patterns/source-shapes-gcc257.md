@@ -289,3 +289,24 @@ Residues left in the same module (not steered):
 | `sra v1,v1,0x10` on a collision result | keep the result in an `s32` even though `collision_query_world` returns `u32` | same |
 | the second modulo test skipped when the first fails | nest the loop-sound test inside the effect branch | `actor_update_boss_death_sequence` `0x8002f8cc` |
 | `addiu s0,s3,8` reused for a byte table and, shifted, for two halfword tables | one `index = action + 8` local indexing the definition's per-action arrays | `actor_update_effect_action` `0x8002f468` |
+
+## map objects
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `beq a,11; slti a,11; slti a,83; slti a,80` ladder | `switch (action) { case 11: case 80: case 81: case 82: ... default: ... }`; the `&&` spelling folds `>= 11 && < 83` into one unsigned range test | `map_object_pool_trigger_link` `0x80031b54` |
+| `beq id,0xff` whose delay slot holds the index increment from the loop tail | `for (; index < N; index++, object++) { if (id == 0xff) continue; ... }`; a `while` with the body under `if (id != 0xff)` fills the slot from the fall-through instead | `map_object_pool_find_interaction_from` `0x800315c4` |
+| `-1` hoisted into `s7` for the distance compare | compare the call result inline in each branch (`if (f(...) != -1) return index;`); one compare after a `distance` join loads `-1` per iteration | same |
+| `sw x; ...; lw x` reload of a field just stored | store x, y, z first and compute the cells afterwards: any later store through the object pointer invalidates the CSE entry, so the cell reads reload | `map_object_spawn_effect` `0x80031834`, `map_object_spawn_actor_debris` `0x800319c8` |
+| `lui s0,&counter` kept in a saved register across the acquire call, `lhu; addiu; sh` then the old value stored | `u16 *sequence = &counter; ... object->spawn_sequence = (*sequence)++;` | same |
+| `srl s1,v0,3; andi s1,0xffff` with the parameter's register reused | a separate short-lived `u16 angle = (u32)rand() >> 3;` (the parameter is dead, so the angle inherits its register); reusing the parameter itself keeps it live and swaps the argument registers | `map_object_spawn_actor_debris` |
+| `addiu t3,a2,-1280` (definitions from the pool base) in a leaf loop | a local `definitions = map_object_state.definitions;` pointer hoisted by loop.c and folded by the second CSE pass; indexing the array directly keeps the absolute form | `map_object_pool_clear_link` `0x80031c44` |
+
+Residues left in the module:
+
+- `map_object_spawn_effect`: retail keeps the sequence pointer in `s0` and the
+  acquired object in `s1` with the return copy scheduled before the counter
+  store; every tried spelling reuses `s0` for the object.
+- `map_object_pool_clear_link`: retail's `kind < 8` branch targets the
+  following `kind != 8` test with an empty delay slot; ours jumps to the loop
+  tail and fills the slot with the pointer increment.

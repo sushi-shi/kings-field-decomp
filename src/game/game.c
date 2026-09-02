@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfMapObjectState map_object_state;
+
 extern KfDisplayState display_state;
 
 extern KfActorState actor_state;
@@ -56,7 +58,6 @@ extern void frame_pacer_vsync_callback(void);
 extern void frame_pacer_wait(void);
 extern void game_shutdown(void);
 
-extern KfMapObjectDefinition map_object_definitions[160];
 extern u32 DAT_8009ce60;
 extern KfMapEvent map_event_pool[8];
 extern u32 game_exit_code;
@@ -92,7 +93,7 @@ void game_main_loop(void)
 
     memset(&display_state.buffer_index, 0, 0x249cc);
     memset(actor_state.definitions, 0, 0x2b48);
-    memset(map_object_definitions, 0, 0x25b8);
+    memset(map_object_state.definitions, 0, 0x25b8);
     memset(&DAT_8009ce60, 0, 0xd28);
     memset(map_event_pool, 0, 0x2360);
     memset(&player_state, 0, sizeof(KfPlayerState));

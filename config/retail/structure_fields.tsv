@@ -216,6 +216,8 @@ KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	semantic_types.h;
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
 KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObjectPlacement	0x00	0x14	bytes	u8[20]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMatrix	0x00	0x12	m	s16[3][3]	supported	game_types.h;Psy-Q-LIBGTE	3x3 rotation matrix
 KfMatrix	0x12	0x02	pad	s16	opaque	game_types.h;Psy-Q-LIBGTE	alignment/reserved lane
 KfMatrix	0x14	0x0c	t	s32[3]	supported	game_types.h;Psy-Q-LIBGTE	translation vector

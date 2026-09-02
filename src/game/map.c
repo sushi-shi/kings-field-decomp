@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfMapObjectState map_object_state;
+
 extern const KfMapCopyRegion map_copy_regions[4];
 extern u8 map_floor_height_grid[100][100];
 extern u8 map_collision_grid[100][100];
@@ -8,8 +10,6 @@ extern u8 map_cell_attribute_grid[100][100];
 /* Two unnamed 100x100 map layers copied alongside the named grids. */
 extern u8 map_cell_orientation_grid[100][100];
 extern u8 map_collision_flag_grid[100][100];
-extern KfMapObjectDefinition map_object_definitions[160];
-extern KfMapObject map_object_pool[190];
 extern u16 map_object_effect_sequence_160;
 extern u16 map_object_effect_sequence_170;
 extern u16 map_object_effect_sequence_180;
@@ -62,7 +62,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     u8 cell_z;
     const KfMapObjectDefinition *definition;
 
-    definition = &map_object_definitions[object->object_id];
+    definition = &map_object_state.definitions[object->object_id];
     yaw &= 0xfff;
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
@@ -111,7 +111,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
 ADDRESS(0x80030eb8, 0xc4)
 s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 {
-    const KfMapObjectDefinition *definition = &map_object_definitions[object->object_id];
+    const KfMapObjectDefinition *definition = &map_object_state.definitions[object->object_id];
     s32 point_x = object->position_x;
     s32 point_z = object->position_z;
     s32 result;
@@ -144,7 +144,7 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 ADDRESS(0x80030f7c, 0x60)
 void map_object_pool_clear(void)
 {
-    KfMapObject *object = map_object_pool;
+    KfMapObject *object = map_object_state.objects;
     u16 index = 189;
 
     do {

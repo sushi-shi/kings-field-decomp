@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/game_types.h>
+#include <kf/semantic_types.h>
 
 extern void lighting_set_color_matrix(const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
 extern void func_8001fde4(s32 first, s32 second);
@@ -30,4 +30,29 @@ void color_matrix_set_rgb(s16 red, s16 green, s16 blue, struct KfMatrix *matrix)
     matrix->m[2][2] = blue;
     matrix->m[2][1] = blue;
     matrix->m[2][0] = blue;
+}
+
+extern KfPlayerState player_state;
+/* Psy-Q LIBGTE: ReadColorMatrix(MATRIX *). */
+extern void ReadColorMatrix(struct KfMatrix *matrix);
+
+/* Cycles the colour matrix green, cyan, white and back while restoring HP and MP. */
+ADDRESS(0x80033e10, 0xd4)
+void player_restore_vitals_with_color_cycle(void)
+{
+    struct KfMatrix saved;
+    struct KfMatrix first;
+    struct KfMatrix second;
+
+    ReadColorMatrix(&saved);
+    color_matrix_set_rgb(0, 0xfff, 0, &first);
+    lighting_transition_color_matrix(&saved, &first);
+    color_matrix_set_rgb(0, 0xfff, 0xfff, &second);
+    lighting_transition_color_matrix(&first, &second);
+    color_matrix_set_rgb(0xfff, 0xfff, 0xfff, &first);
+    lighting_transition_color_matrix(&second, &first);
+    lighting_transition_color_matrix(&first, &saved);
+    player_state.vitals.current_hp = player_state.vitals.maximum_hp;
+    player_state.vitals.current_mp = player_state.vitals.maximum_mp;
+    player_state.status_effect_flags &= 0xfff0;
 }

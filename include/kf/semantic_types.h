@@ -1035,4 +1035,19 @@ typedef struct KfRenderStateOpen {
 typedef char KfRenderStateOpen_size_is_0x100[(sizeof(KfRenderStateOpen) == 0x100) ? 1 : -1];
 /* === end render_state === */
 
+
+/* === map_object_state layout === */
+/*
+ * Map object state: the 160 definitions and the 190-object pool.
+ * map_object_pool_clear_link reaches the definitions from the pool base
+ * register (-1280), so the two arrays are one object in the original source.
+ */
+typedef struct KfMapObjectState {
+    KfMapObjectDefinition definitions[160];
+    KfMapObject objects[190];
+} KfMapObjectState;
+
+typedef char KfMapObjectState_size_is_0x25a8[(sizeof(KfMapObjectState) == 0x25a8) ? 1 : -1];
+/* === end map_object_state === */
+
 #endif

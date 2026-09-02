@@ -1,8 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
-extern KfMapObject map_object_pool[190];
-extern KfMapObjectDefinition map_object_definitions[160];
+extern KfMapObjectState map_object_state;
+
 extern s32 SquareRoot0(s32 value);
 
 extern s32 map_object_distance_to_point(
@@ -33,7 +33,7 @@ s32 map_object_distance_to_point(
 ADDRESS(0x800314f8, 0xcc)
 s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapObject *object = map_object_pool;
+    KfMapObject *object = map_object_state.objects;
     s16 index;
     u16 radius;
 
@@ -41,7 +41,7 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
         if (object->object_id == 0xff) {
             continue;
         }
-        radius = map_object_definitions[object->object_id].collision_radius;
+        radius = map_object_state.definitions[object->object_id].collision_radius;
         if (radius == 0) {
             continue;
         }

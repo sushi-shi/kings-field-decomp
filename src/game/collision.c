@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfMapObjectState map_object_state;
+
 extern KfActorState actor_state;
 
 extern KfPlayerState player_state;
@@ -18,8 +20,6 @@ extern u8 map_cell_attribute_grid[100][100];
 extern s16 map_cell_attribute_height_table[284];
 extern u8 map_collision_flag_grid[100][100];
 extern KfCollisionTarget collision_target;
-extern KfMapObject map_object_pool[190];
-extern KfMapObjectDefinition map_object_definitions[160];
 extern KfMapEvent map_event_pool[8];
 
 /*
@@ -103,12 +103,12 @@ u32 collision_query_world(
         hit = map_object_pool_find_near_point(point_x, point_z, radius);
         if (hit != -1) {
             if (flags & 0x800) {
-                KfMapObject *object = &map_object_pool[hit];
+                KfMapObject *object = &map_object_state.objects[hit];
 
                 collision_target.position = *(struct KfVec4i *)&object->position_x;
                 collision_target.rotation = *(struct KfVec4s *)&object->rotation;
                 collision_target.radius =
-                    map_object_definitions[object->object_id].collision_radius;
+                    map_object_state.definitions[object->object_id].collision_radius;
             }
             return hit | 0x200000;
         }

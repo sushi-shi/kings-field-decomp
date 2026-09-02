@@ -51,12 +51,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 734)
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 495)
-        self.assertEqual(counts["data"], 3295)
+        self.assertEqual(counts["data"], 3294)
         self.assertGreaterEqual(counts["functions_named"], 240)
-        self.assertGreaterEqual(counts["data_named"], 101)
-        self.assertEqual(counts["structures"], 59)
-        self.assertEqual(counts["structure_fields"], 513)
-        self.assertEqual(counts["structure_fields_named"], 429)
+        self.assertGreaterEqual(counts["data_named"], 100)
+        self.assertEqual(counts["structures"], 60)
+        self.assertEqual(counts["structure_fields"], 515)
+        self.assertEqual(counts["structure_fields_named"], 431)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -852,23 +852,10 @@ class InventoryTests(unittest.TestCase):
             (gameplay_sounds.name, gameplay_sounds.datatype, gameplay_sounds.size),
             ("gameplay_sound_refs", "SoundRef[13]", 0x27),
         )
-        map_object_definitions = game.datum(0x8006E8E0)
+        map_object_state = game.datum(0x8006E8E0)
         self.assertEqual(
-            (
-                map_object_definitions.name,
-                map_object_definitions.datatype,
-                map_object_definitions.size,
-            ),
-            (
-                "map_object_definitions",
-                "KfMapObjectDefinition[160]",
-                0x500,
-            ),
-        )
-        map_object_pool = game.datum(0x8006EDE0)
-        self.assertEqual(
-            (map_object_pool.name, map_object_pool.datatype, map_object_pool.size),
-            ("map_object_pool", "KfMapObject[190]", 0x20A8),
+            (map_object_state.name, map_object_state.datatype, map_object_state.size),
+            ("map_object_state", "KfMapObjectState", 0x25A8),
         )
         map_object_loader = game.function(0x80031008)
         self.assertEqual(
@@ -926,10 +913,6 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,
             "unknown",
-        )
-        self.assertEqual(
-            data_identities[("GAME.EXE", 0x8006EDE0)].scope,
-            "global",
         )
         effect_sequences = tuple(
             game.datum(va) for va in (0x80070E92, 0x80070E94, 0x80070E96)
