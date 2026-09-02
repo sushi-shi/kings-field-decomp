@@ -934,3 +934,31 @@ Reference count, not declaration order, drives GCC 2.5.7's callee-saved
 priority here — folding one redundant `count++` into the shared single-char
 emit tail dropped `count`'s priority just enough for the shorter-lived `args`
 pointer to win `s2`, matching retail exactly.
+
+## GAME polygon-emitter / geometry-render band (0x8001ed90..0x8001f218)
+
+The per-entity emitters that the frame renderer sweeps over the object, actor,
+map-event, effect and weapon pools.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `lhu` on both a pool field and a `render_state` view-position `long`, then `subu; sh` | `s16 screen.vx = pool->pos_x - (u16)render_state.view_position.vx;` — the `(u16)` cast of the long member folds the truncated subtract to `lhu` on both operands | `func_8001eedc` `0x8001eedc`, `func_8001f0c4` `0x8001f0c4` (EXACT) |
+| `RotTrans(&screen, sp+t, &flag)` writing the view-space position straight into a `MATRIX`'s `t` column at `matrix+0x14` | pass `(VECTOR *)&model.t` as the RotTrans output; a later `RotMatrix`/`matrix_set_rotation_*` fills `model.m` and `MulMatrix0/2` leaves `t` untouched | `func_8001f0c4`, `func_8001eedc` (EXACT) |
+| `negu a1,a1; jal; addiu a1,a1,50` (the add scheduled into the delay slot) | write `50 - y` as `-y + 50` so the probe forms `neg`+`addiu` instead of `li 0x32`+`subu` | `func_8001f798` `0x8001f798` (EXACT) |
+| `bnez cond,<project>` with the fallback block inline | invert to `if (visible == 0) { select; project; } else { project; }` so the zero case is the fall-through | `func_8001f0c4`, `func_8001eedc` (EXACT) |
+| a `render_state` member matrix reached as `addiu a0,base,-off` off a single view-position anchor register | keep the natural `render_state.view_matrix` / `render_state.pitch_matrix` member accesses; the probe anchors one base at `render_state+0xa4` and rematerialises the matrices as negative offsets | `func_8001ed90`, `func_8001eedc`, `func_8001f0c4` (EXACT for the latter two) |
+
+Local declaration order is load-bearing for these frames: the probe lays scalars
+out in declaration order above the outgoing-argument area, so the source lists
+`screen`, then `scale` (when present), then the model `MATRIX`, then the RotTrans
+`flag`, to reproduce `sp+24 / sp+32 / sp+48 / sp+80` (`func_8001eedc`).
+
+Open residue (not steered): `func_8001ed90` extracts a facing nibble as
+`sprite->orientation & 0xf0` and uses it in `beqz`/subtract. Retail zero-extends
+the masked byte with a redundant `andi 0xff` after the `andi 0xf0`; the value
+provably fits a byte, so cc1psx-257's `nonzero_bits` analysis elides the second
+mask regardless of whether the local is `u8`, `u32`, `(u8)`-cast, or built with a
+compound `&=` (the inverse of the byte-field cases above, where a wider local
+suppresses an `andi`). Referents, call set, CFG and every other instruction match;
+the single extra zero-extension is the only divergence, left as an unattributed
+instruction-selection residue rather than steered with dead code.
