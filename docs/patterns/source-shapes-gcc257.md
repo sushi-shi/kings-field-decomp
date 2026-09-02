@@ -1055,3 +1055,57 @@ Boundary note: `func_80046988`'s true entry is the hoisted mask load at
 `0x80046988`, eight bytes below the frame-carve start the census recorded
 (`0x80046990`); `functions.tsv`/`function_identities.tsv` were corrected and the
 stale `data.tsv` coverage-gap row at `0x80046988` removed.
+
+## item / inventory menu panels
+
+Campaign over the contiguous item/inventory/save-load menu-panel band
+`0x800249a8..0x8002589c` (four functions, dispatched from the hub menu
+`func_80022348` and the save-confirmation panel `func_800222b4`). All four are
+list-widget panels of the same shape as the banked `func_800238d8`
+(`menu_select`) and `func_80022608` (`menu`): a windowed cursor over rows drawn
+by the shared `func_8002abb4`/`func_80028914`/`func_80027ee4`/`func_8002ac34`
+frame helpers, an edge-triggered pad loop (`0x1000`/`0x4000`/`0x20`/`0x40`), and
+a `pad_read(1)`-release wait. Roles: `func_800249a8` drops a held item
+(filtering equipped copies via the seven equipment ids at `player_state+0x64`
+and `+0x90..+0x95`, then decrementing `DAT_800652a8[code]`); `func_80024e64` is
+the save/load hub; `func_800250c4` is the save panel (three slots, a
+card-format row at cursor 3, exit at 4); `func_8002552c` is the load panel
+(three `KfSaveSlotSummary` slots plus exit).
+
+Source shapes that were load-bearing:
+
+| Retail form | Source shape | Witness |
+| --- | --- | --- |
+| a single callee-saved base (`s5`) holds `DAT_800652a8` for the whole body; the build loop strength-reduces `inv[code]` into an advancing temp | index a stable base pointer (`inv = DAT_800652a8; inv[code]`, `inv[selection]--`) rather than an advancing `inv++`, so the exit decrement keeps the base alive across the calls | `func_800249a8` (5.7% -> 91.5%) |
+| catalogue read filtered to the "no card" path via `beq result,1` sharing the fall-through into the menu | write `if (read_catalog(..) != 1) { nodata; return -1; }` (the negated test), not `if (== 1) { menu } else { nodata }` | `func_8002552c`, `func_800250c4` |
+| `KfSaveSlotSummary summaries[3]` at `sp+16`; the load panel's confirm reads `summaries[cursor].fields[2]` (offset 8) for slot occupancy | the 24-byte `u32 fields[6]` summary, three of them (`0x48` bytes, matching the save panel's `memset(.., 0, sizeof)`) | both save/load panels |
+| the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | take `u8 *equip = &player_state.equipped_weapon_id;` and index `equip[0x2c]` etc., not the named `player_state.equipped_*` fields (which re-`lui` per field) | `func_800249a8` |
+
+Residues (structurally faithful, not steerable -- the list-widget compiler wall;
+do not chase):
+
+- `func_800249a8` (91.5%): a three-way callee-saved permutation --- retail
+  `selection=s1`, `codes`-base`=s2`, `input=s3`; cc1psx-257 rotates them to
+  `s1/s2/s3 = codes-base/input/selection`. The banked twin `func_800238d8`
+  lands `selection=s3`, so there is no fixed mapping; the extra build-loop
+  pressure (the `counts[]` scratch and `equip` base) moves the allocno order.
+  Also one loop delay-slot swap (retail advances the inventory temp `t0` in the
+  branch slot and the name pointer `t4` in the body; ours reverses it).
+  Declaration-order and induction-shape variants do not flip either; a `scan`
+  helper local is a forbidden fake and did not help.
+- `func_80024e64` (91.2%): the two-arm action dispatch (`if (action==0) load;
+  else if (action==1) save;`) -- retail branches *out of line* to the load/save
+  blocks and returns `move v0,s1` at the epilogue; cc1psx-257 inlines the load
+  block (inverting the first test) and schedules `move v0,result` into the
+  fall-through. A `switch (action)` did not change it. The `-1` constant does
+  hoist into `s6` as retail has it.
+- `func_8002552c` (58.0%): retail hoists the loop-invariant constants `1` and
+  `3` into callee-saved `s5`/`s6` (frame `0x78`); cc1psx-257 rematerialises them
+  with `li` at each compare (frame `0x70`, two fewer saved regs), which cascades
+  every downstream offset. The instruction stream is otherwise identical. The
+  nearly-identical save panel `func_800250c4` shows retail itself *not* hoisting
+  here, so this is a cost-model coin-flip, not a source fact.
+- `func_800250c4` (53.8%): retail keeps the reused `status` result in a
+  dedicated `s4` (six saved regs, frame `0x78`); cc1psx-257 coalesces it with
+  the `prev`/`i` temp in `s0` (five saved regs, frame `0x70`), again cascading
+  offsets. Same callee-saved-count residue as the load panel, opposite direction.
