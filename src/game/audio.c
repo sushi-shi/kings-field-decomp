@@ -1,13 +1,14 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+/* Error messages and the sequence path template of this unit in the retail data region. */
+RODATA(0x80012a14, 0x40)
+
 extern KfPlayerState player_state;
 
 extern KfAudioState audio_state;
 extern u8 audio_sequence_table[];
 extern s32 audio_voice_slot_index;
-extern const char DAT_80012a14[];
-extern const char DAT_80012a30[];
 
 /* Unresolved helpers: the LIBSND-shaped table/initialization pair, a file loader,
  * a sequence opener/stopper, and a frame wait. */
@@ -84,13 +85,13 @@ void audio_load_vab(u8 *vab_header, u8 *vab_body)
     audio_stop_sequence_fade();
     audio_state.active_vab_id = func_800446a8(vab_header, -1);
     if (audio_state.active_vab_id == -1) {
-        printf(DAT_80012a14);
+        printf("VAB headder open failed\n");
         return;
     }
     audio_state.vab_header = vab_header;
     audio_state.active_vab_id = SsVabTransBody(vab_body, audio_state.active_vab_id);
     if (audio_state.active_vab_id == -1) {
-        printf(DAT_80012a30);
+        printf("VAB body open failed\n");
         return;
     }
     SsVabTransCompleted(1);
