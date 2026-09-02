@@ -480,15 +480,33 @@ source = "src/game/menu_select.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_present_frame"
+image = "GAME.EXE"
+source = "src/game/menu_present_frame.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.primitive_buffer"
 image = "GAME.EXE"
 source = "src/game/primitive_buffer.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_list_util"
+image = "GAME.EXE"
+source = "src/game/menu_list_util.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.game_state"
 image = "GAME.EXE"
 source = "src/game/game_state.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_texture_load"
+image = "GAME.EXE"
+source = "src/game/menu_texture_load.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
