@@ -2,6 +2,13 @@
 #include <kf/game_types.h>
 #include <MALLOC.H>
 
+/* Bytes reserved past the arena cursor in allocation mode 1; OPEN.EXE budgets more. */
+#ifdef KF_OPEN
+#define MEMORY_ARENA_LIMIT 0x112fff
+#else
+#define MEMORY_ARENA_LIMIT 0xfefff
+#endif
+
 /* KERNEL.H (Psy-Q Release 2.5) declares InitHeap without a prototype. */
 extern void InitHeap();
 
@@ -43,7 +50,7 @@ void memory_set_allocation_mode(s32 mode)
         break;
     case 1:
         memory_arena_start = memory_arena_cursor;
-        memory_arena_end = memory_arena_cursor + 0xfefff;
+        memory_arena_end = memory_arena_cursor + MEMORY_ARENA_LIMIT;
         memory_allocation_reset();
         break;
     case 2:
@@ -74,20 +81,19 @@ void *memory_allocate(s32 size)
 {
     u8 **cursor = &memory_arena_cursor;
     u8 *block;
-    u32 entry;
     s32 depth;
 
     if (*cursor == 0) {
         block = memory_malloc_checked(size);
-        entry = (u32)block;
+        size = (s32)block;
     } else {
         block = *cursor;
-        entry = (size + 3) & ~3;
-        *cursor = block + entry;
+        size = (size + 3) & ~3;
+        *cursor += size;
     }
     depth = memory_allocation_stack[0];
     memory_allocation_stack[0] = depth + 1;
-    memory_allocation_stack[1 + depth] = entry;
+    memory_allocation_stack[1 + depth] = size;
     return block;
 }
 

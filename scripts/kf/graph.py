@@ -373,6 +373,7 @@ def edge_compile(unit_name: str, output: Path) -> int:
         profile.cc1_flags,
         profile.compiler,
         profile.maspsx_flags,
+        defines=unit.defines,
     )
     return 0
 

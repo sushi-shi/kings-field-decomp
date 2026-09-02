@@ -155,3 +155,30 @@ also refreshes it after updating the manual ledger. Concurrent per-image checks
 serialize snapshot and replacement through `build/gen/readme.lock`; content is
 written atomically and only when it changes. README generation never changes
 `config/match_baseline.tsv`.
+
+## Shared sources across images
+
+`GAME.EXE` and `OPEN.EXE` link the same allocator, display, and TMD code.
+A source is written once with the claims of its primary image; another
+image reuses it with a unit that binds by name:
+
+```toml
+[[unit]]
+unit = "open.memory"
+image = "OPEN.EXE"
+source = "src/game/memory.c"
+profile = "probe-gcc257-o2-g0"
+bind = "name"
+defines = ["KF_OPEN"]
+```
+
+- `bind = "name"` resolves every `ADDRESS()` and `DATA()` claim through the
+  unit image's own `function_identities.tsv` / `data_identities.tsv` rows by
+  the definition name, so addresses stay image-qualified. The claimed size
+  must still equal that image's body size; a size mismatch means the images
+  do not share the body and the difference has to be expressed in source.
+  `RODATA()` ranges are image-specific and cannot be name-bound.
+- `defines` adds `-DNAME` (or `-DNAME=value`) to the preprocessor run for
+  that unit only. Use it for constants that provably differ between the
+  images (the mode-1 arena limit is `0xfefff` in `GAME.EXE` and `0x112fff`
+  in `OPEN.EXE`), not to fork whole bodies silently.

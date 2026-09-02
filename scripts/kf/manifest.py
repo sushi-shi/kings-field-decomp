@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from scripts.kf.delink import Datum, Function, Module, load_catalog
@@ -23,6 +23,7 @@ from scripts.kf.paths import REPO, RETAIL_CONFIG, UNITS_MANIFEST
 from scripts.kf.retail import IMAGE_LAYOUTS
 
 
+DEFINE_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(=[A-Za-z0-9_x]+)?")
 UNIT_RE = re.compile(r"[a-z0-9][a-z0-9_.-]*$")
 LANGUAGE_SUFFIXES = {
     "c": {".c"},
@@ -63,6 +64,7 @@ class Unit:
     functions: tuple[Function, ...]
     data: tuple[Datum, ...] = ()
     rodata: tuple[int, int] | None = None
+    defines: tuple[str, ...] = ()
 
     @property
     def va(self) -> int:
@@ -235,6 +237,54 @@ def _bind_claims(
     return tuple(functions)
 
 
+def _rebind_claims_by_name(
+    source: Path,
+    image: str,
+    claims: tuple[Claim, ...],
+    identities: dict[tuple[str, int], str],
+) -> tuple[Claim, ...]:
+    """Re-address a shared source's ADDRESS() claims through IMAGE's identities."""
+    by_name: dict[str, list[int]] = {}
+    for (item_image, va), item_name in identities.items():
+        if item_image == image:
+            by_name.setdefault(item_name, []).append(va)
+    rebound: list[Claim] = []
+    for claim in claims:
+        where = f"{source}:{claim.line}"
+        candidates = by_name.get(claim.name, [])
+        if len(candidates) != 1:
+            raise ValueError(
+                f"{where}: {claim.name!r} is not a unique labelled {image} function "
+                f"({len(candidates)} identities); name binding needs one"
+            )
+        rebound.append(replace(claim, va=candidates[0]))
+    return tuple(rebound)
+
+
+def _rebind_data_claims_by_name(
+    source: Path,
+    image: str,
+    claims: tuple[DataClaim, ...],
+    identities: dict[tuple[str, int], DataIdentity],
+) -> tuple[DataClaim, ...]:
+    """Re-address a shared source's DATA() claims through IMAGE's identities."""
+    by_name: dict[str, list[int]] = {}
+    for (item_image, va), item in identities.items():
+        if item_image == image:
+            by_name.setdefault(item.name, []).append(va)
+    rebound: list[DataClaim] = []
+    for claim in claims:
+        where = f"{source}:{claim.line}"
+        candidates = by_name.get(claim.name, [])
+        if len(candidates) != 1:
+            raise ValueError(
+                f"{where}: {claim.name!r} is not a unique curated {image} datum "
+                f"({len(candidates)} identities); name binding needs one"
+            )
+        rebound.append(replace(claim, va=candidates[0]))
+    return tuple(rebound)
+
+
 def _bind_data_claims(
     unit: str,
     image: str,
@@ -321,8 +371,9 @@ def load(
         if not isinstance(row, dict):
             raise ValueError(f"{path}: unit #{index} is not a table")
         required = {"unit", "image", "source", "profile"}
+        optional = {"bind", "defines"}
         missing = required - set(row)
-        extra = set(row) - required
+        extra = set(row) - required - optional
         if "va" in extra:
             raise ValueError(
                 f"{path}: unit #{index} carries `va`; addresses live only in ADDRESS() claims"
@@ -367,8 +418,32 @@ def load(
             raise ValueError(
                 f"{source}: address-derived spellings of labelled identities: {shown}"
             )
+        bind = str(row.get("bind", "address"))
+        if bind not in {"address", "name"}:
+            raise ValueError(f"{path}: unit {name!r} has unknown bind mode {bind!r}")
+        raw_defines = row.get("defines", [])
+        if not isinstance(raw_defines, list) or not all(
+            isinstance(item, str) and DEFINE_RE.fullmatch(item) for item in raw_defines
+        ):
+            raise ValueError(
+                f"{path}: unit {name!r} defines must be a list of preprocessor names "
+                "(NAME or NAME=value)"
+            )
+        defines = tuple(raw_defines)
         claims, data_claims = scan_source(source_path)
         rodata_claims = scan_rodata_claims(source_path)
+        if bind == "name":
+            # A shared source carries the claims of its primary image; another
+            # image reuses it by resolving every claimed definition through
+            # that image's own identity tables, so the addresses stay
+            # image-qualified while the C text is written once.
+            if rodata_claims:
+                raise ValueError(
+                    f"{source}: RODATA() ranges are image-specific; unit {name!r} cannot "
+                    "bind them by name"
+                )
+            claims = _rebind_claims_by_name(source, image, claims, identities)
+            data_claims = _rebind_data_claims_by_name(source, image, data_claims, curated_data)
         rodata: tuple[int, int] | None = None
         if len(rodata_claims) > 1:
             raise ValueError(f"{source}: a unit claims at most one RODATA() range")
@@ -398,7 +473,9 @@ def load(
                 f"{path}: unit {name!r} at {functions[0].va:#x} is listed after "
                 f"{units[-1].unit!r} at {units[-1].va:#x}; units follow the linked order"
             )
-        units.append(Unit(name, image, source.as_posix(), profile_name, functions, data, rodata))
+        units.append(
+            Unit(name, image, source.as_posix(), profile_name, functions, data, rodata, defines)
+        )
         for ordinal, (claim, function) in enumerate(zip(claims, functions)):
             binding_rows.append({
                 "image": image,

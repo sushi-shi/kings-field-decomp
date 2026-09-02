@@ -244,3 +244,10 @@ Residues left in the same module (not steered):
   second `tmd_state.current_asset` load that sits before the guard branch
   without being merged by CSE (`cse_end_of_basic_block` follows a conditional
   jump only when its label is used once and preceded by a barrier).
+
+## memory
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `move a2,a0` at entry, `&cursor` in `a0`, the stack entry stored from `a2` on both paths | reuse the `size` parameter as the recorded entry (`size = (s32)block;` / `size = (size + 3) & ~3;`); a separate `entry` local keeps `size` in `a0` and moves the cursor address to `a3` | `memory_allocate` `0x8001ac0c` (exact in both images) |
+| `addu v0,a2,a1; sw v0,0(a0)` (size before block) | `*cursor += size;`; `*cursor = block + size` and `size + block` both emit `addu v0,a1,a2` | same |

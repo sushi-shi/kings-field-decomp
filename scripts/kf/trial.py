@@ -89,6 +89,7 @@ def compare(unit_name: str, source: Path | None, context: int) -> int:
             profile.cc1_flags,
             profile.compiler,
             profile.maspsx_flags,
+            defines=unit.defines,
         )
         base = listing(output)
     expected = listing(target)

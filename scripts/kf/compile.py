@@ -101,6 +101,7 @@ def compile_source(
     cc1_flags: tuple[str, ...] = (),
     compiler: str = "gcc260-native",
     maspsx_flags: tuple[str, ...] = (),
+    defines: tuple[str, ...] = (),
 ) -> Path:
     source = source.resolve()
     if not source.is_file():
@@ -161,6 +162,8 @@ def compile_source(
         ]
         for directory in include_dirs:
             cpp_arguments.extend(("-I", str(directory.resolve())))
+        for define in defines:
+            cpp_arguments.append(f"-D{define}")
         cpp_arguments.append(str(source))
         preprocessed.write_bytes(_run(cpp_arguments))
 
@@ -241,6 +244,7 @@ def main() -> int:
         "--compiler", choices=tuple(C_COMPILERS), default="gcc260-native"
     )
     parser.add_argument("--maspsx-flag", action="append", default=[])
+    parser.add_argument("--define", action="append", default=[])
     args = parser.parse_args()
 
     key = image_key(args.image)
@@ -266,6 +270,7 @@ def main() -> int:
         tuple(args.cc1_flag),
         args.compiler,
         tuple(args.maspsx_flag),
+        defines=tuple(args.define),
     )
     print(result)
     return 0

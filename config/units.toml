@@ -436,3 +436,11 @@ unit = "game.func_80045f7c"
 image = "GAME.EXE"
 source = "src/game/func_80045f7c.c"
 profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.memory"
+image = "OPEN.EXE"
+source = "src/game/memory.c"
+profile = "probe-gcc257-o2-g0"
+bind = "name"
+defines = ["KF_OPEN"]
