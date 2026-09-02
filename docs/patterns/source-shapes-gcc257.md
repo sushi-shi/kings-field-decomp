@@ -405,3 +405,13 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `move s1,zero` in the first `jal rsin` delay slot | `index = 0;` assigned after the reach computations; the scheduler hoists the constant move above the calls into the load delay | same |
 | saved registers from `sp+32` with `addiu s1,sp,24` | the cone searches take an `s32 *distance` out-parameter: one word local rounded to 8, not a vector | same |
 | the two jump tables with a zero word between them | one `RODATA(0x80012048, 0x130)` claim spanning both tables and the padding | same |
+
+### Horizontal movement (`player_move_horizontal`, residue)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| `move s7,a0` and `move a0,s7` for every use of the heading | the parameter is `s32`; an `s16` parameter is re-extended and spilled | `player_move_horizontal` `0x800171fc` |
+| `sw t4,32(sp)` / `sw t4,40(sp)` word spills of the two map cell bytes | `s32` locals loaded from the `u8` fields | same |
+| `move s1,v0` after `vector_xz_to_angle` | the yaw returns `s32` in this unit; a `u16` return truncates with `andi` | same |
+| `la t4,collision_target; addiu s8,t4,24`, deltas as absolute `lhu`, re-target as `lw -16(s8)`/`lw -24(s8)` | plain global accesses reproduce this: the hoisted invariant is the radius address and CSE folds the position loads onto it | same |
+| residue: `la s0,player_state+202; lbu 0(s0)`, then `addiu s5,s0,-22` as the base for the camera position, floor height and map cell through the loop and after it | every probe (global accesses, a `KfPlayerState *` pointer, a map-cell pointer, a floor-height pointer, the pointer assigned before or inside the loop) either folds the pointer into absolute addresses or anchors the base at another offset; the register permutation and the two halfword delta spills follow from that. Best result 54% with direct accesses. Unattributed | same |
