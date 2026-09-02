@@ -14,7 +14,8 @@ extern KfFloorItem floor_items[64];
 
 extern s32 cd_file_load_allocated(void **data_out, const char *relative_path);
 extern void memory_release_last(void);
-extern void *func_8003c810(void *slot, char *filename);
+/* libcd ISO9660 CdSearchFile; reclassified vendored (see functions_vendored.tsv). */
+extern void *CdSearchFile(void *slot, char *filename);
 extern KfCdFileEntry cd_file_table[80];
 
 /* Item stat banks loaded contiguously from COM\STAT.DAT (opaque records). */
@@ -150,7 +151,7 @@ void func_80020cfc(void)
         rem = n % 100;
         name[12] = rem / 10 + '0';
         name[13] = rem % 10 + '0';
-        if (func_8003c810(&cd_file_table[i], name) != 0) {
+        if (CdSearchFile(&cd_file_table[i], name) != 0) {
             if ((cd_file_table[i].size & 0x7ff) != 0)
                 cd_file_table[i].size =
                     ((cd_file_table[i].size >> 11) + 1) << 11;
