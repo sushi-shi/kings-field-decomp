@@ -245,6 +245,44 @@ Residues left in the same module (not steered):
   without being merged by CSE (`cse_end_of_basic_block` follows a conditional
   jump only when its label is used once and preceded by a barrier).
 
+## tmd_project
+
+Witnesses come from `src/game/tmd_project.c` (`game.tmd_project`,
+`0x8001c60c..0x8001c7f4`): three vertex-projection primitives that walk
+`current_tmd_vertices` through the GTE and write eight-byte screen entries into
+the `DAT_800911b0` scratch buffer. `func_8001c60c` is the shared helper called
+by nine sites in the surrounding polygon emitters.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `beqz a0,exit; addiu s0,a0,-1` guard then an up-walking pointer pair with a `bottom` down-counter `addiu s0,s0,-1; li v0,-1; bne s0,v0` | `for (i = count - 1; i != -1; i--) { ...; out++; vtx++; }` -- the `!= -1` exit prints the `li -1`/`bne` down-counter and keeps the pointers forward; `i >= 0` prints `bgez` instead and `for (i=0;i<count;i++)` keeps `count` live in an extra callee-saved register | all three |
+| unused 8-byte frame tail (`vars=24`, slots 32/36 never referenced) beside four live output slots at 16/20/24/28 | plain scalar `long p, flag, sz0, sz1;` under the `!= -1` for-loop; the reversed loop reserves the extra doubleword that the equivalent `if (count) { do {} while (--i != -1); }` does not | all three |
+| `lhu v0,16(sp); sll v0,v0,1; sh` for the interpolation term, `lhu`/`lw` for the SZ FIFO word | `out->p2 = (u16)p << 1;` (unsigned halfword read) and `out->sz = (u16)sz0;` (perspective) or `out->sz = sz0 >> shift;` (arithmetic `lw`+`srav` when the shift is a `u8` argument) | `tmd_project_vertices`, `tmd_project_vertices_shift` |
+
+`tmd_transform_vertices` `0x8001c754` is exact: its `&out->sz` induction
+pointer carries three stores (`sxy.vy`, `sz`, `p2`) and so unambiguously
+outranks the loop counter, matching retail's register assignment.
+
+Residues left in the same module (not steered):
+
+- `tmd_project_vertices` `0x8001c60c` (84%) and `tmd_project_vertices_shift`
+  `0x8001c6a8` (86%): structurally exact -- frame, stack layout, control flow,
+  the RotTransPers/ReadSZ2 call set and every instruction match -- but the loop
+  counter and the `&out->sz` induction pointer trade `$s0`/`$s1`. The `-dg`
+  dump settles the attribution: the greg pass orders the allocnos
+  `88 86 78 72 73`, i.e. the two-store `&out->sz` giv (`sz` and `p2` writes plus
+  its own bump, four in-loop operand refs) outranks the loop counter (three), so
+  the probe gives the giv `$s0` and the counter `$s1`. Retail assigns the
+  opposite -- counter `$s0`, giv `$s1` -- despite routing the identical two
+  stores through the giv, so the tie is decided by a priority weighting the
+  2.5.7 build does not reproduce, not by any source shape. Dropping a store from
+  the giv would tie the two allocnos (the counter's lower number then wins) but
+  changes the emitted bytes, so it is not steerable from C.
+  `tmd_transform_vertices`, whose giv carries three stores and so unambiguously
+  outranks the counter, matches exactly; the residue is the borderline
+  two-store giv alone. Same giv-base / callee-saved-register-choice
+  compiler-build question as the `func_8002317c` and `func_800238d8` classes.
+
 ## memory
 
 | Retail signature | Source shape | Witness |
