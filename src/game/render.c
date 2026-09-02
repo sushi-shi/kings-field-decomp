@@ -11,7 +11,7 @@ extern MATRIX light_quadrant_matrices[4];
 extern KfTmdState tmd_state;
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
-extern struct KfVec4s *current_tmd_vertices;
+extern SVECTOR *current_tmd_vertices;
 extern u32 DAT_800a0768;
 extern u32 DAT_8009569c;
 extern u32 DAT_80095698;
@@ -156,7 +156,7 @@ KfTmdObject *tmd_get_object(u16 index)
 }
 
 ADDRESS(0x8001c138, 0x10)
-void tmd_set_current_vertices(struct KfVec4s *vertices)
+void tmd_set_current_vertices(SVECTOR *vertices)
 {
     current_tmd_vertices = vertices;
 }
@@ -165,18 +165,18 @@ ADDRESS(0x8001c148, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     current_tmd_vertices =
-        (struct KfVec4s *)((u8 *)tmd_state.current_asset + 12 + tmd_get_object(index)->vertex_offset);
+        (SVECTOR *)((u8 *)tmd_state.current_asset + 12 + tmd_get_object(index)->vertex_offset);
 }
 
 ADDRESS(0x8001c184, 0x12c)
-void render_set_view_transform(struct KfVec4i *position, struct KfVec4s *rotation)
+void render_set_view_transform(VECTOR *position, SVECTOR *rotation)
 {
     SVECTOR angles;
 
     if (position != 0) {
         render_state.view_position = *position;
-        render_state.view_cell.x = render_state.view_position.x / 2000;
-        render_state.view_cell.z = render_state.view_position.z / 2000;
+        render_state.view_cell.x = render_state.view_position.vx / 2000;
+        render_state.view_cell.z = render_state.view_position.vz / 2000;
     }
     if (rotation != 0) {
         render_state.view_rotation = *rotation;
@@ -184,7 +184,7 @@ void render_set_view_transform(struct KfVec4i *position, struct KfVec4s *rotatio
         angles.vz = 0;
         angles.vy = 0;
     }
-    angles.vx = render_state.view_rotation.x;
+    angles.vx = render_state.view_rotation.vx;
     RotMatrix(&angles, (MATRIX *)&render_state.pitch_matrix);
 }
 

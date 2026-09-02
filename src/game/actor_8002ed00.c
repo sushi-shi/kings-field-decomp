@@ -54,9 +54,9 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     struct KfVec3s direction;
-    struct KfVec4s offset;
+    SVECTOR offset;
     struct KfEulerAngles angles;
-    struct KfVec4i position;
+    VECTOR position;
     MATRIX matrix;
     struct KfEulerAngles burst_angles;
     s32 repeat;
@@ -83,14 +83,14 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
         case 22:
         case 23:
         case 24:
-            offset.x = definition->attachment_offsets[attachment_index].x;
-            offset.y = definition->attachment_offsets[attachment_index].y;
-            offset.z = definition->attachment_offsets[attachment_index].z;
+            offset.vx = definition->attachment_offsets[attachment_index].x;
+            offset.vy = definition->attachment_offsets[attachment_index].y;
+            offset.vz = definition->attachment_offsets[attachment_index].z;
             if (repeat == 2) {
                 if (i == 0) {
-                    offset.x = offset.x + 1500;
+                    offset.vx = offset.vx + 1500;
                 } else {
-                    offset.x = offset.x - 1500;
+                    offset.vx = offset.vx - 1500;
                 }
             }
             angles.x = actor->rotation.x;
@@ -98,9 +98,9 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
             angles.z = actor->rotation.z;
             matrix_set_rotation_yxz(&angles, &matrix);
             ApplyMatrix(&matrix, &offset, &position);
-            position.x += actor->position.x;
-            position.y += actor->position.y;
-            position.z += actor->position.z;
+            position.vx += actor->position.vx;
+            position.vy += actor->position.vy;
+            position.vz += actor->position.vz;
             facing = (0x800 - actor->rotation.y) & 0xfff;
             distance = player_distance_to_point_in_cone(
                 (struct KfVec3i *)&position, facing, 50000, 0x155);
@@ -119,16 +119,16 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 angles.y = facing;
             } else {
                 angles.y = vector_xz_to_angle(
-                    actor_state.player_position.x - position.x,
-                    position.z - actor_state.player_position.z);
+                    actor_state.player_position.vx - position.vx,
+                    position.vz - actor_state.player_position.vz);
                 if (effect_code == 23) {
                     scale = 800;
                     angles.x = vector_xz_to_angle(
-                        position.y - (actor_state.player_position.y - 1000), -distance);
+                        position.vy - (actor_state.player_position.vy - 1000), -distance);
                     distance = distance / scale;
                 } else {
                     angles.x = vector_xz_to_angle(
-                        position.y - actor_state.player_position.y, -distance);
+                        position.vy - actor_state.player_position.vy, -distance);
                     if (effect_code == 10) {
                         scale = 250;
                         distance -= 4500;

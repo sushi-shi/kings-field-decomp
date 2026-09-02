@@ -32,7 +32,7 @@ extern void audio_close_vab(void);
 extern void audio_stop_sequence_fade(void);
 extern u32 audio_play_spatial(
     const SoundRef *sound,
-    const struct KfVec4i *position,
+    const VECTOR *position,
     s16 volume,
     s32 max_distance,
     s32 attenuation_distance);
@@ -155,14 +155,14 @@ void audio_close_vab(void)
 ADDRESS(0x80032cf0, 0x2c8)
 u32 audio_play_spatial(
     const SoundRef *sound,
-    const struct KfVec4i *position,
+    const VECTOR *position,
     s16 volume,
     s32 max_distance,
     s32 attenuation_distance)
 {
-    s32 delta_x = (position->x - audio_state.listener_position.x) >> 3;
-    s32 delta_y = (position->y - audio_state.listener_position.y) >> 3;
-    s32 delta_z = (position->z - audio_state.listener_position.z) >> 3;
+    s32 delta_x = (position->vx - audio_state.listener_position.vx) >> 3;
+    s32 delta_y = (position->vy - audio_state.listener_position.vy) >> 3;
+    s32 delta_z = (position->vz - audio_state.listener_position.vz) >> 3;
     s32 distance;
     s32 attenuation;
     s32 level;
@@ -182,9 +182,9 @@ u32 audio_play_spatial(
         level = 127;
     }
     angle = vector_xz_to_angle(
-        position->x - audio_state.listener_position.x,
-        audio_state.listener_position.z - position->z);
-    angle = (angle - audio_state.listener_rotation.y + 1024) & 0xfff;
+        position->vx - audio_state.listener_position.vx,
+        audio_state.listener_position.vz - position->vz);
+    angle = (angle - audio_state.listener_rotation.vy + 1024) & 0xfff;
     if (angle >= 2048) {
         angle = 4096 - angle;
     }
@@ -219,7 +219,7 @@ u32 audio_play_spatial(
 ADDRESS(0x80032fb8, 0x30)
 void audio_play_spatial_default_range(
     const SoundRef *sound,
-    const struct KfVec4i *position,
+    const VECTOR *position,
     s16 volume)
 {
     audio_play_spatial(sound, position, volume, 0x3e80, 0x6d60);
@@ -228,7 +228,7 @@ void audio_play_spatial_default_range(
 ADDRESS(0x80032fe8, 0x2c)
 void audio_play_spatial_range(
     const SoundRef *sound,
-    const struct KfVec4i *position,
+    const VECTOR *position,
     s16 volume,
     s32 max_distance,
     s32 attenuation_distance)
@@ -249,8 +249,8 @@ void audio_key_off_mask(const u8 *voice_mask)
 
 ADDRESS(0x8003303c, 0x70)
 void audio_set_listener_transform(
-    const struct KfVec4i *position_or_null,
-    const struct KfVec4s *rotation_or_null)
+    const VECTOR *position_or_null,
+    const SVECTOR *rotation_or_null)
 {
     if (position_or_null != 0) {
         audio_state.listener_position = *position_or_null;

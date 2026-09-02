@@ -35,17 +35,17 @@ extern s32 save_file_cleanup_temporary(void);
 extern void func_8001b7b0(char object);
 extern void player_update(void);
 extern void player_update_transform_snapshot(
-    struct KfVec4i *position_out, struct KfVec4s *rotation_out);
+    VECTOR *position_out, SVECTOR *rotation_out);
 extern void audio_set_listener_transform(
-    const struct KfVec4i *position_or_null, const struct KfVec4s *rotation_or_null);
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void actor_set_player_transform(
-    const struct KfVec4i *position, const struct KfVec4s *rotation);
+    const VECTOR *position, const SVECTOR *rotation);
 extern void actor_pool_update(void);
 extern void map_object_pool_update(void);
 extern void effect_pool_sweep(void);
 extern void func_8003596c(void);
 extern void func_8001fde4(
-    const struct KfVec4i *position_or_null, const struct KfVec4s *rotation_or_null);
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 func_80036af0(void);
 extern void func_800144d4(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
@@ -60,8 +60,8 @@ extern void game_shutdown(void);
 extern KfMagicRecord magic_records[24];
 extern KfMapEvent map_event_pool[8];
 extern u32 game_exit_code;
-extern struct KfVec4i player_position_snapshot;
-extern struct KfVec4s player_rotation_snapshot;
+extern VECTOR player_position_snapshot;
+extern SVECTOR player_rotation_snapshot;
 extern u8 map_cell_attribute_grid[100][100];
 extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);

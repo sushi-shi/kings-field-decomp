@@ -70,8 +70,8 @@ void player_use_item(u8 item_id)
     s16 slot;
     u8 used = 0;
 
-    reach_x = player_state.camera_position.x - ((rsin(player_state.camera_rotation.y) * 1000) >> 12);
-    reach_z = player_state.camera_position.z + ((rcos(player_state.camera_rotation.y) * 1000) >> 12);
+    reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * 1000) >> 12);
+    reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * 1000) >> 12);
     index = 0;
     switch (item_id) {
     case 53:
@@ -99,7 +99,7 @@ void player_use_item(u8 item_id)
                     func_8001fa44(0x12);
                 } else if (object->object_id != 89
                            || angle_within_tolerance(
-                               player_state.camera_rotation.y, 0x800 - object->rotation.y, 0x155)) {
+                               player_state.camera_rotation.vy, 0x800 - object->rotation.y, 0x155)) {
                     used = 1;
                     if (object->link.link_id == item_id) {
                         object->link.link_id = 0xff;
@@ -179,7 +179,7 @@ void player_use_item(u8 item_id)
     case 59:
         actor = actor_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
-            player_state.camera_rotation.y,
+            player_state.camera_rotation.vy,
             6000,
             0x155,
             &distance);
@@ -189,7 +189,7 @@ void player_use_item(u8 item_id)
         }
         event = map_event_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
-            player_state.camera_rotation.y,
+            player_state.camera_rotation.vy,
             6000,
             0x155,
             &distance);

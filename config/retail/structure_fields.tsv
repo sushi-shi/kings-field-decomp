@@ -21,7 +21,7 @@ KfActor	0x14	0x02	health	u16	supported	semantic_types.h;asm;xrefs	current actor 
 KfActor	0x16	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x; every band load is lhu
 KfActor	0x18	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z; every band load is lhu
 KfActor	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x1c	0x10	position	KfVec4i	supported	semantic_types.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as KfVec4i
+KfActor	0x1c	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as VECTOR
 KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	actor rotation
 KfActor	0x32	0x02	unknown_32	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x34	0x04	unknown_34	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
@@ -75,8 +75,8 @@ KfActorPlacement	0x0c	0x02	local_x	s16	supported	semantic_types.h;asm;actor_pool
 KfActorPlacement	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;actor_pool_load_placements	not read by the loader
 KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	semantic_types.h;asm;xrefs	map-loaded actor definitions
 KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	semantic_types.h;asm;xrefs	live actor records
-KfActorState	0x2b20	0x10	player_position	KfVec4i	supported	semantic_types.h;asm;xrefs	player position snapshot copied each frame
-KfActorState	0x2b30	0x08	player_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	player rotation snapshot copied each frame
+KfActorState	0x2b20	0x10	player_position	VECTOR	supported	semantic_types.h;asm;xrefs	player position snapshot copied each frame
+KfActorState	0x2b30	0x08	player_rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	player rotation snapshot copied each frame
 KfActorState	0x2b38	0x04	current_definition	KfActorDefinition *	supported	semantic_types.h;asm;xrefs	definition of the actor being updated
 KfActorState	0x2b3c	0x04	current	KfActor *	supported	semantic_types.h;asm;xrefs	actor being updated
 KfActorState	0x2b40	0x02	current_index	u16	supported	semantic_types.h;asm;xrefs	index of the actor being updated
@@ -99,25 +99,25 @@ KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	semantic_types.h;asm;xrefs
 KfAudioState	0x0c	0x02	sequence_id	s16	supported	semantic_types.h;asm;xrefs	open sequence identifier
 KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
 KfAudioState	0x10	0x04	sequence_active	s32	supported	semantic_types.h;asm;xrefs	one while a map sequence plays
-KfAudioState	0x14	0x10	listener_position	KfVec4i	supported	semantic_types.h;asm;xrefs	listener position for spatial voices
-KfAudioState	0x24	0x08	listener_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	listener rotation for spatial voices
+KfAudioState	0x14	0x10	listener_position	VECTOR	supported	semantic_types.h;asm;xrefs	listener position for spatial voices
+KfAudioState	0x24	0x08	listener_rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	listener rotation for spatial voices
 KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	semantic_types.h;asm;xrefs	ten voice slots
 KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
 KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
 KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers
 KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	semantic_types.h;asm;xrefs	tone numbers
 KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	semantic_types.h;asm;xrefs	note numbers
-KfCameraPathPoint	0x00	0x10	position	KfVec4i	supported	semantic_types.h;asm;xrefs	path position
-KfCameraPathPoint	0x10	0x08	rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	path rotation
+KfCameraPathPoint	0x00	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	path position
+KfCameraPathPoint	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	path rotation
 KfCameraPathPoint	0x18	0x02	speed	s16	supported	semantic_types.h;asm;xrefs	segment speed
 KfCameraPathPoint	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfCameraPathState	0x00	0x04	points	KfCameraPathPoint *	supported	semantic_types.h;asm;xrefs	path point cursor/base
-KfCameraPathState	0x04	0x10	position	KfVec4i	supported	semantic_types.h;asm;xrefs	current integer position
-KfCameraPathState	0x14	0x08	rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	current integer rotation
-KfCameraPathState	0x1c	0x10	position_fixed	KfVec4i	supported	semantic_types.h;asm;xrefs	fixed-point position
-KfCameraPathState	0x2c	0x10	rotation_fixed	KfVec4i	supported	semantic_types.h;asm;xrefs	fixed-point rotation
-KfCameraPathState	0x3c	0x10	position_delta	KfVec4i	supported	semantic_types.h;asm;xrefs	per-frame position delta
-KfCameraPathState	0x4c	0x10	rotation_delta	KfVec4i	supported	semantic_types.h;asm;xrefs	per-frame rotation delta
+KfCameraPathState	0x04	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	current integer position
+KfCameraPathState	0x14	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	current integer rotation
+KfCameraPathState	0x1c	0x10	position_fixed	VECTOR	supported	semantic_types.h;asm;xrefs	fixed-point position
+KfCameraPathState	0x2c	0x10	rotation_fixed	VECTOR	supported	semantic_types.h;asm;xrefs	fixed-point rotation
+KfCameraPathState	0x3c	0x10	position_delta	VECTOR	supported	semantic_types.h;asm;xrefs	per-frame position delta
+KfCameraPathState	0x4c	0x10	rotation_delta	VECTOR	supported	semantic_types.h;asm;xrefs	per-frame rotation delta
 KfCameraPathState	0x5c	0x02	point_index	s16	supported	semantic_types.h;asm;xrefs	current path point index
 KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;xrefs	segment frame countdown
@@ -127,8 +127,8 @@ KfCdFileEntry	0x02	0x01	sector	u8	supported	semantic_types.h;asm;func_8001ae60;L
 KfCdFileEntry	0x03	0x01	track	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
 KfCdFileEntry	0x04	0x04	size	u32	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
 KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
-KfCollisionTarget	0x00	0x10	position	KfVec4i	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
-KfCollisionTarget	0x10	0x08	rotation	KfVec4s	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
+KfCollisionTarget	0x00	0x10	position	VECTOR	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
+KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
 KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
 KfDisplayState	0x00	0x01	buffer_index	u8	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
@@ -354,12 +354,12 @@ KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	semantic_types.h;data
 KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x98	0x02	unknown_98	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x9a	0x08	view_rotation_offset	KfVec4s	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xa2	0x01	update_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xa4	0x10	camera_position	KfVec4i	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xb4	0x04	floor_height	s32	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb8	0x08	camera_rotation	KfVec4s	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
@@ -391,16 +391,16 @@ KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	semantic_types.h;game_sema
 KfRenderState	0x60	0x20	light_matrix_copy	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0x80	0x20	unknown_80	MATRIX	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xa4	0x10	view_position	KfVec4i	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xb4	0x08	view_rotation	KfVec4s	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa4	0x10	view_position	VECTOR	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xb4	0x08	view_rotation	SVECTOR	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xc0	0x80	quadrant_matrices	MATRIX[4]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x00	0x20	view_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x20	0x20	pitch_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x40	0x20	light_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x60	0x04	fog_near_distance	s32	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x64	0x10	view_position	KfVec4i	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x74	0x08	view_rotation	KfVec4s	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
@@ -543,14 +543,6 @@ KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate
 KfVec3s	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVec3s	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y coordinate
 KfVec3s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVec4i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVec4i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
-KfVec4i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVec4i	0x0c	0x04	pad	s32	opaque	semantic_types.h;asm;xrefs	fourth lane meaning unresolved
-KfVec4s	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVec4s	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y coordinate
-KfVec4s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVec4s	0x06	0x02	pad	s16	opaque	semantic_types.h;asm;xrefs	fourth lane meaning unresolved
 KfVecXZs	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVecXZs	0x02	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
 KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved

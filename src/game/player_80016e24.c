@@ -8,12 +8,12 @@ extern void game_state_initialize(void);
 ADDRESS(0x80016e24, 0x94)
 void game_initialize_session(void)
 {
-    player_state.camera_rotation.z = 0;
-    player_state.camera_rotation.y = 0;
-    player_state.camera_rotation.x = 0;
-    player_state.camera_position.x = 0x7918;
-    player_state.camera_position.y = 0;
-    player_state.camera_position.z = 0xfa0;
+    player_state.camera_rotation.vz = 0;
+    player_state.camera_rotation.vy = 0;
+    player_state.camera_rotation.vx = 0;
+    player_state.camera_position.vx = 0x7918;
+    player_state.camera_position.vy = 0;
+    player_state.camera_position.vz = 0xfa0;
     player_state.weapon_asset_buffer = memory_allocate(0xc000);
     game_state_initialize();
     player_state.update_state = 0;

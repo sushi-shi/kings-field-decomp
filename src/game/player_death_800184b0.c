@@ -12,7 +12,7 @@ extern void matrix_interpolate(
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void player_update_vertical_motion(void);
 extern void func_8001fde4(
-    const struct KfVec4i *position_or_null, const struct KfVec4s *rotation_or_null);
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void player_death_restart(void);
 extern void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend);
 
@@ -44,21 +44,21 @@ void player_death_update(void)
     if (previous >= 1000) {
         *bob = 1000;
         *bob = 1060;
-        player_state.camera_rotation.x -= player_state.death_camera_pitch_step;
+        player_state.camera_rotation.vx -= player_state.death_camera_pitch_step;
         player_state.death_camera_pitch_step += 10;
     } else {
-        player_state.camera_rotation.x -= 10;
+        player_state.camera_rotation.vx -= 10;
         player_state.death_camera_pitch_step += 15;
         *bob = previous + player_state.death_camera_pitch_step;
         if (*bob >= 1000) {
             player_state.death_camera_pitch_step = 10;
         }
     }
-    if (player_state.camera_rotation.x < -800) {
-        player_state.camera_rotation.x = -800;
+    if (player_state.camera_rotation.vx < -800) {
+        player_state.camera_rotation.vx = -800;
         player_state.death_camera_pitch_step = 0;
     }
-    player_state.camera_position.y = *bob - 1500 + player_state.floor_height;
+    player_state.camera_position.vy = *bob - 1500 + player_state.floor_height;
     player_update_vertical_motion();
     player_state.death_visual_blend += 100;
     blend = player_state.death_visual_blend;

@@ -37,7 +37,7 @@ extern void map_event_advance_rotation_blocking(KfMapEvent *event, u16 target, s
 extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
 extern void audio_play_map_sequence(u8 sequence_id);
 extern void audio_play_current_map_sequence(void);
-extern void audio_play_spatial_default_range(const SoundRef *sound, const struct KfVec4i *position, s16 volume);
+extern void audio_play_spatial_default_range(const SoundRef *sound, const VECTOR *position, s16 volume);
 extern void player_clear_motion(void);
 extern void player_restore_vitals_with_color_cycle(void);
 extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
@@ -63,7 +63,7 @@ void func_800346a8(void)
     KfCameraPathState path;
     KfMapObject *effect;
     s32 aux[2];
-    struct KfVec4i spawn;
+    VECTOR spawn;
     s32 grid_height;
     s32 spin;
     s32 hold;
@@ -86,8 +86,8 @@ void func_800346a8(void)
 
     player_state.camera_position = path.position;
     player_state.camera_rotation = path.rotation;
-    player_state.map_cell.x = player_state.camera_position.x / 2000;
-    player_state.map_cell.z = player_state.camera_position.z / 2000;
+    player_state.map_cell.x = player_state.camera_position.vx / 2000;
+    player_state.map_cell.z = player_state.camera_position.vz / 2000;
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
 
     ReadColorMatrix(&color_matrix);
@@ -116,8 +116,8 @@ void func_800346a8(void)
                 if (hold == 1) {
                     stage = 1;
                 } else if (hold == 0x14) {
-                    spawn = *(struct KfVec4i *)&effect->position_x;
-                    spawn.y -= 600;
+                    spawn = *(VECTOR *)&effect->position_x;
+                    spawn.vy -= 600;
                     func_80036f44(0, 0x13, 0x12, &spawn, aux, 1);
                     effect->object_id = 0xb;
                 }
@@ -235,7 +235,7 @@ void func_80034d54(s32 group, s32 index)
 }
 
 ADDRESS(0x80034de4, 0x904)
-void func_80034de4(const struct KfVec4i *position, struct KfVec4s *rotation)
+void func_80034de4(const VECTOR *position, SVECTOR *rotation)
 {
     s32 sound_x;
     s32 sound_z;
@@ -245,8 +245,8 @@ void func_80034de4(const struct KfVec4i *position, struct KfVec4s *rotation)
     KfMapObject *object;
     KfMapObjectDefinition *definition;
 
-    sound_x = position->x - (rsin(rotation->y) * 1500 >> 12);
-    sound_z = position->z + (rcos(rotation->y) * 1500 >> 12);
+    sound_x = position->vx - (rsin(rotation->vy) * 1500 >> 12);
+    sound_z = position->vz + (rcos(rotation->vy) * 1500 >> 12);
     switch (map_cell_attribute_grid[sound_z / 2000][sound_x / 2000]) {
     case 0x3a:
         func_8001fa44(0xc);
@@ -264,8 +264,8 @@ void func_80034de4(const struct KfVec4i *position, struct KfVec4s *rotation)
         break;
     }
 
-    sound_x = position->x - (rsin(rotation->y) * 1000 >> 12);
-    sound_z = position->z + (rcos(rotation->y) * 1000 >> 12);
+    sound_x = position->vx - (rsin(rotation->vy) * 1000 >> 12);
+    sound_z = position->vz + (rcos(rotation->vy) * 1000 >> 12);
     if (DAT_80095088 == 0) {
         index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
         if (index != -1) {
@@ -319,10 +319,10 @@ void func_80034de4(const struct KfVec4i *position, struct KfVec4s *rotation)
         switch (definition->behavior_type) {
         case 8:
             if (object->link.link_id == 0xff
-                && angle_within_tolerance(rotation->y, object->rotation.y, 0x200)) {
+                && angle_within_tolerance(rotation->vy, object->rotation.y, 0x200)) {
                 if (object->link.action_parameter == 0xff) {
                     audio_play_spatial_default_range(&gameplay_sound_ref_2,
-                                                     (const struct KfVec4i *)&object->position_x, 0x7f);
+                                                     (const VECTOR *)&object->position_x, 0x7f);
                 }
                 func_8001fa44(object->action);
             }

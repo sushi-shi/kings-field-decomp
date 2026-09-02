@@ -23,7 +23,7 @@ extern u8 actor_try_select_action_distance_facing(
     u8 action, s32 distance, u16 chance, u16 distance_scale);
 extern u8 actor_try_select_profiled_action(
     u8 action, s32 distance, u8 profile_index, u16 chance);
-extern void vector3i_add_xz(struct KfVec4i *destination, const struct KfVecXZs *delta);
+extern void vector3i_add_xz(VECTOR *destination, const struct KfVecXZs *delta);
 extern u32 collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern s32 map_floor_height_at_position(struct KfVec3i *position);
@@ -178,9 +178,9 @@ void actor_update_awareness(void)
     case 0:
         distance = actor_distance_to_point(
             actor,
-            actor_state.player_position.x,
+            actor_state.player_position.vx,
             0xffff,
-            actor_state.player_position.z,
+            actor_state.player_position.vz,
             0x6d60,
             0,
             0);
@@ -231,9 +231,9 @@ void actor_update_awareness(void)
     case 1:
         distance = actor_distance_to_point(
             actor,
-            actor_state.player_position.x,
+            actor_state.player_position.vx,
             0xffff,
-            actor_state.player_position.z,
+            actor_state.player_position.vz,
             0x7d00,
             0,
             0);
@@ -246,9 +246,9 @@ void actor_update_awareness(void)
     case 2:
         if (actor_distance_to_point(
                 actor,
-                actor_state.player_position.x,
+                actor_state.player_position.vx,
                 0xffff,
-                actor_state.player_position.z,
+                actor_state.player_position.vz,
                 0x7d00,
                 0,
                 0)
@@ -269,7 +269,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    struct KfVec4i target;
+    VECTOR target;
     s32 result;
     s32 drop;
     s32 threshold;
@@ -277,9 +277,9 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
     target = actor->position;
     vector3i_add_xz(&target, delta);
     result = collision_query_world(
-        target.x,
-        target.y,
-        target.z,
+        target.vx,
+        target.vy,
+        target.vz,
         definition->collision_radius,
         definition->collision_height,
         0x8040);
@@ -288,9 +288,9 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
         if (stop_on_collision == 0) {
             if (actor->collision_state != 2) {
                 if (collision_query_world(
-                        actor->position.x,
-                        target.y,
-                        target.z,
+                        actor->position.vx,
+                        target.vy,
+                        target.vz,
                         definition->collision_radius,
                         definition->collision_height,
                         0x8040)
@@ -300,13 +300,13 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
                     } else {
                         actor->movement_yaw = 0;
                     }
-                    actor->position.z = target.z;
-                    actor->cell_z = target.z / MAP_TILE_SIZE;
+                    actor->position.vz = target.vz;
+                    actor->cell_z = target.vz / MAP_TILE_SIZE;
                     actor->collision_state = 1;
                 } else if (collision_query_world(
-                               target.x,
-                               target.y,
-                               actor->position.z,
+                               target.vx,
+                               target.vy,
+                               actor->position.vz,
                                definition->collision_radius,
                                definition->collision_height,
                                0x8040)
@@ -316,8 +316,8 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
                     } else {
                         actor->movement_yaw = 0xc00;
                     }
-                    actor->position.x = target.x;
-                    actor->cell_x = target.x / MAP_TILE_SIZE;
+                    actor->position.vx = target.vx;
+                    actor->cell_x = target.vx / MAP_TILE_SIZE;
                     actor->collision_state = 1;
                 } else {
                     actor->movement_yaw = (actor->movement_yaw + 0x800) & 0xfff;
@@ -329,7 +329,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
         }
         return 1;
     }
-    drop = target.y - map_floor_height_at_position((struct KfVec3i *)&target);
+    drop = target.vy - map_floor_height_at_position((struct KfVec3i *)&target);
     if (drop < 0) {
         if (drop < -600) {
             threshold = 0x4000;
@@ -362,9 +362,9 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
         }
     }
     actor->collision_state = 0;
-    actor->position.x = target.x;
-    actor->position.z = target.z;
-    actor->cell_x = target.x / MAP_TILE_SIZE;
-    actor->cell_z = target.z / MAP_TILE_SIZE;
+    actor->position.vx = target.vx;
+    actor->position.vz = target.vz;
+    actor->cell_x = target.vx / MAP_TILE_SIZE;
+    actor->cell_z = target.vz / MAP_TILE_SIZE;
     return 0;
 }

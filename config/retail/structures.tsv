@@ -61,8 +61,6 @@ KfTmdState	0x24	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;bas
 KfTmdStateOpen	0xc	supported	semantic_types.h;asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
 KfVec3i	0x0c	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates
-KfVec4i	0x10	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates plus retained fourth lane
-KfVec4s	0x08	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates plus retained fourth lane
 KfVecXZs	0x04	supported	semantic_types.h;asm;xrefs	two signed horizontal halfword coordinates
 KfWeaponRecord	0x2c	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
 SoundRef	0x03	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	packed LIBSND program/tone/note reference

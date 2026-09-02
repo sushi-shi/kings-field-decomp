@@ -92,7 +92,7 @@ u32 collision_query_world(
                 KfActor *actor = &actor_state.actors[hit];
 
                 collision_target.position = actor->position;
-                collision_target.rotation = *(struct KfVec4s *)&actor->rotation;
+                collision_target.rotation = *(SVECTOR *)&actor->rotation;
                 collision_target.radius =
                     actor_state.definitions[actor->definition_id].collision_radius;
             }
@@ -105,8 +105,8 @@ u32 collision_query_world(
             if (flags & 0x800) {
                 KfMapObject *object = &map_object_state.objects[hit];
 
-                collision_target.position = *(struct KfVec4i *)&object->position_x;
-                collision_target.rotation = *(struct KfVec4s *)&object->rotation;
+                collision_target.position = *(VECTOR *)&object->position_x;
+                collision_target.rotation = *(SVECTOR *)&object->rotation;
                 collision_target.radius =
                     map_object_state.definitions[object->object_id].collision_radius;
             }
@@ -121,8 +121,8 @@ u32 collision_query_world(
         if (flags & 0x800) {
             KfMapEvent *event = &map_event_pool[hit];
 
-            collision_target.position = *(struct KfVec4i *)&event->reference_x;
-            collision_target.rotation = *(struct KfVec4s *)&event->unknown_34;
+            collision_target.position = *(VECTOR *)&event->reference_x;
+            collision_target.rotation = *(SVECTOR *)&event->unknown_34;
             collision_target.radius = event->radius;
         }
         return hit | 0x400000;

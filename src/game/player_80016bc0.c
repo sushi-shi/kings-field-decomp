@@ -14,9 +14,9 @@ extern s32 fixed6_ratio_step(s32 value, s32 span);
 ADDRESS(0x80016bc0, 0x264)
 void player_update_weapon_attack(void)
 {
-    struct KfVec4s offset;
-    struct KfVec4s rotation;
-    struct KfVec4i result;
+    SVECTOR offset;
+    SVECTOR rotation;
+    VECTOR result;
     MATRIX matrix;
     u16 window;
     s32 actor;
@@ -30,18 +30,18 @@ void player_update_weapon_attack(void)
         if (player_state.equipped_weapon_id == 3
                 ? (u16)(window - 1000) < 300
                 : (u16)(window - 3072) < 300) {
-            offset.x = 0;
-            offset.y = 1000;
-            offset.z = player_state.equipped_weapon_record->attack_z_offset;
-            rotation.x = 0;
-            rotation.y = -player_state.camera_rotation.y;
-            rotation.z = 0;
+            offset.vx = 0;
+            offset.vy = 1000;
+            offset.vz = player_state.equipped_weapon_record->attack_z_offset;
+            rotation.vx = 0;
+            rotation.vy = -player_state.camera_rotation.vy;
+            rotation.vz = 0;
             RotMatrix(&rotation, &matrix);
             ApplyMatrix(&matrix, &offset, &result);
-            result.x += player_state.camera_position.x;
-            result.y += player_state.camera_position.y;
-            result.z += player_state.camera_position.z;
-            actor = actor_pool_find_overlap(result.x, result.y, result.z, 800, 1000);
+            result.vx += player_state.camera_position.vx;
+            result.vy += player_state.camera_position.vy;
+            result.vz += player_state.camera_position.vz;
+            actor = actor_pool_find_overlap(result.vx, result.vy, result.vz, 800, 1000);
             if (actor != -1) {
                 actor_apply_damage(
                     actor,

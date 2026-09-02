@@ -27,14 +27,14 @@ void actor_prepare_charge_toward_player(void)
     s32 length;
 
     actor->movement_yaw = vector_xz_to_angle(
-        actor_state.player_position.x - actor->position.x,
-        actor_state.player_position.z - actor->position.z);
+        actor_state.player_position.vx - actor->position.vx,
+        actor_state.player_position.vz - actor->position.vz);
     if (angle_within_tolerance(actor->rotation.y, (s16)actor->movement_yaw, 0x155) == 0) {
         actor->movement_yaw = actor->rotation.y;
     }
     length = fixed_vector2_length(
-        actor_state.player_position.x - actor->position.x,
-        actor_state.player_position.z - actor->position.z);
+        actor_state.player_position.vx - actor->position.vx,
+        actor_state.player_position.vz - actor->position.vz);
     angle_to_forward_xz(actor->movement_yaw, &delta);
     vector2s_scale_shift11(length >> 2, (s16 *)&delta);
     actor->movement_x = delta.x / 16;
@@ -50,12 +50,12 @@ void actor_apply_horizontal_movement(void)
     struct KfVec3i target;
     s32 result;
 
-    target.x = actor->movement_x + actor->position.x;
-    target.z = actor->movement_z + actor->position.z;
+    target.x = actor->movement_x + actor->position.vx;
+    target.z = actor->movement_z + actor->position.vz;
     definition = actor_state.current_definition;
     result = collision_query_world(
         target.x,
-        actor->position.y,
+        actor->position.vy,
         target.z,
         definition->collision_radius,
         definition->collision_height,
@@ -69,11 +69,11 @@ void actor_apply_horizontal_movement(void)
             actor->movement_x = 0;
         }
     } else {
-        actor->position.x = target.x;
-        actor->position.z = target.z;
+        actor->position.vx = target.x;
+        actor->position.vz = target.z;
     }
-    actor->cell_x = actor->position.x / 2000;
-    actor->cell_z = actor->position.z / 2000;
+    actor->cell_x = actor->position.vx / 2000;
+    actor->cell_z = actor->position.vz / 2000;
 }
 
 /* Runs effect action ACTION (0..7): starts its animation, spawns its effect once, then picks the next action. */
@@ -97,9 +97,9 @@ void actor_update_effect_action(s32 action)
         actor->action_timer = 0xff;
         actor_select_next_action(actor_distance_to_point(
             actor,
-            actor_state.player_position.x,
+            actor_state.player_position.vx,
             0xffff,
-            actor_state.player_position.z,
+            actor_state.player_position.vz,
             0x7d00,
             0,
             0));
@@ -116,7 +116,7 @@ void actor_apply_random_movement(s16 step, s16 limit)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    struct KfVec4i target;
+    VECTOR target;
     s32 result;
 
     if (rand() < 16384) {
@@ -152,13 +152,13 @@ void actor_apply_random_movement(s16 step, s16 limit)
             actor->movement_y = -limit;
         }
     }
-    target.x = actor->movement_x + actor->position.x;
-    target.z = actor->movement_z + actor->position.z;
-    target.y = actor->movement_y + actor->position.y;
+    target.vx = actor->movement_x + actor->position.vx;
+    target.vz = actor->movement_z + actor->position.vz;
+    target.vy = actor->movement_y + actor->position.vy;
     result = collision_query_world(
-        target.x,
-        target.y,
-        target.z,
+        target.vx,
+        target.vy,
+        target.vz,
         definition->collision_radius,
         definition->collision_height,
         0x8060);
@@ -167,18 +167,18 @@ void actor_apply_random_movement(s16 step, s16 limit)
     } else {
         actor->action_timer = 2;
         result = collision_query_world(
-            target.x,
-            actor->position.y,
-            actor->position.z,
+            target.vx,
+            actor->position.vy,
+            actor->position.vz,
             definition->collision_radius,
             definition->collision_height,
             0x8060);
         if (result != -1) {
             actor->movement_x = -actor->movement_x;
         } else if (collision_query_world(
-                       actor->position.x,
-                       target.y,
-                       actor->position.z,
+                       actor->position.vx,
+                       target.vy,
+                       actor->position.vz,
                        definition->collision_radius,
                        definition->collision_height,
                        0x8060)
@@ -186,9 +186,9 @@ void actor_apply_random_movement(s16 step, s16 limit)
             actor->movement_y = -actor->movement_y;
         }
         if (collision_query_world(
-                actor->position.x,
-                actor->position.y,
-                target.z,
+                actor->position.vx,
+                actor->position.vy,
+                target.vz,
                 definition->collision_radius,
                 definition->collision_height,
                 0x8060)
@@ -196,6 +196,6 @@ void actor_apply_random_movement(s16 step, s16 limit)
             actor->movement_z = -actor->movement_z;
         }
     }
-    actor->cell_x = actor->position.x / 2000;
-    actor->cell_z = actor->position.z / 2000;
+    actor->cell_x = actor->position.vx / 2000;
+    actor->cell_z = actor->position.vz / 2000;
 }

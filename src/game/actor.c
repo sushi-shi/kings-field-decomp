@@ -38,13 +38,13 @@ extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 /* Psy-Q LIBGTE: long SquareRoot0(long a). */
 extern void audio_play_spatial_range(
     const SoundRef *sound,
-    const struct KfVec4i *position,
+    const VECTOR *position,
     s16 volume,
     s32 max_distance,
     s32 attenuation_distance);
 extern void audio_play_spatial_default_range(
     const SoundRef *sound,
-    const struct KfVec4i *position,
+    const VECTOR *position,
     s16 volume);
 
 ADDRESS(0x8002ca78, 0x3c)
@@ -71,8 +71,8 @@ void func_8002cab4(void)
 
 ADDRESS(0x8002cad4, 0x70)
 void actor_set_player_transform(
-    const struct KfVec4i *position,
-    const struct KfVec4s *rotation)
+    const VECTOR *position,
+    const SVECTOR *rotation)
 {
     if (position != 0) {
         actor_state.player_position = *position;
@@ -85,16 +85,16 @@ void actor_set_player_transform(
 ADDRESS(0x8002cb44, 0x74)
 void actor_update_cell_from_position(KfActor *actor)
 {
-    actor->cell_x = actor->position.x / 2000;
-    actor->cell_z = actor->position.z / 2000;
+    actor->cell_x = actor->position.vx / 2000;
+    actor->cell_z = actor->position.vz / 2000;
 }
 
 ADDRESS(0x8002cbb8, 0x9c)
 void actor_set_position(KfActor *actor, const struct KfVec3i *position)
 {
-    actor->position.x = position->x;
-    actor->position.z = position->z;
-    actor->position.y = position->y;
+    actor->position.vx = position->x;
+    actor->position.vz = position->z;
+    actor->position.vy = position->y;
     actor->cell_x = position->x / 2000;
     actor->cell_z = position->z / 2000;
 }
@@ -424,9 +424,9 @@ void actor_try_attack_player(
 
     distance = actor_distance_to_point(
         actor,
-        actor_state.player_position.x,
-        actor_state.player_position.y + 1500,
-        actor_state.player_position.z,
+        actor_state.player_position.vx,
+        actor_state.player_position.vy + 1500,
+        actor_state.player_position.vz,
         maximum_distance,
         definition->collision_height,
         1700);
@@ -437,8 +437,8 @@ void actor_try_attack_player(
         return;
     }
     angle = vector_xz_to_angle(
-        actor_state.player_position.x - actor->position.x,
-        actor_state.player_position.z - actor->position.z);
+        actor_state.player_position.vx - actor->position.vx,
+        actor_state.player_position.vz - actor->position.vz);
     if (!angle_within_tolerance(actor->rotation.y + angle_offset, angle, angle_tolerance)) {
         return;
     }
@@ -492,7 +492,7 @@ KfActor *actor_pool_find_target_in_cone(
             continue;
         }
         delta = vector_xz_to_angle(
-            actor->position.x - origin->x, origin->z - actor->position.z) - facing;
+            actor->position.vx - origin->x, origin->z - actor->position.vz) - facing;
         delta &= 0xfff;
         folded = delta;
         if (delta > 2048) {
@@ -522,7 +522,7 @@ s32 actor_distance_to_point(
     s32 actor_height,
     s32 point_height)
 {
-    s32 delta_x = actor->position.x - point_x;
+    s32 delta_x = actor->position.vx - point_x;
     s32 delta_z;
     s32 delta_y;
     s32 top;
@@ -531,7 +531,7 @@ s32 actor_distance_to_point(
     if (delta_x < -max_distance || max_distance < delta_x) {
         goto out_of_range;
     }
-    delta_z = actor->position.z - point_z;
+    delta_z = actor->position.vz - point_z;
     if (delta_z < -max_distance || max_distance < delta_z) {
         goto out_of_range;
     }
@@ -541,7 +541,7 @@ s32 actor_distance_to_point(
         point_height >>= 1;
         top = point_y - point_height;
         point_height += actor_height;
-        delta_y = (actor->position.y - actor_height) - top;
+        delta_y = (actor->position.vy - actor_height) - top;
         if (delta_y < -point_height) {
             goto out_of_range;
         }
@@ -699,8 +699,8 @@ u8 actor_try_select_action_distance_facing(
     if (angle_within_tolerance(
             actor->rotation.y,
             vector_xz_to_angle(
-                actor_state.player_position.x - actor->position.x,
-                actor_state.player_position.z - actor->position.z),
+                actor_state.player_position.vx - actor->position.vx,
+                actor_state.player_position.vz - actor->position.vz),
             0x18e)) {
         return action;
     }
@@ -721,7 +721,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
     cell = actor->cell_z;
     row = map_floor_height_grid[cell];
     cell = actor->cell_x;
-    if (-(row[cell] * 100) != actor->position.y) {
+    if (-(row[cell] * 100) != actor->position.vy) {
         return 0xff;
     }
     if (actor_state.player_target == actor) {
@@ -745,8 +745,8 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
     if (angle_within_tolerance(
             actor->rotation.y,
             vector_xz_to_angle(
-                actor_state.player_position.x - actor->position.x,
-                actor_state.player_position.z - actor->position.z),
+                actor_state.player_position.vx - actor->position.vx,
+                actor_state.player_position.vz - actor->position.vz),
             0x18e)) {
         return action;
     }
@@ -776,8 +776,8 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
     if (angle_within_tolerance(
             actor->rotation.y,
             vector_xz_to_angle(
-                actor_state.player_position.x - actor->position.x,
-                actor_state.player_position.z - actor->position.z),
+                actor_state.player_position.vx - actor->position.vx,
+                actor_state.player_position.vz - actor->position.vz),
             0x1c7)) {
         return action;
     }
@@ -815,8 +815,8 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u
     if (!angle_within_tolerance(
             actor->rotation.y,
             vector_xz_to_angle(
-                actor_state.player_position.x - actor->position.x,
-                actor_state.player_position.z - actor->position.z),
+                actor_state.player_position.vx - actor->position.vx,
+                actor_state.player_position.vz - actor->position.vz),
             0x155)
         && rand() >= 819) {
         return 0xff;

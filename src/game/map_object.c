@@ -28,7 +28,7 @@ extern s32 map_object_distance_to_point(
 /* Effect spawner called with six or seven arguments; declared without a prototype. */
 extern KfEffectRecord *func_80036f44();
 extern void audio_play_spatial_default_range(
-    const SoundRef *sound, const struct KfVec4i *position, s16 volume);
+    const SoundRef *sound, const VECTOR *position, s16 volume);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void map_apply_copy_region(u8 region_id);
 extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
@@ -52,8 +52,8 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
     KfMapObject *object = &map_object_state.objects[start_index];
     s16 index = start_index;
     KfMapObjectDefinition *definition;
-    struct KfVec4s offset;
-    struct KfVec4i point;
+    SVECTOR offset;
+    VECTOR point;
     MATRIX matrix;
 
     for (; index < MAP_OBJECT_COUNT; index++, object++) {
@@ -62,28 +62,28 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
         }
         definition = &map_object_state.definitions[object->object_id];
         if (definition->behavior_type == 0) {
-            offset.x = -MAP_TILE_SIZE;
-            offset.y = 0;
-            offset.z = 0x226;
+            offset.vx = -MAP_TILE_SIZE;
+            offset.vy = 0;
+            offset.vz = 0x226;
             matrix_set_rotation_y(object->rotation.y, &matrix);
             ApplyMatrix(&matrix, &offset, &point);
-            point.x += x;
-            point.z += z;
+            point.vx += x;
+            point.vz += z;
             if (map_object_distance_to_point(
-                    object, point.x, point.z, definition->interaction_radius + extra_radius)
+                    object, point.vx, point.vz, definition->interaction_radius + extra_radius)
                 != -1) {
                 return index;
             }
         } else if (definition->behavior_type == 1) {
-            offset.x = MAP_TILE_SIZE;
-            offset.y = 0;
-            offset.z = 0x226;
+            offset.vx = MAP_TILE_SIZE;
+            offset.vy = 0;
+            offset.vz = 0x226;
             matrix_set_rotation_y(object->rotation.y, &matrix);
             ApplyMatrix(&matrix, &offset, &point);
-            point.x += x;
-            point.z += z;
+            point.vx += x;
+            point.vz += z;
             if (map_object_distance_to_point(
-                    object, point.x, point.z, definition->interaction_radius + extra_radius)
+                    object, point.vx, point.vz, definition->interaction_radius + extra_radius)
                 != -1) {
                 return index;
             }
@@ -297,7 +297,7 @@ void map_object_pool_update(void)
                         sound = &gameplay_sound_ref_7;
                     }
                     audio_play_spatial_default_range(
-                        sound, (struct KfVec4i *)&object->position_x, 0x7f);
+                        sound, (VECTOR *)&object->position_x, 0x7f);
                 }
                 if (timer == 31) {
                     map_object_mark_collision_edge(object, 1, object->rotation.y - 1024);
@@ -319,7 +319,7 @@ void map_object_pool_update(void)
                         sound = &gameplay_sound_ref_7;
                     }
                     audio_play_spatial_default_range(
-                        sound, (struct KfVec4i *)&object->position_x, 0x7f);
+                        sound, (VECTOR *)&object->position_x, 0x7f);
                 }
                 object->rotation.y -= 32;
                 if (pair != 0) {
@@ -333,7 +333,7 @@ void map_object_pool_update(void)
                 object->position_y -= 60;
                 if (elapsed == 0) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_0, (struct KfVec4i *)&object->position_x, 0x7f);
+                        &gameplay_sound_ref_0, (VECTOR *)&object->position_x, 0x7f);
                 }
                 if (elapsed == 40) {
                     map_object_mark_collision_edge(object, 1, object->rotation.y);
@@ -350,7 +350,7 @@ void map_object_pool_update(void)
                     }
                     map_object_mark_collision_edge(object, 0, object->rotation.y);
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_0, (struct KfVec4i *)&object->position_x, 0x7f);
+                        &gameplay_sound_ref_0, (VECTOR *)&object->position_x, 0x7f);
                 }
                 object->position_y += 60;
             }
@@ -523,7 +523,7 @@ void map_object_pool_update(void)
                 record = &DAT_8009d040[object->link.action_parameter];
                 if (record->unknown_08 == 0) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_3, (struct KfVec4i *)&object->position_x, 0x7f);
+                        &gameplay_sound_ref_3, (VECTOR *)&object->position_x, 0x7f);
                 }
                 record->unknown_08 += 128;
                 if (record->unknown_08 >= 4096) {
@@ -539,7 +539,7 @@ void map_object_pool_update(void)
                 record = &DAT_8009d040[object->link.action_parameter];
                 if (record->unknown_08 == 0xfff) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_3, (struct KfVec4i *)&object->position_x, 0x7f);
+                        &gameplay_sound_ref_3, (VECTOR *)&object->position_x, 0x7f);
                 }
                 record->unknown_08 -= 128;
                 if (record->unknown_08 > 4096) {
@@ -569,7 +569,7 @@ void map_object_pool_update(void)
             } else if (object->action_timer == 6) {
                 if (player_state.progress_state.current_floor == 3) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_11, (struct KfVec4i *)&object->position_x, 0x7f);
+                        &gameplay_sound_ref_11, (VECTOR *)&object->position_x, 0x7f);
                     counter = &DAT_8009eafc;
                     if (*counter != 4) {
                         (*counter)++;
@@ -583,7 +583,7 @@ void map_object_pool_update(void)
                 } else if (player_state.progress_state.current_floor == 1) {
                     if (DAT_8009ddb4[3] == 0) {
                         audio_play_spatial_default_range(
-                            &gameplay_sound_ref_5, (struct KfVec4i *)&object->position_x, 0x7f);
+                            &gameplay_sound_ref_5, (VECTOR *)&object->position_x, 0x7f);
                         DAT_8009ddb4[3] = 1;
                     }
                 }

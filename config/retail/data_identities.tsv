@@ -1353,7 +1353,7 @@ GAME.EXE	0x80014264	0x4	DAT_80014264	unknown	load	pointer		address-only	data.tsv
 GAME.EXE	0x80055810	0x9	player_sound_refs	unknown	load	SoundRef[3]	player	supported	data.tsv:direct-bytes;game_semantic_player_stats.tsv;asm;xrefs	three packed references used by weapon attack, death, and level-up paths
 GAME.EXE	0x8005582c	0xa	floor_entry_cells	unknown	load	KfFloorEntryCell[5]	player	supported	data.tsv:direct-bytes;game_semantic_player_interactions.tsv;asm;raw-5x2-cells	one entry cell for each of floors one through five; source linkage remains unresolved
 GAME.EXE	0x80055858	0x20	DAT_80055858	unknown	load	MATRIX	lighting	supported	asm;player_update	color matrix blended toward color_matrix_table[0] while status effect 1 fades
-GAME.EXE	0x80055878	0x40	DAT_80055878	unknown	load	KfVec4s[8]	player	supported	asm;player_update	view_rotation_offset table indexed by update_state 1..7; entry 0 restores the neutral offset
+GAME.EXE	0x80055878	0x40	DAT_80055878	unknown	load	SVECTOR[8]	player	supported	asm;player_update	view_rotation_offset table indexed by update_state 1..7; entry 0 restores the neutral offset
 GAME.EXE	0x800558b8	0x238	map_cell_attribute_height_table	unknown	load	s16[284]	collision	supported	asm;xrefs;collision_query_world;2-byte-stride-by-attribute	signed height offset per cell attribute added to the query height and floor; extent WIP
 GAME.EXE	0x80055af0	0xc	map_resource_path	unknown	load	char[12]	map_resource	supported	game_semantic_map_resources.tsv;asm;xrefs;raw-bytes	mutable B0\\ path shared by the floor selector and map-resource loaders; source linkage remains unresolved
 GAME.EXE	0x80055c5c	0x1	DAT_80055c5c	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1851,8 +1851,8 @@ GAME.EXE	0x80065078	0x2	DAT_80065078	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80065080	0x4	DAT_80065080	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065088	0x2	DAT_80065088	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065090	0x2	DAT_80065090	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065098	0x8	player_rotation_snapshot	global	bss	KfVec4s	player	supported	game_semantic_actor_core.tsv;ghidra-12.0.4-memory-xref;asm;main-loop;xrefs	per-frame rotation snapshot copied into actor and other subsystem contexts
-GAME.EXE	0x800650a0	0x10	player_position_snapshot	global	bss	KfVec4i	player	supported	game_semantic_actor_core.tsv;ghidra-12.0.4-memory-xref;asm;main-loop;xrefs	per-frame position snapshot copied into actor and other subsystem contexts
+GAME.EXE	0x80065098	0x8	player_rotation_snapshot	global	bss	SVECTOR	player	supported	game_semantic_actor_core.tsv;ghidra-12.0.4-memory-xref;asm;main-loop;xrefs	per-frame rotation snapshot copied into actor and other subsystem contexts
+GAME.EXE	0x800650a0	0x10	player_position_snapshot	global	bss	VECTOR	player	supported	game_semantic_actor_core.tsv;ghidra-12.0.4-memory-xref;asm;main-loop;xrefs	per-frame position snapshot copied into actor and other subsystem contexts
 GAME.EXE	0x800650b0	0x1e0	player_level_growth_table	unknown	bss	KfPlayerLevelGrowth[40]	player	supported	game_semantic_player_stats.tsv;asm;xrefs;runtime-copy;12-byte-stride	forty records copied from the gameplay asset stream; entries provide HP, MP, physical-power, magic, and cumulative experience thresholds
 GAME.EXE	0x80065290	0x4	DAT_80065290	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065298	0x4	DAT_80065298	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -1882,7 +1882,7 @@ GAME.EXE	0x80090ec0	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display
 GAME.EXE	0x80090f78	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
 GAME.EXE	0x80090fa8	0x24	tmd_state	unknown	bss	KfTmdState	tmd	supported	game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	AssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	indexed asset-header pointer table
-GAME.EXE	0x800910bc	0x4	current_tmd_vertices	global	bss	KfVec4s *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
+GAME.EXE	0x800910bc	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 GAME.EXE	0x800910c0	0xf0	pool_records	global	bss	KfPoolRecord[12]	pool	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	12 records of stride 20
 GAME.EXE	0x800911b0	0x2	DAT_800911b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800911b2	0x2	DAT_800911b2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3190,7 +3190,7 @@ OPEN.EXE	0x80069a6c	0x4	ordering_table	global	bss	u32 *	primitive_buffer	support
 OPEN.EXE	0x80069a70	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
 OPEN.EXE	0x80069b28	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
 OPEN.EXE	0x80069b58	0xc	tmd_state	unknown	bss	KfTmdStateOpen	tmd	supported	asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
-OPEN.EXE	0x80069b68	0x4	current_tmd_vertices	global	bss	KfVec4s *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
+OPEN.EXE	0x80069b68	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 OPEN.EXE	0x80069b84	0x2	DAT_80069b84	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80069b86	0x2	DAT_80069b86	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da28	0x2	DAT_8006da28	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

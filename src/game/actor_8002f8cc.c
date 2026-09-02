@@ -23,7 +23,7 @@ extern u8 *func_80036f44();
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern u32 collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
-extern s32 map_floor_height_at_position(const struct KfVec4i *position);
+extern s32 map_floor_height_at_position(const VECTOR *position);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
 extern void vector2s_scale_shift11(s16 scale, s16 *vector);
@@ -92,9 +92,9 @@ void actor_update_boss_death_sequence(void)
         actor_pool_begin_death_by_definition(4);
     }
     if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ACTION_INDEX(6)] * 2) == 0) {
-        position.x = actor->position.x + (rand() & 0x1fff) - 4096;
-        position.z = actor->position.z + (rand() & 0x1fff) - 4096;
-        position.y = actor->position.y - (rand() & 0xfff);
+        position.x = actor->position.vx + (rand() & 0x1fff) - 4096;
+        position.z = actor->position.vz + (rand() & 0x1fff) - 4096;
+        position.y = actor->position.vy - (rand() & 0xfff);
         func_80036f44(0, 0x13, 0x2c, &position, effect_output, 0);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ACTION_INDEX(6)] * 4) == 0) {
             sound_ref_play(&boss_death_loop_sound, 100);
@@ -156,8 +156,8 @@ void actor_update_current_action(void)
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = vector_xz_to_angle(
-                actor_state.player_position.x - actor->position.x,
-                actor_state.player_position.z - actor->position.z);
+                actor_state.player_position.vx - actor->position.vx,
+                actor_state.player_position.vz - actor->position.vz);
             break;
         case 1:
             if (actor_move_along_heading(1, 1) != 0) {
@@ -166,8 +166,8 @@ void actor_update_current_action(void)
             }
             if (rand() < 4096) {
                 actor->movement_yaw = vector_xz_to_angle(
-                    actor_state.player_position.x - actor->position.x,
-                    actor_state.player_position.z - actor->position.z);
+                    actor_state.player_position.vx - actor->position.vx,
+                    actor_state.player_position.vz - actor->position.vz);
             }
             break;
         default:
@@ -192,9 +192,9 @@ void actor_update_current_action(void)
             actor->action_timer = 0xff;
             actor_select_next_action(actor_distance_to_point(
                 actor,
-                actor_state.player_position.x,
+                actor_state.player_position.vx,
                 0xffff,
-                actor_state.player_position.z,
+                actor_state.player_position.vz,
                 32000,
                 0,
                 0));
@@ -249,16 +249,16 @@ void actor_update_current_action(void)
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = vector_xz_to_angle(
-                actor_state.player_position.x - actor->position.x,
-                actor_state.player_position.z - actor->position.z);
+                actor_state.player_position.vx - actor->position.vx,
+                actor_state.player_position.vz - actor->position.vz);
         }
         if (actor_move_along_heading(-1, 1) != 0) {
             actor->action = 0xff;
             actor_select_next_action(actor_distance_to_point(
                 actor,
-                actor_state.player_position.x,
+                actor_state.player_position.vx,
                 0xffff,
-                actor_state.player_position.z,
+                actor_state.player_position.vz,
                 32000,
                 0,
                 0));
@@ -282,9 +282,9 @@ void actor_update_current_action(void)
             actor->action_timer = 0xff;
             actor_select_next_action(actor_distance_to_point(
                 actor,
-                actor_state.player_position.x,
+                actor_state.player_position.vx,
                 0xffff,
-                actor_state.player_position.z,
+                actor_state.player_position.vz,
                 32000,
                 0,
                 0));
@@ -349,9 +349,9 @@ void actor_update_current_action(void)
                 actor->vertical_state = 0;
                 actor->vertical_velocity = 0;
                 result = collision_query_world(
-                    actor->position.x,
-                    actor->position.y,
-                    actor->position.z,
+                    actor->position.vx,
+                    actor->position.vy,
+                    actor->position.vz,
                     definition->collision_radius,
                     definition->collision_height,
                     0x8060);
@@ -362,9 +362,9 @@ void actor_update_current_action(void)
                 actor->action_timer = 0xff;
                 actor_select_next_action(actor_distance_to_point(
                     actor,
-                    actor_state.player_position.x,
+                    actor_state.player_position.vx,
                     0xffff,
-                    actor_state.player_position.z,
+                    actor_state.player_position.vz,
                     32000,
                     0,
                     0));
@@ -388,9 +388,9 @@ void actor_update_current_action(void)
             actor->action_timer = 0xff;
             actor_select_next_action(actor_distance_to_point(
                 actor,
-                actor_state.player_position.x,
+                actor_state.player_position.vx,
                 0xffff,
-                actor_state.player_position.z,
+                actor_state.player_position.vz,
                 32000,
                 0,
                 0));
@@ -403,17 +403,17 @@ void actor_update_current_action(void)
             actor->animation_phase = 0;
         }
         result = collision_query_world(
-            actor->position.x, 0xffff, actor->position.z, definition->collision_radius, 0, 0x8040);
+            actor->position.vx, 0xffff, actor->position.vz, definition->collision_radius, 0, 0x8040);
         if (result != -1) {
-            target.x = actor->position.x;
-            target.z = actor->position.z;
+            target.x = actor->position.vx;
+            target.z = actor->position.vz;
             angle_to_forward_xz(actor->rotation.y, &direction);
             vector2s_scale_shift11(definition->move_speed, (s16 *)&direction);
             vector3i_add_xz(&target, &direction);
             if (actor_pool_find_overlap(target.x, 0xffff, target.z, definition->collision_radius, 0)
                 == -1) {
-                actor->position.x = target.x;
-                actor->position.z = target.z;
+                actor->position.vx = target.x;
+                actor->position.vz = target.z;
             }
         } else {
             actor->action_timer = 0xff;
@@ -465,12 +465,12 @@ void actor_update_current_action(void)
             }
             /* Retail reads the home position before this branch assigns it. */
             actor->movement_yaw =
-                vector_xz_to_angle(home_x - actor->position.x, home_z - actor->position.z);
+                vector_xz_to_angle(home_x - actor->position.vx, home_z - actor->position.vz);
         } else if (actor->collision_state == 0) {
             home_x = actor->tile_x * 2000 + actor->local_x;
             home_z = actor->tile_z * 2000 + actor->local_z;
-            if (actor->position.x - home_x > -200 && actor->position.x - home_x < 200
-                && actor->position.z - home_z > -200 && actor->position.z - home_z < 200) {
+            if (actor->position.vx - home_x > -200 && actor->position.vx - home_x < 200
+                && actor->position.vz - home_z > -200 && actor->position.vz - home_z < 200) {
                 actor->movement_yaw = actor->heading_quadrant << 10;
                 actor->rotation.y = angle_approach(
                     actor->rotation.y, actor->movement_yaw, definition->turn_rate);
@@ -488,7 +488,7 @@ void actor_update_current_action(void)
             }
             if (rand() < 2048) {
                 actor->movement_yaw = vector_xz_to_angle(
-                    home_x - actor->position.x, home_z - actor->position.z);
+                    home_x - actor->position.vx, home_z - actor->position.vz);
             }
         }
         actor_move_along_heading(1, 0);
@@ -517,9 +517,9 @@ void actor_update_current_action(void)
             actor->action_timer = 0xff;
             actor_select_next_action(actor_distance_to_point(
                 actor,
-                actor_state.player_position.x,
+                actor_state.player_position.vx,
                 0xffff,
-                actor_state.player_position.z,
+                actor_state.player_position.vz,
                 32000,
                 0,
                 0));
@@ -532,33 +532,33 @@ vertical:
         break;
     case 1:
         floor_height = map_floor_height_at_position(&actor->position);
-        next_y = actor->vertical_velocity + actor->position.y;
+        next_y = actor->vertical_velocity + actor->position.vy;
         if (next_y > floor_height) {
             goto fall;
         }
     land:
-        actor->position.y = floor_height;
+        actor->position.vy = floor_height;
         actor->vertical_state = 0;
         actor->vertical_velocity = 0;
         break;
     fall:
-        actor->position.y = next_y;
+        actor->position.vy = next_y;
         actor->vertical_velocity += 20;
         break;
     case 2:
     case 3:
         floor_height = map_floor_height_at_position(&actor->position);
-        next_y = actor->vertical_velocity + actor->position.y;
+        next_y = actor->vertical_velocity + actor->position.vy;
         if (next_y >= floor_height) {
             goto land;
         }
         goto fall;
     case 4:
-        next_y = actor->vertical_velocity + actor->position.y;
+        next_y = actor->vertical_velocity + actor->position.vy;
         hit = collision_query_world(
-            actor->position.x,
+            actor->position.vx,
             next_y,
-            actor->position.z,
+            actor->position.vz,
             definition->collision_radius,
             definition->collision_height,
             0x8060);

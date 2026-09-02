@@ -25,20 +25,6 @@ struct KfVec3i {
     s32 z;
 };
 
-struct KfVec4s {
-    s16 x;
-    s16 y;
-    s16 z;
-    s16 pad;
-};
-
-struct KfVec4i {
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 pad;
-};
-
 struct KfPitchYaw {
     s16 pitch;
     s16 yaw;
@@ -242,8 +228,8 @@ typedef struct KfTmdGt4 {
  * their meaning is not yet known.
  */
 typedef struct KfCollisionTarget {
-    struct KfVec4i position;
-    struct KfVec4s rotation;
+    VECTOR position;
+    SVECTOR rotation;
     u16 radius;
     u8 unknown_1a[0x06];
 } KfCollisionTarget;
@@ -344,7 +330,7 @@ typedef struct KfActor {
     u16 cell_x;
     u16 cell_z;
     s16 unknown_1a;
-    struct KfVec4i position;
+    VECTOR position;
     struct KfEulerAngles rotation;
     u16 unknown_32;
     u32 unknown_34;
@@ -463,20 +449,20 @@ typedef struct KfFloorItem {
  * are retained because their meanings are not yet evidenced.
  */
 typedef struct KfCameraPathPoint {
-    struct KfVec4i position;
-    struct KfVec4s rotation;
+    VECTOR position;
+    SVECTOR rotation;
     s16 speed;
     s16 unknown_1a;
 } KfCameraPathPoint;
 
 typedef struct KfCameraPathState {
     const KfCameraPathPoint *points;
-    struct KfVec4i position;
-    struct KfVec4s rotation;
-    struct KfVec4i position_fixed;
-    struct KfVec4i rotation_fixed;
-    struct KfVec4i position_delta;
-    struct KfVec4i rotation_delta;
+    VECTOR position;
+    SVECTOR rotation;
+    VECTOR position_fixed;
+    VECTOR rotation_fixed;
+    VECTOR position_delta;
+    VECTOR rotation_delta;
     s16 point_index;
     s16 unknown_5e;
     s32 frames_remaining;
@@ -681,8 +667,6 @@ typedef struct KfSavePayload {
 typedef char KfVecXZs_size_is_4[(sizeof(struct KfVecXZs) == 4) ? 1 : -1];
 typedef char KfVec3s_size_is_6[(sizeof(struct KfVec3s) == 6) ? 1 : -1];
 typedef char KfVec3i_size_is_12[(sizeof(struct KfVec3i) == 12) ? 1 : -1];
-typedef char KfVec4s_size_is_8[(sizeof(struct KfVec4s) == 8) ? 1 : -1];
-typedef char KfVec4i_size_is_16[(sizeof(struct KfVec4i) == 16) ? 1 : -1];
 typedef char KfPitchYaw_size_is_4[(sizeof(struct KfPitchYaw) == 4) ? 1 : -1];
 typedef char KfEulerAngles_size_is_6[
     (sizeof(struct KfEulerAngles) == 6) ? 1 : -1];
@@ -917,12 +901,12 @@ typedef struct KfPlayerState {
     u8 audio_effects_enabled;
     u8 audio_music_enabled;
     u8 unknown_98[2];
-    struct KfVec4s view_rotation_offset;
+    SVECTOR view_rotation_offset;
     u8 update_state;
     u8 unknown_a3;
-    struct KfVec4i camera_position;
+    VECTOR camera_position;
     s32 floor_height;
-    struct KfVec4s camera_rotation;
+    SVECTOR camera_rotation;
     KfPlayerMotionState motion_state;
     KfMapCell map_cell;
     KfMapCell previous_map_cell;
@@ -963,8 +947,8 @@ typedef char KfFloorEntryCell_size_is_2[(sizeof(KfFloorEntryCell) == 2) ? 1 : -1
 typedef struct KfActorState {
     KfActorDefinition definitions[12];
     KfActor actors[128];
-    struct KfVec4i player_position;
-    struct KfVec4s player_rotation;
+    VECTOR player_position;
+    SVECTOR player_rotation;
     KfActorDefinition *current_definition;
     KfActor *current;
     u16 current_index;
@@ -998,8 +982,8 @@ typedef struct KfAudioState {
     s16 sequence_id;
     u8 unknown_0e[2];
     s32 sequence_active;
-    struct KfVec4i listener_position;
-    struct KfVec4s listener_rotation;
+    VECTOR listener_position;
+    SVECTOR listener_rotation;
     KfAudioVoiceSlots voice_slots;
 } KfAudioState;
 
@@ -1066,8 +1050,8 @@ typedef struct KfRenderState {
     MATRIX light_matrix_copy;
     MATRIX unknown_80;
     s32 fog_near_distance;
-    struct KfVec4i view_position;
-    struct KfVec4s view_rotation;
+    VECTOR view_position;
+    SVECTOR view_rotation;
     struct KfVecXZs view_cell;
     MATRIX quadrant_matrices[4];
 } KfRenderState;
@@ -1115,8 +1099,8 @@ typedef struct KfRenderStateOpen {
     MATRIX pitch_matrix;
     MATRIX light_matrix;
     s32 fog_near_distance;
-    struct KfVec4i view_position;
-    struct KfVec4s view_rotation;
+    VECTOR view_position;
+    SVECTOR view_rotation;
     struct KfVecXZs view_cell;
     MATRIX quadrant_matrices[4];
 } KfRenderStateOpen;

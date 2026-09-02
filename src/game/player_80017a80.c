@@ -65,5 +65,5 @@ void player_update_vertical_motion(void)
     }
 done:
     view_offset = player_state.view_bob_offset - 1500;
-    player_state.camera_position.y = view_offset + player_state.floor_height;
+    player_state.camera_position.vy = view_offset + player_state.floor_height;
 }

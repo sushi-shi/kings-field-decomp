@@ -24,8 +24,8 @@ s32 player_distance_to_point_in_cone(
     distance = player_distance_to_point(point->x, 0xffff, point->z, max_distance, 0);
     if (distance != -1) {
         delta = (vector_xz_to_angle(
-                     player_state.camera_position.x - point->x,
-                     point->z - player_state.camera_position.z)
+                     player_state.camera_position.vx - point->x,
+                     point->z - player_state.camera_position.vz)
                  - facing) & 0xfff;
         if (delta > 2048) {
             delta = 0x1000 - delta;
@@ -48,11 +48,11 @@ s32 player_distance_to_point(
     s32 dy;
     s32 distance;
 
-    dx = player_state.camera_position.x - point_x;
+    dx = player_state.camera_position.vx - point_x;
     if (dx < -max_distance || max_distance < dx) {
         return -1;
     }
-    dz = player_state.camera_position.z - point_z;
+    dz = player_state.camera_position.vz - point_z;
     if (dz < -max_distance || max_distance < dz) {
         return -1;
     }
@@ -107,14 +107,14 @@ s32 player_move_horizontal(s32 heading, s32 distance)
 
     dz = (rcos(heading) * distance) >> 12;
     dx = (-rsin(heading) * distance) >> 12;
-    new_z = dz + player_state.camera_position.z;
-    new_x = dx + player_state.camera_position.x;
+    new_z = dz + player_state.camera_position.vz;
+    new_x = dx + player_state.camera_position.vx;
     for (;;) {
         if (collision_query_world(new_x, player_state.floor_height, new_z, 800, 1700, 2177) == -1) {
             break;
         }
-        delta_x = collision_target.position.x - player_state.camera_position.x;
-        delta_z = collision_target.position.z - player_state.camera_position.z;
+        delta_x = collision_target.position.vx - player_state.camera_position.vx;
+        delta_z = collision_target.position.vz - player_state.camera_position.vz;
         angle = vector_xz_to_angle(delta_x, delta_z);
         angle = (angle_mod_delta_le_half_turn(heading, angle) == 0 ? angle + 2112 : angle + 1984)
             & 0xfff;
@@ -122,10 +122,10 @@ s32 player_move_horizontal(s32 heading, s32 distance)
         delta_z = (rcos(angle) * radius) >> 12;
         delta_x = (-rsin(angle) * radius) >> 12;
         attempt--;
-        new_z = collision_target.position.z + delta_z;
-        dz = new_z - player_state.camera_position.z;
-        new_x = collision_target.position.x + delta_x;
-        dx = new_x - player_state.camera_position.x;
+        new_z = collision_target.position.vz + delta_z;
+        dz = new_z - player_state.camera_position.vz;
+        new_x = collision_target.position.vx + delta_x;
+        dx = new_x - player_state.camera_position.vx;
         if (attempt == -1) {
             return 1;
         }
@@ -134,48 +134,48 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     if (cell_z < 100 && map_collision_grid[cell_z][player_state.map_cell.x] != 0
         && -(map_floor_height_grid[cell_z][player_state.map_cell.x] * 100) - player_state.floor_height
                >= -699) {
-        player_state.camera_position.z = new_z;
+        player_state.camera_position.vz = new_z;
         player_state.map_cell.z = cell_z;
     }
     cell_x = new_x / 2000;
     if (cell_x < 100 && map_collision_grid[player_state.map_cell.z][cell_x] != 0
         && -(map_floor_height_grid[player_state.map_cell.z][cell_x] * 100) - player_state.floor_height
                >= -699) {
-        player_state.camera_position.x = new_x;
+        player_state.camera_position.vx = new_x;
         player_state.map_cell.x = cell_x;
     }
     type = map_collision_grid[cell_z0][cell_x0];
     if (type >= 2 && type <= 5) {
         if (player_state.map_cell.x == cell_x0 && player_state.map_cell.z == cell_z0) {
-            remainder_z = player_state.camera_position.z % 2000;
-            remainder_x = player_state.camera_position.x % 2000;
+            remainder_z = player_state.camera_position.vz % 2000;
+            remainder_x = player_state.camera_position.vx % 2000;
             if (type == 2) {
                 if (remainder_x < remainder_z) {
                     half = (remainder_z - remainder_x) / 2;
-                    player_state.camera_position.z -= half;
-                    player_state.camera_position.x += half;
+                    player_state.camera_position.vz -= half;
+                    player_state.camera_position.vx += half;
                 }
             } else if (type == 3) {
                 if (remainder_z + remainder_x >= 2001) {
                     half = (remainder_z + remainder_x - 2000) / 2;
-                    player_state.camera_position.z -= half;
-                    player_state.camera_position.x -= half;
+                    player_state.camera_position.vz -= half;
+                    player_state.camera_position.vx -= half;
                 }
             } else if (type == 4) {
                 if (remainder_z < remainder_x) {
                     half = (remainder_x - remainder_z) / 2;
-                    player_state.camera_position.z += half;
-                    player_state.camera_position.x -= half;
+                    player_state.camera_position.vz += half;
+                    player_state.camera_position.vx -= half;
                 }
             } else if (type == 5) {
                 if (remainder_z + remainder_x < 2000) {
                     half = (2000 - (remainder_z + remainder_x)) / 2;
-                    player_state.camera_position.z += half;
-                    player_state.camera_position.x += half;
+                    player_state.camera_position.vz += half;
+                    player_state.camera_position.vx += half;
                 }
             }
-            player_state.map_cell.z = player_state.camera_position.z / 2000;
-            player_state.map_cell.x = player_state.camera_position.x / 2000;
+            player_state.map_cell.z = player_state.camera_position.vz / 2000;
+            player_state.map_cell.x = player_state.camera_position.vx / 2000;
         }
         if (map_collision_grid[cell_z][cell_x] == 0) {
             if (dz < 0) {
@@ -218,13 +218,13 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                     dx = -(distance * 2896) >> 12;
                 }
             }
-            new_z = dz + player_state.camera_position.z;
+            new_z = dz + player_state.camera_position.vz;
             cell_z = new_z / 2000;
-            new_x = dx + player_state.camera_position.x;
+            new_x = dx + player_state.camera_position.vx;
             cell_x = new_x / 2000;
             if (cell_z < 100 && cell_x < 100 && map_collision_grid[cell_z][cell_x] != 0) {
-                player_state.camera_position.z = new_z;
-                player_state.camera_position.x = new_x;
+                player_state.camera_position.vz = new_z;
+                player_state.camera_position.vx = new_x;
                 player_state.map_cell.z = cell_z;
                 player_state.map_cell.x = cell_x;
             }

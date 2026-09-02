@@ -23,25 +23,25 @@ void camera_path_compute_segment(KfCameraPathState *path)
     s16 az;
 
     path->point_index++;
-    if (point->position.x == -1) {
+    if (point->position.vx == -1) {
         path->frames_remaining = -1;
         return;
     }
-    dx = point->position.x - path->position.x;
-    dy = point->position.y - path->position.y;
-    dz = point->position.z - path->position.z;
+    dx = point->position.vx - path->position.vx;
+    dy = point->position.vy - path->position.vy;
+    dz = point->position.vz - path->position.vz;
     distance = SquareRoot0((dx >> 3) * (dx >> 3) + (dy >> 3) * (dy >> 3) + (dz >> 3) * (dz >> 3))
         << 3;
-    path->position_delta.x = (dx << 4) * point->speed / distance;
-    path->position_delta.y = (dy << 4) * point->speed / distance;
-    path->position_delta.z = (dz << 4) * point->speed / distance;
+    path->position_delta.vx = (dx << 4) * point->speed / distance;
+    path->position_delta.vy = (dy << 4) * point->speed / distance;
+    path->position_delta.vz = (dz << 4) * point->speed / distance;
     path->frames_remaining = distance / point->speed;
-    dx = angle_shortest_delta(path->rotation.x, point->rotation.x);
-    dy = angle_shortest_delta(path->rotation.y, point->rotation.y);
-    az = angle_shortest_delta(path->rotation.z, point->rotation.z);
-    path->rotation_delta.x = (dx << 4) / path->frames_remaining;
-    path->rotation_delta.y = (dy << 4) / path->frames_remaining;
-    path->rotation_delta.z = (az << 4) / path->frames_remaining;
+    dx = angle_shortest_delta(path->rotation.vx, point->rotation.vx);
+    dy = angle_shortest_delta(path->rotation.vy, point->rotation.vy);
+    az = angle_shortest_delta(path->rotation.vz, point->rotation.vz);
+    path->rotation_delta.vx = (dx << 4) / path->frames_remaining;
+    path->rotation_delta.vy = (dy << 4) / path->frames_remaining;
+    path->rotation_delta.vz = (az << 4) / path->frames_remaining;
 }
 
 ADDRESS(0x800335c0, 0xc0)
@@ -51,12 +51,12 @@ void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points)
     path->position = player_state.camera_position;
     path->rotation = player_state.camera_rotation;
     path->point_index = 0;
-    path->position_fixed.x = path->position.x << 4;
-    path->position_fixed.y = path->position.y << 4;
-    path->position_fixed.z = path->position.z << 4;
-    path->rotation_fixed.x = path->rotation.x << 4;
-    path->rotation_fixed.y = path->rotation.y << 4;
-    path->rotation_fixed.z = path->rotation.z << 4;
+    path->position_fixed.vx = path->position.vx << 4;
+    path->position_fixed.vy = path->position.vy << 4;
+    path->position_fixed.vz = path->position.vz << 4;
+    path->rotation_fixed.vx = path->rotation.vx << 4;
+    path->rotation_fixed.vy = path->rotation.vy << 4;
+    path->rotation_fixed.vz = path->rotation.vz << 4;
     camera_path_compute_segment(path);
 }
 
@@ -73,16 +73,16 @@ void camera_path_step(KfCameraPathState *path, s32 y_offset)
             return;
         }
     }
-    path->position_fixed.x += path->position_delta.x;
-    path->position_fixed.y += path->position_delta.y;
-    path->position_fixed.z += path->position_delta.z;
-    path->rotation_fixed.x += path->rotation_delta.x;
-    path->rotation_fixed.y += path->rotation_delta.y;
-    path->rotation_fixed.z += path->rotation_delta.z;
-    path->position.x = path->position_fixed.x >> 4;
-    path->position.y = (path->position_fixed.y >> 4) + y_offset;
-    path->rotation.y = (path->rotation_fixed.y >> 4) & 0xfff;
-    path->position.z = path->position_fixed.z >> 4;
-    path->rotation.x = (path->rotation_fixed.x >> 4) & 0xfff;
-    path->rotation.z = (path->rotation_fixed.z >> 4) & 0xfff;
+    path->position_fixed.vx += path->position_delta.vx;
+    path->position_fixed.vy += path->position_delta.vy;
+    path->position_fixed.vz += path->position_delta.vz;
+    path->rotation_fixed.vx += path->rotation_delta.vx;
+    path->rotation_fixed.vy += path->rotation_delta.vy;
+    path->rotation_fixed.vz += path->rotation_delta.vz;
+    path->position.vx = path->position_fixed.vx >> 4;
+    path->position.vy = (path->position_fixed.vy >> 4) + y_offset;
+    path->rotation.vy = (path->rotation_fixed.vy >> 4) & 0xfff;
+    path->position.vz = path->position_fixed.vz >> 4;
+    path->rotation.vx = (path->rotation_fixed.vx >> 4) & 0xfff;
+    path->rotation.vz = (path->rotation_fixed.vz >> 4) & 0xfff;
 }

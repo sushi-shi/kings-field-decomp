@@ -5,7 +5,7 @@
 /* Psy-Q LIBGTE: int rsin(int a); int rcos(int a). */
 
 /*
- * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the MATRIX/KfVec4s/KfVec4i layouts:
+ * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the MATRIX/SVECTOR/VECTOR layouts:
  * MulMatrix(m0, m1), MulMatrix2(m0, m1), ApplyMatrix(m, v0, v1).
  */
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
@@ -133,20 +133,20 @@ void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s
 {
     MATRIX pitch_matrix;
     MATRIX yaw_matrix;
-    struct KfVec4s source;
-    struct KfVec4i result;
+    SVECTOR source;
+    VECTOR result;
 
-    source.x = 0;
-    source.y = 0;
-    source.z = 0x1000;
+    source.vx = 0;
+    source.vy = 0;
+    source.vz = 0x1000;
     matrix_set_rotation_x(-angles->pitch & 0xfff, &pitch_matrix);
     ApplyMatrix(&pitch_matrix, &source, &result);
-    source.x = result.x;
-    source.y = result.y;
-    source.z = result.z;
+    source.vx = result.vx;
+    source.vy = result.vy;
+    source.vz = result.vz;
     matrix_set_rotation_y(angles->yaw, &yaw_matrix);
     ApplyMatrix(&yaw_matrix, &source, &result);
-    direction->x = result.x;
-    direction->y = result.y;
-    direction->z = result.z;
+    direction->x = result.vx;
+    direction->y = result.vy;
+    direction->z = result.vz;
 }

@@ -7,7 +7,7 @@ extern KfMagicRecord magic_records[24];
 extern u8 map_cell_attribute_grid[100][100];
 extern MATRIX color_matrix_table[7];
 extern MATRIX DAT_80055858;
-extern struct KfVec4s DAT_80055878[8];
+extern SVECTOR DAT_80055878[8];
 extern u32 DAT_80057b30;
 extern s32 DAT_80057e68;
 extern s32 DAT_80057e70;
@@ -78,9 +78,9 @@ void player_update(void)
     KfActor *target;
     const struct KfVec3i *origin;
     struct KfVec3s direction;
-    struct KfVec4s scale;
+    SVECTOR scale;
     struct KfEulerAngles angles;
-    struct KfVec4i position;
+    VECTOR position;
     MATRIX matrix;
     s32 distance;
     u8 attribute;
@@ -201,14 +201,14 @@ void player_update(void)
         }
         player_state.motion_state.movement_speed = SquareRoot0(strafe * strafe + forward * forward);
         if (forward > 0) {
-            player_move_horizontal(player_state.camera_rotation.y, forward);
+            player_move_horizontal(player_state.camera_rotation.vy, forward);
         } else if (forward < 0) {
-            player_move_horizontal((player_state.camera_rotation.y + 0x800) & 0xfff, -forward);
+            player_move_horizontal((player_state.camera_rotation.vy + 0x800) & 0xfff, -forward);
         }
         if (strafe > 0) {
-            player_move_horizontal((player_state.camera_rotation.y - 0x400) & 0xfff, strafe);
+            player_move_horizontal((player_state.camera_rotation.vy - 0x400) & 0xfff, strafe);
         } else if (strafe < 0) {
-            player_move_horizontal((player_state.camera_rotation.y + 0x400) & 0xfff, -strafe);
+            player_move_horizontal((player_state.camera_rotation.vy + 0x400) & 0xfff, -strafe);
         }
         player_update_view_bob();
         if (input & 0x8000) {
@@ -232,8 +232,8 @@ void player_update(void)
                 player_state.motion_state.yaw_step = 0;
             }
         }
-        player_state.camera_rotation.y =
-            (player_state.camera_rotation.y + player_state.motion_state.yaw_step) & 0xfff;
+        player_state.camera_rotation.vy =
+            (player_state.camera_rotation.vy + player_state.motion_state.yaw_step) & 0xfff;
         if (input & 0x2) {
             player_state.motion_state.pitch_step += 3;
             if (player_state.motion_state.pitch_step >= 11) {
@@ -256,14 +256,14 @@ void player_update(void)
             }
         }
         if (player_state.motion_state.pitch_step > 0) {
-            player_state.camera_rotation.x += player_state.motion_state.pitch_step;
-            if (player_state.camera_rotation.x >= 192) {
-                player_state.camera_rotation.x = 191;
+            player_state.camera_rotation.vx += player_state.motion_state.pitch_step;
+            if (player_state.camera_rotation.vx >= 192) {
+                player_state.camera_rotation.vx = 191;
             }
         } else if (player_state.motion_state.pitch_step < 0) {
-            player_state.camera_rotation.x += player_state.motion_state.pitch_step;
-            if (player_state.camera_rotation.x < -191) {
-                player_state.camera_rotation.x = -191;
+            player_state.camera_rotation.vx += player_state.motion_state.pitch_step;
+            if (player_state.camera_rotation.vx < -191) {
+                player_state.camera_rotation.vx = -191;
             }
         }
         if ((input & 0x10) && !(DAT_80057b30 & 0x10)) {
@@ -376,31 +376,31 @@ void player_update(void)
                     if (player_state.unknown_78 == 1) {
                         player_state.vitals.current_mp -= record->mp_cost;
                     }
-                    scale.x = 200;
-                    scale.y = 200;
-                    scale.z = 400;
-                    angles.x = -player_state.camera_rotation.x;
-                    angles.y = player_state.camera_rotation.y;
-                    angles.z = -player_state.camera_rotation.z;
+                    scale.vx = 200;
+                    scale.vy = 200;
+                    scale.vz = 400;
+                    angles.x = -player_state.camera_rotation.vx;
+                    angles.y = player_state.camera_rotation.vy;
+                    angles.z = -player_state.camera_rotation.vz;
                     matrix_set_rotation_yxz(&angles, &matrix);
                     ApplyMatrix(&matrix, &scale, &position);
-                    position.x += player_state.camera_position.x;
-                    position.y += player_state.camera_position.y;
-                    angles.y = player_state.camera_rotation.y;
-                    position.z += player_state.camera_position.z;
-                    angles.x = player_state.camera_rotation.x;
-                    angles.z = player_state.camera_rotation.z;
+                    position.vx += player_state.camera_position.vx;
+                    position.vy += player_state.camera_position.vy;
+                    angles.y = player_state.camera_rotation.vy;
+                    position.vz += player_state.camera_position.vz;
+                    angles.x = player_state.camera_rotation.vx;
+                    angles.z = player_state.camera_rotation.vz;
                     origin = (const struct KfVec3i *)&player_state.camera_position;
                     if ((effect == 5 || effect == 8) && player_state.unknown_78 != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
-                            origin, player_state.camera_rotation.y, 20000, 0x155, &distance);
+                            origin, player_state.camera_rotation.vy, 20000, 0x155, &distance);
                         angles.x -= 4 - (rand() >> 9);
                         angles.y -= 4 - (rand() >> 9);
                         attachment = player_state.unknown_78 & 1;
                     } else {
                         target = actor_pool_find_target_in_cone(
                             (const struct KfVec3i *)&player_state.camera_position,
-                            player_state.camera_rotation.y, 20000, 0x555, &distance);
+                            player_state.camera_rotation.vy, 20000, 0x555, &distance);
                         actor_state.player_target = target;
                         if (target == 0) {
                             attachment = 0xff;
@@ -413,13 +413,13 @@ void player_update(void)
                     func_80036f44(10, 17, effect, &position, &direction,
                                   &player_state.camera_rotation, attachment, 1);
                     if (effect == 20) {
-                        position.y += 300;
-                        angles.y = player_state.camera_rotation.y;
-                        angles.z = player_state.camera_rotation.z;
-                        angles.x = player_state.camera_rotation.x + 64;
+                        position.vy += 300;
+                        angles.y = player_state.camera_rotation.vy;
+                        angles.z = player_state.camera_rotation.vz;
+                        angles.x = player_state.camera_rotation.vx + 64;
                         func_80036f44(10, 17, 20, &position, &direction, &angles, attachment, 0);
                         angles.x -= 128;
-                        position.y -= 600;
+                        position.vy -= 600;
                         func_80036f44(10, 17, 20, &position, &direction, &angles, attachment, 0);
                     }
                 }

@@ -54,9 +54,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 3282)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 65)
-        self.assertEqual(counts["structure_fields"], 565)
-        self.assertEqual(counts["structure_fields_named"], 464)
+        self.assertEqual(counts["structures"], 63)
+        self.assertEqual(counts["structure_fields"], 557)
+        self.assertEqual(counts["structure_fields_named"], 458)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -85,7 +85,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(actor_fields["position"].offset, 0x1C)
         self.assertEqual(
             (actor_fields["position"].size, actor_fields["position"].datatype),
-            (0x10, "KfVec4i"),
+            (0x10, "VECTOR"),
         )
         self.assertEqual(actor_fields["unknown_07"].meaning_confidence, "opaque")
         definition_fields = {
@@ -949,11 +949,11 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(talk_path.name, "talk_image_path_template")
         self.assertEqual(
             _structure_field("KfPlayerState", 0xA4),
-            ("camera_position", "KfVec4i", 0x10),
+            ("camera_position", "VECTOR", 0x10),
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0xB8),
-            ("camera_rotation", "KfVec4s", 8),
+            ("camera_rotation", "SVECTOR", 8),
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0x08),

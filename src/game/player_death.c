@@ -141,21 +141,21 @@ void player_death_restart(void)
     if (((u8 *)&DAT_8009ddb4)[3] == 1 && DAT_800652a8[0x2f] != 0) {
         DAT_800652a8[0x2f]--;
         func_80035b5c();
-        player_state.camera_position.x = 0xfa00;
+        player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
         player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-        player_state.camera_position.z = 0x4e20;
-        player_state.camera_rotation.y = 0;
+        player_state.camera_position.vz = 0x4e20;
+        player_state.camera_rotation.vy = 0;
     } else {
-        player_state.camera_position.x = 0x7918;
-        player_state.camera_position.z = 0x1388;
-        player_state.camera_rotation.y = 0;
+        player_state.camera_position.vx = 0x7918;
+        player_state.camera_position.vz = 0x1388;
+        player_state.camera_rotation.vy = 0;
         game_state_initialize();
         floor = 0xff;
     }
     player_state.status_effect_flags = 0;
-    player_state.camera_rotation.z = 0;
-    player_state.camera_rotation.x = 0;
+    player_state.camera_rotation.vz = 0;
+    player_state.camera_rotation.vx = 0;
     if (floor != 1) {
         player_state.progress_state.current_floor = 1;
         player_state.map_variant = 0;
@@ -169,10 +169,10 @@ void player_death_restart(void)
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
     DAT_80095064 = 0;
-    player_state.view_rotation_offset.z = 0;
-    player_state.view_rotation_offset.y = 0;
-    player_state.view_rotation_offset.x = 0;
+    player_state.view_rotation_offset.vz = 0;
+    player_state.view_rotation_offset.vy = 0;
+    player_state.view_rotation_offset.vx = 0;
     player_state.previous_map_cell.x = player_state.map_cell.x;
     player_state.previous_map_cell.z = player_state.map_cell.z;
-    player_state.camera_position.y = player_state.floor_height - 1500;
+    player_state.camera_position.vy = player_state.floor_height - 1500;
 }

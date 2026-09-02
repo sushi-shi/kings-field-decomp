@@ -39,7 +39,7 @@ extern void vector2s_scale_shift11(s16 scale, s16 *vector);
 extern u32 collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern void audio_play_spatial_range(
-    const SoundRef *sound, const struct KfVec4i *position, s16 volume,
+    const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);
 extern void map_event_set_current(KfMapEvent *event);
 extern int rand(void);
@@ -59,7 +59,7 @@ void func_80035708(void)
 {
     KfMapEvent *event = current_map_event;
     struct KfVecXZs forward;
-    struct KfVec4i point;
+    VECTOR point;
     s16 heading;
 
     collision_adjust_cell_occupancy(event->cell_x, event->cell_z, -1);
@@ -69,14 +69,14 @@ void func_80035708(void)
     angle_to_forward_xz(heading, &forward);
     vector2s_scale_shift11(0x14, (s16 *)&forward);
 
-    point.x = forward.x + event->reference_x;
-    point.z = forward.z + event->reference_z;
+    point.vx = forward.x + event->reference_x;
+    point.vz = forward.z + event->reference_z;
 
-    if (collision_query_world(point.x, 0xffff, point.z, event->radius, 0, 0x8040) == (u32)-1) {
-        event->reference_x = point.x;
-        event->reference_z = point.z;
-        event->cell_x = point.x / 2000;
-        event->cell_z = point.z / 2000;
+    if (collision_query_world(point.vx, 0xffff, point.vz, event->radius, 0, 0x8040) == (u32)-1) {
+        event->reference_x = point.vx;
+        event->reference_z = point.vz;
+        event->cell_x = point.vx / 2000;
+        event->cell_z = point.vz / 2000;
         event->unknown_10 = 0;
         if (event->rotation == event->rotation_target && rand() < 1584) {
             event->rotation_target = rand() >> 3;
@@ -103,7 +103,7 @@ void func_800358e0(void)
             && event == &map_event_pool[0]
             && map_event_pool[0].rotation_phase < 200) {
         audio_play_spatial_range(&gameplay_sound_ref_10,
-            (const struct KfVec4i *)&map_event_pool[0].reference_x,
+            (const VECTOR *)&map_event_pool[0].reference_x,
             0x7f, 0x4650, 0xc350);
     }
 }
