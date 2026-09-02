@@ -521,3 +521,42 @@ Residues recorded in the module (not steered):
   `switch (current_floor)`. Retail's 72-byte frame saves `s0..s8` and spills the
   sound point to the stack; the frame and register allocation cannot be matched
   until every case body is reconstructed, so exact remains open.
+
+## map events
+
+Witnesses come from `src/game/map_events.c` (`game.map_events`, the contiguous
+band `0x80035708..0x80035e14`): the per-frame `map_event_pool` driver
+`func_8003596c` called by `game_main_loop`, its two event updaters
+`func_80035708` (grid-wander AI) and `func_800358e0` (rotating sound emitter),
+and the per-floor state serialiser `func_80035b5c`. `func_8003596c`'s
+current-floor dispatch jump table lives out of line at `RODATA(0x80012be4, 0x14)`
+(five entries); the census carried it as `fragments = 2` because the indirect
+`jr` hid the case bodies, corrected to one 0x1f0 body.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `sw v0,32(sp)`/`sw v0,40(sp)` for the query point then `lw` reloads at every use, only `s0` saved | the collision point is a `struct KfVec4i point` local (`point.x`, `point.z`); aggregates stay in memory, so the members spill and reload, where scalar `s32` locals would occupy `s1`/`s2` | `func_80035708` `0x80035708` |
+| `sh v0,54(s0); sll/sra v0; jal angle_to_forward_xz` (the stored angle reused, not reloaded) | `s16 heading = angle_approach(...); event->rotation = heading; angle_to_forward_xz(heading, &forward);` — a local carries the result to both the store and the sign-extended argument; `rotation`/`rotation_target` are `s16` so the field loads are `lh` | same |
+| `beq unknown_0e,s1 -> body1; li 2; beq unknown_0e,2 -> body2; j cont; body1; body2; cont:` | `if (event->unknown_0e == state) goto call1; if (event->unknown_0e == 2) goto call2; goto cont; call1: ...; call2: ...; cont:` — explicit `goto`s to out-of-line bodies reproduce the tests-first layout and reuse `state` (`s1`); an `if`/`else if` chain emits the inline `bne`-skip form | `func_8003596c` `0x8003596c` |
+| `slt v0,image_dirty,limit` (signed) on two `lbu` byte values | `s32 limit = event->tag.bytes[event->image_index - 1];` then `event->image_dirty >= limit`; a `u8 limit` makes GCC 2.5.7 compare `u8 >= u8` unsigned (`sltu`) | same |
+| `lui/addiu a0,&DAT; lhu v1,0(a0); addiu v0,v1,-1; bnez v1; sh v0,0(a0); li 3; sh v0,0(a0)` (one address register, original value tested) | `u16 *gate = &DAT_8009ddb0; u16 current = *gate; *gate = current - 1; if (current == 0) *gate = 3;` — the pointer local keeps `&DAT` in one register across the three accesses; `DAT_8009ddb0-- == 0` on the global re-materialises the address each time, and the same idiom through the pointer masks the decremented value (`andi`) rather than testing the original | same |
+| `u16 count = 7; do { ... } while (index-- != 0)` promoted with `move; andi 0xffff` before the test | the eight-slot pool walk; the direct-global sibling `DAT_8009ddb2-- == 0` keeps the clean `bnez original` form (no pointer, no mask) | same |
+
+Residues recorded in the module (not steered):
+
+- The map-event globals are one unmodelled BSS aggregate: `map_event_pool`
+  (`0x8009db88`), `current_map_event` (`0x8009dda8`), `DAT_8009ddb0`/`b2`/`b4`,
+  and the per-floor save records at `0x8009d71a` share one base register in
+  retail. `func_800358e0` `0x800358e0` (73%) reaches `&map_event_pool[0]` and
+  `&map_event_pool[0].reference_x` as `&current_map_event - 544` / `- 508`;
+  separate globals emit their own `lui/addiu` pairs. Modelling it needs the
+  aggregate struct that the data inventory still leaves unresolved, so the unit
+  keeps clean symbols and takes the residue. `func_80035b5c` `0x80035b5c` (84%)
+  is addressed through the `DAT_8009ddb4` base (matching retail's single
+  register for the pool, the event-field iterator, and the floor buffer), but
+  its actor/map-object serialisation loops keep the `active` counter and the
+  filter constants in permuted temporaries (`t0`/`t1`), derive
+  `map_object_state.definitions` from a fresh symbol rather than the objects
+  base register, and schedule the leading base `addiu`s differently — the
+  register-permutation and IV-strength-reduction residue class over a large
+  leaf.

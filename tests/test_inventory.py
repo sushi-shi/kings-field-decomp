@@ -47,9 +47,9 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 735)
-        self.assertEqual(counts["signatures_started"], 735)
-        self.assertEqual(counts["typed_returns"], 735)
+        self.assertEqual(counts["functions"], 736)
+        self.assertEqual(counts["signatures_started"], 736)
+        self.assertEqual(counts["typed_returns"], 736)
         self.assertEqual(counts["parameterized"], 496)
         self.assertEqual(counts["data"], 3293)
         self.assertGreaterEqual(counts["functions_named"], 240)
@@ -694,7 +694,6 @@ class InventoryTests(unittest.TestCase):
             0x800350D0,
             0x800350F4,
             0x80035110,
-            0x800359A4,
         ):
             self.assertEqual(rejected[site]["confidence"], "not-control-flow")
             self.assertEqual(
