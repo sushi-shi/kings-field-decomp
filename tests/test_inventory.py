@@ -51,12 +51,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 734)
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 495)
-        self.assertEqual(counts["data"], 3306)
+        self.assertEqual(counts["data"], 3293)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 63)
-        self.assertEqual(counts["structure_fields"], 539)
-        self.assertEqual(counts["structure_fields_named"], 448)
+        self.assertEqual(counts["structures"], 64)
+        self.assertEqual(counts["structure_fields"], 551)
+        self.assertEqual(counts["structure_fields_named"], 455)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -466,7 +466,7 @@ class InventoryTests(unittest.TestCase):
             for row in rows
             if row["provenance"] == "manual:game_semantic_player_update"
         )
-        self.assertEqual(len(campaign_rows), 26)
+        self.assertEqual(len(campaign_rows), 153)
         self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         by_site = {parse_int(row["site_va"]): row for row in campaign_rows}

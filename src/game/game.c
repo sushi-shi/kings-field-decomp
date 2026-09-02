@@ -58,7 +58,7 @@ extern void frame_pacer_vsync_callback(void);
 extern void frame_pacer_wait(void);
 extern void game_shutdown(void);
 
-extern u32 DAT_8009ce60;
+extern KfMagicRecord magic_records[24];
 extern KfMapEvent map_event_pool[8];
 extern u32 game_exit_code;
 extern struct KfVec4i player_position_snapshot;
@@ -94,7 +94,7 @@ void game_main_loop(void)
     memset(&display_state.buffer_index, 0, 0x249cc);
     memset(actor_state.definitions, 0, 0x2b48);
     memset(map_object_state.definitions, 0, 0x25b8);
-    memset(&DAT_8009ce60, 0, 0xd28);
+    memset(magic_records, 0, 0xd28);
     memset(map_event_pool, 0, 0x2360);
     memset(&player_state, 0, sizeof(KfPlayerState));
     memory_card_initialize();

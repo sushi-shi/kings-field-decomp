@@ -71,7 +71,7 @@ extern KfSavePayload *save_payload_buffer;
  */
 extern u32 DAT_8009ddb4[];
 extern u8 DAT_800652a8[];
-extern u8 DAT_8009ce60[];
+extern KfMagicRecord magic_records[24];
 
 extern DRAWENV display_draw_environments[2];
 
@@ -399,7 +399,7 @@ s32 save_file_write_slot(s16 slot_id)
     memcpy(save_payload_buffer->unknown_2440, DAT_800652a8,
            sizeof(save_payload_buffer->unknown_2440));
     for (index = 0, record = 0; index < 24; index++) {
-        save_payload_buffer->magic_flags[index] = DAT_8009ce60[record];
+        save_payload_buffer->magic_flags[index] = magic_records[index].learned;
         record += 20;
     }
     memory_card_clear_events();
@@ -651,7 +651,7 @@ s32 save_file_read_slot(s16 slot_id)
     memcpy(DAT_800652a8, save_payload_buffer->unknown_2440,
            sizeof(save_payload_buffer->unknown_2440));
     for (index = 0, record = 0; index < 24; index++) {
-        DAT_8009ce60[record] = save_payload_buffer->magic_flags[index];
+        magic_records[index].learned = save_payload_buffer->magic_flags[index];
         record += 20;
     }
     player_state.weapon_asset_buffer = weapon_asset_buffer;

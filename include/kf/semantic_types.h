@@ -551,7 +551,9 @@ typedef struct KfArmorRecord {
     u16 status_effect2_resistance;
     u16 defense_component3;
     u16 defense_component4;
-    u8 unknown_0e[0x0e];
+    u16 hp_regen_interval;
+    u16 hp_drain_interval;
+    u8 unknown_12[0x0a];
 } KfArmorRecord;
 
 typedef struct KfPlayerVitals {
@@ -588,12 +590,25 @@ typedef struct KfWeaponRecord {
     u8 unknown_00;
     u8 charge_rate;
     u16 attack_components[5];
-    u8 unknown_0c[0x06];
+    u16 hp_regen_interval;
+    u16 mp_regen_interval;
+    u8 unknown_10[0x02];
     u16 attack_z_offset;
     u8 unknown_14[0x12];
     u16 mirrored_angle;
     u8 unknown_28[0x04];
 } KfWeaponRecord;
+
+typedef struct KfMagicRecord {
+    u8 learned;
+    u8 charge_rate;
+    u8 unknown_02[0x06];
+    u16 unknown_08;
+    u16 unknown_0a;
+    u8 unknown_0c[0x04];
+    u16 mp_cost;
+    u8 unknown_12[0x02];
+} KfMagicRecord;
 
 /*
  * The memory-card file starts with the standard 0x200-byte PlayStation save
@@ -774,6 +789,7 @@ typedef char KfMapCell_size_is_2[(sizeof(KfMapCell) == 0x02) ? 1 : -1];
 typedef char KfMapCopyRegion_size_is_6[
     (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
 typedef char KfArmorRecord_size_is_28[(sizeof(KfArmorRecord) == 28) ? 1 : -1];
+typedef char KfMagicRecord_size_is_20[(sizeof(KfMagicRecord) == 20) ? 1 : -1];
 typedef char KfEffectRecord_size_is_60[(sizeof(KfEffectRecord) == 60) ? 1 : -1];
 typedef char KfMapObjectLink_size_is_8[(sizeof(KfMapObjectLink) == 8) ? 1 : -1];
 typedef char KfMapObjectPlacement_size_is_20[
@@ -840,7 +856,7 @@ typedef struct KfPlayerState {
     u32 unknown_58;
     u8 selected_magic_id;
     u8 unknown_5d[3];
-    void *selected_magic_record;
+    KfMagicRecord *selected_magic_record;
     u8 equipped_weapon_id;
     u8 unknown_65[3];
     const KfWeaponRecord *equipped_weapon_record;

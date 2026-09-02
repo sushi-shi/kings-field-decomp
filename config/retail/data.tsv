@@ -2683,10 +2683,9 @@ GAME.EXE	0x80055836	0x44036	0x2	unclassified	coverage-gap			payload-complement	a
 GAME.EXE	0x80055838	0x44038	0xd	string	direct-references	enemy_info_image_path_template	ascii	game_semantic_player_interactions.tsv	escaped text: ENE0\\EI00.TIM; floor and actor definition ID digits are rewritten before display
 GAME.EXE	0x80055845	0x44045	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055848	0x44048	0xe	string	direct-references	person_image_path_template	ascii	game_semantic_player_interactions.tsv	escaped text: PRSN\\PER00.TIM; map-event kind digits are rewritten before display
-GAME.EXE	0x80055856	0x44056	0x22	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055878	0x44078	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x8005587c	0x4407c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055880	0x44080	0x38	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055856	0x44056	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055858	0x44058	0x20	defined	reviewed	DAT_80055858	KfMatrix	manual:game_semantic_player_update	color matrix blended toward color_matrix_table[0] while status effect 1 fades
+GAME.EXE	0x80055878	0x44078	0x40	defined	reviewed	DAT_80055878	KfVec4s[8]	manual:game_semantic_player_update	view_rotation_offset table indexed by player_state.update_state
 GAME.EXE	0x800558b8	0x440b8	0x238	defined	reviewed	map_cell_attribute_height_table	s16[284]	manual:game_semantic_player_interactions	per-attribute height offsets indexed by map_cell_attribute_grid values; extent is the remaining span and stays WIP
 GAME.EXE	0x80055af0	0x442f0	0xc	defined	reviewed	map_resource_path	char[12]	manual:game_semantic_map_resources	mutable B0\\ path; floor digit is byte one and a filename of at most nine bytes including NUL begins at byte three
 GAME.EXE	0x80055afc	0x442fc	0x95	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -2948,7 +2947,7 @@ GAME.EXE	0x80057b20	0x46320	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 GAME.EXE	0x80057b24	0x46324	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057b28	0x46328	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\L0.
 GAME.EXE	0x80057b2e	0x4632e	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057b30	0x46330	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057b30	0x46330	0x4	defined	reviewed	DAT_80057b30	u32	manual:game_semantic_player_update	previous frame input bits held for edge detection
 GAME.EXE	0x80057b34	0x46334	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b3c	0x4633c	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: \\KF\\
 GAME.EXE	0x80057b41	0x46341	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -3121,9 +3120,9 @@ GAME.EXE	0x80057e58	0x46658	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/gh
 GAME.EXE	0x80057e5c	0x4665c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e60	0x46660	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e64	0x46664	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80057e68	0x46668	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057e68	0x46668	0x4	defined	reviewed	DAT_80057e68	s32	manual:game_semantic_player_update	player movement velocity limit
 GAME.EXE	0x80057e6c	0x4666c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e70	0x46670	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057e70	0x46670	0x4	defined	reviewed	DAT_80057e70	s32	manual:game_semantic_player_update	player turn step limit
 GAME.EXE	0x80057e74	0x46674	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e78	0x46678	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e7c	0x4667c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

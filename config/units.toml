@@ -222,6 +222,12 @@ source = "src/game/player_status_effect4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.player_update"
+image = "GAME.EXE"
+source = "src/game/player_update.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.map_floor_height_for_cell_position"
 image = "GAME.EXE"
 source = "src/game/map_floor_height_for_cell_position.c"

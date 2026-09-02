@@ -89,7 +89,9 @@ KfArmorRecord	0x06	0x02	defense_component2	u16	supported	asm;player_recalculate_
 KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	asm;player_recalculate_combat_stats	added to status_effect2_resistance
 KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component3
 KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component4
-KfArmorRecord	0x0e	0x0e	unknown_0e	u8[14]	opaque	asm;player_recalculate_combat_stats	meaning unresolved
+KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
+KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	asm;player_recalculate_combat_stats	meaning unresolved
 KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
 KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
 KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
@@ -151,6 +153,14 @@ KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
 KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
+KfMagicRecord	0x00	0x01	learned	u8	supported	asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
+KfMagicRecord	0x01	0x01	charge_rate	u8	supported	asm;player_update	fixed6_ratio_step span while charging magic
+KfMagicRecord	0x02	0x06	unknown_02	u8[6]	opaque	asm	meaning unresolved
+KfMagicRecord	0x08	0x02	unknown_08	u16	opaque	asm;xrefs	read by func_80039a80 family; meaning unresolved
+KfMagicRecord	0x0a	0x02	unknown_0a	u16	opaque	asm;xrefs	read by func_80039a80 family; meaning unresolved
+KfMagicRecord	0x0c	0x04	unknown_0c	u8[4]	opaque	asm	meaning unresolved
+KfMagicRecord	0x10	0x02	mp_cost	u16	supported	asm;player_update	compared with and subtracted from vitals.current_mp when casting
+KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	asm	meaning unresolved
 KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCell	0x01	0x01	x	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
@@ -304,7 +314,7 @@ KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	semantic_types.h;data_identities
 KfPlayerState	0x58	0x04	unknown_58	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x60	0x04	selected_magic_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
@@ -532,7 +542,9 @@ KfVecXZs	0x02	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
 KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
 KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
-KfWeaponRecord	0x0c	0x06	unknown_0c	u8[6]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x10	0x02	unknown_10	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
 KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	semantic_types.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved

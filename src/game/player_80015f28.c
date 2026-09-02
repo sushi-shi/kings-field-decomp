@@ -7,7 +7,7 @@ extern KfPlayerState player_state;
 extern KfWeaponRecord weapon_records[16];
 extern KfArmorRecord armor_records[42];
 /* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
-extern u8 DAT_8009ce60[];
+extern KfMagicRecord magic_records[24];
 extern void func_8001fa44(s32 arg0);
 extern void player_recalculate_combat_stats(void);
 
@@ -128,16 +128,16 @@ void player_recalculate_combat_stats(void)
     if (player_state.status_effect_flags & 0x10) {
         player_state.damage_defense_component4 += 10;
     }
-    if (player_state.base_magic >= 37 && DAT_8009ce60[0] != 0 && DAT_8009ce60[20] == 0) {
-        DAT_8009ce60[20] = 1;
+    if (player_state.base_magic >= 37 && magic_records[0].learned != 0 && magic_records[1].learned == 0) {
+        magic_records[1].learned = 1;
         func_8001fa44(1);
     }
-    if (player_state.base_magic >= 70 && DAT_8009ce60[120] == 0) {
-        DAT_8009ce60[120] = 1;
+    if (player_state.base_magic >= 70 && magic_records[6].learned == 0) {
+        magic_records[6].learned = 1;
         func_8001fa44(1);
     }
-    if (player_state.base_magic >= 75 && DAT_8009ce60[80] == 0) {
-        DAT_8009ce60[80] = 1;
+    if (player_state.base_magic >= 75 && magic_records[4].learned == 0) {
+        magic_records[4].learned = 1;
         func_8001fa44(1);
     }
     if (player_state.physical_power >= 1000) {
