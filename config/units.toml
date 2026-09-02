@@ -336,6 +336,12 @@ source = "src/game/render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_8001ed38"
+image = "GAME.EXE"
+source = "src/game/func_8001ed38.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8001fae4"
 image = "GAME.EXE"
 source = "src/game/func_8001fae4.c"
