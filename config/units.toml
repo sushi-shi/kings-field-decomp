@@ -486,6 +486,30 @@ source = "src/game/menu_select.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_item_drop"
+image = "GAME.EXE"
+source = "src/game/menu_item_drop.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_save_load"
+image = "GAME.EXE"
+source = "src/game/menu_save_load.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_save"
+image = "GAME.EXE"
+source = "src/game/menu_save.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_load"
+image = "GAME.EXE"
+source = "src/game/menu_load.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_present_frame"
 image = "GAME.EXE"
 source = "src/game/menu_present_frame.c"
