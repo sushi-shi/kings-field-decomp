@@ -731,3 +731,39 @@ Residues recorded in the module (not steered):
   incremented in the opposite order, and the window-cursor `if (window != 0)`
   test inverted with its arms swapped. Referents, calls, constants, the MP
   affordability/deduction and the four spell effects all match.
+
+## player warp / floor transition (0x80036618..0x80036e38)
+
+`src/game/player_warp.c` reconstructs the warp band. `func_80036d3c` (the actor
+colour-fade sequence) is exact: two `blend` loops over `lighting_set_color_matrix`
+with the map-event activations and actor position/rotation ramps. `func_80036e38`
+(`src/game/func_80036e38.c`) is exact once modelled as a K&R varargs function
+`u32 f(s32 mode, ...)`: retail spills `a0`-`a3` to the incoming home slots and
+reads `mode` from `[0]` and the flag byte from `[4]` (`lbu`), keeping only the
+result in `s0`. Reading the flag as `*((u8 *)&mode + 4)` reproduces the home-slot
+`lbu` and forces `mode` to memory; a named `u8 flag` parameter instead keeps the
+value in a callee-saved register and grows the frame.
+
+Residue recorded (not steered):
+
+- `func_80036850` / `func_800369ac` (99.0% / 99.1%): referents, relocations,
+  call set, CFG, types and constants all match; the only divergence is the
+  prologue schedule of one argument-save move. Retail saves every incoming
+  argument to its callee-saved register before the first body instruction
+  (`move s1,a0; move s0,a1; move a0,zero`); the probe interleaves the first
+  call-argument setup between two of the saves (`move s1,a0; move a0,zero;
+  move s0,a1`). Same register assignment, same count, one instruction reordered.
+- `func_80036618` (~64%): the warp-shimmer animator. Structurally faithful
+  (four-effect spawn, 48-frame animation with the `frame==8` sound, mode-2 pool
+  retention) but hits the same loop-optimiser residues documented for
+  `func_80035e44`: retail strength-reduces the `effects[]` walks to moving
+  pointers with a `s6=-1` down-counter idiom (`do {} while (--i != -1)`) and
+  carries `mode` in an extra callee-saved `s7`, where the probe indexes
+  `effects[i]` per iteration with an up-counter and one fewer saved register.
+- `func_80036af0` (~62%): the per-frame scripted-trigger dispatcher. The switch
+  on the current floor (jump table `0x80012c14`) and the per-floor cell-key
+  comparisons match, but GCC's cross-jumping merges the many
+  `func_80036850(n, 0)` / `func_800369ac(...)` call tails into shared sites in a
+  different basic-block order than retail, and the probe hoists the current-floor
+  load above the frame allocation where retail allocates first. Cross-jump /
+  block-ordering residue; not steered.
