@@ -10,7 +10,7 @@
  * dispatched by func_80034de4 (map_interaction.c) when the player interacts
  * with the world: they gate on progress flags and the persistent world-state
  * block, copy map regions, teach magic, and run a full-screen colour-matrix
- * fade (func_80034438) that reveals a map event.
+ * fade (map_reveal_fade) that reveals a map event.
  */
 
 extern KfPlayerState player_state;
@@ -83,7 +83,7 @@ void func_800343e0(void)
 
 /* Full-screen colour-matrix fade that reveals map event 3, then fades back. */
 ADDRESS(0x80034438, 0x184)
-void func_80034438(void)
+void map_reveal_fade(void)
 {
     MATRIX saved;
     s32 blend;
@@ -122,7 +122,7 @@ void func_800345bc(void)
 {
     if ((*(u32 *)&map_event_pool[3].image_limit & 0xffffff00) == 0x28010200
         && map_event_pool[3].state == 1) {
-        func_80034438();
+        map_reveal_fade();
     }
 }
 

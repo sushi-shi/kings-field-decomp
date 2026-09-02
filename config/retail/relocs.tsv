@@ -6481,7 +6481,7 @@ GAME.EXE	0x80034008	0x22808		mips26	instruction-word	0x800340dc	load		j		control
 GAME.EXE	0x80034010	0x22810	0x80034014	mips_hi16_lo16	reachable-code	0x800a084b	bss	player_state	lui+lbu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80034028	0x22828	0x8003402c	mips_hi16_lo16	reachable-code	0x800a084a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80034058	0x22858	0x8003405c	mips_hi16_lo16	reachable-code	0x8009ddb5	bss	DAT_8009ddb4	lui+sb	v0	paired-reviewed	reviewed	manual:map_floor_scripts
-GAME.EXE	0x80034064	0x22864		mips26	instruction-word	0x80033ee4	load	func_80033ee4	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
+GAME.EXE	0x80034064	0x22864		mips26	instruction-word	0x80033ee4	load	actor_pool_find_at_tile	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80034080	0x22880	0x80034084	mips_hi16_lo16	reachable-code	0x8006c4be	bss	actor_state	lui+addiu	at	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80034090	0x22890		mips26	instruction-word	0x8002cdcc	load	actor_initialize_slot	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x800340a4	0x228a4		mips26	instruction-word	0x800314f8	load	map_object_pool_find_near_point	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
@@ -6549,7 +6549,7 @@ GAME.EXE	0x80034558	0x22d58		mips26	instruction-word	0x8001bab8	load	lighting_se
 GAME.EXE	0x80034560	0x22d60	0x80034564	mips_hi16_lo16	reachable-code	0x80095700	bss	render_state	lui+addiu	a1	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x800345cc	0x22dcc	0x800345d0	mips_hi16_lo16	reachable-code	0x8009dc5c	bss	map_event_pool	lui+lw	v1	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x800345e4	0x22de4	0x800345e8	mips_hi16_lo16	reachable-code	0x8009dc54	bss	map_event_pool	lui+lbu	v1	paired-reviewed	reviewed	manual:map_floor_scripts_b
-GAME.EXE	0x800345f8	0x22df8		mips26	instruction-word	0x80034438	load	func_80034438	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
+GAME.EXE	0x800345f8	0x22df8		mips26	instruction-word	0x80034438	load	map_reveal_fade	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034610	0x22e10	0x80034614	mips_hi16_lo16	reachable-code	0x800652da	bss	DAT_800652a8	lui+lbu	v0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034624	0x22e24	0x80034628	mips_hi16_lo16	reachable-code	0x8009ceec	bss	magic_records	lui+addiu	v1	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034644	0x22e44		mips26	instruction-word	0x8001fa44	load	func_8001fa44	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
@@ -6810,7 +6810,7 @@ GAME.EXE	0x800362a8	0x24aa8	0x800362ac	mips_hi16_lo16	reachable-code	0x80012bfc	
 GAME.EXE	0x800362c4	0x24ac4	0x800362c8	mips_hi16_lo16	reachable-code	0x8009ddb6	bss	DAT_8009ddb4	lui+lbu	v1	paired-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x800362d8	0x24ad8		mips26	reachable-code	0x80030a98	load	map_apply_copy_region	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x800362e0	0x24ae0	0x800362e4	mips_hi16_lo16	reachable-code	0x8009ddb5	bss	DAT_8009ddb4	lui+lbu	v1	paired-reviewed	reviewed	manual:game_map_load
-GAME.EXE	0x800362f4	0x24af4		mips26	reachable-code	0x80033ee4	load	func_80033ee4	jal		control-flow-reviewed	reviewed	manual:game_map_load
+GAME.EXE	0x800362f4	0x24af4		mips26	reachable-code	0x80033ee4	load	actor_pool_find_at_tile	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036318	0x24b18	0x8003631c	mips_hi16_lo16	reachable-code	0x8006c4be	bss	actor_state	lui+addiu	at	paired-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036328	0x24b28	0x8003632c	mips_hi16_lo16	reachable-code	0x8009f845	bss	DAT_8009f845	lui+lbu	v1	paired-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x8003633c	0x24b3c		mips26	reachable-code	0x80031c44	load	map_object_pool_clear_link	jal		control-flow-reviewed	reviewed	manual:game_map_load

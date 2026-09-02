@@ -47,7 +47,7 @@ extern void map_resources_load(u8 floor, u8 map_variant);
 extern void map_event_refresh_image_for_progress(KfMapEvent *event);
 extern void func_8001bae4(s32 floor);
 extern void map_apply_copy_region(u8 region_id);
-extern s32 func_80033ee4(char arg0, char arg1);
+extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern void map_object_pool_clear_link(u8 link_id);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
@@ -150,7 +150,7 @@ void func_80035e44(void)
             map_apply_copy_region(1);
         }
         if (((u8 *)&DAT_8009ddb4)[1] != 2) {
-            i = func_80033ee4(7, 0x28);
+            i = actor_pool_find_at_tile(7, 0x28);
             if (i != -1) {
                 actor_state.actors[i].lifecycle = 3;
             }

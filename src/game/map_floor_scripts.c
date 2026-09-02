@@ -11,7 +11,7 @@
  * the persistent world-state block DAT_8009ddb4, spawning actors, retexturing
  * map objects, teaching magic, and playing positional ambience.
  *
- * func_80033ee4 is the shared helper: it scans the 128-slot actor pool for the
+ * actor_pool_find_at_tile is the shared helper: it scans the 128-slot actor pool for the
  * first live actor sitting on a given map tile and returns its index.
  */
 
@@ -39,7 +39,7 @@ extern int rand(void);
 
 /* Scan the actor pool for the first live actor on map tile (tile_x, tile_z). */
 ADDRESS(0x80033ee4, 0x80)
-s32 func_80033ee4(u8 tile_x, u8 tile_z)
+s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 {
     KfActor *actor = actor_state.actors;
     s16 index;
@@ -76,7 +76,7 @@ void func_80033f64(void)
             s32 object_index;
 
             DAT_8009ddb4[1] = 2;
-            actor_index = func_80033ee4(7, 0x28);
+            actor_index = actor_pool_find_at_tile(7, 0x28);
             if (actor_index != -1) {
                 actor_state.actors[actor_index].lifecycle = 0;
                 actor_initialize_slot(actor_index);
