@@ -18,7 +18,7 @@ extern struct KfVec4s *current_tmd_vertices;
 extern u32 DAT_800a0768;
 extern u32 DAT_8009569c;
 extern u32 DAT_80095698;
-extern u16 DAT_80095090;
+extern u16 floor_item_count;
 extern u16 DAT_8009508e;
 extern u16 DAT_8009508c;
 extern u16 DAT_80095062;
@@ -67,7 +67,7 @@ void render_initialize(void)
     display_state.primitive_buffers[1].start = buffer;
     buffer += 0x19640;
     display_state.primitive_buffers[1].end = buffer;
-    DAT_80095090 = 0;
+    floor_item_count = 0;
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;

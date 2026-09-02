@@ -1919,19 +1919,8 @@ GAME.EXE	0x80095089	0x1	DAT_80095089	unknown	bss	u8		address-only	ghidra-12.0.4-
 GAME.EXE	0x8009508a	0x2	DAT_8009508a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009508c	0x2	DAT_8009508c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009508e	0x2	DAT_8009508e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095090	0x2	DAT_80095090	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095098	0x2	DAT_80095098	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009509a	0x1	DAT_8009509a	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009509b	0x1	DAT_8009509b	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009509c	0x4	DAT_8009509c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950a0	0x4	DAT_800950a0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950a4	0x4	DAT_800950a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950ac	0x1	DAT_800950ac	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950b0	0x2	DAT_800950b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950b2	0x1	DAT_800950b2	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950b3	0x1	DAT_800950b3	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950b4	0x4	DAT_800950b4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800950bc	0x4	DAT_800950bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80095090	0x2	floor_item_count	unknown	bss	u16	item	supported	asm;xrefs;func_80020b4c;render_initialize	count of active floor-item placements expanded by the map item loader
+GAME.EXE	0x80095098	0x600	floor_items	unknown	bss	KfFloorItem[64]	item	supported	asm;xrefs;func_80020b4c;24-byte-stride	runtime floor-item table filled from the map resource placement chunk (0x18-byte stride)
 GAME.EXE	0x80095698	0x4	DAT_80095698	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009569c	0x4	DAT_8009569c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800956a0	0x140	render_state	unknown	bss	KfRenderState	render	supported	game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register

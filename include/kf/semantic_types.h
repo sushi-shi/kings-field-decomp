@@ -427,6 +427,36 @@ typedef struct KfMapObject {
 } KfMapObject;
 
 /*
+ * Serialized floor-item placement record (12 bytes) from the map resource
+ * stream, and the runtime floor-item entry (24 bytes) the loader expands it
+ * into.  The tile bytes index map_floor_height_grid[tile_z][tile_x]; the world
+ * position is tile*2000 plus the signed local offset, and the height byte times
+ * -100 sinks the item onto the floor.
+ */
+typedef struct KfFloorItemPlacement {
+    u16 item_id;
+    u8 unknown_02;
+    u8 unknown_03;
+    u8 tile_z;
+    u8 tile_x;
+    s16 local_z;
+    s16 local_x;
+    s16 local_y;
+} KfFloorItemPlacement;
+
+typedef struct KfFloorItem {
+    u16 item_id;
+    u8 unknown_02;
+    u8 unknown_03;
+    s32 position_x;
+    s32 position_y;
+    s32 position_z;
+    u8 unknown_10[4];
+    u8 flicker;
+    u8 unknown_15[3];
+} KfFloorItem;
+
+/*
  * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte
  * runtime interpolator.  The fourth vector lane and two trailing halfwords
  * are retained because their meanings are not yet evidenced.
@@ -798,6 +828,10 @@ typedef char KfMapObjectDefinition_size_is_8[
     (sizeof(KfMapObjectDefinition) == 0x08) ? 1 : -1];
 typedef char KfMapObject_size_is_44[
     (sizeof(KfMapObject) == 0x2c) ? 1 : -1];
+typedef char KfFloorItemPlacement_size_is_12[
+    (sizeof(KfFloorItemPlacement) == 0x0c) ? 1 : -1];
+typedef char KfFloorItem_size_is_24[
+    (sizeof(KfFloorItem) == 0x18) ? 1 : -1];
 typedef char KfPlayerMotionState_size_is_10[
     (sizeof(KfPlayerMotionState) == 0x0a) ? 1 : -1];
 typedef char KfWeaponRecord_size_is_44[

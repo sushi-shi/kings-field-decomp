@@ -390,6 +390,12 @@ source = "src/game/pool_80020b04.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.item"
+image = "GAME.EXE"
+source = "src/game/item.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.primitive_buffer"
 image = "GAME.EXE"
 source = "src/game/primitive_buffer.c"
