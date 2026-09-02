@@ -738,12 +738,6 @@ source = "src/game/func_80040d04.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8004309c"
-image = "GAME.EXE"
-source = "src/game/func_8004309c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.func_80044154"
 image = "GAME.EXE"
 source = "src/game/func_80044154.c"
