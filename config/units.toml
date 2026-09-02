@@ -396,6 +396,12 @@ source = "src/game/item.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu"
+image = "GAME.EXE"
+source = "src/game/menu.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.primitive_buffer"
 image = "GAME.EXE"
 source = "src/game/primitive_buffer.c"

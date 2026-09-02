@@ -598,3 +598,40 @@ Residues recorded in the module (not steered):
   base register, and schedule the leading base `addiu`s differently — the
   register-permutation and IV-strength-reduction residue class over a large
   leaf.
+## hub menu and item-use
+
+Witnesses come from `src/game/menu.c` (`game.menu`, the contiguous
+`0x800222b4..0x80022d7c` run: a save-buffer splash, the eight-row hub-menu
+dispatcher, and the consumable-item panel). This band sits directly after
+`item.c` and shares its list-widget API (`func_8002ad6c` init,
+`func_80028a70` render, `func_80028380` query, `func_8002aea4` guard) and the
+`KfItemMenu` context; the panel mirrors `func_80021afc`.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `addiu v0,sp,656; sw save_payload_buffer; addiu v0,sp,16; sw save_header_buffer` then a 3-iteration draw loop | point the shared workspace pointers at frame-local `KfSaveHeader`/`KfSavePayload` locals (0x280 at +16, 0x2580 at +656), then `i=0; do { i++; draw; } while (i < 3);` — the post-increment fills the first call's delay slot | `func_800222b4` `0x800222b4` (exact) |
+| jump-table `switch (selection)` where case 0 `j`s into case 5's join tail | `case 0: result = f(); goto join; ... case 5: result = g(); join: if (result == -1) result = -99; break;` — cases 0 and 5 must share the `== -1` fold explicitly; per-case duplication defeats cross-jumping | `func_80022348` `0x80022348` |
+| the out-of-range `sltu 6,selection; bnez` fills its delay slot with `li v0,-99` (the join compare constant), never storing `result` | omit the `default:` label entirely; the out-of-range path leaves `result` at its prior value and reaches the shared `if (result == -99)` test, whose `-99` is the hoisted `v0` | `func_80022348` |
+| a running name pointer based at `DAT_80059108` advanced 20 bytes per code (even on skipped codes) | `s16 *name = DAT_80059108; for (code=0x2a; code<0x30; code++, name += 10) { ... labels[found][j] = name[j]; }` — the explicit giv keeps the table symbol as the base; `DAT_80059108[(code-0x2a)*10+j]` folds the offset into a `DAT_80059108-840` base instead (90.7% -> 92.8%) | `func_80022608` `0x80022608` |
+| `sltu maximum,current; ... sh current` with `&current_hp` registered for the compare-load and the clamp store | write the clamp with the current value first (`if (vitals.current_hp > vitals.maximum_hp) vitals.current_hp = vitals.maximum_hp;`) so the twice-touched member (load + store) wins the registered base; `maximum < current` registers `&maximum_hp` instead (90.1% -> 90.7%) | `func_80022608` |
+| restorative effects apply in place and clamp afterwards | `if ((u32)(code-0x2a) < 6) { inv[code]--; if/else on 0x2b..0x2f adds 25/10/80/150/300 to `vitals.current_hp` and masks `status_effect_flags` with 0xb/0x3/0; then two `current > maximum` clamps; }` — the `sltu` field compares come from the `lhu` zero-extended u16 members | `func_80022608` |
+
+Residues recorded in the module (not steered):
+
+- `func_80022348` `0x80022348` (96.6%): retail promotes the loop-invariant
+  constant `-1` to a callee-saved register (`s6`, adding an eighth save slot so
+  `ra` lands at 44) and compares `selection`/`result`/the case-1 result against
+  it; the probe re-materialises `li v0,-1` (or reuses the `result` pseudo) at
+  each site. The extra save shifts every branch offset and cascades into the
+  case tails' delay-slot fills. Referents, relocations, call set and CFG match.
+  Same callee-saved-constant class as `actor_update_awareness`.
+- `func_80022608` `0x80022608` (92.8%): the consumable panel reconstructs with
+  correct referents, calls, constants and control flow, but the caller-saved
+  allocation permutes against retail — the two name givs land in `t2` where
+  retail uses `t1`, the `-99` selection sentinel in `v0` where retail keeps it
+  in `s2`, and `s3`/`s4` initialise in the other order. Retail also keeps a
+  `player_state` base register live across the effect switch and the full-heal
+  case (`&current_hp` reused for the `+= 300` load/store), while the probe
+  re-forms `lui/addiu` per access. Both are the allocation / registered-base
+  classes shared with `func_80021afc` and the documented `player_state`
+  residues, not structural errors.
