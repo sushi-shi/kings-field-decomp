@@ -449,3 +449,42 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | --- | --- | --- |
 | `env[1].dtd` stored before `env[0].dtd` | `display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;` — the chained assignment evaluates the constant, stores the right operand (env[1]) first, then env[0] | `func_8001bb94` `0x8001bb94` |
 | residue (93.7%): retail keeps `s0 = &display_draw_environments[0].dtd` callee-saved and derives `display_disp_environments[0]` as `s0+162` (PutDispEnv arg) and `render_state.fog_near_distance` as `s0+18538` | ours emits a fresh `lui` for each of the three separate globals. The retail object carries no relocation at the PutDispEnv-arg or fog-store sites — the linked bytes are `addiu a0,s0,162` / `sw v0,18538(s0)` — so the original reached `display_disp_environments` and `render_state` as fixed offsets from `display_draw_environments`, implying the three were one combined declaration in the source. Not reproduced without merging the three globals into one object; unattributed | same |
+
+## item / shop menu
+
+Witnesses come from `src/game/item.c` (`game.item`, the contiguous
+`0x80020b4c..0x800222b4` run: the floor-item loader, the item-database loader,
+and the shop buy/sell/use menus).
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `sll x,5; subu; sll 2; addu; sll 4` for `tile*2000`, `sll 1; addu; sll 3; addu; sll 2` for `height*100` | `u8 tile` and `u8 grid[z][x]` multiplied by the plain constants; GCC strength-reduces `*2000` and `*100` itself | `func_80020b4c` `0x80020b4c` |
+| a windowed grid loads the later field of the record last (`addiu s0,ptr,10`) and the store cursor last field (`addiu s1,dst,20`) as the derived giv bases | reference the highest-offset field last in the loop body, and advance `dst`/`src` (the giv whose init fills the guard branch delay slot) before the lower-offset one | `func_80020b4c` |
+| `li s4,1` (confirm flag) hoisted into the `slti cursor,2; beqz` clamp branch delay slot | set the flag unconditionally at the head of the confirm branch (`confirm = 1;`) before the `if (cursor < N)`; a flag set only inside the taken arm leaves the slot a `nop` | `func_800212d8` `0x800212d8` (exact) |
+| four-way `if ((pad & BIT) && !(prev & BIT))` edge tests that fall through to the next direction when a button is held | one `else if` chain with the full `&&` edge condition per direction; a nested `if (pad & BIT) { if (!(prev & BIT)) ... }` skips the remaining directions on a held button | `func_800212d8` (exact) |
+| a yes/no prompt frame 96 with the two menu strings at `sp+16` and `sp+40` | `s16 prompt[12]; s16 options[12];` fixed-size menu-string buffers (only the leading cells and the `-1` terminator are written) | `func_80021ffc` `0x80021ffc` (exact) |
+| the can-use guard returns `1` through the shared epilogue with `li v0,1` in the branch delay slot, not the `-99` result | `if (!usable) return 1;` as a distinct constant, while the accept/decline paths `return result` | `func_80021ffc` (exact) |
+
+Residues recorded in the same module (not steered):
+
+- `func_80020b4c` `0x80020b4c` (89.5%): retail copies the `placements`
+  parameter to `s2`, saves it in `a1`, and re-materialises `&floor_item_count`
+  through `a0` then `v1` inside the count loop (two extra coalescing moves); the
+  probe keeps `placements` in `a0` and holds the address in `a1`, a strictly
+  cheaper allocation. Referents, relocations, call set, CFG and the whole second
+  loop match.
+- `func_80020cfc` `0x80020cfc` (96.1%): the three-digit filename division
+  allocates `i / 30` to `v1` and reuses the `i + 1` register for `(i+1) / 100`;
+  retail puts `i / 30` in `a2` and takes a fresh register for the second
+  quotient. Every division, dividend order and named-local variant tried keeps
+  the same class assignment. Everything else (the `memcpy` stat-bank loader, the
+  sector rounding) matches.
+- `func_80021538` `0x80021538` (62.3%) and `func_80021afc` `0x80021afc`
+  (67.5%): the buy/sell panels reconstruct with correct referents, call sets and
+  control flow, but two residues remain across the ~0x5c0 bodies. (1) The
+  callee-saved assignment of the menu variables permutes against retail
+  (`selection`/`confirm`/`inventory_base` land in different `sN` than retail's
+  `s1`/`s5`/`s6`). (2) `loop.c` relates the two item icon tables
+  (`DAT_80059108 == DAT_80058dc0 + 840`) into one base register that reaches the
+  second with a `-840` addend; the probe materialises each table symbol
+  separately. Both are allocation/loop-reduction classes, not structural errors.

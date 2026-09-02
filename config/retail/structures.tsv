@@ -18,6 +18,8 @@ KfDisplayStateOpen	0x20024	supported	semantic_types.h;asm;base-register;display_
 KfEffectRecord	0x3c	candidate	asm;map_object_pool_load;map_object_pool_update	60-byte effect pool record at DAT_8009d040; layout mostly opaque
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
+KfFloorItem	0x18	supported	semantic_types.h;asm;func_80020b4c	runtime floor-item table entry
+KfFloorItemPlacement	0x0c	supported	semantic_types.h;asm;func_80020b4c	serialized floor-item placement record
 KfMagicRecord	0x14	supported	asm;player_select_magic;player_update;player_recalculate_combat_stats	20-byte magic record; magic_records[24] is indexed by selected_magic_id and by weapon-bound spell indices 5/8/18/20
 KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
 KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle

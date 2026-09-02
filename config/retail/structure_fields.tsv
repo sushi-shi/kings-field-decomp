@@ -153,6 +153,23 @@ KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
 KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
+KfFloorItem	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id copied from the placement record
+KfFloorItem	0x02	0x01	unknown_02	u8	opaque	semantic_types.h;asm;func_80020b4c	flicker scale copied from the placement record
+KfFloorItem	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
+KfFloorItem	0x04	0x04	position_x	s32	supported	semantic_types.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
+KfFloorItem	0x08	0x04	position_y	s32	supported	semantic_types.h;asm;func_80020b4c	world y = local_y - floor_height*100
+KfFloorItem	0x0c	0x04	position_z	s32	supported	semantic_types.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
+KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	semantic_types.h;func_80020b4c	not written by the loader
+KfFloorItem	0x14	0x01	flicker	u8	supported	semantic_types.h;asm;func_80020b4c	(rand() * unknown_02) >> 15
+KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	semantic_types.h;func_80020b4c	not written by the loader
+KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
+KfFloorItemPlacement	0x02	0x01	unknown_02	u8	opaque	semantic_types.h;asm;func_80020b4c	scales the random flicker value
+KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
+KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	semantic_types.h;asm;func_80020b4c	map tile z (floor-height grid row)
+KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;func_80020b4c	map tile x (floor-height grid column)
+KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
+KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
+KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;func_80020b4c	height offset above the floor height grid
 KfMagicRecord	0x00	0x01	learned	u8	supported	asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
 KfMagicRecord	0x01	0x01	charge_rate	u8	supported	asm;player_update	fixed6_ratio_step span while charging magic
 KfMagicRecord	0x02	0x06	unknown_02	u8[6]	opaque	asm	meaning unresolved
