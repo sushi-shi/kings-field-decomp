@@ -648,21 +648,9 @@ source = "src/game/system_callbacks.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8005081c"
+unit = "game.graph_state_accessors"
 image = "GAME.EXE"
-source = "src/game/func_8005081c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8005082c"
-image = "GAME.EXE"
-source = "src/game/func_8005082c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8005083c"
-image = "GAME.EXE"
-source = "src/game/func_8005083c.c"
+source = "src/game/graph_state_accessors.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
