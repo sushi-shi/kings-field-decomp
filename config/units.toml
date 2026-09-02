@@ -324,6 +324,12 @@ source = "src/game/effect5_texture_cache.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.display_initialize"
+image = "GAME.EXE"
+source = "src/game/display_initialize.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.render"
 image = "GAME.EXE"
 source = "src/game/render.c"
