@@ -534,6 +534,12 @@ source = "src/game/func_8003b580.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_8003b8c8"
+image = "GAME.EXE"
+source = "src/game/func_8003b8c8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8003c560"
 image = "GAME.EXE"
 source = "src/game/func_8003c560.c"
@@ -564,6 +570,12 @@ source = "src/game/func_80044154.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_800444c4"
+image = "GAME.EXE"
+source = "src/game/func_800444c4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_80045f7c"
 image = "GAME.EXE"
 source = "src/game/func_80045f7c.c"
@@ -576,6 +588,12 @@ source = "src/game/func_80046324.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_8004634c"
+image = "GAME.EXE"
+source = "src/game/func_8004634c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8004a344"
 image = "GAME.EXE"
 source = "src/game/func_8004a344.c"
@@ -585,6 +603,24 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.func_8005081c"
 image = "GAME.EXE"
 source = "src/game/func_8005081c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8005082c"
+image = "GAME.EXE"
+source = "src/game/func_8005082c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8005083c"
+image = "GAME.EXE"
+source = "src/game/func_8005083c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_80052240"
+image = "GAME.EXE"
+source = "src/game/func_80052240.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
