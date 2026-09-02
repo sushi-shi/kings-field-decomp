@@ -644,9 +644,7 @@ GAME.EXE	0x8004c4b4	0x3acb4	0x78	0x78	1	function	mips-return-carve			scripts/kf/
 GAME.EXE	0x8004c52c	0x3ad2c	0xc8	0xc8	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004c5f4	0x3adf4	0xc8	0xc8	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 GAME.EXE	0x8004c6bc	0x3aebc	0x84	0x7c	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004c740	0x3af40	0x80	0x80	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-GAME.EXE	0x8004c7c0	0x3afc0	0xc	0xc	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-GAME.EXE	0x8004c7cc	0x3afcc	0x8	0x8	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
+GAME.EXE	0x8004c740	0x3af40	0x94	0x94	1	function	cross-overlay-sdk-lineage			psyq-release25-LIBGTE.LIB:MSC.OBJ;psy-k-0.4.0-XDEF	merged three return-delimited audit blocks (0x8004c740/0x8004c7c0/0x8004c7cc) into the single 0x94 LIBGTE MSC SquareRoot12 body; internal jr ra at 0x8004c7b8/0x8004c7c4 are early exits, not function starts
 GAME.EXE	0x8004c7d4	0x3afd4	0x8c	0x84	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004c860	0x3b060	0x80	0x80	1	function	ghidra-analysis	gteMIMefunc		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004c8e0	0x3b0e0	0x7c	0x7c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
