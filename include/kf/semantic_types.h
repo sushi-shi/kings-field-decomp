@@ -510,10 +510,10 @@ typedef struct KfPlayerState {
     s32 experience;
     s32 next_level_experience;
     KfPlayerProgressState progress_state;
-    u8 unknown_0c[0x1];
-    u8 unknown_0d[0x1];
+    u8 unknown_0c;
+    u8 unknown_0d;
     u8 weapon_charge_delay;
-    u8 unknown_0f[0x1];
+    u8 unknown_0f;
     KfPlayerVitals vitals;
     KfPlayerAttackChargeState attack_charge_state;
     u16 magic_charge;
@@ -555,10 +555,10 @@ typedef struct KfPlayerState {
     s16 weapon_attack_phase;
     u8 unknown_72[0x2];
     u32 unknown_74;
-    u8 unknown_78[0x1];
-    u8 unknown_79[0x1];
+    u8 unknown_78;
+    u8 unknown_79;
     u8 weapon_attack_fully_charged;
-    u8 unknown_7b[0x1];
+    u8 unknown_7b;
     const void *equipped_shield_record;
     const void *equipped_head_armor_record;
     const void *equipped_body_armor_record;
@@ -575,7 +575,7 @@ typedef struct KfPlayerState {
     u8 unknown_98[0x2];
     struct KfVec4s view_rotation_offset;
     u8 update_state;
-    u8 unknown_a3[0x1];
+    u8 unknown_a3;
     struct KfVec4i camera_position;
     s32 floor_height;
     struct KfVec4s camera_rotation;
@@ -589,10 +589,22 @@ typedef struct KfPlayerState {
     s16 death_visual_blend;
     s16 vertical_velocity;
     u8 vertical_state;
-    u8 unknown_df[0x1];
+    u8 unknown_df;
 } KfPlayerState;
 
 typedef char KfPlayerState_size_is_0xe0[(sizeof(KfPlayerState) == 0xe0) ? 1 : -1];
+
+/*
+ * Per-floor entry cell (one-based floor number). player_warp_to_floor_entry
+ * copies byte 0 into previous_map_cell.x and byte 1 into .z, so this table
+ * stores x first, unlike KfMapCell.
+ */
+typedef struct KfFloorEntryCell {
+    u8 x;
+    u8 z;
+} KfFloorEntryCell;
+
+typedef char KfFloorEntryCell_size_is_2[(sizeof(KfFloorEntryCell) == 2) ? 1 : -1];
 
 /* === end player === */
 

@@ -1352,7 +1352,7 @@ GAME.EXE	0x8001425c	0x4	DAT_8001425c	unknown	load	pointer		address-only	data.tsv
 GAME.EXE	0x80014260	0x4	DAT_80014260	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80014264	0x4	DAT_80014264	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055810	0x9	player_sound_refs	unknown	load	SoundRef[3]	player	supported	data.tsv:direct-bytes;game_semantic_player_stats.tsv;asm;xrefs	three packed references used by weapon attack, death, and level-up paths
-GAME.EXE	0x8005582c	0xa	floor_entry_cells	unknown	load	KfMapCell[5]	player	supported	data.tsv:direct-bytes;game_semantic_player_interactions.tsv;asm;raw-5x2-cells	one entry cell for each of floors one through five; source linkage remains unresolved
+GAME.EXE	0x8005582c	0xa	floor_entry_cells	unknown	load	KfFloorEntryCell[5]	player	supported	data.tsv:direct-bytes;game_semantic_player_interactions.tsv;asm;raw-5x2-cells	one entry cell for each of floors one through five; source linkage remains unresolved
 GAME.EXE	0x80055878	0x4	DAT_80055878	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x8005587c	0x4	DAT_8005587c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055af0	0x4	DAT_80055af0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

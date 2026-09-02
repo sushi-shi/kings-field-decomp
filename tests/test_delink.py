@@ -251,6 +251,39 @@ class MipsElfTests(unittest.TestCase):
         self.assertEqual(low & 0xFFFF, 3)
         self.assertEqual(used["addend"], "0x00000003")
 
+    def test_named_owner_resolves_an_address_before_its_extent(self) -> None:
+        # `&table[index - 1]` folds to table - stride: a reviewed row that
+        # names the owner keeps the symbol and carries the negative addend.
+        function = Function(
+            "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"
+        )
+        table = DataObject("GAME.EXE", 0x8005582C, 0xA, "floor_entry_cells")
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": (table,)},
+        )
+        blob = bytearray(struct.pack("<2I", 0x3C038005, 0x2463582A))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "reachable-code",
+            "target_va": "0x8005582a",
+            "target_region": "load",
+            "target_name": "floor_entry_cells",
+            "opcode": "lui+addiu",
+            "confidence": "paired-reviewed",
+            "status": "reviewed",
+        }
+        relocations, used = _apply_relocation(blob, function, row, catalog, "safe")
+        self.assertEqual(
+            [item.symbol for item in relocations],
+            ["floor_entry_cells", "floor_entry_cells"],
+        )
+        self.assertEqual(int(used["addend"], 0), -2)
+
     def test_candidate_outside_load_hi_lo_pair_remains_withheld(self) -> None:
         function = Function(
             "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"

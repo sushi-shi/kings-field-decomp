@@ -10,6 +10,7 @@ KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.ts
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
 KfCollisionTarget	0x20	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
+KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
 KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record

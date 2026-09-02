@@ -45,9 +45,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 3450)
         self.assertGreaterEqual(counts["functions_named"], 187)
         self.assertGreaterEqual(counts["data_named"], 82)
-        self.assertEqual(counts["structures"], 36)
-        self.assertEqual(counts["structure_fields"], 307)
-        self.assertEqual(counts["structure_fields_named"], 250)
+        self.assertEqual(counts["structures"], 37)
+        self.assertEqual(counts["structure_fields"], 309)
+        self.assertEqual(counts["structure_fields_named"], 252)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -382,10 +382,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
         self.assertEqual(by_site[0x80012048]["confidence"], "pointer-reviewed")
-        self.assertEqual(
-            by_site[0x80017D40]["target_name"],
-            "floor_entry_cells-0x2",
-        )
+        # `&floor_entry_cells[floor - 1]` folds to the table symbol minus two;
+        # the row names the owner and the delinker measures the addend from it.
+        self.assertEqual(by_site[0x80017D40]["target_name"], "floor_entry_cells")
         # camera_position and player_view_rotation_offset are KfPlayerState members
         self.assertEqual(by_site[0x80017E3C]["target_name"], "player_state")
         self.assertEqual(by_site[0x80017E94]["target_name"], "player_state")

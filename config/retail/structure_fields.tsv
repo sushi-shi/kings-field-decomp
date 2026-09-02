@@ -80,6 +80,8 @@ KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	semantic_types.h;game_semant
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
+KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
+KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
 KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCell	0x01	0x01	x	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
@@ -183,10 +185,10 @@ KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	semantic_types.h;asm;
 KfPlayerState	0x00	0x4	experience	s32	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x04	0x4	next_level_experience	s32	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x08	0x4	progress_state	KfPlayerProgressState	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
-KfPlayerState	0x0c	0x1	unknown_0c	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
-KfPlayerState	0x0d	0x1	unknown_0d	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0x0c	0x1	unknown_0c	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0x0d	0x1	unknown_0d	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0x0e	0x1	weapon_charge_delay	u8	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
-KfPlayerState	0x0f	0x1	unknown_0f	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0x0f	0x1	unknown_0f	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0x10	0x8	vitals	KfPlayerVitals	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x18	0x4	attack_charge_state	KfPlayerAttackChargeState	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x1c	0x2	magic_charge	u16	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
@@ -228,10 +230,10 @@ KfPlayerState	0x6c	0x4	weapon_asset_buffer	u8 *	supported	semantic_types.h;asm;x
 KfPlayerState	0x70	0x2	weapon_attack_phase	s16	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x72	0x2	unknown_72	u8[2]	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0x74	0x4	unknown_74	u32	candidate	semantic_types.h	opaque bytes inside the saved player object
-KfPlayerState	0x78	0x1	unknown_78	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
-KfPlayerState	0x79	0x1	unknown_79	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0x78	0x1	unknown_78	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0x79	0x1	unknown_79	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0x7a	0x1	weapon_attack_fully_charged	u8	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
-KfPlayerState	0x7b	0x1	unknown_7b	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0x7b	0x1	unknown_7b	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0x7c	0x4	equipped_shield_record	void *	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x80	0x4	equipped_head_armor_record	void *	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0x84	0x4	equipped_body_armor_record	void *	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
@@ -248,7 +250,7 @@ KfPlayerState	0x97	0x1	audio_music_enabled	u8	supported	semantic_types.h;asm;xre
 KfPlayerState	0x98	0x2	unknown_98	u8[2]	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0x9a	0x8	view_rotation_offset	KfVec4s	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0xa2	0x1	update_state	u8	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
-KfPlayerState	0xa3	0x1	unknown_a3	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0xa3	0x1	unknown_a3	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerState	0xa4	0x10	camera_position	KfVec4i	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0xb4	0x4	floor_height	s32	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0xb8	0x8	camera_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
@@ -262,7 +264,7 @@ KfPlayerState	0xd8	0x2	death_camera_pitch_step	u16	supported	semantic_types.h;as
 KfPlayerState	0xda	0x2	death_visual_blend	s16	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0xdc	0x2	vertical_velocity	s16	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
 KfPlayerState	0xde	0x1	vertical_state	u8	supported	semantic_types.h;asm;xrefs	former standalone identity, now a KfPlayerState member
-KfPlayerState	0xdf	0x1	unknown_df	u8[1]	candidate	semantic_types.h	opaque bytes inside the saved player object
+KfPlayerState	0xdf	0x1	unknown_df	u8	candidate	semantic_types.h	opaque bytes inside the saved player object
 KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	maximum HP
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	semantic_types.h;asm;xrefs	current HP
 KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	maximum MP
