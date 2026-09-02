@@ -107,7 +107,7 @@ prunes its orphan base object at configure time.
 ## Status and banking
 
 The status universe is every contiguous, non-vendored function: currently
-1 PSX, 497 GAME, and 246 OPEN functions. Progress is counted per function even
+1 PSX, 492 GAME, and 241 OPEN functions. Progress is counted per function even
 when several functions share a module unit; the objdiff report lists each
 function inside its unit. Only manifested units with real base objects enter
 objdiff. This keeps an absent reconstruction distinct from a
@@ -121,7 +121,9 @@ gates it against the historical best. A banked identity that disappears from
 the report is a loss.
 
 Only `kf bank` mutates the ledger. It refuses stale reports and dirty build
-inputs unless `--dirty` is explicit. Normal builds never update committed
+inputs unless `--dirty` is explicit. `kf bank --unit ID` updates only the
+selected unit, requires every selected function to be exactly 100%, and
+preserves all unrelated baseline rows. Normal builds never update committed
 progress automatically.
 
 ## Generated README status

@@ -133,6 +133,10 @@ def parser() -> argparse.ArgumentParser:
 
     bank_parser = subs.add_parser("bank", help="manually update the score high-water ledger")
     bank_parser.add_argument("--dirty", action="store_true")
+    bank_parser.add_argument(
+        "--unit", action="append",
+        help="bank only this unit; every selected function must be exactly 100%%",
+    )
 
     sema_parser = subs.add_parser(
         "sema",
@@ -192,7 +196,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         if args.command == "check":
             return check(_images(args.image), strict=args.strict)
-        return bank(allow_dirty=args.dirty)
+        return bank(allow_dirty=args.dirty, selected_units=args.unit)
     except (OSError, RuntimeError, ValueError) as error:
         print(f"kf {args.command}: {error}", file=sys.stderr)
         return 1

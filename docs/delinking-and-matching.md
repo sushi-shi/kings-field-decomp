@@ -204,7 +204,7 @@ incremental Ninja graph. The normal commands are:
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
 | `kf check [--strict]` | fail on unchanged-input regressions, lost banked rows, or invalid/stale reports |
-| `kf bank [--dirty]` | manually update `config/match_baseline.tsv` from fresh reports |
+| `kf bank [--unit ID] [--dirty]` | manually update all fresh scores, or only selected units when every selected function is exactly 100% |
 
 Status separates eligible, manifested, compiled, scored, and exact functions.
 The default exact threshold is strictly `100%`. `--loose` is available on

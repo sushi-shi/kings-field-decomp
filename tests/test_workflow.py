@@ -10,7 +10,14 @@ from scripts.kf.delink import Function
 from scripts.kf.graph import _build_line, _write_generator
 from scripts.kf.manifest import Unit, load as load_manifest
 from scripts.kf.objdiff import generate_report
-from scripts.kf.progress import Current, Target, _report_scores, _summary, classifications
+from scripts.kf.progress import (
+    Current,
+    Target,
+    _bank_rows,
+    _report_scores,
+    _summary,
+    classifications,
+)
 from scripts.kf.readme import END, START, render_block, write_block
 
 
@@ -123,6 +130,33 @@ class ProgressTests(unittest.TestCase):
         buckets = classifications([row], baseline)
         self.assertEqual(len(buckets["CHANGED"]), 1)
         self.assertEqual(buckets["REGRESS"], [])
+
+    def test_selective_bank_preserves_unrelated_rows(self) -> None:
+        row = sample_current(100.0)
+        unrelated = {
+            "image": "OPEN.EXE",
+            "va": "0x80020000",
+            "unit": "open.unrelated",
+            "name": "unrelated",
+            "input_sha256": "b" * 64,
+            "best_pct": "80.000000000",
+            "hist_pct": "90.000000000",
+            "banked_pct": "80.000000000",
+            "code_size": "16",
+        }
+        old = {(unrelated["image"], int(unrelated["va"], 16)): unrelated}
+        output = _bank_rows([row], old, (row.unit.unit,))
+        by_identity = {
+            (item["image"], int(str(item["va"]), 16)): item for item in output
+        }
+        self.assertEqual(by_identity[("OPEN.EXE", 0x80020000)], unrelated)
+        banked = by_identity[(row.target.image, row.target.va)]
+        self.assertEqual(banked["banked_pct"], "100.000000000")
+
+    def test_selective_bank_rejects_nonexact_function(self) -> None:
+        row = sample_current(99.999)
+        with self.assertRaisesRegex(ValueError, "not exact"):
+            _bank_rows([row], {}, (row.unit.unit,))
 
 
 class GraphTests(unittest.TestCase):

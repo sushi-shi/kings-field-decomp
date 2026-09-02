@@ -413,7 +413,72 @@ def _dirty_inputs() -> list[str]:
     return sorted(dirty)
 
 
-def bank(*, allow_dirty: bool = False) -> int:
+def _bank_record(row: Current, previous: dict[str, str] | None) -> dict[str, str | int]:
+    pct = row.pct or 0.0
+    same_input = previous is not None and previous["input_sha256"] == row.input_sha256
+    best = max(float(previous["best_pct"]), pct) if same_input else pct
+    hist = max(float(previous["hist_pct"]), pct) if previous else pct
+    return {
+        "image": row.target.image,
+        "va": format_hex(row.target.va),
+        "unit": row.unit.unit,
+        "name": row.target.name,
+        "input_sha256": row.input_sha256,
+        "best_pct": f"{best:.9f}",
+        "hist_pct": f"{hist:.9f}",
+        "banked_pct": f"{pct:.9f}",
+        "code_size": row.target.code_size,
+    }
+
+
+def _bank_rows(
+    rows: list[Current],
+    old: dict[tuple[str, int], dict[str, str]],
+    selected_units: Iterable[str] | None = None,
+) -> list[dict[str, str | int]]:
+    requested = set(selected_units or ())
+    if not requested:
+        output = {
+            (row.target.image, row.target.va): _bank_record(row, old.get(
+                (row.target.image, row.target.va)
+            ))
+            for row in rows
+            if row.scored
+        }
+    else:
+        present = {row.unit.unit for row in rows}
+        missing = sorted(requested - present)
+        if missing:
+            raise ValueError("unknown bank unit(s): " + ", ".join(missing))
+        selected = [row for row in rows if row.unit.unit in requested]
+        unscored = [row for row in selected if not row.scored or row.pct is None]
+        if unscored:
+            raise ValueError(
+                "selected bank unit has unscored function(s): "
+                + ", ".join(row.target.name for row in unscored)
+            )
+        nonexact = [row for row in selected if row.pct != 100.0]
+        if nonexact:
+            raise ValueError(
+                "selected bank unit is not exact: "
+                + ", ".join(
+                    f"{row.target.name}={row.pct:.9f}%" for row in nonexact
+                )
+            )
+        output = dict(old)
+        for row in selected:
+            identity = row.target.image, row.target.va
+            output[identity] = _bank_record(row, old.get(identity))
+    image_order = {image: position for position, image in enumerate(IMAGE_LAYOUTS)}
+    return sorted(
+        output.values(),
+        key=lambda row: (image_order[str(row["image"])], parse_int(str(row["va"]))),
+    )
+
+
+def bank(
+    *, allow_dirty: bool = False, selected_units: Iterable[str] | None = None,
+) -> int:
     dirty = _dirty_inputs()
     if dirty and not allow_dirty:
         shown = "\n".join(f"  {path}" for path in dirty[:12])
@@ -425,28 +490,8 @@ def bank(*, allow_dirty: bool = False) -> int:
     if failures:
         raise ValueError("refusing to bank: " + "; ".join(failures))
     old = load_baseline()
-    output = []
-    for row in sorted(
-        (item for item in rows if item.scored),
-        key=lambda item: (list(IMAGE_LAYOUTS).index(item.target.image), item.target.va),
-    ):
-        identity = row.target.image, row.target.va
-        previous = old.get(identity)
-        pct = row.pct or 0.0
-        same_input = previous is not None and previous["input_sha256"] == row.input_sha256
-        best = max(float(previous["best_pct"]), pct) if same_input else pct
-        hist = max(float(previous["hist_pct"]), pct) if previous else pct
-        output.append({
-            "image": row.target.image,
-            "va": format_hex(row.target.va),
-            "unit": row.unit.unit,
-            "name": row.target.name,
-            "input_sha256": row.input_sha256,
-            "best_pct": f"{best:.9f}",
-            "hist_pct": f"{hist:.9f}",
-            "banked_pct": f"{pct:.9f}",
-            "code_size": row.target.code_size,
-        })
+    selected = tuple(dict.fromkeys(selected_units or ()))
+    output = _bank_rows(rows, old, selected)
     write_tsv(
         BASELINE,
         BASELINE_FIELDS,
@@ -459,6 +504,13 @@ def bank(*, allow_dirty: bool = False) -> int:
     from scripts.kf.readme import refresh as refresh_readme
 
     refreshed = refresh_readme()
-    print(f"banked {len(output)} scored function(s) in {BASELINE.relative_to(REPO)}")
+    if selected:
+        count = sum(row.unit.unit in selected for row in rows)
+        print(
+            f"banked {count} selected exact function(s) in "
+            f"{BASELINE.relative_to(REPO)}"
+        )
+    else:
+        print(f"banked {len(output)} scored function(s) in {BASELINE.relative_to(REPO)}")
     print(f"README match-status block {'refreshed' if refreshed else 'unchanged'}")
     return 0
