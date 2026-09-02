@@ -528,6 +528,12 @@ source = "src/game/func_800356e8.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map_events"
+image = "GAME.EXE"
+source = "src/game/map_events.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_80035e14"
 image = "GAME.EXE"
 source = "src/game/func_80035e14.c"

@@ -212,10 +212,10 @@ KfMapEvent	0x28	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
 KfMapEvent	0x2c	0x04	reference_z	s32	supported	semantic_types.h;asm;xrefs	query reference z
 KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x34	0x02	unknown_34	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x36	0x02	rotation	u16	supported	semantic_types.h;asm;xrefs	current rotation
+KfMapEvent	0x36	0x02	rotation	s16	supported	semantic_types.h;asm;xrefs	current rotation
 KfMapEvent	0x38	0x02	unknown_38	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x40	0x02	rotation_target	u16	supported	semantic_types.h;asm;xrefs	target rotation
+KfMapEvent	0x40	0x02	rotation_target	s16	supported	semantic_types.h;asm;xrefs	target rotation
 KfMapEvent	0x42	0x02	unknown_42	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	initial state
 KfMapEventDefinition	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind

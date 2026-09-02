@@ -540,10 +540,10 @@ typedef struct KfMapEvent {
     s32 reference_z;
     u8 unknown_30[4];
     u16 unknown_34;
-    u16 rotation;
+    s16 rotation;
     u16 unknown_38;
     u8 unknown_3a[6];
-    u16 rotation_target;
+    s16 rotation_target;
     u16 unknown_42;
 } KfMapEvent;
 
