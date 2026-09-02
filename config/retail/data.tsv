@@ -2684,7 +2684,7 @@ GAME.EXE	0x80055838	0x44038	0xd	string	direct-references	enemy_info_image_path_t
 GAME.EXE	0x80055845	0x44045	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055848	0x44048	0xe	string	direct-references	person_image_path_template	ascii	game_semantic_player_interactions.tsv	escaped text: PRSN\\PER00.TIM; map-event kind digits are rewritten before display
 GAME.EXE	0x80055856	0x44056	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055858	0x44058	0x20	defined	reviewed	DAT_80055858	KfMatrix	manual:game_semantic_player_update	color matrix blended toward color_matrix_table[0] while status effect 1 fades
+GAME.EXE	0x80055858	0x44058	0x20	defined	reviewed	DAT_80055858	MATRIX	manual:game_semantic_player_update	color matrix blended toward color_matrix_table[0] while status effect 1 fades
 GAME.EXE	0x80055878	0x44078	0x40	defined	reviewed	DAT_80055878	SVECTOR[8]	manual:game_semantic_player_update	view_rotation_offset table indexed by player_state.update_state
 GAME.EXE	0x800558b8	0x440b8	0x238	defined	reviewed	map_cell_attribute_height_table	s16[284]	manual:game_semantic_player_interactions	per-attribute height offsets indexed by map_cell_attribute_grid values; extent is the remaining span and stays WIP
 GAME.EXE	0x80055af0	0x442f0	0xc	defined	reviewed	map_resource_path	char[12]	manual:game_semantic_map_resources	mutable B0\\ path; floor digit is byte one and a filename of at most nine bytes including NUL begins at byte three
@@ -2773,7 +2773,7 @@ GAME.EXE	0x80055db0	0x445b0	0x4	unclassified	coverage-gap			payload-complement	m
 GAME.EXE	0x80055db4	0x445b4	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055db6	0x445b6	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055db8	0x445b8	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055dbc	0x445bc	0xe0	defined	reviewed	color_matrix_table	KfMatrix[7]	manual:game_semantic_player_death	seven 32-byte colour matrices indexed by base plus 32/128 from player_death fades
+GAME.EXE	0x80055dbc	0x445bc	0xe0	defined	reviewed	color_matrix_table	MATRIX[7]	manual:game_semantic_player_death	seven 32-byte colour matrices indexed by base plus 32/128 from player_death fades
 GAME.EXE	0x80055e9c	0x4469c	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055e9e	0x4469e	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055e9f	0x4469f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
