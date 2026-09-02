@@ -89,7 +89,7 @@ void actor_update_effect_action(s32 action)
     }
     actor_advance_animation_clamped(actor, definition->action_animation_steps[index]);
     if (actor_animation_crossed_phase(actor, definition->action_animation_phases[index])) {
-        actor_spawn_action_effect(definition->effect_codes[action], action);
+        actor_spawn_action_effect(definition->action_parameters[action], action);
     }
     if (actor->animation_phase >= 4095) {
         actor->action_timer = 0xff;

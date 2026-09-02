@@ -658,10 +658,10 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     }
     if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
         audio_play_spatial_range(
-            sound, (const struct KfVec4i *)&actor->position, 0x7f, 20000, 60000);
+            sound, &actor->position, 0x7f, 20000, 60000);
     } else {
         audio_play_spatial_default_range(
-            sound, (const struct KfVec4i *)&actor->position, 0x7f);
+            sound, &actor->position, 0x7f);
     }
 }
 

@@ -310,3 +310,20 @@ Residues left in the module:
 - `map_object_pool_clear_link`: retail's `kind < 8` branch targets the
   following `kind != 8` test with an empty delay slot; ours jumps to the loop
   tail and fills the slot with the pointer increment.
+
+## actor AI
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| a chain of `j <choose>` exits with the chosen id loaded in delay slots | an `if`/`else if` chain assigning `chosen`, with `goto choose` only where a branch must skip later tests after side effects (`rand()`) | `actor_select_next_action` `0x8002e2e8` |
+| `beqz action → case0; li 1; bne action,1 → after; case1 body; case0 body` | `switch (action) { case 1: ...; break; case 0: ...; break; }` with case 1 written first | same |
+| `move s1,zero` in the delay slot of a `rand()` roll branch | assign `chosen = 0` inside the taken branch (`if (rand() < 1092) { chosen = 0; goto choose; }`), not before the roll | same |
+| `lbu s0,7(a); jal rand; sll s0,s0,7; slt v0,v0,s0` | write the threshold on the left: `(actor->unknown_07 << 7) > rand()` so it is evaluated before the call | `actor_update_awareness` `0x8002e6a8` |
+| `andi s2,s0,0xff` once for several compares after a call | copy the promoted `u8` into an `s32 kind` local after the distance query and compare `kind` | same |
+| `lw ×4; sw ×4` copy of the actor position before `vector3i_add_xz` | `KfActor.position` is a `KfVec4i` (16 bytes); `target = actor->position;` | `actor_move_xz_with_collision` `0x8002e954` |
+| blocked handling laid out first, free path after, with `bnez v0 → blocked` from the drop checks | `if (result != -1 && (result != 0x1fff0 \|\| vertical_state == 3)) { blocked: if (stop == 0) { if/else chain } return 1; }` then the free path with `goto blocked` | same |
+| `bgez x → L; li v0,0xc00; li v0,0x400; L: sh` (one store) | `if (delta->x < 0) yaw = 0x400; else yaw = 0xc00;` — the ternary sets the temporary before the branch and takes another register | same |
+| `slti drop,400; bnez → -120 block` with the -300 block inline | `if (drop >= 400) { -300 } else { -120 }` | same |
+
+Residue: `actor_update_awareness` keeps the constant 1 in `s5` for both the
+lifecycle switch and the later `kind == 1` compare; ours re-materialises it.

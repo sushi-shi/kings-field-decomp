@@ -55,7 +55,7 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 60)
-        self.assertEqual(counts["structure_fields"], 515)
+        self.assertEqual(counts["structure_fields"], 517)
         self.assertEqual(counts["structure_fields_named"], 431)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
@@ -83,7 +83,11 @@ class InventoryTests(unittest.TestCase):
             row.name: row for row in fields if row.structure == "KfActor"
         }
         self.assertEqual(actor_fields["position"].offset, 0x1C)
-        self.assertEqual(actor_fields["unknown_28"].meaning_confidence, "opaque")
+        self.assertEqual(
+            (actor_fields["position"].size, actor_fields["position"].datatype),
+            (0x10, "KfVec4i"),
+        )
+        self.assertEqual(actor_fields["unknown_07"].meaning_confidence, "opaque")
         definition_fields = {
             row.name: row for row in fields if row.structure == "KfActorDefinition"
         }

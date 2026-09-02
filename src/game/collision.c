@@ -91,7 +91,7 @@ u32 collision_query_world(
             if (flags & 0x800) {
                 KfActor *actor = &actor_state.actors[hit];
 
-                collision_target.position = *(struct KfVec4i *)&actor->position;
+                collision_target.position = actor->position;
                 collision_target.rotation = *(struct KfVec4s *)&actor->rotation;
                 collision_target.radius =
                     actor_state.definitions[actor->definition_id].collision_radius;

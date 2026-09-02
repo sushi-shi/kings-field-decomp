@@ -366,6 +366,12 @@ source = "src/game/actor.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.actor_8002e2e8"
+image = "GAME.EXE"
+source = "src/game/actor_8002e2e8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.actor_8002ed00"
 image = "GAME.EXE"
 source = "src/game/actor_8002ed00.c"

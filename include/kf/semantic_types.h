@@ -275,11 +275,14 @@ typedef struct KfActorDefinition {
     u8 unknown_00[0x03];
     u8 status_effect;
     u8 status_effect_chance;
-    u8 effect_codes[8];
+    u8 action_parameters[8];
     u8 move_speed;
     u8 action_animations[16];
     u8 turn_rate;
-    u8 unknown_1f[0x1b];
+    u8 unknown_1f[0x15];
+    s16 unknown_34;
+    s16 unknown_36;
+    u8 unknown_38[2];
     u16 action_animation_steps[16];
     u16 action_animation_phases[16];
     u16 collision_radius;
@@ -339,8 +342,7 @@ typedef struct KfActor {
     u16 cell_x;
     u16 cell_z;
     s16 unknown_1a;
-    struct KfVec3i position;
-    u32 unknown_28;
+    struct KfVec4i position;
     struct KfEulerAngles rotation;
     u16 unknown_32;
     u32 unknown_34;

@@ -74,7 +74,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->lifecycle = 0;
             actor->position.z = actor->tile_z * MAP_TILE_SIZE + actor->local_z;
             actor->position.x = actor->tile_x * MAP_TILE_SIZE + actor->local_x;
-            actor->position.y = map_floor_height_at_position(&actor->position);
+            actor->position.y = map_floor_height_at_position((struct KfVec3i *)&actor->position);
             actor->cell_x = actor->tile_x;
             actor->cell_z = actor->tile_z;
         } else {
