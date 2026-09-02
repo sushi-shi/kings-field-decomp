@@ -269,3 +269,13 @@ Residues left in the same module (not steered):
 | `move s0,s2` before the advance, the advance in the next call's delay slot | `block = stream; STREAM_NEXT(stream); call();` | `map_resources_load` |
 | runtime `(src\|dst) & 3` test around a 16-byte copy loop versus a plain `lw/sw` loop | `memcpy` with byte pointers (alignment 1) versus `memcpy(table, (KfPlayerLevelGrowth *)(p + 4), sizeof table)` where the cast target is word-aligned | `common_resources_load` |
 | `move a0,s0` without `andi` before a call taking a small argument | the callee's parameter is `s32`, not `u8`; a `u8` prototype makes the caller mask | `map_resource_path_set_floor` `0x8001b390` |
+
+## actor pool and asset registry
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `move s0,a1; lhu s1,0(s0); addiu s0,s0,4` and the loop stores `s0` into the table | advance the pointer parameter itself (`archive += 4; ... archive += *(u32 *)archive;`); a separate cursor local loads through `a1` and swaps `s0`/`s1` | `asset_registry_load_tmd_archive` `0x800204c0` |
+| a free path that jumps over the placement increment to the actor increment, and a terminator branch that is only `li s5,1; j <free path>` | `if (finished == 1) { mark_free: free...; continue; } ... else { finished = 1; goto mark_free; } placements++; } while (actor++, count-- != 0);` — the shared actor increment sits in the loop condition, so `continue` reaches it without a second increment and the placement pointer is the first induction variable incremented (its giv is initialised last) | `actor_pool_load_placements` `0x800308c0` |
+| duplicated free statements in the terminator branch | not merged by cross-jumping: the second store re-materialises `0xff` in `v0` instead of the hoisted `s6`; `goto` is the shape | same |
+| `move s5,zero` before `lui s2` (the pool base) in the preheader | declare and initialise `finished` before `actor` | same |
+| `li s4,0x7f` ... `do { ... } while (count-- != 0)` over 128 slots | `u16 count = 0x7f;` with the post-decrement test | `actor_pool_update` `0x80030818` |

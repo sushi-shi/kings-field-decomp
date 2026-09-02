@@ -293,8 +293,19 @@ typedef struct KfActorActionProfile {
     s16 near_weight;
 } KfActorActionProfile;
 
+/* 16-byte actor placement record from the map's MIXA.DAT stream. */
 typedef struct KfActorPlacement {
-    u8 bytes[0x10];
+    u8 slot_state;
+    u8 definition_flags;
+    u8 heading_quadrant;
+    u8 tile_z;
+    u8 tile_x;
+    u8 unknown_05;
+    u8 unknown_06;
+    u8 unknown_07[3];
+    s16 local_z;
+    s16 local_x;
+    u8 unknown_0e[2];
 } KfActorPlacement;
 
 typedef struct KfActor {
@@ -302,8 +313,8 @@ typedef struct KfActor {
     u8 definition_id;
     u8 variant;
     u8 heading_quadrant;
-    u8 tile_x;
     u8 tile_z;
+    u8 tile_x;
     u8 lifecycle;
     u8 unknown_07;
     u8 action;
@@ -311,8 +322,8 @@ typedef struct KfActor {
     u8 animation_id;
     u8 vertical_state;
     u8 unknown_0c[2];
-    s16 local_x;
     s16 local_z;
+    s16 local_x;
     u16 animation_phase;
     u16 health;
     u16 cell_x;

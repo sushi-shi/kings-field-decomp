@@ -145,13 +145,13 @@ void actor_initialize_current(void)
     s32 coordinate;
     s32 world;
 
-    coordinate = actor->tile_z;
-    world = coordinate * 2000;
-    coordinate = actor->local_z;
-    position.x = world + coordinate;
     coordinate = actor->tile_x;
     world = coordinate * 2000;
     coordinate = actor->local_x;
+    position.x = world + coordinate;
+    coordinate = actor->tile_z;
+    world = coordinate * 2000;
+    coordinate = actor->local_z;
     position.z = world + coordinate;
     position.y = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
@@ -168,13 +168,13 @@ void actor_initialize_slot(u16 actor_index)
     s32 world;
 
     actor->lifecycle = 1;
-    coordinate = actor->tile_z;
-    world = coordinate * 2000;
-    coordinate = actor->local_z;
-    position.x = world + coordinate;
     coordinate = actor->tile_x;
     world = coordinate * 2000;
     coordinate = actor->local_x;
+    position.x = world + coordinate;
+    coordinate = actor->tile_z;
+    world = coordinate * 2000;
+    coordinate = actor->local_z;
     position.z = world + coordinate;
     position.y = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
@@ -221,8 +221,8 @@ void actor_pool_spawn(
 found:
     actor->definition_id = definition_id;
     actor->slot_state = 0;
-    actor->tile_x = 0xff;
     actor->tile_z = 0xff;
+    actor->tile_x = 0xff;
     actor->variant = 0;
     actor_set_position(actor, position);
     actor_set_rotation(actor, rotation->x, rotation->y, rotation->z);

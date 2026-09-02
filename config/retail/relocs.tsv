@@ -3685,8 +3685,8 @@ GAME.EXE	0x800203e0	0xebe0	0x800203e4	mips_hi16_lo16	reachable-code	0x80095740	b
 GAME.EXE	0x800203e8	0xebe8		mips26	reachable-code	0x8004f4b4	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80020408	0xec08	0x8002040c	mips_hi16_lo16	reachable-code	0x80095740	bss	render_state	lui+sw	at	paired-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x80020410	0xec10		mips26	reachable-code	0x8004f4b4	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x800204fc	0xecfc	0x80020500	mips_hi16_lo16	reachable-code	0x80090fcc	bss	DAT_80090fcc	lui+addiu	s4	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80020514	0xed14		mips26	reachable-code	0x8002059c	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x800204fc	0xecfc	0x80020500	mips_hi16_lo16	reachable-code	0x80090fcc	bss	DAT_80090fcc	lui+addiu	s4	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80020514	0xed14		mips26	reachable-code	0x8002059c	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
 GAME.EXE	0x8002051c	0xed1c		mips26	reachable-code	0x8001c2b0	load	tmd_prepare_primitive_indices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8002056c	0xed6c	0x80020570	mips_hi16_lo16	reachable-code	0x80090fcc	bss	DAT_80090fcc	lui+addiu	at	paired-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x8002057c	0xed7c		mips26	reachable-code	0x8002059c	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -6133,17 +6133,17 @@ GAME.EXE	0x800307c4	0x1efc4		mips26	instruction-word	0x8001a44c	load		jal		range
 GAME.EXE	0x800307cc	0x1efcc		mips26	instruction-word	0x800306bc	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x800307dc	0x1efdc		mips26	instruction-word	0x800307ec	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x800307f4	0x1eff4		mips26	reachable-code	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
-GAME.EXE	0x80030834	0x1f034	0x80030838	mips_hi16_lo16	reachable-code	0x8006c4b8	bss	actor_state	lui+addiu	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8003084c	0x1f04c		mips26	reachable-code	0x8002dbb0	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030864	0x1f064		mips26	reachable-code	0x8002e6a8	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003087c	0x1f07c		mips26	reachable-code	0x8002fa88	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030898	0x1f098		mips26	reachable-code	0x8002dbb0	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x800308f0	0x1f0f0	0x800308f4	mips_hi16_lo16	reachable-code	0x8006c4b8	bss	actor_state	lui+addiu	s2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80030918	0x1f118		mips26	reachable-code	0x80030a28	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030960	0x1f160		mips26	reachable-code	0x8003096c	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x800309f8	0x1f1f8		mips26	reachable-code	0x8001a44c	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030a10	0x1f210		mips26	reachable-code	0x80030a20	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80030a18	0x1f218		mips26	reachable-code	0x80030914	load		j		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x80030834	0x1f034	0x80030838	mips_hi16_lo16	reachable-code	0x8006c4b8	bss	actor_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x8003084c	0x1f04c		mips26	reachable-code	0x8002dbb0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80030864	0x1f064		mips26	reachable-code	0x8002e6a8	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x8003087c	0x1f07c		mips26	reachable-code	0x8002fa88	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80030898	0x1f098		mips26	reachable-code	0x8002dbb0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x800308f0	0x1f0f0	0x800308f4	mips_hi16_lo16	reachable-code	0x8006c4b8	bss	actor_state	lui+addiu	s2	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80030918	0x1f118		mips26	reachable-code	0x80030a28	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80030960	0x1f160		mips26	reachable-code	0x8003096c	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x800309f8	0x1f1f8		mips26	reachable-code	0x8001a44c	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80030a10	0x1f210		mips26	reachable-code	0x80030a20	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
+GAME.EXE	0x80030a18	0x1f218		mips26	reachable-code	0x80030914	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:actor_pool;carved-body-reviewed
 GAME.EXE	0x80030a6c	0x1f26c	0x80030a70	mips_hi16_lo16	reachable-code	0x8006bd98	bss	actor_state	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_actor_core
 GAME.EXE	0x80030ad8	0x1f2d8	0x80030adc	mips_hi16_lo16	reachable-code	0x800561b0	load	map_copy_regions	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
 GAME.EXE	0x80030b28	0x1f328	0x80030b2c	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	s6	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed

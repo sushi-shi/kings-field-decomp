@@ -5,8 +5,8 @@ KfActor	0x00	0x01	slot_state	u8	supported	semantic_types.h;asm;xrefs	allocation/
 KfActor	0x01	0x01	definition_id	u8	supported	semantic_types.h;asm;xrefs	index into actor definitions
 KfActor	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	actor variant selector
 KfActor	0x03	0x01	heading_quadrant	u8	supported	semantic_types.h;asm;xrefs	coarse heading selector
-KfActor	0x04	0x01	tile_x	u8	supported	semantic_types.h;asm;xrefs	map tile x
-KfActor	0x05	0x01	tile_z	u8	supported	semantic_types.h;asm;xrefs	map tile z
+KfActor	0x04	0x01	tile_z	u8	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	map tile z; world position.z = tile_z * 2000 + local_z (actor_initialize_slot, actor_pool_load_placements)
+KfActor	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	map tile x; world position.x = tile_x * 2000 + local_x
 KfActor	0x06	0x01	lifecycle	u8	supported	semantic_types.h;asm;xrefs	actor lifecycle state
 KfActor	0x07	0x01	unknown_07	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x08	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
@@ -14,8 +14,8 @@ KfActor	0x09	0x01	unknown_09	u8	opaque	semantic_types.h;asm;xrefs	meaning unreso
 KfActor	0x0a	0x01	animation_id	u8	supported	semantic_types.h;asm;xrefs	animation selector
 KfActor	0x0b	0x01	vertical_state	u8	supported	semantic_types.h;asm;xrefs	vertical movement selector
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x0e	0x02	local_x	s16	supported	semantic_types.h;asm;xrefs	local horizontal coordinate
-KfActor	0x10	0x02	local_z	s16	supported	semantic_types.h;asm;xrefs	local horizontal coordinate
+KfActor	0x0e	0x02	local_z	s16	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along z added to tile_z * 2000
+KfActor	0x10	0x02	local_x	s16	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along x added to tile_x * 2000
 KfActor	0x12	0x02	animation_phase	u16	supported	semantic_types.h;asm;xrefs	animation phase/progress
 KfActor	0x14	0x02	health	u16	supported	semantic_types.h;asm;xrefs	current actor health
 KfActor	0x16	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x; every band load is lhu
@@ -56,7 +56,17 @@ KfActorDefinition	0x84	0x02	experience_reward	u16	supported	semantic_types.h;asm
 KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	semantic_types.h;asm;xrefs	three attack components
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	semantic_types.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	unknown_96	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActorPlacement	0x00	0x10	bytes	u8[16]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfActorPlacement	0x00	0x01	slot_state	u8	supported	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
+KfActorPlacement	0x01	0x01	definition_flags	u8	supported	semantic_types.h;asm;actor_pool_load_placements	low five bits are the definition id, bit 5 the variant flag
+KfActorPlacement	0x02	0x01	heading_quadrant	u8	supported	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.heading_quadrant
+KfActorPlacement	0x03	0x01	tile_z	u8	supported	semantic_types.h;asm;actor_pool_load_placements	map tile z
+KfActorPlacement	0x04	0x01	tile_x	u8	supported	semantic_types.h;asm;actor_pool_load_placements	map tile x
+KfActorPlacement	0x05	0x01	unknown_05	u8	opaque	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.unknown_07
+KfActorPlacement	0x06	0x01	unknown_06	u8	opaque	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.unknown_09
+KfActorPlacement	0x07	0x03	unknown_07	u8[3]	opaque	semantic_types.h;asm;actor_pool_load_placements	not read by the loader
+KfActorPlacement	0x0a	0x02	local_z	s16	supported	semantic_types.h;asm;actor_pool_load_placements	local offset along z
+KfActorPlacement	0x0c	0x02	local_x	s16	supported	semantic_types.h;asm;actor_pool_load_placements	local offset along x
+KfActorPlacement	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;actor_pool_load_placements	not read by the loader
 KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	semantic_types.h;asm;xrefs	map-loaded actor definitions
 KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	semantic_types.h;asm;xrefs	live actor records
 KfActorState	0x2b20	0x10	player_position	KfVec4i	supported	semantic_types.h;asm;xrefs	player position snapshot copied each frame
