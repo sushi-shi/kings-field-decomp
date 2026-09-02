@@ -2942,8 +2942,7 @@ GAME.EXE	0x80057b3c	0x4633c	0x5	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x80057b41	0x46341	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b44	0x46344	0x3	string	byte-pattern		ascii	manual:cd_file	escaped text: ;1 (CD file version suffix appended by cd_file_load_allocated)
 GAME.EXE	0x80057b47	0x46347	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057b48	0x46348	0x7	string	byte-pattern		ascii	investigation:string-census	escaped text: MIX.TIM
-GAME.EXE	0x80057b4f	0x4634f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80057b48	0x46348	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: MIX.TIM
 GAME.EXE	0x80057b50	0x46350	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: \\E0.;1
 GAME.EXE	0x80057b56	0x46356	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057b57	0x46357	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

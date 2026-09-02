@@ -264,6 +264,12 @@ source = "src/game/tim_upload_images.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.common_resources_load"
+image = "GAME.EXE"
+source = "src/game/common_resources_load.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.map_resource_path_set_floor"
 image = "GAME.EXE"
 source = "src/game/map_resource_path_set_floor.c"
@@ -291,6 +297,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.audio_play_current_map_sequence"
 image = "GAME.EXE"
 source = "src/game/audio_play_current_map_sequence.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_resources_load"
+image = "GAME.EXE"
+source = "src/game/map_resources_load.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

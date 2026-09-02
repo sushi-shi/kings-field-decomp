@@ -260,3 +260,12 @@ Residues left in the same module (not steered):
 | `addiu s0,s0,1` in the branch delay slot, then `li s0,0x64; li s1,1; addiu s0,s0,1` | `for (attempt = 0; attempt < 3; attempt++) { ... if (result == 0) { attempt = 100; loaded = 1; } }`; the loop increment is copied into the delay slot because the fall-through overwrites it | same |
 | `srl v0,v1,0xb; addiu s1,v0,1; sll v0,s1,0xb` with `s1` cleared to zero right after | the rounded sector count shares the `loaded` variable (`loaded = (size >> 11) + 1; size = loaded << 11;`); a separate local keeps the count in `v0` and swaps `s0`/`s1` in the sibling loader | `cd_file_load_into` `0x8001af9c` |
 | `sll s1,a1,2; addu s1,s1,a1; sll s0,s1,2` then `sll v0,s1,2` again before the second table load | index the record array at every use (`cd_file_table[index].size`); a pointer local computes the address once | `func_8001ae60` `0x8001ae60` |
+
+## resources
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `lw v0,0(s2); addiu v0,v0,4; addu s2,s2,v0; jal f; addiu a0,s2,4` | an assigning macro used inside the argument: `f(STREAM_NEXT(stream) + 4)` with `#define STREAM_NEXT(p) ((p) += *(u32 *)(p) + 4)`; `stream = stream + len + 4` as a statement adds the base first (`addu`, then `addiu 4`) | `map_resources_load` `0x8001b558`, `common_resources_load` `0x8001b180` |
+| `move s0,s2` before the advance, the advance in the next call's delay slot | `block = stream; STREAM_NEXT(stream); call();` | `map_resources_load` |
+| runtime `(src\|dst) & 3` test around a 16-byte copy loop versus a plain `lw/sw` loop | `memcpy` with byte pointers (alignment 1) versus `memcpy(table, (KfPlayerLevelGrowth *)(p + 4), sizeof table)` where the cast target is word-aligned | `common_resources_load` |
+| `move a0,s0` without `andi` before a call taking a small argument | the callee's parameter is `s32`, not `u8`; a `u8` prototype makes the caller mask | `map_resource_path_set_floor` `0x8001b390` |

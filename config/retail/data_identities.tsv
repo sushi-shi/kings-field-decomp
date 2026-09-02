@@ -1514,6 +1514,7 @@ GAME.EXE	0x80057b24	0x4	DAT_80057b24	unknown	load	undefined4		address-only	data.
 GAME.EXE	0x80057b30	0x4	DAT_80057b30	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b3c	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	"\\KF\\": five bytes copied to the head of the CD path buffer before the file name
 GAME.EXE	0x80057b44	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	";1": ISO 9660 version suffix appended to every CD path
+GAME.EXE	0x80057b48	0x8	map_mix_tim_filename	unknown	load	char[8]	resources	supported	asm;map_resources_load	"MIX.TIM": .data file name handed to map_resource_load_file for the floor texture image
 GAME.EXE	0x80057b56	0x1	DAT_80057b56	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b5b	0x1	DAT_80057b5b	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b5f	0x1	DAT_80057b5f	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1847,14 +1848,7 @@ GAME.EXE	0x800652a8	0xf0	DAT_800652a8	unknown	bss	u8[240]		address-only	asm;xref
 GAME.EXE	0x80065420	0x4	DAT_80065420	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065424	0x4	DAT_80065424	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065464	0x4	DAT_80065464	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065be8	0x4	DAT_80065be8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065bec	0x4	DAT_80065bec	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065bf0	0x4	DAT_80065bf0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065bf4	0x4	DAT_80065bf4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065bf8	0x4	DAT_80065bf8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065bfc	0x4	DAT_80065bfc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065c00	0x4	DAT_80065c00	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065c04	0x4	DAT_80065c04	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80065be8	0xcc0	DAT_80065be8	unknown	bss	u8[3264]	resources	supported	asm;common_resources_load;func_8001e83c	3264-byte block copied from the second COM.DAT chunk by common_resources_load and read by func_8001e83c; contents unresolved
 GAME.EXE	0x800668d8	0x4	save_header_buffer	unknown	bss	KfSaveHeader *	save_workspace	supported	game_semantic_save_system.tsv;asm;xrefs;0x280	shared pointer rebound to either the base of a 0x2800 arena allocation or the caller's stack workspace; linkage scope is not yet proved
 GAME.EXE	0x800668e0	0x4	save_payload_buffer	unknown	bss	KfSavePayload *	save_workspace	supported	game_semantic_save_system.tsv;asm;xrefs;0x2580	shared pointer rebound to save_header_buffer plus 0x280 or the corresponding caller stack slice; linkage scope is not yet proved
 GAME.EXE	0x800668e8	0x2710	map_collision_flag_grid	unknown	bss	u8[100][100]	collision	supported	game_semantic_collision_grid.tsv;asm;xrefs;collision_query_world;same-cell-index-as-map_collision_grid	per-cell byte: low five bits are updated modulo 32 and tested for zero, bits 0xe0 are preserved, and the query also masks 0xf0 against its flags
