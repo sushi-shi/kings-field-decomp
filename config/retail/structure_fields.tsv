@@ -40,13 +40,16 @@ KfActorActionProfile	0x02	0x02	far_weight	s16	supported	semantic_types.h;asm;xre
 KfActorActionProfile	0x04	0x02	near_distance	s16	supported	semantic_types.h;asm;xrefs	near distance threshold
 KfActorActionProfile	0x06	0x02	middle_weight	s16	supported	semantic_types.h;asm;xrefs	middle action weight
 KfActorActionProfile	0x08	0x02	near_weight	s16	supported	semantic_types.h;asm;xrefs	near action weight
-KfActorDefinition	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActorDefinition	0x03	0x01	status_effect	u8	supported	semantic_types.h;asm;xrefs	status effect flags passed to player_apply_damage by actor_try_attack_player
-KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	semantic_types.h;asm;xrefs	per-hit chance out of 256 compared with rand() >> 7; zero disables the effect
-KfActorDefinition	0x05	0x0c	unknown_05	u8[12]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActorDefinition	0x11	0x01	hit_action	u8	supported	semantic_types.h;asm;xrefs	action selected on hit; 0xff means none
-KfActorDefinition	0x12	0x01	death_action	u8	supported	semantic_types.h;asm;xrefs	action selected on death; 0xff means none
-KfActorDefinition	0x13	0x67	unknown_13	u8[103]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	meaning unresolved
+KfActorDefinition	0x03	0x01	status_effect	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	status effect flags passed to player_apply_damage by actor_try_attack_player
+KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per-hit chance out of 256 compared with rand() >> 7; zero disables
+KfActorDefinition	0x05	0x08	effect_codes	u8[8]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	effect code per effect action (0..7) handed to actor_spawn_action_effect
+KfActorDefinition	0x0d	0x01	move_speed	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	scale applied to the forward vector by actor_move_along_heading
+KfActorDefinition	0x0e	0x10	action_animations	u8[16]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation id per action index (action - 2); entries 3 and 4 are the hit and death animations, 0xff means none
+KfActorDefinition	0x1e	0x01	turn_rate	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	angle_approach step for actor_move_along_heading; halved-and-a-half while colliding
+KfActorDefinition	0x1f	0x1b	unknown_1f	u8[27]	opaque	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	meaning unresolved
+KfActorDefinition	0x3a	0x20	action_animation_steps	u16[16]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation step per action index; the boss death sequence keys effects on entry 4
+KfActorDefinition	0x5a	0x20	action_animation_phases	u16[16]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation phase threshold per action index
 KfActorDefinition	0x7a	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
 KfActorDefinition	0x7c	0x02	collision_height	u16	supported	semantic_types.h;asm;xrefs	collision height
 KfActorDefinition	0x7e	0x02	awareness_distance	u16	supported	semantic_types.h;asm;xrefs	awareness range

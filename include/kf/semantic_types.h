@@ -266,14 +266,22 @@ typedef struct KfAudioVoiceSlots {
  * pool of 128 0x48-byte live actors.  Only fields exercised by the reviewed
  * core routines are named; the remaining bytes deliberately stay opaque.
  */
+/*
+ * Per-action tables are indexed by KF_ACTOR_ACTION_INDEX(action): the hit
+ * action (5) and death action (6) occupy entries 3 and 4, and the eight
+ * effect actions occupy entries 8..15 (actor_update_effect_action).
+ */
 typedef struct KfActorDefinition {
     u8 unknown_00[0x03];
     u8 status_effect;
     u8 status_effect_chance;
-    u8 unknown_05[0x0c];
-    u8 hit_action;
-    u8 death_action;
-    u8 unknown_13[0x67];
+    u8 effect_codes[8];
+    u8 move_speed;
+    u8 action_animations[16];
+    u8 turn_rate;
+    u8 unknown_1f[0x1b];
+    u16 action_animation_steps[16];
+    u16 action_animation_phases[16];
     u16 collision_radius;
     u16 collision_height;
     u16 awareness_distance;
@@ -284,6 +292,8 @@ typedef struct KfActorDefinition {
     u16 defenses[5];
     u8 unknown_96[0x02];
 } KfActorDefinition;
+
+#define KF_ACTOR_ACTION_INDEX(action) ((action) - 2)
 
 typedef struct KfActorActionProfile {
     s16 far_distance;

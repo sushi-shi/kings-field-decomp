@@ -279,3 +279,13 @@ Residues left in the same module (not steered):
 | duplicated free statements in the terminator branch | not merged by cross-jumping: the second store re-materialises `0xff` in `v0` instead of the hoisted `s6`; `goto` is the shape | same |
 | `move s5,zero` before `lui s2` (the pool base) in the preheader | declare and initialise `finished` before `actor` | same |
 | `li s4,0x7f` ... `do { ... } while (count-- != 0)` over 128 slots | `u16 count = 0x7f;` with the post-decrement test | `actor_pool_update` `0x80030818` |
+
+## actor actions
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `addu a2,v0,v0; addu a2,a2,v0; srl a2,a2,1` | `u32 rate = definition->turn_rate; (rate + rate + rate) >> 1`; `rate * 3` prints `sll; addu` and a signed sum prints `sra` | `actor_move_along_heading` `0x8002ed00` |
+| two locals kept in stack slots (`sw v0,24(sp)`, `sw v0,32(sp)`) around a call instead of `s1`/`s2` | a `struct KfVec3i` local whose `x` and `z` are the values (aggregates stay in memory); scalar locals live in saved registers | `actor_apply_horizontal_movement` `0x8002f31c` |
+| `sra v1,v1,0x10` on a collision result | keep the result in an `s32` even though `collision_query_world` returns `u32` | same |
+| the second modulo test skipped when the first fails | nest the loop-sound test inside the effect branch | `actor_update_boss_death_sequence` `0x8002f8cc` |
+| `addiu s0,s3,8` reused for a byte table and, shifted, for two halfword tables | one `index = action + 8` local indexing the definition's per-action arrays | `actor_update_effect_action` `0x8002f468` |
