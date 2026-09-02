@@ -882,3 +882,29 @@ band) is deferred: it is a divide-by-2000 cell walker with its own 6-case jump
 table (`0x80012ce0`) and unresolved `map_cell_attribute_height_table` lookups,
 the same collision-math + cross-jump residue class, and is left NOT-started
 pending cell-attribute data ownership rather than reconstructed speculatively.
+
+## pad
+
+Campaign over the contiguous controller band `0x8005005c..0x8005023c` (module
+`game.pad`, seven small leaves): a critical-section guard plus three PAD entry
+points (`func_800500b8`/`func_8005012c`/`func_80050170`) that dispatch on a
+stored pad identifier, each backed by a "Bad PadIdentifier" reporting stub.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `sw a0,id; sw zero,buf1; li v0,-1; sw v0,buf0; bnez a0` then `PAD_init2`/stub both called `(0x20000001, &buf0)` with `move s0,v0` in the following `jal`'s slot | store the three globals, `result = id==0 ? PAD_init2(...) : stub(...)`, then a void call, `return result` | `func_800500b8` `0x800500b8` (EXACT) |
+| `lw v0,id; addiu sp; bnez v0; sw ra(slot)` then `return ~buf0` | `if (id==0) PAD_dr(); else stub(); return ~buf0;` — the tested load feeds the branch, so the probe hoists it above the frame | `func_8005012c` `0x8005012c` (EXACT) |
+| bad-identifier stub `printf(fmt, id)` with no return statement, consumed in a value context by the caller | K&R `u32 stub() { printf(fmt, id); }` — declares no parameters, falls off the end; the caller passes extra args and reads the incidental `v0` | `func_800500b8` -> `pad_init_bad_identifier` |
+
+Open residue recorded during the same campaign (not steered): retail hoists the
+first data load above the frame allocation / register saves whenever the loaded
+value feeds a *call argument* (`lw a1,pad_identifier` before `addiu sp` in the
+three `printf` stubs) or a *callee-saved register* (`sw s1` then `lw s1,state`
+before `sw ra`/`sw s0` in `critical_section_set`). The probe cc1psx-257 hoists
+a load above the frame only when it feeds the immediately following branch (the
+`func_8005012c` case above), and otherwise emits frame-then-load; `-mcpu=r2000`,
+`-mcpu=r3000`, and `-fschedule-insns` all produce the same frame-first order.
+The referents, call set, CFG and instruction selection are otherwise identical,
+so `critical_section_set`, `pad_init_bad_identifier`, `pad_read_bad_identifier`
+and `pad_stop_bad_identifier` sit one prologue reorder from exact. Left as an
+unattributed load-placement residue rather than steered with dead code.
