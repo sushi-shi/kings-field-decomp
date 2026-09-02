@@ -1,0 +1,19 @@
+#include <kf/address.h>
+#include <kf/semantic_types.h>
+
+extern KfEffectRecord DAT_8009d040[];
+
+ADDRESS(0x80036f00, 0x44)
+char *func_80036f00(void)
+{
+    KfEffectRecord *record = DAT_8009d040;
+    u16 i = 48;
+
+    do {
+        if (record->unknown_00[0] == 0xff) {
+            return (char *)record;
+        }
+        record++;
+    } while (--i != 0);
+    return 0;
+}

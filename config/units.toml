@@ -516,6 +516,12 @@ source = "src/game/func_80036e30.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_80036f00"
+image = "GAME.EXE"
+source = "src/game/func_80036f00.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8003a244"
 image = "GAME.EXE"
 source = "src/game/func_8003a244.c"
@@ -576,9 +582,9 @@ source = "src/game/func_80044154.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800444c4"
+unit = "game.table_lookup_80044488"
 image = "GAME.EXE"
-source = "src/game/func_800444c4.c"
+source = "src/game/table_lookup_80044488.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
