@@ -25,7 +25,7 @@ extern void func_8002ac34(void);
 extern void func_8002718c(void);
 extern void func_80027e58(void);
 extern void menu_play_input_sound(s32 cue);
-extern u32 func_8005012c();
+extern u32 pad_read();
 
 /* Cursor/list widget helpers (init, render, query). */
 extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
@@ -152,13 +152,13 @@ void func_80022d7c(s32 item_code)
         if (frame < 2) {
             frame++;
         } else if (frame == 2) {
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             frame++;
         } else {
-            if (func_8005012c(1) == 0)
+            if (pad_read(1) == 0)
                 continue;
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             return;
         }
@@ -186,7 +186,7 @@ s32 func_8002317c(void)
     s32 prev;
     s32 selection = -99;
 
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
     func_8002ad6c((u16 *)&ctx, 0, 1);
 
@@ -221,7 +221,7 @@ s32 func_8002317c(void)
                 selection = codes[ctx.cursor];
         }
         if (selection != -99) {
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
@@ -229,7 +229,7 @@ s32 func_8002317c(void)
         func_8002abb4();
         confirm = 0;
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if (ctx.count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -329,7 +329,7 @@ void func_800236ac(void)
             func_8002718c();
             func_80028914(1, 9, cursor, confirm);
             func_8002ac34();
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
         }
         switch (selection) {
@@ -357,7 +357,7 @@ void func_800236ac(void)
         func_8002abb4();
         confirm = 0;
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)

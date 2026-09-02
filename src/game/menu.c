@@ -24,7 +24,7 @@ extern void func_80027ee4(void *arg0, s32 arg1);
 extern void func_80028914(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern s32 func_800250c4(void);
 extern void menu_play_input_sound(s32 cue);
-extern u32 func_8005012c();
+extern u32 pad_read();
 extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, query). */
@@ -84,7 +84,7 @@ void func_800222b4(void)
         func_8002ac34();
     } while (i < 3);
     menu_play_input_sound(0);
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
     func_800250c4();
 }
@@ -116,7 +116,7 @@ s32 func_80022348(void)
         func_8002ac34();
     } while (i < 3);
     menu_play_input_sound(0);
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
 
     for (;;) {
@@ -125,7 +125,7 @@ s32 func_80022348(void)
             func_80025f38();
             func_80028914(0, 8, cursor, confirm);
             func_8002ac34();
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
         }
         switch (selection) {
@@ -161,14 +161,14 @@ s32 func_80022348(void)
         }
         if (result != -99) {
             selection = -1;
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             return result;
         }
         selection = -1;
         confirm = 0;
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
@@ -223,7 +223,7 @@ s32 func_80022608(void)
     s32 confirm = 0;
     s32 selection = -99;
 
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
     func_8002ad6c((u16 *)&ctx, 0, 0);
 
@@ -285,13 +285,13 @@ s32 func_80022608(void)
         }
         if (selection != -99) {
             confirm = 0;
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (ctx.cursor != 0) {

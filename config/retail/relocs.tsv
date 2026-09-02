@@ -3738,20 +3738,20 @@ GAME.EXE	0x80021350	0xfb50		mips26	reachable-code	0x8002ac34	load	func_8002ac34	
 GAME.EXE	0x80021358	0xfb58		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002136c	0xfb6c		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021374	0xfb74		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x8002137c	0xfb7c		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x8002137c	0xfb7c		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002138c	0xfb8c		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800213a8	0xfba8		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800213bc	0xfbbc		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800213c4	0xfbc4		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x800213cc	0xfbcc		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x800213cc	0xfbcc		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800213ec	0xfbec		mips26	reachable-code	0x80021410	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800213f4	0xfbf4		mips26	reachable-code	0x80021538	load	func_80021538	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800213fc	0xfbfc		mips26	reachable-code	0x80021410	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021404	0xfc04		mips26	reachable-code	0x80021afc	load	func_80021afc	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021418	0xfc18		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021418	0xfc18		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021428	0xfc28		mips26	reachable-code	0x80021418	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021430	0xfc30		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021438	0xfc38		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021438	0xfc38		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002145c	0xfc5c		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002146c	0xfc6c		mips26	reachable-code	0x800214f4	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021488	0xfc88		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3761,7 +3761,7 @@ GAME.EXE	0x800214cc	0xfccc		mips26	reachable-code	0x800214f4	load		j		control-fl
 GAME.EXE	0x800214e8	0xfce8		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021500	0xfd00		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021508	0xfd08		mips26	reachable-code	0x8002138c	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x8002156c	0xfd6c		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x8002156c	0xfd6c		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021580	0xfd80		mips26	reachable-code	0x8002ad6c	load	func_8002ad6c	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002159c	0xfd9c	0x800215a0	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	v1	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800215ac	0xfdac	0x800215b0	mips_hi16_lo16	reachable-code	0x80059108	bss	DAT_80059108	lui+addiu	t2	paired-reviewed	reviewed	manual:game_item
@@ -3774,9 +3774,9 @@ GAME.EXE	0x80021758	0xff58		mips26	reachable-code	0x80027b7c	load	func_80027b7c	
 GAME.EXE	0x80021760	0xff60		mips26	reachable-code	0x80028a70	load	func_80028a70	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002176c	0xff6c		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002179c	0xff9c		mips26	reachable-code	0x80028380	load	func_80028380	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x800217cc	0xffcc		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x800217cc	0xffcc		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800217dc	0xffdc		mips26	reachable-code	0x800217cc	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x800217e4	0xffe4		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x800217e4	0xffe4		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021808	0x10008		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021810	0x10010		mips26	reachable-code	0x80021a10	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002182c	0x1002c		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3805,7 +3805,7 @@ GAME.EXE	0x80021a7c	0x1027c	0x80021a80	mips_hi16_lo16	reachable-code	0x800594b8	
 GAME.EXE	0x80021a94	0x10294	0x80021a98	mips_hi16_lo16	reachable-code	0x800a07ac	bss	player_state	lui+addiu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80021aac	0x102ac	0x80021ab0	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021ac4	0x102c4	0x80021ac8	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021b30	0x10330		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021b30	0x10330		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021b44	0x10344		mips26	reachable-code	0x8002ad6c	load	func_8002ad6c	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021b54	0x10354	0x80021b58	mips_hi16_lo16	reachable-code	0x800a07e4	bss	player_state	lui+addiu	t2	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80021b5c	0x1035c	0x80021b60	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	t4	paired-reviewed	reviewed	manual:game_item
@@ -3816,9 +3816,9 @@ GAME.EXE	0x80021cdc	0x104dc		mips26	reachable-code	0x80027b7c	load	func_80027b7c
 GAME.EXE	0x80021ce4	0x104e4		mips26	reachable-code	0x80028a70	load	func_80028a70	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021cf0	0x104f0		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021d20	0x10520		mips26	reachable-code	0x80028380	load	func_80028380	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021d50	0x10550		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021d50	0x10550		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021d60	0x10560		mips26	reachable-code	0x80021d50	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021d68	0x10568		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021d68	0x10568		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021d8c	0x1058c		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021d94	0x10594		mips26	reachable-code	0x80021f40	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021db0	0x105b0		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3855,16 +3855,16 @@ GAME.EXE	0x800220f4	0x108f4		mips26	reachable-code	0x8002abb4	load	func_8002abb4
 GAME.EXE	0x800220fc	0x108fc		mips26	reachable-code	0x800292f8	load	func_800292f8	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022110	0x10910		mips26	reachable-code	0x800291ec	load	func_800291ec	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022118	0x10918		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80022120	0x10920		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80022120	0x10920		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022130	0x10930		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022144	0x10944		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002214c	0x1094c		mips26	reachable-code	0x800292f8	load	func_800292f8	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022160	0x10960		mips26	reachable-code	0x800291ec	load	func_800291ec	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022168	0x10968		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80022170	0x10970		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80022170	0x10970		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022180	0x10980		mips26	reachable-code	0x80022170	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022188	0x10988		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80022190	0x10990		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80022190	0x10990		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800221c4	0x109c4		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800221d4	0x109d4		mips26	reachable-code	0x8002225c	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800221f0	0x109f0		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3883,19 +3883,19 @@ GAME.EXE	0x800222e8	0x10ae8		mips26	reachable-code	0x80027ee4	load	func_80027ee4
 GAME.EXE	0x800222fc	0x10afc		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022304	0x10b04		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022318	0x10b18		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022320	0x10b20		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022320	0x10b20		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022330	0x10b30		mips26	reachable-code	0x800250c4	load	func_800250c4	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022384	0x10b84		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x8002238c	0x10b8c		mips26	reachable-code	0x80025f38	load	func_80025f38	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800223a0	0x10ba0		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800223a8	0x10ba8		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800223bc	0x10bbc		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x800223c4	0x10bc4		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x800223c4	0x10bc4		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800223e4	0x10be4		mips26	reachable-code	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800223ec	0x10bec		mips26	reachable-code	0x80025f38	load	func_80025f38	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022400	0x10c00		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022408	0x10c08		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022410	0x10c10		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022410	0x10c10		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022430	0x10c30	0x80022434	mips_hi16_lo16	reachable-code	0x800122c8	load		lui+addiu	at	paired-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x8002244c	0x10c4c		mips26	reachable-code	0x80022608	load	func_80022608	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022454	0x10c54		mips26	reachable-code	0x800224b0	load		j		control-flow-reviewed	reviewed	manual:game_menu
@@ -3910,9 +3910,9 @@ GAME.EXE	0x8002249c	0x10c9c		mips26	reachable-code	0x800224cc	load		j		control-f
 GAME.EXE	0x800224a4	0x10ca4		mips26	reachable-code	0x80024e64	load	func_80024e64	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800224b8	0x10cb8		mips26	reachable-code	0x800224cc	load		j		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800224c0	0x10cc0		mips26	reachable-code	0x8002589c	load	func_8002589c	jal		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x800224d4	0x10cd4		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x800224d4	0x10cd4		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800224e4	0x10ce4		mips26	reachable-code	0x800225e0	load		j		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x800224f0	0x10cf0		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x800224f0	0x10cf0		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022514	0x10d14		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022524	0x10d24		mips26	reachable-code	0x800225ac	load		j		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022540	0x10d40		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu
@@ -3925,7 +3925,7 @@ GAME.EXE	0x800225b4	0x10db4		mips26	reachable-code	0x80025f38	load	func_80025f38
 GAME.EXE	0x800225c8	0x10dc8		mips26	reachable-code	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800225d0	0x10dd0		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800225d8	0x10dd8		mips26	reachable-code	0x800223d4	load		j		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022634	0x10e34		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022634	0x10e34		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022648	0x10e48		mips26	reachable-code	0x8002ad6c	load	func_8002ad6c	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022650	0x10e50	0x80022654	mips_hi16_lo16	reachable-code	0x800652df	bss	DAT_800652a8	lui+lbu	v0	paired-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022658	0x10e58	0x8002265c	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	s5	paired-reviewed	reviewed	manual:game_menu
@@ -3939,9 +3939,9 @@ GAME.EXE	0x800228d4	0x110d4		mips26	reachable-code	0x800279c4	load	func_800279c4
 GAME.EXE	0x800228dc	0x110dc		mips26	reachable-code	0x80028a70	load	func_80028a70	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800228e4	0x110e4		mips26	reachable-code	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022918	0x11118		mips26	reachable-code	0x80028380	load	func_80028380	jal		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022948	0x11148		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022948	0x11148		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022958	0x11158		mips26	reachable-code	0x80022948	load		j		control-flow-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022960	0x11160		mips26	reachable-code	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022960	0x11160		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022984	0x11184		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x8002298c	0x1118c		mips26	reachable-code	0x80022b88	load		j		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800229a8	0x111a8		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu
@@ -4013,11 +4013,11 @@ GAME.EXE	0x800230b8	0x118b8		mips26	instruction-word	0x80054290	load	AddPrim	jal
 GAME.EXE	0x800230dc	0x118dc		mips26	instruction-word	0x80054290	load	AddPrim	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800230fc	0x118fc		mips26	instruction-word	0x80054290	load	AddPrim	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023104	0x11904		mips26	instruction-word	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x80023120	0x11920		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x80023120	0x11920		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023130	0x11930		mips26	reachable-code	0x80023030	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x80023138	0x11938		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x80023148	0x11948		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x800231a8	0x119a8		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x80023138	0x11938		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x80023148	0x11948		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x800231a8	0x119a8		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800231bc	0x119bc		mips26	instruction-word	0x8002ad6c	load	func_8002ad6c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800231d0	0x119d0	0x800231d4	mips_hi16_lo16	reachable-code	0x80059400	bss	DAT_80059400	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800231e0	0x119e0	0x800231e4	mips_hi16_lo16	reachable-code	0x8009ce60	bss	magic_records	lui+addiu	at	paired-reviewed	reviewed	manual:game_menu_panels
@@ -4027,10 +4027,10 @@ GAME.EXE	0x8002329c	0x11a9c		mips26	instruction-word	0x80027e58	load	func_80027e
 GAME.EXE	0x800232a4	0x11aa4		mips26	instruction-word	0x80028a70	load	func_80028a70	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800232b0	0x11ab0		mips26	instruction-word	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800232dc	0x11adc		mips26	instruction-word	0x80028380	load	func_80028380	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x8002330c	0x11b0c		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x8002330c	0x11b0c		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x8002331c	0x11b1c		mips26	reachable-code	0x8002352c	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023324	0x11b24		mips26	instruction-word	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x8002332c	0x11b2c		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x8002332c	0x11b2c		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023350	0x11b50		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023358	0x11b58		mips26	reachable-code	0x80023504	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023374	0x11b74		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
@@ -4079,7 +4079,7 @@ GAME.EXE	0x8002371c	0x11f1c		mips26	instruction-word	0x8002abb4	load	func_8002ab
 GAME.EXE	0x80023724	0x11f24		mips26	instruction-word	0x8002718c	load	func_8002718c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023738	0x11f38		mips26	instruction-word	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023740	0x11f40		mips26	instruction-word	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x80023748	0x11f48		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x80023748	0x11f48		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023768	0x11f68	0x8002376c	mips_hi16_lo16	reachable-code	0x800122f0	load		lui+addiu	at	paired-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023784	0x11f84	0x80023788	mips_hi16_lo16	reachable-code	0x800a0811	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80023798	0x11f98		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
@@ -4088,7 +4088,7 @@ GAME.EXE	0x800237a8	0x11fa8		mips26	instruction-word	0x800238d8	load	func_800238
 GAME.EXE	0x800237b0	0x11fb0		mips26	reachable-code	0x800237c4	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800237b8	0x11fb8		mips26	instruction-word	0x80023e9c	load	func_80023e9c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800237cc	0x11fcc		mips26	instruction-word	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x800237d4	0x11fd4		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x800237d4	0x11fd4		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800237f8	0x11ff8		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023808	0x12008		mips26	reachable-code	0x80023890	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023824	0x12024		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
@@ -4099,7 +4099,7 @@ GAME.EXE	0x80023884	0x12084		mips26	instruction-word	0x8002b150	load	menu_play_i
 GAME.EXE	0x80023890	0x12090		mips26	instruction-word	0x8002718c	load	func_8002718c	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800238a4	0x120a4		mips26	instruction-word	0x80028914	load	func_80028914	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800238ac	0x120ac		mips26	reachable-code	0x80023700	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x8002390c	0x1210c		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x8002390c	0x1210c		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x8002391c	0x1211c	0x80023920	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	a0	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023934	0x12134	0x80023938	mips_hi16_lo16	reachable-code	0x80012310	load		lui+addiu	at	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023954	0x12154		mips26	reachable-code	0x800239a0	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
@@ -4112,9 +4112,9 @@ GAME.EXE	0x800239b8	0x121b8	0x800239bc	mips_hi16_lo16	reachable-code	0x80058dc0	
 GAME.EXE	0x80023a80	0x12280		mips26	instruction-word	0x8002ad6c	load	func_8002ad6c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023ab4	0x122b4		mips26	instruction-word	0x8002aea4	load	func_8002aea4	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023af0	0x122f0		mips26	instruction-word	0x80028380	load	func_80028380	jal		control-flow-reviewed	reviewed	manual:game_menu_select
-GAME.EXE	0x80023b20	0x12320		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x80023b20	0x12320		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023b30	0x12330		mips26	reachable-code	0x80023b20	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
-GAME.EXE	0x80023b38	0x12338		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x80023b38	0x12338		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023b5c	0x1235c		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023b64	0x12364		mips26	reachable-code	0x80023d10	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023b80	0x12380		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_select
@@ -4160,7 +4160,7 @@ GAME.EXE	0x80023e50	0x12650		mips26	instruction-word	0x80016848	load	player_set_
 GAME.EXE	0x80023e58	0x12658		mips26	reachable-code	0x80023e74	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023e60	0x12660	0x80023e64	mips_hi16_lo16	reachable-code	0x800a0815	bss	player_state	lui+sb	s3	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80023e6c	0x1266c		mips26	instruction-word	0x80016848	load	player_set_equipment_slot	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80023ec8	0x126c8		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x80023ec8	0x126c8		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023ee0	0x126e0	0x80023ee4	mips_hi16_lo16	reachable-code	0x80059450	bss	DAT_80059450	lui+addiu	t1	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023ef0	0x126f0	0x80023ef4	mips_hi16_lo16	reachable-code	0x8009ce60	bss	magic_records	lui+addiu	at	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023fac	0x127ac		mips26	instruction-word	0x8002ad6c	load	func_8002ad6c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
@@ -4170,10 +4170,10 @@ GAME.EXE	0x8002401c	0x1281c		mips26	instruction-word	0x80027e58	load	func_80027e
 GAME.EXE	0x80024024	0x12824		mips26	instruction-word	0x80028a70	load	func_80028a70	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80024034	0x12834		mips26	instruction-word	0x8002ac34	load	func_8002ac34	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80024060	0x12860		mips26	instruction-word	0x80028380	load	func_80028380	jal		control-flow-reviewed	reviewed	manual:game_menu_select
-GAME.EXE	0x80024084	0x12884		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x80024084	0x12884		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80024094	0x12894		mips26	reachable-code	0x800242c0	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x8002409c	0x1289c		mips26	instruction-word	0x8002abb4	load	func_8002abb4	jal		control-flow-reviewed	reviewed	manual:game_menu_select
-GAME.EXE	0x800240a4	0x128a4		mips26	instruction-word	0x8005012c	load	func_8005012c	jal		control-flow-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x800240a4	0x128a4		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x800240c8	0x128c8		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x800240d0	0x128d0		mips26	reachable-code	0x8002427c	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x800240ec	0x128ec		mips26	instruction-word	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_menu_select

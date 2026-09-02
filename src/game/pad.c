@@ -7,17 +7,17 @@
  * on the stored pad identifier: identifier 0 uses the Sony trampolines
  * (PAD_init2/PAD_dr/StopPAD2); any other identifier falls to a "Bad
  * PadIdentifier" reporting stub. The stubs keep the original K&R shape - they
- * declare no parameters and fall off the end, so func_800500b8 consumes the
+ * declare no parameters and fall off the end, so pad_initialize consumes the
  * incidental v0 the same way the retail program does.
  *
- * func_800500b8/func_8005012c/func_80050170 stay address-derived here because
+ * pad_initialize/pad_read/pad_stop stay address-derived here because
  * they are the public PAD API referenced from many other translation units;
  * proposed names (pad_initialize/pad_read/pad_stop) are in the reconstruction
  * report. DAT_80057d24/DAT_8006bd88/DAT_80058020/DAT_80058028 likewise remain
  * address-derived WIP identities (critical-section state, pad identifier, and
  * the two pad data words).
  *
- * func_800500b8/func_8005012c/func_80050170 are exact. critical_section_set and
+ * pad_initialize/pad_read/pad_stop are exact. critical_section_set and
  * the three stubs are structurally exact but one prologue reorder short: retail
  * hoists the first data load above the frame allocation when it feeds a call
  * argument or a callee-saved register, which cc1psx-257 does not reproduce (see
@@ -61,7 +61,7 @@ u32 critical_section_set(s32 enable)
 }
 
 ADDRESS(0x800500b8, 0x74)
-u32 func_800500b8(s32 identifier)
+u32 pad_initialize(s32 identifier)
 {
     u32 result;
 
@@ -78,7 +78,7 @@ u32 func_800500b8(s32 identifier)
 }
 
 ADDRESS(0x8005012c, 0x44)
-u32 func_8005012c(void)
+u32 pad_read(void)
 {
     if (DAT_8006bd88 == 0) {
         PAD_dr();
@@ -89,7 +89,7 @@ u32 func_8005012c(void)
 }
 
 ADDRESS(0x80050170, 0x3c)
-void func_80050170(void)
+void pad_stop(void)
 {
     if (DAT_8006bd88 == 0) {
         StopPAD2();

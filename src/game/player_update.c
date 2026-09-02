@@ -13,7 +13,7 @@ extern s32 DAT_80057e68;
 extern s32 DAT_80057e70;
 extern u32 game_exit_code;
 
-extern u32 func_8005012c(s32 mode);
+extern u32 pad_read(s32 mode);
 extern void func_8001b7b0(char object);
 extern s32 func_80036e38(s32 arg0);
 extern void func_80020a2c(void);
@@ -95,7 +95,7 @@ void player_update(void)
         return;
     }
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
-    input = func_8005012c(1);
+    input = pad_read(1);
     if (input & 0x800) {
         func_8001b7b0(3);
     }

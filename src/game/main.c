@@ -3,7 +3,7 @@
 
 /* Psy-Q LIBAPI: InitHeap(unsigned long *head, unsigned long size); InitCARD(long). */
 extern void InitHeap(u32 *head, u32 size);
-extern u32 func_800500b8(s32 arg0);
+extern u32 pad_initialize(s32 arg0);
 extern void InitCARD2(s32 pad_enable);
 extern void ExitCriticalSection(void);
 extern void game_main_loop(void);
@@ -28,7 +28,7 @@ void main(s32 entry_arg0, u32 *entry_args)
     func_80014268((int *)0x80058060, 0x67fe8, 0);
     InitHeap((u32 *)0x800a0980, 0x157680);
     CdInit();
-    func_800500b8(0);
+    pad_initialize(0);
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();

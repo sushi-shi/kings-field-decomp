@@ -51,7 +51,7 @@ extern void func_800144d4(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
 extern void memory_card_shutdown_events(void);
 extern void audio_shutdown(void);
-extern void func_80050170(void);
+extern void pad_stop(void);
 extern u32 func_80050544(u32 object);
 extern void frame_pacer_vsync_callback(void);
 extern void frame_pacer_wait(void);
@@ -162,7 +162,7 @@ void game_shutdown(void)
 {
     memory_card_shutdown_events();
     audio_shutdown();
-    func_80050170();
+    pad_stop();
     func_80050544(3);
 }
 

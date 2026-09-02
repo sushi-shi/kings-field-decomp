@@ -75,7 +75,7 @@ extern void *memory_allocate(s32 size);
 extern void memory_release_last(void);
 extern s32 cd_file_load_into(void *destination, const char *relative_path);
 extern void tim_upload_images(u_long *tim_data);
-extern s32 func_8005012c(s32 mode);
+extern s32 pad_read(s32 mode);
 
 void memory_card_clear_events(void);
 s32 memory_card_wait_event(void);
@@ -841,11 +841,11 @@ void screen_show_image_until_input(const char *path)
         DrawSync(0);
         DrawOTag(&display_state.ordering_table[0x3fff]);
         if (pressed == 0) {
-            if (func_8005012c(1) == 0) {
+            if (pad_read(1) == 0) {
                 pressed = 1;
             }
-        } else if (func_8005012c(1) != 0) {
-            while (func_8005012c(1) != 0) {
+        } else if (pad_read(1) != 0) {
+            while (pad_read(1) != 0) {
             }
             break;
         }

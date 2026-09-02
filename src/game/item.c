@@ -30,7 +30,7 @@ extern void func_8002abb4(void);
 extern void func_8002ac34(void);
 extern void func_80028914(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
-extern u32 func_8005012c();
+extern u32 pad_read();
 
 /* Item sub-panels dispatched by the item menu (defined below). */
 void func_80021538(s32 arg);
@@ -182,7 +182,7 @@ void func_800212d8(s32 arg)
     func_8002abb4();
     func_80028914(7, 3, 0, 0);
     menu_play_input_sound(0);
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
 
     for (;;) {
@@ -191,7 +191,7 @@ void func_800212d8(s32 arg)
             func_8002abb4();
             func_80028914(7, 3, cursor, confirm);
             func_8002ac34();
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
         }
         switch (selection) {
@@ -204,7 +204,7 @@ void func_800212d8(s32 arg)
         }
         selection = -1;
         if (done != -99) {
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             return;
         }
@@ -212,7 +212,7 @@ void func_800212d8(s32 arg)
         func_8002abb4();
         confirm = 0;
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
@@ -261,7 +261,7 @@ void func_80021538(s32 arg)
     s32 confirm = 0;
     s32 selection = -99;
 
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
     func_8002ad6c((u16 *)&ctx, 7, 0);
 
@@ -308,13 +308,13 @@ void func_80021538(s32 arg)
         }
         if (selection != -99) {
             confirm = 0;
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if (ctx.count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -402,7 +402,7 @@ void func_80021afc(s32 arg)
     s32 confirm = 0;
     s32 selection = -99;
 
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
     func_8002ad6c((u16 *)&ctx, 7, 1);
 
@@ -451,13 +451,13 @@ void func_80021afc(s32 arg)
         }
         if (selection != -99) {
             confirm = 0;
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if (ctx.count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -563,7 +563,7 @@ s32 func_80021ffc(s32 arg)
     func_800292f8(arg);
     func_800291ec(prompt, options, 0, 0);
     menu_play_input_sound(0);
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
 
     for (;;) {
@@ -573,14 +573,14 @@ s32 func_80021ffc(s32 arg)
             func_800292f8(arg);
             func_800291ec(prompt, options, choice, confirm);
             func_8002ac34();
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
 
         func_8002abb4();
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if (((input & 0x1000) != 0 && (prev & 0x1000) == 0)
                 || ((input & 0x4000) != 0 && (prev & 0x4000) == 0)) {
             menu_play_input_sound(0);

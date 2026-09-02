@@ -20,7 +20,7 @@ extern void func_8002abb4(void);
 extern void func_8002ac34(void);
 extern void func_80027e58(void);
 extern void menu_play_input_sound(s32 cue);
-extern u32 func_8005012c();
+extern u32 pad_read();
 extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, preview, query). */
@@ -83,7 +83,7 @@ void func_800238d8(s32 object)
     s32 prev;
     s32 selection = -99;
 
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
 
     switch (object) {
@@ -155,13 +155,13 @@ void func_800238d8(s32 object)
         }
         confirm = 0;
         if (selection != -99) {
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if (ctx.count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -278,7 +278,7 @@ void func_80023e9c(void)
     s32 prev;
     s32 selection = -99;
 
-    while (func_8005012c(1) != 0)
+    while (pad_read(1) != 0)
         ;
 
     k = 0;
@@ -322,7 +322,7 @@ void func_80023e9c(void)
                 selection = ctx.cursor;
         }
         if (selection != -99) {
-            while (func_8005012c(1) != 0)
+            while (pad_read(1) != 0)
                 ;
             break;
         }
@@ -330,7 +330,7 @@ void func_80023e9c(void)
         func_8002abb4();
         confirm = 0;
         prev = input;
-        input = func_8005012c(1);
+        input = pad_read(1);
         if (ctx.count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
