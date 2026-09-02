@@ -3,16 +3,11 @@
 
 RODATA(0x80012738, 0x150)
 
-/* Effect pool record; its layout is unresolved, only the 60-byte stride is known. */
-struct KfEffectRecord {
-    u8 bytes[60];
-};
-
 extern KfMapObjectState map_object_state;
 extern u8 map_floor_height_grid[100][100];
-extern struct KfEffectRecord DAT_8009d040[];
+extern KfEffectRecord DAT_8009d040[];
 /* Effect spawner called with five or six arguments; declared without a prototype. */
-extern struct KfEffectRecord *func_80036f44();
+extern KfEffectRecord *func_80036f44();
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
 extern void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw);

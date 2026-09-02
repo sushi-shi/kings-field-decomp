@@ -134,6 +134,10 @@ KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h
 KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfEffectRecord	0x00	0x07	unknown_00	u8[7]	opaque	asm;map_object_pool_update	meaning unresolved
+KfEffectRecord	0x07	0x01	unknown_07	u8	opaque	asm;map_object_pool_update	byte set to 1 by map object actions 81 and 82
+KfEffectRecord	0x08	0x02	unknown_08	u16	opaque	asm;map_object_pool_update	12-bit angle swept by map object action 83
+KfEffectRecord	0x0a	0x32	unknown_0a	u8[50]	opaque	asm;map_object_pool_update	meaning unresolved
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle

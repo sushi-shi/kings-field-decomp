@@ -372,6 +372,14 @@ typedef struct KfMapCopyRegion {
     u8 height;
 } KfMapCopyRegion;
 
+/* Effect pool record; only the 60-byte stride and two fields are known. */
+typedef struct KfEffectRecord {
+    u8 unknown_00[7];
+    u8 unknown_07;
+    u16 unknown_08;
+    u8 unknown_0a[0x32];
+} KfEffectRecord;
+
 typedef struct KfMapObjectLink {
     u8 link_id;
     u8 action_parameter;
@@ -753,6 +761,7 @@ typedef char KfActorPlacement_size_is_16[
 typedef char KfMapCell_size_is_2[(sizeof(KfMapCell) == 0x02) ? 1 : -1];
 typedef char KfMapCopyRegion_size_is_6[
     (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
+typedef char KfEffectRecord_size_is_60[(sizeof(KfEffectRecord) == 60) ? 1 : -1];
 typedef char KfMapObjectLink_size_is_8[(sizeof(KfMapObjectLink) == 8) ? 1 : -1];
 typedef char KfMapObjectPlacement_size_is_20[
     (sizeof(KfMapObjectPlacement) == 0x14) ? 1 : -1];

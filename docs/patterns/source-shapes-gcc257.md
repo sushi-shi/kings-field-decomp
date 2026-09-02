@@ -370,3 +370,16 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `lw 0(s2); lw 4(s2); sw 6(s0); sw 10(s0)` with `s2 = placement + 12` | `memcpy((u32 *)&object->link, (const u32 *)&placement->link, 8)` with the builtin declaration: word pointers give the MIPS aligned block move and the link address seeds the placement base register. A struct copy of the halfword-aligned link type emits `lwl/lwr`, and two separate word assignments cannot interleave their loads past the first store | same |
 | `sb 0xff,14(s0)` between the height lookup and the height subtraction | `object->action = 0xff` written after the `position_y` statement; the scheduler hoists it over the final subtract and store | same |
 | `if (remaining-- == 0) break;` at the bottom, entry count 189 | a `for (;;)` with the post-decrement test, giving 190 iterations | same |
+
+### Map object action update (`map_object_pool_update`, 99.1%)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| `addiu v0,s7,-1; move s7,v0; sll v0,v0,16; bnez` loop test | `s16 count` in `for (count = 190; count != 0; object++, count--)`: the signed halfword test folds to one shift, a `u16` counter emits `andi` | `map_object_pool_update` `0x80031cc8` |
+| `lhu v0; addiu v1,v0,1; andi s1,v0,0xffff; sh v1` | `elapsed = object->action_timer++;` into a halfword local of its own; case 0 instead reads the timer into `timer` first and increments later after the pair lookup | same |
+| `lbu a1` (case 96), `lbu a0` (case 97) for the floor grid byte | one block-scoped `s32 attribute` per case, read before the position update. A single function-scope local shares one register; an inline expression after the stores is not hoisted above them | same |
+| `lh a0,-2(s0)` once, `addiu v0,a0,160` / `-160`, shared `andi; sh` | `tilt = object->rotation.x;` then each arm assigns `object->rotation.x = (tilt +/- 160) & 0xfff`; the earlier arm's tail cross-jumps into the later one | same |
+| case 80: `bnez timer -> tail` with the decrement after the inner switch | `if (timer == 0) { ... } else { timer--; }` rather than an early `timer--; break;` | same |
+| `lui s1; addiu s1` address kept across three calls for the stair counter | `counter = &DAT_8009eafc;` and `*counter` accesses; a plain global is re-addressed at every use | same |
+| `lui/addiu` for both door sounds, never folded from one another | the sound refs at `0x80056188` are thirteen separate `SoundRef` objects (`gameplay_sound_ref_N`); with one array CSE derives the second address from the first | same |
+| residue: `lbu; li; la B; bne; la A` for the door sound | ours schedules `la B` above the compare operands with every spelling (if/else, ternary, default-then-override); only `-fno-schedule-insns` keeps retail's order, which breaks the rest. Unattributed | same |

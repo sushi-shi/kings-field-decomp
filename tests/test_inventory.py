@@ -51,11 +51,11 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 734)
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 495)
-        self.assertEqual(counts["data"], 3294)
+        self.assertEqual(counts["data"], 3306)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 61)
-        self.assertEqual(counts["structure_fields"], 527)
+        self.assertEqual(counts["structures"], 62)
+        self.assertEqual(counts["structure_fields"], 531)
         self.assertEqual(counts["structure_fields_named"], 442)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
@@ -854,7 +854,7 @@ class InventoryTests(unittest.TestCase):
         gameplay_sounds = game.datum(0x80056188)
         self.assertEqual(
             (gameplay_sounds.name, gameplay_sounds.datatype, gameplay_sounds.size),
-            ("gameplay_sound_refs", "SoundRef[13]", 0x27),
+            ("gameplay_sound_ref_0", "SoundRef", 0x3),
         )
         map_object_state = game.datum(0x8006E8E0)
         self.assertEqual(
