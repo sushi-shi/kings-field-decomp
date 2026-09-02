@@ -396,11 +396,7 @@ GAME.EXE	0x8004238c	func_8004238c			void	u8 arg0	address-only	candidate	mips-liv
 GAME.EXE	0x8004262c	func_8004262c			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8004294c	func_8004294c			void	u32 object;u16 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80042d00	func_80042d00			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80042e5c	func_80042e5c			u8	s32 object;s32 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80042f0c	func_80042f0c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8004309c	func_8004309c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x800430ac	func_800430ac			void	u32 object	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x800433d8	func_800433d8			void	u32 object;u16 pointer1;u16 pointer2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800434ec	func_800434ec			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80043634	func_80043634			s32	s16 object;s16 arg1;s16 arg2;u32 arg3	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80043988	func_80043988			u32	s16 object;s16 arg1;s16 arg2;u16 arg3;s16 arg4;u8 arg5	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
