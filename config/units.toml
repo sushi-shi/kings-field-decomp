@@ -48,6 +48,12 @@ source = "src/game/main.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_80014674"
+image = "GAME.EXE"
+source = "src/game/func_80014674.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.game"
 image = "GAME.EXE"
 source = "src/game/game.c"
