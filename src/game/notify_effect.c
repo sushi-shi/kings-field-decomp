@@ -3,7 +3,7 @@
 
 /*
  * Notification effect state machine, stepped once per frame by the frame
- * renderer (func_8001fde4).  It consumes the notification ring filled by
+ * renderer (render_frame).  It consumes the notification ring filled by
  * func_8001fa44 and drives the six on-screen sprite records that
  * func_8001e230 draws.
  *

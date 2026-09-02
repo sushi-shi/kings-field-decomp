@@ -6440,9 +6440,9 @@ GAME.EXE	0x8003379c	0x21f9c	0x800337a0	mips_hi16_lo16	reachable-code	0x8009dda8	
 GAME.EXE	0x800337c4	0x21fc4	0x800337c8	mips_hi16_lo16	reachable-code	0x800a078b	bss	player_state	lui+addiu	a3	paired-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x800337fc	0x21ffc		mips26	reachable-code	0x80033818	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80033810	0x22010		mips26	reachable-code	0x800337f4	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033868	0x22068		mips26	reachable-code	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events
+GAME.EXE	0x80033868	0x22068		mips26	reachable-code	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x80033870	0x22070		mips26	reachable-code	0x800149f4	load	frame_pacer_wait	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events
-GAME.EXE	0x80033894	0x22094		mips26	reachable-code	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events
+GAME.EXE	0x80033894	0x22094		mips26	reachable-code	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x800338e8	0x220e8	0x800338ec	mips_hi16_lo16	reachable-code	0x8009db88	bss	map_event_pool	lui+addiu	s2	paired-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x800338f8	0x220f8	0x800338fc	mips_hi16_lo16	reachable-code	0x80095900	bss	map_floor_height_grid	lui+addiu	s7	paired-reviewed	reviewed	manual:game_semantic_camera_events;carved-body-reviewed
 GAME.EXE	0x80033914	0x22114		mips26	reachable-code	0x80033aa0	load		j		control-flow	candidate	investigation:relocs.tsv
@@ -6456,7 +6456,7 @@ GAME.EXE	0x80033cf8	0x224f8	0x80033cfc	mips_hi16_lo16	reachable-code	0x8009db88	
 GAME.EXE	0x80033d24	0x22524		mips26	reachable-code	0x80033ae4	load	map_event_distance_to_point	jal		control-flow-reviewed	reviewed	manual:game_semantic_event_queries_matrix
 GAME.EXE	0x80033d38	0x22538		mips26	reachable-code	0x80033d60	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80033da8	0x225a8		mips26	reachable-code	0x80020364	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events;carved-body-reviewed
-GAME.EXE	0x80033db4	0x225b4		mips26	reachable-code	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events;carved-body-reviewed
+GAME.EXE	0x80033db4	0x225b4		mips26	reachable-code	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events;carved-body-reviewed
 GAME.EXE	0x80033dbc	0x225bc		mips26	reachable-code	0x800149f4	load	frame_pacer_wait	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events;carved-body-reviewed
 GAME.EXE	0x80033e20	0x22620		mips26	instruction-word	0x8004da04	load	ReadColorMatrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_event_queries_matrix
 GAME.EXE	0x80033e38	0x22638		mips26	instruction-word	0x80033de8	load	color_matrix_set_rgb	jal		control-flow-reviewed	reviewed	manual:game_semantic_event_queries_matrix
@@ -6520,8 +6520,8 @@ GAME.EXE	0x8003432c	0x22b2c	0x80034330	mips_hi16_lo16	reachable-code	0x800a084a	
 GAME.EXE	0x80034340	0x22b40	0x80034344	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80034360	0x22b60	0x80034364	mips_hi16_lo16	instruction-word	0x80012a54	load		lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034368	0x22b68		mips26	instruction-word	0x8002c794	load	screen_show_image_until_input	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
-GAME.EXE	0x80034374	0x22b74		mips26	instruction-word	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
-GAME.EXE	0x80034380	0x22b80		mips26	instruction-word	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
+GAME.EXE	0x80034374	0x22b74		mips26	instruction-word	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
+GAME.EXE	0x80034380	0x22b80		mips26	instruction-word	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034388	0x22b88	0x8003438c	mips_hi16_lo16	instruction-word	0x80012a68	load		lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034390	0x22b90		mips26	instruction-word	0x8002c794	load	screen_show_image_until_input	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x8003439c	0x22b9c	0x800343a0	mips_hi16_lo16	reachable-code	0x8006c1d0	bss	actor_state	lui+sb	v0	paired-reviewed	reviewed	manual:map_floor_scripts_b
@@ -6543,13 +6543,13 @@ GAME.EXE	0x800344d0	0x22cd0		mips26	instruction-word	0x800344f0	load		j		control
 GAME.EXE	0x800344d8	0x22cd8	0x800344dc	mips_hi16_lo16	instruction-word	0x80056218	load	DAT_800561c8	lui+addiu	a1	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x800344e0	0x22ce0	0x800344e4	mips_hi16_lo16	reachable-code	0x80095700	bss	render_state	lui+addiu	a2	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x800344e8	0x22ce8		mips26	instruction-word	0x800202fc	load	matrix_interpolate	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
-GAME.EXE	0x800344f4	0x22cf4		mips26	instruction-word	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
+GAME.EXE	0x800344f4	0x22cf4		mips26	instruction-word	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x800344fc	0x22cfc		mips26	instruction-word	0x800149f4	load	frame_pacer_wait	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034510	0x22d10	0x80034514	mips_hi16_lo16	reachable-code	0x8009dc54	bss	map_event_pool	lui+sb	v0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x8003451c	0x22d1c	0x80034520	mips_hi16_lo16	reachable-code	0x8009f844	bss	DAT_8009f844	lui+sb	v0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034528	0x22d28	0x8003452c	mips_hi16_lo16	instruction-word	0x80055dbc	load	color_matrix_table	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034534	0x22d34		mips26	instruction-word	0x80020364	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
-GAME.EXE	0x80034540	0x22d40		mips26	instruction-word	0x8001fde4	load	func_8001fde4	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
+GAME.EXE	0x80034540	0x22d40		mips26	instruction-word	0x8001fde4	load	render_frame	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034548	0x22d48		mips26	instruction-word	0x800149f4	load	frame_pacer_wait	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034558	0x22d58		mips26	instruction-word	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034560	0x22d60	0x80034564	mips_hi16_lo16	reachable-code	0x80095700	bss	render_state	lui+addiu	a1	paired-reviewed	reviewed	manual:map_floor_scripts_b

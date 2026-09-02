@@ -9,7 +9,7 @@
  * the scene dispatcher (render_entities), draws the held weapon, and presents.
  *
  * WIP: the HUD gauge records at DAT_80055c5c (stride 14, walked by
- * func_8001f9d4) and the notification descriptor globals are unresolved and
+ * render_hud_gauges) and the notification descriptor globals are unresolved and
  * reached by their individual identities.
  */
 
@@ -17,7 +17,7 @@ extern KfRenderState render_state;
 extern KfPlayerState player_state;
 extern MATRIX render_light_matrices[6];
 
-/* HUD gauge record table (12 records, 14-byte stride, walked by func_8001f9d4). */
+/* HUD gauge record table (12 records, 14-byte stride, walked by render_hud_gauges). */
 extern u8 DAT_80055c5c;
 extern u16 DAT_80055c66;
 extern u8 DAT_80055c6a;
@@ -59,17 +59,17 @@ extern void render_set_view_transform(const VECTOR *position, const SVECTOR *rot
 extern void display_begin_frame(void);
 extern void pool_mark_allocated(void);
 extern void func_8001e83c(void);
-extern void func_8001f8b0(void);
-extern void func_8001f9d4(u8 *table);
+extern void render_effect_sprites(void);
+extern void render_hud_gauges(u8 *table);
 extern void func_8001fafc(void);
 extern void func_8001e230(char *descriptor, s16 screen_scale, s32 flag);
 extern void render_entities(void);
-extern void func_8001f798(void);
+extern void render_weapon(void);
 extern void display_present_frame(void);
 extern void func_80020a98(void);
 
 ADDRESS(0x8001fde4, 0x518)
-void func_8001fde4(VECTOR *position, SVECTOR *rotation)
+void render_frame(VECTOR *position, SVECTOR *rotation)
 {
     MATRIX model;
     SVECTOR spin;
@@ -132,14 +132,14 @@ void func_8001fde4(VECTOR *position, SVECTOR *rotation)
     *tint = player_state.unknown_98[1];
     DAT_80055d74 = player_state.unknown_98[1];
     DAT_80055d86 = -render_state.view_rotation.vy & 0xfff;
-    func_8001f8b0();
+    render_effect_sprites();
 
     DAT_8009505a = DAT_80095062;
     DAT_80095058 = DAT_80095060;
     DAT_8009505e = DAT_80095064;
     DAT_8009505d = DAT_80095064;
     DAT_8009505c = DAT_80095064;
-    func_8001f9d4(tint - 168);
+    render_hud_gauges(tint - 168);
 
     SetLightMatrix(&render_light_matrices[5]);
     func_8001fafc();
@@ -177,7 +177,7 @@ void func_8001fde4(VECTOR *position, SVECTOR *rotation)
     }
 
     render_entities();
-    func_8001f798();
+    render_weapon();
     display_present_frame();
     func_80020a98();
 }

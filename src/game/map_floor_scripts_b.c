@@ -40,7 +40,7 @@ extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *matrix, s32 blend);
 extern void lighting_set_active_color_matrix(s32 index);
 extern void frame_pacer_wait(void);
-extern void func_8001fde4(s32 first, s32 second);
+extern void render_frame(s32 first, s32 second);
 extern void func_8001fa44(s32 arg0);
 
 /* The two TIM cut-in paths shown by func_800342ec. */
@@ -58,8 +58,8 @@ void func_800342ec(void)
         && (u16)player_state.camera_rotation.vy < 2289) {
         *fired = 1;
         screen_show_image_until_input("TALK\\C17\\T55171.TIM");
-        func_8001fde4(0, 0);
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
+        render_frame(0, 0);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
         actor_state.definitions[7].action_animations[2] = 2;
         actor_state.definitions[7].action_animations[8] = 3;
@@ -99,7 +99,7 @@ void map_reveal_fade(void)
             matrix_interpolate(&saved, (const MATRIX *)&DAT_800561c8[0x50],
                                &render_state.light_matrix_copy, blend << 2);
         }
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
         frame_pacer_wait();
     }
 
@@ -108,7 +108,7 @@ void map_reveal_fade(void)
 
     for (blend = 0x1000; blend >= 0; blend -= 256) {
         lighting_set_color_matrix(&color_matrix_table[0], &color_matrix_table[3], blend);
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
         frame_pacer_wait();
     }
 

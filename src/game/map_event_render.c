@@ -25,7 +25,7 @@ extern void func_8001c7f8(u16 arg0, s16 arg1);
  * so both are reached through views of KfMapEvent until that block is modelled.
  */
 ADDRESS(0x8001f0c4, 0x154)
-void func_8001f0c4(KfMapEvent *event)
+void render_map_event(KfMapEvent *event)
 {
     SVECTOR screen;
     MATRIX model;

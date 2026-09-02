@@ -41,7 +41,7 @@ extern SoundRef gameplay_sound_ref_6;
 extern MATRIX DAT_80056248;
 
 extern KfEffectRecord *func_80036f44();
-extern void func_8001fde4(VECTOR *position, SVECTOR *rotation);
+extern void render_frame(VECTOR *position, SVECTOR *rotation);
 extern void display_flip_buffer_index(void);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void frame_pacer_wait(void);
@@ -98,9 +98,9 @@ void player_warp_shimmer(s16 mode, VECTOR *position)
     }
 
     display_flip_buffer_index();
-    func_8001fde4(&player_state.camera_position, &player_state.camera_rotation);
+    render_frame(&player_state.camera_position, &player_state.camera_rotation);
     display_flip_buffer_index();
-    func_8001fde4(&player_state.camera_position, &player_state.camera_rotation);
+    render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
     for (frame = 0; frame < 48; frame++) {
         if (frame == 8) {
@@ -115,7 +115,7 @@ void player_warp_shimmer(s16 mode, VECTOR *position)
             EFFECT_ROTATION_PHASE(effects[i]) =
                 (EFFECT_ROTATION_PHASE(effects[i]) + 512) & 0xfff;
         }
-        func_8001fde4(&player_state.camera_position, &player_state.camera_rotation);
+        render_frame(&player_state.camera_position, &player_state.camera_rotation);
         frame_pacer_wait();
     }
 
@@ -271,7 +271,7 @@ void func_80036d3c(KfActor *actor)
         lighting_set_color_matrix(&saved, &DAT_80056248, blend);
         actor->position.vy += 40;
         actor->rotation.y += 64;
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
         frame_pacer_wait();
     }
     actor->definition_id = 6;
@@ -279,7 +279,7 @@ void func_80036d3c(KfActor *actor)
         lighting_set_color_matrix(&saved, &DAT_80056248, blend);
         actor->position.vy -= 40;
         actor->rotation.y -= 64;
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
         frame_pacer_wait();
     }
     lighting_set_active_color_matrix(0);

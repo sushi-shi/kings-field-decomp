@@ -11,7 +11,7 @@ extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void player_update_vertical_motion(void);
-extern void func_8001fde4(
+extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void player_death_restart(void);
 extern void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend);
@@ -64,8 +64,8 @@ void player_death_update(void)
     blend = player_state.death_visual_blend;
     if (blend >= 0x1000) {
         player_death_apply_visual_fade(&player_death_saved_color_matrix, 0x1000);
-        func_8001fde4(0, 0);
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
+        render_frame(0, 0);
         player_death_restart();
     } else {
         player_death_apply_visual_fade(&player_death_saved_color_matrix, blend);

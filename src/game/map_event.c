@@ -6,7 +6,7 @@ extern KfPlayerState player_state;
 extern KfMapEvent *current_map_event;
 extern KfMapEvent map_event_pool[8];
 extern u8 map_floor_height_grid[100][100];
-extern void func_8001fde4(s32 first, s32 second);
+extern void render_frame(s32 first, s32 second);
 extern void frame_pacer_wait(void);
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
@@ -45,11 +45,11 @@ void map_event_advance_rotation_blocking(KfMapEvent *event, u16 target, s16 step
 {
     while (event->rotation_phase < target) {
         event->rotation_phase += step;
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
         frame_pacer_wait();
     }
     event->rotation_phase = target;
-    func_8001fde4(0, 0);
+    render_frame(0, 0);
 }
 
 ADDRESS(0x800338b8, 0x22c)

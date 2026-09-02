@@ -3,7 +3,7 @@
 
 /*
  * Screen-space geometry emitters that run every frame from the top-level frame
- * renderer (func_8001fde4).  Each walks a per-subsystem table of live entries,
+ * renderer (render_frame).  Each walks a per-subsystem table of live entries,
  * feeds one through the GTE, and hands the projected model to the shared
  * display-list builder.
  */
@@ -53,7 +53,7 @@ extern KfEffectSprite DAT_80055d74[];
  * record's swing angle before the model is enqueued.
  */
 ADDRESS(0x8001f798, 0x118)
-void func_8001f798(void)
+void render_weapon(void)
 {
     MATRIX model;
     const KfWeaponRecord *weapon;
@@ -94,7 +94,7 @@ void func_8001f798(void)
  * through func_800205d4, and, if visible, transforms and enqueues asset 0x15.
  */
 ADDRESS(0x8001f8b0, 0x124)
-void func_8001f8b0(void)
+void render_effect_sprites(void)
 {
     MATRIX model;
     VECTOR scale;
@@ -137,7 +137,7 @@ void func_8001f8b0(void)
  * header.  The table base is supplied by the caller.
  */
 ADDRESS(0x8001f9d4, 0x70)
-void func_8001f9d4(u8 *table)
+void render_hud_gauges(u8 *table)
 {
     u8 *entry;
 

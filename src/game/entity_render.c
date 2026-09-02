@@ -11,7 +11,7 @@
  * 0x80055afc load-data blob are unresolved, so entity fields and the tables are
  * reached through byte views until their owners are reconstructed.
  *
- * Codegen residue (func_8001ed90): retail zero-extends the masked facing nibble
+ * Codegen residue (render_floor_item): retail zero-extends the masked facing nibble
  * with a redundant `andi 0xff` after `andi 0xf0` before its `beqz`/subtract; the
  * value provably fits a byte, so the rebuilt gcc-2.5.7 probe elides the second
  * mask (the inverse of the byte-field cases in docs/patterns/source-shapes-
@@ -62,7 +62,7 @@ typedef struct KfFloorSprite {
  * the low nibble of the orientation byte.
  */
 ADDRESS(0x8001ed90, 0x14c)
-void func_8001ed90(KfFloorSprite *sprite)
+void render_floor_item(KfFloorSprite *sprite)
 {
     SVECTOR screen;
     MATRIX model;
@@ -135,7 +135,7 @@ typedef struct KfActorSprite {
  * bound, tested for visibility, and projected against the view matrix.
  */
 ADDRESS(0x8001eedc, 0x1e8)
-void func_8001eedc(KfActorSprite *actor)
+void render_actor_sprite(KfActorSprite *actor)
 {
     SVECTOR screen;
     VECTOR scale;

@@ -44,7 +44,7 @@ extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 extern void frame_pacer_wait(void);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
-extern void func_8001fde4();
+extern void render_frame();
 extern void func_8001fa44(s32 arg0);
 extern u32 func_80036e38(s32 arg0, u8 arg1);
 extern u8 *func_80036f44();
@@ -81,7 +81,7 @@ void func_800346a8(void)
         if (path.frames_remaining == -1) {
             break;
         }
-        func_8001fde4(&path.position, &path.rotation);
+        render_frame(&path.position, &path.rotation);
     }
 
     player_state.camera_position = path.position;
@@ -141,7 +141,7 @@ void func_800346a8(void)
             break;
         }
         effect_pool_sweep();
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
     }
 done:
     ;

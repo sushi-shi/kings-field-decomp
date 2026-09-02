@@ -2,7 +2,7 @@
 #include <kf/semantic_types.h>
 
 extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
-extern void func_8001fde4(s32 first, s32 second);
+extern void render_frame(s32 first, s32 second);
 extern void frame_pacer_wait(void);
 
 ADDRESS(0x80033d80, 0x68)
@@ -12,7 +12,7 @@ void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
 
     do {
         lighting_set_color_matrix(from, to, blend);
-        func_8001fde4(0, 0);
+        render_frame(0, 0);
         frame_pacer_wait();
         blend += 0x400;
     } while (blend <= 0x1000);

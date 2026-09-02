@@ -49,11 +49,11 @@ extern u8 DAT_8009d040[]; /* actor-sprite pool, 60-byte stride */
 extern KfMapEvent map_event_pool[8];
 
 extern void tmd_select(u16 slot);
-extern void func_8001ebb8(KfMapObject *object);
-extern void func_8001e9a4(KfActor *actor);
-extern void func_8001ed90(KfFloorItem *item);
-extern void func_8001eedc(u8 *sprite);
-extern void func_8001f0c4(KfMapEvent *event);
+extern void render_map_object(KfMapObject *object);
+extern void render_actor(KfActor *actor);
+extern void render_floor_item(KfFloorItem *item);
+extern void render_actor_sprite(u8 *sprite);
+extern void render_map_event(KfMapEvent *event);
 
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
@@ -78,7 +78,7 @@ void render_entities(void)
             if (row < g->height) {
                 u16 col = object->cell_x - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
-                    func_8001ebb8(object);
+                    render_map_object(object);
                 }
             }
         }
@@ -115,7 +115,7 @@ void render_entities(void)
             visible = (u16)(dx - (u16)render_state.view_cell.x) < 24;
         }
         if (visible != 0) {
-            func_8001e9a4(actor);
+            render_actor(actor);
         }
     }
 
@@ -134,7 +134,7 @@ void render_entities(void)
             if (row < g->height) {
                 u16 col = (items->position_x / 2000) - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
-                    func_8001ed90(items);
+                    render_floor_item(items);
                 }
             }
             items++;
@@ -154,7 +154,7 @@ void render_entities(void)
             if (row < g->height) {
                 u16 col = (*(s32 *)(sprite + 12) / 2000) - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
-                    func_8001eedc(sprite);
+                    render_actor_sprite(sprite);
                 }
             }
         }
@@ -171,7 +171,7 @@ void render_entities(void)
             if (row < g->height) {
                 u16 col = event->cell_x - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
-                    func_8001f0c4(event);
+                    render_map_event(event);
                 }
             }
         }

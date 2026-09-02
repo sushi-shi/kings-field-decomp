@@ -44,7 +44,7 @@ extern void actor_pool_update(void);
 extern void map_object_pool_update(void);
 extern void effect_pool_sweep(void);
 extern void func_8003596c(void);
-extern void func_8001fde4(
+extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 player_warp_trigger_update(void);
 extern void func_800144d4(void);
@@ -131,7 +131,7 @@ void game_main_loop(void)
         map_object_pool_update();
         effect_pool_sweep();
         func_8003596c();
-        func_8001fde4(&player_position_snapshot, &player_rotation_snapshot);
+        render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.unknown_0d = 0;
         frame_pacer_wait();
         if (map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
