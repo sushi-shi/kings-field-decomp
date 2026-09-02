@@ -558,9 +558,21 @@ source = "src/game/func_800365f8.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.player_warp"
+image = "GAME.EXE"
+source = "src/game/player_warp.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_80036e30"
 image = "GAME.EXE"
 source = "src/game/func_80036e30.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_80036e38"
+image = "GAME.EXE"
+source = "src/game/func_80036e38.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
