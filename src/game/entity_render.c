@@ -3,7 +3,7 @@
 
 /*
  * Per-entity billboard/model emitters invoked by the frame renderer's pool
- * sweep (func_8001f218).  Each transforms one live entry into view space, binds
+ * sweep (render_entities).  Each transforms one live entry into view space, binds
  * the matching asset, and hands the result to the shared sprite/model draw
  * helpers.
  *

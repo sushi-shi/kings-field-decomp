@@ -3,7 +3,7 @@
 
 /*
  * Map-event model emitter invoked by the frame renderer's pool sweep
- * (func_8001f218) for each of the seven live map events.  It carries the
+ * (render_entities) for each of the seven live map events.  It carries the
  * event's world position into the view, orients the model from the event's
  * rotation vector composed onto the view matrix, and enqueues the asset that
  * follows the event's variant id.

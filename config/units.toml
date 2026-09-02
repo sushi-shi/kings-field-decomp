@@ -372,9 +372,21 @@ source = "src/game/map_event_render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.render_scene"
+image = "GAME.EXE"
+source = "src/game/render_scene.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.geometry_render"
 image = "GAME.EXE"
 source = "src/game/geometry_render.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.notify_queue"
+image = "GAME.EXE"
+source = "src/game/notify_queue.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -384,9 +396,21 @@ source = "src/game/func_8001fae4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.notify_effect"
+image = "GAME.EXE"
+source = "src/game/notify_effect.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8001fdc8"
 image = "GAME.EXE"
 source = "src/game/func_8001fdc8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.render_frame"
+image = "GAME.EXE"
+source = "src/game/render_frame.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
