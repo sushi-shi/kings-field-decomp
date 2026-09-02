@@ -354,6 +354,24 @@ source = "src/game/tmd_project.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.render_sprite"
+image = "GAME.EXE"
+source = "src/game/render_sprite.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.render_map_cells"
+image = "GAME.EXE"
+source = "src/game/render_map_cells.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.entity_model_render"
+image = "GAME.EXE"
+source = "src/game/entity_model_render.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8001ed38"
 image = "GAME.EXE"
 source = "src/game/func_8001ed38.c"

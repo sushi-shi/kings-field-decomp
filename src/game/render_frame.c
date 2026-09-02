@@ -58,7 +58,7 @@ extern u16 DAT_8009508a;
 extern void render_set_view_transform(const VECTOR *position, const SVECTOR *rotation);
 extern void display_begin_frame(void);
 extern void pool_mark_allocated(void);
-extern void func_8001e83c(void);
+extern void render_map_cells(void);
 extern void render_effect_sprites(void);
 extern void render_hud_gauges(u8 *table);
 extern void func_8001fafc(void);
@@ -82,7 +82,7 @@ void render_frame(VECTOR *position, SVECTOR *rotation)
     display_begin_frame();
     pool_mark_allocated();
     SetGeomScreen(0xc8);
-    func_8001e83c();
+    render_map_cells();
     SetLightMatrix(&render_light_matrices[4]);
     status4 = &DAT_80055c94;
     *status4 = 0;

@@ -948,6 +948,48 @@ priority here — folding one redundant `count++` into the shared single-char
 emit tail dropped `count`'s priority just enough for the shorter-lived `args`
 pointer to win `s2`, matching retail exactly.
 
+## GAME polygon-enqueuer / pool-emitter band (0x8001c7f8..0x8001ed38)
+
+The internals the frame renderer's emitters call: the large TMD primitive
+enqueuers (`func_8001c7f8` 0xf38, `func_8001d730` 0x6e8, still unreconstructed),
+the screen-space sprite emitters, the visible-cell dispatcher, and the pooled
+model emitters `render_actor`/`render_map_object`.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `bnez in_range,<table>` with the fallback branch as the fall-through | invert to `if (out_of_range) DAT = &fallback; else DAT = table[i];` so the fallback (not the branched-to table lookup) is the fall-through block | `render_map_cells` `0x8001e83c` (EXACT) |
+| `sw window,DAT; ...; lw v0,DAT; lhu 6(v0)` (the just-stored global pointer is reloaded, not reused) | assign directly to the global pointer in each `if`/`else` branch and read `DAT->field` afterwards; a `KfCellWindow *window` local kept live across the store lets CSE reuse the value and drops the reload | same |
+| `u8` do/while counters with `andi 0xff` at the bottom test, `int` cell deltas compared `sltiu ...,100` | `u8 rows = DAT->height; do { ...; } while (rows-- != 0);` with `int` row/col deltas and `if ((u32)row < 100)` range guards | same |
+| `POLY_FT4 *p = display_state.primitive_buffer->cursor; ...->cursor += 40; if (->cursor > ->end) return;` | keep the cursor advance and the overflow guard as the buffer's own member accesses (re-read after the store); write the guard `cursor > end` so the cursor loads before the end | `func_8001e480` `0x8001e480` (structural; scheduling residue) |
+| `p->x0 = p->x2 = v;` storing the higher-index cell first | chained assignment `p->x0 = p->x2 = value;` — the outer destination's store is emitted after the inner (`sh @24` before `sh @8`) | same |
+
+Residues left in the band (not steered):
+
+- `render_actor` `0x8001e9a4`: retail keeps a redundant `andi 0xff` on the
+  lbu-loaded actor descriptor byte before the `>> 4` nibble shift (and again on
+  `high - 1` before the depth-table index), and computes `high - 1` in its own
+  register rather than folding the `-1` into the DAT_80095038/DAT_80095048
+  addends. cc1psx-257's `nonzero_bits` provably drops the mask (verified in
+  isolation for `u8`, `int`, `(unsigned char)`-cast, and `(x & 0xff) >> 4`
+  spellings), which also swaps the descriptor/object callee-saved registers and
+  trims the frame by 8. Same class as `func_8001ed90` above.
+- `render_map_object` `0x8001ebb8`: retail lowers the four-way `behavior_type`
+  dispatch as a sequential comparison tree (`bltz; slti 2; bnez; slti 4; beqz;`
+  fall-through `li 0xb4`) with the object-id mask duplicated across the exit
+  blocks. cc1psx-257 if-converts the `< 4 ? 180 : 0` tail to `negu; andi 0xb4`
+  and cross-jumps the mask into one block for every `switch`, if-else-chain, and
+  `goto`-shaped source tried. Retail optimises the tail less, not more.
+- `func_8001e480` `0x8001e480`: the post-reload scheduler hoists the clut/tpage
+  global loads into the load-delay slots after the screen X/Y reads; retail
+  leaves those nops and keeps each load beside its store. `-O2` reproduces
+  retail's prologue load-above-`subu` hoist but also this body hoist;
+  `-fno-schedule-insns2` drops both. No single 2.5.7 flag matches retail's
+  partial scheduling, so this is left as an open compiler-attribution residue.
+
+All three are the recurring "2.5.7 optimises more aggressively than the retail
+compiler" pattern (mask elision, if-conversion, delay-slot filling); the sources
+are the honest shapes and are not distorted to re-introduce the retail idioms.
+
 ## GAME polygon-emitter / geometry-render band (0x8001ed90..0x8001f218)
 
 The per-entity emitters that the frame renderer sweeps over the object, actor,
