@@ -10,7 +10,7 @@ char *effect_pool_find_free(void)
     u16 i = 48;
 
     do {
-        if (record->unknown_00[0] == 0xff) {
+        if (record->type == 0xff) {
             return (char *)record;
         }
         record++;

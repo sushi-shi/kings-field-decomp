@@ -12,7 +12,7 @@ void effect_pool_sweep(void)
     u16 i = 47;
 
     do {
-        if (record->unknown_00[0] != 0xff) {
+        if (record->type != 0xff) {
             func_8003781c((u8 *)record);
             func_80038a38();
         }

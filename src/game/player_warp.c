@@ -24,9 +24,9 @@
  * it marks map events 1 and 2 active, fades the GTE colour matrix toward the
  * global target while raising and spinning the actor, then fades back.
  *
- * KfEffectRecord fields past 0x0a are not yet fully modelled here (the pool
- * constructor func_80036f44 owns that layout); the two halfwords this file
- * touches use explicit offsets into unknown_0a as a temporary view.
+ * The KfEffectRecord layout is modelled in kf/semantic_types.h; the shimmer
+ * reuses the record's rotation_y halfword as its rotation phase and scale_y as
+ * its fade intensity.
  *
  * func_80036d3c is exact. func_80036850/func_800369ac carry a one-instruction
  * prologue argument-save scheduling residue; func_80036618 hits the
@@ -59,8 +59,8 @@ extern void lighting_set_active_color_matrix(s32 mode);
 extern void func_80036850(s32 floor, u8 variant);
 extern void func_800369ac(char variant, s32 cell_x, s32 cell_z);
 
-#define EFFECT_ROTATION_PHASE(e) (*(u16 *)&(e)->unknown_0a[0x14]) /* +0x1e */
-#define EFFECT_INTENSITY(e) (*(u16 *)&(e)->unknown_0a[0x1c])       /* +0x26 */
+#define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
+#define EFFECT_INTENSITY(e) ((e)->scale_y)
 
 ADDRESS(0x80036618, 0x238)
 void func_80036618(s16 mode, VECTOR *position)
@@ -121,7 +121,7 @@ void func_80036618(s16 mode, VECTOR *position)
 
     if (mode != 2) {
         for (i = 0; i < 4; i++) {
-            effects[i]->unknown_00[0] = 0xff;
+            effects[i]->type = 0xff;
         }
     }
 }
