@@ -1407,6 +1407,7 @@ GAME.EXE	0x80055ea2	0x2	DAT_80055ea2	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80055ea4	0x1	DAT_80055ea4	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055ea5	0x1	DAT_80055ea5	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055ea6	0x1	DAT_80055ea6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055f68	0xc0	render_light_matrices	unknown	load	MATRIX[6]	render	supported	asm;SetLightMatrix-references;32-byte-stride	six GTE light matrices, one per render subsystem, each fed to SetLightMatrix before its emitter pass
 GAME.EXE	0x80056080	0xfa	actor_action_profiles	unknown	load	KfActorActionProfile[25]	actor	supported	data.tsv:direct-references;game_semantic_actor_ai.tsv;game_semantic_actor_actions.tsv;asm;25x0x0a-stride	twenty-five action-selection profiles; source linkage remains unresolved
 GAME.EXE	0x8005617c	0xc	boss_death_phase_sounds	unknown	load	SoundRef[4]	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;packed-3-byte-records	four phase sound references; entries one through three are directly addressed by the boss death handler
 GAME.EXE	0x80056188	0x3	gameplay_sound_ref_0	unknown	load	SoundRef	audio	supported	data.tsv:direct-references;game_semantic_map_runtime.tsv;asm;packed-3-byte-records	one SoundRef; retail forms each address independently, so the entries are separate objects
