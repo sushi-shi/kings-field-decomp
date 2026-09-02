@@ -6408,11 +6408,11 @@ GAME.EXE	0x80033254	0x21a54		mips26	reachable-code	0x80044fac	load	SsUtKeyOn	jal
 GAME.EXE	0x8003325c	0x21a5c	0x80033260	mips_hi16_lo16	reachable-code	0x80057b84	load	audio_voice_slot_index	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_audio_spatial
 GAME.EXE	0x800332bc	0x21abc		mips26	reachable-code	0x800332d4	load		j		control-flow-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x800332cc	0x21acc		mips26	reachable-code	0x800332dc	load		j		control-flow-reviewed	reviewed	manual-match:game_match_campaign_30
-GAME.EXE	0x80033338	0x21b38		mips26	instruction-word	0x800335a0	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80033398	0x21b98		mips26	instruction-word	0x8004c6bc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800334c4	0x21cc4		mips26	instruction-word	0x8003329c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800334d8	0x21cd8		mips26	instruction-word	0x8003329c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800334ec	0x21cec		mips26	instruction-word	0x8003329c	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80033338	0x21b38		mips26	instruction-word	0x800335a0	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:camera_path;carved-body-reviewed
+GAME.EXE	0x80033398	0x21b98		mips26	instruction-word	0x8004c6bc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:camera_path;carved-body-reviewed
+GAME.EXE	0x800334c4	0x21cc4		mips26	instruction-word	0x8003329c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:camera_path;carved-body-reviewed
+GAME.EXE	0x800334d8	0x21cd8		mips26	instruction-word	0x8003329c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:camera_path;carved-body-reviewed
+GAME.EXE	0x800334ec	0x21cec		mips26	instruction-word	0x8003329c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:camera_path;carved-body-reviewed
 GAME.EXE	0x800335cc	0x21dcc	0x800335d0	mips_hi16_lo16	reachable-code	0x800a0824	bss	player_state	lui+addiu	a2	paired-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x800335f8	0x21df8	0x800335fc	mips_hi16_lo16	reachable-code	0x800a0838	bss	player_state	lui+addiu	a2	paired-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x80033668	0x21e68		mips26	reachable-code	0x800332e4	load	camera_path_compute_segment	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events

@@ -3,7 +3,47 @@
 
 extern KfPlayerState player_state;
 
+/* Psy-Q LIBGTE: SquareRoot0. */
+extern s32 SquareRoot0(s32 value);
+extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void camera_path_compute_segment(KfCameraPathState *path);
+
+/*
+ * Advances to the next path point and prepares the Q4 position and
+ * wrapped-rotation deltas that reach it at the point's speed; a point with
+ * x = -1 ends the path.
+ */
+ADDRESS(0x800332e4, 0x2dc)
+void camera_path_compute_segment(KfCameraPathState *path)
+{
+    const KfCameraPathPoint *point = &path->points[path->point_index];
+    s32 dx;
+    s32 dy;
+    s32 dz;
+    s32 distance;
+    s16 az;
+
+    path->point_index++;
+    if (point->position.x == -1) {
+        path->frames_remaining = -1;
+        return;
+    }
+    dx = point->position.x - path->position.x;
+    dy = point->position.y - path->position.y;
+    dz = point->position.z - path->position.z;
+    distance = SquareRoot0((dx >> 3) * (dx >> 3) + (dy >> 3) * (dy >> 3) + (dz >> 3) * (dz >> 3))
+        << 3;
+    path->position_delta.x = (dx << 4) * point->speed / distance;
+    path->position_delta.y = (dy << 4) * point->speed / distance;
+    path->position_delta.z = (dz << 4) * point->speed / distance;
+    path->frames_remaining = distance / point->speed;
+    dx = angle_shortest_delta(path->rotation.x, point->rotation.x);
+    dy = angle_shortest_delta(path->rotation.y, point->rotation.y);
+    az = angle_shortest_delta(path->rotation.z, point->rotation.z);
+    path->rotation_delta.x = (dx << 4) / path->frames_remaining;
+    path->rotation_delta.y = (dy << 4) / path->frames_remaining;
+    path->rotation_delta.z = (az << 4) / path->frames_remaining;
+}
 
 ADDRESS(0x800335c0, 0xc0)
 void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points)
