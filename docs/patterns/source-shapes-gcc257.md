@@ -329,3 +329,16 @@ Residue: `actor_update_awareness` keeps the constant 1 in `s5` for both the
 lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 
 | `sll v0,limit,16` shared in the branch delay slot by both clamp branches | write both clamps with the field first (`movement > limit`, `movement < -limit`) so the extension pseudo takes the same register in both arms and reorg can hoist the common first instruction | `actor_apply_random_movement` `0x8002f558` |
+
+### Effect spawner (`actor_spawn_action_effect`)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| `move s2,a0` then `andi s2,s2,0x1f` in place | the code parameter is an `int`; a `u8` parameter that is modified is spilled to a stack slot and reloaded (`sb`/`lbu`) | `actor_spawn_action_effect` `0x8002edd4` |
+| `addiu s7,v1,-28` emitted after the loop-invariant stack stores, not at entry | use `actor_state.player_position.x` directly inside the loop; the loop optimizer hoists the field address into the preheader. A local pointer is computed at entry and allocated earlier | same |
+| `subu a1,a1,v0; andi a1,a1,0xfff; jal; move s5,a1` | `s16 facing = (0x800 - actor->rotation.y) & 0xfff;` then pass `facing`: the halfword arithmetic loads the field with `lhu`, computes the value in the argument register, and the promoted local receives a copy in the delay slot. A `u16` or `s32` local computes into the callee-saved register and copies into `a1` | same |
+| `addiu a0,a0,1000; subu a0,a0,v0` | `position.y - (player.y - 1000)`: fold's `split_tree` rewrites `ARG0 - (VAR - CON)` into `(ARG0 + CON) - VAR`, while `(position.y + 1000) - player.y` becomes `position.y - (player.y - 1000)` in RTL (`addiu -1000; subu`) | same |
+| one clamp `slt; bnez; li 1; j; div; mflo` after the code-10 body, and the code-9 body ends with `j` back into it | a `goto` from the code-9 branch into a label inside the code-10 branch. Duplicated clamp source is cross-jumped the other way: `do_cross_jump` deletes the copy before the jump it is processing, and the pass walks forward, so the first block always loses its copy. The block swap in jump.c needs label-free ranges and cannot move a clamp with its own branch | same |
+| `beqz s8` loop entry test, `li s8,1` in the delay slot, `li s8,2` conditional | `repeat = 1; if (code & 0x20) repeat = 2; for (i = 0; i < repeat; i++)` | same |
+| jump table at `0x800124d4` for codes 5..24 (20 entries) | a `switch (effect_code)` listing cases 5, 7..13, 22..24 with an empty default; the table is claimed with `RODATA(0x800124d4, 0x50)` | same |
+| `bnez s6 -> L; addiu v0,a0,-1500 (delay); addiu v0,a0,1500; L: sh` | `if (i == 0) offset.x += 1500; else offset.x -= 1500;` reorg hoists the else arm's instruction into the delay slot because the fallthrough overwrites it | same |

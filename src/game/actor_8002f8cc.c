@@ -13,9 +13,8 @@ extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
-/* Effect spawner; this call site passes six arguments (the identity lists eight). */
-extern u8 *func_80036f44(
-    u8 kind, u8 arg1, u8 arg2, struct KfVec3i *position, void *output, u32 arg5);
+/* Effect spawner called with six to eight arguments; declared without a prototype. */
+extern u8 *func_80036f44();
 
 /* Boss death: phase sounds, then random effects and a loop sound keyed on the death animation step. */
 ADDRESS(0x8002f8cc, 0x1bc)

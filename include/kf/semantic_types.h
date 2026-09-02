@@ -279,7 +279,8 @@ typedef struct KfActorDefinition {
     u8 move_speed;
     u8 action_animations[16];
     u8 turn_rate;
-    u8 unknown_1f[0x15];
+    u8 unknown_1f[0x09];
+    struct KfVec3s attachment_offsets[2];
     s16 unknown_34;
     s16 unknown_36;
     u8 unknown_38[2];
@@ -289,7 +290,7 @@ typedef struct KfActorDefinition {
     u16 collision_height;
     u16 awareness_distance;
     u16 initial_health;
-    u8 unknown_82[0x02];
+    u16 unknown_82;
     u16 experience_reward;
     u16 attack_components[3];
     u16 defenses[5];
