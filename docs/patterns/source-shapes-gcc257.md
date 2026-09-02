@@ -449,3 +449,48 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | --- | --- | --- |
 | `env[1].dtd` stored before `env[0].dtd` | `display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;` — the chained assignment evaluates the constant, stores the right operand (env[1]) first, then env[0] | `func_8001bb94` `0x8001bb94` |
 | residue (93.7%): retail keeps `s0 = &display_draw_environments[0].dtd` callee-saved and derives `display_disp_environments[0]` as `s0+162` (PutDispEnv arg) and `render_state.fog_near_distance` as `s0+18538` | ours emits a fresh `lui` for each of the three separate globals. The retail object carries no relocation at the PutDispEnv-arg or fog-store sites — the linked bytes are `addiu a0,s0,162` / `sw v0,18538(s0)` — so the original reached `display_disp_environments` and `render_state` as fixed offsets from `display_draw_environments`, implying the three were one combined declaration in the source. Not reproduced without merging the three globals into one object; unattributed | same |
+
+## map interaction
+
+Witnesses come from `src/game/map_interaction.c` (`game.map_interaction`, the
+contiguous band `0x800346a8..0x800356e8` bracketed by the `func_800346a0` and
+`func_800356e8` stubs). This is the per-frame nearby-event/object interaction
+dispatcher `func_80034de4` called by `player_update`, plus its scripted
+teleport-cutscene (`func_800346a8`), a trigger latch (`func_80034a34`), a
+talk/progress-image dispatcher (`func_80034a80`), and a floor-image loader
+(`func_80034d54`).
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `func_800346a8` `0x800346a8` |
+| `beqz stage,A; beq stage,s4,B; j C` three-way dispatch with `A`,`B` laid out after the test and `C` the common tail | `switch (stage) { case 0: A; break; case 1: B; break; }` then the shared tail `C`; an `if (stage==0)…else if (stage==1)` inverts the first test (`bnez`) and inlines `A` | same |
+| `lbu v1,grid; sll v0,v1,1; …` with no `andi 0xff` before the `*100` chain | read a `u8` grid byte into an `s32` local; a `u8` local re-masks with `andi` before the multiply | same |
+| `lw v1,map_event_pool+0x4c; li a0,-256; and; lui/ori 0x28010500; bne` (one masked word compare of four adjacent bytes) | `(*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500` — a word pun of the image_limit/index/dirty/delay bytes; three byte compares never fold to one `lw` | `func_80034a34` `0x80034a34` |
+| `lbu v0,flag; addiu v0,v0,-1; sb v0,flag` (a byte decrement as `addiu -1`) | `DAT_800652a8[k]--;` (post-decrement); `DAT_800652a8[k] -= 1;` emits `addiu +255` on the promoted unsigned byte | `func_80034a80` `0x80034a80` |
+| cases whose successful branch ends `refresh(); j epilogue` while the failing/other cases fall into a shared tail | `case N: if (cond) { …; refresh(ev); return; } break;` with the tail after the `switch`; a `break` on the success path routes through the tail instead of the epilogue | same |
+| `addu v0,event,image_index; lbu v0,2(v0)` guard, then `talk(floor, image_index, kind, image_dirty)` with `a1` reused from the guard load | `if (event->tag.bytes[event->image_index - 1] != 0) talk_show_indexed_image(floor, event->image_index, event->kind, event->image_dirty);` — the guard's `image_index` load stays live in `a1` for the call | same |
+
+Residues recorded in the module (not steered):
+
+- `func_80034d54` `0x80034d54` (73.7%): retail forms the screen-image path base
+  `DAT_80056238` by registering `&DAT_80056238[5]` (the floor-digit store, whose
+  value needs a global load) and deriving the `screen_show_image_until_input`
+  argument as that pointer `- 5`, leaving `[8]`,`[9]`,`[10]` as absolute
+  `lui/sb`. The probe instead registers `&DAT_80056238[8]` (the first store) and
+  derives the base as `- 8`, which also pushes the `mfhi` remainder from `v1`
+  to `a2`. Every store order and buffer spelling anchors on the first store;
+  this is the same unattributed anchor residue recorded for
+  `talk_show_indexed_image` `0x8002c9d4`.
+- `func_80034de4` `0x80034de4` (partial): the 0x904-byte per-frame interaction
+  dispatcher is not yet fully reconstructed. It computes a spatial-audio source
+  point twice (`rsin/rcos` with the 1500 and 1000 multipliers), switches the
+  `map_cell_attribute_grid` cell attribute, then either processes an overlapping
+  `map_event_pool` region (a three-way state machine on the event's
+  `unknown_0e`, one arm of which indexes an unidentified pointer table at
+  `0x80090fe4` addressed relative to `DAT_80095088`) or walks the map-object
+  pool with `map_object_pool_find_interaction_from`, dispatching each object on
+  an 84-entry `switch (map_object_state.definitions[object_id].behavior_type)`
+  jump table (`RODATA 0x80012a7c`), and finishes with a five-way
+  `switch (current_floor)`. Retail's 72-byte frame saves `s0..s8` and spills the
+  sound point to the stack; the frame and register allocation cannot be matched
+  until every case body is reconstructed, so exact remains open.

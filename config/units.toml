@@ -492,6 +492,12 @@ source = "src/game/func_800346a0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map_interaction"
+image = "GAME.EXE"
+source = "src/game/map_interaction.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_800356e8"
 image = "GAME.EXE"
 source = "src/game/func_800356e8.c"
