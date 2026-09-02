@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfPlayerState player_state;
+
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
 extern void *memset();
 /* Psy-Q KERNEL: OpenEvent(desc, spec, mode, func), EnableEvent, CloseEvent; LIBGPU SetDispMask. */
@@ -55,7 +57,6 @@ extern KfActorDefinition actor_definitions[12];
 extern KfMapObjectDefinition map_object_definitions[160];
 extern u32 DAT_8009ce60;
 extern KfMapEvent map_event_pool[8];
-extern u32 player_experience;
 extern u32 game_exit_code;
 extern struct KfVec4i player_position_snapshot;
 extern struct KfVec4s player_rotation_snapshot;
@@ -78,7 +79,6 @@ static u32 frame_pacer_last_vsync = 0;
  * KfPlayerState); the inventory still names its members separately, so it is
  * viewed through its first member until the aggregate identity exists.
  */
-#define player_state (*(KfPlayerState *)&player_experience)
 
 /*
  * The six memset spans clear whole BSS runs that start at the named objects.
@@ -93,7 +93,7 @@ void game_main_loop(void)
     memset(map_object_definitions, 0, 0x25b8);
     memset(&DAT_8009ce60, 0, 0xd28);
     memset(map_event_pool, 0, 0x2360);
-    memset(&player_experience, 0, 0xe0);
+    memset(&player_state, 0, sizeof(KfPlayerState));
     memory_card_initialize();
     memory_set_allocation_mode(0);
     audio_initialize();
@@ -132,10 +132,10 @@ void game_main_loop(void)
         func_8001fde4(&player_position_snapshot, &player_rotation_snapshot);
         player_state.unknown_0d = 0;
         frame_pacer_wait();
-        if (map_cell_attribute_grid[player_state.player_map_cell.z][player_state.player_map_cell.x]
+        if (map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
             == 0x40) {
-            if (*(u16 *)&player_state.player_previous_map_cell
-                != *(u16 *)&player_state.player_map_cell) {
+            if (*(u16 *)&player_state.previous_map_cell
+                != *(u16 *)&player_state.map_cell) {
                 if (func_80036af0() != 0) {
                     game_exit_code = 0xfe;
                     func_80014674(2);
@@ -143,12 +143,12 @@ void game_main_loop(void)
                     audio_stop_sequence_master_fade(0x80);
                     break;
                 }
-                player_state.player_previous_map_cell.x = player_state.player_map_cell.x;
-                player_state.player_previous_map_cell.z = player_state.player_map_cell.z;
+                player_state.previous_map_cell.x = player_state.map_cell.x;
+                player_state.previous_map_cell.z = player_state.map_cell.z;
             }
         } else {
-            player_state.player_previous_map_cell.z = 0xff;
-            player_state.player_previous_map_cell.x = 0xff;
+            player_state.previous_map_cell.z = 0xff;
+            player_state.previous_map_cell.x = 0xff;
         }
     }
     CloseEvent(vsync_event);

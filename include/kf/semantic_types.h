@@ -544,102 +544,117 @@ typedef char KfWeaponRecord_size_is_44[
     (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
 
 /* === game-math-death layouts === */
+/* === end game-math-death === */
+
+/* === player layouts === */
 
 /*
- * The 0xe0-byte player state block at 0x800a0780. game_main_loop addresses
- * several of these objects through one base register, which the compiler
- * emits only for offsets of a single symbol: the block is one aggregate in
- * the original source. The inventory still names each object separately, so
- * until it carries the aggregate, sources view the block through
- * player_experience (its first member).
+ * The saved player object. save_file_write_slot copies exactly 0xe0 bytes
+ * from 0x800a0780 into the save payload with the compiler's inline struct
+ * loop, and the player routines address these members from a registered
+ * base; both prove one object rather than adjacent globals. Field names keep
+ * their former identity spellings; unknown_ spans remain opaque.
  */
 typedef struct KfPlayerState {
-    u32 player_experience;
-    u32 player_next_level_experience;
-    KfPlayerProgressState player_progress_state;
+    s32 experience;
+    s32 next_level_experience;
+    KfPlayerProgressState progress_state;
     u8 unknown_0c;
     u8 unknown_0d;
-    u8 player_weapon_charge_delay;
+    u8 weapon_charge_delay;
     u8 unknown_0f;
-    KfPlayerVitals player_vitals;
-    KfPlayerAttackChargeState player_attack_charge_state;
-    u16 player_magic_charge;
-    u16 player_physical_power_training;
-    u16 player_magic_training;
-    u16 player_base_physical_power;
-    u16 player_base_magic;
-    u16 player_physical_power;
-    u16 player_magic;
-    u16 player_status_effect_flags;
+    KfPlayerVitals vitals;
+    KfPlayerAttackChargeState attack_charge_state;
+    u16 magic_charge;
+    u16 physical_power_training;
+    u16 magic_training;
+    u16 base_physical_power;
+    u16 base_magic;
+    u16 physical_power;
+    u16 magic;
+    u16 status_effect_flags;
     u32 unknown_2c;
-    u16 player_attack_component0;
-    u16 player_attack_component1;
-    u16 player_attack_component2;
-    u16 player_attack_component3;
-    u16 player_attack_component4;
-    u8 unknown_3a[0x2];
-    u16 player_damage_defense_component0;
-    u16 player_damage_defense_component1;
-    u16 player_damage_defense_component2;
-    u16 player_status_effect2_resistance;
-    u16 player_damage_defense_component3;
-    u16 player_damage_defense_component4;
-    s16 player_status_effect0_timer;
-    s16 player_status_effect1_timer;
-    s16 player_status_effect2_timer;
-    s16 player_status_effect3_timer;
-    s16 player_status_effect4_timer;
-    s16 player_light_effect_timer;
-    u8 unknown_54[0x4];
+    u16 attack_component0;
+    u16 attack_component1;
+    u16 attack_component2;
+    u16 attack_component3;
+    u16 attack_component4;
+    u8 unknown_3a[2];
+    u16 damage_defense_component0;
+    u16 damage_defense_component1;
+    u16 damage_defense_component2;
+    u16 status_effect2_resistance;
+    u16 damage_defense_component3;
+    u16 damage_defense_component4;
+    s16 status_effect0_timer;
+    s16 status_effect1_timer;
+    s16 status_effect2_timer;
+    s16 status_effect3_timer;
+    s16 status_effect4_timer;
+    s16 light_effect_timer;
+    u8 unknown_54[4];
     u32 unknown_58;
-    u8 player_selected_magic_id;
-    u8 unknown_5d[0x3];
-    const void *player_selected_magic_record;
-    u8 player_equipped_weapon_id;
-    u8 unknown_65[0x3];
-    const KfWeaponRecord *player_equipped_weapon_record;
-    u8 *player_weapon_asset_buffer;
-    s16 player_weapon_attack_phase;
-    u8 unknown_72[0x2];
+    u8 selected_magic_id;
+    u8 unknown_5d[3];
+    void *selected_magic_record;
+    u8 equipped_weapon_id;
+    u8 unknown_65[3];
+    KfWeaponRecord *equipped_weapon_record;
+    u8 *weapon_asset_buffer;
+    s16 weapon_attack_phase;
+    u8 unknown_72[2];
     u32 unknown_74;
     u8 unknown_78;
     u8 unknown_79;
-    u8 player_weapon_attack_fully_charged;
-    u8 unknown_7b[0x1];
-    const void *player_equipped_shield_record;
-    const void *player_equipped_head_armor_record;
-    const void *player_equipped_body_armor_record;
-    const void *player_equipped_arm_armor_record;
-    const void *player_equipped_leg_armor_record;
-    u8 player_equipped_shield_id;
-    u8 player_equipped_head_armor_id;
-    u8 player_equipped_body_armor_id;
-    u8 player_equipped_arm_armor_id;
-    u8 player_equipped_leg_armor_id;
-    u8 player_equipped_accessory_id;
+    u8 weapon_attack_fully_charged;
+    u8 unknown_7b[1];
+    void *equipped_shield_record;
+    void *equipped_head_armor_record;
+    void *equipped_body_armor_record;
+    void *equipped_arm_armor_record;
+    void *equipped_leg_armor_record;
+    u8 equipped_shield_id;
+    u8 equipped_head_armor_id;
+    u8 equipped_body_armor_id;
+    u8 equipped_arm_armor_id;
+    u8 equipped_leg_armor_id;
+    u8 equipped_accessory_id;
     u8 audio_effects_enabled;
     u8 audio_music_enabled;
     u8 unknown_98[2];
-    struct KfVec4s player_view_rotation_offset;
-    u8 player_update_state;
+    struct KfVec4s view_rotation_offset;
+    u8 update_state;
     u8 unknown_a3;
     struct KfVec4i camera_position;
-    s32 player_floor_height;
+    s32 floor_height;
     struct KfVec4s camera_rotation;
-    KfPlayerMotionState player_motion_state;
-    KfMapCell player_map_cell;
-    KfMapCell player_previous_map_cell;
-    u8 unknown_ce[0x6];
-    s16 player_view_bob_offset;
-    u16 player_view_bob_phase;
-    u16 player_death_camera_pitch_step;
-    s16 player_death_visual_blend;
-    s16 player_vertical_velocity;
-    u8 player_vertical_state;
-    u8 unknown_df[0x1];
+    KfPlayerMotionState motion_state;
+    KfMapCell map_cell;
+    KfMapCell previous_map_cell;
+    u8 unknown_ce[6];
+    s16 view_bob_offset;
+    u16 view_bob_phase;
+    u16 death_camera_pitch_step;
+    s16 death_visual_blend;
+    s16 vertical_velocity;
+    u8 vertical_state;
+    u8 unknown_df[1];
 } KfPlayerState;
+
 typedef char KfPlayerState_size_is_0xe0[(sizeof(KfPlayerState) == 0xe0) ? 1 : -1];
 
-/* === end game-math-death === */
+/*
+ * Per-floor entry cell (one-based floor number). player_warp_to_floor_entry
+ * copies byte 0 into previous_map_cell.x and byte 1 into .z, so this table
+ * stores x first, unlike KfMapCell.
+ */
+typedef struct KfFloorEntryCell {
+    u8 x;
+    u8 z;
+} KfFloorEntryCell;
+
+typedef char KfFloorEntryCell_size_is_2[(sizeof(KfFloorEntryCell) == 2) ? 1 : -1];
+
+/* === end player === */
 
 #endif

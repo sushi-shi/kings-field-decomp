@@ -415,9 +415,15 @@ def _resolve_symbol(
             if owner is not None:
                 return owner.symbol, target - owner_va
             return symbol, target - owner_va
-        target_data = _containing_data(catalog, function.image, target)
-        if target_data is not None and target_data.symbol == symbol:
-            return symbol, target - target_data.va
+        # A reviewed row may name the owning datum even when the address lies
+        # outside its extent: `&table[index - 1]` folds to `table - stride`.
+        # The addend is measured from that owner, wherever the target lies.
+        named = next(
+            (item for item in catalog.data[function.image] if item.symbol == symbol),
+            None,
+        )
+        if named is not None:
+            return symbol, target - named.va
         return symbol, 0
     target_data = _containing_data(catalog, function.image, target)
     if target_data is not None:
@@ -501,7 +507,7 @@ def _apply_relocation(
         "action": action,
         "relocation": kinds,
         "symbol": symbol,
-        "addend": format_hex(addend),
+        "addend": format_hex(addend) if addend >= 0 else f"-{format_hex(-addend)}",
         "source_kind": row["kind"],
         "source_channel": row["channel"],
         "confidence": row["confidence"],
