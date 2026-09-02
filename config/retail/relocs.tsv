@@ -7167,8 +7167,8 @@ GAME.EXE	0x8003a1a4	0x289a4		mips26	instruction-word	0x8003a214	load		j		range-f
 GAME.EXE	0x8003a1d8	0x289d8		mips26	instruction-word	0x800384f8	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003a200	0x28a00		mips26	instruction-word	0x8003a214	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003a20c	0x28a0c		mips26	instruction-word	0x80038298	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a244	0x28a44	0x8003a248	mips_hi16_lo16	reachable-code	0x8009d040	bss	DAT_8009d040	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8003a274	0x28a74	0x8003a278	mips_hi16_lo16	reachable-code	0x8009ce60	bss	DAT_8009ce60	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8003a244	0x28a44	0x8003a248	mips_hi16_lo16	reachable-code	0x8009d040	bss	DAT_8009d040	lui+addiu	a0	paired-reviewed	reviewed	manual:game_func_8003a244
+GAME.EXE	0x8003a274	0x28a74	0x8003a278	mips_hi16_lo16	reachable-code	0x8009ce60	bss	magic_records	lui+addiu	a1	paired-reviewed	reviewed	manual:game_func_8003a244
 GAME.EXE	0x8003a2a0	0x28aa0	0x8003a2a4	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a2cc	0x28acc	0x8003a2d0	mips_hi16_lo16	reachable-code	0x80012dc0	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003a30c	0x28b0c	0x8003a310	mips_hi16_lo16	reachable-code	0x800a0838	bss	player_state	lui+addiu	s1	paired-reviewed	reviewed	manual:player_state-aggregate
@@ -8270,8 +8270,8 @@ GAME.EXE	0x80040cbc	0x2f4bc		mips26	instruction-word	0x8003ebbc	load		jal		range
 GAME.EXE	0x80040cc4	0x2f4c4	0x80040cc8	mips_hi16_lo16	instruction-word	0x80057cc8	load		lui+lw	v1	paired-pattern	candidate	investigation:relocs.tsv
 GAME.EXE	0x80040ce4	0x2f4e4		mips26	instruction-word	0x800503ac	load	DeliverEvent	jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x80040cec	0x2f4ec		mips26	instruction-word	0x8004fb54	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80040d14	0x2f514		mips26	instruction-word	0x800503ac	load	DeliverEvent	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80040d1c	0x2f51c		mips26	instruction-word	0x8004fbe4	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80040d14	0x2f514		mips26	instruction-word	0x800503ac	load	DeliverEvent	jal		control-flow-reviewed	reviewed	manual:game_func_80040d04
+GAME.EXE	0x80040d1c	0x2f51c		mips26	instruction-word	0x8004fbe4	load	func_8004fbe4	jal		control-flow-reviewed	reviewed	manual:game_func_80040d04
 GAME.EXE	0x80040d34	0x2f534	0x80040d38	mips_hi16_lo16	reachable-code	0x80057cc8	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x80040d50	0x2f550	0x80040d54	mips_hi16_lo16	reachable-code	0x80057f90	load		lui+lhu	v1	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x80040d68	0x2f568		mips26	reachable-code	0x8003ebbc	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -8956,8 +8956,8 @@ GAME.EXE	0x80046200	0x34a00		mips26	instruction-word	0x80046238	load		j		range-f
 GAME.EXE	0x80046218	0x34a18	0x8004621c	mips_hi16_lo16	reachable-code	0x80069008	bss	DAT_80069008	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x80046264	0x34a64		mips26	instruction-word	0x800438b4	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x800462d8	0x34ad8		mips26	instruction-word	0x80046310	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80046334	0x34b34	0x80046338	mips_hi16_lo16	instruction-word	0x80057fe0	load		lui+sb	at	paired-pattern	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004633c	0x34b3c	0x80046340	mips_hi16_lo16	instruction-word	0x80057fe0	load		lui+lbu	v0	paired-pattern	candidate	investigation:relocs.tsv
+GAME.EXE	0x80046334	0x34b34	0x80046338	mips_hi16_lo16	instruction-word	0x80057fe0	load	DAT_80057fe0	lui+sb	at	paired-reviewed	reviewed	manual:game_func_80046324
+GAME.EXE	0x8004633c	0x34b3c	0x80046340	mips_hi16_lo16	instruction-word	0x80057fe0	load	DAT_80057fe0	lui+lbu	v0	paired-reviewed	reviewed	manual:game_func_80046324
 GAME.EXE	0x80046354	0x34b54		mips26	instruction-word	0x80043ee0	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004636c	0x34b6c	0x80046370	mips_hi16_lo16	instruction-word	0x80057fe0	load		lui+lbu	v0	paired-pattern	candidate	investigation:relocs.tsv
 GAME.EXE	0x800463a8	0x34ba8	0x800463ac	mips_hi16_lo16	reachable-code	0x8005acda	bss	DAT_8005acda	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
@@ -9247,7 +9247,7 @@ GAME.EXE	0x8004a204	0x38a04		mips26	instruction-word	0x8004415c	load		jal		range
 GAME.EXE	0x8004a248	0x38a48	0x8004a24c	mips_hi16_lo16	reachable-code	0x800a06e0	bss	DAT_800a06e0	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8004a300	0x38b00		mips26	reachable-code	0x8004415c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004a308	0x38b08		mips26	reachable-code	0x8004a334	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004a34c	0x38b4c	0x8004a350	mips_hi16_lo16	reachable-code	0x800a06e0	bss	DAT_800a06e0	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8004a34c	0x38b4c	0x8004a350	mips_hi16_lo16	reachable-code	0x800a06e0	bss	DAT_800a06e0	lui+addiu	at	paired-reviewed	reviewed	manual:game_func_8004a344
 GAME.EXE	0x8004a398	0x38b98	0x8004a39c	mips_hi16_lo16	reachable-code	0x800a06e0	bss	DAT_800a06e0	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8004a3ec	0x38bec		mips26	instruction-word	0x8004452c	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004a408	0x38c08	0x8004a40c	mips_hi16_lo16	reachable-code	0x800a06e0	bss	DAT_800a06e0	lui+addiu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
