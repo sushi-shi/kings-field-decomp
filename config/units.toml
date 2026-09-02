@@ -630,6 +630,12 @@ source = "src/game/func_8003a760.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.debug_text"
+image = "GAME.EXE"
+source = "src/game/debug_text.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8003ac4c"
 image = "GAME.EXE"
 source = "src/game/func_8003ac4c.c"

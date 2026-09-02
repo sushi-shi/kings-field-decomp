@@ -908,3 +908,29 @@ The referents, call set, CFG and instruction selection are otherwise identical,
 so `critical_section_set`, `pad_init_bad_identifier`, `pad_read_bad_identifier`
 and `pad_stop_bad_identifier` sit one prologue reorder from exact. Left as an
 unattributed load-placement residue rather than steered with dead code.
+
+## debug/format
+
+Campaign over the contiguous text-formatting band `0x8003a7dc..0x8003ac4b`
+(module `debug_text`, six functions). From's own minimal `printf` family
+(the Sony LIBAPI `printf` and LIBGPU `sprintf` are vendored elsewhere); the
+band is dead debug scaffolding, so every signature was recovered from the
+bodies and the internal call graph. All six reached exact; the levers that
+decided the two harder ones are reusable:
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| loop-invariant constants materialised (`lui/ori` divisor) *before* the relocated buffer address (`lui/addiu`) | initialise the plain-constant local (`divisor`) *before* the address local (`out = buffer`); declaration order sets the emission order of hoisted setup, not the register numbers | `format_int_dec` `0x8003a81c`, `format_int_hex` `0x8003a8fc` |
+| `subu w-len; addiu count,-1; ... sb; bnez; addiu count,-1` prepend loop reusing the width-argument register | reuse the parameter as the counter (`width -= len; while (width-- != 0) *--s = pad;`), not a fresh `count` local | `format_pad_left` `0x8003a988` |
+| `move len,zero` hoisted above the load it guards, branch delay slot filled by the pointer bump | compute the loop pointer (`p = s + 1`) *before* the `if (*s)` guard so it, not the `len = 0`, is the delay-slot candidate | `format_pad_left` |
+| switch case *bodies* laid out in a fixed order with shared emit/copy tails reached by back-`j` | order the `case` labels in the source to match the retail body order (the value-based dispatch tree is independent of source order); put the fall-through body first and reach it from later cases with `goto` | `format_vsprintf` `0x8003a9f4` |
+| conversion flags (`width`,`zero_pad`) never initialised at entry | declare them uninitialised; they are only assigned inside the `%` case and read under the `in_format` guard, so an `= 0` emits two dead `move sN,zero` at entry and shifts every offset | `format_vsprintf` |
+| copy loop keeps the character in one register across the store, char register shared with the format-dispatch char | reuse the dispatch char local and load-then-increment in the test (`while ((c = *s++) != 0) { *out++ = c; count++; }`); a separate `*s` test plus `*s++` body defeats the CSE and stalls the load | `format_vsprintf` |
+| `args` in `s2`, `count` in `s3` (the shorter-lived pointer takes the lower callee-saved register) | give the argument pointer the shorter live range (use the `s32 *` parameter directly, no copy) and hold `count`'s reference count down by routing the width-digit literal through the shared literal emit (`goto literal`); one extra `count++` site raises its allocation priority and steals `s2` | `format_vsprintf` |
+
+The last row is the decisive one: a structurally exact `format_vsprintf`
+stalled at 99.4% with only `args`/`count` swapped between `s2` and `s3`.
+Reference count, not declaration order, drives GCC 2.5.7's callee-saved
+priority here — folding one redundant `count++` into the shared single-char
+emit tail dropped `count`'s priority just enough for the shorter-lived `args`
+pointer to win `s2`, matching retail exactly.

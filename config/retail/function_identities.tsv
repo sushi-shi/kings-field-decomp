@@ -360,12 +360,12 @@ GAME.EXE	0x8003a244	effect_pool_reset	effect	pool_reset	void		candidate	candidat
 GAME.EXE	0x8003a274	magic_load_records	magic	load_records	void	const u32 * source	candidate	candidate	asm;magic_records	renamed from address-derived identity; Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8003a2a0	func_8003a2a0			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8003a760	effect_pool_sweep	effect	pool_sweep	void		candidate	candidate	asm;KfEffectRecord;DAT_8009d040	renamed from address-derived identity; Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8003a7dc	func_8003a7dc			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8003a81c	func_8003a81c			void *	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8003a8fc	func_8003a8fc			void *	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8003a988	func_8003a988			char *	char * arg0;char arg1;u8 arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8003a9f4	func_8003a9f4			s32	u8 * arg0;u8 * arg1;void * arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8003ac34	func_8003ac34			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+GAME.EXE	0x8003a7dc	debug_stop	debug	stop	void		candidate	candidate	asm;xrefs;string-literal-DEBUG-STOP;debug_stop_flag	prints the debug banner then toggles debug_stop_flag; no static callers (retained debug scaffolding)
+GAME.EXE	0x8003a81c	format_int_dec	format	int_dec	char *	s32 value	candidate	candidate	asm;cfg;format_vsprintf-callsite	signed base-10 conversion into format_number_buffer
+GAME.EXE	0x8003a8fc	format_int_hex	format	int_hex	char *	u32 value	candidate	candidate	asm;cfg;format_vsprintf-callsite	unsigned 8-digit base-16 conversion into format_number_buffer
+GAME.EXE	0x8003a988	format_pad_left	format	pad_left	char *	char *string;char pad;u8 width	candidate	candidate	asm;cfg;format_vsprintf-callsite	left-pads a string to a byte width, prepending characters in place
+GAME.EXE	0x8003a9f4	format_vsprintf	format	vsprintf	s32	u8 *out;u8 *format;s32 *args	candidate	candidate	asm;cfg;xrefs	printf-style formatter over a va_list-style argument pointer
+GAME.EXE	0x8003ac34	debug_print	debug	print	void		candidate	candidate	asm;xrefs;debug_stop-callsite	variadic diagnostic sink; output disabled in this build (spills argument registers and returns)
 GAME.EXE	0x8003ac4c	func_8003ac4c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8003b580	func_8003b580			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8003b5ac	func_8003b5ac			void	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
