@@ -6,8 +6,6 @@
 /* Psy-Q Release 2.5 headers declare strcat without a prototype. */
 extern char *strcat();
 extern void *memory_allocate(s32 size);
-/* libcd CdSearchFile body linked without its symbol; see the vendored census. */
-extern CdlFILE *func_8003c810(CdlFILE *file, char *path);
 /* CD failure handler: 0 after a failed search, 1 after failed reads. */
 extern void func_8001b7b0(s32 stage);
 
@@ -37,7 +35,7 @@ s32 cd_file_load_allocated(void **destination, char *relative_path)
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
-    if (func_8003c810(&cd_search_file, path) == 0) {
+    if (CdSearchFile(&cd_search_file, path) == 0) {
         func_8001b7b0(0);
     }
     if (cd_search_file.size & (CD_SECTOR_SIZE - 1)) {
@@ -108,7 +106,7 @@ s32 cd_file_load_into(void *destination, char *relative_path)
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
-    if (func_8003c810(&cd_search_file, path) == 0) {
+    if (CdSearchFile(&cd_search_file, path) == 0) {
         func_8001b7b0(0);
     }
     if (cd_search_file.size & (CD_SECTOR_SIZE - 1)) {
