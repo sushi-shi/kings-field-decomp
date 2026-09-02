@@ -95,6 +95,12 @@ KfCameraPathState	0x4c	0x10	rotation_delta	KfVec4i	supported	semantic_types.h;as
 KfCameraPathState	0x5c	0x02	point_index	s16	supported	semantic_types.h;asm;xrefs	current path point index
 KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;xrefs	segment frame countdown
+KfCdFileEntry	0x00	0x01	minute	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC minute of the file
+KfCdFileEntry	0x01	0x01	second	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC second of the file
+KfCdFileEntry	0x02	0x01	sector	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC sector of the file
+KfCdFileEntry	0x03	0x01	track	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
+KfCdFileEntry	0x04	0x04	size	u32	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
+KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
 KfCollisionTarget	0x00	0x10	position	KfVec4i	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
 KfCollisionTarget	0x10	0x08	rotation	KfVec4s	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family

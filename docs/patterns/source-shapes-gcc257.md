@@ -251,3 +251,12 @@ Residues left in the same module (not steered):
 | --- | --- | --- |
 | `move a2,a0` at entry, `&cursor` in `a0`, the stack entry stored from `a2` on both paths | reuse the `size` parameter as the recorded entry (`size = (s32)block;` / `size = (size + 3) & ~3;`); a separate `entry` local keeps `size` in `a0` and moves the cursor address to `a3` | `memory_allocate` `0x8001ac0c` (exact in both images) |
 | `addu v0,a2,a1; sw v0,0(a0)` (size before block) | `*cursor += size;`; `*cursor = block + size` and `size + block` both emit `addu v0,a1,a2` | same |
+
+## cd_file
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `lwl/lwr` + `lb` from a `.data` array, `swl/swr` + `sb` into the path buffer | `memcpy(path, cd_path_prefix, sizeof cd_path_prefix)` with `char cd_path_prefix[5] = "\\KF\\";` (a 5-byte constant-length block move; `strcpy` of a global array cannot fold) | `cd_file_load_allocated` `0x8001acf0` |
+| `addiu s0,s0,1` in the branch delay slot, then `li s0,0x64; li s1,1; addiu s0,s0,1` | `for (attempt = 0; attempt < 3; attempt++) { ... if (result == 0) { attempt = 100; loaded = 1; } }`; the loop increment is copied into the delay slot because the fall-through overwrites it | same |
+| `srl v0,v1,0xb; addiu s1,v0,1; sll v0,s1,0xb` with `s1` cleared to zero right after | the rounded sector count shares the `loaded` variable (`loaded = (size >> 11) + 1; size = loaded << 11;`); a separate local keeps the count in `v0` and swaps `s0`/`s1` in the sibling loader | `cd_file_load_into` `0x8001af9c` |
+| `sll s1,a1,2; addu s1,s1,a1; sll s0,s1,2` then `sll v0,s1,2` again before the second table load | index the record array at every use (`cd_file_table[index].size`); a pointer local computes the address once | `func_8001ae60` `0x8001ae60` |

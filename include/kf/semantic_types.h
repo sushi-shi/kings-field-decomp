@@ -60,6 +60,19 @@ typedef struct KfPrimitiveBuffer {
 } KfPrimitiveBuffer;
 
 /*
+ * CD file record used by the game's own file table (cd_file_table): the
+ * older libcd CdlFILE layout with a 12-byte name, 20 bytes per entry.
+ */
+typedef struct KfCdFileEntry {
+    u8 minute;
+    u8 second;
+    u8 sector;
+    u8 track;
+    u32 size;
+    u8 name[12];
+} KfCdFileEntry;
+
+/*
  * 12-byte header of an unlinked TMD payload.  The format stores the object
  * count as a 32-bit word; the game reads only its low halfword (lhu).
  */
@@ -589,6 +602,7 @@ typedef char KfTmdObject_primitive_offset_offset_is_16[
     (KF_OFFSET_OF(KfTmdObject, primitive_offset) == 0x10) ? 1 : -1];
 typedef char KfTmdObject_primitive_count_offset_is_20[
     (KF_OFFSET_OF(KfTmdObject, primitive_count) == 0x14) ? 1 : -1];
+typedef char KfCdFileEntry_size_is_20[(sizeof(KfCdFileEntry) == 0x14) ? 1 : -1];
 typedef char KfTmdHeader_size_is_12[(sizeof(KfTmdHeader) == 0xc) ? 1 : -1];
 typedef char KfTmdF3_size_is_12[(sizeof(KfTmdF3) == 0xc) ? 1 : -1];
 typedef char KfTmdG3_size_is_16[(sizeof(KfTmdG3) == 0x10) ? 1 : -1];
