@@ -6,7 +6,7 @@ extern void func_8003781c(u8 *object);
 extern void func_80038a38(void);
 
 ADDRESS(0x8003a760, 0x7c)
-void func_8003a760(void)
+void effect_pool_sweep(void)
 {
     KfEffectRecord *record = DAT_8009d040;
     u16 i = 47;

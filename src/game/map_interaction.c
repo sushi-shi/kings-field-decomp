@@ -51,7 +51,7 @@ extern void func_8001fde4();
 extern void func_8001fa44(s32 arg0);
 extern u32 func_80036e38(s32 arg0, u8 arg1);
 extern u8 *func_80036f44();
-extern void func_8003a760(void);
+extern void effect_pool_sweep(void);
 extern void func_80035b5c(void);
 extern void func_800222b4(void);
 extern void func_800343e0(void);
@@ -143,7 +143,7 @@ void func_800346a8(void)
         default:
             break;
         }
-        func_8003a760();
+        effect_pool_sweep();
         func_8001fde4(0, 0);
     }
 done:

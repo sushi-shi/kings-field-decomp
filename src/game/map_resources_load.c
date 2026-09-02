@@ -3,7 +3,7 @@
 #include <SYS/TYPES.H>
 
 extern void audio_stop_sequence_fade(void);
-extern void func_8003a244(void);
+extern void effect_pool_reset(void);
 extern void memory_allocation_reset(void);
 extern void map_resource_path_set_floor(s32 floor);
 extern void *map_resource_load_file(const char *filename);
@@ -55,7 +55,7 @@ void map_resources_load(s32 floor, s32 use_variant)
     const u32 *source;
 
     audio_stop_sequence_fade();
-    func_8003a244();
+    effect_pool_reset();
     memory_allocation_reset();
     map_resource_path_set_floor(floor);
     tim_upload_images(map_resource_load_file(map_mix_tim_filename));

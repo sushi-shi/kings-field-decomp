@@ -4,7 +4,7 @@
 extern KfDisplayState display_state;
 
 ADDRESS(0x8001fdc8, 0x1c)
-void func_8001fdc8(void)
+void display_flip_buffer_index(void)
 {
     display_state.buffer_index = (display_state.buffer_index == 0);
 }

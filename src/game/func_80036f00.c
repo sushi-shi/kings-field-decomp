@@ -4,7 +4,7 @@
 extern KfEffectRecord DAT_8009d040[];
 
 ADDRESS(0x80036f00, 0x44)
-char *func_80036f00(void)
+char *effect_pool_find_free(void)
 {
     KfEffectRecord *record = DAT_8009d040;
     u16 i = 48;

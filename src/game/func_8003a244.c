@@ -5,7 +5,7 @@ extern KfEffectRecord DAT_8009d040[];
 extern KfMagicRecord magic_records[24];
 
 ADDRESS(0x8003a244, 0x30)
-void func_8003a244(void)
+void effect_pool_reset(void)
 {
     KfEffectRecord *record = DAT_8009d040;
     u16 i;
@@ -17,7 +17,7 @@ void func_8003a244(void)
 }
 
 ADDRESS(0x8003a274, 0x2c)
-void func_8003a274(const u32 *source)
+void magic_load_records(const u32 *source)
 {
     u32 *destination = (u32 *)magic_records;
     s32 count;

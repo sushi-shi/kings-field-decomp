@@ -24,7 +24,7 @@ extern void func_8001bb94(void);
 extern void func_80020cfc(void);
 extern void actor_pool_clear(void);
 extern void map_object_pool_clear(void);
-extern void func_8003a244(void);
+extern void effect_pool_reset(void);
 extern void func_800356e8(void);
 extern void common_resources_load(void);
 extern void game_initialize_session(void);
@@ -43,7 +43,7 @@ extern void actor_set_player_transform(
     const struct KfVec4i *position, const struct KfVec4s *rotation);
 extern void actor_pool_update(void);
 extern void map_object_pool_update(void);
-extern void func_8003a760(void);
+extern void effect_pool_sweep(void);
 extern void func_8003596c(void);
 extern void func_8001fde4(
     const struct KfVec4i *position_or_null, const struct KfVec4s *rotation_or_null);
@@ -104,7 +104,7 @@ void game_main_loop(void)
     func_80020cfc();
     actor_pool_clear();
     map_object_pool_clear();
-    func_8003a244();
+    effect_pool_reset();
     func_800356e8();
     common_resources_load();
     game_initialize_session();
@@ -130,7 +130,7 @@ void game_main_loop(void)
         actor_set_player_transform(&player_position_snapshot, &player_rotation_snapshot);
         actor_pool_update();
         map_object_pool_update();
-        func_8003a760();
+        effect_pool_sweep();
         func_8003596c();
         func_8001fde4(&player_position_snapshot, &player_rotation_snapshot);
         player_state.unknown_0d = 0;

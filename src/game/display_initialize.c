@@ -14,7 +14,7 @@ extern void SetGeomOffset(s32 ofx, s32 ofy);
 extern void SetBackColor(s32 r, s32 g, s32 b);
 extern void SetFarColor(s32 r, s32 g, s32 b);
 extern void SetFogNear(s32 distance, s32 projection);
-extern void func_8001bab8(s32 index);
+extern void lighting_set_active_color_matrix(s32 index);
 extern void render_initialize(void);
 
 ADDRESS(0x8001bb94, 0x14c)
@@ -38,7 +38,7 @@ void func_8001bb94(void)
     display_draw_environments[1].b0 = 0;
     PutDispEnv(&display_disp_environments[0]);
     SetBackColor(60, 60, 60);
-    func_8001bab8(0);
+    lighting_set_active_color_matrix(0);
     SetFarColor(0, 0, 0);
     render_state.fog_near_distance = 0x2af8;
     SetFogNear(0x2af8, 200);

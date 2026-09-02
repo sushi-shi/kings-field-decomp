@@ -20,7 +20,7 @@ extern void func_80020a2c(void);
 extern void func_800365f8(void);
 extern void func_80034de4();
 extern void func_8003a2a0(void);
-extern void func_8001bab8(s32 arg0);
+extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *func_80036f44();
 extern s32 rand(void);
 extern s32 SquareRoot0(s32 value);
@@ -438,7 +438,7 @@ void player_update(void)
     }
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
     player_update_weapon_attack();
-    func_8001bab8(0);
+    lighting_set_active_color_matrix(0);
     if (player_state.status_effect1_timer != -1) {
         if (!(player_state.status_effect_flags & 0x2) && player_state.status_effect1_timer >= 33) {
             player_state.status_effect1_timer = 32;
@@ -471,7 +471,7 @@ void player_update(void)
             }
         } else {
             player_state.view_rotation_offset = DAT_80055878[player_state.update_state];
-            func_8001bab8(1);
+            lighting_set_active_color_matrix(1);
             player_state.update_state++;
         }
     }
@@ -569,7 +569,7 @@ void player_update(void)
             } else {
                 phase = player_state.status_effect2_timer % 20;
                 if (phase < 2) {
-                    func_8001bab8(1);
+                    lighting_set_active_color_matrix(1);
                     if (phase == 0) {
                         player_adjust_hp(-1);
                     }
@@ -597,7 +597,7 @@ void player_update(void)
         } else if (player_state.status_effect4_timer == 500) {
             player_recalculate_combat_stats();
         }
-        func_8001bab8(2);
+        lighting_set_active_color_matrix(2);
         player_state.status_effect4_timer--;
     }
     if (player_state.equipped_weapon_id == 9) {
