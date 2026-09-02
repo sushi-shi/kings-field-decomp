@@ -1534,10 +1534,10 @@ GAME.EXE	0x800142dc	0x2adc		mips26	reachable-code	0x8005037c	load	InitCARD2	jal	
 GAME.EXE	0x800142e4	0x2ae4		mips26	reachable-code	0x800504cc	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142ec	0x2aec		mips26	reachable-code	0x800146b8	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142f4	0x2af4	0x800142f8	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
-GAME.EXE	0x80014340	0x2b40	0x80014344	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80014364	0x2b64		mips26	reachable-code	0x800543fc	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80014498	0x2c98	0x8001449c	mips_hi16_lo16	reachable-code	0x80090ebc	bss	display_state	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x800144a4	0x2ca4		mips26	reachable-code	0x80054290	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x80014340	0x2b40	0x80014344	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v1	paired-reviewed	reviewed	manual:game_sprite_add_ft4
+GAME.EXE	0x80014364	0x2b64		mips26	reachable-code	0x800543fc	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	manual:game_sprite_add_ft4
+GAME.EXE	0x80014498	0x2c98	0x8001449c	mips_hi16_lo16	reachable-code	0x80090ebc	bss	display_state	lui+lw	a0	paired-reviewed	reviewed	manual:game_sprite_add_ft4
+GAME.EXE	0x800144a4	0x2ca4		mips26	reachable-code	0x80054290	load	AddPrim	jal		control-flow-reviewed	reviewed	manual:game_sprite_add_ft4
 GAME.EXE	0x800144e8	0x2ce8	0x800144ec	mips_hi16_lo16	reachable-code	0x80057b14	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014510	0x2d10	0x80014514	mips_hi16_lo16	reachable-code	0x80057b1c	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014538	0x2d38	0x8001453c	mips_hi16_lo16	reachable-code	0x80057b24	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv

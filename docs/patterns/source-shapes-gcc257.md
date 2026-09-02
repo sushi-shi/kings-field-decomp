@@ -458,3 +458,22 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | enable path loads `*ptr`, then `\| 0x800000`, then `\| (0x101 << (ch+16))`, one store | compound `*DAT_80057d1c \|= 0x800000 \| (0x101 << (channel + 16));` — the compound form loads once and ORs in source order; the expanded `*p = *p \| A \| B` reschedules the shift ahead of the load | `func_8004fc2c` `0x8004fc2c` |
 | `slot = &table[ch]; *slot = 0;` cleared in the branch delay slot, set to the handler at the end of the enable path | a pointer local to the table element written 0 before the `if`, then `= handler` inside the enable arm | both dispatchers |
 | residue: retail computes the table base (`lui/addiu`) before the index `sll`, loads `*ptr` before materializing `0x800000`, and lays the enable arm as the fall-through | ours schedules the index shift first and orders the IMASK/DPCR arms differently. Semantic order, call set, referents and CFG agree; the residue is R3000 instruction scheduling and basic-block layout. Unattributed | `func_8004fc2c` (69%), `func_8004fcac` (33%) |
+
+### Recurring residue: callee-saved register permutation
+
+Several structurally-exact functions differ from retail only in *which*
+callee-saved register (`s2`..`s5`) each call-surviving local/parameter receives
+— the instruction stream, order, referents, and call set all match. Observed on:
+
+| Function | Detail |
+| --- | --- |
+| `func_80014314` (POLY_FT4 sprite builder, 82.2%) | retail `s2=texcoords, s3=clut, s4=ot_index, s5=tpage`; ours permutes them. `s1=position`/`s6=color` agree. |
+| `func_8003a8fc` / `func_8003a81c` (hex/decimal formatters) | retail `a1=buffer, a2=index`; ours swaps them. Three declaration orderings gave the same result. |
+
+The permutation is stable across source reorderings and declaration-order
+changes, so it is not steerable from C. Because `local-alloc` assigns
+callee-saved registers by an internal priority/qty ordering, a systematic
+permutation across many functions is a candidate signal that the probe
+compiler build or its register-allocation behaviour differs slightly from the
+original toolchain (see the open compiler-attribution question). Worth a
+controlled probe before treating these as closed. Unattributed for now.
