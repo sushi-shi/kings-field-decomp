@@ -1,6 +1,5 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <SYS/TYPES.H>
 #include <MEMORY.H>
 
 extern s32 cd_file_load_allocated(void **destination, char *relative_path);

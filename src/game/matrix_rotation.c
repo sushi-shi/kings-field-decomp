@@ -3,17 +3,11 @@
 #include <kf/game_types.h>
 
 /* Psy-Q LIBGTE: int rsin(int a); int rcos(int a). */
-extern s32 rsin(s32 angle);
-extern s32 rcos(s32 angle);
 
 /*
  * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the KfMatrix/KfVec4s/KfVec4i layouts:
  * MulMatrix(m0, m1), MulMatrix2(m0, m1), ApplyMatrix(m, v0, v1).
  */
-extern struct KfMatrix *MulMatrix(struct KfMatrix *m0, struct KfMatrix *m1);
-extern struct KfMatrix *MulMatrix2(struct KfMatrix *m0, struct KfMatrix *m1);
-extern struct KfVec4i *ApplyMatrix(
-    struct KfMatrix *matrix, struct KfVec4s *source, struct KfVec4i *result);
 extern void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix);
 extern void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix);
 extern void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix);

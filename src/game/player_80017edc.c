@@ -12,8 +12,6 @@ extern const SoundRef gameplay_sound_ref_7;
 extern const SoundRef gameplay_sound_ref_8;
 extern const SoundRef gameplay_sound_ref_12;
 /* Psy-Q LIBGTE: rsin, rcos. */
-extern s32 rsin(s32 angle);
-extern s32 rcos(s32 angle);
 extern void func_8001fa44(s32 arg0);
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *func_80037770();

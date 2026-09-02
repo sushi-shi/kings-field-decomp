@@ -1,7 +1,5 @@
 #include <kf/address.h>
-#include <SYS/TYPES.H>
-#include <LIBGTE.H>
-#include <LIBGPU.H>
+#include <kf/psyq.h>
 
 ADDRESS(0x8001b100, 0x80)
 void tim_upload_images(u_long *tim_data)

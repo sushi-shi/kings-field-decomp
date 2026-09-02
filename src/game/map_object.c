@@ -22,10 +22,6 @@ extern u16 map_object_effect_sequence_180;
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
 extern s32 rand(void);
-extern s32 rsin(s32 angle);
-extern s32 rcos(s32 angle);
-extern struct KfVec4i *ApplyMatrix(
-    struct KfMatrix *matrix, struct KfVec4s *vector, struct KfVec4i *result);
 extern void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix);
 extern s32 map_object_distance_to_point(
     const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);

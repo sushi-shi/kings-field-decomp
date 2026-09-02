@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
-extern void ReadColorMatrix(struct KfMatrix *matrix);
 extern void lighting_set_color_matrix(
     const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
 

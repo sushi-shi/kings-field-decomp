@@ -23,10 +23,6 @@ extern void func_8003a2a0(void);
 extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *func_80036f44();
 extern s32 rand(void);
-extern s32 SquareRoot0(s32 value);
-extern struct KfVec4i *ApplyMatrix(
-    struct KfMatrix *matrix, struct KfVec4s *vector, struct KfVec4i *result);
-extern void SetColorMatrix(struct KfMatrix *matrix);
 extern void matrix_set_rotation_yxz(
     const struct KfEulerAngles *angles, struct KfMatrix *matrix);
 extern void pitch_yaw_to_forward_vector(

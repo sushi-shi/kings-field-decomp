@@ -25,7 +25,6 @@ extern void player_equip_weapon(u8 weapon_id);
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);
 extern void camera_path_step(KfCameraPathState *path, s32 y_offset);
-extern void ReadColorMatrix(void *matrix);
 extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence);
 extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
 extern void map_object_pool_clear_link(u8 link_id);
@@ -43,8 +42,6 @@ extern void player_clear_motion(void);
 extern void player_restore_vitals_with_color_cycle(void);
 extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 extern void frame_pacer_wait(void);
-extern s32 rsin(s32 angle);
-extern s32 rcos(s32 angle);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
 extern void func_8001fde4();

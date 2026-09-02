@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 
 extern void lighting_set_active_color_matrix(s32 index);
-extern void SetGeomScreen(s32 h);
 extern void tmd_select(u16 slot);
 extern void tmd_select_object_vertices(u16 object_index);
 extern KfTmdObject *tmd_get_object(u16 object_index);

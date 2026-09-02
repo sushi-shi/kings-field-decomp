@@ -78,7 +78,6 @@ int angle_mod_delta_le_half_turn(int lhs, int rhs)
 }
 
 /* Psy-Q LIBGTE: catan(long) returns a 12-bit angle for a 12-bit fixed ratio. */
-extern s32 catan(s32 ratio);
 
 /*
  * Heading of the (x, z) offset as a 12-bit angle; the division carries the

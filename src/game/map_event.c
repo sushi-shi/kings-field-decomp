@@ -8,7 +8,6 @@ extern KfMapEvent map_event_pool[8];
 extern u8 map_floor_height_grid[100][100];
 extern void func_8001fde4(s32 first, s32 second);
 extern void frame_pacer_wait(void);
-extern s32 SquareRoot0(s32 value);
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 /* Called with the cell pair only; its third candidate parameter is not passed here. */

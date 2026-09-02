@@ -4,7 +4,6 @@
 extern KfPlayerState player_state;
 
 /* Psy-Q LIBGTE: SquareRoot0. */
-extern s32 SquareRoot0(s32 value);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void camera_path_compute_segment(KfCameraPathState *path);
 

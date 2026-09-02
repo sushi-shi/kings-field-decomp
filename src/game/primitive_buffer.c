@@ -13,7 +13,6 @@ struct PolyFT4_8002accc {
 };
 
 extern struct PolyFT4_8002accc *current_poly_ft4;
-extern void SetPolyFT4(struct PolyFT4_8002accc *primitive);
 
 
 ADDRESS(0x8002accc, 0x50)

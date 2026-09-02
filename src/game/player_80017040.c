@@ -7,13 +7,10 @@ extern u8 map_collision_grid[100][100];
 extern u8 map_floor_height_grid[100][100];
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 /* Psy-Q LIBGTE: rsin, rcos. */
-extern s32 rsin(s32 angle);
-extern s32 rcos(s32 angle);
 extern u32 collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
 /* Psy-Q LIBGTE: long SquareRoot0(long a); */
-extern s32 SquareRoot0(s32 value);
 extern s32 player_distance_to_point(
     s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height);
 

@@ -127,7 +127,6 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
     }
 }
 
-extern s32 SquareRoot0(s32 value);
 
 extern s32 map_object_distance_to_point(
     const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);

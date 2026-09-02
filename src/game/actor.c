@@ -36,7 +36,6 @@ extern void player_apply_damage(
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 /* Psy-Q LIBGTE: long SquareRoot0(long a). */
-extern s32 SquareRoot0(s32 value);
 extern void audio_play_spatial_range(
     const SoundRef *sound,
     const struct KfVec4i *position,

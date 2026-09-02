@@ -15,7 +15,6 @@ extern void *memset();
 extern s32 OpenEvent(u32 descriptor, s32 spec, s32 mode, void (*handler)(void));
 extern s32 EnableEvent(s32 event);
 extern s32 CloseEvent(s32 event);
-extern s32 SetDispMask(s32 mask);
 
 extern void memory_card_initialize(void);
 extern void memory_set_allocation_mode(s32 arg0);

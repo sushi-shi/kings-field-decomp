@@ -1,8 +1,5 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <SYS/TYPES.H>
-#include <LIBGTE.H>
-#include <LIBGPU.H>
 
 extern KfDisplayState display_state;
 

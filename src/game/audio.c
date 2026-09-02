@@ -20,7 +20,6 @@ extern u32 cd_file_load_into(void *destination, const char *path);
 extern s16 func_800468d8(u8 *sequence, s16 vab_id);
 extern void func_8004a344(s16 sequence_id);
 extern void func_8004b6e0(s16 sequence_id);
-extern s32 VSync(s32 mode);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
 extern void SsSetTickMode(s32 tick_mode);
@@ -39,9 +38,6 @@ extern s16 SsUtKeyOn(
     s16 vab_id, s16 program, s16 tone, s16 note, s16 fine, s16 left, s16 right);
 extern s16 SsUtKeyOff(s16 voice, s16 vab_id, s16 program, s16 tone, s16 note);
 extern s32 SsVoKeyOff(s32 voice, s32 program_tone);
-extern s32 SquareRoot0(s32 value);
-extern s32 rsin(s32 angle);
-extern s32 rcos(s32 angle);
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern int printf();

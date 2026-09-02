@@ -2,6 +2,7 @@
 #define KF_SEMANTIC_TYPES_H
 
 #include <kf/game_types.h>
+#include <kf/psyq.h>
 
 /*
  * Layout identities supported by the semantic inventory. Their original

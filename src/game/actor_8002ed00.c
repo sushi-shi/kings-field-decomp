@@ -7,8 +7,6 @@ extern KfActorState actor_state;
 
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, struct KfMatrix *matrix);
-extern struct KfVec4i *ApplyMatrix(
-    struct KfMatrix *matrix, struct KfVec4s *vector, struct KfVec4i *result);
 extern s32 player_distance_to_point_in_cone(
     const struct KfVec3i *point, s16 facing, s32 max_distance, s32 angle_tolerance);
 extern s32 vector_xz_to_angle(s32 x, s32 z);

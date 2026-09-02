@@ -6,7 +6,6 @@ extern KfRenderState render_state;
 extern KfPlayerState player_state;
 
 /* Psy-Q LIBGTE: void ReadColorMatrix(MATRIX *m). */
-extern void ReadColorMatrix(struct KfMatrix *matrix);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void player_equip_weapon(u8 weapon_id);
 extern void player_set_equipment_slot(u8 item_id, u8 slot);

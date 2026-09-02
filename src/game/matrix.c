@@ -14,10 +14,7 @@ extern void matrix_interpolate(
     const struct KfMatrix *to,
     struct KfMatrix *matrix,
     s32 blend);
-extern void SetColorMatrix(struct KfMatrix *matrix);
-extern void SetLightMatrix(struct KfMatrix *matrix);
 
-extern void SetFogNear(s32 distance, s32 projection);
 
 ADDRESS(0x800202fc, 0x68)
 void matrix_interpolate(

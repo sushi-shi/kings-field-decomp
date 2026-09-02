@@ -1,6 +1,5 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <SYS/TYPES.H>
 
 extern void audio_stop_sequence_fade(void);
 extern void effect_pool_reset(void);

@@ -1,19 +1,11 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <SYS/TYPES.H>
-#include <LIBGTE.H>
-#include <LIBGPU.H>
 
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
 extern KfRenderState render_state;
 
 extern u32 func_80050544(u32 mode);
-extern void InitGeom(void);
-extern void SetGeomOffset(s32 ofx, s32 ofy);
-extern void SetBackColor(s32 r, s32 g, s32 b);
-extern void SetFarColor(s32 r, s32 g, s32 b);
-extern void SetFogNear(s32 distance, s32 projection);
 extern void lighting_set_active_color_matrix(s32 index);
 extern void render_initialize(void);
 

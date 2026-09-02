@@ -34,7 +34,6 @@ void color_matrix_set_rgb(s16 red, s16 green, s16 blue, struct KfMatrix *matrix)
 
 extern KfPlayerState player_state;
 /* Psy-Q LIBGTE: ReadColorMatrix(MATRIX *). */
-extern void ReadColorMatrix(struct KfMatrix *matrix);
 
 /* Cycles the colour matrix green, cyan, white and back while restoring HP and MP. */
 ADDRESS(0x80033e10, 0xd4)

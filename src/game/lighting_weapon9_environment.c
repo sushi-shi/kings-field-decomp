@@ -3,10 +3,8 @@
 
 extern KfRenderState render_state;
 
-extern void ReadColorMatrix(struct KfMatrix *matrix);
 extern void lighting_set_color_matrix(
     const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
-extern void SetFogNear(s32 distance, s32 projection);
 
 extern struct KfMatrix color_matrix_table[7];
 

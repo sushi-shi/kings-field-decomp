@@ -3,8 +3,6 @@
 
 extern KfPlayerState player_state;
 /* Psy-Q LIBGTE: RotMatrix(SVECTOR *r, MATRIX *m); ApplyMatrix(MATRIX *m, SVECTOR *v, VECTOR *rv). */
-extern struct KfMatrix *RotMatrix(struct KfVec4s *rotation, struct KfMatrix *matrix);
-extern struct KfVec4i *ApplyMatrix(struct KfMatrix *matrix, struct KfVec4s *vector, struct KfVec4i *result);
 extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
 /*
  * The actor index reaches actor_apply_damage untruncated, so this call site
