@@ -342,6 +342,12 @@ source = "src/game/func_8001fae4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_8001fdc8"
+image = "GAME.EXE"
+source = "src/game/func_8001fdc8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.matrix"
 image = "GAME.EXE"
 source = "src/game/matrix.c"
@@ -486,9 +492,27 @@ source = "src/game/func_800346a0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_800356e8"
+image = "GAME.EXE"
+source = "src/game/func_800356e8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_800365f8"
+image = "GAME.EXE"
+source = "src/game/func_800365f8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_80036e30"
 image = "GAME.EXE"
 source = "src/game/func_80036e30.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8003ac4c"
+image = "GAME.EXE"
+source = "src/game/func_8003ac4c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
