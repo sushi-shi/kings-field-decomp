@@ -110,18 +110,18 @@ s32 map_event_distance_to_point(
     s32 delta_z;
     s32 distance;
 
-    if (delta_x < -max_distance || max_distance < delta_x) {
-        return -1;
+    if (delta_x >= -max_distance && delta_x <= max_distance) {
+        delta_z = event->reference_z - point_z;
+        if (delta_z >= -max_distance && delta_z <= max_distance) {
+            delta_x >>= 3;
+            delta_z >>= 3;
+            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << 3;
+            if (distance <= max_distance) {
+                return distance;
+            }
+        }
     }
-    delta_z = event->reference_z - point_z;
-    if (delta_z < -max_distance || max_distance < delta_z) {
-        return -1;
-    }
-    distance = SquareRoot0((delta_x >> 3) * (delta_x >> 3) + (delta_z >> 3) * (delta_z >> 3)) << 3;
-    if (max_distance < distance) {
-        return -1;
-    }
-    return distance;
+    return -1;
 }
 
 ADDRESS(0x80033b8c, 0x144)

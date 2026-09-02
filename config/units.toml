@@ -188,6 +188,12 @@ source = "src/game/map_object_definitions.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map_object_pool_80031450"
+image = "GAME.EXE"
+source = "src/game/map_object_pool_80031450.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.map_object"
 image = "GAME.EXE"
 source = "src/game/map_object.c"
@@ -251,4 +257,10 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.func_80045f7c"
 image = "GAME.EXE"
 source = "src/game/func_80045f7c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "psx.main"
+image = "PSX.EXE"
+source = "src/psx/main.c"
 profile = "probe-gcc257-o2-g0"
