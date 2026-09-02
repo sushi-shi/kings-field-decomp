@@ -288,6 +288,12 @@ source = "src/game/audio_play_current_map_sequence.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.display"
+image = "GAME.EXE"
+source = "src/game/display.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.tmd"
 image = "GAME.EXE"
 source = "src/game/tmd.c"

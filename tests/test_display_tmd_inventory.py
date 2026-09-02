@@ -52,11 +52,10 @@ PAIRS = (
 
 STATE = {
     "GAME.EXE": {
-        0x80070EA0: ("primitive_buffers", 0x18, "KfPrimitiveBuffer[2]"),
-        0x80070EB8: ("primitive_buffer", 0x04, "KfPrimitiveBuffer *"),
+        0x80070E98: ("display_state", 0x20028, "KfDisplayState"),
         0x80090EC0: ("display_draw_environments", 0xB8, "DRAWENV[2]"),
         0x80090F78: ("display_disp_environments", 0x28, "DISPENV[2]"),
-        0x80090FA8: ("tmd_slots", 0x20, "u8 *[8]"),
+        0x80090FA8: ("tmd_state", 0x24, "KfTmdState"),
         0x800910BC: ("current_tmd_vertices", 0x04, "KfVec4s *"),
         0x80095744: ("render_view_position", 0x10, "KfVec4i"),
         0x80095754: ("render_view_rotation", 0x08, "KfVec4s"),

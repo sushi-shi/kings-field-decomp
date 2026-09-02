@@ -99,6 +99,13 @@ KfCollisionTarget	0x00	0x10	position	KfVec4i	supported	semantic_types.h;game_sem
 KfCollisionTarget	0x10	0x08	rotation	KfVec4s	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
 KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
+KfDisplayState	0x00	0x01	buffer_index	u8	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
@@ -187,6 +194,7 @@ KfMapObjectPlacement	0x00	0x14	bytes	u8[20]	opaque	semantic_types.h;runtime-stri
 KfMatrix	0x00	0x12	m	s16[3][3]	supported	game_types.h;Psy-Q-LIBGTE	3x3 rotation matrix
 KfMatrix	0x12	0x02	pad	s16	opaque	game_types.h;Psy-Q-LIBGTE	alignment/reserved lane
 KfMatrix	0x14	0x0c	t	s32[3]	supported	game_types.h;Psy-Q-LIBGTE	translation vector
+KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	semantic_types.h;asm;xrefs	current POWER charge
@@ -321,6 +329,8 @@ KfTmdObject	0x0c	0x04	normal_count	u32	supported	semantic_types.h;game_semantic_
 KfTmdObject	0x10	0x04	primitive_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
 KfTmdObject	0x14	0x04	primitive_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop
 KfTmdObject	0x18	0x04	scale	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
+KfTmdState	0x00	0x20	slots	u8 *[8]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdState	0x20	0x04	current_asset	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
 KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate

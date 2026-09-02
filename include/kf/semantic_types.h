@@ -724,4 +724,45 @@ typedef char KfAudioState_size_is_144[(sizeof(KfAudioState) == 0x90) ? 1 : -1];
 
 /* === end map-audio === */
 
+/* One reversed ordering table of 0x4000 entries (ClearOTagR/DrawOTag). */
+typedef struct KfOrderingTable {
+    u32 entries[0x4000];
+} KfOrderingTable;
+
+typedef char KfOrderingTable_size_is_0x10000[(sizeof(KfOrderingTable) == 0x10000) ? 1 : -1];
+
+
+/* === display_state layout === */
+/*
+ * Double-buffered display state. display_begin_frame addresses the primitive
+ * buffers (+8) and the ordering tables (+0x24) from the buffer index through
+ * one base register, so the block is one object in the original source.
+ */
+typedef struct KfDisplayState {
+    u8 buffer_index;
+    u8 unknown_01[3];
+    void *asset_load_buffer;
+    KfPrimitiveBuffer primitive_buffers[2];
+    KfPrimitiveBuffer *primitive_buffer;
+    KfOrderingTable ordering_tables[2];
+    u32 *ordering_table;
+} KfDisplayState;
+
+typedef char KfDisplayState_size_is_0x20028[(sizeof(KfDisplayState) == 0x20028) ? 1 : -1];
+/* === end display_state === */
+
+
+/* === tmd_state layout === */
+/*
+ * Registered TMD slots and the selected asset. tmd_register addresses the slot
+ * table 32 bytes below the current-asset pointer through one base register.
+ */
+typedef struct KfTmdState {
+    u8 *slots[8];
+    void *current_asset;
+} KfTmdState;
+
+typedef char KfTmdState_size_is_0x24[(sizeof(KfTmdState) == 0x24) ? 1 : -1];
+/* === end tmd_state === */
+
 #endif

@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfDisplayState display_state;
+
 struct PolyFT4_8002accc {
     u32 tag;
     u8 r0;
@@ -13,9 +15,6 @@ struct PolyFT4_8002accc {
 extern struct PolyFT4_8002accc *current_poly_ft4;
 extern void SetPolyFT4(struct PolyFT4_8002accc *primitive);
 
-extern u32 *ordering_table;
-extern KfPrimitiveBuffer *primitive_buffer;
-extern void AddPrim(u32 *ordering_table, void *primitive);
 
 ADDRESS(0x8002accc, 0x50)
 void primitive_buffer_begin_poly_ft4(void)
@@ -30,7 +29,7 @@ ADDRESS(0x8002ad1c, 0x50)
 void primitive_buffer_commit_poly_ft4(s32 depth)
 {
     depth <<= 2;
-    AddPrim((u32 *)((u8 *)ordering_table + depth), current_poly_ft4);
+    AddPrim((u32 *)((u8 *)display_state.ordering_table + depth), current_poly_ft4);
     current_poly_ft4++;
-    primitive_buffer->cursor = (u8 *)current_poly_ft4;
+    display_state.primitive_buffer->cursor = (u8 *)current_poly_ft4;
 }

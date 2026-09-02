@@ -5,6 +5,8 @@
 #include <LIBGTE.H>
 #include <LIBGPU.H>
 
+extern KfDisplayState display_state;
+
 /* Jump tables and string literals of this unit in the retail data region. */
 RODATA(0x8001235c, 0x178)
 
@@ -71,11 +73,6 @@ extern u32 DAT_8009ddb4[];
 extern u8 DAT_800652a8[];
 extern u8 DAT_8009ce60[];
 
-extern u8 display_buffer_index;
-extern void *asset_load_buffer;
-extern KfPrimitiveBuffer *primitive_buffer;
-extern u32 ordering_tables[2][0x4000];
-extern u32 *ordering_table;
 extern DRAWENV display_draw_environments[2];
 
 extern void *memory_allocate(s32 size);
@@ -770,7 +767,7 @@ s32 menu_load_message_image(s32 message_id)
         path[5] = message_id / 100 + '0';
         path[6] = remainder / 10 + '0';
         path[7] = remainder % 10 + '0';
-        buffer = primitive_buffer->cursor;
+        buffer = display_state.primitive_buffer->cursor;
         if (cd_file_load_into(buffer, path) != 0) {
             return 1;
         }
@@ -827,15 +824,15 @@ void screen_show_image_until_input(const char *path)
     polygon.v3 = 0x80;
     polygon.clut = GetClut(0, 0x1f5);
     polygon.tpage = GetTPage(0, 0, 0x3c0, 0x100);
-    if (cd_file_load_into(asset_load_buffer, path) != 0) {
+    if (cd_file_load_into(display_state.asset_load_buffer, path) != 0) {
         return;
     }
-    tim_upload_images(asset_load_buffer);
-    index = display_buffer_index == 0;
+    tim_upload_images(display_state.asset_load_buffer);
+    index = display_state.buffer_index == 0;
     display_draw_environments[index].isbg = 0;
     display_draw_environments[index].dfe = 0;
     PutDrawEnv(&display_draw_environments[index]);
-    ordering_table = ordering_tables[index];
+    display_state.ordering_table = display_state.ordering_tables[index].entries;
     for (;;) {
         if (brightness < 127) {
             brightness++;
@@ -843,10 +840,10 @@ void screen_show_image_until_input(const char *path)
             polygon.g0 = brightness;
             polygon.b0 = brightness;
         }
-        ClearOTagR(ordering_table, 0x4000);
-        AddPrim(ordering_table, &polygon);
+        ClearOTagR(display_state.ordering_table, 0x4000);
+        AddPrim(display_state.ordering_table, &polygon);
         DrawSync(0);
-        DrawOTag(&ordering_table[0x3fff]);
+        DrawOTag(&display_state.ordering_table[0x3fff]);
         if (pressed == 0) {
             if (func_8005012c(1) == 0) {
                 pressed = 1;
