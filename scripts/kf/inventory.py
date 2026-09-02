@@ -13,6 +13,8 @@ Address-derived names are explicit unresolved identities, not semantic claims.
 
 from __future__ import annotations
 
+import bisect
+
 import argparse
 import json
 import re
@@ -588,6 +590,19 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
         if row["target_region"] == "bss"
         and row["status"] != "rejected"
     }
+    bss_targets_by_image: dict[str, list[int]] = {}
+    for image, target in bss_starts:
+        bss_targets_by_image.setdefault(image, []).append(target)
+    for targets in bss_targets_by_image.values():
+        targets.sort()
+
+    def bss_interior_evidence(row: DataIdentity) -> bool:
+        # An aggregate whose members are what code references (matrices reached
+        # by folded offsets from a sibling field, for example) is evidenced by
+        # any BSS relocation inside its extent, not only at its first byte.
+        targets = bss_targets_by_image.get(row.image, [])
+        index = bisect.bisect_left(targets, row.va)
+        return index < len(targets) and targets[index] < row.va + row.size
     data = load_data_identities(config_dir)
     data_path = config_dir / "data_identities.tsv"
     ordered_data = list(data)
@@ -604,7 +619,12 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
             < row.va + row.size
             <= 0x80200000
         )
-        if key not in data_starts and key not in bss_starts and not ghidra_bss:
+        if (
+            key not in data_starts
+            and key not in bss_starts
+            and not ghidra_bss
+            and not (row.storage == "bss" and bss_interior_evidence(row))
+        ):
             raise ValueError(
                 f"{data_path}: identity lacks structural/BSS evidence {key!r}"
             )

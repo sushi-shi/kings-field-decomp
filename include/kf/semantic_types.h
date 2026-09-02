@@ -59,16 +59,166 @@ typedef struct KfPrimitiveBuffer {
     u8 *cursor;
 } KfPrimitiveBuffer;
 
-/* Standard 0x1c-byte object-table record in an unlinked TMD payload. */
+/*
+ * 12-byte header of an unlinked TMD payload.  The format stores the object
+ * count as a 32-bit word; the game reads only its low halfword (lhu).
+ */
+typedef struct KfTmdHeader {
+    u32 id;
+    u32 flags;
+    u16 object_count;
+    u16 object_count_high;
+} KfTmdHeader;
+
+/*
+ * Standard 0x1c-byte object-table record in an unlinked TMD payload.  The
+ * primitive count is read as a halfword (lhu) by the index preparation loop.
+ */
 typedef struct KfTmdObject {
     u32 vertex_offset;
     u32 vertex_count;
     u32 normal_offset;
     u32 normal_count;
     u32 primitive_offset;
-    u32 primitive_count;
+    u16 primitive_count;
+    u16 primitive_count_high;
     s32 scale;
 } KfTmdObject;
+
+/*
+ * TMD primitive packet bodies that follow the 4-byte packet header
+ * (olen, ilen, flag, mode).  n0..n3 are normal indices, v0..v3 vertex
+ * indices, and tu/tv texture coordinates.  Layouts follow the Psy-Q TMD format.
+ */
+typedef struct KfTmdF3 {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 mode;
+    u16 n0;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+} KfTmdF3;
+
+typedef struct KfTmdG3 {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 mode;
+    u16 n0;
+    u16 v0;
+    u16 n1;
+    u16 v1;
+    u16 n2;
+    u16 v2;
+} KfTmdG3;
+
+typedef struct KfTmdF4 {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 mode;
+    u16 n0;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u16 v3;
+    u16 pad;
+} KfTmdF4;
+
+typedef struct KfTmdG4 {
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 mode;
+    u16 n0;
+    u16 v0;
+    u16 n1;
+    u16 v1;
+    u16 n2;
+    u16 v2;
+    u16 n3;
+    u16 v3;
+} KfTmdG4;
+
+typedef struct KfTmdFt3 {
+    u8 tu0;
+    u8 tv0;
+    u16 cba;
+    u8 tu1;
+    u8 tv1;
+    u16 tsb;
+    u8 tu2;
+    u8 tv2;
+    u16 pad;
+    u16 n0;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+} KfTmdFt3;
+
+typedef struct KfTmdGt3 {
+    u8 tu0;
+    u8 tv0;
+    u16 cba;
+    u8 tu1;
+    u8 tv1;
+    u16 tsb;
+    u8 tu2;
+    u8 tv2;
+    u16 pad;
+    u16 n0;
+    u16 v0;
+    u16 n1;
+    u16 v1;
+    u16 n2;
+    u16 v2;
+} KfTmdGt3;
+
+typedef struct KfTmdFt4 {
+    u8 tu0;
+    u8 tv0;
+    u16 cba;
+    u8 tu1;
+    u8 tv1;
+    u16 tsb;
+    u8 tu2;
+    u8 tv2;
+    u16 pad0;
+    u8 tu3;
+    u8 tv3;
+    u16 pad1;
+    u16 n0;
+    u16 v0;
+    u16 v1;
+    u16 v2;
+    u16 v3;
+    u16 pad2;
+} KfTmdFt4;
+
+typedef struct KfTmdGt4 {
+    u8 tu0;
+    u8 tv0;
+    u16 cba;
+    u8 tu1;
+    u8 tv1;
+    u16 tsb;
+    u8 tu2;
+    u8 tv2;
+    u16 pad0;
+    u8 tu3;
+    u8 tv3;
+    u16 pad1;
+    u16 n0;
+    u16 v0;
+    u16 n1;
+    u16 v1;
+    u16 n2;
+    u16 v2;
+    u16 n3;
+    u16 v3;
+} KfTmdGt4;
 
 /*
  * Optional output from the world collision query.  The query copies a
@@ -439,6 +589,15 @@ typedef char KfTmdObject_primitive_offset_offset_is_16[
     (KF_OFFSET_OF(KfTmdObject, primitive_offset) == 0x10) ? 1 : -1];
 typedef char KfTmdObject_primitive_count_offset_is_20[
     (KF_OFFSET_OF(KfTmdObject, primitive_count) == 0x14) ? 1 : -1];
+typedef char KfTmdHeader_size_is_12[(sizeof(KfTmdHeader) == 0xc) ? 1 : -1];
+typedef char KfTmdF3_size_is_12[(sizeof(KfTmdF3) == 0xc) ? 1 : -1];
+typedef char KfTmdG3_size_is_16[(sizeof(KfTmdG3) == 0x10) ? 1 : -1];
+typedef char KfTmdF4_size_is_16[(sizeof(KfTmdF4) == 0x10) ? 1 : -1];
+typedef char KfTmdG4_size_is_20[(sizeof(KfTmdG4) == 0x14) ? 1 : -1];
+typedef char KfTmdFt3_size_is_20[(sizeof(KfTmdFt3) == 0x14) ? 1 : -1];
+typedef char KfTmdGt3_size_is_24[(sizeof(KfTmdGt3) == 0x18) ? 1 : -1];
+typedef char KfTmdFt4_size_is_28[(sizeof(KfTmdFt4) == 0x1c) ? 1 : -1];
+typedef char KfTmdGt4_size_is_32[(sizeof(KfTmdGt4) == 0x20) ? 1 : -1];
 typedef char KfTmdObject_scale_offset_is_24[
     (KF_OFFSET_OF(KfTmdObject, scale) == 0x18) ? 1 : -1];
 typedef char KfAudioVoiceSlots_vab_ids_offset_is_20[
@@ -764,5 +923,32 @@ typedef struct KfTmdState {
 
 typedef char KfTmdState_size_is_0x24[(sizeof(KfTmdState) == 0x24) ? 1 : -1];
 /* === end tmd_state === */
+
+
+/* === render_state layout === */
+/*
+ * Render state. render_set_view_transform reaches the view and pitch matrices
+ * from the rotation (-180, -148) and render_initialize reaches the quadrant
+ * matrices from the light matrix (+128..+224) through one base register, so
+ * the block is one object in the original source. The light products that
+ * follow (light_quadrant_matrices) are addressed absolutely there, so they are
+ * a separate object. Matrix roles follow the GTE calls that fill them; the
+ * light matrix values are three direction rows.
+ */
+typedef struct KfRenderState {
+    struct KfMatrix view_matrix;
+    struct KfMatrix pitch_matrix;
+    struct KfMatrix light_matrix;
+    struct KfMatrix light_matrix_copy;
+    struct KfMatrix unknown_80;
+    s32 fog_near_distance;
+    struct KfVec4i view_position;
+    struct KfVec4s view_rotation;
+    struct KfVecXZs view_cell;
+    struct KfMatrix quadrant_matrices[4];
+} KfRenderState;
+
+typedef char KfRenderState_size_is_0x140[(sizeof(KfRenderState) == 0x140) ? 1 : -1];
+/* === end render_state === */
 
 #endif

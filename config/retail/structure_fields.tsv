@@ -310,6 +310,16 @@ KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner bac
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
 KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
+KfRenderState	0x00	0x20	view_matrix	KfMatrix	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x20	0x20	pitch_matrix	KfMatrix	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x40	0x20	light_matrix	KfMatrix	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x60	0x20	light_matrix_copy	KfMatrix	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x80	0x20	unknown_80	KfMatrix	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa4	0x10	view_position	KfVec4i	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xb4	0x08	view_rotation	KfVec4s	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xc0	0x80	quadrant_matrices	KfMatrix[4]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
@@ -322,12 +332,123 @@ KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	semantic_types.h;save_f
 KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	semantic_types.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
+KfTmdF3	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x08	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x0a	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF4	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x08	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x0a	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x0c	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x0e	0x02	pad	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdFt3	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x0a	0x02	pad	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x0c	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x0e	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x10	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x12	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt4	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0a	0x02	pad0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0c	0x01	tu3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0d	0x01	tv3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0e	0x02	pad1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x10	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x12	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x14	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x16	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x18	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x1a	0x02	pad2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdG3	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x08	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x0a	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x0c	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x0e	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG4	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x08	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x0a	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x0c	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x0e	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x10	0x02	n3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x12	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdGt3	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x0a	0x02	pad	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x0c	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x0e	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x10	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x12	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x14	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x16	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt4	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0a	0x02	pad0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0c	0x01	tu3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0d	0x01	tv3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0e	0x02	pad1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x10	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x12	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x14	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x16	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x18	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x1a	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x1c	0x02	n3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x1e	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdHeader	0x00	0x04	id	u32	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x04	0x04	flags	u32	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x08	0x02	object_count	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x0a	0x02	object_count_high	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
 KfTmdObject	0x00	0x04	vertex_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
 KfTmdObject	0x04	0x04	vertex_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record
 KfTmdObject	0x08	0x04	normal_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	offset from the TMD object-table base to the normal array
 KfTmdObject	0x0c	0x04	normal_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	normal count in the standard object record
 KfTmdObject	0x10	0x04	primitive_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
-KfTmdObject	0x14	0x04	primitive_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop
+KfTmdObject	0x14	0x02	primitive_count	u16	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop; read as a halfword (lhu)
+KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	upper halfword of the 32-bit TMD primitive count, unread by the game
 KfTmdObject	0x18	0x04	scale	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
 KfTmdState	0x00	0x20	slots	u8 *[8]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdState	0x20	0x04	current_asset	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate

@@ -57,8 +57,8 @@ STATE = {
         0x80090F78: ("display_disp_environments", 0x28, "DISPENV[2]"),
         0x80090FA8: ("tmd_state", 0x24, "KfTmdState"),
         0x800910BC: ("current_tmd_vertices", 0x04, "KfVec4s *"),
-        0x80095744: ("render_view_position", 0x10, "KfVec4i"),
-        0x80095754: ("render_view_rotation", 0x08, "KfVec4s"),
+        0x800956A0: ("render_state", 0x140, "KfRenderState"),
+        0x800957E0: ("light_quadrant_matrices", 0x80, "KfMatrix[4]"),
     },
     "OPEN.EXE": {
         0x80049A50: ("primitive_buffers", 0x18, "KfPrimitiveBuffer[2]"),
@@ -115,7 +115,8 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         }
         self.assertEqual(tmd["vertex_offset"], (0x00, 4, "u32"))
         self.assertEqual(tmd["primitive_offset"], (0x10, 4, "u32"))
-        self.assertEqual(tmd["primitive_count"], (0x14, 4, "u32"))
+        self.assertEqual(tmd["primitive_count"], (0x14, 2, "u16"))
+        self.assertEqual(tmd["primitive_count_high"], (0x16, 2, "u16"))
         self.assertEqual(tmd["scale"], (0x18, 4, "s32"))
 
     def test_image_qualified_state_owns_interior_addresses(self) -> None:

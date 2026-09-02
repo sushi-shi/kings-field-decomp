@@ -210,5 +210,37 @@ Open residues (not steered):
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
 | `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `func_80014268` `0x80014268` |
-| the same frame in a leaf without a loop | not reproduced by parameter masking, copies, or pointer locals; open | `tmd_select` `0x8001c0e8` |
+| the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_asset = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
+| the same frame in `tmd_prepare_primitive_indices` `0x8001c2b0` | not reproduced; the function stores nothing to a global, so the folded pseudo must come from another expression; open | residue |
 
+
+## render
+
+Witnesses come from `src/game/render.c` (`game.render`, one interleaved
+band: render, display, tmd, render, tmd). The GCC 2.5.8 sources
+(`ftp.gnu.org/old-gnu/gcc/gcc-2.5.8.tar.gz`; 2.5.7 is not archived and the
+two generate identical code) explain several of the rows.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `lui v1,&s.b; addiu v0,v1,-32; ... sw a1,0(a0); jal; sw a1,0(v1)` (second store's address materialised first, first store's base derived from it) | chained assignment `s.b = s.array[i] = value;` the destination of the outer assignment is expanded first, CSE's related-value pass derives the array base from it | `tmd_register` `0x8001c5b0` |
+| `move a0,s0; lui a2,&other; addiu a2; jal MulMatrix0; addiu a1,s0,128` (one argument folded from a base register, the next absolute) | the folded operand lives in the same object as the base register; the absolute one is a separate global. CSE folds `sym+k` only against registers holding the same symbol, so an absolute address next to a folded one is boundary evidence | `render_initialize` `0x8001bce0` (`light_quadrant_matrices` split from `render_state`) |
+| `lw v0,0(a2); srl v0,v0,0x18; andi v0,0xfd` beside `lbu v1,1(a2)` | `word = *(u32 *)packet;` as its own statement, then `switch ((word >> 24) & 0xfd)`; writing `mode = *(u32 *)packet >> 24` lets combine turn the load and shift into `lbu 3(a2)` | `tmd_prepare_primitive_indices` `0x8001c2b0` |
+| `lhu v0,n; beqz v0,exit; addiu t0,v0,-1` then a bottom test `move v0,t0; andi; bnez; addu t0,t0,t1` (`t1 = 0xffff`) | `count = field; if (count == 0) return; left = count - 1; do { ... } while (left-- != 0);` with `u16` locals. `while (count--)` on a promoted `u16` copies before the entry test (`move; andi`), and `for (i = 0; i < n; i++)` is never reversed because 2.5.8's `check_dbra_loop` needs a constant bound | same |
+| inner `lhu a0,4(a3); beqz a0,skip; addu a1,a0,t1` | `count = object->field; if (count != 0) { left = count; left--; do {...} while (left-- != 0); }`; `left = count - 1` computes in `int` and prints `addiu -1` | same |
+| giv base on the earlier field (`addiu a3,v1,28`, `lw 0(a3)`, `lhu 4(a3)`) | read the later field first in source; loop.c makes the last-referenced field the combined giv base, and the scheduler then orders the loads by path length (`(offset + 12) + base` gives the offset load the longer path) | same |
+
+Residues left in the same module (not steered):
+
+- `render_set_view_transform` `0x8001c184`: retail copies the rotation
+  through `a1` (a block-move scratch holding the constant address) and
+  re-materialises `a0 = &render_state.view_rotation` for `RotMatrix`; every
+  copy spelling and every flag sweep ties the copy address to the argument
+  register instead. In the 2.5.8 sources `update_equiv_regs` replaces a
+  constant-equivalent pseudo used exactly once in another basic block, so the
+  original probably placed the copy and the call in different blocks in a way
+  not yet found.
+- `tmd_prepare_primitive_indices` `0x8001c2b0`: the unused 8-byte frame and a
+  second `tmd_state.current_asset` load that sits before the guard branch
+  without being merged by CSE (`cse_end_of_basic_block` follows a conditional
+  jump only when its label is used once and preceded by a barrier).

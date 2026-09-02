@@ -1,5 +1,7 @@
 #include <kf/address.h>
-#include <kf/game_types.h>
+#include <kf/semantic_types.h>
+
+extern KfRenderState render_state;
 
 /*
  * Retail loads every element unsigned (lhu) and sign-extends the operands of
@@ -15,7 +17,6 @@ extern void matrix_interpolate(
 extern void SetColorMatrix(struct KfMatrix *matrix);
 extern void SetLightMatrix(struct KfMatrix *matrix);
 
-extern s32 fog_near_distance;
 extern void SetFogNear(s32 distance, s32 projection);
 
 ADDRESS(0x800202fc, 0x68)
@@ -69,13 +70,13 @@ void fog_interpolate_near(s32 start, s32 end, s32 ratio)
 
     distance += ((end - distance) * ratio) >> 12;
 
-    fog_near_distance = distance;
+    render_state.fog_near_distance = distance;
     SetFogNear(distance, 200);
 }
 
 ADDRESS(0x80020400, 0x28)
 void fog_set_near(s32 distance)
 {
-    fog_near_distance = distance;
+    render_state.fog_near_distance = distance;
     SetFogNear(distance, 200);
 }

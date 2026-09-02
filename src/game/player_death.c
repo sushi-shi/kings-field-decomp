@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfRenderState render_state;
+
 extern KfPlayerState player_state;
 
 /* Psy-Q LIBGTE: void ReadColorMatrix(MATRIX *m). */
@@ -18,7 +20,6 @@ extern void game_state_initialize(void);
 
 extern SoundRef player_sound_refs[3];
 extern struct KfMatrix player_death_saved_color_matrix;
-extern s32 fog_near_distance;
 extern s32 player_death_saved_fog_near;
 
 extern KfPlayerLevelGrowth player_level_growth_table[40];
@@ -34,7 +35,7 @@ void player_death_begin(void)
     player_state.death_visual_blend = 0;
     sound_ref_play(&player_sound_refs[1], 0x7f);
     ReadColorMatrix(&player_death_saved_color_matrix);
-    player_death_saved_fog_near = fog_near_distance;
+    player_death_saved_fog_near = render_state.fog_near_distance;
 }
 
 /*

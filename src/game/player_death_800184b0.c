@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfRenderState render_state;
+
 extern KfPlayerState player_state;
 
 extern void lighting_set_color_matrix(
@@ -15,7 +17,6 @@ extern void player_death_restart(void);
 extern void player_death_apply_visual_fade(const struct KfMatrix *color_from, s32 blend);
 
 extern struct KfMatrix color_matrix_table[7];
-extern struct KfMatrix DAT_80095720;
 extern s32 player_death_saved_fog_near;
 extern u8 DAT_80095064;
 extern struct KfMatrix player_death_saved_color_matrix;
@@ -28,7 +29,7 @@ ADDRESS(0x800184b0, 0x90)
 void player_death_apply_visual_fade(const struct KfMatrix *color_from, s32 blend)
 {
     lighting_set_color_matrix(color_from, &color_matrix_table[4], blend);
-    matrix_interpolate(&color_matrix_table[3], &color_matrix_table[4], &DAT_80095720, blend);
+    matrix_interpolate(&color_matrix_table[3], &color_matrix_table[4], &render_state.unknown_80, blend);
     fog_interpolate_near(player_death_saved_fog_near, 0, blend);
     DAT_80095064 = ((blend * -86) >> 12) + 86;
 }
@@ -77,7 +78,7 @@ void player_death_update_reverse_fade(void)
     s16 *blend = &player_state.death_visual_blend;
 
     lighting_set_color_matrix(&color_matrix_table[4], &color_matrix_table[0], *blend);
-    matrix_interpolate(&color_matrix_table[4], &color_matrix_table[3], &DAT_80095720, *blend);
+    matrix_interpolate(&color_matrix_table[4], &color_matrix_table[3], &render_state.unknown_80, *blend);
     fog_interpolate_near(0, player_death_saved_fog_near, *blend);
     DAT_80095064 = (*blend * 86) >> 12;
     *blend += 100;

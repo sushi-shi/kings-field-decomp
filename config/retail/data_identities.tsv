@@ -1395,10 +1395,10 @@ GAME.EXE	0x80055d90	0x1	DAT_80055d90	unknown	load	undefined1		address-only	data.
 GAME.EXE	0x80055d96	0x2	DAT_80055d96	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055d98	0x2	DAT_80055d98	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055d9a	0x2	DAT_80055d9a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055dac	0x2	DAT_80055dac	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055dae	0x2	DAT_80055dae	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055db4	0x2	DAT_80055db4	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055db6	0x2	DAT_80055db6	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055dac	0x2	DAT_80055dac	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055dae	0x2	DAT_80055dae	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055db4	0x2	DAT_80055db4	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055db6	0x2	DAT_80055db6	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055dbc	0xe0	color_matrix_table	unknown	load	KfMatrix[7]	lighting	supported	asm;xrefs;player_death_apply_visual_fade;player_death_update_reverse_fade;32-byte-stride	colour matrices for lighting fades; entries 0, 3 and 4 are the death fade endpoints
 GAME.EXE	0x80055e9c	0x2	DAT_80055e9c	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055e9e	0x1	DAT_80055e9e	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1913,8 +1913,7 @@ GAME.EXE	0x80095066	0x2	DAT_80095066	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80095068	0x2	DAT_80095068	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506a	0x2	DAT_8009506a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506c	0x2	DAT_8009506c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009506e	0x1	DAT_8009506e	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009506f	0x1	DAT_8009506f	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009506e	0x8	DAT_8009506e	unknown	bss	u8[8]		address-only	ghidra-12.0.4-memory-xref	eight flag bytes that render_initialize fills with 0xff in one loop
 GAME.EXE	0x80095086	0x1	DAT_80095086	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095087	0x1	DAT_80095087	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095088	0x1	DAT_80095088	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -1937,28 +1936,8 @@ GAME.EXE	0x800950b4	0x4	DAT_800950b4	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x800950bc	0x4	DAT_800950bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095698	0x4	DAT_80095698	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009569c	0x4	DAT_8009569c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956e0	0x4	DAT_800956e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956e4	0x4	DAT_800956e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956e8	0x4	DAT_800956e8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956ec	0x4	DAT_800956ec	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956f0	0x4	DAT_800956f0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956f4	0x4	DAT_800956f4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956f8	0x4	DAT_800956f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800956fc	0x4	DAT_800956fc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095700	0x4	DAT_80095700	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095704	0x4	DAT_80095704	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095708	0x4	DAT_80095708	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009570c	0x4	DAT_8009570c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095710	0x4	DAT_80095710	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095714	0x4	DAT_80095714	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095718	0x4	DAT_80095718	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009571c	0x4	DAT_8009571c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095720	0x20	DAT_80095720	unknown	bss	KfMatrix		address-only	asm;xrefs;matrix_interpolate-output;player_death-fades	interpolated colour matrix written by the death fades before SetColorMatrix
-GAME.EXE	0x80095740	0x4	fog_near_distance	global	bss	s32	fog	supported	game_match_campaign_30.tsv;reviewed-reloc;SetFogNear	current near-fog distance
-GAME.EXE	0x80095744	0x10	render_view_position	global	bss	KfVec4i	render	supported	game_semantic_display_tmd.tsv;asm;xrefs;four-word-copy	persistent four-word view position copied from an optional input
-GAME.EXE	0x80095754	0x8	render_view_rotation	global	bss	KfVec4s	render	supported	game_semantic_display_tmd.tsv;asm;xrefs;four-halfword-copy	persistent four-halfword view rotation copied from an optional input
-GAME.EXE	0x8009575c	0x2	DAT_8009575c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009575e	0x2	DAT_8009575e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800956a0	0x140	render_state	unknown	bss	KfRenderState	render	supported	game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register
+GAME.EXE	0x800957e0	0x80	light_quadrant_matrices	unknown	bss	KfMatrix[4]	render	supported	asm;render_initialize;absolute-address	products of the light matrix with each yaw-quadrant matrix; render_initialize addresses them absolutely while it reaches the quadrant matrices from the light matrix base register, so they are a separate object
 GAME.EXE	0x80095860	0x4	DAT_80095860	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095868	0x90	audio_state	unknown	bss	KfAudioState	audio	supported	game_semantic_audio_control.tsv;game_semantic_audio_spatial.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate: vab header, active VAB id, sequence buffer/id/active flag, listener position and rotation, voice slots; audio_initialize addresses the voice-id slots relative to the sequence-buffer field, which proves one object
 GAME.EXE	0x800958f8	0x4	game_exit_code	global	bss	u32	game	supported	game_semantic_math_lifecycle.tsv;asm;xrefs	main-loop exit flag/status copied by main into entry_args[1]
