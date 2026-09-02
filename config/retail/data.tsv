@@ -2317,7 +2317,6 @@ GAME.EXE	0x8004641b	0x34c1b	0x6	string	byte-pattern		shift_jis	investigation:str
 GAME.EXE	0x8004642b	0x34c2b	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <隰!$!
 GAME.EXE	0x8004643d	0x34c3d	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: |B限$
 GAME.EXE	0x80046917	0x35117	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!8@
-GAME.EXE	0x80046988	0x35188	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x800469db	0x351db	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4! @
 GAME.EXE	0x80047512	0x35d12	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: B$`'
 GAME.EXE	0x80047e4d	0x3664d	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: ;!$!

@@ -726,6 +726,12 @@ source = "src/game/func_8004634c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.audio_sequence"
+image = "GAME.EXE"
+source = "src/game/audio_sequence.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8004a344"
 image = "GAME.EXE"
 source = "src/game/func_8004a344.c"

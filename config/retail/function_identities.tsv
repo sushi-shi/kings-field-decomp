@@ -420,7 +420,7 @@ GAME.EXE	0x80046324	func_80046324			u8	u8 value	address-only	candidate	mips-live
 GAME.EXE	0x8004634c	func_8004634c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80046374	func_80046374			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800468d8	func_800468d8			u32	u32 arg0;s16 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80046990	func_80046990			s32	s32 arg0;s16 arg1;s16 arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+GAME.EXE	0x80046988	func_80046988			s16	u8 *arg0;s16 arg1;s16 arg2	address-only	candidate	mips-live-in-heuristic;body-review	SsSepOpen-shaped multi-sequence opener; entry hoists open-mask load above the frame
 GAME.EXE	0x80046a94	func_80046a94			s32	u16 object;s16 pointer1;u16 pointer2;u32 pointer3	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800471a4	func_800471a4			void	u16 object;u16 pointer1;u32 pointer2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800476e8	func_800476e8			void	u16 object;s16 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
