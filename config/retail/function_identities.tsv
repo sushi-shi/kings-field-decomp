@@ -331,6 +331,7 @@ GAME.EXE	0x800358e0	func_800358e0			void		address-only	candidate	mips-live-in-he
 GAME.EXE	0x8003596c	func_8003596c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80035b5c	func_80035b5c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80035e14	func_80035e14			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+GAME.EXE	0x80035e44	func_80035e44			void		address-only	supported	asm;cfg;xrefs;func_80035b5c-inverse	per-floor world-state restore; deserialize inverse of func_80035b5c
 GAME.EXE	0x800364e0	func_800364e0			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80036554	func_80036554			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800365f8	func_800365f8			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review

@@ -339,7 +339,7 @@ GAME.EXE	0x800358e0	0x240e0	0x8c	0x8c	1	function	ghidra-analysis			Ghidra-12.0.4
 GAME.EXE	0x8003596c	0x2416c	0x1f0	0x1f0	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x80035b5c	0x2435c	0x2b8	0x2b8	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x80035e14	0x24614	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x80035e44	0x24644	0x69c	0x4a0	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+GAME.EXE	0x80035e44	0x24644	0x69c	0x69c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	one contiguous body; Ghidra split it at the floor-dispatch jump table
 GAME.EXE	0x800364e0	0x24ce0	0x74	0x74	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x80036554	0x24d54	0xa4	0xa4	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x800365f8	0x24df8	0x20	0x20	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary

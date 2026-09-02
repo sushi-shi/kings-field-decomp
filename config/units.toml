@@ -546,6 +546,12 @@ source = "src/game/func_80035e14.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map_load"
+image = "GAME.EXE"
+source = "src/game/map_load.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_800365f8"
 image = "GAME.EXE"
 source = "src/game/func_800365f8.c"

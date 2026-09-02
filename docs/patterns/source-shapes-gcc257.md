@@ -635,3 +635,47 @@ Residues recorded in the module (not steered):
   re-forms `lui/addiu` per access. Both are the allocation / registered-base
   classes shared with `func_80021afc` and the documented `player_state`
   residues, not structural errors.
+
+## map load and per-floor world-state restore
+
+Witnesses from `src/game/map_load.c` (`game.map_load`, band
+`0x80035e44..0x800365f8`). `func_80035e44` is the exact deserialise inverse of
+`func_80035b5c` (`map_events.c`): it reads the same 1700-byte per-floor record
+(`base - 1690 + 1700 * current_floor`, `base = &DAT_8009ddb4`) and rebuilds the
+eight `map_event_pool` slots (reached as `base - 556`), the live-actor lifecycle
+overrides, the 190 `map_object_state.objects` ids, the linked-object payloads,
+and the two effect-object pools `objects[160..169]` / `objects[170..189]`; the
+common tail dispatches a per-floor script through a five-entry jump table.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `sb v0,0(a1); sb v0,-5(a0); ...; lbu v0,-4(a0); addu v0,a1,v0; sb v1,2(v0)` (a store whose offset is a just-read field) | mirror the serialiser field-for-field: `event->image_index = *in++; event->tag.bytes[event->image_index - 1] = *in++;` — the `+2` is `tag` at struct offset 3 minus the `-1` index | `func_80035e44` `0x80035e44` |
+| effect record position rebuilt as `cell*2000 + ((rand()*2000)>>15)` with a `-height*100` y | `object->position_x = object->cell_x * 2000 + ((rand() * 2000) >> 15);` etc., `object->position_y = -(map_floor_height_grid[cell_z][cell_x] * 100);` — the u16 cell members drive the `*125<<4` strength reduction | same |
+| two `sh` to `&object->link` (a dead `lo` store then `lo|hi<<8`) | `*(u16 *)&object->link = *in++; *(u16 *)&object->link |= *in++ << 8;` — the reserialised low byte then the OR keeps `lo` in-register (no reload) | same |
+| a five-case `switch (current_floor)` compiled through a `sltu 4; lw table; jr` casesi table at `0x80012bfc` | `switch (player_state.progress_state.current_floor) { case 1..3,5: ...; default: break; }` claimed with `RODATA(0x80012bfc, 0x14)`; floor 4 falls to the empty default (table slot 3 = end) | same |
+
+Reconstruction notes:
+
+- The whole function is symbolic, not numeric: every table base relocates to its
+  owning global exactly as `func_80035b5c` does (`map_event_pool` as
+  `&DAT_8009ddb4 - 556`, `actor_state`/`map_object_state`/`map_floor_height_grid`
+  by their own symbols). The candidate census had not seeded these hi16/lo16
+  pairs; they are curated `manual:game_map_load`.
+- The delinker's `decoded-target-mismatch` withhold is the reliable check on a
+  hand-computed reloc target: it caught four transcription slips in the floor-5
+  script (`-1980`->`DAT_8009f844`, `-9268`->`map_event_pool[1].state`,
+  `-1978`->`DAT_8009f846`, `21170/21171`->`DAT_800652a8[0xa]/[0xb]`), which also
+  fixed the four source reads.
+
+Residue recorded (not steered):
+
+- `func_80035e44` `0x80035e44` (90.2%): referents, relocations, call set, CFG,
+  types, constants and the `-40` frame all match; the divergence is the
+  documented callee-saved permutation (retail carries the loop index in `s2`,
+  the probe in `s3`, cascading through the six restore loops), the count-loop
+  idiom (`n-1; do {} while (--n != -1)` vs the probe's `while (n-- != 0)`, which
+  spills and grows the frame when forced), and the loop-optimiser's giv-base
+  choice for the effect records (retail bases the induction register on the last
+  field so the members sit at negative offsets). Same class as the
+  `func_80035b5c` single-base-register residue in `map_events.c`. `func_800364e0`
+  and `func_80036554` in the same TU are exact.
