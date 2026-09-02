@@ -796,3 +796,51 @@ Residues recorded in `game.menu_select` (`func_800238d8`, `func_80023e9c`):
   register; retail assigns `s2=selection`, `s3=1`, `s4=input`, whereas the probe
   assigns `s2=1`, `s3=input`, `s4=selection`, plus the same paired-giv
   increment-order swap seen in `func_8002317c`. Unattributed; not steered.
+
+## effect-pool spawn (0x80036f44..0x8003784f)
+
+`src/game/func_80036f44.c` reconstructs the effect-pool spawn band. The
+KfEffectRecord layout (60-byte stride: header bytes, a `VECTOR position` at
+0x0c, and rotation/scale/direction 16-bit triples at 0x1c/0x24/0x2c) is proven
+from the two constructors and modelled in `kf/semantic_types.h`; the default
+scale is 0x1000 and the direction triple is copied from the SVECTOR argument.
+
+`func_80037770` is exact: a specialised constructor (`player_use_item` caller)
+that seeds a fixed type-0xf0/kind-0x34 record. Its `jal effect_pool_find_free`
+needed the `0x800377a4` `mips26` reloc promoted to reviewed.
+
+Residue recorded (not steered):
+
+- `func_8003781c` (~63%): publishes the current effect record and its
+  `magic_records` row through `DAT_8009db84`/`DAT_8009db80`. The retail unit
+  reaches `magic_records` by `addiu a1,a1,-3364` off the `DAT_8009db84` base
+  register: `magic_records`, the effect pool `DAT_8009d040`, `DAT_8009db80` and
+  `DAT_8009db84` are one consecutive block (0x8009ce60..0x8009db88) in the
+  original translation unit, so the linker-resolved delta is an assemble-time
+  constant and one `lui`/`%hi` load serves two globals. A reconstruction that
+  references `magic_records` as its own extern emits a separate `lui`+HI16 pair
+  and cannot share the base register. Reproducing it would require owning that
+  whole bss block (and thus migrating `magic_records`, used by many player/menu
+  units) into this TU; keeping the honest `&magic_records[kind]` reference and
+  the two real HI16/LO16 relocs (`DAT_8009db84`, `DAT_8009db80`) instead leaves
+  the shared-high-halfword divergence as a documented data-layout residue.
+- `func_80036f44` (~46%): the general constructor and its ~45-case kind switch
+  (jump table `0x80012c28`). Structurally faithful — the common record init,
+  the `magic_records[kind]`-indexed spatial sounds, and every case's field
+  writes are decoded and modelled with the real identities — but it stacks
+  three GCC 2.5.7 residue classes at once: (1) switch cross-jumping / tail
+  merging across the many audio-call and return tails, in a different
+  basic-block order than retail; (2) K&R stack-vararg reads (the fifth argument
+  `direction` is the base of the on-stack `arg6..arg8` slots), where the probe's
+  register allocation keeps one fewer callee-saved register than retail's
+  `s0`-`s5`, shifting the whole frame (-48 vs -56) and every subsequent offset;
+  and (3) the retail unaligned 8-byte `lwl/lwr` copies of the direction/rotation
+  triples, which a field-by-field struct copy renders as aligned `lh/sh`. The
+  arithmetic, referents, call set and per-kind semantics all match; the residue
+  is codegen shape, not source facts, and is not steered.
+
+`func_80037850` (the 0x76c effect step/collision routine at the tail of the
+band) is deferred: it is a divide-by-2000 cell walker with its own 6-case jump
+table (`0x80012ce0`) and unresolved `map_cell_attribute_height_table` lookups,
+the same collision-math + cross-jump residue class, and is left NOT-started
+pending cell-attribute data ownership rather than reconstructed speculatively.

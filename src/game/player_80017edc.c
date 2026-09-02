@@ -143,10 +143,10 @@ void player_use_item(u8 item_id)
     case 62:
         record = DAT_8009d040;
         for (slot = 47; slot != -1; slot--, record++) {
-            if (record->unknown_00[0] == 0xff) {
+            if (record->type == 0xff) {
                 continue;
             }
-            if (record->unknown_00[1] == 0x34) {
+            if (record->kind == 0x34) {
                 goto done;
             }
         }

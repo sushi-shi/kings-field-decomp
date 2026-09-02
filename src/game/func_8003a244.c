@@ -11,7 +11,7 @@ void effect_pool_reset(void)
     u16 i;
 
     for (i = 0; i < 48; i++) {
-        record->unknown_00[0] = 0xff;
+        record->type = 0xff;
         record++;
     }
 }

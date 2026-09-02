@@ -15,7 +15,7 @@ KfCdFileEntry	0x14	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CD file 
 KfCollisionTarget	0x20	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
 KfDisplayState	0x20028	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	double-buffer display state: display_begin_frame derives the primitive buffer and ordering table of the frame from the buffer index through one base register
 KfDisplayStateOpen	0x20024	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer is a separate global
-KfEffectRecord	0x3c	candidate	asm;map_object_pool_load;map_object_pool_update	60-byte effect pool record at DAT_8009d040; layout mostly opaque
+KfEffectRecord	0x3c	supported	asm;effect_pool_constructor;func_80037770;map_object_pool_update	60-byte effect pool record at DAT_8009d040; constructors fix the header, VECTOR position and rotation/scale/direction triples
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	semantic_types.h;asm;func_80020b4c	runtime floor-item table entry
