@@ -327,3 +327,5 @@ Residues left in the module:
 
 Residue: `actor_update_awareness` keeps the constant 1 in `s5` for both the
 lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
+
+| `sll v0,limit,16` shared in the branch delay slot by both clamp branches | write both clamps with the field first (`movement > limit`, `movement < -limit`) so the extension pseudo takes the same register in both arms and reorg can hoist the common first instruction | `actor_apply_random_movement` `0x8002f558` |

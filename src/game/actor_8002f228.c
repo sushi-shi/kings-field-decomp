@@ -3,6 +3,8 @@
 
 extern KfActorState actor_state;
 
+/* Psy-Q LIBC: int rand(void). */
+extern s32 rand(void);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 extern s32 fixed_vector2_length(s32 x, s32 y);
@@ -102,4 +104,98 @@ void actor_update_effect_action(s32 action)
             0,
             0));
     }
+}
+
+/*
+ * Nudges each velocity component by STEP in a random direction, clamped to
+ * LIMIT, then applies the whole vector; a blocked move sets a short action
+ * timer and reflects each axis that collides on its own.
+ */
+ADDRESS(0x8002f558, 0x374)
+void actor_apply_random_movement(s16 step, s16 limit)
+{
+    KfActor *actor = actor_state.current;
+    KfActorDefinition *definition = actor_state.current_definition;
+    struct KfVec4i target;
+    s32 result;
+
+    if (rand() < 16384) {
+        actor->movement_x += step;
+        if (actor->movement_x > limit) {
+            actor->movement_x = limit;
+        }
+    } else {
+        actor->movement_x -= step;
+        if (actor->movement_x < -limit) {
+            actor->movement_x = -limit;
+        }
+    }
+    if (rand() < 16384) {
+        actor->movement_z += step;
+        if (actor->movement_z > limit) {
+            actor->movement_z = limit;
+        }
+    } else {
+        actor->movement_z -= step;
+        if (actor->movement_z < -limit) {
+            actor->movement_z = -limit;
+        }
+    }
+    if (rand() < 16384) {
+        actor->movement_y += step;
+        if (actor->movement_y > limit) {
+            actor->movement_y = limit;
+        }
+    } else {
+        actor->movement_y -= step;
+        if (actor->movement_y < -limit) {
+            actor->movement_y = -limit;
+        }
+    }
+    target.x = actor->movement_x + actor->position.x;
+    target.z = actor->movement_z + actor->position.z;
+    target.y = actor->movement_y + actor->position.y;
+    result = collision_query_world(
+        target.x,
+        target.y,
+        target.z,
+        definition->collision_radius,
+        definition->collision_height,
+        0x8060);
+    if (result == -1) {
+        actor->position = target;
+    } else {
+        actor->action_timer = 2;
+        result = collision_query_world(
+            target.x,
+            actor->position.y,
+            actor->position.z,
+            definition->collision_radius,
+            definition->collision_height,
+            0x8060);
+        if (result != -1) {
+            actor->movement_x = -actor->movement_x;
+        } else if (collision_query_world(
+                       actor->position.x,
+                       target.y,
+                       actor->position.z,
+                       definition->collision_radius,
+                       definition->collision_height,
+                       0x8060)
+                   != -1) {
+            actor->movement_y = -actor->movement_y;
+        }
+        if (collision_query_world(
+                actor->position.x,
+                actor->position.y,
+                target.z,
+                definition->collision_radius,
+                definition->collision_height,
+                0x8060)
+            != -1) {
+            actor->movement_z = -actor->movement_z;
+        }
+    }
+    actor->cell_x = actor->position.x / 2000;
+    actor->cell_z = actor->position.z / 2000;
 }

@@ -5974,18 +5974,18 @@ GAME.EXE	0x8002f51c	0x1dd1c	0x8002f520	mips_hi16_lo16	reachable-code	0x8006e8b8	
 GAME.EXE	0x8002f524	0x1dd24	0x8002f528	mips_hi16_lo16	reachable-code	0x8006e8c0	bss	actor_state	lui+lw	a3	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002f52c	0x1dd2c		mips26	instruction-word	0x8002d97c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002f534	0x1dd34		mips26	instruction-word	0x8002e2e8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
-GAME.EXE	0x8002f57c	0x1dd7c	0x8002f580	mips_hi16_lo16	reachable-code	0x8006e8d4	bss	actor_state	lui+lw	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002f584	0x1dd84	0x8002f588	mips_hi16_lo16	reachable-code	0x8006e8d0	bss	actor_state	lui+lw	s4	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8002f58c	0x1dd8c		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002f5cc	0x1ddcc		mips26	instruction-word	0x8002f604	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002f604	0x1de04		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002f63c	0x1de3c		mips26	instruction-word	0x8002f670	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002f670	0x1de70		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002f6a8	0x1dea8		mips26	instruction-word	0x8002f6dc	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8002f57c	0x1dd7c	0x8002f580	mips_hi16_lo16	reachable-code	0x8006e8d4	bss	actor_state	lui+lw	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f584	0x1dd84	0x8002f588	mips_hi16_lo16	reachable-code	0x8006e8d0	bss	actor_state	lui+lw	s4	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f58c	0x1dd8c		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f5cc	0x1ddcc		mips26	instruction-word	0x8002f604	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f604	0x1de04		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f63c	0x1de3c		mips26	instruction-word	0x8002f670	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f670	0x1de70		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002f6a8	0x1dea8		mips26	instruction-word	0x8002f6dc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002f738	0x1df38		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x8002f768	0x1df68		mips26	instruction-word	0x8002f838	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8002f768	0x1df68		mips26	instruction-word	0x8002f838	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002f790	0x1df90		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x8002f7b0	0x1dfb0		mips26	instruction-word	0x8002f7f4	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8002f7b0	0x1dfb0		mips26	instruction-word	0x8002f7f4	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002f7d4	0x1dfd4		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8002f814	0x1e014		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8002f8dc	0x1e0dc	0x8002f8e0	mips_hi16_lo16	instruction-word	0x8005617f	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
