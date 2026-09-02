@@ -555,7 +555,7 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             by_site[0x8001B460]["target_name"],
-            "player_map_variant",
+            "player_state",
         )
         game = index("GAME.EXE")
         path = game.datum(0x80055AF0)
