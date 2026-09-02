@@ -83,7 +83,10 @@ typedef struct KfAudioVoiceSlots {
  * core routines are named; the remaining bytes deliberately stay opaque.
  */
 typedef struct KfActorDefinition {
-    u8 unknown_00[0x11];
+    u8 unknown_00[0x03];
+    u8 status_effect;
+    u8 status_effect_chance;
+    u8 unknown_05[0x0c];
     u8 hit_action;
     u8 death_action;
     u8 unknown_13[0x67];
@@ -500,18 +503,32 @@ typedef char KfWeaponRecord_size_is_44[
 /* === actor layouts === */
 
 /*
- * The twelve definitions and the 128 live actors are one object: several
- * actor routines address a definition as the actor array base minus 0x720
- * (`addiu ...,-1824`), arithmetic the compiler only emits inside one
- * aggregate.
+ * The actor system state is one object: actor routines address a definition
+ * as the actor array base minus 0x720 (`addiu ...,-1824`) and the current
+ * actor pointer as the array base plus 0x241c (`addiu ...,9244`), arithmetic
+ * the compiler only emits inside one aggregate. The members after the arrays
+ * are the retail order of the formerly separate identities.
  */
-typedef struct KfActorTable {
+typedef struct KfActorState {
     KfActorDefinition definitions[12];
     KfActor actors[128];
-} KfActorTable;
+    struct KfVec4i player_position;
+    struct KfVec4s player_rotation;
+    KfActorDefinition *current_definition;
+    KfActor *current;
+    u16 current_index;
+    u16 current_definition_id;
+    KfActor *player_target;
+} KfActorState;
 
-typedef char KfActorTable_size_is_0x2b20[
-    (sizeof(KfActorTable) == 0x2b20) ? 1 : -1];
+typedef char KfActorState_size_is_0x2b48[
+    (sizeof(KfActorState) == 0x2b48) ? 1 : -1];
+#define KF_ACTOR_STATE_OFFSET_OF(member) ((u32)&(((KfActorState *)0)->member))
+typedef char KfActorState_current_offset_is_0x2b3c[
+    (KF_ACTOR_STATE_OFFSET_OF(current) == 0x2b3c) ? 1 : -1];
+typedef char KfActorState_player_target_offset_is_0x2b44[
+    (KF_ACTOR_STATE_OFFSET_OF(player_target) == 0x2b44) ? 1 : -1];
+#undef KF_ACTOR_STATE_OFFSET_OF
 
 /* === end actor === */
 

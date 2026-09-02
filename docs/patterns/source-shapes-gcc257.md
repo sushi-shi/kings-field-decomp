@@ -29,3 +29,37 @@ Open residues recorded during the same campaign (not steered):
   reloading the payload pointer for the second `memset`; the probe reloads
   first. The call also needs a delinker naming decision because `GAME.EXE`
   links two vendored `memset` bodies.
+
+## actor
+
+Shapes settled while reconstructing `src/game/actor.c` (band
+0x8002ca78..0x8002e0f0):
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `addiu v0,s1,-1824` / `addiu s8,s1,9244` (one symbol, member offsets) | one aggregate `KfActorState` for definitions, actors, player snapshot, and current/target pointers; separate globals can never produce base-relative member addresses | `actor_pool_begin_death_by_definition`, `actor_pool_find_overlap` |
+| `lbu v1,5; chain; lh v1,16` (second load after the chain that reads its register) | reuse one temporary for the tile index and then the local offset | `actor_initialize_current` `0x8002cd28` |
+| `li v0,0xff` shared by `sb v0,8` and `sb v0,56` | both fields unsigned bytes assigned `0xff`; an `s8` field would materialize `-1` separately | `actor_initialize` |
+| `sll v0,a1,0x10; bgez` then raw `a1` reused | `s16 delta` parameter tested for sign and added unextended | `actor_advance_animation_wrapped` |
+| `lhu` of a definition byte compared with `0xff` | the byte is `u8`; an `s8` compare against `0xff` folds away entirely | `actor_pool_begin_death_by_definition` |
+| `bnez ... -> exit` on every failing test with `li v0,-1` in the slot, no inverted `beqz; j` | a shared `goto out_of_range` exit label instead of repeated `return -1` | `actor_distance_to_point` |
+| `sw a0,0(a2)` before the index division result is stored | assign the current pointer before computing the index | `actor_bind_current` |
+| `andi v0,s2,0xff` on every return path | selector actions and results are `u8`, not `s8` | `actor_try_select_*` |
+
+Open residues (not steered):
+
+- `actor_apply_damage`, `actor_pool_apply_radial_damage`,
+  `actor_pool_find_overlap`, `actor_try_attack_player`,
+  `actor_play_sound_at_phase`: retail hoists argument-register copies
+  (`move a1,s3`, `move s2,a0`) above independent loads; the 2.5.7 probe keeps
+  them adjacent to their call or use.
+- `actor_try_select_*`, `actor_pool_find_target_in_cone`: retail keeps every
+  prologue register save together and loads the current actor into `s1`
+  afterwards; the probe schedules that load right after the `s1` save.
+- `actor_initialize_slot`: the `lifecycle = 1` store stays between the first
+  load and the multiply chain in retail; the probe sinks it below the chain.
+- `actor_animation_crossed_phase`: register choice only (`v1`/`a2` swapped).
+- `actor_pool_find_free`: the found path joins the not-found path at one
+  `jr $ra` with `move v0,v1` in the compare's delay slot; every tried return
+  shape emits a `j` to the epilogue.
+

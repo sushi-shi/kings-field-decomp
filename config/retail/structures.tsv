@@ -5,7 +5,7 @@ KfActor	0x48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	l
 KfActorActionProfile	0x0a	supported	semantic_types.h;game_semantic_actor_ai.tsv;asm;xrefs	five-halfword actor action weighting record
 KfActorDefinition	0x98	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
 KfActorPlacement	0x10	supported	semantic_types.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
-KfActorTable	0x2b20	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-address	twelve definitions followed by the 128 live actors; one aggregate because actor routines address a definition as the actor array base minus 0x720
+KfActorState	0x2b48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
 KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
 KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator

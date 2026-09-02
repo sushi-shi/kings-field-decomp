@@ -42,12 +42,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 740)
         self.assertEqual(counts["typed_returns"], 740)
         self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3523)
+        self.assertEqual(counts["data"], 3516)
         self.assertGreaterEqual(counts["functions_named"], 187)
-        self.assertGreaterEqual(counts["data_named"], 143)
+        self.assertGreaterEqual(counts["data_named"], 136)
         self.assertEqual(counts["structures"], 36)
-        self.assertEqual(counts["structure_fields"], 226)
-        self.assertEqual(counts["structure_fields_named"], 169)
+        self.assertEqual(counts["structure_fields"], 236)
+        self.assertEqual(counts["structure_fields_named"], 178)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -604,20 +604,10 @@ class InventoryTests(unittest.TestCase):
         )
         save_path = game.datum(0x80056034)
         self.assertEqual(save_path.name, "save_main_file_path")
-        actor_table = game.datum(0x8006BD98)
+        actor_state = game.datum(0x8006BD98)
         self.assertEqual(
-            (actor_table.name, actor_table.datatype, actor_table.size),
-            ("actor_table", "KfActorTable", 0x2B20),
-        )
-        current_actor = game.datum(0x8006E8D4)
-        self.assertEqual(
-            (current_actor.name, current_actor.datatype),
-            ("current_actor", "KfActor *"),
-        )
-        target_actor = game.datum(0x8006E8DC)
-        self.assertEqual(
-            (target_actor.name, target_actor.datatype, target_actor.owner_type),
-            ("player_target_actor", "KfActor *", "actor"),
+            (actor_state.name, actor_state.datatype, actor_state.size),
+            ("actor_state", "KfActorState", 0x2B48),
         )
         action_profiles = game.datum(0x80056080)
         self.assertEqual(

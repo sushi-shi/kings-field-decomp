@@ -1,15 +1,18 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
-extern KfActorTable actor_table;
-
-extern struct KfVec4i actor_player_position;
-extern struct KfVec4s actor_player_rotation;
-extern KfActor *current_actor;
+extern KfActorState actor_state;
 
 extern KfPlayerProgressState player_progress_state;
+extern KfActorActionProfile actor_action_profiles[25];
+extern u8 map_floor_height_grid[100][100];
 /* Unresolved flag consulted before damaging definition 7 on floor 5. */
 extern u8 DAT_8009f846;
+/*
+ * Unresolved pool of 48 sixty-byte records whose first byte is 0xff when free
+ * and whose second byte is a kind; only this byte view is evidenced so far.
+ */
+extern u8 DAT_8009d040[];
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
@@ -19,11 +22,35 @@ extern void func_8001a4e8(s32 cell_x, s32 cell_z, char value);
 extern void player_increment_physical_power_training(void);
 extern void player_increment_magic_training(void);
 extern void player_add_experience(s16 amount);
+extern void player_apply_damage(
+    u16 component0,
+    u16 component1,
+    u16 component2,
+    u16 status_effect_flags,
+    u16 component3,
+    u16 component4,
+    u16 scale_q12,
+    u16 multiplier_tenths);
+/* Callers consume the angle unmasked, so the result is passed as a plain int. */
+extern s32 vector_xz_to_angle(s32 x, s32 z);
+extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
+/* Psy-Q LIBGTE: long SquareRoot0(long a). */
+extern s32 SquareRoot0(s32 value);
+extern void audio_play_spatial_range(
+    const SoundRef *sound,
+    const struct KfVec4i *position,
+    s16 volume,
+    s32 max_distance,
+    s32 attenuation_distance);
+extern void audio_play_spatial_default_range(
+    const SoundRef *sound,
+    const struct KfVec4i *position,
+    s16 volume);
 
 ADDRESS(0x8002ca78, 0x3c)
 KfActor *actor_pool_find_free(void)
 {
-    KfActor *actor = actor_table.actors;
+    KfActor *actor = actor_state.actors;
     s32 count = 127;
 
     do {
@@ -48,10 +75,10 @@ void actor_set_player_transform(
     const struct KfVec4s *rotation)
 {
     if (position != 0) {
-        actor_player_position = *position;
+        actor_state.player_position = *position;
     }
     if (rotation != 0) {
-        actor_player_rotation = *rotation;
+        actor_state.player_rotation = *rotation;
     }
 }
 
@@ -95,7 +122,7 @@ void actor_initialize(KfActor *actor)
     actor->vertical_state = 0;
     actor->action = 0xff;
     actor->action_timer = 0xff;
-    actor->health = actor_table.definitions[actor->definition_id].initial_health;
+    actor->health = actor_state.definitions[actor->definition_id].initial_health;
     if (actor->slot_state == 2 || actor->slot_state == 3 || actor->slot_state == 1) {
         actor->rotation.y = actor->heading_quadrant << 10;
     } else {
@@ -112,7 +139,7 @@ void actor_initialize(KfActor *actor)
 ADDRESS(0x8002cd28, 0xa4)
 void actor_initialize_current(void)
 {
-    KfActor *actor = current_actor;
+    KfActor *actor = actor_state.current;
     struct KfVec3i position;
     s32 coordinate;
     s32 world;
@@ -134,7 +161,7 @@ void actor_initialize_current(void)
 ADDRESS(0x8002cdcc, 0xbc)
 void actor_initialize_slot(u16 actor_index)
 {
-    KfActor *actor = &actor_table.actors[actor_index];
+    KfActor *actor = &actor_state.actors[actor_index];
     struct KfVec3i position;
     s32 coordinate;
     s32 world;
@@ -157,7 +184,7 @@ void actor_initialize_slot(u16 actor_index)
 ADDRESS(0x8002ce88, 0x40)
 void actor_pool_clear(void)
 {
-    KfActor *actor = actor_table.actors;
+    KfActor *actor = actor_state.actors;
     u16 index;
 
     for (index = 0; index < 128; index++, actor++) {
@@ -180,7 +207,7 @@ void actor_pool_spawn(
     const struct KfVec3i *position,
     const struct KfVec3s *rotation)
 {
-    KfActor *actor = actor_table.actors;
+    KfActor *actor = actor_state.actors;
     s16 count = 127;
 
     do {
@@ -205,8 +232,8 @@ found:
 ADDRESS(0x8002cf84, 0xf4)
 void actor_pool_begin_death_by_definition(u16 definition_id)
 {
-    KfActor *actor = actor_table.actors;
-    KfActorDefinition *definition = &actor_table.definitions[definition_id];
+    KfActor *actor = actor_state.actors;
+    KfActorDefinition *definition = &actor_state.definitions[definition_id];
     s16 count = 127;
 
     do {
@@ -252,8 +279,8 @@ void actor_apply_damage(
     u16 scale,
     u16 hit_flags)
 {
-    KfActor *actor = &actor_table.actors[actor_index];
-    KfActorDefinition *definition = &actor_table.definitions[actor->definition_id];
+    KfActor *actor = &actor_state.actors[actor_index];
+    KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
     s32 damage;
     s32 health;
     s32 remaining;
@@ -314,4 +341,508 @@ void actor_apply_damage(
         }
     }
     actor->health = remaining;
+}
+
+ADDRESS(0x8002d4a8, 0x1f8)
+void actor_pool_apply_radial_damage(
+    const struct KfVec3i *origin,
+    u32 radius,
+    u16 falloff,
+    u16 base_power,
+    u16 component0,
+    u16 component1,
+    u16 component2,
+    u16 component3,
+    u16 component4,
+    u16 scale,
+    u16 hit_flags)
+{
+    s32 falloff_value = falloff;
+    s32 remaining = 0x1000 - falloff_value;
+    KfActor *actor = actor_state.actors;
+    KfActorDefinition *definition;
+    s16 index;
+    s32 distance;
+    u16 ratio;
+    u16 weight;
+    u32 damage_scale;
+
+    for (index = 0; index < 128; index++, actor++) {
+        if (actor->lifecycle != 1) {
+            continue;
+        }
+        if (actor->action == 0x7f) {
+            continue;
+        }
+        if (actor == actor_state.current) {
+            continue;
+        }
+        definition = &actor_state.definitions[actor->definition_id];
+        distance = actor_distance_to_point(
+            actor,
+            origin->x,
+            origin->y,
+            origin->z,
+            radius,
+            definition->collision_height,
+            radius);
+        if (distance == -1) {
+            continue;
+        }
+        if (falloff_value == 0x1000) {
+            damage_scale = scale;
+        } else {
+            ratio = (distance << 12) / radius;
+            weight = 0x1000 - ((u32)(ratio * remaining) >> 12);
+            damage_scale = (u32)(scale * weight) >> 12;
+        }
+        actor_apply_damage(
+            index,
+            base_power,
+            component0,
+            component1,
+            component2,
+            component3,
+            component4,
+            damage_scale,
+            hit_flags);
+    }
+}
+
+ADDRESS(0x8002d6a0, 0x158)
+void actor_try_attack_player(
+    u16 minimum_distance,
+    u16 maximum_distance,
+    s16 angle_offset,
+    s16 angle_tolerance)
+{
+    KfActorDefinition *definition = actor_state.current_definition;
+    KfActor *actor = actor_state.current;
+    s32 distance;
+    u16 angle;
+    u16 status_effect;
+
+    distance = actor_distance_to_point(
+        actor,
+        actor_state.player_position.x,
+        actor_state.player_position.y + 1500,
+        actor_state.player_position.z,
+        maximum_distance,
+        definition->collision_height,
+        1700);
+    if (distance == -1) {
+        return;
+    }
+    if (distance < minimum_distance) {
+        return;
+    }
+    angle = vector_xz_to_angle(
+        actor_state.player_position.x - actor->position.x,
+        actor_state.player_position.z - actor->position.z);
+    if (!angle_within_tolerance(actor->rotation.y + angle_offset, angle, angle_tolerance)) {
+        return;
+    }
+    status_effect = 0;
+    if (definition->status_effect_chance != 0
+        && (rand() >> 7) < definition->status_effect_chance) {
+        status_effect = definition->status_effect;
+    }
+    player_apply_damage(
+        definition->attack_components[0],
+        definition->attack_components[1],
+        definition->attack_components[2],
+        status_effect,
+        0,
+        0,
+        0x1000,
+        10);
+}
+
+ADDRESS(0x8002d7f8, 0x184)
+KfActor *actor_pool_find_target_in_cone(
+    const struct KfVec3i *origin,
+    s32 facing,
+    u32 max_distance,
+    s32 angle_tolerance,
+    s32 *distance_out)
+{
+    KfActor *best = 0;
+    s16 best_difference = 30000;
+    s32 best_distance = 0;
+    KfActor *actor = actor_state.actors;
+    u16 count = 127;
+    s32 distance;
+    s32 delta;
+    s32 folded;
+    s16 difference;
+
+    do {
+        if (actor->lifecycle != 1) {
+            continue;
+        }
+        if (actor->action == 0x7f) {
+            continue;
+        }
+        if (actor == actor_state.current) {
+            continue;
+        }
+        distance = actor_distance_to_point(
+            actor, origin->x, 0xffff, origin->z, max_distance, 0, 0);
+        if (distance == -1) {
+            continue;
+        }
+        delta = vector_xz_to_angle(
+            actor->position.x - origin->x, origin->z - actor->position.z) - facing;
+        delta &= 0xfff;
+        folded = delta;
+        if (delta > 2048) {
+            folded = 0x1000 - delta;
+        }
+        difference = folded;
+        if (angle_tolerance < difference) {
+            continue;
+        }
+        if (difference < best_difference) {
+            best_difference = folded;
+            best = actor;
+            best_distance = distance;
+        }
+    } while (actor++, count-- != 0);
+    *distance_out = best_distance;
+    return best;
+}
+
+ADDRESS(0x8002d97c, 0xf0)
+s32 actor_distance_to_point(
+    const KfActor *actor,
+    s32 point_x,
+    s32 point_y,
+    s32 point_z,
+    s32 max_distance,
+    s32 actor_height,
+    s32 point_height)
+{
+    s32 delta_x = actor->position.x - point_x;
+    s32 delta_z;
+    s32 delta_y;
+    s32 top;
+    s32 distance;
+
+    if (delta_x < -max_distance || max_distance < delta_x) {
+        goto out_of_range;
+    }
+    delta_z = actor->position.z - point_z;
+    if (delta_z < -max_distance || max_distance < delta_z) {
+        goto out_of_range;
+    }
+    delta_x >>= 3;
+    if (point_y != 0xffff) {
+        actor_height >>= 1;
+        point_height >>= 1;
+        top = point_y - point_height;
+        point_height += actor_height;
+        delta_y = (actor->position.y - actor_height) - top;
+        if (delta_y < -point_height) {
+            goto out_of_range;
+        }
+        if (point_height < delta_y) {
+            goto out_of_range;
+        }
+    }
+    delta_z >>= 3;
+    distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << 3;
+    if (max_distance < distance) {
+        goto out_of_range;
+    }
+    return distance;
+out_of_range:
+    return -1;
+}
+
+ADDRESS(0x8002da6c, 0x144)
+s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height)
+{
+    KfActor *actor = actor_state.actors;
+    KfActorDefinition *definition;
+    s16 index;
+
+    for (index = 0; index < 128; index++, actor++) {
+        if (actor->lifecycle != 1) {
+            continue;
+        }
+        if (actor->action == 6) {
+            continue;
+        }
+        if (actor->action == 0x7f) {
+            continue;
+        }
+        if (actor == actor_state.current) {
+            continue;
+        }
+        definition = &actor_state.definitions[actor->definition_id];
+        if (actor_distance_to_point(
+                actor,
+                x,
+                y,
+                z,
+                definition->collision_radius + extra_radius,
+                definition->collision_height,
+                point_height) != -1) {
+            return index;
+        }
+    }
+    return -1;
+}
+
+ADDRESS(0x8002dbb0, 0x8c)
+void actor_bind_current(KfActor *actor)
+{
+    s32 index;
+
+    actor_state.current = actor;
+    index = actor - actor_state.actors;
+    actor_state.current_definition = &actor_state.definitions[actor->definition_id];
+    actor_state.current_index = index;
+    actor_state.current_definition_id = actor->definition_id;
+}
+
+ADDRESS(0x8002dc3c, 0x34)
+void actor_advance_animation_wrapped(KfActor *actor, s16 delta)
+{
+    if (delta < 0) {
+        actor->animation_step = -delta;
+    } else {
+        actor->animation_step = delta;
+    }
+    actor->animation_phase = (actor->animation_phase + delta) & 0xfff;
+}
+
+ADDRESS(0x8002dc70, 0x5c)
+void actor_advance_animation_clamped(KfActor *actor, s16 delta)
+{
+    s16 phase;
+
+    if (delta < 0) {
+        actor->animation_step = -delta;
+    } else {
+        actor->animation_step = delta;
+    }
+    phase = actor->animation_phase + delta;
+    actor->animation_phase = phase;
+    if (phase >= 4096) {
+        actor->animation_phase = 0xfff;
+    } else if (phase < 0) {
+        actor->animation_phase = 0;
+    }
+}
+
+ADDRESS(0x8002dccc, 0x30)
+s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase)
+{
+    s32 crossed = 0;
+
+    if (phase < actor->animation_phase) {
+        crossed = phase >= actor->animation_phase - actor->animation_step;
+    }
+    return crossed;
+}
+
+ADDRESS(0x8002dcfc, 0x98)
+void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
+{
+    KfActor *actor = actor_state.current;
+
+    if (!actor_animation_crossed_phase(actor, phase)) {
+        return;
+    }
+    if (player_progress_state.current_floor == 5 && actor->definition_id == 7) {
+        audio_play_spatial_range(
+            sound, (const struct KfVec4i *)&actor->position, 0x7f, 20000, 60000);
+    } else {
+        audio_play_spatial_default_range(
+            sound, (const struct KfVec4i *)&actor->position, 0x7f);
+    }
+}
+
+ADDRESS(0x8002dd94, 0x120)
+u8 actor_try_select_action_distance_facing(
+    u8 action,
+    s32 distance,
+    u16 chance,
+    u16 distance_scale)
+{
+    KfActor *actor = actor_state.current;
+    u16 odds = chance;
+
+    if (actor->action == action && actor->action_timer != 0xff) {
+        return actor->action;
+    }
+    if (distance_scale * 4 < distance) {
+        if (actor->slot_state == 3) {
+            return 0xff;
+        }
+        odds >>= 4;
+    }
+    if (distance < distance_scale) {
+        odds <<= 2;
+    } else if (distance < distance_scale + distance_scale / 2) {
+        odds <<= 1;
+    } else {
+        odds >>= 2;
+    }
+    if (!((rand() >> 4) < odds)) {
+        return 0xff;
+    }
+    if (rand() < 1638) {
+        return action;
+    }
+    if (angle_within_tolerance(
+            actor->rotation.y,
+            vector_xz_to_angle(
+                actor_state.player_position.x - actor->position.x,
+                actor_state.player_position.z - actor->position.z),
+            0x18e)) {
+        return action;
+    }
+    return 0xff;
+}
+
+ADDRESS(0x8002deb4, 0x164)
+u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
+{
+    KfActor *actor = actor_state.current;
+    u16 odds = chance;
+    s32 cell;
+    const u8 *row;
+
+    if (actor->action == action && actor->action_timer != 0xff) {
+        return actor->action;
+    }
+    cell = actor->cell_z;
+    row = map_floor_height_grid[cell];
+    cell = actor->cell_x;
+    if (-(row[cell] * 100) != actor->position.y) {
+        return 0xff;
+    }
+    if (actor_state.player_target == actor) {
+        actor_state.player_target = 0;
+        return action;
+    }
+    if (distance > 7000) {
+        odds >>= 1;
+    } else {
+        if (distance < 4001) {
+            return 0xff;
+        }
+        odds <<= 3;
+    }
+    if (!((rand() >> 4) < odds)) {
+        return 0xff;
+    }
+    if (rand() < 1638) {
+        return action;
+    }
+    if (angle_within_tolerance(
+            actor->rotation.y,
+            vector_xz_to_angle(
+                actor_state.player_position.x - actor->position.x,
+                actor_state.player_position.z - actor->position.z),
+            0x18e)) {
+        return action;
+    }
+    return 0xff;
+}
+
+ADDRESS(0x8002e018, 0xd8)
+u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
+{
+    KfActor *actor = actor_state.current;
+    u16 odds = chance;
+
+    if (actor->action == action && actor->action_timer != 0xff) {
+        return actor->action;
+    }
+    if (distance > 11000) {
+        odds >>= 4;
+    } else {
+        if (distance < 8000) {
+            return 0xff;
+        }
+        odds <<= 2;
+    }
+    if (!((rand() >> 4) < odds)) {
+        return 0xff;
+    }
+    if (angle_within_tolerance(
+            actor->rotation.y,
+            vector_xz_to_angle(
+                actor_state.player_position.x - actor->position.x,
+                actor_state.player_position.z - actor->position.z),
+            0x1c7)) {
+        return action;
+    }
+    return 0xff;
+}
+
+ADDRESS(0x8002e0f0, 0x1f8)
+u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u16 chance)
+{
+    u16 profile = profile_index & 0x1f;
+    KfActorActionProfile *weights = &actor_action_profiles[profile];
+    KfActor *actor = actor_state.current;
+    s32 weight;
+    s32 odds;
+    KfActor *candidate;
+    const u8 *record;
+    s16 index;
+    s16 count;
+
+    if (actor->action == action && actor->action_timer != 0xff) {
+        return actor->action;
+    }
+    weight = weights->near_weight;
+    if (distance < weights->far_distance) {
+        if (distance >= weights->near_distance) {
+            weight = weights->middle_weight;
+        }
+    } else {
+        weight = weights->far_weight;
+    }
+    odds = (chance * weight) >> 8;
+    if (!((rand() >> 4) < odds)) {
+        return 0xff;
+    }
+    if (!angle_within_tolerance(
+            actor->rotation.y,
+            vector_xz_to_angle(
+                actor_state.player_position.x - actor->position.x,
+                actor_state.player_position.z - actor->position.z),
+            0x155)
+        && rand() >= 819) {
+        return 0xff;
+    }
+    if (profile != 9) {
+        return action;
+    }
+    count = 0;
+    candidate = actor_state.actors;
+    index = 127;
+    do {
+        if (candidate->slot_state != 0xff && candidate->lifecycle == 1) {
+            count++;
+        }
+        candidate++;
+    } while (--index != -1);
+    record = DAT_8009d040;
+    index = 47;
+    do {
+        if (record[0] != 0xff && record[1] == 9) {
+            count++;
+        }
+        record += 60;
+    } while (--index != -1);
+    if (count < 2) {
+        return action;
+    }
+    return 0xff;
 }
