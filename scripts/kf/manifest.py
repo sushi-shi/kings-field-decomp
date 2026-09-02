@@ -14,6 +14,7 @@ from scripts.kf.model import (
     DataIdentity,
     data_identities,
     identity_names,
+    scan_rodata_claims,
     scan_source,
     stale_address_names,
     write_bindings,
@@ -61,6 +62,7 @@ class Unit:
     profile: str
     functions: tuple[Function, ...]
     data: tuple[Datum, ...] = ()
+    rodata: tuple[int, int] | None = None
 
     @property
     def va(self) -> int:
@@ -104,6 +106,7 @@ class Manifest:
                 unit.stem,
                 tuple(f.va for f in unit.functions),
                 unit.data,
+                unit.rodata,
             )
             for unit in self.units
         )
@@ -302,6 +305,12 @@ def load(
 
     catalog = load_catalog(config_dir)
     identities = identity_names(config_dir)
+    vendored_names = {
+        (function.image, function.va): function.symbol
+        for image in IMAGE_LAYOUTS
+        for function in catalog.functions[image]
+        if function.scope == "vendored"
+    }
     curated_data = data_identities(config_dir)
     units: list[Unit] = []
     seen_names: set[str] = set()
@@ -348,7 +357,10 @@ def load(
                 raise ValueError(f"{path}: unit {name!r} source is missing: {source}")
             continue
         stale = stale_address_names(
-            source_path, image, identities, {key: item.name for key, item in curated_data.items()}
+            source_path,
+            image,
+            {**vendored_names, **identities},
+            {key: item.name for key, item in curated_data.items()},
         )
         if stale:
             shown = ", ".join(f"{token} -> {name}" for token, name in stale)
@@ -356,6 +368,27 @@ def load(
                 f"{source}: address-derived spellings of labelled identities: {shown}"
             )
         claims, data_claims = scan_source(source_path)
+        rodata_claims = scan_rodata_claims(source_path)
+        rodata: tuple[int, int] | None = None
+        if len(rodata_claims) > 1:
+            raise ValueError(f"{source}: a unit claims at most one RODATA() range")
+        if rodata_claims:
+            claim = rodata_claims[0]
+            layout = IMAGE_LAYOUTS[image]
+            if claim.size <= 0 or claim.va & 3 or not layout.contains(claim.va, claim.size):
+                raise ValueError(
+                    f"{source}:{claim.line}: RODATA({claim.va:#x}, {claim.size:#x}) must be a "
+                    f"word-aligned range inside the {image} load image"
+                )
+            for other in units:
+                if other.image == image and other.rodata is not None and (
+                    claim.va < other.rodata[0] + other.rodata[1]
+                    and other.rodata[0] < claim.va + claim.size
+                ):
+                    raise ValueError(
+                        f"{source}:{claim.line}: RODATA range overlaps unit {other.unit!r}"
+                    )
+            rodata = (claim.va, claim.size)
         if not claims:
             raise ValueError(f"{path}: unit {name!r} source has no ADDRESS() claim: {source}")
         functions = _bind_claims(path, name, image, source, claims, catalog, identities, claimed)
@@ -365,7 +398,7 @@ def load(
                 f"{path}: unit {name!r} at {functions[0].va:#x} is listed after "
                 f"{units[-1].unit!r} at {units[-1].va:#x}; units follow the linked order"
             )
-        units.append(Unit(name, image, source.as_posix(), profile_name, functions, data))
+        units.append(Unit(name, image, source.as_posix(), profile_name, functions, data, rodata))
         for ordinal, (claim, function) in enumerate(zip(claims, functions)):
             binding_rows.append({
                 "image": image,

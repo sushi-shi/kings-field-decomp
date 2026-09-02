@@ -5,6 +5,9 @@
 #include <LIBGTE.H>
 #include <LIBGPU.H>
 
+/* Jump tables and string literals of this unit in the retail data region. */
+RODATA(0x8001235c, 0x178)
+
 extern KfPlayerState player_state;
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset and memcpy without prototypes. */
@@ -54,9 +57,6 @@ extern s32 memory_card_error_event;
 extern const char memory_card_root_path[];
 extern const char save_main_file_path[];
 extern const char save_temporary_file_path[];
-extern const char save_icon_frame_1_path[];
-extern const char save_icon_frame_2_path[];
-extern const char save_icon_frame_3_path[];
 extern char memory_card_message_path_template[];
 extern char talk_image_path_template[];
 extern KfSaveHeader *save_header_buffer;
@@ -692,12 +692,12 @@ void save_file_initialize_buffers(void)
     save_header_buffer->playstation_header[2] = 0x13;
     save_header_buffer->playstation_header[3] = SAVE_FILE_BLOCKS;
     memcpy(&save_header_buffer->playstation_header[4], SAVE_TITLE_TEXT, sizeof(SAVE_TITLE_TEXT));
-    cd_file_load_into(image, save_icon_frame_1_path);
+    cd_file_load_into(image, "TIM\\ICO1.TIM");
     memcpy(&save_header_buffer->playstation_header[0x60], &image[0x14], 0x20);
     memcpy(&save_header_buffer->playstation_header[0x80], &image[0x40], 0x80);
-    cd_file_load_into(image, save_icon_frame_2_path);
+    cd_file_load_into(image, "TIM\\ICO2.TIM");
     memcpy(&save_header_buffer->playstation_header[0x100], &image[0x40], 0x80);
-    cd_file_load_into(image, save_icon_frame_3_path);
+    cd_file_load_into(image, "TIM\\ICO3.TIM");
     memcpy(&save_header_buffer->playstation_header[0x180], &image[0x40], 0x80);
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
 }
@@ -868,10 +868,12 @@ void talk_show_indexed_image(u8 prefix_digit, u8 index_digit, s32 group_id, u8 f
     s32 tens = group_id / 10;
     s32 ones = group_id % 10;
 
-    talk_image_path_template[0xa] = prefix_digit + '0';
-    talk_image_path_template[0xb] = index_digit + '0';
-    talk_image_path_template[0xe] = frame_digit + '0';
-    talk_image_path_template[6] = talk_image_path_template[0xc] = tens + '0';
-    talk_image_path_template[7] = talk_image_path_template[0xd] = ones + '0';
-    screen_show_image_until_input(talk_image_path_template);
+    char *path = talk_image_path_template;
+
+    path[0xa] = prefix_digit + '0';
+    path[0xb] = index_digit + '0';
+    path[0xe] = frame_digit + '0';
+    path[6] = path[0xc] = tens + '0';
+    path[7] = path[0xd] = ones + '0';
+    screen_show_image_until_input(path);
 }

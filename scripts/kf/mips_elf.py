@@ -59,6 +59,7 @@ RELOCATION_TYPES = {
 SECTION_SYMBOL = ".text"
 DATA_SECTION_SYMBOL = ".data"
 BSS_SECTION_SYMBOL = ".bss"
+RODATA_SECTION_SYMBOL = ".rodata"
 
 
 @dataclass(frozen=True)
@@ -162,6 +163,8 @@ def write_mips_elf(
     data_relocations: Iterable[MipsRelocation] = (),
     bss_size: int = 0,
     bss_symbols: Iterable[DefinedSymbol] = (),
+    rodata: bytes = b"",
+    rodata_relocations: Iterable[MipsRelocation] = (),
 ) -> bytes:
     """Build a deterministic MIPS-I/O32 relocatable object.
 
@@ -184,8 +187,10 @@ def write_mips_elf(
     data_relocations = _check_relocations(data_relocations, len(data), ".data")
     data_symbols = _check_symbols(data_symbols, len(data), ".data")
     bss_symbols = _check_symbols(bss_symbols, bss_size, ".bss")
+    rodata_relocations = _check_relocations(rodata_relocations, len(rodata), ".rodata")
     has_data = bool(data) or bool(data_symbols) or bool(data_relocations)
     has_bss = bss_size > 0 or bool(bss_symbols)
+    has_rodata = bool(rodata)
 
     # Section order: .text, .rel.text, [.data, [.rel.data]], [.bss], .symtab,
     # .strtab, .shstrtab. Indices are assigned as the list is built.
@@ -206,6 +211,14 @@ def write_mips_elf(
     if has_bss:
         sections.append(_Section(".bss", SHT_NOBITS, SHF_ALLOC | SHF_WRITE, b"", alignment=4))
         bss_index = len(sections)
+    rodata_index = 0
+    if has_rodata:
+        sections.append(_Section(".rodata", SHT_PROGBITS, SHF_ALLOC, rodata, alignment=4))
+        rodata_index = len(sections)
+        if rodata_relocations:
+            sections.append(
+                _Section(".rel.rodata", SHT_REL, 0, b"", alignment=4, entry_size=REL_SIZE)
+            )
     symtab_index = len(sections) + 1
     strtab_index = symtab_index + 1
     shstrtab_index = strtab_index + 1
@@ -215,6 +228,8 @@ def write_mips_elf(
         section_symbols.append((DATA_SECTION_SYMBOL, data_index))
     if has_bss:
         section_symbols.append((BSS_SECTION_SYMBOL, bss_index))
+    if has_rodata:
+        section_symbols.append((RODATA_SECTION_SYMBOL, rodata_index))
     section_symbol_names = {name for name, _ in section_symbols}
 
     placed = [
@@ -229,7 +244,7 @@ def write_mips_elf(
     if len(set(defined_names)) != len(defined_names):
         raise ValueError("defined symbol names must be unique")
     undefined_names = sorted(
-        {item.symbol for item in (*relocations, *data_relocations)}
+        {item.symbol for item in (*relocations, *data_relocations, *rodata_relocations)}
         - set(defined_names)
         - section_symbol_names
     )
@@ -279,14 +294,18 @@ def write_mips_elf(
     resolved: list[_Section] = []
     for section in sections:
         if section.section_type == SHT_REL:
-            is_text = section.name == ".rel.text"
+            entries, target_index = {
+                ".rel.text": (relocations, text_index),
+                ".rel.data": (data_relocations, data_index),
+                ".rel.rodata": (rodata_relocations, rodata_index),
+            }[section.name]
             section = _Section(
                 section.name,
                 SHT_REL,
                 0,
-                rel_section(relocations if is_text else data_relocations),
+                rel_section(entries),
                 link=symtab_index,
-                info=text_index if is_text else data_index,
+                info=target_index,
                 alignment=4,
                 entry_size=REL_SIZE,
             )

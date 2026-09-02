@@ -46,6 +46,29 @@ class DataClaim:
     line: int
 
 
+@dataclass(frozen=True)
+class RodataClaim:
+    va: int
+    size: int
+    line: int
+
+
+RODATA_RE = re.compile(
+    r"^\s*RODATA\(\s*(0x[0-9A-Fa-f]+)\s*,\s*(0x[0-9A-Fa-f]+|[0-9]+)\s*\)\s*"
+    r"(?:/\*.*\*/\s*)?$"
+)
+
+
+def scan_rodata_claims(source: Path) -> tuple[RodataClaim, ...]:
+    """Return the RODATA() claims of one source in file order."""
+    claims: list[RodataClaim] = []
+    for index, text in enumerate(source.read_text(encoding="utf-8").splitlines()):
+        match = RODATA_RE.match(text)
+        if match is not None:
+            claims.append(RodataClaim(int(match.group(1), 16), int(match.group(2), 0), index + 1))
+    return tuple(claims)
+
+
 def _definition_after(lines: list[str], index: int) -> str:
     for following in lines[index + 1:index + 6]:
         stripped = following.strip()

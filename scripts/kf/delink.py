@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Iterable
 
 from scripts.kf.mips_elf import (
+    RODATA_SECTION_SYMBOL,
     STB_GLOBAL,
     STB_LOCAL,
     STT_FUNC,
@@ -67,6 +68,7 @@ OBJECT_FIELDS = (
     "relocations",
     "data_size",
     "bss_size",
+    "rodata_size",
     "confidence",
     "provenance",
 )
@@ -394,9 +396,14 @@ def _resolve_symbol(
     function: Function,
     target: int,
     target_name: str,
+    rodata: tuple[int, int] | None = None,
 ) -> tuple[str, int]:
     if function.contains(target):
         return SECTION_SYMBOL, target - function.va
+    if rodata is not None and rodata[0] <= target < rodata[0] + rodata[1]:
+        # The owning module's read-only contribution: jump tables and string
+        # literals compare as .rodata offsets, the way the compiler emits them.
+        return RODATA_SECTION_SYMBOL, target - rodata[0]
     target_function = catalog.function_starts[function.image].get(target)
     if target_function is not None:
         return target_function.symbol, 0
@@ -462,11 +469,12 @@ def _apply_relocation(
     row: dict[str, str],
     catalog: Catalog,
     policy: str,
+    rodata: tuple[int, int] | None = None,
 ) -> tuple[list[MipsRelocation], dict[str, object]]:
     validation = validate_relocation(blob, function, row, catalog, policy)
     target = validation.target
     offset = validation.offset
-    symbol, addend = _resolve_symbol(catalog, function, target, row["target_name"])
+    symbol, addend = _resolve_symbol(catalog, function, target, row["target_name"], rodata)
 
     if row["kind"] == "mips26":
         local_target = function.contains(target)
@@ -542,10 +550,18 @@ class Module:
     stem: str
     vas: tuple[int, ...]
     data: tuple[Datum, ...] = ()
+    rodata: tuple[int, int] | None = None
 
     @property
     def object_name(self) -> str:
         return f"{self.vas[0]:08x}_{self.stem}.o"
+
+    @property
+    def text_start(self) -> int:
+        return self.vas[0]
+
+    def owns_rodata(self, address: int) -> bool:
+        return self.rodata is not None and self.rodata[0] <= address < self.rodata[0] + self.rodata[1]
 
 
 def _get_word(blob: bytes | bytearray, offset: int) -> int:
@@ -586,6 +602,25 @@ class ModuleImage:
     body_size: int
     data_size: int
     bss_size: int
+    rodata_size: int = 0
+
+
+def _module_rodata(
+    module: Module, blob: bytes, text_size: int
+) -> tuple[bytes, list[MipsRelocation]]:
+    """Rebase a module's carved read-only range: in-module code pointers become
+    .text-relative words with R_MIPS_32 relocations; everything else (string
+    literals, foreign pointers) keeps its retail bytes."""
+    start = module.text_start
+    end = start + text_size
+    data = bytearray(blob)
+    relocations: list[MipsRelocation] = []
+    for offset in range(0, len(data) - 3, 4):
+        word = _get_word(data, offset)
+        if start <= word < end:
+            _put_word(data, offset, word - start)
+            relocations.append(MipsRelocation(offset, "R_MIPS_32", SECTION_SYMBOL))
+    return bytes(data), relocations
 
 
 def _module_data(
@@ -625,6 +660,7 @@ def _module_object(
     functions: dict[int, Function],
     carved: dict[int, tuple[bytes, list[MipsRelocation]]],
     data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]] | None = None,
+    rodata_blob: bytes | None = None,
 ) -> ModuleImage:
     """Concatenate a module's carved functions into one .text section.
 
@@ -660,6 +696,11 @@ def _module_object(
     data, data_symbols, data_relocations, bss_size, bss_symbols = _module_data(
         module, data_blobs or {}
     )
+    rodata, rodata_relocations = b"", []
+    if module.rodata is not None:
+        if rodata_blob is None:
+            raise ValueError(f"module {module.unit}: RODATA range was not carved")
+        rodata, rodata_relocations = _module_rodata(module, rodata_blob, len(text))
     return ModuleImage(
         write_mips_elf(
             bytes(text),
@@ -672,12 +713,15 @@ def _module_object(
             data_relocations=data_relocations,
             bss_size=bss_size,
             bss_symbols=bss_symbols,
+            rodata=rodata,
+            rodata_relocations=rodata_relocations,
         ),
-        [*relocations, *data_relocations],
+        [*relocations, *data_relocations, *rodata_relocations],
         len(text),
         body_total,
         len(data),
         bss_size,
+        len(rodata),
     )
 
 
@@ -750,6 +794,14 @@ def delink(
         used_rows: list[dict[str, object]] = []
         withheld_functions: list[dict[str, object]] = []
         carved: dict[int, tuple[bytes, list[MipsRelocation]]] = {}
+        # Members of a module that claims a RODATA range are carved a second
+        # time with that range resolving to .rodata offsets.
+        rodata_by_function = {
+            va: module.rodata
+            for module in selected_modules if module.rodata is not None
+            for va in module.vas
+        }
+        carved_rodata: dict[int, tuple[bytes, list[MipsRelocation]]] = {}
         for function in functions:
             if function.fragments != 1:
                 withheld_functions.append({
@@ -796,6 +848,24 @@ def delink(
                     continue
                 function_relocations.extend(relocations)
                 used_rows.append(used)
+            if function.va in rodata_by_function:
+                module_blob = bytearray(executable[start:start + function.size])
+                module_relocations: list[MipsRelocation] = []
+                for row in rows_by_owner[function.va]:
+                    sites = [parse_int(row["site_va"])]
+                    if row["paired_site_va"]:
+                        sites.append(parse_int(row["paired_site_va"]))
+                    if any(occupied[site] > 1 for site in sites):
+                        continue
+                    try:
+                        relocations, _used = _apply_relocation(
+                            module_blob, function, row, catalog, policy,
+                            rodata_by_function[function.va],
+                        )
+                    except ValueError:
+                        continue
+                    module_relocations.extend(relocations)
+                carved_rodata[function.va] = (bytes(module_blob), module_relocations)
 
             object_name = f"{function.va:08x}_{function.symbol}.o"
             object_relative = Path("objects") / object_name
@@ -820,6 +890,7 @@ def delink(
                 "relocations": len(function_relocations),
                 "data_size": "0x0",
                 "bss_size": "0x0",
+                "rodata_size": "0x0",
                 "confidence": function.confidence,
                 "provenance": function.provenance,
             })
@@ -859,7 +930,17 @@ def delink(
             if any(va not in carved for va in module.vas):
                 missing = [f"{va:#x}" for va in module.vas if va not in carved]
                 raise ValueError(f"module {module.unit}: functions not carved: {missing}")
-            built = _module_object(module, catalog.function_starts[image], carved, data_blobs)
+            module_carved = dict(carved)
+            module_carved.update({va: carved_rodata[va] for va in module.vas if va in carved_rodata})
+            rodata_blob = None
+            if module.rodata is not None:
+                rodata_start = expected.file_offset(module.rodata[0])
+                rodata_blob = executable[rodata_start:rodata_start + module.rodata[1]]
+                if len(rodata_blob) != module.rodata[1]:
+                    raise ValueError(f"{exe_path}: truncated RODATA range for {module.unit}")
+            built = _module_object(
+                module, catalog.function_starts[image], module_carved, data_blobs, rodata_blob
+            )
             _write_bytes_if_changed(module_output / module.object_name, built.data)
             live_modules.add(module.object_name)
             first = catalog.function_starts[image][module.vas[0]]
@@ -877,6 +958,7 @@ def delink(
                 "relocations": len(built.relocations),
                 "data_size": format_size(built.data_size),
                 "bss_size": format_size(built.bss_size),
+                "rodata_size": format_size(built.rodata_size),
                 "confidence": first.confidence,
                 "provenance": "config/units.toml",
             })

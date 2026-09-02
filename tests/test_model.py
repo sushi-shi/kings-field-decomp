@@ -11,6 +11,7 @@ from scripts.kf.model import (
     DataClaim,
     DataIdentity,
     scan_claims,
+    scan_rodata_claims,
     scan_source,
     stale_address_names,
 )
@@ -192,6 +193,22 @@ class StaleNameTests(unittest.TestCase):
                 {("GAME.EXE", 0x80020000): "counter"},
             )
         self.assertEqual(stale, [("func_80010000", "named"), ("DAT_80020000", "counter")])
+
+
+class RodataClaimTests(unittest.TestCase):
+    def test_rodata_claim_is_scanned_without_a_definition(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kf-model-") as directory:
+            source = Path(directory) / "unit.c"
+            source.write_text(
+                "#include <kf/address.h>\n\nRODATA(0x8001235c, 0x178)\n\n"
+                "ADDRESS(0x80010000, 0x10)\nvoid first(void)\n{\n}\n",
+                encoding="utf-8",
+            )
+            claims = scan_rodata_claims(source)
+            functions, data = scan_source(source)
+        self.assertEqual([(c.va, c.size, c.line) for c in claims], [(0x8001235C, 0x178, 3)])
+        self.assertEqual(len(functions), 1)
+        self.assertEqual(data, ())
 
 
 if __name__ == "__main__":

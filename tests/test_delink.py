@@ -639,5 +639,65 @@ class ModuleObjectTests(unittest.TestCase):
         self.assertEqual(names["only"][5], section_names.index(".text") + 1)
         self.assertEqual(names["callee"][5], 0)  # undefined
 
+
+class ModuleRodataTests(unittest.TestCase):
+    def test_module_rodata_rebases_in_module_code_pointers(self) -> None:
+        first = Function("GAME.EXE", 0x80010000, 8, 8, 1, "first", "test", "test")
+        second = Function("GAME.EXE", 0x80010008, 8, 8, 1, "second", "test", "test")
+        carved = {
+            0x80010000: (struct.pack("<2I", 0x03E00008, 0), []),
+            0x80010008: (struct.pack("<2I", 0x03E00008, 0), []),
+        }
+        module = Module(
+            "GAME.EXE", "game.pair", "pair", (0x80010000, 0x80010008), (), (0x80012000, 0x10)
+        )
+        # a two-entry jump table into the module followed by a string literal
+        blob = struct.pack("<2I", 0x80010008, 0x80010000) + b"TIM\0\0\0\0\0"
+        built = _module_object(
+            module, {first.va: first, second.va: second}, carved, {}, blob
+        )
+        self.assertEqual(built.rodata_size, 0x10)
+        sections = elf_sections(built.data)
+        rodata = built.data[sections[".rodata"][4]:sections[".rodata"][4] + sections[".rodata"][5]]
+        self.assertEqual(struct.unpack_from("<2I", rodata), (8, 0))
+        self.assertEqual(rodata[8:11], b"TIM")
+        self.assertEqual(
+            [item for item in built.relocations if item.symbol == ".text"],
+            [MipsRelocation(0, "R_MIPS_32", ".text"), MipsRelocation(4, "R_MIPS_32", ".text")],
+        )
+        self.assertIn(".rel.rodata", sections)
+
+    def test_code_reference_inside_the_claimed_range_resolves_to_rodata(self) -> None:
+        function = Function("GAME.EXE", 0x80010000, 8, 8, 1, "first", "test", "test")
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": ()},
+        )
+        target = 0x80012008
+        blob = bytearray(struct.pack("<2I", 0x3C018001, 0x24212008))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": f"{function.va + 4:#x}",
+            "kind": "mips_hi16_lo16",
+            "channel": "reachable-code",
+            "target_va": f"{target:#x}",
+            "target_region": "load",
+            "target_name": "DAT_80012008",
+            "opcode": "lui+addiu",
+            "confidence": "paired-pattern",
+            "status": "candidate",
+        }
+        relocations, used = _apply_relocation(
+            blob, function, row, catalog, "safe", (0x80012000, 0x10)
+        )
+        self.assertEqual(
+            relocations,
+            [MipsRelocation(0, "R_MIPS_HI16", ".rodata"), MipsRelocation(4, "R_MIPS_LO16", ".rodata")],
+        )
+        self.assertEqual(struct.unpack_from("<I", blob, 4)[0] & 0xFFFF, 8)
+
+
 if __name__ == "__main__":
     unittest.main()

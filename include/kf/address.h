@@ -34,4 +34,16 @@
  */
 #define DATA(va, size)
 
+/*
+ * Read-only contribution claim, at most one per translation unit: the retail
+ * address range that holds this unit's switch jump tables and string
+ * literals, in the order the compiler emitted them. The delinker carves it
+ * into the module object's .rodata, turns entries that point into the unit's
+ * own code into .text-relative words, and resolves the code's references to
+ * .rodata offsets, so objdiff compares the tables and literals as well:
+ *
+ *     RODATA(0x8001235c, 0x148)
+ */
+#define RODATA(va, size)
+
 #endif

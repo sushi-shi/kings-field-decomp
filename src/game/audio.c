@@ -19,7 +19,7 @@ extern u32 cd_file_load_into(void *destination, const char *path);
 extern s16 func_800468d8(u8 *sequence, s16 vab_id);
 extern void func_8004a344(s16 sequence_id);
 extern void func_8004b6e0(s16 sequence_id);
-extern s32 func_800555e0(s32 mode);
+extern s32 VSync(s32 mode);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
 extern void SsSetTickMode(s32 tick_mode);
@@ -123,7 +123,7 @@ void audio_stop_sequence_fade(void)
     if (audio_state.sequence_active == 1) {
         volume = 0x4b;
         do {
-            func_800555e0(0);
+            VSync(0);
             SsSeqSetVol(audio_state.sequence_id, volume, volume);
         } while (--volume >= 0);
         func_8004a344(audio_state.sequence_id);
@@ -140,7 +140,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
     if (audio_state.sequence_active == 1) {
         volume = 0x4b00;
         do {
-            func_800555e0(0);
+            VSync(0);
             SsSetMVol(volume >> 8, volume >> 8);
             volume -= fade_step;
         } while (volume > 0);
