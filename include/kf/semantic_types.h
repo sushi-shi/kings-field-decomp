@@ -542,6 +542,18 @@ typedef struct KfPlayerLevelGrowth {
  * agree on these four adjacent unsigned halfwords.  Linked bytes do not
  * establish whether the original object had external or internal linkage.
  */
+/* Armor and accessory record (item ids 13..54 index armor_records[id - 13]). */
+typedef struct KfArmorRecord {
+    u16 unknown_00;
+    u16 defense_component0;
+    u16 defense_component1;
+    u16 defense_component2;
+    u16 status_effect2_resistance;
+    u16 defense_component3;
+    u16 defense_component4;
+    u8 unknown_0e[0x0e];
+} KfArmorRecord;
+
 typedef struct KfPlayerVitals {
     u16 maximum_hp;
     u16 current_hp;
@@ -761,6 +773,7 @@ typedef char KfActorPlacement_size_is_16[
 typedef char KfMapCell_size_is_2[(sizeof(KfMapCell) == 0x02) ? 1 : -1];
 typedef char KfMapCopyRegion_size_is_6[
     (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
+typedef char KfArmorRecord_size_is_28[(sizeof(KfArmorRecord) == 28) ? 1 : -1];
 typedef char KfEffectRecord_size_is_60[(sizeof(KfEffectRecord) == 60) ? 1 : -1];
 typedef char KfMapObjectLink_size_is_8[(sizeof(KfMapObjectLink) == 8) ? 1 : -1];
 typedef char KfMapObjectPlacement_size_is_20[
@@ -839,11 +852,11 @@ typedef struct KfPlayerState {
     u8 unknown_79;
     u8 weapon_attack_fully_charged;
     u8 unknown_7b[1];
-    void *equipped_shield_record;
-    void *equipped_head_armor_record;
-    void *equipped_body_armor_record;
-    void *equipped_arm_armor_record;
-    void *equipped_leg_armor_record;
+    KfArmorRecord *equipped_shield_record;
+    KfArmorRecord *equipped_head_armor_record;
+    KfArmorRecord *equipped_body_armor_record;
+    KfArmorRecord *equipped_arm_armor_record;
+    KfArmorRecord *equipped_leg_armor_record;
     u8 equipped_shield_id;
     u8 equipped_head_armor_id;
     u8 equipped_body_armor_id;

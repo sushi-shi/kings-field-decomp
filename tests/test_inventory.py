@@ -54,9 +54,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 3306)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 62)
-        self.assertEqual(counts["structure_fields"], 531)
-        self.assertEqual(counts["structure_fields_named"], 442)
+        self.assertEqual(counts["structures"], 63)
+        self.assertEqual(counts["structure_fields"], 539)
+        self.assertEqual(counts["structure_fields_named"], 448)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)

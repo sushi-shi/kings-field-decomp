@@ -1838,7 +1838,7 @@ GAME.EXE	0x80015864	0x4064	0x80015868	mips_hi16_lo16	reachable-code	0x800a07b6	b
 GAME.EXE	0x8001586c	0x406c	0x80015870	mips_hi16_lo16	reachable-code	0x800a07b8	bss	player_state	lui+lhu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015880	0x4080	0x80015884	mips_hi16_lo16	reachable-code	0x800a07b8	bss	player_state	lui+sh	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015888	0x4088	0x8001588c	mips_hi16_lo16	reachable-code	0x800a0810	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x800158a4	0x40a4	0x800158a8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x800158a4	0x40a4	0x800158a8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800158b0	0x40b0	0x800158b4	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800158c4	0x40c4	0x800158c8	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800158d8	0x40d8	0x800158dc	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -1853,7 +1853,7 @@ GAME.EXE	0x80015948	0x4148	0x8001594c	mips_hi16_lo16	reachable-code	0x800a07c4	b
 GAME.EXE	0x80015950	0x4150	0x80015954	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015964	0x4164	0x80015968	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x8001596c	0x416c	0x80015970	mips_hi16_lo16	reachable-code	0x800a0811	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015988	0x4188	0x8001598c	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015988	0x4188	0x8001598c	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015994	0x4194	0x80015998	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800159a8	0x41a8	0x800159ac	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800159bc	0x41bc	0x800159c0	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -1868,7 +1868,7 @@ GAME.EXE	0x80015a2c	0x422c	0x80015a30	mips_hi16_lo16	reachable-code	0x800a07c4	b
 GAME.EXE	0x80015a34	0x4234	0x80015a38	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015a48	0x4248	0x80015a4c	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015a50	0x4250	0x80015a54	mips_hi16_lo16	reachable-code	0x800a0813	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015a6c	0x426c	0x80015a70	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015a6c	0x426c	0x80015a70	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015a78	0x4278	0x80015a7c	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015a8c	0x428c	0x80015a90	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015aa0	0x42a0	0x80015aa4	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -1883,7 +1883,7 @@ GAME.EXE	0x80015b10	0x4310	0x80015b14	mips_hi16_lo16	reachable-code	0x800a07c4	b
 GAME.EXE	0x80015b18	0x4318	0x80015b1c	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015b2c	0x432c	0x80015b30	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015b34	0x4334	0x80015b38	mips_hi16_lo16	reachable-code	0x800a0814	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015b50	0x4350	0x80015b54	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015b50	0x4350	0x80015b54	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015b5c	0x435c	0x80015b60	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015b70	0x4370	0x80015b74	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015b84	0x4384	0x80015b88	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -1898,7 +1898,7 @@ GAME.EXE	0x80015bf4	0x43f4	0x80015bf8	mips_hi16_lo16	reachable-code	0x800a07c4	b
 GAME.EXE	0x80015bfc	0x43fc	0x80015c00	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015c10	0x4410	0x80015c14	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015c18	0x4418	0x80015c1c	mips_hi16_lo16	reachable-code	0x800a0812	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015c34	0x4434	0x80015c38	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015c34	0x4434	0x80015c38	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015c40	0x4440	0x80015c44	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015c54	0x4454	0x80015c58	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015c68	0x4468	0x80015c6c	mips_hi16_lo16	reachable-code	0x800a07bc	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -1933,14 +1933,14 @@ GAME.EXE	0x80015df8	0x45f8	0x80015dfc	mips_hi16_lo16	reachable-code	0x800a07c6	b
 GAME.EXE	0x80015e08	0x4608	0x80015e0c	mips_hi16_lo16	reachable-code	0x800a07c6	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015e10	0x4610	0x80015e14	mips_hi16_lo16	reachable-code	0x800a07a4	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015e28	0x4628	0x80015e2c	mips_hi16_lo16	reachable-code	0x8009ce60	bss	DAT_8009ce60	lui+lbu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015e3c	0x463c	0x80015e40	mips_hi16_lo16	reachable-code	0x8009ce74	bss	DAT_8009ce74	lui+lbu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015e50	0x4650	0x80015e54	mips_hi16_lo16	reachable-code	0x8009ce74	bss	DAT_8009ce74	lui+sb	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015e3c	0x463c	0x80015e40	mips_hi16_lo16	reachable-code	0x8009ce74	bss	DAT_8009ce60	lui+lbu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015e50	0x4650	0x80015e54	mips_hi16_lo16	reachable-code	0x8009ce74	bss	DAT_8009ce60	lui+sb	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015e58	0x4658		mips26	reachable-code	0x8001fa44	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015e60	0x4660	0x80015e64	mips_hi16_lo16	reachable-code	0x800a07a4	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015e78	0x4678	0x80015e7c	mips_hi16_lo16	reachable-code	0x8009ced8	bss	DAT_8009ced8	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015e78	0x4678	0x80015e7c	mips_hi16_lo16	reachable-code	0x8009ced8	bss	DAT_8009ce60	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015e94	0x4694		mips26	reachable-code	0x8001fa44	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015e9c	0x469c	0x80015ea0	mips_hi16_lo16	reachable-code	0x800a07a4	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80015eb4	0x46b4	0x80015eb8	mips_hi16_lo16	reachable-code	0x8009ceb0	bss	DAT_8009ceb0	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80015eb4	0x46b4	0x80015eb8	mips_hi16_lo16	reachable-code	0x8009ceb0	bss	DAT_8009ce60	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015ed0	0x46d0		mips26	reachable-code	0x8001fa44	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015ed8	0x46d8	0x80015edc	mips_hi16_lo16	reachable-code	0x800a07a6	bss	player_state	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80015ef8	0x46f8	0x80015efc	mips_hi16_lo16	reachable-code	0x800a07a8	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
@@ -2032,27 +2032,27 @@ GAME.EXE	0x800168c0	0x50c0	0x800168c4	mips_hi16_lo16	reachable-code	0x800a0812	b
 GAME.EXE	0x800168c8	0x50c8		mips26	instruction-word	0x800168d8	load		j		manual-control-flow	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800168d0	0x50d0	0x800168d4	mips_hi16_lo16	reachable-code	0x800a0815	bss	player_state	lui+sb	a0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800168d8	0x50d8	0x800168dc	mips_hi16_lo16	reachable-code	0x800a0810	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x800168f4	0x50f4	0x800168f8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x800168f4	0x50f4	0x800168f8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016900	0x5100	0x80016904	mips_hi16_lo16	reachable-code	0x800a07fc	bss	player_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016908	0x5108		mips26	reachable-code	0x80016918	load		j		manual-control-flow	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016910	0x5110	0x80016914	mips_hi16_lo16	reachable-code	0x800a07fc	bss	player_state	lui+sw	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016918	0x5118	0x8001691c	mips_hi16_lo16	reachable-code	0x800a0811	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80016934	0x5134	0x80016938	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80016934	0x5134	0x80016938	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016940	0x5140	0x80016944	mips_hi16_lo16	reachable-code	0x800a0800	bss	player_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016948	0x5148		mips26	reachable-code	0x80016958	load		j		manual-control-flow	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016950	0x5150	0x80016954	mips_hi16_lo16	reachable-code	0x800a0800	bss	player_state	lui+sw	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016958	0x5158	0x8001695c	mips_hi16_lo16	reachable-code	0x800a0813	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x80016974	0x5174	0x80016978	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x80016974	0x5174	0x80016978	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016980	0x5180	0x80016984	mips_hi16_lo16	reachable-code	0x800a0808	bss	player_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016988	0x5188		mips26	reachable-code	0x80016998	load		j		manual-control-flow	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016990	0x5190	0x80016994	mips_hi16_lo16	reachable-code	0x800a0808	bss	player_state	lui+sw	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016998	0x5198	0x8001699c	mips_hi16_lo16	reachable-code	0x800a0814	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x800169b4	0x51b4	0x800169b8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x800169b4	0x51b4	0x800169b8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800169c0	0x51c0	0x800169c4	mips_hi16_lo16	reachable-code	0x800a080c	bss	player_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800169c8	0x51c8		mips26	reachable-code	0x800169d8	load		j		manual-control-flow	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800169d0	0x51d0	0x800169d4	mips_hi16_lo16	reachable-code	0x800a080c	bss	player_state	lui+sw	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x800169d8	0x51d8	0x800169dc	mips_hi16_lo16	reachable-code	0x800a0812	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x800169f4	0x51f4	0x800169f8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
+GAME.EXE	0x800169f4	0x51f4	0x800169f8	mips_hi16_lo16	reachable-code	0x800a00dc	bss	armor_records	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016a00	0x5200	0x80016a04	mips_hi16_lo16	reachable-code	0x800a0804	bss	player_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016a08	0x5208		mips26	reachable-code	0x80016a18	load		j		manual-control-flow	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80016a10	0x5210	0x80016a14	mips_hi16_lo16	reachable-code	0x800a0804	bss	player_state	lui+sw	zero	paired-reviewed	reviewed	manual:game_semantic_player_stats

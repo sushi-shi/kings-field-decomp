@@ -82,6 +82,14 @@ KfActorState	0x2b3c	0x04	current	KfActor *	supported	semantic_types.h;asm;xrefs	
 KfActorState	0x2b40	0x02	current_index	u16	supported	semantic_types.h;asm;xrefs	index of the actor being updated
 KfActorState	0x2b42	0x02	current_definition_id	u16	supported	semantic_types.h;asm;xrefs	definition id of the actor being updated
 KfActorState	0x2b44	0x04	player_target	KfActor *	supported	semantic_types.h;asm;xrefs	actor targeted by the player
+KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	asm;player_recalculate_combat_stats	meaning unresolved
+KfArmorRecord	0x02	0x02	defense_component0	u16	supported	asm;player_recalculate_combat_stats	added twice to damage_defense_component0
+KfArmorRecord	0x04	0x02	defense_component1	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component1
+KfArmorRecord	0x06	0x02	defense_component2	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component2
+KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	asm;player_recalculate_combat_stats	added to status_effect2_resistance
+KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component3
+KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component4
+KfArmorRecord	0x0e	0x0e	unknown_0e	u8[14]	opaque	asm;player_recalculate_combat_stats	meaning unresolved
 KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
 KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
 KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
@@ -308,11 +316,11 @@ KfPlayerState	0x78	0x01	unknown_78	u8	opaque	semantic_types.h;data_identities.ts
 KfPlayerState	0x79	0x01	unknown_79	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7c	0x04	equipped_shield_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x80	0x04	equipped_head_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x84	0x04	equipped_body_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x88	0x04	equipped_arm_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x8c	0x04	equipped_leg_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x7c	0x04	equipped_shield_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x80	0x04	equipped_head_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x84	0x04	equipped_body_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate

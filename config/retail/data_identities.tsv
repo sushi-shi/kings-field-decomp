@@ -2006,7 +2006,7 @@ GAME.EXE	0x800a01f8	0x4	memory_arena_cursor	unknown	bss	u8 *	memory	supported	ga
 GAME.EXE	0x800a01fc	0x44	memory_allocation_stack	unknown	bss	u32[17]	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	element 0 is the allocation depth, elements 1..16 the released sizes or malloc blocks; memory_allocate and memory_release_last index the entries from the depth word through one base register
 GAME.EXE	0x800a0240	0x4	memory_system_heap_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	one byte past memory_arena_end and the first argument to InitHeap
 GAME.EXE	0x800a0244	0x4	memory_system_heap_size	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	signed byte count from memory_system_heap_start through 0x801f7fff
-GAME.EXE	0x800a0248	0x498	asset_aux_block	global	bss	u32[294]	asset_aux_block	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	294-word copied asset block
+GAME.EXE	0x800a0248	0x498	armor_records	global	bss	KfArmorRecord[42]	armor_records	supported	game_match_campaign_30.tsv;reviewed-reloc;asm;player_recalculate_combat_stats	42 armor and accessory records copied from the common resource stream; indexed by item id minus 13
 GAME.EXE	0x800a06e0	0x4	DAT_800a06e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a06e4	0x4	DAT_800a06e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0760	0x4	DAT_800a0760	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

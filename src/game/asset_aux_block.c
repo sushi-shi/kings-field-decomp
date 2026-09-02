@@ -1,12 +1,12 @@
 #include <kf/address.h>
-#include <kf/game_types.h>
+#include <kf/semantic_types.h>
 
-extern u32 asset_aux_block[];
+extern KfArmorRecord armor_records[42];
 
 ADDRESS(0x800150fc, 0x2c)
 void asset_aux_block_load(const u32 *source)
 {
-    u32 *destination = asset_aux_block;
+    u32 *destination = (u32 *)armor_records;
     s32 count = 294;
 
     do {
