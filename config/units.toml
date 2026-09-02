@@ -702,6 +702,12 @@ source = "src/game/system_callbacks.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.pad"
+image = "GAME.EXE"
+source = "src/game/pad.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.graph_state_accessors"
 image = "GAME.EXE"
 source = "src/game/graph_state_accessors.c"
