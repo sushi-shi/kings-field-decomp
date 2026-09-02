@@ -296,6 +296,49 @@ Residues left in the same module (not steered):
   two-store giv alone. Same giv-base / callee-saved-register-choice
   compiler-build question as the `func_8002317c` and `func_800238d8` classes.
 
+## render enqueue
+
+Witnesses come from `src/game/render_enqueue.c` (`game.render_enqueue`,
+`0x8001de18..0x8001e480`): the projected textured-sprite enqueuer
+`func_8001e230` and the lit map-geometry emitter `func_8001de18`. Both are
+structurally exact (call set, referents, widths, control flow) yet blocked
+below exact by two distinct walls.
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `jal RotTransPers4; move s1,v0` (the anchor depth saved in the call's delay slot, one beat before the corner batch clobbers `$v0`) | `otz = RotTransPers(&anchor, ...); RotTransPers4(corners...);` -- the sprite sorts by the projected origin, not the corner batch; the anchor return lives in `$v0` across the `RotTransPers4` argument set-up | `func_8001e230` `0x8001e230` |
+| four `long sxy0..sxy3;` scalars packed above `p`/`flag`, not an array below them | declare the four screen-XY outputs as separate `long`s, addressed only at the `RotTransPers4` call, so their slots follow `p`/`flag` (whose addresses are taken at the earlier `RotTransPers`) | same |
+
+Residues, both blocked (not steerable from C under this probe):
+
+- `func_8001e230` `0x8001e230` (88%): the same post-reload-scheduler wall as
+  its banked sibling `func_8001e480` (`render_sprite.c`). gcc-2.5.7 fills the
+  screen-XY load-delay slots with the clut/tpage global loads (hoisting them
+  ahead of their stores) and schedules the anchor-depth save so that the OT
+  index needs one extra callee-saved register than retail's five. Neither `-O2`
+  nor `-O2 -fno-schedule-insns2` reproduces both the hoisted prologue and the
+  un-hoisted body at once -- the open scheduler-attribution residue.
+
+- `func_8001de18` `0x8001de18` (13%): the split-identity base-sharing wall.
+  Retail holds `&tmd_state.current_asset` (`tmd_state+0x20`) in one register
+  and forms the projected-vertex buffer as `base+488` and the ordering-table
+  pointer as `(buffer-756)`, materialised from a single relocation. Because
+  gcc shares a base register only across accesses the source proves are one
+  object (the `render_initialize` "boundary evidence" row above), the retail
+  address arithmetic proves `tmd_state`, the vertex buffer `DAT_800911b0`, and
+  `display_state.ordering_table` were **one graphics-context aggregate** the
+  curation split into separate identities -- the same aggregate carries the
+  sprite material `DAT_80095058` at `buffer+16040`, reached that way by the
+  larger emitters `func_8001d730` and `func_8001c7f8`. With the individual
+  identities the per-access `lui`/`addiu` materialisation (plus the loop's
+  every-iteration vertex reads through the un-shared base) is the dominant
+  divergence; it cannot close until that aggregate is modelled, which is
+  high-ripple because `display_state` and `tmd_state` are shared by many banked
+  units. The larger dispatchers `func_8001c7f8` (0xf38, an eleven-way TMD
+  primitive switch whose jump table lives far away at `0x8001222c`) and
+  `func_8001d730` (0x6e8, the actor-model GT/FT path) share this same wall and
+  remain unreconstructed pending the aggregate.
+
 ## memory
 
 | Retail signature | Source shape | Witness |
