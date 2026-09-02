@@ -1559,7 +1559,7 @@ GAME.EXE	0x80014654	0x2e54		mips26	reachable-code	0x80050894	load		jal		control-
 GAME.EXE	0x80014674	0x2e74	0x80014678	mips_hi16_lo16	reachable-code	0x800a0824	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001467c	0x2e7c	0x80014680	mips_hi16_lo16	reachable-code	0x800a082c	bss	player_state	lui+lw	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80014684	0x2e84	0x80014688	mips_hi16_lo16	reachable-code	0x800a0834	bss	player_state	lui+lw	a1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800146a0	0x2ea0		mips26	reachable-code	0x80036618	load	func_80036618	jal		control-flow-reviewed	reviewed	manual:game_func_80014674
+GAME.EXE	0x800146a0	0x2ea0		mips26	reachable-code	0x80036618	load	player_warp_shimmer	jal		control-flow-reviewed	reviewed	manual:game_func_80014674
 GAME.EXE	0x800146cc	0x2ecc	0x800146d0	mips_hi16_lo16	reachable-code	0x80070e98	bss	display_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x800146dc	0x2edc		mips26	reachable-code	0x8005030c	load	memset	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800146e4	0x2ee4	0x800146e8	mips_hi16_lo16	reachable-code	0x8006bd98	bss	actor_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle

@@ -4,19 +4,19 @@
 /*
  * Player warp / floor-transition band 0x80036618..0x80036d3c (GAME.EXE).
  *
- * func_80036618 runs the warp shimmer: it spawns four type-0x15 effects at the
+ * player_warp_shimmer runs the warp shimmer: it spawns four type-0x15 effects at the
  * player position, animates their intensity/rotation over 48 frames (playing
  * gameplay_sound_ref_6 on frame 8), and, unless mode 2 keeps them, releases the
  * pool records afterwards. mode 0/2 fade the shimmer in (delta +0x100 from 0),
  * mode 1 fades it out (delta -0x100 from 0x2000).
  *
- * func_80036850 is the change-floor warp: shimmer out, reload the world through
+ * player_warp_change_floor is the change-floor warp: shimmer out, reload the world through
  * func_80035e14/func_80036554, record the new floor/variant, snap the camera to
- * the centre of its 2000-unit cell, and shimmer back in. func_800369ac is the
+ * the centre of its 2000-unit cell, and shimmer back in. player_warp_same_floor is the
  * same-floor teleport: shimmer out, drop the old broad-phase occupancy, swap the
  * map variant and its assets, move to an explicit cell, and shimmer back in.
  *
- * func_80036af0 runs every frame from game_main_loop: it dispatches on the
+ * player_warp_trigger_update runs every frame from game_main_loop: it dispatches on the
  * current floor (jump table at 0x80012c14) and, when the player's previous map
  * cell matches a scripted trigger, performs the corresponding warp.
  *
@@ -28,9 +28,9 @@
  * constructor func_80036f44 owns that layout); the two halfwords this file
  * touches use explicit offsets into unknown_0a as a temporary view.
  *
- * func_80036d3c is exact. func_80036850/func_800369ac carry a one-instruction
- * prologue argument-save scheduling residue; func_80036618 hits the
- * loop-optimiser count-loop/giv-base residue and func_80036af0 the switch
+ * func_80036d3c is exact. player_warp_change_floor/player_warp_same_floor carry a one-instruction
+ * prologue argument-save scheduling residue; player_warp_shimmer hits the
+ * loop-optimiser count-loop/giv-base residue and player_warp_trigger_update the switch
  * cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
  */
 
@@ -56,14 +56,14 @@ extern void ReadColorMatrix(MATRIX *matrix);
 extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
 extern void lighting_set_active_color_matrix(s32 mode);
 
-extern void func_80036850(s32 floor, u8 variant);
-extern void func_800369ac(char variant, s32 cell_x, s32 cell_z);
+extern void player_warp_change_floor(s32 floor, u8 variant);
+extern void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z);
 
 #define EFFECT_ROTATION_PHASE(e) (*(u16 *)&(e)->unknown_0a[0x14]) /* +0x1e */
 #define EFFECT_INTENSITY(e) (*(u16 *)&(e)->unknown_0a[0x1c])       /* +0x26 */
 
 ADDRESS(0x80036618, 0x238)
-void func_80036618(s16 mode, VECTOR *position)
+void player_warp_shimmer(s16 mode, VECTOR *position)
 {
     KfEffectRecord *effects[4];
     struct {
@@ -127,14 +127,14 @@ void func_80036618(s16 mode, VECTOR *position)
 }
 
 ADDRESS(0x80036850, 0x15c)
-void func_80036850(s32 floor, u8 variant)
+void player_warp_change_floor(s32 floor, u8 variant)
 {
     s32 position[3];
 
     position[0] = player_state.camera_position.vx;
     position[2] = player_state.camera_position.vz;
     position[1] = player_state.floor_height;
-    func_80036618(0, (VECTOR *)position);
+    player_warp_shimmer(0, (VECTOR *)position);
     func_80035e14();
     player_state.progress_state.current_floor = floor;
     player_state.map_variant = variant;
@@ -150,11 +150,11 @@ void func_80036850(s32 floor, u8 variant)
     position[2] = player_state.camera_position.vz;
     player_sync_position_to_map();
     position[1] = player_state.floor_height;
-    func_80036618(1, (VECTOR *)position);
+    player_warp_shimmer(1, (VECTOR *)position);
 }
 
 ADDRESS(0x800369ac, 0x144)
-void func_800369ac(char variant, s32 cell_x, s32 cell_z)
+void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
 {
     s32 position[3];
     u8 previous_variant;
@@ -162,7 +162,7 @@ void func_800369ac(char variant, s32 cell_x, s32 cell_z)
     position[0] = player_state.camera_position.vx;
     position[2] = player_state.camera_position.vz;
     position[1] = player_state.floor_height;
-    func_80036618(0, (VECTOR *)position);
+    player_warp_shimmer(0, (VECTOR *)position);
     collision_adjust_cell_occupancy(player_state.map_cell.x,
                                     player_state.map_cell.z, -1);
     func_80020a2c();
@@ -180,14 +180,14 @@ void func_800369ac(char variant, s32 cell_x, s32 cell_z)
     position[2] = player_state.camera_position.vz;
     player_sync_position_to_map();
     position[1] = player_state.floor_height;
-    func_80036618(1, (VECTOR *)position);
+    player_warp_shimmer(1, (VECTOR *)position);
 }
 
-/* func_80036af0 scripted-trigger jump table (current floor 1..5). */
+/* player_warp_trigger_update scripted-trigger jump table (current floor 1..5). */
 RODATA(0x80012c14, 0x14)
 
 ADDRESS(0x80036af0, 0x24c)
-void func_80036af0(void)
+void player_warp_trigger_update(void)
 {
     u32 cell;
 
@@ -195,11 +195,11 @@ void func_80036af0(void)
     case 1:
         cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
         if (cell == 0x1d380000) {
-            func_80036850(2, 0);
+            player_warp_change_floor(2, 0);
         } else if (cell == 0x190b0000) {
-            func_80036850(3, 0);
+            player_warp_change_floor(3, 0);
         } else if (cell == 0x27230000) {
-            func_80036850(4, 0);
+            player_warp_change_floor(4, 0);
         } else if (cell == 0x0f020000) {
             if (boss_defeat_complete) {
             }
@@ -208,51 +208,51 @@ void func_80036af0(void)
     case 2:
         cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
         if (cell == 0x1d380000) {
-            func_80036850(1, 0);
+            player_warp_change_floor(1, 0);
         } else if (cell == 0x1c120000) {
-            func_80036850(3, 0);
+            player_warp_change_floor(3, 0);
         }
         break;
     case 3:
         cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
         if (cell == 0x190b0000) {
-            func_80036850(1, 0);
+            player_warp_change_floor(1, 0);
         } else if (cell == 0x1c120000) {
-            func_80036850(2, 0);
+            player_warp_change_floor(2, 0);
         } else if (cell == 0x07160000 || cell == 0x2b5c0000) {
-            func_80036850(4, 0);
+            player_warp_change_floor(4, 0);
         }
         break;
     case 4:
         cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
         if (cell == 0x27230000) {
-            func_80036850(1, 0);
+            player_warp_change_floor(1, 0);
         } else if (cell == 0x07160000) {
-            func_80036850(3, 0);
+            player_warp_change_floor(3, 0);
         } else if (cell == 0x27450000) {
-            func_80036850(5, 1);
+            player_warp_change_floor(5, 1);
         } else if (cell == 0x2b5c0000) {
-            func_80036850(3, 0);
+            player_warp_change_floor(3, 0);
         }
         break;
     case 5:
         cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
         if (cell == 0x27450000) {
-            func_80036850(4, 0);
+            player_warp_change_floor(4, 0);
         } else if (cell == 0x463d0000) {
-            func_800369ac(2, 0x12, 0x25);
+            player_warp_same_floor(2, 0x12, 0x25);
         } else if (cell == 0x12250000) {
-            func_800369ac(1, 0x46, 0x3d);
+            player_warp_same_floor(1, 0x46, 0x3d);
         } else if (cell == 0x05180000) {
-            func_800369ac(3, 0x27, 0x2f);
+            player_warp_same_floor(3, 0x27, 0x2f);
         } else if (cell == 0x272f0000) {
             if (!boss_defeat_complete) {
-                func_800369ac(2, 5, 0x19);
+                player_warp_same_floor(2, 5, 0x19);
             }
         } else if (cell == 0x05250000) {
-            func_800369ac(1, 0xe, 0x4f);
+            player_warp_same_floor(1, 0xe, 0x4f);
         } else if (cell == 0x0e4f0000) {
-            func_800369ac(2, 5, 0x25);
+            player_warp_same_floor(2, 5, 0x25);
         }
         break;
     }

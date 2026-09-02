@@ -46,7 +46,7 @@ extern void effect_pool_sweep(void);
 extern void func_8003596c(void);
 extern void func_8001fde4(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern u32 func_80036af0(void);
+extern u32 player_warp_trigger_update(void);
 extern void func_800144d4(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
 extern void memory_card_shutdown_events(void);
@@ -138,7 +138,7 @@ void game_main_loop(void)
             == 0x40) {
             if (*(u16 *)&player_state.previous_map_cell
                 != *(u16 *)&player_state.map_cell) {
-                if (func_80036af0() != 0) {
+                if (player_warp_trigger_update() != 0) {
                     game_exit_code = 0xfe;
                     func_80014674(2);
                     func_800144d4();

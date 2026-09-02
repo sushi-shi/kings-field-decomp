@@ -4,7 +4,7 @@
 extern KfPlayerState player_state;
 /* Entry cell per floor, one-based floor number; stored x first, unlike KfMapCell. */
 extern const KfFloorEntryCell floor_entry_cells[5];
-extern void func_80036618(s16 object, void *arg1);
+extern void player_warp_shimmer(s16 object, void *arg1);
 extern void audio_play_current_map_sequence(void);
 extern void func_80020a2c(void);
 extern void map_variant_assets_load(void);
@@ -20,7 +20,7 @@ void player_warp_to_floor_entry(void)
     position.x = player_state.camera_position.vx;
     position.z = player_state.camera_position.vz;
     position.y = player_state.floor_height;
-    func_80036618(0, &position);
+    player_warp_shimmer(0, &position);
     floor = player_state.progress_state.current_floor;
     entry = &floor_entry_cells[floor - 1];
     player_state.previous_map_cell.x = entry->x;
@@ -39,5 +39,5 @@ void player_warp_to_floor_entry(void)
     }
     player_sync_position_to_map();
     position.y = player_state.floor_height;
-    func_80036618(1, &position);
+    player_warp_shimmer(1, &position);
 }
