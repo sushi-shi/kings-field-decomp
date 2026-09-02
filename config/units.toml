@@ -36,6 +36,12 @@ cc1_flags = []
 # Add one 
 
 [[unit]]
+unit = "psx.main"
+image = "PSX.EXE"
+source = "src/psx/main.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.main"
 image = "GAME.EXE"
 source = "src/game/main.c"
@@ -306,9 +312,21 @@ source = "src/game/actor_definitions.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map"
+image = "GAME.EXE"
+source = "src/game/map.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.map_object_definitions"
 image = "GAME.EXE"
 source = "src/game/map_object_definitions.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_object_pool_80031450"
+image = "GAME.EXE"
+source = "src/game/map_object_pool_80031450.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -318,21 +336,15 @@ source = "src/game/map_object.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.audio_80032c78"
+unit = "game.audio"
 image = "GAME.EXE"
-source = "src/game/audio_80032c78.c"
+source = "src/game/audio.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.audio_80032fb8"
+unit = "game.camera_path"
 image = "GAME.EXE"
-source = "src/game/audio_80032fb8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.angle_8003329c"
-image = "GAME.EXE"
-source = "src/game/angle_8003329c.c"
+source = "src/game/camera_path.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

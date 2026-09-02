@@ -249,13 +249,22 @@ typedef struct KfCameraPathState {
  * one of eight 0x44-byte runtime slots.  Only fields supported by the loader
  * and reviewed update routines are named.
  */
+/*
+ * Five opaque bytes that map_event_pool_load copies from a definition into its
+ * runtime slot as one block (an unaligned word plus a byte), which only a
+ * struct assignment produces.
+ */
+typedef struct KfMapEventTag {
+    u8 bytes[5];
+} KfMapEventTag;
+
 typedef struct KfMapEventDefinition {
     u8 state;
     u8 kind;
     u8 variant;
     u8 cell_z;
     u8 cell_x;
-    u8 unknown_05[5];
+    KfMapEventTag tag;
     u8 image_limit;
     u8 unknown_0b;
     u8 unknown_0c;
@@ -271,7 +280,7 @@ typedef struct KfMapEvent {
     u8 state;
     u8 kind;
     u8 variant;
-    u8 unknown_03[5];
+    KfMapEventTag tag;
     u8 image_limit;
     u8 image_index;
     u8 image_dirty;
@@ -690,5 +699,29 @@ typedef char KfActorState_player_target_offset_is_0x2b44[
 #undef KF_ACTOR_STATE_OFFSET_OF
 
 /* === end actor === */
+/* === map-audio layouts === */
+
+/*
+ * One aggregate holds the audio runtime state at 0x80095868. audio_initialize
+ * derives the voice-id slot address from the sequence-buffer field with a
+ * plain `addiu 54`, which a compiler can only do inside one object; the former
+ * separate identities are its fields.
+ */
+typedef struct KfAudioState {
+    u8 *vab_header;
+    s16 active_vab_id;
+    u8 unknown_06[2];
+    u8 *sequence_buffer;
+    s16 sequence_id;
+    u8 unknown_0e[2];
+    s32 sequence_active;
+    struct KfVec4i listener_position;
+    struct KfVec4s listener_rotation;
+    KfAudioVoiceSlots voice_slots;
+} KfAudioState;
+
+typedef char KfAudioState_size_is_144[(sizeof(KfAudioState) == 0x90) ? 1 : -1];
+
+/* === end map-audio === */
 
 #endif

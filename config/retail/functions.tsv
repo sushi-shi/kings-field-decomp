@@ -4,7 +4,7 @@
 # Function extents are WIP and may include owned jump tables/padding or miss indirect-only code.
 # Independent MIPS carving added anonymous frame/return candidates with explicit confidence.
 image	va	file_offset	size	body_size	fragments	kind	confidence	name	labels	provenance	note
-PSX.EXE	0x80010028	0x828	0xd0	0xbc	1	function	exact-linked-xref	main		LIBSN/SNMAIN plus retail CFG	SNMAIN main XREF resolves to this JAL target
+PSX.EXE	0x80010028	0x828	0xd0	0xd0	1	function	exact-linked-xref	main		LIBSN/SNMAIN plus retail CFG	SNMAIN main XREF resolves to this JAL target; the five words after the loop-back jump are the compiler's unreachable epilogue (lw ra/s1/s0; jr; addiu sp), so the body spans the whole extent
 PSX.EXE	0x800100f8	0x8f8	0x8	0x8	1	function	exact-linked-symbol	__main		LIBSN/SNMAIN	XDEF offset 0 in exact matched text section
 PSX.EXE	0x80010100	0x900	0xb4	0xb4	1	function	exact-linked-symbol	__SN_ENTRY_POINT	+0x0=stup2;+0x24=stup1;+0xa8=stup0	LIBSN/SNMAIN	XDEF offset 8 and PS-X EXE entry; XDEF offset 0x2c; XDEF offset 0xb0
 PSX.EXE	0x800101c4	0x9c4	0x10	0x10	1	function	exact-complete-object	EnterCriticalSection		LIBAPI/A36	all 16 member bytes match
