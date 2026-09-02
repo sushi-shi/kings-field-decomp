@@ -2303,9 +2303,9 @@ GAME.EXE	0x800181b0	0x69b0		mips26	instruction-word	0x8001fa44	load		jal		contro
 GAME.EXE	0x800181b8	0x69b8		mips26	instruction-word	0x80018128	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800181d8	0x69d8	0x800181dc	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lh	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800181e0	0x69e0		mips26	instruction-word	0x80014f6c	load	angle_within_tolerance	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80018204	0x6a04	0x80018208	mips_hi16_lo16	instruction-word	0x800561ac	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x80018204	0x6a04	0x80018208	mips_hi16_lo16	instruction-word	0x800561ac	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001820c	0x6a0c		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80018224	0x6a24	0x80018228	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x80018224	0x6a24	0x80018228	mips_hi16_lo16	instruction-word	0x8005619d	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001822c	0x6a2c		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80018234	0x6a34		mips26	instruction-word	0x80018128	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001823c	0x6a3c		mips26	instruction-word	0x8001fa44	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
@@ -2321,12 +2321,12 @@ GAME.EXE	0x800182e8	0x6ae8	0x800182ec	mips_hi16_lo16	reachable-code	0x8009d040	b
 GAME.EXE	0x80018334	0x6b34	0x80018338	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001835c	0x6b5c		mips26	instruction-word	0x80018384	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80018388	0x6b88		mips26	instruction-word	0x80037770	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80018390	0x6b90	0x80018394	mips_hi16_lo16	instruction-word	0x800561a0	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x80018390	0x6b90	0x80018394	mips_hi16_lo16	instruction-word	0x800561a0	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80018398	0x6b98		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183a0	0x6ba0		mips26	instruction-word	0x80018470	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183a8	0x6ba8		mips26	instruction-word	0x80017cf8	load	player_warp_to_floor_entry	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183b0	0x6bb0		mips26	instruction-word	0x80018484	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x800183b8	0x6bb8	0x800183bc	mips_hi16_lo16	reachable-code	0x800652e1	bss	DAT_800652e1	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x800183b8	0x6bb8	0x800183bc	mips_hi16_lo16	reachable-code	0x800652e1	bss	DAT_800652a8	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183c8	0x6bc8	0x800183cc	mips_hi16_lo16	reachable-code	0x800a07d2	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800183e4	0x6be4		mips26	instruction-word	0x80018484	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183f4	0x6bf4	0x800183f8	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_player_interactions

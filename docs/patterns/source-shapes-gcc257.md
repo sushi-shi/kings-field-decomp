@@ -395,3 +395,13 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `bne timer,-1 -> clamp; ...; la 1000` placed after the clamp | `if (timer != -1) { if (timer < 970) timer = 970; } else { timer = 1000; }`; the `== -1` first form lays the constant inline | `player_apply_damage` `0x80016324` |
 | `addiu s1,s1,5; div; mult; sra s1; mult; div; mflo v1` | `damage += 5; damage = (scale * (damage / 10)) >> 12; loss = (multiplier * damage) / 10;` with `loss` a separate local used for the compare and the subtraction | same |
 | `(rand() * 100) >> 15` | the multiply is by 100, spelled `sll 1, addu, sll 3, addu, sll 2` | same |
+
+### Item use (`player_use_item`)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| key search falls into the lever search when exhausted | `case 53..74` runs its `for (;;)` search and falls through into `case 56..69`, which restarts from the last index (-1) | `player_use_item` `0x80018054` |
+| `bne id,89 -> link test; angle test; beqz -> next` with `li s2,1` in the branch delay slot | `else if (object_id != 89 || angle_within_tolerance(...)) { used = 1; if (link == item) ... else func(4); }` | same |
+| `move s1,zero` in the first `jal rsin` delay slot | `index = 0;` assigned after the reach computations; the scheduler hoists the constant move above the calls into the load delay | same |
+| saved registers from `sp+32` with `addiu s1,sp,24` | the cone searches take an `s32 *distance` out-parameter: one word local rounded to 8, not a vector | same |
+| the two jump tables with a zero word between them | one `RODATA(0x80012048, 0x130)` claim spanning both tables and the padding | same |
