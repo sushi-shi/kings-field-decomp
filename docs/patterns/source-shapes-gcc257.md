@@ -449,3 +449,12 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | --- | --- | --- |
 | `env[1].dtd` stored before `env[0].dtd` | `display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;` — the chained assignment evaluates the constant, stores the right operand (env[1]) first, then env[0] | `func_8001bb94` `0x8001bb94` |
 | residue (93.7%): retail keeps `s0 = &display_draw_environments[0].dtd` callee-saved and derives `display_disp_environments[0]` as `s0+162` (PutDispEnv arg) and `render_state.fog_near_distance` as `s0+18538` | ours emits a fresh `lui` for each of the three separate globals. The retail object carries no relocation at the PutDispEnv-arg or fog-store sites — the linked bytes are `addiu a0,s0,162` / `sw v0,18538(s0)` — so the original reached `display_disp_environments` and `render_state` as fixed offsets from `display_draw_environments`, implying the three were one combined declaration in the source. Not reproduced without merging the three globals into one object; unattributed | same |
+
+### DMA/IRQ handler registration (`system_callbacks` TU)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| ten `func_8004f*` bodies each `move a1,a0; jal <dispatcher>; li a0,<n>` | thin wrappers `void f(u32 h){ dispatcher(<n>, h); }` over two dispatchers (`func_8004fc2c` for DMA channels 0-5 via DPCR at `*DAT_80057d1c`; `func_8004fcac` for IRQ events via IMASK at `*DAT_80057d14`) | `func_8004fac4`..`func_8004fc08` |
+| enable path loads `*ptr`, then `\| 0x800000`, then `\| (0x101 << (ch+16))`, one store | compound `*DAT_80057d1c \|= 0x800000 \| (0x101 << (channel + 16));` — the compound form loads once and ORs in source order; the expanded `*p = *p \| A \| B` reschedules the shift ahead of the load | `func_8004fc2c` `0x8004fc2c` |
+| `slot = &table[ch]; *slot = 0;` cleared in the branch delay slot, set to the handler at the end of the enable path | a pointer local to the table element written 0 before the `if`, then `= handler` inside the enable arm | both dispatchers |
+| residue: retail computes the table base (`lui/addiu`) before the index `sll`, loads `*ptr` before materializing `0x800000`, and lays the enable arm as the fall-through | ours schedules the index shift first and orders the IMASK/DPCR arms differently. Semantic order, call set, referents and CFG agree; the residue is R3000 instruction scheduling and basic-block layout. Unattributed | `func_8004fc2c` (69%), `func_8004fcac` (33%) |

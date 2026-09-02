@@ -600,6 +600,12 @@ source = "src/game/func_8004a344.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.system_callbacks"
+image = "GAME.EXE"
+source = "src/game/system_callbacks.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_8005081c"
 image = "GAME.EXE"
 source = "src/game/func_8005081c.c"
