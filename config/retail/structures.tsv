@@ -12,6 +12,7 @@ KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.ts
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
 KfCollisionTarget	0x20	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
 KfDisplayState	0x20028	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	double-buffer display state: display_begin_frame derives the primitive buffer and ordering table of the frame from the buffer index through one base register
+KfDisplayStateOpen	0x20024	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer is a separate global
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
@@ -34,6 +35,7 @@ KfPlayerVitals	0x08	supported	semantic_types.h;game_semantic_player_death.tsv;as
 KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xrefs	generic allocation-pool record
 KfPrimitiveBuffer	0x0c	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	primitive allocation range and current cursor; two complete records exist in each overlay
 KfRenderState	0x140	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register
+KfRenderStateOpen	0x100	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	OPEN.EXE render state: render_set_view_transform reaches the view and pitch matrices 116 and 84 bytes below the rotation and render_initialize reaches the quadrant matrices 64 bytes past the light matrix through one base register; no light-matrix copy members
 KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
 KfSaveHeader	0x280	supported	semantic_types.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
 KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
@@ -49,6 +51,7 @@ KfTmdGt4	0x20	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q
 KfTmdHeader	0xc	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	12-byte TMD payload header; the game reads the object count as a halfword
 KfTmdObject	0x1c	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	standard TMD object-table record; object stride and primitive fields are exercised by both overlays
 KfTmdState	0x24	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
+KfTmdStateOpen	0xc	supported	semantic_types.h;asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
 KfVec3i	0x0c	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates
 KfVec4i	0x10	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates plus retained fourth lane

@@ -106,6 +106,12 @@ KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semant
 KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayStateOpen	0x00	0x01	buffer_index	u8	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x01	0x03	unknown_01	u8[3]	opaque	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
@@ -320,6 +326,14 @@ KfRenderState	0xa4	0x10	view_position	KfVec4i	supported	semantic_types.h;game_se
 KfRenderState	0xb4	0x08	view_rotation	KfVec4s	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xc0	0x80	quadrant_matrices	KfMatrix[4]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x00	0x20	view_matrix	KfMatrix	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x20	0x20	pitch_matrix	KfMatrix	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x40	0x20	light_matrix	KfMatrix	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x60	0x04	fog_near_distance	s32	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x64	0x10	view_position	KfVec4i	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x74	0x08	view_rotation	KfVec4s	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x80	0x80	quadrant_matrices	KfMatrix[4]	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
@@ -452,6 +466,8 @@ KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	semantic_types.h;game_s
 KfTmdObject	0x18	0x04	scale	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
 KfTmdState	0x00	0x20	slots	u8 *[8]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdState	0x20	0x04	current_asset	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
 KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
 KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate

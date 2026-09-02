@@ -61,14 +61,14 @@ STATE = {
         0x800957E0: ("light_quadrant_matrices", 0x80, "KfMatrix[4]"),
     },
     "OPEN.EXE": {
-        0x80049A50: ("primitive_buffers", 0x18, "KfPrimitiveBuffer[2]"),
-        0x80049A68: ("primitive_buffer", 0x04, "KfPrimitiveBuffer *"),
+        0x80049A48: ("display_state", 0x20024, "KfDisplayStateOpen"),
+        0x80069A6C: ("ordering_table", 0x04, "u32 *"),
         0x80069A70: ("display_draw_environments", 0xB8, "DRAWENV[2]"),
         0x80069B28: ("display_disp_environments", 0x28, "DISPENV[2]"),
-        0x80069B58: ("tmd_slots", 0x08, "u8 *[2]"),
+        0x80069B58: ("tmd_state", 0x0C, "KfTmdStateOpen"),
         0x80069B68: ("current_tmd_vertices", 0x04, "KfVec4s *"),
-        0x8006E0AC: ("render_view_position", 0x10, "KfVec4i"),
-        0x8006E0BC: ("render_view_rotation", 0x08, "KfVec4s"),
+        0x8006E048: ("render_state", 0x100, "KfRenderStateOpen"),
+        0x8006E148: ("light_quadrant_matrices", 0x80, "KfMatrix[4]"),
     },
 }
 

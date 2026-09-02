@@ -951,4 +951,53 @@ typedef struct KfRenderState {
 typedef char KfRenderState_size_is_0x140[(sizeof(KfRenderState) == 0x140) ? 1 : -1];
 /* === end render_state === */
 
+
+/* === display_state layout === */
+/*
+ * OPEN.EXE display state.  Same members as KfDisplayState except that the
+ * ordering-table pointer lives outside the block (ordering_table).
+ */
+typedef struct KfDisplayStateOpen {
+    u8 buffer_index;
+    u8 unknown_01[3];
+    void *asset_load_buffer;
+    KfPrimitiveBuffer primitive_buffers[2];
+    KfPrimitiveBuffer *primitive_buffer;
+    KfOrderingTable ordering_tables[2];
+} KfDisplayStateOpen;
+
+typedef char KfDisplayStateOpen_size_is_0x20024[(sizeof(KfDisplayStateOpen) == 0x20024) ? 1 : -1];
+/* === end display_state === */
+
+
+/* === tmd_state layout === */
+/* OPEN.EXE TMD state: two asset slots and the selected asset. */
+typedef struct KfTmdStateOpen {
+    u8 *slots[2];
+    void *current_asset;
+} KfTmdStateOpen;
+
+typedef char KfTmdStateOpen_size_is_0xc[(sizeof(KfTmdStateOpen) == 0xc) ? 1 : -1];
+/* === end tmd_state === */
+
+
+/* === render_state layout === */
+/*
+ * OPEN.EXE render state.  Same roles as KfRenderState without the
+ * light_matrix_copy and unknown_80 members.
+ */
+typedef struct KfRenderStateOpen {
+    struct KfMatrix view_matrix;
+    struct KfMatrix pitch_matrix;
+    struct KfMatrix light_matrix;
+    s32 fog_near_distance;
+    struct KfVec4i view_position;
+    struct KfVec4s view_rotation;
+    struct KfVecXZs view_cell;
+    struct KfMatrix quadrant_matrices[4];
+} KfRenderStateOpen;
+
+typedef char KfRenderStateOpen_size_is_0x100[(sizeof(KfRenderStateOpen) == 0x100) ? 1 : -1];
+/* === end render_state === */
+
 #endif

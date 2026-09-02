@@ -444,3 +444,15 @@ source = "src/game/memory.c"
 profile = "probe-gcc257-o2-g0"
 bind = "name"
 defines = ["KF_OPEN"]
+
+[[unit]]
+unit = "open.render_init"
+image = "OPEN.EXE"
+source = "src/open/render_init.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.render"
+image = "OPEN.EXE"
+source = "src/open/render.c"
+profile = "probe-gcc257-o2-g0"
