@@ -2800,7 +2800,7 @@ GAME.EXE	0x8001aa6c	0x926c	0x8001aa70	mips_hi16_lo16	reachable-code	0x800a01e8	b
 GAME.EXE	0x8001aa78	0x9278		mips26	reachable-code	0x8001aa84	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001aab8	0x92b8		mips26	reachable-code	0x800502dc	load	malloc	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001aae8	0x92e8	0x8001aaec	mips_hi16_lo16	reachable-code	0x800a01f0	bss	memory_arena_start	lui+lw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001aaf0	0x92f0	0x8001aaf4	mips_hi16_lo16	reachable-code	0x800a01fc	bss	memory_allocation_depth	lui+sw	zero	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+GAME.EXE	0x8001aaf0	0x92f0	0x8001aaf4	mips_hi16_lo16	reachable-code	0x800a01fc	bss	memory_allocation_stack	lui+sw	zero	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001aaf8	0x92f8	0x8001aafc	mips_hi16_lo16	reachable-code	0x800a01f8	bss	memory_arena_cursor	lui+sw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ab2c	0x932c		mips26	reachable-code	0x8001aba0	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ab40	0x9340		mips26	reachable-code	0x8001aba0	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
@@ -2821,8 +2821,8 @@ GAME.EXE	0x8001abf4	0x93f4		mips26	reachable-code	0x8005040c	load	InitHeap	jal		
 GAME.EXE	0x8001ac18	0x9418	0x8001ac1c	mips_hi16_lo16	reachable-code	0x800a01f8	bss	memory_arena_cursor	lui+addiu	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ac30	0x9430		mips26	reachable-code	0x8001aab0	load	memory_malloc_checked	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ac3c	0x943c		mips26	reachable-code	0x8001ac58	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001ac58	0x9458	0x8001ac5c	mips_hi16_lo16	reachable-code	0x800a01fc	bss	memory_allocation_depth	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001ac94	0x9494	0x8001ac98	mips_hi16_lo16	reachable-code	0x800a01fc	bss	memory_allocation_depth	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+GAME.EXE	0x8001ac58	0x9458	0x8001ac5c	mips_hi16_lo16	reachable-code	0x800a01fc	bss	memory_allocation_stack	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+GAME.EXE	0x8001ac94	0x9494	0x8001ac98	mips_hi16_lo16	reachable-code	0x800a01fc	bss	memory_allocation_stack	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001acb4	0x94b4	0x8001acb8	mips_hi16_lo16	reachable-code	0x800a01f8	bss	memory_arena_cursor	lui+lw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001acc8	0x94c8		mips26	reachable-code	0x8005048c	load	free	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001acd0	0x94d0		mips26	reachable-code	0x8001ace0	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
@@ -11354,7 +11354,7 @@ OPEN.EXE	0x80015d70	0x4570		mips26	instruction-word	0x80015d84	load		j		range-fi
 OPEN.EXE	0x80015dbc	0x45bc		mips26	instruction-word	0x8002c730	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80015ddc	0x45dc		mips26	reachable-code	0x80030050	load	malloc	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015e0c	0x460c	0x80015e10	mips_hi16_lo16	reachable-code	0x80075848	bss	memory_arena_start	lui+lw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-OPEN.EXE	0x80015e14	0x4614	0x80015e18	mips_hi16_lo16	reachable-code	0x80075854	bss	memory_allocation_depth	lui+sw	zero	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+OPEN.EXE	0x80015e14	0x4614	0x80015e18	mips_hi16_lo16	reachable-code	0x80075854	bss	memory_allocation_stack	lui+sw	zero	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015e1c	0x461c	0x80015e20	mips_hi16_lo16	reachable-code	0x80075850	bss	memory_arena_cursor	lui+sw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015e50	0x4650		mips26	reachable-code	0x80015ec4	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015e64	0x4664		mips26	reachable-code	0x80015ec4	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
@@ -11375,8 +11375,8 @@ OPEN.EXE	0x80015f18	0x4718		mips26	reachable-code	0x80030150	load	InitHeap	jal		
 OPEN.EXE	0x80015f3c	0x473c	0x80015f40	mips_hi16_lo16	reachable-code	0x80075850	bss	memory_arena_cursor	lui+addiu	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015f54	0x4754		mips26	reachable-code	0x80015dd4	load	memory_malloc_checked	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015f60	0x4760		mips26	reachable-code	0x80015f7c	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
-OPEN.EXE	0x80015f7c	0x477c	0x80015f80	mips_hi16_lo16	reachable-code	0x80075854	bss	memory_allocation_depth	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-OPEN.EXE	0x80015fb8	0x47b8	0x80015fbc	mips_hi16_lo16	reachable-code	0x80075854	bss	memory_allocation_depth	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+OPEN.EXE	0x80015f7c	0x477c	0x80015f80	mips_hi16_lo16	reachable-code	0x80075854	bss	memory_allocation_stack	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+OPEN.EXE	0x80015fb8	0x47b8	0x80015fbc	mips_hi16_lo16	reachable-code	0x80075854	bss	memory_allocation_stack	lui+addiu	v1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015fd8	0x47d8	0x80015fdc	mips_hi16_lo16	reachable-code	0x80075850	bss	memory_arena_cursor	lui+lw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015fec	0x47ec		mips26	reachable-code	0x80030190	load	free	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015ff4	0x47f4		mips26	reachable-code	0x80016004	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator

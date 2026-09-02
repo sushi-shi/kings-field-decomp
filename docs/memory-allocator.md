@@ -24,8 +24,7 @@ The curated function identities are:
 | `memory_arena_start` | `0x800a01f0` | `0x80075848` | `0x04` | `u8 *` |
 | `memory_arena_end` | `0x800a01f4` | `0x8007584c` | `0x04` | `u8 *` |
 | `memory_arena_cursor` | `0x800a01f8` | `0x80075850` | `0x04` | `u8 *` |
-| `memory_allocation_depth` | `0x800a01fc` | `0x80075854` | `0x04` | `s32` |
-| `memory_allocation_entries` | `0x800a0200` | `0x80075858` | `0x40` | `u32[16]` |
+| `memory_allocation_stack` | `0x800a01fc` | `0x80075854` | `0x44` | `u32[17]` |
 | `memory_system_heap_start` | `0x800a0240` | `0x80075898` | `0x04` | `u8 *` |
 | `memory_system_heap_size` | `0x800a0244` | `0x8007589c` | `0x04` | `s32` |
 
@@ -54,3 +53,9 @@ part of the game-function denominator.
 The per-function review ledger is
 `config/evidence/game_open_semantic_memory_allocator.tsv`; instruction-shape
 proof is in `config/evidence/overlay_lineage.tsv`.
+
+`memory_allocation_stack[0]` is the depth and elements 1..16 the entries:
+`memory_allocate` and `memory_release_last` index the entries from the depth
+word through one base register (`&stack + 4 + depth * 4`), which the compiler
+only emits for one array, so the former depth and entry identities are one
+object.

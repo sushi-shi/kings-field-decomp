@@ -246,6 +246,12 @@ source = "src/game/collision.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.memory"
+image = "GAME.EXE"
+source = "src/game/memory.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.tim_upload_images"
 image = "GAME.EXE"
 source = "src/game/tim_upload_images.c"

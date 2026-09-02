@@ -420,7 +420,7 @@ void actor_try_attack_player(
     KfActorDefinition *definition = actor_state.current_definition;
     KfActor *actor = actor_state.current;
     s32 distance;
-    u16 angle;
+    s32 angle;
     u16 status_effect;
 
     distance = actor_distance_to_point(
