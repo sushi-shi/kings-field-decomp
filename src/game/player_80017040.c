@@ -25,18 +25,17 @@ s32 player_distance_to_point_in_cone(
     s16 delta;
 
     distance = player_distance_to_point(point->x, 0xffff, point->z, max_distance, 0);
-    if (distance == -1) {
-        return distance;
-    }
-    delta = (vector_xz_to_angle(
-                 player_state.camera_position.x - point->x,
-                 point->z - player_state.camera_position.z)
-             - facing) & 0xfff;
-    if (delta > 2048) {
-        delta = 0x1000 - delta;
-    }
-    if (angle_tolerance < delta) {
-        distance = -1;
+    if (distance != -1) {
+        delta = (vector_xz_to_angle(
+                     player_state.camera_position.x - point->x,
+                     point->z - player_state.camera_position.z)
+                 - facing) & 0xfff;
+        if (delta > 2048) {
+            delta = 0x1000 - delta;
+        }
+        if (angle_tolerance < delta) {
+            distance = -1;
+        }
     }
     return distance;
 }

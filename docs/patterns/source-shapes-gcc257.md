@@ -434,3 +434,11 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | residue: `lhu v0,42(v0)` and `la v1,player_state+42` for the status flags next to a `la a0,player_state+78` timer anchor | ours relates the flags address to the timer anchor (`lhu v1,-36(a1)`). cse's `use_related_value` links every `player_state+K` constant in the block; GCC 2.5.7 and 2.6.0 both relate here. Unattributed | same |
 | residue: `bgez; nop; li v0,0x20` and `bltz; nop; ...; sll s0,v0,7` | ours fills both delay slots from the fallthrough. Same RTL shape; unattributed reorg difference | same |
 | residue: `lw a0,142(s1)` for `camera_position.x` and pitch/roll loads after the position stores | ours loads `camera_position.x` into `v1`, which frees `a0` for the pitch load and lets sched2 hoist the angle stores above the position stores. Register choice, unattributed | same |
+
+### Floor entry warp and cone distance (`player_warp_to_floor_entry`, `player_distance_to_point_in_cone`)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| `bne mv,3 -> L; nop; jal audio_play_current_map_sequence; L: jal func_80020a2c` | only the sequence call is conditional on `map_variant == 3`; `func_80020a2c()` runs on both paths. The earlier reconstruction nested both calls, which also let reorg copy the target's `li v0,1` into the branch slot | `player_warp_to_floor_entry` `0x80017cf8` |
+| `beq distance,-1 -> ret; move v0,s1` and the epilogue starting with `move v0,s1` | one `return distance;` at the end with the cone test nested under `if (distance != -1)`; reorg copies the epilogue's move into both branch slots. An early `return distance;` yields a separate return block and an empty slot | `player_distance_to_point_in_cone` `0x80017108` |
+| residue: `li v1,1; bne v0,v1; nop; li v0,-1` with the call result never copied out of `v0` | every spelling tried (`if (r != 1) return r; return -1;`, the flipped test, `if (r == 1) r = -1;`, `?:`, `goto`) copies the result to another register first because the constant 1 takes `v0` in local-alloc. Unattributed | `memory_card_show_status_message` `0x8002c510` |

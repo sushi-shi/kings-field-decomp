@@ -32,8 +32,8 @@ void player_warp_to_floor_entry(void)
     if (floor == 5 && player_state.map_variant != 1) {
         if (player_state.map_variant == 3) {
             audio_play_current_map_sequence();
-            func_80020a2c();
         }
+        func_80020a2c();
         player_state.map_variant = 1;
         map_variant_assets_load();
     }
