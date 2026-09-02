@@ -312,6 +312,18 @@ source = "src/game/map_resources_load.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.lighting_set_color_matrix_preset"
+image = "GAME.EXE"
+source = "src/game/lighting_set_color_matrix_preset.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.effect5_texture_cache"
+image = "GAME.EXE"
+source = "src/game/effect5_texture_cache.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.render"
 image = "GAME.EXE"
 source = "src/game/render.c"
