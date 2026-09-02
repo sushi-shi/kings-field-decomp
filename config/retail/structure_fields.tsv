@@ -18,15 +18,15 @@ KfActor	0x0e	0x02	local_x	s16	supported	semantic_types.h;asm;xrefs	local horizon
 KfActor	0x10	0x02	local_z	s16	supported	semantic_types.h;asm;xrefs	local horizontal coordinate
 KfActor	0x12	0x02	animation_phase	u16	supported	semantic_types.h;asm;xrefs	animation phase/progress
 KfActor	0x14	0x02	health	u16	supported	semantic_types.h;asm;xrefs	current actor health
-KfActor	0x16	0x02	cell_x	s16	supported	semantic_types.h;asm;xrefs	map cell x
-KfActor	0x18	0x02	cell_z	s16	supported	semantic_types.h;asm;xrefs	map cell z
+KfActor	0x16	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x; every band load is lhu
+KfActor	0x18	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z; every band load is lhu
 KfActor	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x1c	0x0c	position	KfVec3i	supported	semantic_types.h;asm;xrefs	world position
 KfActor	0x28	0x04	unknown_28	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	actor rotation
 KfActor	0x32	0x02	unknown_32	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x34	0x04	unknown_34	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x38	0x01	action_timer	s8	supported	semantic_types.h;asm;xrefs	signed action countdown
+KfActor	0x38	0x01	action_timer	u8	supported	semantic_types.h;asm;xrefs	action countdown; loaded lbu and seeded with 0xff
 KfActor	0x39	0x01	collision_state	u8	supported	semantic_types.h;asm;xrefs	collision result/state
 KfActor	0x3a	0x02	movement_yaw	s16	supported	semantic_types.h;asm;xrefs	movement heading
 KfActor	0x3c	0x02	animation_step	s16	supported	semantic_types.h;asm;xrefs	animation increment
@@ -40,9 +40,12 @@ KfActorActionProfile	0x02	0x02	far_weight	s16	supported	semantic_types.h;asm;xre
 KfActorActionProfile	0x04	0x02	near_distance	s16	supported	semantic_types.h;asm;xrefs	near distance threshold
 KfActorActionProfile	0x06	0x02	middle_weight	s16	supported	semantic_types.h;asm;xrefs	middle action weight
 KfActorActionProfile	0x08	0x02	near_weight	s16	supported	semantic_types.h;asm;xrefs	near action weight
-KfActorDefinition	0x00	0x11	unknown_00	u8[17]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActorDefinition	0x11	0x01	hit_action	s8	supported	semantic_types.h;asm;xrefs	action selected on hit
-KfActorDefinition	0x12	0x01	death_action	s8	supported	semantic_types.h;asm;xrefs	action selected on death
+KfActorDefinition	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x03	0x01	status_effect	u8	supported	semantic_types.h;asm;xrefs	status effect flags passed to player_apply_damage by actor_try_attack_player
+KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	semantic_types.h;asm;xrefs	per-hit chance out of 256 compared with rand() >> 7; zero disables the effect
+KfActorDefinition	0x05	0x0c	unknown_05	u8[12]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x11	0x01	hit_action	u8	supported	semantic_types.h;asm;xrefs	action selected on hit; 0xff means none
+KfActorDefinition	0x12	0x01	death_action	u8	supported	semantic_types.h;asm;xrefs	action selected on death; 0xff means none
 KfActorDefinition	0x13	0x67	unknown_13	u8[103]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActorDefinition	0x7a	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
 KfActorDefinition	0x7c	0x02	collision_height	u16	supported	semantic_types.h;asm;xrefs	collision height
@@ -54,6 +57,15 @@ KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	semantic_types.h;
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	semantic_types.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	unknown_96	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActorPlacement	0x00	0x10	bytes	u8[16]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	semantic_types.h;asm;xrefs	map-loaded actor definitions
+KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	semantic_types.h;asm;xrefs	live actor records
+KfActorState	0x2b20	0x10	player_position	KfVec4i	supported	semantic_types.h;asm;xrefs	player position snapshot copied each frame
+KfActorState	0x2b30	0x08	player_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	player rotation snapshot copied each frame
+KfActorState	0x2b38	0x04	current_definition	KfActorDefinition *	supported	semantic_types.h;asm;xrefs	definition of the actor being updated
+KfActorState	0x2b3c	0x04	current	KfActor *	supported	semantic_types.h;asm;xrefs	actor being updated
+KfActorState	0x2b40	0x02	current_index	u16	supported	semantic_types.h;asm;xrefs	index of the actor being updated
+KfActorState	0x2b42	0x02	current_definition_id	u16	supported	semantic_types.h;asm;xrefs	definition id of the actor being updated
+KfActorState	0x2b44	0x04	player_target	KfActor *	supported	semantic_types.h;asm;xrefs	actor targeted by the player
 KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
 KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
 KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers

@@ -294,21 +294,9 @@ source = "src/game/save_system.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.actor_pool_8002ca78"
-image = "GAME.EXE"
-source = "src/game/actor_pool_8002ca78.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.actor"
 image = "GAME.EXE"
 source = "src/game/actor.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.actor_pool_8002ce88"
-image = "GAME.EXE"
-source = "src/game/actor_pool_8002ce88.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

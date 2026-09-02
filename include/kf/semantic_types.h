@@ -104,9 +104,12 @@ typedef struct KfAudioVoiceSlots {
  * core routines are named; the remaining bytes deliberately stay opaque.
  */
 typedef struct KfActorDefinition {
-    u8 unknown_00[0x11];
-    s8 hit_action;
-    s8 death_action;
+    u8 unknown_00[0x03];
+    u8 status_effect;
+    u8 status_effect_chance;
+    u8 unknown_05[0x0c];
+    u8 hit_action;
+    u8 death_action;
     u8 unknown_13[0x67];
     u16 collision_radius;
     u16 collision_height;
@@ -149,15 +152,15 @@ typedef struct KfActor {
     s16 local_z;
     u16 animation_phase;
     u16 health;
-    s16 cell_x;
-    s16 cell_z;
+    u16 cell_x;
+    u16 cell_z;
     s16 unknown_1a;
     struct KfVec3i position;
     u32 unknown_28;
     struct KfEulerAngles rotation;
     u16 unknown_32;
     u32 unknown_34;
-    s8 action_timer;
+    u8 action_timer;
     u8 collision_state;
     s16 movement_yaw;
     s16 animation_step;
@@ -599,7 +602,7 @@ typedef struct KfPlayerState {
     void *selected_magic_record;
     u8 equipped_weapon_id;
     u8 unknown_65[3];
-    KfWeaponRecord *equipped_weapon_record;
+    const KfWeaponRecord *equipped_weapon_record;
     u8 *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
@@ -656,5 +659,36 @@ typedef struct KfFloorEntryCell {
 typedef char KfFloorEntryCell_size_is_2[(sizeof(KfFloorEntryCell) == 2) ? 1 : -1];
 
 /* === end player === */
+/* === actor layouts === */
+
+/*
+ * The actor system state is one object: actor routines address a definition
+ * as the actor array base minus 0x720 (`addiu ...,-1824`) and the current
+ * actor pointer as the array base plus 0x241c (`addiu ...,9244`), arithmetic
+ * the compiler only emits inside one aggregate. The members after the arrays
+ * are the retail order of the formerly separate identities.
+ */
+typedef struct KfActorState {
+    KfActorDefinition definitions[12];
+    KfActor actors[128];
+    struct KfVec4i player_position;
+    struct KfVec4s player_rotation;
+    KfActorDefinition *current_definition;
+    KfActor *current;
+    u16 current_index;
+    u16 current_definition_id;
+    KfActor *player_target;
+} KfActorState;
+
+typedef char KfActorState_size_is_0x2b48[
+    (sizeof(KfActorState) == 0x2b48) ? 1 : -1];
+#define KF_ACTOR_STATE_OFFSET_OF(member) ((u32)&(((KfActorState *)0)->member))
+typedef char KfActorState_current_offset_is_0x2b3c[
+    (KF_ACTOR_STATE_OFFSET_OF(current) == 0x2b3c) ? 1 : -1];
+typedef char KfActorState_player_target_offset_is_0x2b44[
+    (KF_ACTOR_STATE_OFFSET_OF(player_target) == 0x2b44) ? 1 : -1];
+#undef KF_ACTOR_STATE_OFFSET_OF
+
+/* === end actor === */
 
 #endif
