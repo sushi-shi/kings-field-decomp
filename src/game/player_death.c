@@ -18,7 +18,7 @@ extern void player_sync_position_to_map(void);
 extern void game_state_initialize(void);
 
 extern SoundRef player_sound_refs[3];
-extern struct KfMatrix player_death_saved_color_matrix;
+extern MATRIX player_death_saved_color_matrix;
 extern s32 player_death_saved_fog_near;
 
 extern KfPlayerLevelGrowth player_level_growth_table[40];

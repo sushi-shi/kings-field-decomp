@@ -388,6 +388,13 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         "u16": (2, 2),
         "s32": (4, 4),
         "u32": (4, 4),
+        # Psy-Q SDK fixed-layout types (declared in the real LIBGTE headers,
+        # not parsed here); registered so project structs can use them.
+        "MATRIX": (0x20, 4),
+        "VECTOR": (0x10, 4),
+        "SVECTOR": (8, 2),
+        "CVECTOR": (4, 1),
+        "DVECTOR": (4, 2),
     }
     layouts: dict[str, HeaderStructureLayout] = {}
     definition_pattern = re.compile(

@@ -59,7 +59,7 @@ extern void func_800346a0(void);
 ADDRESS(0x800346a8, 0x38c)
 void func_800346a8(void)
 {
-    struct KfMatrix color_matrix;
+    MATRIX color_matrix;
     KfCameraPathState path;
     KfMapObject *effect;
     s32 aux[2];

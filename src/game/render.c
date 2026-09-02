@@ -7,7 +7,7 @@ extern void memory_release_last(void);
 
 extern KfDisplayState display_state;
 extern KfRenderState render_state;
-extern struct KfMatrix light_quadrant_matrices[4];
+extern MATRIX light_quadrant_matrices[4];
 extern KfTmdState tmd_state;
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];

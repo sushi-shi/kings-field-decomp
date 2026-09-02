@@ -5,12 +5,12 @@
 /* Psy-Q LIBGTE: int rsin(int a); int rcos(int a). */
 
 /*
- * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the KfMatrix/KfVec4s/KfVec4i layouts:
+ * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the MATRIX/KfVec4s/KfVec4i layouts:
  * MulMatrix(m0, m1), MulMatrix2(m0, m1), ApplyMatrix(m, v0, v1).
  */
-extern void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix);
-extern void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix);
-extern void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix);
+extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
+extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
+extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
 
 /*
  * Angles are 12-bit (0..0xfff). Within a half turn the step is applied
@@ -62,7 +62,7 @@ void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction)
 }
 
 ADDRESS(0x80014b7c, 0x70)
-void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix)
+void matrix_set_rotation_x(s16 angle, MATRIX *matrix)
 {
     s32 sin = rsin(angle);
     s32 cos = rcos(angle);
@@ -79,7 +79,7 @@ void matrix_set_rotation_x(s16 angle, struct KfMatrix *matrix)
 }
 
 ADDRESS(0x80014bec, 0x70)
-void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix)
+void matrix_set_rotation_y(s16 angle, MATRIX *matrix)
 {
     s32 sin = rsin(angle);
     s32 cos = rcos(angle);
@@ -96,7 +96,7 @@ void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix)
 }
 
 ADDRESS(0x80014c5c, 0x70)
-void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix)
+void matrix_set_rotation_z(s16 angle, MATRIX *matrix)
 {
     s32 sin = rsin(angle);
     s32 cos = rcos(angle);
@@ -113,9 +113,9 @@ void matrix_set_rotation_z(s16 angle, struct KfMatrix *matrix)
 }
 
 ADDRESS(0x80014ccc, 0x68)
-void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, struct KfMatrix *matrix)
+void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix)
 {
-    struct KfMatrix temporary;
+    MATRIX temporary;
 
     matrix_set_rotation_z(angles->z, &temporary);
     matrix_set_rotation_x(angles->x, matrix);
@@ -131,8 +131,8 @@ void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, struct KfMatrix
 ADDRESS(0x80014d34, 0xd4)
 void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s *direction)
 {
-    struct KfMatrix pitch_matrix;
-    struct KfMatrix yaw_matrix;
+    MATRIX pitch_matrix;
+    MATRIX yaw_matrix;
     struct KfVec4s source;
     struct KfVec4i result;
 

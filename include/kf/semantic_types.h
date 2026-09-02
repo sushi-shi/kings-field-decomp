@@ -1060,16 +1060,16 @@ typedef char KfTmdState_size_is_0x24[(sizeof(KfTmdState) == 0x24) ? 1 : -1];
  * light matrix values are three direction rows.
  */
 typedef struct KfRenderState {
-    struct KfMatrix view_matrix;
-    struct KfMatrix pitch_matrix;
-    struct KfMatrix light_matrix;
-    struct KfMatrix light_matrix_copy;
-    struct KfMatrix unknown_80;
+    MATRIX view_matrix;
+    MATRIX pitch_matrix;
+    MATRIX light_matrix;
+    MATRIX light_matrix_copy;
+    MATRIX unknown_80;
     s32 fog_near_distance;
     struct KfVec4i view_position;
     struct KfVec4s view_rotation;
     struct KfVecXZs view_cell;
-    struct KfMatrix quadrant_matrices[4];
+    MATRIX quadrant_matrices[4];
 } KfRenderState;
 
 typedef char KfRenderState_size_is_0x140[(sizeof(KfRenderState) == 0x140) ? 1 : -1];
@@ -1111,14 +1111,14 @@ typedef char KfTmdStateOpen_size_is_0xc[(sizeof(KfTmdStateOpen) == 0xc) ? 1 : -1
  * light_matrix_copy and unknown_80 members.
  */
 typedef struct KfRenderStateOpen {
-    struct KfMatrix view_matrix;
-    struct KfMatrix pitch_matrix;
-    struct KfMatrix light_matrix;
+    MATRIX view_matrix;
+    MATRIX pitch_matrix;
+    MATRIX light_matrix;
     s32 fog_near_distance;
     struct KfVec4i view_position;
     struct KfVec4s view_rotation;
     struct KfVecXZs view_cell;
-    struct KfMatrix quadrant_matrices[4];
+    MATRIX quadrant_matrices[4];
 } KfRenderStateOpen;
 
 typedef char KfRenderStateOpen_size_is_0x100[(sizeof(KfRenderStateOpen) == 0x100) ? 1 : -1];

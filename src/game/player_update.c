@@ -5,8 +5,8 @@ extern KfPlayerState player_state;
 extern KfActorState actor_state;
 extern KfMagicRecord magic_records[24];
 extern u8 map_cell_attribute_grid[100][100];
-extern struct KfMatrix color_matrix_table[7];
-extern struct KfMatrix DAT_80055858;
+extern MATRIX color_matrix_table[7];
+extern MATRIX DAT_80055858;
 extern struct KfVec4s DAT_80055878[8];
 extern u32 DAT_80057b30;
 extern s32 DAT_80057e68;
@@ -24,7 +24,7 @@ extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *func_80036f44();
 extern s32 rand(void);
 extern void matrix_set_rotation_yxz(
-    const struct KfEulerAngles *angles, struct KfMatrix *matrix);
+    const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(
     const struct KfPitchYaw *angles, struct KfVec3s *direction);
 extern void vector3s_scale_shift12(s16 scale, s16 *vector);
@@ -35,7 +35,7 @@ extern KfActor *actor_pool_find_target_in_cone(
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void audio_close_vab(void);
 extern void lighting_set_color_matrix(
-    const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
+    const MATRIX *from, const MATRIX *to, s32 blend);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
 extern void lighting_apply_weapon9_environment(void);
@@ -81,7 +81,7 @@ void player_update(void)
     struct KfVec4s scale;
     struct KfEulerAngles angles;
     struct KfVec4i position;
-    struct KfMatrix matrix;
+    MATRIX matrix;
     s32 distance;
     u8 attribute;
     u8 magic_id;

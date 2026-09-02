@@ -22,7 +22,7 @@ extern u16 map_object_effect_sequence_180;
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
 extern s32 rand(void);
-extern void matrix_set_rotation_y(s16 angle, struct KfMatrix *matrix);
+extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern s32 map_object_distance_to_point(
     const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 /* Effect spawner called with six or seven arguments; declared without a prototype. */
@@ -54,7 +54,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
     KfMapObjectDefinition *definition;
     struct KfVec4s offset;
     struct KfVec4i point;
-    struct KfMatrix matrix;
+    MATRIX matrix;
 
     for (; index < MAP_OBJECT_COUNT; index++, object++) {
         if (object->object_id == MAP_OBJECT_NONE) {

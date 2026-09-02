@@ -54,9 +54,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 3282)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 66)
-        self.assertEqual(counts["structure_fields"], 568)
-        self.assertEqual(counts["structure_fields_named"], 466)
+        self.assertEqual(counts["structures"], 65)
+        self.assertEqual(counts["structure_fields"], 565)
+        self.assertEqual(counts["structure_fields_named"], 464)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -993,7 +993,7 @@ class InventoryTests(unittest.TestCase):
                 saved_color_matrix.datatype,
                 saved_color_matrix.size,
             ),
-            ("player_death_saved_color_matrix", "KfMatrix", 0x20),
+            ("player_death_saved_color_matrix", "MATRIX", 0x20),
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0xD8), ("death_camera_pitch_step", "u16", 2)

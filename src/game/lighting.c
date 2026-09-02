@@ -1,12 +1,12 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
-extern void lighting_set_color_matrix(const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
+extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
 extern void func_8001fde4(s32 first, s32 second);
 extern void frame_pacer_wait(void);
 
 ADDRESS(0x80033d80, 0x68)
-void lighting_transition_color_matrix(const struct KfMatrix *from, const struct KfMatrix *to)
+void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
 {
     s32 blend = 0;
 
@@ -19,7 +19,7 @@ void lighting_transition_color_matrix(const struct KfMatrix *from, const struct 
 }
 
 ADDRESS(0x80033de8, 0x28)
-void color_matrix_set_rgb(s16 red, s16 green, s16 blue, struct KfMatrix *matrix)
+void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
 {
     matrix->m[0][2] = red;
     matrix->m[0][1] = red;
@@ -39,9 +39,9 @@ extern KfPlayerState player_state;
 ADDRESS(0x80033e10, 0xd4)
 void player_restore_vitals_with_color_cycle(void)
 {
-    struct KfMatrix saved;
-    struct KfMatrix first;
-    struct KfMatrix second;
+    MATRIX saved;
+    MATRIX first;
+    MATRIX second;
 
     ReadColorMatrix(&saved);
     color_matrix_set_rgb(0, 0xfff, 0, &first);

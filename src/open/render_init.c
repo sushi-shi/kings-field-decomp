@@ -15,7 +15,7 @@ extern u32 func_8001615c(void *destination, char *path);
 
 extern KfDisplayStateOpen display_state;
 extern KfRenderStateOpen render_state;
-extern struct KfMatrix light_quadrant_matrices[4];
+extern MATRIX light_quadrant_matrices[4];
 extern u16 DAT_8006da3a;
 extern u16 DAT_8006da38;
 extern u16 DAT_8006da36;

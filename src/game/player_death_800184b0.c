@@ -6,27 +6,27 @@ extern KfRenderState render_state;
 extern KfPlayerState player_state;
 
 extern void lighting_set_color_matrix(
-    const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
+    const MATRIX *from, const MATRIX *to, s32 blend);
 extern void matrix_interpolate(
-    const struct KfMatrix *from, const struct KfMatrix *to, struct KfMatrix *output, s32 blend);
+    const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void player_update_vertical_motion(void);
 extern void func_8001fde4(
     const struct KfVec4i *position_or_null, const struct KfVec4s *rotation_or_null);
 extern void player_death_restart(void);
-extern void player_death_apply_visual_fade(const struct KfMatrix *color_from, s32 blend);
+extern void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend);
 
-extern struct KfMatrix color_matrix_table[7];
+extern MATRIX color_matrix_table[7];
 extern s32 player_death_saved_fog_near;
 extern u8 DAT_80095064;
-extern struct KfMatrix player_death_saved_color_matrix;
+extern MATRIX player_death_saved_color_matrix;
 
 /*
  * Fades the colour matrix and near fog from `color_from` toward the death
  * palette (table entry 4) and darkens the 8-bit brightness in step.
  */
 ADDRESS(0x800184b0, 0x90)
-void player_death_apply_visual_fade(const struct KfMatrix *color_from, s32 blend)
+void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend)
 {
     lighting_set_color_matrix(color_from, &color_matrix_table[4], blend);
     matrix_interpolate(&color_matrix_table[3], &color_matrix_table[4], &render_state.unknown_80, blend);

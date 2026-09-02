@@ -10,17 +10,17 @@ extern KfRenderState render_state;
  */
 
 extern void matrix_interpolate(
-    const struct KfMatrix *from,
-    const struct KfMatrix *to,
-    struct KfMatrix *matrix,
+    const MATRIX *from,
+    const MATRIX *to,
+    MATRIX *matrix,
     s32 blend);
 
 
 ADDRESS(0x800202fc, 0x68)
 void matrix_interpolate(
-    const struct KfMatrix *from,
-    const struct KfMatrix *to,
-    struct KfMatrix *output,
+    const MATRIX *from,
+    const MATRIX *to,
+    MATRIX *output,
     s32 blend)
 {
     const u16 *source = (const u16 *)from;
@@ -38,11 +38,11 @@ void matrix_interpolate(
 
 ADDRESS(0x80020364, 0x2c)
 void lighting_set_color_matrix(
-    const struct KfMatrix *from,
-    const struct KfMatrix *to,
+    const MATRIX *from,
+    const MATRIX *to,
     s32 blend)
 {
-    struct KfMatrix matrix;
+    MATRIX matrix;
 
     matrix_interpolate(from, to, &matrix, blend);
     SetColorMatrix(&matrix);
@@ -50,11 +50,11 @@ void lighting_set_color_matrix(
 
 ADDRESS(0x80020390, 0x2c)
 void lighting_set_light_matrix(
-    const struct KfMatrix *from,
-    const struct KfMatrix *to,
+    const MATRIX *from,
+    const MATRIX *to,
     s32 blend)
 {
-    struct KfMatrix matrix;
+    MATRIX matrix;
 
     matrix_interpolate(from, to, &matrix, blend);
     SetLightMatrix(&matrix);

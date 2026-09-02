@@ -17,7 +17,7 @@ void player_update_weapon_attack(void)
     struct KfVec4s offset;
     struct KfVec4s rotation;
     struct KfVec4i result;
-    struct KfMatrix matrix;
+    MATRIX matrix;
     u16 window;
     s32 actor;
 

@@ -4,14 +4,14 @@
 extern KfRenderState render_state;
 
 extern void lighting_set_color_matrix(
-    const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
+    const MATRIX *from, const MATRIX *to, s32 blend);
 
-extern struct KfMatrix color_matrix_table[7];
+extern MATRIX color_matrix_table[7];
 
 ADDRESS(0x800187a4, 0x4c)
 void lighting_apply_weapon9_environment(void)
 {
-    struct KfMatrix current;
+    MATRIX current;
 
     ReadColorMatrix(&current);
     lighting_set_color_matrix(&current, &color_matrix_table[4], 0x9c4);

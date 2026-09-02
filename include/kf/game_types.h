@@ -8,11 +8,6 @@ typedef unsigned short u16;
 typedef signed long s32;
 typedef unsigned long u32;
 
-struct KfMatrix {
-    s16 m[3][3];
-    s16 pad;
-    s32 t[3];
-};
 
 struct KfPoolRecord {
     s16 state;
@@ -24,7 +19,6 @@ struct KfPoolRecord {
     u32 *backlink;
 };
 
-typedef char KfMatrix_size_is_32[(sizeof(struct KfMatrix) == 32) ? 1 : -1];
 typedef char KfPoolRecord_size_is_20[
     (sizeof(struct KfPoolRecord) == 20) ? 1 : -1];
 
