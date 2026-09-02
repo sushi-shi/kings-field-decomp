@@ -5,6 +5,8 @@
 #include <LIBGTE.H>
 #include <LIBGPU.H>
 
+extern KfPlayerState player_state;
+
 /* Psy-Q Release 2.5 MEMORY.H declares memset and memcpy without prototypes. */
 extern void *memset();
 extern void *memcpy();
@@ -61,15 +63,10 @@ extern KfSaveHeader *save_header_buffer;
 extern KfSavePayload *save_payload_buffer;
 
 /*
- * Serialized game state. The 0xe0 bytes from player_experience onward, the
+ * Serialized game state. The 0xe0 bytes from player_state.experience onward, the
  * two unresolved blocks, and the first byte of each 20-byte magic record are
  * copied verbatim; the retail object boundaries inside them are still open.
  */
-extern u32 player_experience;
-extern KfPlayerProgressState player_progress_state;
-extern KfPlayerVitals player_vitals;
-extern u8 *player_weapon_asset_buffer;
-extern u32 DAT_800a07f4;
 extern u32 DAT_8009ddb4[];
 extern u8 DAT_800652a8[];
 extern u8 DAT_8009ce60[];
@@ -398,7 +395,7 @@ s32 save_file_write_slot(s16 slot_id)
             break;
         }
     }
-    memcpy(save_payload_buffer->player_state, &player_experience,
+    memcpy(save_payload_buffer->player_state, &player_state.experience,
            sizeof(save_payload_buffer->player_state));
     memcpy(save_payload_buffer->world_state, DAT_8009ddb4,
            sizeof(save_payload_buffer->world_state));
@@ -431,12 +428,12 @@ s32 save_file_write_slot(s16 slot_id)
     }
     save_header_buffer->directory.slot_ids[entry] = slot_id;
     save_header_buffer->directory.slot_ids[previous] = 4;
-    save_header_buffer->directory.summaries[entry].fields[0] = player_experience;
-    save_header_buffer->directory.summaries[entry].fields[1] = player_progress_state.current_floor;
-    save_header_buffer->directory.summaries[entry].fields[2] = player_vitals.current_hp;
-    save_header_buffer->directory.summaries[entry].fields[3] = player_vitals.maximum_hp;
-    save_header_buffer->directory.summaries[entry].fields[4] = player_vitals.current_mp;
-    save_header_buffer->directory.summaries[entry].fields[5] = player_vitals.maximum_mp;
+    save_header_buffer->directory.summaries[entry].fields[0] = player_state.experience;
+    save_header_buffer->directory.summaries[entry].fields[1] = player_state.progress_state.current_floor;
+    save_header_buffer->directory.summaries[entry].fields[2] = player_state.vitals.current_hp;
+    save_header_buffer->directory.summaries[entry].fields[3] = player_state.vitals.maximum_hp;
+    save_header_buffer->directory.summaries[entry].fields[4] = player_state.vitals.current_mp;
+    save_header_buffer->directory.summaries[entry].fields[5] = player_state.vitals.maximum_mp;
     memory_card_clear_events();
     file = open(save_main_file_path, O_WRONLY);
     if (file == -1) {
@@ -648,9 +645,9 @@ s32 save_file_read_slot(s16 slot_id)
     if (count != payload_size) {
         return 0xd;
     }
-    weapon_asset_buffer = player_weapon_asset_buffer;
-    saved_07f4 = DAT_800a07f4;
-    memcpy(&player_experience, save_payload_buffer->player_state,
+    weapon_asset_buffer = player_state.weapon_asset_buffer;
+    saved_07f4 = player_state.unknown_74;
+    memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
     memcpy(DAT_8009ddb4, save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
@@ -660,8 +657,8 @@ s32 save_file_read_slot(s16 slot_id)
         DAT_8009ce60[record] = save_payload_buffer->magic_flags[index];
         record += 20;
     }
-    player_weapon_asset_buffer = weapon_asset_buffer;
-    DAT_800a07f4 = saved_07f4;
+    player_state.weapon_asset_buffer = weapon_asset_buffer;
+    player_state.unknown_74 = saved_07f4;
     return 1;
 }
 

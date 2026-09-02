@@ -17,6 +17,15 @@ from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
 
 
+def _structure_field(structure: str, offset: int) -> tuple[str, str, int]:
+    """(name, datatype, size) of one checked layout field from structure_fields.tsv."""
+    _, rows = read_tsv(RETAIL_CONFIG / "structure_fields.tsv")
+    for row in rows:
+        if row["structure"] == structure and parse_int(row["offset"]) == offset:
+            return row["name"], row["datatype"], parse_int(row["size"])
+    raise AssertionError(f"{structure} has no field at {offset:#x}")
+
+
 def words(*values: int) -> bytes:
     return b"".join(value.to_bytes(4, "little") for value in values)
 
@@ -42,12 +51,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 734)
         self.assertEqual(counts["typed_returns"], 734)
         self.assertEqual(counts["parameterized"], 495)
-        self.assertEqual(counts["data"], 3439)
+        self.assertEqual(counts["data"], 3350)
         self.assertGreaterEqual(counts["functions_named"], 240)
-        self.assertGreaterEqual(counts["data_named"], 185)
-        self.assertEqual(counts["structures"], 38)
-        self.assertEqual(counts["structure_fields"], 322)
-        self.assertEqual(counts["structure_fields_named"], 247)
+        self.assertGreaterEqual(counts["data_named"], 105)
+        self.assertEqual(counts["structures"], 42)
+        self.assertEqual(counts["structure_fields"], 347)
+        self.assertEqual(counts["structure_fields_named"], 268)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -108,14 +117,14 @@ class InventoryTests(unittest.TestCase):
         player_state_fields = {
             row.name: row for row in fields if row.structure == "KfPlayerState"
         }
-        self.assertEqual(player_state_fields["player_vitals"].offset, 0x10)
+        self.assertEqual(player_state_fields["vitals"].offset, 0x10)
         self.assertEqual(player_state_fields["camera_position"].offset, 0xA4)
-        self.assertEqual(player_state_fields["player_motion_state"].offset, 0xC0)
-        self.assertEqual(player_state_fields["player_status_effect4_timer"].offset, 0x50)
-        self.assertEqual(player_state_fields["player_light_effect_timer"].offset, 0x52)
-        self.assertEqual(player_state_fields["player_map_variant"].offset, 0x0C)
+        self.assertEqual(player_state_fields["motion_state"].offset, 0xC0)
+        self.assertEqual(player_state_fields["status_effect4_timer"].offset, 0x50)
+        self.assertEqual(player_state_fields["light_effect_timer"].offset, 0x52)
+        self.assertEqual(player_state_fields["map_variant"].offset, 0x0C)
         self.assertEqual(
-            player_state_fields["player_light_effect_timer"].meaning_confidence,
+            player_state_fields["light_effect_timer"].meaning_confidence,
             "supported",
         )
         self.assertEqual(player_state_fields["unknown_ce"].meaning_confidence, "opaque")
@@ -412,12 +421,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x80012048]["confidence"], "pointer-reviewed")
         self.assertEqual(
             by_site[0x80017D40]["target_name"],
-            "floor_entry_cells-0x2",
+            "floor_entry_cells",
         )
-        self.assertEqual(by_site[0x80017E3C]["target_name"], "camera_position")
+        self.assertEqual(by_site[0x80017E3C]["target_name"], "player_state")
         self.assertEqual(
             by_site[0x80017E94]["target_name"],
-            "player_view_rotation_offset",
+            "player_state",
         )
         self.assertEqual(
             by_site[0x80018104]["target_name"],
@@ -561,19 +570,22 @@ class InventoryTests(unittest.TestCase):
         )
     def test_player_motion_data_owners_are_queryable(self) -> None:
         game = index("GAME.EXE")
-        motion = game.datum(0x800A0840)
+        state = game.datum(0x800A0780)
         self.assertEqual(
-            (motion.name, motion.datatype, motion.size),
-            ("player_motion_state", "KfPlayerMotionState", 0x0A),
+            (state.name, state.datatype, state.size),
+            ("player_state", "KfPlayerState", 0xE0),
         )
-        self.assertEqual(game.data_owner(0x800A0848), motion)
-        map_cell = game.datum(0x800A084A)
         self.assertEqual(
-            (map_cell.name, map_cell.datatype, map_cell.size),
-            ("player_map_cell", "KfMapCell", 2),
+            _structure_field("KfPlayerState", 0xC0),
+            ("motion_state", "KfPlayerMotionState", 0x0A),
         )
-        weapon = game.datum(0x800A07E8)
-        self.assertEqual(weapon.datatype, "const KfWeaponRecord *")
+        self.assertEqual(game.data_owner(0x800A0848), state)
+        self.assertEqual(
+            _structure_field("KfPlayerState", 0xCA), ("map_cell", "KfMapCell", 2)
+        )
+        self.assertEqual(
+            _structure_field("KfPlayerState", 0x68)[1], "KfWeaponRecord *"
+        )
         weapon_records = game.datum(0x8009FF10)
         self.assertEqual(
             (weapon_records.name, weapon_records.datatype, weapon_records.size),
@@ -611,7 +623,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
-        self.assertEqual(by_site[0x80015F30]["target_name"], "player_physical_power_training")
+        self.assertEqual(by_site[0x80015F30]["target_name"], "player_state")
         self.assertEqual(by_site[0x800160E4]["target_name"], "player_level_growth_table")
         self.assertEqual(by_site[0x80016864]["target_name"], "player_equipment_slot_jump_table")
         self.assertEqual(by_site[0x80016B0C]["target_name"], "player_recalculate_combat_stats")
@@ -640,11 +652,11 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             by_site[0x8001711C]["target_name"],
-            "camera_position",
+            "player_state",
         )
         self.assertEqual(
             by_site[0x8001640C]["target_name"],
-            "player_status_effect2_resistance",
+            "player_state",
         )
 
     def test_player_death_matrix_relocations_are_reviewed(self) -> None:
@@ -758,25 +770,24 @@ class InventoryTests(unittest.TestCase):
         )
         save_path = game.datum(0x80056034)
         self.assertEqual(save_path.name, "save_main_file_path")
-        actor_pool = game.datum(0x8006C4B8)
+        # The actor definitions, pool, and current/target pointers form one
+        # aggregate: game_main_loop clears the whole 0x2b48-byte block and the
+        # actor routines address its members from one base register.
+        actor_state = game.datum(0x8006BD98)
         self.assertEqual(
-            (actor_pool.name, actor_pool.datatype, actor_pool.size),
-            ("actor_pool", "KfActor[128]", 0x2400),
+            (actor_state.name, actor_state.datatype, actor_state.size, actor_state.owner_type),
+            ("actor_state", "KfActorState", 0x2B48, "actor"),
         )
-        actor_definition = game.datum(0x8006BD98)
+        self.assertEqual(game.data_owner(0x8006C4B8), actor_state)
         self.assertEqual(
-            (actor_definition.name, actor_definition.datatype),
-            ("actor_definitions", "KfActorDefinition[12]"),
+            _structure_field("KfActorState", 0x0), ("definitions", "KfActorDefinition[12]", 0x720)
         )
-        current_actor = game.datum(0x8006E8D4)
         self.assertEqual(
-            (current_actor.name, current_actor.datatype),
-            ("current_actor", "KfActor *"),
+            _structure_field("KfActorState", 0x720), ("actors", "KfActor[128]", 0x2400)
         )
-        target_actor = game.datum(0x8006E8DC)
+        self.assertEqual(_structure_field("KfActorState", 0x2B3C), ("current", "KfActor *", 4))
         self.assertEqual(
-            (target_actor.name, target_actor.datatype, target_actor.owner_type),
-            ("player_target_actor", "KfActor *", "actor"),
+            _structure_field("KfActorState", 0x2B44), ("player_target", "KfActor *", 4)
         )
         action_profiles = game.datum(0x80056080)
         self.assertEqual(
@@ -892,48 +903,15 @@ class InventoryTests(unittest.TestCase):
                 0x158,
             ),
         )
-        sequence_buffer = game.datum(0x80095870)
+        # The audio runtime state is one aggregate: audio_initialize derives the
+        # voice-id slot address from the sequence-buffer field.
+        audio_state = game.datum(0x80095868)
         self.assertEqual(
-            (sequence_buffer.name, sequence_buffer.datatype),
-            ("audio_sequence_buffer", "u8 *"),
+            (audio_state.name, audio_state.datatype, audio_state.size),
+            ("audio_state", "KfAudioState", 0x90),
         )
-        sequence_id = game.datum(0x80095874)
-        self.assertEqual(
-            (sequence_id.name, sequence_id.datatype),
-            ("audio_sequence_id", "s16"),
-        )
-        voice_index = game.datum(0x80057B84)
-        self.assertEqual(
-            (voice_index.name, voice_index.datatype, voice_index.size),
-            ("audio_voice_slot_index", "s32", 4),
-        )
-        listener_position = game.datum(0x8009587C)
-        listener_rotation = game.datum(0x8009588C)
-        self.assertEqual(
-            (
-                listener_position.name,
-                listener_position.datatype,
-                listener_position.size,
-            ),
-            ("audio_listener_position", "KfVec4i", 0x10),
-        )
-        self.assertEqual(
-            (
-                listener_rotation.name,
-                listener_rotation.datatype,
-                listener_rotation.size,
-            ),
-            ("audio_listener_rotation", "KfVec4s", 8),
-        )
-        voice_slots = game.datum(0x80095894)
-        self.assertEqual(
-            (voice_slots.name, voice_slots.datatype, voice_slots.size),
-            ("audio_voice_slots", "KfAudioVoiceSlots", 0x64),
-        )
-        effects_enabled = game.datum(0x800A0816)
-        music_enabled = game.datum(0x800A0817)
-        self.assertEqual(effects_enabled.name, "audio_effects_enabled")
-        self.assertEqual(music_enabled.name, "audio_music_enabled")
+        self.assertEqual(_structure_field("KfPlayerState", 0x96)[0], "audio_effects_enabled")
+        self.assertEqual(_structure_field("KfPlayerState", 0x97)[0], "audio_music_enabled")
         self.assertEqual(
             {
                 data_identities[("GAME.EXE", va)].scope
@@ -941,15 +919,6 @@ class InventoryTests(unittest.TestCase):
                     0x80059738,
                     0x80057B84,
                     0x80095868,
-                    0x8009586C,
-                    0x80095870,
-                    0x80095874,
-                    0x80095878,
-                    0x8009587C,
-                    0x8009588C,
-                    0x80095894,
-                    0x800A0816,
-                    0x800A0817,
                 )
             },
             {"unknown"},
@@ -992,20 +961,17 @@ class InventoryTests(unittest.TestCase):
         )
         talk_path = game.datum(0x8005606C)
         self.assertEqual(talk_path.name, "talk_image_path_template")
-        camera_position = game.datum(0x800A0824)
-        camera_rotation = game.datum(0x800A0838)
         self.assertEqual(
-            (camera_position.name, camera_position.datatype, camera_position.size),
+            _structure_field("KfPlayerState", 0xA4),
             ("camera_position", "KfVec4i", 0x10),
         )
         self.assertEqual(
-            (camera_rotation.name, camera_rotation.datatype, camera_rotation.size),
+            _structure_field("KfPlayerState", 0xB8),
             ("camera_rotation", "KfVec4s", 8),
         )
-        map_progress = game.datum(0x800A0788)
         self.assertEqual(
-            (map_progress.name, map_progress.datatype, map_progress.size),
-            ("player_progress_state", "KfPlayerProgressState", 4),
+            _structure_field("KfPlayerState", 0x08),
+            ("progress_state", "KfPlayerProgressState", 4),
         )
         map_events = game.datum(0x8009DB88)
         interior_event = game.data_owner(0x8009DC8A)
@@ -1019,17 +985,18 @@ class InventoryTests(unittest.TestCase):
             (current_event.name, current_event.datatype, current_event.size),
             ("current_map_event", "KfMapEvent *", 4),
         )
-        player_vitals = game.datum(0x800A0790)
+        player_state = game.datum(0x800A0780)
         current_mp_owner = game.data_owner(0x800A0796)
         self.assertEqual(
-            (player_vitals.name, player_vitals.datatype, player_vitals.size),
-            ("player_vitals", "KfPlayerVitals", 8),
+            (player_state.name, player_state.datatype, player_state.size),
+            ("player_state", "KfPlayerState", 0xE0),
         )
-        self.assertEqual(current_mp_owner, player_vitals)
+        self.assertEqual(current_mp_owner, player_state)
+        self.assertEqual(
+            _structure_field("KfPlayerState", 0x10), ("vitals", "KfPlayerVitals", 8)
+        )
         saved_fog = game.datum(0x80057E78)
         saved_color_matrix = game.datum(0x80058060)
-        death_pitch_step = game.datum(0x800A0858)
-        death_blend = game.datum(0x800A085A)
         self.assertEqual(
             (saved_fog.name, saved_fog.datatype, saved_fog.size),
             ("player_death_saved_fog_near", "s32", 4),
@@ -1043,47 +1010,33 @@ class InventoryTests(unittest.TestCase):
             ("player_death_saved_color_matrix", "KfMatrix", 0x20),
         )
         self.assertEqual(
-            (death_pitch_step.name, death_pitch_step.datatype, death_pitch_step.size),
-            ("player_death_camera_pitch_step", "u16", 2),
+            _structure_field("KfPlayerState", 0xD8), ("death_camera_pitch_step", "u16", 2)
         )
         self.assertEqual(
-            (death_blend.name, death_blend.datatype, death_blend.size),
-            ("player_death_visual_blend", "s16", 2),
+            _structure_field("KfPlayerState", 0xDA), ("death_visual_blend", "s16", 2)
         )
-        status_data = tuple(
-            game.datum(va)
-            for va in (
-                0x800A07AA,
-                0x800A07BC,
-                0x800A07BE,
-                0x800A07C0,
-                0x800A07C2,
-                0x800A07C4,
-                0x800A07C6,
-                0x800A07C8,
-                0x800A07CA,
-                0x800A07CC,
-                0x800A07CE,
-            )
+        status_fields = tuple(
+            _structure_field("KfPlayerState", offset)
+            for offset in (0x2A, 0x3C, 0x3E, 0x40, 0x42, 0x44, 0x46, 0x48, 0x4A, 0x4C, 0x4E)
         )
         self.assertEqual(
-            tuple(datum.name for datum in status_data),
+            tuple(field[0] for field in status_fields),
             (
-                "player_status_effect_flags",
-                "player_damage_defense_component0",
-                "player_damage_defense_component1",
-                "player_damage_defense_component2",
-                "player_status_effect2_resistance",
-                "player_damage_defense_component3",
-                "player_damage_defense_component4",
-                "player_status_effect0_timer",
-                "player_status_effect1_timer",
-                "player_status_effect2_timer",
-                "player_status_effect3_timer",
+                "status_effect_flags",
+                "damage_defense_component0",
+                "damage_defense_component1",
+                "damage_defense_component2",
+                "status_effect2_resistance",
+                "damage_defense_component3",
+                "damage_defense_component4",
+                "status_effect0_timer",
+                "status_effect1_timer",
+                "status_effect2_timer",
+                "status_effect3_timer",
             ),
         )
         self.assertEqual(
-            tuple(datum.datatype for datum in status_data),
+            tuple(field[1] for field in status_fields),
             ("u16",) * 7 + ("s16",) * 4,
         )
         self.assertEqual(
@@ -1092,25 +1045,8 @@ class InventoryTests(unittest.TestCase):
                 for va in (
                     0x8009DB88,
                     0x8009DDA8,
-                    0x800A0788,
-                    0x800A0790,
-                    0x800A0824,
-                    0x800A0838,
                     0x80058060,
                     0x80057E78,
-                    0x800A0858,
-                    0x800A085A,
-                    0x800A07AA,
-                    0x800A07BC,
-                    0x800A07BE,
-                    0x800A07C0,
-                    0x800A07C2,
-                    0x800A07C4,
-                    0x800A07C6,
-                    0x800A07C8,
-                    0x800A07CA,
-                    0x800A07CC,
-                    0x800A07CE,
                 )
             },
             {"unknown"},

@@ -18,15 +18,15 @@ KfActor	0x0e	0x02	local_x	s16	supported	semantic_types.h;asm;xrefs	local horizon
 KfActor	0x10	0x02	local_z	s16	supported	semantic_types.h;asm;xrefs	local horizontal coordinate
 KfActor	0x12	0x02	animation_phase	u16	supported	semantic_types.h;asm;xrefs	animation phase/progress
 KfActor	0x14	0x02	health	u16	supported	semantic_types.h;asm;xrefs	current actor health
-KfActor	0x16	0x02	cell_x	s16	supported	semantic_types.h;asm;xrefs	map cell x
-KfActor	0x18	0x02	cell_z	s16	supported	semantic_types.h;asm;xrefs	map cell z
+KfActor	0x16	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x; every band load is lhu
+KfActor	0x18	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z; every band load is lhu
 KfActor	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x1c	0x0c	position	KfVec3i	supported	semantic_types.h;asm;xrefs	world position
 KfActor	0x28	0x04	unknown_28	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	actor rotation
 KfActor	0x32	0x02	unknown_32	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActor	0x34	0x04	unknown_34	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x38	0x01	action_timer	s8	supported	semantic_types.h;asm;xrefs	signed action countdown
+KfActor	0x38	0x01	action_timer	u8	supported	semantic_types.h;asm;xrefs	action countdown; loaded lbu and seeded with 0xff
 KfActor	0x39	0x01	collision_state	u8	supported	semantic_types.h;asm;xrefs	collision result/state
 KfActor	0x3a	0x02	movement_yaw	s16	supported	semantic_types.h;asm;xrefs	movement heading
 KfActor	0x3c	0x02	animation_step	s16	supported	semantic_types.h;asm;xrefs	animation increment
@@ -40,9 +40,12 @@ KfActorActionProfile	0x02	0x02	far_weight	s16	supported	semantic_types.h;asm;xre
 KfActorActionProfile	0x04	0x02	near_distance	s16	supported	semantic_types.h;asm;xrefs	near distance threshold
 KfActorActionProfile	0x06	0x02	middle_weight	s16	supported	semantic_types.h;asm;xrefs	middle action weight
 KfActorActionProfile	0x08	0x02	near_weight	s16	supported	semantic_types.h;asm;xrefs	near action weight
-KfActorDefinition	0x00	0x11	unknown_00	u8[17]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActorDefinition	0x11	0x01	hit_action	s8	supported	semantic_types.h;asm;xrefs	action selected on hit
-KfActorDefinition	0x12	0x01	death_action	s8	supported	semantic_types.h;asm;xrefs	action selected on death
+KfActorDefinition	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x03	0x01	status_effect	u8	supported	semantic_types.h;asm;xrefs	status effect flags passed to player_apply_damage by actor_try_attack_player
+KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	semantic_types.h;asm;xrefs	per-hit chance out of 256 compared with rand() >> 7; zero disables the effect
+KfActorDefinition	0x05	0x0c	unknown_05	u8[12]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfActorDefinition	0x11	0x01	hit_action	u8	supported	semantic_types.h;asm;xrefs	action selected on hit; 0xff means none
+KfActorDefinition	0x12	0x01	death_action	u8	supported	semantic_types.h;asm;xrefs	action selected on death; 0xff means none
 KfActorDefinition	0x13	0x67	unknown_13	u8[103]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActorDefinition	0x7a	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
 KfActorDefinition	0x7c	0x02	collision_height	u16	supported	semantic_types.h;asm;xrefs	collision height
@@ -54,6 +57,25 @@ KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	semantic_types.h;
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	semantic_types.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	unknown_96	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfActorPlacement	0x00	0x10	bytes	u8[16]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	semantic_types.h;asm;xrefs	map-loaded actor definitions
+KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	semantic_types.h;asm;xrefs	live actor records
+KfActorState	0x2b20	0x10	player_position	KfVec4i	supported	semantic_types.h;asm;xrefs	player position snapshot copied each frame
+KfActorState	0x2b30	0x08	player_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	player rotation snapshot copied each frame
+KfActorState	0x2b38	0x04	current_definition	KfActorDefinition *	supported	semantic_types.h;asm;xrefs	definition of the actor being updated
+KfActorState	0x2b3c	0x04	current	KfActor *	supported	semantic_types.h;asm;xrefs	actor being updated
+KfActorState	0x2b40	0x02	current_index	u16	supported	semantic_types.h;asm;xrefs	index of the actor being updated
+KfActorState	0x2b42	0x02	current_definition_id	u16	supported	semantic_types.h;asm;xrefs	definition id of the actor being updated
+KfActorState	0x2b44	0x04	player_target	KfActor *	supported	semantic_types.h;asm;xrefs	actor targeted by the player
+KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
+KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
+KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
+KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	semantic_types.h;asm;xrefs	allocated SEQ buffer
+KfAudioState	0x0c	0x02	sequence_id	s16	supported	semantic_types.h;asm;xrefs	open sequence identifier
+KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
+KfAudioState	0x10	0x04	sequence_active	s32	supported	semantic_types.h;asm;xrefs	one while a map sequence plays
+KfAudioState	0x14	0x10	listener_position	KfVec4i	supported	semantic_types.h;asm;xrefs	listener position for spatial voices
+KfAudioState	0x24	0x08	listener_rotation	KfVec4s	supported	semantic_types.h;asm;xrefs	listener rotation for spatial voices
+KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	semantic_types.h;asm;xrefs	ten voice slots
 KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
 KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
 KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers
@@ -80,6 +102,8 @@ KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	semantic_types.h;game_semant
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
+KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
+KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
 KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCell	0x01	0x01	x	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
@@ -91,7 +115,7 @@ KfMapCopyRegion	0x05	0x01	height	u8	supported	semantic_types.h;asm;xrefs	region 
 KfMapEvent	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	active state
 KfMapEvent	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
 KfMapEvent	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
-KfMapEvent	0x03	0x05	unknown_03	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied from the definition tag
 KfMapEvent	0x08	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
 KfMapEvent	0x09	0x01	image_index	u8	supported	semantic_types.h;asm;xrefs	current image index
 KfMapEvent	0x0a	0x01	image_dirty	u8	supported	semantic_types.h;asm;xrefs	image refresh flag
@@ -124,7 +148,7 @@ KfMapEventDefinition	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	even
 KfMapEventDefinition	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
 KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	semantic_types.h;asm;xrefs	map cell z
 KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapEventDefinition	0x05	0x05	unknown_05	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied into the runtime slot
 KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
 KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
@@ -134,6 +158,7 @@ KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	semantic_types.h;
 KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	semantic_types.h;asm;xrefs	initial rotation
 KfMapEventDefinition	0x14	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
 KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObject	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
@@ -180,88 +205,88 @@ KfPlayerProgressState	0x00	0x01	level	u8	supported	semantic_types.h;asm;xrefs	pl
 KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	semantic_types.h;asm;xrefs	current dungeon floor
 KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	semantic_types.h;asm;xrefs	highest reached floor
-KfPlayerState	0x00	0x04	player_experience	u32	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x04	0x04	player_next_level_experience	u32	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x08	0x04	player_progress_state	KfPlayerProgressState	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x0c	0x01	player_map_variant	u8	supported	semantic_types.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
+KfPlayerState	0x00	0x04	experience	s32	supported	semantic_types.h;data_identities.tsv;slt-compares	member of the player_state aggregate
+KfPlayerState	0x04	0x04	next_level_experience	s32	supported	semantic_types.h;data_identities.tsv;slt-compares	member of the player_state aggregate
+KfPlayerState	0x08	0x04	progress_state	KfPlayerProgressState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x0c	0x01	map_variant	u8	supported	semantic_types.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
 KfPlayerState	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x0e	0x01	player_weapon_charge_delay	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x0e	0x01	weapon_charge_delay	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x10	0x08	player_vitals	KfPlayerVitals	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x18	0x04	player_attack_charge_state	KfPlayerAttackChargeState	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x1c	0x02	player_magic_charge	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x1e	0x02	player_physical_power_training	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x20	0x02	player_magic_training	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x22	0x02	player_base_physical_power	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x24	0x02	player_base_magic	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x26	0x02	player_physical_power	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x28	0x02	player_magic	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x2a	0x02	player_status_effect_flags	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x10	0x08	vitals	KfPlayerVitals	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x18	0x04	attack_charge_state	KfPlayerAttackChargeState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x1c	0x02	magic_charge	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x1e	0x02	physical_power_training	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x20	0x02	magic_training	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x22	0x02	base_physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x24	0x02	base_magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x26	0x02	physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x28	0x02	magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x2c	0x04	unknown_2c	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x30	0x02	player_attack_component0	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x32	0x02	player_attack_component1	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x34	0x02	player_attack_component2	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x36	0x02	player_attack_component3	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x38	0x02	player_attack_component4	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x30	0x02	attack_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x32	0x02	attack_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x34	0x02	attack_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x36	0x02	attack_component3	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x38	0x02	attack_component4	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x3c	0x02	player_damage_defense_component0	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x3e	0x02	player_damage_defense_component1	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x40	0x02	player_damage_defense_component2	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x42	0x02	player_status_effect2_resistance	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x44	0x02	player_damage_defense_component3	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x46	0x02	player_damage_defense_component4	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x48	0x02	player_status_effect0_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x4a	0x02	player_status_effect1_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x4c	0x02	player_status_effect2_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x4e	0x02	player_status_effect3_timer	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x50	0x02	player_status_effect4_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
-KfPlayerState	0x52	0x02	player_light_effect_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
+KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x42	0x02	status_effect2_resistance	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4c	0x02	status_effect2_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4e	0x02	status_effect3_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x50	0x02	status_effect4_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
+KfPlayerState	0x52	0x02	light_effect_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
 KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x58	0x04	unknown_58	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x5c	0x01	player_selected_magic_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x60	0x04	player_selected_magic_record	void *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x64	0x01	player_equipped_weapon_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x60	0x04	selected_magic_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x68	0x04	player_equipped_weapon_record	KfWeaponRecord *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x6c	0x04	player_weapon_asset_buffer	u8 *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x70	0x02	player_weapon_attack_phase	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x74	0x04	unknown_74	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x78	0x01	unknown_78	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x79	0x01	unknown_79	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7a	0x01	player_weapon_attack_fully_charged	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7c	0x04	player_equipped_shield_record	void *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x80	0x04	player_equipped_head_armor_record	void *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x84	0x04	player_equipped_body_armor_record	void *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x88	0x04	player_equipped_arm_armor_record	void *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x8c	0x04	player_equipped_leg_armor_record	void *	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x90	0x01	player_equipped_shield_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x91	0x01	player_equipped_head_armor_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x92	0x01	player_equipped_body_armor_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x93	0x01	player_equipped_arm_armor_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x94	0x01	player_equipped_leg_armor_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x95	0x01	player_equipped_accessory_id	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x7c	0x04	equipped_shield_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x80	0x04	equipped_head_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x84	0x04	equipped_body_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x88	0x04	equipped_arm_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x8c	0x04	equipped_leg_armor_record	void *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x98	0x02	unknown_98	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x9a	0x08	player_view_rotation_offset	KfVec4s	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xa2	0x01	player_update_state	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0x9a	0x08	view_rotation_offset	KfVec4s	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xa2	0x01	update_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xa4	0x10	camera_position	KfVec4i	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xb4	0x04	player_floor_height	s32	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xb8	0x08	camera_rotation	KfVec4s	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xc0	0x0a	player_motion_state	KfPlayerMotionState	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xca	0x02	player_map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xcc	0x02	player_previous_map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0xa4	0x10	camera_position	KfVec4i	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb4	0x04	floor_height	s32	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb8	0x08	camera_rotation	KfVec4s	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xce	0x06	unknown_ce	u8[6]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xd4	0x02	player_view_bob_offset	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xd6	0x02	player_view_bob_phase	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xd8	0x02	player_death_camera_pitch_step	u16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xda	0x02	player_death_visual_blend	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xdc	0x02	player_vertical_velocity	s16	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0xde	0x01	player_vertical_state	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
+KfPlayerState	0xd4	0x02	view_bob_offset	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xd6	0x02	view_bob_phase	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xd8	0x02	death_camera_pitch_step	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xda	0x02	death_visual_blend	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xdc	0x02	vertical_velocity	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xde	0x01	vertical_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xdf	0x01	unknown_df	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	maximum HP
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	semantic_types.h;asm;xrefs	current HP

@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfPlayerState player_state;
+
 extern void lighting_set_color_matrix(
     const struct KfMatrix *from, const struct KfMatrix *to, s32 blend);
 extern void matrix_interpolate(
@@ -16,14 +18,7 @@ extern struct KfMatrix color_matrix_table[7];
 extern struct KfMatrix DAT_80095720;
 extern s32 player_death_saved_fog_near;
 extern u8 DAT_80095064;
-extern s16 player_view_bob_offset;
-extern struct KfVec4s camera_rotation;
-extern u16 player_death_camera_pitch_step;
-extern s32 player_floor_height;
-extern struct KfVec4i camera_position;
-extern s16 player_death_visual_blend;
 extern struct KfMatrix player_death_saved_color_matrix;
-extern u8 player_update_state;
 
 /*
  * Fades the colour matrix and near fog from `color_from` toward the death
@@ -41,31 +36,31 @@ void player_death_apply_visual_fade(const struct KfMatrix *color_from, s32 blend
 ADDRESS(0x80018540, 0x184)
 void player_death_update(void)
 {
-    s16 *bob = &player_view_bob_offset;
+    s16 *bob = &player_state.view_bob_offset;
     s32 previous = *bob;
     s32 blend;
 
     if (previous >= 1000) {
         *bob = 1000;
         *bob = 1060;
-        camera_rotation.x -= player_death_camera_pitch_step;
-        player_death_camera_pitch_step += 10;
+        player_state.camera_rotation.x -= player_state.death_camera_pitch_step;
+        player_state.death_camera_pitch_step += 10;
     } else {
-        camera_rotation.x -= 10;
-        player_death_camera_pitch_step += 15;
-        *bob = previous + player_death_camera_pitch_step;
+        player_state.camera_rotation.x -= 10;
+        player_state.death_camera_pitch_step += 15;
+        *bob = previous + player_state.death_camera_pitch_step;
         if (*bob >= 1000) {
-            player_death_camera_pitch_step = 10;
+            player_state.death_camera_pitch_step = 10;
         }
     }
-    if (camera_rotation.x < -800) {
-        camera_rotation.x = -800;
-        player_death_camera_pitch_step = 0;
+    if (player_state.camera_rotation.x < -800) {
+        player_state.camera_rotation.x = -800;
+        player_state.death_camera_pitch_step = 0;
     }
-    camera_position.y = *bob - 1500 + player_floor_height;
+    player_state.camera_position.y = *bob - 1500 + player_state.floor_height;
     player_update_vertical_motion();
-    player_death_visual_blend += 100;
-    blend = player_death_visual_blend;
+    player_state.death_visual_blend += 100;
+    blend = player_state.death_visual_blend;
     if (blend >= 0x1000) {
         player_death_apply_visual_fade(&player_death_saved_color_matrix, 0x1000);
         func_8001fde4(0, 0);
@@ -79,7 +74,7 @@ void player_death_update(void)
 ADDRESS(0x800186c4, 0xe0)
 void player_death_update_reverse_fade(void)
 {
-    s16 *blend = &player_death_visual_blend;
+    s16 *blend = &player_state.death_visual_blend;
 
     lighting_set_color_matrix(&color_matrix_table[4], &color_matrix_table[0], *blend);
     matrix_interpolate(&color_matrix_table[4], &color_matrix_table[3], &DAT_80095720, *blend);
@@ -88,7 +83,7 @@ void player_death_update_reverse_fade(void)
     *blend += 100;
     if (*blend >= 0x1000) {
         player_death_apply_visual_fade(&color_matrix_table[0], 0);
-        player_update_state = 0;
+        player_state.update_state = 0;
     } else {
         player_death_apply_visual_fade(&color_matrix_table[0], 0x1000 - *blend);
     }

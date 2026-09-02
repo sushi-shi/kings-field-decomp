@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import io
+import os
 import struct
 from dataclasses import dataclass
 from pathlib import Path
@@ -187,7 +188,9 @@ def write_tsv(
     if path.is_file() and path.read_text(encoding="utf-8") == content:
         return
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f".{path.name}.tmp")
+    # Parallel build edges (one delink per image) may rewrite the same
+    # generated file; a per-process temporary keeps the replace atomic.
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     temporary.write_text(content, encoding="utf-8", newline="")
     temporary.replace(path)
 

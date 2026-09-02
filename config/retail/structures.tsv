@@ -5,15 +5,19 @@ KfActor	0x48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	l
 KfActorActionProfile	0x0a	supported	semantic_types.h;game_semantic_actor_ai.tsv;asm;xrefs	five-halfword actor action weighting record
 KfActorDefinition	0x98	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
 KfActorPlacement	0x10	supported	semantic_types.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
+KfActorState	0x2b48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
+KfAudioState	0x90	supported	semantic_types.h;game_semantic_audio_control.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate; audio_initialize addresses the voice-id slots relative to the sequence-buffer field
 KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
 KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
 KfCameraPathState	0x64	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	runtime camera path interpolator
 KfCollisionTarget	0x20	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
+KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfMapCell	0x02	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
 KfMapCopyRegion	0x06	supported	semantic_types.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
+KfMapEventTag	0x05	supported	semantic_types.h;game_semantic_camera_events.tsv;asm	five opaque bytes copied as one block by map_event_pool_load
 KfMapObject	0x2c	supported	semantic_types.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
 KfMapObjectDefinition	0x08	supported	semantic_types.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
 KfMapObjectPlacement	0x14	supported	semantic_types.h;game_semantic_map_objects.tsv;runtime-stride	placement record extent; fields remain opaque
@@ -23,7 +27,7 @@ KfPlayerAttackChargeState	0x04	supported	semantic_types.h;game_semantic_player_s
 KfPlayerLevelGrowth	0x0c	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
 KfPlayerMotionState	0x0a	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	five-halfword movement and camera-input state cleared as one complete group
 KfPlayerProgressState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
-KfPlayerState	0xe0	supported	semantic_types.h;data_identities.tsv;game_main_loop-base-register;0xe0-memset	player state block; one aggregate in the original source, members still carry separate identities
+KfPlayerState	0xe0	supported	semantic_types.h;data_identities.tsv;game_main_loop-base-register;0xe0-memset	player state block; one aggregate (player_state) in the original source
 KfPlayerVitals	0x08	supported	semantic_types.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
 KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xrefs	generic allocation-pool record
 KfPrimitiveBuffer	0x0c	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	primitive allocation range and current cursor; two complete records exist in each overlay

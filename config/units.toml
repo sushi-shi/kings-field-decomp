@@ -13,6 +13,10 @@ cc1_flags = []
 # hoisting above the frame allocation, and -O2 schedule reproduce retail forms
 # that the 2.6.0 probe cannot emit. `--expand-div` selects the checked ASPSX
 # div/rem expansion (`break 7`/`break 6`) that retail contains. Still a probe.
+# `-mcpu=r3000` selects the R3000 scheduling model explicitly: the rebuilt
+# cc1 reports Cpu 3000 but schedules with the generic latencies unless the
+# flag is passed, and the explicit model reproduces retail's argument setup
+# and load placement (ten additional exact units, no regressions).
 [profiles.probe-gcc257-o2-g0]
 language = "c"
 compiler = "gcc257-native"
@@ -30,6 +34,12 @@ aspsx_version = "1.07"
 cc1_flags = []
 
 # Add one 
+
+[[unit]]
+unit = "psx.main"
+image = "PSX.EXE"
+source = "src/psx/main.c"
+profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.main"
@@ -86,9 +96,99 @@ source = "src/game/player_8001564c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.player_80015f28"
+image = "GAME.EXE"
+source = "src/game/player_80015f28.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016058"
+image = "GAME.EXE"
+source = "src/game/player_80016058.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_8001627c"
+image = "GAME.EXE"
+source = "src/game/player_8001627c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_800166b4"
+image = "GAME.EXE"
+source = "src/game/player_800166b4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.player_800167e4"
 image = "GAME.EXE"
 source = "src/game/player_800167e4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016a30"
+image = "GAME.EXE"
+source = "src/game/player_80016a30.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016b24"
+image = "GAME.EXE"
+source = "src/game/player_80016b24.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016bc0"
+image = "GAME.EXE"
+source = "src/game/player_80016bc0.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016e24"
+image = "GAME.EXE"
+source = "src/game/player_80016e24.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80016ee8"
+image = "GAME.EXE"
+source = "src/game/player_80016ee8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017040"
+image = "GAME.EXE"
+source = "src/game/player_80017040.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017a24"
+image = "GAME.EXE"
+source = "src/game/player_80017a24.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017a80"
+image = "GAME.EXE"
+source = "src/game/player_80017a80.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017cf8"
+image = "GAME.EXE"
+source = "src/game/player_80017cf8.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017e3c"
+image = "GAME.EXE"
+source = "src/game/player_80017e3c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.player_80017edc"
+image = "GAME.EXE"
+source = "src/game/player_80017edc.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -230,21 +330,9 @@ source = "src/game/save_system.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.actor_pool_8002ca78"
-image = "GAME.EXE"
-source = "src/game/actor_pool_8002ca78.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.actor"
 image = "GAME.EXE"
 source = "src/game/actor.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.actor_pool_8002ce88"
-image = "GAME.EXE"
-source = "src/game/actor_pool_8002ce88.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -254,9 +342,21 @@ source = "src/game/actor_definitions.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.map"
+image = "GAME.EXE"
+source = "src/game/map.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.map_object_definitions"
 image = "GAME.EXE"
 source = "src/game/map_object_definitions.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.map_object_pool_80031450"
+image = "GAME.EXE"
+source = "src/game/map_object_pool_80031450.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -266,21 +366,15 @@ source = "src/game/map_object.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.audio_80032c78"
+unit = "game.audio"
 image = "GAME.EXE"
-source = "src/game/audio_80032c78.c"
+source = "src/game/audio.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.audio_80032fb8"
+unit = "game.camera_path"
 image = "GAME.EXE"
-source = "src/game/audio_80032fb8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.angle_8003329c"
-image = "GAME.EXE"
-source = "src/game/angle_8003329c.c"
+source = "src/game/camera_path.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

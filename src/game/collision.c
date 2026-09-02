@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 
+extern KfPlayerState player_state;
+
 extern s32 map_floor_height_for_cell_position(
     u16 cell_index, s32 point_x, s32 point_z);
 extern s32 player_distance_to_point(
@@ -14,8 +16,6 @@ extern u8 map_cell_attribute_grid[100][100];
 extern s16 map_cell_attribute_height_table[284];
 extern u8 map_collision_flag_grid[100][100];
 extern KfCollisionTarget collision_target;
-extern struct KfVec4i camera_position;
-extern struct KfVec4s camera_rotation;
 extern KfActor actor_pool[128];
 extern KfActorDefinition actor_definitions[12];
 extern KfMapObject map_object_pool[190];
@@ -78,8 +78,8 @@ u32 collision_query_world(
         hit = player_distance_to_point(point_x, point_y, point_z, radius + 800, height);
         if (hit != -1) {
             if (flags & 0x800) {
-                collision_target.position = camera_position;
-                collision_target.rotation = camera_rotation;
+                collision_target.position = player_state.camera_position;
+                collision_target.rotation = player_state.camera_rotation;
                 collision_target.radius = 800;
             }
             return 0x800000;

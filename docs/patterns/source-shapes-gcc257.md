@@ -124,3 +124,84 @@ Open residues recorded during the same campaign (not steered):
   original field is unsigned or accessed through a different type.
 - `angle_within_tolerance`: retail materialises the result through a branch
   (`li v1,1` on the true path); every expression form tried folds to `xori`.
+## player
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `la reg,sym+off` once, then `lhu/sh 0(reg)` for one halfword while a sibling halfword keeps `lui/lhu sym+off` | the halfwords are members of one object (`KfPlayerState`); GCC 2.5.7 registers the address of the first member it touches repeatedly and folds the others. Separate globals never produce the registered form, an array or struct member at any offset does. | `player_increment_physical_power_training` `0x80015f28`; probe `build/probe/train.c` |
+| `lw/sw` x4 loop over 0xe0 bytes from one base | whole-object struct copy; the loop size is the object size and fixes the object extent | `save_file_write_slot` `0x8002b73c` (defines `KfPlayerState`) |
+| working values kept in `$a0`/`$a1` after the parameters die | the parameters are reused as the working variables, no extra locals | `player_calculate_damage_component` `0x8001627c` |
+| independent stores emitted in a non-ascending field order | GCC keeps source order for independent stores; write the assignments in retail order (`z, y, x` for the camera rotation, `yaw, pitch, speed, forward, strafe` for the motion clear) | `game_initialize_session` `0x80016e24`, `player_clear_motion` `0x80016eb8` |
+| a computed value stored to a global and passed to a call from the same register | compute into a local, store it, pass the local; re-reading the global instead reloads it into the argument register | `player_update_view_bob` `0x80017a24` |
+| `lhu v0 = field; lhu v1 = field` twice before a store and compare | `committed = current; if (current == N) ...` with plain member reads; the compiler does not CSE across the intervening store | `player_begin_weapon_attack` `0x80016b24` |
+| `beq falloff,0x1000,<else>` with the computed path falling through | `if (x != CONST) { compute } else { simple }`: the compiler places the first branch of the source first | `player_apply_radial_damage` `0x800166b4` |
+| an ALU instruction from before a branch sitting in that branch's delay slot | put the statement before the `if` in source (`dx >>= 3;` ahead of the y-test); reorg only takes slot fills from the preceding block or the target | `player_distance_to_point` `0x80017108` |
+| the same compare-and-branch duplicated in each arm of an `if`, both arms falling into one block, with the block's first store copied into the joining `j`'s delay slot | `if (cond ? A : B) { ... }`: GCC's do_jump expands a conditional expression by testing each arm directly | `player_update_weapon_attack` `0x80016bc0` |
+| `lh v1,field; beq v1,-1; move a0,v1; addiu a0,a0,300; sh a0,field`, later `subu; andi; sltiu` on the stored register with no constant folding | `field += 300;` on the halfword member in place, then `u16 window = field;` and `(u16)(window - N) < M`; an `s16` local produces a second `lhu` load and an `s32` local folds the constants into the later subtraction | same |
+| the reset stores run whether or not the probe found an actor | the `if (actor != -1)` guards only the damage call | same |
+| `lbu v1 = grid[...]` then the `*100` chain in `v0`, `lh` of a second field, `negu`, store, `addiu -1500` on the second field | distinct variables for the grid byte and the negated height, and `view_offset = view_bob_offset - 1500` as its own local; reusing one variable or writing the sum inline lets the compiler fold the constant onto the other operand | `player_sync_position_to_map` `0x80016ee8` |
+| `la reg,table-2; sll; addu; lbu 0(reg); lbu 1(reg)` | `entry = &table[floor - 1]; a = entry->x; b = entry->z;` (the -1 folds into the symbol; separate `table[floor - 1].x` expressions keep an explicit `addiu -1`) | `player_warp_to_floor_entry` `0x80017cf8` |
+| `switch` on a byte with cases 0, 0x10, 0x20 compiled as `beq 0x10; slti 17; beqz 0; beq 0x20`, and `j` into the middle of another case | a `switch` whose case bodies appear in the retail address order (0x10, 0x20, then 0) with labels inside the cases as `goto` targets; a shared `player_death_begin()` at the end of two branches is cross-jumped into one call | `player_update_vertical_motion` `0x80017a80` |
+| `div` for `/ 10` but `divu` for `% 10` on the same byte | plain `value / 10` and `value % 10` on a `u8` member; the compiler picks the unsigned remainder itself | `actor_show_info_image` `0x80017edc` |
+
+### Scheduling model: `-mcpu=r3000` (profile change, 2026-09-02)
+
+The rebuilt `cc1psx-257` banner reports `Cpu = 3000`, but the instruction
+scheduler used the generic latency model unless `-mcpu=r3000` is passed. With
+the flag, argument setup and load placement follow retail (`li a1,0xffff`
+before the two `lw` loads in `player_distance_to_point_in_cone`; `move v0,a0`
+before the stack-argument loads in `player_apply_radial_damage`). Applied to
+every enrolled unit it produced no regressions and made ten more units exact:
+`matrix_set_rotation_yxz`, the four vector scale helpers,
+`primitive_buffer_commit_poly_ft4`, `game_state_acknowledge_pending`
+(previously exact only under 2.6.0 without the second scheduling pass),
+`save_workspace_allocate`, `audio_play_spatial_range`, `sound_ref_play`.
+`probe-gcc257-o2-g0` now carries `cc1_flags = ["-mcpu=r3000"]`.
+
+Open residues recorded in the player campaign (not steered):
+
+- `player_add_experience` `0x80016058`: inside the level-up `while` loop the
+  probe hoists `la s2,player_level_growth_table+0x1d4` and schedules the
+  extrapolation loads early; retail keeps every growth-table access as a
+  direct `lui/lhu` pair in statement order. Both 2.5.7 and 2.6.0 hoist the
+  anchor for any source-level loop containing two related constant
+  addresses (`build/probe/hoist.c`), and a goto-formed loop loses the
+  retail `s0`/`s1` player anchors, so the shape is unexplained.
+- `player_distance_to_point` `0x80017108`: the last range check keeps an
+  inline `j` to the epilogue instead of the shared `bnez` form, and the
+  final distance lands in `a0` instead of `v1`.
+- `player_distance_to_point_in_cone` `0x80017040`: the early-return branch
+  slot holds `nop` instead of `move v0,s1`.
+## actor
+
+Shapes settled while reconstructing `src/game/actor.c` (band
+0x8002ca78..0x8002e0f0):
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `addiu v0,s1,-1824` / `addiu s8,s1,9244` (one symbol, member offsets) | one aggregate `KfActorState` for definitions, actors, player snapshot, and current/target pointers; separate globals can never produce base-relative member addresses | `actor_pool_begin_death_by_definition`, `actor_pool_find_overlap` |
+| `lbu v1,5; chain; lh v1,16` (second load after the chain that reads its register) | reuse one temporary for the tile index and then the local offset | `actor_initialize_current` `0x8002cd28` |
+| `li v0,0xff` shared by `sb v0,8` and `sb v0,56` | both fields unsigned bytes assigned `0xff`; an `s8` field would materialize `-1` separately | `actor_initialize` |
+| `sll v0,a1,0x10; bgez` then raw `a1` reused | `s16 delta` parameter tested for sign and added unextended | `actor_advance_animation_wrapped` |
+| `lhu` of a definition byte compared with `0xff` | the byte is `u8`; an `s8` compare against `0xff` folds away entirely | `actor_pool_begin_death_by_definition` |
+| `bnez ... -> exit` on every failing test with `li v0,-1` in the slot, no inverted `beqz; j` | a shared `goto out_of_range` exit label instead of repeated `return -1` | `actor_distance_to_point` |
+| `sw a0,0(a2)` before the index division result is stored | assign the current pointer before computing the index | `actor_bind_current` |
+| `andi v0,s2,0xff` on every return path | selector actions and results are `u8`, not `s8` | `actor_try_select_*` |
+
+Open residues (not steered):
+
+- `actor_apply_damage`, `actor_pool_apply_radial_damage`,
+  `actor_pool_find_overlap`, `actor_try_attack_player`,
+  `actor_play_sound_at_phase`: retail hoists argument-register copies
+  (`move a1,s3`, `move s2,a0`) above independent loads; the 2.5.7 probe keeps
+  them adjacent to their call or use.
+- `actor_try_select_*`, `actor_pool_find_target_in_cone`: retail keeps every
+  prologue register save together and loads the current actor into `s1`
+  afterwards; the probe schedules that load right after the `s1` save.
+- `actor_initialize_slot`: the `lifecycle = 1` store stays between the first
+  load and the multiply chain in retail; the probe sinks it below the chain.
+- `actor_animation_crossed_phase`: register choice only (`v1`/`a2` swapped).
+- `actor_pool_find_free`: the found path joins the not-found path at one
+  `jr $ra` with `move v0,v1` in the compare's delay slot; every tried return
+  shape emits a `j` to the epilogue.
+
