@@ -359,3 +359,14 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `move a0,v0; sra v1,a0,16` for the vertical collision result | a separate local for the vertical query. Sharing one `result` across three sites gives it nine references and a higher priority than the shifted copy, which swaps `a0` and `v1` | same |
 | `lui/addiu DAT_80055880+0x36` | `map_cell_attribute_height_table[attribute - 1]`; the reviewed relocation row names the table in `target_name` so the delinker measures the addend from it | same |
 | residue: `lbu v0,5; ... sll v1,v0,5` (tile load in `v0`, product chain in `v1`) | ours loads the tile into `v1` and accumulates in `v0`, costing two `nop`s on the following `lh a0,14`. Every multiply spelling, named-local variant and the 2.6.0 probe allocate the same way: local-alloc ranks the in-place accumulator (4 refs in 2 insns) above the load. Unattributed | same |
+
+### Map object placement loader (`map_object_pool_load`)
+
+| Retail evidence | Source shape | Function |
+| --- | --- | --- |
+| `sh zero,40(sp)` before `move s7,a0` | `u16 ended = 0;` initialised before a local copy of the parameter (`placement = placements`); the parameter's own pseudo stays in `a0` and the copy lands after the flag store | `map_object_pool_load` `0x80031008` |
+| spill slots `remaining` 32, `ended` 40, `definition` 48 above the 8-byte output buffer at 24 | spilled locals take stack slots in declaration order (upward); declare `remaining`, then `ended`, then the definition pointer | same |
+| `beq id,0xff -> tail; ... tail: j fill; sh ended` and the fill block `li 0xff; j advance; sb` | `if (ended == 1) { fill: object_id = 0xff; } else if (id != 0xff) { body } else { ended = 1; goto fill; }`; `continue` jumps to the loop head instead and duplicating the store loses the earlier copy | same |
+| `lw 0(s2); lw 4(s2); sw 6(s0); sw 10(s0)` with `s2 = placement + 12` | `memcpy((u32 *)&object->link, (const u32 *)&placement->link, 8)` with the builtin declaration: word pointers give the MIPS aligned block move and the link address seeds the placement base register. A struct copy of the halfword-aligned link type emits `lwl/lwr`, and two separate word assignments cannot interleave their loads past the first store | same |
+| `sb 0xff,14(s0)` between the height lookup and the height subtraction | `object->action = 0xff` written after the `position_y` statement; the scheduler hoists it over the final subtract and store | same |
+| `if (remaining-- == 0) break;` at the bottom, entry count 189 | a `for (;;)` with the post-decrement test, giving 190 iterations | same |

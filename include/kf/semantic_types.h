@@ -372,8 +372,24 @@ typedef struct KfMapCopyRegion {
     u8 height;
 } KfMapCopyRegion;
 
+typedef struct KfMapObjectLink {
+    u8 link_id;
+    u8 action_parameter;
+    u16 spawn_sequence;
+    s16 vertical_velocity;
+    u8 unknown_06[2];
+} KfMapObjectLink;
+
 typedef struct KfMapObjectPlacement {
-    u8 bytes[0x14];
+    u8 object_id;
+    u8 unknown_01;
+    u8 tile_z;
+    u8 tile_x;
+    u16 yaw;
+    s16 local_z;
+    s16 local_x;
+    s16 local_y;
+    KfMapObjectLink link;
 } KfMapObjectPlacement;
 
 typedef struct KfMapObjectDefinition {
@@ -396,11 +412,7 @@ typedef struct KfMapObject {
     u8 unknown_14[4];
     struct KfEulerAngles rotation;
     u16 unknown_1e;
-    u8 link_id;
-    u8 action_parameter;
-    u16 spawn_sequence;
-    s16 vertical_velocity;
-    u8 unknown_26[2];
+    KfMapObjectLink link;
     u8 action;
     u8 unknown_29;
     u16 action_timer;
@@ -741,6 +753,7 @@ typedef char KfActorPlacement_size_is_16[
 typedef char KfMapCell_size_is_2[(sizeof(KfMapCell) == 0x02) ? 1 : -1];
 typedef char KfMapCopyRegion_size_is_6[
     (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
+typedef char KfMapObjectLink_size_is_8[(sizeof(KfMapObjectLink) == 8) ? 1 : -1];
 typedef char KfMapObjectPlacement_size_is_20[
     (sizeof(KfMapObjectPlacement) == 0x14) ? 1 : -1];
 typedef char KfMapObjectDefinition_size_is_8[

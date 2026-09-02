@@ -150,12 +150,12 @@ void map_object_pool_clear(void)
     do {
         object->object_id = 0xff;
         object->action = 0xff;
-        object->vertical_velocity = 0;
-        object->unknown_26[0] = 0;
-        object->unknown_26[1] = 0;
-        object->link_id = 0;
-        object->action_parameter = 0;
-        object->spawn_sequence = 0;
+        object->link.vertical_velocity = 0;
+        object->link.unknown_06[0] = 0;
+        object->link.unknown_06[1] = 0;
+        object->link.link_id = 0;
+        object->link.action_parameter = 0;
+        object->link.spawn_sequence = 0;
         object++;
     } while (index-- != 0);
     map_object_effect_sequence_180 = 0;

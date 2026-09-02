@@ -205,11 +205,7 @@ KfMapObject	0x10	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world 
 KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	object rotation
 KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x20	0x01	link_id	u8	supported	semantic_types.h;asm;xrefs	linked object/event ID
-KfMapObject	0x21	0x01	action_parameter	u8	supported	semantic_types.h;asm;xrefs	action parameter
-KfMapObject	0x22	0x02	spawn_sequence	u16	supported	semantic_types.h;asm;xrefs	spawn/order sequence
-KfMapObject	0x24	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;xrefs	vertical velocity
-KfMapObject	0x26	0x02	unknown_26	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied verbatim from the placement record
 KfMapObject	0x28	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
 KfMapObject	0x29	0x01	unknown_29	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfMapObject	0x2a	0x02	action_timer	u16	supported	semantic_types.h;asm;xrefs	action timer
@@ -218,7 +214,20 @@ KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	
 KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
 KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObjectPlacement	0x00	0x14	bytes	u8[20]	opaque	semantic_types.h;runtime-stride	field meanings unresolved
+KfMapObjectLink	0x00	0x01	link_id	u8	supported	semantic_types.h;asm;map_object_pool_load	trigger link id
+KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	semantic_types.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
+KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	semantic_types.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
+KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;map_object_pool_load	vertical velocity
+KfMapObjectLink	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;map_object_pool_load	meaning unresolved
+KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
+KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;map_object_pool_load	meaning unresolved
+KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	semantic_types.h;asm;map_object_pool_load	map tile z
+KfMapObjectPlacement	0x03	0x01	tile_x	u8	supported	semantic_types.h;asm;map_object_pool_load	map tile x
+KfMapObjectPlacement	0x04	0x02	yaw	u16	supported	semantic_types.h;asm;map_object_pool_load	initial yaw, masked to 12 bits
+KfMapObjectPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;map_object_pool_load	offset within the tile
+KfMapObjectPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;map_object_pool_load	offset within the tile
+KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;map_object_pool_load	height offset above the floor height grid
+KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied into the pool object
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMatrix	0x00	0x12	m	s16[3][3]	supported	game_types.h;Psy-Q-LIBGTE	3x3 rotation matrix

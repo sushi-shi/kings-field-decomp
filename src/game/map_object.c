@@ -96,7 +96,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
         if (object->object_id == 0xff) {
             return object;
         }
-        age = sequence - object->spawn_sequence;
+        age = sequence - object->link.spawn_sequence;
         if (age < 0) {
             age += 0x10000;
         }
@@ -128,7 +128,7 @@ void map_object_spawn_effect(u8 kind, u8 object_id, const struct KfVec3i *positi
         sequence = &map_object_effect_sequence_170;
     }
     object = map_object_effect_pool_acquire(first_index, 10, *sequence);
-    object->spawn_sequence = (*sequence)++;
+    object->link.spawn_sequence = (*sequence)++;
     object->object_id = object_id;
     object->position_x = position->x;
     object->position_y = y_offset + position->y;
@@ -141,13 +141,13 @@ void map_object_spawn_effect(u8 kind, u8 object_id, const struct KfVec3i *positi
     object->action = MAP_OBJECT_NONE;
     if (object_id < 43) {
         map_object_start_action_if_idle(object, 0x60);
-        object->vertical_velocity = 0;
+        object->link.vertical_velocity = 0;
     } else if (object_id < 48) {
         map_object_start_action_if_idle(object, 0x61);
-        object->vertical_velocity = 0;
+        object->link.vertical_velocity = 0;
     } else if (object_id < 65) {
         map_object_start_action_if_idle(object, 0x62);
-        object->vertical_velocity = 0;
+        object->link.vertical_velocity = 0;
     }
 }
 
@@ -161,10 +161,10 @@ void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s
 
     sequence = &map_object_effect_sequence_160;
     object = map_object_effect_pool_acquire(160, 10, *sequence);
-    object->spawn_sequence = (*sequence)++;
+    object->link.spawn_sequence = (*sequence)++;
     object->object_id = 39;
     /* The debris keeps its source in the link id and action parameter bytes. */
-    *(u16 *)&object->link_id = source;
+    *(u16 *)&object->link.link_id = source;
     angle = (u32)rand() >> 3;
     object->position_x = ((rsin(angle) * 600) >> 12) + position->x;
     object->position_y = y_offset + position->y;
@@ -176,7 +176,7 @@ void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s
     object->rotation.y = rand() >> 3;
     object->action = MAP_OBJECT_NONE;
     map_object_start_action_if_idle(object, 0x62);
-    object->vertical_velocity = -120;
+    object->link.vertical_velocity = -120;
 }
 
 /*
@@ -195,13 +195,13 @@ void map_object_pool_trigger_link(u8 link_id)
         case 80:
         case 81:
         case 82:
-            if (object->link_id == link_id) {
-                object->link_id = MAP_OBJECT_NONE;
+            if (object->link.link_id == link_id) {
+                object->link.link_id = MAP_OBJECT_NONE;
             }
             break;
         default:
             if (map_object_state.definitions[object->object_id].behavior_type < 8
-                && !(object->link_id < 128) && object->link_id == link_id) {
+                && !(object->link.link_id < 128) && object->link.link_id == link_id) {
                 map_object_start_action_if_idle(
                     object, map_object_state.definitions[object->object_id].behavior_type);
             }
@@ -222,8 +222,8 @@ void map_object_pool_clear_link(u8 link_id)
     do {
         if (definitions[object->object_id].behavior_type >= 8
             && definitions[object->object_id].behavior_type == 8
-            && object->link_id == link_id) {
-            object->link_id = MAP_OBJECT_NONE;
+            && object->link.link_id == link_id) {
+            object->link.link_id = MAP_OBJECT_NONE;
         }
         object++;
     } while (count-- != 0);
