@@ -205,3 +205,10 @@ Open residues (not steered):
   `jr $ra` with `move v0,v1` in the compare's delay slot; every tried return
   shape emits a `j` to the epilogue.
 
+## leaf frames
+
+| Retail signature | Source shape | Witness |
+| --- | --- | --- |
+| `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `func_80014268` `0x80014268` |
+| the same frame in a leaf without a loop | not reproduced by parameter masking, copies, or pointer locals; open | `tmd_select` `0x8001c0e8` |
+
