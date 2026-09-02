@@ -25,7 +25,7 @@ extern s32 player_death_saved_fog_near;
 extern u32 player_experience;
 extern u32 player_next_level_experience;
 extern KfPlayerProgressState player_progress_state;
-extern u8 DAT_800a078c;
+extern u8 player_map_variant;
 extern u32 DAT_800a07ac;
 extern KfPlayerAttackChargeState player_attack_charge_state;
 extern u16 player_magic_charge;
@@ -199,7 +199,7 @@ void player_death_restart(void)
     camera_rotation.x = 0;
     if (floor != 1) {
         player_progress_state.current_floor = 1;
-        DAT_800a078c = 0;
+        player_map_variant = 0;
         func_80020a2c();
         audio_close_vab();
         func_800365f8();

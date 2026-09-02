@@ -13,7 +13,7 @@ symbols or pretending that WIP names are original symbols:
   target sizes and every field offset/extent, including opaque ranges; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
-Current semantic coverage is 229 of 734 functions: 209 GAME, one PSX, and 19
+Current semantic coverage is 240 of 734 functions: 220 GAME, one PSX, and 19
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
 image path, and the actor core through targeting, animation, action selection,
@@ -30,6 +30,7 @@ per-function evidence is in the
 `game_semantic_player_stats.tsv`, `game_semantic_player_motion_attack.tsv`,
 `game_semantic_player_interactions.tsv`, `game_semantic_player_update.tsv`,
 `game_semantic_collision_grid.tsv`,
+`game_semantic_map_resources.tsv`,
 `game_semantic_display_tmd.tsv`, and `game_open_semantic_memory_allocator.tsv` files
 under `config/evidence/`. The recovered subsystems and remaining unknowns are
 described in [`save-system.md`](save-system.md),
@@ -44,13 +45,14 @@ described in [`save-system.md`](save-system.md),
 [`player-interactions-and-collision.md`](player-interactions-and-collision.md),
 [`player-update-and-lighting.md`](player-update-and-lighting.md),
 [`collision-grid.md`](collision-grid.md),
+[`map-resources.md`](map-resources.md),
 [`display-and-tmd.md`](display-and-tmd.md),
 [`memory-allocator.md`](memory-allocator.md), and
 [`structure-layouts.md`](structure-layouts.md).
 
-The current first pass contains 3,442 data identities. The lower row count is
+The current first pass contains 3,439 data identities. The lower row count is
 progress: field-sized and pointer-sized seeds are merged when evidence proves
-an owning table or structure. 182 data identities now have semantic review.
+an owning table or structure. 185 data identities now have semantic review.
 Eight loaded identities are candidate or
 supported file-local statics: the six private GAME/OPEN `LIBGTE/MTX` matrix
 stack objects plus the GAME frame pacer's vertical-sync counter and last-tick

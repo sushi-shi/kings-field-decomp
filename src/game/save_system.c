@@ -83,8 +83,8 @@ extern DRAWENV display_draw_environments[2];
 
 extern void *memory_allocate(s32 size);
 extern void memory_release_last(void);
-extern s32 func_8001af9c(void *buffer, const char *path);
-extern void func_8001b100(void *buffer);
+extern s32 cd_file_load_into(void *destination, const char *relative_path);
+extern void tim_upload_images(u_long *tim_data);
 extern s32 func_8005012c(s32 mode);
 
 void memory_card_clear_events(void);
@@ -695,12 +695,12 @@ void save_file_initialize_buffers(void)
     save_header_buffer->playstation_header[2] = 0x13;
     save_header_buffer->playstation_header[3] = SAVE_FILE_BLOCKS;
     memcpy(&save_header_buffer->playstation_header[4], SAVE_TITLE_TEXT, sizeof(SAVE_TITLE_TEXT));
-    func_8001af9c(image, save_icon_frame_1_path);
+    cd_file_load_into(image, save_icon_frame_1_path);
     memcpy(&save_header_buffer->playstation_header[0x60], &image[0x14], 0x20);
     memcpy(&save_header_buffer->playstation_header[0x80], &image[0x40], 0x80);
-    func_8001af9c(image, save_icon_frame_2_path);
+    cd_file_load_into(image, save_icon_frame_2_path);
     memcpy(&save_header_buffer->playstation_header[0x100], &image[0x40], 0x80);
-    func_8001af9c(image, save_icon_frame_3_path);
+    cd_file_load_into(image, save_icon_frame_3_path);
     memcpy(&save_header_buffer->playstation_header[0x180], &image[0x40], 0x80);
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
 }
@@ -774,10 +774,10 @@ s32 menu_load_message_image(s32 message_id)
         path[6] = remainder / 10 + '0';
         path[7] = remainder % 10 + '0';
         buffer = primitive_buffer->cursor;
-        if (func_8001af9c(buffer, path) != 0) {
+        if (cd_file_load_into(buffer, path) != 0) {
             return 1;
         }
-        func_8001b100(buffer);
+        tim_upload_images(buffer);
     }
     return 0;
 }
@@ -830,10 +830,10 @@ void screen_show_image_until_input(const char *path)
     polygon.v3 = 0x80;
     polygon.clut = GetClut(0, 0x1f5);
     polygon.tpage = GetTPage(0, 0, 0x3c0, 0x100);
-    if (func_8001af9c(asset_load_buffer, path) != 0) {
+    if (cd_file_load_into(asset_load_buffer, path) != 0) {
         return;
     }
-    func_8001b100(asset_load_buffer);
+    tim_upload_images(asset_load_buffer);
     index = display_buffer_index == 0;
     display_draw_environments[index].isbg = 0;
     display_draw_environments[index].dfe = 0;

@@ -18,7 +18,7 @@ extern void actor_pool_clear(void);
 extern void map_object_pool_clear(void);
 extern void func_8003a244(void);
 extern void func_800356e8(void);
-extern void func_8001b180(void);
+extern void common_resources_load(void);
 extern void game_initialize_session(void);
 extern void memory_capture_system_heap_start(void);
 extern void memory_reset_system_heap(void);
@@ -103,7 +103,7 @@ void game_main_loop(void)
     map_object_pool_clear();
     func_8003a244();
     func_800356e8();
-    func_8001b180();
+    common_resources_load();
     game_initialize_session();
     memory_set_allocation_mode(1);
     memory_capture_system_heap_start();

@@ -41,13 +41,13 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["functions"], 734)
         self.assertEqual(counts["signatures_started"], 734)
         self.assertEqual(counts["typed_returns"], 734)
-        self.assertEqual(counts["parameterized"], 494)
-        self.assertEqual(counts["data"], 3442)
-        self.assertGreaterEqual(counts["functions_named"], 226)
-        self.assertGreaterEqual(counts["data_named"], 181)
+        self.assertEqual(counts["parameterized"], 495)
+        self.assertEqual(counts["data"], 3439)
+        self.assertGreaterEqual(counts["functions_named"], 240)
+        self.assertGreaterEqual(counts["data_named"], 185)
         self.assertEqual(counts["structures"], 38)
         self.assertEqual(counts["structure_fields"], 322)
-        self.assertEqual(counts["structure_fields_named"], 246)
+        self.assertEqual(counts["structure_fields_named"], 247)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -113,6 +113,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(player_state_fields["player_motion_state"].offset, 0xC0)
         self.assertEqual(player_state_fields["player_status_effect4_timer"].offset, 0x50)
         self.assertEqual(player_state_fields["player_light_effect_timer"].offset, 0x52)
+        self.assertEqual(player_state_fields["player_map_variant"].offset, 0x0C)
         self.assertEqual(
             player_state_fields["player_light_effect_timer"].meaning_confidence,
             "supported",
@@ -514,6 +515,50 @@ class InventoryTests(unittest.TestCase):
             ("map_collision_flag_grid", "u8[100][100]", 0x2710),
         )
 
+    def test_map_resources_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_map_resources.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 11)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_map_resources_relocations_and_data_are_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = tuple(
+            row
+            for row in rows
+            if row["provenance"] == "manual:game_semantic_map_resources"
+        )
+        self.assertEqual(len(campaign_rows), 28)
+        self.assertEqual({row["image"] for row in campaign_rows}, {"GAME.EXE"})
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(by_site[0x8001B108]["target_name"], "OpenTIM")
+        self.assertEqual(
+            by_site[0x8001B428]["target_name"],
+            "map_variant_filename_template",
+        )
+        self.assertEqual(
+            by_site[0x8001B460]["target_name"],
+            "player_map_variant",
+        )
+        game = index("GAME.EXE")
+        path = game.datum(0x80055AF0)
+        variant_buffer = game.datum(0x8009DDAC)
+        self.assertEqual(
+            (path.name, path.datatype, path.size),
+            ("map_resource_path", "char[12]", 0x0C),
+        )
+        self.assertEqual(
+            (variant_buffer.name, variant_buffer.datatype, variant_buffer.size),
+            ("map_variant_asset_buffer", "u8 *", 4),
+        )
     def test_player_motion_data_owners_are_queryable(self) -> None:
         game = index("GAME.EXE")
         motion = game.datum(0x800A0840)

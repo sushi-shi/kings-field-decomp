@@ -21,8 +21,7 @@ GAME.EXE	0x80012178	0x978	0xb	string	byte-pattern		ascii	investigation:string-ce
 GAME.EXE	0x80012183	0x983	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80012184	0x984	0xb	string	byte-pattern		ascii	investigation:string-census	escaped text: COM\\COM.DAT
 GAME.EXE	0x8001218f	0x98f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012190	0x990	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: CHR0.MIM
-GAME.EXE	0x80012198	0x998	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80012190	0x990	0x9	string	direct-references	map_variant_filename_template	ascii	game_semantic_map_resources.tsv	escaped text: CHR0.MIM; complete nine-byte copy includes the trailing NUL before patching its variant digit
 GAME.EXE	0x80012199	0x999	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x8001219c	0x99c	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: MIXA.DAT
 GAME.EXE	0x800121a4	0x9a4	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -2689,9 +2688,7 @@ GAME.EXE	0x80055878	0x44078	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 GAME.EXE	0x8005587c	0x4407c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055880	0x44080	0x38	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x800558b8	0x440b8	0x238	defined	reviewed	map_cell_attribute_height_table	s16[284]	manual:game_semantic_player_interactions	per-attribute height offsets indexed by map_cell_attribute_grid values; extent is the remaining span and stays WIP
-GAME.EXE	0x80055af0	0x442f0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055af4	0x442f4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055af8	0x442f8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80055af0	0x442f0	0xc	defined	reviewed	map_resource_path	char[12]	manual:game_semantic_map_resources	mutable B0\\ path; floor digit is byte one and a filename of at most nine bytes including NUL begins at byte three
 GAME.EXE	0x80055afc	0x442fc	0x95	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055b91	0x44391	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0//4
 GAME.EXE	0x80055b95	0x44395	0x13	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

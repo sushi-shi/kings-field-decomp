@@ -183,7 +183,7 @@ KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	semantic_types.h;asm;
 KfPlayerState	0x00	0x04	player_experience	u32	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
 KfPlayerState	0x04	0x04	player_next_level_experience	u32	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
 KfPlayerState	0x08	0x04	player_progress_state	KfPlayerProgressState	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
-KfPlayerState	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x0c	0x01	player_map_variant	u8	supported	semantic_types.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
 KfPlayerState	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x0e	0x01	player_weapon_charge_delay	u8	supported	semantic_types.h;data_identities.tsv	see the data identity of the same name
 KfPlayerState	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes

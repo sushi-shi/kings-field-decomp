@@ -15,7 +15,7 @@ also compiles the header's size/offset assertions with the pinned target
 compiler.
 
 The current inventory contains 38 structures and 322 fields. Of those fields,
-246 have candidate-or-better meanings; 76 ranges are explicitly `opaque`.
+247 have candidate-or-better meanings; 75 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
 
@@ -103,6 +103,10 @@ The player-update pass identifies its signed fields at `+0x50` and `+0x52` as
 `player_status_effect4_timer` and `player_light_effect_timer`; their complete
 set/use/countdown xrefs are documented in
 [`player-update-and-lighting.md`](player-update-and-lighting.md).
+The map-resource pass identifies byte `+0x0c` as `player_map_variant`: map
+transitions set it, CHR resource loading uses it as the filename digit, and
+floor five variant three selects the alternate sequence. See
+[`map-resources.md`](map-resources.md).
 
 The motion, map-cell, and partially decoded weapon-record fields are shown in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).

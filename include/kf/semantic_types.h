@@ -557,7 +557,7 @@ typedef struct KfPlayerState {
     u32 player_experience;
     u32 player_next_level_experience;
     KfPlayerProgressState player_progress_state;
-    u8 unknown_0c;
+    u8 player_map_variant;
     u8 unknown_0d;
     u8 player_weapon_charge_delay;
     u8 unknown_0f;

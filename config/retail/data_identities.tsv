@@ -14,7 +14,6 @@ GAME.EXE	0x80012000	0x2c	player_combat_stat_effect_jump_table	unknown	load	code 
 GAME.EXE	0x80012030	0x18	player_equipment_slot_jump_table	unknown	load	code pointer[6]	player	supported	data.tsv:direct-references;game_semantic_player_stats.tsv;asm;raw-6x4-targets	compiler-emitted switch table for armor/accessory slot values zero through five; source linkage does not apply
 GAME.EXE	0x80012048	0x84	player_item_use_jump_table	unknown	load	code pointer[33]	player	supported	data.tsv:direct-references;game_semantic_player_interactions.tsv;asm;raw-33x4-targets	compiler-emitted switch table for item IDs 0x2a through 0x4a; source linkage does not apply
 GAME.EXE	0x800120d0	0xa8	player_item_object_type_jump_table	unknown	load	code pointer[42]	player	supported	data.tsv:direct-references;game_semantic_player_interactions.tsv;asm;raw-42x4-targets	compiler-emitted map-object type switch for values 0x51 through 0x7a inside player item use; source linkage does not apply
-GAME.EXE	0x80012198	0x1	DAT_80012198	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x800121b4	0x4	DAT_800121b4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x800121b8	0x4	DAT_800121b8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x800121bc	0x4	DAT_800121bc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1356,9 +1355,7 @@ GAME.EXE	0x8005582c	0xa	floor_entry_cells	unknown	load	KfMapCell[5]	player	suppo
 GAME.EXE	0x80055878	0x4	DAT_80055878	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x8005587c	0x4	DAT_8005587c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x800558b8	0x238	map_cell_attribute_height_table	unknown	load	s16[284]	collision	supported	asm;xrefs;collision_query_world;2-byte-stride-by-attribute	signed height offset per cell attribute added to the query height and floor; extent WIP
-GAME.EXE	0x80055af0	0x4	DAT_80055af0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055af4	0x4	DAT_80055af4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055af8	0x4	DAT_80055af8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055af0	0xc	map_resource_path	unknown	load	char[12]	map_resource	supported	game_semantic_map_resources.tsv;asm;xrefs;raw-bytes	mutable B0\\ path shared by the floor selector and map-resource loaders; source linkage remains unresolved
 GAME.EXE	0x80055c5c	0x1	DAT_80055c5c	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055c66	0x2	DAT_80055c66	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055c6a	0x1	DAT_80055c6a	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2021,7 +2018,7 @@ GAME.EXE	0x8009db80	0x4	DAT_8009db80	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x8009db84	0x4	DAT_8009db84	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009db88	0x220	map_event_pool	unknown	bss	KfMapEvent[8]	map_event	supported	game_semantic_camera_events.tsv;asm;xrefs;0x44-stride;8-record-loop	the loader, dispatcher, and current-event consumers prove one eight-record aggregate; source linkage remains unresolved
 GAME.EXE	0x8009dda8	0x4	current_map_event	unknown	bss	KfMapEvent *	map_event	supported	game_semantic_camera_events.tsv;asm;xrefs	stored by map_event_set_current and read by two event update routines; source linkage remains unresolved
-GAME.EXE	0x8009ddac	0x4	DAT_8009ddac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009ddac	0x4	map_variant_asset_buffer	unknown	bss	u8 *	map_variant_assets	supported	game_semantic_map_resources.tsv;asm;xrefs;0x5a000-allocation	persistent destination for CHR variant files and their in-place TMD registration; source linkage remains unresolved
 GAME.EXE	0x8009ddb0	0x2	DAT_8009ddb0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009ddb2	0x2	DAT_8009ddb2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009ddb4	0x4	DAT_8009ddb4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -2063,7 +2060,7 @@ GAME.EXE	0x800a0778	0x2	DAT_800a0778	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x800a0780	0x4	player_experience	unknown	bss	u32	player	supported	game_semantic_player_stats.tsv;asm;xrefs;save;level-up	cumulative experience, increased by actor death awards and capped at 99999
 GAME.EXE	0x800a0784	0x4	player_next_level_experience	unknown	bss	u32	player	supported	game_semantic_player_stats.tsv;asm;xrefs;level-growth-table	cumulative experience threshold for the next level
 GAME.EXE	0x800a0788	0x4	player_progress_state	unknown	bss	KfPlayerProgressState	player	supported	game_semantic_camera_events.tsv;game_semantic_player_stats.tsv;asm;xrefs;initialization;level-up	contains player level plus current and highest dungeon floors; byte one and source linkage remain unresolved
-GAME.EXE	0x800a078c	0x1	DAT_800a078c	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a078c	0x1	player_map_variant	unknown	bss	u8	player	supported	game_semantic_map_resources.tsv;asm;xrefs;transition-callers	selects the current floor-five map/resource variant and supplies the CHR filename digit; source linkage remains unresolved
 GAME.EXE	0x800a078d	0x1	DAT_800a078d	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a078e	0x1	player_weapon_charge_delay	unknown	bss	u8	player	supported	game_semantic_player_motion_attack.tsv;asm;xrefs	countdown that delays POWER accumulation for ten updates after an attack window closes
 GAME.EXE	0x800a078f	0x1	DAT_800a078f	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
