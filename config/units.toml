@@ -425,6 +425,12 @@ source = "src/game/menu_select.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_status_panel"
+image = "GAME.EXE"
+source = "src/game/menu_status_panel.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_item_drop"
 image = "GAME.EXE"
 source = "src/game/menu_item_drop.c"
@@ -479,9 +485,21 @@ source = "src/game/menu_draw_window.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_list_render"
+image = "GAME.EXE"
+source = "src/game/menu_list_render.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_two_option_dispatch"
 image = "GAME.EXE"
 source = "src/game/menu_two_option_dispatch.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_800292f8"
+image = "GAME.EXE"
+source = "src/game/func_800292f8.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
