@@ -3,9 +3,9 @@
 #include <kf/game.h>
 
 ADDRESS(0x80035e14, 0x30)
-void func_80035e14(void)
+void map_unload_floor(void)
 {
     pool_release_all();
     audio_close_vab();
-    func_80035b5c();
+    map_world_state_persist();
 }

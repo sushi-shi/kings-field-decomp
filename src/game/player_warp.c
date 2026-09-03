@@ -12,7 +12,7 @@
  * mode 1 fades it out (delta -0x100 from 0x2000).
  *
  * player_warp_change_floor is the change-floor warp: shimmer out, reload the world through
- * func_80035e14/map_load_floor, record the new floor/variant, snap the camera to
+ * map_unload_floor/map_load_floor, record the new floor/variant, snap the camera to
  * the centre of its 2000-unit cell, and shimmer back in. player_warp_same_floor is the
  * same-floor teleport: shimmer out, drop the old broad-phase occupancy, swap the
  * map variant and its assets, move to an explicit cell, and shimmer back in.
@@ -118,7 +118,7 @@ void player_warp_change_floor(s32 floor, u8 variant)
     position[2] = player_state.camera_position.vz;
     position[1] = player_state.floor_height;
     player_warp_shimmer(0, (VECTOR *)position);
-    func_80035e14();
+    map_unload_floor();
     player_state.progress_state.current_floor = floor;
     player_state.map_variant = variant;
     if (player_state.progress_state.highest_floor < floor) {

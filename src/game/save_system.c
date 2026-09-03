@@ -49,7 +49,7 @@ extern s32 erase(const char *name);
  * two unresolved blocks, and the first byte of each 20-byte magic record are
  * copied verbatim; the retail object boundaries inside them are still open.
  */
-extern u32 DAT_8009ddb4[];
+extern u32 map_world_state_base[];
 extern u8 DAT_800652a8[];
 extern KfMagicRecord magic_records[24];
 
@@ -369,7 +369,7 @@ s32 save_file_write_slot(s16 slot_id)
     }
     memcpy(save_payload_buffer->player_state, &player_state.experience,
            sizeof(save_payload_buffer->player_state));
-    memcpy(save_payload_buffer->world_state, DAT_8009ddb4,
+    memcpy(save_payload_buffer->world_state, map_world_state_base,
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->unknown_2440, DAT_800652a8,
            sizeof(save_payload_buffer->unknown_2440));
@@ -621,7 +621,7 @@ s32 save_file_read_slot(s16 slot_id)
     saved_07f4 = player_state.unknown_74;
     memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
-    memcpy(DAT_8009ddb4, save_payload_buffer->world_state,
+    memcpy(map_world_state_base, save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
     memcpy(DAT_800652a8, save_payload_buffer->unknown_2440,
            sizeof(save_payload_buffer->unknown_2440));

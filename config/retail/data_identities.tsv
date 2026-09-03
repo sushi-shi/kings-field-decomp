@@ -1957,9 +1957,9 @@ GAME.EXE	0x8009db84	0x4	DAT_8009db84	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x8009db88	0x220	map_event_pool	unknown	bss	KfMapEvent[8]	map_event	supported	game_semantic_camera_events.tsv;asm;xrefs;0x44-stride;8-record-loop	the loader, dispatcher, and current-event consumers prove one eight-record aggregate; source linkage remains unresolved
 GAME.EXE	0x8009dda8	0x4	current_map_event	unknown	bss	KfMapEvent *	map_event	supported	game_semantic_camera_events.tsv;asm;xrefs	stored by map_event_set_current and read by two event update routines; source linkage remains unresolved
 GAME.EXE	0x8009ddac	0x4	map_variant_asset_buffer	unknown	bss	u8 *	map_variant_assets	supported	game_semantic_map_resources.tsv;asm;xrefs;0x5a000-allocation	persistent destination for CHR variant files and their in-place TMD registration; source linkage remains unresolved
-GAME.EXE	0x8009ddb0	0x2	DAT_8009ddb0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009ddb2	0x2	DAT_8009ddb2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009ddb4	0x4	DAT_8009ddb4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009ddb0	0x2	map_event_animation_gate	unknown	bss	u16	map_event	supported	asm;map_event_pool_update-reader;map_event_timers_reset-writer;three-of-four-frames	map-event image-animation gate; nonzero three frames in four, reset to 3
+GAME.EXE	0x8009ddb2	0x2	map_ambient_script_countdown	unknown	bss	u16	map_event	supported	asm;map_event_pool_update-reader;map_event_timers_reset-writer;reloaded-to-10	countdown that fires the per-floor ambient scripts; reloaded to 10
+GAME.EXE	0x8009ddb4	0x4	map_world_state_base	unknown	bss	u32	map_world_state	supported	asm;xrefs;save_system-world-state;per-floor;single-base-register-aggregate	base of the persistent per-floor world-state block (save_system world-state base); reached as one base register in retail
 GAME.EXE	0x8009ddb8	0x4	DAT_8009ddb8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009ddbc	0x4	DAT_8009ddbc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009ddc0	0x4	DAT_8009ddc0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

@@ -5,24 +5,24 @@
 /*
  * Map-event runtime band 0x80035708..0x80035e14 (GAME.EXE).
  *
- * func_8003596c is the per-frame driver called by game_main_loop: it walks the
+ * map_event_pool_update is the per-frame driver called by game_main_loop: it walks the
  * eight-record map_event_pool, dispatches each active event on its unknown_0e
- * kind (1 -> func_80035708 wander, 2 -> func_800358e0 spinner), advances the
+ * kind (1 -> map_event_update_wander wander, 2 -> map_event_update_spinner spinner), advances the
  * image-animation counters, then runs two global countdowns that fire the
- * per-floor ambient scripts. func_80035b5c serialises the live event, actor,
- * and map-object state into the DAT_8009ddb4 world-state block per floor and is
- * invoked on death restart, floor teleport, and from func_80035e14.
+ * per-floor ambient scripts. map_world_state_persist serialises the live event, actor,
+ * and map-object state into the map_world_state_base world-state block per floor and is
+ * invoked on death restart, floor teleport, and from map_unload_floor.
  *
- * map_event_pool, current_map_event, DAT_8009ddb0/b2/b4 and the per-floor save
- * records are one contiguous BSS aggregate in the original; func_800358e0 and
- * func_80035b5c reach the pool through a single DAT_8009ddb4 base register,
+ * map_event_pool, current_map_event, map_event_animation_gate/b2/b4 and the per-floor save
+ * records are one contiguous BSS aggregate in the original; map_event_update_spinner and
+ * map_world_state_persist reach the pool through a single map_world_state_base base register,
  * which separate globals cannot reproduce (documented residue).
  */
 
 /* Event-animation gate: nonzero three frames in four. */
 /* Ambient floor-script countdown, reloaded to 10. */
 /* Start of the persistent world-state block (save_system world_state base). */
-extern u32 DAT_8009ddb4;
+extern u32 map_world_state_base;
 
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void audio_play_spatial_range(
@@ -32,11 +32,11 @@ extern int rand(void);
 
 /* Per-floor ambient-event scripts dispatched by current_floor. */
 
-/* func_8003596c current-floor dispatch jump table (cases 1..5). */
+/* map_event_pool_update current-floor dispatch jump table (cases 1..5). */
 RODATA(0x80012be4, 0x14)
 
 ADDRESS(0x80035708, 0x1d8)
-void func_80035708(void)
+void map_event_update_wander(void)
 {
     KfMapEvent *event = current_map_event;
     struct KfVecXZs forward;
@@ -74,7 +74,7 @@ void func_80035708(void)
 }
 
 ADDRESS(0x800358e0, 0x8c)
-void func_800358e0(void)
+void map_event_update_spinner(void)
 {
     KfMapEvent *event = current_map_event;
 
@@ -90,7 +90,7 @@ void func_800358e0(void)
 }
 
 ADDRESS(0x8003596c, 0x1f0)
-void func_8003596c(void)
+void map_event_pool_update(void)
 {
     KfMapEvent *event = map_event_pool;
     u16 index = 7;
@@ -109,12 +109,12 @@ void func_8003596c(void)
             }
             goto advance_image;
         call_wander:
-            func_80035708();
+            map_event_update_wander();
             goto advance_image;
         call_spinner:
-            func_800358e0();
+            map_event_update_spinner();
         advance_image:
-            if (DAT_8009ddb0 == 0 && event->image_delay != 0) {
+            if (map_event_animation_gate == 0 && event->image_delay != 0) {
                 event->image_delay--;
                 if (event->image_delay == 0) {
                     s32 limit = event->tag.bytes[event->image_index - 1];
@@ -130,7 +130,7 @@ void func_8003596c(void)
     } while (index-- != 0);
 
     {
-        u16 *gate = &DAT_8009ddb0;
+        u16 *gate = &map_event_animation_gate;
         u16 current = *gate;
 
         *gate = current - 1;
@@ -139,32 +139,32 @@ void func_8003596c(void)
         }
     }
 
-    if (DAT_8009ddb2-- == 0) {
-        DAT_8009ddb2 = 10;
+    if (map_ambient_script_countdown-- == 0) {
+        map_ambient_script_countdown = 10;
         switch (player_state.progress_state.current_floor) {
         case 1:
-            func_80033f64();
+            map_ambient_script_floor1();
             break;
         case 2:
-            func_800341ec();
+            map_ambient_script_floor2();
             break;
         case 3:
-            func_8003425c();
+            map_ambient_script_floor3();
             break;
         case 4:
-            func_800342e4();
+            map_ambient_script_floor4();
             break;
         case 5:
-            func_800342ec();
+            map_ambient_script_floor5();
             break;
         }
     }
 }
 
 ADDRESS(0x80035b5c, 0x2b8)
-void func_80035b5c(void)
+void map_world_state_persist(void)
 {
-    u8 *base = (u8 *)&DAT_8009ddb4;
+    u8 *base = (u8 *)&map_world_state_base;
     u8 *out;
     u8 *count_slot;
     KfMapEvent *event;

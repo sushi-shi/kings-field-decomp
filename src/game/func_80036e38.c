@@ -3,7 +3,7 @@
 #include <kf/game.h>
 
 /*
- * func_80036e38 (GAME.EXE): tear down and re-establish the system heap around a
+ * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a
  * mode-selected reload. It drains the GPU (DrawSync), runs pool_release_all, resets
  * the system heap, dispatches on the mode argument, resets the heap again, and
  * clears the player motion state. Callers pass a variable number of arguments,
@@ -13,7 +13,7 @@
 extern void item_menu_root(u32 arg0);
 
 ADDRESS(0x80036e38, 0xc8)
-u32 func_80036e38(s32 mode, ...)
+u32 menu_enter_mode(s32 mode, ...)
 {
     u32 result;
 

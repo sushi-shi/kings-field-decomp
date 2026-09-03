@@ -124,8 +124,8 @@ extern u32 DAT_8009569c;
 extern u32 DAT_8009a740;
 extern KfMagicRecord *DAT_8009db80; /* magic_records row of the current effect */
 extern KfEffectRecord *DAT_8009db84; /* current effect record */
-extern u16 DAT_8009ddb0;
-extern u16 DAT_8009ddb2;
+extern u16 map_event_animation_gate;
+extern u16 map_ambient_script_countdown;
 extern u8 DAT_8009eafc;
 extern u8 DAT_8009f844;
 extern u8 DAT_8009f845;

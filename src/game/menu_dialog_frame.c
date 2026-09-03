@@ -4,7 +4,7 @@
 
 extern POLY_FT4 *current_poly_ft4;
 
-extern void func_8002adf8(s32 value, s32 width, s32 flag, u16 *out);
+extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);
 
 /* Font-atlas / number-atlas sprite descriptors (12-byte cell descriptors). */
 typedef struct MenuSpriteDef {
@@ -115,7 +115,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 251;
-            func_8002adf8(row->field_0, 6, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_0, 6, 0, (u16 *)gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x = 181;
@@ -126,7 +126,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 286;
-            func_8002adf8(row->field_4, 1, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_4, 1, 0, (u16 *)gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x = 181;
@@ -137,7 +137,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 230;
-            func_8002adf8(row->field_8, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_8, 4, 0, (u16 *)gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.codes[0] = 11;
@@ -146,7 +146,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x += 7;
-            func_8002adf8(row->field_c, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_c, 4, 0, (u16 *)gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x = 181;
@@ -157,7 +157,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 230;
-            func_8002adf8(row->field_10, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_10, 4, 0, (u16 *)gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.codes[0] = 11;
@@ -166,7 +166,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x += 7;
-            func_8002adf8(row->field_14, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_14, 4, 0, (u16 *)gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
         }
         row++;

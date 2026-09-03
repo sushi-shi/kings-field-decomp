@@ -5,7 +5,7 @@
 RODATA(0x80012888, 0x18c)
 
 extern KfEffectRecord DAT_8009d040[];
-extern u8 DAT_8009ddb4[4];
+extern u8 map_world_state_base[4];
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
 extern s32 rand(void);
@@ -558,10 +558,10 @@ void map_object_pool_update(void)
                         }
                     }
                 } else if (player_state.progress_state.current_floor == 1) {
-                    if (DAT_8009ddb4[3] == 0) {
+                    if (map_world_state_base[3] == 0) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_ref_5, (VECTOR *)&object->position_x, 0x7f);
-                        DAT_8009ddb4[3] = 1;
+                        map_world_state_base[3] = 1;
                     }
                 }
                 object->action_timer++;

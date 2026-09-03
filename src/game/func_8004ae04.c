@@ -13,7 +13,7 @@
 extern void SeqPlay(s16 arg0, s16 arg1);
 
 ADDRESS(0x8004ae04, 0x2c)
-void func_8004ae04(s16 arg0, s16 arg1)
+void audio_play_sequence(s16 arg0, s16 arg1)
 {
     SeqPlay(arg0, arg1);
 }

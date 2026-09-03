@@ -57,7 +57,7 @@ void game_main_loop(void)
     actor_pool_clear();
     map_object_pool_clear();
     effect_pool_reset();
-    func_800356e8();
+    map_event_timers_reset();
     common_resources_load();
     game_initialize_session();
     memory_set_allocation_mode(1);
@@ -83,7 +83,7 @@ void game_main_loop(void)
         actor_pool_update();
         map_object_pool_update();
         effect_pool_sweep();
-        func_8003596c();
+        map_event_pool_update();
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.unknown_0d = 0;
         frame_pacer_wait();

@@ -4,9 +4,9 @@
 
 /*
  * Per-floor script band 0x800342ec..0x8003469f (GAME.EXE), sitting just past
- * the empty floor-4 ambient stub (func_800342e4).
+ * the empty floor-4 ambient stub (map_ambient_script_floor4).
  *
- * func_800342ec is the floor-5 ambient script dispatched by func_8003596c
+ * map_ambient_script_floor5 is the floor-5 ambient script dispatched by map_event_pool_update
  * (map_events.c). The remaining routines are the floor-1..3 "action" scripts
  * dispatched by func_80034de4 (map_interaction.c) when the player interacts
  * with the world: they gate on progress flags and the persistent world-state
@@ -19,7 +19,7 @@ extern KfMagicRecord magic_records[24];
 /* Progress-flag block raised at init and decremented on death restart. */
 extern u8 DAT_800652a8[240];
 /* Persistent per-floor world-state block. */
-extern u8 DAT_8009ddb4[4];
+extern u8 map_world_state_base[4];
 /* One-shot event-fired flags. */
 /* Camera-path / positional-audio data block; +0x50 is a colour-matrix target. */
 
@@ -30,12 +30,12 @@ extern void lighting_set_active_color_matrix(s32 index);
 extern void render_frame(s32 first, s32 second);
 extern void notify_enqueue(s32 arg0);
 
-/* The two TIM cut-in paths shown by func_800342ec. */
+/* The two TIM cut-in paths shown by map_ambient_script_floor5. */
 RODATA(0x80012a54, 0x28)
 
 /* Floor-5 ambient script: a one-time scripted reveal at a fixed cell/heading. */
 ADDRESS(0x800342ec, 0xf4)
-void func_800342ec(void)
+void map_ambient_script_floor5(void)
 {
     u8 *fired = &DAT_8009f846;
 
@@ -61,8 +61,8 @@ void func_800342ec(void)
 ADDRESS(0x800343e0, 0x58)
 void func_800343e0(void)
 {
-    if (DAT_800652a8[0x38] != 0 && DAT_8009ddb4[2] == 0) {
-        DAT_8009ddb4[2] = 1;
+    if (DAT_800652a8[0x38] != 0 && map_world_state_base[2] == 0) {
+        map_world_state_base[2] = 1;
         map_apply_copy_region(1);
         sound_ref_play(&gameplay_sound_ref_7, 0x64);
     }

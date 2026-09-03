@@ -6,7 +6,7 @@ extern KfMagicRecord magic_records[24];
 
 extern u32 pad_read(s32 mode);
 extern void display_show_error_screen(char object);
-extern s32 func_80036e38(s32 arg0);
+extern s32 menu_enter_mode(s32 arg0);
 extern void func_80034de4();
 extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *effect_pool_construct();
@@ -67,7 +67,7 @@ void player_update(void)
         input = 0x40;
     }
     if ((input & 0x40) && !(DAT_80057b30 & 0x40) && player_state.weapon_attack_phase == -1) {
-        item = func_80036e38(0);
+        item = menu_enter_mode(0);
         if (item >= 0) {
             player_use_item(item);
         } else if (item == -3) {

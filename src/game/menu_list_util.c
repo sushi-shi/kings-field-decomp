@@ -65,7 +65,7 @@ void menu_list_init(MenuListHeader *ctx, s32 row, s32 col)
  * high until the value is exhausted.
  */
 ADDRESS(0x8002adf8, 0xac)
-void func_8002adf8(s32 value, s32 count, s32 pad_zero, s16 *out)
+void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
 {
     s16 blank;
     s32 i;

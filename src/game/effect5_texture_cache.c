@@ -5,7 +5,7 @@
 extern u16 DAT_80095038;
 
 ADDRESS(0x8001bae4, 0xb0)
-void func_8001bae4(s32 mode)
+void effect5_texture_cache_prepare(s32 mode)
 {
     if (mode == 5) {
         DAT_80095038 = GetTPage(1, 0, 0x140, 0x100);

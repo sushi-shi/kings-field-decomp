@@ -64,7 +64,7 @@ void SsSeqCalledTbyT(void)
         }
         for (track = 0; track < DAT_800a0778; track++) {
             if (DAT_800a06e0[sequence][track].flags & 0x1) {
-                func_8004ae04(sequence, track);
+                audio_play_sequence(sequence, track);
                 if (DAT_800a06e0[sequence][track].flags & 0x10) {
                     audio_sequence_fade_in(sequence, track);
                 }

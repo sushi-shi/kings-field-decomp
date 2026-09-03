@@ -52,7 +52,7 @@ typedef struct ConfigPanelParams {
  * ordering-table slot 3000.
  */
 ADDRESS(0x80025da0, 0x198)
-void func_80025da0(ConfigPanelParams params)
+void menu_config_panel_draw(ConfigPanelParams params)
 {
     s32 i;
     s32 *states;

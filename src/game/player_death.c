@@ -6,7 +6,7 @@
 
 extern SoundRef player_sound_refs[3];
 
-extern u32 DAT_8009ddb4;
+extern u32 map_world_state_base;
 extern u8 DAT_800652a8[240];
 
 ADDRESS(0x80015164, 0x68)
@@ -71,7 +71,7 @@ void game_state_initialize(void)
     player_state.status_effect2_timer = -1;
     player_state.status_effect1_timer = -1;
     player_state.status_effect0_timer = -1;
-    cursor = (u8 *)&DAT_8009ddb4;
+    cursor = (u8 *)&map_world_state_base;
     count = 0x2133;
     do {
         *cursor++ = 0;
@@ -121,9 +121,9 @@ void player_death_restart(void)
 {
     s32 floor = player_state.progress_state.current_floor;
 
-    if (((u8 *)&DAT_8009ddb4)[3] == 1 && DAT_800652a8[0x2f] != 0) {
+    if (((u8 *)&map_world_state_base)[3] == 1 && DAT_800652a8[0x2f] != 0) {
         DAT_800652a8[0x2f]--;
-        func_80035b5c();
+        map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
         player_state.vitals.current_mp = player_state.vitals.maximum_mp;

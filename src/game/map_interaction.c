@@ -20,7 +20,7 @@ extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 /* Unprototyped helpers: called with varying arities/argument types. */
 extern void render_frame();
 extern void notify_enqueue(s32 arg0);
-extern u32 func_80036e38(s32 arg0, u8 arg1);
+extern u32 menu_enter_mode(s32 arg0, u8 arg1);
 extern u8 *effect_pool_construct();
 
 ADDRESS(0x800346a8, 0x38c)
@@ -244,7 +244,7 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
                 map_event_advance_rotation_blocking(event, 0x800, 0xc8);
                 audio_play_map_sequence(2);
                 func_80034a80(event);
-                func_80036e38(2, event->kind);
+                menu_enter_mode(2, event->kind);
                 audio_play_current_map_sequence();
                 map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
                 event->unknown_0f = 0;
