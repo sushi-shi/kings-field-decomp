@@ -11,6 +11,7 @@
 #include <kf/game_state.h>
 #include <kf/game_system.h>
 #include <kf/game_render.h>
+#include <kf/notify.h>
 #include <kf/game_map.h>
 #include <kf/game_actor.h>
 #include <kf/game_menu.h>

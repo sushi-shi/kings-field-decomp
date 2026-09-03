@@ -25,7 +25,6 @@
  */
 
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
 extern KfTmdObject *tmd_get_object(u16 index);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void render_enqueue_tmd(u16 arg0, s16 arg1);
@@ -84,7 +83,7 @@ void render_floor_item(KfFloorSprite *sprite)
     }
     SetTransMatrix(&model);
     render_enqueue_sprite(
-        (char *)&DAT_80055afc[4 + (sprite->sprite_id + sprite->anim_frame) * 12],
+        (KfSpriteQuad *)&DAT_80055afc[4 + (sprite->sprite_id + sprite->anim_frame) * 12],
         screen_scale, 1);
     next_frame = sprite->anim_frame + 1;
     frame_count = sprite->orientation;
@@ -156,7 +155,7 @@ void render_actor_sprite(KfActorSprite *actor)
         MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        render_enqueue_sprite((char *)&DAT_80055afc[0x58 + actor->sprite_id * 12], 0, 0);
+        render_enqueue_sprite((KfSpriteQuad *)&DAT_80055afc[0x58 + actor->sprite_id * 12], 0, 0);
     } else {
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
         SetRotMatrix(&model);

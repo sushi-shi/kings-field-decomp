@@ -18,8 +18,6 @@
 
 extern u8 DAT_80055d74;
 
-extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
-
 ADDRESS(0x8001fde4, 0x518)
 void render_frame(VECTOR *position, SVECTOR *rotation)
 {
@@ -104,26 +102,26 @@ void render_frame(VECTOR *position, SVECTOR *rotation)
     model.t[2] = 0xc8;
     spin.vz = 0;
     spin.vy = 0;
-    spin.vx = DAT_8009508a;
+    spin.vx = notification_effect_angle_x;
     RotMatrix(&spin, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
 
     DAT_8009505a = DAT_80095068;
     DAT_80095058 = DAT_80095066;
-    record = DAT_80055d20;
+    record = &notification_sprite_0_active;
     if (record[0] == 1) {
-        render_enqueue_sprite((char *)(record + 2), 0, 0);
+        render_enqueue_sprite((KfSpriteQuad *)(record + 2), 0, 0);
     }
-    if (DAT_80055d2e == 1) {
-        render_enqueue_sprite((char *)(record + 16), 0, 0);
+    if (notification_sprite_1_active == 1) {
+        render_enqueue_sprite((KfSpriteQuad *)(record + 16), 0, 0);
     }
     record += 28;
     DAT_8009505a = DAT_8009506c;
     DAT_80095058 = DAT_8009506a;
     for (i = 3; i != -1; i--) {
         if (record[0] == 1) {
-            render_enqueue_sprite((char *)(record + 2), 0, 0);
+            render_enqueue_sprite((KfSpriteQuad *)(record + 2), 0, 0);
         }
         record += 14;
     }

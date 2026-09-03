@@ -16,26 +16,25 @@
  * state machine (notify_effect_update) consumes it a frame later.  Message id 0x13
  * carries a u16 payload stored in a parallel table.
  *
- * WIP: the ring, its payload table, and the head cursor are unresolved
- * address-only globals, so the payload table is reached as a byte view offset
- * from the head cursor (the retail shared-symbol addend the original struct
- * produced).  The trailing varargs slot carries the id 0x13 payload.
+ * The trailing varargs slot carries the id 0x13 payload.  The payload table is
+ * reached from the head pointer because that source shape reproduces retail's
+ * reuse of the head-address base register.
  */
 
 ADDRESS(0x8001fa44, 0xa0)
-void notify_enqueue(int id, ...)
+void notify_enqueue(s32 message_id, ...)
 {
     u8 *head;
 
-    if (id == 0xff) {
+    if (message_id == 0xff) {
         return;
     }
-    head = &DAT_80095087;
-    if (DAT_8009506e[*head] == 0xff) {
-        DAT_8009506e[*head] = id;
-        if (id == 0x13) {
+    head = &notification_queue_head;
+    if (notification_message_ids[*head] == 0xff) {
+        notification_message_ids[*head] = message_id;
+        if (message_id == 0x13) {
             u16 *payload = (u16 *)(head - 17);
-            payload[*head] = *(u16 *)(&id + 1);
+            payload[*head] = *(u16 *)(&message_id + 1);
         }
         *head = (*head + 1) & 7;
     }
@@ -43,9 +42,9 @@ void notify_enqueue(int id, ...)
 
 
 ADDRESS(0x8001fae4, 0x18)
-void func_8001fae4(unsigned char *object, int value)
+void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
 {
-    object[1] = value * 11;
+    sprite->v = digit * 11;
 }
 
 
@@ -57,15 +56,14 @@ void func_8001fae4(unsigned char *object, int value)
  *
  *   phase 0: a queued id starts an effect.  Id 0x13 is a numeric popup whose
  *            payload is split into four digit sprites; any other id shows one
- *            coloured sprite tinted from the id nibbles.
+ *            sprite whose atlas U/V cell comes from the id nibbles.
  *   phase 2: hold for fifteen frames.
- *   phase 3: slide out, then clear the records and dequeue the entry.
+ *   phase 3: rotate out, then clear the records and dequeue the entry.
  *
- * WIP: the ring, its cursors, and the six sprite records are unresolved
- * address-only globals reached by their individual identities; record 0 also
- * anchors the payload sprite pointers handed to func_8001fae4.  The payload
- * table is a byte view offset from the phase cursor (the shared-symbol addend
- * the original struct produced).
+ * The six 14-byte sprite records are still expressed through their directly
+ * referenced fields; record 0 also anchors the four digit descriptors.  The
+ * payload table is reached from the phase pointer to reproduce retail's shared
+ * base-register schedule.
  *
  * The menu_format_number digit scratch reserves 24 stack bytes (a fixed buffer
  * larger than the four digits used); the exact element count is unverified but
@@ -79,71 +77,76 @@ extern void menu_format_number(u16 value, s32 count, s32 base, u16 *out);
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)
 {
-    u8 *phase = &DAT_80095088;
+    u8 *phase = &notification_effect_phase;
 
     switch (*phase) {
     case 0: {
-        u8 tail = DAT_80095086;
-        u8 id = DAT_8009506e[tail];
+        u8 tail = notification_queue_tail;
+        u8 id = notification_message_ids[tail];
         if (id == 0xff) {
             return;
         }
         *phase = 2;
-        DAT_8009508a = 0;
-        DAT_80095089 = 15;
+        notification_effect_angle_x = 0;
+        notification_hold_frames = 15;
         if (id == 0x13) {
+            u8 *sprite_records = &notification_sprite_0_active;
             u16 digits[12];
-            DAT_80055d20[0] = 0;
-            DAT_80055d2e = 1;
-            DAT_80055d30 = (id & 0xf0) << 3;
-            DAT_80055d31 = (id & 0xf) << 4;
+            sprite_records[0] = 0;
+            notification_sprite_1_active = 1;
+            notification_sprite_1_texture_u = (id & 0xf0) << 3;
+            notification_sprite_1_texture_v = (id & 0xf) << 4;
             menu_format_number(((u16 *)((char *)phase - 18))[tail], 4, 0, digits);
-            DAT_80055d3c = 1;
-            func_8001fae4(&DAT_80055d20[30], digits[3]);
-            DAT_80055d4a = 1;
-            func_8001fae4(&DAT_80055d20[44], digits[2]);
-            DAT_80055d58 = 1;
-            func_8001fae4(&DAT_80055d20[58], digits[1]);
-            DAT_80055d66 = 1;
-            func_8001fae4(&DAT_80055d20[72], digits[0]);
+            notification_sprite_2_active = 1;
+            notification_digit_set_v(
+                (KfSpriteQuad *)(sprite_records + 30), digits[3]);
+            notification_sprite_3_active = 1;
+            notification_digit_set_v(
+                (KfSpriteQuad *)(sprite_records + 44), digits[2]);
+            notification_sprite_4_active = 1;
+            notification_digit_set_v(
+                (KfSpriteQuad *)(sprite_records + 58), digits[1]);
+            notification_sprite_5_active = 1;
+            notification_digit_set_v(
+                (KfSpriteQuad *)(sprite_records + 72), digits[0]);
         } else {
-            DAT_80055d20[0] = 1;
-            DAT_80055d22 = (id & 0xf0) << 3;
-            DAT_80055d23 = (id & 0xf) << 4;
-            DAT_80055d66 = 0;
-            DAT_80055d58 = 0;
-            DAT_80055d4a = 0;
-            DAT_80055d3c = 0;
-            DAT_80055d2e = 0;
+            notification_sprite_0_active = 1;
+            notification_sprite_0_texture_u = (id & 0xf0) << 3;
+            notification_sprite_0_texture_v = (id & 0xf) << 4;
+            notification_sprite_5_active = 0;
+            notification_sprite_4_active = 0;
+            notification_sprite_3_active = 0;
+            notification_sprite_2_active = 0;
+            notification_sprite_1_active = 0;
         }
         break;
     }
     case 2: {
-        u8 counter = DAT_80095089 - 1;
-        DAT_80095089 = counter;
+        u8 counter = notification_hold_frames - 1;
+        notification_hold_frames = counter;
         if (counter == 0) {
             *phase = 3;
         }
         break;
     }
     case 3: {
-        s16 slide = DAT_8009508a + 128;
-        DAT_8009508a = slide;
-        if (slide >= 512) {
+        s16 angle_x = notification_effect_angle_x + 128;
+        notification_effect_angle_x = angle_x;
+        if (angle_x >= 512) {
             u8 *tail = phase - 2;
             u8 id;
-            DAT_8009508a = 512;
-            DAT_80055d66 = 0;
-            DAT_80055d58 = 0;
-            DAT_80055d4a = 0;
-            DAT_80055d3c = 0;
-            DAT_80055d2e = 0;
-            DAT_80055d20[0] = 0;
-            id = DAT_8009506e[DAT_80095086];
+            notification_effect_angle_x = 512;
+            notification_sprite_5_active = 0;
+            notification_sprite_4_active = 0;
+            notification_sprite_3_active = 0;
+            notification_sprite_2_active = 0;
+            notification_sprite_1_active = 0;
+            notification_sprite_0_active = 0;
+            id = notification_message_ids[notification_queue_tail];
             do {
-                DAT_8009506e[*tail] = 0xff;
+                notification_message_ids[*tail] = 0xff;
                 *tail = (*tail + 1) & 7;
-            } while (id == DAT_8009506e[*tail] && id != 0x13);
+            } while (id == notification_message_ids[*tail] && id != 0x13);
             tail[2] = 0;
         }
         break;

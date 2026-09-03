@@ -213,7 +213,6 @@ RODATA(0x80012000, 0x2c)
 
 /* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
 extern KfMagicRecord magic_records[24];
-extern void notify_enqueue(s32 arg0);
 
 /*
  * Rebuilds physical power, magic, the five attack lanes and the six
@@ -386,7 +385,6 @@ void player_increment_magic_training(void)
 
 
 extern const SoundRef player_sound_refs[3];
-extern void notify_enqueue(s32 arg0);
 
 ADDRESS(0x80016058, 0x224)
 void player_add_experience(s16 amount)

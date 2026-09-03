@@ -19,7 +19,6 @@ extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
 extern void render_frame();
-extern void notify_enqueue(s32 arg0);
 extern u32 menu_enter_mode(s32 arg0, u8 arg1);
 extern u8 *effect_pool_construct();
 
@@ -233,7 +232,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * 1000 >> 12);
     sound_z = position->vz + (rcos(rotation->vy) * 1000 >> 12);
-    if (DAT_80095088 == 0) {
+    if (notification_effect_phase == 0) {
         index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
         if (index != -1) {
             event = &map_event_pool[index];

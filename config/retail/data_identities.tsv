@@ -1373,16 +1373,16 @@ GAME.EXE	0x80055cda	0x1	DAT_80055cda	unknown	load	undefined1		address-only	data.
 GAME.EXE	0x80055ce8	0x1	DAT_80055ce8	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055cf6	0x1	DAT_80055cf6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055d04	0x4	DAT_80055d04	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d20	0x1	DAT_80055d20	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d22	0x1	DAT_80055d22	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d23	0x1	DAT_80055d23	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d2e	0x1	DAT_80055d2e	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d30	0x1	DAT_80055d30	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d31	0x1	DAT_80055d31	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d3c	0x1	DAT_80055d3c	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d4a	0x1	DAT_80055d4a	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d58	0x1	DAT_80055d58	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d66	0x1	DAT_80055d66	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055d20	0x1	notification_sprite_0_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update;render_frame	record 0 active flag in the six-entry, 14-byte-stride notification sprite table
+GAME.EXE	0x80055d22	0x1	notification_sprite_0_texture_u	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture U origin of notification sprite record 0
+GAME.EXE	0x80055d23	0x1	notification_sprite_0_texture_v	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture V origin of notification sprite record 0
+GAME.EXE	0x80055d2e	0x1	notification_sprite_1_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update;render_frame	record 1 active flag in the six-entry, 14-byte-stride notification sprite table
+GAME.EXE	0x80055d30	0x1	notification_sprite_1_texture_u	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture U origin of notification sprite record 1
+GAME.EXE	0x80055d31	0x1	notification_sprite_1_texture_v	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture V origin of notification sprite record 1
+GAME.EXE	0x80055d3c	0x1	notification_sprite_2_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 2 active flag in the six-entry, 14-byte-stride notification sprite table
+GAME.EXE	0x80055d4a	0x1	notification_sprite_3_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 3 active flag in the six-entry, 14-byte-stride notification sprite table
+GAME.EXE	0x80055d58	0x1	notification_sprite_4_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 4 active flag in the six-entry, 14-byte-stride notification sprite table
+GAME.EXE	0x80055d66	0x1	notification_sprite_5_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 5 active flag in the six-entry, 14-byte-stride notification sprite table
 GAME.EXE	0x80055d74	0x1	DAT_80055d74	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055d75	0x1	DAT_80055d75	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055d76	0x2	DAT_80055d76	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1916,12 +1916,12 @@ GAME.EXE	0x80095066	0x2	DAT_80095066	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80095068	0x2	DAT_80095068	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506a	0x2	DAT_8009506a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506c	0x2	DAT_8009506c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009506e	0x8	DAT_8009506e	unknown	bss	u8[8]		address-only	ghidra-12.0.4-memory-xref	eight flag bytes that render_initialize fills with 0xff in one loop
-GAME.EXE	0x80095086	0x1	DAT_80095086	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095087	0x1	DAT_80095087	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095088	0x1	DAT_80095088	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095089	0x1	DAT_80095089	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009508a	0x2	DAT_8009508a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	u8[8]	notify	supported	asm;cfg;xrefs;notify_queue.c;render.c	eight-entry message ring; 0xff marks an empty slot
+GAME.EXE	0x80095086	0x1	notification_queue_tail	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update	message ring read/dequeue cursor, wrapped modulo eight
+GAME.EXE	0x80095087	0x1	notification_queue_head	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_enqueue	message ring write cursor, wrapped modulo eight
+GAME.EXE	0x80095088	0x1	notification_effect_phase	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update;map_interaction	on-screen notification state-machine phase
+GAME.EXE	0x80095089	0x1	notification_hold_frames	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update	15-frame notification display hold counter
+GAME.EXE	0x8009508a	0x2	notification_effect_angle_x	global	bss	u16	notify	supported	asm;cfg;xrefs;notify_effect_update;render_frame	X rotation applied to notification sprites, advanced by 128 to 512 during phase 3
 GAME.EXE	0x8009508c	0x2	DAT_8009508c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009508e	0x2	DAT_8009508e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095090	0x2	floor_item_count	unknown	bss	u16	item	supported	asm;xrefs;func_80020b4c;render_initialize	count of active floor-item placements expanded by the map item loader

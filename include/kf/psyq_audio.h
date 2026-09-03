@@ -5,4 +5,8 @@
 #include <kf/psyq.h>
 #include <LIBSND.H>
 #include <LIBCD.H>
+
+/* Internal LIBSND entry point linked from PLAY.OBJ. */
+extern void Snd_play(short sequence, short track);
+
 #endif

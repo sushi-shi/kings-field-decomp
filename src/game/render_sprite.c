@@ -11,10 +11,9 @@
  * projects the quad's four corners through the GTE and depth-cues its colour so
  * the notification and billboard sprites sort into the 3D scene.
  *
- * WIP: the shared 12-byte descriptor is modelled locally as KfSpriteQuad until
- * its producers (the HUD gauge table, the DAT_80055afc sprite records, and the
- * notification descriptors) are reconstructed and the type can move into the
- * shared header.  The tint/clut/tpage carriers (DAT_80095058..DAT_8009505f) are
+ * The shared 12-byte KfSpriteQuad layout is used by the HUD gauge table, the
+ * DAT_80055afc sprite records, and the notification descriptors.  The
+ * tint/clut/tpage carriers (DAT_80095058..DAT_8009505f) are
  * the floor-item render descriptor's leading fields, reached by their
  * individual identities until that object is modelled.
  *
@@ -27,18 +26,6 @@
  * retail's prologue hoist and the un-hoisted body, so this is the open
  * compiler-attribution scheduling residue, not a source defect.
  */
-
-/* One screen sprite descriptor: texture rect then screen rect. */
-typedef struct KfSpriteQuad {
-    u8 u;      /* +0: texture U origin */
-    u8 v;      /* +1: texture V origin */
-    u8 u_span; /* +2: texture U extent */
-    u8 v_span; /* +3: texture V extent */
-    u16 x;     /* +4: screen X origin */
-    u16 y;     /* +6: screen Y origin */
-    u16 w;     /* +8: screen width */
-    u16 h;     /* +10: screen height */
-} KfSpriteQuad;
 
 ADDRESS(0x8001e480, 0x16c)
 void render_screen_sprite(KfSpriteQuad *sprite)

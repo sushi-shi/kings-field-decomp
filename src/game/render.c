@@ -77,10 +77,10 @@ void render_initialize(void)
     DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
     DAT_8009506c = 0x1c;
-    DAT_80095088 = 0;
-    DAT_80095086 = 0;
-    DAT_80095087 = 0;
-    flag = DAT_8009506e;
+    notification_effect_phase = 0;
+    notification_queue_tail = 0;
+    notification_queue_head = 0;
+    flag = notification_message_ids;
     count = 7;
     do {
         *flag++ = 0xff;

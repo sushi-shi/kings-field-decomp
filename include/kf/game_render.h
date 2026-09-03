@@ -12,6 +12,20 @@
 
 #include <kf/semantic_types.h>
 
+/* Texture rectangle followed by its screen-space rectangle. */
+typedef struct KfSpriteQuad {
+    u8 u;
+    u8 v;
+    u8 u_span;
+    u8 v_span;
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
+} KfSpriteQuad;
+
+typedef char KfSpriteQuad_size_is_12[(sizeof(KfSpriteQuad) == 0x0c) ? 1 : -1];
+
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
@@ -29,6 +43,7 @@ extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
 extern void render_effect_sprites(void);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);
+extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag);
 extern void render_entities(void);
 extern void render_hud_gauges(u8 *table);
 extern void render_initialize(void);
@@ -36,6 +51,7 @@ extern void render_map_cell(s32 col, s32 row, char cell);
 extern void render_map_cells(void);
 extern void render_map_event(KfMapEvent *event);
 extern void render_map_object(KfMapObject *object);
+extern void render_screen_sprite(KfSpriteQuad *sprite);
 extern void render_set_view_transform(VECTOR *position, SVECTOR *rotation);
 extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);

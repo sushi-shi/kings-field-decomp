@@ -8,7 +8,6 @@ extern KfEffectRecord DAT_8009d040[];
 /* Per-id byte table shared with the save system; entry 57 counts the lamp charges. */
 extern u8 DAT_800652a8[240];
 /* Psy-Q LIBGTE: rsin, rcos. */
-extern void notify_enqueue(s32 arg0);
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *effect_pool_spawn_typed();
 extern s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 extra_radius);

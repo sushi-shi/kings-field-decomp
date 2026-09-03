@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 548)
-        self.assertEqual(counts["signatures_started"], 548)
-        self.assertEqual(counts["typed_returns"], 548)
-        self.assertEqual(counts["parameterized"], 358)
+        self.assertEqual(counts["functions"], 547)
+        self.assertEqual(counts["signatures_started"], 547)
+        self.assertEqual(counts["typed_returns"], 547)
+        self.assertEqual(counts["parameterized"], 357)
         self.assertEqual(counts["data"], 3287)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)

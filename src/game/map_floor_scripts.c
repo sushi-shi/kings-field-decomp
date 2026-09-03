@@ -32,7 +32,6 @@ extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *matrix, s32 blend);
 extern void lighting_set_active_color_matrix(s32 index);
 extern void render_frame(s32 first, s32 second);
-extern void notify_enqueue(s32 arg0);
 extern int rand(void);
 
 /* The two TIM cut-in paths shown by map_ambient_script_floor5. */

@@ -37,16 +37,6 @@ extern u8 DAT_80055cda;
 extern u8 DAT_80055ce8;
 extern u8 DAT_80055cf6;
 extern u8 DAT_80055d04; /* effect sprite tint anchor */
-extern u8 DAT_80055d20[]; /* record 0 (state, then a 12-byte sprite) */
-extern u8 DAT_80055d22; /* record 0 tint hi */
-extern u8 DAT_80055d23; /* record 0 tint lo */
-extern u8 DAT_80055d2e; /* record 1 state */
-extern u8 DAT_80055d30; /* record 1 tint hi */
-extern u8 DAT_80055d31; /* record 1 tint lo */
-extern u8 DAT_80055d3c; /* record 2 state */
-extern u8 DAT_80055d4a; /* record 3 state */
-extern u8 DAT_80055d58; /* record 4 state */
-extern u8 DAT_80055d66; /* record 5 state */
 extern u16 DAT_80055d86;
 extern s16 DAT_80055dac;
 extern s16 DAT_80055dae;
@@ -111,12 +101,6 @@ extern u16 DAT_80095066;
 extern u16 DAT_80095068;
 extern u16 DAT_8009506a;
 extern u16 DAT_8009506c;
-extern u8 DAT_8009506e[8]; /* notification ring; 0xff marks an empty slot */
-extern u8 DAT_80095086; /* ring tail cursor */
-extern u8 DAT_80095087; /* ring head cursor, wraps mod 8 */
-extern u8 DAT_80095088; /* effect phase */
-extern u8 DAT_80095089; /* phase-2 hold counter */
-extern u16 DAT_8009508a; /* phase-3 slide position */
 extern u16 DAT_8009508c;
 extern u16 DAT_8009508e;
 extern u32 DAT_80095698;

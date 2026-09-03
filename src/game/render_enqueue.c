@@ -67,18 +67,6 @@ extern KfScreenVertex DAT_800911b0[];
  * individual identities until the whole object is modelled (see render_sprite.c).
  */
 
-/* One screen sprite descriptor: texture rect then screen rect. */
-typedef struct KfSpriteQuad {
-    u8 u;      /* +0: texture U origin */
-    u8 v;      /* +1: texture V origin */
-    u8 u_span; /* +2: texture U extent */
-    u8 v_span; /* +3: texture V extent */
-    u16 x;     /* +4: screen X origin */
-    u16 y;     /* +6: screen Y origin */
-    u16 w;     /* +8: screen width */
-    u16 h;     /* +10: screen height */
-} KfSpriteQuad;
-
 extern KfTmdObject *tmd_get_object(u16 index);
 extern long NormalClip(long sxy0, long sxy1, long sxy2);
 extern void NormalColorCol(SVECTOR *normal, CVECTOR *in, CVECTOR *out);

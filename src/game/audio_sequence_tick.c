@@ -1,17 +1,15 @@
 #include <kf/address.h>
+#include <kf/psyq_audio.h>
 #include <kf/seqtrack.h>
 #include <kf/game.h>
 
 /*
- * Per-tick sequence driver.  SsSeqCalledTbyT is FromSoftware's reimplementation
- * of the libsnd tick-by-tick sequence handler: it wraps the update pass in a
- * setjmp/longjmp abort envelope (saving and swapping the handler slot at
- * DAT_8005b274) and then walks every active sequence/track, dispatching to the
- * per-track control routines from the flag bits.  audio_sequence_fade_out runs
- * the volume fade-out state machine (flag 0x20); func_8004ad9c marks a track
- * keyed and clears flag 0x8.  All index DAT_800a06e0[sequence][track]; the row
- * pointer is reloaded on each field access because a store through the record
- * could alias the pointer table.
+ * Per-tick sequence driver.  This follows the LIBSND SSCALL topology, but the
+ * 0x2f8-byte retail dispatcher does not match the 0x244-byte Release 2.5
+ * object, so its provider remains unresolved.  It wraps the update pass in a
+ * setjmp/longjmp abort envelope and dispatches per-track control routines from
+ * the flag bits.  The row pointer is reloaded on each field access because a
+ * store through a track record could alias the pointer table.
  *
  * The abort blocks carry an unattributed residue: retail materializes the
  * handler-slot address (0x8005b274) once and derives the jmp_buf (0x8005b270 =
@@ -64,7 +62,7 @@ void SsSeqCalledTbyT(void)
         }
         for (track = 0; track < DAT_800a0778; track++) {
             if (DAT_800a06e0[sequence][track].flags & 0x1) {
-                audio_play_sequence(sequence, track);
+                Snd_play(sequence, track);
                 if (DAT_800a06e0[sequence][track].flags & 0x10) {
                     audio_sequence_fade_in(sequence, track);
                 }

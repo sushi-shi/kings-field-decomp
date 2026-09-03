@@ -745,12 +745,6 @@ source = "src/game/audio_sequence_tick.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]
-unit = "game.audio_play_sequence"
-image = "GAME.EXE"
-source = "src/game/audio_play_sequence.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.audio_sequence_envelope"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_envelope.c"
