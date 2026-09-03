@@ -7,10 +7,10 @@ extern KfSavePayload *save_payload_buffer;
 
 /* Shared menu primitives: frame begin/flush, header/menu draw, input sound
  * cue, and the vsync/pad poll. */
-extern void func_8002abb4(void);
+extern void menu_frame_begin(void);
 extern void func_8002ac34(void);
 extern void func_80027ea0(void);
-extern void func_80028914(s32 object, s32 arg1, s32 arg2, s32 arg3);
+extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
@@ -49,8 +49,8 @@ s32 func_80024e64(void)
 
     for (;;) {
         if (action != -1 || result == action) {
-            func_8002abb4();
-            func_80028914(2, 3, cursor, confirm);
+            menu_frame_begin();
+            menu_draw_window(2, 3, cursor, confirm);
             func_8002ac34();
             while (pad_read(1) != 0)
                 ;
@@ -66,9 +66,9 @@ s32 func_80024e64(void)
                 func_8002af48(0x3e6);
                 audio_stop_sequence_fade();
                 for (;;) {
-                    func_8002abb4();
+                    menu_frame_begin();
                     func_80027ea0();
-                    func_80028914(2, 3, cursor, confirm);
+                    menu_draw_window(2, 3, cursor, confirm);
                     func_8002ac34();
                 }
             }
@@ -108,8 +108,8 @@ s32 func_80024e64(void)
             result = -1;
         }
 
-        func_8002abb4();
-        func_80028914(2, 3, cursor, confirm);
+        menu_frame_begin();
+        menu_draw_window(2, 3, cursor, confirm);
         func_8002ac34();
     }
 }

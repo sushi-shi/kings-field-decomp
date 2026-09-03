@@ -3,11 +3,11 @@
 
 /* Shared menu primitives: frame begin/flush, header/list/menu draw, input
  * sound cue, and the vsync/pad poll. */
-extern void func_8002abb4(void);
+extern void menu_frame_begin(void);
 extern void func_8002ac34(void);
 extern void func_80027ea0(void);
 extern void func_80027ee4(void *summaries, s32 cursor);
-extern void func_80028914(s32 object, s32 arg1, s32 arg2, s32 arg3);
+extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
@@ -43,10 +43,10 @@ s32 func_8002552c(void)
     if (save_system_read_catalog(summaries) != 1) {
         menu_play_input_sound(0);
         while (pad_read(1) == 0) {
-            func_8002abb4();
+            menu_frame_begin();
             func_80027ea0();
             func_80027ee4(summaries, cursor);
-            func_80028914(5, 4, cursor, confirm);
+            menu_draw_window(5, 4, cursor, confirm);
             func_8002ac34();
         }
         menu_play_input_sound(2);
@@ -57,9 +57,9 @@ s32 func_8002552c(void)
 
     for (;;) {
         if (confirm == 1 || result == -1) {
-            func_8002abb4();
+            menu_frame_begin();
             func_80027ee4(summaries, cursor);
-            func_80028914(5, 4, cursor, confirm);
+            menu_draw_window(5, 4, cursor, confirm);
             func_8002ac34();
             while (pad_read(1) != 0)
                 ;
@@ -72,18 +72,18 @@ s32 func_8002552c(void)
             } else {
                 func_8002af48(0x67);
                 for (i = 0; i < 3; i++) {
-                    func_8002abb4();
+                    menu_frame_begin();
                     func_80027ea0();
                     func_80027ee4(summaries, cursor);
-                    func_80028914(5, 4, cursor, confirm);
+                    menu_draw_window(5, 4, cursor, confirm);
                     func_8002ac34();
                 }
                 if (save_system_read_slot(cursor + 1) != 1) {
                     while (pad_read(1) == 0) {
-                        func_8002abb4();
+                        menu_frame_begin();
                         func_80027ea0();
                         func_80027ee4(summaries, cursor);
-                        func_80028914(5, 4, cursor, confirm);
+                        menu_draw_window(5, 4, cursor, confirm);
                         func_8002ac34();
                     }
                     menu_play_input_sound(2);
@@ -128,9 +128,9 @@ s32 func_8002552c(void)
             result = -1;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         func_80027ee4(summaries, cursor);
-        func_80028914(5, 4, cursor, confirm);
+        menu_draw_window(5, 4, cursor, confirm);
         func_8002ac34();
     }
 }

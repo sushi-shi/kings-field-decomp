@@ -16,7 +16,7 @@ extern s16 DAT_80059450[];
 
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
  * and the deferred state acknowledgement. */
-extern void func_8002abb4(void);
+extern void menu_frame_begin(void);
 extern void func_8002ac34(void);
 extern void func_80027e58(void);
 extern void menu_play_input_sound(s32 cue);
@@ -25,11 +25,11 @@ extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, preview, query). */
 extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
-extern void func_80028a70(s16 *ctx);
+extern void menu_list_render(s16 *ctx);
 extern u32 func_8002aea4(s32 item_id);
 extern u32 func_8002af48(s32 item_id);
-extern void func_800279c4(s32 item_id);
-extern s32 func_80028380(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
+extern void menu_item_model_preview(s32 item_id);
+extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
                          u32 arg5);
 
 /* Player equip/select operations. */
@@ -148,7 +148,7 @@ void func_800238d8(s32 object)
 
     for (;;) {
         if (confirm == 1) {
-            if (func_80028380((u32)&ctx, 5, 0, codes[ctx.cursor], 0, 0) == -1)
+            if (menu_list_interact((u32)&ctx, 5, 0, codes[ctx.cursor], 0, 0) == -1)
                 selection = -99;
             else
                 selection = codes[ctx.cursor];
@@ -210,10 +210,10 @@ void func_800238d8(s32 object)
             selection = -1;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         if (ctx.count != 0)
-            func_800279c4(codes[ctx.cursor]);
-        func_80028a70((s16 *)&ctx);
+            menu_item_model_preview(codes[ctx.cursor]);
+        menu_list_render((s16 *)&ctx);
         func_8002ac34();
     }
 
@@ -304,19 +304,19 @@ void func_80023e9c(void)
     ctx.entries = &labels[0][0];
     ctx.unknown_24 = 0;
 
-    func_8002abb4();
+    menu_frame_begin();
     if (ctx.count != 0) {
         if (func_8002af48(codes[ctx.cursor]) == 1)
             return;
         if (codes[ctx.cursor] != 0xff)
             func_80027e58();
     }
-    func_80028a70((s16 *)&ctx);
+    menu_list_render((s16 *)&ctx);
 
     for (;;) {
         func_8002ac34();
         if (confirm == 1) {
-            if (func_80028380((u32)&ctx, 5, 2, codes[ctx.cursor], 0, 0) == -1)
+            if (menu_list_interact((u32)&ctx, 5, 2, codes[ctx.cursor], 0, 0) == -1)
                 selection = -99;
             else
                 selection = ctx.cursor;
@@ -327,7 +327,7 @@ void func_80023e9c(void)
             break;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         confirm = 0;
         prev = input;
         input = pad_read(1);
@@ -383,7 +383,7 @@ void func_80023e9c(void)
             if (codes[ctx.cursor] != 0xff)
                 func_80027e58();
         }
-        func_80028a70((s16 *)&ctx);
+        menu_list_render((s16 *)&ctx);
     }
 
     if (selection != -1) {
