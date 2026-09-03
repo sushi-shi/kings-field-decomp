@@ -22,11 +22,13 @@ extern u32 DAT_8009a728;
 
 extern int printf();
 
-/* Per-track sequence parsers: func_800471a4 loads a single sequence into the
- * slot; func_80046a94 parses track `index` of a multi-track set and returns the
- * number of bytes it consumed from the sequence buffer. */
-extern void func_800471a4(s16 slot, s16 vab_id, u8 *sequence);
-extern s32 func_80046a94(s16 slot, s32 index, s16 vab_id, u8 *data);
+/* Per-track sequence parsers (defined in audio_sequence_parse.c):
+ * audio_sequence_load_track loads a single sequence into the slot;
+ * audio_sequence_parse_track parses track `index` of a multi-track set and
+ * returns the number of bytes it consumed from the sequence buffer.  The
+ * parser is old-style (K&R) so `index` is passed as a promoted int here. */
+extern void audio_sequence_load_track(s16 slot, s16 vab_id, u8 *sequence);
+extern s32 audio_sequence_parse_track(s16 slot, s32 index, s16 vab_id, u8 *data);
 
 ADDRESS(0x800468d8, 0xb0)
 s16 func_800468d8(u8 *sequence, s16 vab_id)
@@ -46,7 +48,7 @@ s16 func_800468d8(u8 *sequence, s16 vab_id)
         }
     }
     DAT_8009a728 |= 1 << slot;
-    func_800471a4(slot, vab_id, sequence);
+    audio_sequence_load_track(slot, vab_id, sequence);
     return slot;
 }
 
@@ -69,7 +71,7 @@ s16 func_80046988(u8 *data, s16 vab_id, s16 count)
     }
     DAT_8009a728 |= 1 << slot;
     for (i = 0; i < count; i++) {
-        data += func_80046a94(slot, i, vab_id, data);
+        data += audio_sequence_parse_track(slot, i, vab_id, data);
     }
     return slot;
 }

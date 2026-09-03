@@ -863,6 +863,12 @@ source = "src/game/audio_sequence.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]
+unit = "game.audio_sequence_parse"
+image = "GAME.EXE"
+source = "src/game/audio_sequence_parse.c"
+profile = "probe-gcc257-o2-plain"
+
+[[unit]]
 unit = "game.audio_sequence_track"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_track.c"
