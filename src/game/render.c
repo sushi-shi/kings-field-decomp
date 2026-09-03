@@ -283,7 +283,7 @@ void tmd_register(u16 index, void *asset)
 }
 
 ADDRESS(0x8001c5ec, 0x20)
-void tmd_release_last_allocation(void)
+void tmd_release_last_allocation(s32 slot)
 {
     memory_release_last();
 }

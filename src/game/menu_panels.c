@@ -18,7 +18,6 @@ extern POLY_FT4 DAT_800580e8[2][4];
 extern u32 pad_read();
 
 /* Cursor/list widget helpers (init, render, query). */
-extern u32 menu_load_item_texture(s32 magic_id);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /* Sub-panel handlers dispatched by the option menu. */

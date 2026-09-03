@@ -18,7 +18,6 @@ extern s16 DAT_80058dc0[];
 extern u32 pad_read();
 
 /* Item-list widget helpers (init, render, preview, query). */
-extern u32 menu_load_item_texture(s32 item_id);
 
 /* Player equip/select operations. */
 

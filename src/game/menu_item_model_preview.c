@@ -3,8 +3,6 @@
 #include <kf/game.h>
 
 
-/* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
-extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);
 /* Positioned glyph run: origin then codes terminated by -1. */
 typedef struct MenuGlyphString {
     u16 x;
@@ -86,7 +84,7 @@ void menu_item_model_preview(s32 item_id)
         menu_draw_string(&DAT_800583f4, &gs);
 
         gs.x = 0x117;
-        menu_format_number(DAT_800652a8[item_id], 2, 0, (u16 *)gs.codes);
+        menu_format_number(DAT_800652a8[item_id], 2, 0, gs.codes);
         menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     }
 }

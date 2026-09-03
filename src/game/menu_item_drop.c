@@ -26,7 +26,6 @@ extern u32 pad_read();
 
 /* Item-list widget helper and the save/load workers plus effect/audio hooks. */
 extern s32 menu_two_option_prompt(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
-extern u32 menu_load_item_texture(s32 arg0);
 
 /*
  * Drop-item panel dispatched by the hub menu (slot 4).  Builds a scrollable

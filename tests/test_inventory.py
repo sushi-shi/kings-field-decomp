@@ -549,6 +549,37 @@ class InventoryTests(unittest.TestCase):
             ("current_poly_ft4", "POLY_FT4 *", 4),
         )
 
+    def test_menu_runtime_tu_is_gapless_and_uses_one_unit(self) -> None:
+        evidence_path = CONFIG / "evidence/game_tu_menu_runtime.tsv"
+        _, rows = read_tsv(evidence_path)
+        self.assertEqual(len(rows), 9)
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in rows
+        ]
+        self.assertEqual(spans[0][0], 0x8002ABB4)
+        self.assertEqual(spans[-1][0] + spans[-1][1], 0x8002B078)
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        units = (CONFIG / "units.toml").read_text()
+        self.assertEqual(units.count('source = "src/game/menu_runtime.c"'), 1)
+        for old_source in (
+            "src/game/menu_frame.c",
+            "src/game/menu_list_util.c",
+            "src/game/game_state.c",
+            "src/game/menu_texture_load.c",
+        ):
+            self.assertNotIn(old_source, units)
+
+        identity = load_function_identities(RETAIL_CONFIG, required=True)[
+            ("GAME.EXE", 0x8002ADF8)
+        ]
+        self.assertEqual(
+            identity.parameters,
+            "s32 value;s32 count;s32 pad_zero;s16 * out",
+        )
+
     def test_menu_list_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_menu_list.tsv"
         _, rows = read_tsv(evidence_path)

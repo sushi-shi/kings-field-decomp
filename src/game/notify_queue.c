@@ -72,8 +72,6 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
  * residue that leaves the body otherwise structurally exact.
  */
 
-extern void menu_format_number(u16 value, s32 count, s32 base, u16 *out);
-
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)
 {
@@ -91,24 +89,25 @@ void notify_effect_update(void)
         notification_hold_frames = 15;
         if (id == 0x13) {
             u8 *sprite_records = &notification_sprite_0_active;
-            u16 digits[12];
+            KfNotificationDigitBuffer digits;
             sprite_records[0] = 0;
             notification_sprite_1_active = 1;
             notification_sprite_1_texture_u = (id & 0xf0) << 3;
             notification_sprite_1_texture_v = (id & 0xf) << 4;
-            menu_format_number(((u16 *)((char *)phase - 18))[tail], 4, 0, digits);
+            menu_format_number(
+                ((u16 *)((char *)phase - 18))[tail], 4, 0, digits.formatted);
             notification_sprite_2_active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 30), digits[3]);
+                (KfSpriteQuad *)(sprite_records + 30), digits.values[3]);
             notification_sprite_3_active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 44), digits[2]);
+                (KfSpriteQuad *)(sprite_records + 44), digits.values[2]);
             notification_sprite_4_active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 58), digits[1]);
+                (KfSpriteQuad *)(sprite_records + 58), digits.values[1]);
             notification_sprite_5_active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 72), digits[0]);
+                (KfSpriteQuad *)(sprite_records + 72), digits.values[0]);
         } else {
             notification_sprite_0_active = 1;
             notification_sprite_0_texture_u = (id & 0xf0) << 3;

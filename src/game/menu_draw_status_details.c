@@ -3,8 +3,6 @@
 #include <kf/game.h>
 
 
-/* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
-extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);
 /* Positioned glyph run: origin then codes terminated by -1. */
 typedef struct MenuGlyphString {
     u16 x;
@@ -107,11 +105,11 @@ void menu_draw_status_details(void)
 
     gs.x = 0x5b;
     gs.y = 0x23;
-    menu_format_number(player_state.experience, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.experience, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.y += 0x10;
-    menu_format_number(player_state.progress_state.level, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.progress_state.level, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0x4d;
@@ -141,26 +139,26 @@ void menu_draw_status_details(void)
 
     gs.x = 0x46;
     gs.y += 0x10;
-    menu_format_number(player_state.vitals.current_hp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.current_hp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.codes[0] = 0xb;
     gs.codes[1] = -1;
     gs.x += 0x1c;
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.x += 7;
-    menu_format_number(player_state.vitals.maximum_hp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.maximum_hp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0x46;
     gs.y += 0x10;
-    menu_format_number(player_state.vitals.current_mp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.current_mp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.codes[0] = 0xb;
     gs.codes[1] = -1;
     gs.x += 0x1c;
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.x += 7;
-    menu_format_number(player_state.vitals.maximum_mp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.maximum_mp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0x3f;
@@ -195,27 +193,27 @@ void menu_draw_status_details(void)
 
     gs.x = 0x5b;
     gs.y += 0x10;
-    menu_format_number(player_state.unknown_2c, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.unknown_2c, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0x10;
-    menu_format_number(player_state.physical_power, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.physical_power, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0x10;
-    menu_format_number(player_state.magic, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.magic, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0x10;
     menu_format_number(
         (s32)(((((u32)player_state.attack_component0 + player_state.attack_component1 +
                  player_state.attack_component2) * 3 >> 1) +
                ((u32)player_state.attack_component3 + player_state.attack_component4) * 2) * 10) >> 3,
-        6, 0, (u16 *)gs.codes);
+        6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0x10;
     menu_format_number(
         (((u32)player_state.damage_defense_component0 + player_state.damage_defense_component1 +
           player_state.damage_defense_component2 + player_state.status_effect2_resistance / 5 +
           player_state.damage_defense_component3 + player_state.damage_defense_component4) * 10) / 7,
-        6, 0, (u16 *)gs.codes);
+        6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xb5;
@@ -298,36 +296,36 @@ void menu_draw_status_details(void)
 
     gs.x = 0xfb;
     gs.y = 0x2c;
-    menu_format_number(player_state.attack_component0, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.attack_component0, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component1, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.attack_component1, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component2, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.attack_component2, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component3, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.attack_component3, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component4, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.attack_component4, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0x1e;
-    menu_format_number(player_state.damage_defense_component0, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.damage_defense_component0, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component1, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.damage_defense_component1, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component2, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.damage_defense_component2, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.status_effect2_resistance, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.status_effect2_resistance, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component3, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.damage_defense_component3, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component4, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.damage_defense_component4, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 }

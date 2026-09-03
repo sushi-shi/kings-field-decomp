@@ -5,6 +5,15 @@
 
 #include <kf/game_types.h>
 
+/*
+ * The menu formatter writes signed glyphs (including -1), while the
+ * notification renderer reads the four decimal cells with lhu.
+ */
+typedef union KfNotificationDigitBuffer {
+    s16 formatted[12];
+    u16 values[12];
+} KfNotificationDigitBuffer;
+
 extern u8 notification_message_ids[8];
 extern u8 notification_queue_tail;
 extern u8 notification_queue_head;

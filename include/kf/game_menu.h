@@ -32,6 +32,11 @@ typedef struct MenuSpriteDef {
     u16 height;
 } MenuSpriteDef;
 
+/* Eight-byte cell in the runtime-loaded menu label bank. */
+typedef struct MenuLabelCell {
+    u16 halfwords[4];
+} MenuLabelCell;
+
 /*
  * Scrollable menu-list state. The first 24 bytes are a positioned title,
  * followed by list geometry/cursor bytes and the row-glyph and optional
@@ -53,6 +58,8 @@ typedef struct KfMenuList {
     u8 *quantities;
 } KfMenuList;
 
+extern MenuLabelCell DAT_80058494[];
+
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
 extern s32 item_use_confirm(s32 arg);
@@ -62,6 +69,8 @@ extern void menu_config_panel(void);
 extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
 extern void menu_draw_number(u16 *atlas, s16 *str);
 extern void menu_draw_stats_header(void);
+extern void menu_format_number(
+    s32 value, s32 count, s32 pad_zero, s16 *out);
 extern void menu_drop_item(void);
 extern void menu_equip_select(s32 object);
 extern void menu_frame_begin(void);
@@ -71,6 +80,7 @@ extern s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
                               s32 item_id, u32 arg4, u32 arg5);
 extern void menu_list_render(const KfMenuList *list);
 extern u32 menu_load_item_model(s32 id);
+extern u32 menu_load_item_texture(s32 id);
 extern s32 menu_load_panel(void);
 extern s32 menu_magic_panel(void);
 extern void menu_map_viewer(s32 item_code);

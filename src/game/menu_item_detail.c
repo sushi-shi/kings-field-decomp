@@ -11,8 +11,6 @@
  */
 
 
-/* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
-extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);
 /* Positioned glyph run: origin then codes terminated by -1. */
 typedef struct MenuGlyphString {
     u16 x;
@@ -114,7 +112,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     gs.x = 0xc8;
     gs.y += 18;
     prices = (mode != 0) ? DAT_800595f8 : DAT_800594b8;
-    menu_format_number(prices[object][col - 1], 6, 0, (u16 *)gs.codes);
+    menu_format_number(prices[object][col - 1], 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xf2;
@@ -133,7 +131,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     menu_draw_string(&DAT_800583f4, &gs);
 
     gs.x = 0x11c;
-    menu_format_number(DAT_800652a8[object], 2, 0, (u16 *)gs.codes);
+    menu_format_number(DAT_800652a8[object], 2, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     menu_blit_sprite_translucent(&DAT_80058424, &DAT_80058c10);
@@ -141,7 +139,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = DAT_80058c10.x + 28;
     gs.y = DAT_80058c10.y;
-    menu_format_number(player_state.unknown_2c, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.unknown_2c, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 }
 
@@ -234,7 +232,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 251;
-            menu_format_number(row->field_0, 6, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_0, 6, 0, gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x = 181;
@@ -245,7 +243,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 286;
-            menu_format_number(row->field_4, 1, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_4, 1, 0, gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x = 181;
@@ -256,7 +254,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 230;
-            menu_format_number(row->field_8, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_8, 4, 0, gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.codes[0] = 11;
@@ -265,7 +263,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x += 7;
-            menu_format_number(row->field_c, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_c, 4, 0, gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x = 181;
@@ -276,7 +274,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 230;
-            menu_format_number(row->field_10, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_10, 4, 0, gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.codes[0] = 11;
@@ -285,7 +283,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
             gs.x += 7;
-            menu_format_number(row->field_14, 4, 0, (u16 *)gs.codes);
+            menu_format_number(row->field_14, 4, 0, gs.codes);
             menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
         }
         row++;

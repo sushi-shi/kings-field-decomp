@@ -3,8 +3,6 @@
 #include <kf/game.h>
 
 
-/* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
-extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);
 /* Positioned glyph run: origin then codes terminated by -1. */
 typedef struct MenuGlyphString {
     u16 x;
@@ -87,11 +85,11 @@ void menu_draw_stats_header(void)
 
     gs.x = 0xfb;
     gs.y = 0x24;
-    menu_format_number(player_state.experience, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.experience, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.y += 0x17;
-    menu_format_number(player_state.progress_state.level, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.progress_state.level, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xed;
@@ -121,31 +119,31 @@ void menu_draw_stats_header(void)
 
     gs.x = 0xfb;
     gs.y += 0x17;
-    menu_format_number(player_state.progress_state.current_floor, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.progress_state.current_floor, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xe6;
     gs.y += 0x17;
-    menu_format_number(player_state.vitals.current_hp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.current_hp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.codes[0] = 0xb;
     gs.codes[1] = -1;
     gs.x += 0x1c;
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.x += 7;
-    menu_format_number(player_state.vitals.maximum_hp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.maximum_hp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xe6;
     gs.y += 0x17;
-    menu_format_number(player_state.vitals.current_mp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.current_mp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.codes[0] = 0xb;
     gs.codes[1] = -1;
     gs.x += 0x1c;
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
     gs.x += 7;
-    menu_format_number(player_state.vitals.maximum_mp, 4, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.vitals.maximum_mp, 4, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xdf;
@@ -180,6 +178,6 @@ void menu_draw_stats_header(void)
 
     gs.x = 0xfb;
     gs.y += 0x17;
-    menu_format_number(player_state.unknown_2c, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.unknown_2c, 6, 0, gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 }

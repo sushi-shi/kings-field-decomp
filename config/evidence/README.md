@@ -67,6 +67,11 @@ negative control that moves four version-skewed `LIBGPU/VSYNC` functions to the
 vendored inventory. `overlay_lineage.tsv` independently checks the shared
 instruction shapes and both overlay deltas.
 
+`game_tu_menu_runtime.tsv` records the nine gapless GAME functions from the
+menu frame helpers through numbered TIM loading. It supports replacing four
+reconstruction-only units with one WIP contiguous module while keeping the
+surrounding menu backdrop and save-system boundaries explicitly unresolved.
+
 `game_open_semantic_memory_allocator.tsv` records the seven-function LIFO
 allocator duplicated in GAME and OPEN, including its signed interfaces, two
 allocation modes, 16-entry state array, all direct calls, and the intentional

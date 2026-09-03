@@ -438,27 +438,9 @@ source = "src/game/menu_window_backdrop.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.menu_frame"
+unit = "game.menu_runtime"
 image = "GAME.EXE"
-source = "src/game/menu_frame.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_list_util"
-image = "GAME.EXE"
-source = "src/game/menu_list_util.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.game_state"
-image = "GAME.EXE"
-source = "src/game/game_state.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_texture_load"
-image = "GAME.EXE"
-source = "src/game/menu_texture_load.c"
+source = "src/game/menu_runtime.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
