@@ -218,3 +218,48 @@ can only be tested by controlled recompilation. go32 v2 under DOSBox is simply
 how a DJGPP COFF `cc1` is executed on this host; the run's only evidential
 content is the assembly it emits, compared byte-for-byte against the carved
 retail objects.
+
+## Per-TU profile assignments (campaign sweep)
+
+The discriminator from the conclusion above was applied as a campaign. Every
+`GAME.EXE` unit carrying a non-exact function (48 units, 93 non-exact
+functions) was rebuilt under each candidate 2.5.7 scheduling profile and its
+per-function EXACT set was compared against the banked default
+(`probe-gcc257-o2-g0`, `-mcpu=r2000`):
+
+| profile | `cc1` flags | model |
+| --- | --- | --- |
+| `probe-gcc257-o2-g0` (default) | `-mcpu=r2000` | R2000 schedule, attributed |
+| `probe-gcc257-o2-plain` | *(none)* | generic 2.5.7 schedule (no `-mcpu`) |
+| `probe-gcc257-o2-nosched` | `-mcpu=r2000 -fno-schedule-insns` | R2000, cc1 scheduler off |
+| `probe-gcc257-o2-r3000` | `-mcpu=r3000` | R3000 schedule (swept, unused) |
+| `probe-gcc257-o2-plain-nosched` | `-fno-schedule-insns` | generic, scheduler off (swept, unused) |
+
+Selection rule (config-only; source untouched): a unit is reassigned only if a
+profile's EXACT set is a **strict superset** of the default's — it must add at
+least one byte-exact function and **drop none** (zero within-unit regression).
+Ties keep the most-attributed profile (`-mcpu=r2000` preferred, then `plain`).
+A profile that merely raises a fuzzy % without reaching a new EXACT, or that
+trades one exact for another, is rejected.
+
+Three units flipped; **GAME exact 266 → 272 (+6)**, `kf check` green, no
+regressions in any image:
+
+| unit | old profile | new profile | exacts | functions flipped |
+| --- | --- | --- | --- | --- |
+| `game.audio_sequence_track` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-plain` | 1/5 → 5/5 (+4) | `func_8004a128`, `func_8004a21c`, `func_8004a374`, `func_8004a3c8` |
+| `game.render_sprite` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-nosched` | 0/1 → 1/1 (+1) | `func_8001e480` (`sprite_add_ft4` body) |
+| `game.audio_sequence` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-plain` | 0/2 → 1/2 (+1) | `func_800468d8` |
+
+`render_sprite` reaches exact under both `nosched` and `plain-nosched`;
+`nosched` is kept because it retains the attributed `-mcpu=r2000` and adds only
+the documented scheduler-off lever. The `audio_sequence*` units match retail's
+*unscheduled* frame/load order — the same shape `pad` needs — and reach it
+under plain `-O2`, not under any `-mcpu` variant.
+
+The remaining **45 units did not move under any scheduling model** (kept
+`probe-gcc257-o2-g0`). This is itself attribution evidence: the residue ceiling
+is not a global `-mcpu` on/off switch. The scheduling model is a genuine per-TU
+discriminator for a small set of units, but most residues are a deeper
+register-allocation / instruction-selection difference that no available 2.5.7
+scheduling profile closes. `probe-gcc257-o2-g0` remains the correct default.

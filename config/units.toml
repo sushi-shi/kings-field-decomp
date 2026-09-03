@@ -35,6 +35,20 @@ aspsx_version = "1.07"
 cc1_flags = []
 maspsx_flags = ["--expand-div"]
 
+# Per-TU scheduling-model probes. `-mcpu=r2000` (the default g0) is a per-unit
+# discriminator, not a global truth: some TUs reach byte-exact only under a
+# different R3000A scheduling model. `-fno-schedule-insns` disables the cc1
+# instruction scheduler and reproduces retail's unscheduled load placement for
+# the units that were compiled that way. These remain probes.
+[profiles.probe-gcc257-o2-nosched]
+language = "c"
+compiler = "gcc257-native"
+optimization = "O2"
+small_data = 0
+aspsx_version = "1.07"
+cc1_flags = ["-mcpu=r2000", "-fno-schedule-insns"]
+maspsx_flags = ["--expand-div"]
+
 [profiles.asm-r3000-g0]
 language = "assembly"
 compiler = "gnu-as"
@@ -384,7 +398,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.render_sprite"
 image = "GAME.EXE"
 source = "src/game/render_sprite.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.render_map_cells"
@@ -828,13 +842,13 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.audio_sequence"
 image = "GAME.EXE"
 source = "src/game/audio_sequence.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-plain"
 
 [[unit]]
 unit = "game.audio_sequence_track"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_track.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-plain"
 
 [[unit]]
 unit = "game.func_8004ae04"
