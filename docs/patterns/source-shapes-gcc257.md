@@ -31,6 +31,15 @@ Open residues recorded during the same campaign (not steered):
   reloading the payload pointer for the second `memset`; the probe reloads
   first. The call also needs a delinker naming decision because `GAME.EXE`
   links two vendored `memset` bodies.
+- `func_80029ab0`/`func_80029c50` `0x80029ab0` (menu sprite blitters): the two
+  quad corner-inset constants (`-4`/`-3`, `-18`/`-2`), each used four times,
+  are kept as `addiu` immediates in retail; the probe materializes each into a
+  callee register (`li 0xfffc; addu`) and then schedules that `li` into the
+  following load-delay slot that retail leaves as `nop`. Fields, values, load
+  widths, associativity, and the per-corner `current_poly_ft4` reloads all
+  match; only the constant materialization and the freed delay slot differ.
+  The same u16-store-context constant handling recurs across the menu POLY_FT4
+  assembly helpers.
 
 ## save
 
