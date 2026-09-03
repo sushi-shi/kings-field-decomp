@@ -3,7 +3,7 @@
 
 extern KfEffectRecord DAT_8009d040[];
 extern void effect_pool_set_current(u8 *object);
-extern void func_80038a38(void);
+extern void effect_update_dispatch(void);
 
 ADDRESS(0x8003a760, 0x7c)
 void effect_pool_sweep(void)
@@ -14,7 +14,7 @@ void effect_pool_sweep(void)
     do {
         if (record->type != 0xff) {
             effect_pool_set_current((u8 *)record);
-            func_80038a38();
+            effect_update_dispatch();
         }
         record++;
     } while (i-- != 0);

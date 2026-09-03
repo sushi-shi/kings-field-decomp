@@ -11,7 +11,7 @@
  * vertices, and up-converts them into Gouraud-textured GT3/GT4 GPU primitives
  * whose per-vertex colours come from one flat face normal (NormalColorCol) that
  * is then depth-cued per vertex (DpqColor).  It is the emitter reached by the
- * per-cell wall/floor routine func_8001e5ec.
+ * per-cell wall/floor routine render_map_cell.
  *
  * render_enqueue_sprite is the projected textured-sprite enqueuer: it projects a
  * KfSpriteQuad's four corners through the GTE (RotTransPers4), builds a
@@ -39,7 +39,7 @@
  *    object, so the original was a single graphics-context aggregate that the
  *    curation split into display_state, tmd_state and DAT_800911b0 (the same
  *    unified object also carries the sprite material DAT_80095058 at
- *    buffer+16040, reached that way by func_8001d730/func_8001c7f8).  Modelling
+ *    buffer+16040, reached that way by render_enqueue_model/render_enqueue_tmd).  Modelling
  *    that aggregate is high-ripple (display_state and tmd_state are shared by
  *    many banked units), so this source keeps the individual identities; the
  *    resulting per-access address materialisation is the dominant divergence

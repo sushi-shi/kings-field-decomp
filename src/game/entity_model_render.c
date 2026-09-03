@@ -7,10 +7,10 @@
  * (render_entities).  Each carries one live pool record into view space through
  * RotTrans, composes a per-axis rotation onto the current view matrix, installs
  * the derived light matrix, projects the selected TMD object's vertices, and
- * hands the primitive run to the shared polygon enqueuer (func_8001c7f8).
+ * hands the primitive run to the shared polygon enqueuer (render_enqueue_tmd).
  *
- * WIP: the two enqueuers reached here (func_8001c7f8, the large TMD primitive
- * emitter, and func_8001d730, the actor-specific enqueue path) are the render
+ * WIP: the two enqueuers reached here (render_enqueue_tmd, the large TMD primitive
+ * emitter, and render_enqueue_model, the actor-specific enqueue path) are the render
  * subsystem's core polygon builders and remain unreconstructed; they are
  * reached by their address identities.  The actor descriptor byte lives in the
  * actor definition record (definitions[id].unknown_00[1]); its low nibble
@@ -40,7 +40,7 @@ extern MATRIX render_light_matrices[6];
 /*
  * Floor-billboard depth/scale pairs indexed by the actor descriptor's high
  * nibble, copied into the floor-item render descriptor (DAT_80095058 /
- * DAT_8009505a) just before func_8001d730 enqueues the billboard.  DAT_80095048
+ * DAT_8009505a) just before render_enqueue_model enqueues the billboard.  DAT_80095048
  * is the paired table 18 bytes below DAT_8009505a, so it is reached as an
  * offset from that descriptor field (the shared-base addend the original
  * produced).
@@ -56,8 +56,8 @@ extern KfTmdObject *tmd_get_object(u16 object_index);
 extern void tmd_select_object_vertices(u16 object_index);
 extern void tmd_project_vertices(s32 count);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
-extern void func_8001c7f8(u16 object_index, s16 depth_bias);
-extern void func_8001d730(u16 object_index, s16 depth_bias);
+extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
+extern void render_enqueue_model(u16 object_index, s16 depth_bias);
 
 ADDRESS(0x8001e9a4, 0x214)
 void render_actor(KfActor *actor)
@@ -101,11 +101,11 @@ void render_actor(KfActor *actor)
 
     high = descriptor >> 4;
     if (high == 0) {
-        func_8001c7f8(0, 0);
+        render_enqueue_tmd(0, 0);
     } else {
         DAT_8009505a = DAT_80095038[high - 1];
         DAT_80095058 = ((u16 *)((char *)&DAT_8009505a - 18))[high - 1];
-        func_8001d730(0, 0);
+        render_enqueue_model(0, 0);
     }
 }
 
@@ -151,5 +151,5 @@ void render_map_object(KfMapObject *object)
     }
     tmd_select_object_vertices(id);
     tmd_project_vertices(tmd_get_object(id)->vertex_count);
-    func_8001c7f8(id, depth);
+    render_enqueue_tmd(id, depth);
 }

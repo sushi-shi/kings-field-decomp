@@ -5,7 +5,7 @@
  * Effect per-kind update helpers, band 0x80037fbc..0x80038a38 (GAME.EXE).
  *
  * These are the per-effect-kind subroutines called by the effect update
- * dispatcher func_80038a38, which walks the effect pool from effect_pool_sweep
+ * dispatcher effect_update_dispatch, which walks the effect pool from effect_pool_sweep
  * and switches on KfEffectRecord.kind. They operate on the "current" effect
  * record published through DAT_8009db84 (and its magic_records row through
  * DAT_8009db80), or on a record passed by pointer.
@@ -20,7 +20,7 @@
  * (vx,0,vz) offset about Y. effect_spawn_trail_kind13 / effect_spawn_ground_kind6 spawn trailing
  * sub-effects (kinds 0x13 and 6) offset from the record.
  *
- * func_80037850 (the collision/height probe) and func_80038a38 (the dispatcher)
+ * func_80037850 (the collision/height probe) and effect_update_dispatch (the dispatcher)
  * are the band endpoints and remain WIP; this unit externs them.
  */
 

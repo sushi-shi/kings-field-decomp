@@ -19,7 +19,7 @@ extern KfTmdObject *tmd_get_object(u16 index);
 extern void tmd_transform_vertices(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern u16 *render_bind_animated_instance(void *entry, u16 asset, u16 arg2, u16 arg3, u16 count);
-extern void func_8001c7f8(u16 arg0, s16 arg1);
+extern void render_enqueue_tmd(u16 arg0, s16 arg1);
 extern void func_8001e480(char *entry);
 
 /*
@@ -82,7 +82,7 @@ void render_weapon(void)
         tmd_project_vertices_shift(object->vertex_count, 3);
         depth_bias =
             (s16)*(const u16 *)((const u8 *)player_state.equipped_weapon_record + 32) >> 5;
-        func_8001c7f8(0, -depth_bias + 50);
+        render_enqueue_tmd(0, -depth_bias + 50);
     }
 }
 
@@ -124,7 +124,7 @@ void render_effect_sprites(void)
                 &entry->anchor, 0x15, entry->visibility_tag, entry->asset_variant,
                 object->vertex_count) != 0) {
             tmd_transform_vertices(object->vertex_count);
-            func_8001c7f8(0, 0);
+            render_enqueue_tmd(0, 0);
         }
         entry++;
     }

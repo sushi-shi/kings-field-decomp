@@ -7,9 +7,9 @@
  * when the pitch is near level, otherwise the fixed DAT_80055e9c window),
  * publishes it at DAT_80095860 for render_entities' cull tests, then walks the
  * window's cell grid and hands every populated, in-range cell to the per-cell
- * emitter func_8001e5ec.
+ * emitter render_map_cell.
  *
- * WIP: func_8001e5ec (the per-cell wall/floor emitter) is not yet reconstructed
+ * WIP: render_map_cell (the per-cell wall/floor emitter) is not yet reconstructed
  * and is reached by its address identity.  The window table DAT_80065be8 is a
  * 16-entry, 204-byte-stride block; its interior beyond the grid header is
  * unresolved, so the entry is reached as a byte offset and the grid is a local
@@ -32,7 +32,7 @@ typedef struct KfCellWindow {
 extern KfCellWindow *DAT_80095860;
 
 extern void tmd_select(u16 slot);
-extern void func_8001e5ec(s32 col, s32 row, char cell);
+extern void render_map_cell(s32 col, s32 row, char cell);
 
 ADDRESS(0x8001e83c, 0x168)
 void render_map_cells(void)
@@ -62,7 +62,7 @@ void render_map_cells(void)
             cols = DAT_80095860->width;
             do {
                 if ((u32)col < 100 && *cell != 0) {
-                    func_8001e5ec(col, row, *cell);
+                    render_map_cell(col, row, *cell);
                 }
                 cell++;
                 col++;

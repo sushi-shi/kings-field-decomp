@@ -34,7 +34,7 @@ extern KfTmdObject *tmd_get_object(u16 index);
 extern void tmd_select_object_vertices(u16 object_index);
 extern void tmd_project_vertices(s32 count);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
-extern void func_8001c7f8(u16 arg0, s16 arg1);
+extern void render_enqueue_tmd(u16 arg0, s16 arg1);
 
 /*
  * One record of the floor-decoration pool (24-byte stride).  Only the transform
@@ -178,6 +178,6 @@ void render_actor_sprite(KfActorSprite *actor)
         } else {
             tmd_project_vertices(object->vertex_count);
         }
-        func_8001c7f8(0, 100);
+        render_enqueue_tmd(0, 100);
     }
 }
