@@ -1,21 +1,28 @@
 # Floor height and collision occupancy grids
 
 This GAME campaign follows two direct calls and four shared 100-by-100 map
-arrays. The three adjacent functions are retained as separate reconstruction
-units; their address order is not evidence that they belonged to one original
-translation unit.
+arrays. The three adjacent helpers form the `game.collision_grid`
+reconstruction unit: the direct call chain, shared grid layer, common collision
+policy, and common compiler profile support that ownership model. Their address
+order alone would not establish an original translation unit.
 
 ## Exact functions
 
 | Address | Identity | Observed operation |
 | --- | --- | --- |
 | `0x8001a29c` | `map_floor_height_for_cell_position` | Converts the cell's height byte to negative world y and adds 300 on the half selected by orientation values 1 through 4 when collision kind is 6. |
-| `0x8001a44c` | `map_floor_height_at_position` | Divides `KfVec4i.x/z` by 2000, forms the 100-wide flat index, and returns the first helper's result. |
+| `0x8001a44c` | `map_floor_height_at_position` | Divides Psy-Q `VECTOR.vx/vz` by 2000, forms the 100-wide flat index, and returns the first helper's result. |
 | `0x8001a4e8` | `collision_adjust_cell_occupancy` | Adds `+1` or `-1` to the low-five-bit occupancy value over the bounded 5x5 neighborhood while preserving bits `0xe0`. |
 
 All three C functions are strict 100% object matches under
 `probe-gcc257-o2-g0`. This remains a productive compiler probe rather than
 historical compiler/profile attribution.
+
+The preceding player-update routine and following collision-query dispatcher
+remain separate units. In particular, `collision_query_world` is a larger,
+entity-oriented dispatcher: it coordinates several actor, object, and event
+overlap tests and owns a separate cell-height table. That is a semantic
+boundary from these map-grid lookup and occupancy primitives.
 
 The wrapper's initial reconstruction incorrectly truncated the flat cell
 index to `s16`. Retail passes the two division results directly, and removing
@@ -38,7 +45,7 @@ volatile state, or assembly.
 These arrays are typed data objects, not structures. Their equal extents and
 loading sequence do not prove an enclosing C aggregate, so no speculative map
 structure is introduced. The only structure touched here is the existing
-checked `KfVec4i` (`0x10` bytes: `x` at `+0x00`, `z` at `+0x08`) used by the
+Psy-Q `VECTOR` (`0x10` bytes: `vx` at `+0x00`, `vz` at `+0x08`) used by the
 position wrapper.
 
 All thirteen direct occupancy call instructions are reviewed relocation rows,

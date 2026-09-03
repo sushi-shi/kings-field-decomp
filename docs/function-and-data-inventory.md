@@ -167,7 +167,7 @@ two previously opaque signed halfwords to `KfPlayerState` timer fields at
 matches; the large update remains a separately planned reconstruction.
 
 The collision-grid pass names and exactly reconstructs the cell floor-height
-query, its `KfVec4i` position wrapper, and the 5x5 occupancy updater. It admits
+query, its Psy-Q `VECTOR` position wrapper, and the 5x5 occupancy updater. It admits
 the fourth 100-by-100 map grid at `0x80069018`, proves unsigned cell-coordinate
 arguments from thirteen lifecycle call sites, and keeps all four grids as
 separate arrays because their common extent does not prove an enclosing map

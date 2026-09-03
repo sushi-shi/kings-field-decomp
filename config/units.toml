@@ -167,21 +167,9 @@ source = "src/game/player_update.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.map_floor_height_for_cell_position"
+unit = "game.collision_grid"
 image = "GAME.EXE"
-source = "src/game/map_floor_height_for_cell_position.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.map_floor_height_at_position"
-image = "GAME.EXE"
-source = "src/game/map_floor_height_at_position.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.collision_adjust_cell_occupancy"
-image = "GAME.EXE"
-source = "src/game/collision_adjust_cell_occupancy.c"
+source = "src/game/collision_grid.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
