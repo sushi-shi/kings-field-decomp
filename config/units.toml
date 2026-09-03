@@ -455,9 +455,9 @@ source = "src/game/menu_draw_status_details.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8002718c"
+unit = "game.menu_draw_name_list"
 image = "GAME.EXE"
-source = "src/game/func_8002718c.c"
+source = "src/game/menu_draw_name_list.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -503,9 +503,9 @@ source = "src/game/menu_two_option_dispatch.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800292f8"
+unit = "game.menu_draw_item_name_frame"
 image = "GAME.EXE"
-source = "src/game/func_800292f8.c"
+source = "src/game/menu_draw_item_name_frame.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -744,9 +744,9 @@ source = "src/game/func_8003ac4c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8003ce2c"
+unit = "game.cd_parse_directory_entry"
 image = "GAME.EXE"
-source = "src/game/func_8003ce2c.c"
+source = "src/game/cd_parse_directory_entry.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

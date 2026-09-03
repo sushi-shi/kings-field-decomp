@@ -29,7 +29,7 @@ RODATA(0x8001318c, 0x78)
  * parsed table.  Returns 0xffffffff when the sector read fails, otherwise 1.
  */
 ADDRESS(0x8003ce2c, 0x224)
-u32 func_8003ce2c(s32 dir_index)
+u32 cd_parse_directory_entry(s32 dir_index)
 {
     u8 *src;
     u8 *dst;

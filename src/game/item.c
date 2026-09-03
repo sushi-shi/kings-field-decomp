@@ -536,15 +536,15 @@ s32 item_use_confirm(s32 arg)
     options[5] = -1;
 
     menu_frame_begin();
-    func_800292f8(arg);
+    menu_draw_item_name_frame(arg);
     menu_draw_two_option(prompt, options, 0, 0);
     menu_present_frame();
     menu_frame_begin();
-    func_800292f8(arg);
+    menu_draw_item_name_frame(arg);
     menu_draw_two_option(prompt, options, 0, 0);
     menu_present_frame();
     menu_frame_begin();
-    func_800292f8(arg);
+    menu_draw_item_name_frame(arg);
     menu_draw_two_option(prompt, options, 0, 0);
     menu_play_input_sound(0);
     while (pad_read(1) != 0)
@@ -554,7 +554,7 @@ s32 item_use_confirm(s32 arg)
         menu_present_frame();
         if (result != -99) {
             menu_frame_begin();
-            func_800292f8(arg);
+            menu_draw_item_name_frame(arg);
             menu_draw_two_option(prompt, options, choice, confirm);
             menu_present_frame();
             while (pad_read(1) != 0)
@@ -588,7 +588,7 @@ s32 item_use_confirm(s32 arg)
             menu_play_input_sound(2);
             result = 1;
         }
-        func_800292f8(arg);
+        menu_draw_item_name_frame(arg);
         menu_draw_two_option(prompt, options, choice, confirm);
     }
 

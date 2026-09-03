@@ -33,7 +33,7 @@ extern u16 DAT_80057b72;
  * whose texel corners flip per quadrant).  `param_1` is the item id.
  */
 ADDRESS(0x800292f8, 0x7b8)
-void func_800292f8(s32 param_1)
+void menu_draw_item_name_frame(s32 param_1)
 {
     MenuGlyphString gs;
     MATRIX rot;

@@ -42,7 +42,7 @@ extern MenuName DAT_80059400[];
  * the shared glyph workspace before drawing.
  */
 ADDRESS(0x8002718c, 0x838)
-void func_8002718c(void)
+void menu_draw_name_list(void)
 {
     MenuGlyphString gs;
 

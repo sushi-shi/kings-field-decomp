@@ -306,14 +306,14 @@ void menu_option_root(void)
     s32 selection = -1;
 
     menu_frame_begin();
-    func_8002718c();
+    menu_draw_name_list();
     menu_draw_window(1, 9, 0, 0);
 
     for (;;) {
         menu_present_frame();
         if (selection != -1 || result == selection) {
             menu_frame_begin();
-            func_8002718c();
+            menu_draw_name_list();
             menu_draw_window(1, 9, cursor, confirm);
             menu_present_frame();
             while (pad_read(1) != 0)
@@ -368,7 +368,7 @@ void menu_option_root(void)
             menu_play_input_sound(2);
             result = -1;
         }
-        func_8002718c();
+        menu_draw_name_list();
         menu_draw_window(1, 9, cursor, confirm);
     }
 }
