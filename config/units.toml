@@ -706,16 +706,11 @@ image = "GAME.EXE"
 source = "src/game/menu_enter_mode.c"
 profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.func_80036f00"
-image = "GAME.EXE"
-source = "src/game/func_80036f00.c"
-profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80036f44"
+unit = "game.effect_pool"
 image = "GAME.EXE"
-source = "src/game/func_80036f44.c"
+source = "src/game/effect_pool.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

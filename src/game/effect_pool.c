@@ -40,6 +40,22 @@ extern void audio_play_spatial_range(
     s32 max_distance, s32 attenuation_distance);
 
 /* effect_pool_construct kind-dispatch jump table (kinds 0x04..0x30). */
+
+ADDRESS(0x80036f00, 0x44)
+char *effect_pool_find_free(void)
+{
+    KfEffectRecord *record = DAT_8009d040;
+    u16 i = 48;
+
+    do {
+        if (record->type == 0xff) {
+            return (char *)record;
+        }
+        record++;
+    } while (--i != 0);
+    return 0;
+}
+
 RODATA(0x80012c28, 0xb4)
 
 ADDRESS(0x80036f44, 0x82c)
