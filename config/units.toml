@@ -131,99 +131,9 @@ source = "src/game/player_death.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_8001564c"
-image = "GAME.EXE"
-source = "src/game/player_8001564c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80015f28"
-image = "GAME.EXE"
-source = "src/game/player_80015f28.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016058"
-image = "GAME.EXE"
-source = "src/game/player_80016058.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_8001627c"
-image = "GAME.EXE"
-source = "src/game/player_8001627c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_800166b4"
-image = "GAME.EXE"
-source = "src/game/player_800166b4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_800167e4"
-image = "GAME.EXE"
-source = "src/game/player_800167e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.player_80016a30"
 image = "GAME.EXE"
 source = "src/game/player_80016a30.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016b24"
-image = "GAME.EXE"
-source = "src/game/player_80016b24.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016bc0"
-image = "GAME.EXE"
-source = "src/game/player_80016bc0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016e24"
-image = "GAME.EXE"
-source = "src/game/player_80016e24.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016ee8"
-image = "GAME.EXE"
-source = "src/game/player_80016ee8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017040"
-image = "GAME.EXE"
-source = "src/game/player_80017040.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017a24"
-image = "GAME.EXE"
-source = "src/game/player_80017a24.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017a80"
-image = "GAME.EXE"
-source = "src/game/player_80017a80.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017cf8"
-image = "GAME.EXE"
-source = "src/game/player_80017cf8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017e3c"
-image = "GAME.EXE"
-source = "src/game/player_80017e3c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
