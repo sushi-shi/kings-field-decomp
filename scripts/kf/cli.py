@@ -156,6 +156,12 @@ def parser() -> argparse.ArgumentParser:
         help="validate or propose function/global semantic identities",
     )
     inventory_parser.add_argument("inventory_args", nargs=argparse.REMAINDER)
+    verify_parser = subs.add_parser(
+        "verify",
+        add_help=False,
+        help="cleanliness ratchet board and data-section matching vs retail",
+    )
+    verify_parser.add_argument("verify_args", nargs=argparse.REMAINDER)
     return root
 
 
@@ -173,6 +179,10 @@ def main(argv: list[str] | None = None) -> int:
         from scripts.kf.inventory import main as inventory_main
 
         return inventory_main(raw[1:])
+    if raw and raw[0] == "verify":
+        from scripts.kf.verify import main as verify_main
+
+        return verify_main(raw[1:])
     args = parser().parse_args(raw)
     try:
         if args.command == "init":

@@ -356,6 +356,25 @@ def print_status(
     return 0
 
 
+def _report_cleanliness() -> None:
+    """Print the cleanliness ratchet status - informational, never fatal.
+
+    The board is a ratchet enforced by `kf verify board --gate`; surfacing its
+    delta here lets a matcher see a crutch it just added without making the
+    shared build/check a hard failure (the orchestrator gates at integration).
+    """
+    try:
+        from scripts.kf.cleanliness import gate
+        findings = gate()
+    except Exception:  # noqa: BLE001 - a reporting aid must never break check
+        return
+    if findings:
+        print(f"cleanliness: {len(findings)} ratchet(s) above floor "
+              f"(run `kf verify board`); informational, not gating build")
+    else:
+        print("cleanliness: no ratcheted crutch metric above its committed floor")
+
+
 def check(
     images: Iterable[str] = IMAGE_LAYOUTS, *, strict: bool = False,
 ) -> int:
@@ -379,6 +398,7 @@ def check(
 
     if refresh_readme():
         print("README match-status block refreshed")
+    _report_cleanliness()
     if bad:
         reasons = []
         if failures:
