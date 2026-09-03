@@ -16,7 +16,7 @@ extern u32 pad_read();
 
 /* Save/load workers and the save-complete effect/audio hooks. */
 extern s32 menu_load_panel(void);
-extern s32 func_800286d4(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
+extern s32 menu_two_option_prompt(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
 extern u32 menu_load_item_texture(s32 arg0);
 extern void audio_stop_sequence_fade(void);
 
@@ -61,7 +61,7 @@ s32 menu_save_load_hub(void)
             if (result == 0)
                 result = -3;
         } else if (action == 1) {
-            result = func_800286d4(2, 3, cursor, 0);
+            result = menu_two_option_prompt(2, 3, cursor, 0);
             if (result == 0) {
                 menu_load_item_texture(0x3e6);
                 audio_stop_sequence_fade();

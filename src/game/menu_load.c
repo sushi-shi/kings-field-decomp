@@ -14,7 +14,7 @@ extern u32 pad_read();
 /* Save-catalogue / slot workers and the load effect hook. */
 extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
 extern s32 save_system_read_slot(s16 slot_id);
-extern s32 func_800286d4(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
+extern s32 menu_two_option_prompt(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
 extern u32 menu_load_item_texture(s32 arg0);
 
 /*
@@ -66,7 +66,7 @@ s32 menu_load_panel(void)
         }
 
         if (confirm == 1 && cursor != 3) {
-            result = func_800286d4(5, 4, cursor, (u32)summaries);
+            result = menu_two_option_prompt(5, 4, cursor, (u32)summaries);
             if (result == -1) {
                 result = -99;
             } else {
