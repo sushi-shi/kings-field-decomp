@@ -1535,7 +1535,7 @@ GAME.EXE	0x80057b6c	0x4	pending_game_state	global	load	s32	game_state	candidate	
 GAME.EXE	0x80057b72	0x2	DAT_80057b72	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b80	0x3	boss_death_loop_sound	unknown	load	SoundRef	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;sound_ref_play	periodic sound used by the boss death sequence; source linkage remains unresolved
 GAME.EXE	0x80057b84	0x4	audio_voice_slot_index	unknown	load	s32	audio	supported	data.tsv:direct-references;game_semantic_audio_spatial.tsv;asm;xrefs;retail-initial-value-9	managed sound-effect ring index advanced modulo ten before each voice; source linkage remains unresolved
-GAME.EXE	0x80057b98	0x4	debug_stop_flag	static	load	s32	debug	candidate	data.tsv:direct-references;asm;debug_stop	debug-stop toggle flag read and inverted by debug_stop; initial value zero
+GAME.EXE	0x80057b98	0x4	debug_stop_flag	global	load	s32	debug	candidate	data.tsv:direct-references;asm;debug_stop	debug-stop toggle flag read and inverted by debug_stop; initial value zero
 GAME.EXE	0x80057ba4	0x4	DAT_80057ba4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057bff	0x1	DAT_80057bff	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057c00	0x4	DAT_80057c00	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

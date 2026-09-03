@@ -35,7 +35,7 @@ extern void debug_print();
 RODATA(0x80012dd4, 0x10)
 
 DATA(0x80057b98, 0x4)
-static s32 debug_stop_flag = 0;
+s32 debug_stop_flag = 0;
 
 DATA(0x800598a8, 0x18)
 static char format_number_buffer[24];
@@ -47,7 +47,7 @@ extern char *format_pad_left(char *string, char pad, u8 width);
 ADDRESS(0x8003a7dc, 0x40)
 void debug_stop(void)
 {
-    debug_print("DEBUG STOP !!!");
+    debug_print("DEBUG STOP !!!\n");
     debug_stop_flag = debug_stop_flag == 0;
 }
 
