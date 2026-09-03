@@ -287,6 +287,18 @@ source = "src/game/tmd_project.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.render_enqueue_tmd"
+image = "GAME.EXE"
+source = "src/game/render_enqueue_tmd.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.render_enqueue_model"
+image = "GAME.EXE"
+source = "src/game/render_enqueue_model.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.render_enqueue"
 image = "GAME.EXE"
 source = "src/game/render_enqueue.c"
@@ -297,6 +309,12 @@ unit = "game.render_sprite"
 image = "GAME.EXE"
 source = "src/game/render_sprite.c"
 profile = "probe-gcc257-o2-nosched"
+
+[[unit]]
+unit = "game.render_map_cell"
+image = "GAME.EXE"
+source = "src/game/render_map_cell.c"
+profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.render_map_cells"
@@ -407,6 +425,12 @@ source = "src/game/menu_select.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_status_panel"
+image = "GAME.EXE"
+source = "src/game/menu_status_panel.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_item_drop"
 image = "GAME.EXE"
 source = "src/game/menu_item_drop.c"
@@ -419,9 +443,39 @@ source = "src/game/menu_config_panel.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_draw_stats_header"
+image = "GAME.EXE"
+source = "src/game/menu_draw_stats_header.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_draw_status_details"
+image = "GAME.EXE"
+source = "src/game/menu_draw_status_details.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8002718c"
+image = "GAME.EXE"
+source = "src/game/func_8002718c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_item_model_preview"
+image = "GAME.EXE"
+source = "src/game/menu_item_model_preview.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_item_detail"
 image = "GAME.EXE"
 source = "src/game/menu_item_detail.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_list_interact"
+image = "GAME.EXE"
+source = "src/game/menu_list_interact.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -437,9 +491,21 @@ source = "src/game/menu_draw_window.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_list_render"
+image = "GAME.EXE"
+source = "src/game/menu_list_render.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_two_option_dispatch"
 image = "GAME.EXE"
 source = "src/game/menu_two_option_dispatch.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_800292f8"
+image = "GAME.EXE"
+source = "src/game/func_800292f8.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -653,6 +719,12 @@ source = "src/game/func_80036f44.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.effect_map_collision"
+image = "GAME.EXE"
+source = "src/game/effect_map_collision.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.effect_update"
 image = "GAME.EXE"
 source = "src/game/effect_update.c"
@@ -674,6 +746,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.func_8003ac4c"
 image = "GAME.EXE"
 source = "src/game/func_8003ac4c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8003ce2c"
+image = "GAME.EXE"
+source = "src/game/func_8003ce2c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

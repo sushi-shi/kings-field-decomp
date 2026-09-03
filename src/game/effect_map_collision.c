@@ -1,0 +1,135 @@
+#include <kf/address.h>
+#include <kf/semantic_types.h>
+#include <kf/game.h>
+
+/* Per-attribute collision shape record in map_cell_attribute_height_table+0x200. */
+typedef struct KfCellHeightRecord {
+    s16 x_min;
+    s16 y_min;
+    s16 x_max;
+    s16 y_max;
+} KfCellHeightRecord;
+
+/* Switch jump table for the diagonal-wall cell shapes. */
+RODATA(0x80012ce0, 0x18)
+
+/*
+ * Probe whether a world position collides with the map geometry at its cell.
+ * Converts x/z to a 100x100 cell, rejects out-of-range cells and positions
+ * below the cell floor, then tests the cell's attribute-driven height/step
+ * shape and its collision-grid shape (flat, four diagonal half-cells, or the
+ * neighbour-aware corner cell 0).  A surviving hit is forwarded to
+ * collision_query_world with the flags selected from the active effect record;
+ * 0x10000 means "no collision".
+ */
+ADDRESS(0x80037850, 0x76c)
+u32 effect_map_collision(VECTOR *position, s32 radius)
+{
+    KfCellHeightRecord *records;
+    u8 *cg;
+    s32 x;
+    s32 z;
+    s32 subx;
+    s32 subz;
+    s32 y;
+    s32 floor;
+    s32 cell;
+    s32 height;
+    u8 attr;
+    u32 flags;
+
+    x = position->vx / 2000;
+    z = position->vz / 2000;
+    subz = (s16)(position->vz % 2000);
+    if ((x & 0xffff) > 99 || (z & 0xffff) > 99) {
+        return 0x10000;
+    }
+    cell = z * 100 + x;
+    y = position->vy;
+    floor = (u8)map_floor_height_grid[z][x] * -100;
+    if (floor < y) {
+        return 0x10000;
+    }
+    attr = map_cell_attribute_grid[z][x];
+    records = (KfCellHeightRecord *)((u8 *)map_cell_attribute_height_table + 0x200);
+    if (attr != 0xff) {
+        height = map_cell_attribute_height_table[attr];
+        if (height < 0) {
+            if (y < height + floor) {
+                return 0x10000;
+            }
+        } else if (floor + records[height].y_min <= y && y <= floor + records[height].y_max) {
+            u8 orient = map_cell_orientation_grid[z][x];
+
+            subx = (s16)(position->vx % 2000);
+            if (orient == 2) {
+                subx = 2000 - subx;
+            } else if (orient < 3) {
+                if (orient == 1) {
+                    subx = subz;
+                }
+            } else if (orient == 3) {
+                subx = 2000 - subz;
+            }
+            if (records[height].x_min <= subx && subx <= records[height].x_max) {
+                goto collide;
+            }
+        }
+    }
+
+    cg = &map_collision_grid[0][0];
+    switch (cg[cell]) {
+    case 0:
+        if (((cg[cell + 100] != 1 && cg[cell + 100] != 6) || position->vz % 2000 < 1000) &&
+            ((cg[cell - 100] != 1 && cg[cell - 100] != 6) || 1000 < position->vz % 2000) &&
+            ((cg[cell + 1] != 1 && cg[cell + 1] != 6) || position->vx % 2000 < 1000)) {
+            if (cg[cell - 1] != 1 && cg[cell - 1] != 6) {
+                return 0x10000;
+            }
+            if (1000 < position->vx % 2000) {
+                return 0x10000;
+            }
+        }
+        break;
+    case 2:
+        if (position->vx % 2000 + 1000 < position->vz % 2000) {
+            return 0x10000;
+        }
+        break;
+    case 3:
+        if (3000 < position->vx % 2000 + position->vz % 2000) {
+            return 0x10000;
+        }
+        break;
+    case 4:
+        if (position->vz % 2000 + 1000 < position->vx % 2000) {
+            return 0x10000;
+        }
+        break;
+    case 5:
+        if (position->vx % 2000 + position->vz % 2000 < 1000) {
+            return 0x10000;
+        }
+        break;
+    }
+
+collide:
+    {
+        u8 kind = *(u8 *)DAT_8009db84 & 3;
+
+        if (kind == 2) {
+            flags = 0x71;
+        } else if (kind < 3) {
+            if (kind != 1) {
+                return 1;
+            }
+            flags = 0xe1;
+        } else {
+            if (kind != 3) {
+                return 3;
+            }
+            flags = 0x61;
+        }
+    }
+    return collision_query_world(position->vx, position->vy, position->vz, radius, 0, flags);
+}
