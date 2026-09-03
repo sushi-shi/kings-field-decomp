@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern s32 map_floor_height_at_position(struct KfVec3i *position);
-
 #define ACTOR_SLOT_FREE 0xff
 #define MAP_TILE_SIZE 2000
 
@@ -70,7 +68,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->lifecycle = 0;
             actor->position.vz = actor->tile_z * MAP_TILE_SIZE + actor->local_z;
             actor->position.vx = actor->tile_x * MAP_TILE_SIZE + actor->local_x;
-            actor->position.vy = map_floor_height_at_position((struct KfVec3i *)&actor->position);
+            actor->position.vy = map_floor_height_at_position(&actor->position);
             actor->cell_x = actor->tile_x;
             actor->cell_z = actor->tile_z;
         } else {
@@ -79,4 +77,16 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
         }
         placements++;
     } while (actor++, count-- != 0);
+}
+
+ADDRESS(0x80030a6c, 0x2c)
+void actor_definitions_load(const KfActorDefinition *definitions)
+{
+    const u32 *source = (const u32 *)definitions;
+    u32 *destination = (u32 *)actor_state.definitions;
+    s32 count = 0x1c8;
+
+    do {
+        *destination++ = *source++;
+    } while (--count != 0);
 }

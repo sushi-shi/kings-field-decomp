@@ -507,12 +507,6 @@ source = "src/game/actor_pool.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.actor_definitions"
-image = "GAME.EXE"
-source = "src/game/actor_definitions.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.map"
 image = "GAME.EXE"
 source = "src/game/map.c"

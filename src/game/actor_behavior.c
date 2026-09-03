@@ -14,9 +14,7 @@ extern s32 actor_distance_to_point(
     s32 point_height);
 extern void actor_try_attack_player();
 extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
-extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern u8 *effect_pool_construct();
-extern s32 map_floor_height_at_position(const VECTOR *position);
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s *direction);
 extern s32 rand(void);
@@ -322,7 +320,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
         }
         return 1;
     }
-    drop = target.vy - map_floor_height_at_position((struct KfVec3i *)&target);
+    drop = target.vy - map_floor_height_at_position(&target);
     if (drop < 0) {
         if (drop < -600) {
             threshold = 0x4000;

@@ -17,7 +17,6 @@ extern void pitch_yaw_to_forward_vector(
 extern KfActor *actor_pool_find_target_in_cone(
     const struct KfVec3i *origin, s32 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
-extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void player_use_item();
 
 ADDRESS(0x80018880, 0x1a1c)

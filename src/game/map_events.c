@@ -24,7 +24,6 @@
 /* Start of the persistent world-state block (save_system world_state base). */
 extern u32 map_world_state_base;
 
-extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);

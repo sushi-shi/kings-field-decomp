@@ -5,8 +5,6 @@
 extern void render_frame(s32 first, s32 second);
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
-/* Called with the cell pair only; its third candidate parameter is not passed here. */
-extern void collision_adjust_cell_occupancy(s32 cell_x, s32 cell_z);
 
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)
@@ -53,13 +51,11 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
 
     do {
         if (exhausted == 1) {
+        mark_free:
             event->state = 0xff;
         } else {
             event->state = definitions->state;
-            if (event->state == 0xff) {
-                exhausted = 1;
-                event->state = 0xff;
-            } else {
+            if (event->state != 0xff) {
                 event->kind = definitions->kind;
                 event->variant = definitions->variant;
                 event->tag = definitions->tag;
@@ -87,7 +83,10 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->rotation_phase = 0;
                 event->rotation_target = 0;
                 event->unknown_10 = 0;
-                collision_adjust_cell_occupancy(event->cell_x, event->cell_z);
+                collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
+            } else {
+                exhausted = 1;
+                goto mark_free;
             }
         }
         event++;

@@ -7,7 +7,6 @@ RODATA(0x80012738, 0x150)
 extern KfEffectRecord DAT_8009d040[];
 /* Effect spawner called with five or six arguments; declared without a prototype. */
 extern KfEffectRecord *effect_pool_construct();
-extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 
 /*
  * Fills the 190 pool records from the sentinel-terminated placement list:

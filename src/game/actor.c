@@ -11,9 +11,6 @@ extern u8 DAT_8009d040[];
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
-/* Unresolved map-cell helpers: floor height for a position, and cell marking. */
-extern s32 map_floor_height_at_position(struct KfVec3i *position);
-extern void collision_adjust_cell_occupancy(s32 cell_x, s32 cell_z, char value);
 /* Callers consume the angle unmasked, so the result is passed as a plain int. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
@@ -180,7 +177,7 @@ void actor_initialize_current(void)
     world = coordinate * 2000;
     coordinate = actor->local_z;
     position.z = world + coordinate;
-    position.y = map_floor_height_at_position(&position);
+    position.y = map_floor_height_at_position((const VECTOR *)&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
     actor_initialize(actor);
@@ -203,7 +200,7 @@ void actor_initialize_slot(u16 actor_index)
     world = coordinate * 2000;
     coordinate = actor->local_z;
     position.z = world + coordinate;
-    position.y = map_floor_height_at_position(&position);
+    position.y = map_floor_height_at_position((const VECTOR *)&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
     actor_initialize(actor);

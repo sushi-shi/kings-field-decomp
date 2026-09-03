@@ -37,7 +37,6 @@
 
 extern KfEffectRecord *effect_pool_construct();
 extern void render_frame(VECTOR *position, SVECTOR *rotation);
-extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)

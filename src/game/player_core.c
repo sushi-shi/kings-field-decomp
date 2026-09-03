@@ -212,9 +212,6 @@ void player_clear_motion(void)
     player_state.motion_state.strafe_velocity = 0;
 }
 
-
-extern void collision_adjust_cell_occupancy(s32 object, s32 arg1, char arg2);
-
 ADDRESS(0x80016ee8, 0x158)
 void player_sync_position_to_map(void)
 {
