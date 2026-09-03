@@ -13,9 +13,6 @@ typedef struct MenuLabelCell {
 
 extern MenuLabelCell DAT_80058494[];
 
-extern u32 cd_file_load_table_entry(void **asset_out, s32 id);
-extern void tmd_register(u16 slot, void *asset);
-
 /*
  * Header block that precedes a menu list on the frame: two layout shorts, the
  * ten-glyph label copied from the (row, col) table, and the window/cursor

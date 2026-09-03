@@ -59,6 +59,7 @@ extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut, u8
 extern void tmd_prepare_primitive_indices(void);
 extern void tmd_project_vertices(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
+extern void tmd_register(u16 index, void *asset);
 extern void tmd_select(u16 index);
 extern void tmd_select_object_vertices(u16 index);
 extern void tmd_set_current_vertices(SVECTOR *vertices);

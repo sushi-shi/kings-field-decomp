@@ -164,7 +164,6 @@ extern u16 map_object_effect_sequence_180;
 extern KfMapObjectState map_object_state;
 extern char map_resource_path[12];
 extern u8 *map_variant_asset_buffer;
-extern const char map_variant_filename_template[9];
 extern u32 memory_allocation_stack[17];
 extern u8 *memory_arena_cursor;
 extern u8 *memory_arena_end;

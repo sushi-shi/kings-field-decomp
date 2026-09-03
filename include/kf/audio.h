@@ -13,6 +13,7 @@ extern void audio_initialize(void);
 extern void audio_shutdown(void);
 extern void audio_load_vab(u8 *vab_header, u8 *vab_body);
 extern void audio_close_vab(void);
+extern void audio_play_current_map_sequence(void);
 extern void audio_play_map_sequence(u8 sequence_id);
 extern void audio_play_voice(
     s16 vab_id, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume);

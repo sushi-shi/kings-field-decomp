@@ -43,6 +43,7 @@ extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
 extern void *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(s32 floor);
+extern void map_resources_load(s32 floor, s32 map_variant);
 extern void map_variant_assets_load(void);
 
 #endif

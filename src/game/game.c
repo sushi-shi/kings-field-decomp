@@ -9,7 +9,6 @@ extern s32 OpenEvent(u32 descriptor, s32 spec, s32 mode, void (*handler)(void));
 extern s32 EnableEvent(s32 event);
 extern s32 CloseEvent(s32 event);
 
-extern void memory_set_allocation_mode(s32 arg0);
 extern void display_show_error_screen(char object);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);

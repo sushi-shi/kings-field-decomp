@@ -31,8 +31,6 @@ extern u32 map_world_state_base;
 extern u8 DAT_800652a8[240];
 
 extern int rand(void);
-extern void map_resources_load(u8 floor, u8 map_variant);
-
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
 RODATA(0x80012bfc, 0x14)
 

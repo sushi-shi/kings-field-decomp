@@ -21,7 +21,7 @@ GAME.EXE	0x80012178	0x978	0xb	string	byte-pattern		ascii	investigation:string-ce
 GAME.EXE	0x80012183	0x983	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80012184	0x984	0xb	string	byte-pattern		ascii	investigation:string-census	escaped text: COM\\COM.DAT
 GAME.EXE	0x8001218f	0x98f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80012190	0x990	0x9	string	direct-references	map_variant_filename_template	ascii	game_semantic_map_resources.tsv	escaped text: CHR0.MIM; complete nine-byte copy includes the trailing NUL before patching its variant digit
+GAME.EXE	0x80012190	0x990	0x9	string	byte-pattern		ascii	game_semantic_map_resources.tsv	escaped text: CHR0.MIM; literal inside the resources TU RODATA claim; complete nine-byte copy includes the trailing NUL before patching its variant digit
 GAME.EXE	0x80012199	0x999	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x8001219c	0x99c	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: MIXA.DAT
 GAME.EXE	0x800121a4	0x9a4	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

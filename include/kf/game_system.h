@@ -46,6 +46,10 @@ extern void asset_aux_block_load(const u32 *source);
 extern void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive);
 extern void asset_registry_select(u16 index);
 extern void asset_registry_set(u16 index, void *asset);
+extern s32 cd_file_load_allocated(
+    void **destination, const char *relative_path);
+extern s32 cd_file_load_into(void *destination, const char *relative_path);
+extern s32 cd_file_load_table_entry(void **destination, s32 index);
 extern void common_resources_load(void);
 extern int fixed6_ratio_step(int value, int divisor);
 extern s32 fixed_vector2_length(s32 x, s32 y);
@@ -63,6 +67,7 @@ extern void game_state_initialize(void);
 extern void *memory_allocate(s32 size);
 extern void memory_allocation_reset(void);
 extern void memory_capture_system_heap_start(void);
+extern void memory_set_allocation_mode(s32 mode);
 extern s32 memory_card_check_or_format(s16 allow_format);
 extern void memory_card_initialize(void);
 extern void memory_card_shutdown_events(void);

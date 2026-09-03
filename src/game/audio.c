@@ -9,7 +9,6 @@ RODATA(0x80012a14, 0x40)
 /* Unresolved helpers: a file loader, a sequence opener/stopper, and a frame
  * wait.  SsInit/SsSetTableSize come from LIBSND.H (Psy-Q, now vendored). */
 extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
-extern u32 cd_file_load_into(void *destination, const char *path);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
 /* Declared with an int result here: retail uses the returned angle unmasked. */

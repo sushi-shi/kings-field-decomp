@@ -16,7 +16,6 @@
 #include <kf/game_actor.h>
 #include <kf/game_menu.h>
 #include <kf/audio.h>
-#include <kf/audio_play_current_map_sequence.h>
 #include <kf/audio_sequence_envelope.h>
 #include <kf/audio_sequence_parse.h>
 #include <kf/game_player.h>

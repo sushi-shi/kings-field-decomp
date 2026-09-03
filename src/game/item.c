@@ -8,7 +8,6 @@ extern void *memset();
 extern void *memcpy();
 extern void exit(s32 status);
 
-extern s32 cd_file_load_allocated(void **data_out, const char *relative_path);
 /* libcd ISO9660 CdSearchFile; reclassified vendored (see functions_vendored.tsv). */
 extern void *CdSearchFile(void *slot, char *filename);
 extern KfCdFileEntry cd_file_table[80];

@@ -13,9 +13,6 @@ extern s16 DAT_80059400[];
  * the leading double-buffered POLY_FT4 rows. */
 extern POLY_FT4 DAT_800580e8[2][4];
 
-/* CD/TIM asset helpers. */
-extern s32 cd_file_load_into(void *destination, const char *relative_path);
-
 /* Shared menu primitives: frame begin/flush, hub background, list-panel
  * background, input sound cue, and the vsync/pad poll. */
 extern u32 pad_read();

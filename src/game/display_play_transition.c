@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern s32 cd_file_load_into(void *destination, char *relative_path);
-
 /* Screen-quad descriptor blocks for the faded full-screen image. They keep
  * sub-word alignment so the retail copies them with unaligned word moves. */
 typedef struct {

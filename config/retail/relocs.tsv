@@ -2893,7 +2893,7 @@ GAME.EXE	0x8001b3b8	0x9bb8		mips26	reachable-code	0x8005036c	load	strcpy	jal		co
 GAME.EXE	0x8001b3c0	0x9bc0	0x8001b3c4	mips_hi16_lo16	reachable-code	0x80055af0	load	map_resource_path	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b3c8	0x9bc8		mips26	reachable-code	0x8001acf0	load	cd_file_load_allocated	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b420	0x9c20	0x8001b424	mips_hi16_lo16	reachable-code	0x80055af3	load	map_resource_path	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_map_resources
-GAME.EXE	0x8001b428	0x9c28	0x8001b42c	mips_hi16_lo16	reachable-code	0x80012190	load	map_variant_filename_template	lui+addiu	a2	paired-reviewed	reviewed	manual:game_semantic_map_resources
+GAME.EXE	0x8001b428	0x9c28	0x8001b42c	mips_hi16_lo16	reachable-code	0x80012190	load		lui+addiu	a2	paired-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b458	0x9c58	0x8001b45c	mips_hi16_lo16	reachable-code	0x8009ddac	bss	map_variant_asset_buffer	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b460	0x9c60	0x8001b464	mips_hi16_lo16	reachable-code	0x800a078c	bss	player_state	lui+lbu	v0	paired-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b470	0x9c70	0x8001b474	mips_hi16_lo16	reachable-code	0x80055af6	load	map_resource_path	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_map_resources

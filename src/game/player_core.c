@@ -14,7 +14,6 @@
 RODATA(0x80012030, 0x18)
 
 /* "...\0" image path whose two decimal digits at [9] and [10] select the weapon. */
-extern s32 cd_file_load_into(u8 *buffer, const char *path);
 extern void exit(s32 status);
 
 /* Stores the item id into one of the six armor slots, re-resolves the five armor record pointers, and recalculates. */

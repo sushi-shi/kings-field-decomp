@@ -53,7 +53,6 @@ extern u32 map_world_state_base[];
 extern u8 DAT_800652a8[];
 extern KfMagicRecord magic_records[24];
 
-extern s32 cd_file_load_into(void *destination, const char *relative_path);
 extern s32 pad_read(s32 mode);
 
 void memory_card_clear_events(void);

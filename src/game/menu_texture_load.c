@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern s32 cd_file_load_into(void *destination, const char *relative_path);
-
 /* The "TIM\Mnnn." disc-name template literal lives in this unit's rodata. */
 RODATA(0x80012350, 0xc)
 

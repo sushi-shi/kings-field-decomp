@@ -25,7 +25,7 @@ CdlLOC cd_read_location = {0, 0, 0, 0};
 
 /* Loads \KF\<relative_path>;1 into a fresh arena allocation. */
 ADDRESS(0x8001acf0, 0x170)
-s32 cd_file_load_allocated(void **destination, char *relative_path)
+s32 cd_file_load_allocated(void **destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
     s32 attempt;
@@ -96,7 +96,7 @@ s32 cd_file_load_table_entry(void **destination, s32 index)
 
 /* Loads \KF\<relative_path>;1 into DESTINATION. */
 ADDRESS(0x8001af9c, 0x164)
-s32 cd_file_load_into(void *destination, char *relative_path)
+s32 cd_file_load_into(void *destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
     s32 attempt;

@@ -12,6 +12,7 @@
 
 #include <kf/semantic_types.h>
 
+extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
 extern s32 item_use_confirm(s32 arg);
 extern void menu_add_frame_quad(void);

@@ -555,7 +555,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x8001B108]["target_name"], "OpenTIM")
         self.assertEqual(
             by_site[0x8001B428]["target_name"],
-            "map_variant_filename_template",
+            "",
         )
         self.assertEqual(
             by_site[0x8001B460]["target_name"],
