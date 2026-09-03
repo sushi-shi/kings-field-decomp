@@ -42,8 +42,6 @@ extern void actor_update_current_action(void);
 extern void actor_update_effect_action(s32 action);
 extern u32 effect_map_collision(VECTOR *position, s32 param);
 extern char *effect_pool_find_free(void);
-extern void effect_pool_reset(void);
-extern void effect_pool_sweep(void);
 extern void effect_update_dispatch(void);
 extern void magic_cast(void);
 

@@ -5,7 +5,6 @@
 
 extern s32 cd_file_load_allocated(void **destination, char *relative_path);
 extern void player_weapon_load_records_and_mirror_angles(const KfWeaponRecord *source);
-extern void magic_load_records(void *block);
 
 extern u8 DAT_80065be8[3264];
 

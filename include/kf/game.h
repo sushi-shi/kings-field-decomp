@@ -16,5 +16,7 @@
 #include <kf/game_menu.h>
 #include <kf/game_audio.h>
 #include <kf/game_player.h>
+#include <kf/pool.h>
+#include <kf/magic.h>
 
 #endif

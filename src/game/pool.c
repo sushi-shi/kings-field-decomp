@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
 #include <kf/game.h>
+#include <kf/pool.h>
 
 /*
  * KfPoolRecord lifecycle: the twelve-entry pool that caches per-instance

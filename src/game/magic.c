@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game.h>
+#include <kf/magic.h>
 
 extern KfEffectRecord DAT_8009d040[];
 extern KfMagicRecord magic_records[24];
