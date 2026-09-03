@@ -443,6 +443,12 @@ source = "src/game/menu_two_option_prompt.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_draw_window"
+image = "GAME.EXE"
+source = "src/game/menu_draw_window.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_two_option_dispatch"
 image = "GAME.EXE"
 source = "src/game/menu_two_option_dispatch.c"
@@ -455,9 +461,21 @@ source = "src/game/menu_sprite_blit.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_draw_number"
+image = "GAME.EXE"
+source = "src/game/menu_draw_number.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_window_backdrop"
 image = "GAME.EXE"
 source = "src/game/menu_window_backdrop.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_frame_begin"
+image = "GAME.EXE"
+source = "src/game/menu_frame_begin.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
