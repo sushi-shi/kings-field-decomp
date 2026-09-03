@@ -101,18 +101,6 @@ source = "src/game/matrix_rotation.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.vector_math"
-image = "GAME.EXE"
-source = "src/game/vector_math.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.fixed_vector2"
-image = "GAME.EXE"
-source = "src/game/fixed_vector2.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.player_weapon"
 image = "GAME.EXE"
 source = "src/game/player_weapon.c"
@@ -356,24 +344,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.notify_queue"
 image = "GAME.EXE"
 source = "src/game/notify_queue.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8001fae4"
-image = "GAME.EXE"
-source = "src/game/func_8001fae4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.notify_effect"
-image = "GAME.EXE"
-source = "src/game/notify_effect.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8001fdc8"
-image = "GAME.EXE"
-source = "src/game/func_8001fdc8.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
