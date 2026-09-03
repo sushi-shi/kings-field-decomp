@@ -54,6 +54,12 @@ source = "src/game/sprite_add_ft4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.func_800144d4"
+image = "GAME.EXE"
+source = "src/game/func_800144d4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.func_80014674"
 image = "GAME.EXE"
 source = "src/game/func_80014674.c"
@@ -321,6 +327,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.map_resources_load"
 image = "GAME.EXE"
 source = "src/game/map_resources_load.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8001b7b0"
+image = "GAME.EXE"
+source = "src/game/func_8001b7b0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -753,6 +765,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.func_8003a244"
 image = "GAME.EXE"
 source = "src/game/func_8003a244.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8003a2a0"
+image = "GAME.EXE"
+source = "src/game/func_8003a2a0.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
