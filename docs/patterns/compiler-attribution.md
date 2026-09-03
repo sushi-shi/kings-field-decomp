@@ -242,25 +242,23 @@ Ties keep the most-attributed profile (`-mcpu=r2000` preferred, then `plain`).
 A profile that merely raises a fuzzy % without reaching a new EXACT, or that
 trades one exact for another, is rejected.
 
-The original sweep reported three flipped units. A later provider audit proved
+The original sweep reported three flipped units. Later provider audits proved
 that `game.audio_sequence_track` reconstructed five `LIBSND.LIB` routines from
-`SSPLAY.OBJ` and `STOP.OBJ`; that unit is now excluded rather than treated as
-game compiler evidence. The corrected game-only result is two units and
-**GAME exact 265 → 267 (+2)**, with no regressions in any image:
+`SSPLAY.OBJ` and `STOP.OBJ`, while `game.audio_sequence` reconstructed the
+`SSOPEN.OBJ` public openers. Both units are now excluded rather than treated as
+game compiler evidence. The corrected game-only result is one unit and
+**GAME exact 265 → 266 (+1)**, with no regressions in any image:
 
 | unit | old profile | new profile | exacts | functions flipped |
 | --- | --- | --- | --- | --- |
 | `game.render_sprite` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-nosched` | 0/1 → 1/1 (+1) | `func_8001e480` (`sprite_add_ft4` body) |
-| `game.audio_sequence` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-plain` | 0/2 → 1/2 (+1) | `func_800468d8` |
 
 `render_sprite` reaches exact under both `nosched` and `plain-nosched`;
 `nosched` is kept because it retains the attributed `-mcpu=r2000` and adds only
-the documented scheduler-off lever. The `audio_sequence` unit matches retail's
-*unscheduled* frame/load order — the same shape `pad` needs — and reaches it
-under plain `-O2`, not under any `-mcpu` variant. The former LIBSND unit supplies
-no evidence about the compiler used for game-owned translation units.
+the documented scheduler-off lever. The former LIBSND units supply no evidence
+about the compiler used for game-owned translation units.
 
-The remaining **45 units did not move under any scheduling model** (kept
+The remaining surveyed game units did not move under any scheduling model (kept
 `probe-gcc257-o2-g0`). This is itself attribution evidence: the residue ceiling
 is not a global `-mcpu` on/off switch. The scheduling model is a genuine per-TU
 discriminator for a small set of units, but most residues are a deeper

@@ -607,18 +607,6 @@ source = "src/game/func_80045f7c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.audio_sequence"
-image = "GAME.EXE"
-source = "src/game/audio_sequence.c"
-profile = "probe-gcc257-o2-plain"
-
-[[unit]]
-unit = "game.audio_sequence_parse"
-image = "GAME.EXE"
-source = "src/game/audio_sequence_parse.c"
-profile = "probe-gcc257-o2-plain"
-
-[[unit]]
 unit = "game.audio_sequence_tick"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_tick.c"
@@ -628,12 +616,6 @@ profile = "probe-gcc257-o2-plain"
 unit = "game.audio_sequence_envelope"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_envelope.c"
-profile = "probe-gcc257-o2-plain"
-
-[[unit]]
-unit = "game.audio_sequence_reset"
-image = "GAME.EXE"
-source = "src/game/audio_sequence_reset.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]

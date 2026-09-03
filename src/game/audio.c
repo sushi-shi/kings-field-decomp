@@ -6,8 +6,8 @@
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
 
-/* Unresolved helpers: a file loader, a sequence opener/closer, and a frame
- * wait.  SsInit/SsSetTableSize come from LIBSND.H (Psy-Q, now vendored). */
+/* Unresolved helpers: a VAB-head loader and the game file loader.
+ * Sequence operations come from LIBSND.H (Psy-Q, now vendored). */
 extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
@@ -65,8 +65,8 @@ void audio_play_map_sequence(u8 sequence_id)
         path[6] = sequence_id + '0';
         path[1] = player_state.progress_state.current_floor + '0';
         if (cd_file_load_into(audio_state.sequence_buffer, path) == 0) {
-            audio_state.sequence_id =
-                func_800468d8(audio_state.sequence_buffer, audio_state.active_vab_id);
+            audio_state.sequence_id = SsSeqOpen(
+                (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);
             SsSeqSetVol(audio_state.sequence_id, 0x4b, 0x4b);
             SsSeqPlay(audio_state.sequence_id, 1, 0);
             audio_state.sequence_active = 1;
@@ -86,7 +86,7 @@ void audio_stop_sequence_fade(void)
             SsSeqSetVol(audio_state.sequence_id, volume, volume);
         } while (--volume >= 0);
         SsSeqStop(audio_state.sequence_id);
-        func_8004b6e0(audio_state.sequence_id);
+        SsSeqClose(audio_state.sequence_id);
         audio_state.sequence_active = 0;
     }
 }
@@ -106,7 +106,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
         SsSetMVol(0, 0);
         SsSeqSetVol(audio_state.sequence_id, 0, 0);
         SsSeqStop(audio_state.sequence_id);
-        func_8004b6e0(audio_state.sequence_id);
+        SsSeqClose(audio_state.sequence_id);
         audio_state.sequence_active = 0;
     }
 }
@@ -115,7 +115,7 @@ ADDRESS(0x80032c78, 0x38)
 void audio_shutdown(void)
 {
     audio_close_vab();
-    func_8004b6e0(audio_state.sequence_id);
+    SsSeqClose(audio_state.sequence_id);
     SsEnd();
 }
 

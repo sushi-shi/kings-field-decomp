@@ -13,17 +13,17 @@ KFIII executable contributes to this list.
 | image | Release 2.5 exact object | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 185 | 143 | 4 | 58 | 52 | 442 |
-| `OPEN.EXE` | 184 | 143 | 4 | 58 | 37 | 426 |
-| **total** | **377** | **286** | **8** | **116** | **89** | **876** |
+| `GAME.EXE` | 186 | 144 | 114 | 58 | 51 | 553 |
+| `OPEN.EXE` | 184 | 143 | 103 | 58 | 37 | 525 |
+| **total** | **378** | **287** | **217** | **116** | **88** | **1,086** |
 
-The 876 rows comprise 862 named functions and 14 anonymous internal functions
-whose containing Sony object is known. Provider counts are: 264 `LIBGTE`, 192
-`LIBGPU`, 128 `LIBCD`, 121 `LIBSND`, 93 `LIBAPI`, 62 `LIBSPU`, four startup
-functions attributed to `NONE2.OBJ`, two each from `LIBSN` and `LIBETC`, and
-eight fully fixed `memcpy` copies whose exact member remains ambiguous across
-`LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party library has been
-identified, so none is claimed in the TSV.
+The 1,086 rows comprise 1,060 named functions and 26 anonymous internal
+functions whose containing Sony object is known. Provider counts are: 275
+`LIBGTE`, 230 `LIBSND`, 208 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
+34 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
+`LIBSN`, and eight fully fixed `memcpy` copies whose exact member remains
+ambiguous across `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party
+library has been identified, so none is claimed in the TSV.
 
 These rows are an exclusion boundary as well as attribution evidence.
 `kf-delink` may carve them to preserve the linked executable model and resolve
@@ -90,14 +90,17 @@ encodings differ from pinned Release 2.5. They therefore use the explicit
 `sdk-lineage-supported` channel and do not claim an exact SDK revision.
 
 The same confidence channel now covers `LIBSND/VMANAGER`'s four
-`SsUtKeyOn`/`SsUtKeyOff` rows and `LIBGPU/VSYNC`'s four public/private rows.
-The VMANAGER names combine exact GAME/OPEN instruction shapes with archive
-order, header prototypes, and neighboring exact anchors. The two retail VSYNC
-functions per overlay preserve every instruction shape, implement the public
-`VSync(int mode)` behavior plus its private hardware/root-counter worker, carry
-the same `vsync.c` revision string, and occupy the expected library sequence.
-Their exact Release 2.5 object boundaries differ, so none is advertised as an
-exact archive match.
+`SsUtKeyOn`/`SsUtKeyOff` rows, twelve `LIBSND` sequence open/init/close rows,
+and `LIBGPU/VSYNC`'s four public/private rows. The VMANAGER names combine exact
+GAME/OPEN instruction shapes with archive order, header prototypes, and
+neighboring exact anchors. `SSOPEN.OBJ`, `SEPINIT.OBJ`, `SEQINIT.OBJ`, and
+`SSCLOSE.OBJ` provide the sequence symbols, order, local data XREFs, and public
+prototypes; both overlays preserve every instruction shape. The two retail
+VSYNC functions per overlay likewise preserve every instruction shape,
+implement the public `VSync(int mode)` behavior plus its private hardware/
+root-counter worker, carry the same `vsync.c` revision string, and occupy the
+expected library sequence. Their exact Release 2.5 object boundaries differ,
+so none is advertised as an exact archive match.
 
 The exact object spans also establish a partial final linked order. The full
 per-image placement tables, boundaries, gaps, and contiguous chains are kept in
@@ -122,7 +125,14 @@ What has been tested is narrower:
 | Is this MSVC incremental RVA behaviour? | No. Reordering direct inputs changes addresses, while no corresponding incremental-link metadata or padding mechanism has been identified or used by the tooling. | Treat the MSVC analogy as rejected, not as a matching rule. |
 
 `config/evidence/overlay_lineage.tsv` captures an observed stronger case. A
-contiguous 17-function audio-related chain appears in both `GAME.EXE` and
+contiguous four-function sequence-open/init chain appears in both overlays at
+the constant `0x2022c` delta. Across 900 instructions, every instruction keeps
+the same opcode/register shape and 844 words are identical before masking
+linked immediates. Archive symbols and XREFs identify the chain as
+`SsSeqOpen`, `SsSepOpen`, `InitSoundSep`, and `InitSoundSeq`; the corrected OPEN
+`SsSepOpen` entry at `0x8002675c` includes its hoisted `_snd_openflag` load.
+
+A separate contiguous 17-function audio-related chain appears in both `GAME.EXE` and
 `OPEN.EXE` with the same sizes and a constant `0x2022c` address delta. Across
 1,570 instructions, 1,570 preserve the same opcode/register shape and 1,396 are
 word-identical before masking linked immediates. Run the executable-backed and
@@ -156,6 +166,11 @@ version-skewed retail revision. `STOP.OBJ` then exports `SsSeqStop`,
 `SsSepStop`, and internal `Snd_stop` in the same order, with matching public
 signatures and stop/key-off behavior. Those facts support provider ownership
 without claiming that the pinned object bytes are exact.
+
+The final two rows of that chain are the consecutive, equal-sized exports from
+`SSCLOSE.OBJ`: `SsSeqClose` and `SsSepClose`. Their official prototypes,
+key-off/reset behavior, `_snd_openflag`/`_snd_seq_t_max`/`_ss_score` XREFs, and
+complete cross-overlay shapes support the same provider verdict.
 
 The FID pass specifically prevents the earlier overreach later in the chain:
 Release 2.5

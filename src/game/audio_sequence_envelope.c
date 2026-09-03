@@ -7,7 +7,7 @@
  * volume fade-in state machine (flag 0x10); audio_sequence_track_key_off keys one track off
  * (flag 0x2); func_8004b3f4 clears the key-state byte and flag 0x100;
  * audio_sequence_pitch_slide advances the pitch/portamento slide (flags 0x40/0x80).  All
- * index DAT_800a06e0[sequence][track]; the row pointer is reloaded from the
+ * index _ss_score[sequence][track]; the row pointer is reloaded from the
  * global on each field access because a store through the record could alias
  * the pointer table.
  */
@@ -22,15 +22,15 @@ void audio_sequence_fade_in(s16 sequence, s16 track)
     u16 vr;
     int period;
 
-    DAT_800a06e0[sequence][track].field_10--;
-    period = DAT_800a06e0[sequence][track].field_14;
+    _ss_score[sequence][track].field_10--;
+    period = _ss_score[sequence][track].field_14;
     if (period > 0) {
-        if (DAT_800a06e0[sequence][track].field_10 % period != 0) {
+        if (_ss_score[sequence][track].field_10 % period != 0) {
             goto tail;
         }
-        if (DAT_800a06e0[sequence][track].field_06 > 0) {
-            DAT_800a06e0[sequence][track].field_08--;
-            if (DAT_800a06e0[sequence][track].field_08 < 0) {
+        if (_ss_score[sequence][track].field_06 > 0) {
+            _ss_score[sequence][track].field_08--;
+            if (_ss_score[sequence][track].field_08 < 0) {
                 SpuVmSetSeqVol(sequence, 0x7f, 0x7f, 0);
                 goto clear_flag;
             }
@@ -42,9 +42,9 @@ void audio_sequence_fade_in(s16 sequence, s16 track)
             SpuVmSetSeqVol(sequence, 0x7f, 0x7f, 0);
             goto clear_flag;
         }
-        if (DAT_800a06e0[sequence][track].field_06 < 0) {
-            DAT_800a06e0[sequence][track].field_08++;
-            if (DAT_800a06e0[sequence][track].field_08 > 0) {
+        if (_ss_score[sequence][track].field_06 < 0) {
+            _ss_score[sequence][track].field_08++;
+            if (_ss_score[sequence][track].field_08 > 0) {
                 SpuVmSetSeqVol(sequence, 0, 0, 0);
                 goto clear_flag;
             }
@@ -58,14 +58,14 @@ void audio_sequence_fade_in(s16 sequence, s16 track)
         }
         goto refresh;
     } else {
-        if (DAT_800a06e0[sequence][track].field_06 > 0) {
-            DAT_800a06e0[sequence][track].field_08 += period;
+        if (_ss_score[sequence][track].field_06 > 0) {
+            _ss_score[sequence][track].field_08 += period;
             SpuVmGetSeqVol(sequence, &vl, &vr);
-            if (DAT_800a06e0[sequence][track].field_08 < 0) {
+            if (_ss_score[sequence][track].field_08 < 0) {
                 SpuVmSetSeqVol(sequence, 0x7f, 0x7f, 0);
                 goto clear_flag;
             }
-            period = DAT_800a06e0[sequence][track].field_14;
+            period = _ss_score[sequence][track].field_14;
             if ((int)vl - period < 128 && (int)vr - period < 128) {
                 SpuVmSetSeqVol(sequence, vl - period, vr - period, 0);
                 goto refresh;
@@ -73,14 +73,14 @@ void audio_sequence_fade_in(s16 sequence, s16 track)
             SpuVmSetSeqVol(sequence, 0x7f, 0x7f, 0);
             goto clear_flag;
         }
-        if (DAT_800a06e0[sequence][track].field_06 < 0) {
-            DAT_800a06e0[sequence][track].field_08 -= period;
+        if (_ss_score[sequence][track].field_06 < 0) {
+            _ss_score[sequence][track].field_08 -= period;
             SpuVmGetSeqVol(sequence, &vl, &vr);
-            if (DAT_800a06e0[sequence][track].field_08 > 0) {
+            if (_ss_score[sequence][track].field_08 > 0) {
                 SpuVmSetSeqVol(sequence, 0, 0, 0);
                 goto clear_flag;
             }
-            period = DAT_800a06e0[sequence][track].field_14;
+            period = _ss_score[sequence][track].field_14;
             if ((int)vl >= -period && (int)vr >= -period) {
                 SpuVmSetSeqVol(sequence, vl + period, vr + period, 0);
                 goto refresh;
@@ -92,81 +92,81 @@ void audio_sequence_fade_in(s16 sequence, s16 track)
     }
 
 clear_flag:
-    DAT_800a06e0[sequence][track].flags &= ~0x10u;
+    _ss_score[sequence][track].flags &= ~0x10u;
 refresh:
-    if (DAT_800a06e0[sequence][track].field_10 != 0 &&
-        DAT_800a06e0[sequence][track].field_08 != 0) {
+    if (_ss_score[sequence][track].field_10 != 0 &&
+        _ss_score[sequence][track].field_08 != 0) {
         goto tail;
     }
-    DAT_800a06e0[sequence][track].flags &= ~0x10u;
+    _ss_score[sequence][track].flags &= ~0x10u;
 tail:
-    SpuVmGetSeqVol(sequence, &DAT_800a06e0[sequence][track].field_2a,
-                   &DAT_800a06e0[sequence][track].field_2c);
+    SpuVmGetSeqVol(sequence, &_ss_score[sequence][track].field_2a,
+                   &_ss_score[sequence][track].field_2c);
 }
 
 ADDRESS(0x8004b360, 0x94)
 void audio_sequence_track_key_off(s16 sequence, s16 track)
 {
     SpuVmSeqKeyOff(sequence, track);
-    DAT_800a06e0[sequence][track].field_57 = 0;
-    DAT_800a06e0[sequence][track].flags &= ~0x2u;
+    _ss_score[sequence][track].field_57 = 0;
+    _ss_score[sequence][track].flags &= ~0x2u;
 }
 
 ADDRESS(0x8004b3f4, 0x64)
 void func_8004b3f4(s16 sequence, s16 track)
 {
-    DAT_800a06e0[sequence][track].field_57 = 0;
-    DAT_800a06e0[sequence][track].flags &= ~0x100u;
+    _ss_score[sequence][track].field_57 = 0;
+    _ss_score[sequence][track].flags &= ~0x100u;
 }
 
 ADDRESS(0x8004b458, 0x24c)
 void audio_sequence_pitch_slide(s16 sequence, s16 track)
 {
-    DAT_800a06e0[sequence][track].field_1c--;
-    if (DAT_800a06e0[sequence][track].field_24 > 0) {
-        if (DAT_800a06e0[sequence][track].field_1c %
-                DAT_800a06e0[sequence][track].field_24 != 0) {
+    _ss_score[sequence][track].field_1c--;
+    if (_ss_score[sequence][track].field_24 > 0) {
+        if (_ss_score[sequence][track].field_1c %
+                _ss_score[sequence][track].field_24 != 0) {
             return;
         }
-        if (DAT_800a06e0[sequence][track].field_a8 >
-                DAT_800a06e0[sequence][track].field_20) {
-            DAT_800a06e0[sequence][track].field_a8--;
-        } else if (DAT_800a06e0[sequence][track].field_a8 <
-                DAT_800a06e0[sequence][track].field_20) {
-            DAT_800a06e0[sequence][track].field_a8++;
+        if (_ss_score[sequence][track].field_a8 >
+                _ss_score[sequence][track].field_20) {
+            _ss_score[sequence][track].field_a8--;
+        } else if (_ss_score[sequence][track].field_a8 <
+                _ss_score[sequence][track].field_20) {
+            _ss_score[sequence][track].field_a8++;
         }
     } else {
-        if (DAT_800a06e0[sequence][track].field_a8 >
-                DAT_800a06e0[sequence][track].field_20) {
-            DAT_800a06e0[sequence][track].field_a8 +=
-                DAT_800a06e0[sequence][track].field_24;
-            if (DAT_800a06e0[sequence][track].field_a8 <
-                    DAT_800a06e0[sequence][track].field_20) {
-                DAT_800a06e0[sequence][track].field_a8 =
-                    DAT_800a06e0[sequence][track].field_20;
+        if (_ss_score[sequence][track].field_a8 >
+                _ss_score[sequence][track].field_20) {
+            _ss_score[sequence][track].field_a8 +=
+                _ss_score[sequence][track].field_24;
+            if (_ss_score[sequence][track].field_a8 <
+                    _ss_score[sequence][track].field_20) {
+                _ss_score[sequence][track].field_a8 =
+                    _ss_score[sequence][track].field_20;
             }
-        } else if (DAT_800a06e0[sequence][track].field_a8 <
-                DAT_800a06e0[sequence][track].field_20) {
-            DAT_800a06e0[sequence][track].field_a8 -=
-                DAT_800a06e0[sequence][track].field_24;
-            if (DAT_800a06e0[sequence][track].field_a8 >
-                    DAT_800a06e0[sequence][track].field_20) {
-                DAT_800a06e0[sequence][track].field_a8 =
-                    DAT_800a06e0[sequence][track].field_20;
+        } else if (_ss_score[sequence][track].field_a8 <
+                _ss_score[sequence][track].field_20) {
+            _ss_score[sequence][track].field_a8 -=
+                _ss_score[sequence][track].field_24;
+            if (_ss_score[sequence][track].field_a8 >
+                    _ss_score[sequence][track].field_20) {
+                _ss_score[sequence][track].field_a8 =
+                    _ss_score[sequence][track].field_20;
             }
         }
     }
 
-    DAT_800a06e0[sequence][track].field_92 =
-        DAT_800a06e0[sequence][track].field_6c *
-        DAT_800a06e0[sequence][track].field_a8 * 10 / (DAT_8009ff00 * 60);
-    if (DAT_800a06e0[sequence][track].field_92 <= 0) {
-        DAT_800a06e0[sequence][track].field_92 = 1;
+    _ss_score[sequence][track].field_92 =
+        _ss_score[sequence][track].field_6c *
+        _ss_score[sequence][track].field_a8 * 10 / (DAT_8009ff00 * 60);
+    if (_ss_score[sequence][track].field_92 <= 0) {
+        _ss_score[sequence][track].field_92 = 1;
     }
-    if (DAT_800a06e0[sequence][track].field_1c == 0 ||
-        DAT_800a06e0[sequence][track].field_a8 ==
-            DAT_800a06e0[sequence][track].field_20) {
-        DAT_800a06e0[sequence][track].flags &= ~0x40u;
-        DAT_800a06e0[sequence][track].flags &= ~0x80u;
+    if (_ss_score[sequence][track].field_1c == 0 ||
+        _ss_score[sequence][track].field_a8 ==
+            _ss_score[sequence][track].field_20) {
+        _ss_score[sequence][track].flags &= ~0x40u;
+        _ss_score[sequence][track].flags &= ~0x80u;
     }
 }

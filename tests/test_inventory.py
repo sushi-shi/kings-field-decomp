@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 537)
-        self.assertEqual(counts["signatures_started"], 537)
-        self.assertEqual(counts["typed_returns"], 537)
-        self.assertEqual(counts["parameterized"], 347)
+        self.assertEqual(counts["functions"], 525)
+        self.assertEqual(counts["signatures_started"], 525)
+        self.assertEqual(counts["typed_returns"], 525)
+        self.assertEqual(counts["parameterized"], 335)
         self.assertEqual(counts["data"], 3287)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -810,6 +810,54 @@ class InventoryTests(unittest.TestCase):
         # The version-skewed SSCALL dispatcher remains a game-owned candidate.
         self.assertNotIn(("GAME.EXE", 0x8004A55C), vendored)
         self.assertIn(("GAME.EXE", 0x8004A55C), identities)
+
+    def test_libsnd_sequence_open_init_and_close_are_vendored(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in rows
+        }
+        expected = {
+            ("GAME.EXE", 0x800468D8): ("SsSeqOpen", "SSOPEN"),
+            ("GAME.EXE", 0x80046988): ("SsSepOpen", "SSOPEN"),
+            ("GAME.EXE", 0x80046A94): ("InitSoundSep", "SEPINIT"),
+            ("GAME.EXE", 0x800471A4): ("InitSoundSeq", "SEQINIT"),
+            ("GAME.EXE", 0x8004B6E0): ("SsSeqClose", "SSCLOSE"),
+            ("GAME.EXE", 0x8004B848): ("SsSepClose", "SSCLOSE"),
+            ("OPEN.EXE", 0x800266AC): ("SsSeqOpen", "SSOPEN"),
+            ("OPEN.EXE", 0x8002675C): ("SsSepOpen", "SSOPEN"),
+            ("OPEN.EXE", 0x80026868): ("InitSoundSep", "SEPINIT"),
+            ("OPEN.EXE", 0x80026F78): ("InitSoundSeq", "SEQINIT"),
+            ("OPEN.EXE", 0x8002B4B4): ("SsSeqClose", "SSCLOSE"),
+            ("OPEN.EXE", 0x8002B61C): ("SsSepClose", "SSCLOSE"),
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        for key, (name, module) in expected.items():
+            self.assertEqual(vendored[key]["name"], name)
+            self.assertEqual(vendored[key]["module"], module)
+            self.assertEqual(
+                vendored[key]["confidence"],
+                "sdk-lineage-supported",
+            )
+            self.assertNotIn(key, identities)
+
+        _, function_rows = read_tsv(RETAIL_CONFIG / "functions.tsv")
+        open_functions = {
+            parse_int(row["va"]): parse_int(row["size"])
+            for row in function_rows
+            if row["image"] == "OPEN.EXE"
+        }
+        self.assertEqual(open_functions[0x8002675C], 0x10C)
+        self.assertNotIn(0x80026764, open_functions)
+
+        _, data_rows = read_tsv(RETAIL_CONFIG / "data.tsv")
+        self.assertFalse(
+            any(
+                row["image"] == "OPEN.EXE"
+                and parse_int(row["va"]) == 0x8002675C
+                for row in data_rows
+            )
+        )
 
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")

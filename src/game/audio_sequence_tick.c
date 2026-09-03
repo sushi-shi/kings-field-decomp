@@ -54,35 +54,35 @@ void SsSeqCalledTbyT(void)
 
     SpuVmFlush();
     for (sequence = 0; sequence < DAT_800a0770; sequence++) {
-        if (!(DAT_8009a728 & (1 << sequence))) {
+        if (!(_snd_openflag & (1 << sequence))) {
             continue;
         }
-        if (DAT_800a0778 <= 0) {
+        if (_snd_seq_t_max <= 0) {
             continue;
         }
-        for (track = 0; track < DAT_800a0778; track++) {
-            if (DAT_800a06e0[sequence][track].flags & 0x1) {
+        for (track = 0; track < _snd_seq_t_max; track++) {
+            if (_ss_score[sequence][track].flags & 0x1) {
                 Snd_play(sequence, track);
-                if (DAT_800a06e0[sequence][track].flags & 0x10) {
+                if (_ss_score[sequence][track].flags & 0x10) {
                     audio_sequence_fade_in(sequence, track);
                 }
             }
-            if (DAT_800a06e0[sequence][track].flags & 0x20) {
+            if (_ss_score[sequence][track].flags & 0x20) {
                 audio_sequence_fade_out(sequence, track);
             }
-            if (DAT_800a06e0[sequence][track].flags & 0x40) {
+            if (_ss_score[sequence][track].flags & 0x40) {
                 audio_sequence_pitch_slide(sequence, track);
             }
-            if (DAT_800a06e0[sequence][track].flags & 0x80) {
+            if (_ss_score[sequence][track].flags & 0x80) {
                 audio_sequence_pitch_slide(sequence, track);
             }
-            if (DAT_800a06e0[sequence][track].flags & 0x2) {
+            if (_ss_score[sequence][track].flags & 0x2) {
                 audio_sequence_track_key_off(sequence, track);
             }
-            if (DAT_800a06e0[sequence][track].flags & 0x8) {
+            if (_ss_score[sequence][track].flags & 0x8) {
                 func_8004ad9c(sequence, track);
             }
-            if (DAT_800a06e0[sequence][track].flags & 0x4) {
+            if (_ss_score[sequence][track].flags & 0x4) {
                 Snd_stop(sequence, track);
             }
         }
@@ -102,15 +102,15 @@ void audio_sequence_fade_out(s16 sequence, s16 track)
     u16 vr;
     int period;
 
-    DAT_800a06e0[sequence][track].field_10--;
-    period = DAT_800a06e0[sequence][track].field_14;
+    _ss_score[sequence][track].field_10--;
+    period = _ss_score[sequence][track].field_14;
     if (period > 0) {
-        if (DAT_800a06e0[sequence][track].field_10 % period != 0) {
+        if (_ss_score[sequence][track].field_10 % period != 0) {
             goto tail;
         }
-        if (DAT_800a06e0[sequence][track].field_06 > 0) {
-            DAT_800a06e0[sequence][track].field_08--;
-            if (DAT_800a06e0[sequence][track].field_08 < 0) {
+        if (_ss_score[sequence][track].field_06 > 0) {
+            _ss_score[sequence][track].field_08--;
+            if (_ss_score[sequence][track].field_08 < 0) {
                 SpuVmSetSeqVol(sequence, 0, 0, 0);
                 goto clear_flag;
             }
@@ -122,9 +122,9 @@ void audio_sequence_fade_out(s16 sequence, s16 track)
             SpuVmSetSeqVol(sequence, 0, 0, 0);
             goto clear_flag;
         }
-        if (DAT_800a06e0[sequence][track].field_06 < 0) {
-            DAT_800a06e0[sequence][track].field_08++;
-            if (DAT_800a06e0[sequence][track].field_08 > 0) {
+        if (_ss_score[sequence][track].field_06 < 0) {
+            _ss_score[sequence][track].field_08++;
+            if (_ss_score[sequence][track].field_08 > 0) {
                 SpuVmSetSeqVol(sequence, 0x7f, 0x7f, 0);
                 goto clear_flag;
             }
@@ -138,14 +138,14 @@ void audio_sequence_fade_out(s16 sequence, s16 track)
         }
         goto refresh;
     } else {
-        if (DAT_800a06e0[sequence][track].field_06 > 0) {
-            DAT_800a06e0[sequence][track].field_08 += period;
-            if (DAT_800a06e0[sequence][track].field_08 < 0) {
+        if (_ss_score[sequence][track].field_06 > 0) {
+            _ss_score[sequence][track].field_08 += period;
+            if (_ss_score[sequence][track].field_08 < 0) {
                 SpuVmSetSeqVol(sequence, 0, 0, 0);
                 goto clear_flag;
             }
             SpuVmGetSeqVol(sequence, &vl, &vr);
-            period = DAT_800a06e0[sequence][track].field_14;
+            period = _ss_score[sequence][track].field_14;
             if ((int)vl >= -period && (int)vr >= -period) {
                 SpuVmSetSeqVol(sequence, vl + period, vr + period, 0);
                 goto refresh;
@@ -153,14 +153,14 @@ void audio_sequence_fade_out(s16 sequence, s16 track)
             SpuVmSetSeqVol(sequence, 0, 0, 0);
             goto clear_flag;
         }
-        if (DAT_800a06e0[sequence][track].field_06 < 0) {
-            DAT_800a06e0[sequence][track].field_08 -= period;
-            if (DAT_800a06e0[sequence][track].field_08 > 0) {
+        if (_ss_score[sequence][track].field_06 < 0) {
+            _ss_score[sequence][track].field_08 -= period;
+            if (_ss_score[sequence][track].field_08 > 0) {
                 SpuVmSetSeqVol(sequence, 0x7f, 0x7f, 0);
                 goto clear_flag;
             }
             SpuVmGetSeqVol(sequence, &vl, &vr);
-            period = DAT_800a06e0[sequence][track].field_14;
+            period = _ss_score[sequence][track].field_14;
             if ((int)vl - period < 128 && (int)vr - period < 128) {
                 SpuVmSetSeqVol(sequence, vl - period, vr - period, 0);
                 goto refresh;
@@ -172,21 +172,21 @@ void audio_sequence_fade_out(s16 sequence, s16 track)
     }
 
 clear_flag:
-    DAT_800a06e0[sequence][track].flags &= ~0x20u;
+    _ss_score[sequence][track].flags &= ~0x20u;
 refresh:
-    if (DAT_800a06e0[sequence][track].field_10 != 0 &&
-        DAT_800a06e0[sequence][track].field_08 != 0) {
+    if (_ss_score[sequence][track].field_10 != 0 &&
+        _ss_score[sequence][track].field_08 != 0) {
         goto tail;
     }
-    DAT_800a06e0[sequence][track].flags &= ~0x20u;
+    _ss_score[sequence][track].flags &= ~0x20u;
 tail:
-    SpuVmGetSeqVol(sequence, &DAT_800a06e0[sequence][track].field_2a,
-                   &DAT_800a06e0[sequence][track].field_2c);
+    SpuVmGetSeqVol(sequence, &_ss_score[sequence][track].field_2a,
+                   &_ss_score[sequence][track].field_2c);
 }
 
 ADDRESS(0x8004ad9c, 0x68)
 void func_8004ad9c(s16 sequence, s16 track)
 {
-    DAT_800a06e0[sequence][track].field_57 = 1;
-    DAT_800a06e0[sequence][track].flags &= ~0x8u;
+    _ss_score[sequence][track].field_57 = 1;
+    _ss_score[sequence][track].flags &= ~0x8u;
 }

@@ -33,8 +33,8 @@ interior addresses were not modeled as separate globals.
 The voice region is one aggregate rather than five overlapping globals. The
 code retains the base at `0x80095894` and accesses five `s16[10]` lanes at
 offsets `0x00`, `0x14`, `0x28`, `0x3c`, and `0x50`. `KfAudioVoiceSlots` names
-those fields and checks both the `0x64` size and every lane offset. The adjacent
-`game_exit_code` at `0x800958f8` proves the complete-object extent.
+those fields and checks every lane offset. The adjacent `game_exit_code` at
+`0x800958f8` proves the complete `0x64`-byte object extent.
 
 ## Operations
 
@@ -66,9 +66,17 @@ those fields and checks both the `0x64` size and every lane offset. The adjacent
 Psy-Q Release 2.5 `LIBSND.H` supplies the authentic widths and prototypes for
 `SsSetTableSize`, VAB transfer, sequence open/play/volume/stop/close, master
 volume, reverb, and voice calls. Several targets have exact Release 2.5 FIDs.
-The remaining anonymous sequence targets are API-name candidates supported by
-their ABI, call position, and surrounding library sequence; they are not
-promoted to exact FID results or reconstructed as game bodies.
+The `SSOPEN`, `SEPINIT`, `SEQINIT`, `SSPLAY`, `STOP`, and `SSCLOSE` families are
+provider-attributed through archive symbols, official public prototypes,
+function semantics, and complete GAME/OPEN instruction-shape agreement. Their
+exact SDK revision remains unresolved, so they use `sdk-lineage-supported`
+rather than an exact Release 2.5 confidence class and are not reconstructed as
+game bodies.
+
+That evidence also identifies the internal data referents `_snd_openflag`,
+`_ss_score`, and `_snd_seq_t_max` in both overlays. OPEN's `SsSepOpen` begins at
+`0x8002675c`: its first `lui`/`lw` pair hoists the `_snd_openflag` load above the
+stack-frame allocation, correcting an earlier false eight-byte data gap.
 
 Two VMANAGER functions require a different proof channel. GAME
 `0x80044fac/0x80045378` and OPEN `0x80024dcc/0x80025198` have respectively
@@ -88,10 +96,10 @@ is in `config/evidence/overlay_lineage.tsv`.
 ## Next questions
 
 - Establish exact Release 2.5/version-skew evidence for the currently anonymous
-  `SsInit`, `SsSetTableSize`, `SsVabOpenHead`, `SsSeqOpen`, `SsSeqStop`, and
-  `SsSeqClose` targets before adding them to the vendored census. `VSync` and
-  its private worker are now admitted through cross-overlay `LIBGPU/VSYNC`
-  lineage; their exact SDK revision remains unresolved.
+  `SsInit`, `SsSetTableSize`, and `SsVabOpenHead` targets before adding them to
+  the vendored census. `VSync` and its private worker are admitted through
+  cross-overlay `LIBGPU/VSYNC` lineage; their exact SDK revision remains
+  unresolved.
 - Resolve the three-byte voice-mask layout and any indirect caller of
   `audio_key_off_mask`; no pointer to the function appears in loaded GAME data.
 - Recover translation-unit boundaries before assigning global versus `static`

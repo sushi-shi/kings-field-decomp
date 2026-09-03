@@ -4,15 +4,15 @@
 #include <kf/game_types.h>
 
 /*
- * King's Field custom music sequence-track driver (built over Psy-Q libsnd's
- * VMANAGER voice helpers).  DAT_800a06e0[sequence] points at that open
- * sequence's array of 0xAC-byte per-track records; DAT_800a0770 counts the
- * open sequences, DAT_800a0778 the tracks per sequence, and DAT_8009a728 is
- * the active-sequence bitmask.  Only the fields the driver touches are named;
- * the rest of the record stays opaque.  Widths follow the retail load/store
- * forms: flags is a 32-bit bitfield, the fade counters at 0x10/0x1c are
- * unsigned (retail divides them with divu), and the periods at 0x14/0x24 are
- * signed halfwords.
+ * LIBSND-compatible sequence-track state shared by the provider open/init/
+ * close routines and the still-unclassified dispatcher/envelope family.
+ * _ss_score[sequence] points at that open sequence's array of 0xAC-byte
+ * per-track records; DAT_800a0770 counts the open sequences, _snd_seq_t_max the
+ * tracks per sequence, and _snd_openflag is the active-sequence bitmask.  Only
+ * the fields the remaining reconstruction touches are named; the rest stays
+ * opaque.  Widths follow the retail load/store forms: flags is a 32-bit
+ * bitfield, the fade counters at 0x10/0x1c are unsigned (retail divides them
+ * with divu), and the periods at 0x14/0x24 are signed halfwords.
  */
 typedef struct SeqTrack {
     u32 flags;             /* 0x00 dispatch flags: 0x1/0x2/0x4/0x8/0x10/0x20/0x40/0x80/0x100/0x200 */
@@ -57,10 +57,10 @@ typedef struct SeqTrack {
 } SeqTrack;
 
 /* Per-sequence track-record table and driver-wide sequence census (all BSS). */
-extern SeqTrack *DAT_800a06e0[];
+extern SeqTrack *_ss_score[];
 extern s16 DAT_800a0770; /* open-sequence count */
-extern s16 DAT_800a0778; /* tracks per sequence */
-extern s32 DAT_8009a728; /* active-sequence bitmask */
+extern s16 _snd_seq_t_max; /* tracks per sequence */
+extern s32 _snd_openflag; /* active-sequence bitmask */
 
 /*
  * Psy-Q Release 2.5 LIBSND VMANAGER helpers (vendored; see

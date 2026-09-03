@@ -1936,7 +1936,7 @@ GAME.EXE	0x800958f8	0x4	game_exit_code	global	bss	u32	game	supported	game_semant
 GAME.EXE	0x80095900	0x2710	map_floor_height_grid	unknown	bss	u8[100][100]	map	supported	game_semantic_player_motion_attack.tsv;asm;xrefs;100-wide-indexing	map-cell height bytes converted to world floor height by multiplication by -100; source linkage remains unresolved
 GAME.EXE	0x80098010	0x4	DAT_80098010	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80098018	0x2710	map_collision_grid	unknown	bss	u8[100][100]	map	supported	game_semantic_player_motion_attack.tsv;asm;xrefs;100-wide-indexing	map-cell collision bytes read by horizontal player movement; individual bit meanings remain unresolved
-GAME.EXE	0x8009a728	0x4	DAT_8009a728	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009a728	0x4	_snd_openflag	unknown	bss	u32	audio	supported	SSOPEN.OBJ:XREF;SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	LIBSND internal active-sequence bitmask used by open, close, stop, and tick routines; source linkage remains unresolved
 GAME.EXE	0x8009a738	0x4	DAT_8009a738	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009a740	0x4	DAT_8009a740	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009a748	0x2710	map_cell_attribute_grid	unknown	bss	u8[100][100]	map	supported	game_semantic_player_motion_attack.tsv;asm;xrefs;100-wide-indexing	map-cell policy bytes used by vertical motion for fall and hazard handling; the wider code table remains unresolved
@@ -1988,12 +1988,12 @@ GAME.EXE	0x800a01fc	0x44	memory_allocation_stack	unknown	bss	u32[17]	memory	supp
 GAME.EXE	0x800a0240	0x4	memory_system_heap_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	one byte past memory_arena_end and the first argument to InitHeap
 GAME.EXE	0x800a0244	0x4	memory_system_heap_size	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	signed byte count from memory_system_heap_start through 0x801f7fff
 GAME.EXE	0x800a0248	0x498	armor_records	global	bss	KfArmorRecord[42]	armor_records	supported	game_match_campaign_30.tsv;reviewed-reloc;asm;player_recalculate_combat_stats	42 armor and accessory records copied from the common resource stream; indexed by item id minus 13
-GAME.EXE	0x800a06e0	0x4	DAT_800a06e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a06e0	0x4	_ss_score	unknown	bss	SeqTrack *	audio	supported	SEPINIT.OBJ:XREF;SEQINIT.OBJ:XREF;SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	LIBSND internal base of the per-sequence track-pointer table; source linkage and full table extent remain unresolved
 GAME.EXE	0x800a06e4	0x4	DAT_800a06e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0760	0x4	DAT_800a0760	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0768	0x4	DAT_800a0768	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0770	0x2	DAT_800a0770	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800a0778	0x2	DAT_800a0778	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800a0778	0x2	_snd_seq_t_max	unknown	bss	s16	audio	supported	SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	LIBSND internal configured track count used as the bound for sequence-track iteration; source linkage remains unresolved
 GAME.EXE	0x800a0780	0xe0	player_state	unknown	bss	KfPlayerState	player	supported	save_file_write_slot:0xe0-copy-loop;asm:registered-member-addressing;game_semantic_player_stats.tsv	saved player object: save_file_write_slot copies exactly 0xe0 bytes from here with GCC's inline struct loop, and the player routines address its members from a registered base; every former interior identity is now a KfPlayerState field
 GAME.EXE	0x800a0860	0x4	DAT_800a0860	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0868	0x4	DAT_800a0868	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3244,7 +3244,7 @@ OPEN.EXE	0x8006e224	0x2	DAT_8006e224	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x8006e238	0x2	DAT_8006e238	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e24c	0x2	DAT_8006e24c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80070970	0x4	DAT_80070970	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80073088	0x4	DAT_80073088	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80073088	0x4	_snd_openflag	unknown	bss	u32	audio	supported	SSOPEN.OBJ:XREF;SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal active-sequence bitmask; source linkage remains unresolved
 OPEN.EXE	0x80073090	0x4	DAT_80073090	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80073098	0x4	DAT_80073098	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800757b0	0x4	DAT_800757b0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3281,12 +3281,12 @@ OPEN.EXE	0x80075850	0x4	memory_arena_cursor	unknown	bss	u8 *	memory	supported	ga
 OPEN.EXE	0x80075854	0x44	memory_allocation_stack	unknown	bss	u32[17]	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	element 0 is the allocation depth, elements 1..16 the released sizes or malloc blocks; memory_allocate and memory_release_last index the entries from the depth word through one base register
 OPEN.EXE	0x80075898	0x4	memory_system_heap_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	one byte past memory_arena_end and the first argument to InitHeap
 OPEN.EXE	0x8007589c	0x4	memory_system_heap_size	unknown	bss	s32	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;psyq-InitHeap	signed byte count from memory_system_heap_start through 0x801f7fff
-OPEN.EXE	0x800758a0	0x4	DAT_800758a0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x800758a0	0x4	_ss_score	unknown	bss	SeqTrack *	audio	supported	SEPINIT.OBJ:XREF;SEQINIT.OBJ:XREF;SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal per-sequence track-pointer table base; source linkage and full extent remain unresolved
 OPEN.EXE	0x800758a4	0x4	DAT_800758a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075920	0x4	DAT_80075920	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075928	0x4	DAT_80075928	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075930	0x2	DAT_80075930	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075938	0x2	DAT_80075938	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80075938	0x2	_snd_seq_t_max	unknown	bss	s16	audio	supported	SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal configured track count; source linkage remains unresolved
 OPEN.EXE	0x80075940	0x4	DAT_80075940	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075948	0x4	DAT_80075948	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075950	0x2	DAT_80075950	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

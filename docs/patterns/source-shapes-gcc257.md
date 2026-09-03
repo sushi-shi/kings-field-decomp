@@ -1122,44 +1122,6 @@ suppresses an `andi`). Referents, call set, CFG and every other instruction matc
 the single extra zero-extension is the only divergence, left as an unattributed
 instruction-selection residue rather than steered with dead code.
 
-## audio sequence openers (0x800468d8..0x80046a94)
-
-Module `audio_sequence`, two openers of King's Field's custom sequence player
-(a FromSoftware-customized copy of the Psy-Q `LIBSND` `SEQREAD.C`; the band
-above, `0x80046a94..`, holds the `NoteOn`/`SetProgramChange`/`ReadDeltaValue`/
-`GetMetaEvent`/`SeqPlay`/`Snd_setVabAttr` engine and is a vendored-reclassify
-candidate). `func_800468d8` is the `SsSeqOpen`-shaped single opener called from
-`audio_play_map_sequence`; `func_80046988` is the `SsSepOpen`-shaped multi-track
-opener. Both allocate the lowest clear bit of the open-sequence bitmask
-`DAT_8009a728`, print `"Can't Open Sequence data any more\n\n"` when the mask is
-already negative (top slot taken), then hand the buffer to the per-track parser.
-
-| Retail form | Source shape | Witness |
-| --- | --- | --- |
-| one callee-saved register (`s0`) serves as both the bit-search index and the track loop counter | a single `s32 i` drives *both* `for` loops; separate `index`/`i` locals split them across a temp and a saved register (46% -> 62%) | `func_80046988` |
-| `found` read with `andi ...,0xff`, stored full-word | `unsigned char found;` -- a plain `int` folds the mask away | both |
-| chosen slot sign-extended (`sll/sra 0x10`) before the `1<<slot` update and the return | `s16 slot;` | both |
-| no `move s0,zero` for the slot before the search loop | do not initialise `slot`; the search always assigns it before the `!found` exit | both |
-| `move v1,zero`(index) before `move a0,zero`(found) | `for (i = 0, found = 0; ...)` -- the comma-init emits `i=0` before `found=0` | both |
-
-Residue (not steerable, do not chase): retail **hoists the opening
-`DAT_8009a728` load above the frame allocation** so `addiu sp` fills its
-load-delay slot, and fills the end-of-search mask-reload's delay with the
-`sll a1` argument shift. cc1psx-257 emits `addiu sp; sw ra; sw sN; .set
-noreorder; lw; nop` and never hoists a *compare-feeding* value load over the
-frame -- verified identical under both `-mcpu=r2000` and `-mcpu=r3000`. This is
-distinct from the *argument*-load hoist 257 does reproduce
-(`memory_card_clear_events` `0x8002b36c`, `lui/lw a0` before `addiu sp`); the
-value-load-above-frame form is a load-placement wall that keeps both openers at
-83.9% / 62.3% structurally exact. `func_80046988` additionally permutes the
-slot register (retail `slot=s4`, pre-shifted `slot<<16` giv in `s5`; ours
-swaps them) -- the recurring callee-saved-register-choice residue.
-
-Boundary note: `func_80046988`'s true entry is the hoisted mask load at
-`0x80046988`, eight bytes below the frame-carve start the census recorded
-(`0x80046990`); `functions.tsv`/`function_identities.tsv` were corrected and the
-stale `data.tsv` coverage-gap row at `0x80046988` removed.
-
 ## item / inventory menu panels
 
 Campaign over the contiguous item/inventory/save-load menu-panel band

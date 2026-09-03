@@ -1261,7 +1261,7 @@ OPEN.EXE	0x8002659c	0x14d9c	0x88	0x88	1	function	mips-frame-carve			scripts/kf/a
 OPEN.EXE	0x80026624	0x14e24	0x30	0x30	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return+relocation-candidate
 OPEN.EXE	0x80026654	0x14e54	0x58	0x58	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x800266ac	0x14eac	0xb0	0xb0	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x80026764	0x14f64	0x104	0x104	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
+OPEN.EXE	0x8002675c	0x14f5c	0x10c	0x10c	1	function	manual-hoisted-load-entry			manual:libsnd-ssopen-boundary	entry hoists the _snd_openflag load above the frame; frame-carve missed the leading 8 bytes
 OPEN.EXE	0x80026868	0x15068	0x710	0x710	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return+relocation-candidate
 OPEN.EXE	0x80026f78	0x15778	0x544	0x544	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x800274bc	0x15cbc	0x1dc	0x1dc	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary

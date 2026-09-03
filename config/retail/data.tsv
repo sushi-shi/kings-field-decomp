@@ -5025,7 +5025,6 @@ OPEN.EXE	0x80026583	0x14d83	0x4	string	byte-pattern		ascii	investigation:string-
 OPEN.EXE	0x80026607	0x14e07	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <h1\x20
 OPEN.EXE	0x8002662f	0x14e2f	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瀘ъ-
 OPEN.EXE	0x800266eb	0x14eeb	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!8@
-OPEN.EXE	0x8002675c	0x14f5c	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800267af	0x14faf	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4! @
 OPEN.EXE	0x800268ad	0x150ad	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: XB$イ
 OPEN.EXE	0x80026f31	0x15731	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: X!$!
