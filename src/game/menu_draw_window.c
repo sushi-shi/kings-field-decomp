@@ -14,12 +14,6 @@ typedef struct MenuSpriteDef {
     u16 height;
 } MenuSpriteDef;
 
-/* Screen origin shared by the sprite blitters and the glyph drawers. */
-typedef struct MenuPoint {
-    u16 x;
-    u16 y;
-} MenuPoint;
-
 /*
  * Window/menu-list descriptor bank: nine 0x108-byte records copied in from the
  * layout resource.  Each record is a title label followed by ten 0x18-byte row

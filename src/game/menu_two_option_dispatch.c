@@ -3,7 +3,7 @@
 #include <kf/game.h>
 
 
-/* Sprite descriptor and destination point shared with the menu blitters. */
+/* Sprite descriptor shared with the menu blitters. */
 typedef struct MenuSpriteDef {
     u16 tpage;
     u16 clut;
@@ -12,11 +12,6 @@ typedef struct MenuSpriteDef {
     u16 width;
     u16 height;
 } MenuSpriteDef;
-
-typedef struct MenuPoint {
-    u16 x;
-    u16 y;
-} MenuPoint;
 
 /* Shared two-option sprite descriptors (BSS, filled by the menu setup). */
 extern MenuSpriteDef DAT_8005840c; /* option box, normal */

@@ -34,12 +34,6 @@ typedef struct MenuSpriteDef {
     u16 height;
 } MenuSpriteDef;
 
-/* Destination point on the frame. */
-typedef struct MenuPoint {
-    u16 x;
-    u16 y;
-} MenuPoint;
-
 /*
  * A positioned label: the screen origin of the first glyph followed by a run
  * of glyph codes terminated by -1.  Each code carries the atlas glyph index in

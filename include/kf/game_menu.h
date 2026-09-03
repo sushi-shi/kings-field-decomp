@@ -2,15 +2,22 @@
 #define KF_GAME_MENU_H
 
 /*
- * Menu, item and talk UI prototypes.
+ * Shared menu, item and talk UI types and prototypes.
  *
- * Generated during extern-crutch removal: declarations that were duplicated
- * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
- * remain unresolved WIP identities. Byte-neutral: a declaration never changes
- * codegen.
+ * Generated during extern-crutch removal: types and declarations duplicated
+ * across src/game/*.c live here once as their evidence permits. DAT_/func_
+ * spellings remain unresolved WIP identities.
  */
 
 #include <kf/semantic_types.h>
+
+/* Screen-space anchor shared by menu labels and sprite blitters. */
+typedef struct MenuPoint {
+    u16 x;
+    u16 y;
+} MenuPoint;
+
+typedef char MenuPoint_size_is_4[(sizeof(MenuPoint) == 4) ? 1 : -1];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
