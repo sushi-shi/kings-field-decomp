@@ -2,6 +2,18 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
+/*
+ * Four rectangular map-cell copy regions {source_x, source_z, destination_x,
+ * destination_z, width, height} applied by map_apply_copy_region.
+ */
+DATA(0x800561b0, 0x18)
+KfMapCopyRegion map_copy_regions[4] = {
+    {55, 33, 50, 39, 3, 3},
+    {47, 16, 30, 20, 3, 3},
+    {58, 44, 15, 48, 3, 3},
+    {64, 44, 37, 45, 3, 3},
+};
+
 /* Two unnamed 100x100 map layers copied alongside the named grids. */
 
 ADDRESS(0x80030a98, 0x1e4)

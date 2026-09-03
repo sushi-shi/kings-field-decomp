@@ -29,6 +29,52 @@ extern void audio_play_spatial_default_range(
     const VECTOR *position,
     s16 volume);
 
+/*
+ * Twenty-five ten-byte action-selection profiles indexed by profile_index in
+ * actor_try_select_profiled_action: {far_distance, far_weight, near_distance,
+ * middle_weight, near_weight}. Unused rows are zero.
+ */
+DATA(0x80056080, 0xfa)
+KfActorActionProfile actor_action_profiles[25] = {
+    {0},
+    {0},
+    {0},
+    {0},
+    {12000, 256, 5500, 768, 32},
+    {9000, 256, 4000, 768, 48},
+    {0},
+    {9000, 256, 4000, 768, 48},
+    {9000, 256, 4000, 768, 48},
+    {10000, 256, 1000, 768, 32},
+    {6000, 64, 3000, 768, 48},
+    {20000, 64, 5000, 768, 48},
+    {6000, 64, 2000, 768, 48},
+    {9000, 256, 4000, 768, 48},
+    {0},
+    {0},
+    {0},
+    {0},
+    {0},
+    {0},
+    {20000, 256, 6000, 1024, 48},
+    {0},
+    {9000, 256, 4000, 768, 48},
+    {12000, 256, 5500, 768, 32},
+    {20000, 256, 6000, 1024, 48},
+};
+
+/*
+ * Boss-death phase sounds {program, tone, note}; the death handler uses phases
+ * one through three, and the fourth record shares the trailing filler byte.
+ */
+DATA(0x8005617c, 0xc)
+SoundRef boss_death_phase_sounds[4] = {
+    {27, 1, 88},
+    {27, 2, 88},
+    {27, 3, 88},
+    {88, 88, 88},
+};
+
 ADDRESS(0x8002ca78, 0x3c)
 KfActor *actor_pool_find_free(void)
 {
