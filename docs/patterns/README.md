@@ -12,3 +12,10 @@ promotes a probe to a proven historical toolchain.
 - [source-shapes-gcc257.md](source-shapes-gcc257.md): source shapes that
   decided exact matches under the 2.5.7 probe (loop counters, return-value
   joins, struct copies, two-statement accumulations).
+- [compiler-attribution.md](compiler-attribution.md): a dedicated
+  cross-version pass over the residue corpus. How GCC 2.4.1 CC1PSX was made
+  runnable (a go32-stub frankenbinary under DOSBox) and the finding that it
+  reproduces retail no better than 2.5.7 `-O2` (byte-identical on most residue
+  functions, worse where it diverges); the residue ceiling is an unattributed
+  scheduling/regalloc residue, and `-mcpu=r2000` is a per-TU discriminator, not
+  a global truth.
