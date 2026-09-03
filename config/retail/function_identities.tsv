@@ -368,14 +368,8 @@ GAME.EXE	0x8003a9f4	format_vsprintf	format	vsprintf	s32	u8 *out;u8 *format;s32 *
 GAME.EXE	0x8003ac34	debug_print	debug	print	void		candidate	candidate	asm;xrefs;debug_stop-callsite	variadic diagnostic sink; output disabled in this build (spills argument registers and returns)
 GAME.EXE	0x8003ac4c	func_8003ac4c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8003ce2c	func_8003ce2c			u32	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80044154	func_80044154			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80044488	func_80044488			s32	s16 arg0;u16 * arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x800444c4	func_800444c4			s32	s16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x800444f8	func_800444f8			s32	s16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80045f7c	func_80045f7c			u32	u16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80045f98	func_80045f98			u32	u16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80046324	func_80046324			u8	u8 value	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004634c	func_8004634c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x800468d8	func_800468d8			u32	u32 arg0;s16 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x80046988	func_80046988			s16	u8 *arg0;s16 arg1;s16 arg2	address-only	candidate	mips-live-in-heuristic;body-review	SsSepOpen-shaped multi-sequence opener; entry hoists open-mask load above the frame
 GAME.EXE	0x80046a94	func_80046a94			s32	u16 object;s16 pointer1;u16 pointer2;u32 pointer3	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
@@ -396,18 +390,6 @@ GAME.EXE	0x8004b3f4	func_8004b3f4			void	s32 object;s16 arg1	address-only	candid
 GAME.EXE	0x8004b458	func_8004b458			void	s32 object;s16 pointer1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8004b6e0	func_8004b6e0			void	s16 object	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8004b848	func_8004b848			void	s16 object	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fac4	func_8004fac4			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fae8	func_8004fae8			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fb0c	func_8004fb0c			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fb30	func_8004fb30			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fb54	func_8004fb54			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fb78	func_8004fb78			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fb9c	func_8004fb9c			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fbc0	func_8004fbc0			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fbe4	func_8004fbe4			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fc08	func_8004fc08			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x8004fc2c	dma_set_channel_callback	dma	set_channel_callback	void	s32 arg0;s32 pointer1	candidate	candidate	asm;dpcr-channel-enable-bits;system_callbacks	sets/clears the DMA channel enable+priority bits in DPCR via *DAT_80057d1c and stores the per-channel handler in DAT_800642d0[channel]
-GAME.EXE	0x8004fcac	interrupt_set_callback	interrupt	set_callback	u32	u32 object;s32 arg1	candidate	candidate	asm;imask-event-bits;system_callbacks	sets/clears the interrupt mask bit for the event in *DAT_80057d14 and stores the per-event handler in DAT_800642f0[event]; event 3 is rejected
 GAME.EXE	0x8005005c	critical_section_set			u32	s32 enable	candidate	candidate	asm;cfg;xrefs;EnterCriticalSection;ExitCriticalSection	interrupt guard: enters the critical section when enable is nonzero and exits otherwise, records the state in the critical-section-state global, and returns the previous state; called by func_8004fd30
 GAME.EXE	0x800500b8	pad_initialize	pad	initialize	u32	s32 identifier	supported	supported	asm;cfg;xrefs;pad.c;PAD_init	initialises the controller for the given pad identifier; identifier 0 calls the Sony PAD_init trampoline, any other value reports a bad-identifier error
 GAME.EXE	0x8005012c	pad_read	pad	read	u32		supported	supported	asm;cfg;xrefs;pad.c;PAD_dr	reads the current controller button state; identifier 0 calls the Sony PAD_dr trampoline, any other value reports a bad-identifier error
@@ -418,7 +400,6 @@ GAME.EXE	0x8005020c	pad_stop_bad_identifier			void		candidate	candidate	asm;xref
 GAME.EXE	0x8005081c	func_8005081c			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8005082c	func_8005082c			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 GAME.EXE	0x8005083c	func_8005083c			u32	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-GAME.EXE	0x80052240	func_80052240			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80013734	func_80013734			void	void * arg0;s32 arg1;u32 arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80013758	func_80013758			void	u32 arg0;void * arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x800137c4	func_800137c4			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
@@ -533,14 +514,8 @@ OPEN.EXE	0x80022d2c	func_80022d2c			void		address-only	candidate	mips-live-in-he
 OPEN.EXE	0x80022ebc	func_80022ebc			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80022ecc	func_80022ecc			void	u32 object	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x800231f8	func_800231f8			void	u32 object;u16 pointer1;u16 pointer2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x80023f74	func_80023f74			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x800242a8	func_800242a8			s32	s16 arg0;u16 * arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x800242e4	func_800242e4			s32	s16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x80024318	func_80024318			s32	s16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80025d9c	func_80025d9c			u32	u16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80025db8	func_80025db8			u32	u16 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x80026144	func_80026144			u8	u8 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002616c	func_8002616c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x800266ac	func_800266ac			u32	u32 arg0;s16 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80026764	func_80026764			s32	s32 arg0;s16 arg1;s16 arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80026868	func_80026868			s32	u16 object;s16 pointer1;u16 pointer2;u32 pointer3	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
@@ -569,18 +544,6 @@ OPEN.EXE	0x8002c528	func_8002c528			u32	u8 * arg0;u8 * arg1;u32 arg2;u32 arg3;u8
 OPEN.EXE	0x8002c7b4	func_8002c7b4			u32	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8002c834	func_8002c834			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8002c840	func_8002c840			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f898	func_8002f898			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f8bc	func_8002f8bc			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f8e0	func_8002f8e0			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f904	func_8002f904			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f928	func_8002f928			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f94c	func_8002f94c			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f970	func_8002f970			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f994	func_8002f994			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f9b8	func_8002f9b8			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002f9dc	func_8002f9dc			void	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002fa00	func_8002fa00			void	s32 arg0;s32 pointer1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8002fa80	func_8002fa80			u32	u32 object;s32 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8002fe30	func_8002fe30			u32	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8002fe8c	func_8002fe8c			u32	s32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8002ff00	func_8002ff00			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
@@ -591,4 +554,3 @@ OPEN.EXE	0x8002ffe0	func_8002ffe0			void		address-only	candidate	mips-live-in-he
 OPEN.EXE	0x80030500	func_80030500			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80030510	func_80030510			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80030520	func_80030520			u32	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x80031f24	func_80031f24			u32		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review

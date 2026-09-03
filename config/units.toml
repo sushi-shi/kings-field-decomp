@@ -774,33 +774,9 @@ source = "src/game/func_8003ac4c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80044154"
-image = "GAME.EXE"
-source = "src/game/func_80044154.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.table_lookup_80044488"
-image = "GAME.EXE"
-source = "src/game/table_lookup_80044488.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.func_80045f7c"
 image = "GAME.EXE"
 source = "src/game/func_80045f7c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80046324"
-image = "GAME.EXE"
-source = "src/game/func_80046324.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8004634c"
-image = "GAME.EXE"
-source = "src/game/func_8004634c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -822,12 +798,6 @@ source = "src/game/func_8004ae04.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.system_callbacks"
-image = "GAME.EXE"
-source = "src/game/system_callbacks.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.pad"
 image = "GAME.EXE"
 source = "src/game/pad.c"
@@ -837,12 +807,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.graph_state_accessors"
 image = "GAME.EXE"
 source = "src/game/graph_state_accessors.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80052240"
-image = "GAME.EXE"
-source = "src/game/func_80052240.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
