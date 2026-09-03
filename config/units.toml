@@ -389,9 +389,9 @@ source = "src/game/asset_registry.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.render_instance_800205d4"
+unit = "game.render_bind_animated_instance"
 image = "GAME.EXE"
-source = "src/game/render_instance_800205d4.c"
+source = "src/game/render_bind_animated_instance.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -694,11 +694,6 @@ image = "GAME.EXE"
 source = "src/game/player_warp.c"
 profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.func_80036e30"
-image = "GAME.EXE"
-source = "src/game/func_80036e30.c"
-profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.menu_enter_mode"
@@ -737,11 +732,6 @@ image = "GAME.EXE"
 source = "src/game/debug_text.c"
 profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.func_8003ac4c"
-image = "GAME.EXE"
-source = "src/game/func_8003ac4c.c"
-profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.cd_parse_directory_entry"
