@@ -11,9 +11,9 @@ typedef unsigned long u32;
 
 struct KfPoolRecord {
     s16 state;
-    s16 unknown_02;
-    s16 value_04;
-    s16 unknown_06;
+    u16 unknown_02;
+    u16 value_04;
+    u16 unknown_06;
     u32 unknown_08;
     void *allocation;
     u32 *backlink;

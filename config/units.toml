@@ -444,15 +444,33 @@ source = "src/game/matrix.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.color_lerp_80020428"
+image = "GAME.EXE"
+source = "src/game/color_lerp_80020428.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.asset_registry"
 image = "GAME.EXE"
 source = "src/game/asset_registry.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.render_instance_800205d4"
+image = "GAME.EXE"
+source = "src/game/render_instance_800205d4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.pool_80020978"
 image = "GAME.EXE"
 source = "src/game/pool_80020978.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.pool_release_80020a2c"
+image = "GAME.EXE"
+source = "src/game/pool_release_80020a2c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
