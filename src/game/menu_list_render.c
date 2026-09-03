@@ -2,17 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-
-/* Atlas cell descriptor with u16 texel origin (font/icon atlases). */
-typedef struct MenuSpriteDef {
-    u16 tpage;
-    u16 clut;
-    u16 u;
-    u16 v;
-    u16 width;
-    u16 height;
-} MenuSpriteDef;
-
 /* Window-tile sprite descriptor: byte texel origin, halfword tile size. */
 typedef struct MenuTileSprite {
     u16 tpage;

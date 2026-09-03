@@ -19,6 +19,23 @@ typedef struct MenuPoint {
 
 typedef char MenuPoint_size_is_4[(sizeof(MenuPoint) == 4) ? 1 : -1];
 
+/*
+ * Texture-page, CLUT, texel-origin, and extent descriptor shared by menu
+ * sprites and font atlases. Retail reads every field as a halfword for
+ * screen-space arithmetic; renderers narrow texel coordinates only when
+ * storing them into GPU packet bytes.
+ */
+typedef struct MenuSpriteDef {
+    u16 tpage;
+    u16 clut;
+    u16 u;
+    u16 v;
+    u16 width;
+    u16 height;
+} MenuSpriteDef;
+
+typedef char MenuSpriteDef_size_is_12[(sizeof(MenuSpriteDef) == 0x0c) ? 1 : -1];
+
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
 extern s32 item_use_confirm(s32 arg);

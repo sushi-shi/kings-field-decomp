@@ -5,21 +5,6 @@
 /* Current textured-quad cursor in the shared primitive workspace. */
 
 /*
- * Font-atlas sprite descriptor: texture page and CLUT of the glyph atlas, the
- * atlas texel origin (u, v) of the digit column, and one glyph cell's width
- * and height in texels.  Same layout as menu_draw_string's font descriptor;
- * the callers hand this in as a u16 * to the atlas record at DAT_800583e8.
- */
-typedef struct MenuSpriteDef {
-    u16 tpage;
-    u16 clut;
-    u16 u;
-    u16 v;
-    u16 width;
-    u16 height;
-} MenuSpriteDef;
-
-/*
  * A positioned digit run: the screen origin of the first glyph followed by a
  * run of glyph codes terminated by -1.  Shares its {x, y} prefix with the menu
  * glyph string so a single scratch object feeds both drawers.

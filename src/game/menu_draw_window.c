@@ -4,16 +4,6 @@
 
 /* Current textured-quad cursor in the shared primitive workspace. */
 
-/* Font/sprite atlas descriptor: atlas page/clut, texel origin and cell size. */
-typedef struct MenuSpriteDef {
-    u16 tpage;
-    u16 clut;
-    u16 u;
-    u16 v;
-    u16 width;
-    u16 height;
-} MenuSpriteDef;
-
 /*
  * Window/menu-list descriptor bank: nine 0x108-byte records copied in from the
  * layout resource.  Each record is a title label followed by ten 0x18-byte row

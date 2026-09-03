@@ -18,23 +18,6 @@
 /* Current textured-quad cursor in the shared primitive workspace. */
 
 /*
- * Sprite descriptor read by the menu blitters: texture page and CLUT, the
- * top-left texel, and the sprite's width and height in texels.  Widths and
- * heights are halfwords for the screen-space corner arithmetic; the compiler
- * narrows the same fields to byte loads for the texel-coordinate stores. The
- * glyph renderer consumes the same layout as a font atlas descriptor, taking
- * the atlas page/clut and the glyph cell size.
- */
-typedef struct MenuSpriteDef {
-    u16 tpage;
-    u16 clut;
-    u16 u;
-    u16 v;
-    u16 width;
-    u16 height;
-} MenuSpriteDef;
-
-/*
  * A positioned label: the screen origin of the first glyph followed by a run
  * of glyph codes terminated by -1.  Each code carries the atlas glyph index in
  * its low 12 bits (16 cells per atlas row, 14x12 texel cells) and two optional

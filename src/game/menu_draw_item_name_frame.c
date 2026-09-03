@@ -2,17 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-
-/* Sprite / atlas cell descriptor (texture page, CLUT, texel origin, size). */
-typedef struct MenuSpriteDef {
-    u16 tpage;
-    u16 clut;
-    u16 u;
-    u16 v;
-    u16 width;
-    u16 height;
-} MenuSpriteDef;
-
 /* Positioned glyph run: origin then codes terminated by -1. */
 typedef struct MenuGlyphString {
     u16 x;

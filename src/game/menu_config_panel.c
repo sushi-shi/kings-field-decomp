@@ -2,17 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-
-/* Sprite descriptor shared with the menu blitters. */
-typedef struct MenuSpriteDef {
-    u16 tpage;
-    u16 clut;
-    u16 u;
-    u16 v;
-    u16 width;
-    u16 height;
-} MenuSpriteDef;
-
 /* Option-box sprites and the font-atlas descriptor (BSS, set up elsewhere). */
 extern MenuSpriteDef DAT_8005840c; /* option box, normal */
 extern MenuSpriteDef DAT_80058418; /* option box, highlighted */
