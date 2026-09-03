@@ -1517,8 +1517,8 @@ GAME.EXE	0x80057ab0	0x4	DAT_80057ab0	unknown	load	undefined *		address-only	data
 GAME.EXE	0x80057acc	0x4	DAT_80057acc	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057ad0	0x4	DAT_80057ad0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057ad4	0x4	DAT_80057ad4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057b0c	0x4	frame_pacer_vsync_count	static	load	u32	frame_pacer	candidate	game_semantic_math_lifecycle.tsv;asm;xrefs;Psy-Q-2.5-KERNEL.H:RCntCNT3	zero-initialized counter incremented by the vertical-sync handler; static linkage is a TU-ownership candidate
-GAME.EXE	0x80057b10	0x4	frame_pacer_last_vsync	static	load	u32	frame_pacer	candidate	game_semantic_math_lifecycle.tsv;asm;xrefs	last vertical-sync count admitted by frame_pacer_wait; static linkage is a TU-ownership candidate
+GAME.EXE	0x80057b0c	0x4	frame_pacer_vsync_count	global	load	u32	frame_pacer	supported	game_semantic_math_lifecycle.tsv;asm;xrefs;Psy-Q-2.5-KERNEL.H:RCntCNT3;named-HI16-reloc	zero-initialized counter incremented by the vertical-sync handler; retail references it by named HI16/LO16 reloc, proving external linkage
+GAME.EXE	0x80057b10	0x4	frame_pacer_last_vsync	global	load	u32	frame_pacer	supported	game_semantic_math_lifecycle.tsv;asm;xrefs;named-HI16-reloc	last vertical-sync count admitted by frame_pacer_wait; retail references it by named HI16/LO16 reloc, proving external linkage
 GAME.EXE	0x80057b14	0x8	fade_screen_rect	global	load	u16[4]	display	supported	asm;func_800144d4;sprite_add_ft4	position rect {x,y,w,h} of the faded full-screen transition image
 GAME.EXE	0x80057b1c	0x8	fade_screen_uv	global	load	u8[8]	display	supported	asm;func_800144d4;sprite_add_ft4	texture-coordinate rect (even bytes u,v,w,h) of the faded full-screen transition image
 GAME.EXE	0x80057b24	0x4	fade_screen_color	global	load	u8[4]	display	supported	asm;func_800144d4	base modulation color ramped up 6 per frame during the fade-in

@@ -20,15 +20,17 @@ extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);
 
 /*
- * Both counters live in the retail load image four bytes apart, so they were
- * explicitly initialized data, not commons; static linkage is the curated
- * TU-ownership candidate for this frame pacer.
+ * Both counters live in the retail load image four bytes apart as explicitly
+ * initialized data. Retail references them through named HI16/LO16 relocations
+ * (R_MIPS_HI16 frame_pacer_vsync_count, not a .data section offset), so they
+ * had external linkage in the original: internal `static` linkage would fold
+ * the references to section-relative relocs and never match.
  */
 DATA(0x80057b0c, 0x4)
-static u32 frame_pacer_vsync_count = 0;
+u32 frame_pacer_vsync_count = 0;
 
 DATA(0x80057b10, 0x4)
-static u32 frame_pacer_last_vsync = 0;
+u32 frame_pacer_last_vsync = 0;
 /*
  * The player state block is one aggregate in the original source (see
  * KfPlayerState); the inventory still names its members separately, so it is
