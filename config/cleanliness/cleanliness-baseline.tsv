@@ -4,10 +4,10 @@
 # Never hand-edit to raise a floor - reconstruct/name the symbol instead.
 src func_ refs	74
 src DAT_ refs	1282
-GAME extern decls	828
-pointer casts	1026
+GAME extern decls	830
+pointer casts	1028
 void* views	72
 byte-array views	30
-.c-local aggregates	62
+.c-local aggregates	63
 unresolved func_ identities	163
 unresolved DAT_ identities	3162
