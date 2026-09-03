@@ -35,6 +35,14 @@ extern int rand(void);
 /* map_event_pool_update current-floor dispatch jump table (cases 1..5). */
 RODATA(0x80012be4, 0x14)
 
+/* Reset the event-animation gate and ambient-script countdown at floor start. */
+ADDRESS(0x800356e8, 0x20)
+void map_event_timers_reset(void)
+{
+    map_event_animation_gate = 3;
+    map_ambient_script_countdown = 10;
+}
+
 ADDRESS(0x80035708, 0x1d8)
 void map_event_update_wander(void)
 {
@@ -253,4 +261,14 @@ void map_world_state_persist(void)
         *out++ = (u8)object->cell_z;
         *out++ = (u8)((u16)object->rotation.y >> 4);
     }
+}
+
+/* Tear down the live floor: release pooled allocations, close the map VAB, and
+ * persist the world-state block. Called on floor teleport and death restart. */
+ADDRESS(0x80035e14, 0x30)
+void map_unload_floor(void)
+{
+    pool_release_all();
+    audio_close_vab();
+    map_world_state_persist();
 }

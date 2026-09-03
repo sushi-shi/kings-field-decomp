@@ -713,45 +713,15 @@ source = "src/game/map_floor_scripts.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800342e4"
-image = "GAME.EXE"
-source = "src/game/func_800342e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.map_floor_scripts_b"
-image = "GAME.EXE"
-source = "src/game/map_floor_scripts_b.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800346a0"
-image = "GAME.EXE"
-source = "src/game/func_800346a0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.map_interaction"
 image = "GAME.EXE"
 source = "src/game/map_interaction.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800356e8"
-image = "GAME.EXE"
-source = "src/game/func_800356e8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.map_events"
 image = "GAME.EXE"
 source = "src/game/map_events.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80035e14"
-image = "GAME.EXE"
-source = "src/game/func_80035e14.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

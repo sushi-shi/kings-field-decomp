@@ -3,29 +3,40 @@
 #include <kf/game.h>
 
 /*
- * Per-floor ambient event scripts, band 0x80033ee4..0x800342e3 (GAME.EXE).
+ * Per-floor scripts, one contiguous run 0x80033ee4..0x800346a8 (GAME.EXE):
+ * the shared actor-tile lookup, the floor 1..5 ambient scripts dispatched by
+ * map_event_pool_update (map_events.c), and the floor 1..4 action scripts
+ * dispatched by map_interaction_dispatch (map_interaction.c). The floor-4
+ * ambient and action scripts are empty stubs. They watch the player's cell and
+ * facing, drive a per-floor state machine in the persistent world-state block
+ * map_world_state_base, spawn/retexture actors and objects, teach magic, and run
+ * the full-screen colour-matrix reveal fade. Module boundary is WIP.
  *
- * map_event_pool_update (map_events.c) runs one of these every ~10 frames, indexed by
- * player_state.progress_state.current_floor (floor 1 -> map_ambient_script_floor1, floor 2
- * -> map_ambient_script_floor2, floor 3 -> map_ambient_script_floor3). They watch the player's current
- * map cell and facing angle and drive a small per-floor state machine held in
- * the persistent world-state block map_world_state_base, spawning actors, retexturing
- * map objects, teaching magic, and playing positional ambience.
- *
- * actor_pool_find_at_tile is the shared helper: it scans the 128-slot actor pool for the
- * first live actor sitting on a given map tile and returns its index.
+ * actor_pool_find_at_tile is the shared helper: it scans the 128-slot actor
+ * pool for the first live actor sitting on a given map tile and returns its
+ * index.
  */
 
 extern KfMagicRecord magic_records[24];
 
+/* Progress-flag block raised at init and decremented on death restart. */
+extern u8 DAT_800652a8[240];
 /* Persistent per-floor world-state block (save_system world_state base). */
 extern u8 map_world_state_base[4];
-/* Camera-path / positional-audio data block; +0x40 is an ambience anchor. */
+/* Camera-path / positional-audio data block; +0x40 ambience, +0x50 matrix. */
 
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
+extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
+extern void matrix_interpolate(
+    const MATRIX *from, const MATRIX *to, MATRIX *matrix, s32 blend);
+extern void lighting_set_active_color_matrix(s32 index);
+extern void render_frame(s32 first, s32 second);
 extern void notify_enqueue(s32 arg0);
 extern int rand(void);
+
+/* The two TIM cut-in paths shown by map_ambient_script_floor5. */
+RODATA(0x80012a54, 0x28)
 
 /* Scan the actor pool for the first live actor on map tile (tile_x, tile_z). */
 ADDRESS(0x80033ee4, 0x80)
@@ -125,4 +136,114 @@ void map_ambient_script_floor3(void)
             notify_enqueue(1);
         }
     }
+}
+
+/* Floor 4 ambient script: empty stub. */
+ADDRESS(0x800342e4, 0x8)
+void map_ambient_script_floor4(void)
+{
+}
+
+/* Floor-5 ambient script: a one-time scripted reveal at a fixed cell/heading. */
+ADDRESS(0x800342ec, 0xf4)
+void map_ambient_script_floor5(void)
+{
+    u8 *fired = &DAT_8009f846;
+
+    if (*fired == 0 && player_state.map_cell.x >= 38
+        && player_state.map_cell.x < 41 && player_state.map_cell.z == 7
+        && (u16)player_state.camera_rotation.vy >= 1808
+        && (u16)player_state.camera_rotation.vy < 2289) {
+        *fired = 1;
+        screen_show_image_until_input("TALK\\C17\\T55171.TIM");
+        render_frame(0, 0);
+        render_frame(0, 0);
+        screen_show_image_until_input("TALK\\C17\\T55172.TIM");
+        actor_state.definitions[7].action_animations[2] = 2;
+        actor_state.definitions[7].action_animations[8] = 3;
+        actor_state.definitions[7].action_animations[9] = 3;
+        actor_state.definitions[7].action_animations[10] = 3;
+        actor_state.definitions[7].action_animations[11] = 1;
+        map_apply_copy_region(4);
+    }
+}
+
+/* Floor-1 action script: reveal a passage once its progress flag is set. */
+ADDRESS(0x800343e0, 0x58)
+void map_action_script_floor1(void)
+{
+    if (DAT_800652a8[0x38] != 0 && map_world_state_base[2] == 0) {
+        map_world_state_base[2] = 1;
+        map_apply_copy_region(1);
+        sound_ref_play(&gameplay_sound_ref_7, 0x64);
+    }
+}
+
+/* Full-screen colour-matrix fade that reveals map event 3, then fades back. */
+ADDRESS(0x80034438, 0x184)
+void map_reveal_fade(void)
+{
+    MATRIX saved;
+    s32 blend;
+
+    saved = render_state.light_matrix_copy;
+
+    for (blend = 0; blend < 4097; blend += 128) {
+        lighting_set_color_matrix(&color_matrix_table[0], &color_matrix_table[3], blend);
+        if (blend >= 1025) {
+            map_event_pool[3].position_y -= 130;
+            map_event_pool[3].rotation += 128;
+        } else {
+            matrix_interpolate(&saved, (const MATRIX *)&DAT_800561c8[0x50],
+                               &render_state.light_matrix_copy, blend << 2);
+        }
+        render_frame(0, 0);
+        frame_pacer_wait();
+    }
+
+    map_event_pool[3].state = 3;
+    DAT_8009f844 = 1;
+
+    for (blend = 0x1000; blend >= 0; blend -= 256) {
+        lighting_set_color_matrix(&color_matrix_table[0], &color_matrix_table[3], blend);
+        render_frame(0, 0);
+        frame_pacer_wait();
+    }
+
+    lighting_set_active_color_matrix(0);
+    render_state.light_matrix_copy = saved;
+}
+
+/* Floor-2 action script: run the reveal fade when event 3 is fully open. */
+ADDRESS(0x800345bc, 0x54)
+void map_action_script_floor2(void)
+{
+    if ((*(u32 *)&map_event_pool[3].image_limit & 0xffffff00) == 0x28010200
+        && map_event_pool[3].state == 1) {
+        map_reveal_fade();
+    }
+}
+
+/* Floor-3 action script: teach two spells gated on flags and event state. */
+ADDRESS(0x80034610, 0x90)
+void map_action_script_floor3(void)
+{
+    if (DAT_800652a8[0x32] != 0) {
+        if (magic_records[7].learned == 0) {
+            magic_records[7].learned = 1;
+            notify_enqueue(1);
+        }
+    }
+    if ((*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010300) {
+        if (magic_records[5].learned == 0) {
+            magic_records[5].learned = 1;
+            notify_enqueue(1);
+        }
+    }
+}
+
+/* Floor 4 action script: empty stub. */
+ADDRESS(0x800346a0, 0x8)
+void map_action_script_floor4(void)
+{
 }
