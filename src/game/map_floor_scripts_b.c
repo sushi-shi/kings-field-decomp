@@ -8,7 +8,7 @@
  *
  * map_ambient_script_floor5 is the floor-5 ambient script dispatched by map_event_pool_update
  * (map_events.c). The remaining routines are the floor-1..3 "action" scripts
- * dispatched by func_80034de4 (map_interaction.c) when the player interacts
+ * dispatched by map_interaction_dispatch (map_interaction.c) when the player interacts
  * with the world: they gate on progress flags and the persistent world-state
  * block, copy map regions, teach magic, and run a full-screen colour-matrix
  * fade (map_reveal_fade) that reveals a map event.
@@ -59,7 +59,7 @@ void map_ambient_script_floor5(void)
 
 /* Floor-1 action script: reveal a passage once its progress flag is set. */
 ADDRESS(0x800343e0, 0x58)
-void func_800343e0(void)
+void map_action_script_floor1(void)
 {
     if (DAT_800652a8[0x38] != 0 && map_world_state_base[2] == 0) {
         map_world_state_base[2] = 1;
@@ -105,7 +105,7 @@ void map_reveal_fade(void)
 
 /* Floor-2 action script: run the reveal fade when event 3 is fully open. */
 ADDRESS(0x800345bc, 0x54)
-void func_800345bc(void)
+void map_action_script_floor2(void)
 {
     if ((*(u32 *)&map_event_pool[3].image_limit & 0xffffff00) == 0x28010200
         && map_event_pool[3].state == 1) {
@@ -115,7 +115,7 @@ void func_800345bc(void)
 
 /* Floor-3 action script: teach two spells gated on flags and event state. */
 ADDRESS(0x80034610, 0x90)
-void func_80034610(void)
+void map_action_script_floor3(void)
 {
     if (DAT_800652a8[0x32] != 0) {
         if (magic_records[7].learned == 0) {

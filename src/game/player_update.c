@@ -7,7 +7,7 @@ extern KfMagicRecord magic_records[24];
 extern u32 pad_read(s32 mode);
 extern void display_show_error_screen(char object);
 extern s32 menu_enter_mode(s32 arg0);
-extern void func_80034de4();
+extern void map_interaction_dispatch();
 extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
@@ -86,7 +86,7 @@ void player_update(void)
         DAT_80057b30 = input;
     } else {
         if ((input & 0x20) && !(DAT_80057b30 & 0x20)) {
-            func_80034de4(&player_state.camera_position, &player_state.camera_rotation);
+            map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
         if (player_state.status_effect_flags & 0x8) {
             DAT_80057e68 = 36;

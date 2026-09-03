@@ -115,7 +115,7 @@ done:
 }
 
 ADDRESS(0x80034a34, 0x4c)
-void func_80034a34(void)
+void map_action_script_floor5(void)
 {
     if ((*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500) {
         func_800346a8();
@@ -124,7 +124,7 @@ void func_80034a34(void)
 }
 
 ADDRESS(0x80034a80, 0x2d4)
-void func_80034a80(KfMapEvent *event)
+void map_event_interact(KfMapEvent *event)
 {
     switch (event->kind) {
     case 3:
@@ -192,7 +192,7 @@ void func_80034a80(KfMapEvent *event)
 }
 
 ADDRESS(0x80034d54, 0x90)
-void func_80034d54(s32 group, s32 index)
+void map_show_screen_image(s32 group, s32 index)
 {
     DAT_80056238[8] = group + '0';
     DAT_80056238[5] = player_state.progress_state.current_floor + '0';
@@ -202,7 +202,7 @@ void func_80034d54(s32 group, s32 index)
 }
 
 ADDRESS(0x80034de4, 0x904)
-void func_80034de4(const VECTOR *position, SVECTOR *rotation)
+void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 {
     s32 sound_x;
     s32 sound_z;
@@ -243,7 +243,7 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
                 event->unknown_0f = 0;
                 map_event_advance_rotation_blocking(event, 0x800, 0xc8);
                 audio_play_map_sequence(2);
-                func_80034a80(event);
+                map_event_interact(event);
                 menu_enter_mode(2, event->kind);
                 audio_play_current_map_sequence();
                 map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
@@ -252,12 +252,12 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
                 player_clear_motion();
                 break;
             case 1:
-                func_80034a80(event);
+                map_event_interact(event);
                 player_clear_motion();
                 break;
             case 2:
                 map_event_advance_rotation_blocking(event, 0xfff, 0x190);
-                func_80034a80(event);
+                map_event_interact(event);
                 if (event->unknown_0f == 0) {
                     map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
                 }
@@ -302,19 +302,19 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
 
     switch (player_state.progress_state.current_floor) {
     case 1:
-        func_800343e0();
+        map_action_script_floor1();
         break;
     case 2:
-        func_800345bc();
+        map_action_script_floor2();
         break;
     case 3:
-        func_80034610();
+        map_action_script_floor3();
         break;
     case 4:
-        func_800346a0();
+        map_action_script_floor4();
         break;
     case 5:
-        func_80034a34();
+        map_action_script_floor5();
         break;
     default:
         break;
