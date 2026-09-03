@@ -77,9 +77,9 @@ source = "src/game/sprite_add_ft4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800144d4"
+unit = "game.display_play_transition"
 image = "GAME.EXE"
-source = "src/game/func_800144d4.c"
+source = "src/game/display_play_transition.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -119,21 +119,21 @@ source = "src/game/player_death.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_80016a30"
+unit = "game.player_core"
 image = "GAME.EXE"
-source = "src/game/player_80016a30.c"
+source = "src/game/player_core.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_80017edc"
+unit = "game.player_use_item"
 image = "GAME.EXE"
-source = "src/game/player_80017edc.c"
+source = "src/game/player_use_item.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_death_800184b0"
+unit = "game.player_death_fade"
 image = "GAME.EXE"
-source = "src/game/player_death_800184b0.c"
+source = "src/game/player_death_fade.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -251,9 +251,9 @@ source = "src/game/map_resources_load.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8001b7b0"
+unit = "game.display_show_error_screen"
 image = "GAME.EXE"
-source = "src/game/func_8001b7b0.c"
+source = "src/game/display_show_error_screen.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -377,9 +377,9 @@ source = "src/game/matrix.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.color_lerp_80020428"
+unit = "game.color_lerp_rgb555"
 image = "GAME.EXE"
-source = "src/game/color_lerp_80020428.c"
+source = "src/game/color_lerp_rgb555.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -623,9 +623,9 @@ source = "src/game/map_object_definitions.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.map_object_pool_80031450"
+unit = "game.map_object_pool"
 image = "GAME.EXE"
-source = "src/game/map_object_pool_80031450.c"
+source = "src/game/map_object_pool.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -701,9 +701,9 @@ source = "src/game/func_80036e30.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80036e38"
+unit = "game.menu_enter_mode"
 image = "GAME.EXE"
-source = "src/game/func_80036e38.c"
+source = "src/game/menu_enter_mode.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -785,9 +785,9 @@ source = "src/game/audio_sequence_tick.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]
-unit = "game.func_8004ae04"
+unit = "game.audio_play_sequence"
 image = "GAME.EXE"
-source = "src/game/func_8004ae04.c"
+source = "src/game/audio_play_sequence.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
