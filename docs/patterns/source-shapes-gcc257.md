@@ -319,25 +319,90 @@ Residues, both blocked (not steerable from C under this probe):
   nor `-O2 -fno-schedule-insns2` reproduces both the hoisted prologue and the
   un-hoisted body at once -- the open scheduler-attribution residue.
 
-- `func_8001de18` `0x8001de18` (13%): the split-identity base-sharing wall.
-  Retail holds `&tmd_state.current_asset` (`tmd_state+0x20`) in one register
-  and forms the projected-vertex buffer as `base+488` and the ordering-table
-  pointer as `(buffer-756)`, materialised from a single relocation. Because
-  gcc shares a base register only across accesses the source proves are one
-  object (the `render_initialize` "boundary evidence" row above), the retail
-  address arithmetic proves `tmd_state`, the vertex buffer `DAT_800911b0`, and
-  `display_state.ordering_table` were **one graphics-context aggregate** the
-  curation split into separate identities -- the same aggregate carries the
-  sprite material `DAT_80095058` at `buffer+16040`, reached that way by the
-  larger emitters `func_8001d730` and `func_8001c7f8`. With the individual
-  identities the per-access `lui`/`addiu` materialisation (plus the loop's
-  every-iteration vertex reads through the un-shared base) is the dominant
-  divergence; it cannot close until that aggregate is modelled, which is
-  high-ripple because `display_state` and `tmd_state` are shared by many banked
-  units. The larger dispatchers `func_8001c7f8` (0xf38, an eleven-way TMD
-  primitive switch whose jump table lives far away at `0x8001222c`) and
-  `func_8001d730` (0x6e8, the actor-model GT/FT path) share this same wall and
-  remain unreconstructed pending the aggregate.
+- `func_8001de18` `0x8001de18` (13%): a base-sharing divergence that turned out
+  **not** to be the dominant one. Retail holds `&tmd_state.current_asset`
+  (`tmd_state+0x20`) in one register and forms the projected-vertex buffer as
+  `base+488` and the ordering-table pointer as `(buffer-756)`, materialised
+  from a single relocation. Because gcc shares a base register only across
+  accesses the source proves are one object (the `render_initialize` "boundary
+  evidence" row above), that arithmetic proves `tmd_state`, the vertex buffer
+  `DAT_800911b0`, and `display_state.ordering_table` were **one
+  graphics-context aggregate** the curation split into separate identities --
+  the same aggregate carries the sprite material `DAT_80095058` at
+  `buffer+16040`, reached that way by the larger emitters `func_8001d730` and
+  `func_8001c7f8`. The aggregate was modelled and probed (see the
+  graphics-context section below); it reproduces the base register exactly, but
+  it lifts `func_8001de18` only `12.85% -> 13.7%`. The dominant divergence is
+  **not** the split identity -- it is the same unattributed gcc-2.5.7
+  register-allocation/frame wall as its siblings: retail uses `$s6`/`$s7` for
+  the buffer/counter where the probe swaps them, and retail reserves an extra
+  8-byte frame slot (`-80` vs `-72`) to spill the packet `header` across the
+  loop-body calls where the probe keeps it live. The `render_initialize`
+  boundary evidence for base-sharing remains sound; what is wrong is the earlier
+  claim that the split identity was the reason for the 13% score. The larger
+  dispatchers `func_8001c7f8` (0xf38, an eleven-way TMD primitive switch whose
+  jump table lives far away at `0x8001222c`) and `func_8001d730` (0x6e8, the
+  actor-model GT/FT path) share the same aggregate and the same regalloc wall.
+
+## graphics-context aggregate (`0x80090ebc..0x800957e0`)
+
+The base-register arithmetic in `func_8001de18` (`&tmd_state.current_asset`
+reaching `display_state.ordering_table` at `-756` off the `+488` buffer
+pointer) and in the display initializer `func_8001bb94` (`&draw_env[0].dtd`
+reaching `disp_env[0]` at `+162` and `render_state.fog_near_distance` at
+`+18538`, all with the linked bytes carrying no relocation at the offset
+sites) prove that a contiguous BSS run the curation split into many identities
+was **one declared object** in the source. gcc shares a base only across
+members of one symbol, and a separate global can never sit inside another
+global's extent, so every identity between the proven endpoints is a member.
+The proven extent is `0x80090ebc..0x800957e0` (`0x4924` bytes); the OPEN.EXE
+layout already models the leading ordering-table pointer as a global separate
+from `display_state` (size `0x20024`), so GAME's `display_state` shrinks to
+`0x20024` and the pointer becomes the aggregate's first member.
+
+| aggregate offset | address | member | current identity |
+| --- | --- | --- | --- |
+| `+0x0000` | `0x80090ebc` | `ordering_table` (current-frame OT pointer) | tail of `display_state` |
+| `+0x0004` | `0x80090ec0` | `draw_environments[2]` (`DRAWENV`) | `display_draw_environments` |
+| `+0x00bc` | `0x80090f78` | `disp_environments[2]` (`DISPENV`) | `display_disp_environments` |
+| `+0x00e4` | `0x80090fa0` | 8-byte gap | (unmodelled) |
+| `+0x00ec` | `0x80090fa8` | `tmd_state` (`current_asset` at `+0x10c`) | `tmd_state` |
+| `+0x0110` | `0x80090fcc` | `asset_registry_entries[60]` | `asset_registry_entries` |
+| `+0x0200` | `0x800910bc` | `current_tmd_vertices` | `current_tmd_vertices` |
+| `+0x0204` | `0x800910c0` | `pool_records[12]` | `pool_records` |
+| `+0x02f4` | `0x800911b0` | `projected_vertices` (8-byte screen entries) | `DAT_800911b0` |
+| `+0x419c` | `0x80095058` | sprite/floor scratch, floor items, frame counters | `DAT_80095058`, `floor_items`, ... |
+| `+0x47e4` | `0x800956a0` | `render_state` (`fog_near_distance` at `+0xa0`) | `render_state` |
+| end `+0x4924` | `0x800957e0` | -- | `light_quadrant_matrices` (separate, per `render_initialize`) |
+
+Probe result (aggregate modelled as `KfGraphicsContext graphics_context` at
+`0x80090ebc`, its span retargeted in `relocs.tsv`, its consumers migrated):
+
+- The base register is reproduced exactly on both witnesses: the delinked
+  target and the compiled object both anchor `graphics_context+0x10c`, form the
+  buffer as `+488`, the ordering table as `-756`, `disp_env` as `+162` and the
+  fog word as `+18538` -- one relocation for the whole span.
+- `func_8001bb94` (display init) improves `94.25% -> 98.42%`: here the
+  base-sharing *was* the dominant residue. The remainder is a callee-saved
+  register / CSE decision the 2.5.7 build does not make -- retail keeps
+  `$s0 = &draw_env[0].dtd` live across the four trailing calls and stores the
+  far `fog_near_distance` as `sw v0,18538(s0)`, where the probe drops the base
+  after `PutDispEnv` and re-materialises the fog store with a fresh `lui`.
+- `func_8001de18` (map enqueuer) improves only `12.85% -> 13.7%`: base-sharing
+  is a small fraction of its body, and the register-swap + extra-frame-slot
+  wall above dominates the score.
+
+Verdict: the aggregate is the correct structural model and is byte-clean where
+tested (`func_8001e230` stayed `88.2%` under the migration, confirming
+single-object member migrations do not shift bytes), but it closes neither
+enqueuer nor the initializer to exact -- both residues are the unattributed
+gcc-2.5.7 register-allocation/scheduling wall class (compare the
+`tmd_project_vertices` two-store-giv residue and the `func_8001e230`
+post-reload-scheduler residue). Landing the model is high-ripple (it renames
+`display_state`/`tmd_state`/`render_state`/`display_draw_environments` and the
+buffers across ~28 units and retargets ~230 relocation sites) and banks no new
+function, so it is deferred until the compiler/regalloc attribution is settled;
+until then the individual identities stay.
 
 ## memory
 
@@ -542,7 +607,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
 | `env[1].dtd` stored before `env[0].dtd` | `display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;` — the chained assignment evaluates the constant, stores the right operand (env[1]) first, then env[0] | `func_8001bb94` `0x8001bb94` |
-| residue (93.7%): retail keeps `s0 = &display_draw_environments[0].dtd` callee-saved and derives `display_disp_environments[0]` as `s0+162` (PutDispEnv arg) and `render_state.fog_near_distance` as `s0+18538` | ours emits a fresh `lui` for each of the three separate globals. The retail object carries no relocation at the PutDispEnv-arg or fog-store sites — the linked bytes are `addiu a0,s0,162` / `sw v0,18538(s0)` — so the original reached `display_disp_environments` and `render_state` as fixed offsets from `display_draw_environments`, implying the three were one combined declaration in the source. Not reproduced without merging the three globals into one object; unattributed | same |
+| residue (94.25%): retail keeps `s0 = &display_draw_environments[0].dtd` callee-saved and derives `display_disp_environments[0]` as `s0+162` (PutDispEnv arg) and `render_state.fog_near_distance` as `s0+18538` | the retail object carries no relocation at the PutDispEnv-arg or fog-store sites — the linked bytes are `addiu a0,s0,162` / `sw v0,18538(s0)` — so the three were one combined declaration. Merging them into the graphics-context aggregate (see that section) and migrating this unit reproduces the base and lifts `94.25% -> 98.42%`; the last residue is that the probe drops `$s0` after `PutDispEnv` and re-materialises the far fog store with a fresh `lui` instead of keeping the base callee-saved across the four trailing calls. Unattributed regalloc/CSE residue | same |
 
 ### DMA/IRQ handler registration (`system_callbacks` TU)
 
