@@ -2,10 +2,8 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* The view_rotation_offset table; the cell-attribute threshold table the player
- * targeting code reads follows it in the original translation unit and is
- * reached as an offset (+0x3e) from this base. */
-
+extern KfEffectRecord DAT_8009d040[];
+extern KfMagicRecord magic_records[24];
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
 extern KfActor *actor_pool_find_target_in_cone(const struct KfVec3i *origin,
     s32 facing, u32 max_distance, s32 angle_tolerance, s32 *distance_out);
@@ -14,6 +12,30 @@ extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles,
     struct KfVec3s *direction);
 extern KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
     SVECTOR *direction, ...);
+extern void effect_pool_set_current(u8 *object);
+
+ADDRESS(0x8003a244, 0x30)
+void effect_pool_reset(void)
+{
+    KfEffectRecord *record = DAT_8009d040;
+    u16 i;
+
+    for (i = 0; i < 48; i++) {
+        record->type = 0xff;
+        record++;
+    }
+}
+
+ADDRESS(0x8003a274, 0x2c)
+void magic_load_records(const u32 *source)
+{
+    u32 *destination = (u32 *)magic_records;
+    s32 count;
+
+    for (count = 120; count != 0; count--) {
+        *destination++ = *source++;
+    }
+}
 
 /* magic_cast dispatch table (selected_magic_id 4..8). */
 RODATA(0x80012dc0, 0x14)
@@ -125,4 +147,19 @@ void magic_cast(void)
         }
         break;
     }
+}
+
+ADDRESS(0x8003a760, 0x7c)
+void effect_pool_sweep(void)
+{
+    KfEffectRecord *record = DAT_8009d040;
+    u16 i = 47;
+
+    do {
+        if (record->type != 0xff) {
+            effect_pool_set_current((u8 *)record);
+            effect_update_dispatch();
+        }
+        record++;
+    } while (i-- != 0);
 }
