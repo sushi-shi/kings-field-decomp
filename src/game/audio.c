@@ -11,10 +11,8 @@ extern KfAudioState audio_state;
 extern u8 audio_sequence_table[];
 extern s32 audio_voice_slot_index;
 
-/* Unresolved helpers: the LIBSND-shaped table/initialization pair, a file loader,
- * a sequence opener/stopper, and a frame wait. */
-extern void func_8003e350(void);
-extern void func_8003e440(u8 *table, s16 sequence_count, s16 track_count);
+/* Unresolved helpers: a file loader, a sequence opener/stopper, and a frame
+ * wait.  SsInit/SsSetTableSize come from LIBSND.H (Psy-Q, now vendored). */
 extern void *memory_allocate(s32 size);
 extern s16 func_800446a8(u8 *vab_header, s16 vab_id);
 extern u32 cd_file_load_into(void *destination, const char *path);
@@ -44,8 +42,8 @@ void audio_initialize(void)
 {
     s32 index;
 
-    func_8003e350();
-    func_8003e440(audio_sequence_table, 2, 1);
+    SsInit();
+    SsSetTableSize((char *)audio_sequence_table, 2, 1);
     SsSetTickMode(1);
     SsStart();
     SsSetMVol(0x7f, 0x7f);
