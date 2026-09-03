@@ -220,6 +220,13 @@ typedef struct KfTmdGt4 {
     u16 v3;
 } KfTmdGt4;
 
+/* One GTE-projected TMD vertex consumed by the polygon enqueue paths. */
+typedef struct KfScreenVertex {
+    DVECTOR sxy;
+    s16 sz;
+    s16 p2;
+} KfScreenVertex;
+
 /*
  * Optional output from the world collision query.  The query copies a
  * transform from the selected player, actor, map object, or map event and
@@ -695,40 +702,19 @@ typedef struct KfSavePayload {
     u8 unknown_2548[56];
 } KfSavePayload;
 
-typedef char KfVecXZs_size_is_4[(sizeof(struct KfVecXZs) == 4) ? 1 : -1];
-typedef char KfVec3s_size_is_6[(sizeof(struct KfVec3s) == 6) ? 1 : -1];
-typedef char KfVec3i_size_is_12[(sizeof(struct KfVec3i) == 12) ? 1 : -1];
-typedef char KfPitchYaw_size_is_4[(sizeof(struct KfPitchYaw) == 4) ? 1 : -1];
-typedef char KfEulerAngles_size_is_6[
-    (sizeof(struct KfEulerAngles) == 6) ? 1 : -1];
-typedef char KfCollisionTarget_size_is_32[
-    (sizeof(KfCollisionTarget) == 0x20) ? 1 : -1];
-typedef char SoundRef_size_is_3[(sizeof(SoundRef) == 3) ? 1 : -1];
-typedef char KfAudioVoiceSlots_size_is_100[
-    (sizeof(KfAudioVoiceSlots) == 0x64) ? 1 : -1];
 #define KF_OFFSET_OF(type, member) ((u32)&(((type *)0)->member))
-typedef char KfPrimitiveBuffer_size_is_12[
-    (sizeof(KfPrimitiveBuffer) == 0x0c) ? 1 : -1];
 typedef char KfPrimitiveBuffer_end_offset_is_4[
     (KF_OFFSET_OF(KfPrimitiveBuffer, end) == 0x04) ? 1 : -1];
 typedef char KfPrimitiveBuffer_cursor_offset_is_8[
     (KF_OFFSET_OF(KfPrimitiveBuffer, cursor) == 0x08) ? 1 : -1];
-typedef char KfTmdObject_size_is_28[
-    (sizeof(KfTmdObject) == 0x1c) ? 1 : -1];
 typedef char KfTmdObject_primitive_offset_offset_is_16[
     (KF_OFFSET_OF(KfTmdObject, primitive_offset) == 0x10) ? 1 : -1];
 typedef char KfTmdObject_primitive_count_offset_is_20[
     (KF_OFFSET_OF(KfTmdObject, primitive_count) == 0x14) ? 1 : -1];
-typedef char KfCdFileEntry_size_is_20[(sizeof(KfCdFileEntry) == 0x14) ? 1 : -1];
-typedef char KfTmdHeader_size_is_12[(sizeof(KfTmdHeader) == 0xc) ? 1 : -1];
-typedef char KfTmdF3_size_is_12[(sizeof(KfTmdF3) == 0xc) ? 1 : -1];
-typedef char KfTmdG3_size_is_16[(sizeof(KfTmdG3) == 0x10) ? 1 : -1];
-typedef char KfTmdF4_size_is_16[(sizeof(KfTmdF4) == 0x10) ? 1 : -1];
-typedef char KfTmdG4_size_is_20[(sizeof(KfTmdG4) == 0x14) ? 1 : -1];
-typedef char KfTmdFt3_size_is_20[(sizeof(KfTmdFt3) == 0x14) ? 1 : -1];
-typedef char KfTmdGt3_size_is_24[(sizeof(KfTmdGt3) == 0x18) ? 1 : -1];
-typedef char KfTmdFt4_size_is_28[(sizeof(KfTmdFt4) == 0x1c) ? 1 : -1];
-typedef char KfTmdGt4_size_is_32[(sizeof(KfTmdGt4) == 0x20) ? 1 : -1];
+typedef char KfScreenVertex_sz_offset_is_4[
+    (KF_OFFSET_OF(KfScreenVertex, sz) == 0x04) ? 1 : -1];
+typedef char KfScreenVertex_p2_offset_is_6[
+    (KF_OFFSET_OF(KfScreenVertex, p2) == 0x06) ? 1 : -1];
 typedef char KfTmdObject_scale_offset_is_24[
     (KF_OFFSET_OF(KfTmdObject, scale) == 0x18) ? 1 : -1];
 typedef char KfAudioVoiceSlots_vab_ids_offset_is_20[
@@ -739,12 +725,8 @@ typedef char KfAudioVoiceSlots_tones_offset_is_60[
     (KF_OFFSET_OF(KfAudioVoiceSlots, tones) == 0x3c) ? 1 : -1];
 typedef char KfAudioVoiceSlots_notes_offset_is_80[
     (KF_OFFSET_OF(KfAudioVoiceSlots, notes) == 0x50) ? 1 : -1];
-typedef char KfCameraPathPoint_size_is_28[
-    (sizeof(KfCameraPathPoint) == 0x1c) ? 1 : -1];
 typedef char KfCameraPathPoint_speed_offset_is_24[
     (KF_OFFSET_OF(KfCameraPathPoint, speed) == 0x18) ? 1 : -1];
-typedef char KfCameraPathState_size_is_100[
-    (sizeof(KfCameraPathState) == 0x64) ? 1 : -1];
 typedef char KfCameraPathState_rotation_offset_is_20[
     (KF_OFFSET_OF(KfCameraPathState, rotation) == 0x14) ? 1 : -1];
 typedef char KfCameraPathState_position_fixed_offset_is_28[
@@ -755,14 +737,10 @@ typedef char KfCameraPathState_point_index_offset_is_92[
     (KF_OFFSET_OF(KfCameraPathState, point_index) == 0x5c) ? 1 : -1];
 typedef char KfCameraPathState_frames_remaining_offset_is_96[
     (KF_OFFSET_OF(KfCameraPathState, frames_remaining) == 0x60) ? 1 : -1];
-typedef char KfMapEventDefinition_size_is_24[
-    (sizeof(KfMapEventDefinition) == 0x18) ? 1 : -1];
 typedef char KfMapEventDefinition_initial_rotation_offset_is_18[
     (KF_OFFSET_OF(KfMapEventDefinition, initial_rotation) == 0x12) ? 1 : -1];
 typedef char KfMapEventDefinition_radius_offset_is_20[
     (KF_OFFSET_OF(KfMapEventDefinition, radius) == 0x14) ? 1 : -1];
-typedef char KfMapEvent_size_is_68[
-    (sizeof(KfMapEvent) == 0x44) ? 1 : -1];
 typedef char KfMapEvent_rotation_phase_offset_is_18[
     (KF_OFFSET_OF(KfMapEvent, rotation_phase) == 0x12) ? 1 : -1];
 typedef char KfMapEvent_position_x_offset_is_20[
@@ -775,24 +753,16 @@ typedef char KfMapEvent_rotation_offset_is_54[
     (KF_OFFSET_OF(KfMapEvent, rotation) == 0x36) ? 1 : -1];
 typedef char KfMapEvent_rotation_target_offset_is_64[
     (KF_OFFSET_OF(KfMapEvent, rotation_target) == 0x40) ? 1 : -1];
-typedef char KfPlayerProgressState_size_is_4[
-    (sizeof(KfPlayerProgressState) == 4) ? 1 : -1];
 typedef char KfPlayerProgressState_current_floor_offset_is_2[
     (KF_OFFSET_OF(KfPlayerProgressState, current_floor) == 2) ? 1 : -1];
-typedef char KfPlayerLevelGrowth_size_is_12[
-    (sizeof(KfPlayerLevelGrowth) == 0x0c) ? 1 : -1];
 typedef char KfPlayerLevelGrowth_experience_threshold_offset_is_8[
     (KF_OFFSET_OF(KfPlayerLevelGrowth, experience_threshold) == 8) ? 1 : -1];
-typedef char KfPlayerVitals_size_is_8[
-    (sizeof(KfPlayerVitals) == 8) ? 1 : -1];
 typedef char KfPlayerVitals_current_hp_offset_is_2[
     (KF_OFFSET_OF(KfPlayerVitals, current_hp) == 2) ? 1 : -1];
 typedef char KfPlayerVitals_maximum_mp_offset_is_4[
     (KF_OFFSET_OF(KfPlayerVitals, maximum_mp) == 4) ? 1 : -1];
 typedef char KfPlayerVitals_current_mp_offset_is_6[
     (KF_OFFSET_OF(KfPlayerVitals, current_mp) == 6) ? 1 : -1];
-typedef char KfPlayerAttackChargeState_size_is_4[
-    (sizeof(KfPlayerAttackChargeState) == 4) ? 1 : -1];
 typedef char KfPlayerAttackChargeState_committed_offset_is_2[
     (KF_OFFSET_OF(KfPlayerAttackChargeState, committed) == 2) ? 1 : -1];
 typedef char KfMapCell_x_offset_is_1[
@@ -816,42 +786,6 @@ typedef char KfCollisionTarget_rotation_offset_is_16[
 typedef char KfCollisionTarget_radius_offset_is_24[
     (KF_OFFSET_OF(KfCollisionTarget, radius) == 0x18) ? 1 : -1];
 #undef KF_OFFSET_OF
-typedef char KfSaveSlotSummary_size_is_24[
-    (sizeof(KfSaveSlotSummary) == 0x18) ? 1 : -1];
-typedef char KfSaveDirectory_size_is_128[
-    (sizeof(KfSaveDirectory) == 0x80) ? 1 : -1];
-typedef char KfSaveHeader_size_is_640[
-    (sizeof(KfSaveHeader) == 0x280) ? 1 : -1];
-typedef char KfSavePayload_size_is_9600[
-    (sizeof(KfSavePayload) == 0x2580) ? 1 : -1];
-typedef char KfActorDefinition_size_is_152[
-    (sizeof(KfActorDefinition) == 0x98) ? 1 : -1];
-typedef char KfActor_size_is_72[(sizeof(KfActor) == 0x48) ? 1 : -1];
-typedef char KfActorActionProfile_size_is_10[
-    (sizeof(KfActorActionProfile) == 0x0a) ? 1 : -1];
-typedef char KfActorPlacement_size_is_16[
-    (sizeof(KfActorPlacement) == 0x10) ? 1 : -1];
-typedef char KfMapCell_size_is_2[(sizeof(KfMapCell) == 0x02) ? 1 : -1];
-typedef char KfMapCopyRegion_size_is_6[
-    (sizeof(KfMapCopyRegion) == 0x06) ? 1 : -1];
-typedef char KfArmorRecord_size_is_28[(sizeof(KfArmorRecord) == 28) ? 1 : -1];
-typedef char KfMagicRecord_size_is_20[(sizeof(KfMagicRecord) == 20) ? 1 : -1];
-typedef char KfEffectRecord_size_is_60[(sizeof(KfEffectRecord) == 60) ? 1 : -1];
-typedef char KfMapObjectLink_size_is_8[(sizeof(KfMapObjectLink) == 8) ? 1 : -1];
-typedef char KfMapObjectPlacement_size_is_20[
-    (sizeof(KfMapObjectPlacement) == 0x14) ? 1 : -1];
-typedef char KfMapObjectDefinition_size_is_8[
-    (sizeof(KfMapObjectDefinition) == 0x08) ? 1 : -1];
-typedef char KfMapObject_size_is_44[
-    (sizeof(KfMapObject) == 0x2c) ? 1 : -1];
-typedef char KfFloorItemPlacement_size_is_12[
-    (sizeof(KfFloorItemPlacement) == 0x0c) ? 1 : -1];
-typedef char KfFloorItem_size_is_24[
-    (sizeof(KfFloorItem) == 0x18) ? 1 : -1];
-typedef char KfPlayerMotionState_size_is_10[
-    (sizeof(KfPlayerMotionState) == 0x0a) ? 1 : -1];
-typedef char KfWeaponRecord_size_is_44[
-    (sizeof(KfWeaponRecord) == 0x2c) ? 1 : -1];
 
 /* === game-math-death layouts === */
 /* === end game-math-death === */
@@ -951,8 +885,6 @@ typedef struct KfPlayerState {
     u8 unknown_df[1];
 } KfPlayerState;
 
-typedef char KfPlayerState_size_is_0xe0[(sizeof(KfPlayerState) == 0xe0) ? 1 : -1];
-
 /*
  * Per-floor entry cell (one-based floor number). player_warp_to_floor_entry
  * copies byte 0 into previous_map_cell.x and byte 1 into .z, so this table
@@ -962,8 +894,6 @@ typedef struct KfFloorEntryCell {
     u8 x;
     u8 z;
 } KfFloorEntryCell;
-
-typedef char KfFloorEntryCell_size_is_2[(sizeof(KfFloorEntryCell) == 2) ? 1 : -1];
 
 /* === end player === */
 /* === actor layouts === */
@@ -987,8 +917,6 @@ typedef struct KfActorState {
     KfActor *player_target;
 } KfActorState;
 
-typedef char KfActorState_size_is_0x2b48[
-    (sizeof(KfActorState) == 0x2b48) ? 1 : -1];
 #define KF_ACTOR_STATE_OFFSET_OF(member) ((u32)&(((KfActorState *)0)->member))
 typedef char KfActorState_current_offset_is_0x2b3c[
     (KF_ACTOR_STATE_OFFSET_OF(current) == 0x2b3c) ? 1 : -1];
@@ -1018,17 +946,12 @@ typedef struct KfAudioState {
     KfAudioVoiceSlots voice_slots;
 } KfAudioState;
 
-typedef char KfAudioState_size_is_144[(sizeof(KfAudioState) == 0x90) ? 1 : -1];
-
 /* === end map-audio === */
 
 /* One reversed ordering table of 0x4000 entries (ClearOTagR/DrawOTag). */
 typedef struct KfOrderingTable {
     u32 entries[0x4000];
 } KfOrderingTable;
-
-typedef char KfOrderingTable_size_is_0x10000[(sizeof(KfOrderingTable) == 0x10000) ? 1 : -1];
-
 
 /* === display_state layout === */
 /*
@@ -1046,9 +969,7 @@ typedef struct KfDisplayState {
     u32 *ordering_table;
 } KfDisplayState;
 
-typedef char KfDisplayState_size_is_0x20028[(sizeof(KfDisplayState) == 0x20028) ? 1 : -1];
 /* === end display_state === */
-
 
 /* === tmd_state layout === */
 /*
@@ -1060,9 +981,7 @@ typedef struct KfTmdState {
     void *current_asset;
 } KfTmdState;
 
-typedef char KfTmdState_size_is_0x24[(sizeof(KfTmdState) == 0x24) ? 1 : -1];
 /* === end tmd_state === */
-
 
 /* === render_state layout === */
 /*
@@ -1087,9 +1006,7 @@ typedef struct KfRenderState {
     MATRIX quadrant_matrices[4];
 } KfRenderState;
 
-typedef char KfRenderState_size_is_0x140[(sizeof(KfRenderState) == 0x140) ? 1 : -1];
 /* === end render_state === */
-
 
 /* === display_state layout === */
 /*
@@ -1105,9 +1022,7 @@ typedef struct KfDisplayStateOpen {
     KfOrderingTable ordering_tables[2];
 } KfDisplayStateOpen;
 
-typedef char KfDisplayStateOpen_size_is_0x20024[(sizeof(KfDisplayStateOpen) == 0x20024) ? 1 : -1];
 /* === end display_state === */
-
 
 /* === tmd_state layout === */
 /* OPEN.EXE TMD state: two asset slots and the selected asset. */
@@ -1116,9 +1031,7 @@ typedef struct KfTmdStateOpen {
     void *current_asset;
 } KfTmdStateOpen;
 
-typedef char KfTmdStateOpen_size_is_0xc[(sizeof(KfTmdStateOpen) == 0xc) ? 1 : -1];
 /* === end tmd_state === */
-
 
 /* === render_state layout === */
 /*
@@ -1136,9 +1049,7 @@ typedef struct KfRenderStateOpen {
     MATRIX quadrant_matrices[4];
 } KfRenderStateOpen;
 
-typedef char KfRenderStateOpen_size_is_0x100[(sizeof(KfRenderStateOpen) == 0x100) ? 1 : -1];
 /* === end render_state === */
-
 
 /* === map_object_state layout === */
 /*
@@ -1151,7 +1062,6 @@ typedef struct KfMapObjectState {
     KfMapObject objects[190];
 } KfMapObjectState;
 
-typedef char KfMapObjectState_size_is_0x25a8[(sizeof(KfMapObjectState) == 0x25a8) ? 1 : -1];
 /* === end map_object_state === */
 
 #endif

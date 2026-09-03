@@ -75,8 +75,6 @@ typedef struct SeqTrack {
     u32 field_a8;          /* 0xa8 beats-per-minute copy */
 } SeqTrack;
 
-typedef char SeqTrack_size_is_0xac[(sizeof(SeqTrack) == 0xac) ? 1 : -1];
-
 /* Per-sequence libsnd _ss_score record table (BSS; owned elsewhere). */
 extern SeqTrack *DAT_800a06e0[];
 

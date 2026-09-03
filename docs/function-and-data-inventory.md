@@ -191,10 +191,10 @@ declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
 
-The structure inventory currently covers 38 types and 322 fields. 246 fields
-have semantic names and 76 exact ranges remain explicitly opaque. `kf inventory
-check` derives the 32-bit layouts from the checked C headers and rejects any
-TSV disagreement in size, offset, extent, name, or datatype.
+The structure inventory currently covers 64 types and 582 fields. 474 fields
+have supported semantic names and 108 exact ranges remain explicitly opaque.
+`kf inventory check` derives the 32-bit layouts from the checked C headers and
+rejects any TSV disagreement in size, offset, extent, name, or datatype.
 
 Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
@@ -205,13 +205,13 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfMapEventDefinition`, `KfMapEvent`, `KfMapCell`, `KfPlayerProgressState`,
 `KfPlayerLevelGrowth`, `KfPlayerMotionState`, `KfPlayerVitals`,
 `KfPlayerAttackChargeState`, `KfPlayerState`, `KfWeaponRecord`,
-`KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`,
+`KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`, `KfScreenVertex`,
 `KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
-`KfSavePayload` live in `include/kf/semantic_types.h` with compile-time size
-checks; established reconstruction types such as `KfMatrix` remain in
-`include/kf/game_types.h`. A type name records only fields and extents
-supported by the current MIPS access pattern; it does not claim the original
-source spelling.
+`KfSavePayload` live in `include/kf/semantic_types.h`, with their sizes checked
+against `config/retail/structures.tsv` by `kf inventory check`; established
+reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`. A
+type name records only fields and extents supported by the current MIPS access
+pattern; it does not claim the original source spelling.
 
 The confidence values are `address-only`, `candidate`, `supported`, and
 `proven`. `proven` is reserved for a recovered source symbol/signature or an

@@ -56,8 +56,6 @@ typedef struct SeqTrack {
     u32 field_a8;          /* 0xa8 slide accumulator */
 } SeqTrack;
 
-typedef char SeqTrack_size_is_0xac[(sizeof(SeqTrack) == 0xac) ? 1 : -1];
-
 /* Per-sequence track-record table and driver-wide sequence census (all BSS). */
 extern SeqTrack *DAT_800a06e0[];
 extern s16 DAT_800a0770; /* open-sequence count */

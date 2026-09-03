@@ -24,7 +24,7 @@ typedef struct KfSpriteQuad {
     u16 h;
 } KfSpriteQuad;
 
-typedef char KfSpriteQuad_size_is_12[(sizeof(KfSpriteQuad) == 0x0c) ? 1 : -1];
+extern KfScreenVertex DAT_800911b0[];
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);

@@ -24,8 +24,6 @@ struct EXEC {
     u32 base;
 };
 
-typedef char EXEC_size_is_60[(sizeof(struct EXEC) == 0x3c) ? 1 : -1];
-
 extern char *overlay_path_table[2];
 extern s32 _96_init(void);
 extern s32 _96_remove(void);

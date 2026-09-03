@@ -3,15 +3,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Projection scratch buffer shared with tmd_project.c: one entry per vertex. */
-typedef struct KfScreenVertex {
-    DVECTOR sxy;
-    s16 sz;
-    s16 p2;
-} KfScreenVertex;
-
-extern KfScreenVertex DAT_800911b0[];
-
 extern KfTmdObject *tmd_get_object(u16 index);
 extern long NormalClip(long sxy0, long sxy1, long sxy2);
 extern void NormalColorDpq(SVECTOR *normal, CVECTOR *in, long dpq, CVECTOR *out);

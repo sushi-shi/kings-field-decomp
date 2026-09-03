@@ -47,6 +47,7 @@ KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;as
 KfSaveHeader	0x280	supported	semantic_types.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
 KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
 KfSaveSlotSummary	0x18	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	six summary words with unresolved individual meanings
+KfScreenVertex	0x08	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm;xrefs	eight-byte GTE projection result shared by TMD projection producers and polygon enqueue consumers
 KfTmdF3	0xc	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	flat triangle packet body (mode 0x20): colour word then n0 v0 v1 v2
 KfTmdF4	0x10	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	flat quad packet body (mode 0x28): colour word, n0 v0 v1 v2 v3 pad
 KfTmdFt3	0x14	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	flat textured triangle packet body (mode 0x24): three uv words then n0 v0 v1 v2

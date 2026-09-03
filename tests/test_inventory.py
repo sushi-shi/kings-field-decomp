@@ -54,9 +54,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 3287)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 63)
-        self.assertEqual(counts["structure_fields"], 579)
-        self.assertEqual(counts["structure_fields_named"], 471)
+        self.assertEqual(counts["structures"], 64)
+        self.assertEqual(counts["structure_fields"], 582)
+        self.assertEqual(counts["structure_fields_named"], 474)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -69,6 +69,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfCollisionTarget"].size, 0x20)
         self.assertEqual(structures["KfPlayerState"].size, 0xE0)
         self.assertEqual(structures["KfPrimitiveBuffer"].size, 0x0C)
+        self.assertEqual(structures["KfScreenVertex"].size, 0x08)
         self.assertEqual(structures["KfTmdObject"].size, 0x1C)
         growth_fields = {
             row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)
@@ -560,6 +561,29 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_projection_scratch_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_projection_scratch.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 6)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        self.assertEqual(
+            _structure_field("KfScreenVertex", 0x00), ("sxy", "DVECTOR", 4)
+        )
+        self.assertEqual(
+            _structure_field("KfScreenVertex", 0x04), ("sz", "s16", 2)
+        )
+        self.assertEqual(
+            _structure_field("KfScreenVertex", 0x06), ("p2", "s16", 2)
+        )
 
     def test_map_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_map_resources.tsv"

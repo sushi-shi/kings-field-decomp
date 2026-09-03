@@ -17,8 +17,6 @@ typedef struct MenuPoint {
     u16 y;
 } MenuPoint;
 
-typedef char MenuPoint_size_is_4[(sizeof(MenuPoint) == 4) ? 1 : -1];
-
 /*
  * Texture-page, CLUT, texel-origin, and extent descriptor shared by menu
  * sprites and font atlases. Retail reads every field as a halfword for
@@ -33,8 +31,6 @@ typedef struct MenuSpriteDef {
     u16 width;
     u16 height;
 } MenuSpriteDef;
-
-typedef char MenuSpriteDef_size_is_12[(sizeof(MenuSpriteDef) == 0x0c) ? 1 : -1];
 
 /*
  * Scrollable menu-list state. The first 24 bytes are a positioned title,
@@ -56,8 +52,6 @@ typedef struct KfMenuList {
     s16 *glyph_rows;
     u8 *quantities;
 } KfMenuList;
-
-typedef char KfMenuList_size_is_40[(sizeof(KfMenuList) == 0x28) ? 1 : -1];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);

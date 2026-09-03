@@ -10,10 +10,6 @@
  * emitters get the full sixteen-bit Z rather than RotTransPers' truncated
  * return value.
  *
- * WIP: the scratch buffer at DAT_800911b0 is modelled locally as KfScreenVertex
- * until its polygon-emitter consumers are reconstructed and the type can move
- * into the shared header with a structures.tsv entry.
- *
  * Codegen residue: tmd_project_vertices and tmd_project_vertices_shift are
  * structurally exact but swap two callee-saved registers versus retail -- the
  * loop counter and the &out->sz induction pointer trade $s0/$s1.  The pointer
@@ -23,15 +19,6 @@
  * whose giv carries three stores and clearly outranks the counter, matches
  * exactly.  See docs/patterns/source-shapes-gcc257.md.
  */
-
-/* Projection scratch buffer: one entry per transformed TMD vertex. */
-typedef struct KfScreenVertex {
-    DVECTOR sxy; /* +0: packed screen X/Y from RotTransPers/RotTrans */
-    s16 sz;      /* +4: depth (SZ, or view-space Z) */
-    s16 p2;      /* +6: doubled perspective term (or a second copy of Z) */
-} KfScreenVertex;
-
-extern KfScreenVertex DAT_800911b0[];
 
 /* Writes GTE data register 19 (SZ3) to *sz0; the second slot follows the call
  * convention but is ignored by the linked library body. */

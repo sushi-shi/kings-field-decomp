@@ -47,15 +47,6 @@
  *    and cannot close until the aggregate is modelled.
  */
 
-/* Projection scratch buffer shared with tmd_project.c: one entry per vertex. */
-typedef struct KfScreenVertex {
-    DVECTOR sxy; /* +0: packed screen X/Y from RotTransPers/RotTrans */
-    s16 sz;      /* +4: depth (SZ FIFO) */
-    s16 p2;      /* +6: doubled perspective term */
-} KfScreenVertex;
-
-extern KfScreenVertex DAT_800911b0[];
-
 /*
  * Flat-shading colour scratch: a CVECTOR at 0x80057b60 whose command byte
  * (0x80057b63) carries the current primitive code into NormalColorCol, and the

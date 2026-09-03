@@ -53,8 +53,6 @@ typedef struct SeqTrack {
     u32 field_a8;         /* 0xa8 */
 } SeqTrack;
 
-typedef char SeqTrack_size_is_0xac[(sizeof(SeqTrack) == 0xac) ? 1 : -1];
-
 extern SeqTrack *DAT_800a06e0[];
 
 /* Psy-Q Release 2.5 LIBSND VMANAGER per-sequence volume setter (now vendored). */

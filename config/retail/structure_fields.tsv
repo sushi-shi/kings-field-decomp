@@ -437,6 +437,9 @@ KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	semantic_types.h;save_f
 KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	semantic_types.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
+KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
+KfScreenVertex	0x04	0x02	sz	s16	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
+KfScreenVertex	0x06	0x02	p2	s16	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
 KfTmdF3	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
