@@ -1538,21 +1538,23 @@ GAME.EXE	0x80014340	0x2b40	0x80014344	mips_hi16_lo16	reachable-code	0x80070eb8	b
 GAME.EXE	0x80014364	0x2b64		mips26	reachable-code	0x800543fc	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	manual:game_sprite_add_ft4
 GAME.EXE	0x80014498	0x2c98	0x8001449c	mips_hi16_lo16	reachable-code	0x80090ebc	bss	display_state	lui+lw	a0	paired-reviewed	reviewed	manual:game_sprite_add_ft4
 GAME.EXE	0x800144a4	0x2ca4		mips26	reachable-code	0x80054290	load	AddPrim	jal		control-flow-reviewed	reviewed	manual:game_sprite_add_ft4
-GAME.EXE	0x800144e8	0x2ce8	0x800144ec	mips_hi16_lo16	reachable-code	0x80057b14	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80014510	0x2d10	0x80014514	mips_hi16_lo16	reachable-code	0x80057b1c	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x80014538	0x2d38	0x8001453c	mips_hi16_lo16	reachable-code	0x80057b24	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x800144e8	0x2ce8	0x800144ec	mips_hi16_lo16	reachable-code	0x80057b14	load	fade_screen_rect	lui+addiu	a1	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x80014510	0x2d10	0x80014514	mips_hi16_lo16	reachable-code	0x80057b1c	load	fade_screen_uv	lui+addiu	a1	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x80014538	0x2d38	0x8001453c	mips_hi16_lo16	reachable-code	0x80057b24	load	fade_screen_color	lui+addiu	a1	paired-reachable	reviewed	investigation:relocs.tsv
 GAME.EXE	0x80014554	0x2d54		mips26	reachable-code	0x80050894	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001455c	0x2d5c	0x80014560	mips_hi16_lo16	reachable-code	0x80090ec0	bss	display_draw_environments	lui+addiu	a0	paired-reviewed	reviewed	manual:game_func_800144d4
 GAME.EXE	0x80014564	0x2d64		mips26	reachable-code	0x80050d48	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001456c	0x2d6c	0x80014570	mips_hi16_lo16	reachable-code	0x80090f1c	bss	display_draw_environments	lui+addiu	a0	paired-reviewed	reviewed	manual:game_func_800144d4
 GAME.EXE	0x80014574	0x2d74		mips26	reachable-code	0x80050d48	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001457c	0x2d7c		mips26	reachable-code	0x80050894	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80014584	0x2d84	0x80014588	mips_hi16_lo16	reachable-code	0x80070e9c	bss	display_state	lui+addiu	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80014590	0x2d90	0x80014594	mips_hi16_lo16	reachable-code	0x80057b28	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x80014584	0x2d84	0x80014588	mips_hi16_lo16	reachable-code	0x80070e9c	bss	display_state	lui+addiu	s0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x80014590	0x2d90	0x80014594	mips_hi16_lo16	reachable-code	0x80057b28	load	fade_screen_path	lui+addiu	a1	paired-reachable	reviewed	investigation:relocs.tsv
 GAME.EXE	0x80014598	0x2d98		mips26	reachable-code	0x8001af9c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800145ac	0x2dac		mips26	reachable-code	0x8001b100	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800145c0	0x2dc0		mips26	reachable-code	0x800540dc	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800145d0	0x2dd0		mips26	reachable-code	0x80054170	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800145dc	0x2ddc		mips26	reachable-code	0x8001bfb8	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-GAME.EXE	0x800145fc	0x2dfc		mips26	reachable-code	0x80014608	load		j		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x800145fc	0x2dfc		mips26	reachable-code	0x80014608	load		j		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x80014638	0x2e38		mips26	reachable-code	0x80014314	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014640	0x2e40		mips26	reachable-code	0x8001c050	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x80014654	0x2e54		mips26	reachable-code	0x80050894	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -2953,38 +2955,41 @@ GAME.EXE	0x8001b7d4	0x9fd4		mips26	reachable-code	0x800543fc	load		jal		control-
 GAME.EXE	0x8001b7e0	0x9fe0		mips26	reachable-code	0x80054348	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001b844	0xa044		mips26	reachable-code	0x80054170	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001b85c	0xa05c		mips26	reachable-code	0x800540dc	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b868	0xa068	0x8001b86c	mips_hi16_lo16	reachable-code	0x80058098	bss	cd_path_buffer	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b870	0xa070	0x8001b874	mips_hi16_lo16	reachable-code	0x80057b50	load		lui+addiu	a2	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b8a8	0xa0a8	0x8001b8ac	mips_hi16_lo16	reachable-code	0x8005809a	bss	cd_path_buffer	lui+sb	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b8b0	0xa0b0	0x8001b8b4	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b868	0xa068	0x8001b86c	mips_hi16_lo16	reachable-code	0x80058098	bss	cd_path_buffer	lui+addiu	a1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b870	0xa070	0x8001b874	mips_hi16_lo16	reachable-code	0x80057b50	load	error_screen_path	lui+addiu	a2	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001b8a8	0xa0a8	0x8001b8ac	mips_hi16_lo16	reachable-code	0x8005809a	bss	cd_path_buffer	lui+sb	s0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b8b0	0xa0b0	0x8001b8b4	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001b8b8	0xa0b8		mips26	reachable-code	0x8003c810	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001b8c8	0xa0c8		mips26	reachable-code	0x800504ec	load	exit	jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b8d0	0xa0d0	0x8001b8d4	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b8fc	0xa0fc	0x8001b900	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+lbu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b904	0xa104	0x8001b908	mips_hi16_lo16	reachable-code	0x80058081	bss	cd_search_file	lui+lbu	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b90c	0xa10c	0x8001b910	mips_hi16_lo16	reachable-code	0x80058082	bss	cd_search_file	lui+lbu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b914	0xa114	0x8001b918	mips_hi16_lo16	reachable-code	0x80057e80	load	cd_read_location	lui+sb	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b91c	0xa11c	0x8001b920	mips_hi16_lo16	reachable-code	0x80057e81	load	cd_read_location	lui+sb	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b924	0xa124	0x8001b928	mips_hi16_lo16	reachable-code	0x80057e82	load	cd_read_location	lui+sb	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b930	0xa130	0x8001b934	mips_hi16_lo16	reachable-code	0x80057e80	load	cd_read_location	lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001b8d0	0xa0d0	0x8001b8d4	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+addiu	a0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b8fc	0xa0fc	0x8001b900	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+lbu	v0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b904	0xa104	0x8001b908	mips_hi16_lo16	reachable-code	0x80058081	bss	cd_search_file	lui+lbu	v1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b90c	0xa10c	0x8001b910	mips_hi16_lo16	reachable-code	0x80058082	bss	cd_search_file	lui+lbu	a0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b914	0xa114	0x8001b918	mips_hi16_lo16	reachable-code	0x80057e80	load	cd_read_location	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001b91c	0xa11c	0x8001b920	mips_hi16_lo16	reachable-code	0x80057e81	load	cd_read_location	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001b924	0xa124	0x8001b928	mips_hi16_lo16	reachable-code	0x80057e82	load	cd_read_location	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001b930	0xa130	0x8001b934	mips_hi16_lo16	reachable-code	0x80057e80	load	cd_read_location	lui+addiu	a1	paired-reachable	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001b938	0xa138		mips26	reachable-code	0x8003aed8	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b944	0xa144	0x8001b948	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b94c	0xa14c	0x8001b950	mips_hi16_lo16	reachable-code	0x80070e9c	bss	display_state	lui+lw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b944	0xa144	0x8001b948	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+lw	a0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b94c	0xa14c	0x8001b950	mips_hi16_lo16	reachable-code	0x80070e9c	bss	display_state	lui+lw	a1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001b954	0xa154		mips26	reachable-code	0x8003b034	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001b960	0xa160		mips26	reachable-code	0x8003ad54	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b98c	0xa18c	0x8001b990	mips_hi16_lo16	reachable-code	0x80070e9c	bss	display_state	lui+addiu	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b98c	0xa18c	0x8001b990	mips_hi16_lo16	reachable-code	0x80070e9c	bss	display_state	lui+addiu	s0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001b998	0xa198		mips26	reachable-code	0x8001b100	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b9a0	0xa1a0	0x8001b9a4	mips_hi16_lo16	reachable-code	0x80070e98	bss	display_state	lui+lbu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b9c4	0xa1c4	0x8001b9c8	mips_hi16_lo16	reachable-code	0x80090ed8	bss	DAT_80090ed8	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b9a0	0xa1a0	0x8001b9a4	mips_hi16_lo16	reachable-code	0x80070e98	bss	display_state	lui+lbu	v0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b9c4	0xa1c4	0x8001b9c8	mips_hi16_lo16	reachable-code	0x80090ed8	bss	display_draw_environments	lui+addiu	at	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b9d4	0xa1d4	0x8001b9d8	mips_hi16_lo16	reachable-code	0x80090ed7	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	manual:game_func_8001b7b0
+GAME.EXE	0x8001b9e4	0xa1e4	0x8001b9e8	mips_hi16_lo16	reachable-code	0x80090ec0	bss	display_draw_environments	lui+addiu	v0	paired-reviewed	reviewed	manual:game_func_8001b7b0
 GAME.EXE	0x8001b9ec	0xa1ec		mips26	reachable-code	0x80050d48	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001b9f4	0xa1f4	0x8001b9f8	mips_hi16_lo16	reachable-code	0x80090ebc	bss	display_state	lui+addiu	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001b9f4	0xa1f4	0x8001b9f8	mips_hi16_lo16	reachable-code	0x80090ebc	bss	display_state	lui+addiu	s1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001ba14	0xa214		mips26	reachable-code	0x80050c44	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ba20	0xa220		mips26	reachable-code	0x80054290	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ba28	0xa228		mips26	reachable-code	0x80050894	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ba38	0xa238		mips26	reachable-code	0x80050cf0	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ba40	0xa240		mips26	reachable-code	0x8005012c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ba50	0xa250		mips26	reachable-code	0x8005012c	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001ba74	0xa274	0x8001ba78	mips_hi16_lo16	reachable-code	0x80090ed8	bss	DAT_80090ed8	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001ba74	0xa274	0x8001ba78	mips_hi16_lo16	reachable-code	0x80090ed8	bss	display_draw_environments	lui+addiu	at	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001ba84	0xa284	0x8001ba88	mips_hi16_lo16	reachable-code	0x80090ed7	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	manual:game_func_8001b7b0
 GAME.EXE	0x8001ba94	0xa294		mips26	reachable-code	0x80050894	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001bac4	0xa2c4	0x8001bac8	mips_hi16_lo16	reachable-code	0x80055dbc	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001bacc	0xa2cc		mips26	reachable-code	0x8004d7e4	load	SetColorMatrix	jal		control-flow	candidate	investigation:relocs.tsv
@@ -7243,43 +7248,45 @@ GAME.EXE	0x8003a2cc	0x28acc	0x8003a2d0	mips_hi16_lo16	reachable-code	0x80012dc0	
 GAME.EXE	0x8003a30c	0x28b0c	0x8003a310	mips_hi16_lo16	reachable-code	0x800a0838	bss	player_state	lui+addiu	s1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a318	0x28b18	0x8003a31c	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lhu	a2	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a320	0x28b20	0x8003a324	mips_hi16_lo16	reachable-code	0x800a083c	bss	player_state	lui+lhu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a338	0x28b38		mips26	instruction-word	0x80014ccc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a348	0x28b48		mips26	instruction-word	0x8004d470	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a338	0x28b38		mips26	reachable-code	0x80014ccc	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a348	0x28b48		mips26	reachable-code	0x8004d470	load		jal		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a364	0x28b64	0x8003a368	mips_hi16_lo16	reachable-code	0x800a0828	bss	player_state	lui+lw	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a36c	0x28b6c	0x8003a370	mips_hi16_lo16	reachable-code	0x800a082c	bss	player_state	lui+lw	t0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a394	0x28b94	0x8003a398	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lh	a1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a3a0	0x28ba0		mips26	instruction-word	0x8002d7f8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a3ac	0x28bac	0x8003a3b0	mips_hi16_lo16	reachable-code	0x8006e8dc	bss	actor_state	lui+sw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8003a3a0	0x28ba0		mips26	reachable-code	0x8002d7f8	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a3ac	0x28bac	0x8003a3b0	mips_hi16_lo16	reachable-code	0x8006e8dc	bss	actor_state	lui+sw	a1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8003a3bc	0x28bbc	0x8003a3c0	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a3e0	0x28be0		mips26	instruction-word	0x8003a4dc	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a3ec	0x28bec		mips26	instruction-word	0x8003a4d4	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a3e0	0x28be0		mips26	reachable-code	0x8003a4dc	load		j		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a3ec	0x28bec		mips26	reachable-code	0x8003a4d4	load		j		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a3f4	0x28bf4	0x8003a3f8	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a440	0x28c40	0x8003a444	mips_hi16_lo16	instruction-word	0x800558b6	load		lui+addiu	at	paired-pattern	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a46c	0x28c6c		mips26	instruction-word	0x8003a484	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a488	0x28c88		mips26	instruction-word	0x80014fb8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a4c8	0x28cc8		mips26	instruction-word	0x8003a4dc	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a40c	0x28c0c	0x8003a410	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:game_func_8003a2a0
+GAME.EXE	0x8003a440	0x28c40	0x8003a444	mips_hi16_lo16	reachable-code	0x800558b6	load	DAT_80055878	lui+addiu	at	paired-pattern	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a46c	0x28c6c		mips26	reachable-code	0x8003a484	load		j		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a488	0x28c88		mips26	reachable-code	0x80014fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a4c8	0x28cc8		mips26	reachable-code	0x8003a4dc	load		j		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a4dc	0x28cdc	0x8003a4e0	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+addiu	s1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a4f8	0x28cf8	0x8003a4fc	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a500	0x28d00	0x8003a504	mips_hi16_lo16	reachable-code	0x800a083c	bss	player_state	lui+lhu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a510	0x28d10		mips26	instruction-word	0x80014d34	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a51c	0x28d1c		mips26	instruction-word	0x80014e48	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a510	0x28d10		mips26	reachable-code	0x80014d34	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a51c	0x28d1c		mips26	reachable-code	0x80014e48	load		jal		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a53c	0x28d3c	0x8003a540	mips_hi16_lo16	reachable-code	0x800a0838	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a544	0x28d44	0x8003a548	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lhu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a54c	0x28d4c	0x8003a550	mips_hi16_lo16	reachable-code	0x800a083c	bss	player_state	lui+lhu	a2	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a57c	0x28d7c		mips26	instruction-word	0x80036f44	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a584	0x28d84		mips26	instruction-word	0x8003a74c	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a5a8	0x28da8		mips26	instruction-word	0x80036f44	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a5b0	0x28db0		mips26	instruction-word	0x8003a74c	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a57c	0x28d7c		mips26	reachable-code	0x80036f44	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a584	0x28d84		mips26	reachable-code	0x8003a74c	load		j		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a5a8	0x28da8		mips26	reachable-code	0x80036f44	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a5b0	0x28db0		mips26	reachable-code	0x8003a74c	load		j		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a5c0	0x28dc0	0x8003a5c4	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+addiu	s0	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a5d4	0x28dd4		mips26	instruction-word	0x8002d7f8	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a5d4	0x28dd4		mips26	reachable-code	0x8002d7f8	load		jal		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a5f8	0x28df8	0x8003a5fc	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	a2	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a600	0x28e00		mips26	instruction-word	0x80036f44	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a608	0x28e08		mips26	instruction-word	0x8003a74c	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a614	0x28e14		mips26	instruction-word	0x8004f27c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003a648	0x28e48		mips26	instruction-word	0x8004f384	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a600	0x28e00		mips26	reachable-code	0x80036f44	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a608	0x28e08		mips26	reachable-code	0x8003a74c	load		j		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a614	0x28e14		mips26	reachable-code	0x8004f27c	load		jal		range-filtered	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a648	0x28e48		mips26	reachable-code	0x8004f384	load		jal		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a66c	0x28e6c	0x8003a670	mips_hi16_lo16	reachable-code	0x800a082c	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:player_state-aggregate
+GAME.EXE	0x8003a6f0	0x28ef0	0x8003a6f4	mips_hi16_lo16	reachable-code	0x80095900	bss	map_floor_height_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:game_func_8003a2a0
 GAME.EXE	0x8003a718	0x28f18	0x8003a71c	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	a2	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8003a744	0x28f44		mips26	instruction-word	0x80036f44	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003a744	0x28f44		mips26	reachable-code	0x80036f44	load		jal		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a778	0x28f78	0x8003a77c	mips_hi16_lo16	reachable-code	0x8009d040	bss	DAT_8009d040	lui+addiu	s0	paired-reviewed	reviewed	manual:game_func_8003a760
 GAME.EXE	0x8003a79c	0x28f9c		mips26	reachable-code	0x8003781c	load		jal		control-flow-reviewed	reviewed	manual:game_func_8003a760
 GAME.EXE	0x8003a7a4	0x28fa4		mips26	reachable-code	0x80038a38	load		jal		control-flow-reviewed	reviewed	manual:game_func_8003a760
