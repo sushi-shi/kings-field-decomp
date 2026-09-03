@@ -26,6 +26,15 @@ aspsx_version = "1.07"
 cc1_flags = ["-mcpu=r2000"]
 maspsx_flags = ["--expand-div"]
 
+[profiles.probe-gcc257-o2-plain]
+language = "c"
+compiler = "gcc257-native"
+optimization = "O2"
+small_data = 0
+aspsx_version = "1.07"
+cc1_flags = []
+maspsx_flags = ["--expand-div"]
+
 [profiles.asm-r3000-g0]
 language = "assembly"
 compiler = "gnu-as"
@@ -837,7 +846,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.pad"
 image = "GAME.EXE"
 source = "src/game/pad.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-plain"
 
 [[unit]]
 unit = "game.graph_state_accessors"
