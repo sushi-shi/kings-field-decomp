@@ -4,7 +4,7 @@
 extern KfDisplayState display_state;
 extern DRAWENV display_draw_environments[2];
 
-extern void func_80014314(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
+extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
                           u8 *color, u16 ot_index);
 extern s32 cd_file_load_into(void *destination, char *relative_path);
 extern void tim_upload_images(u_long *tim_data);
@@ -37,7 +37,7 @@ char fade_screen_path[7] = "B0\\L0.";
 /* Loads a full-screen image from the disc and fades it in over 18 frames by
  * ramping the modulation color; called from game_main_loop on a transition. */
 ADDRESS(0x800144d4, 0x1a0)
-void func_800144d4(void)
+void display_play_transition(void)
 {
     FadeRect rect = fade_screen_rect;
     FadeUv uv = fade_screen_uv;
@@ -68,7 +68,7 @@ void func_800144d4(void)
         }
         color.v[2] = color.v[0];
         color.v[1] = color.v[0];
-        func_80014314(rect.v, uv.v, tpage, clut, color.v, 4);
+        sprite_add_ft4(rect.v, uv.v, tpage, clut, color.v, 4);
         display_present_frame();
     }
     DrawSync(0);

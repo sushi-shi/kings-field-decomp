@@ -9,7 +9,7 @@ extern void lighting_set_active_color_matrix(s32 index);
 extern void render_initialize(void);
 
 ADDRESS(0x8001bb94, 0x14c)
-void func_8001bb94(void)
+void display_initialize(void)
 {
     ResetGraph(3);
     InitGeom();

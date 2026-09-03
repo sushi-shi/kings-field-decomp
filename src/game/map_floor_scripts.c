@@ -34,7 +34,7 @@ extern void audio_play_spatial_default_range(
 extern void actor_initialize_slot(u16 actor_index);
 extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
 extern void player_restore_vitals_with_color_cycle(void);
-extern void func_8001fa44(s32 arg0);
+extern void notify_enqueue(s32 arg0);
 extern int rand(void);
 
 /* Scan the actor pool for the first live actor on map tile (tile_x, tile_z). */
@@ -132,7 +132,7 @@ void func_8003425c(void)
         if (magic_records[2].learned == 0 || magic_records[3].learned == 0) {
             magic_records[2].learned = 1;
             magic_records[3].learned = 1;
-            func_8001fa44(1);
+            notify_enqueue(1);
         }
     }
 }

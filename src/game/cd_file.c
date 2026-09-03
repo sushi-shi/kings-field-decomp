@@ -7,7 +7,7 @@
 extern char *strcat();
 extern void *memory_allocate(s32 size);
 /* CD failure handler: 0 after a failed search, 1 after failed reads. */
-extern void func_8001b7b0(s32 stage);
+extern void display_show_error_screen(s32 stage);
 
 extern CdlFILE cd_search_file;
 extern char cd_path_buffer[80];
@@ -36,7 +36,7 @@ s32 cd_file_load_allocated(void **destination, char *relative_path)
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == 0) {
-        func_8001b7b0(0);
+        display_show_error_screen(0);
     }
     if (cd_search_file.size & (CD_SECTOR_SIZE - 1)) {
         loaded = (cd_search_file.size >> CD_SECTOR_SHIFT) + 1;
@@ -60,14 +60,14 @@ s32 cd_file_load_allocated(void **destination, char *relative_path)
         }
     }
     if (loaded == 0) {
-        func_8001b7b0(1);
+        display_show_error_screen(1);
     }
     return 0;
 }
 
 /* Loads the file table entry INDEX into a fresh arena allocation. */
 ADDRESS(0x8001ae60, 0x13c)
-s32 func_8001ae60(void **destination, s32 index)
+s32 cd_file_load_table_entry(void **destination, s32 index)
 {
     s32 attempt;
     s32 loaded;
@@ -90,7 +90,7 @@ s32 func_8001ae60(void **destination, s32 index)
         }
     }
     if (loaded == 0) {
-        func_8001b7b0(1);
+        display_show_error_screen(1);
     }
     return 0;
 }
@@ -107,7 +107,7 @@ s32 cd_file_load_into(void *destination, char *relative_path)
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == 0) {
-        func_8001b7b0(0);
+        display_show_error_screen(0);
     }
     if (cd_search_file.size & (CD_SECTOR_SIZE - 1)) {
         loaded = (cd_search_file.size >> CD_SECTOR_SHIFT) + 1;
@@ -130,7 +130,7 @@ s32 cd_file_load_into(void *destination, char *relative_path)
         }
     }
     if (loaded == 0) {
-        func_8001b7b0(1);
+        display_show_error_screen(1);
     }
     return 0;
 }

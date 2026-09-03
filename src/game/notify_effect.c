@@ -4,7 +4,7 @@
 /*
  * Notification effect state machine, stepped once per frame by the frame
  * renderer (render_frame).  It consumes the notification ring filled by
- * func_8001fa44 and drives the six on-screen sprite records that
+ * notify_enqueue and drives the six on-screen sprite records that
  * render_enqueue_sprite draws.
  *
  *   phase 0: a queued id starts an effect.  Id 0x13 is a numeric popup whose
@@ -47,7 +47,7 @@ extern void func_8002adf8(u16 value, s32 count, s32 base, u16 *out);
 extern void func_8001fae4(u8 *record, int value);
 
 ADDRESS(0x8001fafc, 0x2cc)
-void func_8001fafc(void)
+void notify_effect_update(void)
 {
     u8 *phase = &DAT_80095088;
 

@@ -18,31 +18,31 @@ extern s16 DAT_800591d0[];
 /* Shared menu primitives: frame begin/flush, background draw, header draw,
  * input sound cue, and the vsync/pad poll. */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
+extern void menu_present_frame(void);
 extern void menu_draw_stats_header(void);
 extern void func_80027ee4(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern s32 func_800250c4(void);
+extern s32 menu_save_panel(void);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, query). */
-extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
+extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
 extern void menu_list_render(s16 *ctx);
-extern u32 func_8002aea4(s32 item_id);
+extern u32 menu_load_item_model(s32 item_id);
 extern void menu_item_model_preview(s32 item_id);
 extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
                          u32 arg5);
-extern void func_80022d7c(s32 item_id);
+extern void menu_map_viewer(s32 item_id);
 
 /* Menu sub-panels dispatched by the hub menu. */
-s32 func_80022608(void);
-extern s32 func_8002317c(void);
-extern void func_800236ac(void);
+s32 menu_use_item_panel(void);
+extern s32 menu_magic_panel(void);
+extern void menu_option_root(void);
 extern void menu_status_panel(void);
-extern void func_800249a8(void);
-extern s32 func_80024e64(void);
+extern void menu_drop_item(void);
+extern s32 menu_save_load_hub(void);
 extern void menu_config_panel(void);
 
 /*
@@ -66,7 +66,7 @@ typedef struct KfItemMenu {
  * shows a three-frame confirmation screen, blocking until input is released.
  */
 ADDRESS(0x800222b4, 0x94)
-void func_800222b4(void)
+void menu_save_confirm(void)
 {
     KfSaveHeader header;
     KfSavePayload payload;
@@ -81,12 +81,12 @@ void func_800222b4(void)
         menu_frame_begin();
         func_80027ee4((void *)0, 3);
         menu_draw_window(4, 5, 0, 0);
-        func_8002ac34();
+        menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(0);
     while (pad_read(1) != 0)
         ;
-    func_800250c4();
+    menu_save_panel();
 }
 
 /*
@@ -97,7 +97,7 @@ void func_800222b4(void)
  */
 RODATA(0x800122c8, 0x1c)
 ADDRESS(0x80022348, 0x2c0)
-s32 func_80022348(void)
+s32 menu_root(void)
 {
     s32 cursor = 0;
     s32 confirm = 0;
@@ -113,7 +113,7 @@ s32 func_80022348(void)
         menu_frame_begin();
         menu_draw_stats_header();
         menu_draw_window(0, 8, cursor, confirm);
-        func_8002ac34();
+        menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(0);
     while (pad_read(1) != 0)
@@ -124,21 +124,21 @@ s32 func_80022348(void)
             menu_frame_begin();
             menu_draw_stats_header();
             menu_draw_window(0, 8, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
         }
         switch (selection) {
         case 0:
-            result = func_80022608();
+            result = menu_use_item_panel();
             goto join_result;
         case 1:
             result = -1;
-            if (func_8002317c() == -1)
+            if (menu_magic_panel() == -1)
                 result = -99;
             break;
         case 2:
-            func_800236ac();
+            menu_option_root();
             result = -99;
             break;
         case 3:
@@ -146,11 +146,11 @@ s32 func_80022348(void)
             result = -99;
             break;
         case 4:
-            func_800249a8();
+            menu_drop_item();
             result = -99;
             break;
         case 5:
-            result = func_80024e64();
+            result = menu_save_load_hub();
         join_result:
             if (result == -1)
                 result = -99;
@@ -195,7 +195,7 @@ s32 func_80022348(void)
         menu_frame_begin();
         menu_draw_stats_header();
         menu_draw_window(0, 8, cursor, confirm);
-        func_8002ac34();
+        menu_present_frame();
     }
 }
 
@@ -203,11 +203,11 @@ s32 func_80022348(void)
  * Consumable-item panel: builds a scrollable list of the usable items the
  * player holds, runs the windowed cursor, and applies the selected item's
  * effect.  Restoratives (codes 0x2b..0x2f) heal HP/MP and clear status flags
- * in place; special items (0x37, 0x49) are handled by func_80022d7c.  Returns
+ * in place; special items (0x37, 0x49) are handled by menu_map_viewer.  Returns
  * the chosen item code, or -1 when the item cannot be used.
  */
 ADDRESS(0x80022608, 0x774)
-s32 func_80022608(void)
+s32 menu_use_item_panel(void)
 {
     KfItemMenu ctx;
     s16 labels[50][10];
@@ -225,7 +225,7 @@ s32 func_80022608(void)
 
     while (pad_read(1) != 0)
         ;
-    func_8002ad6c((u16 *)&ctx, 0, 0);
+    menu_list_init((u16 *)&ctx, 0, 0);
 
     inv = DAT_800652a8;
     found = 0;
@@ -270,14 +270,14 @@ s32 func_80022608(void)
 
     menu_frame_begin();
     if (ctx.count != 0) {
-        if (func_8002aea4(codes[ctx.cursor]) != 0)
+        if (menu_load_item_model(codes[ctx.cursor]) != 0)
             return -1;
         menu_item_model_preview(codes[ctx.cursor]);
     }
     menu_list_render((s16 *)&ctx);
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact((u32)&ctx, 0, 0, codes[ctx.cursor], 0, 0) != -1)
@@ -308,7 +308,7 @@ s32 func_80022608(void)
                 ctx.scroll = ctx.count - ctx.page;
                 ctx.window = ctx.page - 1;
             }
-            if (func_8002aea4(codes[ctx.cursor]) != 0)
+            if (menu_load_item_model(codes[ctx.cursor]) != 0)
                 return -1;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
@@ -323,15 +323,15 @@ s32 func_80022608(void)
                 ctx.scroll = 0;
                 ctx.window = 0;
             }
-            if (func_8002aea4(codes[ctx.cursor]) != 0)
+            if (menu_load_item_model(codes[ctx.cursor]) != 0)
                 return -1;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
             if (codes[ctx.cursor] == 0x37 || codes[ctx.cursor] == 0x49) {
                 game_state_acknowledge_pending();
-                func_80022d7c(codes[ctx.cursor]);
+                menu_map_viewer(codes[ctx.cursor]);
                 menu_play_input_sound(2);
-                if (func_8002aea4(codes[ctx.cursor]) != 0)
+                if (menu_load_item_model(codes[ctx.cursor]) != 0)
                     return -1;
             } else {
                 confirm = 1;

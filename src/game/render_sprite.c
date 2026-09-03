@@ -5,7 +5,7 @@
 /*
  * Screen-space textured-sprite emitters.  Both build a POLY_FT4 quad from a
  * 12-byte sprite descriptor (texture U/V origin and span, then screen origin
- * and span) and link it into the frame's ordering table.  func_8001e480 draws
+ * and span) and link it into the frame's ordering table.  render_screen_sprite draws
  * the quad in raw screen space for the HUD-gauge pass; render_enqueue_sprite first
  * projects the quad's four corners through the GTE and depth-cues its colour so
  * the notification and billboard sprites sort into the 3D scene.
@@ -17,7 +17,7 @@
  * the floor-item render descriptor's leading fields, reached by their
  * individual identities until that object is modelled.
  *
- * Codegen residue (func_8001e480, structurally exact -- the POLY_FT4 field
+ * Codegen residue (render_screen_sprite, structurally exact -- the POLY_FT4 field
  * layout, the primitive-buffer guard, and the ordering-table insert all match).
  * gcc-2.5.7's post-reload scheduler fills the load-delay slots after the screen
  * X/Y reads with the clut/tpage global loads, hoisting them ahead of their
@@ -48,7 +48,7 @@ typedef struct KfSpriteQuad {
 } KfSpriteQuad;
 
 ADDRESS(0x8001e480, 0x16c)
-void func_8001e480(KfSpriteQuad *sprite)
+void render_screen_sprite(KfSpriteQuad *sprite)
 {
     POLY_FT4 *prim;
 

@@ -15,7 +15,7 @@ extern POLY_FT4 DAT_80058278[2];
 
 /* Link the shared mid-depth menu quad at ordering-table slot 500. */
 ADDRESS(0x80027e58, 0x48)
-void func_80027e58(void)
+void menu_add_marker_quad(void)
 {
     AddPrim(display_state.ordering_table + 500,
             &DAT_80058228[display_state.buffer_index]);
@@ -23,7 +23,7 @@ void func_80027e58(void)
 
 /* Link the shared front menu quad at ordering-table slot 0. */
 ADDRESS(0x80027ea0, 0x44)
-void func_80027ea0(void)
+void menu_add_frame_quad(void)
 {
     AddPrim(display_state.ordering_table,
             &DAT_80058278[display_state.buffer_index]);

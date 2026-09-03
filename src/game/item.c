@@ -28,24 +28,24 @@ extern u8 DAT_800595f8[];
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
+extern void menu_present_frame(void);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /* Item sub-panels dispatched by the item menu (defined below). */
-void func_80021538(s32 arg);
-void func_80021afc(s32 arg);
+void item_menu_buy(s32 arg);
+void item_menu_sell(s32 arg);
 
 /* Item-list panel helpers and the shared inventory / stat data. */
-extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
+extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
 extern void menu_list_render(s16 *ctx);
-extern u32 func_8002aea4(s32 item_id);
+extern u32 menu_load_item_model(s32 item_id);
 extern void func_80027b7c(s32 item_id, s32 arg1, s32 arg2);
 extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4, u32 arg5);
 extern void game_state_acknowledge_pending(void);
 extern void func_800292f8(s32 object);
-extern void func_800291ec(void *prompt, void *options, s32 choice, s32 confirm);
+extern void menu_draw_two_option(void *prompt, void *options, s32 choice, s32 confirm);
 
 extern KfPlayerState player_state;
 extern u8 DAT_800652a8[240];
@@ -74,7 +74,7 @@ typedef struct KfItemMenu {
  * position sunk onto the floor and seeds a random flicker value.
  */
 ADDRESS(0x80020b4c, 0x1b0)
-void func_80020b4c(KfFloorItemPlacement *placements)
+void item_load_floor_placements(KfFloorItemPlacement *placements)
 {
     KfFloorItemPlacement *placement;
     KfFloorItem *item;
@@ -117,7 +117,7 @@ RODATA(0x800122a0, 0x28)
  * shared CD file table, whose read sizes are rounded up to whole sectors.
  */
 ADDRESS(0x80020cfc, 0x5dc)
-void func_80020cfc(void)
+void item_load_database(void)
 {
     char name[40] = "\\KF\\ITEM0\\I000.TMD;1";
     void *stat_data;
@@ -165,7 +165,7 @@ void func_80020cfc(void)
  * or confirming the exit row leaves the menu.
  */
 ADDRESS(0x800212d8, 0x260)
-void func_800212d8(s32 arg)
+void item_menu_root(s32 arg)
 {
     s32 cursor = 0;
     s32 confirm = 0;
@@ -176,10 +176,10 @@ void func_800212d8(s32 arg)
 
     menu_frame_begin();
     menu_draw_window(7, 3, 0, 0);
-    func_8002ac34();
+    menu_present_frame();
     menu_frame_begin();
     menu_draw_window(7, 3, 0, 0);
-    func_8002ac34();
+    menu_present_frame();
     menu_frame_begin();
     menu_draw_window(7, 3, 0, 0);
     menu_play_input_sound(0);
@@ -187,20 +187,20 @@ void func_800212d8(s32 arg)
         ;
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (selection != -1 || done == selection) {
             menu_frame_begin();
             menu_draw_window(7, 3, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
         }
         switch (selection) {
         case 0:
-            func_80021538(arg);
+            item_menu_buy(arg);
             break;
         case 1:
-            func_80021afc(arg);
+            item_menu_sell(arg);
             break;
         }
         selection = -1;
@@ -247,7 +247,7 @@ void func_800212d8(s32 arg)
  * can afford deducts its price from gold and adds the item to inventory.
  */
 ADDRESS(0x80021538, 0x5c4)
-void func_80021538(s32 arg)
+void item_menu_buy(s32 arg)
 {
     KfItemMenu ctx;
     s16 entries[80][10];
@@ -264,7 +264,7 @@ void func_80021538(s32 arg)
 
     while (pad_read(1) != 0)
         ;
-    func_8002ad6c((u16 *)&ctx, 7, 0);
+    menu_list_init((u16 *)&ctx, 7, 0);
 
     inv = &DAT_800652a8[arg * 80];
     found = 0;
@@ -294,14 +294,14 @@ void func_80021538(s32 arg)
 
     menu_frame_begin();
     if (ctx.count != 0) {
-        if (func_8002aea4(index[ctx.cursor]) != 0)
+        if (menu_load_item_model(index[ctx.cursor]) != 0)
             return;
         func_80027b7c(index[ctx.cursor], arg, 0);
     }
     menu_list_render((s16 *)&ctx);
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact((u32)&ctx, 3, 1, index[ctx.cursor], arg, 0) != -1)
@@ -337,7 +337,7 @@ void func_80021538(s32 arg)
                 ctx.scroll = ctx.count - ctx.page;
                 ctx.window = ctx.page - 1;
             }
-            if (func_8002aea4(index[ctx.cursor]) != 0)
+            if (menu_load_item_model(index[ctx.cursor]) != 0)
                 return;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
@@ -352,7 +352,7 @@ void func_80021538(s32 arg)
                 ctx.scroll = 0;
                 ctx.window = 0;
             }
-            if (func_8002aea4(index[ctx.cursor]) != 0)
+            if (menu_load_item_model(index[ctx.cursor]) != 0)
                 return;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             if (player_state.unknown_2c
@@ -388,7 +388,7 @@ void func_80021538(s32 arg)
  * copy from inventory and credits its sell price to gold.
  */
 ADDRESS(0x80021afc, 0x500)
-void func_80021afc(s32 arg)
+void item_menu_sell(s32 arg)
 {
     KfItemMenu ctx;
     s16 entries[80][10];
@@ -405,7 +405,7 @@ void func_80021afc(s32 arg)
 
     while (pad_read(1) != 0)
         ;
-    func_8002ad6c((u16 *)&ctx, 7, 1);
+    menu_list_init((u16 *)&ctx, 7, 1);
 
     inv = DAT_800652a8;
     found = 0;
@@ -436,14 +436,14 @@ void func_80021afc(s32 arg)
 
     menu_frame_begin();
     if (ctx.count != 0) {
-        if (func_8002aea4(index[ctx.cursor]) != 0)
+        if (menu_load_item_model(index[ctx.cursor]) != 0)
             return;
         func_80027b7c(index[ctx.cursor], arg, 1);
     }
     menu_list_render((s16 *)&ctx);
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact((u32)&ctx, 4, 1, index[ctx.cursor], arg, confirm)
@@ -480,7 +480,7 @@ void func_80021afc(s32 arg)
                 ctx.scroll = ctx.count - ctx.page;
                 ctx.window = ctx.page - 1;
             }
-            if (func_8002aea4(index[ctx.cursor]) != 0)
+            if (menu_load_item_model(index[ctx.cursor]) != 0)
                 return;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
@@ -495,7 +495,7 @@ void func_80021afc(s32 arg)
                 ctx.scroll = 0;
                 ctx.window = 0;
             }
-            if (func_8002aea4(index[ctx.cursor]) != 0)
+            if (menu_load_item_model(index[ctx.cursor]) != 0)
                 return;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
@@ -525,7 +525,7 @@ void func_80021afc(s32 arg)
  * item cannot be used at all.
  */
 ADDRESS(0x80021ffc, 0x2b8)
-s32 func_80021ffc(s32 arg)
+s32 item_use_confirm(s32 arg)
 {
     s16 prompt[12];
     s16 options[12];
@@ -537,7 +537,7 @@ s32 func_80021ffc(s32 arg)
     s32 prev;
 
     item = DAT_800652a8[arg];
-    if (func_8002aea4(arg) != 0)
+    if (menu_load_item_model(arg) != 0)
         return 1;
 
     prompt[0] = 0x3c;
@@ -554,26 +554,26 @@ s32 func_80021ffc(s32 arg)
 
     menu_frame_begin();
     func_800292f8(arg);
-    func_800291ec(prompt, options, 0, 0);
-    func_8002ac34();
+    menu_draw_two_option(prompt, options, 0, 0);
+    menu_present_frame();
     menu_frame_begin();
     func_800292f8(arg);
-    func_800291ec(prompt, options, 0, 0);
-    func_8002ac34();
+    menu_draw_two_option(prompt, options, 0, 0);
+    menu_present_frame();
     menu_frame_begin();
     func_800292f8(arg);
-    func_800291ec(prompt, options, 0, 0);
+    menu_draw_two_option(prompt, options, 0, 0);
     menu_play_input_sound(0);
     while (pad_read(1) != 0)
         ;
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (result != -99) {
             menu_frame_begin();
             func_800292f8(arg);
-            func_800291ec(prompt, options, choice, confirm);
-            func_8002ac34();
+            menu_draw_two_option(prompt, options, choice, confirm);
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
             break;
@@ -606,7 +606,7 @@ s32 func_80021ffc(s32 arg)
             result = 1;
         }
         func_800292f8(arg);
-        func_800291ec(prompt, options, choice, confirm);
+        menu_draw_two_option(prompt, options, choice, confirm);
     }
 
     game_state_acknowledge_pending();

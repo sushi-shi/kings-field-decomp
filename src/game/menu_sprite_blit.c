@@ -43,7 +43,7 @@ typedef struct MenuPoint {
  * it at ordering-table depth 2000.
  */
 ADDRESS(0x80029ab0, 0x1a0)
-void func_80029ab0(const MenuSpriteDef *sprite, const MenuPoint *pos)
+void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const MenuPoint *pos)
 {
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = sprite->tpage;
@@ -74,7 +74,7 @@ void func_80029ab0(const MenuSpriteDef *sprite, const MenuPoint *pos)
  * 2000.
  */
 ADDRESS(0x80029c50, 0x190)
-void func_80029c50(const MenuSpriteDef *sprite, const MenuPoint *pos)
+void menu_blit_sprite(const MenuSpriteDef *sprite, const MenuPoint *pos)
 {
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = sprite->tpage;

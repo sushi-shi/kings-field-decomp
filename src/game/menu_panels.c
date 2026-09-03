@@ -21,23 +21,23 @@ extern void tim_upload_images(u_long *tim_data);
 /* Shared menu primitives: frame begin/flush, hub background, list-panel
  * background, input sound cue, and the vsync/pad poll. */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
+extern void menu_present_frame(void);
 extern void func_8002718c(void);
-extern void func_80027e58(void);
+extern void menu_add_marker_quad(void);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /* Cursor/list widget helpers (init, render, query). */
-extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
+extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
 extern void menu_list_render(s16 *ctx);
-extern u32 func_8002af48(s32 magic_id);
+extern u32 menu_load_item_texture(s32 magic_id);
 extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
                          u32 arg5);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /* Sub-panel handlers dispatched by the option menu. */
-extern void func_800238d8(s32 object);
-extern void func_80023e9c(void);
+extern void menu_equip_select(s32 object);
+extern void menu_spell_select(void);
 extern void player_status_apply_effect4(void);
 
 /*
@@ -65,7 +65,7 @@ RODATA(0x800122e4, 0x2c)
  * ordering table until a button is pressed.
  */
 ADDRESS(0x80022d7c, 0x400)
-void func_80022d7c(s32 item_code)
+void menu_map_viewer(s32 item_code)
 {
     s32 frame = 0;
     POLY_FT4 poly_bg[2];
@@ -148,7 +148,7 @@ void func_80022d7c(s32 item_code)
                 &DAT_800580e8[display_state.buffer_index][1]);
         AddPrim(display_state.ordering_table + 3000,
                 &DAT_800580e8[display_state.buffer_index][0]);
-        func_8002ac34();
+        menu_present_frame();
         if (frame < 2) {
             frame++;
         } else if (frame == 2) {
@@ -172,7 +172,7 @@ void func_80022d7c(s32 item_code)
  * the panel is cancelled.
  */
 ADDRESS(0x8002317c, 0x530)
-s32 func_8002317c(void)
+s32 menu_magic_panel(void)
 {
     KfItemMenu ctx;
     s16 labels[10][10];
@@ -188,7 +188,7 @@ s32 func_8002317c(void)
 
     while (pad_read(1) != 0)
         ;
-    func_8002ad6c((u16 *)&ctx, 0, 1);
+    menu_list_init((u16 *)&ctx, 0, 1);
 
     found = 0;
     name = DAT_80059400;
@@ -207,14 +207,14 @@ s32 func_8002317c(void)
 
     menu_frame_begin();
     if (ctx.count != 0) {
-        if (func_8002af48(codes[ctx.cursor]) == 1)
+        if (menu_load_item_texture(codes[ctx.cursor]) == 1)
             return -1;
-        func_80027e58();
+        menu_add_marker_quad();
     }
     menu_list_render((s16 *)&ctx);
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact((u32)&ctx, 0, 2, codes[ctx.cursor], 0, 0) != -1)
@@ -251,7 +251,7 @@ s32 func_8002317c(void)
                 ctx.scroll = ctx.count - ctx.page;
                 ctx.window = ctx.page - 1;
             }
-            if (func_8002af48(codes[ctx.cursor]) == 1)
+            if (menu_load_item_texture(codes[ctx.cursor]) == 1)
                 return -1;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
@@ -266,7 +266,7 @@ s32 func_8002317c(void)
                 ctx.scroll = 0;
                 ctx.window = 0;
             }
-            if (func_8002af48(codes[ctx.cursor]) == 1)
+            if (menu_load_item_texture(codes[ctx.cursor]) == 1)
                 return -1;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
@@ -277,7 +277,7 @@ s32 func_8002317c(void)
         }
 
         if (ctx.count != 0)
-            func_80027e58();
+            menu_add_marker_quad();
         menu_list_render((s16 *)&ctx);
     }
 
@@ -304,12 +304,12 @@ s32 func_8002317c(void)
 
 /*
  * Option menu: a nine-row cursor (eight slots plus an exit row) that dispatches
- * each slot to func_800238d8, except slot 1 (func_80023e9c) and slots 5/6 which
+ * each slot to menu_equip_select, except slot 1 (menu_spell_select) and slots 5/6 which
  * are blocked while the special head-armour is equipped.  Loops until the exit
  * row or cancel.
  */
 ADDRESS(0x800236ac, 0x22c)
-void func_800236ac(void)
+void menu_option_root(void)
 {
     s32 cursor = 0;
     s32 confirm = 0;
@@ -323,12 +323,12 @@ void func_800236ac(void)
     menu_draw_window(1, 9, 0, 0);
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (selection != -1 || result == selection) {
             menu_frame_begin();
             func_8002718c();
             menu_draw_window(1, 9, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
         }
@@ -345,10 +345,10 @@ void func_800236ac(void)
         case 3:
         case 4:
         case 7:
-            func_800238d8(selection);
+            menu_equip_select(selection);
             break;
         case 1:
-            func_80023e9c();
+            menu_spell_select();
             break;
         }
         if (result != -99)

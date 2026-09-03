@@ -14,7 +14,7 @@ extern s32 DAT_80057e70;
 extern u32 game_exit_code;
 
 extern u32 pad_read(s32 mode);
-extern void func_8001b7b0(char object);
+extern void display_show_error_screen(char object);
 extern s32 func_80036e38(s32 arg0);
 extern void pool_release_all(void);
 extern void func_800365f8(void);
@@ -97,7 +97,7 @@ void player_update(void)
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
     input = pad_read(1);
     if (input & 0x800) {
-        func_8001b7b0(3);
+        display_show_error_screen(3);
     }
     if (input & 0x100) {
         input = 0x40;

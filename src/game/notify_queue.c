@@ -4,7 +4,7 @@
 /*
  * On-screen notification ring.  Player stat routines (level, training,
  * experience, item use) enqueue a message id here; the notification effect
- * state machine (func_8001fafc) consumes it a frame later.  Message id 0x13
+ * state machine (notify_effect_update) consumes it a frame later.  Message id 0x13
  * carries a u16 payload stored in a parallel table.
  *
  * WIP: the ring, its payload table, and the head cursor are unresolved
@@ -17,7 +17,7 @@ extern u8 DAT_8009506e[8]; /* request ring; 0xff marks an empty slot */
 extern u8 DAT_80095087;    /* ring head cursor, wraps mod 8 */
 
 ADDRESS(0x8001fa44, 0xa0)
-void func_8001fa44(int id, ...)
+void notify_enqueue(int id, ...)
 {
     u8 *head;
 

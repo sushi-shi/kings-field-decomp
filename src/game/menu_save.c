@@ -7,8 +7,8 @@ extern void *memset();
 /* Shared menu primitives: frame begin/flush, header/list/menu draw, input
  * sound cue, and the vsync/pad poll. */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
-extern void func_80027ea0(void);
+extern void menu_present_frame(void);
+extern void menu_add_frame_quad(void);
 extern void func_80027ee4(void *summaries, s32 cursor);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
@@ -20,7 +20,7 @@ extern s32 save_system_write_slot(s16 slot_id);
 extern s32 save_file_cleanup_temporary(void);
 extern s32 memory_card_check_or_format(s16 allow_format);
 extern s32 func_800286d4(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
-extern u32 func_8002af48(s32 arg0);
+extern u32 menu_load_item_texture(s32 arg0);
 
 /*
  * Save panel dispatched by the save-confirmation screen.  Reads the catalogue
@@ -36,7 +36,7 @@ extern u32 func_8002af48(s32 arg0);
  * panels").
  */
 ADDRESS(0x800250c4, 0x468)
-s32 func_800250c4(void)
+s32 menu_save_panel(void)
 {
     KfSaveSlotSummary summaries[3];
     s32 cursor = 0;
@@ -52,10 +52,10 @@ s32 func_800250c4(void)
         menu_play_input_sound(0);
         while (pad_read(1) == 0) {
             menu_frame_begin();
-            func_80027ea0();
+            menu_add_frame_quad();
             func_80027ee4(summaries, cursor);
             menu_draw_window(4, 5, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
         }
         menu_play_input_sound(2);
         while (pad_read(1) != 0)
@@ -68,7 +68,7 @@ s32 func_800250c4(void)
             menu_frame_begin();
             func_80027ee4(summaries, cursor);
             menu_draw_window(4, 5, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
         }
@@ -77,13 +77,13 @@ s32 func_800250c4(void)
             if (cursor == 3) {
                 status = save_file_cleanup_temporary();
                 if (status == 1) {
-                    func_8002af48(0x72);
+                    menu_load_item_texture(0x72);
                     while (pad_read(1) == 0) {
                         menu_frame_begin();
-                        func_80027ea0();
+                        menu_add_frame_quad();
                         func_80027ee4(summaries, cursor);
                         menu_draw_window(4, 5, cursor, confirm);
-                        func_8002ac34();
+                        menu_present_frame();
                     }
                 }
                 menu_play_input_sound(0);
@@ -96,23 +96,23 @@ s32 func_800250c4(void)
                 result = -99;
             } else {
                 if (cursor < 3) {
-                    func_8002af48(0x68);
+                    menu_load_item_texture(0x68);
                     for (i = 0; i < 3; i++) {
                         menu_frame_begin();
-                        func_80027ea0();
+                        menu_add_frame_quad();
                         func_80027ee4(summaries, cursor);
                         menu_draw_window(4, 5, cursor, confirm);
-                        func_8002ac34();
+                        menu_present_frame();
                     }
                     status = save_system_write_slot(cursor + 1);
                 } else {
-                    func_8002af48(0x69);
+                    menu_load_item_texture(0x69);
                     for (i = 0; i < 3; i++) {
                         menu_frame_begin();
-                        func_80027ea0();
+                        menu_add_frame_quad();
                         func_80027ee4(summaries, cursor);
                         menu_draw_window(4, 5, cursor, confirm);
-                        func_8002ac34();
+                        menu_present_frame();
                     }
                     status = memory_card_check_or_format(1);
                     memset(summaries, 0, sizeof(summaries));
@@ -121,10 +121,10 @@ s32 func_800250c4(void)
                 if (status != 1) {
                     while (pad_read(1) == 0) {
                         menu_frame_begin();
-                        func_80027ea0();
+                        menu_add_frame_quad();
                         func_80027ee4(summaries, cursor);
                         menu_draw_window(4, 5, cursor, confirm);
-                        func_8002ac34();
+                        menu_present_frame();
                     }
                     menu_play_input_sound(2);
                     while (pad_read(1) != 0)
@@ -167,6 +167,6 @@ s32 func_800250c4(void)
         menu_frame_begin();
         func_80027ee4(summaries, cursor);
         menu_draw_window(4, 5, cursor, confirm);
-        func_8002ac34();
+        menu_present_frame();
     }
 }
