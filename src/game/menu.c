@@ -20,7 +20,7 @@ extern s16 DAT_800591d0[];
 extern void menu_frame_begin(void);
 extern void menu_present_frame(void);
 extern void menu_draw_stats_header(void);
-extern void func_80027ee4(void *arg0, s32 arg1);
+extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern s32 menu_save_panel(void);
 extern void menu_play_input_sound(s32 cue);
@@ -79,7 +79,7 @@ void menu_save_confirm(void)
     do {
         i++;
         menu_frame_begin();
-        func_80027ee4((void *)0, 3);
+        menu_draw_dialog_frame((void *)0, 3);
         menu_draw_window(4, 5, 0, 0);
         menu_present_frame();
     } while (i < 3);

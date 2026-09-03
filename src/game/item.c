@@ -41,7 +41,7 @@ void item_menu_sell(s32 arg);
 extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
 extern void menu_list_render(s16 *ctx);
 extern u32 menu_load_item_model(s32 item_id);
-extern void func_80027b7c(s32 item_id, s32 arg1, s32 arg2);
+extern void menu_draw_item_detail(s32 item_id, s32 arg1, s32 arg2);
 extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4, u32 arg5);
 extern void game_state_acknowledge_pending(void);
 extern void func_800292f8(s32 object);
@@ -296,7 +296,7 @@ void item_menu_buy(s32 arg)
     if (ctx.count != 0) {
         if (menu_load_item_model(index[ctx.cursor]) != 0)
             return;
-        func_80027b7c(index[ctx.cursor], arg, 0);
+        menu_draw_item_detail(index[ctx.cursor], arg, 0);
     }
     menu_list_render((s16 *)&ctx);
 
@@ -369,7 +369,7 @@ void item_menu_buy(s32 arg)
 
         menu_frame_begin();
         if (ctx.count != 0)
-            func_80027b7c(index[ctx.cursor], arg, 0);
+            menu_draw_item_detail(index[ctx.cursor], arg, 0);
         menu_list_render((s16 *)&ctx);
     }
 
@@ -438,7 +438,7 @@ void item_menu_sell(s32 arg)
     if (ctx.count != 0) {
         if (menu_load_item_model(index[ctx.cursor]) != 0)
             return;
-        func_80027b7c(index[ctx.cursor], arg, 1);
+        menu_draw_item_detail(index[ctx.cursor], arg, 1);
     }
     menu_list_render((s16 *)&ctx);
 
@@ -507,7 +507,7 @@ void item_menu_sell(s32 arg)
 
         menu_frame_begin();
         if (ctx.count != 0)
-            func_80027b7c(index[ctx.cursor], arg, 1);
+            menu_draw_item_detail(index[ctx.cursor], arg, 1);
         menu_list_render((s16 *)&ctx);
     }
 

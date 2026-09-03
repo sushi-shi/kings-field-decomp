@@ -6,7 +6,7 @@
 extern void menu_frame_begin(void);
 extern void menu_present_frame(void);
 extern void menu_add_frame_quad(void);
-extern void func_80027ee4(void *summaries, s32 cursor);
+extern void menu_draw_dialog_frame(void *summaries, s32 cursor);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
@@ -45,7 +45,7 @@ s32 menu_load_panel(void)
         while (pad_read(1) == 0) {
             menu_frame_begin();
             menu_add_frame_quad();
-            func_80027ee4(summaries, cursor);
+            menu_draw_dialog_frame(summaries, cursor);
             menu_draw_window(5, 4, cursor, confirm);
             menu_present_frame();
         }
@@ -58,7 +58,7 @@ s32 menu_load_panel(void)
     for (;;) {
         if (confirm == 1 || result == -1) {
             menu_frame_begin();
-            func_80027ee4(summaries, cursor);
+            menu_draw_dialog_frame(summaries, cursor);
             menu_draw_window(5, 4, cursor, confirm);
             menu_present_frame();
             while (pad_read(1) != 0)
@@ -74,7 +74,7 @@ s32 menu_load_panel(void)
                 for (i = 0; i < 3; i++) {
                     menu_frame_begin();
                     menu_add_frame_quad();
-                    func_80027ee4(summaries, cursor);
+                    menu_draw_dialog_frame(summaries, cursor);
                     menu_draw_window(5, 4, cursor, confirm);
                     menu_present_frame();
                 }
@@ -82,7 +82,7 @@ s32 menu_load_panel(void)
                     while (pad_read(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();
-                        func_80027ee4(summaries, cursor);
+                        menu_draw_dialog_frame(summaries, cursor);
                         menu_draw_window(5, 4, cursor, confirm);
                         menu_present_frame();
                     }
@@ -129,7 +129,7 @@ s32 menu_load_panel(void)
         }
 
         menu_frame_begin();
-        func_80027ee4(summaries, cursor);
+        menu_draw_dialog_frame(summaries, cursor);
         menu_draw_window(5, 4, cursor, confirm);
         menu_present_frame();
     }
