@@ -16,7 +16,7 @@ extern s32 pending_game_state;
 extern u16 DAT_80057b72;
 
 extern void game_state_acknowledge_pending(void);
-extern u32 func_8001ae60(void **asset_out, s32 id);
+extern u32 cd_file_load_table_entry(void **asset_out, s32 id);
 extern void tmd_register(u16 slot, void *asset);
 
 /*
@@ -40,7 +40,7 @@ typedef struct MenuListHeader {
 
 /* Initialize a menu list header and copy its label glyphs from the table. */
 ADDRESS(0x8002ad6c, 0x8c)
-void func_8002ad6c(MenuListHeader *ctx, s32 row, s32 col)
+void menu_list_init(MenuListHeader *ctx, s32 row, s32 col)
 {
     u16 *src;
     s32 i;
@@ -93,13 +93,13 @@ void func_8002adf8(s32 value, s32 count, s32 pad_zero, s16 *out)
  * pending markers and returns 0.
  */
 ADDRESS(0x8002aea4, 0x68)
-u32 func_8002aea4(s32 id)
+u32 menu_load_item_model(s32 id)
 {
     void *asset;
 
     game_state_acknowledge_pending();
     if (id != 0xff) {
-        if (func_8001ae60(&asset, id) != 0) {
+        if (cd_file_load_table_entry(&asset, id) != 0) {
             return 1;
         }
         tmd_register(4, asset);

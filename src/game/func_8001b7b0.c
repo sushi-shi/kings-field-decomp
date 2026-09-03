@@ -25,7 +25,7 @@ char error_screen_path[7] = "\\E0.;1";
  * Called by cd_file_load_into on disc failure and by game_main_loop on a save
  * error. */
 ADDRESS(0x8001b7b0, 0x308)
-void func_8001b7b0(s32 stage)
+void display_show_error_screen(s32 stage)
 {
     POLY_FT4 prim;
     s32 back;

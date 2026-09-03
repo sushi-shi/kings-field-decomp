@@ -8,16 +8,16 @@ extern KfSavePayload *save_payload_buffer;
 /* Shared menu primitives: frame begin/flush, header/menu draw, input sound
  * cue, and the vsync/pad poll. */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
-extern void func_80027ea0(void);
+extern void menu_present_frame(void);
+extern void menu_add_frame_quad(void);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /* Save/load workers and the save-complete effect/audio hooks. */
-extern s32 func_8002552c(void);
+extern s32 menu_load_panel(void);
 extern s32 func_800286d4(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
-extern u32 func_8002af48(s32 arg0);
+extern u32 menu_load_item_texture(s32 arg0);
 extern void audio_stop_sequence_fade(void);
 
 /*
@@ -33,7 +33,7 @@ extern void audio_stop_sequence_fade(void);
  * panels").
  */
 ADDRESS(0x80024e64, 0x260)
-s32 func_80024e64(void)
+s32 menu_save_load_hub(void)
 {
     KfSaveHeader header;
     KfSavePayload payload;
@@ -51,25 +51,25 @@ s32 func_80024e64(void)
         if (action != -1 || result == action) {
             menu_frame_begin();
             menu_draw_window(2, 3, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
         }
 
         if (action == 0) {
-            result = func_8002552c();
+            result = menu_load_panel();
             if (result == 0)
                 result = -3;
         } else if (action == 1) {
             result = func_800286d4(2, 3, cursor, 0);
             if (result == 0) {
-                func_8002af48(0x3e6);
+                menu_load_item_texture(0x3e6);
                 audio_stop_sequence_fade();
                 for (;;) {
                     menu_frame_begin();
-                    func_80027ea0();
+                    menu_add_frame_quad();
                     menu_draw_window(2, 3, cursor, confirm);
-                    func_8002ac34();
+                    menu_present_frame();
                 }
             }
         }
@@ -110,6 +110,6 @@ s32 func_80024e64(void)
 
         menu_frame_begin();
         menu_draw_window(2, 3, cursor, confirm);
-        func_8002ac34();
+        menu_present_frame();
     }
 }

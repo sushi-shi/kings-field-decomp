@@ -12,7 +12,7 @@ extern const SoundRef gameplay_sound_ref_7;
 extern const SoundRef gameplay_sound_ref_8;
 extern const SoundRef gameplay_sound_ref_12;
 /* Psy-Q LIBGTE: rsin, rcos. */
-extern void func_8001fa44(s32 arg0);
+extern void notify_enqueue(s32 arg0);
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *effect_pool_spawn_typed();
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
@@ -96,7 +96,7 @@ void player_use_item(u8 item_id)
             case 121:
             case 122:
                 if (object->link.link_id == 0xff) {
-                    func_8001fa44(0x12);
+                    notify_enqueue(0x12);
                 } else if (object->object_id != 89
                            || angle_within_tolerance(
                                player_state.camera_rotation.vy, 0x800 - object->rotation.y, 0x155)) {
@@ -108,7 +108,7 @@ void player_use_item(u8 item_id)
                             sound_ref_play(&gameplay_sound_ref_7, 0x7f);
                         }
                     } else {
-                        func_8001fa44(4);
+                        notify_enqueue(4);
                     }
                 }
                 break;
@@ -129,7 +129,7 @@ void player_use_item(u8 item_id)
             object = &map_object_state.objects[index];
             if (object->object_id == item_id) {
                 if (object->link.link_id == 0xff) {
-                    func_8001fa44(0x12);
+                    notify_enqueue(0x12);
                 } else {
                     DAT_800652a8[object->object_id] = 0;
                     used = 1;
@@ -206,6 +206,6 @@ void player_use_item(u8 item_id)
     }
 done:
     if (!used) {
-        func_8001fa44(0x12);
+        notify_enqueue(0x12);
     }
 }

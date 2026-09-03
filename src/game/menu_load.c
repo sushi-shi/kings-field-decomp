@@ -4,8 +4,8 @@
 /* Shared menu primitives: frame begin/flush, header/list/menu draw, input
  * sound cue, and the vsync/pad poll. */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
-extern void func_80027ea0(void);
+extern void menu_present_frame(void);
+extern void menu_add_frame_quad(void);
 extern void func_80027ee4(void *summaries, s32 cursor);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
@@ -15,7 +15,7 @@ extern u32 pad_read();
 extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
 extern s32 save_system_read_slot(s16 slot_id);
 extern s32 func_800286d4(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
-extern u32 func_8002af48(s32 arg0);
+extern u32 menu_load_item_texture(s32 arg0);
 
 /*
  * Load panel: reads the memory-card catalogue into three slot summaries and
@@ -30,7 +30,7 @@ extern u32 func_8002af48(s32 arg0);
  * "item / inventory menu panels").
  */
 ADDRESS(0x8002552c, 0x370)
-s32 func_8002552c(void)
+s32 menu_load_panel(void)
 {
     KfSaveSlotSummary summaries[3];
     s32 cursor = 0;
@@ -44,10 +44,10 @@ s32 func_8002552c(void)
         menu_play_input_sound(0);
         while (pad_read(1) == 0) {
             menu_frame_begin();
-            func_80027ea0();
+            menu_add_frame_quad();
             func_80027ee4(summaries, cursor);
             menu_draw_window(5, 4, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
         }
         menu_play_input_sound(2);
         while (pad_read(1) != 0)
@@ -60,7 +60,7 @@ s32 func_8002552c(void)
             menu_frame_begin();
             func_80027ee4(summaries, cursor);
             menu_draw_window(5, 4, cursor, confirm);
-            func_8002ac34();
+            menu_present_frame();
             while (pad_read(1) != 0)
                 ;
         }
@@ -70,21 +70,21 @@ s32 func_8002552c(void)
             if (result == -1) {
                 result = -99;
             } else {
-                func_8002af48(0x67);
+                menu_load_item_texture(0x67);
                 for (i = 0; i < 3; i++) {
                     menu_frame_begin();
-                    func_80027ea0();
+                    menu_add_frame_quad();
                     func_80027ee4(summaries, cursor);
                     menu_draw_window(5, 4, cursor, confirm);
-                    func_8002ac34();
+                    menu_present_frame();
                 }
                 if (save_system_read_slot(cursor + 1) != 1) {
                     while (pad_read(1) == 0) {
                         menu_frame_begin();
-                        func_80027ea0();
+                        menu_add_frame_quad();
                         func_80027ee4(summaries, cursor);
                         menu_draw_window(5, 4, cursor, confirm);
-                        func_8002ac34();
+                        menu_present_frame();
                     }
                     menu_play_input_sound(2);
                     while (pad_read(1) != 0)
@@ -131,6 +131,6 @@ s32 func_8002552c(void)
         menu_frame_begin();
         func_80027ee4(summaries, cursor);
         menu_draw_window(5, 4, cursor, confirm);
-        func_8002ac34();
+        menu_present_frame();
     }
 }

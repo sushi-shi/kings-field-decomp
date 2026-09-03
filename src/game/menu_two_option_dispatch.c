@@ -25,8 +25,8 @@ extern MenuSpriteDef DAT_80058418; /* option box, highlighted */
 extern MenuSpriteDef DAT_8005846c; /* window frame */
 extern u8 DAT_800583f4[];          /* label descriptor for func_80029de0 */
 
-extern void func_80029c50(const MenuSpriteDef *sprite, const MenuPoint *pos);
-extern void func_80029ab0(const MenuSpriteDef *sprite, const MenuPoint *pos);
+extern void menu_blit_sprite(const MenuSpriteDef *sprite, const MenuPoint *pos);
+extern void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const MenuPoint *pos);
 extern void func_80029de0(u8 *desc, const MenuPoint *pos);
 
 /*
@@ -35,26 +35,26 @@ extern void func_80029de0(u8 *desc, const MenuPoint *pos);
  * the highlight box when highlighting is active), and a label under each.
  */
 ADDRESS(0x800291ec, 0x10c)
-void func_800291ec(const MenuPoint *point0, const MenuPoint *point1,
+void menu_draw_two_option(const MenuPoint *point0, const MenuPoint *point1,
                    s32 selected, s32 highlight)
 {
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     if (selected == 0) {
-        func_80029c50(&DAT_8005846c, point0);
+        menu_blit_sprite(&DAT_8005846c, point0);
     } else {
-        func_80029c50(&DAT_8005846c, point1);
+        menu_blit_sprite(&DAT_8005846c, point1);
     }
     if (highlight == 1) {
         if (selected == 0) {
-            func_80029ab0(&DAT_80058418, point0);
-            func_80029ab0(&DAT_8005840c, point1);
+            menu_blit_sprite_translucent(&DAT_80058418, point0);
+            menu_blit_sprite_translucent(&DAT_8005840c, point1);
         } else {
-            func_80029ab0(&DAT_8005840c, point0);
-            func_80029ab0(&DAT_80058418, point1);
+            menu_blit_sprite_translucent(&DAT_8005840c, point0);
+            menu_blit_sprite_translucent(&DAT_80058418, point1);
         }
     } else {
-        func_80029ab0(&DAT_8005840c, point0);
-        func_80029ab0(&DAT_8005840c, point1);
+        menu_blit_sprite_translucent(&DAT_8005840c, point0);
+        menu_blit_sprite_translucent(&DAT_8005840c, point1);
     }
     func_80029de0(DAT_800583f4, point0);
     func_80029de0(DAT_800583f4, point1);

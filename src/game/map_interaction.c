@@ -45,12 +45,12 @@ extern void frame_pacer_wait(void);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
 extern void render_frame();
-extern void func_8001fa44(s32 arg0);
+extern void notify_enqueue(s32 arg0);
 extern u32 func_80036e38(s32 arg0, u8 arg1);
 extern u8 *effect_pool_construct();
 extern void effect_pool_sweep(void);
 extern void func_80035b5c(void);
-extern void func_800222b4(void);
+extern void menu_save_confirm(void);
 extern void func_800343e0(void);
 extern void func_800345bc(void);
 extern void func_80034610(void);
@@ -180,7 +180,7 @@ void func_80034a80(KfMapEvent *event)
             && map_event_pool[2].image_dirty < 2) {
             *(u8 *)&magic_records[0] = 1;
             DAT_800652a8[0x3b]--;
-            func_8001fa44(1);
+            notify_enqueue(1);
             map_event_pool[2].tag.bytes[1] = 7;
             talk_show_indexed_image(player_state.progress_state.current_floor,
                                     event->image_index, event->kind, 2);
@@ -249,16 +249,16 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
     sound_z = position->vz + (rcos(rotation->vy) * 1500 >> 12);
     switch (map_cell_attribute_grid[sound_z / 2000][sound_x / 2000]) {
     case 0x3a:
-        func_8001fa44(0xc);
+        notify_enqueue(0xc);
         break;
     case 0x3f:
-        func_8001fa44(0x17);
+        notify_enqueue(0x17);
         break;
     case 0x5d:
-        func_8001fa44(0x18);
+        notify_enqueue(0x18);
         break;
     case 0x45:
-        func_8001fa44(0x11);
+        notify_enqueue(0x11);
         break;
     default:
         break;
@@ -313,7 +313,7 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
         object = &map_object_state.objects[index];
         definition = &map_object_state.definitions[object->object_id];
         if (definition->behavior_type > 0x53) {
-            func_8001fa44(object->unknown_29);
+            notify_enqueue(object->unknown_29);
             continue;
         }
         switch (definition->behavior_type) {
@@ -324,11 +324,11 @@ void func_80034de4(const VECTOR *position, SVECTOR *rotation)
                     audio_play_spatial_default_range(&gameplay_sound_ref_2,
                                                      (const VECTOR *)&object->position_x, 0x7f);
                 }
-                func_8001fa44(object->action);
+                notify_enqueue(object->action);
             }
             break;
         default:
-            func_8001fa44(object->unknown_29);
+            notify_enqueue(object->unknown_29);
             break;
         }
     }

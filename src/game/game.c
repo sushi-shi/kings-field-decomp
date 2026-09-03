@@ -19,8 +19,8 @@ extern s32 CloseEvent(s32 event);
 extern void memory_card_initialize(void);
 extern void memory_set_allocation_mode(s32 arg0);
 extern void audio_initialize(void);
-extern void func_8001bb94(void);
-extern void func_80020cfc(void);
+extern void display_initialize(void);
+extern void item_load_database(void);
 extern void actor_pool_clear(void);
 extern void map_object_pool_clear(void);
 extern void effect_pool_reset(void);
@@ -32,7 +32,7 @@ extern void memory_reset_system_heap(void);
 extern void func_800365f8(void);
 extern void func_80014674(u32 arg0);
 extern s32 save_file_cleanup_temporary(void);
-extern void func_8001b7b0(char object);
+extern void display_show_error_screen(char object);
 extern void player_update(void);
 extern void player_update_transform_snapshot(
     VECTOR *position_out, SVECTOR *rotation_out);
@@ -47,7 +47,7 @@ extern void func_8003596c(void);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 player_warp_trigger_update(void);
-extern void func_800144d4(void);
+extern void display_play_transition(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
 extern void memory_card_shutdown_events(void);
 extern void audio_shutdown(void);
@@ -98,8 +98,8 @@ void game_main_loop(void)
     memory_card_initialize();
     memory_set_allocation_mode(0);
     audio_initialize();
-    func_8001bb94();
-    func_80020cfc();
+    display_initialize();
+    item_load_database();
     actor_pool_clear();
     map_object_pool_clear();
     effect_pool_reset();
@@ -115,7 +115,7 @@ void game_main_loop(void)
     EnableEvent(vsync_event);
     func_80014674(1);
     if (save_file_cleanup_temporary() == 2) {
-        func_8001b7b0(2);
+        display_show_error_screen(2);
     }
     game_exit_code = 0;
     for (;;) {
@@ -140,7 +140,7 @@ void game_main_loop(void)
                 if (player_warp_trigger_update() != 0) {
                     game_exit_code = 0xfe;
                     func_80014674(2);
-                    func_800144d4();
+                    display_play_transition();
                     audio_stop_sequence_master_fade(0x80);
                     break;
                 }

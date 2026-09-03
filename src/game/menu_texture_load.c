@@ -16,7 +16,7 @@ RODATA(0x80012350, 0xc)
  * fails, otherwise 0.
  */
 ADDRESS(0x8002af48, 0x130)
-u32 func_8002af48(s32 id)
+u32 menu_load_item_texture(s32 id)
 {
     char name[16] = "TIM\\M000.";
     void *destination;

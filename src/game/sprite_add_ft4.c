@@ -4,7 +4,7 @@
 extern KfDisplayState display_state;
 
 ADDRESS(0x80014314, 0x1c0)
-void func_80014314(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
+void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
                    u8 *color, u16 ot_index)
 {
     POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;

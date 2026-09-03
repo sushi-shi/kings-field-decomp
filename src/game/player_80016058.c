@@ -5,7 +5,7 @@ extern KfPlayerState player_state;
 extern KfPlayerLevelGrowth player_level_growth_table[40];
 extern const SoundRef player_sound_refs[3];
 extern void player_recalculate_combat_stats(void);
-extern void func_8001fa44(s32 arg0);
+extern void notify_enqueue(s32 arg0);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 
 ADDRESS(0x80016058, 0x224)
@@ -57,7 +57,7 @@ void player_add_experience(s16 amount)
             player_state.base_magic = 999;
         }
         player_recalculate_combat_stats();
-        func_8001fa44(0);
+        notify_enqueue(0);
         sound_ref_play(&player_sound_refs[2], 0x7f);
     }
 }

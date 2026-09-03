@@ -12,7 +12,7 @@ extern void audio_load_vab(u8 *vab_header, u8 *vab_body);
 extern void audio_play_current_map_sequence(void);
 extern const u32 *map_resource_copy_words(
     u32 *destination, const u32 *source, u32 word_count);
-extern void func_80020b4c(s16 *block);
+extern void item_load_floor_placements(s16 *block);
 extern void map_object_pool_load(const KfMapObjectPlacement *placements);
 extern void actor_pool_load_placements(const KfActorPlacement *placements);
 extern void actor_definitions_load(const KfActorDefinition *definitions);
@@ -69,7 +69,7 @@ void map_resources_load(s32 floor, s32 use_variant)
     source = map_resource_copy_words((u32 *)map_cell_orientation_grid, source, MAP_GRID_WORDS);
     source = map_resource_copy_words((u32 *)map_collision_flag_grid, source, MAP_GRID_WORDS);
     map_resource_copy_words((u32 *)map_collision_grid, source, MAP_GRID_WORDS);
-    func_80020b4c((s16 *)(STREAM_NEXT(stream) + 4));
+    item_load_floor_placements((s16 *)(STREAM_NEXT(stream) + 4));
     map_object_pool_load((KfMapObjectPlacement *)(STREAM_NEXT(stream) + 4));
     actor_pool_load_placements((KfActorPlacement *)(STREAM_NEXT(stream) + 4));
     actor_definitions_load((KfActorDefinition *)(STREAM_NEXT(stream) + 4));

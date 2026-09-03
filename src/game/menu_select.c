@@ -17,17 +17,17 @@ extern s16 DAT_80059450[];
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
  * and the deferred state acknowledgement. */
 extern void menu_frame_begin(void);
-extern void func_8002ac34(void);
-extern void func_80027e58(void);
+extern void menu_present_frame(void);
+extern void menu_add_marker_quad(void);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, preview, query). */
-extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
+extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
 extern void menu_list_render(s16 *ctx);
-extern u32 func_8002aea4(s32 item_id);
-extern u32 func_8002af48(s32 item_id);
+extern u32 menu_load_item_model(s32 item_id);
+extern u32 menu_load_item_texture(s32 item_id);
 extern void menu_item_model_preview(s32 item_id);
 extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
                          u32 arg5);
@@ -66,7 +66,7 @@ RODATA(0x80012310, 0x40)
  * special helm (id 0x15) is chosen.
  */
 ADDRESS(0x800238d8, 0x5c4)
-void func_800238d8(s32 object)
+void menu_equip_select(s32 object)
 {
     KfItemMenu ctx;
     s16 labels[20][10];
@@ -135,14 +135,14 @@ void func_800238d8(s32 object)
     codes[k] = 0xff;
     k++;
 
-    func_8002ad6c((u16 *)&ctx, 1, object);
+    menu_list_init((u16 *)&ctx, 1, object);
     ctx.count = k;
     ctx.rows = 10;
     ctx.entries = &labels[0][0];
     ctx.unknown_24 = 0;
 
     if (ctx.count != 0) {
-        if (func_8002aea4(codes[ctx.cursor]) != 0)
+        if (menu_load_item_model(codes[ctx.cursor]) != 0)
             return;
     }
 
@@ -185,7 +185,7 @@ void func_800238d8(s32 object)
                     ctx.window = ctx.page - 1;
                 }
             }
-            if (func_8002aea4(codes[ctx.cursor]) != 0)
+            if (menu_load_item_model(codes[ctx.cursor]) != 0)
                 return;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
@@ -200,7 +200,7 @@ void func_800238d8(s32 object)
                 ctx.scroll = 0;
                 ctx.window = 0;
             }
-            if (func_8002aea4(codes[ctx.cursor]) != 0)
+            if (menu_load_item_model(codes[ctx.cursor]) != 0)
                 return;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
@@ -214,7 +214,7 @@ void func_800238d8(s32 object)
         if (ctx.count != 0)
             menu_item_model_preview(codes[ctx.cursor]);
         menu_list_render((s16 *)&ctx);
-        func_8002ac34();
+        menu_present_frame();
     }
 
     game_state_acknowledge_pending();
@@ -264,7 +264,7 @@ void func_800238d8(s32 object)
  * confirm stores the chosen spell as the active magic and resolves its record.
  */
 ADDRESS(0x80023e9c, 0x470)
-void func_80023e9c(void)
+void menu_spell_select(void)
 {
     KfItemMenu ctx;
     s16 labels[20][10];
@@ -298,7 +298,7 @@ void func_80023e9c(void)
     codes[k] = 0xff;
     k++;
 
-    func_8002ad6c((u16 *)&ctx, 1, 1);
+    menu_list_init((u16 *)&ctx, 1, 1);
     ctx.count = k;
     ctx.rows = 10;
     ctx.entries = &labels[0][0];
@@ -306,15 +306,15 @@ void func_80023e9c(void)
 
     menu_frame_begin();
     if (ctx.count != 0) {
-        if (func_8002af48(codes[ctx.cursor]) == 1)
+        if (menu_load_item_texture(codes[ctx.cursor]) == 1)
             return;
         if (codes[ctx.cursor] != 0xff)
-            func_80027e58();
+            menu_add_marker_quad();
     }
     menu_list_render((s16 *)&ctx);
 
     for (;;) {
-        func_8002ac34();
+        menu_present_frame();
         if (confirm == 1) {
             if (menu_list_interact((u32)&ctx, 5, 2, codes[ctx.cursor], 0, 0) == -1)
                 selection = -99;
@@ -354,7 +354,7 @@ void func_80023e9c(void)
                     ctx.window = ctx.page - 1;
                 }
             }
-            if (func_8002af48(codes[ctx.cursor]) == 1)
+            if (menu_load_item_texture(codes[ctx.cursor]) == 1)
                 return;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
@@ -369,7 +369,7 @@ void func_80023e9c(void)
                 ctx.scroll = 0;
                 ctx.window = 0;
             }
-            if (func_8002af48(codes[ctx.cursor]) == 1)
+            if (menu_load_item_texture(codes[ctx.cursor]) == 1)
                 return;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
@@ -381,7 +381,7 @@ void func_80023e9c(void)
 
         if (ctx.count != 0) {
             if (codes[ctx.cursor] != 0xff)
-                func_80027e58();
+                menu_add_marker_quad();
         }
         menu_list_render((s16 *)&ctx);
     }

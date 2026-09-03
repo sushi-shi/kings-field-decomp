@@ -41,7 +41,7 @@ extern void matrix_interpolate(
 extern void lighting_set_active_color_matrix(s32 index);
 extern void frame_pacer_wait(void);
 extern void render_frame(s32 first, s32 second);
-extern void func_8001fa44(s32 arg0);
+extern void notify_enqueue(s32 arg0);
 
 /* The two TIM cut-in paths shown by func_800342ec. */
 RODATA(0x80012a54, 0x28)
@@ -133,13 +133,13 @@ void func_80034610(void)
     if (DAT_800652a8[0x32] != 0) {
         if (magic_records[7].learned == 0) {
             magic_records[7].learned = 1;
-            func_8001fa44(1);
+            notify_enqueue(1);
         }
     }
     if ((*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010300) {
         if (magic_records[5].learned == 0) {
             magic_records[5].learned = 1;
-            func_8001fa44(1);
+            notify_enqueue(1);
         }
     }
 }

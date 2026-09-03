@@ -12,7 +12,7 @@ extern DISPENV display_disp_environments[2];
  * hub and item panels call this local copy.
  */
 ADDRESS(0x8002ac34, 0x98)
-void func_8002ac34(void)
+void menu_present_frame(void)
 {
     DrawSync(0);
     VSync(0);

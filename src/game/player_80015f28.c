@@ -8,7 +8,7 @@ extern KfWeaponRecord weapon_records[16];
 extern KfArmorRecord armor_records[42];
 /* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
 extern KfMagicRecord magic_records[24];
-extern void func_8001fa44(s32 arg0);
+extern void notify_enqueue(s32 arg0);
 extern void player_recalculate_combat_stats(void);
 
 /*
@@ -130,15 +130,15 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.base_magic >= 37 && magic_records[0].learned != 0 && magic_records[1].learned == 0) {
         magic_records[1].learned = 1;
-        func_8001fa44(1);
+        notify_enqueue(1);
     }
     if (player_state.base_magic >= 70 && magic_records[6].learned == 0) {
         magic_records[6].learned = 1;
-        func_8001fa44(1);
+        notify_enqueue(1);
     }
     if (player_state.base_magic >= 75 && magic_records[4].learned == 0) {
         magic_records[4].learned = 1;
-        func_8001fa44(1);
+        notify_enqueue(1);
     }
     if (player_state.physical_power >= 1000) {
         player_state.physical_power = 999;
@@ -158,7 +158,7 @@ void player_increment_physical_power_training(void)
         if (player_state.base_physical_power >= 1000) {
             player_state.base_physical_power = 999;
         } else {
-            func_8001fa44(0x1e);
+            notify_enqueue(0x1e);
         }
         player_recalculate_combat_stats();
     }
@@ -174,7 +174,7 @@ void player_increment_magic_training(void)
         if (player_state.base_magic >= 1000) {
             player_state.base_magic = 999;
         } else {
-            func_8001fa44(0x1f);
+            notify_enqueue(0x1f);
         }
         player_recalculate_combat_stats();
     }

@@ -20,7 +20,7 @@ extern void tmd_transform_vertices(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern u16 *render_bind_animated_instance(void *entry, u16 asset, u16 arg2, u16 arg3, u16 count);
 extern void render_enqueue_tmd(u16 arg0, s16 arg1);
-extern void func_8001e480(char *entry);
+extern void render_screen_sprite(char *entry);
 
 /*
  * One entry of the animated decal/sprite table at DAT_80055d74 (stride 28).
@@ -133,7 +133,7 @@ void render_effect_sprites(void)
 
 /*
  * Walks a stride-14 table terminated by a 0xff type byte and dispatches every
- * active (type == 1) entry to func_8001e480, pointing it past the two-byte
+ * active (type == 1) entry to render_screen_sprite, pointing it past the two-byte
  * header.  The table base is supplied by the caller.
  */
 ADDRESS(0x8001f9d4, 0x70)
@@ -147,7 +147,7 @@ void render_hud_gauges(u8 *table)
     }
     do {
         if (entry[0] == 1) {
-            func_8001e480((char *)(entry + 2));
+            render_screen_sprite((char *)(entry + 2));
         }
         entry += 14;
     } while (entry[0] != 0xff);

@@ -61,7 +61,7 @@ extern void pool_mark_allocated(void);
 extern void render_map_cells(void);
 extern void render_effect_sprites(void);
 extern void render_hud_gauges(u8 *table);
-extern void func_8001fafc(void);
+extern void notify_effect_update(void);
 extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
 extern void render_entities(void);
 extern void render_weapon(void);
@@ -142,7 +142,7 @@ void render_frame(VECTOR *position, SVECTOR *rotation)
     render_hud_gauges(tint - 168);
 
     SetLightMatrix(&render_light_matrices[5]);
-    func_8001fafc();
+    notify_effect_update();
 
     DAT_8009505c = 0xff;
     DAT_8009505d = 0xff;

@@ -24,7 +24,7 @@
  * flow all match; see docs/patterns/source-shapes-gcc257.md):
  *
  *  - render_enqueue_sprite hits the same post-reload-scheduler wall as its banked
- *    sibling func_8001e480 (render_sprite.c): gcc-2.5.7 fills the screen-XY
+ *    sibling render_screen_sprite (render_sprite.c): gcc-2.5.7 fills the screen-XY
  *    load-delay slots with the clut/tpage global loads and saves the anchor
  *    depth in the RotTransPers4 delay slot a beat differently than retail,
  *    which spends one extra callee-saved register.  Neither -O2 nor
