@@ -377,21 +377,9 @@ source = "src/game/render_instance_800205d4.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.pool_80020978"
+unit = "game.pool"
 image = "GAME.EXE"
-source = "src/game/pool_80020978.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.pool_release_80020a2c"
-image = "GAME.EXE"
-source = "src/game/pool_release_80020a2c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.pool_80020b04"
-image = "GAME.EXE"
-source = "src/game/pool_80020b04.c"
+source = "src/game/pool.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -671,21 +659,9 @@ source = "src/game/effect_update.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8003a244"
+unit = "game.magic"
 image = "GAME.EXE"
-source = "src/game/func_8003a244.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8003a2a0"
-image = "GAME.EXE"
-source = "src/game/func_8003a2a0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8003a760"
-image = "GAME.EXE"
-source = "src/game/func_8003a760.c"
+source = "src/game/magic.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
