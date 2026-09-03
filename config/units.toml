@@ -731,6 +731,12 @@ source = "src/game/func_80036f44.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.effect_map_collision"
+image = "GAME.EXE"
+source = "src/game/effect_map_collision.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.effect_update"
 image = "GAME.EXE"
 source = "src/game/effect_update.c"
@@ -764,6 +770,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.func_8003ac4c"
 image = "GAME.EXE"
 source = "src/game/func_8003ac4c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8003ce2c"
+image = "GAME.EXE"
+source = "src/game/func_8003ce2c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
