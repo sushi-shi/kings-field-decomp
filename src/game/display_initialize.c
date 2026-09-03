@@ -5,14 +5,13 @@ extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
 extern KfRenderState render_state;
 
-extern u32 func_80050544(u32 mode);
 extern void lighting_set_active_color_matrix(s32 index);
 extern void render_initialize(void);
 
 ADDRESS(0x8001bb94, 0x14c)
 void func_8001bb94(void)
 {
-    func_80050544(3);
+    ResetGraph(3);
     InitGeom();
     SetGeomOffset(160, 120);
     SetDefDrawEnv(&display_draw_environments[0], 0, 0, 320, 240);

@@ -40,7 +40,7 @@ extern u32 PAD_init2();
 extern void PAD_dr(void);
 extern void StopPAD2(void);
 extern int printf(const char *format, ...);
-extern void func_8004fa00(void);
+extern void ResetCallback(void);
 
 extern u32 pad_init_bad_identifier();
 extern void pad_read_bad_identifier(void);
@@ -73,7 +73,7 @@ u32 pad_initialize(s32 identifier)
     } else {
         result = pad_init_bad_identifier(0x20000001, &DAT_80058020);
     }
-    func_8004fa00();
+    ResetCallback();
     return result;
 }
 

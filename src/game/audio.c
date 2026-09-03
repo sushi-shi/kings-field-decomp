@@ -14,7 +14,7 @@ extern s32 audio_voice_slot_index;
 /* Unresolved helpers: a file loader, a sequence opener/stopper, and a frame
  * wait.  SsInit/SsSetTableSize come from LIBSND.H (Psy-Q, now vendored). */
 extern void *memory_allocate(s32 size);
-extern s16 func_800446a8(u8 *vab_header, s16 vab_id);
+extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
 extern u32 cd_file_load_into(void *destination, const char *path);
 extern s16 func_800468d8(u8 *sequence, s16 vab_id);
 extern void func_8004a344(s16 sequence_id);
@@ -62,7 +62,7 @@ ADDRESS(0x80032984, 0xc8)
 void audio_load_vab(u8 *vab_header, u8 *vab_body)
 {
     audio_stop_sequence_fade();
-    audio_state.active_vab_id = func_800446a8(vab_header, -1);
+    audio_state.active_vab_id = SsVabOpenHead(vab_header, -1);
     if (audio_state.active_vab_id == -1) {
         printf("VAB headder open failed\n");
         return;
