@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Map-event runtime band 0x80035708..0x80035e14 (GAME.EXE).
@@ -18,38 +19,18 @@
  * which separate globals cannot reproduce (documented residue).
  */
 
-extern KfPlayerState player_state;
-extern KfMapEvent map_event_pool[8];
-extern KfMapEvent *current_map_event;
-extern KfActorState actor_state;
-extern KfMapObjectState map_object_state;
-extern SoundRef gameplay_sound_ref_10;
-
 /* Event-animation gate: nonzero three frames in four. */
-extern u16 DAT_8009ddb0;
 /* Ambient floor-script countdown, reloaded to 10. */
-extern u16 DAT_8009ddb2;
 /* Start of the persistent world-state block (save_system world_state base). */
 extern u32 DAT_8009ddb4;
 
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern s16 angle_approach(s16 current, s16 target, s32 step);
-extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern void vector2s_scale_shift11(s16 scale, s16 *vector);
-extern u32 collision_query_world(
-    s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern void audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);
-extern void map_event_set_current(KfMapEvent *event);
 extern int rand(void);
 
 /* Per-floor ambient-event scripts dispatched by current_floor. */
-extern void func_80033f64(void);
-extern void func_800341ec(void);
-extern void func_8003425c(void);
-extern void func_800342e4(void);
-extern void func_800342ec(void);
 
 /* func_8003596c current-floor dispatch jump table (cases 1..5). */
 RODATA(0x80012be4, 0x14)

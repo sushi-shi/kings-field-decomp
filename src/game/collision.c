@@ -1,26 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfMapObjectState map_object_state;
-
-extern KfActorState actor_state;
-
-extern KfPlayerState player_state;
-
-extern s32 map_floor_height_for_cell_position(
-    u16 cell_index, s32 point_x, s32 point_z);
-extern s32 player_distance_to_point(
-    s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height);
-extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
-extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
-extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
-
-extern u8 map_collision_grid[100][100];
-extern u8 map_cell_attribute_grid[100][100];
-extern s16 map_cell_attribute_height_table[284];
-extern u8 map_collision_flag_grid[100][100];
-extern KfCollisionTarget collision_target;
-extern KfMapEvent map_event_pool[8];
+#include <kf/game.h>
 
 /*
  * World-space probe used by movement and interaction. Cells are 2000 units

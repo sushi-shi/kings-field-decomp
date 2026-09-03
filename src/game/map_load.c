@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Map-load band 0x80035e44..0x800365f8 (GAME.EXE).
@@ -24,33 +25,13 @@
  * then copies colour_matrix_table[3] into the render lighting matrix.
  */
 
-extern KfPlayerState player_state;
-extern KfMapEvent map_event_pool[8];
-extern KfActorState actor_state;
-extern KfMapObjectState map_object_state;
-extern KfRenderState render_state;
-extern MATRIX color_matrix_table[7];
-extern u8 map_floor_height_grid[100][100];
-
 /* Start of the per-floor persistent world-state block (see func_80035b5c). */
 extern u32 DAT_8009ddb4;
-extern u8 DAT_8009eafc;
-extern u8 DAT_8009f844;
-extern u8 DAT_8009f845;
-extern u8 DAT_8009f846;
-extern u8 boss_defeat_complete;
 /* Player inventory / key-item flag array. */
 extern u8 DAT_800652a8[240];
 
 extern int rand(void);
 extern void map_resources_load(u8 floor, u8 map_variant);
-extern void map_event_refresh_image_for_progress(KfMapEvent *event);
-extern void func_8001bae4(s32 floor);
-extern void map_apply_copy_region(u8 region_id);
-extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
-extern void map_object_pool_clear_link(u8 link_id);
-extern void map_object_pool_trigger_link(u8 link_id);
-extern void actor_pool_begin_death_by_definition(u16 definition_id);
 
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
 RODATA(0x80012bfc, 0x14)

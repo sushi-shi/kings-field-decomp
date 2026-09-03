@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Per-frame renderer entry, called by the player warp/update path.  It rebuilds
@@ -13,60 +14,11 @@
  * reached by their individual identities.
  */
 
-extern KfRenderState render_state;
-extern KfPlayerState player_state;
-extern MATRIX render_light_matrices[6];
-
 /* HUD gauge record table (12 records, 14-byte stride, walked by render_hud_gauges). */
-extern u8 DAT_80055c5c;
-extern u16 DAT_80055c66;
-extern u8 DAT_80055c6a;
-extern u16 DAT_80055c74;
-extern u8 DAT_80055c78;
-extern u16 DAT_80055c82;
-extern u8 DAT_80055c86;
-extern u16 DAT_80055c90;
-extern u8 DAT_80055c94;
-extern u8 DAT_80055ca2;
-extern u8 DAT_80055cb0;
-extern u8 DAT_80055cbe;
-extern u8 DAT_80055ccc;
-extern u8 DAT_80055cda;
-extern u8 DAT_80055ce8;
-extern u8 DAT_80055cf6;
 
-extern u8 DAT_80055d04;   /* effect sprite tint anchor */
 extern u8 DAT_80055d74;
-extern u16 DAT_80055d86;
-extern u8 DAT_80055d20[];  /* six notification sprite records */
-extern u8 DAT_80055d2e;
 
-extern u16 DAT_80095058;
-extern u16 DAT_8009505a;
-extern u8 DAT_8009505c;
-extern u8 DAT_8009505d;
-extern u8 DAT_8009505e;
-extern u16 DAT_80095060;
-extern u16 DAT_80095062;
-extern u8 DAT_80095064;
-extern u16 DAT_80095066;
-extern u16 DAT_80095068;
-extern u16 DAT_8009506a;
-extern u16 DAT_8009506c;
-extern u16 DAT_8009508a;
-
-extern void render_set_view_transform(const VECTOR *position, const SVECTOR *rotation);
-extern void display_begin_frame(void);
-extern void pool_mark_allocated(void);
-extern void render_map_cells(void);
-extern void render_effect_sprites(void);
-extern void render_hud_gauges(u8 *table);
-extern void notify_effect_update(void);
 extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
-extern void render_entities(void);
-extern void render_weapon(void);
-extern void display_present_frame(void);
-extern void pool_release_stale(void);
 
 ADDRESS(0x8001fde4, 0x518)
 void render_frame(VECTOR *position, SVECTOR *rotation)

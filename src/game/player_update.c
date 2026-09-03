@@ -1,25 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-extern KfActorState actor_state;
 extern KfMagicRecord magic_records[24];
-extern u8 map_cell_attribute_grid[100][100];
-extern MATRIX color_matrix_table[7];
-extern MATRIX DAT_80055858;
-extern SVECTOR DAT_80055878[8];
-extern u32 DAT_80057b30;
-extern s32 DAT_80057e68;
-extern s32 DAT_80057e70;
-extern u32 game_exit_code;
 
 extern u32 pad_read(s32 mode);
 extern void display_show_error_screen(char object);
 extern s32 func_80036e38(s32 arg0);
-extern void pool_release_all(void);
-extern void func_800365f8(void);
 extern void func_80034de4();
-extern void magic_cast(void);
 extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
@@ -27,37 +15,13 @@ extern void matrix_set_rotation_yxz(
     const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(
     const struct KfPitchYaw *angles, struct KfVec3s *direction);
-extern void vector3s_scale_shift12(s16 scale, s16 *vector);
-extern s32 fixed6_ratio_step(s32 value, s32 span);
 extern KfActor *actor_pool_find_target_in_cone(
     const struct KfVec3i *origin, s32 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern void audio_close_vab(void);
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
-extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
-extern void fog_set_near(s32 distance);
-extern void lighting_apply_weapon9_environment(void);
-extern void lighting_apply_timed_player_effect(void);
-extern void player_death_update(void);
-extern void player_death_update_reverse_fade(void);
-extern void player_death_begin(void);
 extern void player_use_item();
-extern void player_sync_position_to_map(void);
-extern void player_equip_weapon(u8 weapon_id);
-extern void player_select_magic(u8 magic_id);
-extern s32 player_move_horizontal(s32 heading, s32 distance);
-extern void player_update_view_bob(void);
-extern void player_update_vertical_motion(void);
-extern void player_begin_weapon_attack(void);
-extern void player_update_weapon_attack(void);
-extern void player_adjust_hp(s32 delta);
-extern void player_adjust_mp(s32 delta);
-extern void player_recalculate_combat_stats(void);
-extern void player_apply_damage(
-    u16 component0, u16 component1, u16 component2, u16 status_effect_flags,
-    u16 component3, u16 component4, u16 scale_q12, u16 multiplier_tenths);
 
 ADDRESS(0x80018880, 0x1a1c)
 void player_update(void)

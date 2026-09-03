@@ -1,12 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern DRAWENV display_draw_environments[2];
-extern DISPENV display_disp_environments[2];
-extern KfRenderState render_state;
+#include <kf/game.h>
 
 extern void lighting_set_active_color_matrix(s32 index);
-extern void render_initialize(void);
 
 ADDRESS(0x8001bb94, 0x14c)
 void display_initialize(void)

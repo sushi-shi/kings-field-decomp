@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfWeaponRecord weapon_records[16];
+#include <kf/game.h>
 
 ADDRESS(0x800150a8, 0x54)
 void player_weapon_load_records_and_mirror_angles(const u32 *source)

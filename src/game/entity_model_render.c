@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Pooled 3D-model entity emitters invoked by the frame renderer's pool sweep
@@ -32,11 +33,6 @@
  * honest shapes and must not be distorted to re-introduce the retail idioms.
  */
 
-extern KfRenderState render_state;
-extern KfActorState actor_state;
-extern KfMapObjectState map_object_state;
-extern MATRIX render_light_matrices[6];
-
 /*
  * Floor-billboard depth/scale pairs indexed by the actor descriptor's high
  * nibble, copied into the floor-item render descriptor (DAT_80095058 /
@@ -46,18 +42,10 @@ extern MATRIX render_light_matrices[6];
  * produced).
  */
 extern u16 DAT_80095038[];
-extern u16 DAT_80095058;
-extern u16 DAT_8009505a;
 
-extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
-extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
-extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 object_index);
-extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_project_vertices(s32 count);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
-extern void render_enqueue_model(u16 object_index, s16 depth_bias);
 
 ADDRESS(0x8001e9a4, 0x214)
 void render_actor(KfActor *actor)

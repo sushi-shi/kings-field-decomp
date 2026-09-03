@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Per-frame entity dispatcher.  It sweeps the map-object, actor, floor-item,
@@ -19,11 +20,6 @@
  * than via a temp -- an unattributed register-allocation/scheduling residue.
  */
 
-extern KfRenderState render_state;
-extern KfMapObjectState map_object_state;
-extern KfActorState actor_state;
-extern MATRIX render_light_matrices[6];
-
 /* Visible map cell window: dimensions, window origin, then the cell flags. */
 typedef struct KfCellWindow {
     u16 width;
@@ -36,24 +32,11 @@ typedef struct KfCellWindow {
 extern KfCellWindow *DAT_80095860;
 
 /* Floor-item render descriptor, laid out just below floor_items. */
-extern u16 DAT_80095058;
-extern u16 DAT_8009505a;
-extern u8 DAT_8009505c;
-extern u8 DAT_8009505d;
-extern u8 DAT_8009505e;
-extern u16 DAT_8009508c;
-extern u16 DAT_8009508e;
-extern u16 floor_item_count;
 
 extern u8 DAT_8009d040[]; /* actor-sprite pool, 60-byte stride */
-extern KfMapEvent map_event_pool[8];
 
-extern void tmd_select(u16 slot);
-extern void render_map_object(KfMapObject *object);
-extern void render_actor(KfActor *actor);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_actor_sprite(u8 *sprite);
-extern void render_map_event(KfMapEvent *event);
 
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)

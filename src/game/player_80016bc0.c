@@ -1,15 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
 /* Psy-Q LIBGTE: RotMatrix(SVECTOR *r, MATRIX *m); ApplyMatrix(MATRIX *m, SVECTOR *v, VECTOR *rv). */
-extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
 /*
  * The actor index reaches actor_apply_damage untruncated, so this call site
  * did not go through a halfword-typed prototype.
  */
 extern void actor_apply_damage();
-extern s32 fixed6_ratio_step(s32 value, s32 span);
 
 ADDRESS(0x80016bc0, 0x264)
 void player_update_weapon_attack(void)

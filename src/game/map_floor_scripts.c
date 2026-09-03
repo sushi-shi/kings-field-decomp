@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Per-floor ambient event scripts, band 0x80033ee4..0x800342e3 (GAME.EXE).
@@ -15,25 +16,14 @@
  * first live actor sitting on a given map tile and returns its index.
  */
 
-extern KfPlayerState player_state;
-extern KfActorState actor_state;
-extern KfMapObjectState map_object_state;
-extern KfMapEvent map_event_pool[8];
 extern KfMagicRecord magic_records[24];
 
 /* Persistent per-floor world-state block (save_system world_state base). */
 extern u8 DAT_8009ddb4[4];
 /* Camera-path / positional-audio data block; +0x40 is an ambience anchor. */
-extern u8 DAT_800561c8[0x70];
-
-extern const SoundRef gameplay_sound_ref_5;
-extern const SoundRef gameplay_sound_ref_8;
 
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern void actor_initialize_slot(u16 actor_index);
-extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
-extern void player_restore_vitals_with_color_cycle(void);
 extern void notify_enqueue(s32 arg0);
 extern int rand(void);
 

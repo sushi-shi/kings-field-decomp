@@ -1,8 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Player object and the 240-byte inventory / progress-flag block. */
-extern KfPlayerState player_state;
 extern u8 DAT_800652a8[240];
 
 /* Twenty-byte magic records (learned flag + MP cost). */
@@ -12,30 +12,16 @@ extern KfMagicRecord magic_records[24];
  * equipment/item panels index DAT_80058dc0 by item id; the spell panel starts
  * at DAT_80059450 (the fifth spell name). */
 extern s16 DAT_80058dc0[];
-extern s16 DAT_80059450[];
 
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
  * and the deferred state acknowledgement. */
-extern void menu_frame_begin(void);
-extern void menu_present_frame(void);
-extern void menu_add_marker_quad(void);
-extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
-extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, preview, query). */
 extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
-extern void menu_list_render(s16 *ctx);
-extern u32 menu_load_item_model(s32 item_id);
 extern u32 menu_load_item_texture(s32 item_id);
-extern void menu_item_model_preview(s32 item_id);
-extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
-                         u32 arg5);
 
 /* Player equip/select operations. */
-extern void player_equip_weapon(u8 weapon_id);
-extern void player_set_equipment_slot(u8 item_id, u8 slot);
-extern void player_select_magic(u8 magic_id);
 
 /*
  * Item-list display context: a shared menu list header with a visible-window

@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Two polygon-emission enqueuers that sit at the tail of the render subsystem's
@@ -46,9 +47,6 @@
  *    and cannot close until the aggregate is modelled.
  */
 
-extern KfDisplayState display_state;
-extern KfTmdState tmd_state;
-
 /* Projection scratch buffer shared with tmd_project.c: one entry per vertex. */
 typedef struct KfScreenVertex {
     DVECTOR sxy; /* +0: packed screen X/Y from RotTransPers/RotTrans */
@@ -63,16 +61,11 @@ extern KfScreenVertex DAT_800911b0[];
  * (0x80057b63) carries the current primitive code into NormalColorCol, and the
  * light direction normal at 0x80057b64 fed to NormalColorDpq.
  */
-extern u8 DAT_80057b63;
-extern SVECTOR DAT_80057b64;
 
 /*
  * Screen sprite / floor-item render descriptor leading fields, reached by their
  * individual identities until the whole object is modelled (see render_sprite.c).
  */
-extern u16 DAT_80095058; /* clut; the colour CVECTOR follows four bytes on */
-extern u16 DAT_8009505a; /* tpage */
-extern u8 DAT_8009505f;  /* colour CVECTOR command byte */
 
 /* One screen sprite descriptor: texture rect then screen rect. */
 typedef struct KfSpriteQuad {
@@ -87,7 +80,6 @@ typedef struct KfSpriteQuad {
 } KfSpriteQuad;
 
 extern KfTmdObject *tmd_get_object(u16 index);
-extern void tmd_project_vertices(s32 count);
 extern long NormalClip(long sxy0, long sxy1, long sxy2);
 extern void NormalColorCol(SVECTOR *normal, CVECTOR *in, CVECTOR *out);
 extern void DpqColor(CVECTOR *in, long dqp, CVECTOR *out);

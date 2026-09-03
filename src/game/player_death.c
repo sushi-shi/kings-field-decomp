@@ -1,30 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfRenderState render_state;
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q LIBGTE: void ReadColorMatrix(MATRIX *m). */
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
-extern void player_equip_weapon(u8 weapon_id);
-extern void player_set_equipment_slot(u8 item_id, u8 slot);
-extern void player_select_magic(u8 magic_id);
-extern void func_80035b5c(void);
-extern void pool_release_all(void);
-extern void audio_close_vab(void);
-extern void func_800365f8(void);
-extern void player_sync_position_to_map(void);
-extern void game_state_initialize(void);
 
 extern SoundRef player_sound_refs[3];
-extern MATRIX player_death_saved_color_matrix;
-extern s32 player_death_saved_fog_near;
 
-extern KfPlayerLevelGrowth player_level_growth_table[40];
 extern u32 DAT_8009ddb4;
 extern u8 DAT_800652a8[240];
-extern u8 DAT_80095064;
 
 ADDRESS(0x80015164, 0x68)
 void player_death_begin(void)

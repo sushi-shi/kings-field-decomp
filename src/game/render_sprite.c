@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Screen-space textured-sprite emitters.  Both build a POLY_FT4 quad from a
@@ -26,14 +27,6 @@
  * retail's prologue hoist and the un-hoisted body, so this is the open
  * compiler-attribution scheduling residue, not a source defect.
  */
-
-extern KfDisplayState display_state;
-
-extern u16 DAT_80095058;
-extern u16 DAT_8009505a;
-extern u8 DAT_8009505c;
-extern u8 DAT_8009505d;
-extern u8 DAT_8009505e;
 
 /* One screen sprite descriptor: texture rect then screen rect. */
 typedef struct KfSpriteQuad {

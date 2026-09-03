@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Screen-space geometry emitters that run every frame from the top-level frame
@@ -8,16 +9,9 @@
  * display-list builder.
  */
 
-extern KfRenderState render_state;
-extern KfPlayerState player_state;
-
 /* Six light/color matrices fed to SetLightMatrix, one per render subsystem. */
-extern MATRIX render_light_matrices[6];
 
-extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 index);
-extern void tmd_transform_vertices(s32 count);
-extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern u16 *render_bind_animated_instance(void *entry, u16 asset, u16 arg2, u16 arg3, u16 count);
 extern void render_enqueue_tmd(u16 arg0, s16 arg1);
 extern void render_screen_sprite(char *entry);

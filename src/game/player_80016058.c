@@ -1,12 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-extern KfPlayerLevelGrowth player_level_growth_table[40];
 extern const SoundRef player_sound_refs[3];
-extern void player_recalculate_combat_stats(void);
 extern void notify_enqueue(s32 arg0);
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
 
 ADDRESS(0x80016058, 0x224)
 void player_add_experience(s16 amount)

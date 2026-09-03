@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Per-floor script band 0x800342ec..0x8003469f (GAME.EXE), sitting just past
@@ -13,33 +14,19 @@
  * fade (map_reveal_fade) that reveals a map event.
  */
 
-extern KfPlayerState player_state;
-extern KfActorState actor_state;
 extern KfMagicRecord magic_records[24];
-extern KfMapEvent map_event_pool[8];
-extern KfRenderState render_state;
-extern MATRIX color_matrix_table[7];
 
 /* Progress-flag block raised at init and decremented on death restart. */
 extern u8 DAT_800652a8[240];
 /* Persistent per-floor world-state block. */
 extern u8 DAT_8009ddb4[4];
 /* One-shot event-fired flags. */
-extern u8 DAT_8009f844;
-extern u8 DAT_8009f846;
 /* Camera-path / positional-audio data block; +0x50 is a colour-matrix target. */
-extern u8 DAT_800561c8[0x70];
 
-extern const SoundRef gameplay_sound_ref_7;
-
-extern void screen_show_image_until_input(const char *path);
-extern void map_apply_copy_region(u8 region_id);
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *matrix, s32 blend);
 extern void lighting_set_active_color_matrix(s32 index);
-extern void frame_pacer_wait(void);
 extern void render_frame(s32 first, s32 second);
 extern void notify_enqueue(s32 arg0);
 

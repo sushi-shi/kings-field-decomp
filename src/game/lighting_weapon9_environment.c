@@ -1,12 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfRenderState render_state;
+#include <kf/game.h>
 
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
-
-extern MATRIX color_matrix_table[7];
 
 ADDRESS(0x800187a4, 0x4c)
 void lighting_apply_weapon9_environment(void)

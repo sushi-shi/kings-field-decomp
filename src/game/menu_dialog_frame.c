@@ -1,11 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern POLY_FT4 *current_poly_ft4;
-extern KfDisplayState display_state;
 
 extern void func_8002adf8(s32 value, s32 width, s32 flag, u16 *out);
-extern void menu_draw_number(u16 *atlas, s16 *str);
 
 /* Font-atlas / number-atlas sprite descriptors (12-byte cell descriptors). */
 typedef struct MenuSpriteDef {
@@ -39,7 +38,6 @@ extern MenuSpriteDef DAT_800583e8;
  * POLY_F4[2][6] anchored at 0x800582f8 would overrun into the atlas; this
  * anchoring keeps every global's extent disjoint.
  */
-extern POLY_F4 DAT_800582c8[2][6];
 
 /* One save-slot summary row: a 6-digit field, a 1-digit field, and two
  * value/max pairs (separated by the "/" glyph).  field_8 gates the row. */

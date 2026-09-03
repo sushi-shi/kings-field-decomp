@@ -1,18 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-extern KfCollisionTarget collision_target;
-extern u8 map_collision_grid[100][100];
-extern u8 map_floor_height_grid[100][100];
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 /* Psy-Q LIBGTE: rsin, rcos. */
-extern u32 collision_query_world(
-    s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
-extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
 /* Psy-Q LIBGTE: long SquareRoot0(long a); */
-extern s32 player_distance_to_point(
-    s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height);
 
 ADDRESS(0x80017040, 0xc8)
 s32 player_distance_to_point_in_cone(

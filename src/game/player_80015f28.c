@@ -1,15 +1,12 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x80012000, 0x2c)
 
-extern KfPlayerState player_state;
-extern KfWeaponRecord weapon_records[16];
-extern KfArmorRecord armor_records[42];
 /* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
 extern KfMagicRecord magic_records[24];
 extern void notify_enqueue(s32 arg0);
-extern void player_recalculate_combat_stats(void);
 
 /*
  * Rebuilds physical power, magic, the five attack lanes and the six

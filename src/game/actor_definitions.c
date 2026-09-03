@@ -1,8 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfActorState actor_state;
-
+#include <kf/game.h>
 
 ADDRESS(0x80030a6c, 0x2c)
 void actor_definitions_load(const KfActorDefinition *definitions)

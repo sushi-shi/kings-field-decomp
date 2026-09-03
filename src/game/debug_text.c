@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Custom text-formatting / debug band 0x8003a7dc..0x8003ac4b (GAME.EXE).
@@ -39,10 +40,6 @@ static s32 debug_stop_flag = 0;
 
 DATA(0x800598a8, 0x18)
 static char format_number_buffer[24];
-
-extern char *format_int_dec(s32 value);
-extern char *format_int_hex(u32 value);
-extern char *format_pad_left(char *string, char pad, u8 width);
 
 ADDRESS(0x8003a7dc, 0x40)
 void debug_stop(void)

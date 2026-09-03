@@ -1,8 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern u16 DAT_8009ddb0;
-extern u16 DAT_8009ddb2;
+#include <kf/game.h>
 
 ADDRESS(0x800356e8, 0x20)
 void func_800356e8(void)

@@ -1,9 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern KfEffectRecord DAT_8009d040[];
 extern void effect_pool_set_current(u8 *object);
-extern void effect_update_dispatch(void);
 
 ADDRESS(0x8003a760, 0x7c)
 void effect_pool_sweep(void)

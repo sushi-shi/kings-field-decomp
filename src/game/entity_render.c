@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Per-entity billboard/model emitters invoked by the frame renderer's pool
@@ -18,21 +19,14 @@
  * gcc257.md).  The single extra instruction is the only divergence.
  */
 
-extern KfRenderState render_state;
-
 /*
  * Sprite-descriptor blob; ed90 indexes the 12-byte records four bytes in and
  * eedc's billboard path indexes them 0x58 bytes in.
  */
-extern u8 DAT_80055afc[];
 
-extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
-extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 index);
-extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_project_vertices(s32 count);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void render_enqueue_tmd(u16 arg0, s16 arg1);
 

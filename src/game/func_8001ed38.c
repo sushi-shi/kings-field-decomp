@@ -1,11 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern void lighting_set_active_color_matrix(s32 index);
-extern void tmd_select(u16 slot);
-extern void tmd_select_object_vertices(u16 object_index);
 extern KfTmdObject *tmd_get_object(u16 object_index);
-extern void tmd_project_vertices(s32 count);
 extern void render_enqueue_tmd(u16 arg0, s16 arg1);
 
 ADDRESS(0x8001ed38, 0x58)

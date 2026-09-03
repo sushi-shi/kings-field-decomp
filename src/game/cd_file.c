@@ -2,15 +2,14 @@
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
 #include <MEMORY.H>
+#include <kf/game.h>
 
 /* Psy-Q Release 2.5 headers declare strcat without a prototype. */
 extern char *strcat();
-extern void *memory_allocate(s32 size);
 /* CD failure handler: 0 after a failed search, 1 after failed reads. */
 extern void display_show_error_screen(s32 stage);
 
 extern CdlFILE cd_search_file;
-extern char cd_path_buffer[80];
 extern KfCdFileEntry cd_file_table[];
 
 DATA(0x80057b3c, 0x5)

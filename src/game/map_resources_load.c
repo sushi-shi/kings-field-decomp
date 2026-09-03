@@ -1,36 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern void audio_stop_sequence_fade(void);
-extern void effect_pool_reset(void);
-extern void memory_allocation_reset(void);
-extern void map_resource_path_set_floor(s32 floor);
-extern void *map_resource_load_file(const char *filename);
-extern void tim_upload_images(u_long *tim_data);
-extern void memory_release_last(void);
-extern void audio_load_vab(u8 *vab_header, u8 *vab_body);
-extern void audio_play_current_map_sequence(void);
-extern const u32 *map_resource_copy_words(
-    u32 *destination, const u32 *source, u32 word_count);
 extern void item_load_floor_placements(s16 *block);
-extern void map_object_pool_load(const KfMapObjectPlacement *placements);
-extern void actor_pool_load_placements(const KfActorPlacement *placements);
-extern void actor_definitions_load(const KfActorDefinition *definitions);
-extern void map_event_pool_load(const KfMapEventDefinition *definitions);
 extern void tmd_register(u16 index, void *asset);
-extern void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive);
-extern void *memory_allocate(s32 size);
-extern void map_variant_assets_load(void);
-extern void player_sync_position_to_map(void);
 extern void memory_set_allocation_mode(s32 mode);
-
-extern u8 map_cell_attribute_grid[100][100];
-extern u8 map_floor_height_grid[100][100];
-extern u8 map_cell_orientation_grid[100][100];
-extern u8 map_collision_flag_grid[100][100];
-extern u8 map_collision_grid[100][100];
-extern u8 *map_variant_asset_buffer;
-extern u8 *memory_arena_cursor;
 
 DATA(0x80057b48, 0x8)
 char map_mix_tim_filename[8] = "MIX.TIM";

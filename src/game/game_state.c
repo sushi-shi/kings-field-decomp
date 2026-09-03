@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
+#include <kf/game.h>
 
-extern s32 pending_game_state;
 extern void tmd_release_last_allocation(s32 slot);
 
 ADDRESS(0x8002af0c, 0x3c)

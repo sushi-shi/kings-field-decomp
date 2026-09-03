@@ -2,6 +2,7 @@
 #include <kf/psyq.h>
 #include <kf/semantic_types.h>
 #include <kf/game_types.h>
+#include <kf/game.h>
 
 /*
  * Binds and refreshes one animated model instance for the entity renderers
@@ -54,17 +55,7 @@ typedef struct KfMorphObject {
 } KfMorphObject;
 
 extern KfAnimAsset *asset_registry_entries[];
-extern SVECTOR *current_tmd_vertices;
-extern SVECTOR DAT_800930f0[]; /* morph scratch base */
-extern u32 DAT_800930f8[];     /* base+keyframe scratch (== &DAT_800930f0[1]) */
 
-extern void asset_registry_select(u16 index);
-extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_set_current_vertices(SVECTOR *vertices);
-extern void *memory_malloc_checked(s32 size);
-extern struct KfPoolRecord *pool_allocate(void);
-extern void pool_record_release(struct KfPoolRecord *record);
-extern void pool_release_all(void);
 extern void gteMIMefunc(SVECTOR *dst, SVECTOR *delta, long count, long frac);
 
 ADDRESS(0x800205d4, 0x3a4)

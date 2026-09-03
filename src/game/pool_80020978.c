@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
-
-extern struct KfPoolRecord pool_records[];
+#include <kf/game.h>
 
 extern void free(void *allocation);
 

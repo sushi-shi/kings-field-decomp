@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Notification effect state machine, stepped once per frame by the frame
@@ -26,25 +27,7 @@
  * residue that leaves the body otherwise structurally exact.
  */
 
-extern u8 DAT_8009506e[8]; /* notification ring; 0xff marks an empty slot */
-extern u8 DAT_80095086;    /* ring tail cursor */
-extern u8 DAT_80095088;    /* effect phase */
-extern u8 DAT_80095089;    /* phase-2 hold counter */
-extern u16 DAT_8009508a;   /* phase-3 slide position */
-
-extern u8 DAT_80055d20[];  /* record 0 (state, then a 12-byte sprite) */
-extern u8 DAT_80055d22;    /* record 0 tint hi */
-extern u8 DAT_80055d23;    /* record 0 tint lo */
-extern u8 DAT_80055d2e;    /* record 1 state */
-extern u8 DAT_80055d30;    /* record 1 tint hi */
-extern u8 DAT_80055d31;    /* record 1 tint lo */
-extern u8 DAT_80055d3c;    /* record 2 state */
-extern u8 DAT_80055d4a;    /* record 3 state */
-extern u8 DAT_80055d58;    /* record 4 state */
-extern u8 DAT_80055d66;    /* record 5 state */
-
 extern void func_8002adf8(u16 value, s32 count, s32 base, u16 *out);
-extern void func_8001fae4(u8 *record, int value);
 
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)

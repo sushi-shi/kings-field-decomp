@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/seqtrack.h>
+#include <kf/game.h>
 
 /*
  * Per-tick sequence driver.  SsSeqCalledTbyT is FromSoftware's reimplementation
@@ -20,30 +21,17 @@
  */
 
 /* setjmp/longjmp abort envelope and handler-swap state (all BSS/load). */
-extern u32 DAT_8009a740;
-extern void *DAT_80057d08;
-extern u8 DAT_80058010[8];
-extern int DAT_8005b270[]; /* jmp_buf */
-extern void *DAT_8005b274; /* live abort handler slot (jmp_buf + 4) */
-extern void *DAT_80058018; /* saved handler */
-extern int DAT_80063278;   /* installed abort handler */
 extern s16 DAT_800a0770;   /* open-sequence count */
 
 /* The vendored libsnd _memcpy at 0x8004a52c; address-suffixed because GAME.EXE
  * links four distinct memcpy bodies. */
-extern void memcpy_8004a52c();
 extern int setjmp();
 extern void longjmp();
 extern void SpuVmFlush();
 
 /* Per-track dispatch targets (own module and siblings). */
-extern void func_8004ae04(s16 sequence, s16 track);
-extern void audio_sequence_fade_in(s16 sequence, s16 track);
 void audio_sequence_fade_out(s16 sequence, s16 track);
-extern void audio_sequence_pitch_slide(s16 sequence, s16 track);
-extern void audio_sequence_track_key_off(s16 sequence, s16 track);
 void func_8004ad9c(s16 sequence, s16 track);
-extern void func_8004a3c8(s16 sequence, s16 track);
 
 ADDRESS(0x8004a55c, 0x2f8)
 void SsSeqCalledTbyT(void)

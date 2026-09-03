@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
 #include <MALLOC.H>
+#include <kf/game.h>
 
 /* Bytes reserved past the arena cursor in allocation mode 1; OPEN.EXE budgets more. */
 #ifdef KF_OPEN
@@ -12,13 +13,7 @@
 /* KERNEL.H (Psy-Q Release 2.5) declares InitHeap without a prototype. */
 extern void InitHeap();
 
-extern u8 *memory_arena_start;
-extern u8 *memory_arena_end;
-extern u8 *memory_arena_cursor;
 /* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
-extern u32 memory_allocation_stack[17];
-extern u8 *memory_system_heap_start;
-extern s32 memory_system_heap_size;
 
 /* Allocations must land in the 2 MiB of RAM mirrored at 0x80000000. */
 ADDRESS(0x8001aab0, 0x38)

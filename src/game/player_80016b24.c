@@ -1,9 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
 extern const SoundRef player_sound_refs[3];
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
 
 ADDRESS(0x80016b24, 0x9c)
 void player_begin_weapon_attack(void)

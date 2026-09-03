@@ -1,13 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfMapObjectState map_object_state;
-
-extern KfDisplayState display_state;
-
-extern KfActorState actor_state;
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
 extern void *memset();
@@ -16,52 +9,13 @@ extern s32 OpenEvent(u32 descriptor, s32 spec, s32 mode, void (*handler)(void));
 extern s32 EnableEvent(s32 event);
 extern s32 CloseEvent(s32 event);
 
-extern void memory_card_initialize(void);
 extern void memory_set_allocation_mode(s32 arg0);
-extern void audio_initialize(void);
-extern void display_initialize(void);
-extern void item_load_database(void);
-extern void actor_pool_clear(void);
-extern void map_object_pool_clear(void);
-extern void effect_pool_reset(void);
-extern void func_800356e8(void);
-extern void common_resources_load(void);
-extern void game_initialize_session(void);
-extern void memory_capture_system_heap_start(void);
-extern void memory_reset_system_heap(void);
-extern void func_800365f8(void);
-extern void func_80014674(u32 arg0);
-extern s32 save_file_cleanup_temporary(void);
 extern void display_show_error_screen(char object);
-extern void player_update(void);
-extern void player_update_transform_snapshot(
-    VECTOR *position_out, SVECTOR *rotation_out);
-extern void audio_set_listener_transform(
-    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern void actor_set_player_transform(
-    const VECTOR *position, const SVECTOR *rotation);
-extern void actor_pool_update(void);
-extern void map_object_pool_update(void);
-extern void effect_pool_sweep(void);
-extern void func_8003596c(void);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 player_warp_trigger_update(void);
-extern void display_play_transition(void);
-extern void audio_stop_sequence_master_fade(s32 fade_step);
-extern void memory_card_shutdown_events(void);
-extern void audio_shutdown(void);
-extern void pad_stop(void);
-extern void frame_pacer_vsync_callback(void);
-extern void frame_pacer_wait(void);
-extern void game_shutdown(void);
 
 extern KfMagicRecord magic_records[24];
-extern KfMapEvent map_event_pool[8];
-extern u32 game_exit_code;
-extern VECTOR player_position_snapshot;
-extern SVECTOR player_rotation_snapshot;
-extern u8 map_cell_attribute_grid[100][100];
 extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);
 

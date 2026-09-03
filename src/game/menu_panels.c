@@ -1,9 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Player object and the double-buffered display state. */
-extern KfPlayerState player_state;
-extern KfDisplayState display_state;
 
 /* Twenty-byte magic records (learned flag + MP cost) and the spell-name
  * string table (10 halfwords per label). */
@@ -16,29 +15,17 @@ extern POLY_FT4 DAT_800580e8[2][4];
 
 /* CD/TIM asset helpers. */
 extern s32 cd_file_load_into(void *destination, const char *relative_path);
-extern void tim_upload_images(u_long *tim_data);
 
 /* Shared menu primitives: frame begin/flush, hub background, list-panel
  * background, input sound cue, and the vsync/pad poll. */
-extern void menu_frame_begin(void);
-extern void menu_present_frame(void);
-extern void func_8002718c(void);
-extern void menu_add_marker_quad(void);
-extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /* Cursor/list widget helpers (init, render, query). */
 extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
-extern void menu_list_render(s16 *ctx);
 extern u32 menu_load_item_texture(s32 magic_id);
-extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
-                         u32 arg5);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /* Sub-panel handlers dispatched by the option menu. */
-extern void menu_equip_select(s32 object);
-extern void menu_spell_select(void);
-extern void player_status_apply_effect4(void);
 
 /*
  * Item-list display context: a shared menu list header with a visible-window

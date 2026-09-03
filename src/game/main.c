@@ -1,13 +1,11 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
+#include <kf/game.h>
 
 /* Psy-Q LIBAPI: InitHeap(unsigned long *head, unsigned long size); InitCARD(long). */
 extern void InitHeap(u32 *head, u32 size);
-extern u32 pad_initialize(s32 arg0);
 extern void InitCARD2(s32 pad_enable);
 extern void ExitCriticalSection(void);
-extern void game_main_loop(void);
-extern u32 game_exit_code;
 
 ADDRESS(0x80014268, 0x24)
 void func_80014268(int *destination, int count, int value)

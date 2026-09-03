@@ -1,10 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfTmdState tmd_state;
-
-extern void asset_registry_select(u16 index);
-extern void tmd_prepare_primitive_indices(void);
+#include <kf/game.h>
 
 struct AssetHeader8002059c {
     u8 unknown_00[8];

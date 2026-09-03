@@ -1,8 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
-extern void player_death_begin(void);
+#include <kf/game.h>
 
 ADDRESS(0x8001564c, 0x70)
 void player_adjust_hp(s32 delta)

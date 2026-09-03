@@ -1,12 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern POLY_FT4 *current_poly_ft4;
-extern KfDisplayState display_state;
-extern KfPlayerState player_state;
 
 /* Model draw helper (sets up the item TMD after the matrices are loaded). */
-extern void func_8001ed38(void);
 /* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
 extern void func_8002adf8(s32 value, s32 width, s32 flag, u16 *out);
 
@@ -28,7 +26,6 @@ typedef struct MenuGlyphString {
 } MenuGlyphString;
 
 extern void menu_draw_string(const MenuSpriteDef *font, const MenuGlyphString *str);
-extern void menu_draw_number(u16 *atlas, s16 *str);
 extern void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const void *pos);
 
 /* Shared menu font atlas, number atlas, and the item-icon sprite descriptor. */
@@ -41,7 +38,6 @@ extern MenuSpriteDef DAT_80058424;
  * halfword identity the rest of the menu shares (menu_list_util resets it);
  * the RotMatrix argument is the SVECTOR that begins one halfword before it.
  */
-extern u16 DAT_80057b72;
 
 /* Item name table (ten glyph codes per item) and the two price tables
  * (two price columns per item).  Runtime-indexed, so only the base is

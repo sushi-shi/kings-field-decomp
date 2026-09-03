@@ -1,13 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfActorState actor_state;
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
-extern void actor_set_action(KfActor *actor, u8 action);
-extern void actor_initialize_current(void);
 extern s32 actor_distance_to_point(
     const KfActor *actor,
     s32 point_x,
@@ -16,16 +12,7 @@ extern s32 actor_distance_to_point(
     s32 max_distance,
     s32 actor_height,
     s32 point_height);
-extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
-extern u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance);
-extern u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance);
-extern u8 actor_try_select_action_distance_facing(
-    u8 action, s32 distance, u16 chance, u16 distance_scale);
-extern u8 actor_try_select_profiled_action(
-    u8 action, s32 distance, u8 profile_index, u16 chance);
 extern void vector3i_add_xz(VECTOR *destination, const struct KfVecXZs *delta);
-extern u32 collision_query_world(
-    s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern s32 map_floor_height_at_position(struct KfVec3i *position);
 
 #define ACTOR_ACTION_NONE 0xff

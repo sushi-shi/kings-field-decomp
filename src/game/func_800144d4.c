@@ -1,15 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfDisplayState display_state;
-extern DRAWENV display_draw_environments[2];
-
-extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
-                          u8 *color, u16 ot_index);
 extern s32 cd_file_load_into(void *destination, char *relative_path);
-extern void tim_upload_images(u_long *tim_data);
-extern void display_begin_frame(void);
-extern void display_present_frame(void);
 
 /* Screen-quad descriptor blocks for the faded full-screen image. They keep
  * sub-word alignment so the retail copies them with unaligned word moves. */

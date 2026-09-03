@@ -1,16 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x80012738, 0x150)
 
-extern KfMapObjectState map_object_state;
-extern u8 map_floor_height_grid[100][100];
 extern KfEffectRecord DAT_8009d040[];
 /* Effect spawner called with five or six arguments; declared without a prototype. */
 extern KfEffectRecord *effect_pool_construct();
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
-extern void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw);
 
 /*
  * Fills the 190 pool records from the sentinel-terminated placement list:
@@ -126,10 +123,6 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
         }
     }
 }
-
-
-extern s32 map_object_distance_to_point(
-    const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 
 ADDRESS(0x80031450, 0xa8)
 s32 map_object_distance_to_point(

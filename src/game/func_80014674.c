@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
 extern void player_warp_shimmer(u32 mode, struct KfVec3i *position);
 
 ADDRESS(0x80014674, 0x44)

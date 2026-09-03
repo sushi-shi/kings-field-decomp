@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Two menu sprite blitters that assemble one POLY_FT4 per call from a sprite
@@ -12,9 +13,6 @@
 
 /* Current textured-quad cursor in the shared primitive workspace. */
 extern POLY_FT4 *current_poly_ft4;
-
-extern void primitive_buffer_begin_poly_ft4(void);
-extern void primitive_buffer_commit_poly_ft4(s32 depth);
 
 /*
  * Sprite descriptor read by the menu blitters: texture page and CLUT, the

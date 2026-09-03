@@ -1,10 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
-extern u8 map_floor_height_grid[100][100];
-extern u8 map_cell_attribute_grid[100][100];
-extern void player_death_begin(void);
+#include <kf/game.h>
 
 ADDRESS(0x80017a80, 0x278)
 void player_update_vertical_motion(void)

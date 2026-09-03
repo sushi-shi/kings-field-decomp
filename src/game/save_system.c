@@ -2,13 +2,10 @@
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
 #include <KERNEL.H>
-
-extern KfDisplayState display_state;
+#include <kf/game.h>
 
 /* Jump tables and string literals of this unit in the retail data region. */
 RODATA(0x8001235c, 0x178)
-
-extern KfPlayerState player_state;
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset and memcpy without prototypes. */
 extern void *memset();
@@ -25,7 +22,6 @@ extern void _bu_init(void);
 extern void _card_auto(s32 enable);
 extern s32 _card_info(s32 channel);
 extern void _new_card(void);
-extern s32 format(const char *device);
 extern s32 open(const char *name, s32 mode);
 extern s32 close(s32 file);
 extern s32 lseek(s32 file, s32 offset, s32 origin);
@@ -48,18 +44,6 @@ extern s32 erase(const char *name);
     "\201@\201@\201@\201@\201@\201@\201\203\201\203\201@\201@\202j\202h\202m\202f" \
     "\201f\202r\201@\202e\202h\202d\202k\202c\201@\201@\201\204\201\204"
 
-extern s32 memory_card_io_end_event;
-extern s32 memory_card_timeout_event;
-extern s32 memory_card_new_device_event;
-extern s32 memory_card_error_event;
-extern const char memory_card_root_path[];
-extern const char save_main_file_path[];
-extern const char save_temporary_file_path[];
-extern char memory_card_message_path_template[];
-extern char talk_image_path_template[];
-extern KfSaveHeader *save_header_buffer;
-extern KfSavePayload *save_payload_buffer;
-
 /*
  * Serialized game state. The 0xe0 bytes from player_state.experience onward, the
  * two unresolved blocks, and the first byte of each 20-byte magic record are
@@ -69,12 +53,7 @@ extern u32 DAT_8009ddb4[];
 extern u8 DAT_800652a8[];
 extern KfMagicRecord magic_records[24];
 
-extern DRAWENV display_draw_environments[2];
-
-extern void *memory_allocate(s32 size);
-extern void memory_release_last(void);
 extern s32 cd_file_load_into(void *destination, const char *relative_path);
-extern void tim_upload_images(u_long *tim_data);
 extern s32 pad_read(s32 mode);
 
 void memory_card_clear_events(void);

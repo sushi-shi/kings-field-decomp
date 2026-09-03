@@ -1,12 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern u16 DAT_80095038;
-extern u16 DAT_8009503a;
-extern u16 DAT_8009503c;
-extern u16 DAT_80095048;
-extern u16 DAT_8009504a;
-extern u16 DAT_8009504c;
 
 ADDRESS(0x8001bae4, 0xb0)
 void func_8001bae4(s32 mode)

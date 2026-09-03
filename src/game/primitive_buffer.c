@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfDisplayState display_state;
+#include <kf/game.h>
 
 struct PolyFT4_8002accc {
     u32 tag;
@@ -13,7 +12,6 @@ struct PolyFT4_8002accc {
 };
 
 extern struct PolyFT4_8002accc *current_poly_ft4;
-
 
 ADDRESS(0x8002accc, 0x50)
 void primitive_buffer_begin_poly_ft4(void)

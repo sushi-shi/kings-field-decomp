@@ -1,20 +1,12 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-
-extern KfMapEvent *current_map_event;
-extern KfMapEvent map_event_pool[8];
-extern u8 map_floor_height_grid[100][100];
 extern void render_frame(s32 first, s32 second);
-extern void frame_pacer_wait(void);
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 /* Called with the cell pair only; its third candidate parameter is not passed here. */
 extern void collision_adjust_cell_occupancy(s32 cell_x, s32 cell_z);
-
-extern s32 map_event_distance_to_point(
-    const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
 
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)
