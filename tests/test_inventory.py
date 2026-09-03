@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 547)
-        self.assertEqual(counts["signatures_started"], 547)
-        self.assertEqual(counts["typed_returns"], 547)
-        self.assertEqual(counts["parameterized"], 357)
+        self.assertEqual(counts["functions"], 537)
+        self.assertEqual(counts["signatures_started"], 537)
+        self.assertEqual(counts["typed_returns"], 537)
+        self.assertEqual(counts["parameterized"], 347)
         self.assertEqual(counts["data"], 3287)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -778,6 +778,38 @@ class InventoryTests(unittest.TestCase):
                 "sdk-lineage-supported",
             )
             self.assertNotIn(key, identities)
+
+    def test_libsnd_sequence_control_is_vendored_in_both_overlays(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in rows
+        }
+        expected = {
+            ("GAME.EXE", 0x8004A128): ("SsPlayBack", "SSPLAY"),
+            ("GAME.EXE", 0x8004A21C): ("Snd_SetPlayMode", "SSPLAY"),
+            ("GAME.EXE", 0x8004A344): ("SsSeqStop", "STOP"),
+            ("GAME.EXE", 0x8004A374): ("SsSepStop", "STOP"),
+            ("GAME.EXE", 0x8004A3C8): ("Snd_stop", "STOP"),
+            ("OPEN.EXE", 0x80029EFC): ("SsPlayBack", "SSPLAY"),
+            ("OPEN.EXE", 0x80029FF0): ("Snd_SetPlayMode", "SSPLAY"),
+            ("OPEN.EXE", 0x8002A118): ("SsSeqStop", "STOP"),
+            ("OPEN.EXE", 0x8002A148): ("SsSepStop", "STOP"),
+            ("OPEN.EXE", 0x8002A19C): ("Snd_stop", "STOP"),
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        for key, (name, module) in expected.items():
+            self.assertEqual(vendored[key]["name"], name)
+            self.assertEqual(vendored[key]["module"], module)
+            self.assertEqual(
+                vendored[key]["confidence"],
+                "sdk-lineage-supported",
+            )
+            self.assertNotIn(key, identities)
+
+        # The version-skewed SSCALL dispatcher remains a game-owned candidate.
+        self.assertNotIn(("GAME.EXE", 0x8004A55C), vendored)
+        self.assertIn(("GAME.EXE", 0x8004A55C), identities)
 
     def test_semantic_function_and_bss_identity_are_queryable(self) -> None:
         game = index("GAME.EXE")

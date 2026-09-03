@@ -242,20 +242,23 @@ Ties keep the most-attributed profile (`-mcpu=r2000` preferred, then `plain`).
 A profile that merely raises a fuzzy % without reaching a new EXACT, or that
 trades one exact for another, is rejected.
 
-Three units flipped; **GAME exact 266 → 272 (+6)**, `kf check` green, no
-regressions in any image:
+The original sweep reported three flipped units. A later provider audit proved
+that `game.audio_sequence_track` reconstructed five `LIBSND.LIB` routines from
+`SSPLAY.OBJ` and `STOP.OBJ`; that unit is now excluded rather than treated as
+game compiler evidence. The corrected game-only result is two units and
+**GAME exact 265 → 267 (+2)**, with no regressions in any image:
 
 | unit | old profile | new profile | exacts | functions flipped |
 | --- | --- | --- | --- | --- |
-| `game.audio_sequence_track` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-plain` | 1/5 → 5/5 (+4) | `func_8004a128`, `func_8004a21c`, `func_8004a374`, `func_8004a3c8` |
 | `game.render_sprite` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-nosched` | 0/1 → 1/1 (+1) | `func_8001e480` (`sprite_add_ft4` body) |
 | `game.audio_sequence` | `probe-gcc257-o2-g0` | `probe-gcc257-o2-plain` | 0/2 → 1/2 (+1) | `func_800468d8` |
 
 `render_sprite` reaches exact under both `nosched` and `plain-nosched`;
 `nosched` is kept because it retains the attributed `-mcpu=r2000` and adds only
-the documented scheduler-off lever. The `audio_sequence*` units match retail's
-*unscheduled* frame/load order — the same shape `pad` needs — and reach it
-under plain `-O2`, not under any `-mcpu` variant.
+the documented scheduler-off lever. The `audio_sequence` unit matches retail's
+*unscheduled* frame/load order — the same shape `pad` needs — and reaches it
+under plain `-O2`, not under any `-mcpu` variant. The former LIBSND unit supplies
+no evidence about the compiler used for game-owned translation units.
 
 The remaining **45 units did not move under any scheduling model** (kept
 `probe-gcc257-o2-g0`). This is itself attribution evidence: the residue ceiling

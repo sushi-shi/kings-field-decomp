@@ -6,7 +6,7 @@
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
 
-/* Unresolved helpers: a file loader, a sequence opener/stopper, and a frame
+/* Unresolved helpers: a file loader, a sequence opener/closer, and a frame
  * wait.  SsInit/SsSetTableSize come from LIBSND.H (Psy-Q, now vendored). */
 extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
 
@@ -85,7 +85,7 @@ void audio_stop_sequence_fade(void)
             VSync(0);
             SsSeqSetVol(audio_state.sequence_id, volume, volume);
         } while (--volume >= 0);
-        func_8004a344(audio_state.sequence_id);
+        SsSeqStop(audio_state.sequence_id);
         func_8004b6e0(audio_state.sequence_id);
         audio_state.sequence_active = 0;
     }
@@ -105,7 +105,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
         } while (volume > 0);
         SsSetMVol(0, 0);
         SsSeqSetVol(audio_state.sequence_id, 0, 0);
-        func_8004a344(audio_state.sequence_id);
+        SsSeqStop(audio_state.sequence_id);
         func_8004b6e0(audio_state.sequence_id);
         audio_state.sequence_active = 0;
     }

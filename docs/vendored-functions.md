@@ -122,9 +122,9 @@ What has been tested is narrower:
 | Is this MSVC incremental RVA behaviour? | No. Reordering direct inputs changes addresses, while no corresponding incremental-link metadata or padding mechanism has been identified or used by the tooling. | Treat the MSVC analogy as rejected, not as a matching rule. |
 
 `config/evidence/overlay_lineage.tsv` captures an observed stronger case. A
-contiguous 16-function audio-related chain appears in both `GAME.EXE` and
+contiguous 17-function audio-related chain appears in both `GAME.EXE` and
 `OPEN.EXE` with the same sizes and a constant `0x2022c` address delta. Across
-1,509 instructions, 1,509 preserve the same opcode/register shape and 1,338 are
+1,570 instructions, 1,570 preserve the same opcode/register shape and 1,396 are
 word-identical before masking linked immediates. Run the executable-backed and
 archive-backed regression check with:
 
@@ -148,7 +148,17 @@ exactly two direct `jal` callers per overlay, both inside the candidate
 `SsSeqCalledTbyT` body.
 
 That repeated order proves common linked code, not Sony ownership. The FID pass
-specifically prevents the earlier overreach here: Release 2.5
+is combined with object-specific evidence for the first five admitted pairs.
+The byte-exact Release 2.5 `SsSeqPlay` and `SsSepPlay` FIDs anchor
+`SSPLAY.OBJ`; its following `SsPlayBack` and `Snd_SetPlayMode` symbols retain
+their order, calls, semantics, and complete GAME/OPEN instruction shapes in a
+version-skewed retail revision. `STOP.OBJ` then exports `SsSeqStop`,
+`SsSepStop`, and internal `Snd_stop` in the same order, with matching public
+signatures and stop/key-off behavior. Those facts support provider ownership
+without claiming that the pinned object bytes are exact.
+
+The FID pass specifically prevents the earlier overreach later in the chain:
+Release 2.5
 `LIBSND.LIB/SSCALL.OBJ` contains a named 0x244-byte `SsSeqCalledTbyT`, but it
 does not match either 0x2f8-byte retail dispatcher. The preceding 0x30-byte
 helper exactly matches `memcpy`/`_memcpy`-shaped functions from three SDK object

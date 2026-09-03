@@ -6,7 +6,8 @@
 #include <LIBSND.H>
 #include <LIBCD.H>
 
-/* Internal LIBSND entry point linked from PLAY.OBJ. */
+/* Internal LIBSND entry points linked from PLAY.OBJ and STOP.OBJ. */
 extern void Snd_play(short sequence, short track);
+extern void Snd_stop(short sequence, short track);
 
 #endif

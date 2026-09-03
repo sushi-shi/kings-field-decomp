@@ -83,7 +83,7 @@ void SsSeqCalledTbyT(void)
                 func_8004ad9c(sequence, track);
             }
             if (DAT_800a06e0[sequence][track].flags & 0x4) {
-                func_8004a3c8(sequence, track);
+                Snd_stop(sequence, track);
             }
         }
     }

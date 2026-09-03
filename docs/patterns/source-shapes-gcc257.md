@@ -128,19 +128,6 @@ Open residues recorded during the same campaign (not steered):
   (`matrix_set_rotation_yxz`, `pitch_yaw_to_forward_vector`), and forms an
   argument address before the first call's other operands
   (`player_death_update_reverse_fade`, `player_death_apply_visual_fade`).
-- Odd-stride 2D array index (`game.audio_sequence_track`, the sequence-track
-  routines `func_8004a128`/`func_8004a21c`/`func_8004a374`/`func_8004a3c8`
-  indexing `SeqTrack *DAT_800a06e0[seq][track]`, stride 0xAC = 172): retail
-  schedules the penultimate strength-reduction step (`subu reg,reg,track`) of
-  `track * 0xAC` into the load-delay slot of the row-pointer `lw`, leaving the
-  final `sll` after the load; that ordering also lets the now-dead
-  sign-extended `track` register be reused as the byte offset. cc1psx-257
-  (`-mcpu=r2000`) emits the `subu` before the load and fills the delay with the
-  `sll`, so the row-pointer and offset land in the opposite registers for the
-  rest of the body. Structurally exact; the 1D sibling `func_8004a344`
-  (`DAT_800a06e0[seq]->flags`, no multiply) is exact. A local row pointer does
-  not move the schedule, and `-mcpu=r3000` regresses banked save units, so no
-  probe lever reproduces retail here.
 - `player_death_update`: retail has an 8-byte larger frame with no stack
   traffic and loads `camera_rotation.x` with `lhu` before subtracting, so the
   original field is unsigned or accessed through a different type.

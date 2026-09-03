@@ -33,8 +33,6 @@ extern void map_unload_floor(void);
 extern void func_800365f8(void);
 extern void func_80036d3c(KfActor *actor);
 extern s16 func_800468d8(u8 *sequence, s16 vab_id);
-extern void func_8004a344(s16 sequence);
-extern void func_8004a3c8(s16 sequence, s16 track);
 extern void memcpy_8004a52c();
 extern void func_8004b6e0(s16 sequence);
 extern s16 angle_approach(s16 current, s16 target, s32 step);
