@@ -398,9 +398,9 @@ KfPlayerVitals	0x02	0x02	current_hp	u16	supported	semantic_types.h;asm;xrefs	cur
 KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	maximum MP
 KfPlayerVitals	0x06	0x02	current_mp	u16	supported	semantic_types.h;asm;xrefs	current MP
 KfPoolRecord	0x00	0x02	state	s16	supported	game_types.h;asm;xrefs	allocation state
-KfPoolRecord	0x02	0x02	unknown_02	s16	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x04	0x02	value_04	s16	candidate	game_types.h;asm;xrefs	accessed value; exact meaning unresolved
-KfPoolRecord	0x06	0x02	unknown_06	s16	opaque	game_types.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x04	0x02	value_04	u16	candidate	game_types.h;asm;xrefs	accessed value; exact meaning unresolved
+KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
 KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
 KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
 KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer

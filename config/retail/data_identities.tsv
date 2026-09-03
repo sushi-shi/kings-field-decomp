@@ -1891,6 +1891,7 @@ GAME.EXE	0x800911b0	0x2	DAT_800911b0	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x800911b2	0x2	DAT_800911b2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800911b4	0x2	DAT_800911b4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800911b6	0x2	DAT_800911b6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800930f0	0x8	DAT_800930f0	unknown	bss	SVECTOR		address-only	asm;render-morph-scratch	morph blend scratch vertex buffer base
 GAME.EXE	0x800930f8	0x4	DAT_800930f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800930fc	0x4	DAT_800930fc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80093100	0x4	DAT_80093100	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
