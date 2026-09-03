@@ -570,28 +570,13 @@ source = "src/game/actor.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.actor_8002e2e8"
+unit = "game.actor_behavior"
 image = "GAME.EXE"
-source = "src/game/actor_8002e2e8.c"
+source = "src/game/actor_behavior.c"
 profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.actor_8002ed00"
-image = "GAME.EXE"
-source = "src/game/actor_8002ed00.c"
-profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.actor_8002f228"
-image = "GAME.EXE"
-source = "src/game/actor_8002f228.c"
-profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.actor_8002f8cc"
-image = "GAME.EXE"
-source = "src/game/actor_8002f8cc.c"
-profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.actor_pool"

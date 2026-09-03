@@ -2,12 +2,12 @@
 # RATCHET: down-only. Bless a lower number with `kf verify board --update`;
 # a higher one is a regression and fails `kf verify board --gate`.
 # Never hand-edit to raise a floor - reconstruct/name the symbol instead.
-src func_ refs	74
-src DAT_ refs	1282
-GAME extern decls	830
-pointer casts	1028
-void* views	72
+src func_ refs	61
+src DAT_ refs	1280
+GAME extern decls	834
+pointer casts	1037
+void* views	71
 byte-array views	30
 .c-local aggregates	63
-unresolved func_ identities	163
+unresolved func_ identities	159
 unresolved DAT_ identities	3162
