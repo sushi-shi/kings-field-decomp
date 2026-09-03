@@ -11,7 +11,7 @@
  * DAT_8009db80), or on a record passed by pointer.
  *
  * effect_projectile_update_3d / effect_projectile_update_2d are projectile-motion updates: they advance the
- * record along a rotated velocity, probe the world through func_80037850, apply
+ * record along a rotated velocity, probe the world through effect_map_collision, apply
  * actor (collision class 0x10) or player (class 0x80) damage from the magic
  * row, and manage the impact sound and lifetime counter (unknown_07).
  * effect_floor_deform_line stamps an interpolated floor height into map_floor_height_grid
@@ -20,7 +20,7 @@
  * (vx,0,vz) offset about Y. effect_spawn_trail_kind13 / effect_spawn_ground_kind6 spawn trailing
  * sub-effects (kinds 0x13 and 6) offset from the record.
  *
- * func_80037850 (the collision/height probe) and effect_update_dispatch (the dispatcher)
+ * effect_map_collision (the collision/height probe) and effect_update_dispatch (the dispatcher)
  * are the band endpoints and remain WIP; this unit externs them.
  */
 
@@ -35,7 +35,7 @@ extern SoundRef gameplay_sound_ref_4;
  * effect_floor_deform_line reads from offset 0x21 (7-byte records); extent WIP. */
 extern u8 DAT_80056247[];
 
-extern u32 func_80037850(VECTOR *position, s32 param);
+extern u32 effect_map_collision(VECTOR *position, s32 param);
 extern KfEffectRecord *effect_pool_construct();
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
@@ -83,7 +83,7 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
         world.vx += record->position.vx;
         world.vy += record->position.vy;
         world.vz += record->position.vz;
-        collision = func_80037850(&world, 0x78);
+        collision = effect_map_collision(&world, 0x78);
         if (collision != 0xffffffff) {
             if ((collision >> 16) == 0x10) {
                 actor_apply_damage(collision & 0xffff, 0, magic->unknown_08,
@@ -147,7 +147,7 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
         record->position.vy = (s16)record->direction_y
             + (rsin((s16)record->unknown_38 << 1) >> 2);
         record->unknown_38 = (record->unknown_38 + 64) & 0xfff;
-        collision = func_80037850(&record->position, 0x96);
+        collision = effect_map_collision(&record->position, 0x96);
         if (collision != 0xffffffff) {
             if ((collision >> 16) == 0x10) {
                 actor_apply_damage(collision & 0xffff, 0, magic->unknown_08,

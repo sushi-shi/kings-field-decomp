@@ -17,11 +17,11 @@ extern s16 DAT_800591d0[];
 
 /* Shared menu primitives: frame begin/flush, background draw, header draw,
  * input sound cue, and the vsync/pad poll. */
-extern void func_8002abb4(void);
+extern void menu_frame_begin(void);
 extern void func_8002ac34(void);
-extern void func_80025f38(void);
+extern void menu_draw_stats_header(void);
 extern void func_80027ee4(void *arg0, s32 arg1);
-extern void func_80028914(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern s32 func_800250c4(void);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
@@ -29,10 +29,10 @@ extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, query). */
 extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
-extern void func_80028a70(s16 *ctx);
+extern void menu_list_render(s16 *ctx);
 extern u32 func_8002aea4(s32 item_id);
-extern void func_800279c4(s32 item_id);
-extern s32 func_80028380(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
+extern void menu_item_model_preview(s32 item_id);
+extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
                          u32 arg5);
 extern void func_80022d7c(s32 item_id);
 
@@ -40,10 +40,10 @@ extern void func_80022d7c(s32 item_id);
 s32 func_80022608(void);
 extern s32 func_8002317c(void);
 extern void func_800236ac(void);
-extern void func_8002430c(void);
+extern void menu_status_panel(void);
 extern void func_800249a8(void);
 extern s32 func_80024e64(void);
-extern void func_8002589c(void);
+extern void menu_config_panel(void);
 
 /*
  * Item-list display context: a shared menu list header with a visible-window
@@ -78,9 +78,9 @@ void func_800222b4(void)
     i = 0;
     do {
         i++;
-        func_8002abb4();
+        menu_frame_begin();
         func_80027ee4((void *)0, 3);
-        func_80028914(4, 5, 0, 0);
+        menu_draw_window(4, 5, 0, 0);
         func_8002ac34();
     } while (i < 3);
     menu_play_input_sound(0);
@@ -110,9 +110,9 @@ s32 func_80022348(void)
     i = 0;
     do {
         i++;
-        func_8002abb4();
-        func_80025f38();
-        func_80028914(0, 8, cursor, confirm);
+        menu_frame_begin();
+        menu_draw_stats_header();
+        menu_draw_window(0, 8, cursor, confirm);
         func_8002ac34();
     } while (i < 3);
     menu_play_input_sound(0);
@@ -121,9 +121,9 @@ s32 func_80022348(void)
 
     for (;;) {
         if (selection != -1 || result == selection) {
-            func_8002abb4();
-            func_80025f38();
-            func_80028914(0, 8, cursor, confirm);
+            menu_frame_begin();
+            menu_draw_stats_header();
+            menu_draw_window(0, 8, cursor, confirm);
             func_8002ac34();
             while (pad_read(1) != 0)
                 ;
@@ -142,7 +142,7 @@ s32 func_80022348(void)
             result = -99;
             break;
         case 3:
-            func_8002430c();
+            menu_status_panel();
             result = -99;
             break;
         case 4:
@@ -156,7 +156,7 @@ s32 func_80022348(void)
                 result = -99;
             break;
         case 6:
-            func_8002589c();
+            menu_config_panel();
             break;
         }
         if (result != -99) {
@@ -192,9 +192,9 @@ s32 func_80022348(void)
             menu_play_input_sound(2);
             result = -1;
         }
-        func_8002abb4();
-        func_80025f38();
-        func_80028914(0, 8, cursor, confirm);
+        menu_frame_begin();
+        menu_draw_stats_header();
+        menu_draw_window(0, 8, cursor, confirm);
         func_8002ac34();
     }
 }
@@ -268,19 +268,19 @@ s32 func_80022608(void)
     ctx.entries = &labels[0][0];
     ctx.unknown_24 = (s32)counts;
 
-    func_8002abb4();
+    menu_frame_begin();
     if (ctx.count != 0) {
         if (func_8002aea4(codes[ctx.cursor]) != 0)
             return -1;
-        func_800279c4(codes[ctx.cursor]);
+        menu_item_model_preview(codes[ctx.cursor]);
     }
-    func_80028a70((s16 *)&ctx);
+    menu_list_render((s16 *)&ctx);
 
     for (;;) {
         func_8002ac34();
         if (confirm == 1) {
             selection = -99;
-            if (func_80028380((u32)&ctx, 0, 0, codes[ctx.cursor], 0, 0) != -1)
+            if (menu_list_interact((u32)&ctx, 0, 0, codes[ctx.cursor], 0, 0) != -1)
                 selection = codes[ctx.cursor];
         }
         if (selection != -99) {
@@ -341,10 +341,10 @@ s32 func_80022608(void)
             selection = -1;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         if (ctx.count != 0)
-            func_800279c4(codes[ctx.cursor]);
-        func_80028a70((s16 *)&ctx);
+            menu_item_model_preview(codes[ctx.cursor]);
+        menu_list_render((s16 *)&ctx);
     }
 
     game_state_acknowledge_pending();

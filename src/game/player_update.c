@@ -19,7 +19,7 @@ extern s32 func_80036e38(s32 arg0);
 extern void pool_release_all(void);
 extern void func_800365f8(void);
 extern void func_80034de4();
-extern void func_8003a2a0(void);
+extern void magic_cast(void);
 extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
@@ -308,7 +308,7 @@ void player_update(void)
                     }
                     if (player_state.vitals.current_mp >= cost) {
                         player_state.vitals.current_mp -= cost;
-                        func_8003a2a0();
+                        magic_cast();
                         player_state.magic_charge = 0;
                         player_state.weapon_attack_fully_charged = 0;
                         goto magic_done;

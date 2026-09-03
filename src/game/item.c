@@ -27,9 +27,9 @@ extern u8 DAT_800594b8[];
 extern u8 DAT_800595f8[];
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
-extern void func_8002abb4(void);
+extern void menu_frame_begin(void);
 extern void func_8002ac34(void);
-extern void func_80028914(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
@@ -39,10 +39,10 @@ void func_80021afc(s32 arg);
 
 /* Item-list panel helpers and the shared inventory / stat data. */
 extern void func_8002ad6c(u16 *ctx, s32 arg1, s32 arg2);
-extern void func_80028a70(s16 *ctx);
+extern void menu_list_render(s16 *ctx);
 extern u32 func_8002aea4(s32 item_id);
 extern void func_80027b7c(s32 item_id, s32 arg1, s32 arg2);
-extern s32 func_80028380(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4, u32 arg5);
+extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4, u32 arg5);
 extern void game_state_acknowledge_pending(void);
 extern void func_800292f8(s32 object);
 extern void func_800291ec(void *prompt, void *options, s32 choice, s32 confirm);
@@ -174,14 +174,14 @@ void func_800212d8(s32 arg)
     s32 done = -99;
     s32 selection = -1;
 
-    func_8002abb4();
-    func_80028914(7, 3, 0, 0);
+    menu_frame_begin();
+    menu_draw_window(7, 3, 0, 0);
     func_8002ac34();
-    func_8002abb4();
-    func_80028914(7, 3, 0, 0);
+    menu_frame_begin();
+    menu_draw_window(7, 3, 0, 0);
     func_8002ac34();
-    func_8002abb4();
-    func_80028914(7, 3, 0, 0);
+    menu_frame_begin();
+    menu_draw_window(7, 3, 0, 0);
     menu_play_input_sound(0);
     while (pad_read(1) != 0)
         ;
@@ -189,8 +189,8 @@ void func_800212d8(s32 arg)
     for (;;) {
         func_8002ac34();
         if (selection != -1 || done == selection) {
-            func_8002abb4();
-            func_80028914(7, 3, cursor, confirm);
+            menu_frame_begin();
+            menu_draw_window(7, 3, cursor, confirm);
             func_8002ac34();
             while (pad_read(1) != 0)
                 ;
@@ -210,7 +210,7 @@ void func_800212d8(s32 arg)
             return;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         confirm = 0;
         prev = input;
         input = pad_read(1);
@@ -237,7 +237,7 @@ void func_800212d8(s32 arg)
             menu_play_input_sound(2);
             done = -1;
         }
-        func_80028914(7, 3, cursor, confirm);
+        menu_draw_window(7, 3, cursor, confirm);
     }
 }
 
@@ -292,19 +292,19 @@ void func_80021538(s32 arg)
     ctx.entries = &entries[0][0];
     ctx.unknown_24 = 0;
 
-    func_8002abb4();
+    menu_frame_begin();
     if (ctx.count != 0) {
         if (func_8002aea4(index[ctx.cursor]) != 0)
             return;
         func_80027b7c(index[ctx.cursor], arg, 0);
     }
-    func_80028a70((s16 *)&ctx);
+    menu_list_render((s16 *)&ctx);
 
     for (;;) {
         func_8002ac34();
         if (confirm == 1) {
             selection = -99;
-            if (func_80028380((u32)&ctx, 3, 1, index[ctx.cursor], arg, 0) != -1)
+            if (menu_list_interact((u32)&ctx, 3, 1, index[ctx.cursor], arg, 0) != -1)
                 selection = index[ctx.cursor];
         }
         if (selection != -99) {
@@ -367,10 +367,10 @@ void func_80021538(s32 arg)
             selection = -1;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         if (ctx.count != 0)
             func_80027b7c(index[ctx.cursor], arg, 0);
-        func_80028a70((s16 *)&ctx);
+        menu_list_render((s16 *)&ctx);
     }
 
     game_state_acknowledge_pending();
@@ -434,19 +434,19 @@ void func_80021afc(s32 arg)
     ctx.entries = &entries[0][0];
     ctx.unknown_24 = 0;
 
-    func_8002abb4();
+    menu_frame_begin();
     if (ctx.count != 0) {
         if (func_8002aea4(index[ctx.cursor]) != 0)
             return;
         func_80027b7c(index[ctx.cursor], arg, 1);
     }
-    func_80028a70((s16 *)&ctx);
+    menu_list_render((s16 *)&ctx);
 
     for (;;) {
         func_8002ac34();
         if (confirm == 1) {
             selection = -99;
-            if (func_80028380((u32)&ctx, 4, 1, index[ctx.cursor], arg, confirm)
+            if (menu_list_interact((u32)&ctx, 4, 1, index[ctx.cursor], arg, confirm)
                     != -1)
                 selection = index[ctx.cursor];
         }
@@ -505,10 +505,10 @@ void func_80021afc(s32 arg)
             selection = -1;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         if (ctx.count != 0)
             func_80027b7c(index[ctx.cursor], arg, 1);
-        func_80028a70((s16 *)&ctx);
+        menu_list_render((s16 *)&ctx);
     }
 
     game_state_acknowledge_pending();
@@ -552,15 +552,15 @@ s32 func_80021ffc(s32 arg)
     options[4] = 0x6a;
     options[5] = -1;
 
-    func_8002abb4();
+    menu_frame_begin();
     func_800292f8(arg);
     func_800291ec(prompt, options, 0, 0);
     func_8002ac34();
-    func_8002abb4();
+    menu_frame_begin();
     func_800292f8(arg);
     func_800291ec(prompt, options, 0, 0);
     func_8002ac34();
-    func_8002abb4();
+    menu_frame_begin();
     func_800292f8(arg);
     func_800291ec(prompt, options, 0, 0);
     menu_play_input_sound(0);
@@ -570,7 +570,7 @@ s32 func_80021ffc(s32 arg)
     for (;;) {
         func_8002ac34();
         if (result != -99) {
-            func_8002abb4();
+            menu_frame_begin();
             func_800292f8(arg);
             func_800291ec(prompt, options, choice, confirm);
             func_8002ac34();
@@ -579,7 +579,7 @@ s32 func_80021ffc(s32 arg)
             break;
         }
 
-        func_8002abb4();
+        menu_frame_begin();
         prev = input;
         input = pad_read(1);
         if (((input & 0x1000) != 0 && (prev & 0x1000) == 0)

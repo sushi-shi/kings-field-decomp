@@ -20,13 +20,13 @@ extern void vector3s_scale_shift12(s16 scale, s16 *vector);
 extern KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
     SVECTOR *direction, ...);
 
-/* func_8003a2a0 dispatch table (selected_magic_id 4..8). */
+/* magic_cast dispatch table (selected_magic_id 4..8). */
 RODATA(0x80012dc0, 0x14)
 
 /* Spawns the player's ranged magic effect for the current spell
  * (selected_magic_id 4..8), aiming at a target actor in the view cone. */
 ADDRESS(0x8003a2a0, 0x4c0)
-void func_8003a2a0(void)
+void magic_cast(void)
 {
     struct KfVec3s direction;
     SVECTOR offset;
