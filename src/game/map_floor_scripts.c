@@ -27,10 +27,6 @@ extern u8 map_world_state_base[4];
 
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
-extern void matrix_interpolate(
-    const MATRIX *from, const MATRIX *to, MATRIX *matrix, s32 blend);
-extern void lighting_set_active_color_matrix(s32 index);
 extern void render_frame(s32 first, s32 second);
 extern int rand(void);
 

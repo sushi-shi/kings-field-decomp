@@ -8,12 +8,6 @@
  * runs 8..-1.
  */
 
-extern void matrix_interpolate(
-    const MATRIX *from,
-    const MATRIX *to,
-    MATRIX *matrix,
-    s32 blend);
-
 ADDRESS(0x800202fc, 0x68)
 void matrix_interpolate(
     const MATRIX *from,

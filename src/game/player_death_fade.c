@@ -2,10 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void lighting_set_color_matrix(
-    const MATRIX *from, const MATRIX *to, s32 blend);
-extern void matrix_interpolate(
-    const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 

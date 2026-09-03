@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void lighting_set_active_color_matrix(s32 index);
-
 ADDRESS(0x8001bb94, 0x14c)
 void display_initialize(void)
 {

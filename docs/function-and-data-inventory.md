@@ -163,8 +163,10 @@ while the six-byte tail remains opaque.
 The player-update pass names the `0x1a1c`-byte main player update, three
 lighting-preset wrappers, and the leaf that installs status effect 4. It maps
 two previously opaque signed halfwords to `KfPlayerState` timer fields at
-`+0x50` and `+0x52`. The four small reconstructed functions are strict exact
-matches; the large update remains a separately planned reconstruction.
+`+0x50` and `+0x52`. The three repeated lighting wrappers share one
+`game.lighting_presets` unit and the status mutator remains separate. All four
+small functions are strict exact matches; the large update remains a
+separately planned reconstruction.
 
 The collision-grid pass names and exactly reconstructs the cell floor-height
 query, its Psy-Q `VECTOR` position wrapper, and the 5x5 occupancy updater. It admits

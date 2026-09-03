@@ -2,8 +2,10 @@
 
 The GAME.EXE band at `0x800187a4..0x8001a29c` contains three small lighting
 wrappers, one player-status leaf, and the large `player_update` routine. The
-address band is an investigation boundary, not proof that these functions
-formed one original translation unit.
+three repeated wrappers form the `game.lighting_presets` reconstruction unit;
+their shared call shape, adjacent color-table entries, and common profile
+support that ownership model. The wider address band remains an investigation
+boundary, not evidence that the status leaf or `player_update` shared the TU.
 
 ## Adjacent exact helpers
 
@@ -17,6 +19,11 @@ formed one original translation unit.
 All four C reconstructions are strict 100% object matches under the current
 `probe-gcc257-o2-g0` probe. This is a matching result, not proof that GCC 2.5.7
 or this optimization profile was the historical toolchain.
+
+The following `player_status_apply_effect4` remains separate: it mutates
+player status rather than lighting state and its only proven caller is the
+menu magic panel. The preceding reverse-death fade is likewise retained in the
+player-death unit because it owns a larger death-state transition sequence.
 
 The third lighting wrapper has no decoded incoming reference. Its function
 boundary is still supported by its complete 56-byte stack frame, two direct

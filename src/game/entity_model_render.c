@@ -43,7 +43,6 @@
  */
 extern u16 DAT_80095038[];
 
-extern void lighting_set_active_color_matrix(s32 index);
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);

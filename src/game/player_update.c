@@ -8,7 +8,6 @@ extern u32 pad_read(s32 mode);
 extern void display_show_error_screen(char object);
 extern s32 menu_enter_mode(s32 arg0);
 extern void map_interaction_dispatch();
-extern void lighting_set_active_color_matrix(s32 arg0);
 extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
 extern void matrix_set_rotation_yxz(
@@ -19,8 +18,6 @@ extern KfActor *actor_pool_find_target_in_cone(
     const struct KfVec3i *origin, s32 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern void lighting_set_color_matrix(
-    const MATRIX *from, const MATRIX *to, s32 blend);
 extern void player_use_item();
 
 ADDRESS(0x80018880, 0x1a1c)

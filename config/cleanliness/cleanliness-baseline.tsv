@@ -4,7 +4,7 @@
 # Never hand-edit to raise a floor - reconstruct/name the symbol instead.
 src func_ refs	54
 src DAT_ refs	1213
-GAME extern decls	787
+GAME extern decls	775
 pointer casts	1032
 void* views	58
 byte-array views	30

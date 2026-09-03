@@ -137,21 +137,9 @@ source = "src/game/player_death_fade.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.lighting_weapon9_environment"
+unit = "game.lighting_presets"
 image = "GAME.EXE"
-source = "src/game/lighting_weapon9_environment.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.lighting_timed_player_effect"
-image = "GAME.EXE"
-source = "src/game/lighting_timed_player_effect.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.lighting_color_preset6"
-image = "GAME.EXE"
-source = "src/game/lighting_color_preset6.c"
+source = "src/game/lighting_presets.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

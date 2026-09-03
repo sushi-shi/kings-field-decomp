@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
 extern void render_frame(s32 first, s32 second);
 
 /*
