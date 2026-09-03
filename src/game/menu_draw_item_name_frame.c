@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern POLY_FT4 *current_poly_ft4;
 
 /* Sprite / atlas cell descriptor (texture page, CLUT, texel origin, size). */
 typedef struct MenuSpriteDef {

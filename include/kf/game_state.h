@@ -162,6 +162,7 @@ extern u16 map_object_effect_sequence_160;
 extern u16 map_object_effect_sequence_170;
 extern u16 map_object_effect_sequence_180;
 extern KfMapObjectState map_object_state;
+extern POLY_FT4 *current_poly_ft4;
 extern char map_resource_path[12];
 extern u8 *map_variant_asset_buffer;
 extern u32 memory_allocation_stack[17];

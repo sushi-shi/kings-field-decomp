@@ -16,7 +16,6 @@
  */
 
 /* Current textured-quad cursor in the shared primitive workspace. */
-extern POLY_FT4 *current_poly_ft4;
 
 /*
  * Sprite descriptor read by the menu blitters: texture page and CLUT, the

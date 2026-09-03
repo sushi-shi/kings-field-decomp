@@ -10,7 +10,6 @@
  * and sprite descriptors. Module boundary is WIP.
  */
 
-extern POLY_FT4 *current_poly_ft4;
 
 /* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
 extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);

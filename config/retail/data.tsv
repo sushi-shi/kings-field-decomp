@@ -3127,7 +3127,7 @@ GAME.EXE	0x80057e78	0x46678	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 GAME.EXE	0x80057e7c	0x4667c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e80	0x46680	0x4	defined	ghidra-defined		CdlLOC	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	cd_read_location; CdlLOC handed to CdControl(CdlSetloc)
 GAME.EXE	0x80057e84	0x46684	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e88	0x46688	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057e88	0x46688	0x4	defined	reviewed	current_poly_ft4	POLY_FT4 *	manual:game_semantic_menu_frame	zero-initialized current menu textured-quad allocation cursor
 GAME.EXE	0x80057e8c	0x4668c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e90	0x46690	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e94	0x46694	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

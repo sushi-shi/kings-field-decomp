@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern POLY_FT4 *current_poly_ft4;
 
 /* Sprite/point descriptors shared with the menu blitters. */
 typedef struct MenuSpriteDef {

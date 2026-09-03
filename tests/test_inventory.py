@@ -528,6 +528,26 @@ class InventoryTests(unittest.TestCase):
             ("map_collision_flag_grid", "u8[100][100]", 0x2710),
         )
 
+    def test_menu_frame_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_menu_frame.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 4)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_menu_frame_cursor_owner_is_queryable(self) -> None:
+        cursor = index("GAME.EXE").datum(0x80057E88)
+        self.assertEqual(
+            (cursor.name, cursor.datatype, cursor.size),
+            ("current_poly_ft4", "POLY_FT4 *", 4),
+        )
+
     def test_map_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_map_resources.tsv"
         _, rows = read_tsv(evidence_path)

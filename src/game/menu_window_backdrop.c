@@ -3,7 +3,6 @@
 #include <kf/game.h>
 
 /* Current textured-quad cursor in the shared primitive workspace. */
-extern POLY_FT4 *current_poly_ft4;
 
 /*
  * Shared translucent menu-window backdrop sprite descriptor.  The retail image

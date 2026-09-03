@@ -3,7 +3,6 @@
 #include <kf/game.h>
 
 /* Current textured-quad cursor in the shared primitive workspace. */
-extern POLY_FT4 *current_poly_ft4;
 
 /* Font/sprite atlas descriptor: atlas page/clut, texel origin and cell size. */
 typedef struct MenuSpriteDef {
