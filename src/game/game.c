@@ -69,7 +69,7 @@ void game_main_loop(void)
     SetDispMask(1);
     vsync_event = OpenEvent(0xf2000003, 2, 0x1000, frame_pacer_vsync_callback);
     EnableEvent(vsync_event);
-    func_80014674(1);
+    player_warp_shimmer_at_player(1);
     if (save_file_cleanup_temporary() == 2) {
         display_show_error_screen(2);
     }
@@ -95,7 +95,7 @@ void game_main_loop(void)
                 != *(u16 *)&player_state.map_cell) {
                 if (player_warp_trigger_update() != 0) {
                     game_exit_code = 0xfe;
-                    func_80014674(2);
+                    player_warp_shimmer_at_player(2);
                     display_play_transition();
                     audio_stop_sequence_master_fade(0x80);
                     break;

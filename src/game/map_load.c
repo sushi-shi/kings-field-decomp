@@ -211,3 +211,9 @@ void map_load_floor(void)
     effect5_texture_cache_prepare(player_state.progress_state.current_floor);
     render_state.unknown_80 = color_matrix_table[3];
 }
+
+ADDRESS(0x800365f8, 0x20)
+void func_800365f8(void)
+{
+    map_load_floor();
+}

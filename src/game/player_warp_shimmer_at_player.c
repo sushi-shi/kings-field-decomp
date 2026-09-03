@@ -5,7 +5,7 @@
 extern void player_warp_shimmer(u32 mode, struct KfVec3i *position);
 
 ADDRESS(0x80014674, 0x44)
-void func_80014674(u32 mode)
+void player_warp_shimmer_at_player(u32 mode)
 {
     struct KfVec3i position;
 

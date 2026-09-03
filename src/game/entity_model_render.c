@@ -43,6 +43,7 @@
  */
 extern u16 DAT_80095038[];
 
+extern void lighting_set_active_color_matrix(s32 index);
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
@@ -140,4 +141,15 @@ void render_map_object(KfMapObject *object)
     tmd_select_object_vertices(id);
     tmd_project_vertices(tmd_get_object(id)->vertex_count);
     render_enqueue_tmd(id, depth);
+}
+
+ADDRESS(0x8001ed38, 0x58)
+void func_8001ed38(void)
+{
+    lighting_set_active_color_matrix(0);
+    SetGeomScreen(0xc8);
+    tmd_select(4);
+    tmd_select_object_vertices(0);
+    tmd_project_vertices(tmd_get_object(0)->vertex_count);
+    render_enqueue_tmd(0, 0x3e8);
 }

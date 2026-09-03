@@ -83,9 +83,9 @@ source = "src/game/display_play_transition.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_80014674"
+unit = "game.player_warp_shimmer_at_player"
 image = "GAME.EXE"
-source = "src/game/func_80014674.c"
+source = "src/game/player_warp_shimmer_at_player.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -328,11 +328,6 @@ image = "GAME.EXE"
 source = "src/game/entity_model_render.c"
 profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.func_8001ed38"
-image = "GAME.EXE"
-source = "src/game/func_8001ed38.c"
-profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.entity_render"
@@ -682,11 +677,6 @@ image = "GAME.EXE"
 source = "src/game/map_load.c"
 profile = "probe-gcc257-o2-g0"
 
-[[unit]]
-unit = "game.func_800365f8"
-image = "GAME.EXE"
-source = "src/game/func_800365f8.c"
-profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.player_warp"
