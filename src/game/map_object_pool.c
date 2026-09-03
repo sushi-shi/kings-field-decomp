@@ -2,11 +2,189 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
+/*
+ * Map copy and map-object pool/load band (GAME 0x80030a98..0x800315c4).
+ * The following map-object runtime/action unit remains a separate WIP owner.
+ */
+
 RODATA(0x80012738, 0x150)
 
 extern KfEffectRecord DAT_8009d040[];
 /* Effect spawner called with five or six arguments; declared without a prototype. */
 extern KfEffectRecord *effect_pool_construct();
+
+/*
+ * Four rectangular map-cell copy regions {source_x, source_z, destination_x,
+ * destination_z, width, height} applied by map_apply_copy_region.
+ */
+DATA(0x800561b0, 0x18)
+KfMapCopyRegion map_copy_regions[4] = {
+    {55, 33, 50, 39, 3, 3},
+    {47, 16, 30, 20, 3, 3},
+    {58, 44, 15, 48, 3, 3},
+    {64, 44, 37, 45, 3, 3},
+};
+
+/* Two unnamed 100x100 map layers copied alongside the named grids. */
+
+ADDRESS(0x80030a98, 0x1e4)
+void map_apply_copy_region(u8 region_id)
+{
+    const KfMapCopyRegion *region;
+    u8 height;
+    u8 width;
+    s32 source_z;
+    s32 destination_z;
+    s32 source_x;
+    s32 destination_x;
+
+    if (region_id == 0xff) {
+        return;
+    }
+    region = &map_copy_regions[region_id];
+    height = region->height;
+    source_z = region->source_z;
+    destination_z = region->destination_z;
+    while (height-- != 0) {
+        width = region->width;
+        destination_x = region->destination_x;
+        source_x = region->source_x;
+        while (width-- != 0) {
+            map_cell_attribute_grid[destination_z][destination_x] =
+                map_cell_attribute_grid[source_z][source_x];
+            map_floor_height_grid[destination_z][destination_x] =
+                map_floor_height_grid[source_z][source_x];
+            map_cell_orientation_grid[destination_z][destination_x] = map_cell_orientation_grid[source_z][source_x];
+            map_collision_grid[destination_z][destination_x] =
+                map_collision_grid[source_z][source_x];
+            map_collision_flag_grid[destination_z][destination_x] = map_collision_flag_grid[source_z][source_x];
+            destination_x++;
+            source_x++;
+        }
+        source_z++;
+        destination_z++;
+    }
+}
+
+ADDRESS(0x80030c7c, 0x23c)
+void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw)
+{
+    u8 cell_x = object->cell_x;
+    u8 cell_z;
+    const KfMapObjectDefinition *definition;
+
+    definition = &map_object_state.definitions[object->object_id];
+    yaw &= 0xfff;
+    cell_z = object->cell_z;
+    switch (definition->behavior_type) {
+    case 2:
+    case 3:
+        map_collision_grid[cell_z][cell_x] = value;
+        switch (yaw) {
+        case 0x000:
+            cell_z++;
+            break;
+        case 0x400:
+            cell_x++;
+            break;
+        case 0x800:
+            cell_z--;
+            break;
+        case 0xc00:
+            cell_x--;
+            break;
+        }
+        map_collision_grid[cell_z][cell_x] = value;
+        break;
+    case 0:
+        switch (yaw) {
+        case 0x000:
+            map_collision_grid[cell_z - 1][cell_x + 1] = value;
+            map_collision_grid[cell_z][cell_x + 1] = value;
+            break;
+        case 0x400:
+            map_collision_grid[cell_z + 1][cell_x] = value;
+            map_collision_grid[cell_z + 1][cell_x + 1] = value;
+            break;
+        case 0x800:
+            map_collision_grid[cell_z + 1][cell_x - 1] = value;
+            map_collision_grid[cell_z][cell_x - 1] = value;
+            break;
+        case 0xc00:
+            map_collision_grid[cell_z - 1][cell_x] = value;
+            map_collision_grid[cell_z - 1][cell_x - 1] = value;
+            break;
+        }
+        break;
+    }
+}
+
+ADDRESS(0x80030eb8, 0xc4)
+s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
+{
+    const KfMapObjectDefinition *definition = &map_object_state.definitions[object->object_id];
+    s32 point_x = object->position_x;
+    s32 point_z = object->position_z;
+    s32 result;
+
+    yaw &= 0xfff;
+    if (definition->behavior_type == 0) {
+        switch (yaw) {
+        case 0x000:
+            point_x += 2000;
+            break;
+        case 0x400:
+            point_z += 2000;
+            break;
+        case 0x800:
+            point_x -= 2000;
+            break;
+        case 0xc00:
+            point_z -= 2000;
+            break;
+        default:
+            return result;
+        }
+    } else if (definition->behavior_type != 2) {
+        return result;
+    }
+    result = collision_query_world(point_x, 0xffff, point_z, 3000, 0, 0x21);
+    return result;
+}
+
+ADDRESS(0x80030f7c, 0x60)
+void map_object_pool_clear(void)
+{
+    KfMapObject *object = map_object_state.objects;
+    u16 index = 189;
+
+    do {
+        object->object_id = 0xff;
+        object->action = 0xff;
+        object->link.vertical_velocity = 0;
+        object->link.unknown_06[0] = 0;
+        object->link.unknown_06[1] = 0;
+        object->link.link_id = 0;
+        object->link.action_parameter = 0;
+        object->link.spawn_sequence = 0;
+        object++;
+    } while (index-- != 0);
+    map_object_effect_sequence_180 = 0;
+    map_object_effect_sequence_170 = 0;
+    map_object_effect_sequence_160 = 0;
+}
+
+ADDRESS(0x80030fdc, 0x2c)
+void map_object_definitions_load(const KfMapObjectDefinition *definitions)
+{
+    const u32 *source = (const u32 *)definitions;
+    u32 *destination = (u32 *)map_object_state.definitions;
+    s32 count = 0x140;
+
+    do {
+        *destination++ = *source++;
+    } while (--count != 0);
+}
 
 /*
  * Fills the 190 pool records from the sentinel-terminated placement list:
