@@ -2,9 +2,19 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
+
+/*
+ * Player death, vitals, and combat run, one contiguous band
+ * 0x80015164..0x80016848 (GAME.EXE): death sequence and restart, HP/MP
+ * adjustment, damage application and combat-stat recalculation, experience and
+ * training, and the physical damage-component formula. Assembled from seven
+ * address-adjacent single-purpose player units; module boundary is WIP.
+ */
+
+
 /* Psy-Q LIBGTE: void ReadColorMatrix(MATRIX *m). */
 
-extern SoundRef player_sound_refs[3];
+extern const SoundRef player_sound_refs[3];
 
 extern u32 map_world_state_base;
 extern u8 DAT_800652a8[240];
@@ -158,4 +168,424 @@ void player_death_restart(void)
     player_state.previous_map_cell.x = player_state.map_cell.x;
     player_state.previous_map_cell.z = player_state.map_cell.z;
     player_state.camera_position.vy = player_state.floor_height - 1500;
+}
+
+
+ADDRESS(0x8001564c, 0x70)
+void player_adjust_hp(s32 delta)
+{
+    s32 value = player_state.vitals.current_hp;
+
+    value += delta;
+
+    if (value <= 0) {
+        player_state.vitals.current_hp = 0;
+        player_death_begin();
+        return;
+    }
+    if (player_state.vitals.maximum_hp < value) {
+        player_state.vitals.current_hp = player_state.vitals.maximum_hp;
+    } else {
+        player_state.vitals.current_hp = value;
+    }
+}
+
+ADDRESS(0x800156bc, 0x58)
+void player_adjust_mp(s32 delta)
+{
+    s32 value = player_state.vitals.current_mp;
+
+    value += delta;
+
+    if (value <= 0) {
+        player_state.vitals.current_mp = 0;
+        return;
+    }
+    if (player_state.vitals.maximum_mp < value) {
+        player_state.vitals.current_mp = player_state.vitals.maximum_mp;
+    } else {
+        player_state.vitals.current_mp = value;
+    }
+}
+
+
+RODATA(0x80012000, 0x2c)
+
+/* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
+extern KfMagicRecord magic_records[24];
+extern void notify_enqueue(s32 arg0);
+
+/*
+ * Rebuilds physical power, magic, the five attack lanes and the six
+ * defense lanes from the base stats, the poison status, the weapon, the
+ * five armor pieces and the accessory, then fires the magic milestones
+ * and clamps both powers below 1000.
+ */
+ADDRESS(0x80015714, 0x814)
+void player_recalculate_combat_stats(void)
+{
+    const KfWeaponRecord *weapon;
+    const KfArmorRecord *armor;
+    s32 power;
+
+    player_state.attack_component0 = 0;
+    player_state.attack_component1 = 0;
+    player_state.attack_component2 = 0;
+    player_state.attack_component3 = 0;
+    player_state.attack_component4 = 0;
+    player_state.damage_defense_component0 = 0;
+    player_state.damage_defense_component1 = 0;
+    player_state.damage_defense_component2 = 0;
+    player_state.status_effect2_resistance = 0;
+    player_state.damage_defense_component3 = 0;
+    player_state.damage_defense_component4 = 0;
+    player_state.physical_power = player_state.base_physical_power;
+    player_state.magic = player_state.base_magic;
+    if (player_state.status_effect_flags & 1) {
+        power = player_state.physical_power - 20;
+        if (power < 0) {
+            power = 0;
+        }
+        player_state.physical_power = power;
+    }
+    if (player_state.equipped_weapon_id != 0xff) {
+        weapon = &weapon_records[player_state.equipped_weapon_id];
+        player_state.attack_component0 += weapon->attack_components[0];
+        player_state.attack_component1 += weapon->attack_components[1];
+        player_state.attack_component2 += weapon->attack_components[2];
+        player_state.attack_component3 += weapon->attack_components[3];
+        player_state.attack_component4 += weapon->attack_components[4];
+    }
+    if (player_state.equipped_shield_id != 0xff) {
+        armor = &armor_records[player_state.equipped_shield_id - 13];
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component1 += armor->defense_component1;
+        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.damage_defense_component3 += armor->defense_component3;
+        player_state.damage_defense_component4 += armor->defense_component4;
+    }
+    if (player_state.equipped_head_armor_id != 0xff) {
+        armor = &armor_records[player_state.equipped_head_armor_id - 13];
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component1 += armor->defense_component1;
+        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.damage_defense_component3 += armor->defense_component3;
+        player_state.damage_defense_component4 += armor->defense_component4;
+    }
+    if (player_state.equipped_arm_armor_id != 0xff) {
+        armor = &armor_records[player_state.equipped_arm_armor_id - 13];
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component1 += armor->defense_component1;
+        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.damage_defense_component3 += armor->defense_component3;
+        player_state.damage_defense_component4 += armor->defense_component4;
+    }
+    if (player_state.equipped_leg_armor_id != 0xff) {
+        armor = &armor_records[player_state.equipped_leg_armor_id - 13];
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component1 += armor->defense_component1;
+        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.damage_defense_component3 += armor->defense_component3;
+        player_state.damage_defense_component4 += armor->defense_component4;
+    }
+    if (player_state.equipped_body_armor_id != 0xff) {
+        armor = &armor_records[player_state.equipped_body_armor_id - 13];
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component0 += armor->defense_component0;
+        player_state.damage_defense_component1 += armor->defense_component1;
+        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.damage_defense_component3 += armor->defense_component3;
+        player_state.damage_defense_component4 += armor->defense_component4;
+    }
+    switch (player_state.equipped_accessory_id) {
+    case 48:
+        player_state.attack_component3 += 5;
+        break;
+    case 49:
+        player_state.damage_defense_component3 += 7;
+        break;
+    case 50:
+        player_state.damage_defense_component4 += 7;
+        break;
+    case 51:
+        player_state.magic += 8;
+        break;
+    case 42:
+        player_state.magic += 1;
+        break;
+    case 52:
+        player_state.attack_component3 += 3;
+        break;
+    }
+    if (player_state.equipped_shield_id == 16) {
+        player_state.physical_power -= 8;
+    }
+    if (player_state.status_effect_flags & 0x10) {
+        player_state.damage_defense_component4 += 10;
+    }
+    if (player_state.base_magic >= 37 && magic_records[0].learned != 0 && magic_records[1].learned == 0) {
+        magic_records[1].learned = 1;
+        notify_enqueue(1);
+    }
+    if (player_state.base_magic >= 70 && magic_records[6].learned == 0) {
+        magic_records[6].learned = 1;
+        notify_enqueue(1);
+    }
+    if (player_state.base_magic >= 75 && magic_records[4].learned == 0) {
+        magic_records[4].learned = 1;
+        notify_enqueue(1);
+    }
+    if (player_state.physical_power >= 1000) {
+        player_state.physical_power = 999;
+    }
+    if (player_state.magic >= 1000) {
+        player_state.magic = 999;
+    }
+}
+
+ADDRESS(0x80015f28, 0x98)
+void player_increment_physical_power_training(void)
+{
+    player_state.physical_power_training++;
+    if (player_state.physical_power_training >= 100) {
+        player_state.base_physical_power++;
+        player_state.physical_power_training = 0;
+        if (player_state.base_physical_power >= 1000) {
+            player_state.base_physical_power = 999;
+        } else {
+            notify_enqueue(0x1e);
+        }
+        player_recalculate_combat_stats();
+    }
+}
+
+ADDRESS(0x80015fc0, 0x98)
+void player_increment_magic_training(void)
+{
+    player_state.magic_training++;
+    if (player_state.magic_training >= 100) {
+        player_state.base_magic++;
+        player_state.magic_training = 0;
+        if (player_state.base_magic >= 1000) {
+            player_state.base_magic = 999;
+        } else {
+            notify_enqueue(0x1f);
+        }
+        player_recalculate_combat_stats();
+    }
+}
+
+
+extern const SoundRef player_sound_refs[3];
+extern void notify_enqueue(s32 arg0);
+
+ADDRESS(0x80016058, 0x224)
+void player_add_experience(s16 amount)
+{
+    const KfPlayerLevelGrowth *growth;
+    u8 level;
+
+    player_state.experience += amount;
+    if (player_state.experience > 99999) {
+        player_state.experience = 99999;
+    }
+    while (player_state.experience >= player_state.next_level_experience) {
+        level = player_state.progress_state.level;
+        if (player_state.progress_state.level >= 255) {
+            break;
+        }
+        player_state.progress_state.level = level + 1;
+        if (level >= 40) {
+            player_state.vitals.maximum_hp +=
+                player_level_growth_table[39].maximum_hp
+                - player_level_growth_table[38].maximum_hp;
+            player_state.vitals.maximum_mp +=
+                player_level_growth_table[39].maximum_mp
+                - player_level_growth_table[38].maximum_mp;
+            player_state.base_physical_power += player_level_growth_table[39].physical_power_step;
+            player_state.base_magic += player_level_growth_table[39].magic_step;
+            player_state.next_level_experience +=
+                player_level_growth_table[39].experience_threshold
+                - player_level_growth_table[38].experience_threshold;
+        } else {
+            growth = &player_level_growth_table[level];
+            player_state.vitals.maximum_hp = growth->maximum_hp;
+            player_state.vitals.maximum_mp = growth->maximum_mp;
+            player_state.base_physical_power += growth->physical_power_step;
+            player_state.base_magic += growth->magic_step;
+            player_state.next_level_experience = growth->experience_threshold;
+        }
+        if (player_state.vitals.maximum_hp >= 10000) {
+            player_state.vitals.maximum_hp = 9999;
+        }
+        if (player_state.vitals.maximum_mp >= 10000) {
+            player_state.vitals.maximum_mp = 9999;
+        }
+        if (player_state.base_physical_power >= 1000) {
+            player_state.base_physical_power = 999;
+        }
+        if (player_state.base_magic >= 1000) {
+            player_state.base_magic = 999;
+        }
+        player_recalculate_combat_stats();
+        notify_enqueue(0);
+        sound_ref_play(&player_sound_refs[2], 0x7f);
+    }
+}
+
+
+/*
+ * The parameters are reused as the working values: retail keeps the
+ * threshold in $a0 and the excess in $a1 for the whole body.
+ */
+ADDRESS(0x8001627c, 0xa8)
+s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
+{
+    if (attack == 0) {
+        return 0;
+    }
+    base_power = defense + base_power / 5;
+    defense = attack - base_power;
+    if (defense < 0) {
+        defense = 0;
+    }
+    if (base_power == 0) {
+        base_power = 1;
+    }
+    return defense + (attack * attack) / (base_power * 2);
+}
+
+
+/* Psy-Q LIBC: int rand(void). */
+extern s32 rand(void);
+
+/*
+ * Applies the four status bits (poison, curse blocked by accessory 0x31,
+ * a resisted effect, and a short one), combines the five defended damage
+ * components in tenths, scales the sum, and subtracts it from the hit
+ * points, flagging the update state on any damage.
+ */
+ADDRESS(0x80016324, 0x390)
+void player_apply_damage(
+    u16 component0,
+    u16 component1,
+    u16 component2,
+    u16 status_effect_flags,
+    u16 component3,
+    u16 component4,
+    u16 scale_q12,
+    u16 multiplier_tenths)
+{
+    s32 damage;
+    s32 loss;
+    s32 remaining;
+
+    if (status_effect_flags & 1) {
+        player_state.status_effect0_timer = 600;
+        player_state.status_effect_flags |= 1;
+    }
+    if ((status_effect_flags & 2) && player_state.equipped_accessory_id != 0x31) {
+        if (player_state.status_effect1_timer != -1) {
+            if (player_state.status_effect1_timer < 970) {
+                player_state.status_effect1_timer = 970;
+            }
+        } else {
+            player_state.status_effect1_timer = 1000;
+        }
+        player_state.status_effect_flags |= 2;
+    }
+    if (status_effect_flags & 4) {
+        if (player_state.status_effect2_resistance < (rand() * 100) >> 15) {
+            player_state.status_effect2_timer = 600;
+            player_state.status_effect_flags |= 4;
+        }
+    }
+    if (status_effect_flags & 8) {
+        player_state.status_effect3_timer = 300;
+        player_state.status_effect_flags |= 8;
+    }
+    damage = player_calculate_damage_component(
+        player_state.physical_power * 10, player_state.damage_defense_component0 * 10, component0 * 10);
+    damage += player_calculate_damage_component(
+        player_state.physical_power * 10, player_state.damage_defense_component1 * 10, component1 * 10);
+    damage += player_calculate_damage_component(
+        player_state.physical_power * 10, player_state.damage_defense_component2 * 10, component2 * 10);
+    damage += player_calculate_damage_component(
+        player_state.physical_power * 10, player_state.damage_defense_component3 * 10, component3 * 10);
+    damage += player_calculate_damage_component(
+        player_state.physical_power * 10, player_state.damage_defense_component4 * 10, component4 * 10);
+    damage += 5;
+    damage = (scale_q12 * (damage / 10)) >> 12;
+    loss = (multiplier_tenths * damage) / 10;
+    if (loss != 0) {
+        remaining = player_state.vitals.current_hp - loss;
+        if (remaining <= 0) {
+            remaining = 0;
+        }
+        player_state.vitals.current_hp = remaining;
+        if (player_state.update_state != 0xff) {
+            player_state.update_state = 1;
+        }
+    }
+}
+
+ADDRESS(0x800166b4, 0x130)
+void player_apply_radial_damage(
+    const struct KfVec3i *origin,
+    u32 radius,
+    u16 falloff_q12,
+    u16 base_power,
+    u16 component0,
+    u16 component1,
+    u16 component2,
+    u16 component3,
+    u16 component4,
+    u16 scale_q12,
+    u16 multiplier_tenths)
+{
+    s32 distance;
+    u16 attenuation;
+    u32 value;
+
+    distance = player_distance_to_point(origin->x, origin->y, origin->z, radius, radius);
+    if (distance == -1) {
+        return;
+    }
+    if (falloff_q12 != 0x1000) {
+        attenuation = (distance << 12) / radius;
+        value = attenuation * (0x1000 - falloff_q12);
+        attenuation = 0x1000 - (value >> 12);
+        value = scale_q12 * attenuation;
+        attenuation = value >> 12;
+    } else {
+        attenuation = scale_q12;
+    }
+    player_apply_damage(
+        component0, component1, component2, 0, component3, component4,
+        attenuation, multiplier_tenths);
+}
+
+
+extern KfMagicRecord magic_records[24];
+
+ADDRESS(0x800167e4, 0x64)
+void player_select_magic(u8 magic_id)
+{
+    player_state.magic_charge = 0;
+    player_state.selected_magic_id = magic_id;
+    if (magic_id == 0xff) {
+        player_state.selected_magic_record = 0;
+    } else {
+        player_state.selected_magic_record =
+            &magic_records[player_state.selected_magic_id];
+    }
 }

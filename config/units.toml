@@ -101,18 +101,6 @@ source = "src/game/matrix_rotation.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.vector_math"
-image = "GAME.EXE"
-source = "src/game/vector_math.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.fixed_vector2"
-image = "GAME.EXE"
-source = "src/game/fixed_vector2.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.player_weapon"
 image = "GAME.EXE"
 source = "src/game/player_weapon.c"
@@ -131,99 +119,9 @@ source = "src/game/player_death.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_8001564c"
-image = "GAME.EXE"
-source = "src/game/player_8001564c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80015f28"
-image = "GAME.EXE"
-source = "src/game/player_80015f28.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016058"
-image = "GAME.EXE"
-source = "src/game/player_80016058.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_8001627c"
-image = "GAME.EXE"
-source = "src/game/player_8001627c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_800166b4"
-image = "GAME.EXE"
-source = "src/game/player_800166b4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_800167e4"
-image = "GAME.EXE"
-source = "src/game/player_800167e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.player_80016a30"
 image = "GAME.EXE"
 source = "src/game/player_80016a30.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016b24"
-image = "GAME.EXE"
-source = "src/game/player_80016b24.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016bc0"
-image = "GAME.EXE"
-source = "src/game/player_80016bc0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016e24"
-image = "GAME.EXE"
-source = "src/game/player_80016e24.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80016ee8"
-image = "GAME.EXE"
-source = "src/game/player_80016ee8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017040"
-image = "GAME.EXE"
-source = "src/game/player_80017040.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017a24"
-image = "GAME.EXE"
-source = "src/game/player_80017a24.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017a80"
-image = "GAME.EXE"
-source = "src/game/player_80017a80.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017cf8"
-image = "GAME.EXE"
-source = "src/game/player_80017cf8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.player_80017e3c"
-image = "GAME.EXE"
-source = "src/game/player_80017e3c.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -449,24 +347,6 @@ source = "src/game/notify_queue.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_8001fae4"
-image = "GAME.EXE"
-source = "src/game/func_8001fae4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.notify_effect"
-image = "GAME.EXE"
-source = "src/game/notify_effect.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_8001fdc8"
-image = "GAME.EXE"
-source = "src/game/func_8001fdc8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.render_frame"
 image = "GAME.EXE"
 source = "src/game/render_frame.c"
@@ -545,24 +425,6 @@ source = "src/game/menu_item_drop.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.menu_save_load"
-image = "GAME.EXE"
-source = "src/game/menu_save_load.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_save"
-image = "GAME.EXE"
-source = "src/game/menu_save.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_load"
-image = "GAME.EXE"
-source = "src/game/menu_load.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.menu_config_panel"
 image = "GAME.EXE"
 source = "src/game/menu_config_panel.c"
@@ -572,18 +434,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.menu_item_detail"
 image = "GAME.EXE"
 source = "src/game/menu_item_detail.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_ot_prims"
-image = "GAME.EXE"
-source = "src/game/menu_ot_prims.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_dialog_frame"
-image = "GAME.EXE"
-source = "src/game/menu_dialog_frame.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -602,12 +452,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.menu_sprite_blit"
 image = "GAME.EXE"
 source = "src/game/menu_sprite_blit.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_string"
-image = "GAME.EXE"
-source = "src/game/menu_draw_string.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -749,45 +593,15 @@ source = "src/game/map_floor_scripts.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800342e4"
-image = "GAME.EXE"
-source = "src/game/func_800342e4.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.map_floor_scripts_b"
-image = "GAME.EXE"
-source = "src/game/map_floor_scripts_b.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_800346a0"
-image = "GAME.EXE"
-source = "src/game/func_800346a0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.map_interaction"
 image = "GAME.EXE"
 source = "src/game/map_interaction.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.func_800356e8"
-image = "GAME.EXE"
-source = "src/game/func_800356e8.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.map_events"
 image = "GAME.EXE"
 source = "src/game/map_events.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.func_80035e14"
-image = "GAME.EXE"
-source = "src/game/func_80035e14.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
