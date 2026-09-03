@@ -611,9 +611,21 @@ source = "src/game/menu_draw_string.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_draw_number"
+image = "GAME.EXE"
+source = "src/game/menu_draw_number.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_window_backdrop"
 image = "GAME.EXE"
 source = "src/game/menu_window_backdrop.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_frame_begin"
+image = "GAME.EXE"
+source = "src/game/menu_frame_begin.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
