@@ -1,14 +1,12 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern POLY_FT4 *current_poly_ft4;
-extern KfDisplayState display_state;
-extern KfPlayerState player_state;
 
 /* Model draw helper (sets up the item TMD after the matrices are loaded). */
-extern void func_8001ed38(void);
 /* Decimal formatter: renders `value` right-justified in `width` glyph cells. */
-extern void func_8002adf8(s32 value, s32 width, s32 flag, u16 *out);
+extern void menu_format_number(s32 value, s32 width, s32 flag, u16 *out);
 
 /* Sprite / atlas cell descriptor (texture page, CLUT, texel origin, size). */
 typedef struct MenuSpriteDef {
@@ -28,7 +26,6 @@ typedef struct MenuGlyphString {
 } MenuGlyphString;
 
 extern void menu_draw_string(const MenuSpriteDef *font, const MenuGlyphString *str);
-extern void menu_draw_number(u16 *atlas, s16 *str);
 extern void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const void *pos);
 
 /* Shared menu font atlas, number atlas, and the item-icon sprite descriptor. */
@@ -41,7 +38,6 @@ extern MenuSpriteDef DAT_80058424;
  * halfword identity the rest of the menu shares (menu_list_util resets it);
  * the RotMatrix argument is the SVECTOR that begins one halfword before it.
  */
-extern u16 DAT_80057b72;
 
 /* Item name table (ten glyph codes per item) and the two price tables
  * (two price columns per item).  Runtime-indexed, so only the base is
@@ -118,7 +114,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     gs.x = 0xc8;
     gs.y += 18;
     prices = (mode != 0) ? DAT_800595f8 : DAT_800594b8;
-    func_8002adf8(prices[object][col - 1], 6, 0, (u16 *)gs.codes);
+    menu_format_number(prices[object][col - 1], 6, 0, (u16 *)gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     gs.x = 0xf2;
@@ -137,7 +133,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     menu_draw_string(&DAT_800583f4, &gs);
 
     gs.x = 0x11c;
-    func_8002adf8(DAT_800652a8[object], 2, 0, (u16 *)gs.codes);
+    menu_format_number(DAT_800652a8[object], 2, 0, (u16 *)gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 
     menu_blit_sprite_translucent(&DAT_80058424, &DAT_80058c10);
@@ -145,6 +141,6 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = DAT_80058c10.x + 28;
     gs.y = DAT_80058c10.y;
-    func_8002adf8(player_state.unknown_2c, 6, 0, (u16 *)gs.codes);
+    menu_format_number(player_state.unknown_2c, 6, 0, (u16 *)gs.codes);
     menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
 }

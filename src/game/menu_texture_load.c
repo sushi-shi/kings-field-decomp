@@ -1,10 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfDisplayState display_state;
+#include <kf/game.h>
 
 extern s32 cd_file_load_into(void *destination, const char *relative_path);
-extern void tim_upload_images(u_long *tim_data);
 
 /* The "TIM\Mnnn." disc-name template literal lives in this unit's rodata. */
 RODATA(0x80012350, 0xc)

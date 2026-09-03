@@ -1,11 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfActorState actor_state;
-
-extern void actor_bind_current(KfActor *actor);
-extern void actor_update_awareness(void);
-extern void actor_update_current_action(void);
 extern s32 map_floor_height_at_position(struct KfVec3i *position);
 
 #define ACTOR_SLOT_FREE 0xff

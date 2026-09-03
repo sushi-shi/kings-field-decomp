@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 ADDRESS(0x80017e3c, 0xa0)
 void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_out)

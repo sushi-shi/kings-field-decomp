@@ -1,30 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfRenderState render_state;
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q LIBGTE: void ReadColorMatrix(MATRIX *m). */
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
-extern void player_equip_weapon(u8 weapon_id);
-extern void player_set_equipment_slot(u8 item_id, u8 slot);
-extern void player_select_magic(u8 magic_id);
-extern void func_80035b5c(void);
-extern void pool_release_all(void);
-extern void audio_close_vab(void);
-extern void func_800365f8(void);
-extern void player_sync_position_to_map(void);
-extern void game_state_initialize(void);
 
 extern SoundRef player_sound_refs[3];
-extern MATRIX player_death_saved_color_matrix;
-extern s32 player_death_saved_fog_near;
 
-extern KfPlayerLevelGrowth player_level_growth_table[40];
-extern u32 DAT_8009ddb4;
+extern u32 map_world_state_base;
 extern u8 DAT_800652a8[240];
-extern u8 DAT_80095064;
 
 ADDRESS(0x80015164, 0x68)
 void player_death_begin(void)
@@ -88,7 +71,7 @@ void game_state_initialize(void)
     player_state.status_effect2_timer = -1;
     player_state.status_effect1_timer = -1;
     player_state.status_effect0_timer = -1;
-    cursor = (u8 *)&DAT_8009ddb4;
+    cursor = (u8 *)&map_world_state_base;
     count = 0x2133;
     do {
         *cursor++ = 0;
@@ -138,9 +121,9 @@ void player_death_restart(void)
 {
     s32 floor = player_state.progress_state.current_floor;
 
-    if (((u8 *)&DAT_8009ddb4)[3] == 1 && DAT_800652a8[0x2f] != 0) {
+    if (((u8 *)&map_world_state_base)[3] == 1 && DAT_800652a8[0x2f] != 0) {
         DAT_800652a8[0x2f]--;
-        func_80035b5c();
+        map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
         player_state.vitals.current_mp = player_state.vitals.maximum_mp;

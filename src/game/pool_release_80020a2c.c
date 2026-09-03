@@ -1,9 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
-
-extern struct KfPoolRecord pool_records[];
-
-extern void pool_record_release(struct KfPoolRecord *record);
+#include <kf/game.h>
 
 /*
  * Releases every occupied pool record, freeing each owned allocation.  Called

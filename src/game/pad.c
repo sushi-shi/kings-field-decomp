@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Controller (PAD) front end plus the interrupt critical-section guard that
@@ -25,15 +26,6 @@
  * code.
  */
 
-extern u32 DAT_80057d24;
-extern u32 DAT_8006bd88;
-extern u32 DAT_80058020;
-extern u32 DAT_80058028;
-
-extern char DAT_80013e8c[];
-extern char DAT_80013eac[];
-extern char DAT_80013ecc[];
-
 extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);
 extern u32 PAD_init2();
@@ -41,10 +33,6 @@ extern void PAD_dr(void);
 extern void StopPAD2(void);
 extern int printf(const char *format, ...);
 extern void ResetCallback(void);
-
-extern u32 pad_init_bad_identifier();
-extern void pad_read_bad_identifier(void);
-extern void pad_stop_bad_identifier(void);
 
 ADDRESS(0x8005005c, 0x5c)
 u32 critical_section_set(s32 enable)

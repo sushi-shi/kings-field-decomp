@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * On-screen notification ring.  Player stat routines (level, training,
@@ -12,9 +13,6 @@
  * from the head cursor (the retail shared-symbol addend the original struct
  * produced).  The trailing varargs slot carries the id 0x13 payload.
  */
-
-extern u8 DAT_8009506e[8]; /* request ring; 0xff marks an empty slot */
-extern u8 DAT_80095087;    /* ring head cursor, wraps mod 8 */
 
 ADDRESS(0x8001fa44, 0xa0)
 void notify_enqueue(int id, ...)

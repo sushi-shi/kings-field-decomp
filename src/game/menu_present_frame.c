@@ -1,9 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfDisplayState display_state;
-extern DRAWENV display_draw_environments[2];
-extern DISPENV display_disp_environments[2];
+#include <kf/game.h>
 
 /*
  * Menu/hub copy of the frame flush: wait for the GPU and vertical retrace,

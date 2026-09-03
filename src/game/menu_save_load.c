@@ -1,24 +1,17 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Shared save workspace pointers (rebound to the caller's frame buffers). */
-extern KfSaveHeader *save_header_buffer;
-extern KfSavePayload *save_payload_buffer;
 
 /* Shared menu primitives: frame begin/flush, header/menu draw, input sound
  * cue, and the vsync/pad poll. */
-extern void menu_frame_begin(void);
-extern void menu_present_frame(void);
-extern void menu_add_frame_quad(void);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
-extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /* Save/load workers and the save-complete effect/audio hooks. */
-extern s32 menu_load_panel(void);
 extern s32 menu_two_option_prompt(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
 extern u32 menu_load_item_texture(s32 arg0);
-extern void audio_stop_sequence_fade(void);
 
 /*
  * Save/load hub dispatched by the option menu (slot 5).  Runs a three-row

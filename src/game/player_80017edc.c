@@ -1,33 +1,21 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x80012048, 0x130)
 
-extern KfPlayerState player_state;
-extern KfMapObjectState map_object_state;
 extern KfEffectRecord DAT_8009d040[];
 /* Per-id byte table shared with the save system; entry 57 counts the lamp charges. */
 extern u8 DAT_800652a8[240];
-extern const SoundRef gameplay_sound_ref_7;
-extern const SoundRef gameplay_sound_ref_8;
-extern const SoundRef gameplay_sound_ref_12;
 /* Psy-Q LIBGTE: rsin, rcos. */
 extern void notify_enqueue(s32 arg0);
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *effect_pool_spawn_typed();
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 extra_radius);
-extern void map_object_pool_trigger_link(u8 link_id);
 extern int angle_within_tolerance(int lhs, int rhs, s16 range);
 extern KfActor *actor_pool_find_target_in_cone( const struct KfVec3i *origin, s32 facing, u32 max_distance, s32 angle_tolerance, s32 *distance_out);
-extern KfMapEvent *map_event_pool_find_target_in_cone( const struct KfVec3i *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
-extern void player_warp_to_floor_entry(void);
-extern void player_increment_magic_training(void);
 /* Image paths whose decimal digits are patched before display. */
-extern char enemy_info_image_path_template[13];
-extern char person_image_path_template[14];
 extern void render_frame(s32 first, s32 second);
-extern void screen_show_image_until_input(const char *path);
 
 ADDRESS(0x80017edc, 0xc8)
 void actor_show_info_image(const KfActor *actor)

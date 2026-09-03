@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Vertex projection primitives that feed the polygon emitters.  Each walks the
@@ -22,8 +23,6 @@
  * whose giv carries three stores and clearly outranks the counter, matches
  * exactly.  See docs/patterns/source-shapes-gcc257.md.
  */
-
-extern SVECTOR *current_tmd_vertices;
 
 /* Projection scratch buffer: one entry per transformed TMD vertex. */
 typedef struct KfScreenVertex {

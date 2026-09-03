@@ -1,9 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
-
-extern u8 map_floor_height_grid[100][100];
-extern u8 map_collision_grid[100][100];
-extern u8 map_cell_orientation_grid[100][100];
+#include <kf/game.h>
 
 ADDRESS(0x8001a29c, 0x1b0)
 s32 map_floor_height_for_cell_position(

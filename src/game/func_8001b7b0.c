@@ -1,14 +1,11 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
+#include <kf/game.h>
 
-extern KfDisplayState display_state;
-extern DRAWENV display_draw_environments[2];
 extern CdlFILE cd_search_file;
-extern char cd_path_buffer[80];
 extern CdlLOC cd_read_location;
 
-extern void tim_upload_images(u_long *tim_data);
 extern u32 pad_read();
 extern void exit(s32 status);
 

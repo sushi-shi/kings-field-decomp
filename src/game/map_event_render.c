@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Map-event model emitter invoked by the frame renderer's pool sweep
@@ -9,12 +10,7 @@
  * follows the event's variant id.
  */
 
-extern KfRenderState render_state;
-
-extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 index);
-extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_project_vertices(s32 count);
 extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void render_enqueue_tmd(u16 arg0, s16 arg1);
 

@@ -1,25 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfRenderState render_state;
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
-extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
-extern void player_update_vertical_motion(void);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern void player_death_restart(void);
-extern void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend);
-
-extern MATRIX color_matrix_table[7];
-extern s32 player_death_saved_fog_near;
-extern u8 DAT_80095064;
-extern MATRIX player_death_saved_color_matrix;
 
 /*
  * Fades the colour matrix and near fog from `color_from` toward the death

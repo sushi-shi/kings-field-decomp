@@ -1,14 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-
-extern KfActorState actor_state;
-
-extern KfActorActionProfile actor_action_profiles[25];
-extern u8 map_floor_height_grid[100][100];
 /* Unresolved flag consulted before damaging definition 7 on floor 5. */
-extern u8 DAT_8009f846;
 /*
  * Unresolved pool of 48 sixty-byte records whose first byte is 0xff when free
  * and whose second byte is a kind; only this byte view is evidenced so far.
@@ -20,18 +14,6 @@ extern s32 rand(void);
 /* Unresolved map-cell helpers: floor height for a position, and cell marking. */
 extern s32 map_floor_height_at_position(struct KfVec3i *position);
 extern void collision_adjust_cell_occupancy(s32 cell_x, s32 cell_z, char value);
-extern void player_increment_physical_power_training(void);
-extern void player_increment_magic_training(void);
-extern void player_add_experience(s16 amount);
-extern void player_apply_damage(
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 status_effect_flags,
-    u16 component3,
-    u16 component4,
-    u16 scale_q12,
-    u16 multiplier_tenths);
 /* Callers consume the angle unmasked, so the result is passed as a plain int. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);

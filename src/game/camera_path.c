@@ -1,11 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q LIBGTE: SquareRoot0. */
-extern s16 angle_shortest_delta(s32 first, s32 second);
-extern void camera_path_compute_segment(KfCameraPathState *path);
 
 /*
  * Advances to the next path point and prepares the Q4 position and

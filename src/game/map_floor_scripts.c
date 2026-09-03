@@ -1,39 +1,29 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Per-floor ambient event scripts, band 0x80033ee4..0x800342e3 (GAME.EXE).
  *
- * func_8003596c (map_events.c) runs one of these every ~10 frames, indexed by
- * player_state.progress_state.current_floor (floor 1 -> func_80033f64, floor 2
- * -> func_800341ec, floor 3 -> func_8003425c). They watch the player's current
+ * map_event_pool_update (map_events.c) runs one of these every ~10 frames, indexed by
+ * player_state.progress_state.current_floor (floor 1 -> map_ambient_script_floor1, floor 2
+ * -> map_ambient_script_floor2, floor 3 -> map_ambient_script_floor3). They watch the player's current
  * map cell and facing angle and drive a small per-floor state machine held in
- * the persistent world-state block DAT_8009ddb4, spawning actors, retexturing
+ * the persistent world-state block map_world_state_base, spawning actors, retexturing
  * map objects, teaching magic, and playing positional ambience.
  *
  * actor_pool_find_at_tile is the shared helper: it scans the 128-slot actor pool for the
  * first live actor sitting on a given map tile and returns its index.
  */
 
-extern KfPlayerState player_state;
-extern KfActorState actor_state;
-extern KfMapObjectState map_object_state;
-extern KfMapEvent map_event_pool[8];
 extern KfMagicRecord magic_records[24];
 
 /* Persistent per-floor world-state block (save_system world_state base). */
-extern u8 DAT_8009ddb4[4];
+extern u8 map_world_state_base[4];
 /* Camera-path / positional-audio data block; +0x40 is an ambience anchor. */
-extern u8 DAT_800561c8[0x70];
-
-extern const SoundRef gameplay_sound_ref_5;
-extern const SoundRef gameplay_sound_ref_8;
 
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern void actor_initialize_slot(u16 actor_index);
-extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
-extern void player_restore_vitals_with_color_cycle(void);
 extern void notify_enqueue(s32 arg0);
 extern int rand(void);
 
@@ -55,18 +45,18 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 
 /* Floor 1 ambient script. */
 ADDRESS(0x80033f64, 0x288)
-void func_80033f64(void)
+void map_ambient_script_floor1(void)
 {
-    if (DAT_8009ddb4[3] == 1) {
+    if (map_world_state_base[3] == 1) {
         audio_play_spatial_default_range(
             &gameplay_sound_ref_5, (const VECTOR *)&DAT_800561c8[0x40], 0x73);
     }
 
-    switch (DAT_8009ddb4[1]) {
+    switch (map_world_state_base[1]) {
     case 0:
         if (player_state.map_cell.x >= 7 && player_state.map_cell.z >= 31
             && player_state.map_cell.x < 12 && player_state.map_cell.z < 41) {
-            DAT_8009ddb4[1] = 1;
+            map_world_state_base[1] = 1;
         }
         break;
     case 1:
@@ -75,7 +65,7 @@ void func_80033f64(void)
             s32 actor_index;
             s32 object_index;
 
-            DAT_8009ddb4[1] = 2;
+            map_world_state_base[1] = 2;
             actor_index = actor_pool_find_at_tile(7, 0x28);
             if (actor_index != -1) {
                 actor_state.actors[actor_index].lifecycle = 0;
@@ -89,11 +79,11 @@ void func_80033f64(void)
         break;
     }
 
-    switch (DAT_8009ddb4[0]) {
+    switch (map_world_state_base[0]) {
     case 0:
         if (player_state.map_cell.x >= 2 && player_state.map_cell.z >= 27
             && player_state.map_cell.x < 5 && player_state.map_cell.z < 30) {
-            DAT_8009ddb4[0] = 1;
+            map_world_state_base[0] = 1;
         }
         break;
     case 1:
@@ -101,7 +91,7 @@ void func_80033f64(void)
             || player_state.map_cell.x >= 28 || player_state.map_cell.z >= 41) {
             s32 object_index;
 
-            DAT_8009ddb4[0] = 2;
+            map_world_state_base[0] = 2;
             object_index = map_object_pool_find_near_point(0x2328, 0xdea8, 0xbb8);
             if (object_index != -1) {
                 map_object_state.objects[object_index].object_id = 0xff;
@@ -113,7 +103,7 @@ void func_80033f64(void)
 
 /* Floor 2 ambient script: random fire-crackle on the second map event. */
 ADDRESS(0x800341ec, 0x70)
-void func_800341ec(void)
+void map_ambient_script_floor2(void)
 {
     if (map_event_pool[1].image_index == 2 && map_event_pool[1].image_dirty < 3
         && rand() < 4000) {
@@ -124,7 +114,7 @@ void func_800341ec(void)
 
 /* Floor 3 ambient script: healing altar that also teaches two spells. */
 ADDRESS(0x8003425c, 0x88)
-void func_8003425c(void)
+void map_ambient_script_floor3(void)
 {
     if (player_state.map_cell.x >= 15 && player_state.map_cell.x < 18
         && player_state.map_cell.z == 0x40) {

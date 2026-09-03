@@ -1,22 +1,14 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfActorState actor_state;
+#include <kf/game.h>
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
-extern s32 fixed_vector2_length(s32 x, s32 y);
-extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern void vector2s_scale_shift11(s16 scale, s16 *vector);
-extern u32 collision_query_world(
-    s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
-extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_spawn_action_effect(u8 effect_code, s32 attachment_index);
 extern s32 actor_distance_to_point(const KfActor *actor, s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 actor_height, s32 point_height);
-extern void actor_select_next_action(s32 player_distance);
 
 /* Aims the current actor at the player and sets a charge velocity from the distance. */
 ADDRESS(0x8002f228, 0xf4)

@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 ADDRESS(0x80017a24, 0x5c)
 void player_update_view_bob(void)

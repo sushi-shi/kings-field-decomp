@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
-
-extern struct KfPoolRecord pool_records[];
+#include <kf/game.h>
 
 ADDRESS(0x80020b04, 0x48)
 struct KfPoolRecord *pool_allocate(void)

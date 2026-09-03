@@ -1,49 +1,25 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Shared save workspace pointers (rebound to the caller's frame buffers). */
-extern KfSaveHeader *save_header_buffer;
-extern KfSavePayload *save_payload_buffer;
 
 /* Player object and the 240-byte inventory / progress-flag block. */
-extern KfPlayerState player_state;
 extern u8 DAT_800652a8[240];
 
 /* Item-name string tables (10 halfwords per label). */
-extern s16 DAT_8005920c[];
-extern s16 DAT_80059374[];
-extern s16 DAT_80059108[];
-extern s16 DAT_800591d0[];
 
 /* Shared menu primitives: frame begin/flush, background draw, header draw,
  * input sound cue, and the vsync/pad poll. */
-extern void menu_frame_begin(void);
-extern void menu_present_frame(void);
-extern void menu_draw_stats_header(void);
 extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern s32 menu_save_panel(void);
-extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
-extern void game_state_acknowledge_pending(void);
 
 /* Item-list widget helpers (init, render, query). */
 extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
-extern void menu_list_render(s16 *ctx);
-extern u32 menu_load_item_model(s32 item_id);
-extern void menu_item_model_preview(s32 item_id);
-extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4,
-                         u32 arg5);
-extern void menu_map_viewer(s32 item_id);
 
 /* Menu sub-panels dispatched by the hub menu. */
 s32 menu_use_item_panel(void);
-extern s32 menu_magic_panel(void);
-extern void menu_option_root(void);
-extern void menu_status_panel(void);
-extern void menu_drop_item(void);
-extern s32 menu_save_load_hub(void);
-extern void menu_config_panel(void);
 
 /*
  * Item-list display context: a shared menu list header with a visible-window

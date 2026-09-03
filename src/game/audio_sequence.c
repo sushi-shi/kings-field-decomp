@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * King's Field custom sequence-open family (SEQREAD.C-shaped MIDI player).
@@ -27,8 +28,6 @@ extern int printf();
  * audio_sequence_parse_track parses track `index` of a multi-track set and
  * returns the number of bytes it consumed from the sequence buffer.  The
  * parser is old-style (K&R) so `index` is passed as a promoted int here. */
-extern void audio_sequence_load_track(s16 slot, s16 vab_id, u8 *sequence);
-extern s32 audio_sequence_parse_track(s16 slot, s32 index, s16 vab_id, u8 *data);
 
 ADDRESS(0x800468d8, 0xb0)
 s16 func_800468d8(u8 *sequence, s16 vab_id)

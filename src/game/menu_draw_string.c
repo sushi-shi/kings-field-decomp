@@ -1,11 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Current textured-quad cursor in the shared primitive workspace. */
 extern POLY_FT4 *current_poly_ft4;
-
-extern void primitive_buffer_begin_poly_ft4(void);
-extern void primitive_buffer_commit_poly_ft4(s32 depth);
 
 /*
  * Font-atlas sprite descriptor: texture page and CLUT of the glyph atlas plus

@@ -1,14 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-extern KfActorState actor_state;
-extern u8 map_cell_attribute_grid[100][100];
-extern u8 map_floor_height_grid[100][100];
 /* The view_rotation_offset table; the cell-attribute threshold table the player
  * targeting code reads follows it in the original translation unit and is
  * reached as an offset (+0x3e) from this base. */
-extern SVECTOR DAT_80055878[8];
 
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
 extern KfActor *actor_pool_find_target_in_cone(const struct KfVec3i *origin,
@@ -16,7 +12,6 @@ extern KfActor *actor_pool_find_target_in_cone(const struct KfVec3i *origin,
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles,
     struct KfVec3s *direction);
-extern void vector3s_scale_shift12(s16 scale, s16 *vector);
 extern KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
     SVECTOR *direction, ...);
 

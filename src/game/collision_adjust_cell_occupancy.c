@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
-
-extern u8 map_collision_flag_grid[100][100];
+#include <kf/game.h>
 
 ADDRESS(0x8001a4e8, 0xc4)
 void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta)

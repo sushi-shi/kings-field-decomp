@@ -1,14 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
 /* Entry cell per floor, one-based floor number; stored x first, unlike KfMapCell. */
-extern const KfFloorEntryCell floor_entry_cells[5];
 extern void player_warp_shimmer(s16 object, void *arg1);
-extern void audio_play_current_map_sequence(void);
-extern void pool_release_all(void);
-extern void map_variant_assets_load(void);
-extern void player_sync_position_to_map(void);
 
 ADDRESS(0x80017cf8, 0x144)
 void player_warp_to_floor_entry(void)

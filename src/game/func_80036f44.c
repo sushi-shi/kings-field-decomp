@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Effect-pool spawn band 0x80036f44..0x8003784f (GAME.EXE).
@@ -31,13 +32,7 @@
 
 extern KfEffectRecord DAT_8009d040[];
 extern KfMagicRecord magic_records[];
-extern KfPlayerState player_state;
 
-extern KfEffectRecord *DAT_8009db84;   /* current effect record */
-extern KfMagicRecord *DAT_8009db80;    /* magic_records row of the current effect */
-
-extern char *effect_pool_find_free(void);
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
 extern void audio_play_spatial_range(

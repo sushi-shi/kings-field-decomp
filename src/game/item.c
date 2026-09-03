@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Psy-Q LIBC. */
 extern s32 rand(void);
@@ -7,30 +8,20 @@ extern void *memset();
 extern void *memcpy();
 extern void exit(s32 status);
 
-extern u8 map_floor_height_grid[100][100];
-
-extern u16 floor_item_count;
-extern KfFloorItem floor_items[64];
-
 extern s32 cd_file_load_allocated(void **data_out, const char *relative_path);
-extern void memory_release_last(void);
 /* libcd ISO9660 CdSearchFile; reclassified vendored (see functions_vendored.tsv). */
 extern void *CdSearchFile(void *slot, char *filename);
 extern KfCdFileEntry cd_file_table[80];
 
 /* Item stat banks loaded contiguously from COM\STAT.DAT (opaque records). */
 extern u8 DAT_800580e8[];
-extern u8 DAT_80058478[];
 extern u8 DAT_80058dc0[];
 extern u8 DAT_80059400[];
 extern u8 DAT_800594b8[];
 extern u8 DAT_800595f8[];
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
-extern void menu_frame_begin(void);
-extern void menu_present_frame(void);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /* Item sub-panels dispatched by the item menu (defined below). */
@@ -39,17 +30,9 @@ void item_menu_sell(s32 arg);
 
 /* Item-list panel helpers and the shared inventory / stat data. */
 extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
-extern void menu_list_render(s16 *ctx);
-extern u32 menu_load_item_model(s32 item_id);
-extern void menu_draw_item_detail(s32 item_id, s32 arg1, s32 arg2);
-extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4, u32 arg5);
-extern void game_state_acknowledge_pending(void);
-extern void func_800292f8(s32 object);
 extern void menu_draw_two_option(void *prompt, void *options, s32 choice, s32 confirm);
 
-extern KfPlayerState player_state;
 extern u8 DAT_800652a8[240];
-extern s16 DAT_80059108[];
 
 /*
  * Item-list display context: a shared menu list header with a visible-window

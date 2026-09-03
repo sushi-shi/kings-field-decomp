@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Player warp / floor-transition band 0x80036618..0x80036d3c (GAME.EXE).
@@ -11,7 +12,7 @@
  * mode 1 fades it out (delta -0x100 from 0x2000).
  *
  * player_warp_change_floor is the change-floor warp: shimmer out, reload the world through
- * func_80035e14/map_load_floor, record the new floor/variant, snap the camera to
+ * map_unload_floor/map_load_floor, record the new floor/variant, snap the camera to
  * the centre of its 2000-unit cell, and shimmer back in. player_warp_same_floor is the
  * same-floor teleport: shimmer out, drop the old broad-phase occupancy, swap the
  * map variant and its assets, move to an explicit cell, and shimmer back in.
@@ -34,30 +35,12 @@
  * cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
  */
 
-extern KfPlayerState player_state;
-extern KfMapEvent map_event_pool[8];
-extern u8 boss_defeat_complete;
-extern SoundRef gameplay_sound_ref_6;
-extern MATRIX DAT_80056248;
-
 extern KfEffectRecord *effect_pool_construct();
 extern void render_frame(VECTOR *position, SVECTOR *rotation);
-extern void display_flip_buffer_index(void);
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
-extern void frame_pacer_wait(void);
-extern void func_80035e14(void);
-extern void map_load_floor(void);
-extern void player_sync_position_to_map(void);
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern void pool_release_all(void);
-extern void map_variant_assets_load(void);
-extern void audio_play_current_map_sequence(void);
 extern void ReadColorMatrix(MATRIX *matrix);
 extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
 extern void lighting_set_active_color_matrix(s32 mode);
-
-extern void player_warp_change_floor(s32 floor, u8 variant);
-extern void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z);
 
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)
@@ -135,7 +118,7 @@ void player_warp_change_floor(s32 floor, u8 variant)
     position[2] = player_state.camera_position.vz;
     position[1] = player_state.floor_height;
     player_warp_shimmer(0, (VECTOR *)position);
-    func_80035e14();
+    map_unload_floor();
     player_state.progress_state.current_floor = floor;
     player_state.map_variant = variant;
     if (player_state.progress_state.highest_floor < floor) {

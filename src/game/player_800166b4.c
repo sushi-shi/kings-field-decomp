@@ -1,16 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
-extern s32 player_distance_to_point(
-    s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height);
-extern s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack);
-extern void player_apply_damage(
-    u16 component0, u16 component1, u16 component2, u16 status_effect_flags,
-    u16 component3, u16 component4, u16 scale_q12, u16 multiplier_tenths);
 
 /*
  * Applies the four status bits (poison, curse blocked by accessory 0x31,

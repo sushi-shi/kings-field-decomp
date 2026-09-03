@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfRenderState render_state;
+#include <kf/game.h>
 
 /*
  * Retail loads every element unsigned (lhu) and sign-extends the operands of
@@ -14,7 +13,6 @@ extern void matrix_interpolate(
     const MATRIX *to,
     MATRIX *matrix,
     s32 blend);
-
 
 ADDRESS(0x800202fc, 0x68)
 void matrix_interpolate(

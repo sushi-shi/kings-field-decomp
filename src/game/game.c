@@ -1,13 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfMapObjectState map_object_state;
-
-extern KfDisplayState display_state;
-
-extern KfActorState actor_state;
-
-extern KfPlayerState player_state;
+#include <kf/game.h>
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
 extern void *memset();
@@ -16,65 +9,28 @@ extern s32 OpenEvent(u32 descriptor, s32 spec, s32 mode, void (*handler)(void));
 extern s32 EnableEvent(s32 event);
 extern s32 CloseEvent(s32 event);
 
-extern void memory_card_initialize(void);
 extern void memory_set_allocation_mode(s32 arg0);
-extern void audio_initialize(void);
-extern void display_initialize(void);
-extern void item_load_database(void);
-extern void actor_pool_clear(void);
-extern void map_object_pool_clear(void);
-extern void effect_pool_reset(void);
-extern void func_800356e8(void);
-extern void common_resources_load(void);
-extern void game_initialize_session(void);
-extern void memory_capture_system_heap_start(void);
-extern void memory_reset_system_heap(void);
-extern void func_800365f8(void);
-extern void func_80014674(u32 arg0);
-extern s32 save_file_cleanup_temporary(void);
 extern void display_show_error_screen(char object);
-extern void player_update(void);
-extern void player_update_transform_snapshot(
-    VECTOR *position_out, SVECTOR *rotation_out);
-extern void audio_set_listener_transform(
-    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern void actor_set_player_transform(
-    const VECTOR *position, const SVECTOR *rotation);
-extern void actor_pool_update(void);
-extern void map_object_pool_update(void);
-extern void effect_pool_sweep(void);
-extern void func_8003596c(void);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 player_warp_trigger_update(void);
-extern void display_play_transition(void);
-extern void audio_stop_sequence_master_fade(s32 fade_step);
-extern void memory_card_shutdown_events(void);
-extern void audio_shutdown(void);
-extern void pad_stop(void);
-extern void frame_pacer_vsync_callback(void);
-extern void frame_pacer_wait(void);
-extern void game_shutdown(void);
 
 extern KfMagicRecord magic_records[24];
-extern KfMapEvent map_event_pool[8];
-extern u32 game_exit_code;
-extern VECTOR player_position_snapshot;
-extern SVECTOR player_rotation_snapshot;
-extern u8 map_cell_attribute_grid[100][100];
 extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);
 
 /*
- * Both counters live in the retail load image four bytes apart, so they were
- * explicitly initialized data, not commons; static linkage is the curated
- * TU-ownership candidate for this frame pacer.
+ * Both counters live in the retail load image four bytes apart as explicitly
+ * initialized data. Retail references them through named HI16/LO16 relocations
+ * (R_MIPS_HI16 frame_pacer_vsync_count, not a .data section offset), so they
+ * had external linkage in the original: internal `static` linkage would fold
+ * the references to section-relative relocs and never match.
  */
 DATA(0x80057b0c, 0x4)
-static u32 frame_pacer_vsync_count = 0;
+u32 frame_pacer_vsync_count = 0;
 
 DATA(0x80057b10, 0x4)
-static u32 frame_pacer_last_vsync = 0;
+u32 frame_pacer_last_vsync = 0;
 /*
  * The player state block is one aggregate in the original source (see
  * KfPlayerState); the inventory still names its members separately, so it is
@@ -103,7 +59,7 @@ void game_main_loop(void)
     actor_pool_clear();
     map_object_pool_clear();
     effect_pool_reset();
-    func_800356e8();
+    map_event_timers_reset();
     common_resources_load();
     game_initialize_session();
     memory_set_allocation_mode(1);
@@ -129,7 +85,7 @@ void game_main_loop(void)
         actor_pool_update();
         map_object_pool_update();
         effect_pool_sweep();
-        func_8003596c();
+        map_event_pool_update();
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.unknown_0d = 0;
         frame_pacer_wait();

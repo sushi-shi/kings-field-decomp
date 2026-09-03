@@ -1,41 +1,17 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x80012524, 0x214)
 
-extern KfActorState actor_state;
-extern KfPlayerState player_state;
-extern u8 map_cell_attribute_grid[100][100];
-extern s16 map_cell_attribute_height_table[284];
-
-extern const SoundRef boss_death_phase_sounds[4];
-extern const SoundRef boss_death_loop_sound;
-extern u8 boss_defeat_complete;
-
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
-extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
-extern void map_object_pool_trigger_link(u8 link_id);
-extern void actor_pool_begin_death_by_definition(u16 definition_id);
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
 /* Effect spawner called with six to eight arguments; declared without a prototype. */
 extern u8 *effect_pool_construct();
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern u32 collision_query_world(
-    s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern s32 map_floor_height_at_position(const VECTOR *position);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
-extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern void vector2s_scale_shift11(s16 scale, s16 *vector);
 extern void vector3i_add_xz(struct KfVec3i *destination, const struct KfVecXZs *delta);
-extern s16 angle_approach(s16 current, s16 target, s32 step);
-extern s32 actor_move_along_heading(s32 direction, s32 stop_on_collision);
-extern void actor_prepare_charge_toward_player(void);
-extern void actor_apply_horizontal_movement(void);
-extern void actor_update_effect_action(s32 action);
-extern void actor_apply_random_movement(s16 step, s16 limit);
-extern void actor_select_next_action(s32 player_distance);
-extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 /*
  * These three take halfword arguments that retail passes without any
  * extension, so they are declared without prototypes here.
@@ -51,22 +27,6 @@ extern s32 actor_distance_to_point(
     s32 max_distance,
     s32 actor_height,
     s32 point_height);
-extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
-extern void actor_initialize(KfActor *actor);
-extern void func_80036d3c(KfActor *actor);
-extern void map_object_spawn_effect(
-    u8 kind, u8 object_id, const struct KfVec3i *position, s32 y_offset);
-extern void map_object_spawn_actor_debris(
-    u16 source, const struct KfVec3i *position, s32 y_offset);
-extern void player_apply_damage(
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 status_effect_flags,
-    u16 component3,
-    u16 component4,
-    u16 scale_q12,
-    u16 multiplier_tenths);
 
 /* Boss death: phase sounds, then random effects and a loop sound keyed on the death animation step. */
 ADDRESS(0x8002f8cc, 0x1bc)

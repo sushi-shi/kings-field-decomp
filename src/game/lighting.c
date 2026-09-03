@@ -1,9 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 extern void lighting_set_color_matrix(const MATRIX *from, const MATRIX *to, s32 blend);
 extern void render_frame(s32 first, s32 second);
-extern void frame_pacer_wait(void);
 
 ADDRESS(0x80033d80, 0x68)
 void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
@@ -32,7 +32,6 @@ void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
     matrix->m[2][0] = blue;
 }
 
-extern KfPlayerState player_state;
 /* Psy-Q LIBGTE: ReadColorMatrix(MATRIX *). */
 
 /* Cycles the colour matrix green, cyan, white and back while restoring HP and MP. */

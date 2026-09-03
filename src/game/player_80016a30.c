@@ -1,17 +1,12 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x80012030, 0x18)
 
-extern KfPlayerState player_state;
-extern KfWeaponRecord weapon_records[16];
 /* "...\0" image path whose two decimal digits at [9] and [10] select the weapon. */
-extern char weapon_image_path_template[15];
 extern s32 cd_file_load_into(u8 *buffer, const char *path);
 extern void exit(s32 status);
-extern void asset_registry_set(u16 index, void *asset);
-extern KfArmorRecord armor_records[42];
-extern void player_recalculate_combat_stats(void);
 
 /* Stores the item id into one of the six armor slots, re-resolves the five armor record pointers, and recalculates. */
 ADDRESS(0x80016848, 0x1e8)

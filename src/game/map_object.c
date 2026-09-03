@@ -1,41 +1,18 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x80012888, 0x18c)
 
-extern KfMapObjectState map_object_state;
-extern KfPlayerState player_state;
-extern const SoundRef gameplay_sound_ref_0;
-extern const SoundRef gameplay_sound_ref_1;
-extern const SoundRef gameplay_sound_ref_3;
-extern const SoundRef gameplay_sound_ref_5;
-extern const SoundRef gameplay_sound_ref_7;
-extern const SoundRef gameplay_sound_ref_11;
-extern u8 map_floor_height_grid[100][100];
 extern KfEffectRecord DAT_8009d040[];
-extern u8 DAT_8009f846;
-extern u8 DAT_8009eafc;
-extern u8 DAT_8009ddb4[4];
-extern u16 map_object_effect_sequence_160;
-extern u16 map_object_effect_sequence_170;
-extern u16 map_object_effect_sequence_180;
+extern u8 map_world_state_base[4];
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
 extern s32 rand(void);
-extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
-extern s32 map_object_distance_to_point(
-    const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 /* Effect spawner called with six or seven arguments; declared without a prototype. */
 extern KfEffectRecord *effect_pool_construct();
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern void sound_ref_play(const SoundRef *sound, s16 volume);
-extern void map_apply_copy_region(u8 region_id);
-extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
-extern void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw);
-extern void map_object_pool_trigger_link(u8 link_id);
-extern s32 player_distance_to_point(
-    s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height);
 
 #define MAP_OBJECT_COUNT 190
 #define MAP_OBJECT_NONE 0xff
@@ -581,10 +558,10 @@ void map_object_pool_update(void)
                         }
                     }
                 } else if (player_state.progress_state.current_floor == 1) {
-                    if (DAT_8009ddb4[3] == 0) {
+                    if (map_world_state_base[3] == 0) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_ref_5, (VECTOR *)&object->position_x, 0x7f);
-                        DAT_8009ddb4[3] = 1;
+                        map_world_state_base[3] = 1;
                     }
                 }
                 object->action_timer++;

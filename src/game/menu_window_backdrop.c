@@ -1,13 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /* Current textured-quad cursor in the shared primitive workspace. */
 extern POLY_FT4 *current_poly_ft4;
-
-extern void primitive_buffer_begin_poly_ft4(void);
-extern void primitive_buffer_commit_poly_ft4(s32 depth);
-
-extern KfDisplayState display_state;
 
 /*
  * Shared translucent menu-window backdrop sprite descriptor.  The retail image
@@ -15,12 +11,6 @@ extern KfDisplayState display_state;
  * BSS global rather than one struct base register: texture page and CLUT of
  * the backdrop atlas, its top-left texel (u, v) and the tile size (w, h).
  */
-extern u16 DAT_80058400; /* tpage */
-extern u16 DAT_80058402; /* clut */
-extern u8 DAT_80058404;  /* u */
-extern u8 DAT_80058406;  /* v */
-extern u16 DAT_80058408; /* tile width  */
-extern u16 DAT_8005840a; /* tile height */
 
 /*
  * Persistent double-buffered window-border quads, four per buffer, linked at

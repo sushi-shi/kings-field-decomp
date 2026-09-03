@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * A positioned label consumed by menu_draw_string / menu_draw_two_option: the screen
@@ -11,14 +12,11 @@ typedef struct MenuGlyphString {
     s16 codes[10];
 } MenuGlyphString;
 
-extern void menu_frame_begin(void);
-extern void menu_present_frame(void);
 extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_draw_two_option(const MenuGlyphString *point0,
                           const MenuGlyphString *point1, s32 selected,
                           s32 highlight);
-extern void menu_play_input_sound(s32 cue);
 extern u32 pad_read();
 
 /*

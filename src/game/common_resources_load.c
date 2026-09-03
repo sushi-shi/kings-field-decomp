@@ -1,19 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <MEMORY.H>
+#include <kf/game.h>
 
 extern s32 cd_file_load_allocated(void **destination, char *relative_path);
-extern void tim_upload_images(u_long *tim_data);
-extern void memory_release_last(void);
-extern void asset_registry_set(u16 index, void *asset);
 extern void player_weapon_load_records_and_mirror_angles(const KfWeaponRecord *source);
-extern void asset_aux_block_load(const u32 *source);
 extern void magic_load_records(void *block);
-extern void map_object_definitions_load(const KfMapObjectDefinition *definitions);
 
 extern u8 DAT_80065be8[3264];
-extern KfPlayerLevelGrowth player_level_growth_table[40];
-extern u8 *memory_arena_cursor;
 
 RODATA(0x80012178, 0x18)
 

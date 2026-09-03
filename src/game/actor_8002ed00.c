@@ -1,22 +1,14 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 RODATA(0x800124d4, 0x50)
 
-extern KfActorState actor_state;
-
-extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern s32 player_distance_to_point_in_cone(
-    const struct KfVec3i *point, s16 facing, s32 max_distance, s32 angle_tolerance);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s *direction);
-extern void vector3s_scale_shift12(s16 scale, s16 *vector);
 /* Effect spawner called with six to eight arguments; declared without a prototype. */
 extern u8 *effect_pool_construct();
-extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern void vector2s_scale_shift11(s16 scale, s16 *vector);
-extern s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_collision);
 
 /* Turns the current actor toward its movement yaw and steps along it; a negative DIRECTION walks backwards. */
 ADDRESS(0x8002ed00, 0xd4)

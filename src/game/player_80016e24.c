@@ -1,9 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
-extern void *memory_allocate(s32 size);
-extern void game_state_initialize(void);
+#include <kf/game.h>
 
 ADDRESS(0x80016e24, 0x94)
 void game_initialize_session(void)

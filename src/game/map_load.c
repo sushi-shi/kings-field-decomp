@@ -1,12 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Map-load band 0x80035e44..0x800365f8 (GAME.EXE).
  *
  * map_restore_floor_state is the per-floor world-state RESTORE routine: the exact inverse
- * of func_80035b5c (map_events.c), which serialises the live event, actor, and
- * map-object state into the DAT_8009ddb4 world-state block. It reads the same
+ * of map_world_state_persist (map_events.c), which serialises the live event, actor, and
+ * map-object state into the map_world_state_base world-state block. It reads the same
  * 1700-byte per-floor record (base - 1690 + 1700 * current_floor), and when its
  * marker byte is 1 it rebuilds the eight map events, the live-actor lifecycle
  * overrides, the 190 map-object ids, the linked-object payloads, and the two
@@ -14,43 +15,23 @@
  * tail dispatches a per-floor scripted setup on the current floor (1..5).
  *
  * map_event_pool and the per-floor records share one contiguous BSS aggregate
- * reached through a single DAT_8009ddb4 base register (the event pool is
+ * reached through a single map_world_state_base base register (the event pool is
  * base - 556); separate globals cannot reproduce that base, so a register/
- * scheduling residue is expected here exactly as documented for func_80035b5c.
+ * scheduling residue is expected here exactly as documented for map_world_state_persist.
  *
  * map_refresh_event_images walks the eight-record map_event_pool and refreshes the image
  * of every active (state == 1) event. map_load_floor loads the current floor:
- * map_resources_load, the world-state restore, the event refresh, func_8001bae4,
+ * map_resources_load, the world-state restore, the event refresh, effect5_texture_cache_prepare,
  * then copies colour_matrix_table[3] into the render lighting matrix.
  */
 
-extern KfPlayerState player_state;
-extern KfMapEvent map_event_pool[8];
-extern KfActorState actor_state;
-extern KfMapObjectState map_object_state;
-extern KfRenderState render_state;
-extern MATRIX color_matrix_table[7];
-extern u8 map_floor_height_grid[100][100];
-
-/* Start of the per-floor persistent world-state block (see func_80035b5c). */
-extern u32 DAT_8009ddb4;
-extern u8 DAT_8009eafc;
-extern u8 DAT_8009f844;
-extern u8 DAT_8009f845;
-extern u8 DAT_8009f846;
-extern u8 boss_defeat_complete;
+/* Start of the per-floor persistent world-state block (see map_world_state_persist). */
+extern u32 map_world_state_base;
 /* Player inventory / key-item flag array. */
 extern u8 DAT_800652a8[240];
 
 extern int rand(void);
 extern void map_resources_load(u8 floor, u8 map_variant);
-extern void map_event_refresh_image_for_progress(KfMapEvent *event);
-extern void func_8001bae4(s32 floor);
-extern void map_apply_copy_region(u8 region_id);
-extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
-extern void map_object_pool_clear_link(u8 link_id);
-extern void map_object_pool_trigger_link(u8 link_id);
-extern void actor_pool_begin_death_by_definition(u16 definition_id);
 
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
 RODATA(0x80012bfc, 0x14)
@@ -58,7 +39,7 @@ RODATA(0x80012bfc, 0x14)
 ADDRESS(0x80035e44, 0x69c)
 void map_restore_floor_state(void)
 {
-    u8 *base = (u8 *)&DAT_8009ddb4;
+    u8 *base = (u8 *)&map_world_state_base;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;
@@ -146,10 +127,10 @@ void map_restore_floor_state(void)
 
     switch (player_state.progress_state.current_floor) {
     case 1:
-        if (((u8 *)&DAT_8009ddb4)[2] == 1) {
+        if (((u8 *)&map_world_state_base)[2] == 1) {
             map_apply_copy_region(1);
         }
-        if (((u8 *)&DAT_8009ddb4)[1] != 2) {
+        if (((u8 *)&map_world_state_base)[1] != 2) {
             i = actor_pool_find_at_tile(7, 0x28);
             if (i != -1) {
                 actor_state.actors[i].lifecycle = 3;
@@ -227,6 +208,6 @@ void map_load_floor(void)
                        player_state.map_variant);
     map_restore_floor_state();
     map_refresh_event_images();
-    func_8001bae4(player_state.progress_state.current_floor);
+    effect5_texture_cache_prepare(player_state.progress_state.current_floor);
     render_state.unknown_80 = color_matrix_table[3];
 }

@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Visible-cell dispatcher for the map geometry pass.  It selects the cell
@@ -16,9 +17,7 @@
  * KfCellWindow view.
  */
 
-extern KfRenderState render_state;
 extern u8 DAT_80065be8[]; /* 16 x 204-byte per-yaw cell windows */
-extern u16 DAT_80055e9c;  /* fixed fallback cell window */
 
 /* Visible map cell window: dimensions, window origin, then the cell flags. */
 typedef struct KfCellWindow {
@@ -30,9 +29,6 @@ typedef struct KfCellWindow {
 } KfCellWindow;
 
 extern KfCellWindow *DAT_80095860;
-
-extern void tmd_select(u16 slot);
-extern void render_map_cell(s32 col, s32 row, char cell);
 
 ADDRESS(0x8001e83c, 0x168)
 void render_map_cells(void)

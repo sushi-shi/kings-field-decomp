@@ -1,20 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfMapObjectState map_object_state;
-
-extern const KfMapCopyRegion map_copy_regions[4];
-extern u8 map_floor_height_grid[100][100];
-extern u8 map_collision_grid[100][100];
-extern u8 map_cell_attribute_grid[100][100];
 /* Two unnamed 100x100 map layers copied alongside the named grids. */
-extern u8 map_cell_orientation_grid[100][100];
-extern u8 map_collision_flag_grid[100][100];
-extern u16 map_object_effect_sequence_160;
-extern u16 map_object_effect_sequence_170;
-extern u16 map_object_effect_sequence_180;
-extern u32 collision_query_world(
-    s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 
 ADDRESS(0x80030a98, 0x1e4)
 void map_apply_copy_region(u8 region_id)

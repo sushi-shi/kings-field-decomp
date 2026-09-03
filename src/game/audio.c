@@ -1,41 +1,21 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
+#include <kf/game.h>
 
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
 
-extern KfPlayerState player_state;
-
-extern KfAudioState audio_state;
-extern u8 audio_sequence_table[];
-extern s32 audio_voice_slot_index;
-
 /* Unresolved helpers: a file loader, a sequence opener/stopper, and a frame
  * wait.  SsInit/SsSetTableSize come from LIBSND.H (Psy-Q, now vendored). */
-extern void *memory_allocate(s32 size);
 extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
 extern u32 cd_file_load_into(void *destination, const char *path);
-extern s16 func_800468d8(u8 *sequence, s16 vab_id);
-extern void func_8004a344(s16 sequence_id);
-extern void func_8004b6e0(s16 sequence_id);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
 /* Declared with an int result here: retail uses the returned angle unmasked. */
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern int printf();
 extern void *memset();
-
-extern void audio_close_vab(void);
-extern void audio_stop_sequence_fade(void);
-extern u32 audio_play_spatial(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume,
-    s32 max_distance,
-    s32 attenuation_distance);
-extern void audio_play_voice(
-    s16 vab_id, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume);
 
 ADDRESS(0x800328e0, 0xa4)
 void audio_initialize(void)

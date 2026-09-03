@@ -1,10 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
-extern u8 map_floor_height_grid[100][100];
-extern u8 DAT_80095064;
-extern void player_clear_motion(void);
 extern void collision_adjust_cell_occupancy(s32 object, s32 arg1, char arg2);
 
 ADDRESS(0x80016ee8, 0x158)

@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Menu label glyph store, addressed in 8-byte cells.  A label occupies three
@@ -12,10 +13,6 @@ typedef struct MenuLabelCell {
 
 extern MenuLabelCell DAT_80058494[];
 
-extern s32 pending_game_state;
-extern u16 DAT_80057b72;
-
-extern void game_state_acknowledge_pending(void);
 extern u32 cd_file_load_table_entry(void **asset_out, s32 id);
 extern void tmd_register(u16 slot, void *asset);
 
@@ -68,7 +65,7 @@ void menu_list_init(MenuListHeader *ctx, s32 row, s32 col)
  * high until the value is exhausted.
  */
 ADDRESS(0x8002adf8, 0xac)
-void func_8002adf8(s32 value, s32 count, s32 pad_zero, s16 *out)
+void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
 {
     s16 blank;
     s32 i;

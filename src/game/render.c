@@ -1,37 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern void *memory_allocate(s32 size);
-extern void pool_reset(void);
-extern void memory_release_last(void);
-
-extern KfDisplayState display_state;
-extern KfRenderState render_state;
-extern MATRIX light_quadrant_matrices[4];
-extern KfTmdState tmd_state;
-extern DRAWENV display_draw_environments[2];
-extern DISPENV display_disp_environments[2];
-extern SVECTOR *current_tmd_vertices;
-extern u32 DAT_800a0768;
-extern u32 DAT_8009569c;
-extern u32 DAT_80095698;
-extern u16 floor_item_count;
-extern u16 DAT_8009508e;
-extern u16 DAT_8009508c;
-extern u16 DAT_80095062;
-extern u16 DAT_80095060;
-extern u16 DAT_80095068;
-extern u16 DAT_80095066;
-extern u16 DAT_8009506a;
-extern u16 DAT_8009506c;
-extern u8 DAT_80095088;
-extern u8 DAT_80095086;
-extern u8 DAT_80095087;
-extern u8 DAT_8009506e[8];
-extern s16 DAT_80055dac;
-extern s16 DAT_80055dae;
-extern s16 DAT_80055db4;
-extern s16 DAT_80055db6;
+#include <kf/game.h>
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
 #define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + 12))

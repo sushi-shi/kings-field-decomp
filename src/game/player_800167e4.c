@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
-extern KfPlayerState player_state;
 extern KfMagicRecord magic_records[24];
 
 ADDRESS(0x800167e4, 0x64)

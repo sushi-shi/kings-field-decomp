@@ -1,7 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfDisplayState display_state;
+#include <kf/game.h>
 
 /*
  * Two shared menu ordering-table primitives: double-buffered POLY_FT4 quads
@@ -10,8 +9,6 @@ extern KfDisplayState display_state;
  * elsewhere, so both helpers only select the active buffer's copy and enqueue
  * it.  Both are shared by the magic, list, save and load panels.
  */
-extern POLY_FT4 DAT_80058228[2];
-extern POLY_FT4 DAT_80058278[2];
 
 /* Link the shared mid-depth menu quad at ordering-table slot 500. */
 ADDRESS(0x80027e58, 0x48)

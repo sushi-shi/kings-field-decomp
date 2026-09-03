@@ -1,8 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfMapObjectState map_object_state;
-
+#include <kf/game.h>
 
 ADDRESS(0x80030fdc, 0x2c)
 void map_object_definitions_load(const KfMapObjectDefinition *definitions)

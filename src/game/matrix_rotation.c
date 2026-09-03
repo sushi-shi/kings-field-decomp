@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game_types.h>
+#include <kf/game.h>
 
 /* Psy-Q LIBGTE: int rsin(int a); int rcos(int a). */
 
@@ -8,9 +9,6 @@
  * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the MATRIX/SVECTOR/VECTOR layouts:
  * MulMatrix(m0, m1), MulMatrix2(m0, m1), ApplyMatrix(m, v0, v1).
  */
-extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
-extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
-extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
 
 /*
  * Angles are 12-bit (0..0xfff). Within a half turn the step is applied

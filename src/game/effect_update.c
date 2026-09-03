@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game.h>
 
 /*
  * Effect per-kind update helpers, band 0x80037fbc..0x80038a38 (GAME.EXE).
@@ -24,27 +25,15 @@
  * are the band endpoints and remain WIP; this unit externs them.
  */
 
-extern KfEffectRecord *DAT_8009db84;   /* current effect record */
-extern KfMagicRecord *DAT_8009db80;    /* magic_records row of the current effect */
 extern KfEffectRecord DAT_8009d040[];  /* effect pool base */
-extern KfPlayerState player_state;
-extern u8 map_floor_height_grid[100][100];
-extern SoundRef gameplay_sound_ref_4;
 
 /* Base datum holding the scripted floor-deformation segment records that
  * effect_floor_deform_line reads from offset 0x21 (7-byte records); extent WIP. */
-extern u8 DAT_80056247[];
 
-extern u32 effect_map_collision(VECTOR *position, s32 param);
 extern KfEffectRecord *effect_pool_construct();
-extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
-extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern void actor_apply_damage(
     u16 actor_index, u16 base_power, u16 component0, u16 component1,
     u16 component2, u16 component3, u16 component4, u16 scale, u16 hit_flags);
-extern void player_apply_damage(
-    u16 component0, u16 component1, u16 component2, u16 status_effect_flags,
-    u16 component3, u16 component4, u16 scale_q12, u16 multiplier_tenths);
 extern s32 audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);

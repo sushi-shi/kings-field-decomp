@@ -1,9 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-
-extern KfPlayerState player_state;
-
-extern void audio_play_map_sequence(u8 sequence_id);
+#include <kf/game.h>
 
 ADDRESS(0x8001b49c, 0xbc)
 void audio_play_current_map_sequence(void)
