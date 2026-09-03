@@ -299,6 +299,12 @@ source = "src/game/render_sprite.c"
 profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
+unit = "game.render_map_cell"
+image = "GAME.EXE"
+source = "src/game/render_map_cell.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.render_map_cells"
 image = "GAME.EXE"
 source = "src/game/render_map_cells.c"
@@ -428,6 +434,30 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.menu_config_panel"
 image = "GAME.EXE"
 source = "src/game/menu_config_panel.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_draw_stats_header"
+image = "GAME.EXE"
+source = "src/game/menu_draw_stats_header.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_draw_status_details"
+image = "GAME.EXE"
+source = "src/game/menu_draw_status_details.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.func_8002718c"
+image = "GAME.EXE"
+source = "src/game/func_8002718c.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_item_model_preview"
+image = "GAME.EXE"
+source = "src/game/menu_item_model_preview.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -710,25 +740,25 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.audio_sequence"
 image = "GAME.EXE"
 source = "src/game/audio_sequence.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.audio_sequence_parse"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_parse.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.audio_sequence_track"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_track.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.audio_sequence_tick"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_tick.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.func_8004ae04"
@@ -740,19 +770,19 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.audio_sequence_envelope"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_envelope.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.audio_sequence_reset"
 image = "GAME.EXE"
 source = "src/game/audio_sequence_reset.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.pad"
 image = "GAME.EXE"
 source = "src/game/pad.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
 unit = "game.graph_state_accessors"
