@@ -32,7 +32,6 @@ extern void map_world_state_persist(void);
 extern void map_unload_floor(void);
 extern void func_800365f8(void);
 extern void func_80036d3c(KfActor *actor);
-extern void memcpy_8004a52c();
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);

@@ -240,7 +240,7 @@ def verify_sscall_boundary_and_calls(
     functions_path: Path = RETAIL_CONFIG / "functions.tsv",
     vendored_path: Path = RETAIL_CONFIG / "functions_vendored.tsv",
 ) -> int:
-    """Check the memcpy FID, SSCALL-shaped dispatcher, and direct calls."""
+    """Check the memcpy FID, SSCALL provider row, and direct calls."""
     _fields, raw_functions = read_tsv(functions_path)
     functions = [
         (row["image"], parse_int(row["va"]), parse_int(row["size"]))
@@ -272,8 +272,19 @@ def verify_sscall_boundary_and_calls(
             raise ValueError(
                 f"{image}: repeated memcpy helper FID evidence differs"
             )
-        if (image, dispatcher) in vendored:
-            raise ValueError(f"{image}: unmatched SSCALL dispatcher must stay in scope")
+        dispatcher_vendor = vendored.get((image, dispatcher), {})
+        if (
+            dispatcher_vendor.get("name"),
+            dispatcher_vendor.get("module"),
+            dispatcher_vendor.get("evidence"),
+            dispatcher_vendor.get("confidence"),
+        ) != (
+            "SsSeqCalledTbyT",
+            "SSCALL",
+            "cross-overlay-instruction-shape+archive-export+xref-topology",
+            "sdk-lineage-supported",
+        ):
+            raise ValueError(f"{image}: SSCALL provider evidence differs")
 
         payload = _load_payload(exe_dir, image)
         prefix = _words(payload, image, dispatcher, 8)
@@ -340,7 +351,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
         )
     print(f"archive anchors verified: {anchors}")
     print(
-        "ambiguous-provider memcpy FIDs and unpromoted SSCALL dispatcher "
+        "ambiguous-provider memcpy FIDs and SSCALL provider dispatcher "
         f"verified with direct helper calls: {direct_calls}"
     )
     return 0

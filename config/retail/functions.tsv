@@ -613,14 +613,14 @@ GAME.EXE	0x8004a344	0x38b44	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4
 GAME.EXE	0x8004a374	0x38b74	0x54	0x54	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 GAME.EXE	0x8004a3c8	0x38bc8	0x164	0x164	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004a52c	0x38d2c	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004a55c	0x38d5c	0x2f8	0x2f8	1	function	cross-overlay-sdk-candidate	SsSeqCalledTbyT		config/evidence/overlay_lineage.tsv;LIBSND/SSCALL	boundary corrected eight bytes earlier; name remains a structural candidate: psy-k extraction of the Release 2.5 LIBSND.LIB SSCALL object (0x244 bytes) aligns best at retail+0x7c with 72 equal, 28 relocation-masked, and 45 differing words of 145, so this 0x2f8-byte body is a different libsnd build and no supplied archive proves it
-GAME.EXE	0x8004a854	0x39054	0x548	0x548	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004ad9c	0x3959c	0x68	0x68	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+GAME.EXE	0x8004a55c	0x38d5c	0x2f8	0x2f8	1	function	cross-overlay-sdk-lineage	SsSeqCalledTbyT		config/evidence/overlay_lineage.tsv;LIBSND/SSCALL.OBJ	boundary includes the leading LUI+LW; SSCALL export and complete dispatch XREF topology identify the version-skewed provider body
+GAME.EXE	0x8004a854	0x39054	0x548	0x548	1	function	cross-overlay-sdk-lineage	Snd_decrescendo		config/evidence/overlay_lineage.tsv;LIBSND/DECRE.OBJ	DECRE export, sequence-volume calls, and complete GAME/OPEN shape identify the provider body
+GAME.EXE	0x8004ad9c	0x3959c	0x68	0x68	1	function	cross-overlay-sdk-lineage	Snd_replay		config/evidence/overlay_lineage.tsv;LIBSND/REPLAY.OBJ	REPLAY export, _ss_score XREF, and complete GAME/OPEN shape identify the provider body
 GAME.EXE	0x8004ae04	0x39604	0x2c	0x2c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004ae30	0x39630	0x530	0x530	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004b360	0x39b60	0x94	0x94	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8004b3f4	0x39bf4	0x64	0x64	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-GAME.EXE	0x8004b458	0x39c58	0x24c	0x24c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+GAME.EXE	0x8004ae30	0x39630	0x530	0x530	1	function	cross-overlay-sdk-lineage	Snd_crescendo		config/evidence/overlay_lineage.tsv;LIBSND/CRES.OBJ	CRES export, sequence-volume calls, and complete GAME/OPEN shape identify the provider body
+GAME.EXE	0x8004b360	0x39b60	0x94	0x94	1	function	cross-overlay-sdk-lineage	Snd_pause		config/evidence/overlay_lineage.tsv;LIBSND/PAUSE.OBJ	first PAUSE export, SpuVmSeqKeyOff call, and complete GAME/OPEN shape identify the provider body
+GAME.EXE	0x8004b3f4	0x39bf4	0x64	0x64	1	function	cross-overlay-sdk-lineage	Snd_nextpause		config/evidence/overlay_lineage.tsv;LIBSND/PAUSE.OBJ	second PAUSE export and complete GAME/OPEN shape identify the provider body
+GAME.EXE	0x8004b458	0x39c58	0x24c	0x24c	1	function	cross-overlay-sdk-lineage	Snd_tempo		config/evidence/overlay_lineage.tsv;LIBSND/TEMPO.OBJ	TEMPO export, VBLANK_MINUS XREF, and complete GAME/OPEN shape identify the provider body
 GAME.EXE	0x8004b6a4	0x39ea4	0x3c	0x3c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004b6e0	0x39ee0	0x168	0x168	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004b848	0x3a048	0x168	0x168	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
@@ -1293,14 +1293,14 @@ OPEN.EXE	0x8002a118	0x18918	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4
 OPEN.EXE	0x8002a148	0x18948	0x54	0x54	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x8002a19c	0x1899c	0x164	0x164	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002a300	0x18b00	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002a330	0x18b30	0x2f8	0x2f8	1	function	cross-overlay-sdk-candidate	SsSeqCalledTbyT		config/evidence/overlay_lineage.tsv;LIBSND/SSCALL	boundary corrected eight bytes earlier; name remains a structural candidate: psy-k extraction of the Release 2.5 LIBSND.LIB SSCALL object (0x244 bytes) aligns best at retail+0x7c with 72 equal, 28 relocation-masked, and 45 differing words of 145, so this 0x2f8-byte body is a different libsnd build and no supplied archive proves it
-OPEN.EXE	0x8002a628	0x18e28	0x548	0x548	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ab70	0x19370	0x68	0x68	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+OPEN.EXE	0x8002a330	0x18b30	0x2f8	0x2f8	1	function	cross-overlay-sdk-lineage	SsSeqCalledTbyT		config/evidence/overlay_lineage.tsv;LIBSND/SSCALL.OBJ	boundary includes the leading LUI+LW; OPEN twin of the version-skewed provider dispatcher
+OPEN.EXE	0x8002a628	0x18e28	0x548	0x548	1	function	cross-overlay-sdk-lineage	Snd_decrescendo		config/evidence/overlay_lineage.tsv;LIBSND/DECRE.OBJ	OPEN twin of the version-skewed DECRE provider body
+OPEN.EXE	0x8002ab70	0x19370	0x68	0x68	1	function	cross-overlay-sdk-lineage	Snd_replay		config/evidence/overlay_lineage.tsv;LIBSND/REPLAY.OBJ	OPEN twin of the version-skewed REPLAY provider body
 OPEN.EXE	0x8002abd8	0x193d8	0x2c	0x2c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ac04	0x19404	0x530	0x530	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002b134	0x19934	0x94	0x94	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002b1c8	0x199c8	0x64	0x64	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002b22c	0x19a2c	0x24c	0x24c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+OPEN.EXE	0x8002ac04	0x19404	0x530	0x530	1	function	cross-overlay-sdk-lineage	Snd_crescendo		config/evidence/overlay_lineage.tsv;LIBSND/CRES.OBJ	OPEN twin of the version-skewed CRES provider body
+OPEN.EXE	0x8002b134	0x19934	0x94	0x94	1	function	cross-overlay-sdk-lineage	Snd_pause		config/evidence/overlay_lineage.tsv;LIBSND/PAUSE.OBJ	OPEN twin of the first version-skewed PAUSE provider body
+OPEN.EXE	0x8002b1c8	0x199c8	0x64	0x64	1	function	cross-overlay-sdk-lineage	Snd_nextpause		config/evidence/overlay_lineage.tsv;LIBSND/PAUSE.OBJ	OPEN twin of the second version-skewed PAUSE provider body
+OPEN.EXE	0x8002b22c	0x19a2c	0x24c	0x24c	1	function	cross-overlay-sdk-lineage	Snd_tempo		config/evidence/overlay_lineage.tsv;LIBSND/TEMPO.OBJ	OPEN twin of the version-skewed TEMPO provider body
 OPEN.EXE	0x8002b478	0x19c78	0x3c	0x3c	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return+relocation-candidate
 OPEN.EXE	0x8002b4b4	0x19cb4	0x168	0x168	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002b61c	0x19e1c	0x168	0x168	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return

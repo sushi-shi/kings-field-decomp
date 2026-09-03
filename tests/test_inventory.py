@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 525)
-        self.assertEqual(counts["signatures_started"], 525)
-        self.assertEqual(counts["typed_returns"], 525)
-        self.assertEqual(counts["parameterized"], 335)
+        self.assertEqual(counts["functions"], 511)
+        self.assertEqual(counts["signatures_started"], 511)
+        self.assertEqual(counts["typed_returns"], 511)
+        self.assertEqual(counts["parameterized"], 323)
         self.assertEqual(counts["data"], 3287)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -796,6 +796,20 @@ class InventoryTests(unittest.TestCase):
             ("OPEN.EXE", 0x8002A118): ("SsSeqStop", "STOP"),
             ("OPEN.EXE", 0x8002A148): ("SsSepStop", "STOP"),
             ("OPEN.EXE", 0x8002A19C): ("Snd_stop", "STOP"),
+            ("GAME.EXE", 0x8004A55C): ("SsSeqCalledTbyT", "SSCALL"),
+            ("GAME.EXE", 0x8004A854): ("Snd_decrescendo", "DECRE"),
+            ("GAME.EXE", 0x8004AD9C): ("Snd_replay", "REPLAY"),
+            ("GAME.EXE", 0x8004AE30): ("Snd_crescendo", "CRES"),
+            ("GAME.EXE", 0x8004B360): ("Snd_pause", "PAUSE"),
+            ("GAME.EXE", 0x8004B3F4): ("Snd_nextpause", "PAUSE"),
+            ("GAME.EXE", 0x8004B458): ("Snd_tempo", "TEMPO"),
+            ("OPEN.EXE", 0x8002A330): ("SsSeqCalledTbyT", "SSCALL"),
+            ("OPEN.EXE", 0x8002A628): ("Snd_decrescendo", "DECRE"),
+            ("OPEN.EXE", 0x8002AB70): ("Snd_replay", "REPLAY"),
+            ("OPEN.EXE", 0x8002AC04): ("Snd_crescendo", "CRES"),
+            ("OPEN.EXE", 0x8002B134): ("Snd_pause", "PAUSE"),
+            ("OPEN.EXE", 0x8002B1C8): ("Snd_nextpause", "PAUSE"),
+            ("OPEN.EXE", 0x8002B22C): ("Snd_tempo", "TEMPO"),
         }
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         for key, (name, module) in expected.items():
@@ -807,9 +821,19 @@ class InventoryTests(unittest.TestCase):
             )
             self.assertNotIn(key, identities)
 
-        # The version-skewed SSCALL dispatcher remains a game-owned candidate.
-        self.assertNotIn(("GAME.EXE", 0x8004A55C), vendored)
-        self.assertIn(("GAME.EXE", 0x8004A55C), identities)
+        self.assertEqual(vendored[("GAME.EXE", 0x8004B3F4)]["member_offset"], "0x8c")
+        self.assertEqual(vendored[("OPEN.EXE", 0x8002B1C8)]["member_offset"], "0x8c")
+
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        expected_data = {
+            ("GAME.EXE", 0x8009FF00): "VBLANK_MINUS",
+            ("GAME.EXE", 0x800A0770): "_snd_seq_s_max",
+            ("OPEN.EXE", 0x800757D0): "VBLANK_MINUS",
+            ("OPEN.EXE", 0x80075930): "_snd_seq_s_max",
+        }
+        for key, name in expected_data.items():
+            self.assertEqual(data_identities[key].name, name)
+            self.assertEqual(data_identities[key].confidence, "supported")
 
     def test_libsnd_sequence_open_init_and_close_are_vendored(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")

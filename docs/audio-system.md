@@ -66,15 +66,17 @@ those fields and checks every lane offset. The adjacent `game_exit_code` at
 Psy-Q Release 2.5 `LIBSND.H` supplies the authentic widths and prototypes for
 `SsSetTableSize`, VAB transfer, sequence open/play/volume/stop/close, master
 volume, reverb, and voice calls. Several targets have exact Release 2.5 FIDs.
-The `SSOPEN`, `SEPINIT`, `SEQINIT`, `SSPLAY`, `STOP`, and `SSCLOSE` families are
-provider-attributed through archive symbols, official public prototypes,
-function semantics, and complete GAME/OPEN instruction-shape agreement. Their
-exact SDK revision remains unresolved, so they use `sdk-lineage-supported`
-rather than an exact Release 2.5 confidence class and are not reconstructed as
-game bodies.
+The `SSOPEN`, `SEPINIT`, `SEQINIT`, `SSPLAY`, `STOP`, `SSCALL`, `DECRE`,
+`REPLAY`, `CRES`, `PAUSE`, `TEMPO`, and `SSCLOSE` families are
+provider-attributed through archive symbols and XREFs, official public
+prototypes where available, function semantics, and complete GAME/OPEN
+instruction-shape agreement. Their exact SDK revision remains unresolved, so
+the version-skewed bodies use `sdk-lineage-supported` rather than an exact
+Release 2.5 confidence class and are not reconstructed as game bodies.
 
 That evidence also identifies the internal data referents `_snd_openflag`,
-`_ss_score`, and `_snd_seq_t_max` in both overlays. OPEN's `SsSepOpen` begins at
+`_ss_score`, `_snd_seq_s_max`, `_snd_seq_t_max`, and `VBLANK_MINUS` in both
+overlays. OPEN's `SsSepOpen` begins at
 `0x8002675c`: its first `lui`/`lw` pair hoists the `_snd_openflag` load above the
 stack-frame allocation, correcting an earlier false eight-byte data gap.
 

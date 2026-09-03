@@ -246,7 +246,11 @@ The original sweep reported three flipped units. Later provider audits proved
 that `game.audio_sequence_track` reconstructed five `LIBSND.LIB` routines from
 `SSPLAY.OBJ` and `STOP.OBJ`, while `game.audio_sequence` reconstructed the
 `SSOPEN.OBJ` public openers. Both units are now excluded rather than treated as
-game compiler evidence. The corrected game-only result is one unit and
+game compiler evidence. The later `game.audio_sequence_tick` and
+`game.audio_sequence_envelope` reconstructions were likewise removed after
+`SSCALL`, `DECRE`, `REPLAY`, `CRES`, `PAUSE`, and `TEMPO` archive evidence
+identified all seven bodies as version-skewed LIBSND code. The corrected
+game-only result is one unit and
 **GAME exact 265 → 266 (+1)**, with no regressions in any image:
 
 | unit | old profile | new profile | exacts | functions flipped |

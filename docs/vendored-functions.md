@@ -13,13 +13,13 @@ KFIII executable contributes to this list.
 | image | Release 2.5 exact object | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 186 | 144 | 114 | 58 | 51 | 553 |
-| `OPEN.EXE` | 184 | 143 | 103 | 58 | 37 | 525 |
-| **total** | **378** | **287** | **217** | **116** | **88** | **1,086** |
+| `GAME.EXE` | 186 | 144 | 121 | 58 | 51 | 560 |
+| `OPEN.EXE` | 184 | 143 | 110 | 58 | 37 | 532 |
+| **total** | **378** | **287** | **231** | **116** | **88** | **1,100** |
 
-The 1,086 rows comprise 1,060 named functions and 26 anonymous internal
+The 1,100 rows comprise 1,074 named functions and 26 anonymous internal
 functions whose containing Sony object is known. Provider counts are: 275
-`LIBGTE`, 230 `LIBSND`, 208 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
+`LIBGTE`, 244 `LIBSND`, 208 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
 34 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
 `LIBSN`, and eight fully fixed `memcpy` copies whose exact member remains
 ambiguous across `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party
@@ -153,8 +153,8 @@ only the independently evidenced VSYNC pair enters the provider exclusion.
 
 The command also asserts the corrected `lui`/`lw` prefix in both executables,
 all four direct helper callsites, the helper's ambiguous-provider FID row, and
-the dispatcher's absence from the provider-exclusion TSV. The helper must have
-exactly two direct `jal` callers per overlay, both inside the candidate
+the archive anchors for the dispatcher and its six control targets. The helper
+must have exactly two direct `jal` callers per overlay, both inside the
 `SsSeqCalledTbyT` body.
 
 That repeated order proves common linked code, not Sony ownership. The FID pass
@@ -172,16 +172,23 @@ The final two rows of that chain are the consecutive, equal-sized exports from
 key-off/reset behavior, `_snd_openflag`/`_snd_seq_t_max`/`_ss_score` XREFs, and
 complete cross-overlay shapes support the same provider verdict.
 
-The FID pass specifically prevents the earlier overreach later in the chain:
-Release 2.5
-`LIBSND.LIB/SSCALL.OBJ` contains a named 0x244-byte `SsSeqCalledTbyT`, but it
-does not match either 0x2f8-byte retail dispatcher. The preceding 0x30-byte
-helper exactly matches `memcpy`/`_memcpy`-shaped functions from three SDK object
-identities, and the same body occurs four times per retail image. That proves a
-Sony `memcpy` body while leaving the exact archive member ambiguous, so all
-eight copies use `fid-release25-ambiguous`. The dispatcher itself is not
-classified as vendored. Its structural name and cross-overlay lineage remain a
-useful WIP hypothesis, kept separate from provider ownership.
+Release 2.5 `LIBSND.LIB/SSCALL.OBJ` contains a 0x244-byte
+`SsSeqCalledTbyT`, while the retail dispatcher is 0x2f8 bytes. That size and
+byte mismatch proves revision skew, but not game ownership: the object exports
+the same entry and imports the complete retail dispatch set, `_ss_score`, the
+sequence bounds, and `SpuVmFlush`. Each dispatched body is independently
+anchored by its own archive member: `DECRE.OBJ` exports `Snd_decrescendo`,
+`REPLAY.OBJ` exports `Snd_replay`, `CRES.OBJ` exports `Snd_crescendo`,
+`PAUSE.OBJ` exports consecutive `Snd_pause`/`Snd_nextpause`, and `TEMPO.OBJ`
+exports `Snd_tempo` with the distinctive `VBLANK_MINUS` XREF. Their call/data
+sets and state transitions agree with retail, and every GAME/OPEN pair has a
+complete instruction-shape match. The seven pairs therefore use
+`sdk-lineage-supported`; no exact Release 2.5 byte claim is made.
+
+The preceding 0x30-byte helper exactly matches `memcpy`/`_memcpy`-shaped
+functions from three SDK object identities, and the same body occurs four times
+per retail image. That proves a Sony `memcpy` body while leaving the exact
+archive member ambiguous, so all eight copies use `fid-release25-ambiguous`.
 
 ## TSV contract
 
