@@ -7,7 +7,7 @@
  * DAT_800a06e0[sequence] points at that open sequence's array of 0xAC-byte
  * track records (see audio_sequence.c for the openers that allocate them).
  * These routines toggle the per-track control flags at offset 0 and drive the
- * shared voice-parameter helper func_8004415c (left/right volume, capped at
+ * shared voice-parameter helper SpuVmSetSeqVol (left/right volume, capped at
  * 0x7f) and the LIBSND VMANAGER key-off primitive SpuVmSeqKeyOff.
  *
  * The row pointer is reloaded from the global before every statement because a
@@ -29,8 +29,8 @@
 typedef struct SeqTrack {
     u32 flags;            /* 0x00 */
     u8 reserved_04[0x22]; /* 0x04 */
-    u16 volume_left;      /* 0x26 -> func_8004415c arg1 */
-    u16 volume_right;     /* 0x28 -> func_8004415c arg2 */
+    u16 volume_left;      /* 0x26 -> SpuVmSetSeqVol arg1 */
+    u16 volume_right;     /* 0x28 -> SpuVmSetSeqVol arg2 */
     u8 reserved_2a[0x06]; /* 0x2a */
     u32 field_30;         /* 0x30 */
     u32 field_34;         /* 0x34 */
@@ -57,8 +57,8 @@ typedef char SeqTrack_size_is_0xac[(sizeof(SeqTrack) == 0xac) ? 1 : -1];
 
 extern SeqTrack *DAT_800a06e0[];
 
-/* Per-track voice volume update (shared with the whole sequence family). */
-extern s32 func_8004415c(s16 sequence, s16 volume_left, s16 volume_right, s16 mode);
+/* Psy-Q Release 2.5 LIBSND VMANAGER per-sequence volume setter (now vendored). */
+extern s32 SpuVmSetSeqVol(s16 sequence, s16 volume_left, s16 volume_right, s16 mode);
 /* Psy-Q Release 2.5 LIBSND VMANAGER key-off primitive. */
 extern void SpuVmSeqKeyOff(s16 sequence, s16 track);
 
@@ -71,7 +71,7 @@ void func_8004a128(s16 sequence, s16 track, u16 arg2)
     DAT_800a06e0[sequence][track].field_68 = arg2;
     DAT_800a06e0[sequence][track].field_6a = 0;
     DAT_800a06e0[sequence][track].field_30 = DAT_800a06e0[sequence][track].field_34;
-    func_8004415c(sequence, DAT_800a06e0[sequence]->volume_left,
+    SpuVmSetSeqVol(sequence, DAT_800a06e0[sequence]->volume_left,
                   DAT_800a06e0[sequence]->volume_right, 0);
 }
 
@@ -85,7 +85,7 @@ void func_8004a21c(s16 sequence, s16 track, u8 mode, u16 arg3)
         DAT_800a06e0[sequence][track].flags |= 0x1u;
         DAT_800a06e0[sequence][track].field_6a = 0;
         DAT_800a06e0[sequence][track].field_57 = 1;
-        func_8004415c(sequence, DAT_800a06e0[sequence][track].volume_left,
+        SpuVmSetSeqVol(sequence, DAT_800a06e0[sequence][track].volume_left,
                       DAT_800a06e0[sequence][track].volume_right, 0);
     } else if (mode == 0) {
         DAT_800a06e0[sequence][track].flags |= 0x2u;

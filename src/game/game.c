@@ -52,7 +52,6 @@ extern void audio_stop_sequence_master_fade(s32 fade_step);
 extern void memory_card_shutdown_events(void);
 extern void audio_shutdown(void);
 extern void pad_stop(void);
-extern u32 func_80050544(u32 object);
 extern void frame_pacer_vsync_callback(void);
 extern void frame_pacer_wait(void);
 extern void game_shutdown(void);
@@ -163,7 +162,7 @@ void game_shutdown(void)
     memory_card_shutdown_events();
     audio_shutdown();
     pad_stop();
-    func_80050544(3);
+    ResetGraph(3);
 }
 
 ADDRESS(0x800149d4, 0x20)
