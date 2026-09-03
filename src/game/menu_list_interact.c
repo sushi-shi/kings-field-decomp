@@ -12,19 +12,19 @@ typedef struct MenuOption {
 extern u32 pad_read();
 extern void menu_item_model_preview(s32 item_id);
 extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
-extern void menu_list_render(s16 *ctx);
 extern void menu_add_marker_quad(void);
 extern void menu_draw_two_option(const void *point0, const void *point1, s32 selected, s32 highlight);
 
 /*
  * Drive an interactive scrollable list with a two-option confirm footer.
- * `ctx` is the list widget context, `kind` selects the pair of footer labels,
+ * `list` is the list widget context, `kind` selects the pair of footer labels,
  * `mode` selects the side preview redrawn each frame (0 = 3D item model, 1 =
  * item detail panel, 2 = map marker), and `item_id` / `arg4` / `arg5` feed that
  * preview.  Returns -selected_row on the up/confirm edge, -1 on cancel.
  */
 ADDRESS(0x80028380, 0x354)
-s32 menu_list_interact(u32 ctx, s32 kind, s32 mode, s32 item_id, u32 arg4, u32 arg5)
+s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
+                       s32 item_id, u32 arg4, u32 arg5)
 {
     MenuOption opt0;
     MenuOption opt1;
@@ -89,7 +89,7 @@ opt0_done:
         } else if (mode == 2 && item_id != 0xff) {
             menu_add_marker_quad();
         }
-        menu_list_render((s16 *)ctx);
+        menu_list_render(list);
         menu_draw_two_option(&opt0, &opt1, selected, highlight);
         menu_present_frame();
 
@@ -102,7 +102,7 @@ opt0_done:
             } else if (mode == 2 && item_id != 0xff) {
                 menu_add_marker_quad();
             }
-            menu_list_render((s16 *)ctx);
+            menu_list_render(list);
             menu_draw_two_option(&opt0, &opt1, selected, highlight);
             menu_present_frame();
             while (pad_read(1) != 0) {

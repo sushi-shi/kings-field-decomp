@@ -18,27 +18,10 @@ extern POLY_FT4 DAT_800580e8[2][4];
 extern u32 pad_read();
 
 /* Cursor/list widget helpers (init, render, query). */
-extern void menu_list_init(u16 *ctx, s32 arg1, s32 arg2);
 extern u32 menu_load_item_texture(s32 magic_id);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /* Sub-panel handlers dispatched by the option menu. */
-
-/*
- * Item-list display context: a shared menu list header with a visible-window
- * cursor over the label entries that follow it on the frame.
- */
-typedef struct KfItemMenu {
-    u8 unknown_00[26];
-    u8 count;
-    u8 page;
-    u8 scroll;
-    u8 cursor;
-    u8 window;
-    u8 rows;
-    s16 *entries;
-    s32 unknown_24;
-} KfItemMenu;
 
 RODATA(0x800122e4, 0x2c)
 
@@ -158,7 +141,7 @@ void menu_map_viewer(s32 item_code)
 ADDRESS(0x8002317c, 0x530)
 s32 menu_magic_panel(void)
 {
-    KfItemMenu ctx;
+    KfMenuList ctx;
     s16 labels[10][10];
     u8 codes[16];
     s16 *name;
@@ -172,7 +155,7 @@ s32 menu_magic_panel(void)
 
     while (pad_read(1) != 0)
         ;
-    menu_list_init((u16 *)&ctx, 0, 1);
+    menu_list_init(&ctx, 0, 1);
 
     found = 0;
     name = DAT_80059400;
@@ -184,25 +167,25 @@ s32 menu_magic_panel(void)
             found++;
         }
     }
-    ctx.count = found;
-    ctx.rows = 10;
-    ctx.entries = &labels[0][0];
-    ctx.unknown_24 = 0;
+    ctx.entry_count = found;
+    ctx.glyphs_per_entry = 10;
+    ctx.glyph_rows = &labels[0][0];
+    ctx.quantities = 0;
 
     menu_frame_begin();
-    if (ctx.count != 0) {
-        if (menu_load_item_texture(codes[ctx.cursor]) == 1)
+    if (ctx.entry_count != 0) {
+        if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
             return -1;
         menu_add_marker_quad();
     }
-    menu_list_render((s16 *)&ctx);
+    menu_list_render(&ctx);
 
     for (;;) {
         menu_present_frame();
         if (confirm == 1) {
             selection = -99;
-            if (menu_list_interact((u32)&ctx, 0, 2, codes[ctx.cursor], 0, 0) != -1)
-                selection = codes[ctx.cursor];
+            if (menu_list_interact(&ctx, 0, 2, codes[ctx.selected_index], 0, 0) != -1)
+                selection = codes[ctx.selected_index];
         }
         if (selection != -99) {
             while (pad_read(1) != 0)
@@ -214,43 +197,43 @@ s32 menu_magic_panel(void)
         confirm = 0;
         prev = input;
         input = pad_read(1);
-        if (ctx.count == 0) {
+        if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
                 selection = -1;
             }
         } else if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
-            if (ctx.cursor != 0) {
-                ctx.cursor--;
-                if (ctx.window != 0)
-                    ctx.window--;
+            if (ctx.selected_index != 0) {
+                ctx.selected_index--;
+                if (ctx.cursor_row != 0)
+                    ctx.cursor_row--;
                 else
-                    ctx.scroll--;
-            } else if (ctx.count < ctx.page) {
-                ctx.cursor = ctx.count - 1;
-                ctx.scroll = 0;
-                ctx.window = ctx.count - 1;
+                    ctx.scroll_offset--;
+            } else if (ctx.entry_count < ctx.visible_rows) {
+                ctx.selected_index = ctx.entry_count - 1;
+                ctx.scroll_offset = 0;
+                ctx.cursor_row = ctx.entry_count - 1;
             } else {
-                ctx.scroll = ctx.count - ctx.page;
-                ctx.window = ctx.page - 1;
+                ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
+                ctx.cursor_row = ctx.visible_rows - 1;
             }
-            if (menu_load_item_texture(codes[ctx.cursor]) == 1)
+            if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return -1;
         } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
             menu_play_input_sound(0);
-            if (ctx.cursor < ctx.count - 1) {
-                ctx.cursor++;
-                if (ctx.window != ctx.page - 1)
-                    ctx.window++;
+            if (ctx.selected_index < ctx.entry_count - 1) {
+                ctx.selected_index++;
+                if (ctx.cursor_row != ctx.visible_rows - 1)
+                    ctx.cursor_row++;
                 else
-                    ctx.scroll++;
+                    ctx.scroll_offset++;
             } else {
-                ctx.cursor = 0;
-                ctx.scroll = 0;
-                ctx.window = 0;
+                ctx.selected_index = 0;
+                ctx.scroll_offset = 0;
+                ctx.cursor_row = 0;
             }
-            if (menu_load_item_texture(codes[ctx.cursor]) == 1)
+            if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return -1;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
@@ -260,9 +243,9 @@ s32 menu_magic_panel(void)
             selection = -1;
         }
 
-        if (ctx.count != 0)
+        if (ctx.entry_count != 0)
             menu_add_marker_quad();
-        menu_list_render((s16 *)&ctx);
+        menu_list_render(&ctx);
     }
 
     if (selection == -1)

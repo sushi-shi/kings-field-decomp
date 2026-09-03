@@ -36,6 +36,29 @@ typedef struct MenuSpriteDef {
 
 typedef char MenuSpriteDef_size_is_12[(sizeof(MenuSpriteDef) == 0x0c) ? 1 : -1];
 
+/*
+ * Scrollable menu-list state. The first 24 bytes are a positioned title,
+ * followed by list geometry/cursor bytes and the row-glyph and optional
+ * quantity sources consumed by the shared list renderer.
+ */
+typedef struct KfMenuList {
+    s16 title_x;
+    u16 title_y;
+    s16 title_glyphs[10];
+    u8 list_x;
+    u8 list_y;
+    u8 entry_count;
+    u8 visible_rows;
+    u8 scroll_offset;
+    u8 selected_index;
+    u8 cursor_row;
+    u8 glyphs_per_entry;
+    s16 *glyph_rows;
+    u8 *quantities;
+} KfMenuList;
+
+typedef char KfMenuList_size_is_40[(sizeof(KfMenuList) == 0x28) ? 1 : -1];
+
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
 extern s32 item_use_confirm(s32 arg);
@@ -49,8 +72,10 @@ extern void menu_drop_item(void);
 extern void menu_equip_select(s32 object);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(s32 item_id);
-extern s32 menu_list_interact(u32 ctx, s32 arg1, s32 arg2, s32 item_id, u32 arg4, u32 arg5);
-extern void menu_list_render(s16 *ctx);
+extern void menu_list_init(KfMenuList *list, s32 row, s32 column);
+extern s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
+                              s32 item_id, u32 arg4, u32 arg5);
+extern void menu_list_render(const KfMenuList *list);
 extern u32 menu_load_item_model(s32 id);
 extern s32 menu_load_panel(void);
 extern s32 menu_magic_panel(void);

@@ -13,46 +13,27 @@ typedef struct MenuLabelCell {
 
 extern MenuLabelCell DAT_80058494[];
 
-/*
- * Header block that precedes a menu list on the frame: two layout shorts, the
- * ten-glyph label copied from the (row, col) table, and the window/cursor
- * bytes that the list widget drives afterwards.
- */
-typedef struct MenuListHeader {
-    s16 field_00;
-    s16 field_02;
-    u16 glyphs[10];
-    u8 field_18;
-    u8 field_19;
-    u8 count;
-    u8 field_1b;
-    u8 scroll;
-    u8 cursor;
-    u8 window;
-    u8 rows;
-} MenuListHeader;
-
 /* Initialize a menu list header and copy its label glyphs from the table. */
 ADDRESS(0x8002ad6c, 0x8c)
-void menu_list_init(MenuListHeader *ctx, s32 row, s32 col)
+void menu_list_init(KfMenuList *list, s32 row, s32 column)
 {
     u16 *src;
     s32 i;
 
-    ctx->field_00 = 12;
-    ctx->field_02 = 19;
-    src = DAT_80058494[row * 33 + col * 3].halfwords;
+    list->title_x = 12;
+    list->title_y = 19;
+    src = DAT_80058494[row * 33 + column * 3].halfwords;
     for (i = 0; i < 10; i++) {
-        ctx->glyphs[i] = src[i];
+        list->title_glyphs[i] = src[i];
     }
-    ctx->field_18 = 0x16;
-    ctx->field_19 = 0x26;
-    ctx->count = 0;
-    ctx->field_1b = 0x0b;
-    ctx->scroll = 0;
-    ctx->cursor = 0;
-    ctx->window = 0;
-    ctx->rows = 8;
+    list->list_x = 0x16;
+    list->list_y = 0x26;
+    list->entry_count = 0;
+    list->visible_rows = 0x0b;
+    list->scroll_offset = 0;
+    list->selected_index = 0;
+    list->cursor_row = 0;
+    list->glyphs_per_entry = 8;
 }
 
 /*
