@@ -23,11 +23,11 @@ typedef struct MenuPoint {
 extern MenuSpriteDef DAT_8005840c; /* option box, normal */
 extern MenuSpriteDef DAT_80058418; /* option box, highlighted */
 extern MenuSpriteDef DAT_8005846c; /* window frame */
-extern u8 DAT_800583f4[];          /* label descriptor for func_80029de0 */
+extern u8 DAT_800583f4[];          /* font-atlas descriptor for menu_draw_string */
 
 extern void func_80029c50(const MenuSpriteDef *sprite, const MenuPoint *pos);
 extern void func_80029ab0(const MenuSpriteDef *sprite, const MenuPoint *pos);
-extern void func_80029de0(u8 *desc, const MenuPoint *pos);
+extern void menu_draw_string(const MenuSpriteDef *font, const MenuPoint *str);
 
 /*
  * Draw a two-option selection widget: one window frame around the selected
@@ -56,6 +56,6 @@ void func_800291ec(const MenuPoint *point0, const MenuPoint *point1,
         func_80029ab0(&DAT_8005840c, point0);
         func_80029ab0(&DAT_8005840c, point1);
     }
-    func_80029de0(DAT_800583f4, point0);
-    func_80029de0(DAT_800583f4, point1);
+    menu_draw_string((const MenuSpriteDef *)DAT_800583f4, point0);
+    menu_draw_string((const MenuSpriteDef *)DAT_800583f4, point1);
 }

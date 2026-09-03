@@ -19,7 +19,7 @@ extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
 extern s32 save_system_write_slot(s16 slot_id);
 extern s32 save_file_cleanup_temporary(void);
 extern s32 memory_card_check_or_format(s16 allow_format);
-extern s32 func_800286d4(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
+extern s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3);
 extern u32 func_8002af48(s32 arg0);
 
 /*
@@ -91,7 +91,7 @@ s32 func_800250c4(void)
                     ;
             }
 
-            result = func_800286d4(4, 5, cursor, (u32)summaries);
+            result = menu_two_option_prompt(4, 5, cursor, summaries);
             if (result == -1) {
                 result = -99;
             } else {
