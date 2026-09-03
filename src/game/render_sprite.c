@@ -6,7 +6,7 @@
  * Screen-space textured-sprite emitters.  Both build a POLY_FT4 quad from a
  * 12-byte sprite descriptor (texture U/V origin and span, then screen origin
  * and span) and link it into the frame's ordering table.  func_8001e480 draws
- * the quad in raw screen space for the HUD-gauge pass; func_8001e230 first
+ * the quad in raw screen space for the HUD-gauge pass; render_enqueue_sprite first
  * projects the quad's four corners through the GTE and depth-cues its colour so
  * the notification and billboard sprites sort into the 3D scene.
  *

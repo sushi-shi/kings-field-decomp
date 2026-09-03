@@ -28,12 +28,12 @@ extern u8 DAT_80055afc[];
 
 extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern void func_8001e230(char *descriptor, s16 screen_scale, s32 flag);
+extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
 extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 index);
 extern void tmd_select_object_vertices(u16 object_index);
 extern void tmd_project_vertices(s32 count);
-extern u16 *func_800205d4(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
+extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void func_8001c7f8(u16 arg0, s16 arg1);
 
 /*
@@ -89,7 +89,7 @@ void render_floor_item(KfFloorSprite *sprite)
         screen_scale = 0xc8;
     }
     SetTransMatrix(&model);
-    func_8001e230(
+    render_enqueue_sprite(
         (char *)&DAT_80055afc[4 + (sprite->sprite_id + sprite->anim_frame) * 12],
         screen_scale, 1);
     next_frame = sprite->anim_frame + 1;
@@ -130,7 +130,7 @@ typedef struct KfActorSprite {
 /*
  * Emits one pooled actor.  Empty slots (id 0xff) are skipped.  The record is
  * carried into the view, oriented from its Euler angles and scaled in place.
- * A mode of 0xff draws a fixed billboard sprite through func_8001e230 against
+ * A mode of 0xff draws a fixed billboard sprite through render_enqueue_sprite against
  * the render pitch matrix; otherwise the asset that follows the id by 30 is
  * bound, tested for visibility, and projected against the view matrix.
  */
@@ -162,7 +162,7 @@ void render_actor_sprite(KfActorSprite *actor)
         MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        func_8001e230((char *)&DAT_80055afc[0x58 + actor->sprite_id * 12], 0, 0);
+        render_enqueue_sprite((char *)&DAT_80055afc[0x58 + actor->sprite_id * 12], 0, 0);
     } else {
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
         SetRotMatrix(&model);
@@ -170,7 +170,7 @@ void render_actor_sprite(KfActorSprite *actor)
         asset = actor->sprite_id + 30;
         asset_registry_select(asset);
         object = tmd_get_object(0);
-        if (func_800205d4(
+        if (render_bind_animated_instance(
                 &actor->anchor, asset, actor->mode, actor->asset_variant,
                 object->vertex_count) == 0) {
             tmd_select_object_vertices(0);

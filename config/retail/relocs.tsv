@@ -6801,7 +6801,7 @@ GAME.EXE	0x80035c8c	0x2448c	0x80035c90	mips_hi16_lo16	reachable-code	0x8006ede0	
 GAME.EXE	0x80035cc0	0x244c0	0x80035cc4	mips_hi16_lo16	reachable-code	0x8006ede0	bss	map_object_state	lui+addiu	a2	paired-reviewed	reviewed	manual:game_map_events
 GAME.EXE	0x80035d7c	0x2457c	0x80035d80	mips_hi16_lo16	reachable-code	0x80070980	bss	map_object_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_events
 GAME.EXE	0x80035dcc	0x245cc	0x80035dd0	mips_hi16_lo16	reachable-code	0x80070b32	bss	map_object_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_events
-GAME.EXE	0x80035e1c	0x2461c		mips26	instruction-word	0x80020a2c	load	func_80020a2c	jal		control-flow-reviewed	reviewed	manual:game_func_80035e14
+GAME.EXE	0x80035e1c	0x2461c		mips26	instruction-word	0x80020a2c	load	pool_release_all	jal		control-flow-reviewed	reviewed	manual:game_func_80035e14
 GAME.EXE	0x80035e24	0x24624		mips26	instruction-word	0x80032cb0	load	audio_close_vab	jal		control-flow-reviewed	reviewed	manual:game_func_80035e14
 GAME.EXE	0x80035e2c	0x2462c		mips26	instruction-word	0x80035b5c	load	func_80035b5c	jal		control-flow-reviewed	reviewed	manual:game_func_80035e14
 GAME.EXE	0x80035e60	0x24660	0x80035e64	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_map_load
@@ -6864,8 +6864,8 @@ GAME.EXE	0x8003651c	0x24d1c		mips26	reachable-code	0x800337ac	load	map_event_ref
 GAME.EXE	0x80036560	0x24d60	0x80036564	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+addiu	s0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003656c	0x24d6c	0x80036570	mips_hi16_lo16	reachable-code	0x800a078c	bss	player_state	lui+lbu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80036574	0x24d74		mips26	reachable-code	0x8001b558	load	map_resources_load	jal		control-flow-reviewed	reviewed	manual:game_map_load
-GAME.EXE	0x8003657c	0x24d7c		mips26	reachable-code	0x80035e44	load	func_80035e44	jal		control-flow-reviewed	reviewed	manual:game_map_load
-GAME.EXE	0x80036584	0x24d84		mips26	reachable-code	0x800364e0	load	func_800364e0	jal		control-flow-reviewed	reviewed	manual:game_map_load
+GAME.EXE	0x8003657c	0x24d7c		mips26	reachable-code	0x80035e44	load	map_restore_floor_state	jal		control-flow-reviewed	reviewed	manual:game_map_load
+GAME.EXE	0x80036584	0x24d84		mips26	reachable-code	0x800364e0	load	map_refresh_event_images	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036590	0x24d90		mips26	reachable-code	0x8001bae4	load	func_8001bae4	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036598	0x24d98	0x8003659c	mips_hi16_lo16	reachable-code	0x80055e1c	load	color_matrix_table	lui+addiu	a1	paired-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x800365a0	0x24da0	0x800365a4	mips_hi16_lo16	reachable-code	0x80095720	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_load

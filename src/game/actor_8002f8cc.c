@@ -19,7 +19,7 @@ extern void map_object_pool_trigger_link(u8 link_id);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 /* Effect spawner called with six to eight arguments; declared without a prototype. */
-extern u8 *func_80036f44();
+extern u8 *effect_pool_construct();
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern u32 collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
@@ -95,7 +95,7 @@ void actor_update_boss_death_sequence(void)
         position.x = actor->position.vx + (rand() & 0x1fff) - 4096;
         position.z = actor->position.vz + (rand() & 0x1fff) - 4096;
         position.y = actor->position.vy - (rand() & 0xfff);
-        func_80036f44(0, 0x13, 0x2c, &position, effect_output, 0);
+        effect_pool_construct(0, 0x13, 0x2c, &position, effect_output, 0);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ACTION_INDEX(6)] * 4) == 0) {
             sound_ref_play(&boss_death_loop_sound, 100);
         }

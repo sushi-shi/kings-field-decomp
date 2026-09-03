@@ -47,7 +47,7 @@ extern void frame_pacer_wait(void);
 extern void render_frame();
 extern void func_8001fa44(s32 arg0);
 extern u32 func_80036e38(s32 arg0, u8 arg1);
-extern u8 *func_80036f44();
+extern u8 *effect_pool_construct();
 extern void effect_pool_sweep(void);
 extern void func_80035b5c(void);
 extern void func_800222b4(void);
@@ -118,7 +118,7 @@ void func_800346a8(void)
                 } else if (hold == 0x14) {
                     spawn = *(VECTOR *)&effect->position_x;
                     spawn.vy -= 600;
-                    func_80036f44(0, 0x13, 0x12, &spawn, aux, 1);
+                    effect_pool_construct(0, 0x13, 0x12, &spawn, aux, 1);
                     effect->object_id = 0xb;
                 }
             } else if (spin < 240) {

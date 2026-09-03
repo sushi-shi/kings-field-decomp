@@ -4,7 +4,7 @@
 /*
  * Effect-pool spawn band 0x80036f44..0x8003784f (GAME.EXE).
  *
- * func_80036f44 is the general effect-pool constructor. It claims a free
+ * effect_pool_construct is the general effect-pool constructor. It claims a free
  * KfEffectRecord from DAT_8009d040 (effect_pool_find_free), fixes the header
  * (type at 0x00, kind at 0x01, id at 0x06), copies the caller's VECTOR position
  * and SVECTOR direction, defaults the scale triple to 0x1000, then dispatches
@@ -13,16 +13,16 @@
  * the fifth argument (the direction pointer) is the base of the on-stack
  * variadic slots (arg6 at +4, arg7 at +8, arg8 at +12) that the kinds read.
  *
- * func_80037770 is a specialised constructor used by player_use_item; it seeds
+ * effect_pool_spawn_typed is a specialised constructor used by player_use_item; it seeds
  * the record directly without the kind dispatch.
  *
- * func_8003781c publishes the "current" effect record and its magic_records row
+ * effect_pool_set_current publishes the "current" effect record and its magic_records row
  * through DAT_8009db84/DAT_8009db80.
  *
- * func_80037770 is exact. func_80036f44 carries the GCC 2.5.7 switch
+ * effect_pool_spawn_typed is exact. effect_pool_construct carries the GCC 2.5.7 switch
  * cross-jumping / K&R stack-vararg codegen residue (a large jump table with
  * tail-merged cases and one fewer callee-saved register than retail).
- * func_8003781c carries the shared-high-halfword data residue: the retail unit
+ * effect_pool_set_current carries the shared-high-halfword data residue: the retail unit
  * reaches magic_records by offset from DAT_8009db84's base register because the
  * two globals are consecutive in the original translation unit, which a
  * reconstruction referencing magic_records as its own extern cannot reproduce.
@@ -44,11 +44,11 @@ extern void audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);
 
-/* func_80036f44 kind-dispatch jump table (kinds 0x04..0x30). */
+/* effect_pool_construct kind-dispatch jump table (kinds 0x04..0x30). */
 RODATA(0x80012c28, 0xb4)
 
 ADDRESS(0x80036f44, 0x82c)
-KfEffectRecord *func_80036f44(u8 id, u8 type, u8 kind, VECTOR *position,
+KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
                              SVECTOR *direction)
 {
     KfEffectRecord *record = (KfEffectRecord *)effect_pool_find_free();
@@ -454,7 +454,7 @@ KfEffectRecord *func_80036f44(u8 id, u8 type, u8 kind, VECTOR *position,
 }
 
 ADDRESS(0x80037770, 0xac)
-KfEffectRecord *func_80037770(u16 a0, u16 a1, u16 a2, u16 a3, s32 a4, s32 a5)
+KfEffectRecord *effect_pool_spawn_typed(u16 a0, u16 a1, u16 a2, u16 a3, s32 a4, s32 a5)
 {
     KfEffectRecord *record = (KfEffectRecord *)effect_pool_find_free();
     if (record != 0) {
@@ -476,7 +476,7 @@ KfEffectRecord *func_80037770(u16 a0, u16 a1, u16 a2, u16 a3, s32 a4, s32 a5)
 }
 
 ADDRESS(0x8003781c, 0x34)
-void func_8003781c(KfEffectRecord *record)
+void effect_pool_set_current(KfEffectRecord *record)
 {
     DAT_8009db84 = record;
     DAT_8009db80 = &magic_records[record->kind];

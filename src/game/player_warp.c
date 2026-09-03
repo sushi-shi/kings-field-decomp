@@ -11,7 +11,7 @@
  * mode 1 fades it out (delta -0x100 from 0x2000).
  *
  * player_warp_change_floor is the change-floor warp: shimmer out, reload the world through
- * func_80035e14/func_80036554, record the new floor/variant, snap the camera to
+ * func_80035e14/map_load_floor, record the new floor/variant, snap the camera to
  * the centre of its 2000-unit cell, and shimmer back in. player_warp_same_floor is the
  * same-floor teleport: shimmer out, drop the old broad-phase occupancy, swap the
  * map variant and its assets, move to an explicit cell, and shimmer back in.
@@ -40,16 +40,16 @@ extern u8 boss_defeat_complete;
 extern SoundRef gameplay_sound_ref_6;
 extern MATRIX DAT_80056248;
 
-extern KfEffectRecord *func_80036f44();
+extern KfEffectRecord *effect_pool_construct();
 extern void render_frame(VECTOR *position, SVECTOR *rotation);
 extern void display_flip_buffer_index(void);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void frame_pacer_wait(void);
 extern void func_80035e14(void);
-extern void func_80036554(void);
+extern void map_load_floor(void);
 extern void player_sync_position_to_map(void);
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern void func_80020a2c(void);
+extern void pool_release_all(void);
 extern void map_variant_assets_load(void);
 extern void audio_play_current_map_sequence(void);
 extern void ReadColorMatrix(MATRIX *matrix);
@@ -92,7 +92,7 @@ void player_warp_shimmer(s16 mode, VECTOR *position)
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
     for (i = 0; i < 4; i++) {
-        KfEffectRecord *effect = func_80036f44(0xa, 0x11, 0x15, position, &scratch.direction);
+        KfEffectRecord *effect = effect_pool_construct(0xa, 0x11, 0x15, position, &scratch.direction);
         EFFECT_INTENSITY(effect) = intensity;
         effects[i] = effect;
     }
@@ -141,7 +141,7 @@ void player_warp_change_floor(s32 floor, u8 variant)
     if (player_state.progress_state.highest_floor < floor) {
         player_state.progress_state.highest_floor = floor;
     }
-    func_80036554();
+    map_load_floor();
     player_state.camera_position.vx =
         player_state.camera_position.vx / 2000 * 2000 + 1000;
     position[0] = player_state.camera_position.vx;
@@ -165,7 +165,7 @@ void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
     player_warp_shimmer(0, (VECTOR *)position);
     collision_adjust_cell_occupancy(player_state.map_cell.x,
                                     player_state.map_cell.z, -1);
-    func_80020a2c();
+    pool_release_all();
     previous_variant = player_state.map_variant;
     player_state.map_variant = variant;
     map_variant_assets_load();

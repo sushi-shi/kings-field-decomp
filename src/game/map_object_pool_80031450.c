@@ -7,7 +7,7 @@ extern KfMapObjectState map_object_state;
 extern u8 map_floor_height_grid[100][100];
 extern KfEffectRecord DAT_8009d040[];
 /* Effect spawner called with five or six arguments; declared without a prototype. */
-extern KfEffectRecord *func_80036f44();
+extern KfEffectRecord *effect_pool_construct();
 extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
 extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
 extern void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw);
@@ -55,7 +55,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             }
             switch (object_id) {
             case 136:
-                object->link.action_parameter = func_80036f44(
+                object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x23,
                                                     0x11,
@@ -71,7 +71,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 map_object_start_action_if_idle(object, 0x50);
                 break;
             case 138:
-                object->link.action_parameter = func_80036f44(
+                object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x23,
                                                     0xf,
@@ -82,7 +82,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 map_object_start_action_if_idle(object, 0x51);
                 break;
             case 139:
-                object->link.action_parameter = func_80036f44(
+                object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x23,
                                                     0x10,
@@ -94,7 +94,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 break;
             case 135:
                 object->link.action_parameter =
-                    func_80036f44(0, 3, 0x30, &object->position_x, effect_output, &object->rotation)
+                    effect_pool_construct(0, 3, 0x30, &object->position_x, effect_output, &object->rotation)
                     - DAT_8009d040;
                 map_object_start_action_if_idle(object, 0x53);
                 break;

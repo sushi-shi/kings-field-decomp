@@ -18,7 +18,7 @@ extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 index);
 extern void tmd_transform_vertices(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
-extern u16 *func_800205d4(void *entry, u16 asset, u16 arg2, u16 arg3, u16 count);
+extern u16 *render_bind_animated_instance(void *entry, u16 asset, u16 arg2, u16 arg3, u16 count);
 extern void func_8001c7f8(u16 arg0, s16 arg1);
 extern void func_8001e480(char *entry);
 
@@ -76,7 +76,7 @@ void render_weapon(void)
     SetTransMatrix(&model);
     asset_registry_select(0x14);
     object = tmd_get_object(0);
-    if (func_800205d4(
+    if (render_bind_animated_instance(
             &player_state.unknown_74, 0x14, 0, player_state.weapon_attack_phase,
             object->vertex_count) != 0) {
         tmd_project_vertices_shift(object->vertex_count, 3);
@@ -91,7 +91,7 @@ void render_weapon(void)
  * replaced with render_state's sprite color matrix for the whole pass and
  * restored afterwards.  Each live entry builds a rotated, uniformly scaled
  * model matrix with the translation folded into its t column, tests visibility
- * through func_800205d4, and, if visible, transforms and enqueues asset 0x15.
+ * through render_bind_animated_instance, and, if visible, transforms and enqueues asset 0x15.
  */
 ADDRESS(0x8001f8b0, 0x124)
 void render_effect_sprites(void)
@@ -120,7 +120,7 @@ void render_effect_sprites(void)
         SetTransMatrix(&model);
         asset_registry_select(0x15);
         object = tmd_get_object(0);
-        if (func_800205d4(
+        if (render_bind_animated_instance(
                 &entry->anchor, 0x15, entry->visibility_tag, entry->asset_variant,
                 object->vertex_count) != 0) {
             tmd_transform_vertices(object->vertex_count);

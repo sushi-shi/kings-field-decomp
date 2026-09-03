@@ -64,11 +64,11 @@ extern void tmd_set_current_vertices(SVECTOR *vertices);
 extern void *memory_malloc_checked(s32 size);
 extern struct KfPoolRecord *pool_allocate(void);
 extern void pool_record_release(struct KfPoolRecord *record);
-extern void func_80020a2c(void);
+extern void pool_release_all(void);
 extern void gteMIMefunc(SVECTOR *dst, SVECTOR *delta, long count, long frac);
 
 ADDRESS(0x800205d4, 0x3a4)
-u16 *func_800205d4(void *anchor, u16 asset, u16 tag, u16 variant, u16 count)
+u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count)
 {
     struct KfPoolRecord *record = *(struct KfPoolRecord **)anchor;
     KfAnimAsset *ah = asset_registry_entries[asset];
@@ -111,7 +111,7 @@ reinit:
         alloc = memory_malloc_checked(count << 3);
         record->allocation = alloc;
         if (alloc == 0) {
-            func_80020a2c();
+            pool_release_all();
         }
     } while (alloc == 0);
     *(struct KfPoolRecord **)anchor = record;

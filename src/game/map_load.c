@@ -4,7 +4,7 @@
 /*
  * Map-load band 0x80035e44..0x800365f8 (GAME.EXE).
  *
- * func_80035e44 is the per-floor world-state RESTORE routine: the exact inverse
+ * map_restore_floor_state is the per-floor world-state RESTORE routine: the exact inverse
  * of func_80035b5c (map_events.c), which serialises the live event, actor, and
  * map-object state into the DAT_8009ddb4 world-state block. It reads the same
  * 1700-byte per-floor record (base - 1690 + 1700 * current_floor), and when its
@@ -18,8 +18,8 @@
  * base - 556); separate globals cannot reproduce that base, so a register/
  * scheduling residue is expected here exactly as documented for func_80035b5c.
  *
- * func_800364e0 walks the eight-record map_event_pool and refreshes the image
- * of every active (state == 1) event. func_80036554 loads the current floor:
+ * map_refresh_event_images walks the eight-record map_event_pool and refreshes the image
+ * of every active (state == 1) event. map_load_floor loads the current floor:
  * map_resources_load, the world-state restore, the event refresh, func_8001bae4,
  * then copies colour_matrix_table[3] into the render lighting matrix.
  */
@@ -52,11 +52,11 @@ extern void map_object_pool_clear_link(u8 link_id);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 
-/* func_80035e44 per-floor scripted-setup jump table (floors 1..5). */
+/* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
 RODATA(0x80012bfc, 0x14)
 
 ADDRESS(0x80035e44, 0x69c)
-void func_80035e44(void)
+void map_restore_floor_state(void)
 {
     u8 *base = (u8 *)&DAT_8009ddb4;
     u8 *in;
@@ -207,7 +207,7 @@ void func_80035e44(void)
 }
 
 ADDRESS(0x800364e0, 0x74)
-void func_800364e0(void)
+void map_refresh_event_images(void)
 {
     KfMapEvent *event = map_event_pool;
     u16 index = 7;
@@ -221,12 +221,12 @@ void func_800364e0(void)
 }
 
 ADDRESS(0x80036554, 0xa4)
-void func_80036554(void)
+void map_load_floor(void)
 {
     map_resources_load(player_state.progress_state.current_floor,
                        player_state.map_variant);
-    func_80035e44();
-    func_800364e0();
+    map_restore_floor_state();
+    map_refresh_event_images();
     func_8001bae4(player_state.progress_state.current_floor);
     render_state.unknown_80 = color_matrix_table[3];
 }

@@ -11,7 +11,7 @@ extern void pool_record_release(struct KfPoolRecord *record);
  * instance data.
  */
 ADDRESS(0x80020a2c, 0x6c)
-void func_80020a2c(void)
+void pool_release_all(void)
 {
     struct KfPoolRecord *record = pool_records;
     s16 i;
@@ -30,7 +30,7 @@ void func_80020a2c(void)
  * back to state 2.
  */
 ADDRESS(0x80020a98, 0x6c)
-void func_80020a98(void)
+void pool_release_stale(void)
 {
     struct KfPoolRecord *record = pool_records;
     u16 count = 12;

@@ -13,7 +13,7 @@ extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s *direction);
 extern void vector3s_scale_shift12(s16 scale, s16 *vector);
 /* Effect spawner called with six to eight arguments; declared without a prototype. */
-extern u8 *func_80036f44();
+extern u8 *effect_pool_construct();
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
 extern void vector2s_scale_shift11(s16 scale, s16 *vector);
 extern s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_collision);
@@ -155,19 +155,19 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
             pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
             vector3s_scale_shift12(scale, (s16 *)&direction);
             if (effect_code == 8 || effect_code == 22) {
-                func_80036f44(
+                effect_pool_construct(
                     definition->unknown_82, 0x23, effect_code, &position, &direction, &angles, 1);
             } else if (effect_code == 24) {
                 burst_angles.x = actor->rotation.x;
                 burst_angles.y = facing;
                 burst_angles.z = actor->rotation.z;
-                func_80036f44(
+                effect_pool_construct(
                     definition->unknown_82, 0x23, 24, &position, &direction, &burst_angles, 0xfe, 1);
             } else if (effect_code == 10) {
-                func_80036f44(
+                effect_pool_construct(
                     definition->unknown_82, 0x23, 10, &position, &direction, 3, distance, 0xbb8);
             } else {
-                func_80036f44(
+                effect_pool_construct(
                     definition->unknown_82, 0x23, effect_code, &position, &direction, distance, 1);
             }
             break;

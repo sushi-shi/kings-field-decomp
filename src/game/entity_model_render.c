@@ -55,7 +55,7 @@ extern void asset_registry_select(u16 index);
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern void tmd_select_object_vertices(u16 object_index);
 extern void tmd_project_vertices(s32 count);
-extern u16 *func_800205d4(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
+extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
 extern void func_8001c7f8(u16 object_index, s16 depth_bias);
 extern void func_8001d730(u16 object_index, s16 depth_bias);
 
@@ -91,7 +91,7 @@ void render_actor(KfActor *actor)
     asset = descriptor & 0xf;
     asset_registry_select(asset);
     object = tmd_get_object(0);
-    if (func_800205d4(&actor->unknown_34, asset, actor->animation_id,
+    if (render_bind_animated_instance(&actor->unknown_34, asset, actor->animation_id,
                       actor->animation_phase, object->vertex_count) == 0) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);

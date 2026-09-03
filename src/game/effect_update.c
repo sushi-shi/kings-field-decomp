@@ -10,14 +10,14 @@
  * record published through DAT_8009db84 (and its magic_records row through
  * DAT_8009db80), or on a record passed by pointer.
  *
- * func_80037fe0 / func_80038298 are projectile-motion updates: they advance the
+ * effect_projectile_update_3d / effect_projectile_update_2d are projectile-motion updates: they advance the
  * record along a rotated velocity, probe the world through func_80037850, apply
  * actor (collision class 0x10) or player (class 0x80) damage from the magic
  * row, and manage the impact sound and lifetime counter (unknown_07).
- * func_800384f8 stamps an interpolated floor height into map_floor_height_grid
- * along a scripted cell line (segment records at DAT_80056247+0x21). func_800386c4
- * jitters a three-halfword triple by rand. func_8003872c rotates a scaled
- * (vx,0,vz) offset about Y. func_800387bc / func_800388b4 spawn trailing
+ * effect_floor_deform_line stamps an interpolated floor height into map_floor_height_grid
+ * along a scripted cell line (segment records at DAT_80056247+0x21). effect_scatter_triple
+ * jitters a three-halfword triple by rand. effect_rotate_scale_offset_y rotates a scaled
+ * (vx,0,vz) offset about Y. effect_spawn_trail_kind13 / effect_spawn_ground_kind6 spawn trailing
  * sub-effects (kinds 0x13 and 6) offset from the record.
  *
  * func_80037850 (the collision/height probe) and func_80038a38 (the dispatcher)
@@ -32,11 +32,11 @@ extern u8 map_floor_height_grid[100][100];
 extern SoundRef gameplay_sound_ref_4;
 
 /* Base datum holding the scripted floor-deformation segment records that
- * func_800384f8 reads from offset 0x21 (7-byte records); extent WIP. */
+ * effect_floor_deform_line reads from offset 0x21 (7-byte records); extent WIP. */
 extern u8 DAT_80056247[];
 
 extern u32 func_80037850(VECTOR *position, s32 param);
-extern KfEffectRecord *func_80036f44();
+extern KfEffectRecord *effect_pool_construct();
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern void actor_apply_damage(
@@ -53,7 +53,7 @@ extern void audio_play_spatial_default_range(
 extern s32 rand(void);
 
 ADDRESS(0x80037fbc, 0x24)
-int func_80037fbc(KfEffectRecord *effect)
+int effect_magic_power(KfEffectRecord *effect)
 {
     if (effect->type & 0x10) {
         return player_state.magic;
@@ -62,7 +62,7 @@ int func_80037fbc(KfEffectRecord *effect)
 }
 
 ADDRESS(0x80037fe0, 0x2b8)
-void func_80037fe0(SVECTOR *velocity, s32 frame_limit)
+void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
 {
     KfEffectRecord *record = DAT_8009db84;
     KfMagicRecord *magic = DAT_8009db80;
@@ -132,7 +132,7 @@ void func_80037fe0(SVECTOR *velocity, s32 frame_limit)
 }
 
 ADDRESS(0x80038298, 0x260)
-void func_80038298(s32 speed, s32 frame_limit)
+void effect_projectile_update_2d(s32 speed, s32 frame_limit)
 {
     KfEffectRecord *record = DAT_8009db84;
     KfMagicRecord *magic = DAT_8009db80;
@@ -179,7 +179,7 @@ void func_80038298(s32 speed, s32 frame_limit)
 }
 
 ADDRESS(0x800384f8, 0x1cc)
-void func_800384f8(s32 segment_index, s32 progress_start, s32 progress_step)
+void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step)
 {
     u8 *segment = &DAT_80056247[segment_index * 7 + 0x21];
     int range = progress_step < 0 ? -progress_step : progress_step;
@@ -215,7 +215,7 @@ void func_800384f8(s32 segment_index, s32 progress_start, s32 progress_step)
 }
 
 ADDRESS(0x800386c4, 0x68)
-void func_800386c4(u16 *values)
+void effect_scatter_triple(u16 *values)
 {
     values[0] = values[0] + (rand() >> 8) - 64;
     values[1] = values[1] + (rand() >> 8) - 64;
@@ -223,7 +223,7 @@ void func_800386c4(u16 *values)
 }
 
 ADDRESS(0x8003872c, 0x90)
-void func_8003872c(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale)
+void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale)
 {
     SVECTOR scaled;
     SVECTOR rotation;
@@ -240,22 +240,22 @@ void func_8003872c(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale)
 }
 
 ADDRESS(0x800387bc, 0xf8)
-void func_800387bc(u8 id, KfEffectRecord *record, s16 angle, s32 distance)
+void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 distance)
 {
     VECTOR position;
     s32 index;
     s32 scale = (distance << 12) / 800;
 
-    func_8003872c((SVECTOR *)&record->direction_x, &position, angle, scale);
+    effect_rotate_scale_offset_y((SVECTOR *)&record->direction_x, &position, angle, scale);
     index = ((char *)record - (char *)DAT_8009d040) / 60;
     position.vx += record->position.vx;
     position.vz += record->position.vz;
-    func_80036f44(id, record->type, 0x13, &position,
+    effect_pool_construct(id, record->type, 0x13, &position,
         (SVECTOR *)&record->direction_x, index);
 }
 
 ADDRESS(0x800388b4, 0x184)
-void func_800388b4(u8 id, KfEffectRecord *record, s16 angle_offset, s32 arg6)
+void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 arg6)
 {
     VECTOR position;
     s32 angle = -(s16)(record->direction_y + angle_offset);
@@ -267,6 +267,6 @@ void func_800388b4(u8 id, KfEffectRecord *record, s16 angle_offset, s32 arg6)
     cell_z = position.vz / 2000;
     cell_x = position.vx / 2000;
     position.vy = -(map_floor_height_grid[cell_z][cell_x] * 100);
-    func_80036f44(id, record->type, 6, &position,
+    effect_pool_construct(id, record->type, 6, &position,
         (SVECTOR *)&record->direction_x, arg6);
 }

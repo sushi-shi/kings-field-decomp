@@ -5,7 +5,7 @@
  * Notification effect state machine, stepped once per frame by the frame
  * renderer (render_frame).  It consumes the notification ring filled by
  * func_8001fa44 and drives the six on-screen sprite records that
- * func_8001e230 draws.
+ * render_enqueue_sprite draws.
  *
  *   phase 0: a queued id starts an effect.  Id 0x13 is a numeric popup whose
  *            payload is split into four digit sprites; any other id shows one

@@ -6,14 +6,14 @@
  * Two polygon-emission enqueuers that sit at the tail of the render subsystem's
  * primitive pipeline.
  *
- * func_8001de18 is the lit map-geometry path: it walks a prepared TMD object's
+ * render_enqueue_map is the lit map-geometry path: it walks a prepared TMD object's
  * FT3/FT4 primitive packets, back-face-clips each against the projected screen
  * vertices, and up-converts them into Gouraud-textured GT3/GT4 GPU primitives
  * whose per-vertex colours come from one flat face normal (NormalColorCol) that
  * is then depth-cued per vertex (DpqColor).  It is the emitter reached by the
  * per-cell wall/floor routine func_8001e5ec.
  *
- * func_8001e230 is the projected textured-sprite enqueuer: it projects a
+ * render_enqueue_sprite is the projected textured-sprite enqueuer: it projects a
  * KfSpriteQuad's four corners through the GTE (RotTransPers4), builds a
  * depth-cued POLY_FT4, and sorts it into the 3D scene's ordering table.  It is
  * reached by the floor-item and actor-billboard emitters and by the frame
@@ -23,14 +23,14 @@
  * Residues (both structurally exact -- call set, referents, widths, control
  * flow all match; see docs/patterns/source-shapes-gcc257.md):
  *
- *  - func_8001e230 hits the same post-reload-scheduler wall as its banked
+ *  - render_enqueue_sprite hits the same post-reload-scheduler wall as its banked
  *    sibling func_8001e480 (render_sprite.c): gcc-2.5.7 fills the screen-XY
  *    load-delay slots with the clut/tpage global loads and saves the anchor
  *    depth in the RotTransPers4 delay slot a beat differently than retail,
  *    which spends one extra callee-saved register.  Neither -O2 nor
  *    -fno-schedule-insns2 reproduces both retail schedules at once.
  *
- *  - func_8001de18 references four curated identities -- tmd_state.current_asset,
+ *  - render_enqueue_map references four curated identities -- tmd_state.current_asset,
  *    the projected-vertex buffer DAT_800911b0, and display_state.ordering_table
  *    -- that the retail code reaches through ONE base register: it holds
  *    &tmd_state.current_asset and forms the vertex buffer as base+488 and the
@@ -100,7 +100,7 @@ extern void DpqColor(CVECTOR *in, long dqp, CVECTOR *out);
  * ordering-table slot is the averaged screen depth biased by 200.
  */
 ADDRESS(0x8001de18, 0x418)
-void func_8001de18(u16 object_index)
+void render_enqueue_map(u16 object_index)
 {
     KfTmdObject *object;
     u8 *payload;
@@ -213,7 +213,7 @@ void func_8001de18(u16 object_index)
  * projected depth biased by the caller's screen_scale.
  */
 ADDRESS(0x8001e230, 0x250)
-void func_8001e230(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
+void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
 {
     SVECTOR corners[4];
     SVECTOR anchor;

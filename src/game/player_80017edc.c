@@ -14,7 +14,7 @@ extern const SoundRef gameplay_sound_ref_12;
 /* Psy-Q LIBGTE: rsin, rcos. */
 extern void func_8001fa44(s32 arg0);
 /* Effect spawner variant called with six arguments; declared without a prototype. */
-extern u8 *func_80037770();
+extern u8 *effect_pool_spawn_typed();
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 extra_radius);
 extern void map_object_pool_trigger_link(u8 link_id);
@@ -151,9 +151,9 @@ void player_use_item(u8 item_id)
             }
         }
         if (player_state.progress_state.current_floor == 2) {
-            func_80037770(0, 4, 0x96, 0x320, 0x2b, 0x46);
+            effect_pool_spawn_typed(0, 4, 0x96, 0x320, 0x2b, 0x46);
         } else if (player_state.progress_state.current_floor == 3) {
-            func_80037770(4, 1, 0x96, 0x320, 0x58, 0x10e);
+            effect_pool_spawn_typed(4, 1, 0x96, 0x320, 0x58, 0x10e);
         } else {
             break;
         }

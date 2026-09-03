@@ -16,12 +16,12 @@ extern u32 game_exit_code;
 extern u32 pad_read(s32 mode);
 extern void func_8001b7b0(char object);
 extern s32 func_80036e38(s32 arg0);
-extern void func_80020a2c(void);
+extern void pool_release_all(void);
 extern void func_800365f8(void);
 extern void func_80034de4();
 extern void func_8003a2a0(void);
 extern void lighting_set_active_color_matrix(s32 arg0);
-extern KfEffectRecord *func_80036f44();
+extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
 extern void matrix_set_rotation_yxz(
     const struct KfEulerAngles *angles, MATRIX *matrix);
@@ -107,7 +107,7 @@ void player_update(void)
         if (item >= 0) {
             player_use_item(item);
         } else if (item == -3) {
-            func_80020a2c();
+            pool_release_all();
             audio_close_vab();
             func_800365f8();
             player_sync_position_to_map();
@@ -410,17 +410,17 @@ void player_update(void)
                     }
                     pitch_yaw_to_forward_vector((const struct KfPitchYaw *)&angles, &direction);
                     vector3s_scale_shift12(900, (s16 *)&direction);
-                    func_80036f44(10, 17, effect, &position, &direction,
+                    effect_pool_construct(10, 17, effect, &position, &direction,
                                   &player_state.camera_rotation, attachment, 1);
                     if (effect == 20) {
                         position.vy += 300;
                         angles.y = player_state.camera_rotation.vy;
                         angles.z = player_state.camera_rotation.vz;
                         angles.x = player_state.camera_rotation.vx + 64;
-                        func_80036f44(10, 17, 20, &position, &direction, &angles, attachment, 0);
+                        effect_pool_construct(10, 17, 20, &position, &direction, &angles, attachment, 0);
                         angles.x -= 128;
                         position.vy -= 600;
-                        func_80036f44(10, 17, 20, &position, &direction, &angles, attachment, 0);
+                        effect_pool_construct(10, 17, 20, &position, &direction, &angles, attachment, 0);
                     }
                 }
                 player_state.unknown_78--;

@@ -9,7 +9,7 @@
  * in-range fraction).  No direct caller in GAME.EXE -- reached indirectly.
  */
 ADDRESS(0x80020428, 0x98)
-u16 func_80020428(u16 c0, u16 c1, s32 frac)
+u16 color_lerp_rgb555(u16 c0, u16 c1, s32 frac)
 {
     s32 r0 = c0 & 0x1f;
     s32 r1 = c1 & 0x1f;

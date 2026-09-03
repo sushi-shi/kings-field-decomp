@@ -2,7 +2,7 @@
 #include <kf/semantic_types.h>
 
 extern KfEffectRecord DAT_8009d040[];
-extern void func_8003781c(u8 *object);
+extern void effect_pool_set_current(u8 *object);
 extern void func_80038a38(void);
 
 ADDRESS(0x8003a760, 0x7c)
@@ -13,7 +13,7 @@ void effect_pool_sweep(void)
 
     do {
         if (record->type != 0xff) {
-            func_8003781c((u8 *)record);
+            effect_pool_set_current((u8 *)record);
             func_80038a38();
         }
         record++;

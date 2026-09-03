@@ -26,7 +26,7 @@ extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern s32 map_object_distance_to_point(
     const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 /* Effect spawner called with six or seven arguments; declared without a prototype. */
-extern KfEffectRecord *func_80036f44();
+extern KfEffectRecord *effect_pool_construct();
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
@@ -428,7 +428,7 @@ void map_object_pool_update(void)
                 direction.y = 0;
                 direction.x = (rsin(object->rotation.y) * 175u) >> 10;
                 direction.z = (-rcos(object->rotation.y) * 175u) >> 10;
-                func_80036f44(
+                effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
                     0x23,
                     0xe,
@@ -444,7 +444,7 @@ void map_object_pool_update(void)
                 point.x = object->position_x;
                 point.z = object->position_z;
                 point.y = object->position_y - 1400;
-                func_80036f44(
+                effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
                     0x23,
                     5,
@@ -460,7 +460,7 @@ void map_object_pool_update(void)
                 point.x = object->position_x;
                 point.z = object->position_z;
                 point.y = object->position_y + 600;
-                func_80036f44(
+                effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
                     0x23,
                     7,
@@ -488,7 +488,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 point.y = object->position_y - 1000;
-                func_80036f44(
+                effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
                     0x23,
                     7,

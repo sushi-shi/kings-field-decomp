@@ -6,7 +6,7 @@ extern KfPlayerState player_state;
 extern const KfFloorEntryCell floor_entry_cells[5];
 extern void player_warp_shimmer(s16 object, void *arg1);
 extern void audio_play_current_map_sequence(void);
-extern void func_80020a2c(void);
+extern void pool_release_all(void);
 extern void map_variant_assets_load(void);
 extern void player_sync_position_to_map(void);
 
@@ -33,7 +33,7 @@ void player_warp_to_floor_entry(void)
         if (player_state.map_variant == 3) {
             audio_play_current_map_sequence();
         }
-        func_80020a2c();
+        pool_release_all();
         player_state.map_variant = 1;
         map_variant_assets_load();
     }

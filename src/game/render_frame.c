@@ -62,11 +62,11 @@ extern void render_map_cells(void);
 extern void render_effect_sprites(void);
 extern void render_hud_gauges(u8 *table);
 extern void func_8001fafc(void);
-extern void func_8001e230(char *descriptor, s16 screen_scale, s32 flag);
+extern void render_enqueue_sprite(char *descriptor, s16 screen_scale, s32 flag);
 extern void render_entities(void);
 extern void render_weapon(void);
 extern void display_present_frame(void);
-extern void func_80020a98(void);
+extern void pool_release_stale(void);
 
 ADDRESS(0x8001fde4, 0x518)
 void render_frame(VECTOR *position, SVECTOR *rotation)
@@ -161,17 +161,17 @@ void render_frame(VECTOR *position, SVECTOR *rotation)
     DAT_80095058 = DAT_80095066;
     record = DAT_80055d20;
     if (record[0] == 1) {
-        func_8001e230((char *)(record + 2), 0, 0);
+        render_enqueue_sprite((char *)(record + 2), 0, 0);
     }
     if (DAT_80055d2e == 1) {
-        func_8001e230((char *)(record + 16), 0, 0);
+        render_enqueue_sprite((char *)(record + 16), 0, 0);
     }
     record += 28;
     DAT_8009505a = DAT_8009506c;
     DAT_80095058 = DAT_8009506a;
     for (i = 3; i != -1; i--) {
         if (record[0] == 1) {
-            func_8001e230((char *)(record + 2), 0, 0);
+            render_enqueue_sprite((char *)(record + 2), 0, 0);
         }
         record += 14;
     }
@@ -179,5 +179,5 @@ void render_frame(VECTOR *position, SVECTOR *rotation)
     render_entities();
     render_weapon();
     display_present_frame();
-    func_80020a98();
+    pool_release_stale();
 }

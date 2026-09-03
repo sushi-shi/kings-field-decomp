@@ -11,7 +11,7 @@ extern void player_equip_weapon(u8 weapon_id);
 extern void player_set_equipment_slot(u8 item_id, u8 slot);
 extern void player_select_magic(u8 magic_id);
 extern void func_80035b5c(void);
-extern void func_80020a2c(void);
+extern void pool_release_all(void);
 extern void audio_close_vab(void);
 extern void func_800365f8(void);
 extern void player_sync_position_to_map(void);
@@ -159,7 +159,7 @@ void player_death_restart(void)
     if (floor != 1) {
         player_state.progress_state.current_floor = 1;
         player_state.map_variant = 0;
-        func_80020a2c();
+        pool_release_all();
         audio_close_vab();
         func_800365f8();
     }
