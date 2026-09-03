@@ -13,7 +13,7 @@ typedef struct MenuGlyphString {
 
 extern void menu_frame_begin(void);
 extern void menu_present_frame(void);
-extern void func_80027ee4(void *arg0, s32 arg1);
+extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
 extern void menu_draw_two_option(const MenuGlyphString *point0,
                           const MenuGlyphString *point1, s32 selected,
@@ -61,7 +61,7 @@ s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3)
     for (;;) {
         if (result != -99) {
             menu_frame_begin();
-            func_80027ee4(arg3, composite);
+            menu_draw_dialog_frame(arg3, composite);
             menu_draw_window(kind, menu_id, arg2, 1);
             menu_draw_two_option(&label_a, &label_b, selected, highlight);
             menu_present_frame();
@@ -90,7 +90,7 @@ s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3)
         }
 
         menu_frame_begin();
-        func_80027ee4(arg3, composite);
+        menu_draw_dialog_frame(arg3, composite);
         menu_draw_window(kind, menu_id, arg2, 1);
         menu_draw_two_option(&label_a, &label_b, selected, highlight);
         menu_present_frame();

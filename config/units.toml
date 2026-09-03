@@ -569,9 +569,21 @@ source = "src/game/menu_config_panel.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_item_detail"
+image = "GAME.EXE"
+source = "src/game/menu_item_detail.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_ot_prims"
 image = "GAME.EXE"
 source = "src/game/menu_ot_prims.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_dialog_frame"
+image = "GAME.EXE"
+source = "src/game/menu_dialog_frame.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -596,6 +608,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.menu_draw_string"
 image = "GAME.EXE"
 source = "src/game/menu_draw_string.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.menu_window_backdrop"
+image = "GAME.EXE"
+source = "src/game/menu_window_backdrop.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
