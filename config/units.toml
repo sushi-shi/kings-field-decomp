@@ -473,6 +473,12 @@ source = "src/game/menu_item_detail.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_list_interact"
+image = "GAME.EXE"
+source = "src/game/menu_list_interact.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_two_option_prompt"
 image = "GAME.EXE"
 source = "src/game/menu_two_option_prompt.c"
