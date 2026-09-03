@@ -1577,7 +1577,7 @@ GAME.EXE	0x80014740	0x2f40		mips26	reachable-code	0x8005030c	load	memset	jal		co
 GAME.EXE	0x80014748	0x2f48		mips26	reachable-code	0x8002b1d4	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014750	0x2f50		mips26	reachable-code	0x8001ab08	load	memory_set_allocation_mode	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x80014758	0x2f58		mips26	reachable-code	0x800328e0	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x80014760	0x2f60		mips26	reachable-code	0x8001bb94	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x80014760	0x2f60		mips26	reachable-code	0x8001bb94	load	display_initialize	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x80014768	0x2f68		mips26	reachable-code	0x80020cfc	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014770	0x2f70		mips26	reachable-code	0x8002ce88	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014778	0x2f78		mips26	reachable-code	0x80030f7c	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -1595,7 +1595,7 @@ GAME.EXE	0x800147dc	0x2fdc		mips26	reachable-code	0x8005045c	load	OpenEvent	jal	
 GAME.EXE	0x800147e8	0x2fe8		mips26	reachable-code	0x800502bc	load	EnableEvent	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800147f0	0x2ff0		mips26	reachable-code	0x80014674	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800147f8	0x2ff8		mips26	reachable-code	0x8002c70c	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001480c	0x300c		mips26	reachable-code	0x8001b7b0	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001480c	0x300c		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x80014814	0x3014	0x80014818	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x8001481c	0x301c	0x80014820	mips_hi16_lo16	reachable-code	0x800a078d	bss	player_state	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014824	0x3024	0x80014828	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	s2	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
@@ -2414,7 +2414,7 @@ GAME.EXE	0x800188e0	0x70e0	0x800188e4	mips_hi16_lo16	reachable-code	0x800a084b	b
 GAME.EXE	0x800188e8	0x70e8	0x800188ec	mips_hi16_lo16	reachable-code	0x800a084a	bss	player_state	lui+lbu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x800188f0	0x70f0		mips26	reachable-code	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
 GAME.EXE	0x800188f8	0x70f8		mips26	reachable-code	0x8005012c	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x80018910	0x7110		mips26	reachable-code	0x8001b7b0	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x80018910	0x7110		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80018934	0x7134	0x80018938	mips_hi16_lo16	reachable-code	0x80057b30	load		lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001894c	0x714c	0x80018950	mips_hi16_lo16	reachable-code	0x800a07f0	bss	player_state	lui+lh	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80018960	0x7160		mips26	reachable-code	0x80036e38	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
@@ -2623,7 +2623,7 @@ GAME.EXE	0x800198e8	0x80e8	0x800198ec	mips_hi16_lo16	reachable-code	0x800a084b	b
 GAME.EXE	0x800198f0	0x80f0	0x800198f4	mips_hi16_lo16	reachable-code	0x800a084a	bss	player_state	lui+lbu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x800198f8	0x80f8		mips26	reachable-code	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
 GAME.EXE	0x80019900	0x8100		mips26	reachable-code	0x80016bc0	load	player_update_weapon_attack	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_motion_attack
-GAME.EXE	0x80019908	0x8108		mips26	reachable-code	0x8001bab8	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x80019908	0x8108		mips26	reachable-code	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80019910	0x8110	0x80019914	mips_hi16_lo16	reachable-code	0x800a07ca	bss	player_state	lui+lh	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80019924	0x8124	0x80019928	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80019944	0x8144	0x80019948	mips_hi16_lo16	reachable-code	0x800a07ca	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:player_state-aggregate
@@ -2652,7 +2652,7 @@ GAME.EXE	0x80019aa0	0x82a0	0x80019aa4	mips_hi16_lo16	reachable-code	0x8005587b	l
 GAME.EXE	0x80019ab0	0x82b0	0x80019ab4	mips_hi16_lo16	reachable-code	0x80055878	load	DAT_80055878	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80019ac0	0x82c0	0x80019ac4	mips_hi16_lo16	reachable-code	0x8005587f	load	DAT_80055878	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80019ad0	0x82d0	0x80019ad4	mips_hi16_lo16	reachable-code	0x8005587c	load	DAT_80055878	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x80019af0	0x82f0		mips26	reachable-code	0x8001bab8	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x80019af0	0x82f0		mips26	reachable-code	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80019b08	0x8308	0x80019b0c	mips_hi16_lo16	reachable-code	0x800a07e4	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80019b1c	0x831c	0x80019b20	mips_hi16_lo16	reachable-code	0x800a07e8	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80019b38	0x8338	0x80019b3c	mips_hi16_lo16	reachable-code	0x800a07d8	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:player_state-aggregate
@@ -2713,7 +2713,7 @@ GAME.EXE	0x8001a094	0x8894	0x8001a098	mips_hi16_lo16	reachable-code	0x800a07aa	b
 GAME.EXE	0x8001a0b0	0x88b0		mips26	reachable-code	0x8001a0cc	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001a0cc	0x88cc	0x8001a0d0	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+addiu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001a0e0	0x88e0		mips26	reachable-code	0x8001a140	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x8001a128	0x8928		mips26	reachable-code	0x8001bab8	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x8001a128	0x8928		mips26	reachable-code	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001a138	0x8938		mips26	reachable-code	0x8001564c	load	player_adjust_hp	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_death
 GAME.EXE	0x8001a140	0x8940	0x8001a144	mips_hi16_lo16	reachable-code	0x800a07c8	bss	player_state	lui+addiu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001a158	0x8958	0x8001a15c	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
@@ -2727,7 +2727,7 @@ GAME.EXE	0x8001a1e0	0x89e0	0x8001a1e4	mips_hi16_lo16	reachable-code	0x800a07aa	b
 GAME.EXE	0x8001a1f0	0x89f0	0x8001a1f4	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001a1f8	0x89f8		mips26	reachable-code	0x8001a208	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001a208	0x8a08		mips26	reachable-code	0x80015714	load	player_recalculate_combat_stats	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_stats
-GAME.EXE	0x8001a210	0x8a10		mips26	reachable-code	0x8001bab8	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x8001a210	0x8a10		mips26	reachable-code	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001a218	0x8a18	0x8001a21c	mips_hi16_lo16	reachable-code	0x800a07d0	bss	player_state	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001a230	0x8a30	0x8001a234	mips_hi16_lo16	reachable-code	0x800a07e4	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001a244	0x8a44		mips26	reachable-code	0x800187a4	load	lighting_apply_weapon9_environment	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
@@ -2814,7 +2814,7 @@ GAME.EXE	0x8001ad38	0x9538	0x8001ad3c	mips_hi16_lo16	reachable-code	0x80057b44	l
 GAME.EXE	0x8001ad40	0x9540		mips26	reachable-code	0x8005031c	load	strcat	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad48	0x9548	0x8001ad4c	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad50	0x9550		mips26	reachable-code	0x8003c810	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001ad60	0x9560		mips26	reachable-code	0x8001b7b0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001ad60	0x9560		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad68	0x9568	0x8001ad6c	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad98	0x9598		mips26	reachable-code	0x8001ac0c	load	memory_allocate	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ada4	0x95a4	0x8001ada8	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+lbu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
@@ -2828,7 +2828,7 @@ GAME.EXE	0x8001ade0	0x95e0		mips26	reachable-code	0x8003aed8	load		jal		control-
 GAME.EXE	0x8001adec	0x95ec	0x8001adf0	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+lw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001adf8	0x95f8		mips26	reachable-code	0x8003b034	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ae04	0x9604		mips26	reachable-code	0x8003ad54	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001ae3c	0x963c		mips26	reachable-code	0x8001b7b0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001ae3c	0x963c		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ae8c	0x968c	0x8001ae90	mips_hi16_lo16	reachable-code	0x8006b734	bss	cd_file_table	lui+addiu	at	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ae9c	0x969c		mips26	reachable-code	0x8001ac0c	load	memory_allocate	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001aea8	0x96a8	0x8001aeac	mips_hi16_lo16	reachable-code	0x8006b730	bss	cd_file_table	lui+addiu	at	paired-reviewed	reviewed	manual:cd_file;carved-body-reviewed
@@ -2842,7 +2842,7 @@ GAME.EXE	0x8001af08	0x9708		mips26	reachable-code	0x8003aed8	load		jal		control-
 GAME.EXE	0x8001af18	0x9718	0x8001af1c	mips_hi16_lo16	reachable-code	0x8006b734	bss	cd_file_table	lui+addiu	at	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001af2c	0x972c		mips26	reachable-code	0x8003b034	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001af38	0x9738		mips26	reachable-code	0x8003ad54	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001af70	0x9770		mips26	reachable-code	0x8001b7b0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001af70	0x9770		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001afb4	0x97b4	0x8001afb8	mips_hi16_lo16	reachable-code	0x80058098	bss	cd_path_buffer	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001afbc	0x97bc	0x8001afc0	mips_hi16_lo16	reachable-code	0x80057b3c	load	cd_path_prefix	lui+addiu	a2	paired-reviewed	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001afdc	0x97dc		mips26	reachable-code	0x8005031c	load	strcat	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
@@ -2850,7 +2850,7 @@ GAME.EXE	0x8001afe4	0x97e4	0x8001afe8	mips_hi16_lo16	reachable-code	0x80057b44	l
 GAME.EXE	0x8001afec	0x97ec		mips26	reachable-code	0x8005031c	load	strcat	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001aff4	0x97f4	0x8001aff8	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001affc	0x97fc		mips26	reachable-code	0x8003c810	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001b00c	0x980c		mips26	reachable-code	0x8001b7b0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001b00c	0x980c		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b014	0x9814	0x8001b018	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b044	0x9844	0x8001b048	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+lbu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b04c	0x984c	0x8001b050	mips_hi16_lo16	reachable-code	0x80058081	bss	cd_search_file	lui+lbu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
@@ -2863,7 +2863,7 @@ GAME.EXE	0x8001b080	0x9880		mips26	reachable-code	0x8003aed8	load		jal		control-
 GAME.EXE	0x8001b08c	0x988c	0x8001b090	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+lw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b098	0x9898		mips26	reachable-code	0x8003b034	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b0a4	0x98a4		mips26	reachable-code	0x8003ad54	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001b0dc	0x98dc		mips26	reachable-code	0x8001b7b0	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001b0dc	0x98dc		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b108	0x9908		mips26	reachable-code	0x800529a0	load	OpenTIM	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b110	0x9910		mips26	reachable-code	0x800529b0	load	ReadTIM	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b134	0x9934		mips26	reachable-code	0x80050958	load	LoadImage	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
@@ -3028,7 +3028,7 @@ GAME.EXE	0x8001bc74	0xa474	0x8001bc78	mips_hi16_lo16	reachable-code	0x80090f36	b
 GAME.EXE	0x8001bc7c	0xa47c	0x8001bc80	mips_hi16_lo16	reachable-code	0x80090f37	bss	display_draw_environments	lui+sb	zero	paired-reviewed	reviewed	manual:game_display_initialize
 GAME.EXE	0x8001bc84	0xa484		mips26	reachable-code	0x80050e68	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001bc94	0xa494		mips26	reachable-code	0x8004ca3c	load	SetBackColor	jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001bc9c	0xa49c		mips26	reachable-code	0x8001bab8	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001bc9c	0xa49c		mips26	reachable-code	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001bcac	0xa4ac		mips26	reachable-code	0x8004ca5c	load	SetFarColor	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001bcc0	0xa4c0		mips26	reachable-code	0x8004f4b4	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001bcc8	0xa4c8		mips26	reachable-code	0x8001bce0	load	render_initialize	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
@@ -3406,7 +3406,7 @@ GAME.EXE	0x8001ecf4	0xd4f4		mips26	reachable-code	0x8001c148	load	tmd_select_obj
 GAME.EXE	0x8001ecfc	0xd4fc		mips26	reachable-code	0x8001c114	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001ed08	0xd508		mips26	reachable-code	0x8001c60c	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001ed14	0xd514		mips26	reachable-code	0x8001c7f8	load		jal		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001ed40	0xd540		mips26	reachable-code	0x8001bab8	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001ed40	0xd540		mips26	reachable-code	0x8001bab8	load	lighting_set_active_color_matrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001ed48	0xd548		mips26	reachable-code	0x8004cb08	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ed50	0xd550		mips26	reachable-code	0x8001c0e8	load	tmd_select	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001ed58	0xd558		mips26	reachable-code	0x8001c148	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd

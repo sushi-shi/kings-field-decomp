@@ -5,7 +5,6 @@
 extern KfMagicRecord magic_records[24];
 
 extern u32 pad_read(s32 mode);
-extern void display_show_error_screen(char object);
 extern s32 menu_enter_mode(s32 arg0);
 extern void map_interaction_dispatch();
 extern KfEffectRecord *effect_pool_construct();

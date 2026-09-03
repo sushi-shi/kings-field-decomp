@@ -13,6 +13,28 @@ from scripts.kf.retail import parse_int, read_tsv
 
 
 PAIRS = (
+    (
+        "GAME.EXE",
+        0x8001B7B0,
+        "display_show_error_screen",
+        "void",
+        "s32 stage",
+    ),
+    (
+        "GAME.EXE",
+        0x8001BAB8,
+        "lighting_set_active_color_matrix",
+        "void",
+        "s32 index",
+    ),
+    (
+        "GAME.EXE",
+        0x8001BAE4,
+        "effect5_texture_cache_prepare",
+        "void",
+        "s32 mode",
+    ),
+    ("GAME.EXE", 0x8001BB94, "display_initialize", "void", ""),
     ("GAME.EXE", 0x8001BCE0, "render_initialize", "void", ""),
     ("GAME.EXE", 0x8001BFB8, "display_begin_frame", "void", ""),
     ("GAME.EXE", 0x8001C050, "display_present_frame", "void", ""),
@@ -131,7 +153,7 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         display_rows = [
             row for row in rows if row["provenance"] == "manual:game_semantic_display_tmd"
         ]
-        self.assertEqual(len(display_rows), 229)
+        self.assertEqual(len(display_rows), 233)
         self.assertEqual({row["status"] for row in display_rows}, {"reviewed"})
         vsync_rows = [row for row in rows if row["provenance"] == "manual:vsync-runtime"]
         self.assertEqual(len(vsync_rows), 40)
@@ -145,7 +167,7 @@ class DisplayTmdInventoryTests(unittest.TestCase):
             and row["channel"] == "reachable-code"
             and (row["image"], parse_int(row["target_va"])) in targets
         ]
-        self.assertEqual(len(calls), 70)
+        self.assertEqual(len(calls), 85)
         for row in calls:
             key = row["image"], parse_int(row["target_va"])
             self.assertEqual(row["target_name"], targets[key])

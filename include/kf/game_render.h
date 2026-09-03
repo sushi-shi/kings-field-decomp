@@ -31,6 +31,8 @@ extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
 extern void display_play_transition(void);
 extern void display_present_frame(void);
+extern void display_show_error_screen(s32 stage);
+extern void effect5_texture_cache_prepare(s32 mode);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
 extern void lighting_apply_color_preset6(void);

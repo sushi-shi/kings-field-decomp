@@ -14,7 +14,6 @@
 #include <kf/semantic_types.h>
 
 extern void func_80014674(u32 mode);
-extern void effect5_texture_cache_prepare(s32 mode);
 extern void func_8001ed38(void);
 extern void func_8002718c(void);
 extern void func_800292f8(s32 object);

@@ -5,6 +5,7 @@
 
 extern CdlFILE cd_search_file;
 extern CdlLOC cd_read_location;
+extern u16 DAT_80095038;
 
 extern u32 pad_read();
 extern void exit(s32 status);
@@ -93,4 +94,51 @@ void display_show_error_screen(s32 stage)
     display_draw_environments[back].isbg = 1;
     display_draw_environments[back].dfe = 1;
     DrawSync(0);
+}
+
+ADDRESS(0x8001bab8, 0x2c)
+void lighting_set_active_color_matrix(s32 index)
+{
+    SetColorMatrix(&color_matrix_table[index]);
+}
+
+ADDRESS(0x8001bae4, 0xb0)
+void effect5_texture_cache_prepare(s32 mode)
+{
+    if (mode == 5) {
+        DAT_80095038 = GetTPage(1, 0, 0x140, 0x100);
+        DAT_8009503a = GetTPage(1, 0, 0x180, 0x100);
+        DAT_8009503c = GetTPage(1, 0, 0x340, 0x100);
+        DAT_80095048 = GetClut(0, 0x1eb);
+        DAT_8009504a = GetClut(0, 0x1eb);
+        DAT_8009504c = GetClut(0, 0x1eb);
+    }
+}
+
+ADDRESS(0x8001bb94, 0x14c)
+void display_initialize(void)
+{
+    ResetGraph(3);
+    InitGeom();
+    SetGeomOffset(160, 120);
+    SetDefDrawEnv(&display_draw_environments[0], 0, 0, 320, 240);
+    SetDefDispEnv(&display_disp_environments[0], 0, 240, 320, 240);
+    SetDefDrawEnv(&display_draw_environments[1], 0, 240, 320, 240);
+    SetDefDispEnv(&display_disp_environments[1], 0, 0, 320, 240);
+    display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;
+    display_draw_environments[0].isbg = 1;
+    display_draw_environments[1].isbg = 1;
+    display_draw_environments[0].r0 = 0;
+    display_draw_environments[0].g0 = 0;
+    display_draw_environments[0].b0 = 0;
+    display_draw_environments[1].r0 = 0;
+    display_draw_environments[1].g0 = 0;
+    display_draw_environments[1].b0 = 0;
+    PutDispEnv(&display_disp_environments[0]);
+    SetBackColor(60, 60, 60);
+    lighting_set_active_color_matrix(0);
+    SetFarColor(0, 0, 0);
+    render_state.fog_near_distance = 0x2af8;
+    SetFogNear(0x2af8, 200);
+    render_initialize();
 }

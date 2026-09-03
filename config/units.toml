@@ -185,27 +185,9 @@ source = "src/game/resources.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.display_show_error_screen"
+unit = "game.display"
 image = "GAME.EXE"
-source = "src/game/display_show_error_screen.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.lighting_set_color_matrix_preset"
-image = "GAME.EXE"
-source = "src/game/lighting_set_color_matrix_preset.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.effect5_texture_cache"
-image = "GAME.EXE"
-source = "src/game/effect5_texture_cache.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.display_initialize"
-image = "GAME.EXE"
-source = "src/game/display_initialize.c"
+source = "src/game/display.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

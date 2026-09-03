@@ -7,7 +7,6 @@
 /* Psy-Q Release 2.5 headers declare strcat without a prototype. */
 extern char *strcat();
 /* CD failure handler: 0 after a failed search, 1 after failed reads. */
-extern void display_show_error_screen(s32 stage);
 
 extern CdlFILE cd_search_file;
 extern KfCdFileEntry cd_file_table[];
