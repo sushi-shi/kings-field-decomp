@@ -4,15 +4,12 @@
 
 RODATA(0x80012048, 0x130)
 
-extern KfEffectRecord DAT_8009d040[];
 /* Per-id byte table shared with the save system; entry 57 counts the lamp charges. */
 extern u8 DAT_800652a8[240];
 /* Psy-Q LIBGTE: rsin, rcos. */
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *effect_pool_spawn_typed();
-extern s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 extra_radius);
 extern int angle_within_tolerance(int lhs, int rhs, s16 range);
-extern KfActor *actor_pool_find_target_in_cone( const struct KfVec3i *origin, s32 facing, u32 max_distance, s32 angle_tolerance, s32 *distance_out);
 /* Image paths whose decimal digits are patched before display. */
 extern void render_frame(s32 first, s32 second);
 
@@ -128,7 +125,7 @@ void player_use_item(u8 item_id)
         }
         break;
     case 62:
-        record = DAT_8009d040;
+        record = effect_pool_records;
         for (slot = 47; slot != -1; slot--, record++) {
             if (record->type == 0xff) {
                 continue;

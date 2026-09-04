@@ -1535,6 +1535,7 @@ GAME.EXE	0x80057b6c	0x4	pending_game_state	global	load	s32	game_state	candidate	
 GAME.EXE	0x80057b72	0x2	DAT_80057b72	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b80	0x3	boss_death_loop_sound	unknown	load	SoundRef	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;sound_ref_play	periodic sound used by the boss death sequence; source linkage remains unresolved
 GAME.EXE	0x80057b84	0x4	audio_voice_slot_index	unknown	load	s32	audio	supported	data.tsv:direct-references;game_semantic_audio_spatial.tsv;asm;xrefs;retail-initial-value-9	managed sound-effect ring index advanced modulo ten before each voice; source linkage remains unresolved
+GAME.EXE	0x80057b88	0x10	effect_projectile_velocities	global	load	SVECTOR[2]	effect_update	supported	data.tsv:direct-references;asm;effect_update_dispatch;retail-initializers	two initialized vertical-velocity vectors {0,2500,0,0} and {0,4900,0,0} used by effect kinds 15 and 16
 GAME.EXE	0x80057b98	0x4	debug_stop_flag	global	load	s32	debug	candidate	data.tsv:direct-references;asm;debug_stop	debug-stop toggle flag read and inverted by debug_stop; initial value zero
 GAME.EXE	0x80057ba4	0x4	DAT_80057ba4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057bff	0x1	DAT_80057bff	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1885,7 +1886,7 @@ GAME.EXE	0x80070e98	0x20028	display_state	unknown	bss	KfDisplayState	display	sup
 GAME.EXE	0x80090ec0	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_screen_talk.tsv;ghidra-12.0.4-memory-xref;asm;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
 GAME.EXE	0x80090f78	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
 GAME.EXE	0x80090fa8	0x24	tmd_state	unknown	bss	KfTmdState	tmd	supported	game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
-GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	AssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	indexed asset-header pointer table
+GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	KfAssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm;semantic_types.h	indexed model-asset header pointer table
 GAME.EXE	0x800910bc	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 GAME.EXE	0x800910c0	0xf0	pool_records	global	bss	KfPoolRecord[12]	pool	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	12 records of stride 20
 GAME.EXE	0x800911b0	0x2	DAT_800911b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -1942,18 +1943,9 @@ GAME.EXE	0x8009a740	0x4	DAT_8009a740	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x8009a748	0x2710	map_cell_attribute_grid	unknown	bss	u8[100][100]	map	supported	game_semantic_player_motion_attack.tsv;asm;xrefs;100-wide-indexing	map-cell policy bytes used by vertical motion for fall and hazard handling; the wider code table remains unresolved
 GAME.EXE	0x8009ce58	0x4	DAT_8009ce58	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009ce60	0x1e0	magic_records	global	bss	KfMagicRecord[24]	player	supported	asm;player_select_magic;player_update;player_recalculate_combat_stats	twenty-byte magic records; selected_magic_record = &magic_records[selected_magic_id]; weapons 7/8/11/3 bind indices 20/5/18/8
-GAME.EXE	0x8009d040	0x1	DAT_8009d040	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d041	0x1	DAT_8009d041	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d043	0x1	DAT_8009d043	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d04c	0x4	DAT_8009d04c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d054	0x4	DAT_8009d054	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d07c	0x1	DAT_8009d07c	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d07d	0x1	DAT_8009d07d	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d07f	0x1	DAT_8009d07f	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d088	0x4	DAT_8009d088	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009d090	0x4	DAT_8009d090	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009db80	0x4	DAT_8009db80	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009db84	0x4	DAT_8009db84	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8009d040	0xb40	effect_pool_records	global	bss	KfEffectRecord[48]	effect_pool	supported	asm;effect_pool_find_free;effect_pool_reset;60-byte-stride;48-record-loop	complete pool extent from its base through the two current-effect pointer globals
+GAME.EXE	0x8009db80	0x4	current_effect_magic_record	global	bss	KfMagicRecord *	effect_pool	supported	asm;effect_pool_set_current;effect_update_dispatch	magic definition selected from the current effect kind before each update
+GAME.EXE	0x8009db84	0x4	current_effect	global	bss	KfEffectRecord *	effect_pool	supported	asm;effect_pool_set_current;effect_pool_sweep;effect_update_dispatch	active effect record published before collision and per-kind update dispatch
 GAME.EXE	0x8009db88	0x220	map_event_pool	unknown	bss	KfMapEvent[8]	map_event	supported	game_semantic_camera_events.tsv;asm;xrefs;0x44-stride;8-record-loop	the loader, dispatcher, and current-event consumers prove one eight-record aggregate; source linkage remains unresolved
 GAME.EXE	0x8009dda8	0x4	current_map_event	unknown	bss	KfMapEvent *	map_event	supported	game_semantic_camera_events.tsv;asm;xrefs	stored by map_event_set_current and read by two event update routines; source linkage remains unresolved
 GAME.EXE	0x8009ddac	0x4	map_variant_asset_buffer	unknown	bss	u8 *	map_variant_assets	supported	game_semantic_map_resources.tsv;asm;xrefs;0x5a000-allocation	persistent destination for CHR variant files and their in-place TMD registration; source linkage remains unresolved

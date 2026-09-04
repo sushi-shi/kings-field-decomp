@@ -155,6 +155,8 @@ void map_restore_floor_state(void)
             map_apply_copy_region(3);
         }
         break;
+    case 4:
+        break;
     case 5:
         if (DAT_8009f844 == 1) {
             map_event_pool[1].state = 1;

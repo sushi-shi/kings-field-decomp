@@ -2970,7 +2970,7 @@ GAME.EXE	0x80057b7d	0x4637d	0x3	unclassified	coverage-gap			payload-complement	u
 GAME.EXE	0x80057b80	0x46380	0x3	data	direct-references	boss_death_loop_sound	SoundRef	game_semantic_actor_actions.tsv;game_semantic_audio_spatial.tsv	program/tone/note reference played periodically during the boss death sequence
 GAME.EXE	0x80057b83	0x46383	0x1	unclassified	coverage-gap			payload-complement	padding after boss-death loop sound
 GAME.EXE	0x80057b84	0x46384	0x4	defined	direct-references	audio_voice_slot_index	s32	game_semantic_audio_spatial.tsv	loaded ring index initialized to nine and advanced modulo ten before each managed sound-effect voice
-GAME.EXE	0x80057b88	0x46388	0x10	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80057b88	0x46388	0x10	data	direct-references	effect_projectile_velocities	SVECTOR[2]	asm;effect_update_dispatch;retail-bytes	two initialized vertical-velocity vectors used by effect kinds 15 and 16
 GAME.EXE	0x80057b98	0x46398	0x4	defined	direct-references	debug_stop_flag	s32	asm;debug_stop	debug-stop toggle flag read and inverted by debug_stop
 GAME.EXE	0x80057b9c	0x4639c	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: none
 GAME.EXE	0x80057ba0	0x463a0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

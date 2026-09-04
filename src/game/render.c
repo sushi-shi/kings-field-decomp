@@ -16,6 +16,9 @@
 #define TMD_G4 0x38
 #define TMD_GT4 0x3c
 
+/* tmd_register primitive-mode dispatch table. */
+RODATA(0x800121b4, 0x74)
+
 ADDRESS(0x8001bce0, 0x2d8)
 void render_initialize(void)
 {

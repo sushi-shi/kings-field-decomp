@@ -367,7 +367,7 @@ typedef struct KfMapCopyRegion {
 } KfMapCopyRegion;
 
 /*
- * Effect pool record (60-byte stride, pool at DAT_8009d040). The pool
+ * Effect pool record (60-byte stride, pool in effect_pool_records). The pool
  * constructor func_80036f44 and the specialised constructor func_80037770
  * establish the field layout: byte 0 is the type tag (0xff marks a free
  * slot), byte 1 the dispatch/magic_records index, byte 6 the owning id, a
@@ -405,6 +405,32 @@ typedef struct KfEffectRecord {
     u16 unknown_3a;      /* 0x3a */
 } KfEffectRecord;
 
+/* Rendering view of the same 60-byte effect-pool record. The renderer reads
+ * the low halfwords of the VECTOR position and interprets kind-specific header
+ * bytes as sprite selectors. */
+typedef struct KfEffectRenderView {
+    u8 unknown_00[3];
+    u8 sprite_id;
+    u8 mode;
+    u8 unknown_05[3];
+    u16 asset_variant;
+    u8 unknown_0a[2];
+    u16 position_x;
+    u16 unknown_0e;
+    u16 position_y;
+    u16 unknown_12;
+    u16 position_z;
+    u8 unknown_16[6];
+    struct KfEulerAngles rotation;
+    u8 unknown_22[2];
+    s16 scale_x;
+    s16 scale_y;
+    s16 scale_z;
+    u8 unknown_2a[10];
+    u8 anchor[4];
+    u8 unknown_38[4];
+} KfEffectRenderView;
+
 typedef struct KfMapObjectLink {
     u8 link_id;
     u8 action_parameter;
@@ -432,6 +458,15 @@ typedef struct KfMapObjectDefinition {
     u16 interaction_radius;
     u8 unknown_06[2];
 } KfMapObjectDefinition;
+
+/* Header shared by static and animated model assets in the asset registry. */
+typedef struct KfAssetHeader {
+    u32 byte_size;
+    s32 animation_data;
+    u32 tmd_data_offset;
+    u32 object_table_offset;
+    u32 clip_table_offset;
+} KfAssetHeader;
 
 typedef struct KfMapObject {
     u8 object_id;
@@ -657,10 +692,8 @@ typedef struct KfWeaponRecord {
 typedef struct KfMagicRecord {
     u8 learned;
     u8 charge_rate;
-    u8 unknown_02[0x06];
-    u16 unknown_08;
-    u16 unknown_0a;
-    u8 unknown_0c[0x04];
+    SoundRef sounds[2];
+    u16 damage_components[4];
     u16 mp_cost;
     u8 unknown_12[0x02];
 } KfMagicRecord;
@@ -817,7 +850,7 @@ typedef struct KfPlayerState {
     u16 physical_power;
     u16 magic;
     u16 status_effect_flags;
-    u32 unknown_2c;
+    u32 gold;
     u16 attack_component0;
     u16 attack_component1;
     u16 attack_component2;

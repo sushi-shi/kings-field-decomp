@@ -13,7 +13,6 @@ extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 player_warp_trigger_update(void);
 
-extern KfMagicRecord magic_records[24];
 extern void EnterCriticalSection(void);
 extern void ExitCriticalSection(void);
 

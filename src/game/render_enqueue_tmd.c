@@ -29,6 +29,8 @@ extern CVECTOR DAT_80057b58;   /* base colour for textured primitives */
  * the original reached through a single base register; kept as separate curated
  * identities here, so per-access address materialisation diverges.
  */
+RODATA(0x8001222c, 0x74)
+
 ADDRESS(0x8001c7f8, 0xf38)
 void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 {

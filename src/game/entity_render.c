@@ -94,41 +94,14 @@ void render_floor_item(KfFloorSprite *sprite)
 }
 
 /*
- * One record of the actor-billboard pool (60-byte stride).  Only the transform
- * inputs, the mode/id selectors, and the projection anchor are resolved.
- */
-typedef struct KfActorSprite {
-    u8 unknown_00[3];
-    u8 sprite_id;                  /* +3: 0xff marks an empty slot */
-    u8 mode;                       /* +4: 0xff selects the billboard sprite path */
-    u8 unknown_05[3];
-    u16 asset_variant;             /* +8 */
-    u8 unknown_0a[2];
-    u16 position_x;                /* +12 */
-    u16 unknown_0e;
-    u16 position_y;                /* +16 */
-    u16 unknown_12;
-    u16 position_z;                /* +20 */
-    u8 unknown_16[6];
-    struct KfEulerAngles rotation; /* +28 */
-    u8 unknown_22[2];
-    s16 scale_x;                   /* +36 */
-    s16 scale_y;                   /* +38 */
-    s16 scale_z;                   /* +40 */
-    u8 unknown_2a[10];
-    u8 anchor[4];                  /* +52 */
-    u8 unknown_38[4];
-} KfActorSprite;
-
-/*
- * Emits one pooled actor.  Empty slots (id 0xff) are skipped.  The record is
+ * Emits one pooled effect sprite. Empty slots (sprite_id 0xff) are skipped. The record is
  * carried into the view, oriented from its Euler angles and scaled in place.
  * A mode of 0xff draws a fixed billboard sprite through render_enqueue_sprite against
  * the render pitch matrix; otherwise the asset that follows the id by 30 is
  * bound, tested for visibility, and projected against the view matrix.
  */
 ADDRESS(0x8001eedc, 0x1e8)
-void render_actor_sprite(KfActorSprite *actor)
+void render_actor_sprite(KfEffectRenderView *actor)
 {
     SVECTOR screen;
     VECTOR scale;

@@ -1,15 +1,22 @@
 # effect_update_dispatch (0x80038a38) reconstruction map
 
-Groundwork for a dedicated reconstruction session. This is the last not-started
-GAME function (0x180c bytes, ~384 instructions). It is the per-kind effect
+Evidence map for the first semantic reconstruction. This was the last
+not-started GAME function (0x180c bytes). It is the per-kind effect
 behavior dispatcher and belongs to the `game.effect_update` module
 (`src/game/effect_update.c`) as its next contiguous claim after 0x800388b4.
-NOT reconstructed yet: too large for an incidental pass and every case body hits
-the gcc-2.5.7 scheduler/regalloc wall individually.
+The first pass now covers all 16 distinct handler bodies and owns the exact
+49-entry jump table; instruction matching remains open.
+
+Current first-pass verdict: the function is structurally started, not matched
+or bankable (37.918777%). The first instruction divergence is the prologue:
+retail allocates 0xa8 bytes and saves `s8` through `s0`, while the current probe
+allocates 0xc8 bytes and saves `s5` through `s0`. The reconstructed body is
+0x16f0 bytes versus retail's 0x180c. This is an open source-shape/codegen
+residue, not an attributed compiler wall.
 
 ## Signature / register model
-- `s4` = current effect record = `KfEffectRecord *` from `DAT_8009db84` (loaded).
-- `s3`/`s1` = a second record `DAT_8009db80` (loaded pointer).
+- `s4` = current effect record = `KfEffectRecord *` from `current_effect`.
+- `s3`/`s1` = `current_effect_magic_record` (`KfMagicRecord *`).
 - `s6` = `s4->kind` (`KfEffectRecord` +1). `s2` = `s4->unknown_07` (+7).
 - Prologue: `sp,-168`; saves ra,s8,s7,s6,s5,s4,s3,s2,s1,s0.
 

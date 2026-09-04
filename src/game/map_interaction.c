@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern KfMagicRecord magic_records[24];
 
 /* Progress-flag block; individual indices unresolved. */
 extern u8 DAT_800652a8[240];
@@ -11,15 +10,16 @@ extern u8 DAT_800652a8[240];
 /* Loaded camera-path point table (points begin at +8); extent unresolved. */
 /* Full-screen image path template "KAN\B0\K000.TIM". */
 
-extern s32 map_object_pool_find_interaction_from(
-    s16 start_index, s32 point_x, s32 point_z, s32 radius_padding);
 extern void audio_play_spatial_default_range(const SoundRef *sound, const VECTOR *position, s16 volume);
 extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
 extern void render_frame();
-extern u32 menu_enter_mode(s32 arg0, u8 arg1);
+extern u32 menu_enter_mode(s32 arg0, ...);
 extern u8 *effect_pool_construct();
+
+/* Object-behaviour dispatch followed by the current-floor action dispatch. */
+RODATA(0x80012a7c, 0x164)
 
 ADDRESS(0x800346a8, 0x38c)
 void func_800346a8(void)
@@ -206,9 +206,17 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     s32 sound_z;
     s32 index;
     s32 slot;
+    s32 item_index;
+    s32 result;
+    s32 neighbor_index;
+    u16 saved_pitch;
+    u8 found_item;
+    u8 *item_id;
     KfMapEvent *event;
     KfMapObject *object;
+    KfMapObject *neighbor;
     KfMapObjectDefinition *definition;
+    KfMapObjectDefinition *neighbor_definition;
 
     sound_x = position->vx - (rsin(rotation->vy) * 1500 >> 12);
     sound_z = position->vz + (rcos(rotation->vy) * 1500 >> 12);
@@ -255,8 +263,14 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 break;
             case 2:
                 map_event_advance_rotation_blocking(event, 0xfff, 0x190);
+                result = asset_registry_entries[event->variant]->animation_data < 2;
+                if (result == 0) {
+                    event->rotation_phase = 0;
+                    event->unknown_0f = 1;
+                    map_event_advance_rotation_blocking(event, 0x800, 0xc8);
+                }
                 map_event_interact(event);
-                if (event->unknown_0f == 0) {
+                if (result == 0) {
                     map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
                 }
                 event->unknown_0f = 0;
@@ -277,23 +291,192 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         }
         object = &map_object_state.objects[index];
         definition = &map_object_state.definitions[object->object_id];
-        if (definition->behavior_type > 0x53) {
-            notify_enqueue(object->unknown_29);
-            continue;
-        }
         switch (definition->behavior_type) {
-        case 8:
-            if (object->link.link_id == 0xff
-                && angle_within_tolerance(rotation->vy, object->rotation.y, 0x200)) {
-                if (object->link.action_parameter == 0xff) {
-                    audio_play_spatial_default_range(&gameplay_sound_ref_2,
-                                                     (const VECTOR *)&object->position_x, 0x7f);
+        case 0:
+        case 1:
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
+                && !angle_within_tolerance(
+                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
+                break;
+            }
+            if (object->link.link_id != 0xff && definition->behavior_type == 0) {
+                goto notify_default;
+            }
+
+            neighbor_index = 0;
+            for (;;) {
+                neighbor_index = map_object_pool_find_interaction_from(
+                    neighbor_index, object->position_x, object->position_z, 6000);
+                if (neighbor_index == -1) {
+                    object->link.action_parameter = 0xff;
+                    break;
                 }
-                notify_enqueue(object->action);
+                if (neighbor_index != index) {
+                    neighbor = &map_object_state.objects[neighbor_index];
+                    neighbor_definition =
+                        &map_object_state.definitions[neighbor->object_id];
+                    if (neighbor_definition->behavior_type < 2) {
+                        if (neighbor->link.link_id != 0xff
+                            && neighbor_definition->behavior_type == 0) {
+                            goto notify_default;
+                        }
+                        map_object_start_action_if_idle(
+                            neighbor, neighbor_definition->behavior_type);
+                        object->link.action_parameter = neighbor_index;
+                        neighbor->link.action_parameter = index;
+                        break;
+                    }
+                }
+                neighbor_index++;
+            }
+            map_object_start_action_if_idle(object, definition->behavior_type);
+            continue;
+
+        case 2:
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
+                && !angle_within_tolerance(
+                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
+                break;
+            }
+            if (object->action != 0xff) {
+                break;
+            }
+            if (object->link.link_id != 0xff) {
+                goto notify_default;
+            }
+            map_object_start_action_if_idle(object, 2);
+            continue;
+
+        case 8:
+            if (object->link.link_id != 0xff) {
+                notify_enqueue(object->link.unknown_06[0]);
+                continue;
+            }
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x200)) {
+                break;
+            }
+
+            item_index = 3;
+            while (object->link.action_parameter == 0xff) {
+                item_index--;
+                if ((s16)item_index == -1) {
+                    goto notify_default;
+                }
+            }
+
+            audio_play_spatial_default_range(
+                &gameplay_sound_ref_2, (const VECTOR *)&object->position_x, 0x7f);
+            saved_pitch = rotation->vx;
+            while (object->rotation.x >= -0x3ff) {
+                if ((u16)(rotation->vx - 0xbf) >= 0x742) {
+                    rotation->vx += 0x10;
+                }
+                object->rotation.x -= 0x20;
+                render_frame(position, rotation);
+                frame_pacer_wait();
+            }
+
+            item_index = 3;
+            item_id = &object->link.action_parameter;
+            for (;;) {
+                if (*item_id != 0xff) {
+                    result = menu_enter_mode(1, *item_id);
+                    if (result == 0) {
+                        *item_id = 0xff;
+                    } else if (result == 2) {
+                        notify_enqueue(0x10);
+                    }
+                }
+                item_index--;
+                if ((s16)item_index == -1) {
+                    break;
+                }
+                item_id++;
+            }
+            object->rotation.x = 0;
+            rotation->vx = saved_pitch;
+            break;
+
+        case 9:
+            item_id = &object->link.link_id;
+            found_item = 0;
+            item_index = 3;
+            for (;;) {
+                if (*item_id != 0xff) {
+                    found_item = 1;
+                    result = menu_enter_mode(1, *item_id);
+                    if (result == 0) {
+                        *item_id = 0xff;
+                    } else if (result == 2) {
+                        notify_enqueue(0x10);
+                    }
+                }
+                item_index--;
+                if ((s16)item_index == -1) {
+                    break;
+                }
+                item_id++;
+            }
+            if (found_item == 0) {
+                goto notify_default;
+            }
+            continue;
+
+        case 11:
+            if (object->link.link_id != 0xff) {
+                goto notify_default;
+            }
+            player_restore_vitals_with_color_cycle();
+            continue;
+
+        case 13:
+            if (notification_effect_phase != 0) {
+                break;
+            }
+            if (object->object_id == 0x82) {
+                result = 0;
+            } else {
+                if (object->object_id != 0x83) {
+                    return;
+                }
+                result = 1;
+            }
+            map_show_screen_image(result, object->link.link_id);
+            player_clear_motion();
+            continue;
+
+        case 14:
+            map_world_state_persist();
+            menu_save_confirm();
+            continue;
+
+        case 0x40:
+            result = menu_enter_mode(1, object->object_id);
+            if (result == 0) {
+                object->object_id = 0xff;
+            } else if (result == 2) {
+                notify_enqueue(0x10);
+                continue;
             }
             break;
+
+        case 0x41:
+            result = object->link.link_id | object->link.action_parameter << 8;
+            notify_enqueue(0x13, result);
+            player_state.gold += result;
+            object->object_id = 0xff;
+            break;
+
+        case 0x53:
+            if (object->link.link_id == 0xff) {
+                goto notify_default;
+            }
+            object->action_timer = 1;
+            break;
+
         default:
-            notify_enqueue(object->unknown_29);
+notify_default:
+            notify_enqueue(object->link.unknown_06[1]);
             break;
         }
     }

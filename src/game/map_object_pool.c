@@ -9,7 +9,6 @@
 
 RODATA(0x80012738, 0x150)
 
-extern KfEffectRecord DAT_8009d040[];
 /* Effect spawner called with five or six arguments; declared without a prototype. */
 extern KfEffectRecord *effect_pool_construct();
 
@@ -235,7 +234,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     0x11,
                                                     &object->position_x,
                                                     effect_output)
-                    - DAT_8009d040;
+                    - effect_pool_records;
                 map_object_start_action_if_idle(object, 0x51);
                 break;
             case 115:
@@ -252,7 +251,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object->position_x,
                                                     effect_output,
                                                     &object->rotation)
-                    - DAT_8009d040;
+                    - effect_pool_records;
                 map_object_start_action_if_idle(object, 0x51);
                 break;
             case 139:
@@ -263,13 +262,13 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object->position_x,
                                                     effect_output,
                                                     &object->rotation)
-                    - DAT_8009d040;
+                    - effect_pool_records;
                 map_object_start_action_if_idle(object, 0x52);
                 break;
             case 135:
                 object->link.action_parameter =
                     effect_pool_construct(0, 3, 0x30, &object->position_x, effect_output, &object->rotation)
-                    - DAT_8009d040;
+                    - effect_pool_records;
                 map_object_start_action_if_idle(object, 0x53);
                 break;
             case 56:

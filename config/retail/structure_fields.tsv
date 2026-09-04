@@ -92,6 +92,11 @@ KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	asm;player_recalculate_
 KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
 KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	asm;player_recalculate_combat_stats	meaning unresolved
+KfAssetHeader	0x00	0x04	byte_size	u32	supported	semantic_types.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
+KfAssetHeader	0x04	0x04	animation_data	s32	candidate	semantic_types.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
+KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	semantic_types.h;asm;asset_registry_select	byte offset from header to TMD payload
+KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
+KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
 KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
 KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
 KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
@@ -170,6 +175,26 @@ KfEffectRecord	0x32	0x02	unknown_32	u16	opaque	asm;effect_pool_constructor;effec
 KfEffectRecord	0x34	0x04	unknown_34	u8[4]	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
 KfEffectRecord	0x38	0x02	unknown_38	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	sound handle written by several effect kinds
 KfEffectRecord	0x3a	0x02	unknown_3a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRenderView	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;render_actor_sprite	header bytes interpreted by effect behavior
+KfEffectRenderView	0x03	0x01	sprite_id	u8	supported	semantic_types.h;asm;render_actor_sprite	0xff skips the record; otherwise selects the billboard or model asset
+KfEffectRenderView	0x04	0x01	mode	u8	supported	semantic_types.h;asm;render_actor_sprite	0xff selects the billboard path; other values select animation clips
+KfEffectRenderView	0x05	0x03	unknown_05	u8[3]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved header bytes
+KfEffectRenderView	0x08	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_actor_sprite	variant argument passed to render_bind_animated_instance
+KfEffectRenderView	0x0a	0x02	unknown_0a	u8[2]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before position
+KfEffectRenderView	0x0c	0x02	position_x	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position x halfword used by the renderer
+KfEffectRenderView	0x0e	0x02	unknown_0e	u16	opaque	semantic_types.h;asm;render_actor_sprite	high halfword of the effect position x word
+KfEffectRenderView	0x10	0x02	position_y	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position y halfword used by the renderer
+KfEffectRenderView	0x12	0x02	unknown_12	u16	opaque	semantic_types.h;asm;render_actor_sprite	high halfword of the effect position y word
+KfEffectRenderView	0x14	0x02	position_z	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position z halfword used by the renderer
+KfEffectRenderView	0x16	0x06	unknown_16	u8[6]	opaque	semantic_types.h;asm;render_actor_sprite	high position-z halfword and VECTOR pad word
+KfEffectRenderView	0x1c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;render_actor_sprite	model rotation passed to matrix_set_rotation_yxz
+KfEffectRenderView	0x22	0x02	unknown_22	u8[2]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before scale
+KfEffectRenderView	0x24	0x02	scale_x	s16	supported	semantic_types.h;asm;render_actor_sprite	model x scale
+KfEffectRenderView	0x26	0x02	scale_y	s16	supported	semantic_types.h;asm;render_actor_sprite	model y scale
+KfEffectRenderView	0x28	0x02	scale_z	s16	supported	semantic_types.h;asm;render_actor_sprite	model z scale
+KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before animation anchor
+KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
+KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved tail
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
@@ -194,10 +219,8 @@ KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;func_8
 KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;func_80020b4c	height offset above the floor height grid
 KfMagicRecord	0x00	0x01	learned	u8	supported	asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
 KfMagicRecord	0x01	0x01	charge_rate	u8	supported	asm;player_update	fixed6_ratio_step span while charging magic
-KfMagicRecord	0x02	0x06	unknown_02	u8[6]	opaque	asm	meaning unresolved
-KfMagicRecord	0x08	0x02	unknown_08	u16	opaque	asm;xrefs	read by func_80039a80 family; meaning unresolved
-KfMagicRecord	0x0a	0x02	unknown_0a	u16	opaque	asm;xrefs	read by func_80039a80 family; meaning unresolved
-KfMagicRecord	0x0c	0x04	unknown_0c	u8[4]	opaque	asm	meaning unresolved
+KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	semantic_types.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
+KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	semantic_types.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
 KfMagicRecord	0x10	0x02	mp_cost	u16	supported	asm;player_update	compared with and subtracted from vitals.current_mp when casting
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	asm	meaning unresolved
 KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
@@ -327,7 +350,7 @@ KfPlayerState	0x24	0x02	base_magic	u16	supported	semantic_types.h;data_identitie
 KfPlayerState	0x26	0x02	physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x28	0x02	magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x2c	0x04	unknown_2c	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x2c	0x04	gold	u32	supported	semantic_types.h;asm;menu;item-buy-sell	player gold total
 KfPlayerState	0x30	0x02	attack_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x32	0x02	attack_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x34	0x02	attack_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate

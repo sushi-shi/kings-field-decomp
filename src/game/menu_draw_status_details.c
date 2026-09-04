@@ -179,7 +179,7 @@ void menu_draw_status_details(void)
 
     gs.x = 0x5b;
     gs.y += 0x10;
-    menu_format_number(player_state.unknown_2c, 6, 0, gs.codes);
+    menu_format_number(player_state.gold, 6, 0, gs.codes);
     menu_draw_number(&DAT_800583e8, &gs);
     gs.y += 0x10;
     menu_format_number(player_state.physical_power, 6, 0, gs.codes);

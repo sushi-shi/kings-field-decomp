@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern KfMagicRecord magic_records[24];
 
 extern u32 pad_read(s32 mode);
 extern s32 menu_enter_mode(s32 arg0);
@@ -13,9 +12,6 @@ extern void matrix_set_rotation_yxz(
     const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(
     const struct KfPitchYaw *angles, struct KfVec3s *direction);
-extern KfActor *actor_pool_find_target_in_cone(
-    const struct KfVec3i *origin, s32 facing, u32 max_distance,
-    s32 angle_tolerance, s32 *distance_out);
 extern void player_use_item();
 
 ADDRESS(0x80018880, 0x1a1c)

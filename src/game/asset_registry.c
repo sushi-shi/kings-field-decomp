@@ -2,13 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-struct AssetHeader8002059c {
-    u8 unknown_00[8];
-    u32 data_offset;
-};
-
-extern struct AssetHeader8002059c *asset_registry_entries[];
-
 /*
  * Registers every asset of a TMD archive: a u16 count, then chunks that each
  * start with their own byte length, assigned consecutive ids from
@@ -21,11 +14,11 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 
     archive += 4;
     while (count-- != 0) {
-        asset_registry_entries[first_asset_id] = (struct AssetHeader8002059c *)archive;
+        asset_registry_entries[first_asset_id] = (KfAssetHeader *)archive;
         asset_registry_select(first_asset_id);
         tmd_prepare_primitive_indices();
         first_asset_id++;
-        archive += *(u32 *)archive;
+        archive += ((KfAssetHeader *)archive)->byte_size;
     }
 }
 
@@ -40,7 +33,7 @@ void asset_registry_set(u16 index, void *asset)
 ADDRESS(0x8002059c, 0x38)
 void asset_registry_select(u16 index)
 {
-    struct AssetHeader8002059c *asset = asset_registry_entries[index];
+    KfAssetHeader *asset = asset_registry_entries[index];
 
-    tmd_state.current_asset = (u8 *)asset + asset->data_offset;
+    tmd_state.current_asset = (u8 *)asset + asset->tmd_data_offset;
 }

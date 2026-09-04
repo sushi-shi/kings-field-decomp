@@ -6,7 +6,7 @@
  * Effect-pool spawn band 0x80036f44..0x8003784f (GAME.EXE).
  *
  * effect_pool_construct is the general effect-pool constructor. It claims a free
- * KfEffectRecord from DAT_8009d040 (effect_pool_find_free), fixes the header
+ * KfEffectRecord from effect_pool_records (effect_pool_find_free), fixes the header
  * (type at 0x00, kind at 0x01, id at 0x06), copies the caller's VECTOR position
  * and SVECTOR direction, defaults the scale triple to 0x1000, then dispatches
  * on the effect kind (a magic_records index in 4..0x30) to seed the per-kind
@@ -18,20 +18,17 @@
  * the record directly without the kind dispatch.
  *
  * effect_pool_set_current publishes the "current" effect record and its magic_records row
- * through DAT_8009db84/DAT_8009db80.
+ * through current_effect/current_effect_magic_record.
  *
  * effect_pool_spawn_typed is exact. effect_pool_construct carries the GCC 2.5.7 switch
  * cross-jumping / K&R stack-vararg codegen residue (a large jump table with
  * tail-merged cases and one fewer callee-saved register than retail).
  * effect_pool_set_current carries the shared-high-halfword data residue: the retail unit
- * reaches magic_records by offset from DAT_8009db84's base register because the
+ * reaches magic_records by offset from current_effect's base register because the
  * two globals are consecutive in the original translation unit, which a
  * reconstruction referencing magic_records as its own extern cannot reproduce.
  * See docs/patterns/source-shapes-gcc257.md.
  */
-
-extern KfEffectRecord DAT_8009d040[];
-extern KfMagicRecord magic_records[];
 
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
@@ -44,7 +41,7 @@ extern void audio_play_spatial_range(
 ADDRESS(0x80036f00, 0x44)
 char *effect_pool_find_free(void)
 {
-    KfEffectRecord *record = DAT_8009d040;
+    KfEffectRecord *record = effect_pool_records;
     u16 i = 48;
 
     do {
@@ -489,6 +486,6 @@ KfEffectRecord *effect_pool_spawn_typed(u16 a0, u16 a1, u16 a2, u16 a3, s32 a4, 
 ADDRESS(0x8003781c, 0x34)
 void effect_pool_set_current(KfEffectRecord *record)
 {
-    DAT_8009db84 = record;
-    DAT_8009db80 = &magic_records[record->kind];
+    current_effect = record;
+    current_effect_magic_record = &magic_records[record->kind];
 }

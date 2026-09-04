@@ -316,7 +316,7 @@ void item_menu_buy(s32 arg)
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
-            if (player_state.unknown_2c
+            if (player_state.gold
                     < ((u16 *)DAT_800594b8)[index[ctx.selected_index] * 2 + arg - 1]) {
                 menu_play_input_sound(2);
             } else {
@@ -338,7 +338,7 @@ void item_menu_buy(s32 arg)
     if (selection != -1) {
         if (selection == 0x34)
             inv[52]--;
-        player_state.unknown_2c -= ((u16 *)DAT_800594b8)[selection * 2 + arg - 1];
+        player_state.gold -= ((u16 *)DAT_800594b8)[selection * 2 + arg - 1];
         DAT_800652a8[selection]++;
     }
 }
@@ -475,7 +475,7 @@ void item_menu_sell(s32 arg)
     game_state_acknowledge_pending();
     if (selection != -1) {
         inv[selection]--;
-        player_state.unknown_2c += ((u16 *)DAT_800595f8)[selection * 2 + arg - 1];
+        player_state.gold += ((u16 *)DAT_800595f8)[selection * 2 + arg - 1];
     }
 }
 

@@ -106,8 +106,9 @@ extern u16 DAT_8009508e;
 extern u32 DAT_80095698;
 extern u32 DAT_8009569c;
 extern u32 DAT_8009a740;
-extern KfMagicRecord *DAT_8009db80; /* magic_records row of the current effect */
-extern KfEffectRecord *DAT_8009db84; /* current effect record */
+extern KfMagicRecord *current_effect_magic_record;
+extern KfEffectRecord *current_effect;
+extern KfMagicRecord magic_records[24];
 extern u16 map_event_animation_gate;
 extern u16 map_ambient_script_countdown;
 extern u8 DAT_8009eafc;
@@ -128,11 +129,14 @@ extern char cd_path_buffer[80];
 extern KfCollisionTarget collision_target;
 extern MATRIX color_matrix_table[7];
 extern KfMapEvent *current_map_event;
+extern KfAssetHeader *asset_registry_entries[];
 extern SVECTOR *current_tmd_vertices;
 extern DISPENV display_disp_environments[2];
 extern DRAWENV display_draw_environments[2];
 extern KfDisplayState display_state;
 extern char enemy_info_image_path_template[13];
+extern KfEffectRecord effect_pool_records[48];
+extern SVECTOR effect_projectile_velocities[2];
 extern const KfFloorEntryCell floor_entry_cells[5];
 extern u16 floor_item_count;
 extern KfFloorItem floor_items[64];

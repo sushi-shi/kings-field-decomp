@@ -967,17 +967,20 @@ needed the `0x800377a4` `mips26` reloc promoted to reviewed.
 Residue recorded (not steered):
 
 - `func_8003781c` (~63%): publishes the current effect record and its
-  `magic_records` row through `DAT_8009db84`/`DAT_8009db80`. The retail unit
-  reaches `magic_records` by `addiu a1,a1,-3364` off the `DAT_8009db84` base
-  register: `magic_records`, the effect pool `DAT_8009d040`, `DAT_8009db80` and
-  `DAT_8009db84` are one consecutive block (0x8009ce60..0x8009db88) in the
+  `magic_records` row through `current_effect` (0x8009db84) and
+  `current_effect_magic_record` (0x8009db80). The retail unit reaches
+  `magic_records` by `addiu a1,a1,-3364` off the `current_effect` base
+  register: `magic_records`, `effect_pool_records`,
+  `current_effect_magic_record`, and `current_effect` are one consecutive
+  block (0x8009ce60..0x8009db88) in the
   original translation unit, so the linker-resolved delta is an assemble-time
   constant and one `lui`/`%hi` load serves two globals. A reconstruction that
   references `magic_records` as its own extern emits a separate `lui`+HI16 pair
   and cannot share the base register. Reproducing it would require owning that
   whole bss block (and thus migrating `magic_records`, used by many player/menu
   units) into this TU; keeping the honest `&magic_records[kind]` reference and
-  the two real HI16/LO16 relocs (`DAT_8009db84`, `DAT_8009db80`) instead leaves
+  the two real HI16/LO16 relocs (`current_effect`,
+  `current_effect_magic_record`) instead leaves
   the shared-high-halfword divergence as a documented data-layout residue.
 - `func_80036f44` (~46%): the general constructor and its ~45-case kind switch
   (jump table `0x80012c28`). Structurally faithful — the common record init,

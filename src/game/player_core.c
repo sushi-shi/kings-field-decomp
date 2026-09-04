@@ -114,11 +114,6 @@ void player_begin_weapon_attack(void)
 
 
 /* Psy-Q LIBGTE: RotMatrix(SVECTOR *r, MATRIX *m); ApplyMatrix(MATRIX *m, SVECTOR *v, VECTOR *rv). */
-/*
- * The actor index reaches actor_apply_damage untruncated, so this call site
- * did not go through a halfword-typed prototype.
- */
-extern void actor_apply_damage();
 
 ADDRESS(0x80016bc0, 0x264)
 void player_update_weapon_attack(void)

@@ -115,7 +115,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
 
 collide:
     {
-        u8 kind = *(u8 *)DAT_8009db84 & 3;
+        u8 kind = current_effect->type & 3;
 
         if (kind == 2) {
             flags = 0x71;

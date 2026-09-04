@@ -324,6 +324,12 @@ source = "src/game/menu.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.menu_map_viewer"
+image = "GAME.EXE"
+source = "src/game/menu_map_viewer.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.menu_panels"
 image = "GAME.EXE"
 source = "src/game/menu_panels.c"

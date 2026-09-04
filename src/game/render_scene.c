@@ -33,10 +33,8 @@ extern KfCellWindow *DAT_80095860;
 
 /* Floor-item render descriptor, laid out just below floor_items. */
 
-extern u8 DAT_8009d040[]; /* actor-sprite pool, 60-byte stride */
 
 extern void render_floor_item(KfFloorItem *item);
-extern void render_actor_sprite(u8 *sprite);
 
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
@@ -47,7 +45,7 @@ void render_entities(void)
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
-    u8 *sprite;
+    KfEffectRenderView *sprite;
     s16 i;
 
     tmd_select(1);
@@ -126,22 +124,22 @@ void render_entities(void)
 
     /* Actor sprites. */
     SetLightMatrix(&render_light_matrices[2]);
-    sprite = DAT_8009d040;
+    sprite = (KfEffectRenderView *)effect_pool_records;
     for (i = 47; i != -1; i--) {
-        if (sprite[0] == 0xff || sprite[3] == 0xff) {
+        if (sprite->unknown_00[0] == 0xff || sprite->sprite_id == 0xff) {
             break;
         }
         {
-            u16 row = (*(s32 *)(sprite + 20) / 2000) - s6;
+            u16 row = (*(s32 *)&sprite->position_z / 2000) - s6;
             KfCellWindow *g = DAT_80095860;
             if (row < g->height) {
-                u16 col = (*(s32 *)(sprite + 12) / 2000) - s5;
+                u16 col = (*(s32 *)&sprite->position_x / 2000) - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_actor_sprite(sprite);
                 }
             }
         }
-        sprite += 60;
+        sprite++;
     }
 
     /* Map events. */

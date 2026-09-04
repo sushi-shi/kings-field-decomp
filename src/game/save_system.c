@@ -51,7 +51,6 @@ extern s32 erase(const char *name);
  */
 extern u32 map_world_state_base[];
 extern u8 DAT_800652a8[];
-extern KfMagicRecord magic_records[24];
 
 extern s32 pad_read(s32 mode);
 

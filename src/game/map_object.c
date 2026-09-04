@@ -4,7 +4,6 @@
 
 RODATA(0x80012888, 0x18c)
 
-extern KfEffectRecord DAT_8009d040[];
 extern u8 map_world_state_base[4];
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
@@ -483,7 +482,7 @@ void map_object_pool_update(void)
         case 81:
         case 82:
             if (object->link.link_id == MAP_OBJECT_NONE && object->action_timer == 0) {
-                DAT_8009d040[object->link.action_parameter].unknown_07 = 1;
+                effect_pool_records[object->link.action_parameter].unknown_07 = 1;
                 object->action_timer = 1;
             }
             break;
@@ -492,12 +491,12 @@ void map_object_pool_update(void)
                 break;
             }
             if (object->link.link_id == MAP_OBJECT_NONE) {
-                DAT_8009d040[object->link.action_parameter].unknown_08 = 0xfff;
+                effect_pool_records[object->link.action_parameter].unknown_08 = 0xfff;
                 object->action_timer = 2;
                 break;
             }
             if (object->action_timer == 1) {
-                record = &DAT_8009d040[object->link.action_parameter];
+                record = &effect_pool_records[object->link.action_parameter];
                 if (record->unknown_08 == 0) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_3, (VECTOR *)&object->position_x, 0x7f);
@@ -513,7 +512,7 @@ void map_object_pool_update(void)
                     }
                 }
             } else if (object->action_timer == 3) {
-                record = &DAT_8009d040[object->link.action_parameter];
+                record = &effect_pool_records[object->link.action_parameter];
                 if (record->unknown_08 == 0xfff) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_3, (VECTOR *)&object->position_x, 0x7f);

@@ -21,15 +21,6 @@
  * uninitialised, matching the retail body.
  */
 
-/* asset_registry_entries[asset]: an animated-model asset header. */
-typedef struct KfAnimAsset {
-    u32 unknown_00;   /* +0 */
-    u32 field_04;     /* +4: 0 => no animation data (static asset) */
-    u32 data_offset;  /* +8: TMD payload offset (asset_registry_select) */
-    u32 object_table; /* +12: byte offset to the object-offset table */
-    u32 clip_table;   /* +16: byte offset to the clip-offset table (by tag) */
-} KfAnimAsset;
-
 /* asset base + clip_table[tag]: one animation clip. */
 typedef struct KfAnimClip {
     u16 keyframe_count; /* +0 */
@@ -54,15 +45,13 @@ typedef struct KfMorphObject {
     SVECTOR deltas[1]; /* +12: signed vertex deltas */
 } KfMorphObject;
 
-extern KfAnimAsset *asset_registry_entries[];
-
 extern void gteMIMefunc(SVECTOR *dst, SVECTOR *delta, long count, long frac);
 
 ADDRESS(0x800205d4, 0x3a4)
 u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count)
 {
     struct KfPoolRecord *record = *(struct KfPoolRecord **)anchor;
-    KfAnimAsset *ah = asset_registry_entries[asset];
+    KfAssetHeader *ah = asset_registry_entries[asset];
     KfAnimClip *clip;
     KfAnimKeyframe *kf;
     KfMorphObject *obj;
@@ -78,7 +67,7 @@ u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant
     u16 frac;
     u16 i;
 
-    if (ah->field_04 == 0) {
+    if (ah->animation_data == 0) {
         if (record != 0) {
             pool_record_release(record);
         }
@@ -119,7 +108,8 @@ have_record:
 search:
     accum = 0;
     prev = 0;
-    clip = (KfAnimClip *)((char *)ah + ((u32 *)((char *)ah + ah->clip_table))[tag]);
+    clip = (KfAnimClip *)((char *)ah
+                          + ((u32 *)((char *)ah + ah->clip_table_offset))[tag]);
     i = clip->keyframe_count;
     if (i != 0) {
         u32 *kfp = clip->keyframes;
@@ -147,7 +137,7 @@ blend:
         goto finalize;
     }
 
-    object_table = (u32 *)((char *)ah + ah->object_table);
+    object_table = (u32 *)((char *)ah + ah->object_table_offset);
     asset_registry_select(asset);
     tmd_select_object_vertices(0);
 

@@ -6,7 +6,6 @@
 extern u8 DAT_800652a8[240];
 
 /* Twenty-byte magic records (learned flag + MP cost). */
-extern KfMagicRecord magic_records[24];
 
 /* Item-name and spell-name string tables (10 halfwords per label). The
  * equipment/item panels index DAT_80058dc0 by item id; the spell panel starts

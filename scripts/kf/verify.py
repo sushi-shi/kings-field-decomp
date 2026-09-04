@@ -4,13 +4,14 @@ Two ported gates from the sibling gruntz decomp, adapted to King's Field's
 PS-X ELF / objdiff flow:
 
     kf verify board [--gate|--update|--externs]        source cleanliness ratchet
-    kf verify data  [--image I][--detail][--coverage]  data vs retail bytes
+    kf verify data  [--image I][--detail][--coverage]  strict data gate vs retail
 
 ``board`` counts the address-derived spellings and ``extern``/cast/view
 crutches in ``src/`` + ``include/`` and the curated identity TSVs against
 committed floors (``down = good``); ``data`` compares each reconstructed unit's
 owned ``.data``/``.rodata``/``.bss`` against the retail-delinked target,
-reloc-masked. See the module docstrings for the full contract.
+reloc-masked, and exits nonzero on any mismatch or missing artifact. See the
+module docstrings for the full contract.
 """
 
 from __future__ import annotations

@@ -17,7 +17,6 @@
  * index.
  */
 
-extern KfMagicRecord magic_records[24];
 
 /* Progress-flag block raised at init and decremented on death restart. */
 extern u8 DAT_800652a8[240];

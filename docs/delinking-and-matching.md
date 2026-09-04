@@ -203,7 +203,7 @@ incremental Ninja graph. The normal commands are:
 | `kf try --unit ID [--source FILE]` | compile one unit into a scratch object and diff it per function against its module target without touching the build tree |
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
-| `kf check [--strict]` | fail on unchanged-input regressions, lost banked rows, or invalid/stale reports |
+| `kf check [--strict]` | fail on data mismatches/incomplete comparisons, unchanged-input regressions, lost banked rows, or invalid/stale reports |
 | `kf bank [--unit ID] [--dirty]` | manually update all fresh scores, or only selected units when every selected function is exactly 100% |
 
 Status separates eligible, manifested, compiled, scored, and exact functions.

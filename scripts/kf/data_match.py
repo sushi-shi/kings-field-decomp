@@ -10,10 +10,14 @@ objdiff), and reports the first divergence and any referent mismatch. ``.bss``
 is compared by size/ownership only - uninitialized storage has no bytes to
 match.
 
-    kf verify data                 # per-image summary + the diverging units
+    kf verify data                 # strict gate + per-image summary
     kf verify data --image game    # one image
     kf verify data --coverage      # add the owned-vs-total data coverage gap
     kf verify data --detail        # per-diverging-unit byte/referent detail
+
+Any byte, extent, relocation type/referent, or BSS ownership divergence exits
+nonzero. Missing comparison objects are also fatal rather than silently
+skipped.
 
 Retail ground truth is the delinked object under ``build/delink/<img>/modules``
 whose ``.data``/``.rodata`` bytes are copied from the retail image; the
@@ -165,6 +169,13 @@ class UnitDataDiff:
         return [d for d in self.diffs if d.status != "match"]
 
 
+@dataclass(frozen=True)
+class ArtifactFailure:
+    image: str
+    unit: str
+    detail: str
+
+
 def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None:
     rt = retail.sections.get(name)
     rc = recon.sections.get(name)
@@ -199,21 +210,24 @@ def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None
                            f"masked content diverges at +{first:#x} "
                            f"(retail {rt_bytes[first]:#04x} vs "
                            f"reconstruction {rc_bytes[first]:#04x})")
+    padded = (rt_size + 15) & ~15
     if rc_size > rt_size and any(rc_bytes[rt_size:]):
         extra = next(i for i in range(rt_size, rc_size) if rc_bytes[i])
         return SectionDiff(name, rt_size, rc_size, "extra-tail",
                            f"reconstruction emits {rc_size - rt_size} extra byte(s) "
                            f"past the retail extent, non-zero at +{extra:#x}")
-    if rt_size > rc_size and any(rt_bytes[rc_size:]):
-        short = next(i for i in range(rc_size, rt_size) if rt_bytes[i])
+    if rc_size > padded:
+        return SectionDiff(name, rt_size, rc_size, "extra-tail",
+                           f"reconstruction extent exceeds retail's 16-byte "
+                           f"alignment padding ({rc_size} B vs {padded} B padded)")
+    if rt_size > rc_size:
         return SectionDiff(name, rt_size, rc_size, "short",
-                           f"reconstruction is {rt_size - rc_size} byte(s) short; "
-                           f"retail has content at +{short:#x}")
-    rt_key = [(r.offset, r.symbol) for r in rt_rel if r.offset < overlap]
-    rc_key = [(r.offset, r.symbol) for r in rc_rel if r.offset < overlap]
+                           f"reconstruction is {rt_size - rc_size} byte(s) short")
+    rt_key = [(r.offset, r.type, r.symbol) for r in rt_rel]
+    rc_key = [(r.offset, r.type, r.symbol) for r in rc_rel]
     if rt_key != rc_key:
-        rt_by_off = dict(rt_key)
-        rc_by_off = dict(rc_key)
+        rt_by_off = {offset: (typ, symbol) for offset, typ, symbol in rt_key}
+        rc_by_off = {offset: (typ, symbol) for offset, typ, symbol in rc_key}
         same_referents = sorted(rt_by_off.values()) == sorted(rc_by_off.values())
         if set(rt_by_off) != set(rc_by_off) and same_referents:
             detail = (f"same {len(rt_key)} referent(s), shifted layout: "
@@ -252,8 +266,9 @@ def diff_unit(image: str, object_name: str,
     key = image_key(image)
     target = delink_dir / key / "modules" / object_name
     base = objdiff_dir / key / "base" / object_name
-    if not target.is_file() or not base.is_file():
-        return None
+    missing = [str(path) for path in (target, base) if not path.is_file()]
+    if missing:
+        raise FileNotFoundError("missing " + ", ".join(missing))
     retail = Elf(target)
     recon = Elf(base)
     result = UnitDataDiff(image, object_name)
@@ -267,17 +282,31 @@ def diff_unit(image: str, object_name: str,
     return result if result.diffs else None
 
 
-def diff_image(image: str, manifest: Manifest,
-               delink_dir: Path, objdiff_dir: Path) -> list[UnitDataDiff]:
+def diff_image(
+    image: str,
+    manifest: Manifest,
+    delink_dir: Path,
+    objdiff_dir: Path,
+) -> tuple[list[UnitDataDiff], list[ArtifactFailure]]:
     results: list[UnitDataDiff] = []
+    failures: list[ArtifactFailure] = []
     for unit in manifest.units:
         if unit.image != image:
+            continue
+        key = image_key(image)
+        target = delink_dir / key / "modules" / unit.object_name
+        base = objdiff_dir / key / "base" / unit.object_name
+        missing = [str(path) for path in (target, base) if not path.is_file()]
+        if missing:
+            failures.append(ArtifactFailure(
+                image, unit.unit, "missing " + ", ".join(missing)
+            ))
             continue
         diff = diff_unit(image, unit.object_name, delink_dir, objdiff_dir)
         if diff is not None:
             diff.unit = unit.unit
             results.append(diff)
-    return results
+    return results, failures
 
 
 # --------------------------------------------------------------------------- #
@@ -311,11 +340,13 @@ def coverage(image: str, delink_dir: Path) -> tuple[int, int, list[tuple[int, in
 def run(images: tuple[str, ...], *, show_detail: bool, show_coverage: bool,
         delink_dir: Path, objdiff_dir: Path) -> int:
     manifest = load_manifest()
-    total_units = total_match = total_diverge = 0
+    total_units = total_match = total_diverge = total_artifact_failures = 0
     for image in images:
         # diff_image returns every data-owning unit: a matching one carries only
         # `match` SectionDiffs, a diverging one carries at least one other.
-        results = diff_image(image, manifest, delink_dir, objdiff_dir)
+        results, artifact_failures = diff_image(
+            image, manifest, delink_dir, objdiff_dir
+        )
         diverging = [r for r in results if not r.matches]
         matched = len(results) - len(diverging)
         print(f"\n{image}: {len(results)} unit(s) own data; "
@@ -323,6 +354,7 @@ def run(images: tuple[str, ...], *, show_detail: bool, show_coverage: bool,
         total_units += len(results)
         total_match += matched
         total_diverge += len(diverging)
+        total_artifact_failures += len(artifact_failures)
         for result in diverging:
             summary = ", ".join(f"{d.name} [{d.status}]" for d in result.divergent)
             print(f"  DIVERGE {result.unit:<40} {summary}")
@@ -330,6 +362,8 @@ def run(images: tuple[str, ...], *, show_detail: bool, show_coverage: bool,
                 for d in result.divergent:
                     print(f"          {d.name:<9} retail={d.retail_size:<6} "
                           f"recon={d.recon_size:<6} {d.detail}")
+        for failure in artifact_failures:
+            print(f"  INCOMPLETE {failure.unit:<39} {failure.detail}")
         if show_coverage:
             owned, total, extents = coverage(image, delink_dir)
             pct = (100.0 * owned / total) if total else 0.0
@@ -339,8 +373,9 @@ def run(images: tuple[str, ...], *, show_detail: bool, show_coverage: bool,
             for va, size, name in extents[:10]:
                 print(f"    {va:#010x}  {size:>6} B  {name}")
     print(f"\ndata-match: {total_match}/{total_units} data-owning unit(s) match retail"
-          f" ({total_diverge} diverge)")
-    return 0
+          f" ({total_diverge} diverge; "
+          f"{total_artifact_failures} artifact failure(s))")
+    return 1 if total_diverge or total_artifact_failures else 0
 
 
 def main(argv: list[str] | None = None) -> int:

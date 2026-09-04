@@ -394,6 +394,16 @@ def check(
     ]
     if strict:
         bad = bad or bool(strict_changed)
+    from scripts.kf.data_match import run as check_data
+
+    data_bad = check_data(
+        selected,
+        show_detail=True,
+        show_coverage=False,
+        delink_dir=BUILD / "delink",
+        objdiff_dir=BUILD / "objdiff",
+    ) != 0
+    bad = bad or data_bad
     from scripts.kf.readme import refresh as refresh_readme
 
     if refresh_readme():
@@ -411,9 +421,11 @@ def check(
             reasons.append(
                 f"{len(strict_changed)} changed-input row(s) below historical best [--strict]"
             )
+        if data_bad:
+            reasons.append("data-section mismatch or incomplete comparison")
         print("check FAILED: " + ", ".join(reasons), file=sys.stderr)
         return 1
-    print("check OK: no unchanged-input regressions or lost banked functions")
+    print("check OK: exact data and no unchanged-input regressions or lost banked functions")
     return 0
 
 

@@ -3,11 +3,7 @@
 #include <kf/game.h>
 #include <kf/magic.h>
 
-extern KfEffectRecord DAT_8009d040[];
-extern KfMagicRecord magic_records[24];
 extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern KfActor *actor_pool_find_target_in_cone(const struct KfVec3i *origin,
-    s32 facing, u32 max_distance, s32 angle_tolerance, s32 *distance_out);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles,
     struct KfVec3s *direction);
@@ -18,7 +14,7 @@ extern void effect_pool_set_current(u8 *object);
 ADDRESS(0x8003a244, 0x30)
 void effect_pool_reset(void)
 {
-    KfEffectRecord *record = DAT_8009d040;
+    KfEffectRecord *record = effect_pool_records;
     u16 i;
 
     for (i = 0; i < 48; i++) {
@@ -153,7 +149,7 @@ void magic_cast(void)
 ADDRESS(0x8003a760, 0x7c)
 void effect_pool_sweep(void)
 {
-    KfEffectRecord *record = DAT_8009d040;
+    KfEffectRecord *record = effect_pool_records;
     u16 i = 47;
 
     do {

@@ -4,10 +4,8 @@
 
 /* Unresolved flag consulted before damaging definition 7 on floor 5. */
 /*
- * Unresolved pool of 48 sixty-byte records whose first byte is 0xff when free
- * and whose second byte is a kind; only this byte view is evidenced so far.
+ * Shared pool of 48 sixty-byte effect records whose first byte is 0xff when free.
  */
-extern u8 DAT_8009d040[];
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
@@ -818,7 +816,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u
     s32 weight;
     s32 odds;
     KfActor *candidate;
-    const u8 *record;
+    const KfEffectRecord *record;
     s16 index;
     s16 count;
 
@@ -858,13 +856,13 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u
         }
         candidate++;
     } while (--index != -1);
-    record = DAT_8009d040;
+    record = effect_pool_records;
     index = 47;
     do {
-        if (record[0] != 0xff && record[1] == 9) {
+        if (record->type != 0xff && record->kind == 9) {
             count++;
         }
-        record += 60;
+        record++;
     } while (--index != -1);
     if (count < 2) {
         return action;

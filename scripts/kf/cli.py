@@ -127,7 +127,10 @@ def parser() -> argparse.ArgumentParser:
         help="count scores >=99.995%% as display-exact (default requires 100%%)",
     )
 
-    check_parser = subs.add_parser("check", help="fail on banked regressions or losses")
+    check_parser = subs.add_parser(
+        "check",
+        help="fail on data mismatches, banked regressions, or losses",
+    )
     check_parser.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
     check_parser.add_argument("--strict", action="store_true")
 

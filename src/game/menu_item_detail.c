@@ -123,7 +123,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = DAT_80058c10.x + 28;
     gs.y = DAT_80058c10.y;
-    menu_format_number(player_state.unknown_2c, 6, 0, gs.codes);
+    menu_format_number(player_state.gold, 6, 0, gs.codes);
     menu_draw_number(&DAT_800583e8, &gs);
 }
 

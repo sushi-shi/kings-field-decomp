@@ -7,6 +7,7 @@ KfActorDefinition	0x98	supported	semantic_types.h;game_semantic_actor_core.tsv;a
 KfActorPlacement	0x10	supported	semantic_types.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
 KfActorState	0x2b48	supported	semantic_types.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
 KfArmorRecord	0x1c	supported	asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
+KfAssetHeader	0x14	supported	semantic_types.h;asm;asset_registry;render_bind_animated_instance	model asset header shared by static and animated registry entries
 KfAudioState	0x90	supported	semantic_types.h;game_semantic_audio_control.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate; audio_initialize addresses the voice-id slots relative to the sequence-buffer field
 KfAudioVoiceSlots	0x64	supported	semantic_types.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
 KfCameraPathPoint	0x1c	supported	semantic_types.h;game_semantic_camera_events.tsv;asm;xrefs	serialized camera path point
@@ -15,7 +16,8 @@ KfCdFileEntry	0x14	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CD file 
 KfCollisionTarget	0x20	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
 KfDisplayState	0x20028	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	double-buffer display state: display_begin_frame derives the primitive buffer and ordering table of the frame from the buffer index through one base register
 KfDisplayStateOpen	0x20024	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer is a separate global
-KfEffectRecord	0x3c	supported	asm;effect_pool_constructor;effect_pool_spawn_typed;map_object_pool_update	60-byte effect pool record at DAT_8009d040; constructors fix the header, VECTOR position and rotation/scale/direction triples
+KfEffectRecord	0x3c	supported	asm;effect_pool_constructor;effect_pool_spawn_typed;map_object_pool_update	60-byte record in effect_pool_records; constructors fix the header, VECTOR position and rotation/scale/direction triples
+KfEffectRenderView	0x3c	supported	semantic_types.h;asm;render_actor_sprite;render_entities	60-byte rendering view of an effect_pool_records entry; reads low position halfwords and the sprite-specific header selectors
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	semantic_types.h;asm;func_80020b4c	runtime floor-item table entry

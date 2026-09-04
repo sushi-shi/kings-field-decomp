@@ -34,6 +34,8 @@ extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u
 extern void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw);
 extern void map_object_pool_clear(void);
 extern void map_object_pool_clear_link(u8 link_id);
+extern s32 map_object_pool_find_interaction_from(
+    s32 start_index, s32 point_x, s32 point_z, s32 radius_padding);
 extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
 extern void map_object_pool_load(const KfMapObjectPlacement *placements);
 extern void map_object_pool_trigger_link(u8 link_id);

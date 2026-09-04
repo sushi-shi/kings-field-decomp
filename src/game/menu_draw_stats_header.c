@@ -164,6 +164,6 @@ void menu_draw_stats_header(void)
 
     gs.x = 0xfb;
     gs.y += 0x17;
-    menu_format_number(player_state.unknown_2c, 6, 0, gs.codes);
+    menu_format_number(player_state.gold, 6, 0, gs.codes);
     menu_draw_number(&DAT_800583e8, &gs);
 }

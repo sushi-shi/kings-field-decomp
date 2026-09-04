@@ -45,7 +45,7 @@ void game_state_initialize(void)
     player_state.progress_state.level = 1;
     player_state.progress_state.current_floor = 1;
     player_state.progress_state.highest_floor = 1;
-    player_state.unknown_2c = 0x96;
+    player_state.gold = 0x96;
     player_state.attack_charge_state.current = 0;
     player_state.magic_charge = 0;
     player_state.weapon_charge_delay = 0;
@@ -212,7 +212,6 @@ void player_adjust_mp(s32 delta)
 RODATA(0x80012000, 0x2c)
 
 /* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
-extern KfMagicRecord magic_records[24];
 
 /*
  * Rebuilds physical power, magic, the five attack lanes and the six
@@ -573,7 +572,6 @@ void player_apply_radial_damage(
 }
 
 
-extern KfMagicRecord magic_records[24];
 
 ADDRESS(0x800167e4, 0x64)
 void player_select_magic(u8 magic_id)
