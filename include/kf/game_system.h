@@ -47,18 +47,10 @@ extern void game_main_loop(void);
 extern void game_shutdown(void);
 extern void game_state_acknowledge_pending(void);
 extern void game_state_initialize(void);
-extern s32 memory_card_check_or_format(s16 allow_format);
-extern void memory_card_initialize(void);
-extern void memory_card_shutdown_events(void);
 extern u32 pad_init_bad_identifier();
 extern u32 pad_initialize(s32 identifier);
 extern u32 pad_read();
 extern void pad_read_bad_identifier(void);
 extern void pad_stop(void);
 extern void pad_stop_bad_identifier(void);
-extern s32 save_file_cleanup_temporary(void);
-extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
-extern s32 save_system_read_slot(s16 slot_id);
-extern s32 save_system_write_slot(s16 slot_id);
-
 #endif

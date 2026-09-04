@@ -49,10 +49,10 @@ KfPoolRecord	0x14	supported	game_types.h;game_semantic_math_lifecycle.tsv;asm;xr
 KfPrimitiveBuffer	0x0c	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	primitive allocation range and current cursor; two complete records exist in each overlay
 KfRenderState	0x140	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register
 KfRenderStateOpen	0x100	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	OPEN.EXE render state: render_set_view_transform reaches the view and pitch matrices 116 and 84 bytes below the rotation and render_initialize reaches the quadrant matrices 64 bytes past the light matrix through one base register; no light-matrix copy members
-KfSaveDirectory	0x80	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
-KfSaveHeader	0x280	supported	semantic_types.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
-KfSavePayload	0x2580	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
-KfSaveSlotSummary	0x18	supported	semantic_types.h;game_semantic_save_system.tsv;asm;xrefs	six summary words with unresolved individual meanings
+KfSaveDirectory	0x80	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
+KfSaveHeader	0x280	supported	game_save.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
+KfSavePayload	0x2580	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
+KfSaveSlotSummary	0x18	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs	six summary words with unresolved individual meanings
 KfScreenVertex	0x08	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm;xrefs	eight-byte GTE projection result shared by TMD projection producers and polygon enqueue consumers
 KfSpriteQuad	0x0c	supported	semantic_types.h;game_semantic_notification_sprites.tsv;asm;render_screen_sprite;render_enqueue_sprite	texture and screen rectangles shared by HUD, notification and projected sprite renderers
 KfTmdF3	0xc	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	flat triangle packet body (mode 0x20): colour word then n0 v0 v1 v2

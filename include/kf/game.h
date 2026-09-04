@@ -11,6 +11,7 @@
 #include <kf/map_data.h>
 #include <kf/memory.h>
 #include <kf/game_cd.h>
+#include <kf/game_save.h>
 #include <kf/resources.h>
 #include <kf/item.h>
 #include <kf/game_math.h>

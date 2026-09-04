@@ -380,7 +380,7 @@ def _align(value: int, alignment: int) -> int:
 
 
 def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
-    """Calculate the target's 32-bit C layouts from the two checked headers."""
+    """Calculate target 32-bit C layouts from the ordered owner headers."""
     primitive_layouts = {
         "s8": (1, 1),
         "u8": (1, 1),
@@ -406,10 +406,17 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         r"(.+?)\s+(\**)([A-Za-z_]\w*)((?:\s*\[\s*(?:0x[0-9a-fA-F]+|\d+)\s*\])*)"
     )
     array_pattern = re.compile(r"\[\s*(0x[0-9a-fA-F]+|\d+)\s*\]")
-    for path in (REPO / "include/kf/game_types.h", REPO / "include/kf/semantic_types.h"):
+    checked_headers = (
+        REPO / "include/kf/game_types.h",
+        REPO / "include/kf/semantic_types.h",
+        REPO / "include/kf/game_save.h",
+    )
+    for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
         for match in definition_pattern.finditer(text):
             name, body = match.groups()
+            if name in layouts:
+                raise ValueError(f"{path}: duplicate checked structure {name}")
             offset = 0
             alignment = 1
             fields = []

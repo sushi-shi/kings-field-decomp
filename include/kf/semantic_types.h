@@ -751,43 +751,6 @@ typedef struct KfMagicRecord {
     u8 unknown_12[0x02];
 } KfMagicRecord;
 
-/*
- * The memory-card file starts with the standard 0x200-byte PlayStation save
- * header (one header frame plus three icon frames).  King's Field appends a
- * 0x80-byte directory and stores each serialized game slot in 0x2580 bytes.
- * The six summary fields are known to be 32-bit values, but their individual
- * gameplay meanings are still under investigation.
- */
-typedef struct KfSaveSlotSummary {
-    u32 fields[6];
-} KfSaveSlotSummary;
-
-typedef struct KfSaveDirectory {
-    u8 slot_ids[4];
-    u8 reserved[0x1c];
-    KfSaveSlotSummary summaries[4];
-} KfSaveDirectory;
-
-typedef struct KfSaveHeader {
-    u8 playstation_header[0x200];
-    KfSaveDirectory directory;
-} KfSaveHeader;
-
-/*
- * The write/read pair copies four ranges verbatim.  The two word-aligned
- * ranges are moved with aligned word loops and the 0xf0-byte range with a
- * runtime-alignment-checked loop, which fixes the member alignments; the
- * meanings of the serialized bytes remain unresolved.
- */
-typedef struct KfSavePayload {
-    u32 player_state[56];
-    u8 unknown_0e0[556];
-    u32 world_state[2125];
-    u8 unknown_2440[240];
-    u8 magic_flags[24];
-    u8 unknown_2548[56];
-} KfSavePayload;
-
 /* === game-math-death layouts === */
 /* === end game-math-death === */
 

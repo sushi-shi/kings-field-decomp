@@ -12,7 +12,7 @@ from scripts.kf.inventory import (
     load_structure_identities,
     validate,
 )
-from scripts.kf.paths import CONFIG, RETAIL_CONFIG
+from scripts.kf.paths import CONFIG, REPO, RETAIL_CONFIG
 from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
 
@@ -200,6 +200,19 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_save_layouts_live_in_the_save_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        save_header = (REPO / "include/kf/game_save.h").read_text()
+        for structure in (
+            "KfSaveSlotSummary",
+            "KfSaveDirectory",
+            "KfSaveHeader",
+            "KfSavePayload",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, save_header)
+            self.assertNotIn(declaration, semantic_types)
 
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"

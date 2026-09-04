@@ -29,6 +29,10 @@ save_header_buffer  +0x0000  KfSaveHeader   (0x0280 bytes)
 save_payload_buffer +0x0280  KfSavePayload  (0x2580 bytes)
 ```
 
+These file-layout types, the shared workspace declarations, and the public
+cross-TU save API are owned by `include/kf/game_save.h`. Internal card and file
+helpers remain declared inside `save_system.c`.
+
 Each summary is six 32-bit fields. Their individual gameplay meanings are not
 yet proved, so the type deliberately keeps them as `fields[6]`. The card header
 initializer writes `SC`, icon flag `0x13`, block count `5`, the Shift-JIS title,
@@ -120,12 +124,12 @@ remains a candidate pending a caller or translation-unit boundary.
 
 The band is reconstructed as the single module `src/game/save_system.c`
 (unit `game.save_system`, 24 claimed functions, `0x8002b078..0x8002ca78`).
-Fourteen functions are strict 100%; the remaining ten carry recorded residues
-listed under "save" in [`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md):
-unit-local `.rdata` referents (jump tables, the card title, the message
-template), the player and display state structs that retail addresses as one
-object each, and two scheduling/allocation placements. `KfSavePayload` now
-names the four copied ranges by their copy-loop alignment. The two reverse
-ordering tables at `0x80070ebc` are addressed only relative to
-`asset_load_buffer`, so they still lack the relocation evidence the identity
-checker requires and remain a declaration inside the module.
+Twenty-one functions are strict 100%. The remaining three carry recorded
+residues listed under "save" in
+[`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md):
+`memory_card_show_status_message`, `screen_show_image_until_input`, and
+`talk_show_indexed_image`. `KfSavePayload` names the four copied ranges by
+their copy-loop alignment. The two reverse ordering tables at `0x80070ebc` are
+addressed only relative to `asset_load_buffer`, so they still lack the
+relocation evidence the identity checker requires and remain declarations
+inside the module.

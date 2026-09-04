@@ -191,8 +191,8 @@ declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
 
-The structure inventory currently covers 64 types and 582 fields. 474 fields
-have supported semantic names and 108 exact ranges remain explicitly opaque.
+The structure inventory currently covers 71 types and 635 fields. 521 fields
+have supported semantic names and 114 exact ranges remain explicitly opaque.
 `kf inventory check` derives the 32-bit layouts from the checked C headers and
 rejects any TSV disagreement in size, offset, extent, name, or datatype.
 
@@ -206,12 +206,13 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfPlayerLevelGrowth`, `KfPlayerMotionState`, `KfPlayerVitals`,
 `KfPlayerAttackChargeState`, `KfPlayerState`, `KfWeaponRecord`,
 `KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`, `KfScreenVertex`,
-`KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
-`KfSavePayload` live in `include/kf/semantic_types.h`, with their sizes checked
+`KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and `KfSavePayload`
+are owned by `include/kf/game_save.h`; the remaining inventory-only layouts in
+this list still live in `include/kf/semantic_types.h`. Their sizes are checked
 against `config/retail/structures.tsv` by `kf inventory check`; established
-reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`. A
-type name records only fields and extents supported by the current MIPS access
-pattern; it does not claim the original source spelling.
+reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`.
+A type name records only fields and extents supported by the current MIPS
+access pattern; it does not claim the original source spelling.
 
 The confidence values are `address-only`, `candidate`, `supported`, and
 `proven`. `proven` is reserved for a recovered source symbol/signature or an

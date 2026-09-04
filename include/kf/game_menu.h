@@ -10,6 +10,7 @@
  */
 
 #include <kf/semantic_types.h>
+#include <kf/game_save.h>
 
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
