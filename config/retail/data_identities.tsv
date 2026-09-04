@@ -3104,12 +3104,11 @@ OPEN.EXE	0x80049a44	0x2	DAT_80049a44	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x80049a46	0x2	DAT_80049a46	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049a48	0x20024	display_state	unknown	bss	KfDisplayStateOpen	display	supported	asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer is a separate global
 OPEN.EXE	0x80069a6c	0x4	ordering_table	global	bss	u32 *	primitive_buffer	supported	game_semantic_display_tmd.tsv;asm;xrefs;ClearOTagR;DrawOTag	primitive ordering table
-OPEN.EXE	0x80069a70	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
-OPEN.EXE	0x80069b28	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
+OPEN.EXE	0x80069a70	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	open_semantic_render_init.tsv;asm;xrefs;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; display_initialize reuses an interior pointer across the following display-environment storage
+OPEN.EXE	0x80069b28	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	open_semantic_render_init.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
 OPEN.EXE	0x80069b58	0xc	tmd_state	unknown	bss	KfTmdStateOpen	tmd	supported	asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
 OPEN.EXE	0x80069b68	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
-OPEN.EXE	0x80069b84	0x2	DAT_80069b84	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80069b86	0x2	DAT_80069b86	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80069b80	0x1f40	tmd_projected_vertices	global	bss	KfScreenVertex[1000]	tmd	supported	open_semantic_projection.tsv;game_semantic_projection_scratch.tsv;asm;xrefs;1000-guard;8-byte-stride	projection scratch buffer shared by TMD projection producers and polygon consumers; the guard rejects counts at the 1000-record capacity
 OPEN.EXE	0x8006da28	0x2	DAT_8006da28	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da2a	0x2	DAT_8006da2a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da2c	0x1	DAT_8006da2c	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3136,7 +3135,7 @@ OPEN.EXE	0x8006e044	0x4	DAT_8006e044	unknown	bss	u32		address-only	ghidra-12.0.4
 OPEN.EXE	0x8006e048	0x100	render_state	unknown	bss	KfRenderStateOpen	render	supported	asm;base-register;render_set_view_transform;render_initialize	OPEN.EXE render state: render_set_view_transform reaches the view and pitch matrices 116 and 84 bytes below the rotation and render_initialize reaches the quadrant matrices 64 bytes past the light matrix through one base register; no light-matrix copy members
 OPEN.EXE	0x8006e148	0x80	light_quadrant_matrices	unknown	bss	MATRIX[4]	render	supported	asm;render_initialize;absolute-address	products of the light matrix with each yaw-quadrant matrix, addressed absolutely by render_initialize while the quadrant matrices fold from the light matrix base register
 OPEN.EXE	0x8006e1c8	0x4	DAT_8006e1c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1cc	0x2	DAT_8006e1cc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x8006e1cc	0x2	tmd_projection_shift	global	bss	s16	tmd	supported	open_semantic_projection.tsv;asm;xrefs;lh;sllv;srav	signed shift count applied to projected perspective/depth values; display initialization sets the normal value to one
 OPEN.EXE	0x8006e1d0	0x4	DAT_8006e1d0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e1d4	0x2	DAT_8006e1d4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e1d8	0x4	DAT_8006e1d8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3199,7 +3198,7 @@ OPEN.EXE	0x8007589c	0x4	memory_system_heap_size	unknown	bss	s32	memory	supported
 OPEN.EXE	0x800758a0	0x4	_ss_score	unknown	bss	pointer	audio	supported	SEPINIT.OBJ:XREF;SEQINIT.OBJ:XREF;SSCALL.OBJ:XREF;SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal per-sequence track-pointer table base; the private record type, source linkage, and full extent remain unresolved
 OPEN.EXE	0x800758a4	0x4	DAT_800758a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80075920	0x4	DAT_80075920	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075928	0x4	DAT_80075928	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80075928	0x4	primitive_allocation_count	global	bss	u32	primitive_buffer	supported	open_semantic_render_init.tsv;asm;xrefs;allocate-increment;frame-reset	number of successful primitive-buffer allocations in the current frame
 OPEN.EXE	0x80075930	0x2	_snd_seq_s_max	unknown	bss	s16	audio	supported	SSCALL.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal configured sequence count; source linkage remains unresolved
 OPEN.EXE	0x80075938	0x2	_snd_seq_t_max	unknown	bss	s16	audio	supported	SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal configured track count; source linkage remains unresolved
 OPEN.EXE	0x80075940	0x4	DAT_80075940	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

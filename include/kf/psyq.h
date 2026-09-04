@@ -18,4 +18,7 @@
 #include <LIBGPU.H>
 #include <LIBETC.H>
 
+/* REG.OBJ exports this helper, but Psy-Q Release 2.5's LIBGTE.H omits it. */
+extern void ReadSZ2(long *sz0, long *sz1);
+
 #endif

@@ -13,16 +13,15 @@ MATRIX color_matrix_table[5] = {
 };
 
 /*
- * OPEN.EXE render initialisation. The preceding colour-preset selector shares
- * the same matrix state and initialization caller. The two functions linked
- * after this body (display-environment setup at 0x80016adc and the primitive
- * allocator at 0x80016cb4) are not reconstructed, so this remains a WIP unit.
- * Shared state and the GAME homolog support the render-family interface, not
- * an original TU boundary. This variant loads B0\RTBL., budgets a larger
- * primitive buffer, keeps no light-matrix copy, and sets one texture page.
+ * OPEN.EXE render initialisation. The colour-preset selector, display setup,
+ * and primitive allocator share the same matrix/display state and direct
+ * initialization flow. Shared state and the GAME homolog support this WIP
+ * render-family unit, not an original TU boundary. This variant loads
+ * B0\RTBL., budgets a larger primitive buffer, keeps no light-matrix copy,
+ * and sets one texture page.
  */
 
-RODATA(0x80012110, 0xc)
+RODATA(0x80012110, 0x28)
 
 ADDRESS(0x800168dc, 0x2c)
 void lighting_set_active_color_matrix(s32 index)
@@ -84,4 +83,79 @@ void render_initialize(void)
         &light_quadrant_matrices[3]);
     DAT_8006da38 = GetTPage(1, 0, 0x340, 0);
     DAT_8006da36 = 0x7a00;
+}
+
+ADDRESS(0x80016adc, 0x1d8)
+void display_initialize(s32 mode)
+{
+    s32 framebuffer_height = 240;
+    s32 lower_buffer_y = 240;
+
+    if (mode == 0xfe) {
+        ResetGraph(3);
+    } else {
+        ResetGraph(0);
+    }
+    InitGeom();
+    SetGeomOffset(160, 120);
+    SetDefDrawEnv(
+        &display_draw_environments[0], 0, 0, 320, framebuffer_height);
+    SetDefDispEnv(
+        &display_disp_environments[0],
+        0,
+        lower_buffer_y,
+        320,
+        framebuffer_height);
+    SetDefDrawEnv(
+        &display_draw_environments[1],
+        0,
+        lower_buffer_y,
+        320,
+        framebuffer_height);
+    SetDefDispEnv(
+        &display_disp_environments[1], 0, 0, 320, framebuffer_height);
+    display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;
+    display_draw_environments[0].isbg = 1;
+    display_draw_environments[1].isbg = 1;
+    display_draw_environments[0].r0 = 0;
+    display_draw_environments[0].g0 = 0;
+    display_draw_environments[0].b0 = 0;
+    display_draw_environments[1].r0 = 0;
+    display_draw_environments[1].g0 = 0;
+    display_draw_environments[1].b0 = 0;
+    if (mode == 0xfe) {
+        PutDispEnv(&display_disp_environments[0]);
+        SetDispMask(1);
+    } else {
+        display_draw_environments[0].dfe = 0;
+        display_draw_environments[1].dfe = 0;
+        PutDrawEnv(&display_draw_environments[0]);
+        PutDrawEnv(&display_draw_environments[1]);
+        display_draw_environments[0].dfe = 1;
+        display_draw_environments[1].dfe = 1;
+        SetDispMask(0);
+    }
+    SetBackColor(0, 0, 0);
+    lighting_set_active_color_matrix(0);
+    SetFarColor(0, 0, 0);
+    render_state.fog_near_distance = 0x2af8;
+    SetFogNear(0x2af8, 200);
+    tmd_projection_shift = 1;
+    render_initialize();
+}
+
+ADDRESS(0x80016cb4, 0x84)
+void *primitive_buffer_allocate(u16 byte_count)
+{
+    u8 *allocation = display_state.primitive_buffer->cursor;
+
+    display_state.primitive_buffer->cursor += byte_count;
+    if (display_state.primitive_buffer->cursor >
+        display_state.primitive_buffer->end) {
+        for (;;) {
+            printf("primitive over fllow!!!\n");
+        }
+    }
+    primitive_allocation_count++;
+    return allocation;
 }

@@ -3241,8 +3241,8 @@ OPEN.EXE	0x80012104	0x904	0x8	string	byte-pattern		ascii	investigation:string-ce
 OPEN.EXE	0x8001210c	0x90c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80012110	0x910	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\RTBL.
 OPEN.EXE	0x80012118	0x918	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x8001211c	0x91c	0x17	string	byte-pattern		ascii	investigation:string-census	escaped text: primitive over fllow!!!
-OPEN.EXE	0x80012133	0x933	0x5	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x8001211c	0x91c	0x19	string	reviewed		ascii	manual:open_semantic_render_init	escaped text including newline and terminating NUL: primitive over fllow!!!\n
+OPEN.EXE	0x80012135	0x935	0x3	unclassified	coverage-gap			payload-complement	alignment padding after the primitive overflow diagnostic
 OPEN.EXE	0x80012138	0x938	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x8001213c	0x93c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80012140	0x940	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -3272,8 +3272,8 @@ OPEN.EXE	0x8001219c	0x99c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghid
 OPEN.EXE	0x800121a0	0x9a0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800121a4	0x9a4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800121a8	0x9a8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121ac	0x9ac	0x11	string	byte-pattern		ascii	investigation:string-census	escaped text: POINT OVER !!!!!!
-OPEN.EXE	0x800121bd	0x9bd	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800121ac	0x9ac	0x13	string	reviewed		ascii	manual:open_semantic_projection	escaped text including newline and terminating NUL: POINT OVER !!!!!!\n
+OPEN.EXE	0x800121bf	0x9bf	0x1	unclassified	coverage-gap			payload-complement	alignment padding after the projection-capacity diagnostic
 OPEN.EXE	0x800121c0	0x9c0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800121c4	0x9c4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800121c8	0x9c8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -5351,7 +5351,7 @@ OPEN.EXE	0x800372e1	0x25ae1	0x3	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x800372e4	0x25ae4	0x3	string	byte-pattern		ascii	manual:open_cd_file	escaped text: ;1 including terminator
 OPEN.EXE	0x800372e7	0x25ae7	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372e8	0x25ae8	0x8	string	reviewed	opening_ending_sequence_path	char[8]	manual:open_semantic_resources	B0\\END. sequence path including its terminating NUL
-OPEN.EXE	0x800372ef	0x25aef	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800372f0	0x25af0	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372f3	0x25af3	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372f4	0x25af4	0x7	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372fb	0x25afb	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum

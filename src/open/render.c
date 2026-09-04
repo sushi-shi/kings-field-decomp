@@ -3,10 +3,9 @@
 #include <kf/open_render.h>
 
 /*
- * OPEN.EXE render-family bodies following two unresolved functions. Shared
- * instruction shapes with src/game/render.c support common source lineage;
- * the OPEN state layouts and ordering-table pointer differ, and no original
- * TU boundary is claimed while the intervening functions remain unresolved.
+ * OPEN.EXE display, TMD, and projection bodies following render initialization.
+ * Shared instruction shapes with the GAME renderer support common source
+ * lineage; OPEN-specific state layouts and call paths remain explicit.
  */
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
@@ -23,6 +22,9 @@
 #define TMD_G4 0x38
 #define TMD_GT4 0x3c
 
+DATA(0x80069b80, 0x1f40)
+KfScreenVertex tmd_projected_vertices[1000];
+
 ADDRESS(0x80016d38, 0x98)
 void display_begin_frame(void)
 {
@@ -31,7 +33,7 @@ void display_begin_frame(void)
     ordering_table = display_state.ordering_tables[display_state.buffer_index].entries;
     ClearOTagR(ordering_table, 0x4000);
     display_state.primitive_buffer->cursor = display_state.primitive_buffer->start;
-    DAT_80075928 = 0;
+    primitive_allocation_count = 0;
     DAT_8006e044 = 0;
     DAT_8006e040 = 0;
 }
@@ -92,7 +94,7 @@ void render_set_view_transform(
     RotMatrix(&angles, (MATRIX *)&render_state.pitch_matrix);
 }
 
-RODATA(0x80012138, 0x74)
+RODATA(0x80012138, 0x88)
 
 /*
  * Converts every vertex and normal index of the current asset into a byte
@@ -223,4 +225,30 @@ ADDRESS(0x8001736c, 0x20)
 void tmd_release_last_allocation(s32 slot)
 {
     memory_release_last();
+}
+
+ADDRESS(0x8001738c, 0xcc)
+void tmd_project_vertices(s32 count)
+{
+    KfScreenVertex *out;
+    SVECTOR *vertex;
+    long perspective;
+    long flag;
+    long depth;
+    long unused_depth;
+
+    if (count >= 1000) {
+        func_8001a814("POINT OVER !!!!!!\n");
+        return;
+    }
+    out = tmd_projected_vertices;
+    vertex = current_tmd_vertices;
+    for (count--; count != -1; count--) {
+        RotTransPers(vertex, (long *)&out->sxy, &perspective, &flag);
+        out->p2 = perspective << tmd_projection_shift;
+        ReadSZ2(&depth, &unused_depth);
+        out->sz = (u16)depth;
+        out++;
+        vertex++;
+    }
 }

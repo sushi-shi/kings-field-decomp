@@ -89,6 +89,7 @@ STATE = {
         0x80069B28: ("display_disp_environments", 0x28, "DISPENV[2]"),
         0x80069B58: ("tmd_state", 0x0C, "KfTmdStateOpen"),
         0x80069B68: ("current_tmd_vertices", 0x04, "SVECTOR *"),
+        0x80069B80: ("tmd_projected_vertices", 0x1F40, "KfScreenVertex[1000]"),
         0x8006E048: ("render_state", 0x100, "KfRenderStateOpen"),
         0x8006E148: ("light_quadrant_matrices", 0x80, "MATRIX[4]"),
     },

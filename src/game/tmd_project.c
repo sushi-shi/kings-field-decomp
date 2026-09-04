@@ -20,10 +20,6 @@
  * exactly.  See docs/patterns/source-shapes-gcc257.md.
  */
 
-/* Writes GTE data register 19 (SZ3) to *sz0; the second slot follows the call
- * convention but is ignored by the linked library body. */
-extern void ReadSZ2(long *sz0, long *sz1);
-
 ADDRESS(0x8001c60c, 0x9c)
 void tmd_project_vertices(s32 count)
 {
