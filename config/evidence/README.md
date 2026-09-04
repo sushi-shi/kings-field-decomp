@@ -169,6 +169,12 @@ volume duplication into the two O32 stack arguments, active-VAB aggregate
 referent, and game-owned ten-slot policy boundary. The wrapper matches retail
 exactly.
 
+`open_semantic_audio_play_voice.tsv` records the OPEN ten-slot managed voice
+player and its loaded ring index. It proves the all-zero sound guard, occupied
+slot key-off, metadata replacement, key-on result store, six signed halfword
+arguments, and the precise policy difference from its exact GAME homolog. The
+function and owned data match retail exactly.
+
 `open_semantic_opening_scene1.tsv` records the contiguous OPEN scene-1 fade
 renderer and controller. It proves the two textured half-screen packets, their
 texture-page origins and shade width, the 0-to-128 and 128-to-0 transitions,

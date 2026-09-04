@@ -2804,7 +2804,7 @@ OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported
 OPEN.EXE	0x800372e8	0x8	opening_ending_sequence_path	unknown	load	char[8]	opening_resources	supported	open_semantic_resources.tsv;asm;direct-bytes;sole-xref	B0\\END. sequence path used by the ending resource loader
 OPEN.EXE	0x800372f3	0x1	DAT_800372f3	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372fb	0x1	DAT_800372fb	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037304	0x4	DAT_80037304	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037304	0x4	audio_voice_slot_index	global	load	s32	audio	supported	open_semantic_audio_play_voice.tsv;asm;xrefs;retail-initial-value-9;GAME-overlay-homolog	managed sound-effect ring index advanced modulo ten before each voice
 OPEN.EXE	0x80037314	0x4	DAT_80037314	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003736f	0x1	DAT_8003736f	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037370	0x4	DAT_80037370	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
