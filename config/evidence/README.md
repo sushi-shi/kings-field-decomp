@@ -14,6 +14,12 @@ and fixed-point helper names. These campaign tables support identities in
 `function_identities.tsv` and `data_identities.tsv`; they are not recovered
 original symbols.
 
+`game_semantic_unresolved_functions.tsv` records the reviewed residual GAME
+address identities: one behaviorally redundant map-load wrapper and two
+unreferenced return stubs. It supports their body-level signatures while
+deliberately leaving purpose, ownership, and the return-carved stub boundaries
+unresolved.
+
 `game_semantic_audio_control.tsv` records the per-function retail, caller,
 string, shared-state, and Psy-Q 2.5 header evidence for GAME audio
 initialization, VAB loading, and sequence lifecycle policy. API-name candidates

@@ -210,5 +210,6 @@ void map_load_floor(void)
 ADDRESS(0x800365f8, 0x20)
 void func_800365f8(void)
 {
+    /* The wrapper's distinct purpose is unresolved; it adds no visible work. */
     map_load_floor();
 }

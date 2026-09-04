@@ -172,6 +172,29 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
+    def test_reviewed_unresolved_functions_keep_address_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_unresolved_functions.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        expected = {
+            ("GAME.EXE", 0x800365F8),
+            ("GAME.EXE", 0x80036E30),
+            ("GAME.EXE", 0x8003AC4C),
+        }
+
+        self.assertEqual(
+            {(row["image"], parse_int(row["va"])) for row in rows}, expected
+        )
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(identity.name_confidence, "address-only")
+            self.assertEqual(identity.signature_confidence, "supported")
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
     def test_data_access_uses_low_instruction_opcode(self) -> None:
         reference = FakeReference()
         self.assertEqual(_data_access(FakeImage(0x8C820000), reference), "read")

@@ -207,4 +207,5 @@ void debug_print(int __builtin_va_alist)
 ADDRESS(0x8003ac4c, 0x8)
 void func_8003ac4c(void)
 {
+    /* Unreferenced return stub at the game/runtime boundary. */
 }
