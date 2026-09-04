@@ -1,25 +1,16 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/cd_file.h>
+#include <kf/memory.h>
+#include <kf/open_render.h>
 
 /*
- * OPEN.EXE render initialisation.  The translation unit continues in
- * src/open/render.c; the two unlabelled helpers linked between them (display
- * environment setup at 0x80016adc and the primitive allocator at 0x80016cb4)
- * are not reconstructed yet, so the run is split into two units.  Compared
- * with GAME.EXE this snapshot loads B0\RTBL., budgets a larger primitive
- * buffer, keeps no light-matrix copy, and sets one texture page.
+ * OPEN.EXE render initialisation. The two functions linked after this body
+ * (display-environment setup at 0x80016adc and the primitive allocator at
+ * 0x80016cb4) are not reconstructed, so this remains a separate WIP unit.
+ * Shared state and the GAME homolog support the render-family interface, not
+ * an original TU boundary. This variant loads B0\RTBL., budgets a larger
+ * primitive buffer, keeps no light-matrix copy, and sets one texture page.
  */
-
-extern void *memory_allocate(s32 size);
-extern u32 func_8001615c(void *destination, char *path);
-
-extern KfDisplayStateOpen display_state;
-extern KfRenderStateOpen render_state;
-extern MATRIX light_quadrant_matrices[4];
-extern u16 DAT_8006da3a;
-extern u16 DAT_8006da38;
-extern u16 DAT_8006da36;
-extern u32 DAT_800439d8;
 
 RODATA(0x80012110, 0xc)
 
@@ -30,7 +21,7 @@ void render_initialize(void)
     u8 *buffer;
 
     display_state.buffer_index = 0xff;
-    func_8001615c(&DAT_800439d8, "B0\\RTBL.");
+    cd_file_load_into(&DAT_800439d8, "B0\\RTBL.");
     buffer = memory_allocate(0x4c2c0);
     display_state.asset_load_buffer = buffer;
     display_state.primitive_buffers[0].start = buffer;

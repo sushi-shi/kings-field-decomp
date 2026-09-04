@@ -113,6 +113,11 @@ overlay-specific arena spans. `overlay_lineage.tsv` independently checks the
 constant address delta and all 144 instruction shapes. The adjacent state is
 kept as separate globals because no enclosing C object has yet been proved.
 
+`open_semantic_cd_file.tsv` records the contiguous OPEN disc-file loader pair,
+its caller-provided and allocator-provided destination contracts, the shared
+CD path/state objects, and the provider boundary at Psy-Q CD-ROM and libc
+calls. Both functions and the unit's two path literals match retail exactly.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a

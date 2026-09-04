@@ -5344,9 +5344,10 @@ OPEN.EXE	0x800372a8	0x25aa8	0x28	unclassified	coverage-gap			payload-complement	
 OPEN.EXE	0x800372d0	0x25ad0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372d4	0x25ad4	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\L0.
 OPEN.EXE	0x800372da	0x25ada	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800372dc	0x25adc	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: \\KF\\
-OPEN.EXE	0x800372e0	0x25ae0	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800372e1	0x25ae1	0x7	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800372dc	0x25adc	0x5	string	byte-pattern		ascii	manual:open_cd_file	escaped text: \\KF\\ including terminator
+OPEN.EXE	0x800372e1	0x25ae1	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800372e4	0x25ae4	0x3	string	byte-pattern		ascii	manual:open_cd_file	escaped text: ;1 including terminator
+OPEN.EXE	0x800372e7	0x25ae7	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372e8	0x25ae8	0x7	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\END.
 OPEN.EXE	0x800372ef	0x25aef	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372f3	0x25af3	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -5502,10 +5503,8 @@ OPEN.EXE	0x800375c8	0x25dc8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/gh
 OPEN.EXE	0x800375cc	0x25dcc	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800375d0	0x25dd0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800375d4	0x25dd4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800375d8	0x25dd8	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800375d9	0x25dd9	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800375da	0x25dda	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800375db	0x25ddb	0x5	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800375d8	0x25dd8	0x4	defined	manual:open_cd_file		CdlLOC	manual:open_cd_file	four-byte Psy-Q CD location copied fieldwise before CdlSetloc
+OPEN.EXE	0x800375dc	0x25ddc	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800375e0	0x25de0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800375e4	0x25de4	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800375e8	0x25de8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -5577,13 +5576,4 @@ OPEN.EXE	0x80037764	0x25f64	0x4	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x80037768	0x25f68	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x8003776c	0x25f6c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037770	0x25f70	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80037774	0x25f74	0x2c	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800377a0	0x25fa0	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800377a1	0x25fa1	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800377a2	0x25fa2	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800377a3	0x25fa3	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800377a4	0x25fa4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800377a8	0x25fa8	0x10	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800377b8	0x25fb8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800377bc	0x25fbc	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800377bd	0x25fbd	0x43	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80037774	0x25f74	0x8c	unclassified	coverage-gap			payload-complement	includes zero-filled file padding overlapping the inferred BSS start; may contain other unresolved state

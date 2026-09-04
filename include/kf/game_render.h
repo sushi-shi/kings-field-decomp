@@ -77,7 +77,7 @@ extern KfTmdObject *tmd_get_object(u16 index);
 extern void tmd_release_last_allocation(s32 slot);
 extern void tmd_project_vertices(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
-extern void tmd_register(u16 index, void *asset);
+extern void tmd_register(u16 slot, u8 *tmd);
 extern void tmd_select(u16 index);
 extern void tmd_select_object_vertices(u16 index);
 extern void tmd_set_current_vertices(SVECTOR *vertices);

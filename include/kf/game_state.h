@@ -116,7 +116,6 @@ extern s32 audio_voice_slot_index;
 extern const SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[4];
 extern u8 boss_defeat_complete;
-extern char cd_path_buffer[80];
 extern KfCollisionTarget collision_target;
 extern MATRIX color_matrix_table[7];
 extern KfMapEvent *current_map_event;

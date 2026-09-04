@@ -1,23 +1,13 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/memory.h>
+#include <kf/open_render.h>
 
 /*
- * OPEN.EXE copy of the render translation unit (continued from
- * src/open/render_init.c).  The bodies match src/game/render.c; only the
- * state layouts and the separate ordering-table pointer differ.
+ * OPEN.EXE render-family bodies following two unresolved functions. Shared
+ * instruction shapes with src/game/render.c support common source lineage;
+ * the OPEN state layouts and ordering-table pointer differ, and no original
+ * TU boundary is claimed while the intervening functions remain unresolved.
  */
-
-extern KfDisplayStateOpen display_state;
-extern KfRenderStateOpen render_state;
-extern KfTmdStateOpen tmd_state;
-extern DRAWENV display_draw_environments[2];
-extern DISPENV display_disp_environments[2];
-extern u32 *ordering_table;
-extern SVECTOR *current_tmd_vertices;
-extern u32 DAT_80075928;
-extern u32 DAT_8006e044;
-extern u32 DAT_8006e040;
-extern void memory_release_last(void);
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
 #define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + 12))
@@ -82,7 +72,8 @@ void tmd_select_object_vertices(u16 index)
 }
 
 ADDRESS(0x80016f04, 0x12c)
-void render_set_view_transform(VECTOR *position, SVECTOR *rotation)
+void render_set_view_transform(
+    const VECTOR *position, const SVECTOR *rotation)
 {
     SVECTOR angles;
 
@@ -222,14 +213,14 @@ void tmd_prepare_primitive_indices(void)
 }
 
 ADDRESS(0x80017330, 0x3c)
-void tmd_register(u16 index, void *asset)
+void tmd_register(u16 slot, u8 *tmd)
 {
-    tmd_state.current_asset = tmd_state.slots[index] = asset;
+    tmd_state.current_asset = tmd_state.slots[slot] = tmd;
     tmd_prepare_primitive_indices();
 }
 
 ADDRESS(0x8001736c, 0x20)
-void tmd_release_last_allocation(void)
+void tmd_release_last_allocation(s32 slot)
 {
     memory_release_last();
 }

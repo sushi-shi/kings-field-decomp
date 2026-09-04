@@ -151,7 +151,9 @@ class DisplayTmdInventoryTests(unittest.TestCase):
     def test_decoded_relocations_and_direct_calls_are_reviewed(self) -> None:
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         display_rows = [
-            row for row in rows if row["provenance"] == "manual:game_semantic_display_tmd"
+            row
+            for row in rows
+            if "manual:game_semantic_display_tmd" in row["provenance"].split(";")
         ]
         self.assertEqual(len(display_rows), 233)
         self.assertEqual({row["status"] for row in display_rows}, {"reviewed"})

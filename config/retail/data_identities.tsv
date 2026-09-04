@@ -2826,7 +2826,8 @@ OPEN.EXE	0x8003724c	0x4	DAT_8003724c	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x800372a0	0x4	DAT_800372a0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372a4	0x4	DAT_800372a4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372d0	0x4	DAT_800372d0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800372e0	0x1	DAT_800372e0	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800372dc	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	"\\KF\\": five bytes copied to the head of the OPEN CD path buffer before the file name
+OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	";1": ISO 9660 version suffix appended to every OPEN CD path
 OPEN.EXE	0x800372f3	0x1	DAT_800372f3	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372fb	0x1	DAT_800372fb	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037304	0x4	DAT_80037304	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2911,9 +2912,7 @@ OPEN.EXE	0x800375c8	0x4	DAT_800375c8	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x800375cc	0x4	DAT_800375cc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375d0	0x4	DAT_800375d0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375d4	0x4	DAT_800375d4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800375d8	0x1	DAT_800375d8	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800375d9	0x1	DAT_800375d9	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800375da	0x1	DAT_800375da	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800375d8	0x4	cd_read_location	unknown	load	CdlLOC	cd_file	supported	open_semantic_cd_file.tsv;asm;CdControl	CdlLOC receiving the searched file's minute, second, and sector before CdlSetloc; the fourth byte is not rewritten by these helpers
 OPEN.EXE	0x800375e0	0x4	DAT_800375e0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375e8	0x4	DAT_800375e8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375f0	0x1	DAT_800375f0	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2954,12 +2953,8 @@ OPEN.EXE	0x80037758	0x4	DAT_80037758	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x80037760	0x4	DAT_80037760	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037768	0x4	DAT_80037768	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037770	0x4	DAT_80037770	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800377a0	0x1	DAT_800377a0	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800377a1	0x1	DAT_800377a1	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800377a2	0x1	DAT_800377a2	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800377a4	0x4	DAT_800377a4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800377b8	0x4	DAT_800377b8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800377bc	0x1	DAT_800377bc	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800377a0	0x18	cd_search_file	unknown	bss	CdlFILE	cd_file	supported	open_semantic_cd_file.tsv;asm;CdSearchFile;GAME-overlay-layout	CdlFILE filled by CdSearchFile; exact adjacency to the path buffer and the zero-padded load tail support BSS ownership
+OPEN.EXE	0x800377b8	0x50	cd_path_buffer	unknown	bss	char[80]	cd_file	supported	open_semantic_cd_file.tsv;asm;GAME-overlay-layout	80-byte path buffer following the CdlFILE exactly as in GAME; its final eight bytes extend beyond the padded load image
 OPEN.EXE	0x800379c0	0x1	DAT_800379c0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800379c1	0x1	DAT_800379c1	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800379c8	0x4	DAT_800379c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

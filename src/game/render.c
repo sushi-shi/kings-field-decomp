@@ -280,9 +280,9 @@ void tmd_prepare_primitive_indices(void)
 }
 
 ADDRESS(0x8001c5b0, 0x3c)
-void tmd_register(u16 index, void *asset)
+void tmd_register(u16 slot, u8 *tmd)
 {
-    tmd_state.current_asset = tmd_state.slots[index] = asset;
+    tmd_state.current_asset = tmd_state.slots[slot] = tmd;
     tmd_prepare_primitive_indices();
 }
 

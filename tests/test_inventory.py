@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 509)
         self.assertEqual(counts["typed_returns"], 509)
         self.assertEqual(counts["parameterized"], 321)
-        self.assertEqual(counts["data"], 3200)
+        self.assertEqual(counts["data"], 3195)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 67)
@@ -682,6 +682,54 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_open_cd_file_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_cd_file.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 2)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        data = load_data_identities(RETAIL_CONFIG)
+        expected = {
+            0x800372DC: ("cd_path_prefix", "load", "char[5]", 0x05),
+            0x800372E4: ("cd_version_suffix", "load", "char[3]", 0x03),
+            0x800375D8: ("cd_read_location", "load", "CdlLOC", 0x04),
+            0x800377A0: ("cd_search_file", "bss", "CdlFILE", 0x18),
+            0x800377B8: ("cd_path_buffer", "bss", "char[80]", 0x50),
+        }
+        for va, shape in expected.items():
+            identity = data[("OPEN.EXE", va)]
+            self.assertEqual(
+                (identity.name, identity.storage, identity.datatype, identity.size),
+                shape,
+            )
+
+    def test_open_cd_file_relocations_are_named_and_reviewed(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in rows
+            if "manual:open_cd_file" in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 43)
+        self.assertNotIn("", {row["target_name"] for row in campaign_rows})
+
+        calls = [row for row in campaign_rows if row["kind"] == "mips26"]
+        body_data = [
+            row
+            for row in campaign_rows
+            if 0x80016014 <= parse_int(row["site_va"]) < 0x80016298
+        ]
+        self.assertEqual(len(calls), 16)
+        self.assertEqual(len(body_data), 26)
+        self.assertEqual({row["status"] for row in calls + body_data}, {"reviewed"})
 
     def test_map_resources_relocations_and_data_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

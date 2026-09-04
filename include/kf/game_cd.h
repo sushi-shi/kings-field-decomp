@@ -1,13 +1,8 @@
 #ifndef KF_GAME_CD_H
 #define KF_GAME_CD_H
 
-/* Shared game-owned state at the Psy-Q CD-ROM boundary. */
-
-#include <kf/semantic_types.h>
-#include <kf/psyq_cd.h>
-
-extern CdlFILE cd_search_file;
-extern CdlLOC cd_read_location;
+/* GAME.EXE additions to the shared CD-file interface. */
+#include <kf/cd_file.h>
 
 /*
  * Retail indexes these as 20-byte records from an older CdlFILE layout. The
@@ -16,5 +11,6 @@ extern CdlLOC cd_read_location;
  * stride.
  */
 extern KfCdFileEntry cd_file_table[80];
+extern s32 cd_file_load_table_entry(void **destination, s32 index);
 
 #endif
