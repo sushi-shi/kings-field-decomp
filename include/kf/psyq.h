@@ -18,7 +18,8 @@
 #include <LIBGPU.H>
 #include <LIBETC.H>
 
-/* REG.OBJ exports this helper, but Psy-Q Release 2.5's LIBGTE.H omits it. */
-extern void ReadSZ2(long *sz0, long *sz1);
+/* REG.OBJ exports this helper, but Release 2.5's LIBGTE.H omits it.
+ * Retail writes only *depth; GAME and OPEN pass an unused second pointer. */
+extern void ReadSZ2(long *depth, long *unused_depth);
 
 #endif

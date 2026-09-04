@@ -8,11 +8,14 @@ per-function dossiers are in
 instructions admitted by this campaign.
 
 GAME's reconstructed `game.render` module now owns the filled contiguous run
-`0x8001b7b0..0x8001c60c`.  The former `game.display` split ended immediately
+`0x8001b7b0..0x8001c7f8`.  The former `game.display` split ended immediately
 before `render_initialize`, which `display_initialize` calls directly, and
 both halves operate on the same graphics state family with the same compiler
 profile.  That is enough evidence to consolidate the reconstruction unit; the
 module boundary remains WIP rather than a claim about the historical filename.
+The projection tail now shares this owner: the preceding accessors set its
+input vertex cursor, and callers use their object counts before projection.
+See [the projection ownership evidence](patterns/tmd-projection.md).
 
 ## Function identities
 
@@ -23,9 +26,9 @@ module boundary remains WIP rather than a claim about the historical filename.
 | present frame | `0x8001c050` | `0x80016dd0` | `void display_present_frame(void)` |
 | select TMD slot | `0x8001c0e8` | `0x80016e68` | `void tmd_select(u16 slot)` |
 | get object record | `0x8001c114` | `0x80016e94` | `KfTmdObject *tmd_get_object(u16 object_index)` |
-| set vertex cursor | `0x8001c138` | `0x80016eb8` | `void tmd_set_current_vertices(KfVec4s *vertices)` |
+| set vertex cursor | `0x8001c138` | `0x80016eb8` | `void tmd_set_current_vertices(SVECTOR *vertices)` |
 | select object vertices | `0x8001c148` | `0x80016ec8` | `void tmd_select_object_vertices(u16 object_index)` |
-| set view transform | `0x8001c184` | `0x80016f04` | `void render_set_view_transform(const KfVec4i *, const KfVec4s *)` |
+| set view transform | `0x8001c184` | `0x80016f04` | `void render_set_view_transform(const VECTOR *, const SVECTOR *)` |
 | prepare primitive indices | `0x8001c2b0` | `0x80017030` | `void tmd_prepare_primitive_indices(void)` |
 | register TMD | `0x8001c5b0` | `0x80017330` | `void tmd_register(u16 slot, u8 *tmd)` |
 | release last allocation | `0x8001c5ec` | `0x8001736c` | `void tmd_release_last_allocation(s32 slot)` |
@@ -38,9 +41,8 @@ with exact strides `0x5c` and `0x14`, and submits `ordering_table - 4` through
 `DrawOTag`.
 
 The view function treats position and rotation as independently optional. It
-copies a 16-byte `KfVec4i` and an eight-byte `KfVec4s`, derives two signed
-division terms, and calls `RotMatrix` twice. The two following halfwords remain
-address-named because their exact projection meanings are not yet established.
+copies a 16-byte `VECTOR` and an eight-byte `SVECTOR`, derives the two signed
+view-cell coordinates, and calls `RotMatrix` twice.
 
 ## Complete structures
 
@@ -57,8 +59,7 @@ typedef struct KfTmdObject {
     u32 normal_offset;     /* +0x08 */
     u32 normal_count;      /* +0x0c */
     u32 primitive_offset;  /* +0x10 */
-    u16 primitive_count;   /* +0x14 */
-    u16 primitive_count_high; /* +0x16 */
+    u32 primitive_count;   /* +0x14 */
     s32 scale;             /* +0x18 */
 } KfTmdObject; /* 0x1c */
 ```
@@ -100,15 +101,15 @@ no callee is invented for that `jr` dispatch.
 | display environments | `0x80090f78` | `0x80069b28` | `DISPENV[2]` |
 | TMD slots | `0x80090fa8` | `0x80069b58` | `u8 *[8]` / `u8 *[2]` |
 | current asset/TMD payload | `0x80090fc8` | `0x80069b60` | `void *` |
-| current TMD vertices | `0x800910bc` | `0x80069b68` | `KfVec4s *` |
-| view position | `0x80095744` | `0x8006e0ac` | `KfVec4i` |
-| view rotation | `0x80095754` | `0x8006e0bc` | `KfVec4s` |
+| current TMD vertices | `0x800910bc` | `0x80069b68` | `SVECTOR *` |
+| view position | `0x80095744` | `0x8006e0ac` | `VECTOR` |
+| view rotation | `0x80095754` | `0x8006e0bc` | `SVECTOR` |
 
 The TMD slot count is genuinely overlay-specific. GAME has eight pointers
 before the current payload, whereas OPEN has two. The shared payload retains
-the existing `current_asset_data` source identity because the reconstructed
-asset registry also owns it; the TMD interpretation is a supported use, not a
-reason to create an overlapping global or force a source rename.
+the shared `tmd_state.current_asset` field, also used by the reconstructed
+asset registry; the TMD interpretation does not introduce an overlapping
+global or a separate payload owner.
 
 GAME's only caller passes slot `4` to `tmd_release_last_allocation`, but the
 wrapper itself never reads `$a0`; OPEN has no confirmed caller. The parameter
@@ -132,8 +133,8 @@ game denominator and are not reconstruction targets.
 
 - Prove the exact SDK revision that produced the two-function retail VSYNC
   shape.
-- Recover original TU ownership before coalescing these functions into source
-  units; adjacency and overlay lineage are insufficient.
+- Recover historical TU boundaries beyond the supported reconstruction
+  grouping; adjacency and overlay lineage alone are insufficient.
 - Refine the selected payload identity if later asset-registry work proves a
   narrower TMD-specific owner without creating overlapping globals.
 - Reconstruct a representative TMD function batch before attributing any

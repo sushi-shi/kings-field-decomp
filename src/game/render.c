@@ -2,6 +2,7 @@
 #include <kf/game_cd.h>
 #include <kf/game_render.h>
 #include <kf/notify.h>
+#include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 #include <kf/tmd.h>
@@ -427,4 +428,73 @@ ADDRESS(0x8001c5ec, 0x20)
 void tmd_release_last_allocation(s32 slot)
 {
     memory_release_last();
+}
+
+/* Store the full GTE depth; RotTransPers returns depth divided by four. */
+ADDRESS(0x8001c60c, 0x9c)
+void tmd_project_vertices(s32 count)
+{
+    KfScreenVertex *projected;
+    SVECTOR *vertex;
+    long perspective;
+    long gte_flags;
+    long depth;
+    long unused_depth;
+    s32 remaining;
+
+    projected = DAT_800911b0;
+    vertex = current_tmd_vertices;
+    for (remaining = count - 1; remaining != -1; remaining--) {
+        RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
+        projected->p2 = (u16)perspective << 1;
+        ReadSZ2(&depth, &unused_depth);
+        projected->sz = (u16)depth;
+        projected++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x8001c6a8, 0xac)
+void tmd_project_vertices_shift(s32 count, u8 shift)
+{
+    KfScreenVertex *projected;
+    SVECTOR *vertex;
+    long perspective;
+    long gte_flags;
+    long depth;
+    long unused_depth;
+    s32 remaining;
+
+    projected = DAT_800911b0;
+    vertex = current_tmd_vertices;
+    for (remaining = count - 1; remaining != -1; remaining--) {
+        RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
+        projected->p2 = (u16)perspective << 1;
+        ReadSZ2(&depth, &unused_depth);
+        projected->sz = depth >> shift;
+        projected++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x8001c754, 0xa4)
+void tmd_transform_vertices(s32 count)
+{
+    KfScreenVertex *projected;
+    SVECTOR *vertex;
+    VECTOR transformed;
+    long gte_flags;
+    s32 remaining;
+
+    projected = DAT_800911b0;
+    vertex = current_tmd_vertices;
+    for (remaining = count - 1; remaining != -1; remaining--) {
+        RotTrans(vertex, &transformed, &gte_flags);
+        projected->sxy.vx = transformed.vx;
+        projected->sxy.vy = transformed.vy;
+        projected->p2 = transformed.vz;
+        projected->sz = transformed.vz;
+        projected++;
+        vertex++;
+    }
 }
