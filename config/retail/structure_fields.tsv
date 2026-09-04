@@ -233,6 +233,13 @@ KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	item.h;asm;func_80020b4c	map 
 KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	item.h;asm;func_80020b4c	offset within the tile
 KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	item.h;asm;func_80020b4c	offset within the tile
 KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	item.h;asm;func_80020b4c	height offset above the floor height grid
+KfFloorItemStateOpen	0x000	0x008	material	KfSpriteMaterial	supported	open_render.h;open_semantic_entity_traversal.tsv;open_semantic_sprite_render.tsv;asm	active sprite selectors and SDK color; traversal derives items from material.tpage plus 22
+KfFloorItemStateOpen	0x008	0x006	unknown_08	u8[6]	opaque	open_render.h;open_semantic_entity_traversal.tsv	unresolved bytes between the material and floor-item texture selectors
+KfFloorItemStateOpen	0x00e	0x002	texture_clut	u16	supported	open_render.h;open_semantic_entity_traversal.tsv;asm;render_initialize	CLUT selector initialized to 0x7a00 and copied into the active material
+KfFloorItemStateOpen	0x010	0x002	texture_tpage	u16	supported	open_render.h;open_semantic_entity_traversal.tsv;asm;GetTPage	texture page initialized by GetTPage(1,0,0x340,0) and copied into the active material
+KfFloorItemStateOpen	0x012	0x002	count	u16	supported	open_render.h;open_semantic_entity_traversal.tsv;asm;item_load_floor_placements	number of loaded floor-item placements; traversal narrows count-minus-one to s16
+KfFloorItemStateOpen	0x014	0x004	unknown_14	u8[4]	opaque	open_render.h;open_semantic_entity_traversal.tsv	unresolved bytes before the runtime record pool
+KfFloorItemStateOpen	0x018	0x600	items	KfFloorItem[64]	supported	open_render.h;open_semantic_entity_traversal.tsv;asm;24-byte-stride;64-record-extent	runtime records; traversal computes their base from material.tpage and advances by 24 bytes
 KfHudSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game_render.h;retail-initializers	unread byte before the sprite descriptor
 KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game_render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place

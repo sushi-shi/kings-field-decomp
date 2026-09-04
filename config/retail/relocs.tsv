@@ -11471,9 +11471,9 @@ OPEN.EXE	0x80015134	0x3934		mips26	reachable-code	0x8002c0b0	load	SetFarColor	ja
 OPEN.EXE	0x80015140	0x3940	0x80015144	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+sh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80015148	0x3948	0x8001514c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80015150	0x3950	0x80015154	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015160	0x3960	0x80015164	mips_hi16_lo16	reachable-code	0x8006da2c	bss	render_sprite_material	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80015168	0x3968	0x8001516c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	render_sprite_material	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80015170	0x3970	0x80015174	mips_hi16_lo16	reachable-code	0x8006da2e	bss	render_sprite_material	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
+OPEN.EXE	0x80015160	0x3960	0x80015164	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80015168	0x3968	0x8001516c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80015170	0x3970	0x80015174	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
 OPEN.EXE	0x80015180	0x3980	0x80015184	mips_hi16_lo16	reachable-code	0x800372a0	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001519c	0x399c	0x800151a0	mips_hi16_lo16	reachable-code	0x800372a4	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800151d4	0x39d4		mips26	reachable-code	0x80015240	load		j		control-flow	candidate	investigation:relocs.tsv
@@ -11506,9 +11506,9 @@ OPEN.EXE	0x800153ec	0x3bec		mips26	reachable-code	0x80013804	load	sprite_add_g4	
 OPEN.EXE	0x800153f4	0x3bf4	0x800153f8	mips_hi16_lo16	reachable-code	0x80037298	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800153fc	0x3bfc	0x80015400	mips_hi16_lo16	reachable-code	0x800372b4	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80015404	0x3c04		mips26	reachable-code	0x80013b5c	load	sprite_add_f4	jal		control-flow-reviewed	reviewed	manual:open_semantic_sprite_f4
-OPEN.EXE	0x80015438	0x3c38	0x8001543c	mips_hi16_lo16	reachable-code	0x8006da2c	bss	render_sprite_material	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80015464	0x3c64	0x80015468	mips_hi16_lo16	reachable-code	0x8006da2e	bss	render_sprite_material	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x8001546c	0x3c6c	0x80015470	mips_hi16_lo16	reachable-code	0x8006da2d	bss	render_sprite_material	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
+OPEN.EXE	0x80015438	0x3c38	0x8001543c	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80015464	0x3c64	0x80015468	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x8001546c	0x3c6c	0x80015470	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
 OPEN.EXE	0x80015488	0x3c88	0x8001548c	mips_hi16_lo16	reachable-code	0x80035888	load		lui+addiu	s1	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800154ac	0x3cac	0x800154b0	mips_hi16_lo16	reachable-code	0x800358ca	load		lui+lh	v0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800154d0	0x3cd0		mips26	reachable-code	0x800154ec	load		j		control-flow	candidate	investigation:relocs.tsv
@@ -11779,7 +11779,7 @@ OPEN.EXE	0x8001694c	0x514c	0x80016950	mips_hi16_lo16	reachable-code	0x80049a50	b
 OPEN.EXE	0x80016960	0x5160	0x80016964	mips_hi16_lo16	reachable-code	0x80049a54	bss	display_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80016968	0x5168	0x8001696c	mips_hi16_lo16	reachable-code	0x80049a5c	bss	display_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80016974	0x5174	0x80016978	mips_hi16_lo16	reachable-code	0x80049a60	bss	display_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x8001697c	0x517c	0x80016980	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_count	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_resources
+OPEN.EXE	0x8001697c	0x517c	0x80016980	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_resources;manual:open_semantic_entity_traversal
 OPEN.EXE	0x80016990	0x5190	0x80016994	mips_hi16_lo16	reachable-code	0x8006e0c8	bss	render_state	lui+sw	a1	paired-reviewed	reviewed	manual:render_initialize;carved-body-reviewed
 OPEN.EXE	0x80016998	0x5198		mips26	reachable-code	0x8002e78c	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x800169a8	0x51a8	0x800169ac	mips_hi16_lo16	reachable-code	0x8006e128	bss	render_state	lui+sw	a1	paired-reviewed	reviewed	manual:render_initialize;carved-body-reviewed
@@ -11806,8 +11806,8 @@ OPEN.EXE	0x80016a88	0x5288		mips26	reachable-code	0x8002cba8	load		jal		control-
 OPEN.EXE	0x80016a94	0x5294	0x80016a98	mips_hi16_lo16	reachable-code	0x8006e1a8	bss	light_quadrant_matrices	lui+sw	a2	paired-reviewed	reviewed	manual:render_initialize;carved-body-reviewed
 OPEN.EXE	0x80016a9c	0x529c		mips26	reachable-code	0x8002cba8	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80016ab0	0x52b0		mips26	reachable-code	0x80033dc0	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80016ab8	0x52b8	0x80016abc	mips_hi16_lo16	reachable-code	0x8006da38	bss	DAT_8006da38	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80016ac4	0x52c4	0x80016ac8	mips_hi16_lo16	reachable-code	0x8006da36	bss	DAT_8006da36	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd
+OPEN.EXE	0x80016ab8	0x52b8	0x80016abc	mips_hi16_lo16	reachable-code	0x8006da38	bss	floor_item_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80016ac4	0x52c4	0x80016ac8	mips_hi16_lo16	reachable-code	0x8006da36	bss	floor_item_state	lui+sh	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_traversal
 OPEN.EXE	0x80016b04	0x5304		mips26	reachable-code	0x80030228	load	ResetGraph	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
 OPEN.EXE	0x80016b0c	0x530c		mips26	reachable-code	0x80016b1c	load		j		control-flow-reviewed	reviewed	manual:open_semantic_render_init
 OPEN.EXE	0x80016b14	0x5314		mips26	reachable-code	0x80030228	load	ResetGraph	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
@@ -12032,9 +12032,9 @@ OPEN.EXE	0x80018a38	0x7238		mips26	reachable-code	0x8002d820	load	RotTransPers	j
 OPEN.EXE	0x80018a78	0x7278		mips26	reachable-code	0x8002de88	load	RotTransPers4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sprite_render
 OPEN.EXE	0x80018a80	0x7280		mips26	reachable-code	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_sprite_render
 OPEN.EXE	0x80018a8c	0x728c		mips26	reachable-code	0x800340e0	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sprite_render
-OPEN.EXE	0x80018a94	0x7294	0x80018a98	mips_hi16_lo16	reachable-code	0x8006da28	bss	render_sprite_material	lui+addiu	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80018aac	0x72ac	0x80018ab0	mips_hi16_lo16	reachable-code	0x8006da2a	bss	render_sprite_material	lui+lhu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80018b34	0x7334	0x80018b38	mips_hi16_lo16	reachable-code	0x8006da2f	bss	render_sprite_material	lui+sb	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
+OPEN.EXE	0x80018a94	0x7294	0x80018a98	mips_hi16_lo16	reachable-code	0x8006da28	bss	floor_item_state	lui+addiu	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80018aac	0x72ac	0x80018ab0	mips_hi16_lo16	reachable-code	0x8006da2a	bss	floor_item_state	lui+lhu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80018b34	0x7334	0x80018b38	mips_hi16_lo16	reachable-code	0x8006da2f	bss	floor_item_state	lui+sb	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
 OPEN.EXE	0x80018b58	0x7358	0x80018b5c	mips_hi16_lo16	reachable-code	0x800372fc	load	render_sprite_light_normal	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sprite_render
 OPEN.EXE	0x80018b64	0x7364		mips26	reachable-code	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sprite_render
 OPEN.EXE	0x80018b88	0x7388	0x80018b8c	mips_hi16_lo16	reachable-code	0x80069a6c	bss	ordering_table	lui+lw	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
@@ -12120,25 +12120,25 @@ OPEN.EXE	0x800191bc	0x79bc		mips26	reachable-code	0x8002d558	load	SetRotMatrix	j
 OPEN.EXE	0x800191c8	0x79c8		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_floor_item_render
 OPEN.EXE	0x800191f0	0x79f0	0x800191f4	mips_hi16_lo16	reachable-code	0x800358e0	load	floor_item_sprites	lui+addiu	v0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_floor_item_render
 OPEN.EXE	0x800191f8	0x79f8		mips26	reachable-code	0x800189a0	load	render_enqueue_sprite	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_floor_item_render
-OPEN.EXE	0x80019268	0x7a68	0x8001926c	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019274	0x7a74	0x80019278	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019284	0x7a84	0x80019288	mips_hi16_lo16	reachable-code	0x8006e0c6	bss	render_state	lui+lhu	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019294	0x7a94	0x80019298	mips_hi16_lo16	reachable-code	0x8006e0c4	bss	render_state	lui+lhu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800192a4	0x7aa4		mips26	reachable-code	0x80016e68	load	tmd_select	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800192c4	0x7ac4	0x800192c8	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	a2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019324	0x7b24		mips26	reachable-code	0x80018ecc	load	opening_entity_render	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv
-OPEN.EXE	0x8001934c	0x7b4c	0x80019350	mips_hi16_lo16	reachable-code	0x800359e4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019354	0x7b54		mips26	reachable-code	0x8002d588	load	SetLightMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019360	0x7b60	0x80019364	mips_hi16_lo16	reachable-code	0x8006da2e	bss	render_sprite_material	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80019368	0x7b68	0x8001936c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	render_sprite_material	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80019370	0x7b70	0x80019374	mips_hi16_lo16	reachable-code	0x8006da2c	bss	render_sprite_material	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80019378	0x7b78	0x8001937c	mips_hi16_lo16	reachable-code	0x8006da2a	bss	render_sprite_material	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x80019380	0x7b80	0x80019384	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_count	lui+lhu	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019388	0x7b88	0x8001938c	mips_hi16_lo16	reachable-code	0x8006da38	bss	DAT_8006da38	lui+lhu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019390	0x7b90	0x80019394	mips_hi16_lo16	reachable-code	0x8006da36	bss	DAT_8006da36	lui+lhu	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001939c	0x7b9c	0x800193a0	mips_hi16_lo16	reachable-code	0x8006da28	bss	render_sprite_material	lui+sh	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render
-OPEN.EXE	0x800193f8	0x7bf8	0x800193fc	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019488	0x7c88		mips26	reachable-code	0x800190f4	load	render_floor_item	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_floor_item_render
+OPEN.EXE	0x80019268	0x7a68	0x8001926c	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019274	0x7a74	0x80019278	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019284	0x7a84	0x80019288	mips_hi16_lo16	reachable-code	0x8006e0c6	bss	render_state	lui+lhu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019294	0x7a94	0x80019298	mips_hi16_lo16	reachable-code	0x8006e0c4	bss	render_state	lui+lhu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x800192a4	0x7aa4		mips26	reachable-code	0x80016e68	load	tmd_select	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_traversal
+OPEN.EXE	0x800192c4	0x7ac4	0x800192c8	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	a2	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019324	0x7b24		mips26	reachable-code	0x80018ecc	load	opening_entity_render	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_traversal
+OPEN.EXE	0x8001934c	0x7b4c	0x80019350	mips_hi16_lo16	reachable-code	0x800359e4	load	floor_item_light_matrix	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019354	0x7b54		mips26	reachable-code	0x8002d588	load	SetLightMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019360	0x7b60	0x80019364	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019368	0x7b68	0x8001936c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019370	0x7b70	0x80019374	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019378	0x7b78	0x8001937c	mips_hi16_lo16	reachable-code	0x8006da2a	bss	floor_item_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019380	0x7b80	0x80019384	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_state	lui+lhu	s3	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019388	0x7b88	0x8001938c	mips_hi16_lo16	reachable-code	0x8006da38	bss	floor_item_state	lui+lhu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019390	0x7b90	0x80019394	mips_hi16_lo16	reachable-code	0x8006da36	bss	floor_item_state	lui+lhu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x8001939c	0x7b9c	0x800193a0	mips_hi16_lo16	reachable-code	0x8006da28	bss	floor_item_state	lui+sh	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
+OPEN.EXE	0x800193f8	0x7bf8	0x800193fc	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_traversal
+OPEN.EXE	0x80019488	0x7c88		mips26	reachable-code	0x800190f4	load	render_floor_item	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_floor_item_render;manual:open_semantic_entity_traversal
 OPEN.EXE	0x800194e0	0x7ce0		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene0_render
 OPEN.EXE	0x800194e8	0x7ce8		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene0_render
 OPEN.EXE	0x800194f0	0x7cf0		mips26	reachable-code	0x8002c15c	load	SetGeomScreen	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene0_render
@@ -12156,8 +12156,8 @@ OPEN.EXE	0x8001967c	0x7e7c	0x80019680	mips_hi16_lo16	reachable-code	0x8006e0a8	b
 OPEN.EXE	0x80019684	0x7e84		mips26	instruction-word	0x8002f288	load	SetFogNear	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
 OPEN.EXE	0x800196a4	0x7ea4	0x800196a8	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_matrix
 OPEN.EXE	0x800196ac	0x7eac		mips26	instruction-word	0x8002f288	load	SetFogNear	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
-OPEN.EXE	0x80019804	0x8004	0x80019808	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_count	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x8001984c	0x804c	0x80019850	mips_hi16_lo16	reachable-code	0x8006da40	bss	floor_items	lui+addiu	s3	paired-reviewed	reviewed	manual:open_semantic_resources
+OPEN.EXE	0x80019804	0x8004	0x80019808	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_entity_traversal
+OPEN.EXE	0x8001984c	0x804c	0x80019850	mips_hi16_lo16	reachable-code	0x8006da40	bss	floor_item_state	lui+addiu	s3	paired-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_entity_traversal
 OPEN.EXE	0x80019868	0x8068	0x8001986c	mips_hi16_lo16	reachable-code	0x8006e260	bss	map_floor_height_grid	lui+addiu	s4	paired-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80019934	0x8134		mips26	reachable-code	0x800301a0	load	rand	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80019994	0x8194	0x80019998	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources;aggregate-owner

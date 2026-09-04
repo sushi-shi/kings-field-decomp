@@ -19,7 +19,10 @@ The SDK types explain packed word stores to the four GPU coordinate pairs.
 The unused origin-screen output is a `long`, as required by `RotTransPers`;
 there is no evidence requiring a separate `DVECTOR` view of that output.
 
-`render_sprite_material` is an eight-byte BSS working model at `0x8006da28`:
+The eight-byte `KfSpriteMaterial` prefix at `0x8006da28` is now owned by
+`floor_item_state.material`; the later
+[traversal pass](open-entity-traversal-residue.md) proved the pool-base
+relationship and expanded the original standalone material working model:
 
 | Offset | Type | Evidence |
 | --- | --- | --- |

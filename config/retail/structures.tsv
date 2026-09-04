@@ -24,6 +24,7 @@ KfEulerAngles	0x06	supported	game_math.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	game_player.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	item.h;asm;func_80020b4c	runtime floor-item table entry
 KfFloorItemPlacement	0x0c	supported	item.h;asm;func_80020b4c	serialized floor-item placement record
+KfFloorItemStateOpen	0x618	supported	open_render.h;open_semantic_entity_traversal.tsv;asm;base-plus-22;64-record-extent	OPEN material and texture state followed by count and 64 floor-item records; two intervening ranges remain opaque
 KfHudSprite	0x0e	supported	game_render.h;game_semantic_hud_sprites.tsv;asm;retail-initializers;14-byte-stride	HUD table row with state byte and complete screen-sprite descriptor; state 0xff terminates the array
 KfMagicRecord	0x14	supported	magic.h;asm;player_select_magic;player_update;player_recalculate_combat_stats	20-byte magic record; magic_records[24] is indexed by selected_magic_id and by weapon-bound spell indices 5/8/18/20
 KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order

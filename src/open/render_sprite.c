@@ -4,9 +4,6 @@
 DATA(0x800372fc, 0x8)
 SVECTOR render_sprite_light_normal = {0, 0, 0x1000, 0};
 
-DATA(0x8006da28, 0x8)
-KfSpriteMaterial render_sprite_material;
-
 ADDRESS(0x800189a0, 0x21c)
 void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
 {
@@ -34,8 +31,8 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
 
     prim = primitive_buffer_allocate(sizeof(POLY_FT4));
     SetPolyFT4(prim);
-    prim->clut = render_sprite_material.clut;
-    prim->tpage = render_sprite_material.tpage;
+    prim->clut = floor_item_state.material.clut;
+    prim->tpage = floor_item_state.material.tpage;
     /* GTE screen coordinates are copied into the GPU packet as packed words. */
     *(long *)&prim->x0 = sxy0;
     *(long *)&prim->x1 = sxy1;
@@ -45,11 +42,11 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
     prim->u1 = prim->u3 = sprite->u + sprite->u_span;
     prim->v0 = prim->v1 = sprite->v;
     prim->v2 = prim->v3 = sprite->v + sprite->v_span;
-    render_sprite_material.color.cd = prim->code;
+    floor_item_state.material.color.cd = prim->code;
     if (flag == 1) {
         p += p >> 1;
     }
-    NormalColorDpq(&render_sprite_light_normal, &render_sprite_material.color,
+    NormalColorDpq(&render_sprite_light_normal, &floor_item_state.material.color,
                    p, (CVECTOR *)&prim->r0);
     if (otz + depth_bias >= 5) {
         AddPrim(&ordering_table[(otz + depth_bias) & 0x3fff], prim);

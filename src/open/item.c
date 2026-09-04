@@ -1,20 +1,18 @@
 #include <kf/address.h>
 #include <kf/item.h>
 #include <kf/map_data.h>
+#include <kf/open_render.h>
 #include <kf/psyq_libc.h>
 
-DATA(0x8006da3a, 0x2)
-u16 floor_item_count;
-
-DATA(0x8006da40, 0x600)
-KfFloorItem floor_items[64];
+DATA(0x8006da28, 0x618)
+KfFloorItemStateOpen floor_item_state;
 
 ADDRESS(0x800197e4, 0x1b0)
 void item_load_floor_placements(KfFloorItemPlacement *placements)
 {
     KfFloorItemPlacement *placement;
     KfFloorItem *item;
-    u16 *count = &floor_item_count;
+    u16 *count = &floor_item_state.count;
 
     placement = placements;
     *count = 0;
@@ -25,7 +23,7 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
         } while (placement++->item_id != 0xffff);
     }
 
-    item = floor_items;
+    item = floor_item_state.items;
     placement = placements;
     if (placement->item_id != 0xffff) {
         do {

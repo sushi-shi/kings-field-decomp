@@ -30,11 +30,12 @@ class OpenSpriteRenderTests(unittest.TestCase):
         fixture = REPO / "tests/fixtures/open_sprite_material_layout.c"
         with TemporaryDirectory(prefix="kf-sprite-material-layout-") as directory:
             root = Path(directory)
-            for expected_size in (8, 9):
-                with self.subTest(expected_size=expected_size):
+            for expected_size, item_size in ((8, 0x618), (9, 0x618), (8, 0x61C)):
+                with self.subTest(expected_size=expected_size, item_size=item_size):
                     preprocessed = subprocess.run(
                         [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
-                         "-I", sdk, f"-DEXPECTED_MATERIAL_SIZE={expected_size}", str(fixture)],
+                         "-I", sdk, f"-DEXPECTED_MATERIAL_SIZE={expected_size}",
+                         f"-DEXPECTED_ITEM_STATE_SIZE={item_size}", str(fixture)],
                         capture_output=True, check=True,
                     )
                     source = root / "layout.i"
@@ -44,11 +45,13 @@ class OpenSpriteRenderTests(unittest.TestCase):
                          "-o", str(root / "layout.s")],
                         capture_output=True, text=True, check=False,
                     )
-                    if expected_size == 8:
+                    if expected_size == 8 and item_size == 0x618:
                         self.assertEqual(result.returncode, 0, result.stderr)
                     else:
                         self.assertNotEqual(result.returncode, 0)
-                        self.assertIn("sprite_material_size", result.stderr)
+                        expected_error = ("sprite_material_size" if expected_size != 8
+                                          else "floor_item_state_size")
+                        self.assertIn(expected_error, result.stderr)
 
     def test_function_and_data_ownership(self) -> None:
         unit = load_manifest().by_name()["open.render_sprite"]
@@ -57,7 +60,6 @@ class OpenSpriteRenderTests(unittest.TestCase):
                          [(0x800189A0, 0x21C)])
         self.assertEqual([(datum.va, datum.size, datum.symbol) for datum in unit.data], [
             (0x800372FC, 8, "render_sprite_light_normal"),
-            (0x8006DA28, 8, "render_sprite_material"),
         ])
         functions = load_function_identities(RETAIL_CONFIG, required=True)
         identity = functions[("OPEN.EXE", 0x800189A0)]
@@ -66,13 +68,13 @@ class OpenSpriteRenderTests(unittest.TestCase):
                           "KfSpriteQuad *sprite;s16 depth_bias;s32 flag"))
         self.assertIn("open_semantic_sprite_render.tsv", identity.evidence)
         data = load_data_identities(RETAIL_CONFIG)
-        for va, name, datatype, storage in (
-            (0x800372FC, "render_sprite_light_normal", "SVECTOR", "load"),
-            (0x8006DA28, "render_sprite_material", "KfSpriteMaterial", "bss"),
+        for va, name, datatype, size, storage in (
+            (0x800372FC, "render_sprite_light_normal", "SVECTOR", 8, "load"),
+            (0x8006DA28, "floor_item_state", "KfFloorItemStateOpen", 0x618, "bss"),
         ):
             datum = data[("OPEN.EXE", va)]
             self.assertEqual((datum.name, datum.datatype, datum.size, datum.storage),
-                             (name, datatype, 8, storage))
+                             (name, datatype, size, storage))
         self.assertFalse(any(image == "OPEN.EXE" and 0x8006DA28 < va < 0x8006DA30
                              for image, va in data))
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -95,9 +97,9 @@ class OpenSpriteRenderTests(unittest.TestCase):
             (0x80018A78, 0x8002DE88, "RotTransPers4"),
             (0x80018A80, 0x80016CB4, "primitive_buffer_allocate"),
             (0x80018A8C, 0x800340E0, "SetPolyFT4"),
-            (0x80018A94, 0x8006DA28, "render_sprite_material"),
-            (0x80018AAC, 0x8006DA2A, "render_sprite_material"),
-            (0x80018B34, 0x8006DA2F, "render_sprite_material"),
+            (0x80018A94, 0x8006DA28, "floor_item_state"),
+            (0x80018AAC, 0x8006DA2A, "floor_item_state"),
+            (0x80018B34, 0x8006DA2F, "floor_item_state"),
             (0x80018B58, 0x800372FC, "render_sprite_light_normal"),
             (0x80018B64, 0x8002DAE8, "NormalColorDpq"),
             (0x80018B88, 0x80069A6C, "ordering_table"),
@@ -106,7 +108,7 @@ class OpenSpriteRenderTests(unittest.TestCase):
         material = [row for row in rows if row["image"] == "OPEN.EXE"
                     and 0x8006DA28 <= parse_int(row["target_va"]) < 0x8006DA30]
         self.assertEqual(len(material), 14)
-        self.assertEqual({row["target_name"] for row in material}, {"render_sprite_material"})
+        self.assertEqual({row["target_name"] for row in material}, {"floor_item_state"})
         for row in body + material:
             self.assertEqual(row["status"], "reviewed")
             self.assertIn("manual:open_semantic_sprite_render", row["provenance"].split(";"))

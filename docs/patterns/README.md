@@ -31,3 +31,6 @@ promotes a probe to a proven historical toolchain.
 - [open-sprite-render.md](open-sprite-render.md): typed sprite material,
   SDK packet ownership, and the depth/texture source forms behind the exact
   OPEN projected-sprite renderer.
+- [open-entity-traversal-residue.md](open-entity-traversal-residue.md): visible
+  entity/item traversal, the wider floor-item state owner, and the remaining
+  entry/material-base instruction differences.

@@ -35,9 +35,7 @@ typedef struct KfFloorItem {
     u8 unknown_15[3];
 } KfFloorItem;
 
-extern u16 floor_item_count;
-extern KfFloorItem floor_items[64];
-
+/* GAME globals; OPEN places these fields in KfFloorItemStateOpen. */
 extern u16 floor_item_count;
 extern KfFloorItem floor_items[64];
 

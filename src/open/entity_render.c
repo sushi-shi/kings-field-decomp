@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/open_opening_render.h>
 #include <kf/open_render.h>
+#include <kf/open_scene0.h>
 #include <kf/psyq.h>
 
 DATA(0x800358e0, 0x54)
@@ -12,6 +13,11 @@ KfSpriteQuad floor_item_sprites[7] = {
     {0x90, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
     {0xb0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
     {0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+};
+
+DATA(0x800359e4, 0x20)
+MATRIX floor_item_light_matrix = {
+    {{0, 0, 0x1000}, {0, 0, 0x1000}, {0, 0, 0}}, {0, 0, 0},
 };
 
 /* Shared sweep caller and transform setup support this WIP contiguous module. */
@@ -125,5 +131,55 @@ void render_floor_item(KfFloorItem *item)
     item->animation_frame = next_frame;
     if ((next_frame & 0xff) >= (frame_count & 0xf)) {
         item->animation_frame = 0;
+    }
+}
+
+ADDRESS(0x80019240, 0x298)
+void opening_render_entities_and_items(void)
+{
+    const KfCellWindow *window = active_cell_window;
+    s32 origin_z = (u16)render_state.view_cell.z - window->origin_z;
+    s32 origin_x = (u16)render_state.view_cell.x - window->origin_x;
+    KfOpeningEntity *entity;
+    KfFloorItem *item;
+    s16 remaining;
+
+    tmd_select(1);
+    entity = opening_entity_state.entities;
+    for (remaining = 31; remaining != -1; remaining--) {
+        if (entity->object_id < 32) {
+            u16 row = entity->cell_z - origin_z;
+            const KfCellWindow *grid = active_cell_window;
+
+            if (row < grid->height) {
+                u16 col = entity->cell_x - origin_x;
+
+                if (col < grid->width && grid->cells[row * grid->width + col] != 0) {
+                    opening_entity_render(entity);
+                }
+            }
+        }
+        entity++;
+    }
+
+    SetLightMatrix(&floor_item_light_matrix);
+    floor_item_state.material.color.r = floor_item_state.material.color.g =
+        floor_item_state.material.color.b = 180;
+    floor_item_state.material.tpage = floor_item_state.texture_tpage;
+    floor_item_state.material.clut = floor_item_state.texture_clut;
+    item = floor_item_state.items;
+    remaining = floor_item_state.count;
+    while (--remaining != -1) {
+        u16 row = item->position_z / 2000 - origin_z;
+        const KfCellWindow *grid = active_cell_window;
+
+        if (row < grid->height) {
+            u16 col = item->position_x / 2000 - origin_x;
+
+            if (col < grid->width && grid->cells[row * grid->width + col] != 0) {
+                render_floor_item(item);
+            }
+        }
+        item++;
     }
 }

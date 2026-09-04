@@ -46,7 +46,7 @@ void render_initialize(void)
     display_state.primitive_buffers[1].start = buffer;
     buffer += 0x26160;
     display_state.primitive_buffers[1].end = buffer;
-    floor_item_count = 0;
+    floor_item_state.count = 0;
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;
@@ -82,8 +82,8 @@ void render_initialize(void)
         &render_state.light_matrix,
         &render_state.quadrant_matrices[3],
         &light_quadrant_matrices[3]);
-    DAT_8006da38 = GetTPage(1, 0, 0x340, 0);
-    DAT_8006da36 = 0x7a00;
+    floor_item_state.texture_tpage = GetTPage(1, 0, 0x340, 0);
+    floor_item_state.texture_clut = 0x7a00;
 }
 
 ADDRESS(0x80016adc, 0x1d8)

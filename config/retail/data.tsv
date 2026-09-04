@@ -5150,7 +5150,8 @@ OPEN.EXE	0x800358cc	0x240cc	0x14	unclassified	coverage-gap			payload-complement	
 OPEN.EXE	0x800358e0	0x240e0	0x54	defined	reviewed	floor_item_sprites	KfSpriteQuad[7]	manual:open_semantic_floor_item_render	seven 12-byte sprite descriptors; renderer indexes by item id plus animation frame
 OPEN.EXE	0x80035934	0x24134	0x10	unclassified	coverage-gap			payload-complement	non-sprite bytes following the seven-record working table extent; ownership unresolved
 OPEN.EXE	0x80035944	0x24144	0xa0	defined	reviewed	color_matrix_table	MATRIX[5]	manual:open_semantic_render_init	five 32-byte colour-matrix presets selected directly or through lighting_set_active_color_matrix
-OPEN.EXE	0x800359e4	0x241e4	0xa0	unclassified	coverage-gap			payload-complement	starts with a separately referenced light MATRIX and continues into LIBCD callback state; ownership remains unresolved
+OPEN.EXE	0x800359e4	0x241e4	0x20	defined	reviewed	floor_item_light_matrix	MATRIX	manual:open_semantic_entity_traversal	initialized light preset passed to SetLightMatrix before the floor-item pass
+OPEN.EXE	0x80035a04	0x24204	0x80	unclassified	coverage-gap			payload-complement	LIBCD callback-state region following the separate light MATRIX; ownership remains unresolved
 OPEN.EXE	0x80035a84	0x24284	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80035a88	0x24288	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80035a8c	0x2428c	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
