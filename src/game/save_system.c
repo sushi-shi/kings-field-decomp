@@ -8,7 +8,6 @@
 /* Jump tables and string literals of this unit in the retail data region. */
 RODATA(0x8001235c, 0x178)
 
-/* LIBSND.H: int SsVoKeyOn(long, long, unsigned short, unsigned short); */
 /* Memory-card create requests carry the block count in the high halfword. */
 #define SAVE_FILE_BLOCKS 5
 /* Shift-JIS card title; retail keeps it as a literal in this unit's read-only data. */
@@ -21,8 +20,6 @@ RODATA(0x8001235c, 0x178)
  * two unresolved blocks, and the first byte of each 20-byte magic record are
  * copied verbatim; the retail object boundaries inside them are still open.
  */
-extern u32 map_world_state_base[];
-extern u8 DAT_800652a8[];
 
 void memory_card_clear_events(void);
 s32 memory_card_wait_event(void);
@@ -337,7 +334,7 @@ s32 save_file_write_slot(s16 slot_id)
     }
     memcpy(save_payload_buffer->player_state, &player_state.experience,
            sizeof(save_payload_buffer->player_state));
-    memcpy(save_payload_buffer->world_state, map_world_state_base,
+    memcpy(save_payload_buffer->world_state, &map_world_state_base,
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->unknown_2440, DAT_800652a8,
            sizeof(save_payload_buffer->unknown_2440));
@@ -589,7 +586,7 @@ s32 save_file_read_slot(s16 slot_id)
     saved_07f4 = player_state.unknown_74;
     memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
-    memcpy(map_world_state_base, save_payload_buffer->world_state,
+    memcpy(&map_world_state_base, save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
     memcpy(DAT_800652a8, save_payload_buffer->unknown_2440,
            sizeof(save_payload_buffer->unknown_2440));

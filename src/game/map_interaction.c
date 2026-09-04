@@ -1,15 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game.h>
-
-
-/* Progress-flag block; individual indices unresolved. */
-extern u8 DAT_800652a8[240];
-/* Cutscene-active flag. */
-/* Special-event trigger latch raised by func_800346a8. */
-/* Loaded camera-path point table (points begin at +8); extent unresolved. */
-/* Full-screen image path template "KAN\B0\K000.TIM". */
-
 /* Object-behaviour dispatch followed by the current-floor action dispatch. */
 RODATA(0x80012a7c, 0x164)
 

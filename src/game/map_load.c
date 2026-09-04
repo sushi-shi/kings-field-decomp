@@ -26,18 +26,13 @@
  * then copies colour_matrix_table[3] into the render lighting matrix.
  */
 
-/* Start of the per-floor persistent world-state block (see map_world_state_persist). */
-extern u32 map_world_state_base;
-/* Player inventory / key-item flag array. */
-extern u8 DAT_800652a8[240];
-
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
 RODATA(0x80012bfc, 0x14)
 
 ADDRESS(0x80035e44, 0x69c)
 void map_restore_floor_state(void)
 {
-    u8 *base = (u8 *)&map_world_state_base;
+    u8 *base = MAP_WORLD_STATE_BYTES;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;
@@ -125,10 +120,10 @@ void map_restore_floor_state(void)
 
     switch (player_state.progress_state.current_floor) {
     case 1:
-        if (((u8 *)&map_world_state_base)[2] == 1) {
+        if (MAP_WORLD_STATE_BYTES[2] == 1) {
             map_apply_copy_region(1);
         }
-        if (((u8 *)&map_world_state_base)[1] != 2) {
+        if (MAP_WORLD_STATE_BYTES[1] != 2) {
             i = actor_pool_find_at_tile(7, 0x28);
             if (i != -1) {
                 actor_state.actors[i].lifecycle = 3;

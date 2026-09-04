@@ -1,13 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game.h>
-
-
 /* Item name table (ten glyph codes per item). Runtime-indexed. */
 extern s16 DAT_80058dc0[][10];
-
-/* Per-item held quantity (one byte each). */
-extern u8 DAT_800652a8[];
 
 /* Y-axis spin angle carried alongside the preview rotation SVECTOR. */
 extern u16 DAT_80057b72;

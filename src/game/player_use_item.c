@@ -4,11 +4,6 @@
 
 RODATA(0x80012048, 0x130)
 
-/* Per-id byte table shared with the save system; entry 57 counts the lamp charges. */
-extern u8 DAT_800652a8[240];
-/* Psy-Q LIBGTE: rsin, rcos. */
-/* Image paths whose decimal digits are patched before display. */
-
 ADDRESS(0x80017edc, 0xc8)
 void actor_show_info_image(const KfActor *actor)
 {

@@ -20,11 +20,6 @@
  * which separate globals cannot reproduce (documented residue).
  */
 
-/* Event-animation gate: nonzero three frames in four. */
-/* Ambient floor-script countdown, reloaded to 10. */
-/* Start of the persistent world-state block (save_system world_state base). */
-extern u32 map_world_state_base;
-
 /* Per-floor ambient-event scripts dispatched by current_floor. */
 
 /* map_event_pool_update current-floor dispatch jump table (cases 1..5). */
@@ -167,7 +162,7 @@ void map_event_pool_update(void)
 ADDRESS(0x80035b5c, 0x2b8)
 void map_world_state_persist(void)
 {
-    u8 *base = (u8 *)&map_world_state_base;
+    u8 *base = MAP_WORLD_STATE_BYTES;
     u8 *out;
     u8 *count_slot;
     KfMapEvent *event;

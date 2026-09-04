@@ -10,9 +10,6 @@
  * the shared menu draw primitives. Module boundary is WIP.
  */
 
-/* Player object and the 240-byte inventory / progress-flag block. */
-extern u8 DAT_800652a8[240];
-
 /* Item-name string table: ten halfwords (a 20-byte label) per item id. */
 extern s16 DAT_80058dc0[];
 

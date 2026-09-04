@@ -2,11 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Player object and the 240-byte inventory / progress-flag block. */
-extern u8 DAT_800652a8[240];
-
-/* Twenty-byte magic records (learned flag + MP cost). */
-
 /* Item-name and spell-name string tables (10 halfwords per label). The
  * equipment/item panels index DAT_80058dc0 by item id; the spell panel starts
  * at DAT_80059450 (the fifth spell name). */

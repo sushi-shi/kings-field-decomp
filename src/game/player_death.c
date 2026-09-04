@@ -11,15 +11,6 @@
  * training, and the physical damage-component formula. Assembled from seven
  * address-adjacent single-purpose player units; module boundary is WIP.
  */
-
-
-/* Psy-Q LIBGTE: void ReadColorMatrix(MATRIX *m). */
-
-extern const SoundRef player_sound_refs[3];
-
-extern u32 map_world_state_base;
-extern u8 DAT_800652a8[240];
-
 ADDRESS(0x80015164, 0x68)
 void player_death_begin(void)
 {
@@ -82,7 +73,7 @@ void game_state_initialize(void)
     player_state.status_effect2_timer = -1;
     player_state.status_effect1_timer = -1;
     player_state.status_effect0_timer = -1;
-    cursor = (u8 *)&map_world_state_base;
+    cursor = MAP_WORLD_STATE_BYTES;
     count = 0x2133;
     do {
         *cursor++ = 0;
@@ -132,7 +123,7 @@ void player_death_restart(void)
 {
     s32 floor = player_state.progress_state.current_floor;
 
-    if (((u8 *)&map_world_state_base)[3] == 1 && DAT_800652a8[0x2f] != 0) {
+    if (MAP_WORLD_STATE_BYTES[3] == 1 && DAT_800652a8[0x2f] != 0) {
         DAT_800652a8[0x2f]--;
         map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
@@ -382,9 +373,6 @@ void player_increment_magic_training(void)
         player_recalculate_combat_stats();
     }
 }
-
-
-extern const SoundRef player_sound_refs[3];
 
 ADDRESS(0x80016058, 0x224)
 void player_add_experience(s16 amount)

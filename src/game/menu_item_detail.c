@@ -16,9 +16,6 @@ extern s16 DAT_80058dc0[][10];
 extern u16 DAT_800594b8[][2];
 extern u16 DAT_800595f8[][2];
 
-/* Per-item held quantity (one byte each). */
-extern u8 DAT_800652a8[];
-
 /* Icon anchor: {x, y} reused as a one-glyph label origin by the icon draw. */
 extern MenuGlyphString DAT_80058c10;
 

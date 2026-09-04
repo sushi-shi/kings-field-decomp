@@ -2,9 +2,10 @@
 #define KF_GAME_STATE_H
 
 /*
- * Shared declarations for the game's global state singletons, pools,
- * grids and data tables. Each datum is DEFINED (with DATA()) in its owning
- * translation unit; every consumer sees it through this header.
+ * Shared declarations for the game's global state singletons, pools, grids,
+ * and data tables. Load-image data is defined with DATA() in its owning
+ * translation unit; unresolved BSS ownership remains curated WIP. Every
+ * consumer sees one common declaration here.
  *
  * Generated during extern-crutch removal: declarations that were duplicated
  * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
@@ -80,6 +81,7 @@ extern s16 DAT_80059450[];
 extern int DAT_8005b270[]; /* jmp_buf */
 extern void *DAT_8005b274; /* live abort handler slot (jmp_buf + 4) */
 extern int DAT_80063278; /* installed abort handler */
+extern u8 DAT_800652a8[240]; /* inventory and progress flag block */
 extern u32 DAT_8006bd88;
 extern SVECTOR DAT_800930f0[]; /* morph scratch base */
 extern u32 DAT_800930f8[]; /* base+keyframe scratch (== &DAT_800930f0[1]) */
@@ -163,6 +165,8 @@ extern u8 map_collision_grid[100][100];
 extern KfMapCopyRegion map_copy_regions[4];
 extern KfMapEvent map_event_pool[8];
 extern u8 map_floor_height_grid[100][100];
+extern u32 map_world_state_base; /* aligned base; interior fields remain WIP */
+#define MAP_WORLD_STATE_BYTES ((u8 *)&map_world_state_base)
 extern u16 map_object_effect_sequence_160;
 extern u16 map_object_effect_sequence_170;
 extern u16 map_object_effect_sequence_180;
@@ -189,6 +193,7 @@ extern s32 player_death_saved_fog_near;
 extern KfPlayerLevelGrowth player_level_growth_table[40];
 extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
+extern const SoundRef player_sound_refs[3];
 extern KfPlayerState player_state;
 extern struct KfPoolRecord pool_records[];
 extern MATRIX render_light_matrices[6];

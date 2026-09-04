@@ -92,9 +92,6 @@ void player_equip_weapon(u8 weapon_id)
     player_recalculate_combat_stats();
 }
 
-
-extern const SoundRef player_sound_refs[3];
-
 ADDRESS(0x80016b24, 0x9c)
 void player_begin_weapon_attack(void)
 {

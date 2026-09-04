@@ -16,8 +16,6 @@ extern u8 DAT_800595f8[];
 void item_menu_buy(s32 arg);
 void item_menu_sell(s32 arg);
 
-extern u8 DAT_800652a8[240];
-
 /*
  * Expands the map resource stream's floor-item placement chunk into the runtime
  * floor-item table.  The first pass counts the placements up to the 0xffff

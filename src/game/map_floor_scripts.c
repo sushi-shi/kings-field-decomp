@@ -17,14 +17,6 @@
  * pool for the first live actor sitting on a given map tile and returns its
  * index.
  */
-
-
-/* Progress-flag block raised at init and decremented on death restart. */
-extern u8 DAT_800652a8[240];
-/* Persistent per-floor world-state block (save_system world_state base). */
-extern u8 map_world_state_base[4];
-/* Camera-path / positional-audio data block; +0x40 ambience, +0x50 matrix. */
-
 /* The two TIM cut-in paths shown by map_ambient_script_floor5. */
 RODATA(0x80012a54, 0x28)
 
@@ -48,16 +40,16 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 ADDRESS(0x80033f64, 0x288)
 void map_ambient_script_floor1(void)
 {
-    if (map_world_state_base[3] == 1) {
+    if (MAP_WORLD_STATE_BYTES[3] == 1) {
         audio_play_spatial_default_range(
             &gameplay_sound_ref_5, (const VECTOR *)&DAT_800561c8[0x40], 0x73);
     }
 
-    switch (map_world_state_base[1]) {
+    switch (MAP_WORLD_STATE_BYTES[1]) {
     case 0:
         if (player_state.map_cell.x >= 7 && player_state.map_cell.z >= 31
             && player_state.map_cell.x < 12 && player_state.map_cell.z < 41) {
-            map_world_state_base[1] = 1;
+            MAP_WORLD_STATE_BYTES[1] = 1;
         }
         break;
     case 1:
@@ -66,7 +58,7 @@ void map_ambient_script_floor1(void)
             s32 actor_index;
             s32 object_index;
 
-            map_world_state_base[1] = 2;
+            MAP_WORLD_STATE_BYTES[1] = 2;
             actor_index = actor_pool_find_at_tile(7, 0x28);
             if (actor_index != -1) {
                 actor_state.actors[actor_index].lifecycle = 0;
@@ -80,11 +72,11 @@ void map_ambient_script_floor1(void)
         break;
     }
 
-    switch (map_world_state_base[0]) {
+    switch (MAP_WORLD_STATE_BYTES[0]) {
     case 0:
         if (player_state.map_cell.x >= 2 && player_state.map_cell.z >= 27
             && player_state.map_cell.x < 5 && player_state.map_cell.z < 30) {
-            map_world_state_base[0] = 1;
+            MAP_WORLD_STATE_BYTES[0] = 1;
         }
         break;
     case 1:
@@ -92,7 +84,7 @@ void map_ambient_script_floor1(void)
             || player_state.map_cell.x >= 28 || player_state.map_cell.z >= 41) {
             s32 object_index;
 
-            map_world_state_base[0] = 2;
+            MAP_WORLD_STATE_BYTES[0] = 2;
             object_index = map_object_pool_find_near_point(0x2328, 0xdea8, 0xbb8);
             if (object_index != -1) {
                 map_object_state.objects[object_index].object_id = 0xff;
@@ -162,8 +154,9 @@ void map_ambient_script_floor5(void)
 ADDRESS(0x800343e0, 0x58)
 void map_action_script_floor1(void)
 {
-    if (DAT_800652a8[0x38] != 0 && map_world_state_base[2] == 0) {
-        map_world_state_base[2] = 1;
+    if (DAT_800652a8[0x38] != 0
+        && MAP_WORLD_STATE_BYTES[2] == 0) {
+        MAP_WORLD_STATE_BYTES[2] = 1;
         map_apply_copy_region(1);
         sound_ref_play(&gameplay_sound_ref_7, 0x64);
     }

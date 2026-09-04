@@ -5,10 +5,6 @@
 
 RODATA(0x80012888, 0x18c)
 
-extern u8 map_world_state_base[4];
-
-/* Psy-Q LIBGTE: rsin, rcos, ApplyMatrix. */
-
 #define MAP_OBJECT_COUNT 190
 #define MAP_OBJECT_NONE 0xff
 #define MAP_TILE_SIZE 2000
@@ -553,10 +549,10 @@ void map_object_pool_update(void)
                         }
                     }
                 } else if (player_state.progress_state.current_floor == 1) {
-                    if (map_world_state_base[3] == 0) {
+                    if (MAP_WORLD_STATE_BYTES[3] == 0) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_ref_5, (VECTOR *)&object->position_x, 0x7f);
-                        map_world_state_base[3] = 1;
+                        MAP_WORLD_STATE_BYTES[3] = 1;
                     }
                 }
                 object->action_timer++;

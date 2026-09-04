@@ -2,16 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Shared save workspace pointers (rebound to the caller's frame buffers). */
-
-/* Player object and the 240-byte inventory / progress-flag block. */
-extern u8 DAT_800652a8[240];
-
-/* Item-name string tables (10 halfwords per label). */
-
-/* Shared menu primitives: frame begin/flush, background draw, header draw,
- * input sound cue, and the vsync/pad poll. */
-
 /* Menu sub-panels dispatched by the hub menu. */
 s32 menu_use_item_panel(void);
 
