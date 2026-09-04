@@ -80,7 +80,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     SetLightMatrix(&lres);
     SetRotMatrix(&rot);
     SetTransMatrix(&rot);
-    func_8001ed38();
+    menu_render_item_model();
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 

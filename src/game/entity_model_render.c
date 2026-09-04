@@ -10,11 +10,8 @@
  * the derived light matrix, projects the selected TMD object's vertices, and
  * hands the primitive run to the shared polygon enqueuer (render_enqueue_tmd).
  *
- * WIP: the two enqueuers reached here (render_enqueue_tmd, the large TMD primitive
- * emitter, and render_enqueue_model, the actor-specific enqueue path) are the render
- * subsystem's core polygon builders and remain unreconstructed; they are
- * reached by their address identities.  The actor descriptor byte lives in the
- * actor definition record (definitions[id].unknown_00[1]); its low nibble
+ * The actor descriptor byte lives in the actor definition record
+ * (definitions[id].unknown_00[1]); its low nibble
  * selects the asset slot and its high nibble selects a floor-billboard depth
  * pair (DAT_80095038/DAT_80095048).
  *
@@ -42,10 +39,6 @@
  * produced).
  */
 extern u16 DAT_80095038[];
-
-extern KfTmdObject *tmd_get_object(u16 object_index);
-extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
-extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 
 ADDRESS(0x8001e9a4, 0x214)
 void render_actor(KfActor *actor)
@@ -143,7 +136,7 @@ void render_map_object(KfMapObject *object)
 }
 
 ADDRESS(0x8001ed38, 0x58)
-void func_8001ed38(void)
+void menu_render_item_model(void)
 {
     lighting_set_active_color_matrix(0);
     SetGeomScreen(0xc8);

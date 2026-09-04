@@ -58,11 +58,6 @@
  * individual identities until the whole object is modelled (see render_sprite.c).
  */
 
-extern KfTmdObject *tmd_get_object(u16 index);
-extern long NormalClip(long sxy0, long sxy1, long sxy2);
-extern void NormalColorCol(SVECTOR *normal, CVECTOR *in, CVECTOR *out);
-extern void DpqColor(CVECTOR *in, long dqp, CVECTOR *out);
-
 /*
  * Emits one prepared TMD object as lit Gouraud-textured primitives.  Each FT3
  * (mode 0x24) or FT4 (mode 0x2c) packet indexes the projection scratch buffer

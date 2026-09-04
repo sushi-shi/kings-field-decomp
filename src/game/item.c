@@ -32,7 +32,7 @@ extern u8 DAT_800652a8[240];
  * Expands the map resource stream's floor-item placement chunk into the runtime
  * floor-item table.  The first pass counts the placements up to the 0xffff
  * terminator; the second pass converts each tile/offset pair into a world
- * position sunk onto the floor and seeds a random flicker value.
+ * position sunk onto the floor and seeds a random starting animation frame.
  */
 ADDRESS(0x80020b4c, 0x1b0)
 void item_load_floor_placements(KfFloorItemPlacement *placements)
@@ -57,13 +57,14 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
             s32 height;
 
             item->item_id = placement->item_id;
-            item->unknown_02 = placement->unknown_02;
+            item->facing_and_frame_count = placement->facing_and_frame_count;
             item->unknown_03 = placement->unknown_03;
             item->position_x = placement->tile_x * 2000 + placement->local_x;
             item->position_z = placement->tile_z * 2000 + placement->local_z;
             height = map_floor_height_grid[placement->tile_z][placement->tile_x] * 100;
             item->position_y = placement->local_y - height;
-            item->flicker = (rand() * item->unknown_02) >> 15;
+            item->animation_frame =
+                (rand() * item->facing_and_frame_count) >> 15;
             item++;
             placement++;
         } while (placement->item_id != 0xffff);

@@ -46,13 +46,18 @@ extern void matrix_interpolate(
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
+extern void menu_render_item_model(void);
 extern void primitive_buffer_begin_poly_ft4(void);
 extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
 extern void render_actor_sprite(KfEffectRenderView *sprite);
+extern u16 *render_bind_animated_instance(
+    void *anchor, u16 asset, u16 tag, u16 variant, u16 vertex_count);
 extern void render_effect_sprites(void);
+extern void render_enqueue_map(u16 object_index);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag);
+extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_entities(void);
 extern void render_hud_gauges(u8 *table);
 extern void render_initialize(void);
@@ -66,6 +71,7 @@ extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);
 extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut, u8 *color, u16 ot_index);
 extern void tmd_prepare_primitive_indices(void);
+extern KfTmdObject *tmd_get_object(u16 index);
 extern void tmd_release_last_allocation(s32 slot);
 extern void tmd_project_vertices(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);

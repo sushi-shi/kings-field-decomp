@@ -11,10 +11,6 @@
 
 /* Six light/color matrices fed to SetLightMatrix, one per render subsystem. */
 
-extern KfTmdObject *tmd_get_object(u16 index);
-extern u16 *render_bind_animated_instance(void *entry, u16 asset, u16 arg2, u16 arg3, u16 count);
-extern void render_enqueue_tmd(u16 arg0, s16 arg1);
-
 /*
  * One entry of the animated decal/sprite table at DAT_80055d74 (stride 28).
  * WIP: field roles beyond the transform inputs are unresolved, so the trailing

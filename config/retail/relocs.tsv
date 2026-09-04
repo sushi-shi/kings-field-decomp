@@ -5232,7 +5232,7 @@ GAME.EXE	0x80029388	0x17b88		mips26	reachable-code	0x8004cdd4	load	MulMatrix0	ja
 GAME.EXE	0x80029390	0x17b90		mips26	reachable-code	0x8004d7b4	load	SetLightMatrix	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x80029398	0x17b98		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293a0	0x17ba0		mips26	reachable-code	0x8004d814	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
-GAME.EXE	0x800293a8	0x17ba8		mips26	reachable-code	0x8001ed38	load	func_8001ed38	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
+GAME.EXE	0x800293a8	0x17ba8		mips26	reachable-code	0x8001ed38	load	menu_render_item_model	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293b8	0x17bb8	0x800293bc	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293c8	0x17bc8	0x800293cc	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v0	paired-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293ec	0x17bec	0x800293f0	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+sw	at	paired-reviewed	reviewed	manual:menu_draw_item_name_frame

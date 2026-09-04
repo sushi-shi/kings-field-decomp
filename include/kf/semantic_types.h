@@ -495,7 +495,7 @@ typedef struct KfMapObject {
  */
 typedef struct KfFloorItemPlacement {
     u16 item_id;
-    u8 unknown_02;
+    u8 facing_and_frame_count;
     u8 unknown_03;
     u8 tile_z;
     u8 tile_x;
@@ -506,15 +506,27 @@ typedef struct KfFloorItemPlacement {
 
 typedef struct KfFloorItem {
     u16 item_id;
-    u8 unknown_02;
+    u8 facing_and_frame_count;
     u8 unknown_03;
     s32 position_x;
     s32 position_y;
     s32 position_z;
     u8 unknown_10[4];
-    u8 flicker;
+    u8 animation_frame;
     u8 unknown_15[3];
 } KfFloorItem;
+
+/*
+ * Per-yaw visible-cell window selected by render_map_cells and consumed by
+ * render_entities.  The cell payload is row-major with width*height entries.
+ */
+typedef struct KfCellWindow {
+    u16 width;
+    u16 height;
+    u16 origin_x;
+    u16 origin_z;
+    u8 cells[196];
+} KfCellWindow;
 
 /*
  * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte

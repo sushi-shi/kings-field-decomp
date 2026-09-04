@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void render_enqueue_map(u16 object_index);
-
 /*
  * Per-cell wall/floor geometry emitter for the map pass, called by
  * render_map_cells for each visible, populated cell.  Reads the cell's

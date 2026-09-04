@@ -3,14 +3,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern KfTmdObject *tmd_get_object(u16 index);
-extern long NormalClip(long sxy0, long sxy1, long sxy2);
-extern void NormalColorDpq(SVECTOR *normal, CVECTOR *in, long dpq, CVECTOR *out);
-extern void NormalColorDpq3(SVECTOR *n0, SVECTOR *n1, SVECTOR *n2, CVECTOR *in, long dpq,
-                            CVECTOR *out0, CVECTOR *out1, CVECTOR *out2);
-extern void NormalColorCol3(SVECTOR *n0, SVECTOR *n1, SVECTOR *n2, CVECTOR *in,
-                            CVECTOR *out0, CVECTOR *out1, CVECTOR *out2);
-
 extern u8 DAT_80057b5b;        /* last textured primitive code */
 extern CVECTOR DAT_80057b58;   /* base colour for textured primitives */
 

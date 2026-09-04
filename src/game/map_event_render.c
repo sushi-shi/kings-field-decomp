@@ -10,10 +10,6 @@
  * follows the event's variant id.
  */
 
-extern KfTmdObject *tmd_get_object(u16 index);
-extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
-extern void render_enqueue_tmd(u16 arg0, s16 arg1);
-
 /*
  * The world position is taken from the low halves of the event's reference and
  * y coordinates; the render-rotation vector overlaps the event's rotation field

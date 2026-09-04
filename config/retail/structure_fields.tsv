@@ -132,6 +132,11 @@ KfCdFileEntry	0x02	0x01	sector	u8	supported	semantic_types.h;asm;func_8001ae60;L
 KfCdFileEntry	0x03	0x01	track	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
 KfCdFileEntry	0x04	0x04	size	u32	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
 KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
+KfCellWindow	0x00	0x02	width	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row width and inner-loop bound
+KfCellWindow	0x02	0x02	height	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row count and outer-loop bound
+KfCellWindow	0x04	0x02	origin_x	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
+KfCellWindow	0x06	0x02	origin_z	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
+KfCellWindow	0x08	0xc4	cells	u8[196]	supported	semantic_types.h;asm;render_map_cells;render_entities;DAT_80065be8-stride	row-major visibility bytes filling the remainder of each 204-byte window record
 KfCollisionTarget	0x00	0x10	position	VECTOR	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
 KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
@@ -201,16 +206,16 @@ KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
 KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
 KfFloorItem	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id copied from the placement record
-KfFloorItem	0x02	0x01	unknown_02	u8	opaque	semantic_types.h;asm;func_80020b4c	flicker scale copied from the placement record
+KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
 KfFloorItem	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
 KfFloorItem	0x04	0x04	position_x	s32	supported	semantic_types.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
 KfFloorItem	0x08	0x04	position_y	s32	supported	semantic_types.h;asm;func_80020b4c	world y = local_y - floor_height*100
 KfFloorItem	0x0c	0x04	position_z	s32	supported	semantic_types.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
 KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	semantic_types.h;func_80020b4c	not written by the loader
-KfFloorItem	0x14	0x01	flicker	u8	supported	semantic_types.h;asm;func_80020b4c	(rand() * unknown_02) >> 15
+KfFloorItem	0x14	0x01	animation_frame	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
 KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	semantic_types.h;func_80020b4c	not written by the loader
 KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
-KfFloorItemPlacement	0x02	0x01	unknown_02	u8	opaque	semantic_types.h;asm;func_80020b4c	scales the random flicker value
+KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
 KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
 KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	semantic_types.h;asm;func_80020b4c	map tile z (floor-height grid row)
 KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;func_80020b4c	map tile x (floor-height grid column)

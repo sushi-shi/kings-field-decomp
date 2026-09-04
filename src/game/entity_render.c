@@ -24,38 +24,15 @@
  * eedc's billboard path indexes them 0x58 bytes in.
  */
 
-extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern KfTmdObject *tmd_get_object(u16 index);
-extern u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count);
-extern void render_enqueue_tmd(u16 arg0, s16 arg1);
-
-/*
- * One record of the floor-decoration pool (24-byte stride).  Only the transform
- * inputs and the animation cursor are resolved.
- */
-typedef struct KfFloorSprite {
-    u16 sprite_id;    /* +0 */
-    u8 orientation;   /* +2: high nibble facing step, low nibble frame count */
-    u8 unknown_03;    /* +3 */
-    u16 position_x;   /* +4 */
-    u16 unknown_06;   /* +6 */
-    u16 position_y;   /* +8 */
-    u16 unknown_0a;   /* +10 */
-    u16 position_z;   /* +12 */
-    u8 unknown_0e[6]; /* +14 */
-    u8 anim_frame;    /* +20 */
-    u8 unknown_15[3]; /* +21 */
-} KfFloorSprite;
-
 /*
  * Emits one floor decoration.  The record's world position is carried into the
  * view via RotTrans (its result lands directly in the model matrix's t column),
  * then either a facing rotation is composed onto the view matrix or the render
  * pitch matrix is used verbatim.  The sprite frame advances and wraps against
- * the low nibble of the orientation byte.
+ * the low nibble of the packed facing/frame-count byte.
  */
 ADDRESS(0x8001ed90, 0x14c)
-void render_floor_item(KfFloorSprite *sprite)
+void render_floor_item(KfFloorItem *item)
 {
     SVECTOR screen;
     MATRIX model;
@@ -67,11 +44,11 @@ void render_floor_item(KfFloorSprite *sprite)
 
     SetRotMatrix((MATRIX *)&render_state.view_matrix);
     SetTransMatrix((MATRIX *)&render_state.view_matrix);
-    screen.vx = sprite->position_x - (u16)render_state.view_position.vx;
-    screen.vy = sprite->position_y - (u16)render_state.view_position.vy;
-    screen.vz = sprite->position_z - (u16)render_state.view_position.vz;
+    screen.vx = (u16)item->position_x - (u16)render_state.view_position.vx;
+    screen.vy = (u16)item->position_y - (u16)render_state.view_position.vy;
+    screen.vz = (u16)item->position_z - (u16)render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    facing = sprite->orientation & 0xf0;
+    facing = item->facing_and_frame_count & 0xf0;
     if (facing != 0) {
         matrix_set_rotation_y((facing - 16) << 6, &model);
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
@@ -83,13 +60,14 @@ void render_floor_item(KfFloorSprite *sprite)
     }
     SetTransMatrix(&model);
     render_enqueue_sprite(
-        (KfSpriteQuad *)&DAT_80055afc[4 + (sprite->sprite_id + sprite->anim_frame) * 12],
+        (KfSpriteQuad *)&DAT_80055afc[
+            4 + (item->item_id + item->animation_frame) * 12],
         screen_scale, 1);
-    next_frame = sprite->anim_frame + 1;
-    frame_count = sprite->orientation;
-    sprite->anim_frame = next_frame;
+    next_frame = item->animation_frame + 1;
+    frame_count = item->facing_and_frame_count;
+    item->animation_frame = next_frame;
     if ((next_frame & 0xff) >= (frame_count & 0xf)) {
-        sprite->anim_frame = 0;
+        item->animation_frame = 0;
     }
 }
 

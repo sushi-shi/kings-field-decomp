@@ -51,7 +51,7 @@ void menu_item_model_preview(s32 item_id)
         SetLightMatrix(&lres);
         SetRotMatrix(&rot);
         SetTransMatrix(&rot);
-        func_8001ed38();
+        menu_render_item_model();
 
         current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 

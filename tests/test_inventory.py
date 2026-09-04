@@ -54,9 +54,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 3279)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 66)
-        self.assertEqual(counts["structure_fields"], 605)
-        self.assertEqual(counts["structure_fields_named"], 493)
+        self.assertEqual(counts["structures"], 67)
+        self.assertEqual(counts["structure_fields"], 610)
+        self.assertEqual(counts["structure_fields_named"], 500)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -70,6 +70,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfPlayerState"].size, 0xE0)
         self.assertEqual(structures["KfPrimitiveBuffer"].size, 0x0C)
         self.assertEqual(structures["KfScreenVertex"].size, 0x08)
+        self.assertEqual(structures["KfCellWindow"].size, 0xCC)
         self.assertEqual(structures["KfTmdObject"].size, 0x1C)
         growth_fields = {
             row.name: (row.offset, row.size, row.datatype, row.meaning_confidence)

@@ -10,25 +10,12 @@
  * window's cell grid and hands every populated, in-range cell to the per-cell
  * emitter render_map_cell.
  *
- * WIP: render_map_cell (the per-cell wall/floor emitter) is not yet reconstructed
- * and is reached by its address identity.  The window table DAT_80065be8 is a
- * 16-entry, 204-byte-stride block; its interior beyond the grid header is
- * unresolved, so the entry is reached as a byte offset and the grid is a local
- * KfCellWindow view.
+ * The window table DAT_80065be8 is a 16-entry, 204-byte-stride block; its
+ * containing data owner remains unresolved, so the selected entry is reached
+ * as a byte offset and viewed through the shared KfCellWindow layout.
  */
 
 extern u8 DAT_80065be8[]; /* 16 x 204-byte per-yaw cell windows */
-
-/* Visible map cell window: dimensions, window origin, then the cell flags. */
-typedef struct KfCellWindow {
-    u16 width;
-    u16 height;
-    u16 origin_x;
-    u16 origin_z;
-    u8 cells[1];
-} KfCellWindow;
-
-extern KfCellWindow *DAT_80095860;
 
 ADDRESS(0x8001e83c, 0x168)
 void render_map_cells(void)

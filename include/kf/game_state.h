@@ -105,6 +105,7 @@ extern u16 DAT_8009508c;
 extern u16 DAT_8009508e;
 extern u32 DAT_80095698;
 extern u32 DAT_8009569c;
+extern KfCellWindow *DAT_80095860;
 extern u32 DAT_8009a740;
 extern KfMagicRecord *current_effect_magic_record;
 extern KfEffectRecord *current_effect;

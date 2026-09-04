@@ -9,32 +9,17 @@
  * A dedicated light matrix is installed before the floor-item, actor-sprite,
  * and map-event passes.
  *
- * WIP: the cell window and the floor-item render descriptor are unresolved.
- * The descriptor block precedes floor_items in one object, so floor_items is
- * reached as a byte view offset from the descriptor base (the shared-symbol
- * addend the original produced); the actor-sprite pool stays a byte view.
+ * WIP: the owner of the cell-window table and floor-item render descriptor is
+ * unresolved.  The descriptor block precedes floor_items in one object, so
+ * floor_items is reached as a byte view offset from the descriptor base (the
+ * shared-symbol addend the original produced); the actor-sprite pool stays a
+ * byte view.
  *
  * Structurally exact (frame, control flow, cull arithmetic, call set, and
  * referents all match), but the seven-register global allocation differs in
  * numbering and one setup subtract lands directly in its saved register rather
  * than via a temp -- an unattributed register-allocation/scheduling residue.
  */
-
-/* Visible map cell window: dimensions, window origin, then the cell flags. */
-typedef struct KfCellWindow {
-    u16 width;
-    u16 height;
-    u16 origin_x;
-    u16 origin_z;
-    u8 cells[1];
-} KfCellWindow;
-
-extern KfCellWindow *DAT_80095860;
-
-/* Floor-item render descriptor, laid out just below floor_items. */
-
-
-extern void render_floor_item(KfFloorItem *item);
 
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
