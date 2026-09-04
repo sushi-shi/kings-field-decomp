@@ -22,8 +22,8 @@ KfEffectRenderView	0x3c	supported	semantic_types.h;asm;render_actor_sprite;rende
 KfEffectSprite	0x1c	supported	semantic_types.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
 KfEulerAngles	0x06	supported	game_math.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
-KfFloorItem	0x18	supported	semantic_types.h;asm;func_80020b4c	runtime floor-item table entry
-KfFloorItemPlacement	0x0c	supported	semantic_types.h;asm;func_80020b4c	serialized floor-item placement record
+KfFloorItem	0x18	supported	item.h;asm;func_80020b4c	runtime floor-item table entry
+KfFloorItemPlacement	0x0c	supported	item.h;asm;func_80020b4c	serialized floor-item placement record
 KfHudSprite	0x0e	supported	semantic_types.h;game_semantic_hud_sprites.tsv;asm;retail-initializers;14-byte-stride	HUD table row with state byte and complete screen-sprite descriptor; state 0xff terminates the array
 KfMagicRecord	0x14	supported	asm;player_select_magic;player_update;player_recalculate_combat_stats	20-byte magic record; magic_records[24] is indexed by selected_magic_id and by weapon-bound spell indices 5/8/18/20
 KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order

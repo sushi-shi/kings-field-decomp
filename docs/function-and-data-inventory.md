@@ -210,7 +210,8 @@ and `KfAudioState` are owned by `include/kf/audio.h`. The game-owned
 are owned alongside their operations by `include/kf/game_math.h`; and the
 actor layouts and state aggregate are owned by `include/kf/game_actor.h`.
 The map cell, copy-region, map-object, map-event, and camera-path layouts are
-owned by `include/kf/game_map.h`.
+owned by `include/kf/game_map.h`; and the serialized and runtime floor-item
+layouts are owned with their loader interface by `include/kf/item.h`.
 The remaining inventory-only layouts in this list still live in
 `include/kf/semantic_types.h`. Their sizes are
 checked against `config/retail/structures.tsv` by `kf inventory check`;

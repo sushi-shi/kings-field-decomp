@@ -3,7 +3,40 @@
 
 /* Floor-item resource loading shared by GAME and OPEN. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
+
+/*
+ * Serialized floor-item placement record (12 bytes) from the map resource
+ * stream, and the runtime floor-item entry (24 bytes) the loader expands it
+ * into. The tile bytes index map_floor_height_grid[tile_z][tile_x]; the world
+ * position is tile*2000 plus the signed local offset, and the height byte times
+ * -100 sinks the item onto the floor.
+ */
+typedef struct KfFloorItemPlacement {
+    u16 item_id;
+    u8 facing_and_frame_count;
+    u8 unknown_03;
+    u8 tile_z;
+    u8 tile_x;
+    s16 local_z;
+    s16 local_x;
+    s16 local_y;
+} KfFloorItemPlacement;
+
+typedef struct KfFloorItem {
+    u16 item_id;
+    u8 facing_and_frame_count;
+    u8 unknown_03;
+    s32 position_x;
+    s32 position_y;
+    s32 position_z;
+    u8 unknown_10[4];
+    u8 animation_frame;
+    u8 unknown_15[3];
+} KfFloorItem;
+
+extern u16 floor_item_count;
+extern KfFloorItem floor_items[64];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 

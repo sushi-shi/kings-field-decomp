@@ -216,23 +216,23 @@ KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
 KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
-KfFloorItem	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id copied from the placement record
-KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
-KfFloorItem	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
-KfFloorItem	0x04	0x04	position_x	s32	supported	semantic_types.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
-KfFloorItem	0x08	0x04	position_y	s32	supported	semantic_types.h;asm;func_80020b4c	world y = local_y - floor_height*100
-KfFloorItem	0x0c	0x04	position_z	s32	supported	semantic_types.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
-KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	semantic_types.h;func_80020b4c	not written by the loader
-KfFloorItem	0x14	0x01	animation_frame	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
-KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	semantic_types.h;func_80020b4c	not written by the loader
-KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
-KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
-KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
-KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	semantic_types.h;asm;func_80020b4c	map tile z (floor-height grid row)
-KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;func_80020b4c	map tile x (floor-height grid column)
-KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
-KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
-KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;func_80020b4c	height offset above the floor height grid
+KfFloorItem	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id copied from the placement record
+KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
+KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
+KfFloorItem	0x04	0x04	position_x	s32	supported	item.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
+KfFloorItem	0x08	0x04	position_y	s32	supported	item.h;asm;func_80020b4c	world y = local_y - floor_height*100
+KfFloorItem	0x0c	0x04	position_z	s32	supported	item.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
+KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	item.h;func_80020b4c	not written by the loader
+KfFloorItem	0x14	0x01	animation_frame	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
+KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	item.h;func_80020b4c	not written by the loader
+KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
+KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
+KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
+KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	item.h;asm;func_80020b4c	map tile z (floor-height grid row)
+KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	item.h;asm;func_80020b4c	map tile x (floor-height grid column)
+KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	item.h;asm;func_80020b4c	offset within the tile
+KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	item.h;asm;func_80020b4c	offset within the tile
+KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	item.h;asm;func_80020b4c	height offset above the floor height grid
 KfHudSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
 KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place

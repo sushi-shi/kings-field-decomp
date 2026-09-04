@@ -96,8 +96,6 @@ extern char enemy_info_image_path_template[13];
 extern KfEffectRecord effect_pool_records[48];
 extern SVECTOR effect_projectile_velocities[2];
 extern const KfFloorEntryCell floor_entry_cells[5];
-extern u16 floor_item_count;
-extern KfFloorItem floor_items[64];
 extern u32 game_exit_code;
 extern const SoundRef gameplay_sound_ref_0;
 extern const SoundRef gameplay_sound_ref_1;
