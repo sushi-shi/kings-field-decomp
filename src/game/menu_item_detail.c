@@ -9,17 +9,6 @@
  * save-slot summary rows. All draw through the shared glyph-string workspace
  * and sprite descriptors. Module boundary is WIP.
  */
-/* One save-slot summary row: a 6-digit field, a 1-digit field, and two
- * value/max pairs (separated by the "/" glyph).  field_8 gates the row. */
-typedef struct MenuSlotStats {
-    s32 field_0;
-    s32 field_4;
-    s32 field_8;
-    s32 field_c;
-    s32 field_10;
-    s32 field_14;
-} MenuSlotStats;
-
 /* Item name table (ten glyph codes per item) and the two price tables
  * (two price columns per item).  Runtime-indexed, so only the base is
  * relocated. */
@@ -155,7 +144,7 @@ void menu_add_frame_quad(void)
  * Draw a bordered menu dialog frame plus optional save-slot summary rows.
  * `kind` selects which of the composite-frame quads (indices 2..4 of the
  * double-buffered flat-quad array) border the box.  When `rows` is non-null,
- * up to three slot summaries are drawn, each gated by its field_8 being
+ * up to three slot summaries are drawn, each gated by its third word being
  * positive; every row prints an icon label plus its numeric fields through the
  * shared glyph-string workspace.  Used by the save/load panels, the save
  * confirmation, and the two-option confirm dialog.
@@ -165,10 +154,10 @@ void menu_add_frame_quad(void)
  * base-sharing / list-widget class in docs/patterns/source-shapes-gcc257.md.
  */
 ADDRESS(0x80027ee4, 0x49c)
-void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
+void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
 {
     MenuGlyphString gs;
-    const MenuSlotStats *row;
+    const KfSaveSlotSummary *row;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
@@ -207,7 +196,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
     row = rows;
     for (i = 0; i < 3; i++) {
         gs.y = i * 65 + 30;
-        if (row->field_8 > 0) {
+        if ((s32)row->fields[2] > 0) {
             gs.x = 181;
             gs.codes[0] = 0x82;
             gs.codes[1] = 0x83;
@@ -216,7 +205,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 251;
-            menu_format_number(row->field_0, 6, 0, gs.codes);
+            menu_format_number(row->fields[0], 6, 0, gs.codes);
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.x = 181;
@@ -227,7 +216,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 286;
-            menu_format_number(row->field_4, 1, 0, gs.codes);
+            menu_format_number(row->fields[1], 1, 0, gs.codes);
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.x = 181;
@@ -238,7 +227,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 230;
-            menu_format_number(row->field_8, 4, 0, gs.codes);
+            menu_format_number(row->fields[2], 4, 0, gs.codes);
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.codes[0] = 11;
@@ -247,7 +236,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.x += 7;
-            menu_format_number(row->field_c, 4, 0, gs.codes);
+            menu_format_number(row->fields[3], 4, 0, gs.codes);
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.x = 181;
@@ -258,7 +247,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_string(&DAT_800583f4, &gs);
 
             gs.x = 230;
-            menu_format_number(row->field_10, 4, 0, gs.codes);
+            menu_format_number(row->fields[4], 4, 0, gs.codes);
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.codes[0] = 11;
@@ -267,7 +256,7 @@ void menu_draw_dialog_frame(const MenuSlotStats *rows, s32 kind)
             menu_draw_number(&DAT_800583e8, &gs);
 
             gs.x += 7;
-            menu_format_number(row->field_14, 4, 0, gs.codes);
+            menu_format_number(row->fields[5], 4, 0, gs.codes);
             menu_draw_number(&DAT_800583e8, &gs);
         }
         row++;

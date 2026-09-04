@@ -18,14 +18,6 @@ extern u8 DAT_800652a8[240];
 /* Item-name string table: ten halfwords (a 20-byte label) per item id. */
 extern s16 DAT_80058dc0[];
 
-/* Shared menu primitives: windowed list/menu draw, input sound cue, and the
- * vsync/pad poll. */
-extern void menu_draw_dialog_frame(void *summaries, s32 cursor);
-extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
-
-/* Item-list widget helper and the save/load workers plus effect/audio hooks. */
-extern s32 menu_two_option_prompt(s32 arg0, u32 arg1, u32 arg2, u32 arg3);
-
 /*
  * Drop-item panel dispatched by the hub menu (slot 4).  Builds a scrollable
  * list of every held item, subtracting one copy of any item currently worn in
@@ -334,7 +326,7 @@ s32 menu_save_panel(void)
                     ;
             }
 
-            result = menu_two_option_prompt(4, 5, cursor, (u32)summaries);
+            result = menu_two_option_prompt(4, 5, cursor, summaries);
             if (result == -1) {
                 result = -99;
             } else {
@@ -463,7 +455,7 @@ s32 menu_load_panel(void)
         }
 
         if (confirm == 1 && cursor != 3) {
-            result = menu_two_option_prompt(5, 4, cursor, (u32)summaries);
+            result = menu_two_option_prompt(5, 4, cursor, summaries);
             if (result == -1) {
                 result = -99;
             } else {

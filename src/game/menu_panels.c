@@ -12,7 +12,6 @@ extern s16 DAT_80059400[];
  * background, input sound cue, and the vsync/pad poll. */
 
 /* Cursor/list widget helpers (init, render, query). */
-extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /* Sub-panel handlers dispatched by the option menu. */
 

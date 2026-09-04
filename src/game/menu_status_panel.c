@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void menu_draw_status_details(void);
-extern void menu_draw_window_backdrop(void);
 
 /*
  * Status panel top-level loop reached from menu_root: each frame it draws the

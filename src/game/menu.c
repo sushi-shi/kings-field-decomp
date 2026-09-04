@@ -11,8 +11,6 @@ extern u8 DAT_800652a8[240];
 
 /* Shared menu primitives: frame begin/flush, background draw, header draw,
  * input sound cue, and the vsync/pad poll. */
-extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
-extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 
 /* Menu sub-panels dispatched by the hub menu. */
 s32 menu_use_item_panel(void);
@@ -35,7 +33,7 @@ void menu_save_confirm(void)
     do {
         i++;
         menu_frame_begin();
-        menu_draw_dialog_frame((void *)0, 3);
+        menu_draw_dialog_frame(0, 3);
         menu_draw_window(4, 5, 0, 0);
         menu_present_frame();
     } while (i < 3);

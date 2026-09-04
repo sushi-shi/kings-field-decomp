@@ -2,18 +2,17 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
-extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
-
 /*
  * Interactive two-option confirm dialog.  Draws the window and the two labels
  * every frame, toggling the selected option on an up/down edge, and returns
  * once the player confirms (result -selected) or cancels (result -1).  Kinds 4
- * and 5 forward the caller's composite argument to the frame builder; all
- * others suppress it (-1).
+ * and 5 forward the caller's save summaries to the frame builder; all others
+ * suppress the composite-frame selection (-1).
  */
 ADDRESS(0x800286d4, 0x240)
-s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3)
+s32 menu_two_option_prompt(
+    s32 kind, s32 count, s32 highlight_row,
+    const KfSaveSlotSummary *summaries)
 {
     MenuGlyphString label_a;
     MenuGlyphString label_b;
@@ -28,15 +27,15 @@ s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3)
         ;
 
     if ((u32)(kind - 4) < 2)
-        composite = arg2;
+        composite = highlight_row;
 
     label_a.x = 0x60;
-    label_a.y = menu_id * 20 + 44;
+    label_a.y = count * 20 + 44;
     label_a.codes[0] = 0x59;
     label_a.codes[1] = 0x41;
     label_a.codes[2] = -1;
     label_b.x = 0x60;
-    label_b.y = menu_id * 20 + 64;
+    label_b.y = count * 20 + 64;
     label_b.codes[0] = 0x41;
     label_b.codes[1] = 0x41;
     label_b.codes[2] = 0x43;
@@ -45,8 +44,8 @@ s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3)
     for (;;) {
         if (result != -99) {
             menu_frame_begin();
-            menu_draw_dialog_frame(arg3, composite);
-            menu_draw_window(kind, menu_id, arg2, 1);
+            menu_draw_dialog_frame(summaries, composite);
+            menu_draw_window(kind, count, highlight_row, 1);
             menu_draw_two_option(&label_a, &label_b, selected, highlight);
             menu_present_frame();
             while (pad_read(1) != 0)
@@ -74,8 +73,8 @@ s32 menu_two_option_prompt(s32 kind, s32 menu_id, s32 arg2, void *arg3)
         }
 
         menu_frame_begin();
-        menu_draw_dialog_frame(arg3, composite);
-        menu_draw_window(kind, menu_id, arg2, 1);
+        menu_draw_dialog_frame(summaries, composite);
+        menu_draw_window(kind, count, highlight_row, 1);
         menu_draw_two_option(&label_a, &label_b, selected, highlight);
         menu_present_frame();
     }

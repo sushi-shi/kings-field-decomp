@@ -80,6 +80,7 @@ extern MenuLabelCell DAT_80058494[];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
+extern void item_menu_root(s32 arg);
 extern s32 item_use_confirm(s32 arg);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
@@ -88,6 +89,8 @@ extern void menu_blit_sprite(
 extern void menu_blit_sprite_translucent(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_config_panel(void);
+extern void menu_draw_dialog_frame(
+    const KfSaveSlotSummary *summaries, s32 kind);
 extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
 extern void menu_draw_item_name_frame(s32 item_id);
 extern void menu_draw_number(
@@ -95,9 +98,11 @@ extern void menu_draw_number(
 extern void menu_draw_string(
     const MenuSpriteDef *font, const MenuGlyphString *string);
 extern void menu_draw_stats_header(void);
+extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
     s32 selected, s32 highlight);
+extern void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 count, s32 pad_zero, s16 *out);
@@ -123,6 +128,9 @@ extern s32 menu_save_load_hub(void);
 extern s32 menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);
+extern s32 menu_two_option_prompt(
+    s32 kind, s32 count, s32 highlight,
+    const KfSaveSlotSummary *summaries);
 extern void talk_show_indexed_image(u8 prefix_digit, u8 index_digit, s32 group_id, u8 frame_digit);
 
 #endif
