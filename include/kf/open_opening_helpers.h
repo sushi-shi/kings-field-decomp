@@ -5,8 +5,6 @@
 
 extern u32 opening_input_action;
 
-/* K&R declaration preserves callers that supply the ignored pad identifier. */
-extern u32 pad_read();
 extern void opening_poll_input(void);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 

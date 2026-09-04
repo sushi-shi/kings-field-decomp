@@ -14,13 +14,13 @@ KFIII executable contributes to this list.
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
 | `GAME.EXE` | 186 | 146 | 125 | 58 | 51 | 566 |
-| `OPEN.EXE` | 184 | 145 | 114 | 58 | 37 | 538 |
-| **total** | **378** | **291** | **239** | **116** | **88** | **1,112** |
+| `OPEN.EXE` | 184 | 145 | 121 | 58 | 37 | 545 |
+| **total** | **378** | **291** | **246** | **116** | **88** | **1,119** |
 
-The 1,112 rows comprise 1,086 named functions and 26 anonymous internal
+The 1,119 rows comprise 1,093 named functions and 26 anonymous internal
 functions whose containing Sony object is known. Provider counts are: 275
 `LIBGTE`, 248 `LIBSND`, 214 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
-34 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
+41 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
 `LIBSN`, and eight fully fixed `memcpy` copies whose exact member remains
 ambiguous across `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party
 library has been identified, so none is claimed in the TSV.

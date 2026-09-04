@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 499)
-        self.assertEqual(counts["signatures_started"], 499)
-        self.assertEqual(counts["typed_returns"], 499)
-        self.assertEqual(counts["parameterized"], 318)
+        self.assertEqual(counts["functions"], 492)
+        self.assertEqual(counts["signatures_started"], 492)
+        self.assertEqual(counts["typed_returns"], 492)
+        self.assertEqual(counts["parameterized"], 316)
         self.assertEqual(counts["data"], 3084)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -837,11 +837,17 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
             self.assertEqual(row["current_match"], "100.000000000% exact")
 
-        pad_read = identities[("OPEN.EXE", 0x8002FF00)]
+        _, vendored_rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in vendored_rows
+        }
+        pad_read = vendored[("OPEN.EXE", 0x8002FF00)]
         self.assertEqual(
-            (pad_read.name, pad_read.owner, pad_read.action),
-            ("pad_read", "pad", "read"),
+            (pad_read["name"], pad_read["library"], pad_read["module"]),
+            ("PadRead", "LIBETC.LIB", "PAD"),
         )
+        self.assertNotIn(("OPEN.EXE", 0x8002FF00), identities)
 
         data = load_data_identities(RETAIL_CONFIG)
         action = data[("OPEN.EXE", 0x80043178)]
@@ -868,6 +874,52 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(action_rows), 12)
         self.assertEqual(
             {row["target_name"] for row in action_rows}, {"opening_input_action"}
+        )
+
+    def test_open_libetc_pad_run_is_excluded_as_vendored(self) -> None:
+        evidence_path = CONFIG / "evidence/open_vendor_libetc_pad.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        self.assertEqual(len(evidence_rows), 7)
+
+        expected = {
+            0x8002FE30: "critical_section_set",
+            0x8002FE8C: "PadInit",
+            0x8002FF00: "PadRead",
+            0x8002FF44: "PadStop",
+            0x8002FF80: "pad_init_bad_identifier",
+            0x8002FFB0: "pad_read_bad_identifier",
+            0x8002FFE0: "pad_stop_bad_identifier",
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        _, vendored_rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in vendored_rows
+        }
+        for va, name in expected.items():
+            self.assertNotIn(("OPEN.EXE", va), identities)
+            row = vendored[("OPEN.EXE", va)]
+            self.assertEqual(row["name"], name)
+            self.assertEqual(
+                (row["provider"], row["library"], row["confidence"]),
+                (
+                    "Sony Computer Entertainment",
+                    "LIBETC.LIB",
+                    "sdk-lineage-supported",
+                ),
+            )
+        self.assertEqual(
+            {parse_int(row["va"]) for row in evidence_rows}, set(expected)
+        )
+        self.assertEqual(
+            {row["verdict"] for row in evidence_rows},
+            {
+                "Sony LIBETC INTR.OBJ static; exclude from OPEN game progress",
+                "Sony LIBETC PAD.OBJ PadInit; exclude from OPEN game progress",
+                "Sony LIBETC PAD.OBJ PadRead; exclude from OPEN game progress",
+                "Sony LIBETC PAD.OBJ PadStop; exclude from OPEN game progress",
+                "Sony version-skewed LIBETC PAD.OBJ static; exclude from OPEN game progress",
+            },
         )
 
     def test_open_sprite_f4_campaign_matches_curated_evidence(self) -> None:

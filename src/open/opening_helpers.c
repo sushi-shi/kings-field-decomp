@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/open_opening_helpers.h>
+#include <kf/psyq_pad.h>
 
 DATA(0x80043178, 0x4)
 u32 opening_input_action;
@@ -7,7 +8,7 @@ u32 opening_input_action;
 ADDRESS(0x80013c70, 0x3c)
 void opening_poll_input(void)
 {
-    u32 input = pad_read(1);
+    u32 input = PadRead(1);
 
     if (input != 0) {
         if ((input & 0x100) != 0) {

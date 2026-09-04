@@ -177,6 +177,12 @@ controller and its nine-point camera path. It proves the display-enable and
 entity transitions, camera-phase gate, synchronized GTE/DRAWENV brightness,
 and closing color fade. Both the function and owned path match retail exactly.
 
+`open_vendor_libetc_pad.tsv` records the OPEN `LIBETC` interrupt-tail helper
+and six-function `PAD.OBJ` run. Complete GAME/OPEN instruction-shape identity,
+archive order and exports, and the retail `pad.c` v1.17 marker prove Sony
+ownership, so these functions are excluded rather than reconstructed as game
+progress.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five
