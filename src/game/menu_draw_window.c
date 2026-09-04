@@ -2,61 +2,48 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Current textured-quad cursor in the shared primitive workspace. */
-
-/*
- * Window/menu-list descriptor bank: nine 0x108-byte records copied in from the
- * layout resource.  Each record is a title label followed by ten 0x18-byte row
- * labels (a {x, y} origin plus its glyph codes), consumed here as MenuPoints
- * for the row backgrounds and as glyph strings for the text.
- */
-extern u8 DAT_80058478[];
 /*
  * Draw one menu window: an optional title label (drawn when the record's first
  * halfword is non-zero), then `count` selectable rows, then the shared
  * translucent backdrop for every window kind but 6.  The highlighted row
  * (index `highlight`) takes the confirmed-selection background when `flag` is
  * 1 and always gets the selection-cursor sprite overlaid.  Rows advance one
- * 0x18-byte label per step starting at the record's second label.
+ * MenuGlyphString per step starting at the record's first row.
  *
- * Residue: call set, referents, control flow and the recomputed
- * highlight*0x18+0x18 offsets all match retail, but gcc257-o2 CSEs the
- * per-row `record + off` pointer and the loop bounds into two extra
- * callee-saved registers (56-byte frame vs retail's 48), where retail's
- * compiler recomputes `record + off` before each call.  An unattributed
- * CSE/register-allocation wall for this many-call drawing loop; no faithful
- * source form suppresses the CSE without distorting the code.
+ * Retail retains the layout base and a byte row offset, then recomputes their
+ * sum in call delay slots.  gcc257-o2 CSEs the typed row pointer and gives the
+ * flag an additional saved-register role.  The structured row model is kept;
+ * the remaining difference is an unattributed CSE/register-allocation residue.
  */
 ADDRESS(0x80028914, 0x15c)
 void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
 {
-    u8 *record;
-    s32 off;
+    const MenuWindowLayout *layout;
+    s32 row;
 
-    record = &DAT_80058478[kind * 0x108];
+    layout = &menu_window_layouts[kind];
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    if (*(s16 *)record != 0) {
-        menu_blit_sprite_translucent(&DAT_80058424, (const MenuPoint *)record);
-        menu_draw_string(
-            &DAT_800583f4, (const MenuGlyphString *)record);
+    if (layout->title.x != 0) {
+        menu_blit_sprite_translucent(
+            &DAT_80058424, (const MenuPoint *)&layout->title);
+        menu_draw_string(&DAT_800583f4, &layout->title);
     }
     if (count > 0) {
-        off = 0x18;
+        row = 0;
         do {
+            const MenuGlyphString *label = &layout->rows[row];
             const MenuSpriteDef *box = &DAT_80058424;
 
-            if (off == highlight * 0x18 + 0x18 && flag == 1) {
+            if (row == highlight && flag == 1) {
                 box = &DAT_80058430;
             }
-            menu_blit_sprite_translucent(box, (const MenuPoint *)(record + off));
-            if (off == highlight * 0x18 + 0x18) {
-                menu_blit_sprite(&DAT_8005846c, (const MenuPoint *)(record + off));
+            menu_blit_sprite_translucent(box, (const MenuPoint *)label);
+            if (row == highlight) {
+                menu_blit_sprite(&DAT_8005846c, (const MenuPoint *)label);
             }
-            menu_draw_string(
-                &DAT_800583f4,
-                (const MenuGlyphString *)(record + off));
-            off += 0x18;
-        } while (off < count * 0x18 + 0x18);
+            menu_draw_string(&DAT_800583f4, label);
+            row++;
+        } while (row < count);
     }
     if (kind != 6) {
         menu_draw_window_backdrop();

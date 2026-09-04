@@ -69,6 +69,11 @@ from `COM\\STAT.DAT`: 80 item-name rows, 9 magic-name rows, and the two 80-by-2
 buy/sell price tables. It also records every affected consumer and proves that
 the former interior address identities are aggregate row addends.
 
+`game_semantic_menu_window_layouts.tsv` records the preceding nine
+`MenuWindowLayout` records loaded from the same file. It proves each 0x108-byte
+layout is one title plus ten 0x18-byte row labels and resolves the item-detail
+panel's former interior-address label.
+
 `game_semantic_render_cell_windows.tsv` records the 16 runtime-loaded
 `KfCellWindow` records, the per-frame active-window pointer, and the loader,
 selector, and entity-culling functions that prove their extents and fields.

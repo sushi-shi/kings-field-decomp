@@ -1703,18 +1703,7 @@ GAME.EXE	0x80058466	0x1	DAT_80058466	unknown	bss	u8		address-only	ghidra-12.0.4-
 GAME.EXE	0x80058468	0x2	DAT_80058468	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8005846a	0x2	DAT_8005846a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8005846c	0xc	DAT_8005846c	unknown	bss	MenuSpriteDef		address-only	asm;menu-two-option-dispatch;func_80029c50-arg	menu window-frame sprite descriptor
-GAME.EXE	0x80058478	0x4	DAT_80058478	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005847c	0x4	DAT_8005847c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058480	0x4	DAT_80058480	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058484	0x4	DAT_80058484	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058488	0x4	DAT_80058488	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005848c	0x4	DAT_8005848c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058490	0x4	DAT_80058490	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058494	0x4	DAT_80058494	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058498	0x4	DAT_80058498	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005849c	0x4	DAT_8005849c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058c10	0x2	DAT_80058c10	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058c12	0x2	DAT_80058c12	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80058478	0x948	menu_window_layouts	global	bss	MenuWindowLayout[9]	menu	supported	game_semantic_menu_window_layouts.tsv;item_load_database;asm;0x108-stride;0x18-labels	nine menu-window layouts loaded from COM\\STAT.DAT; each contains one title and ten selectable MenuGlyphString rows
 GAME.EXE	0x80058dc0	0x640	item_name_rows	unknown	bss	MenuGlyphRow[80]	menu	supported	game_semantic_item_menu_data.tsv;item_load_database;menu-consumers	80 item-name rows loaded from COM\\STAT.DAT and indexed by item id
 GAME.EXE	0x80059400	0xb4	magic_name_rows	unknown	bss	MenuGlyphRow[9]	menu	supported	game_semantic_item_menu_data.tsv;item_load_database;menu-consumers	9 magic-name rows loaded from COM\\STAT.DAT and indexed by spell id
 GAME.EXE	0x800594b8	0x140	item_buy_prices	unknown	bss	u16[80][2]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;item_menu_buy;menu_draw_item_detail	80 two-column item buy prices loaded from COM\\STAT.DAT

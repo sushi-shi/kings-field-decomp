@@ -9,9 +9,6 @@
  * save-slot summary rows. All draw through the shared glyph-string workspace
  * and sprite descriptors. Module boundary is WIP.
  */
-/* Icon anchor: {x, y} reused as a one-glyph label origin by the icon draw. */
-extern MenuGlyphString DAT_80058c10;
-
 /*
  * Draw the selected inventory item's detail: a spinning 3D TMD preview (built
  * from the GTE rotation and a fixed local light matrix), the item name, its
@@ -97,11 +94,12 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     menu_draw_number(&DAT_800583e8, &gs);
 
     menu_blit_sprite_translucent(
-        &DAT_80058424, (const MenuPoint *)&DAT_80058c10);
-    menu_draw_string(&DAT_800583f4, &DAT_80058c10);
+        &DAT_80058424,
+        (const MenuPoint *)&menu_window_layouts[7].rows[3]);
+    menu_draw_string(&DAT_800583f4, &menu_window_layouts[7].rows[3]);
 
-    gs.x = DAT_80058c10.x + 28;
-    gs.y = DAT_80058c10.y;
+    gs.x = menu_window_layouts[7].rows[3].x + 28;
+    gs.y = menu_window_layouts[7].rows[3].y;
     menu_format_number(player_state.gold, 6, 0, gs.codes);
     menu_draw_number(&DAT_800583e8, &gs);
 }

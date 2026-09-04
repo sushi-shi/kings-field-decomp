@@ -27,6 +27,12 @@ typedef struct MenuGlyphString {
     s16 codes[10];
 } MenuGlyphString;
 
+/* One title and ten selectable labels in a runtime-loaded menu window. */
+typedef struct MenuWindowLayout {
+    MenuGlyphString title;
+    MenuGlyphString rows[10];
+} MenuWindowLayout;
+
 /* One runtime-loaded menu name: ten glyph codes selected by item or spell ID. */
 typedef struct MenuGlyphRow {
     s16 codes[10];
@@ -82,6 +88,7 @@ extern MenuSpriteDef DAT_80058424;
 extern MenuSpriteDef DAT_80058430;
 extern MenuSpriteDef DAT_8005846c;
 extern MenuLabelCell DAT_80058494[];
+extern MenuWindowLayout menu_window_layouts[9];
 extern MenuGlyphRow item_name_rows[80];
 extern MenuGlyphRow magic_name_rows[9];
 extern u16 item_buy_prices[80][2];

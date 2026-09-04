@@ -72,7 +72,6 @@ extern u8 DAT_80058404; /* u */
 extern u8 DAT_80058406; /* v */
 extern u16 DAT_80058408; /* tile width  */
 extern u16 DAT_8005840a; /* tile height */
-extern u8 DAT_80058478[];
 extern int DAT_8005b270[]; /* jmp_buf */
 extern void *DAT_8005b274; /* live abort handler slot (jmp_buf + 4) */
 extern int DAT_80063278; /* installed abort handler */

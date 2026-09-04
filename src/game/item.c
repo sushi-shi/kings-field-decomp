@@ -74,8 +74,8 @@ void item_load_database(void)
     src = stat_data;
     memcpy(DAT_800580e8, src, 912);
     src += 912;
-    memcpy(DAT_80058478, src, 2376);
-    src += 2376;
+    memcpy(menu_window_layouts, src, sizeof menu_window_layouts);
+    src += sizeof menu_window_layouts;
     memcpy(item_name_rows, src, sizeof(item_name_rows));
     src += sizeof(item_name_rows);
     memcpy(magic_name_rows, src, sizeof(magic_name_rows));
