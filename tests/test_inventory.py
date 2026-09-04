@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 509)
-        self.assertEqual(counts["signatures_started"], 509)
-        self.assertEqual(counts["typed_returns"], 509)
-        self.assertEqual(counts["parameterized"], 322)
+        self.assertEqual(counts["functions"], 503)
+        self.assertEqual(counts["signatures_started"], 503)
+        self.assertEqual(counts["typed_returns"], 503)
+        self.assertEqual(counts["parameterized"], 320)
         self.assertEqual(counts["data"], 3165)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -1098,6 +1098,30 @@ class InventoryTests(unittest.TestCase):
                 vendored[key]["confidence"],
                 "sdk-lineage-supported",
             )
+            self.assertNotIn(key, identities)
+
+    def test_libgpu_graph_state_accessors_are_vendored_in_both_overlays(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in rows
+        }
+        expected = {
+            ("GAME.EXE", 0x8005081C): ("GetGraphType", 0x308),
+            ("GAME.EXE", 0x8005082C): ("GetGraphDebug", 0x318),
+            ("GAME.EXE", 0x8005083C): ("DrawSyncCallback", 0x328),
+            ("OPEN.EXE", 0x80030500): ("GetGraphType", 0x308),
+            ("OPEN.EXE", 0x80030510): ("GetGraphDebug", 0x318),
+            ("OPEN.EXE", 0x80030520): ("DrawSyncCallback", 0x328),
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        for key, (name, member_offset) in expected.items():
+            row = vendored[key]
+            self.assertEqual(row["name"], name)
+            self.assertEqual(row["library"], "LIBGPU.LIB")
+            self.assertEqual(row["module"], "SYS")
+            self.assertEqual(parse_int(row["member_offset"]), member_offset)
+            self.assertEqual(row["confidence"], "sdk-lineage-supported")
             self.assertNotIn(key, identities)
 
     def test_libsnd_sequence_control_is_vendored_in_both_overlays(self) -> None:

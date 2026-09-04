@@ -13,13 +13,13 @@ KFIII executable contributes to this list.
 | image | Release 2.5 exact object | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 186 | 144 | 121 | 58 | 51 | 560 |
-| `OPEN.EXE` | 184 | 143 | 110 | 58 | 37 | 532 |
-| **total** | **378** | **287** | **231** | **116** | **88** | **1,100** |
+| `GAME.EXE` | 186 | 144 | 125 | 58 | 51 | 564 |
+| `OPEN.EXE` | 184 | 143 | 114 | 58 | 37 | 536 |
+| **total** | **378** | **287** | **239** | **116** | **88** | **1,108** |
 
-The 1,100 rows comprise 1,074 named functions and 26 anonymous internal
+The 1,108 rows comprise 1,082 named functions and 26 anonymous internal
 functions whose containing Sony object is known. Provider counts are: 275
-`LIBGTE`, 244 `LIBSND`, 208 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
+`LIBGTE`, 244 `LIBSND`, 214 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
 34 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
 `LIBSN`, and eight fully fixed `memcpy` copies whose exact member remains
 ambiguous across `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party
@@ -91,11 +91,17 @@ encodings differ from pinned Release 2.5. They therefore use the explicit
 
 The same confidence channel now covers `LIBSND/VMANAGER`'s four
 `SsUtKeyOn`/`SsUtKeyOff` rows, twelve `LIBSND` sequence open/init/close rows,
-and `LIBGPU/VSYNC`'s four public/private rows. The VMANAGER names combine exact
+`LIBGPU/SYS`'s six graph-state accessor rows, and `LIBGPU/VSYNC`'s four
+public/private rows. The VMANAGER names combine exact
 GAME/OPEN instruction shapes with archive order, header prototypes, and
 neighboring exact anchors. `SSOPEN.OBJ`, `SEPINIT.OBJ`, `SEQINIT.OBJ`, and
 `SSCLOSE.OBJ` provide the sequence symbols, order, local data XREFs, and public
 prototypes; both overlays preserve every instruction shape. The two retail
+SYS trios occupy the `GetGraphType`, `GetGraphDebug`, and `DrawSyncCallback`
+XDEF slots at `0x308`, `0x318`, and `0x328`, precisely between the exact
+`SetGraphDebug` and `SetDispMask` anchors. Their paired instruction shapes,
+private-data access order, and LIBGPU-only caller sets resolve the two
+otherwise-colliding 16-byte getter FIDs. The two retail
 VSYNC functions per overlay likewise preserve every instruction shape,
 implement the public `VSync(int mode)` behavior plus its private hardware/
 root-counter worker, carry the same `vsync.c` revision string, and occupy the

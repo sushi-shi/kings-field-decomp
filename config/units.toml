@@ -559,12 +559,6 @@ source = "src/game/pad.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]
-unit = "game.graph_state_accessors"
-image = "GAME.EXE"
-source = "src/game/graph_state_accessors.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "open.memory"
 image = "OPEN.EXE"
 source = "src/game/memory.c"

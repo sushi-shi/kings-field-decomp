@@ -9850,10 +9850,10 @@ GAME.EXE	0x800507e0	0x3efe0	0x800507e4	mips_hi16_lo16	instruction-word	0x80057d3
 GAME.EXE	0x800507e8	0x3efe8	0x800507ec	mips_hi16_lo16	instruction-word	0x80057d38	load		lui+lw	a3	paired-pattern	candidate	investigation:relocs.tsv
 GAME.EXE	0x800507f0	0x3eff0	0x800507f4	mips_hi16_lo16	instruction-word	0x80057d2c	load		lui+lw	v0	paired-pattern	candidate	investigation:relocs.tsv
 GAME.EXE	0x800507f8	0x3eff8	0x800507fc	mips_hi16_lo16	instruction-word	0x80013eec	load		lui+addiu	a0	paired-pattern	candidate	investigation:relocs.tsv
-GAME.EXE	0x8005081c	0x3f01c	0x80050820	mips_hi16_lo16	reachable-code	0x80057d34	load	DAT_80057d34	lui+lw	v0	paired-reviewed	reviewed	manual:game_func_8005081c
-GAME.EXE	0x8005082c	0x3f02c	0x80050830	mips_hi16_lo16	reachable-code	0x80057d30	load	DAT_80057d30	lui+lw	v0	paired-reviewed	reviewed	manual:game_func_8005082c
-GAME.EXE	0x8005083c	0x3f03c	0x80050840	mips_hi16_lo16	instruction-word	0x80057d3c	load	DAT_80057d3c	lui+lw	v0	paired-reviewed	reviewed	manual:game_func_8005083c
-GAME.EXE	0x80050844	0x3f044	0x80050848	mips_hi16_lo16	instruction-word	0x80057d3c	load	DAT_80057d3c	lui+sw	at	paired-reviewed	reviewed	manual:game_func_8005083c
+GAME.EXE	0x8005081c	0x3f01c	0x80050820	mips_hi16_lo16	reachable-code	0x80057d34	load	DAT_80057d34	lui+lw	v0	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
+GAME.EXE	0x8005082c	0x3f02c	0x80050830	mips_hi16_lo16	reachable-code	0x80057d30	load	DAT_80057d30	lui+lw	v0	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
+GAME.EXE	0x8005083c	0x3f03c	0x80050840	mips_hi16_lo16	instruction-word	0x80057d3c	load	DAT_80057d3c	lui+lw	v0	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
+GAME.EXE	0x80050844	0x3f044	0x80050848	mips_hi16_lo16	instruction-word	0x80057d3c	load	DAT_80057d3c	lui+sw	at	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
 GAME.EXE	0x8005085c	0x3f05c	0x80050860	mips_hi16_lo16	reachable-code	0x80057d28	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x80050894	0x3f094	0x80050898	mips_hi16_lo16	reachable-code	0x80057d28	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x800508e0	0x3f0e0	0x800508e4	mips_hi16_lo16	instruction-word	0x80013f18	load		lui+addiu	a0	paired-pattern	candidate	investigation:relocs.tsv
@@ -14639,10 +14639,10 @@ OPEN.EXE	0x800304c4	0x1ecc4	0x800304c8	mips_hi16_lo16	instruction-word	0x800374a
 OPEN.EXE	0x800304cc	0x1eccc	0x800304d0	mips_hi16_lo16	instruction-word	0x800374a8	load		lui+lw	a3	paired-pattern	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800304d4	0x1ecd4	0x800304d8	mips_hi16_lo16	instruction-word	0x8003749c	load		lui+lw	v0	paired-pattern	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800304dc	0x1ecdc	0x800304e0	mips_hi16_lo16	instruction-word	0x800133b8	load		lui+addiu	a0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80030500	0x1ed00	0x80030504	mips_hi16_lo16	reachable-code	0x800374a4	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80030510	0x1ed10	0x80030514	mips_hi16_lo16	reachable-code	0x800374a0	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80030520	0x1ed20	0x80030524	mips_hi16_lo16	instruction-word	0x800374ac	load		lui+lw	v0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80030528	0x1ed28	0x8003052c	mips_hi16_lo16	instruction-word	0x800374ac	load		lui+sw	at	paired-pattern	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80030500	0x1ed00	0x80030504	mips_hi16_lo16	reachable-code	0x800374a4	load	DAT_800374a4	lui+lw	v0	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
+OPEN.EXE	0x80030510	0x1ed10	0x80030514	mips_hi16_lo16	reachable-code	0x800374a0	load	DAT_800374a0	lui+lw	v0	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
+OPEN.EXE	0x80030520	0x1ed20	0x80030524	mips_hi16_lo16	instruction-word	0x800374ac	load	DAT_800374ac	lui+lw	v0	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
+OPEN.EXE	0x80030528	0x1ed28	0x8003052c	mips_hi16_lo16	instruction-word	0x800374ac	load	DAT_800374ac	lui+sw	at	paired-reviewed	reviewed	manual:libgpu_sys_graph_state
 OPEN.EXE	0x80030540	0x1ed40	0x80030544	mips_hi16_lo16	reachable-code	0x80037498	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80030578	0x1ed78	0x8003057c	mips_hi16_lo16	reachable-code	0x80037498	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800305c4	0x1edc4	0x800305c8	mips_hi16_lo16	instruction-word	0x800133e4	load		lui+addiu	a0	paired-pattern	candidate	investigation:relocs.tsv

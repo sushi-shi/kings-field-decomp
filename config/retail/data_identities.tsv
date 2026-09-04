@@ -1560,10 +1560,10 @@ GAME.EXE	0x80057d1c	0x4	DAT_80057d1c	unknown	load	pointer		address-only	data.tsv
 GAME.EXE	0x80057d24	0x4	DAT_80057d24	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d28	0x4	DAT_80057d28	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d2c	0x4	DAT_80057d2c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057d30	0x4	DAT_80057d30	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057d34	0x4	DAT_80057d34	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057d30	0x4	DAT_80057d30	unknown	load	s32	libgpu_sys	supported	LIBGPU.LIB-SYS.OBJ-archive-order;GetGraphDebug-xrefs;overlay-lineage	LIBGPU graph debug level returned by GetGraphDebug and consumed throughout SYS.OBJ; original private symbol and linkage remain unresolved
+GAME.EXE	0x80057d34	0x4	DAT_80057d34	unknown	load	s32	libgpu_sys	supported	LIBGPU.LIB-SYS.OBJ-archive-order;GetGraphType-xrefs;overlay-lineage	LIBGPU graph type returned by GetGraphType and consumed throughout SYS.OBJ; original private symbol and linkage remain unresolved
 GAME.EXE	0x80057d38	0x4	DAT_80057d38	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057d3c	0x4	DAT_80057d3c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057d3c	0x4	DAT_80057d3c	unknown	load	pointer	libgpu_sys	supported	LIBGPU.LIB-SYS.OBJ-archive-order;DrawSyncCallback-xrefs;overlay-lineage	LIBGPU draw-sync callback pointer exchanged by DrawSyncCallback and read by the SYS.OBJ dispatcher; original private symbol and linkage remain unresolved
 GAME.EXE	0x80057d44	0x4	DAT_80057d44	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d48	0x4	DAT_80057d48	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d4c	0x4	DAT_80057d4c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2856,10 +2856,10 @@ OPEN.EXE	0x8003748c	0x4	DAT_8003748c	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x80037494	0x4	DAT_80037494	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037498	0x4	DAT_80037498	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003749c	0x4	DAT_8003749c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800374a0	0x4	DAT_800374a0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800374a4	0x4	DAT_800374a4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800374a0	0x4	DAT_800374a0	unknown	load	s32	libgpu_sys	supported	LIBGPU.LIB-SYS.OBJ-archive-order;GetGraphDebug-xrefs;overlay-lineage	LIBGPU graph debug level returned by GetGraphDebug and consumed throughout SYS.OBJ; original private symbol and linkage remain unresolved
+OPEN.EXE	0x800374a4	0x4	DAT_800374a4	unknown	load	s32	libgpu_sys	supported	LIBGPU.LIB-SYS.OBJ-archive-order;GetGraphType-xrefs;overlay-lineage	LIBGPU graph type returned by GetGraphType and consumed throughout SYS.OBJ; original private symbol and linkage remain unresolved
 OPEN.EXE	0x800374a8	0x4	DAT_800374a8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800374ac	0x4	DAT_800374ac	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800374ac	0x4	DAT_800374ac	unknown	load	pointer	libgpu_sys	supported	LIBGPU.LIB-SYS.OBJ-archive-order;DrawSyncCallback-xrefs;overlay-lineage	LIBGPU draw-sync callback pointer exchanged by DrawSyncCallback and read by the SYS.OBJ dispatcher; original private symbol and linkage remain unresolved
 OPEN.EXE	0x800374b4	0x4	DAT_800374b4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800374b8	0x4	DAT_800374b8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800374bc	0x4	DAT_800374bc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
