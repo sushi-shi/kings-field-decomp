@@ -66,3 +66,31 @@ void fog_set_near(s32 distance)
     render_state.fog_near_distance = distance;
     SetFogNear(distance, 200);
 }
+
+ADDRESS(0x800196c4, 0x88)
+void color_lerp_cvector(
+    const CVECTOR *from,
+    const CVECTOR *to,
+    CVECTOR *output,
+    s32 blend)
+{
+    output->r = (((to->r - from->r) * blend) >> 12) + from->r;
+    output->g = (((to->g - from->g) * blend) >> 12) + from->g;
+    output->b = (((to->b - from->b) * blend) >> 12) + from->b;
+}
+
+ADDRESS(0x8001974c, 0x98)
+u16 color_lerp_rgb555(u16 color0, u16 color1, s32 blend)
+{
+    s32 r0 = color0 & 0x1f;
+    s32 r1 = color1 & 0x1f;
+    s32 r = r0 + (((r1 - r0) * blend) >> 12);
+    s32 g0 = (color0 >> 5) & 0x1f;
+    s32 g1 = (color1 >> 5) & 0x1f;
+    s32 g = g0 + (((g1 - g0) * blend) >> 12);
+    s32 b0 = (color0 >> 10) & 0x1f;
+    s32 b1 = (color1 >> 10) & 0x1f;
+    s32 b = b0 + (((b1 - b0) * blend) >> 12);
+
+    return r | ((color0 & 0x8000) | (b << 10) | (g << 5));
+}

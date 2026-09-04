@@ -11497,10 +11497,10 @@ OPEN.EXE	0x80015364	0x3b64		mips26	reachable-code	0x8002c15c	load		jal		control-
 OPEN.EXE	0x8001536c	0x3b6c		mips26	reachable-code	0x80019520	load	opening_render_entities	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_render_entities
 OPEN.EXE	0x80015394	0x3b94	0x80015398	mips_hi16_lo16	reachable-code	0x800372a0	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001539c	0x3b9c	0x800153a0	mips_hi16_lo16	reachable-code	0x800372a8	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153b0	0x3bb0		mips26	reachable-code	0x800196c4	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800153b0	0x3bb0		mips26	reachable-code	0x800196c4	load	color_lerp_cvector	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_color_lerp
 OPEN.EXE	0x800153b8	0x3bb8	0x800153bc	mips_hi16_lo16	reachable-code	0x800372a4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800153c0	0x3bc0	0x800153c4	mips_hi16_lo16	reachable-code	0x800372ac	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153cc	0x3bcc		mips26	reachable-code	0x800196c4	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800153cc	0x3bcc		mips26	reachable-code	0x800196c4	load	color_lerp_cvector	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_color_lerp
 OPEN.EXE	0x800153e4	0x3be4	0x800153e8	mips_hi16_lo16	reachable-code	0x80037290	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800153ec	0x3bec		mips26	reachable-code	0x80013804	load	sprite_add_g4	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x800153f4	0x3bf4	0x800153f8	mips_hi16_lo16	reachable-code	0x80037298	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv

@@ -64,6 +64,9 @@ extern void lighting_set_light_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
+extern void color_lerp_cvector(
+    const CVECTOR *from, const CVECTOR *to, CVECTOR *output, s32 blend);
+extern u16 color_lerp_rgb555(u16 color0, u16 color1, s32 blend);
 extern void *primitive_buffer_allocate(u16 byte_count);
 extern void render_initialize(void);
 extern void display_begin_frame(void);

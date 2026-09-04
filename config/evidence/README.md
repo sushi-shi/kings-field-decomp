@@ -194,6 +194,14 @@ relocations. Four functions match retail exactly; the fog interpolator has
 complete C at 92.94% with the same register-allocation residue as its
 byte-identical GAME retail homolog.
 
+`open_semantic_color_lerp.tsv` records the contiguous OPEN unpacked-CVECTOR and
+packed-RGB555 interpolation pair. It proves the three byte-wide CVECTOR
+channels and preserved command byte, the RGB555 channel masks and preserved
+STP bit, two typed ending-scene calls, and the exact GAME RGB555 homolog. Both
+functions match retail exactly. The cross-overlay lineage ledger records the
+five-function matrix/fog run and the separately aligned RGB555 helper; it does
+not assert an original object boundary.
+
 `open_semantic_sound_ref.tsv` records the packed OPEN sound wrapper and its
 managed-voice referent. It proves the three byte-wide sound fields, signed
 volume duplication into the two O32 stack arguments, active-VAB aggregate

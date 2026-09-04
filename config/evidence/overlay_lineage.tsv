@@ -12,6 +12,12 @@ shared-angle-math	GAME.EXE	0x80014f6c	OPEN.EXE	0x80015c98	0x3c	-0xd2c	15	15	15		
 shared-angle-math	GAME.EXE	0x80014fa8	OPEN.EXE	0x80015cd4	0x10	-0xd2c	4	4	4				byte-identical modular-angle half-turn predicate proves the OPEN helper shares the supported GAME source identity
 shared-angle-math	GAME.EXE	0x80014fb8	OPEN.EXE	0x80015ce4	0xb0	-0xd2c	40	44	44				complete instruction shape, catan call order, and sole OPEN coordinate caller prove shared vector-to-angle source identity
 shared-vector-length	GAME.EXE	0x80015068	OPEN.EXE	0x80015d94	0x40	-0xd2c	15	16	16				complete fixed-vector magnitude shape corrects the OPEN boundary and proves shared source identity; linked SquareRoot0 target differs
+shared-matrix-fog	GAME.EXE	0x800202fc	OPEN.EXE	0x80019598	0x68	0x6d64	26	26	26				byte-identical nine-element matrix interpolator and invariant run position prove shared game-owned source lineage
+shared-matrix-fog	GAME.EXE	0x80020364	OPEN.EXE	0x80019600	0x2c	0x6d64	9	11	11				identical color-matrix wrapper shape; only the linked matrix-interpolator and SetColorMatrix targets differ
+shared-matrix-fog	GAME.EXE	0x80020390	OPEN.EXE	0x8001962c	0x2c	0x6d64	9	11	11				identical light-matrix wrapper shape; only the linked matrix-interpolator and SetLightMatrix targets differ
+shared-matrix-fog	GAME.EXE	0x800203bc	OPEN.EXE	0x80019658	0x44	0x6d64	14	17	17				identical fog interpolation shape and run position; linked render state and SetFogNear referents differ
+shared-matrix-fog	GAME.EXE	0x80020400	OPEN.EXE	0x8001969c	0x28	0x6d64	7	10	10				identical fog setter shape closes the shared run before OPEN inserts its CVECTOR interpolator
+shared-rgb555	GAME.EXE	0x80020428	OPEN.EXE	0x8001974c	0x98	0x6cdc	38	38	38				byte-identical packed-color interpolator follows the OPEN-only 0x88-byte CVECTOR helper, supporting a distinct shared source/object identity
 memory-allocator	GAME.EXE	0x8001aab0	OPEN.EXE	0x80015dd4	0x38	0x4cdc	13	14	14				identical instruction shape proves the checked malloc wrapper is shared game source across overlays; linked malloc target differs by image
 memory-allocator	GAME.EXE	0x8001aae8	OPEN.EXE	0x80015e0c	0x20	0x4cdc	2	8	8				identical instruction shape and state access order prove the allocator reset pair
 memory-allocator	GAME.EXE	0x8001ab08	OPEN.EXE	0x80015e2c	0xa8	0x4cdc	24	42	42				identical instruction shape proves the three-mode allocator setup pair; mode 1 deliberately uses different overlay-specific span constants
