@@ -5,7 +5,7 @@
 RODATA(0x80012a7c, 0x164)
 
 ADDRESS(0x800346a8, 0x38c)
-void func_800346a8(void)
+void map_floor5_transition_cutscene(void)
 {
     MATRIX color_matrix;
     KfCameraPathState path;
@@ -99,7 +99,7 @@ ADDRESS(0x80034a34, 0x4c)
 void map_action_script_floor5(void)
 {
     if ((*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500) {
-        func_800346a8();
+        map_floor5_transition_cutscene();
         DAT_8009f845 = 1;
     }
 }
@@ -275,61 +275,6 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         object = &map_object_state.objects[index];
         definition = &map_object_state.definitions[object->object_id];
         switch (definition->behavior_type) {
-        case 0:
-        case 1:
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
-                && !angle_within_tolerance(
-                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
-                break;
-            }
-            if (object->link.link_id != 0xff && definition->behavior_type == 0) {
-                goto notify_default;
-            }
-
-            neighbor_index = 0;
-            for (;;) {
-                neighbor_index = map_object_pool_find_interaction_from(
-                    neighbor_index, object->position_x, object->position_z, 6000);
-                if (neighbor_index == -1) {
-                    object->link.action_parameter = 0xff;
-                    break;
-                }
-                if (neighbor_index != index) {
-                    neighbor = &map_object_state.objects[neighbor_index];
-                    neighbor_definition =
-                        &map_object_state.definitions[neighbor->object_id];
-                    if (neighbor_definition->behavior_type < 2) {
-                        if (neighbor->link.link_id != 0xff
-                            && neighbor_definition->behavior_type == 0) {
-                            goto notify_default;
-                        }
-                        map_object_start_action_if_idle(
-                            neighbor, neighbor_definition->behavior_type);
-                        object->link.action_parameter = neighbor_index;
-                        neighbor->link.action_parameter = index;
-                        break;
-                    }
-                }
-                neighbor_index++;
-            }
-            map_object_start_action_if_idle(object, definition->behavior_type);
-            continue;
-
-        case 2:
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
-                && !angle_within_tolerance(
-                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
-                break;
-            }
-            if (object->action != 0xff) {
-                break;
-            }
-            if (object->link.link_id != 0xff) {
-                goto notify_default;
-            }
-            map_object_start_action_if_idle(object, 2);
-            continue;
-
         case 8:
             if (object->link.link_id != 0xff) {
                 notify_enqueue(object->link.unknown_06[0]);
@@ -405,6 +350,85 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             }
             continue;
 
+        case 2:
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
+                && !angle_within_tolerance(
+                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
+                break;
+            }
+            if (object->action != 0xff) {
+                break;
+            }
+            if (object->link.link_id != 0xff) {
+                goto notify_default;
+            }
+            map_object_start_action_if_idle(object, 2);
+            continue;
+
+        case 0:
+        case 1:
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
+                && !angle_within_tolerance(
+                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
+                break;
+            }
+            if (object->link.link_id != 0xff && definition->behavior_type == 0) {
+                goto notify_default;
+            }
+
+            neighbor_index = 0;
+            for (;;) {
+                neighbor_index = map_object_pool_find_interaction_from(
+                    neighbor_index, object->position_x, object->position_z, 6000);
+                if (neighbor_index == -1) {
+                    object->link.action_parameter = 0xff;
+                    break;
+                }
+                if (neighbor_index != index) {
+                    neighbor = &map_object_state.objects[neighbor_index];
+                    neighbor_definition =
+                        &map_object_state.definitions[neighbor->object_id];
+                    if (neighbor_definition->behavior_type < 2) {
+                        if (neighbor->link.link_id != 0xff
+                            && neighbor_definition->behavior_type == 0) {
+                            goto notify_default;
+                        }
+                        map_object_start_action_if_idle(
+                            neighbor, neighbor_definition->behavior_type);
+                        object->link.action_parameter = neighbor_index;
+                        neighbor->link.action_parameter = index;
+                        break;
+                    }
+                }
+                neighbor_index++;
+            }
+            map_object_start_action_if_idle(object, definition->behavior_type);
+            continue;
+
+        case 0x40:
+            result = menu_enter_mode(1, object->object_id);
+            if (result == 0) {
+                object->object_id = 0xff;
+            } else if (result == 2) {
+                notify_enqueue(0x10);
+                continue;
+            }
+            break;
+
+        case 0x41:
+            result = object->link.link_id | object->link.action_parameter << 8;
+            notify_enqueue(0x13, result);
+            player_state.gold += result;
+            object->object_id = 0xff;
+            break;
+
+        case 0x53:
+            if (object->link.link_id == 0xff) {
+                goto notify_default;
+            }
+            object->action_timer = 1;
+            break;
+
         case 11:
             if (object->link.link_id != 0xff) {
                 goto notify_default;
@@ -432,30 +456,6 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             map_world_state_persist();
             menu_save_confirm();
             continue;
-
-        case 0x40:
-            result = menu_enter_mode(1, object->object_id);
-            if (result == 0) {
-                object->object_id = 0xff;
-            } else if (result == 2) {
-                notify_enqueue(0x10);
-                continue;
-            }
-            break;
-
-        case 0x41:
-            result = object->link.link_id | object->link.action_parameter << 8;
-            notify_enqueue(0x13, result);
-            player_state.gold += result;
-            object->object_id = 0xff;
-            break;
-
-        case 0x53:
-            if (object->link.link_id == 0xff) {
-                goto notify_default;
-            }
-            object->action_timer = 1;
-            break;
 
         default:
 notify_default:

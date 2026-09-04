@@ -638,13 +638,13 @@ Witnesses come from `src/game/map_interaction.c` (`game.map_interaction`, the
 contiguous band `0x800346a8..0x800356e8` bracketed by the `func_800346a0` and
 `func_800356e8` stubs). This is the per-frame nearby-event/object interaction
 dispatcher `func_80034de4` called by `player_update`, plus its scripted
-teleport-cutscene (`func_800346a8`), a trigger latch (`func_80034a34`), a
-talk/progress-image dispatcher (`func_80034a80`), and a floor-image loader
-(`func_80034d54`).
+transition cutscene (`map_floor5_transition_cutscene`), a trigger latch
+(`func_80034a34`), a talk/progress-image dispatcher (`func_80034a80`), and a
+floor-image loader (`func_80034d54`).
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `func_800346a8` `0x800346a8` |
+| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `map_floor5_transition_cutscene` `0x800346a8` |
 | `beqz stage,A; beq stage,s4,B; j C` three-way dispatch with `A`,`B` laid out after the test and `C` the common tail | `switch (stage) { case 0: A; break; case 1: B; break; }` then the shared tail `C`; an `if (stage==0)…else if (stage==1)` inverts the first test (`bnez`) and inlines `A` | same |
 | `lbu v1,grid; sll v0,v1,1; …` with no `andi 0xff` before the `*100` chain | read a `u8` grid byte into an `s32` local; a `u8` local re-masks with `andi` before the multiply | same |
 | `lw v1,map_event_pool+0x4c; li a0,-256; and; lui/ori 0x28010500; bne` (one masked word compare of four adjacent bytes) | `(*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500` — a word pun of the image_limit/index/dirty/delay bytes; three byte compares never fold to one `lw` | `func_80034a34` `0x80034a34` |

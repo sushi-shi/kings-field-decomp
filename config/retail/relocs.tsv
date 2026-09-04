@@ -6769,7 +6769,7 @@ GAME.EXE	0x800349f8	0x231f8		mips26	instruction-word	0x8003a760	load		jal		contr
 GAME.EXE	0x80034a04	0x23204		mips26	instruction-word	0x8001fde4	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80034a0c	0x2320c		mips26	instruction-word	0x80034914	load		j		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80034a44	0x23244	0x80034a48	mips_hi16_lo16	reachable-code	0x8009dbd4	bss	map_event_pool	lui+lw	v1	paired-reviewed	reviewed	manual:game_map_interaction
-GAME.EXE	0x80034a5c	0x2325c		mips26	instruction-word	0x800346a8	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
+GAME.EXE	0x80034a5c	0x2325c		mips26	instruction-word	0x800346a8	load	map_floor5_transition_cutscene	jal		control-flow-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x80034a68	0x23268	0x80034a6c	mips_hi16_lo16	reachable-code	0x8009f845	bss	DAT_8009f845	lui+sb	v0	paired-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80034ab4	0x232b4		mips26	reachable-code	0x80034ce8	load		j		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80034ad0	0x232d0		mips26	reachable-code	0x80034ce8	load		j		control-flow-reviewed	reviewed	manual:game_map_interaction

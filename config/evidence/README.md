@@ -22,8 +22,9 @@ and the ten-slot voice manager. The companion `vmanager-key-utilities` rows in
 shared SDK code in GAME and OPEN even though their version-skewed bytes evade
 the exact Release 2.5 FIDs.
 
-`game_semantic_camera_events.tsv` records the camera-path interpolator and the
-adjacent map-event family. It includes the stack-owned path-state layout, the
+`game_semantic_camera_events.tsv` records the camera-path interpolator, its
+floor-5 transition-cutscene consumer, and the adjacent map-event family. It
+includes the stack-owned path-state layout, the
 eight-record event-pool boundary, five shared global/static candidates, the
 ambiguous short FID on the current-event setter, and six rejected false
 control-flow xrefs. The two families share an investigation band, not proven

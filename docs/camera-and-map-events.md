@@ -1,16 +1,17 @@
 # Camera paths and map events
 
 This pass identifies two GAME.EXE families in the investigation band
-`0x800332e4..0x80033ae4`. They are grouped for review convenience only.
-Address adjacency does not prove that the camera-path and map-event functions
-belonged to one original translation unit.
+`0x800332e4..0x80033ae4` and reviews the floor-5 transition consumer at
+`0x800346a8`. They are grouped for review convenience only. Address adjacency
+does not prove that these functions belonged to one original translation unit.
 
 ## Camera-path controller
 
 `camera_path_begin`, `camera_path_compute_segment`, and `camera_path_step`
-operate on a caller-owned `0x64`-byte `KfCameraPathState`. The controlling
-caller at `0x800346a8` allocates that state on its stack, begins a path, steps
-it while rendering, and copies the final transform back to the live camera.
+operate on a caller-owned `0x64`-byte `KfCameraPathState`.
+`map_floor5_transition_cutscene` allocates that state on its stack, begins a
+path, steps it while rendering, and copies the final transform back to the live
+camera.
 
 The state retains a pointer to `0x1c`-byte `KfCameraPathPoint` records. A point
 whose x coordinate is `-1` terminates the path. Segment setup computes a
@@ -19,6 +20,15 @@ Q4 position and shortest-path 12-bit rotation deltas. The point pointer used by
 the reviewed caller is `0x800561d0`, but the surrounding initialized bytes do
 not yet prove a safe table boundary or sentinel sequence. It therefore remains
 unnamed.
+
+## Floor-5 transition cutscene
+
+`map_floor5_transition_cutscene` is the sole proven consumer of the camera-path
+interface. Its only proven external caller is `map_action_script_floor5`. It
+follows the path to relocate the player, creates a map-object effect at the
+fixed floor-5 cell `(85, 40)`, spins the object up and down while emitting a
+secondary effect, and finishes by starting object action `0x60`. The name stops
+at this observed behavior; it does not infer a story or lore identity.
 
 ## Map-event pool
 
