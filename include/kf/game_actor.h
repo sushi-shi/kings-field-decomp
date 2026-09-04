@@ -2,7 +2,7 @@
 #define KF_GAME_ACTOR_H
 
 /*
- * Actor, effect, magic and combatant prototypes.
+ * Actor and combatant prototypes.
  *
  * Generated during extern-crutch removal: declarations that were duplicated
  * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
@@ -53,9 +53,5 @@ extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_i
 extern void actor_update_awareness(void);
 extern void actor_update_current_action(void);
 extern void actor_update_effect_action(s32 action);
-extern u32 effect_map_collision(VECTOR *position, s32 param);
-extern char *effect_pool_find_free(void);
-extern void effect_update_dispatch(void);
-extern void magic_cast(void);
 
 #endif

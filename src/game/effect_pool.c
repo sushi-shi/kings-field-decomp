@@ -39,14 +39,14 @@ extern void audio_play_spatial_range(
 /* effect_pool_construct kind-dispatch jump table (kinds 0x04..0x30). */
 
 ADDRESS(0x80036f00, 0x44)
-char *effect_pool_find_free(void)
+KfEffectRecord *effect_pool_find_free(void)
 {
     KfEffectRecord *record = effect_pool_records;
     u16 i = 48;
 
     do {
         if (record->type == 0xff) {
-            return (char *)record;
+            return record;
         }
         record++;
     } while (--i != 0);
@@ -56,10 +56,11 @@ char *effect_pool_find_free(void)
 RODATA(0x80012c28, 0xb4)
 
 ADDRESS(0x80036f44, 0x82c)
-KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
-                             SVECTOR *direction)
+KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, u8 kind, const VECTOR *position,
+    const SVECTOR *direction, ...)
 {
-    KfEffectRecord *record = (KfEffectRecord *)effect_pool_find_free();
+    KfEffectRecord *record = effect_pool_find_free();
     s32 *va = (s32 *)&direction;   /* variadic stack base: va[1]=arg6, va[2]=arg7, va[3]=arg8 */
     KfMagicRecord *magic;
 
@@ -462,22 +463,24 @@ KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
 }
 
 ADDRESS(0x80037770, 0xac)
-KfEffectRecord *effect_pool_spawn_typed(u16 a0, u16 a1, u16 a2, u16 a3, s32 a4, s32 a5)
+KfEffectRecord *effect_pool_spawn_typed(
+    u16 rotation_x, u16 rotation_y, u16 rotation_z, u16 direction_y,
+    s32 position_x, s32 position_y)
 {
-    KfEffectRecord *record = (KfEffectRecord *)effect_pool_find_free();
+    KfEffectRecord *record = effect_pool_find_free();
     if (record != 0) {
-        record->rotation_x = a0;
-        record->rotation_y = a1;
-        record->rotation_z = a2;
-        record->position.vx = a4;
-        record->position.vy = a5;
-        record->direction_y = a3;
+        record->rotation_x = rotation_x;
+        record->rotation_y = rotation_y;
+        record->rotation_z = rotation_z;
+        record->position.vx = position_x;
+        record->position.vy = position_y;
+        record->direction_y = direction_y;
         record->unknown_02 = 0xff;
         record->unknown_03 = 0xff;
         record->kind = 0x34;
         record->type = 0xf0;
         record->unknown_07 = 0;
-        record->direction_x = a4;
+        record->direction_x = position_x;
         record->direction_z = 0;
     }
     return record;

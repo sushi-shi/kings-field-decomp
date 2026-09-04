@@ -8,8 +8,6 @@ extern u8 map_world_state_base[4];
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
 extern s32 rand(void);
-/* Effect spawner called with six or seven arguments; declared without a prototype. */
-extern KfEffectRecord *effect_pool_construct();
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
 

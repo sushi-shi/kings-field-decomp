@@ -7,8 +7,6 @@ RODATA(0x80012048, 0x130)
 /* Per-id byte table shared with the save system; entry 57 counts the lamp charges. */
 extern u8 DAT_800652a8[240];
 /* Psy-Q LIBGTE: rsin, rcos. */
-/* Effect spawner variant called with six arguments; declared without a prototype. */
-extern u8 *effect_pool_spawn_typed();
 /* Image paths whose decimal digits are patched before display. */
 
 ADDRESS(0x80017edc, 0xc8)

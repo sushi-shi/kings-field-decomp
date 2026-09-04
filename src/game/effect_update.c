@@ -29,7 +29,6 @@
 /* Base datum holding the scripted floor-deformation segment records that
  * effect_floor_deform_line reads from offset 0x21 (7-byte records); extent WIP. */
 
-extern KfEffectRecord *effect_pool_construct();
 extern s32 audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);

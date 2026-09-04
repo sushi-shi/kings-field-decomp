@@ -12,9 +12,8 @@ extern u8 DAT_800652a8[240];
 
 extern void audio_play_spatial_default_range(const SoundRef *sound, const VECTOR *position, s16 volume);
 
-/* Unprototyped helpers: called with varying arities/argument types. */
+/* This menu helper is called with varying arities. */
 extern u32 menu_enter_mode(s32 arg0, ...);
-extern u8 *effect_pool_construct();
 
 /* Object-behaviour dispatch followed by the current-floor action dispatch. */
 RODATA(0x80012a7c, 0x164)

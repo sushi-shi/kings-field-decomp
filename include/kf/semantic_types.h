@@ -368,7 +368,7 @@ typedef struct KfMapCopyRegion {
 
 /*
  * Effect pool record (60-byte stride, pool in effect_pool_records). The pool
- * constructor func_80036f44 and the specialised constructor func_80037770
+ * general and specialised effect-pool constructors
  * establish the field layout: byte 0 is the type tag (0xff marks a free
  * slot), byte 1 the dispatch/magic_records index, byte 6 the owning id, a
  * VECTOR world position at 0x0c, and three SVECTOR-shaped 16-bit triples

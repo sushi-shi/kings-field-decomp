@@ -9,9 +9,6 @@
 
 RODATA(0x80012738, 0x150)
 
-/* Effect spawner called with five or six arguments; declared without a prototype. */
-extern KfEffectRecord *effect_pool_construct();
-
 /*
  * Four rectangular map-cell copy regions {source_x, source_z, destination_x,
  * destination_z, width, height} applied by map_apply_copy_region.

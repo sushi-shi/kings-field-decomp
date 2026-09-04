@@ -13,7 +13,6 @@ extern s32 actor_distance_to_point(
     s32 actor_height,
     s32 point_height);
 extern void actor_try_attack_player();
-extern u8 *effect_pool_construct();
 extern s32 rand(void);
 
 #define ACTOR_ACTION_NONE 0xff

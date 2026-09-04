@@ -35,8 +35,6 @@
  * cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
  */
 
-extern KfEffectRecord *effect_pool_construct();
-
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)
 

@@ -15,6 +15,7 @@
 #include <kf/notify.h>
 #include <kf/game_map.h>
 #include <kf/game_actor.h>
+#include <kf/game_effect.h>
 #include <kf/game_menu.h>
 #include <kf/audio.h>
 #include <kf/game_player.h>

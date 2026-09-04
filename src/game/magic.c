@@ -3,10 +3,6 @@
 #include <kf/game.h>
 #include <kf/magic.h>
 
-extern KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
-    SVECTOR *direction, ...);
-extern void effect_pool_set_current(u8 *object);
-
 ADDRESS(0x8003a244, 0x30)
 void effect_pool_reset(void)
 {
@@ -150,7 +146,7 @@ void effect_pool_sweep(void)
 
     do {
         if (record->type != 0xff) {
-            effect_pool_set_current((u8 *)record);
+            effect_pool_set_current(record);
             effect_update_dispatch();
         }
         record++;

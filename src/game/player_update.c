@@ -5,7 +5,6 @@
 
 extern s32 menu_enter_mode(s32 arg0);
 extern void map_interaction_dispatch();
-extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
 extern void player_use_item();
 
