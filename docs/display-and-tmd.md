@@ -7,6 +7,13 @@ per-function dossiers are in
 `config/evidence/game_semantic_display_tmd.tsv`; `kf lineage` checks all 541
 instructions admitted by this campaign.
 
+GAME's reconstructed `game.render` module now owns the filled contiguous run
+`0x8001b7b0..0x8001c60c`.  The former `game.display` split ended immediately
+before `render_initialize`, which `display_initialize` calls directly, and
+both halves operate on the same graphics state family with the same compiler
+profile.  That is enough evidence to consolidate the reconstruction unit; the
+module boundary remains WIP rather than a claim about the historical filename.
+
 ## Function identities
 
 | Action | GAME | OPEN | Contract |
