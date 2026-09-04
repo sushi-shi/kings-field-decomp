@@ -158,6 +158,13 @@ texture-page origins and shade width, the 0-to-128 and 128-to-0 transitions,
 the timed input interval, and both sequence-stop modes. Both functions match
 retail exactly.
 
+`open_semantic_opening_entity_transition.tsv` records the OPEN four-entity
+transition helper shared by the scene-3 and ending controllers. It proves the
+four valid modes, the complete `VECTOR` field in each 40-byte entity, and the
+staggered scale/yaw animation. The semantic C reaches 94.685036%; retail keeps
+a dead three-word stack snapshot that the humane source intentionally omits,
+with the frame/register residue left unattributed.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five

@@ -528,17 +528,15 @@ typedef struct KfMapObject {
 } KfMapObject;
 
 /* OPEN.EXE title-scene entity: the shared map-object transform prefix followed
- * by a uniform model scale. */
+ * by a uniform model scale.  The transition helper's four-word structure copy
+ * proves that the complete position field is one SDK VECTOR. */
 typedef struct KfOpeningEntity {
     u8 object_id;
     u8 unknown_01;
     u16 cell_x;
     u16 cell_z;
     u8 unknown_06[2];
-    s32 position_x;
-    s32 position_y;
-    s32 position_z;
-    u8 unknown_14[4];
+    VECTOR position;
     struct KfEulerAngles rotation;
     u16 unknown_1e;
     SVECTOR scale;

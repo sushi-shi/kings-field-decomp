@@ -55,8 +55,8 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
-        self.assertEqual(counts["structure_fields"], 652)
-        self.assertEqual(counts["structure_fields_named"], 530)
+        self.assertEqual(counts["structure_fields"], 649)
+        self.assertEqual(counts["structure_fields_named"], 528)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -989,6 +989,43 @@ class InventoryTests(unittest.TestCase):
                 if parse_int(row["target_va"]) in {0x800143DC, 0x8001455C}
             },
             {"opening_scene1_draw_fade", "opening_scene1_run"},
+        )
+
+    def test_open_entity_transition_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = (
+            CONFIG / "evidence/open_semantic_opening_entity_transition.tsv"
+        )
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";"))
+        signature = f"{identity.return_type} {identity.name}({parameters})"
+        self.assertEqual(row["final_name"], identity.name)
+        self.assertEqual(row["final_signature"], signature)
+        self.assertIn(evidence_path.name, identity.evidence)
+        self.assertEqual(row["current_match"], "94.685036000% complete C")
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_opening_entity_transition"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 12)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {reloc["target_name"] for reloc in campaign_rows})
+        state_rows = [
+            reloc
+            for reloc in campaign_rows
+            if parse_int(reloc["target_va"]) in {0x800498F8, 0x80049912}
+        ]
+        self.assertEqual(len(state_rows), 3)
+        self.assertEqual(
+            {reloc["target_name"] for reloc in state_rows},
+            {"opening_entity_state"},
         )
 
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
