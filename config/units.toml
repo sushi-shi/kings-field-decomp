@@ -553,12 +553,6 @@ profile = "probe-gcc257-o2-g0"
 
 
 [[unit]]
-unit = "game.cd_parse_directory_entry"
-image = "GAME.EXE"
-source = "src/game/cd_parse_directory_entry.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.func_80045f7c"
 image = "GAME.EXE"
 source = "src/game/func_80045f7c.c"

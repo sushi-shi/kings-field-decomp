@@ -1,15 +1,12 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <kf/psyq_audio.h>
+#include <kf/game_cd.h>
 #include <MEMORY.H>
 #include <kf/game.h>
 
 /* Psy-Q Release 2.5 headers declare strcat without a prototype. */
 extern char *strcat();
 /* CD failure handler: 0 after a failed search, 1 after failed reads. */
-
-extern CdlFILE cd_search_file;
-extern KfCdFileEntry cd_file_table[];
 
 DATA(0x80057b3c, 0x5)
 char cd_path_prefix[5] = "\\KF\\";

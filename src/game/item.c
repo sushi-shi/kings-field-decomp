@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/game_cd.h>
 #include <kf/game.h>
 
 /* Psy-Q LIBC. */
@@ -7,10 +8,6 @@ extern s32 rand(void);
 extern void *memset();
 extern void *memcpy();
 extern void exit(s32 status);
-
-/* libcd ISO9660 CdSearchFile; reclassified vendored (see functions_vendored.tsv). */
-extern void *CdSearchFile(void *slot, char *filename);
-extern KfCdFileEntry cd_file_table[80];
 
 /* Item stat banks loaded contiguously from COM\STAT.DAT (opaque records). */
 extern u8 DAT_80058dc0[];
@@ -112,7 +109,7 @@ void item_load_database(void)
         rem = n % 100;
         name[12] = rem / 10 + '0';
         name[13] = rem % 10 + '0';
-        if (CdSearchFile(&cd_file_table[i], name) != 0) {
+        if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != 0) {
             if ((cd_file_table[i].size & 0x7ff) != 0)
                 cd_file_table[i].size =
                     ((cd_file_table[i].size >> 11) + 1) << 11;

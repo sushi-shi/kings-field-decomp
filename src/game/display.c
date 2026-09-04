@@ -1,10 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
-#include <kf/psyq_audio.h>
+#include <kf/game_cd.h>
 #include <kf/game.h>
 
-extern CdlFILE cd_search_file;
-extern CdlLOC cd_read_location;
 extern u16 DAT_80095038;
 
 extern void exit(s32 status);
