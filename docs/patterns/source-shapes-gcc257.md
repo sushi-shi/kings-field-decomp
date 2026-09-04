@@ -889,9 +889,10 @@ Residues recorded in the module (not steered):
 
 ## player warp / floor transition (0x80036618..0x80036e38)
 
-`src/game/player_warp.c` reconstructs the warp band. `func_80036d3c` (the actor
-colour-fade sequence) is exact: two `blend` loops over `lighting_set_color_matrix`
-with the map-event activations and actor position/rotation ramps. `func_80036e38`
+`src/game/player_warp.c` reconstructs the warp band.
+`actor_transform_definition5_to6` (the actor colour-fade sequence) is exact:
+two `blend` loops over `lighting_set_color_matrix` with the map-event
+state assignments and actor position/rotation ramps. `func_80036e38`
 (`src/game/func_80036e38.c`) is exact once modelled as a K&R varargs function
 `u32 f(s32 mode, ...)`: retail spills `a0`-`a3` to the incoming home slots and
 reads `mode` from `[0]` and the flag byte from `[4]` (`lbu`), keeping only the

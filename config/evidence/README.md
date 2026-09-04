@@ -63,6 +63,11 @@ the two recovered signed timers to `KfPlayerState` offsets `0x50` and `0x52`
 and records the relocation-only causes behind three initially non-exact helper
 objects.
 
+`game_semantic_player_warp.tsv` records the player-position shimmer wrapper,
+blocking shimmer animator, floor-trigger dispatcher, and the adjacent actor
+definition-5-to-6 color-fade transition. The names describe only observed
+state transitions; the actor's character identity remains unresolved.
+
 `game_semantic_menu_interaction_api.tsv` records the player-facing map-action
 dispatcher and modal-menu boundary. It proves the read-only position input,
 mutable rotation output, and the variadic O32 home-slot contract shared by the

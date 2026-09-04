@@ -22,18 +22,20 @@
  * current floor (jump table at 0x80012c14) and, when the player's previous map
  * cell matches a scripted trigger, performs the corresponding warp.
  *
- * func_80036d3c is the actor colour-fade sequence (actor_update_current_action):
- * it marks map events 1 and 2 active, fades the GTE colour matrix toward the
- * global target while raising and spinning the actor, then fades back.
+ * actor_transform_definition5_to6 is the colour-fade transition called for
+ * floor 4 actor definition 5: it sets map events 1 and 2 to state 3, fades
+ * the GTE colour matrix toward the global target while raising and spinning
+ * the actor, changes its definition to 6, then reverses the fade and motion.
  *
  * The KfEffectRecord layout is modelled in kf/game_effect.h; the shimmer
  * reuses the record's rotation_y halfword as its rotation phase and scale_y as
  * its fade intensity.
  *
- * func_80036d3c is exact. player_warp_change_floor/player_warp_same_floor carry a one-instruction
+ * actor_transform_definition5_to6 is exact.
+ * player_warp_change_floor/player_warp_same_floor carry a one-instruction
  * prologue argument-save scheduling residue; player_warp_shimmer hits the
- * loop-optimiser count-loop/giv-base residue and player_warp_trigger_update the switch
- * cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
+ * loop-optimiser count-loop/giv-base residue and player_warp_trigger_update
+ * the switch cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
  */
 
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
@@ -239,7 +241,7 @@ u32 player_warp_trigger_update(void)
 }
 
 ADDRESS(0x80036d3c, 0xf4)
-void func_80036d3c(KfActor *actor)
+void actor_transform_definition5_to6(KfActor *actor)
 {
     MATRIX saved;
     s32 blend;

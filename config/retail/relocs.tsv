@@ -6218,7 +6218,7 @@ GAME.EXE	0x8002fec0	0x1e6c0		mips26	instruction-word	0x8002dc70	load		jal		range
 GAME.EXE	0x8002fecc	0x1e6cc		mips26	instruction-word	0x8002dcfc	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002ff04	0x1e704		mips26	instruction-word	0x80030610	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002ff0c	0x1e70c	0x8002ff10	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8002ff30	0x1e730		mips26	instruction-word	0x80036d3c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
+GAME.EXE	0x8002ff30	0x1e730		mips26	instruction-word	0x80036d3c	load	actor_transform_definition5_to6	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;manual:game_semantic_player_warp;carved-body-reviewed
 GAME.EXE	0x8002ff38	0x1e738		mips26	instruction-word	0x8002cc64	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002ff40	0x1e740		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
 GAME.EXE	0x8002ff6c	0x1e76c		mips26	instruction-word	0x800307fc	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:actor_actions;carved-body-reviewed
