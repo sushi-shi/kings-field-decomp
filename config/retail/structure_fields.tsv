@@ -442,13 +442,13 @@ KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	maximu
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game_player.h;asm;xrefs	current HP
 KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	maximum MP
 KfPlayerVitals	0x06	0x02	current_mp	u16	supported	game_player.h;asm;xrefs	current MP
-KfPoolRecord	0x00	0x02	state	s16	supported	game_types.h;asm;xrefs	allocation state
-KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x04	0x02	value_04	u16	candidate	game_types.h;asm;xrefs	accessed value; exact meaning unresolved
-KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
-KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer
+KfPoolRecord	0x00	0x02	state	s16	supported	pool.h;asm;xrefs	allocation state
+KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	pool.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x04	0x02	value_04	u16	candidate	pool.h;asm;xrefs	accessed value; exact meaning unresolved
+KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	pool.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	pool.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x0c	0x04	allocation	void *	supported	pool.h;asm;xrefs	allocated object pointer
+KfPoolRecord	0x10	0x04	backlink	u32 *	supported	pool.h;asm;xrefs	owner backlink pointer
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
 KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin

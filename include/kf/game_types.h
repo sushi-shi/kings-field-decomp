@@ -8,14 +8,4 @@ typedef unsigned short u16;
 typedef signed long s32;
 typedef unsigned long u32;
 
-struct KfPoolRecord {
-    s16 state;
-    u16 unknown_02;
-    u16 value_04;
-    u16 unknown_06;
-    u32 unknown_08;
-    void *allocation;
-    u32 *backlink;
-};
-
 #endif

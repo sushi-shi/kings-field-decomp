@@ -87,7 +87,6 @@ extern SoundRef gameplay_sound_ref_6;
 extern const SoundRef gameplay_sound_ref_7;
 extern const SoundRef gameplay_sound_ref_8;
 extern char person_image_path_template[14];
-extern struct KfPoolRecord pool_records[];
 extern char talk_image_path_template[];
 extern char weapon_image_path_template[15];
 

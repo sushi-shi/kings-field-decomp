@@ -14,7 +14,7 @@
 ADDRESS(0x80020978, 0x30)
 void pool_reset(void)
 {
-    struct KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = pool_records;
     u16 count = 12;
 
     do {
@@ -27,7 +27,7 @@ void pool_reset(void)
 ADDRESS(0x800209a8, 0x3c)
 void pool_mark_allocated(void)
 {
-    struct KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = pool_records;
     u16 count = 12;
 
     do {
@@ -39,7 +39,7 @@ void pool_mark_allocated(void)
 }
 
 ADDRESS(0x800209e4, 0x48)
-void pool_record_release(struct KfPoolRecord *record)
+void pool_record_release(KfPoolRecord *record)
 {
     record->state = 0;
     *record->backlink = 0;
@@ -57,7 +57,7 @@ void pool_record_release(struct KfPoolRecord *record)
 ADDRESS(0x80020a2c, 0x6c)
 void pool_release_all(void)
 {
-    struct KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = pool_records;
     s16 i;
 
     for (i = 11; i != -1; i--) {
@@ -76,7 +76,7 @@ void pool_release_all(void)
 ADDRESS(0x80020a98, 0x6c)
 void pool_release_stale(void)
 {
-    struct KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = pool_records;
     u16 count = 12;
 
     do {
@@ -88,9 +88,9 @@ void pool_release_stale(void)
 }
 
 ADDRESS(0x80020b04, 0x48)
-struct KfPoolRecord *pool_allocate(void)
+KfPoolRecord *pool_allocate(void)
 {
-    struct KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = pool_records;
     u16 count = 12;
 
     do {
