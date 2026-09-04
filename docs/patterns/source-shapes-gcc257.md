@@ -235,6 +235,7 @@ two generate identical code) explain several of the rows.
 | `lui v1,&s.b; addiu v0,v1,-32; ... sw a1,0(a0); jal; sw a1,0(v1)` (second store's address materialised first, first store's base derived from it) | chained assignment `s.b = s.array[i] = value;` the destination of the outer assignment is expanded first, CSE's related-value pass derives the array base from it | `tmd_register` `0x8001c5b0` |
 | `move a0,s0; lui a2,&other; addiu a2; jal MulMatrix0; addiu a1,s0,128` (one argument folded from a base register, the next absolute) | the folded operand lives in the same object as the base register; the absolute one is a separate global. CSE folds `sym+k` only against registers holding the same symbol, so an absolute address next to a folded one is boundary evidence | `render_initialize` `0x8001bce0` (`light_quadrant_matrices` split from `render_state`) |
 | `lw v0,0(a2); srl v0,v0,0x18; andi v0,0xfd` beside `lbu v1,1(a2)` | `word = *(u32 *)packet;` as its own statement, then `switch ((word >> 24) & 0xfd)`; writing `mode = *(u32 *)packet >> 24` lets combine turn the load and shift into `lbu 3(a2)` | `tmd_prepare_primitive_indices` `0x8001c2b0` |
+| a nullable rotation branch guards only the 8-byte copy; `RotMatrix` and the two zero stores follow unconditionally | keep only `view_rotation = *rotation` inside `if (rotation != 0)`, then perform `RotMatrix` and initialize the derived angles after the block | OPEN `render_set_view_transform` `0x80016f04` |
 | `lhu v0,n; beqz v0,exit; addiu t0,v0,-1` then a bottom test `move v0,t0; andi; bnez; addu t0,t0,t1` (`t1 = 0xffff`) | `count = field; if (count == 0) return; left = count - 1; do { ... } while (left-- != 0);` with `u16` locals. `while (count--)` on a promoted `u16` copies before the entry test (`move; andi`), and `for (i = 0; i < n; i++)` is never reversed because 2.5.8's `check_dbra_loop` needs a constant bound | same |
 | inner `lhu a0,4(a3); beqz a0,skip; addu a1,a0,t1` | `count = object->field; if (count != 0) { left = count; left--; do {...} while (left-- != 0); }`; `left = count - 1` computes in `int` and prints `addiu -1` | same |
 | giv base on the earlier field (`addiu a3,v1,28`, `lw 0(a3)`, `lhu 4(a3)`) | read the later field first in source; loop.c makes the last-referenced field the combined giv base, and the scheduler then orders the loads by path length (`(offset + 12) + base` gives the offset load the longer path) | same |
@@ -249,10 +250,11 @@ Residues left in the same module (not steered):
   constant-equivalent pseudo used exactly once in another basic block, so the
   original probably placed the copy and the call in different blocks in a way
   not yet found.
-- `tmd_prepare_primitive_indices` `0x8001c2b0`: the unused 8-byte frame and a
-  second `tmd_state.current_asset` load that sits before the guard branch
-  without being merged by CSE (`cse_end_of_basic_block` follows a conditional
-  jump only when its label is used once and preceded by a barrier).
+- `tmd_prepare_primitive_indices`: in OPEN `0x80017030`, computing the outer
+  decrement and object pointer before the zero-count guard reproduces retail's
+  second `tmd_state.current_asset` load. The unused 8-byte frame and the entry
+  branch/decrement schedule remain unattributed; the current complete semantic
+  source is 98.333336% after all internal jump referents were reviewed.
 
 ## tmd_project
 

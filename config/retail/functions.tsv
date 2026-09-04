@@ -979,7 +979,7 @@ OPEN.EXE	0x80015c3c	0x443c	0x5c	0x5c	1	function	mips-return-carve			scripts/kf/a
 OPEN.EXE	0x80015c98	0x4498	0x3c	0x3c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x80015cd4	0x44d4	0x10	0x10	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x80015ce4	0x44e4	0xb0	0xb0	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code+relocation-candidate
-OPEN.EXE	0x80015db4	0x45b4	0x20	0x20	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
+OPEN.EXE	0x80015d94	0x4594	0x40	0x40	1	function	manual-disassembly			manual:open_semantic_math	decoded arithmetic prefix feeds live v0 into the framed SquareRoot0 call; complete body matches GAME fixed_vector2_length
 OPEN.EXE	0x80015dd4	0x45d4	0x38	0x38	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80015e0c	0x460c	0x20	0x20	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80015e2c	0x462c	0xa8	0xa8	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary

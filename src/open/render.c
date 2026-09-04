@@ -86,10 +86,10 @@ void render_set_view_transform(
     }
     if (rotation != 0) {
         render_state.view_rotation = *rotation;
-        RotMatrix((SVECTOR *)&render_state.view_rotation, (MATRIX *)&render_state.view_matrix);
-        angles.vz = 0;
-        angles.vy = 0;
     }
+    RotMatrix((SVECTOR *)&render_state.view_rotation, (MATRIX *)&render_state.view_matrix);
+    angles.vz = 0;
+    angles.vy = 0;
     angles.vx = render_state.view_rotation.vx;
     RotMatrix(&angles, (MATRIX *)&render_state.pitch_matrix);
 }
@@ -113,11 +113,11 @@ void tmd_prepare_primitive_indices(void)
     u32 word;
 
     object_count = ((KfTmdHeader *)tmd_state.current_asset)->object_count;
+    objects_left = object_count - 1;
+    object = TMD_OBJECTS(tmd_state.current_asset);
     if (object_count == 0) {
         return;
     }
-    object = TMD_OBJECTS(tmd_state.current_asset);
-    objects_left = object_count - 1;
     do {
         primitive_count = object->primitive_count;
         packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + 12);
@@ -238,7 +238,7 @@ void tmd_project_vertices(s32 count)
     long unused_depth;
 
     if (count >= 1000) {
-        func_8001a814("POINT OVER !!!!!!\n");
+        debug_printf("POINT OVER !!!!!!\n");
         return;
     }
     out = tmd_projected_vertices;

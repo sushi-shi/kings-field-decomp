@@ -42,7 +42,6 @@ extern void tmd_register(u16 slot, u8 *tmd);
 extern void tmd_release_last_allocation(s32 slot);
 extern void tmd_project_vertices(s32 count);
 
-/* Address-derived WIP identity for OPEN's empty variadic diagnostic sink. */
-extern void func_8001a814(const char *format, ...);
+extern void debug_printf(const char *format, ...);
 
 #endif
