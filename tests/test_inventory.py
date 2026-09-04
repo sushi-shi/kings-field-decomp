@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 509)
         self.assertEqual(counts["typed_returns"], 509)
         self.assertEqual(counts["parameterized"], 322)
-        self.assertEqual(counts["data"], 3195)
+        self.assertEqual(counts["data"], 3200)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 67)
@@ -735,7 +735,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(evidence_rows), 2)
+        self.assertEqual(len(evidence_rows), 9)
         for row in evidence_rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -750,10 +750,36 @@ class InventoryTests(unittest.TestCase):
             for row in relocation_rows
             if "manual:open_semantic_resources" in row["provenance"].split(";")
         ]
-        self.assertEqual(len(campaign_rows), 17)
+        self.assertEqual(len(campaign_rows), 33)
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         calls = [row for row in campaign_rows if row["opcode"] == "jal"]
         self.assertNotIn("", {row["target_name"] for row in calls})
+
+        loader_rows = [
+            row
+            for row in relocation_rows
+            if row["image"] == "OPEN.EXE"
+            and 0x80016348 <= parse_int(row["site_va"]) < 0x80016510
+        ]
+        self.assertEqual(len(loader_rows), 27)
+        self.assertEqual({row["status"] for row in loader_rows}, {"reviewed"})
+        loader_calls = [row for row in loader_rows if row["opcode"] == "jal"]
+        self.assertNotIn("", {row["target_name"] for row in loader_calls})
+
+        data = load_data_identities(RETAIL_CONFIG)
+        expected_grids = {
+            0x800446C8: "map_collision_flag_grid",
+            0x80046DF8: "map_cell_orientation_grid",
+            0x8006E260: "map_floor_height_grid",
+            0x80070978: "map_collision_grid",
+            0x800730A0: "map_cell_attribute_grid",
+        }
+        for va, name in expected_grids.items():
+            identity = data[("OPEN.EXE", va)]
+            self.assertEqual(
+                (identity.name, identity.storage, identity.datatype, identity.size),
+                (name, "bss", "u8[100][100]", 0x2710),
+            )
 
     def test_map_resources_relocations_and_data_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

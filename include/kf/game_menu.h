@@ -114,7 +114,6 @@ extern MenuGlyphRow magic_name_rows[9];
 extern u16 item_buy_prices[80][2];
 extern u16 item_sell_prices[80][2];
 
-extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
 extern void item_menu_root(s32 arg);
 extern s32 item_use_confirm(s32 arg);

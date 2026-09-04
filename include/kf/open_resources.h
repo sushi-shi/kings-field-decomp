@@ -1,0 +1,12 @@
+#ifndef KF_OPEN_RESOURCES_H
+#define KF_OPEN_RESOURCES_H
+
+/* OPEN.EXE resource loading and its opening-only placement consumer. */
+
+#include <kf/semantic_types.h>
+
+extern void opening_resources_load_scene0(void);
+extern void opening_entity_pool_load_placements(
+    const KfMapObjectPlacement *placements, s32 base_y);
+
+#endif

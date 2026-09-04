@@ -3052,8 +3052,10 @@ OPEN.EXE	0x80043210	0x4	DAT_80043210	unknown	bss	u32		address-only	ghidra-12.0.4
 OPEN.EXE	0x80043214	0x4	DAT_80043214	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80043254	0x4	DAT_80043254	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800439d8	0x4	DAT_800439d8	unknown	bss	u32		address-only	asm;render_initialize	destination buffer of the B0\\RTBL. load issued by render_initialize; extent unknown
+OPEN.EXE	0x800446c8	0x2710	map_collision_flag_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	fourth map grid copied from MIXA0; GAME homolog identifies the per-cell collision flag grid
 OPEN.EXE	0x80046de0	0x4	DAT_80046de0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80046de8	0x4	DAT_80046de8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80046df8	0x2710	map_cell_orientation_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	third map grid copied from MIXA0; GAME homolog identifies the per-cell orientation grid
 OPEN.EXE	0x80049508	0x4	DAT_80049508	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049510	0x4	DAT_80049510	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049528	0x4	DAT_80049528	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3151,10 +3153,13 @@ OPEN.EXE	0x8006e210	0x2	DAT_8006e210	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x8006e224	0x2	DAT_8006e224	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e238	0x2	DAT_8006e238	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e24c	0x2	DAT_8006e24c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x8006e260	0x2710	map_floor_height_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	second map grid copied from MIXA0; placement consumers multiply its cells by -100 as floor heights
 OPEN.EXE	0x80070970	0x4	DAT_80070970	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80070978	0x2710	map_collision_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	fifth map grid copied from MIXA0; GAME homolog identifies the per-cell collision-kind grid
 OPEN.EXE	0x80073088	0x4	_snd_openflag	unknown	bss	u32	audio	supported	SSOPEN.OBJ:XREF;SSCLOSE.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal active-sequence bitmask; source linkage remains unresolved
 OPEN.EXE	0x80073090	0x4	DAT_80073090	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80073098	0x4	DAT_80073098	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x800730a0	0x2710	map_cell_attribute_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	first map grid copied from MIXA0; GAME homolog identifies the per-cell attribute grid
 OPEN.EXE	0x800757b0	0x4	DAT_800757b0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800757bc	0x4	DAT_800757bc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800757c0	0x2	DAT_800757c0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
