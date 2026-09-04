@@ -92,11 +92,11 @@ KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	game_equipment.h;asm;pl
 KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
 KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
-KfAssetHeader	0x00	0x04	byte_size	u32	supported	semantic_types.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
-KfAssetHeader	0x04	0x04	animation_data	s32	candidate	semantic_types.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
-KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	semantic_types.h;asm;asset_registry_select	byte offset from header to TMD payload
-KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
-KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
+KfAssetHeader	0x00	0x04	byte_size	u32	supported	game_asset.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
+KfAssetHeader	0x04	0x04	animation_data	s32	candidate	game_asset.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
+KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	game_asset.h;asm;asset_registry_select	byte offset from header to TMD payload
+KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	game_asset.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
+KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	game_asset.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
 KfAudioState	0x00	0x04	vab_header	u8 *	supported	audio.h;asm;xrefs	loaded VAB header pointer
 KfAudioState	0x04	0x02	active_vab_id	s16	supported	audio.h;asm;xrefs	active VAB identifier; minus one after close
 KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
@@ -132,28 +132,28 @@ KfCdFileEntry	0x02	0x01	sector	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	
 KfCdFileEntry	0x03	0x01	track	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
 KfCdFileEntry	0x04	0x04	size	u32	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
 KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
-KfCellWindow	0x00	0x02	width	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row width and inner-loop bound
-KfCellWindow	0x02	0x02	height	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row count and outer-loop bound
-KfCellWindow	0x04	0x02	origin_x	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
-KfCellWindow	0x06	0x02	origin_z	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
-KfCellWindow	0x08	0xc4	cells	u8[196]	supported	semantic_types.h;game_semantic_render_cell_windows.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	row-major visibility bytes filling the remainder of each 204-byte window record
+KfCellWindow	0x00	0x02	width	u16	supported	game_render.h;asm;render_map_cells;render_entities	row width and inner-loop bound
+KfCellWindow	0x02	0x02	height	u16	supported	game_render.h;asm;render_map_cells;render_entities	row count and outer-loop bound
+KfCellWindow	0x04	0x02	origin_x	u16	supported	game_render.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
+KfCellWindow	0x06	0x02	origin_z	u16	supported	game_render.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
+KfCellWindow	0x08	0xc4	cells	u8[196]	supported	game_render.h;game_semantic_render_cell_windows.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	row-major visibility bytes filling the remainder of each 204-byte window record
 KfCollisionTarget	0x00	0x10	position	VECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
 KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
 KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
-KfDisplayState	0x00	0x01	buffer_index	u8	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayStateOpen	0x00	0x01	buffer_index	u8	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x01	0x03	unknown_01	u8[3]	opaque	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayState	0x00	0x01	buffer_index	u8	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayStateOpen	0x00	0x01	buffer_index	u8	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x01	0x03	unknown_01	u8[3]	opaque	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
 KfEffectRecord	0x01	0x01	kind	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
 KfEffectRecord	0x02	0x01	unknown_02	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
@@ -200,17 +200,17 @@ KfEffectRenderView	0x28	0x02	scale_z	s16	supported	game_effect.h;asm;render_acto
 KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before animation anchor
 KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	game_effect.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
 KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	game_effect.h;asm;render_actor_sprite	unresolved tail
-KfEffectSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
-KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	semantic_types.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
-KfEffectSprite	0x02	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
-KfEffectSprite	0x04	0x02	scale	u16	supported	semantic_types.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
-KfEffectSprite	0x06	0x02	translation_x	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation X
-KfEffectSprite	0x08	0x02	translation_y	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation Y
-KfEffectSprite	0x0a	0x02	translation_z	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation Z
-KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the rotation vector
-KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
-KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the animation anchor
-KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
+KfEffectSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
+KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	game_render.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
+KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game_render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
+KfEffectSprite	0x04	0x02	scale	u16	supported	game_render.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
+KfEffectSprite	0x06	0x02	translation_x	s16	supported	game_render.h;asm;render_effect_sprites	model translation X
+KfEffectSprite	0x08	0x02	translation_y	s16	supported	game_render.h;asm;render_effect_sprites	model translation Y
+KfEffectSprite	0x0a	0x02	translation_z	s16	supported	game_render.h;asm;render_effect_sprites	model translation Z
+KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before the rotation vector
+KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	game_render.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
+KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before the animation anchor
+KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	game_render.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
 KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
@@ -233,9 +233,9 @@ KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	item.h;asm;func_80020b4c	map 
 KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	item.h;asm;func_80020b4c	offset within the tile
 KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	item.h;asm;func_80020b4c	offset within the tile
 KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	item.h;asm;func_80020b4c	height offset above the floor height grid
-KfHudSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
-KfHudSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
-KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
+KfHudSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
+KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game_render.h;retail-initializers	unread byte before the sprite descriptor
+KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game_render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
 KfMagicRecord	0x00	0x01	learned	u8	supported	magic.h;asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
 KfMagicRecord	0x01	0x01	charge_rate	u8	supported	magic.h;asm;player_update	fixed6_ratio_step span while charging magic
 KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
@@ -333,10 +333,10 @@ KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	game_map.h;asm;map_object_p
 KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied into the pool object
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
-KfNotificationSprite	0x00	0x01	active	u8	supported	semantic_types.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
-KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
-KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
-KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
+KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
+KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
+KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
+KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	game_math.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	game_math.h;asm;xrefs	yaw angle
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
@@ -449,27 +449,27 @@ KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	game_types.h;asm;xrefs	meaning unre
 KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
 KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
 KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer
-KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
-KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
-KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
-KfRenderState	0x00	0x20	view_matrix	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x20	0x20	pitch_matrix	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x60	0x20	light_matrix_copy	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x80	0x20	unknown_80	MATRIX	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xa4	0x10	view_position	VECTOR	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xb4	0x08	view_rotation	SVECTOR	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xc0	0x80	quadrant_matrices	MATRIX[4]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x00	0x20	view_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x20	0x20	pitch_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x40	0x20	light_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x60	0x04	fog_near_distance	s32	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
+KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
+KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
+KfRenderState	0x00	0x20	view_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x20	0x20	pitch_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x60	0x20	light_matrix_copy	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x80	0x20	unknown_80	MATRIX	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa4	0x10	view_position	VECTOR	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xb4	0x08	view_rotation	SVECTOR	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xc0	0x80	quadrant_matrices	MATRIX[4]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x00	0x20	view_matrix	MATRIX	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x20	0x20	pitch_matrix	MATRIX	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x40	0x20	light_matrix	MATRIX	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x60	0x04	fog_near_distance	s32	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	game_save.h;asm;xrefs	four save-slot identifiers
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	game_save.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	game_save.h;asm;xrefs	four slot summaries
@@ -485,14 +485,14 @@ KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	game_save.h;asm;xrefs	individua
 KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
 KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
-KfSpriteQuad	0x00	0x01	u	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
-KfSpriteQuad	0x01	0x01	v	u8	supported	semantic_types.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
-KfSpriteQuad	0x02	0x01	u_span	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
-KfSpriteQuad	0x03	0x01	v_span	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
-KfSpriteQuad	0x04	0x02	x	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
-KfSpriteQuad	0x06	0x02	y	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
-KfSpriteQuad	0x08	0x02	w	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
-KfSpriteQuad	0x0a	0x02	h	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
+KfSpriteQuad	0x00	0x01	u	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
+KfSpriteQuad	0x01	0x01	v	u8	supported	game_render.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
+KfSpriteQuad	0x02	0x01	u_span	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
+KfSpriteQuad	0x03	0x01	v_span	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
+KfSpriteQuad	0x04	0x02	x	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
+KfSpriteQuad	0x06	0x02	y	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
+KfSpriteQuad	0x08	0x02	w	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
+KfSpriteQuad	0x0a	0x02	h	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
 KfTmdF3	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
@@ -611,10 +611,10 @@ KfTmdObject	0x10	0x04	primitive_offset	u32	supported	tmd.h;game_semantic_display
 KfTmdObject	0x14	0x02	primitive_count	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop; read as a halfword (lhu)
 KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	upper halfword of the 32-bit TMD primitive count, unread by the game
 KfTmdObject	0x18	0x04	scale	s32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
-KfTmdState	0x00	0x20	slots	u8 *[8]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdState	0x20	0x04	current_asset	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdState	0x00	0x20	slots	u8 *[8]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdState	0x20	0x04	current_asset	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfVec3i	0x00	0x04	x	s32	supported	game_math.h;asm;xrefs	x coordinate
 KfVec3i	0x04	0x04	y	s32	supported	game_math.h;asm;xrefs	y coordinate
 KfVec3i	0x08	0x04	z	s32	supported	game_math.h;asm;xrefs	z coordinate

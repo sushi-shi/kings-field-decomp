@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,

@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
 
 /*
  * Per-channel linear interpolation between two RGB555 colors.  Each 5-bit

@@ -58,5 +58,6 @@ case labels rather than invented function starts.
 The per-function evidence and unresolved points are preserved in
 `config/evidence/game_semantic_player_interactions.tsv`. Canonical sizes and
 fields live in `config/retail/structures.tsv` and
-`config/retail/structure_fields.tsv`; the checked C declarations and target
-layout assertions live in `include/kf/semantic_types.h`.
+`config/retail/structure_fields.tsv`; checked C declarations live in the
+subsystem owner headers, chiefly `include/kf/game_player.h`,
+`include/kf/game_collision.h`, and `include/kf/item.h` for this campaign.

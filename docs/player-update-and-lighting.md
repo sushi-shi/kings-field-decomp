@@ -41,15 +41,11 @@ The two recovered timers are fields of the checked `0xe0`-byte
 | `0x50` | `player_status_effect4_timer` | `s16` | Initialized to `-1`, set to 500 with status bit 4, decremented by `player_update`, and clears the bit at zero. |
 | `0x52` | `player_light_effect_timer` | `s16` | Initialized to `-1`, set to 1000 by item use, decremented by `player_update`, and sampled by effect-model rendering. |
 
-The complete structure and every field extent are checked in
-`include/kf/semantic_types.h`, `config/retail/structures.tsv`, and
-`config/retail/structure_fields.tsv`. Several reconstructed files still spell
-interior members as separate extern symbols because the current relocation
-inventory carries member-level identities. That is a WIP linkage model, not a
-claim that the original program declared unrelated globals. The intended final
-source model is one typed aggregate wherever the executable proves a common
-object owner; aggregate-global delinking must preserve the same interior
-HI16/LO16 addends before those declarations are migrated safely.
+The complete structure is declared in `include/kf/game_player.h`; every field
+extent is checked against `config/retail/structures.tsv` and
+`config/retail/structure_fields.tsv` by `kf inventory check`. Reconstructed
+sources use the `player_state` aggregate. The delinker must preserve the
+interior HI16/LO16 addends that identify its fields.
 
 ## Relocation findings
 

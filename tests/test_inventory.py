@@ -362,6 +362,40 @@ class InventoryTests(unittest.TestCase):
         self.assertNotIn(declaration, semantic_types)
         self.assertIn("extern KfCollisionTarget collision_target;", collision_header)
 
+    def test_render_layouts_live_in_their_owner_headers(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        owners = {
+            "render_types.h": ("KfPrimitiveBuffer", "KfOrderingTable"),
+            "game_asset.h": ("KfAssetHeader",),
+            "game_render.h": (
+                "KfSpriteQuad",
+                "KfHudSprite",
+                "KfEffectSprite",
+                "KfCellWindow",
+                "KfDisplayState",
+                "KfTmdState",
+                "KfRenderState",
+            ),
+            "notify.h": ("KfNotificationSprite",),
+            "open_render.h": (
+                "KfDisplayStateOpen",
+                "KfTmdStateOpen",
+                "KfRenderStateOpen",
+            ),
+        }
+        for header_name, structures in owners.items():
+            owner_header = (REPO / "include/kf" / header_name).read_text()
+            for structure in structures:
+                declaration = f"typedef struct {structure}"
+                self.assertIn(declaration, owner_header)
+                self.assertNotIn(declaration, semantic_types)
+
+    def test_sources_include_semantic_owner_headers_directly(self) -> None:
+        for source in (REPO / "src").rglob("*.c"):
+            self.assertNotIn(
+                "#include <kf/semantic_types.h>", source.read_text()
+            )
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

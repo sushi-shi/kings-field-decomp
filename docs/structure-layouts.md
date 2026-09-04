@@ -6,8 +6,8 @@ Structure recovery is a first-class part of the semantic inventory:
 - `config/retail/structure_fields.tsv` records every field's offset, extent,
   datatype, semantic confidence, evidence, and note;
 - the ordered owner headers under `include/kf/` are the C forms used by
-  reconstructions; `semantic_types.h` remains a temporary home only where a
-  narrower owner has not yet been established.
+  reconstructions; `semantic_types.h` is now a compatibility umbrella and
+  defines no layouts of its own.
 
 `kf inventory check` calculates the PlayStation 32-bit C layout from those
 headers and compares it with both TSVs. It rejects missing or duplicate types

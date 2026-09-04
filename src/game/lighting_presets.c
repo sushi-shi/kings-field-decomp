@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_render.h>
 #include <kf/game.h>
 
 ADDRESS(0x800187a4, 0x4c)

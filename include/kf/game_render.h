@@ -1,25 +1,106 @@
 #ifndef KF_GAME_RENDER_H
 #define KF_GAME_RENDER_H
 
-/*
- * Rendering / TMD / matrix / lighting / display prototypes.
- *
- * Generated during extern-crutch removal: declarations that were duplicated
- * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
- * remain unresolved WIP identities. Byte-neutral: a declaration never changes
- * codegen.
- */
+/* GAME.EXE rendering, display, lighting, and TMD state and operations. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_actor.h>
+#include <kf/game_effect.h>
+#include <kf/game_map.h>
+#include <kf/item.h>
+#include <kf/render_types.h>
 #include <kf/tmd.h>
 
+/* Texture rectangle followed by its screen-space rectangle. */
+typedef struct KfSpriteQuad {
+    u8 u;
+    u8 v;
+    u8 u_span;
+    u8 v_span;
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
+} KfSpriteQuad;
+
+/* One row of the sentinel-terminated HUD gauge and status-sprite table. */
+typedef struct KfHudSprite {
+    u8 state;
+    u8 unknown_01;
+    KfSpriteQuad sprite;
+} KfHudSprite;
+
+/* Animated screen-facing model entry; state 0xff terminates the list. */
+typedef struct KfEffectSprite {
+    u8 state;
+    u8 visibility_tag;
+    u16 asset_variant;
+    u16 scale;
+    s16 translation_x;
+    s16 translation_y;
+    s16 translation_z;
+    u8 unknown_0c[2];
+    SVECTOR rotation;
+    u8 unknown_16[2];
+    u8 anchor[4];
+} KfEffectSprite;
+
+/* Per-yaw row-major visible-cell window. */
+typedef struct KfCellWindow {
+    u16 width;
+    u16 height;
+    u16 origin_x;
+    u16 origin_z;
+    u8 cells[196];
+} KfCellWindow;
+
+/* Double-buffered GAME.EXE display state. */
+typedef struct KfDisplayState {
+    u8 buffer_index;
+    u8 unknown_01[3];
+    void *asset_load_buffer;
+    KfPrimitiveBuffer primitive_buffers[2];
+    KfPrimitiveBuffer *primitive_buffer;
+    KfOrderingTable ordering_tables[2];
+    u32 *ordering_table;
+} KfDisplayState;
+
+/* Eight registered TMD slots and the selected asset. */
+typedef struct KfTmdState {
+    u8 *slots[8];
+    void *current_asset;
+} KfTmdState;
+
+/* GAME.EXE view, lighting, fog, and quadrant matrices. */
+typedef struct KfRenderState {
+    MATRIX view_matrix;
+    MATRIX pitch_matrix;
+    MATRIX light_matrix;
+    MATRIX light_matrix_copy;
+    MATRIX unknown_80;
+    s32 fog_near_distance;
+    VECTOR view_position;
+    SVECTOR view_rotation;
+    struct KfVecXZs view_cell;
+    MATRIX quadrant_matrices[4];
+} KfRenderState;
+
 extern KfScreenVertex DAT_800911b0[];
+extern MATRIX color_matrix_table[7];
+extern SVECTOR *current_tmd_vertices;
+extern POLY_FT4 *current_poly_ft4;
+extern DISPENV display_disp_environments[2];
+extern DRAWENV display_draw_environments[2];
+extern KfDisplayState display_state;
 extern KfCellWindow render_cell_windows[16];
 extern const KfCellWindow *active_cell_window;
 extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];
 extern KfEffectSprite effect_sprites[2];
 extern KfHudSprite hud_sprites[14];
+extern MATRIX light_quadrant_matrices[4];
+extern MATRIX render_light_matrices[6];
+extern KfRenderState render_state;
+extern KfTmdState tmd_state;
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);

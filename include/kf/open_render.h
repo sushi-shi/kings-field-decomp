@@ -3,8 +3,37 @@
 
 /* OPEN.EXE display, render, and TMD state shared across render units. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_math.h>
+#include <kf/render_types.h>
 #include <kf/tmd.h>
+
+/* OPEN.EXE display state; ordering_table is a separate global. */
+typedef struct KfDisplayStateOpen {
+    u8 buffer_index;
+    u8 unknown_01[3];
+    void *asset_load_buffer;
+    KfPrimitiveBuffer primitive_buffers[2];
+    KfPrimitiveBuffer *primitive_buffer;
+    KfOrderingTable ordering_tables[2];
+} KfDisplayStateOpen;
+
+/* Two registered TMD slots and the selected asset. */
+typedef struct KfTmdStateOpen {
+    u8 *slots[2];
+    void *current_asset;
+} KfTmdStateOpen;
+
+/* OPEN.EXE view state lacks GAME's two extra light matrices. */
+typedef struct KfRenderStateOpen {
+    MATRIX view_matrix;
+    MATRIX pitch_matrix;
+    MATRIX light_matrix;
+    s32 fog_near_distance;
+    VECTOR view_position;
+    SVECTOR view_rotation;
+    struct KfVecXZs view_cell;
+    MATRIX quadrant_matrices[4];
+} KfRenderStateOpen;
 
 extern KfDisplayStateOpen display_state;
 extern KfRenderStateOpen render_state;

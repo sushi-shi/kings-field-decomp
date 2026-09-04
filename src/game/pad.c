@@ -1,8 +1,10 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
+
+RODATA(0x80013e8c, 0x60)
 
 /*
  * Controller (PAD) front end plus the interrupt critical-section guard that
@@ -72,17 +74,17 @@ void pad_stop(void)
 ADDRESS(0x800501ac, 0x30)
 u32 pad_init_bad_identifier()
 {
-    printf(DAT_80013e8c, DAT_8006bd88);
+    printf("PAD_init: Bad PadIdentifier %d\n", DAT_8006bd88);
 }
 
 ADDRESS(0x800501dc, 0x30)
 void pad_read_bad_identifier(void)
 {
-    printf(DAT_80013eac, DAT_8006bd88);
+    printf("PAD_dr  : Bad PadIdentifier %d\n", DAT_8006bd88);
 }
 
 ADDRESS(0x8005020c, 0x30)
 void pad_stop_bad_identifier(void)
 {
-    printf(DAT_80013ecc, DAT_8006bd88);
+    printf("StopPAD : Bad PadIdentifier %d\n", DAT_8006bd88);
 }

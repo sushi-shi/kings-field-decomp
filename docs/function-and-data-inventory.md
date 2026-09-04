@@ -216,9 +216,14 @@ motion, saved-state, and floor-entry layouts are owned with the player globals
 and operations by `include/kf/game_player.h`. `KfCollisionTarget` is owned with
 the world-collision data and query operations by
 `include/kf/game_collision.h`.
-The remaining checked render-state layouts still live in
-`include/kf/semantic_types.h`. Their sizes are
-checked against `config/retail/structures.tsv` by `kf inventory check`;
+Shared primitive-buffer and ordering-table layouts live in
+`include/kf/render_types.h`; GAME and OPEN display, TMD-registration, and
+render-state aggregates live in `include/kf/game_render.h` and
+`include/kf/open_render.h`. Asset-registry and notification records live with
+their interfaces in `include/kf/game_asset.h` and `include/kf/notify.h`.
+`include/kf/semantic_types.h` remains only as a compatibility umbrella and
+defines no checked layouts. All owner-header layouts are checked against
+`config/retail/structures.tsv` by `kf inventory check`;
 inventory-only vectors such as `KfVec4s` and `KfVec4i` do not acquire C
 declarations until a reconstructed interface needs them, and established
 reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`.

@@ -13,11 +13,10 @@
  * codegen.
  */
 
-#include <kf/semantic_types.h>
+#include <kf/audio.h>
+#include <kf/game_types.h>
+#include <kf/psyq.h>
 
-extern char DAT_80013e8c[];
-extern char DAT_80013eac[];
-extern char DAT_80013ecc[];
 extern MATRIX DAT_80055858;
 extern SVECTOR DAT_80055878[8];
 extern u8 DAT_80055afc[];
@@ -81,12 +80,6 @@ extern u8 DAT_8009f844;
 extern u8 DAT_8009f845;
 extern u8 DAT_8009f846;
 extern u32 DAT_800a0768;
-extern MATRIX color_matrix_table[7];
-extern KfAssetHeader *asset_registry_entries[];
-extern SVECTOR *current_tmd_vertices;
-extern DISPENV display_disp_environments[2];
-extern DRAWENV display_draw_environments[2];
-extern KfDisplayState display_state;
 extern char enemy_info_image_path_template[13];
 extern u32 game_exit_code;
 extern const SoundRef gameplay_sound_ref_0;
@@ -101,15 +94,10 @@ extern const SoundRef gameplay_sound_ref_5;
 extern SoundRef gameplay_sound_ref_6;
 extern const SoundRef gameplay_sound_ref_7;
 extern const SoundRef gameplay_sound_ref_8;
-extern MATRIX light_quadrant_matrices[4];
-extern POLY_FT4 *current_poly_ft4;
 extern s32 pending_game_state;
 extern char person_image_path_template[14];
 extern struct KfPoolRecord pool_records[];
-extern MATRIX render_light_matrices[6];
-extern KfRenderState render_state;
 extern char talk_image_path_template[];
-extern KfTmdState tmd_state;
 extern char weapon_image_path_template[15];
 
 #endif

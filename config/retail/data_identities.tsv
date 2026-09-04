@@ -1775,7 +1775,7 @@ GAME.EXE	0x80070e98	0x20028	display_state	unknown	bss	KfDisplayState	display	sup
 GAME.EXE	0x80090ec0	0xb8	display_draw_environments	global	bss	DRAWENV[2]	display	supported	game_semantic_screen_talk.tsv;ghidra-12.0.4-memory-xref;asm;PutDrawEnv;0x5c-stride	two adjacent Psy-Q DRAWENV records; former byte candidates were embedded fields
 GAME.EXE	0x80090f78	0x28	display_disp_environments	global	bss	DISPENV[2]	display	supported	game_semantic_display_tmd.tsv;asm;xrefs;PutDispEnv;0x14-stride	two adjacent Psy-Q DISPENV records selected with the display-buffer index
 GAME.EXE	0x80090fa8	0x24	tmd_state	unknown	bss	KfTmdState	tmd	supported	game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
-GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	KfAssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm;semantic_types.h	indexed model-asset header pointer table
+GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	KfAssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm;game_asset.h	indexed model-asset header pointer table
 GAME.EXE	0x800910bc	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 GAME.EXE	0x800910c0	0xf0	pool_records	global	bss	KfPoolRecord[12]	pool	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	12 records of stride 20
 GAME.EXE	0x800911b0	0x2	DAT_800911b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

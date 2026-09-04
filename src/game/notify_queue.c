@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/notify.h>
 #include <kf/game.h>
 
 DATA(0x80055d20, 0x54)

@@ -9,8 +9,8 @@
  * spellings remain unresolved WIP identities.
  */
 
-#include <kf/semantic_types.h>
 #include <kf/game_save.h>
+#include <kf/psyq.h>
 
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
