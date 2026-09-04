@@ -35,7 +35,7 @@ s32 menu_magic_panel(void)
     s32 prev;
     s32 selection = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
     menu_list_init(&ctx, 0, 1);
 
@@ -70,7 +70,7 @@ s32 menu_magic_panel(void)
                 selection = codes[ctx.selected_index];
         }
         if (selection != -99) {
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
@@ -78,7 +78,7 @@ s32 menu_magic_panel(void)
         menu_frame_begin();
         confirm = 0;
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -178,7 +178,7 @@ void menu_option_root(void)
             menu_draw_name_list();
             menu_draw_window(1, 9, cursor, confirm);
             menu_present_frame();
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
         }
         switch (selection) {
@@ -206,7 +206,7 @@ void menu_option_root(void)
         menu_frame_begin();
         confirm = 0;
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)

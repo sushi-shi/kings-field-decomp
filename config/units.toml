@@ -541,10 +541,18 @@ profile = "probe-gcc257-o2-g0"
 
 
 [[unit]]
+unit = "game.intr_tail"
+image = "GAME.EXE"
+source = "src/vendor/game_libetc_intr_tail.c"
+profile = "probe-gcc257-o2-plain"
+scope = "vendored"
+
+[[unit]]
 unit = "game.pad"
 image = "GAME.EXE"
-source = "src/game/pad.c"
+source = "src/vendor/game_libetc_pad.c"
 profile = "probe-gcc257-o2-plain"
+scope = "vendored"
 
 [[unit]]
 unit = "open.memory"

@@ -786,11 +786,11 @@ void screen_show_image_until_input(const char *path)
         DrawSync(0);
         DrawOTag(&display_state.ordering_table[0x3fff]);
         if (pressed == 0) {
-            if (pad_read(1) == 0) {
+            if (PadRead(1) == 0) {
                 pressed = 1;
             }
-        } else if (pad_read(1) != 0) {
-            while (pad_read(1) != 0) {
+        } else if (PadRead(1) != 0) {
+            while (PadRead(1) != 0) {
             }
             break;
         }

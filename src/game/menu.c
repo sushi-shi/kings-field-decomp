@@ -28,7 +28,7 @@ void menu_save_confirm(void)
         menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(0);
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
     menu_save_panel();
 }
@@ -60,7 +60,7 @@ s32 menu_root(void)
         menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(0);
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
 
     for (;;) {
@@ -69,7 +69,7 @@ s32 menu_root(void)
             menu_draw_stats_header();
             menu_draw_window(0, 8, cursor, confirm);
             menu_present_frame();
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
         }
         switch (selection) {
@@ -105,14 +105,14 @@ s32 menu_root(void)
         }
         if (result != -99) {
             selection = -1;
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             return result;
         }
         selection = -1;
         confirm = 0;
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
@@ -167,7 +167,7 @@ s32 menu_use_item_panel(void)
     s32 confirm = 0;
     s32 selection = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
     menu_list_init(&ctx, 0, 0);
 
@@ -229,13 +229,13 @@ s32 menu_use_item_panel(void)
         }
         if (selection != -99) {
             confirm = 0;
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index != 0) {

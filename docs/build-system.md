@@ -23,11 +23,14 @@ void game_shutdown(void)
 manifest loader binds them (`build/gen/bindings.tsv` records the result). The
 binding rules are structural, in the spirit of Gruntz's `RVA()`:
 
-- a claim must name an admitted, non-vendored, non-fragmented function of the
-  unit's image, spelled exactly as `function_identities.tsv` names it, so a
-  labelled function is never called by an address-derived name in source, and
-  its size must equal the admitted retail body size, so the claim and the
+- a normal claim must name an admitted, non-vendored, non-fragmented function
+  of the unit's image, spelled exactly as `function_identities.tsv` names it,
+  so a labelled function is never called by an address-derived name in source,
+  and its size must equal the admitted retail body size, so the claim and the
   census cannot drift apart silently;
+- a unit explicitly marked `scope = "vendored"` may claim only provider-owned
+  functions. It remains in objdiff as a strict source-verification unit, but
+  every function must stay exactly 100% and none enters progress or banking;
 - claims inside one source ascend by address, and a unit owns every admitted
   function between its first and last claim, so a source file is a contiguous
   run of the linked image (address-order incrementalism);
@@ -124,7 +127,7 @@ prunes its orphan base object at configure time.
 ## Status and banking
 
 The status universe is every contiguous, non-vendored function: currently
-1 PSX, 492 GAME, and 241 OPEN functions. Progress is counted per function even
+1 PSX, 362 GAME, and 122 OPEN functions. Progress is counted per function even
 when several functions share a module unit; the objdiff report lists each
 function inside its unit. Only manifested units with real base objects enter
 objdiff. This keeps an absent reconstruction distinct from a
@@ -151,8 +154,9 @@ strict-100% snapshot as `kf status` and replaces only the text between
 `<!-- match-score:start -->` and `<!-- match-score:end -->`.
 
 `kf check` refreshes the block, and `kf build` ends in that check. The check
-also compares every owned `.data`, `.rodata`, and `.bss` contribution against
-the retail-delinked object by default and fails on any byte, exact object-section
+also requires every vendored source-verification function to remain 100% and
+compares every owned `.data`, `.rodata`, and `.bss` contribution against the
+retail-delinked object by default. It fails on any byte, exact object-section
 extent (including assembler-owned writable/switch-table zero tails materialized
 by the delinker),
 relocation type/referent, ownership, or comparison-artifact mismatch. `kf bank` also

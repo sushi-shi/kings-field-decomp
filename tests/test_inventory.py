@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 499)
-        self.assertEqual(counts["signatures_started"], 499)
-        self.assertEqual(counts["typed_returns"], 499)
-        self.assertEqual(counts["parameterized"], 317)
+        self.assertEqual(counts["functions"], 485)
+        self.assertEqual(counts["signatures_started"], 485)
+        self.assertEqual(counts["typed_returns"], 485)
+        self.assertEqual(counts["parameterized"], 313)
         self.assertEqual(counts["data"], 3165)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -907,25 +907,63 @@ class InventoryTests(unittest.TestCase):
             {"reviewed"},
         )
 
-    def test_pad_tu_owns_its_private_identifier_and_literals(self) -> None:
-        evidence_path = CONFIG / "evidence/game_tu_pad.tsv"
+    def test_pad_vendor_unit_owns_its_private_identifier_and_literals(self) -> None:
+        evidence_path = CONFIG / "evidence/game_vendor_pad.tsv"
         _, rows = read_tsv(evidence_path)
-        self.assertEqual(len(rows), 7)
+        self.assertEqual(len(rows), 6)
         spans = [
             (parse_int(row["va"]), parse_int(row["extent"]))
             for row in rows
         ]
-        self.assertEqual(spans[0][0], 0x8005005C)
+        self.assertEqual(spans[0][0], 0x800500B8)
         self.assertEqual(spans[-1][0] + spans[-1][1], 0x8005023C)
         for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
             self.assertEqual(va + extent, next_va)
 
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        for row in rows:
-            identity = identities[(row["image"], parse_int(row["va"]))]
-            self.assertEqual(identity.name_confidence, "supported")
-            self.assertEqual(identity.signature_confidence, "supported")
-            self.assertIn(evidence_path.name, identity.evidence)
+        _, vendored_rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in vendored_rows
+        }
+        expected_names = (
+            "critical_section_set",
+            "PadInit",
+            "PadRead",
+            "PadStop",
+            "pad_init_bad_identifier",
+            "pad_read_bad_identifier",
+            "pad_stop_bad_identifier",
+        )
+        game_addresses = (
+            0x8005005C,
+            *(parse_int(row["va"]) for row in rows),
+        )
+        open_addresses = (
+            0x8002FE30,
+            0x8002FE8C,
+            0x8002FF00,
+            0x8002FF44,
+            0x8002FF80,
+            0x8002FFB0,
+            0x8002FFE0,
+        )
+        for image, addresses in (
+            ("GAME.EXE", game_addresses),
+            ("OPEN.EXE", open_addresses),
+        ):
+            for va, name in zip(addresses, expected_names):
+                self.assertNotIn((image, va), identities)
+                vendor = vendored[(image, va)]
+                self.assertEqual(vendor["name"], name)
+                self.assertEqual(
+                    (vendor["provider"], vendor["library"], vendor["confidence"]),
+                    (
+                        "Sony Computer Entertainment",
+                        "LIBETC.LIB",
+                        "sdk-lineage-supported",
+                    ),
+                )
 
         pad_identifier = load_data_identities(RETAIL_CONFIG)[
             ("GAME.EXE", 0x8006BD88)
@@ -959,11 +997,15 @@ class InventoryTests(unittest.TestCase):
             {"reviewed"},
         )
 
-        source = (REPO / "src/game/pad.c").read_text()
+        source = (REPO / "src/vendor/game_libetc_pad.c").read_text()
         game_state = (REPO / "include/kf/game_state.h").read_text()
+        vendor_header = (REPO / "include/kf/psyq_pad.h").read_text()
         self.assertIn("DATA(0x8006bd88, 0x4)\nstatic s32 pad_identifier;", source)
         self.assertNotIn("DAT_8006bd88", source)
         self.assertNotIn("DAT_8006bd88", game_state)
+        self.assertIn("extern u32 PadInit(s32 identifier);", vendor_header)
+        self.assertIn("extern u32 PadRead();", vendor_header)
+        self.assertFalse((REPO / "include/kf/game_pad.h").exists())
         for literal in (
             "PAD_init: Bad PadIdentifier %d\\n",
             "PAD_dr  : Bad PadIdentifier %d\\n",

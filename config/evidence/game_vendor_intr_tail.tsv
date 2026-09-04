@@ -1,0 +1,4 @@
+# Reviewed function and ownership evidence for the GAME LIBETC INTR.OBJ tail.
+# The sole claim is retained as an exact source-verification unit; its original static identity remains a supported reconstruction.
+image	va	extent	family	current_match	body_and_cfg	call_and_data_evidence	signature_and_width_evidence	vendor_negative_control	tu_verdict
+GAME.EXE	0x8005005c	0x5c	critical-section	100.000000000% exact	conditional EnterCriticalSection/ExitCriticalSection calls followed by one shared state store and return	one proven caller; reads and replaces DAT_80057d24	full-width enable argument and previous-state return are proved by lw/sw and the two API branches	full GAME/OPEN instruction-shape identity, sole calls from the paired INTR.OBJ intInit bodies, and archive order support a version-skewed LIBETC INTR.OBJ static	vendor attribution supported; exact vendored source-verification unit excluded from game progress

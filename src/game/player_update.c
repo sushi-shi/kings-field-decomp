@@ -40,7 +40,7 @@ void player_update(void)
         return;
     }
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
-    input = pad_read(1);
+    input = PadRead(1);
     if (input & 0x800) {
         display_show_error_screen(3);
     }

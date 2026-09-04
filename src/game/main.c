@@ -22,7 +22,7 @@ void main(s32 entry_arg0, u32 *entry_args)
     func_80014268((int *)0x80058060, 0x67fe8, 0);
     InitHeap((u32 *)0x800a0980, 0x157680);
     CdInit();
-    pad_initialize(0);
+    PadInit(0);
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();

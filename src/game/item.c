@@ -127,7 +127,7 @@ void item_menu_root(s32 arg)
     menu_frame_begin();
     menu_draw_window(7, 3, 0, 0);
     menu_play_input_sound(0);
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
 
     for (;;) {
@@ -136,7 +136,7 @@ void item_menu_root(s32 arg)
             menu_frame_begin();
             menu_draw_window(7, 3, cursor, confirm);
             menu_present_frame();
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
         }
         switch (selection) {
@@ -149,7 +149,7 @@ void item_menu_root(s32 arg)
         }
         selection = -1;
         if (done != -99) {
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             return;
         }
@@ -157,7 +157,7 @@ void item_menu_root(s32 arg)
         menu_frame_begin();
         confirm = 0;
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
@@ -206,7 +206,7 @@ void item_menu_buy(s32 arg)
     s32 confirm = 0;
     s32 selection = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
     menu_list_init(&ctx, 7, 0);
 
@@ -253,13 +253,13 @@ void item_menu_buy(s32 arg)
         }
         if (selection != -99) {
             confirm = 0;
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -347,7 +347,7 @@ void item_menu_sell(s32 arg)
     s32 confirm = 0;
     s32 selection = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
     menu_list_init(&ctx, 7, 1);
 
@@ -396,13 +396,13 @@ void item_menu_sell(s32 arg)
         }
         if (selection != -99) {
             confirm = 0;
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -514,7 +514,7 @@ s32 item_use_confirm(s32 arg)
         (const MenuGlyphString *)prompt,
         (const MenuGlyphString *)options, 0, 0);
     menu_play_input_sound(0);
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
 
     for (;;) {
@@ -526,14 +526,14 @@ s32 item_use_confirm(s32 arg)
                 (const MenuGlyphString *)prompt,
                 (const MenuGlyphString *)options, choice, confirm);
             menu_present_frame();
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
 
         menu_frame_begin();
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (((input & 0x1000) != 0 && (prev & 0x1000) == 0)
                 || ((input & 0x4000) != 0 && (prev & 0x4000) == 0)) {
             menu_play_input_sound(0);

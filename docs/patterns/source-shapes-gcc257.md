@@ -1006,10 +1006,11 @@ pending cell-attribute data ownership rather than reconstructed speculatively.
 
 ## pad
 
-Campaign over the contiguous controller band `0x8005005c..0x8005023c` (module
-`game.pad`, seven small leaves): a critical-section guard plus three PAD entry
-points (`func_800500b8`/`func_8005012c`/`func_80050170`) that dispatch on a
-stored pad identifier, each backed by a "Bad PadIdentifier" reporting stub.
+Campaign over the adjacent vendored bands `0x8005005c..0x8005023c`: the
+`game.intr_tail` critical-section helper has INTR.OBJ lineage, while the six
+`game.pad` functions have PAD.OBJ lineage. The three public PAD entry points
+dispatch on a stored pad identifier and each has a "Bad PadIdentifier"
+reporting stub.
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
@@ -1021,9 +1022,9 @@ The original `probe-gcc257-o2-g0` campaign left a repeatable load-placement
 residue: retail hoists the first data load above the frame allocation / register
 saves whenever the loaded value feeds a call argument or a callee-saved
 register. The later `probe-gcc257-o2-plain` profile reproduces that schedule;
-all seven `game.pad` functions are now exact without source steering. The old
-residue remains useful evidence for this unit's profile selection, not an open
-function mismatch.
+all seven vendored verification functions are now exact without source
+steering. The old residue remains useful evidence for these units' profile
+selection, not an open function mismatch.
 
 ## debug/format
 
@@ -1130,7 +1131,7 @@ list-widget panels of the same shape as the banked `func_800238d8`
 (`menu_select`) and `func_80022608` (`menu`): a windowed cursor over rows drawn
 by the shared `func_8002abb4`/`func_80028914`/`func_80027ee4`/`func_8002ac34`
 frame helpers, an edge-triggered pad loop (`0x1000`/`0x4000`/`0x20`/`0x40`), and
-a `pad_read(1)`-release wait. Roles: `func_800249a8` drops a held item
+a `PadRead(1)`-release wait. Roles: `func_800249a8` drops a held item
 (filtering equipped copies via the seven equipment ids at `player_state+0x64`
 and `+0x90..+0x95`, then decrementing `DAT_800652a8[code]`); `func_80024e64` is
 the save/load hub; `func_800250c4` is the save panel (three slots, a

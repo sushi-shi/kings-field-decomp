@@ -102,7 +102,7 @@ void game_shutdown(void)
 {
     memory_card_shutdown_events();
     audio_shutdown();
-    pad_stop();
+    PadStop();
     ResetGraph(3);
 }
 

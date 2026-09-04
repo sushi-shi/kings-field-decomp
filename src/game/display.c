@@ -81,9 +81,9 @@ void display_show_error_screen(s32 stage)
     AddPrim(display_state.ordering_table, &prim);
     DrawSync(0);
     DrawOTag(display_state.ordering_table + 0x3fff);
-    while (pad_read(1) == 0) {
+    while (PadRead(1) == 0) {
     }
-    while (pad_read(1) != 0) {
+    while (PadRead(1) != 0) {
     }
     display_draw_environments[back].isbg = 1;
     display_draw_environments[back].dfe = 1;

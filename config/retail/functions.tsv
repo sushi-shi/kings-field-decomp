@@ -782,13 +782,13 @@ GAME.EXE	0x8004fc2c	0x3e42c	0x80	0x80	1	function	ghidra-analysis			Ghidra-12.0.4
 GAME.EXE	0x8004fcac	0x3e4ac	0x84	0x84	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8004fd30	0x3e530	0x2d0	0x2d0	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x80050000	0x3e800	0x5c	0x5c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code+relocation-candidate
-GAME.EXE	0x8005005c	0x3e85c	0x5c	0x5c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x800500b8	0x3e8b8	0x74	0x74	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8005012c	0x3e92c	0x44	0x44	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x80050170	0x3e970	0x3c	0x3c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x800501ac	0x3e9ac	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x800501dc	0x3e9dc	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-GAME.EXE	0x8005020c	0x3ea0c	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+GAME.EXE	0x8005005c	0x3e85c	0x5c	0x5c	1	function	ghidra-analysis	critical_section_set		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC INTR.OBJ lineage
+GAME.EXE	0x800500b8	0x3e8b8	0x74	0x74	1	function	ghidra-analysis	PadInit		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC PAD.OBJ identity
+GAME.EXE	0x8005012c	0x3e92c	0x44	0x44	1	function	ghidra-analysis	PadRead		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC PAD.OBJ identity
+GAME.EXE	0x80050170	0x3e970	0x3c	0x3c	1	function	ghidra-analysis	PadStop		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC PAD.OBJ identity
+GAME.EXE	0x800501ac	0x3e9ac	0x30	0x30	1	function	ghidra-analysis	pad_init_bad_identifier		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed version-skewed PAD.OBJ static identity
+GAME.EXE	0x800501dc	0x3e9dc	0x30	0x30	1	function	ghidra-analysis	pad_read_bad_identifier		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed version-skewed PAD.OBJ static identity
+GAME.EXE	0x8005020c	0x3ea0c	0x30	0x30	1	function	ghidra-analysis	pad_stop_bad_identifier		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed version-skewed PAD.OBJ static identity
 GAME.EXE	0x8005023c	0x3ea3c	0xc	0xc	1	function	ghidra-analysis	CloseEvent		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8005024c	0x3ea4c	0xc	0xc	1	function	ghidra-analysis	_card_info		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 GAME.EXE	0x8005025c	0x3ea5c	0xc	0xc	1	function	ghidra-analysis	PAD_dr		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
@@ -1464,13 +1464,13 @@ OPEN.EXE	0x8002fa00	0x1e200	0x80	0x80	1	function	ghidra-analysis			Ghidra-12.0.4
 OPEN.EXE	0x8002fa80	0x1e280	0x84	0x84	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002fb04	0x1e304	0x2d0	0x2d0	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002fdd4	0x1e5d4	0x5c	0x5c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code+relocation-candidate
-OPEN.EXE	0x8002fe30	0x1e630	0x5c	0x5c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002fe8c	0x1e68c	0x74	0x74	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ff00	0x1e700	0x44	0x44	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ff44	0x1e744	0x3c	0x3c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ff80	0x1e780	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ffb0	0x1e7b0	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002ffe0	0x1e7e0	0x30	0x30	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+OPEN.EXE	0x8002fe30	0x1e630	0x5c	0x5c	1	function	ghidra-analysis	critical_section_set		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC INTR.OBJ lineage
+OPEN.EXE	0x8002fe8c	0x1e68c	0x74	0x74	1	function	ghidra-analysis	PadInit		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC PAD.OBJ identity
+OPEN.EXE	0x8002ff00	0x1e700	0x44	0x44	1	function	ghidra-analysis	PadRead		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC PAD.OBJ identity
+OPEN.EXE	0x8002ff44	0x1e744	0x3c	0x3c	1	function	ghidra-analysis	PadStop		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed LIBETC PAD.OBJ identity
+OPEN.EXE	0x8002ff80	0x1e780	0x30	0x30	1	function	ghidra-analysis	pad_init_bad_identifier		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed version-skewed PAD.OBJ static identity
+OPEN.EXE	0x8002ffb0	0x1e7b0	0x30	0x30	1	function	ghidra-analysis	pad_read_bad_identifier		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed version-skewed PAD.OBJ static identity
+OPEN.EXE	0x8002ffe0	0x1e7e0	0x30	0x30	1	function	ghidra-analysis	pad_stop_bad_identifier		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted boundary with reviewed version-skewed PAD.OBJ static identity
 OPEN.EXE	0x80030010	0x1e810	0xc	0xc	1	function	ghidra-analysis	CloseEvent		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80030020	0x1e820	0xc	0xc	1	function	ghidra-analysis	PAD_dr		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80030030	0x1e830	0x10	0x10	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
