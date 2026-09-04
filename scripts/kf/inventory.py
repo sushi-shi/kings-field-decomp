@@ -409,6 +409,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     checked_headers = (
         REPO / "include/kf/game_types.h",
         REPO / "include/kf/audio.h",
+        REPO / "include/kf/game_math.h",
         REPO / "include/kf/semantic_types.h",
         REPO / "include/kf/game_save.h",
         REPO / "include/kf/game_cd.h",

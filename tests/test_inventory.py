@@ -253,6 +253,20 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, audio_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_math_layouts_live_in_the_game_math_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        math_header = (REPO / "include/kf/game_math.h").read_text()
+        for structure in (
+            "KfVecXZs",
+            "KfVec3s",
+            "KfVec3i",
+            "KfPitchYaw",
+            "KfEulerAngles",
+        ):
+            declaration = f"struct {structure} {{"
+            self.assertIn(declaration, math_header)
+            self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

@@ -196,9 +196,8 @@ have supported semantic names and 114 exact ranges remain explicitly opaque.
 `kf inventory check` derives the 32-bit layouts from the checked C headers and
 rejects any TSV disagreement in size, offset, extent, name, or datatype.
 
-Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
-`KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
-`KfActorActionProfile`, `KfActor`, `KfActorPlacement`,
+Shared inventory-only layout names such as `KfVec4s`, `KfVec4i`,
+`KfActorDefinition`, `KfActorActionProfile`, `KfActor`, `KfActorPlacement`,
 `KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObjectDefinition`,
 `KfMapObject`, `KfCameraPathPoint`, `KfCameraPathState`,
 `KfMapEventDefinition`, `KfMapEvent`, `KfMapCell`, `KfPlayerProgressState`,
@@ -209,8 +208,10 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfSaveDirectory`, `KfSaveHeader`, and `KfSavePayload` are owned by
 `include/kf/game_save.h`; the shared TMD payload, primitive, and projection
 layouts are owned by `include/kf/tmd.h`; and `SoundRef`, `KfAudioVoiceSlots`,
-and `KfAudioState` are owned by `include/kf/audio.h`. The remaining
-inventory-only layouts in this list still live in
+and `KfAudioState` are owned by `include/kf/audio.h`. The game-owned
+`KfVecXZs`, `KfVec3s`, `KfVec3i`, `KfPitchYaw`, and `KfEulerAngles` layouts
+are owned alongside their operations by `include/kf/game_math.h`. The
+remaining inventory-only layouts in this list still live in
 `include/kf/semantic_types.h`. Their sizes are
 checked against `config/retail/structures.tsv` by `kf inventory check`;
 established reconstruction types such as `KfMatrix` remain in

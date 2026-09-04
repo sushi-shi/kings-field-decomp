@@ -4,39 +4,12 @@
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 #include <kf/audio.h>
+#include <kf/game_math.h>
 
 /*
  * Layout identities supported by the semantic inventory. Their original
  * source spellings and translation-unit ownership remain unknown.
  */
-struct KfVecXZs {
-    s16 x;
-    s16 z;
-};
-
-struct KfVec3s {
-    s16 x;
-    s16 y;
-    s16 z;
-};
-
-struct KfVec3i {
-    s32 x;
-    s32 y;
-    s32 z;
-};
-
-struct KfPitchYaw {
-    s16 pitch;
-    s16 yaw;
-};
-
-struct KfEulerAngles {
-    s16 x;
-    s16 y;
-    s16 z;
-};
-
 /*
  * Each display buffer owns one primitive allocation interval. Frame begin
  * selects one of two 0x0c-byte records and resets cursor to start.

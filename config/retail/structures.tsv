@@ -20,7 +20,7 @@ KfDisplayStateOpen	0x20024	supported	semantic_types.h;asm;base-register;display_
 KfEffectRecord	0x3c	supported	asm;effect_pool_constructor;effect_pool_spawn_typed;map_object_pool_update	60-byte record in effect_pool_records; constructors fix the header, VECTOR position and rotation/scale/direction triples
 KfEffectRenderView	0x3c	supported	semantic_types.h;asm;render_actor_sprite;render_entities	60-byte rendering view of an effect_pool_records entry; reads low position halfwords and the sprite-specific header selectors
 KfEffectSprite	0x1c	supported	semantic_types.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
-KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
+KfEulerAngles	0x06	supported	game_math.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	semantic_types.h;asm;func_80020b4c	runtime floor-item table entry
 KfFloorItemPlacement	0x0c	supported	semantic_types.h;asm;func_80020b4c	serialized floor-item placement record
@@ -38,7 +38,7 @@ KfMapObjectPlacement	0x14	supported	semantic_types.h;game_semantic_map_objects.t
 KfMapObjectState	0x25a8	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	map object definitions followed by the object pool; map_object_pool_clear_link derives the definition table 1280 bytes below the pool base through one register, so both are one object
 KfNotificationSprite	0x0e	supported	semantic_types.h;game_semantic_notification_sprites.tsv;asm;retail-initializers;14-byte-stride	on-screen notification record with an active byte and complete screen-sprite descriptor
 KfOrderingTable	0x10000	supported	semantic_types.h;asm;ClearOTagR-0x4000	one reversed ordering table; display_begin_frame clears 0x4000 entries and display_present_frame draws from entry 0x3fff
-KfPitchYaw	0x04	supported	semantic_types.h;asm;xrefs	two signed halfword angles
+KfPitchYaw	0x04	supported	game_math.h;asm;xrefs	two signed halfword angles
 KfPlayerAttackChargeState	0x04	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
 KfPlayerLevelGrowth	0x0c	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
 KfPlayerMotionState	0x0a	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	five-halfword movement and camera-input state cleared as one complete group
@@ -67,8 +67,8 @@ KfTmdHeader	0xc	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-form
 KfTmdObject	0x1c	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	standard TMD object-table record; object stride and primitive fields are exercised by both overlays
 KfTmdState	0x24	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 KfTmdStateOpen	0xc	supported	semantic_types.h;asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
-KfVec3i	0x0c	supported	semantic_types.h;asm;xrefs	three signed 32-bit coordinates
-KfVec3s	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword coordinates
-KfVecXZs	0x04	supported	semantic_types.h;asm;xrefs	two signed horizontal halfword coordinates
+KfVec3i	0x0c	supported	game_math.h;asm;xrefs	three signed 32-bit coordinates
+KfVec3s	0x06	supported	game_math.h;asm;xrefs	three signed halfword coordinates
+KfVecXZs	0x04	supported	game_math.h;asm;xrefs	two signed horizontal halfword coordinates
 KfWeaponRecord	0x2c	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
 SoundRef	0x03	supported	audio.h;game_semantic_audio_spatial.tsv;asm;xrefs	packed LIBSND program/tone/note reference

@@ -211,9 +211,9 @@ KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;retail-ini
 KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
 KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the animation anchor
 KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
-KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
-KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
-KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
+KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
+KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
+KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
 KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
 KfFloorItem	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id copied from the placement record
@@ -337,8 +337,8 @@ KfNotificationSprite	0x00	0x01	active	u8	supported	semantic_types.h;asm;notify_e
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
-KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
-KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle
+KfPitchYaw	0x00	0x02	pitch	s16	supported	game_math.h;asm;xrefs	pitch angle
+KfPitchYaw	0x02	0x02	yaw	s16	supported	game_math.h;asm;xrefs	yaw angle
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	semantic_types.h;asm;xrefs	current POWER charge
 KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	semantic_types.h;asm;xrefs	attack-time POWER snapshot
 KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	level maximum HP
@@ -615,14 +615,14 @@ KfTmdState	0x00	0x20	slots	u8 *[8]	supported	semantic_types.h;game_semantic_disp
 KfTmdState	0x20	0x04	current_asset	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
-KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVec3s	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVec3s	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y coordinate
-KfVec3s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVecXZs	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVecXZs	0x02	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
+KfVec3i	0x00	0x04	x	s32	supported	game_math.h;asm;xrefs	x coordinate
+KfVec3i	0x04	0x04	y	s32	supported	game_math.h;asm;xrefs	y coordinate
+KfVec3i	0x08	0x04	z	s32	supported	game_math.h;asm;xrefs	z coordinate
+KfVec3s	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
+KfVec3s	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y coordinate
+KfVec3s	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
+KfVecXZs	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
+KfVecXZs	0x02	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
 KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
 KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state

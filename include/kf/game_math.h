@@ -1,9 +1,38 @@
 #ifndef KF_GAME_MATH_H
 #define KF_GAME_MATH_H
 
-/* Game-owned fixed-point angle, vector, and matrix helpers. */
+/* Game-owned fixed-point angle, vector, and matrix types and helpers. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
+#include <kf/psyq.h>
+
+struct KfVecXZs {
+    s16 x;
+    s16 z;
+};
+
+struct KfVec3s {
+    s16 x;
+    s16 y;
+    s16 z;
+};
+
+struct KfVec3i {
+    s32 x;
+    s32 y;
+    s32 z;
+};
+
+struct KfPitchYaw {
+    s16 pitch;
+    s16 yaw;
+};
+
+struct KfEulerAngles {
+    s16 x;
+    s16 y;
+    s16 z;
+};
 
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
