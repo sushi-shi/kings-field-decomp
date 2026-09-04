@@ -2,15 +2,10 @@
 #define KF_GAME_STATE_H
 
 /*
- * Shared declarations for the game's global state singletons, pools, grids,
- * and data tables. Load-image data is defined with DATA() in its owning
- * translation unit; unresolved BSS ownership remains curated WIP. Every
- * consumer sees one common declaration here.
- *
- * Generated during extern-crutch removal: declarations that were duplicated
- * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
- * remain unresolved WIP identities. Byte-neutral: a declaration never changes
- * codegen.
+ * Shared declarations whose semantic owner headers remain unresolved.
+ * Recovered families live in their own headers. Load-image data is defined
+ * with DATA() in its owning translation unit; unresolved BSS ownership and
+ * DAT_ identities remain curated WIP.
  */
 
 #include <kf/audio.h>
@@ -49,12 +44,6 @@ extern int DAT_80063278; /* installed abort handler */
 extern u8 DAT_800652a8[240]; /* inventory and progress flag block */
 extern SVECTOR DAT_800930f0[]; /* morph scratch base */
 extern u32 DAT_800930f8[]; /* base+keyframe scratch (== &DAT_800930f0[1]) */
-extern u16 DAT_80095058; /* clut; the colour CVECTOR follows four bytes on */
-extern u16 DAT_8009505a; /* tpage */
-extern u8 DAT_8009505c;
-extern u8 DAT_8009505d;
-extern u8 DAT_8009505e;
-extern u8 DAT_8009505f; /* colour CVECTOR command byte */
 extern u16 DAT_80095060;
 extern u16 DAT_80095062;
 extern u8 DAT_80095064;

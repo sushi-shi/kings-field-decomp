@@ -1,33 +1,17 @@
 #include <kf/address.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/game_state.h>
 
-/*
- * Per-frame entity dispatcher.  It sweeps the map-object, actor, floor-item,
- * actor-sprite, and map-event pools, culls each entry against the visible map
- * cell window selected through active_cell_window, and hands survivors to
- * their emitter.
- * A dedicated light matrix is installed before the floor-item, actor-sprite,
- * and map-event passes.
- *
- * WIP: the owner of the cell-window table and floor-item render descriptor is
- * unresolved.  The descriptor block precedes floor_items in one object, so
- * floor_items is reached as a byte view offset from the descriptor base (the
- * shared-symbol addend the original produced); the actor-sprite pool stays a
- * byte view.
- *
- * Structurally exact (frame, control flow, cull arithmetic, call set, and
- * referents all match), but the seven-register global allocation differs in
- * numbering and one setup subtract lands directly in its saved register rather
- * than via a temp -- an unattributed register-allocation/scheduling residue.
+/* Cull each pool against the active cell window before dispatching its emitter.
+ * Effect records remain a temporary view of the shared pool storage.
  */
 
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
 {
     const KfCellWindow *grid = active_cell_window;
-    int s6 = (u16)render_state.view_cell.z - grid->origin_z;
-    int s5 = (u16)render_state.view_cell.x - grid->origin_x;
+    int window_origin_z = (u16)render_state.view_cell.z - grid->origin_z;
+    int window_origin_x = (u16)render_state.view_cell.x - grid->origin_x;
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
@@ -40,10 +24,10 @@ void render_entities(void)
     object = map_object_state.objects;
     for (i = 189; i != -1; i--) {
         if (object->object_id < 133) {
-            u16 row = object->cell_z - s6;
+            u16 row = object->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
-                u16 col = object->cell_x - s5;
+                u16 col = object->cell_x - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_map_object(object);
                 }
@@ -60,13 +44,13 @@ void render_entities(void)
             continue;
         }
         if (actor->variant == 0) {
-            u16 row = actor->cell_z - s6;
+            u16 row = actor->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row >= g->height) {
                 continue;
             }
             {
-                u16 col = actor->cell_x - s5;
+                u16 col = actor->cell_x - window_origin_x;
                 if (col >= g->width) {
                     continue;
                 }
@@ -88,18 +72,18 @@ void render_entities(void)
 
     /* Floor items. */
     SetLightMatrix(&render_light_matrices[1]);
-    DAT_8009505e = 0xb4;
-    DAT_8009505d = 0xb4;
-    DAT_8009505c = 0xb4;
-    DAT_8009505a = DAT_8009508e;
-    DAT_80095058 = DAT_8009508c;
+    active_render_blue = 0xb4;
+    active_render_green = 0xb4;
+    active_render_red = 0xb4;
+    active_render_tpage = DAT_8009508e;
+    active_render_clut = DAT_8009508c;
     {
-        KfFloorItem *items = (KfFloorItem *)((char *)&DAT_8009505a + 62);
+        KfFloorItem *items = floor_items;
         for (i = floor_item_count - 1; i != -1; i--) {
-            u16 row = (items->position_z / 2000) - s6;
+            u16 row = (items->position_z / 2000) - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
-                u16 col = (items->position_x / 2000) - s5;
+                u16 col = (items->position_x / 2000) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_floor_item(items);
                 }
@@ -111,21 +95,20 @@ void render_entities(void)
     /* Actor sprites. */
     SetLightMatrix(&render_light_matrices[2]);
     sprite = (KfEffectRenderView *)effect_pool_records;
-    for (i = 47; i != -1; i--) {
+    for (i = 47; i != -1; i--, sprite++) {
         if (sprite->unknown_00[0] == 0xff || sprite->sprite_id == 0xff) {
-            break;
+            continue;
         }
         {
-            u16 row = (*(s32 *)&sprite->position_z / 2000) - s6;
+            u16 row = (*(s32 *)&sprite->position_z / 2000) - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
-                u16 col = (*(s32 *)&sprite->position_x / 2000) - s5;
+                u16 col = (*(s32 *)&sprite->position_x / 2000) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_actor_sprite(sprite);
                 }
             }
         }
-        sprite++;
     }
 
     /* Map events. */
@@ -133,10 +116,10 @@ void render_entities(void)
     event = map_event_pool;
     for (i = 7; i != -1; i--) {
         if (event->state == 1) {
-            u16 row = event->cell_z - s6;
+            u16 row = event->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
-                u16 col = event->cell_x - s5;
+                u16 col = event->cell_x - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_map_event(event);
                 }

@@ -25,3 +25,5 @@ promotes a probe to a proven historical toolchain.
 - [notification-state.md](notification-state.md): retail payload/control
   base relationships, the variadic enqueue signature, and the distinction
   between the recovered notification fields and the wider graphics object.
+- [render-material.md](render-material.md): supported texture/colour identities,
+  unresolved aggregate boundaries, and the retail effect-pool skip behavior.

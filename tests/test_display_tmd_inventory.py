@@ -176,6 +176,34 @@ class DisplayTmdInventoryTests(unittest.TestCase):
             self.assertEqual(row["target_name"], expected[owner_va])
             self.assertEqual(row["status"], "reviewed")
 
+    def test_active_material_names_preserve_sdk_widths_and_referents(self) -> None:
+        expected = {
+            0x80095058: ("active_render_clut", 2, "u16"),
+            0x8009505A: ("active_render_tpage", 2, "u16"),
+            0x8009505C: ("active_render_red", 1, "u8"),
+            0x8009505D: ("active_render_green", 1, "u8"),
+            0x8009505E: ("active_render_blue", 1, "u8"),
+            0x8009505F: ("active_render_code", 1, "u8"),
+        }
+        identities = load_data_identities(RETAIL_CONFIG)
+        for va, shape in expected.items():
+            datum = identities[("GAME.EXE", va)]
+            self.assertEqual((datum.name, datum.size, datum.datatype), shape)
+            self.assertEqual(datum.storage, "bss")
+            self.assertEqual(datum.confidence, "supported")
+            self.assertIn("game_semantic_render_material.tsv", datum.evidence)
+
+        _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        references = [
+            row for row in rows
+            if row["image"] == "GAME.EXE"
+            and 0x80095058 <= parse_int(row["target_va"]) < 0x80095060
+        ]
+        self.assertEqual(len(references), 27)
+        for row in references:
+            self.assertEqual(row["target_name"], expected[parse_int(row["target_va"])][0])
+            self.assertEqual(row["status"], "reviewed")
+
     def test_decoded_relocations_and_direct_calls_are_reviewed(self) -> None:
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         display_rows = [

@@ -1,39 +1,12 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/game_math.h>
+#include <kf/game_asset.h>
 
-/*
- * Pooled 3D-model entity emitters invoked by the frame renderer's pool sweep
- * (render_entities).  Each carries one live pool record into view space through
- * RotTrans, composes a per-axis rotation onto the current view matrix, installs
- * the derived light matrix, projects the selected TMD object's vertices, and
- * hands the primitive run to the shared polygon enqueuer (render_enqueue_tmd).
- *
- * The actor descriptor byte lives in the actor definition record
- * (definitions[id].unknown_00[1]); its low nibble
- * selects the asset slot and its high nibble selects a floor-billboard texture
- * page/CLUT pair.
- *
- * Codegen residues (both structurally exact -- calls, referents, widths, and
- * control flow all match).  render_actor: retail zero-extends the descriptor
- * byte with a redundant `andi 0xff` before the `>> 4` nibble shift (and again
- * before the depth-table index), and keeps `high - 1` in its own register;
- * gcc-2.5.7 provably drops the mask from the lbu-loaded byte and folds the -1
- * into the table addend, which also swaps the descriptor/object callee-saved
- * registers and trims the frame.  render_map_object: retail lowers the four-way
- * behavior dispatch as a sequential comparison tree with the 180 arm falling
- * through and the object-id mask duplicated across the exit blocks; gcc-2.5.7
- * if-converts the `< 4 ? 180 : 0` tail to `negu`/`andi 0xb4` and cross-jumps
- * the mask into one block.  Both are the "gcc-2.5.7 optimizes more than retail"
- * wall documented in docs/patterns/source-shapes-gcc257.md; the sources are the
- * honest shapes and must not be distorted to re-introduce the retail idioms.
- */
-
-/*
- * Floor-billboard texture-page/CLUT pairs are indexed by the actor descriptor's
- * high nibble and copied into the active render material just before
- * render_enqueue_model enqueues the billboard.
+/* Transform pooled models into view space and install their derived lighting.
+ * The actor descriptor's low nibble selects the asset; its high nibble selects
+ * a cached texture page and CLUT when nonzero.
  */
 
 ADDRESS(0x8001e9a4, 0x214)
@@ -80,8 +53,8 @@ void render_actor(KfActor *actor)
     if (high == 0) {
         render_enqueue_tmd(0, 0);
     } else {
-        DAT_8009505a = effect5_texture_pages[high - 1];
-        DAT_80095058 = effect5_texture_cluts[high - 1];
+        active_render_tpage = effect5_texture_pages[high - 1];
+        active_render_clut = effect5_texture_cluts[high - 1];
         render_enqueue_model(0, 0);
     }
 }

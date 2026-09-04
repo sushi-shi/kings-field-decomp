@@ -101,6 +101,13 @@ extern MATRIX light_quadrant_matrices[4];
 extern MATRIX render_light_matrices[6];
 extern KfRenderState render_state;
 extern KfTmdState tmd_state;
+extern u16 active_render_clut;
+extern u16 active_render_tpage;
+/* Contiguous RGB/command bytes; the enclosing graphics object is unresolved. */
+extern u8 active_render_red;
+extern u8 active_render_green;
+extern u8 active_render_blue;
+extern u8 active_render_code;
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);
