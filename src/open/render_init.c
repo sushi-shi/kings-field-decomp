@@ -3,6 +3,7 @@
 #include <kf/item.h>
 #include <kf/memory.h>
 #include <kf/open_render.h>
+#include <kf/open_resources.h>
 
 DATA(0x80035944, 0xa0)
 MATRIX color_matrix_table[5] = {

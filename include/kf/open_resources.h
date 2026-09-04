@@ -27,6 +27,7 @@ typedef struct KfOpeningEntityState {
 } KfOpeningEntityState;
 
 extern KfOpeningEntityState opening_entity_state;
+extern u16 floor_item_count;
 
 extern void opening_entity_pool_reset(void);
 extern KfOpeningEntity *opening_entity_find_by_object_id(
