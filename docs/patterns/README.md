@@ -45,6 +45,8 @@ promotes a probe to a proven historical toolchain.
   packed GPU accesses, and the unresolved graphics-wide shared-base relation.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
+- [animation-cache.md](animation-cache.md): animation-pool metadata, typed
+  cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
   parser write guards, load-delay audit, and reduced Unicorn memory-hook
   control-flow defects.

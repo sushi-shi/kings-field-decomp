@@ -12,6 +12,7 @@ from scripts.kf.inventory import (
     load_structure_identities,
     validate,
 )
+from scripts.kf.manifest import load as load_manifest
 from scripts.kf.paths import CONFIG, REPO, RETAIL_CONFIG
 from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
@@ -56,7 +57,45 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 76)
         self.assertEqual(counts["structure_fields"], 663)
-        self.assertEqual(counts["structure_fields_named"], 540)
+        self.assertEqual(counts["structure_fields_named"], 543)
+
+    def test_animation_pool_record_fields_and_complete_owner(self) -> None:
+        fields = (
+            (0x00, "state", "s16", 2),
+            (0x02, "asset_index", "u16", 2),
+            (0x04, "clip_index", "u16", 2),
+            (0x06, "keyframe_index", "u16", 2),
+            (0x08, "rest_morph", "KfMorphObject *", 4),
+            (0x0C, "cached_vertices", "SVECTOR *", 4),
+            (0x10, "owner_slot", "KfPoolRecord **", 4),
+        )
+        for offset, name, datatype, size in fields:
+            self.assertEqual(_structure_field("KfPoolRecord", offset),
+                             (name, datatype, size))
+        game = index("GAME.EXE")
+        datum = game.datum(0x800910C0)
+        self.assertEqual((datum.name, datum.datatype, datum.size),
+                         ("pool_records", "KfPoolRecord[12]", 0xF0))
+        claims = load_manifest().by_name()["game.pool"].data
+        self.assertEqual([(claim.va, claim.size, claim.symbol, claim.storage)
+                          for claim in claims],
+                         [(0x800910C0, 0xF0, "pool_records", "bss")])
+        self.assertEqual(game.data_owner(0x800911AF), datum)
+        self.assertNotEqual(game.data_owner(0x800911B0), datum)
+
+    def test_animation_binder_and_cache_lifecycle_share_contiguous_ownership(self) -> None:
+        manifest = load_manifest()
+        unit = manifest.by_name()["game.pool"]
+        self.assertNotIn("game.render_bind_animated_instance", manifest.by_name())
+        self.assertEqual(unit.source_path, REPO / "src/game/pool.c")
+        self.assertEqual([function.va for function in unit.functions], [
+            0x800205D4, 0x80020978, 0x800209A8, 0x800209E4,
+            0x80020A2C, 0x80020A98, 0x80020B04,
+        ])
+        for first, second in zip(unit.functions, unit.functions[1:]):
+            self.assertEqual(first.va + first.body_size, second.va)
+        self.assertEqual(unit.functions[-1].va + unit.functions[-1].body_size,
+                         0x80020B4C)
 
     def test_game_tmd_buffer_prefixes_have_one_array_identity_each(self) -> None:
         game = index("GAME.EXE")

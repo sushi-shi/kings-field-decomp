@@ -6,6 +6,8 @@ import unittest
 
 from scripts.kf.animation_oracle import (
     CANDIDATE_OBJECT,
+    CANDIDATE_UNIT,
+    FUNCTION,
     INITIAL_KF_INDEX,
     AnimationCase,
     apply_gte_mime,
@@ -15,8 +17,9 @@ from scripts.kf.animation_oracle import (
     parse_asset,
     synthetic_cases,
 )
+from scripts.kf.manifest import load as load_manifest
 from scripts.kf.parser_machine import GameSymbols
-from scripts.kf.paths import LOCAL_CONFIG
+from scripts.kf.paths import BUILD, LOCAL_CONFIG
 from scripts.kf.rust_codec import DEFAULT_DRIVER, RustCodec
 from scripts.kf.sema.image import RetailImage
 
@@ -47,6 +50,15 @@ def synthetic_asset() -> bytes:
 
 
 class AnimationOracleTests(unittest.TestCase):
+    def test_candidate_object_follows_the_binder_unit_owner(self) -> None:
+        manifest = load_manifest()
+        unit = manifest.by_identity()[("GAME.EXE", 0x800205D4)]
+
+        self.assertEqual(unit.unit, CANDIDATE_UNIT)
+        self.assertEqual(unit.function.symbol, FUNCTION)
+        self.assertEqual(CANDIDATE_OBJECT,
+                         BUILD / "objdiff" / unit.image_key / "base" / unit.object_name)
+
     def test_bounded_asset_scan_recovers_clip_keyframe_and_morph_tables(self) -> None:
         asset = parse_asset(synthetic_asset(), "fixture")
 
