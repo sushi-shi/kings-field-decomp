@@ -5,7 +5,8 @@
 /*
  * Per-frame entity dispatcher.  It sweeps the map-object, actor, floor-item,
  * actor-sprite, and map-event pools, culls each entry against the visible map
- * cell window pointed to by DAT_80095860, and hands survivors to their emitter.
+ * cell window selected through active_cell_window, and hands survivors to
+ * their emitter.
  * A dedicated light matrix is installed before the floor-item, actor-sprite,
  * and map-event passes.
  *
@@ -24,7 +25,7 @@
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
 {
-    KfCellWindow *grid = DAT_80095860;
+    const KfCellWindow *grid = active_cell_window;
     int s6 = (u16)render_state.view_cell.z - grid->origin_z;
     int s5 = (u16)render_state.view_cell.x - grid->origin_x;
     KfMapObject *object;
@@ -40,7 +41,7 @@ void render_entities(void)
     for (i = 189; i != -1; i--) {
         if (object->object_id < 133) {
             u16 row = object->cell_z - s6;
-            KfCellWindow *g = DAT_80095860;
+            const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = object->cell_x - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
@@ -60,7 +61,7 @@ void render_entities(void)
         }
         if (actor->variant == 0) {
             u16 row = actor->cell_z - s6;
-            KfCellWindow *g = DAT_80095860;
+            const KfCellWindow *g = active_cell_window;
             if (row >= g->height) {
                 continue;
             }
@@ -96,7 +97,7 @@ void render_entities(void)
         KfFloorItem *items = (KfFloorItem *)((char *)&DAT_8009505a + 62);
         for (i = floor_item_count - 1; i != -1; i--) {
             u16 row = (items->position_z / 2000) - s6;
-            KfCellWindow *g = DAT_80095860;
+            const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = (items->position_x / 2000) - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
@@ -116,7 +117,7 @@ void render_entities(void)
         }
         {
             u16 row = (*(s32 *)&sprite->position_z / 2000) - s6;
-            KfCellWindow *g = DAT_80095860;
+            const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = (*(s32 *)&sprite->position_x / 2000) - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
@@ -133,7 +134,7 @@ void render_entities(void)
     for (i = 7; i != -1; i--) {
         if (event->state == 1) {
             u16 row = event->cell_z - s6;
-            KfCellWindow *g = DAT_80095860;
+            const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = event->cell_x - s5;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {

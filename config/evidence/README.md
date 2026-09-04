@@ -69,6 +69,10 @@ from `COM\\STAT.DAT`: 80 item-name rows, 9 magic-name rows, and the two 80-by-2
 buy/sell price tables. It also records every affected consumer and proves that
 the former interior address identities are aggregate row addends.
 
+`game_semantic_render_cell_windows.tsv` records the 16 runtime-loaded
+`KfCellWindow` records, the per-frame active-window pointer, and the loader,
+selector, and entity-culling functions that prove their extents and fields.
+
 `game_semantic_display_tmd.tsv` records eleven related GAME/OPEN function
 pairs for frame submission, view transforms, TMD registration/access, and
 primitive-index preparation. It supports complete `KfPrimitiveBuffer` and

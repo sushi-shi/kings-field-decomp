@@ -25,6 +25,8 @@ typedef struct KfSpriteQuad {
 } KfSpriteQuad;
 
 extern KfScreenVertex DAT_800911b0[];
+extern KfCellWindow render_cell_windows[16];
+extern const KfCellWindow *active_cell_window;
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);

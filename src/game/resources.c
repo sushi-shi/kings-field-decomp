@@ -4,8 +4,6 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-extern u8 DAT_80065be8[3264];
-
 DATA(0x80057b48, 0x8)
 char map_mix_tim_filename[8] = "MIX.TIM";
 
@@ -51,7 +49,7 @@ void common_resources_load(void)
     cd_file_load_allocated((void **)&stream, "COM\\COM.DAT");
     asset_registry_set(0x15, stream + 4);
     block = STREAM_NEXT(stream);
-    memcpy(DAT_80065be8, block + 4, sizeof DAT_80065be8);
+    memcpy(render_cell_windows, block + 4, sizeof render_cell_windows);
     player_weapon_load_records_and_mirror_angles(
         (const KfWeaponRecord *)(STREAM_NEXT(stream) + 4));
     asset_aux_block_load((u32 *)(STREAM_NEXT(stream) + 4));
