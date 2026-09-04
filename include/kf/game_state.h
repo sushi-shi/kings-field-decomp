@@ -30,8 +30,6 @@ extern char DAT_80056238[16];
 extern u8 DAT_80056247[];
 extern MATRIX DAT_80056248;
 extern u32 DAT_80057b30;
-extern u8 DAT_80057b63;
-extern SVECTOR DAT_80057b64;
 extern u16 DAT_80057b72;
 extern void *DAT_80057d08;
 extern u32 DAT_80057d24;

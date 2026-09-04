@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 485)
         self.assertEqual(counts["typed_returns"], 485)
         self.assertEqual(counts["parameterized"], 313)
-        self.assertEqual(counts["data"], 3165)
+        self.assertEqual(counts["data"], 3166)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 71)
@@ -1079,7 +1079,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/game_semantic_projection_scratch.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 7)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -1096,6 +1096,64 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             _structure_field("KfScreenVertex", 0x06), ("p2", "s16", 2)
+        )
+
+        enqueuers = rows[3:]
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in enqueuers
+        ]
+        self.assertEqual(
+            spans,
+            [
+                (0x8001C7F8, 0xF38),
+                (0x8001D730, 0x6E8),
+                (0x8001DE18, 0x418),
+                (0x8001E230, 0x250),
+            ],
+        )
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        data = load_data_identities(RETAIL_CONFIG)
+        self.assertEqual(
+            [
+                (data[("GAME.EXE", va)].name, data[("GAME.EXE", va)].datatype)
+                for va in (0x80057B58, 0x80057B5C, 0x80057B60, 0x80057B64)
+            ],
+            [
+                ("tmd_textured_primitive_color", "CVECTOR"),
+                ("model_textured_primitive_color", "CVECTOR"),
+                ("map_textured_primitive_color", "CVECTOR"),
+                ("render_sprite_light_normal", "SVECTOR"),
+            ],
+        )
+
+        source = (REPO / "src/game/render_enqueuers.c").read_text()
+        self.assertEqual(source.count("\nADDRESS("), 4)
+        self.assertEqual(source.count("\nDATA("), 4)
+        self.assertNotIn("DAT_80057b63", source)
+        self.assertNotIn("DAT_80057b64", source)
+        for obsolete in (
+            "src/game/render_enqueue.c",
+            "src/game/render_enqueue_tmd.c",
+            "src/game/render_enqueue_model.c",
+        ):
+            self.assertFalse((REPO / obsolete).exists())
+
+        _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        by_site = {
+            parse_int(row["site_va"]): row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+        }
+        self.assertEqual(
+            by_site[0x8001DE98]["target_name"],
+            "map_textured_primitive_color",
+        )
+        self.assertEqual(
+            by_site[0x8001E41C]["target_name"],
+            "render_sprite_light_normal",
         )
 
     def test_map_resources_campaign_matches_curated_identities(self) -> None:

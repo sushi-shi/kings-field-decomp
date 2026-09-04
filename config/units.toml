@@ -197,21 +197,9 @@ source = "src/game/tmd_project.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.render_enqueue_tmd"
-image = "GAME.EXE"
-source = "src/game/render_enqueue_tmd.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.render_enqueue_model"
-image = "GAME.EXE"
-source = "src/game/render_enqueue_model.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.render_enqueue"
 image = "GAME.EXE"
-source = "src/game/render_enqueue.c"
+source = "src/game/render_enqueuers.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

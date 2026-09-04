@@ -294,11 +294,13 @@ Residues left in the same module (not steered):
 
 ## render enqueue
 
-Witnesses come from `src/game/render_enqueue.c` (`game.render_enqueue`,
-`0x8001de18..0x8001e480`): the projected textured-sprite enqueuer
-`func_8001e230` and the lit map-geometry emitter `func_8001de18`. Both are
-structurally exact (call set, referents, widths, control flow) yet blocked
-below exact by two distinct walls.
+Witnesses come from `src/game/render_enqueuers.c` (`game.render_enqueue`,
+`0x8001c7f8..0x8001e480`). The four consumers are one evidenced TU: their text
+order (TMD, model, map, sprite) is mirrored exactly by the gapless load-data
+run at `0x80057b58..0x80057b6c` (three neutral `CVECTOR`s followed by the
+sprite `SVECTOR` light normal). The projected textured-sprite enqueuer
+`func_8001e230` and lit map-geometry emitter `func_8001de18` are structurally
+complete but remain below exact for two distinct walls.
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
@@ -392,13 +394,21 @@ Verdict: the aggregate is the correct structural model and is byte-clean where
 tested (`func_8001e230` stayed `88.2%` under the migration, confirming
 single-object member migrations do not shift bytes), but it closes neither
 enqueuer nor the initializer to exact -- both residues are the unattributed
-gcc-2.5.7 register-allocation/scheduling wall class (compare the
-`tmd_project_vertices` two-store-giv residue and the `func_8001e230`
-post-reload-scheduler residue). Landing the model is high-ripple (it renames
+  gcc-2.5.7 register-allocation/scheduling wall class (compare the
+  `tmd_project_vertices` two-store-giv residue and the `func_8001e230`
+  post-reload-scheduler residue). Landing the model is high-ripple (it renames
 `display_state`/`tmd_state`/`render_state`/`display_draw_environments` and the
 buffers across ~28 units and retargets ~230 relocation sites) and banks no new
-function, so it is deferred until the compiler/regalloc attribution is settled;
-until then the individual identities stay.
+  function, so it is deferred until the compiler/regalloc attribution is settled;
+  until then the individual identities stay.
+
+The later TU/data-ownership pass recovered `map_textured_primitive_color` at
+`0x80057b60` and its interior `cd` referent at `+3`, plus
+`render_sprite_light_normal` at `0x80057b64`. This keeps all other consumer
+scores unchanged, makes the combined four-object data contribution exact, and
+raises `render_enqueue_map` from `12.854961%` to `18.305344%`. Its first
+remaining divergence is still the aggregate base formation described above;
+the later frame/register-allocation residue remains unattributed.
 
 ## memory
 
@@ -998,11 +1008,11 @@ Residue recorded (not steered):
   arithmetic, referents, call set and per-kind semantics all match; the residue
   is codegen shape, not source facts, and is not steered.
 
-`func_80037850` (the 0x76c effect step/collision routine at the tail of the
-band) is deferred: it is a divide-by-2000 cell walker with its own 6-case jump
-table (`0x80012ce0`) and unresolved `map_cell_attribute_height_table` lookups,
-the same collision-math + cross-jump residue class, and is left NOT-started
-pending cell-attribute data ownership rather than reconstructed speculatively.
+`effect_map_collision` (the 0x76c routine at `0x80037850`) was subsequently
+reconstructed after the cell-attribute owners were reviewed. It is a
+divide-by-2000 cell walker with its own six-case jump table (`0x80012ce0`) and
+currently scores `71.711580%`; the remaining collision-math/cross-jump residue
+is documented rather than treated as an unstarted function.
 
 ## pad
 
