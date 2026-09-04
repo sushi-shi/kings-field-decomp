@@ -8,6 +8,9 @@ u32 pad_init_bad_identifier();
 void pad_read_bad_identifier(void);
 void pad_stop_bad_identifier(void);
 
+DATA(0x8006bd88, 0x4)
+static s32 pad_identifier;
+
 RODATA(0x80013e8c, 0x60)
 
 /*
@@ -42,7 +45,7 @@ u32 pad_initialize(s32 identifier)
 {
     u32 result;
 
-    DAT_8006bd88 = identifier;
+    pad_identifier = identifier;
     DAT_80058028 = 0;
     DAT_80058020 = -1;
     if (identifier == 0) {
@@ -57,7 +60,7 @@ u32 pad_initialize(s32 identifier)
 ADDRESS(0x8005012c, 0x44)
 u32 pad_read(void)
 {
-    if (DAT_8006bd88 == 0) {
+    if (pad_identifier == 0) {
         PAD_dr();
     } else {
         pad_read_bad_identifier();
@@ -68,7 +71,7 @@ u32 pad_read(void)
 ADDRESS(0x80050170, 0x3c)
 void pad_stop(void)
 {
-    if (DAT_8006bd88 == 0) {
+    if (pad_identifier == 0) {
         StopPAD2();
     } else {
         pad_stop_bad_identifier();
@@ -78,17 +81,17 @@ void pad_stop(void)
 ADDRESS(0x800501ac, 0x30)
 u32 pad_init_bad_identifier()
 {
-    printf("PAD_init: Bad PadIdentifier %d\n", DAT_8006bd88);
+    printf("PAD_init: Bad PadIdentifier %d\n", pad_identifier);
 }
 
 ADDRESS(0x800501dc, 0x30)
 void pad_read_bad_identifier(void)
 {
-    printf("PAD_dr  : Bad PadIdentifier %d\n", DAT_8006bd88);
+    printf("PAD_dr  : Bad PadIdentifier %d\n", pad_identifier);
 }
 
 ADDRESS(0x8005020c, 0x30)
 void pad_stop_bad_identifier(void)
 {
-    printf("StopPAD : Bad PadIdentifier %d\n", DAT_8006bd88);
+    printf("StopPAD : Bad PadIdentifier %d\n", pad_identifier);
 }

@@ -907,6 +907,70 @@ class InventoryTests(unittest.TestCase):
             {"reviewed"},
         )
 
+    def test_pad_tu_owns_its_private_identifier_and_literals(self) -> None:
+        evidence_path = CONFIG / "evidence/game_tu_pad.tsv"
+        _, rows = read_tsv(evidence_path)
+        self.assertEqual(len(rows), 7)
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in rows
+        ]
+        self.assertEqual(spans[0][0], 0x8005005C)
+        self.assertEqual(spans[-1][0] + spans[-1][1], 0x8005023C)
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            self.assertEqual(identity.name_confidence, "supported")
+            self.assertEqual(identity.signature_confidence, "supported")
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        pad_identifier = load_data_identities(RETAIL_CONFIG)[
+            ("GAME.EXE", 0x8006BD88)
+        ]
+        self.assertEqual(
+            (
+                pad_identifier.name,
+                pad_identifier.scope,
+                pad_identifier.storage,
+                pad_identifier.datatype,
+                pad_identifier.owner,
+                pad_identifier.confidence,
+            ),
+            ("pad_identifier", "static", "bss", "s32", "pad", "supported"),
+        )
+
+        _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        identifier_references = [
+            row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+            and row["target_va"] == "0x8006bd88"
+        ]
+        self.assertEqual(len(identifier_references), 6)
+        self.assertEqual(
+            {row["target_name"] for row in identifier_references},
+            {"pad_identifier"},
+        )
+        self.assertEqual(
+            {row["status"] for row in identifier_references},
+            {"reviewed"},
+        )
+
+        source = (REPO / "src/game/pad.c").read_text()
+        game_state = (REPO / "include/kf/game_state.h").read_text()
+        self.assertIn("DATA(0x8006bd88, 0x4)\nstatic s32 pad_identifier;", source)
+        self.assertNotIn("DAT_8006bd88", source)
+        self.assertNotIn("DAT_8006bd88", game_state)
+        for literal in (
+            "PAD_init: Bad PadIdentifier %d\\n",
+            "PAD_dr  : Bad PadIdentifier %d\\n",
+            "StopPAD : Bad PadIdentifier %d\\n",
+        ):
+            self.assertIn(literal, source)
+
     def test_menu_presentation_tu_and_interfaces_are_curated(self) -> None:
         evidence_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
         _, rows = read_tsv(evidence_path)

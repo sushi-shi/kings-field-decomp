@@ -172,7 +172,7 @@ retail by the same amount (91%); 2.4.1 is not closer.
 clean case. Retail `pad_stop_bad_identifier`:
 
 ```
-lui  a1,%hi(DAT_8006bd88)
+lui  a1,%hi(pad_identifier)
 lw   a1,0(a1)          # independent global load first
 addiu sp,sp,-24        # then the frame
 sw   ra,16(sp)
