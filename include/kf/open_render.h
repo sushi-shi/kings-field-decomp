@@ -19,7 +19,6 @@ extern MATRIX color_matrix_table[5];
 extern u32 DAT_800439d8;
 extern u16 DAT_8006da36;
 extern u16 DAT_8006da38;
-extern u16 DAT_8006da3a;
 extern u32 DAT_8006e040;
 extern u32 DAT_8006e044;
 extern s16 tmd_projection_shift;

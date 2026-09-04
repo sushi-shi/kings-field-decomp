@@ -3029,43 +3029,7 @@ OPEN.EXE	0x80049508	0x4	DAT_80049508	unknown	bss	u32		address-only	ghidra-12.0.4
 OPEN.EXE	0x80049510	0x4	DAT_80049510	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049528	0x4	DAT_80049528	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049530	0x4	DAT_80049530	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049538	0x1	DAT_80049538	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004953a	0x2	DAT_8004953a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004953c	0x2	DAT_8004953c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049540	0x4	DAT_80049540	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049544	0x4	DAT_80049544	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049548	0x4	DAT_80049548	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049550	0x2	DAT_80049550	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049552	0x2	DAT_80049552	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049554	0x2	DAT_80049554	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049558	0x2	DAT_80049558	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004955a	0x2	DAT_8004955a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004955c	0x2	DAT_8004955c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049560	0x1	DAT_80049560	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049562	0x2	DAT_80049562	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049564	0x2	DAT_80049564	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800498f8	0x1	DAT_800498f8	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049900	0x4	DAT_80049900	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049904	0x4	DAT_80049904	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049908	0x4	DAT_80049908	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004990c	0x4	DAT_8004990c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049910	0x2	DAT_80049910	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049912	0x2	DAT_80049912	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049914	0x2	DAT_80049914	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049918	0x2	DAT_80049918	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004991a	0x2	DAT_8004991a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004991c	0x2	DAT_8004991c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049920	0x1	DAT_80049920	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049928	0x4	DAT_80049928	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004992c	0x4	DAT_8004992c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049930	0x4	DAT_80049930	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049934	0x4	DAT_80049934	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049938	0x2	DAT_80049938	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004993a	0x2	DAT_8004993a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8004993c	0x2	DAT_8004993c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049940	0x2	DAT_80049940	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049942	0x2	DAT_80049942	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049944	0x2	DAT_80049944	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80049538	0x500	opening_entities	unknown	bss	KfOpeningEntity[32]	opening_entity_pool	supported	open_semantic_resources.tsv;asm;32-record-loop;40-byte-stride	OPEN opening entity pool; placement loader initializes 32 contiguous 40-byte runtime records and controller reset clears the encompassing pool
 OPEN.EXE	0x80049a42	0x2	DAT_80049a42	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049a44	0x2	DAT_80049a44	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049a46	0x2	DAT_80049a46	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3084,19 +3048,8 @@ OPEN.EXE	0x8006da2e	0x1	DAT_8006da2e	unknown	bss	u8		address-only	ghidra-12.0.4-
 OPEN.EXE	0x8006da2f	0x1	DAT_8006da2f	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da36	0x2	DAT_8006da36	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da38	0x2	DAT_8006da38	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da3a	0x2	DAT_8006da3a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da40	0x2	DAT_8006da40	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da42	0x1	DAT_8006da42	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da43	0x1	DAT_8006da43	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da44	0x4	DAT_8006da44	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da48	0x4	DAT_8006da48	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da4c	0x4	DAT_8006da4c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da54	0x1	DAT_8006da54	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da58	0x2	DAT_8006da58	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da5a	0x1	DAT_8006da5a	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da5b	0x1	DAT_8006da5b	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da5c	0x4	DAT_8006da5c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da64	0x4	DAT_8006da64	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x8006da3a	0x2	floor_item_count	global	bss	u16	item	supported	open_semantic_resources.tsv;asm;item_load_floor_placements	floor-item count reset and incremented while scanning the sentinel-terminated placement list
+OPEN.EXE	0x8006da40	0x600	floor_items	global	bss	KfFloorItem[64]	item	supported	open_semantic_resources.tsv;asm;24-byte-stride;64-record-capacity	OPEN floor-item runtime pool; placement loader writes contiguous 24-byte records and the next known object begins at the exact 64-record extent
 OPEN.EXE	0x8006e040	0x4	DAT_8006e040	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e044	0x4	DAT_8006e044	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e048	0x100	render_state	unknown	bss	KfRenderStateOpen	render	supported	asm;base-register;render_set_view_transform;render_initialize	OPEN.EXE render state: render_set_view_transform reaches the view and pitch matrices 116 and 84 bytes below the rotation and render_initialize reaches the quadrant matrices 64 bytes past the light matrix through one base register; no light-matrix copy members

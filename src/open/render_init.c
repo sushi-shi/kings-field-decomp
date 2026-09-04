@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/cd_file.h>
+#include <kf/item.h>
 #include <kf/memory.h>
 #include <kf/open_render.h>
 
@@ -45,7 +46,7 @@ void render_initialize(void)
     display_state.primitive_buffers[1].start = buffer;
     buffer += 0x26160;
     display_state.primitive_buffers[1].end = buffer;
-    DAT_8006da3a = 0;
+    floor_item_count = 0;
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;

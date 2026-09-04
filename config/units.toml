@@ -621,6 +621,18 @@ source = "src/open/render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.item"
+image = "OPEN.EXE"
+source = "src/open/item.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.opening_entity_pool"
+image = "OPEN.EXE"
+source = "src/open/opening_entity_pool.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.audio"
 image = "OPEN.EXE"
 source = "src/open/audio.c"

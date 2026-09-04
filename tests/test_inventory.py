@@ -51,12 +51,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 499)
         self.assertEqual(counts["typed_returns"], 499)
         self.assertEqual(counts["parameterized"], 317)
-        self.assertEqual(counts["data"], 3151)
+        self.assertEqual(counts["data"], 3104)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 71)
-        self.assertEqual(counts["structure_fields"], 635)
-        self.assertEqual(counts["structure_fields_named"], 521)
+        self.assertEqual(counts["structures"], 72)
+        self.assertEqual(counts["structure_fields"], 647)
+        self.assertEqual(counts["structure_fields_named"], 529)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -776,7 +776,7 @@ class InventoryTests(unittest.TestCase):
             for row in relocation_rows
             if "manual:open_semantic_resources" in row["provenance"].split(";")
         ]
-        self.assertEqual(len(campaign_rows), 91)
+        self.assertEqual(len(campaign_rows), 102)
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         calls = [row for row in campaign_rows if row["opcode"] == "jal"]
         self.assertNotIn("", {row["target_name"] for row in calls})

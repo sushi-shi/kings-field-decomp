@@ -5,6 +5,9 @@
 
 #include <kf/semantic_types.h>
 
+extern u16 floor_item_count;
+extern KfFloorItem floor_items[64];
+
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 
 #endif

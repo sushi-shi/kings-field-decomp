@@ -336,6 +336,18 @@ KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	semantic_types.
 KfNotificationSprite	0x00	0x01	active	u8	supported	semantic_types.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
+KfOpeningEntity	0x00	0x01	object_id	u8	supported	semantic_types.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
+KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x02	0x02	cell_x	u16	supported	semantic_types.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record
+KfOpeningEntity	0x04	0x02	cell_z	u16	supported	semantic_types.h;open_semantic_resources.tsv;asm	map cell z copied from the placement record
+KfOpeningEntity	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x08	0x04	position_x	s32	supported	semantic_types.h;open_semantic_resources.tsv;asm	world x = tile_x*2000 + local_x
+KfOpeningEntity	0x0c	0x04	position_y	s32	supported	semantic_types.h;open_semantic_resources.tsv;asm	world y from caller base or local_y minus floor height
+KfOpeningEntity	0x10	0x04	position_z	s32	supported	semantic_types.h;open_semantic_resources.tsv;asm	world z = tile_z*2000 + local_z
+KfOpeningEntity	0x14	0x04	unknown_14	u8[4]	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;open_semantic_resources.tsv;asm	zero x/z and 12-bit placement yaw
+KfOpeningEntity	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x20	0x08	scale	SVECTOR	supported	semantic_types.h;open_semantic_resources.tsv;asm	xyz initialized to 0x1000; trailing SVECTOR pad remains untouched
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle

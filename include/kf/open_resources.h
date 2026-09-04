@@ -5,6 +5,8 @@
 
 #include <kf/semantic_types.h>
 
+extern KfOpeningEntity opening_entities[32];
+
 extern void opening_resources_load_scene0(void);
 extern void opening_resources_load_scene1(void);
 extern void opening_resources_load_scene3(void);

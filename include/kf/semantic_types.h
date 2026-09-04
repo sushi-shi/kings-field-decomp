@@ -527,6 +527,23 @@ typedef struct KfMapObject {
     u16 action_timer;
 } KfMapObject;
 
+/* OPEN.EXE title-scene entity: the shared map-object transform prefix followed
+ * by a uniform model scale. */
+typedef struct KfOpeningEntity {
+    u8 object_id;
+    u8 unknown_01;
+    u16 cell_x;
+    u16 cell_z;
+    u8 unknown_06[2];
+    s32 position_x;
+    s32 position_y;
+    s32 position_z;
+    u8 unknown_14[4];
+    struct KfEulerAngles rotation;
+    u16 unknown_1e;
+    SVECTOR scale;
+} KfOpeningEntity;
+
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
  * stream, and the runtime floor-item entry (24 bytes) the loader expands it
