@@ -1790,12 +1790,12 @@ GAME.EXE	0x80093100	0x4	DAT_80093100	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x80093104	0x4	DAT_80093104	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095038	0x6	effect5_texture_pages	global	bss	u16[3]	display	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read	three texture-page IDs prepared for floor mode five and indexed by the actor descriptor high nibble
 GAME.EXE	0x80095048	0x6	effect5_texture_cluts	global	bss	u16[3]	display	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;paired-index	three CLUT IDs paired with effect5_texture_pages
-GAME.EXE	0x80095058	0x2	DAT_80095058	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009505a	0x2	DAT_8009505a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009505c	0x1	DAT_8009505c	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009505d	0x1	DAT_8009505d	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009505e	0x1	DAT_8009505e	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009505f	0x1	DAT_8009505f	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80095058	0x2	active_render_clut	unknown	bss	u16	render	supported	game_semantic_render_material.tsv;asm;LIBGPU.H	active palette selector copied into GPU primitive CLUT fields; enclosing graphics object and storage definition remain WIP
+GAME.EXE	0x8009505a	0x2	active_render_tpage	unknown	bss	u16	render	supported	game_semantic_render_material.tsv;asm;LIBGPU.H	active texture page copied into GPU primitives; enclosing graphics object and storage definition remain WIP
+GAME.EXE	0x8009505c	0x1	active_render_red	unknown	bss	u8	render	supported	game_semantic_render_material.tsv;asm;LIBGTE.H;LIBGPU.H	red byte of the contiguous SDK colour/command span; complete enclosing graphics object remains WIP
+GAME.EXE	0x8009505d	0x1	active_render_green	unknown	bss	u8	render	supported	game_semantic_render_material.tsv;asm;LIBGTE.H;LIBGPU.H	green byte of the contiguous SDK colour/command span; complete enclosing graphics object remains WIP
+GAME.EXE	0x8009505e	0x1	active_render_blue	unknown	bss	u8	render	supported	game_semantic_render_material.tsv;asm;LIBGTE.H;LIBGPU.H	blue byte of the contiguous SDK colour/command span; complete enclosing graphics object remains WIP
+GAME.EXE	0x8009505f	0x1	active_render_code	unknown	bss	u8	render	supported	game_semantic_render_material.tsv;asm;LIBGTE.H;LIBGPU.H	primitive command byte copied into the SDK colour vector before NormalColorDpq; enclosing graphics object remains WIP
 GAME.EXE	0x80095060	0x2	DAT_80095060	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095062	0x2	DAT_80095062	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095064	0x1	DAT_80095064	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -1803,12 +1803,8 @@ GAME.EXE	0x80095066	0x2	DAT_80095066	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80095068	0x2	DAT_80095068	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506a	0x2	DAT_8009506a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506c	0x2	DAT_8009506c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	u8[8]	notify	supported	asm;cfg;xrefs;notify_queue.c;render.c	eight-entry message ring; 0xff marks an empty slot
-GAME.EXE	0x80095086	0x1	notification_queue_tail	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update	message ring read/dequeue cursor, wrapped modulo eight
-GAME.EXE	0x80095087	0x1	notification_queue_head	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_enqueue	message ring write cursor, wrapped modulo eight
-GAME.EXE	0x80095088	0x1	notification_effect_phase	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update;map_interaction	on-screen notification state-machine phase
-GAME.EXE	0x80095089	0x1	notification_hold_frames	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update	15-frame notification display hold counter
-GAME.EXE	0x8009508a	0x2	notification_effect_angle_x	global	bss	u16	notify	supported	asm;cfg;xrefs;notify_effect_update;render_frame	X rotation applied to notification sprites, advanced by 128 to 512 during phase 3
+GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	u8[8]	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;render_initialize	eight-entry message ring; 0xff marks an empty slot; every consumer materializes its own array base
+GAME.EXE	0x80095076	0x16	notification_state	global	bss	KfNotificationState	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;head-minus-17;phase-minus-18	eight numeric payloads with byte cursors, phase, hold counter, and halfword sprite rotation; larger graphics-context ownership remains under investigation
 GAME.EXE	0x8009508c	0x2	DAT_8009508c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009508e	0x2	DAT_8009508e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095090	0x2	floor_item_count	unknown	bss	u16	item	supported	asm;xrefs;func_80020b4c;render_initialize	count of active floor-item placements expanded by the map item loader

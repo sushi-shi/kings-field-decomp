@@ -1,6 +1,8 @@
 #include <kf/address.h>
 #include <kf/game_cd.h>
 #include <kf/game_render.h>
+#include <kf/notify.h>
+#include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 #include <kf/tmd.h>
@@ -216,9 +218,9 @@ void render_initialize(void)
     DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
     DAT_8009506c = 0x1c;
-    notification_effect_phase = 0;
-    notification_queue_tail = 0;
-    notification_queue_head = 0;
+    notification_state.effect_phase = 0;
+    notification_state.queue_tail = 0;
+    notification_state.queue_head = 0;
     flag = notification_message_ids;
     count = 7;
     do {
@@ -313,14 +315,14 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     u32 word;
 
-    object_count = ((KfTmdHeader *)tmd_state.current_asset)->object_count;
+    object_count = (u16)((KfTmdHeader *)tmd_state.current_asset)->object_count;
     if (object_count == 0) {
         return;
     }
     object = TMD_OBJECTS(tmd_state.current_asset);
     objects_left = object_count - 1;
     do {
-        primitive_count = object->primitive_count;
+        primitive_count = (u16)object->primitive_count;
         packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + 12);
         if (primitive_count != 0) {
             primitives_left = primitive_count;
@@ -426,4 +428,73 @@ ADDRESS(0x8001c5ec, 0x20)
 void tmd_release_last_allocation(s32 slot)
 {
     memory_release_last();
+}
+
+/* Store the full GTE depth; RotTransPers returns depth divided by four. */
+ADDRESS(0x8001c60c, 0x9c)
+void tmd_project_vertices(s32 count)
+{
+    KfScreenVertex *projected;
+    SVECTOR *vertex;
+    long perspective;
+    long gte_flags;
+    long depth;
+    long unused_depth;
+    s32 remaining;
+
+    projected = DAT_800911b0;
+    vertex = current_tmd_vertices;
+    for (remaining = count - 1; remaining != -1; remaining--) {
+        RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
+        projected->p2 = (u16)perspective << 1;
+        ReadSZ2(&depth, &unused_depth);
+        projected->sz = (u16)depth;
+        projected++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x8001c6a8, 0xac)
+void tmd_project_vertices_shift(s32 count, u8 shift)
+{
+    KfScreenVertex *projected;
+    SVECTOR *vertex;
+    long perspective;
+    long gte_flags;
+    long depth;
+    long unused_depth;
+    s32 remaining;
+
+    projected = DAT_800911b0;
+    vertex = current_tmd_vertices;
+    for (remaining = count - 1; remaining != -1; remaining--) {
+        RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
+        projected->p2 = (u16)perspective << 1;
+        ReadSZ2(&depth, &unused_depth);
+        projected->sz = depth >> shift;
+        projected++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x8001c754, 0xa4)
+void tmd_transform_vertices(s32 count)
+{
+    KfScreenVertex *projected;
+    SVECTOR *vertex;
+    VECTOR transformed;
+    long gte_flags;
+    s32 remaining;
+
+    projected = DAT_800911b0;
+    vertex = current_tmd_vertices;
+    for (remaining = count - 1; remaining != -1; remaining--) {
+        RotTrans(vertex, &transformed, &gte_flags);
+        projected->sxy.vx = transformed.vx;
+        projected->sxy.vy = transformed.vy;
+        projected->p2 = transformed.vz;
+        projected->sz = transformed.vz;
+        projected++;
+        vertex++;
+    }
 }

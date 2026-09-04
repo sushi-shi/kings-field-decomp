@@ -34,3 +34,12 @@ promotes a probe to a proven historical toolchain.
 - [open-entity-traversal-residue.md](open-entity-traversal-residue.md): visible
   entity/item traversal, the wider floor-item state owner, and the remaining
   entry/material-base instruction differences.
+- [notification-state.md](notification-state.md): retail payload/control
+  base relationships, the variadic enqueue signature, and the distinction
+  between the recovered notification fields and the wider graphics object.
+- [render-material.md](render-material.md): supported texture/colour identities,
+  unresolved aggregate boundaries, and the retail effect-pool skip behavior.
+- [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
+  narrowing in preparation, and the shared GAME/OPEN TMD interface.
+- [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
+  the observed ReadSZ2 call contract, and unattributed register differences.

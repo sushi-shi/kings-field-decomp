@@ -256,43 +256,34 @@ Residues left in the same module (not steered):
   branch/decrement schedule remain unattributed; the current complete semantic
   source is 98.333336% after all internal jump referents were reviewed.
 
-## tmd_project
+## TMD projection
 
-Witnesses come from `src/game/tmd_project.c` (`game.tmd_project`,
-`0x8001c60c..0x8001c7f4`): three vertex-projection primitives that walk
-`current_tmd_vertices` through the GTE and write eight-byte screen entries into
-the `DAT_800911b0` scratch buffer. `func_8001c60c` is the shared helper called
-by nine sites in the surrounding polygon emitters.
+The three GAME projection producers now live in `src/game/render.c` at
+`0x8001c60c..0x8001c7f8`, beside the accessors that select their input
+vertices. See [tmd-projection.md](tmd-projection.md) for the ownership
+evidence, SDK boundary, full function snapshots, and current verdicts.
 
-| Retail signature | Source shape | Witness |
-| --- | --- | --- |
-| `beqz a0,exit; addiu s0,a0,-1` guard then an up-walking pointer pair with a `bottom` down-counter `addiu s0,s0,-1; li v0,-1; bne s0,v0` | `for (i = count - 1; i != -1; i--) { ...; out++; vtx++; }` -- the `!= -1` exit prints the `li -1`/`bne` down-counter and keeps the pointers forward; `i >= 0` prints `bgez` instead and `for (i=0;i<count;i++)` keeps `count` live in an extra callee-saved register | all three |
-| unused 8-byte frame tail (`vars=24`, slots 32/36 never referenced) beside four live output slots at 16/20/24/28 | plain scalar `long p, flag, sz0, sz1;` under the `!= -1` for-loop; the reversed loop reserves the extra doubleword that the equivalent `if (count) { do {} while (--i != -1); }` does not | all three |
-| `lhu v0,16(sp); sll v0,v0,1; sh` for the interpolation term, `lhu`/`lw` for the SZ FIFO word | `out->p2 = (u16)p << 1;` (unsigned halfword read) and `out->sz = (u16)sz0;` (perspective) or `out->sz = sz0 >> shift;` (arithmetic `lw`+`srav` when the shift is a `u8` argument) | `tmd_project_vertices`, `tmd_project_vertices_shift` |
+The retained source follows these directly observed forms:
 
-`tmd_transform_vertices` `0x8001c754` is exact: its `&out->sz` induction
-pointer carries three stores (`sxy.vy`, `sz`, `p2`) and so unambiguously
-outranks the loop counter, matching retail's register assignment.
+- A zero guard and decrement-to-minus-one loop, with forward eight-byte
+  input/output strides. The source uses a signed `remaining` counter;
+  it does not substitute a nonnegative bound or a forward index.
+- The perspective result is loaded as a halfword and doubled before the
+  `p2` store. Plain projection loads the depth as a halfword; shifted
+  projection loads it as a signed word before `srav` with a byte-sized
+  shift argument.
+- `ReadSZ2` receives two addressable locals in retail, but its exact SDK
+  body writes only the first. They are named `depth` and `unused_depth`.
+- The non-perspective path copies low halfwords from an authentic SDK
+  `VECTOR` into the projected coordinates and both depth fields.
 
-Residues left in the same module (not steered):
-
-- `tmd_project_vertices` `0x8001c60c` (84%) and `tmd_project_vertices_shift`
-  `0x8001c6a8` (86%): structurally exact -- frame, stack layout, control flow,
-  the RotTransPers/ReadSZ2 call set and every instruction match -- but the loop
-  counter and the `&out->sz` induction pointer trade `$s0`/`$s1`. The `-dg`
-  dump settles the attribution: the greg pass orders the allocnos
-  `88 86 78 72 73`, i.e. the two-store `&out->sz` giv (`sz` and `p2` writes plus
-  its own bump, four in-loop operand refs) outranks the loop counter (three), so
-  the probe gives the giv `$s0` and the counter `$s1`. Retail assigns the
-  opposite -- counter `$s0`, giv `$s1` -- despite routing the identical two
-  stores through the giv, so the tie is decided by a priority weighting the
-  2.5.7 build does not reproduce, not by any source shape. Dropping a store from
-  the giv would tie the two allocnos (the counter's lower number then wins) but
-  changes the emitted bytes, so it is not steerable from C.
-  `tmd_transform_vertices`, whose giv carries three stores and so unambiguously
-  outranks the counter, matches exactly; the residue is the borderline
-  two-store giv alone. Same giv-base / callee-saved-register-choice
-  compiler-build question as the `func_8002317c` and `func_800238d8` classes.
+The perspective routines remain 98.846150% and 98.953490%; the transform
+routine remains exact. The first two swap the counter/depth-pointer
+`$s0` and `$s1` roles relative to retail. Their raw comparisons otherwise
+agree on instructions and ordered relocations. Earlier statements here
+assigned this to a particular allocation-priority mechanism and declared
+it impossible to resolve from C. Those claims exceed the evidence and
+are withdrawn: the remaining difference is unattributed.
 
 ## render enqueue
 
@@ -346,6 +337,13 @@ Residues, both blocked (not steerable from C under this probe):
 
 ## graphics-context aggregate (`0x80090ebc..0x800957e0`)
 
+The section below records the earlier aggregate hypothesis and GCC 2.5.7
+experiment. Its claims about original declaration boundaries and compiler
+mechanisms exceed what the linked bytes alone establish. The later
+[notification-state pass](notification-state.md) records the exact-function
+regressions under the current probe and the narrower field relationships that
+have been verified. The complete original object boundary remains unresolved.
+
 The base-register arithmetic in `func_8001de18` (`&tmd_state.current_asset`
 reaching `display_state.ordering_table` at `-756` off the `+488` buffer
 pointer) and in the display initializer `func_8001bb94` (`&draw_env[0].dtd`
@@ -397,7 +395,7 @@ tested (`func_8001e230` stayed `88.2%` under the migration, confirming
 single-object member migrations do not shift bytes), but it closes neither
 enqueuer nor the initializer to exact -- both residues are the unattributed
   gcc-2.5.7 register-allocation/scheduling wall class (compare the
-  `tmd_project_vertices` two-store-giv residue and the `func_8001e230`
+  `tmd_project_vertices` register-identity difference and the `func_8001e230`
   post-reload-scheduler residue). Landing the model is high-ripple (it renames
 `display_state`/`tmd_state`/`render_state`/`display_draw_environments` and the
 buffers across ~28 units and retargets ~230 relocation sites) and banks no new

@@ -343,6 +343,12 @@ KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;
 KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
+KfNotificationState	0x00	0x10	message_payloads	u16[8]	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	parallel numeric payloads used only by message 0x13
+KfNotificationState	0x10	0x01	queue_tail	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	read cursor, advanced modulo eight after the effect finishes
+KfNotificationState	0x11	0x01	queue_head	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_enqueue	write cursor, advanced modulo eight after an enqueue
+KfNotificationState	0x12	0x01	effect_phase	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch	zero is idle, two holds, three rotates out
+KfNotificationState	0x13	0x01	hold_frames	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	countdown seeded with fifteen frames
+KfNotificationState	0x14	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
 KfOpeningEntity	0x00	0x01	object_id	u8	supported	open_resources.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
 KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
 KfOpeningEntity	0x02	0x02	cell_x	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record
@@ -625,15 +631,13 @@ KfTmdGt4	0x1c	0x02	n3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-
 KfTmdGt4	0x1e	0x02	v3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
 KfTmdHeader	0x00	0x04	id	u32	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
 KfTmdHeader	0x04	0x04	flags	u32	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x08	0x02	object_count	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x0a	0x02	object_count_high	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x08	0x04	object_count	u32	supported	tmd.h;game_semantic_tmd_counts.tsv;Sony-File-Formats-1998:p2-25	word-sized format count; both index-preparation routines intentionally narrow it to u16
 KfTmdObject	0x00	0x04	vertex_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
 KfTmdObject	0x04	0x04	vertex_count	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record
 KfTmdObject	0x08	0x04	normal_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	offset from the TMD object-table base to the normal array
 KfTmdObject	0x0c	0x04	normal_count	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	normal count in the standard object record
 KfTmdObject	0x10	0x04	primitive_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
-KfTmdObject	0x14	0x02	primitive_count	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop; read as a halfword (lhu)
-KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	upper halfword of the 32-bit TMD primitive count, unread by the game
+KfTmdObject	0x14	0x04	primitive_count	u32	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	word-sized count read with lw by all three polygon emitters; both index-preparation routines narrow it to u16
 KfTmdObject	0x18	0x04	scale	s32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
 KfTmdState	0x00	0x20	slots	u8 *[8]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdState	0x20	0x04	current_asset	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate

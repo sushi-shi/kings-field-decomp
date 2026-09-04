@@ -138,9 +138,16 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         }
         self.assertEqual(tmd["vertex_offset"], (0x00, 4, "u32"))
         self.assertEqual(tmd["primitive_offset"], (0x10, 4, "u32"))
-        self.assertEqual(tmd["primitive_count"], (0x14, 2, "u16"))
-        self.assertEqual(tmd["primitive_count_high"], (0x16, 2, "u16"))
+        self.assertEqual(tmd["primitive_count"], (0x14, 4, "u32"))
+        self.assertNotIn("primitive_count_high", tmd)
         self.assertEqual(tmd["scale"], (0x18, 4, "s32"))
+        header = {
+            row.name: (row.offset, row.size, row.datatype)
+            for row in fields
+            if row.structure == "KfTmdHeader"
+        }
+        self.assertEqual(header["object_count"], (0x08, 4, "u32"))
+        self.assertNotIn("object_count_high", header)
 
     def test_image_qualified_state_owns_interior_addresses(self) -> None:
         identities = load_data_identities(RETAIL_CONFIG)
@@ -174,6 +181,34 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         for row in references:
             owner_va = parse_int(row["target_va"]) - 3
             self.assertEqual(row["target_name"], expected[owner_va])
+            self.assertEqual(row["status"], "reviewed")
+
+    def test_active_material_names_preserve_sdk_widths_and_referents(self) -> None:
+        expected = {
+            0x80095058: ("active_render_clut", 2, "u16"),
+            0x8009505A: ("active_render_tpage", 2, "u16"),
+            0x8009505C: ("active_render_red", 1, "u8"),
+            0x8009505D: ("active_render_green", 1, "u8"),
+            0x8009505E: ("active_render_blue", 1, "u8"),
+            0x8009505F: ("active_render_code", 1, "u8"),
+        }
+        identities = load_data_identities(RETAIL_CONFIG)
+        for va, shape in expected.items():
+            datum = identities[("GAME.EXE", va)]
+            self.assertEqual((datum.name, datum.size, datum.datatype), shape)
+            self.assertEqual(datum.storage, "bss")
+            self.assertEqual(datum.confidence, "supported")
+            self.assertIn("game_semantic_render_material.tsv", datum.evidence)
+
+        _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        references = [
+            row for row in rows
+            if row["image"] == "GAME.EXE"
+            and 0x80095058 <= parse_int(row["target_va"]) < 0x80095060
+        ]
+        self.assertEqual(len(references), 27)
+        for row in references:
+            self.assertEqual(row["target_name"], expected[parse_int(row["target_va"])][0])
             self.assertEqual(row["status"], "reviewed")
 
     def test_decoded_relocations_and_direct_calls_are_reviewed(self) -> None:

@@ -4,6 +4,7 @@ import unittest
 
 from scripts.kf.inventory import (
     load_data_identities,
+    load_function_identities,
     load_structure_field_identities,
     load_structure_identities,
 )
@@ -12,6 +13,50 @@ from scripts.kf.retail import parse_int, read_tsv
 
 
 class NotificationSpriteInventoryTests(unittest.TestCase):
+    def test_payloads_and_control_fields_share_one_nonoverlapping_owner(self) -> None:
+        identities = load_data_identities(RETAIL_CONFIG)
+        state = identities[("GAME.EXE", 0x80095076)]
+        self.assertEqual(
+            (state.name, state.size, state.datatype, state.storage),
+            ("notification_state", 0x16, "KfNotificationState", "bss"),
+        )
+        interior = {
+            va for image, va in identities
+            if image == "GAME.EXE" and 0x80095076 <= va < 0x8009508C
+        }
+        self.assertEqual(interior, {0x80095076})
+        fields = {
+            row.name: (row.offset, row.size, row.datatype)
+            for row in load_structure_field_identities(RETAIL_CONFIG)
+            if row.structure == "KfNotificationState"
+        }
+        self.assertEqual(fields, {
+            "message_payloads": (0x00, 0x10, "u16[8]"),
+            "queue_tail": (0x10, 1, "u8"),
+            "queue_head": (0x11, 1, "u8"),
+            "effect_phase": (0x12, 1, "u8"),
+            "hold_frames": (0x13, 1, "u8"),
+            "effect_angle_x": (0x14, 2, "u16"),
+        })
+        _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        references = [
+            row for row in rows
+            if row["image"] == "GAME.EXE"
+            and 0x80095076 <= parse_int(row["target_va"]) < 0x8009508C
+        ]
+        self.assertEqual(len(references), 17)
+        self.assertEqual({row["target_name"] for row in references}, {state.name})
+        self.assertEqual(
+            identities[("GAME.EXE", 0x8009506E)].name,
+            "notification_message_ids",
+        )
+
+    def test_enqueue_signature_preserves_the_optional_promoted_argument(self) -> None:
+        identity = load_function_identities(RETAIL_CONFIG, required=True)[
+            ("GAME.EXE", 0x8001FA44)
+        ]
+        self.assertEqual(identity.parameters, "s32 message_id;...")
+
     def test_complete_sprite_layouts(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
         fields = load_structure_field_identities(RETAIL_CONFIG)

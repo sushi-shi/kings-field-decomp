@@ -1,7 +1,10 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/notify.h>
+#include <kf/game_player.h>
+#include <kf/game_state.h>
+#include <kf/pool.h>
 
 /*
  * Per-frame renderer entry, called by the player warp/update path.  It rebuilds
@@ -85,31 +88,31 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & 0xfff;
     render_effect_sprites();
 
-    DAT_8009505a = DAT_80095062;
-    DAT_80095058 = DAT_80095060;
-    DAT_8009505e = DAT_80095064;
-    DAT_8009505d = DAT_80095064;
-    DAT_8009505c = DAT_80095064;
+    active_render_tpage = DAT_80095062;
+    active_render_clut = DAT_80095060;
+    active_render_blue = DAT_80095064;
+    active_render_green = DAT_80095064;
+    active_render_red = DAT_80095064;
     render_hud_gauges(auxiliary_sprite - 12);
 
     SetLightMatrix(&render_light_matrices[5]);
     notify_effect_update();
 
-    DAT_8009505c = 0xff;
-    DAT_8009505d = 0xff;
-    DAT_8009505e = 0xff;
+    active_render_red = 0xff;
+    active_render_green = 0xff;
+    active_render_blue = 0xff;
     model.t[0] = 0;
     model.t[1] = 0xa0;
     model.t[2] = 0xc8;
     spin.vz = 0;
     spin.vy = 0;
-    spin.vx = notification_effect_angle_x;
+    spin.vx = notification_state.effect_angle_x;
     RotMatrix(&spin, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
 
-    DAT_8009505a = DAT_80095068;
-    DAT_80095058 = DAT_80095066;
+    active_render_tpage = DAT_80095068;
+    active_render_clut = DAT_80095066;
     record = notification_sprites;
     if (record[0].active == 1) {
         render_enqueue_sprite(&record[0].sprite, 0, 0);
@@ -118,8 +121,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         render_enqueue_sprite(&record[1].sprite, 0, 0);
     }
     record += 2;
-    DAT_8009505a = DAT_8009506c;
-    DAT_80095058 = DAT_8009506a;
+    active_render_tpage = DAT_8009506c;
+    active_render_clut = DAT_8009506a;
     for (i = 3; i != -1; i--) {
         if (record->active == 1) {
             render_enqueue_sprite(&record->sprite, 0, 0);

@@ -1,26 +1,13 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/tmd.h>
 
 DATA(0x80057b58, 0x4)
 CVECTOR tmd_textured_primitive_color = {0x80, 0x80, 0x80, 0};
 
 #define VTX(off) ((KfScreenVertex *)((u8 *)vertices + (off)))
 
-/*
- * Emit one prepared TMD object across the full primitive-type set: flat (F3/F4),
- * flat textured (FT3/FT4), Gouraud (G3/G4) and Gouraud textured (GT3/GT4),
- * each with a semi-transparent variant.  Untextured packets shade from their own
- * packet colour; textured packets take tmd_textured_primitive_color and the
- * packet's own CLUT/tpage.  Every packet is back-face clipped against the
- * projected screen vertices and sorted at the averaged depth biased by the tag.
- *
- * Residue: the graphics-context aggregate wall documented for render_enqueue_map
- * -- tmd_state.current_asset, DAT_800911b0 and display_state are one object in
- * the original reached through a single base register; kept as separate curated
- * identities here, so per-access address materialisation diverges.
- */
 RODATA(0x8001222c, 0x74)
 
 ADDRESS(0x8001c7f8, 0xf38)
@@ -31,7 +18,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     u8 *normals;
     u8 *packet;
     KfScreenVertex *vertices;
-    s32 remaining;
+    u32 remaining;
     u32 header;
     s32 otz;
 
@@ -380,18 +367,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 DATA(0x80057b5c, 0x4)
 CVECTOR model_textured_primitive_color = {0x80, 0x80, 0x80, 0};
 
-/*
- * Emit one prepared TMD object as flat/Gouraud shaded textured primitives using
- * the shared global material colour.  Textured triangles (0x24) and quads
- * (0x2c) take a single face normal (NormalColorDpq); Gouraud textured triangles
- * (0x34) and quads (0x3c) take a per-vertex normal (NormalColorDpq3).  Each
- * packet is back-face clipped against the projected screen vertices and sorted
- * into the 3D ordering table at the averaged depth biased by the caller's tag.
- *
- * Residue: the graphics-context aggregate wall documented for render_enqueue_map
- * -- tmd_state.current_asset, DAT_800911b0 and display_state are one object in
- * the original, reached through a single base register; kept as separate
- * curated identities here, so per-access address materialisation diverges.
+/* Emit textured model packets with the active texture selection and the
+ * separate model lighting colour. The caller supplies the signed depth bias.
  */
 ADDRESS(0x8001d730, 0x6e8)
 void render_enqueue_model(u16 object_index, s16 depth_bias)
@@ -401,7 +378,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     u8 *normals;
     u8 *packet;
     KfScreenVertex *vertices;
-    s32 remaining;
+    u32 remaining;
     u32 header;
     u32 type;
     s32 otz;
@@ -438,8 +415,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 }
                 SetPolyGT3(prim);
                 model_textured_primitive_color.cd = prim->code;
-                prim->clut = DAT_80095058;
-                prim->tpage = DAT_8009505a;
+                prim->clut = active_render_clut;
+                prim->tpage = active_render_tpage;
                 *(long *)&prim->x0 = *(long *)&va->sxy;
                 *(long *)&prim->x1 = *(long *)&vb->sxy;
                 *(long *)&prim->x2 = *(long *)&vc->sxy;
@@ -470,8 +447,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                     }
                     SetPolyFT3(prim);
                     model_textured_primitive_color.cd = prim->code;
-                    prim->clut = DAT_80095058;
-                    prim->tpage = DAT_8009505a;
+                    prim->clut = active_render_clut;
+                    prim->tpage = active_render_tpage;
                     *(long *)&prim->x0 = *(long *)&va->sxy;
                     *(long *)&prim->x1 = *(long *)&vb->sxy;
                     *(long *)&prim->x2 = *(long *)&vc->sxy;
@@ -501,8 +478,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                     }
                     SetPolyFT4(prim);
                     model_textured_primitive_color.cd = prim->code;
-                    prim->clut = DAT_80095058;
-                    prim->tpage = DAT_8009505a;
+                    prim->clut = active_render_clut;
+                    prim->tpage = active_render_tpage;
                     *(long *)&prim->x0 = *(long *)&va->sxy;
                     *(long *)&prim->x1 = *(long *)&vb->sxy;
                     *(long *)&prim->x2 = *(long *)&vc->sxy;
@@ -535,8 +512,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 }
                 SetPolyGT4(prim);
                 model_textured_primitive_color.cd = prim->code;
-                prim->clut = DAT_80095058;
-                prim->tpage = DAT_8009505a;
+                prim->clut = active_render_clut;
+                prim->tpage = active_render_tpage;
                 *(long *)&prim->x0 = *(long *)&va->sxy;
                 *(long *)&prim->x1 = *(long *)&vb->sxy;
                 *(long *)&prim->x2 = *(long *)&vc->sxy;
@@ -560,50 +537,6 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     } while (remaining-- != 0);
 }
 
-/*
- * Two polygon-emission enqueuers that sit at the tail of the render subsystem's
- * primitive pipeline.
- *
- * render_enqueue_map is the lit map-geometry path: it walks a prepared TMD object's
- * FT3/FT4 primitive packets, back-face-clips each against the projected screen
- * vertices, and up-converts them into Gouraud-textured GT3/GT4 GPU primitives
- * whose per-vertex colours come from one flat face normal (NormalColorCol) that
- * is then depth-cued per vertex (DpqColor).  It is the emitter reached by the
- * per-cell wall/floor routine render_map_cell.
- *
- * render_enqueue_sprite is the projected textured-sprite enqueuer: it projects a
- * KfSpriteQuad's four corners through the GTE (RotTransPers4), builds a
- * depth-cued POLY_FT4, and sorts it into the 3D scene's ordering table.  It is
- * reached by the floor-item and actor-billboard emitters and by the frame
- * renderer's notification-sprite pass.  The sort depth is the projected anchor
- * point (RotTransPers of the origin), not the corner batch.
- *
- * Residues (both structurally exact -- call set, referents, widths, control
- * flow all match; see docs/patterns/source-shapes-gcc257.md):
- *
- *  - render_enqueue_sprite hits the same post-reload-scheduler wall as its banked
- *    sibling render_screen_sprite (render_sprite.c): gcc-2.5.7 fills the screen-XY
- *    load-delay slots with the clut/tpage global loads and saves the anchor
- *    depth in the RotTransPers4 delay slot a beat differently than retail,
- *    which spends one extra callee-saved register.  Neither -O2 nor
- *    -fno-schedule-insns2 reproduces both retail schedules at once.
- *
- *  - render_enqueue_map references four curated identities -- tmd_state.current_asset,
- *    the projected-vertex buffer DAT_800911b0, and display_state.ordering_table
- *    -- that the retail code reaches through ONE base register: it holds
- *    &tmd_state.current_asset and forms the vertex buffer as base+488 and the
- *    ordering-table pointer as (buffer-756), with a single relocation for the
- *    whole span.  gcc can only share a base across accesses that are one source
- *    object, so the original was a single graphics-context aggregate that the
- *    curation split into display_state, tmd_state and DAT_800911b0 (the same
- *    unified object also carries the sprite material DAT_80095058 at
- *    buffer+16040, reached that way by render_enqueue_model/render_enqueue_tmd).  Modelling
- *    that aggregate is high-ripple (display_state and tmd_state are shared by
- *    many banked units), so this source keeps the individual identities. The
- *    first remaining divergence is that base formation; later differences are
- *    the documented register-allocation/frame residue.
- */
-
 DATA(0x80057b60, 0x4)
 CVECTOR map_textured_primitive_color = {0x80, 0x80, 0x80, 0};
 
@@ -614,11 +547,6 @@ SVECTOR render_sprite_light_normal = {0, 0, 0x1000, 0};
  * Flat-shading colour scratch: map_textured_primitive_color.cd carries the
  * current primitive code into NormalColorCol, and render_sprite_light_normal
  * supplies the following light direction to NormalColorDpq.
- */
-
-/*
- * Screen sprite / floor-item render descriptor leading fields, reached by their
- * individual identities until the whole object is modelled (see render_sprite.c).
  */
 
 /*
@@ -636,7 +564,7 @@ void render_enqueue_map(u16 object_index)
     u8 *normals;
     u8 *packet;
     KfScreenVertex *vertices;
-    s32 remaining;
+    u32 remaining;
     u32 header;
     CVECTOR shade;
     POLY_GT4 *prim;
@@ -774,21 +702,22 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
         return;
     }
     SetPolyFT4(prim);
-    prim->clut = DAT_80095058;
+    prim->clut = active_render_clut;
     *(long *)&prim->x0 = sxy0;
     *(long *)&prim->x1 = sxy1;
     *(long *)&prim->x2 = sxy2;
-    prim->tpage = DAT_8009505a;
+    prim->tpage = active_render_tpage;
     *(long *)&prim->x3 = sxy3;
     prim->u0 = prim->u2 = sprite->u;
     prim->u1 = prim->u3 = sprite->u + sprite->u_span;
     prim->v0 = prim->v1 = sprite->v;
     prim->v2 = prim->v3 = sprite->v + sprite->v_span;
-    DAT_8009505f = prim->code;
+    active_render_code = prim->code;
     if (flag == 1) {
         p += p >> 1;
     }
-    NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&DAT_80095058 + 2), p,
+    /* WIP graphics ownership: retail derives the CVECTOR from CLUT + 4 bytes. */
+    NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&active_render_clut + 2), p,
                    (CVECTOR *)&prim->r0);
     otz += screen_scale;
     if (otz >= 5) {

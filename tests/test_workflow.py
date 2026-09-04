@@ -88,6 +88,24 @@ class ManifestTests(unittest.TestCase):
             for previous, following in zip(unit.functions, unit.functions[1:]):
                 self.assertEqual(previous.va + previous.size, following.va)
 
+    def test_tmd_projection_and_vertex_selection_share_an_owner(self) -> None:
+        manifest = load_manifest()
+        owners = manifest.by_identity()
+        family = (
+            0x8001C114,  # object lookup
+            0x8001C138,  # vertex cursor setter
+            0x8001C148,  # object vertex selection
+            0x8001C5EC,  # immediately preceding TMD lifetime operation
+            0x8001C60C,  # perspective projection
+            0x8001C6A8,  # shifted-depth projection
+            0x8001C754,  # non-perspective transform
+        )
+        self.assertEqual(
+            {owners[("GAME.EXE", va)].unit for va in family},
+            {"game.render"},
+        )
+        self.assertNotIn("game.tmd_project", manifest.by_name())
+
 
 class ProgressTests(unittest.TestCase):
     def test_vendored_verification_rows_do_not_enter_progress(self) -> None:

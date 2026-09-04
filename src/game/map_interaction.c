@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
+#include <kf/notify.h>
 #include <kf/game.h>
 /* Object-behaviour dispatch followed by the current-floor action dispatch. */
 RODATA(0x80012a7c, 0x164)
@@ -223,7 +224,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * 1000 >> 12);
     sound_z = position->vz + (rcos(rotation->vy) * 1000 >> 12);
-    if (notification_effect_phase == 0) {
+    if (notification_state.effect_phase == 0) {
         index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
         if (index != -1) {
             event = &map_event_pool[index];
@@ -438,7 +439,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case 13:
-            if (notification_effect_phase != 0) {
+            if (notification_state.effect_phase != 0) {
                 break;
             }
             if (object->object_id == 0x82) {
