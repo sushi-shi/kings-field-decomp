@@ -86,5 +86,8 @@ extern void tmd_prepare_primitive_indices(void);
 extern void tmd_register(u16 slot, u8 *tmd);
 extern void tmd_release_last_allocation(s32 slot);
 extern void tmd_project_vertices(s32 count);
+extern void tmd_project_vertices_perspective_right(s32 count);
+extern void tmd_project_vertices_shift(s32 count, u8 shift);
+extern void tmd_transform_vertices(s32 count);
 
 #endif

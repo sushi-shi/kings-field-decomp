@@ -11906,15 +11906,18 @@ OPEN.EXE	0x800173d0	0x5bd0	0x800173d4	mips_hi16_lo16	reachable-code	0x80069b68	b
 OPEN.EXE	0x800173f4	0x5bf4		mips26	reachable-code	0x8002d820	load	RotTransPers	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
 OPEN.EXE	0x80017408	0x5c08	0x8001740c	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+lh	v1	paired-reviewed	reviewed	manual:open_semantic_projection
 OPEN.EXE	0x8001741c	0x5c1c		mips26	reachable-code	0x8002c1ac	load	ReadSZ2	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
-OPEN.EXE	0x80017478	0x5c78	0x8001747c	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80017498	0x5c98		mips26	instruction-word	0x8002d820	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800174ac	0x5cac	0x800174b0	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+lh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800174c0	0x5cc0		mips26	instruction-word	0x8002c1ac	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017520	0x5d20	0x80017524	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80017544	0x5d44		mips26	instruction-word	0x8002d820	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017564	0x5d64		mips26	instruction-word	0x8002c1ac	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800175cc	0x5dcc	0x800175d0	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800175ec	0x5dec		mips26	instruction-word	0x8002d8b0	load		jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80017470	0x5c70	0x80017474	mips_hi16_lo16	reachable-code	0x80069b80	bss	tmd_projected_vertices	lui+addiu	s2	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x80017478	0x5c78	0x8001747c	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x80017498	0x5c98		mips26	reachable-code	0x8002d820	load	RotTransPers	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x800174ac	0x5cac	0x800174b0	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+lh	v1	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x800174c0	0x5cc0		mips26	reachable-code	0x8002c1ac	load	ReadSZ2	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x80017518	0x5d18	0x8001751c	mips_hi16_lo16	reachable-code	0x80069b80	bss	tmd_projected_vertices	lui+addiu	s2	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x80017520	0x5d20	0x80017524	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x80017544	0x5d44		mips26	reachable-code	0x8002d820	load	RotTransPers	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x80017564	0x5d64		mips26	reachable-code	0x8002c1ac	load	ReadSZ2	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x800175c4	0x5dc4	0x800175c8	mips_hi16_lo16	reachable-code	0x80069b80	bss	tmd_projected_vertices	lui+addiu	s2	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x800175cc	0x5dcc	0x800175d0	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	paired-reviewed	reviewed	manual:open_semantic_projection
+OPEN.EXE	0x800175ec	0x5dec		mips26	reachable-code	0x8002d8b0	load	RotTrans	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
 OPEN.EXE	0x8001767c	0x5e7c		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80017688	0x5e88	0x8001768c	mips_hi16_lo16	reachable-code	0x80069b60	bss	tmd_state	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800176f0	0x5ef0	0x800176f4	mips_hi16_lo16	reachable-code	0x800121c0	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
@@ -12079,7 +12082,7 @@ OPEN.EXE	0x8001900c	0x780c		mips26	instruction-word	0x80019020	load		j		range-fi
 OPEN.EXE	0x80019024	0x7824		mips26	instruction-word	0x800190a8	load		j		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019030	0x7830		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019038	0x7838		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019044	0x7844		mips26	instruction-word	0x80017458	load		jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80019044	0x7844		mips26	instruction-word	0x80017458	load	tmd_project_vertices_perspective_right	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
 OPEN.EXE	0x80019050	0x7850		mips26	instruction-word	0x8001764c	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019058	0x7858		mips26	instruction-word	0x800190d8	load		j		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019060	0x7860		mips26	instruction-word	0x8001906c	load		j		range-filtered	candidate	investigation:relocs.tsv

@@ -2233,17 +2233,27 @@ class InventoryTests(unittest.TestCase):
     def test_open_projection_campaign_is_semantically_modeled(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_projection.tsv"
         _, rows = read_tsv(evidence_path)
-        self.assertEqual(len(rows), 1)
-        row = rows[0]
-
+        expected = {
+            0x8001738C: ("tmd_project_vertices", "s32 count"),
+            0x80017458: ("tmd_project_vertices_perspective_right", "s32 count"),
+            0x800174FC: ("tmd_project_vertices_shift", "s32 count;u8 shift"),
+            0x800175A8: ("tmd_transform_vertices", "s32 count"),
+        }
+        self.assertEqual({parse_int(row["va"]) for row in rows}, set(expected))
         functions = load_function_identities(RETAIL_CONFIG, required=True)
-        identity = functions[("OPEN.EXE", 0x8001738C)]
-        self.assertEqual(
-            (identity.name, identity.return_type, identity.parameters),
-            ("tmd_project_vertices", "void", "s32 count"),
-        )
-        self.assertEqual(row["final_signature"], "void tmd_project_vertices(s32 count)")
-        self.assertIn(evidence_path.name, identity.evidence)
+        for row in rows:
+            va = parse_int(row["va"])
+            identity = functions[("OPEN.EXE", va)]
+            name, parameters = expected[va]
+            self.assertEqual(
+                (identity.name, identity.return_type, identity.parameters),
+                (name, "void", parameters),
+            )
+            self.assertEqual(
+                row["final_signature"],
+                f"void {name}({parameters.replace(';', ', ')})",
+            )
+            self.assertIn(evidence_path.name, identity.evidence)
 
         data = load_data_identities(RETAIL_CONFIG)
         scratch = data[("OPEN.EXE", 0x80069B80)]
@@ -2265,12 +2275,23 @@ class InventoryTests(unittest.TestCase):
             for item in relocation_rows
             if item["provenance"] == "manual:open_semantic_projection"
         ]
-        self.assertEqual(len(campaign_rows), 11)
+        self.assertEqual(len(campaign_rows), 24)
         self.assertEqual({item["status"] for item in campaign_rows}, {"reviewed"})
         by_site = {parse_int(item["site_va"]): item for item in campaign_rows}
         self.assertEqual(by_site[0x800173C8]["target_name"], "tmd_projected_vertices")
         self.assertEqual(by_site[0x80017408]["target_name"], "tmd_projection_shift")
         self.assertEqual(by_site[0x8001741C]["target_name"], "ReadSZ2")
+        for site in (0x80017470, 0x80017518, 0x800175C4):
+            self.assertEqual(by_site[site]["target_name"], "tmd_projected_vertices")
+            self.assertEqual(parse_int(by_site[site]["target_va"]), 0x80069B80)
+        self.assertEqual(by_site[0x800174AC]["target_name"], "tmd_projection_shift")
+        self.assertEqual(by_site[0x80017544]["target_name"], "RotTransPers")
+        self.assertEqual(by_site[0x80017564]["target_name"], "ReadSZ2")
+        self.assertEqual(by_site[0x800175EC]["target_name"], "RotTrans")
+        self.assertEqual(
+            by_site[0x80019044]["target_name"],
+            "tmd_project_vertices_perspective_right",
+        )
         self.assertEqual(by_site[0x800190C0]["target_name"], "tmd_project_vertices")
 
     def test_game_open_diagnostic_sink_is_semantically_modeled(self) -> None:

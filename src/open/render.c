@@ -88,11 +88,11 @@ void render_set_view_transform(
     if (rotation != 0) {
         render_state.view_rotation = *rotation;
     }
-    RotMatrix((SVECTOR *)&render_state.view_rotation, (MATRIX *)&render_state.view_matrix);
+    RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
     angles.vz = 0;
     angles.vy = 0;
     angles.vx = render_state.view_rotation.vx;
-    RotMatrix(&angles, (MATRIX *)&render_state.pitch_matrix);
+    RotMatrix(&angles, &render_state.pitch_matrix);
 }
 
 RODATA(0x80012138, 0x88)
@@ -249,6 +249,71 @@ void tmd_project_vertices(s32 count)
         out->p2 = perspective << tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
         out->sz = (u16)depth;
+        out++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x80017458, 0xa4)
+void tmd_project_vertices_perspective_right(s32 count)
+{
+    KfScreenVertex *out;
+    SVECTOR *vertex;
+    long perspective;
+    long flag;
+    long depth;
+    long unused_depth;
+
+    out = tmd_projected_vertices;
+    vertex = current_tmd_vertices;
+    for (count--; count != -1; count--) {
+        RotTransPers(vertex, (long *)&out->sxy, &perspective, &flag);
+        out->p2 = perspective >> tmd_projection_shift;
+        ReadSZ2(&depth, &unused_depth);
+        out->sz = (u16)depth;
+        out++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x800174fc, 0xac)
+void tmd_project_vertices_shift(s32 count, u8 shift)
+{
+    KfScreenVertex *out;
+    SVECTOR *vertex;
+    long perspective;
+    long flag;
+    long depth;
+    long unused_depth;
+
+    out = tmd_projected_vertices;
+    vertex = current_tmd_vertices;
+    for (count--; count != -1; count--) {
+        RotTransPers(vertex, (long *)&out->sxy, &perspective, &flag);
+        out->p2 = (u16)perspective << 1;
+        ReadSZ2(&depth, &unused_depth);
+        out->sz = depth >> shift;
+        out++;
+        vertex++;
+    }
+}
+
+ADDRESS(0x800175a8, 0xa4)
+void tmd_transform_vertices(s32 count)
+{
+    KfScreenVertex *out;
+    SVECTOR *vertex;
+    VECTOR position;
+    long flag;
+
+    out = tmd_projected_vertices;
+    vertex = current_tmd_vertices;
+    for (count--; count != -1; count--) {
+        RotTrans(vertex, &position, &flag);
+        out->sxy.vx = position.vx;
+        out->sxy.vy = position.vy;
+        out->p2 = position.vz;
+        out->sz = position.vz;
         out++;
         vertex++;
     }
