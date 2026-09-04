@@ -416,6 +416,22 @@ def lifecycle_cases() -> tuple[LifecycleCase, ...]:
             ASSET_ID,
             (),
         ),
+        LifecycleCase(
+            "lifecycle/malloc-three-retries",
+            animated,
+            False,
+            True,
+            ASSET_ID,
+            (0, 0, 0, ALLOCATION_VA),
+        ),
+        LifecycleCase(
+            "lifecycle/reinit-malloc-retries",
+            animated,
+            True,
+            True,
+            ASSET_ID - 1,
+            (0, 0, ALLOCATION_VA),
+        ),
     )
 
 

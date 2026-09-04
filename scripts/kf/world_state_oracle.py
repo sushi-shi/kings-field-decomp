@@ -64,22 +64,22 @@ class Conditions:
         ))
 
 
-def synthetic_record(marker: bool = True) -> bytes:
+def synthetic_record(marker: bool = True, *, sparse: bool = True) -> bytes:
     if not marker:
         return b"\0"
     output = bytearray((1,))
     for event in range(EVENT_COUNT):
         output.extend((event + 1, 9, 1, 2, 0x30 + event, 3, 4))
-    output.extend((2, 3, 7, 127, 8))
+    output.extend((2, 3, 7, 127, 8) if sparse else (0,))
     object_ids_offset = len(output)
     output.extend(index % 150 for index in range(OBJECT_COUNT))
     output[object_ids_offset + 170:object_ids_offset + 173] = bytes((42, 45, 50))
-    output.extend((1, 3, 10, 11, 12, 13, 14, 15, 16, 17))
+    output.extend((1, 3, 10, 11, 12, 13, 14, 15, 16, 17) if sparse else (0,))
     for index in range(10):
         output.extend((index + 1, index + 2, 0x80 + index, 0x90 + index))
     for index in range(20):
         output.extend((index + 21, index + 31, index))
-    assert len(output) == 362
+    assert len(output) == (362 if sparse else 349)
     return bytes(output)
 
 
@@ -151,6 +151,14 @@ def _cases() -> list[tuple[str, bytes, Conditions]]:
          Conditions(5, flag_8009f844=1, inventory_0a=1, boss_defeat_complete=1)),
         ("floor5-copy", persisted, Conditions(5, flag_8009f846=1)),
         ("marker-clear", synthetic_record(False), Conditions(4)),
+        ("zero-sparse-counts", synthetic_record(sparse=False), Conditions(4)),
+        ("floor1-missing-actor", persisted, Conditions(1)),
+        ("floor1-skip-actor", persisted, Conditions(1, world_byte_1=2)),
+        ("floor2-no-overrides", persisted, Conditions(2)),
+        ("floor3-no-overrides", persisted, Conditions(3)),
+        ("floor5-no-overrides", persisted, Conditions(5)),
+        ("floor5-second-inventory", persisted, Conditions(5, inventory_0b=1)),
+        ("floor5-link-flag", persisted, Conditions(5, flag_8009f845=1)),
     ]
 
 

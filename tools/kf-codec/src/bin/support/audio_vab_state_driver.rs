@@ -1,6 +1,9 @@
 //! Host transport for the allocation-free VAB runtime-state transformation.
 
-use kf_codec::audio_vab_state::{load_vab_success, SonyVabRegions, VabLoadInputs, VabServiceCall};
+use kf_codec::audio_vab_state::{
+    load_vab_runtime, load_vab_success, SonyVabRegions, VabLoadInputs, VabRuntimeCall,
+    VabRuntimeInputs, VabServiceCall,
+};
 
 fn encode_calls(calls: &[VabServiceCall]) -> Vec<u8> {
     let mut output = Vec::with_capacity(calls.len() * 20);
@@ -79,5 +82,96 @@ pub fn execute(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
     blocks.remove(1);
     blocks.push(trace);
     blocks.push(report);
+    Ok(blocks)
+}
+
+pub fn execute_runtime(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
+    if blocks.len() != 18
+        || blocks[15].len() != 16
+        || blocks[16].len() != 1
+        || blocks[17].len() != 12
+    {
+        return Err(
+            "audio-vab-runtime expects the 16 state inputs, prefix byte, and three control words"
+                .into(),
+        );
+    }
+    let control = blocks.pop().unwrap();
+    let mut prefix = blocks.pop().unwrap();
+    let params = blocks.pop().unwrap();
+    let word = |bytes: &[u8], at: usize| u32::from_le_bytes(bytes[at..at + 4].try_into().unwrap());
+    let inputs = VabRuntimeInputs {
+        load: VabLoadInputs {
+            vh_address: word(&params, 0),
+            vb_address: word(&params, 4),
+            spu_allocation: word(&params, 8),
+            in_transfer: word(&params, 12) as i32,
+        },
+        read_result: if word(&control, 0) != 0 {
+            Some(word(&control, 4))
+        } else {
+            None
+        },
+        incoming_bank_id: word(&control, 8) as i16,
+    };
+    let [vh, vb, audio, maximum_programs, open_bank_count, bank_status, vh_end_pointers, header_pointers, program_pointers, tone_pointers, spu_start_addresses, body_sizes, current_header_pointer, current_program_pointer, current_tone_pointer] =
+        &mut blocks[..]
+    else {
+        unreachable!()
+    };
+    let mut trace = Vec::new();
+    load_vab_runtime(
+        vh,
+        vb,
+        audio
+            .as_mut_slice()
+            .try_into()
+            .map_err(|_| "invalid GAME audio state size")?,
+        SonyVabRegions {
+            maximum_programs,
+            open_bank_count,
+            bank_status,
+            vh_end_pointers,
+            header_pointers,
+            program_pointers,
+            tone_pointers,
+            spu_start_addresses,
+            body_sizes,
+            current_header_pointer,
+            current_program_pointer,
+            current_tone_pointer,
+        },
+        &mut prefix[0],
+        inputs,
+        |call| {
+            let (tag, args) = match call {
+                VabRuntimeCall::Spu(call) => {
+                    trace.extend(encode_calls(&[call]));
+                    return;
+                }
+                VabRuntimeCall::VSync => (8u32, [0, 0, 0, 0]),
+                VabRuntimeCall::SequenceVolume { id, volume } => (
+                    9,
+                    [
+                        id as i32 as u32,
+                        volume as i32 as u32,
+                        volume as i32 as u32,
+                        0,
+                    ],
+                ),
+                VabRuntimeCall::SequenceStop(id) => (10, [id as i32 as u32, 0, 0, 0]),
+                VabRuntimeCall::SequenceClose(id) => (11, [id as i32 as u32, 0, 0, 0]),
+                VabRuntimeCall::HeaderError => (12, [0, 0, 0, 0]),
+                VabRuntimeCall::BodyError => (13, [0, 0, 0, 0]),
+            };
+            for word in [tag, args[0], args[1], args[2], args[3]] {
+                trace.extend_from_slice(&word.to_le_bytes());
+            }
+        },
+    )
+    .map_err(|error| format!("{error:?}"))?;
+    blocks.remove(1);
+    blocks.push(trace);
+    blocks.push(prefix);
     Ok(blocks)
 }

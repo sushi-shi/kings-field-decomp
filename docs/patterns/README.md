@@ -50,3 +50,5 @@ promotes a probe to a proven historical toolchain.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
   parser write guards, load-delay audit, and reduced Unicorn memory-hook
   control-flow defects.
+- [game-parser-verification.md](game-parser-verification.md): parser failure
+  controls, VAB partial state and cleanup quirks, and seven-function match review.

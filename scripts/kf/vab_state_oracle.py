@@ -1,4 +1,4 @@
-"""Compare complete successful VAB-load state across retail GAME, C, and Rust.
+"""Compare VAB-load success and failure state across retail GAME, C, and Rust.
 
 The GAME wrapper is executed as reconstructed candidate code.  Its three Sony
 Release 2.5 VAB routines remain explicitly admitted shared retail providers;
@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 import struct
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Sequence
 
@@ -93,6 +93,50 @@ class VabCase:
     label: str
     vh: bytes
     vb: bytes
+
+
+@dataclass(frozen=True)
+class VabRuntimeCase:
+    asset: VabCase
+    in_transfer: int = 0
+    allocation: int = SPU_ALLOCATION
+    read_result: int | None = None
+    active_sequence: int = 0
+    all_banks_busy: bool = False
+    incoming_bank_id: int = 16
+
+
+def runtime_cases(asset: VabCase) -> tuple[VabRuntimeCase, ...]:
+    """Real providers see byte mutations and injected service results."""
+    def case(label: str, **kwargs) -> VabRuntimeCase:
+        return VabRuntimeCase(replace(asset, label=label), **kwargs)
+
+    bad_magic = bytearray(asset.vh)
+    bad_magic[:4] = b"BAD!"
+    bad_programs = bytearray(asset.vh)
+    struct.pack_into("<H", bad_programs, 18, 129)
+    unused_length = bytearray(asset.vh)
+    programs = struct.unpack_from("<H", unused_length, 18)[0]
+    lengths_at = 32 + 128 * 16 + programs * 16 * 32
+    struct.pack_into("<H", unused_length, lengths_at + 255 * 2, 0xFFFF)
+    return (
+        case("runtime/success"),
+        case("runtime/transfer-busy", in_transfer=1),
+        case("runtime/transfer-other-value", in_transfer=2),
+        case("runtime/malloc-failed", allocation=0xFFFFFFFF),
+        case("runtime/spu-end-overflow", allocation=0x80000),
+        case("runtime/spu-end-exact", allocation=0x80000 - len(asset.vb)),
+        case("runtime/read-zero", read_result=0),
+        case("runtime/read-short", read_result=len(asset.vb) - 1),
+        case("runtime/read-error", read_result=0xFFFFFFFF),
+        case("runtime/active-fade", active_sequence=1),
+        case("runtime/active-fade-then-busy", active_sequence=1, in_transfer=1),
+        case("runtime/nonboolean-active", active_sequence=2),
+        case("runtime/all-banks-busy", all_banks_busy=True),
+        VabRuntimeCase(replace(asset, label="runtime/bad-magic", vh=bytes(bad_magic))),
+        VabRuntimeCase(replace(asset, label="runtime/too-many-programs", vh=bytes(bad_programs))),
+        VabRuntimeCase(replace(asset, label="runtime/unused-length-tail", vh=bytes(unused_length))),
+    )
 
 
 @dataclass(frozen=True)
@@ -186,17 +230,18 @@ def _hooks() -> tuple[ExternalHook, ...]:
     )
 
 
-def programs(symbols: GameSymbols):
+def programs(symbols: GameSymbols, hooks: tuple[ExternalHook, ...] | None = None):
     providers = tuple(
         RetailProvider(name)
         for name in ("SsVabOpenHead", "SsVabTransBody", "SsVabTransCompleted")
     )
     functions = (VAB_FUNCTION, "audio_stop_sequence_fade")
-    retail = RetailProgram.link(symbols, functions, hooks=_hooks(), providers=providers)
+    hooks = _hooks() if hooks is None else hooks
+    retail = RetailProgram.link(symbols, functions, hooks=hooks, providers=providers)
     candidate = CandidateProgram.link(
         symbols,
         tuple(CandidateFunction(name, CANDIDATE_OBJECT) for name in functions),
-        hooks=_hooks(),
+        hooks=hooks,
         providers=providers,
     )
     return retail, candidate
@@ -355,6 +400,99 @@ def compare_vab_states(
     return len(cases), retail_steps, candidate_steps
 
 
+def _runtime_request(case: VabRuntimeCase) -> tuple[bytes, ...]:
+    blocks = list(seeded_request(case.asset))
+    audio = bytearray(blocks[2])
+    struct.pack_into("<h", audio, 0x0C, -3)  # signed O32 service argument
+    struct.pack_into("<I", audio, 0x10, case.active_sequence)
+    blocks[2] = bytes(audio)
+    if case.all_banks_busy:
+        blocks[5] = bytes([1] * 16)
+    blocks[15] = struct.pack("<IIIi", VH_VA, VB_VA, case.allocation, case.in_transfer)
+    blocks.extend((b"\xA5", struct.pack(
+        "<III", case.read_result is not None,
+        case.read_result or 0, case.incoming_bank_id,
+    )))
+    return tuple(blocks)
+
+
+def execute_runtime(retail: RetailImage, symbols: GameSymbols,
+                    case: VabRuntimeCase, request: Sequence[bytes], *, candidate: bool):
+    trace = bytearray()
+    transfer = case.in_transfer
+
+    def hook(name: str, tag: int, arity: int, response):
+        def call(context: HookContext) -> int:
+            nonlocal transfer
+            args = (*context.args[:arity], *((0,) * (4 - arity)))
+            trace.extend(struct.pack("<5I", tag, *args))
+            if name == "_spu_setInTransfer":
+                transfer = context.args[0]
+            return response(context) if callable(response) else response
+        return ExternalHook(name, call)
+
+    def error(context: HookContext) -> int:
+        message = bytearray()
+        for offset in range(64):
+            byte = context.read(context.args[0] + offset, 1)[0]
+            if byte == 0:
+                break
+            message.append(byte)
+        tag = {b"VAB headder open failed\n": 12, b"VAB body open failed\n": 13}.get(bytes(message))
+        if tag is None:
+            raise AssertionError(f"unexpected VAB error: {bytes(message)!r}")
+        trace.extend(struct.pack("<5I", tag, 0, 0, 0, 0))
+        return 0
+
+    hooks = (
+        hook("_spu_getInTransfer", 1, 0, lambda _ctx: transfer),
+        hook("_spu_setInTransfer", 2, 1, 0),
+        hook("SpuMalloc", 3, 1, case.allocation),
+        hook("SpuSetTransferMode", 4, 1, 0),
+        hook("SpuSetTransferStartAddr", 5, 1, lambda ctx: ctx.args[0]),
+        hook("SpuRead", 6, 2, lambda ctx: ctx.args[1] if case.read_result is None else case.read_result),
+        hook("SpuIsTransferCompleted", 7, 1, 1),
+        hook("VSync", 8, 1, 0),
+        hook("SsSeqSetVol", 9, 3, 0),
+        hook("SsSeqStop", 10, 1, 0),
+        hook("SsSeqClose", 11, 1, 0),
+        ExternalHook("printf", error),
+    )
+    program = programs(symbols, hooks)[int(candidate)]
+    prefix = MemoryRange("Sony automatic-id cleanup byte", BANK_STATUS_VA - 1, 1)
+    ranges = (*_ranges(len(case.asset.vh)), prefix)
+    immutable_vb = MemoryRange("immutable VB", VB_VA, len(case.asset.vb))
+    result = ParserMachine(retail, program).call(
+        VAB_FUNCTION, (VH_VA, VB_VA),
+        initial_gprs={19: case.incoming_bank_id},
+        memory=(*_machine_inputs(request[:15]), MemoryInput(prefix.address, request[16])),
+        capture=(*ranges, immutable_vb), allowed_writes=ranges,
+    )
+    if result.memory[-1].data != case.asset.vb or any(
+        write.address < VB_VA + len(case.asset.vb) and VB_VA < write.address + write.size
+        for write in result.writes
+    ):
+        raise AssertionError(f"{case.asset.label}: VB modified")
+    # The service flag is represented by its complete ordered get/set trace.
+    return tuple(region.data for region in result.memory[:-2]) + (
+        bytes(trace), result.memory[-2].data,
+    )
+
+
+def compare_runtime_cases(retail: RetailImage, symbols: GameSymbols, rust: RustCodec,
+                          cases: Sequence[VabRuntimeCase]) -> int:
+    for case in cases:
+        request = _runtime_request(case)
+        expected = execute_runtime(retail, symbols, case, request, candidate=False)
+        candidate = execute_runtime(retail, symbols, case, request, candidate=True)
+        actual = rust.call("audio-vab-runtime", *request)
+        for version, result in (("C", candidate), ("Rust", actual)):
+            if result != expected:
+                index = next((i for i, (a, b) in enumerate(zip(expected, result)) if a != b), -1)
+                raise AssertionError(f"{case.asset.label}: retail/{version} runtime block {index} differs")
+    return len(cases)
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--retail-dir", type=Path)
@@ -376,6 +514,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         count, retail_steps, candidate_steps = compare_vab_states(
             retail, symbols, rust, cases
         )
+        runtime_count = compare_runtime_cases(retail, symbols, rust, runtime_cases(cases[0]))
         print(
             f"[vab-state-oracle] PASS: {count} shipped VAB banks; retail/C/Rust "
             "mutated VH, GAME audio state, Sony tables/pointers, and ordered SPU "
@@ -385,6 +524,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"[vab-state-oracle] instructions: retail {retail_steps}, "
             f"candidate {candidate_steps}"
         )
+        print(f"[vab-state-oracle] PASS: {runtime_count} success/failure/fade controls; "
+              "full partial state, cleanup byte, immutable VB, and service arguments agree")
         print(
             "[vab-state-oracle] shared boundary: candidate GAME wrapper is actual; "
             "Sony OpenHead/TransBody/Completed use explicitly admitted retail providers"

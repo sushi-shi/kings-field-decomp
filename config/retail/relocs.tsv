@@ -3151,13 +3151,13 @@ GAME.EXE	0x8001c2b0	0xaab0	0x8001c2b4	mips_hi16_lo16	reachable-code	0x80090fc8	b
 GAME.EXE	0x8001c2c0	0xaac0	0x8001c2c4	mips_hi16_lo16	reachable-code	0x80090fc8	bss	tmd_state	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001c2dc	0xaadc	0x8001c2e0	mips_hi16_lo16	reachable-code	0x80090fc8	bss	tmd_state	lui+lw	v1	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001c32c	0xab2c	0x8001c330	mips_hi16_lo16	reachable-code	0x800121b4	load		lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_display_tmd
-GAME.EXE	0x8001c374	0xab74		mips26	instruction-word	0x8001c584	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001c3b8	0xabb8		mips26	instruction-word	0x8001c3e8	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001c3ec	0xabec		mips26	instruction-word	0x8001c584	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001c438	0xac38		mips26	instruction-word	0x8001c584	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001c478	0xac78		mips26	instruction-word	0x8001c584	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001c4dc	0xacdc		mips26	instruction-word	0x8001c584	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001c51c	0xad1c		mips26	instruction-word	0x8001c584	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001c374	0xab74		mips26	reachable-code	0x8001c584	load		j		manual-control-flow	reviewed	manual:game_parser_verification
+GAME.EXE	0x8001c3b8	0xabb8		mips26	reachable-code	0x8001c3e8	load		j		manual-control-flow	reviewed	manual:game_parser_verification
+GAME.EXE	0x8001c3ec	0xabec		mips26	reachable-code	0x8001c584	load		j		manual-control-flow	reviewed	manual:game_parser_verification
+GAME.EXE	0x8001c438	0xac38		mips26	reachable-code	0x8001c584	load		j		manual-control-flow	reviewed	manual:game_parser_verification
+GAME.EXE	0x8001c478	0xac78		mips26	reachable-code	0x8001c584	load		j		manual-control-flow	reviewed	manual:game_parser_verification
+GAME.EXE	0x8001c4dc	0xacdc		mips26	reachable-code	0x8001c584	load		j		manual-control-flow	reviewed	manual:game_parser_verification
+GAME.EXE	0x8001c51c	0xad1c		mips26	reachable-code	0x8001c584	load		j		manual-control-flow	reviewed	manual:game_parser_verification
 GAME.EXE	0x8001c5b8	0xadb8	0x8001c5bc	mips_hi16_lo16	reachable-code	0x80090fc8	bss	tmd_state	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001c5d4	0xadd4		mips26	reachable-code	0x8001c2b0	load	tmd_prepare_primitive_indices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001c5f4	0xadf4		mips26	reachable-code	0x8001ac8c	load	memory_release_last	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator

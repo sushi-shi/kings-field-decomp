@@ -75,6 +75,7 @@ fn execute(operation: &str, mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, St
         "save-write-slot" => save_write_driver::execute(blocks),
         "audio-vab" | "audio-seq" => audio_driver::execute(operation, blocks),
         "audio-vab-state" => audio_vab_state_driver::execute(blocks),
+        "audio-vab-runtime" => audio_vab_state_driver::execute_runtime(blocks),
         "map-resources" => map_resource_driver::execute(blocks),
         "world-restore" => world_state_driver::execute(blocks),
         "common-load" => {

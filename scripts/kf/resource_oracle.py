@@ -506,7 +506,13 @@ GRID_NAMES = (
 )
 
 
-def compare_stat(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, root: Path) -> int:
+def compare_stat(
+    retail: RetailImage, symbols: GameSymbols, rust: RustCodec, root: Path,
+    *, source_alignment: int = 0,
+) -> int:
+    if source_alignment not in range(4):
+        raise ValueError("STAT source alignment must be in 0..3")
+    source_address = INPUT_VA + source_alignment
     specs = (
         ("DAT_800580e8", 912),
         ("menu_window_layouts", 2376),
@@ -543,7 +549,7 @@ def compare_stat(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, roo
             if name != b"COM\\STAT.DAT":
                 raise AssertionError(f"unexpected STAT load path {name!r}")
             io_order.append("load")
-            context.write_u32(context.args[0], INPUT_VA)
+            context.write_u32(context.args[0], source_address)
             return 0
 
         def release(_context: HookContext) -> int:
@@ -594,7 +600,7 @@ def compare_stat(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, roo
         result = ParserMachine(retail, program).call(
             "item_load_database",
             memory=[
-                MemoryInput(INPUT_VA, source),
+                MemoryInput(source_address, source),
                 *[MemoryInput(c.address, data) for c, data in zip(captures, initial)],
             ],
             capture=captures,
@@ -612,7 +618,8 @@ def compare_stat(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, roo
     if aligned_size != 4096:
         raise AssertionError(f"STAT aligned-size control changed to {aligned_size}")
     print(
-        "[resource-oracle] PASS STAT: six banks, 80 directory entries, ordered 40-byte paths, "
+        f"[resource-oracle] PASS STAT alignment {source_alignment}: "
+        "six banks, 80 directory entries, ordered 40-byte paths, "
         "and preserved 2048-aligned success size",
         flush=True,
     )
@@ -1014,7 +1021,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.family in ("placements", "all"):
         count += compare_placements(retail, symbols, rust, root)
     if args.family in ("stat", "all"):
-        count += compare_stat(retail, symbols, rust, root)
+        for source_alignment in range(4):
+            count += compare_stat(
+                retail, symbols, rust, root, source_alignment=source_alignment,
+            )
     if args.family in ("archives", "all"):
         count += compare_archives(retail, symbols, rust, root)
     if args.family in ("common", "all"):

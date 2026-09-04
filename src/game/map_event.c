@@ -42,8 +42,8 @@ void map_event_advance_rotation_blocking(KfMapEvent *event, u16 target, s16 step
 ADDRESS(0x800338b8, 0x22c)
 void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
-    KfMapEvent *event = map_event_pool;
     u8 exhausted = 0;
+    KfMapEvent *event = map_event_pool;
     u16 count = 7;
 
     do {
@@ -69,8 +69,8 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->radius = definitions->radius;
                 event->position_y =
                     -(map_floor_height_grid[event->cell_z][event->cell_x] * 100);
+                event->rotation = definitions->initial_rotation;
                 definitions++;
-                event->rotation = definitions[-1].initial_rotation;
                 event->unknown_38 = 0;
                 event->unknown_34 = 0;
                 event->image_dirty = 1;

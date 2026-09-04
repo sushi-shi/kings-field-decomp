@@ -1,5 +1,6 @@
 use kf_codec::audio_vab_state::{
-    load_vab_success, SonyVabRegions, VabLoadInputs, VabServiceCall, VabStateError,
+    load_vab_runtime, load_vab_success, SonyVabRegions, VabLoadInputs, VabRuntimeCall,
+    VabRuntimeInputs, VabRuntimeOutcome, VabServiceCall, VabStateError,
     GAME_AUDIO_SEQUENCE_ACTIVE_OFFSET, GAME_AUDIO_STATE_SIZE, VAB_HEADER_SIZE,
     VAB_LENGTH_TABLE_SIZE, VAB_NEW_PROGRAM_SLOTS, VAB_POINTER_TABLE_SIZE, VAB_PROGRAM_SIZE,
     VAB_TONES_PER_PROGRAM, VAB_TONE_SIZE,
@@ -28,6 +29,38 @@ struct Fixture {
 }
 
 impl Fixture {
+    fn runtime(
+        &mut self,
+        inputs: VabRuntimeInputs,
+    ) -> (VabRuntimeOutcome, Vec<VabRuntimeCall>, u8) {
+        let mut prefix = 0xa5;
+        let mut calls = Vec::new();
+        let outcome = load_vab_runtime(
+            &mut self.vh,
+            &self.vb,
+            &mut self.audio,
+            SonyVabRegions {
+                maximum_programs: &mut self.maximum,
+                open_bank_count: &mut self.count,
+                bank_status: &mut self.status,
+                vh_end_pointers: &mut self.vh_ends,
+                header_pointers: &mut self.headers,
+                program_pointers: &mut self.programs,
+                tone_pointers: &mut self.tones,
+                spu_start_addresses: &mut self.starts,
+                body_sizes: &mut self.sizes,
+                current_header_pointer: &mut self.current_header,
+                current_program_pointer: &mut self.current_program,
+                current_tone_pointer: &mut self.current_tone,
+            },
+            &mut prefix,
+            inputs,
+            |call| calls.push(call),
+        )
+        .unwrap();
+        (outcome, calls, prefix)
+    }
+
     fn new() -> Self {
         let programs = 2usize;
         let tones_at = VAB_HEADER_SIZE + VAB_NEW_PROGRAM_SLOTS * VAB_PROGRAM_SIZE;
@@ -113,6 +146,137 @@ impl Fixture {
             },
         )
     }
+}
+
+fn runtime_inputs() -> VabRuntimeInputs {
+    VabRuntimeInputs {
+        load: VabLoadInputs {
+            vh_address: VH_ADDRESS,
+            vb_address: VB_ADDRESS,
+            spu_allocation: SPU_START,
+            in_transfer: 0,
+        },
+        read_result: None,
+        incoming_bank_id: 16,
+    }
+}
+
+#[test]
+fn runtime_busy_marks_game_failure_without_reserving_a_bank() {
+    let mut fixture = Fixture::new();
+    let vh = fixture.vh.clone();
+    let headers = fixture.headers;
+    let mut inputs = runtime_inputs();
+    inputs.load.in_transfer = 1;
+    let (outcome, calls, prefix) = fixture.runtime(inputs);
+    assert_eq!(outcome, VabRuntimeOutcome::HeaderRejected);
+    assert_eq!(
+        calls,
+        [
+            VabRuntimeCall::Spu(VabServiceCall::GetInTransfer),
+            VabRuntimeCall::HeaderError
+        ]
+    );
+    assert_eq!(prefix, 0xa5);
+    assert_eq!(fixture.vh, vh);
+    assert_eq!(fixture.headers, headers);
+    assert_eq!(fixture.status[2], 0);
+    assert_eq!(&fixture.audio[4..6], &u16::MAX.to_le_bytes());
+}
+
+#[test]
+fn runtime_bad_magic_retains_reserved_slot_and_exposes_cleanup_byte() {
+    let mut fixture = Fixture::new();
+    fixture.vh[..4].copy_from_slice(b"BAD!");
+    let programs = fixture.programs;
+    let (outcome, calls, prefix) = fixture.runtime(runtime_inputs());
+    assert_eq!(outcome, VabRuntimeOutcome::HeaderRejected);
+    assert_eq!(prefix, 0);
+    assert_eq!(fixture.status[2], 1);
+    assert_eq!(fixture.count, 2u16.to_le_bytes());
+    assert_eq!(fixture.maximum, 0x5a5au16.to_le_bytes());
+    assert_eq!(table_word(&fixture.headers, 2), VH_ADDRESS);
+    assert_eq!(fixture.programs, programs);
+    assert_eq!(
+        calls,
+        [
+            VabRuntimeCall::Spu(VabServiceCall::GetInTransfer),
+            VabRuntimeCall::Spu(VabServiceCall::SetInTransfer(1)),
+            VabRuntimeCall::Spu(VabServiceCall::SetInTransfer(0)),
+            VabRuntimeCall::HeaderError,
+        ]
+    );
+}
+
+#[test]
+fn runtime_allocation_failure_keeps_partial_header_preparation() {
+    let mut fixture = Fixture::new();
+    let starts = fixture.starts;
+    let mut inputs = runtime_inputs();
+    inputs.load.spu_allocation = u32::MAX;
+    let (outcome, calls, prefix) = fixture.runtime(inputs);
+    assert_eq!(outcome, VabRuntimeOutcome::HeaderRejected);
+    assert_eq!(prefix, 0);
+    assert_eq!(fixture.starts, starts);
+    assert_eq!(
+        table_word(&fixture.vh_ends, 2),
+        VH_ADDRESS + fixture.vh.len() as u32
+    );
+    assert_eq!(table_word(&fixture.programs, 2), VH_ADDRESS + 32);
+    assert_eq!(&fixture.vh[40..44], &0u32.to_le_bytes());
+    assert!(calls.contains(&VabRuntimeCall::Spu(VabServiceCall::Malloc(40))));
+}
+
+#[test]
+fn runtime_short_transfer_leaves_header_open_and_skips_completion() {
+    let mut fixture = Fixture::new();
+    let mut inputs = runtime_inputs();
+    inputs.read_result = Some(39);
+    let (outcome, calls, prefix) = fixture.runtime(inputs);
+    assert_eq!(outcome, VabRuntimeOutcome::BodyRejected);
+    assert_eq!(fixture.status[2], 2);
+    assert_eq!(fixture.count, 3u16.to_le_bytes());
+    assert_eq!(prefix, 0xa5);
+    assert_eq!(calls.last(), Some(&VabRuntimeCall::BodyError));
+    assert!(!calls.contains(&VabRuntimeCall::Spu(VabServiceCall::IsTransferCompleted(1))));
+}
+
+#[test]
+fn runtime_full_bank_search_uses_explicit_inherited_id() {
+    let mut fixture = Fixture::new();
+    fixture.status.fill(1);
+    let (outcome, _, prefix) = fixture.runtime(runtime_inputs());
+    assert_eq!(outcome, VabRuntimeOutcome::HeaderRejected);
+    assert_eq!(fixture.status, [1; 16]);
+    assert_eq!(fixture.count, 1u16.to_le_bytes());
+    assert_eq!(prefix, 0);
+}
+
+#[test]
+fn runtime_active_sequence_fades_before_attempting_a_busy_bank() {
+    let mut fixture = Fixture::new();
+    fixture.audio[12..14].copy_from_slice(&(-3i16).to_le_bytes());
+    fixture.audio[16..20].copy_from_slice(&1u32.to_le_bytes());
+    let mut inputs = runtime_inputs();
+    inputs.load.in_transfer = 1;
+    let (_, calls, _) = fixture.runtime(inputs);
+    for (index, volume) in (0..=75).rev().enumerate() {
+        assert_eq!(calls[index * 2], VabRuntimeCall::VSync);
+        assert_eq!(
+            calls[index * 2 + 1],
+            VabRuntimeCall::SequenceVolume { id: -3, volume }
+        );
+    }
+    assert_eq!(
+        &calls[152..],
+        &[
+            VabRuntimeCall::SequenceStop(-3),
+            VabRuntimeCall::SequenceClose(-3),
+            VabRuntimeCall::Spu(VabServiceCall::GetInTransfer),
+            VabRuntimeCall::HeaderError,
+        ]
+    );
+    assert_eq!(&fixture.audio[16..20], &0u32.to_le_bytes());
 }
 
 fn table_word(bytes: &[u8], index: usize) -> u32 {
@@ -207,7 +371,7 @@ fn busy_transfer_is_rejected_without_mutating_caller_state() {
 }
 
 #[test]
-fn transfer_extent_must_match_all_256_length_entries() {
+fn transfer_extent_must_match_used_length_entries() {
     let mut fixture = Fixture::new();
     fixture.vb.pop();
     assert_eq!(
@@ -217,6 +381,14 @@ fn transfer_extent_must_match_all_256_length_entries() {
             actual: 39,
         })
     );
+}
+
+#[test]
+fn unused_sample_length_tail_does_not_change_transfer_size() {
+    let mut fixture = Fixture::new();
+    let last = fixture.vh.len() - 2;
+    fixture.vh[last..].copy_from_slice(&u16::MAX.to_le_bytes());
+    assert_eq!(fixture.load(0).unwrap().report.body_size, 40);
 }
 
 #[test]

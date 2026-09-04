@@ -98,6 +98,8 @@ class AnimationOracleTests(unittest.TestCase):
                 "lifecycle/malloc-retry",
                 "lifecycle/different-asset-reinit",
                 "lifecycle/static-record-release",
+                "lifecycle/malloc-three-retries",
+                "lifecycle/reinit-malloc-retries",
             ],
         )
         self.assertEqual(selected[2].allocation_results, (0, 0x800A0000))
@@ -149,7 +151,7 @@ class AnimationOracleTests(unittest.TestCase):
             lifecycle_cases(),
         )
 
-        self.assertEqual(count, 5)
+        self.assertEqual(count, 7)
 
 
 if __name__ == "__main__":

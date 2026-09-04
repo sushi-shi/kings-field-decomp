@@ -33,6 +33,10 @@ class WorldStateOracleTests(unittest.TestCase):
         object_ids = 62
         self.assertEqual(record[object_ids + 170:object_ids + 173], bytes((42, 45, 50)))
         self.assertEqual(synthetic_record(False), b"\0")
+        empty = synthetic_record(sparse=False)
+        self.assertEqual(len(empty), 349)
+        self.assertEqual(empty[57], 0)
+        self.assertEqual(empty[58 + 190], 0)
 
     def test_conditions_have_stable_driver_order(self) -> None:
         conditions = Conditions(*range(11), found_actor=17)
@@ -75,7 +79,7 @@ class WorldStateOracleTests(unittest.TestCase):
             GameSymbols.load(),
             RustCodec(REPO / "tools/target/debug/kf-codec-oracle"),
         )
-        self.assertEqual(count, 7)
+        self.assertEqual(count, 15)
 
 
 if __name__ == "__main__":

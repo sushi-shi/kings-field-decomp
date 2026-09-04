@@ -16,9 +16,7 @@
  * tail dispatches a per-floor scripted setup on the current floor (1..5).
  *
  * map_event_pool and the per-floor records share one contiguous BSS aggregate
- * reached through a single map_world_state_base base register (the event pool is
- * base - 556); separate globals cannot reproduce that base, so a register/
- * scheduling residue is expected here exactly as documented for map_world_state_persist.
+ * reached through map_world_state_base (the event pool is base - 556).
  *
  * map_refresh_event_images walks the eight-record map_event_pool and refreshes the image
  * of every active (state == 1) event. map_load_floor loads the current floor:
@@ -37,7 +35,6 @@ void map_restore_floor_state(void)
     KfMapEvent *event;
     KfMapObject *object;
     s32 i;
-    s32 count;
 
     in = base - 1690 + 1700 * player_state.progress_state.current_floor;
     if (*in++ == 1) {
@@ -52,10 +49,10 @@ void map_restore_floor_state(void)
             event->unknown_0d = *in++;
         }
 
-        count = *in++;
-        while (count-- != 0) {
-            i = *in++;
-            actor_state.actors[i].lifecycle = *in++;
+        i = *in++;
+        while (--i != -1) {
+            s32 actor_index = *in++;
+            actor_state.actors[actor_index].lifecycle = *in++;
         }
 
         object = &map_object_state.objects[0];
@@ -63,8 +60,8 @@ void map_restore_floor_state(void)
             object->object_id = *in++;
         }
 
-        count = *in++;
-        while (count-- != 0) {
+        i = *in++;
+        while (--i != -1) {
             u8 *link;
             s32 k;
 
@@ -86,9 +83,9 @@ void map_restore_floor_state(void)
                 object->cell_z * 2000 + ((rand() * 2000) >> 15);
             object->position_y =
                 -(map_floor_height_grid[object->cell_z][object->cell_x] * 100);
-            object->rotation.x = 0;
-            object->rotation.y = 0;
             object->rotation.z = 0;
+            object->rotation.y = 0;
+            object->rotation.x = 0;
             *(u16 *)&object->link = *in++;
             *(u16 *)&object->link |= *in++ << 8;
             object->link.spawn_sequence = 0;
@@ -124,9 +121,9 @@ void map_restore_floor_state(void)
             map_apply_copy_region(1);
         }
         if (MAP_WORLD_STATE_BYTES[1] != 2) {
-            i = actor_pool_find_at_tile(7, 0x28);
-            if (i != -1) {
-                actor_state.actors[i].lifecycle = 3;
+            s32 actor_index = actor_pool_find_at_tile(7, 0x28);
+            if (actor_index != -1) {
+                actor_state.actors[actor_index].lifecycle = 3;
             }
         }
         if (DAT_8009f845 == 1) {

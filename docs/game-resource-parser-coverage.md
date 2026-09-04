@@ -18,6 +18,12 @@ the census below now has a Rust implementation and passing comparison coverage
 at its stated boundary. `python -m scripts.kf.codec_oracle` runs all ten suites
 without case or event limits and rebuilds the candidates by default.
 
+The [failure-path and match review](patterns/game-parser-verification.md)
+leaves **23 of the 29 explicit GAME functions strict-exact (79.31%)**, up from
+22. Size-weighted objdiff similarity is 98.291691%, distinct from the passing
+finite test corpus. Six functions remain non-exact; Sony providers are not
+included in these counts.
+
 ## Complete parser census
 
 | Format/layer | GAME entry point(s) | Candidate unit | Serialized input | Observable output | Rust/oracle status |
@@ -32,15 +38,15 @@ without case or event limits and rebuilds the candidates by default.
 | Map-event definitions | `map_event_pool_load` `0x800338b8` | `game.map_event` | First at most eight 24-byte records in MIXA chunk 7; `state == 0xff` sentinel | `KfMapEvent[8]`, 68 bytes each, plus collision occupancy callbacks | Rust `placements`; three-way pass on all five floors and empty-sentinel control: full pool, grids, ordered callbacks |
 | Model-asset archive | `asset_registry_load_tmd_archive` `0x800204c0`; `asset_registry_set` `0x8002055c`; offset resolver `asset_registry_select` `0x8002059c` | `game.asset_registry` | `u16 count`, two reserved bytes, then 20-byte `KfAssetHeader` entries advanced by `byte_size` | Consecutive `asset_registry_entries`; current TMD is `asset + tmd_data_offset`; each TMD is prepared in place | Rust `asset_archive`/`registry`; three-way pass on 14 MIXB archives, three CHR archives, COM asset, 16 WEP assets and empty control: full mutated payload, 64-slot registry window, selected pointer |
 | Standard TMD packet preparation | `tmd_register` `0x8001c5b0`; parser `tmd_prepare_primitive_indices` `0x8001c2b0` | `game.render` | 12-byte TMD header, 28-byte object records, packets advanced by `4 + ilen * 4` | Selected `u16` normal/vertex indices in eight polygon modes are shifted left by three in place | Rust `tmd`; three-way pass on all 246 shipped payloads plus four synthetic controls (including unknown modes and wrapping). Registry wrapper also passes all ten raw MIXB and 67 item TMDs, including all eight slots and selected pointer |
-| King's Field animation tables | `render_bind_animated_instance` `0x800205d4` | `game.pool` | `KfAssetHeader` object/clip tables, clip and keyframe offsets, morph/rest objects and base TMD vertices | 20-byte pool record, caller cache, shared scratch including its leading reserved vector, full TMD state/current pointer, return status and lifecycle requests | Rust `animation`; 1,134-case three-way pass: 1,027 shipped animated selections/cache hits, 99 static assets, three reverse/wrap/fallback controls, five allocation/reinitialization/release controls |
-| `STAT.DAT` fixed banks | `item_load_database` `0x80020cfc` | `game.item` | Exactly 5,708 bytes | Six copies: 912, 2,376, 1,600, 180, 320, and 320 bytes | Rust `stat`; three-way pass on all six banks, 80 20-byte CD file entries, and all 80 lookup-name buffers with deterministic found/missing responses |
+| King's Field animation tables | `render_bind_animated_instance` `0x800205d4` | `game.pool` | `KfAssetHeader` object/clip tables, clip and keyframe offsets, morph/rest objects and base TMD vertices | 20-byte pool record, caller cache, shared scratch including its leading reserved vector, full TMD state/current pointer, return status and lifecycle requests | Rust `animation`; 1,136-case three-way pass: 1,027 shipped animated selections/cache hits, 99 static assets, three reverse/wrap/fallback controls, seven allocation/reinitialization/release controls |
+| `STAT.DAT` fixed banks | `item_load_database` `0x80020cfc` | `game.item` | Exactly 5,708 bytes | Six copies: 912, 2,376, 1,600, 180, 320, and 320 bytes | Rust `stat`; three-way pass at all four source byte alignments on all six banks, 80 20-byte CD file entries, and all 80 lookup-name buffers with deterministic found/missing responses |
 | TIM image | game loop `tim_upload_images` `0x8001b100`; Sony `OpenTIM` `0x800529a0`, `ReadTIM` `0x800529b0`, actual worker `get_tim_addr` `0x80052cb0` | `game.resources`; vendored `LIBGPU.LIB/TMD` | TIM magic `0x10`, mode, optional CLUT block, pixel block; files may concatenate records | Full 20-byte `TIM_IMAGE` descriptor, CLUT/pixel rectangles and bytes, submission order, SDK cursor | Rust `tim`; three-way pass on 297 GAME files plus two synthetic controls, 678 uploads total. C wrapper explicitly shares the three retail Sony decoder providers; Rust is independent |
 | Save icon TIM extraction | `save_file_initialize_buffers` `0x8002c304` | `game.save_system` | `TIM/ICO1.TIM` through `ICO3.TIM`, 192 bytes each | ICO1 CLUT bytes `[0x14,0x34)` and pixel bytes `[0x40,0xc0)`; ICO2/3 pixel bytes `[0x40,0xc0)` copied into the 0x200-byte card header | Rust `save`; three-way pass using all three retail icons, comparing complete initialized buffers and ordered file callbacks |
-| VAB/VH/VB | game wrapper `audio_load_vab` `0x80032984`; Sony parser `SsVabOpenHead` `0x800446a8`; transfer `SsVabTransBody` `0x80044aa8`, completion `0x80044ce4` | `game.audio`; vendored `LIBSND.LIB/VMANAGER` | MIXA chunks 0 and 1 | Full mutated VH, GAME audio state, touched Sony program/tone/sample tables and aliases, SPU transfer requests | Rust `audio`/`audio_vab_state`; all five shipped banks pass normalization/roundtrip and full runtime-state comparisons on successful loads. Sony routines are explicit shared retail providers; Rust is independent |
+| VAB/VH/VB | game wrapper `audio_load_vab` `0x80032984`; Sony parser `SsVabOpenHead` `0x800446a8`; transfer `SsVabTransBody` `0x80044aa8`, completion `0x80044ce4` | `game.audio`; vendored `LIBSND.LIB/VMANAGER` | MIXA chunks 0 and 1 | Full mutated VH, GAME audio state, touched Sony program/tone/sample tables and aliases, SPU transfer requests | Rust `audio`/`audio_vab_state`; all five shipped banks pass normalization/roundtrip and successful runtime comparisons; 16 additional busy/allocation/validation/transfer/fade controls compare partial state, adjacent cleanup byte and service arguments. Sony routines are explicit shared retail providers; Rust is independent |
 | SEQ | game wrapper `audio_play_map_sequence` `0x80032a4c`; Sony open `SsSeqOpen` `0x800468d8`; initializer `InitSoundSeq` `0x800471a4`; event pump `SeqPlay` `0x800476e8`, `GetSeqData` `0x800478c4`, `ReadDeltaValue` `0x80049d80`, `GetMetaEvent` `0x80049888`; tick dispatcher `SsSeqCalledTbyT` `0x8004a55c` | `game.audio`; vendored `LIBSND.LIB/SSOPEN`, `SEQINIT`, `SEQREAD`, `SSCALL` | Nine `B1..B5/SND*.SEQ` files | Full 176-byte score after initialization and each event, ordered SPU arguments, 0x90-byte GAME audio state, Sony open flag and unchanged loaded SEQ | Rust `audio`; all nine files and 15,880 events (5,154 running-status) pass full state/flag/input/command comparisons, including nonzero state seeds. Sony parser bodies are shared retail providers; Rust is independent |
 | Memory-card header/catalog | `save_file_read_header` `0x8002bd08`; `save_system_read_catalog` `0x8002b078` | `game.save_system` | First 0x280 bytes of `bu00:BISLPS-00017KF      ` | `KfSaveHeader`; catalog copies six-word summaries selected by four directory slot IDs | Rust `save`; three-way pass on success, short-read retry, retry exhaustion, open failure, cached catalog and unavailable catalog |
 | Memory-card slot payload | `save_file_read_slot` `0x8002beb0`; inverse writer `save_file_write_slot` `0x8002b73c` | `game.save_system` | One 0x2580-byte payload at `0x280 + entry * 0x2580`, after rereading/comparing the header | Copies 0xe0 player bytes, 0x2134 world bytes, 0xf0 auxiliary bytes, and 24 sampled magic flags; preserves two live player pointers/words | Rust `save`; reader passes slots 1–4 and retry/open/missing/summary-mismatch cases. Writer passes 14 cases covering rotation, creation, absent previous entry, retries and failures: full buffers, simulated file and I/O trace |
-| Nested per-floor world state | serializer `map_world_state_persist` `0x80035b5c`; deserializer `map_restore_floor_state` `0x80035e44` | `game.map_events`, `game.map_load` | Variable-length record within the saved 0x2134-byte world block | Eight events, sparse actor lifecycle overrides, 190 object IDs, sparse object-link payloads, and two effect-object pools | Rust `world_state`/`world_persist`; restore passes seven cases across floors 1–5, floor-five direct/copy and marker-clear with complete pools/callbacks. Persistence passes five cases comparing the full 8,500-byte world block, including exactly 1,690 bytes for floor five |
+| Nested per-floor world state | serializer `map_world_state_persist` `0x80035b5c`; deserializer `map_restore_floor_state` `0x80035e44` | `game.map_events`, `game.map_load` | Variable-length record within the saved 0x2134-byte world block | Eight events, sparse actor lifecycle overrides, 190 object IDs, sparse object-link payloads, and two effect-object pools | Rust `world_state`/`world_persist`; restore passes 15 cases across floors 1–5, zero sparse counts, missing/skipped actors, floor override branches and marker-clear with complete pools/callbacks. Persistence passes five cases comparing the full 8,500-byte world block, including exactly 1,690 bytes for floor five |
 
 ## Format corpus and invariants
 
@@ -70,15 +76,15 @@ parser boundary:
 - Audio executes actual Sony parser bodies as shared retail/C providers. Rust
   independently derives VAB runtime state and complete per-event SEQ records.
   SPU hardware/voice allocation is a declared service boundary. VAB runtime
-  agreement covers successful loads, not transfer-busy, allocation-failure or
-  active-sequence fade paths.
+  agreement covers successful loads and the 16 explicit failure/fade controls;
+  it does not claim all malformed-input, inherited-register or hardware states.
 - Save reads and writes use deterministic in-memory BIOS/file services. No
   real memory card or host save file is changed.
 
 The placement family also passes full-capacity actor/object/event inputs
 without a sentinel and an object-ID-123 control (28 cases total). STAT includes
 a successful already-sector-aligned 4,096-byte file and verifies that it is not
-rounded up again. TMD defaults include modes below, inside, and above the switch
+rounded up again, at each of four source byte alignments. TMD defaults include modes below, inside, and above the switch
 range, zero-length unknown payloads, and a following wrapping-index packet.
 TIM controls cover a no-CLUT record, opaque mode bits, zero-area upload and
 word-rounded block length; both absent CLUT pointers must become zero.
@@ -204,6 +210,15 @@ same seven ordered service requests. This independent Rust transform is in
 The entire VB is also captured and required to remain unchanged, and any
 decoded store overlapping it is rejected. This explicitly checks the largest
 body's tail even though it overlaps the harness's conservative stack window.
+
+Sixteen additional VAB controls compare failures and fades, including Sony's
+partial writes and automatic-ID cleanup at the byte before the status array.
+Rust represents that byte explicitly and safely. These controls found and
+fixed a Rust model bug: transfer size uses only the low-byte sample count plus
+one lengths, not every entry in the 256-entry table. See the
+[campaign report](patterns/game-parser-verification.md) for exact cases,
+remaining limits and the distinction between this fix, the TMD relocation
+inventory correction and C instruction-level improvements.
 
 All nine SEQ files start with bytes `70 51 45 53` (`pQES` in file order).
 `SsSeqOpen` allocates a sequence slot and delegates header/state parsing to
