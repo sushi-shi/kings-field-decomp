@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_map.h>
 #include <kf/game.h>
 /* Object-behaviour dispatch followed by the current-floor action dispatch. */
 RODATA(0x80012a7c, 0x164)

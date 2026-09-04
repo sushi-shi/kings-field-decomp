@@ -6,6 +6,7 @@
 #include <kf/audio.h>
 #include <kf/game_math.h>
 #include <kf/game_actor.h>
+#include <kf/game_map.h>
 
 /*
  * Layout identities supported by the semantic inventory. Their original
@@ -76,20 +77,6 @@ typedef struct KfCollisionTarget {
     u8 unknown_1a[0x06];
 } KfCollisionTarget;
 
-typedef struct KfMapCell {
-    u8 z;
-    u8 x;
-} KfMapCell;
-
-typedef struct KfMapCopyRegion {
-    u8 source_x;
-    u8 source_z;
-    u8 destination_x;
-    u8 destination_z;
-    u8 width;
-    u8 height;
-} KfMapCopyRegion;
-
 /*
  * Effect pool record (60-byte stride, pool in effect_pool_records). The pool
  * general and specialised effect-pool constructors
@@ -155,34 +142,6 @@ typedef struct KfEffectRenderView {
     u8 unknown_38[4];
 } KfEffectRenderView;
 
-typedef struct KfMapObjectLink {
-    u8 link_id;
-    u8 action_parameter;
-    u16 spawn_sequence;
-    s16 vertical_velocity;
-    u8 unknown_06[2];
-} KfMapObjectLink;
-
-typedef struct KfMapObjectPlacement {
-    u8 object_id;
-    u8 unknown_01;
-    u8 tile_z;
-    u8 tile_x;
-    u16 yaw;
-    s16 local_z;
-    s16 local_x;
-    s16 local_y;
-    KfMapObjectLink link;
-} KfMapObjectPlacement;
-
-typedef struct KfMapObjectDefinition {
-    u8 behavior_type;
-    u8 unknown_01;
-    u16 collision_radius;
-    u16 interaction_radius;
-    u8 unknown_06[2];
-} KfMapObjectDefinition;
-
 /* Header shared by static and animated model assets in the asset registry. */
 typedef struct KfAssetHeader {
     u32 byte_size;
@@ -191,24 +150,6 @@ typedef struct KfAssetHeader {
     u32 object_table_offset;
     u32 clip_table_offset;
 } KfAssetHeader;
-
-typedef struct KfMapObject {
-    u8 object_id;
-    u8 unknown_01;
-    u16 cell_x;
-    u16 cell_z;
-    u8 unknown_06[2];
-    s32 position_x;
-    s32 position_y;
-    s32 position_z;
-    u8 unknown_14[4];
-    struct KfEulerAngles rotation;
-    u16 unknown_1e;
-    KfMapObjectLink link;
-    u8 action;
-    u8 unknown_29;
-    u16 action_timer;
-} KfMapObject;
 
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
@@ -251,97 +192,6 @@ typedef struct KfCellWindow {
     u16 origin_z;
     u8 cells[196];
 } KfCellWindow;
-
-/*
- * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte
- * runtime interpolator.  The fourth vector lane and two trailing halfwords
- * are retained because their meanings are not yet evidenced.
- */
-typedef struct KfCameraPathPoint {
-    VECTOR position;
-    SVECTOR rotation;
-    s16 speed;
-    s16 unknown_1a;
-} KfCameraPathPoint;
-
-typedef struct KfCameraPathState {
-    const KfCameraPathPoint *points;
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR position_fixed;
-    VECTOR rotation_fixed;
-    VECTOR position_delta;
-    VECTOR rotation_delta;
-    s16 point_index;
-    s16 unknown_5e;
-    s32 frames_remaining;
-} KfCameraPathState;
-
-/*
- * Map-event definitions are expanded from a 0x18-byte resource record into
- * one of eight 0x44-byte runtime slots.  Only fields supported by the loader
- * and reviewed update routines are named.
- */
-/*
- * Five opaque bytes that map_event_pool_load copies from a definition into its
- * runtime slot as one block (an unaligned word plus a byte), which only a
- * struct assignment produces.
- */
-typedef struct KfMapEventTag {
-    u8 bytes[5];
-} KfMapEventTag;
-
-typedef struct KfMapEventDefinition {
-    u8 state;
-    u8 kind;
-    u8 variant;
-    u8 cell_z;
-    u8 cell_x;
-    KfMapEventTag tag;
-    u8 image_limit;
-    u8 unknown_0b;
-    u8 unknown_0c;
-    u8 unknown_0d;
-    s16 position_z_offset;
-    s16 position_x_offset;
-    u16 initial_rotation;
-    u16 radius;
-    u16 unknown_16;
-} KfMapEventDefinition;
-
-typedef struct KfMapEvent {
-    u8 state;
-    u8 kind;
-    u8 variant;
-    KfMapEventTag tag;
-    u8 image_limit;
-    u8 image_index;
-    u8 image_dirty;
-    u8 image_delay;
-    u8 unknown_0c;
-    u8 unknown_0d;
-    u8 unknown_0e;
-    u8 unknown_0f;
-    u8 unknown_10;
-    u8 unknown_11;
-    u16 rotation_phase;
-    s32 position_x;
-    s32 position_z;
-    u16 cell_x;
-    u16 cell_z;
-    u16 radius;
-    u16 unknown_22;
-    s32 reference_x;
-    s32 position_y;
-    s32 reference_z;
-    u8 unknown_30[4];
-    u16 unknown_34;
-    s16 rotation;
-    u16 unknown_38;
-    u8 unknown_3a[6];
-    s16 rotation_target;
-    u16 unknown_42;
-} KfMapEvent;
 
 typedef struct KfPlayerProgressState {
     u8 level;
@@ -645,18 +495,5 @@ typedef struct KfRenderStateOpen {
 } KfRenderStateOpen;
 
 /* === end render_state === */
-
-/* === map_object_state layout === */
-/*
- * Map object state: the 160 definitions and the 190-object pool.
- * map_object_pool_clear_link reaches the definitions from the pool base
- * register (-1280), so the two arrays are one object in the original source.
- */
-typedef struct KfMapObjectState {
-    KfMapObjectDefinition definitions[160];
-    KfMapObject objects[190];
-} KfMapObjectState;
-
-/* === end map_object_state === */
 
 #endif

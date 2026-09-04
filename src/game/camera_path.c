@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_map.h>
 #include <kf/game.h>
 
 /* Psy-Q LIBGTE: SquareRoot0. */

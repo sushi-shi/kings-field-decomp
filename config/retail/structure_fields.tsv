@@ -112,20 +112,20 @@ KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	audio.h;asm;xrefs	VAB IDs
 KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	audio.h;asm;xrefs	program numbers
 KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	audio.h;asm;xrefs	tone numbers
 KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	audio.h;asm;xrefs	note numbers
-KfCameraPathPoint	0x00	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	path position
-KfCameraPathPoint	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	path rotation
-KfCameraPathPoint	0x18	0x02	speed	s16	supported	semantic_types.h;asm;xrefs	segment speed
-KfCameraPathPoint	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfCameraPathState	0x00	0x04	points	KfCameraPathPoint *	supported	semantic_types.h;asm;xrefs	path point cursor/base
-KfCameraPathState	0x04	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	current integer position
-KfCameraPathState	0x14	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	current integer rotation
-KfCameraPathState	0x1c	0x10	position_fixed	VECTOR	supported	semantic_types.h;asm;xrefs	fixed-point position
-KfCameraPathState	0x2c	0x10	rotation_fixed	VECTOR	supported	semantic_types.h;asm;xrefs	fixed-point rotation
-KfCameraPathState	0x3c	0x10	position_delta	VECTOR	supported	semantic_types.h;asm;xrefs	per-frame position delta
-KfCameraPathState	0x4c	0x10	rotation_delta	VECTOR	supported	semantic_types.h;asm;xrefs	per-frame rotation delta
-KfCameraPathState	0x5c	0x02	point_index	s16	supported	semantic_types.h;asm;xrefs	current path point index
-KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;xrefs	segment frame countdown
+KfCameraPathPoint	0x00	0x10	position	VECTOR	supported	game_map.h;asm;xrefs	path position
+KfCameraPathPoint	0x10	0x08	rotation	SVECTOR	supported	game_map.h;asm;xrefs	path rotation
+KfCameraPathPoint	0x18	0x02	speed	s16	supported	game_map.h;asm;xrefs	segment speed
+KfCameraPathPoint	0x1a	0x02	unknown_1a	s16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfCameraPathState	0x00	0x04	points	KfCameraPathPoint *	supported	game_map.h;asm;xrefs	path point cursor/base
+KfCameraPathState	0x04	0x10	position	VECTOR	supported	game_map.h;asm;xrefs	current integer position
+KfCameraPathState	0x14	0x08	rotation	SVECTOR	supported	game_map.h;asm;xrefs	current integer rotation
+KfCameraPathState	0x1c	0x10	position_fixed	VECTOR	supported	game_map.h;asm;xrefs	fixed-point position
+KfCameraPathState	0x2c	0x10	rotation_fixed	VECTOR	supported	game_map.h;asm;xrefs	fixed-point rotation
+KfCameraPathState	0x3c	0x10	position_delta	VECTOR	supported	game_map.h;asm;xrefs	per-frame position delta
+KfCameraPathState	0x4c	0x10	rotation_delta	VECTOR	supported	game_map.h;asm;xrefs	per-frame rotation delta
+KfCameraPathState	0x5c	0x02	point_index	s16	supported	game_map.h;asm;xrefs	current path point index
+KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	game_map.h;asm;xrefs	segment frame countdown
 KfCdFileEntry	0x00	0x01	minute	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC minute of the file
 KfCdFileEntry	0x01	0x01	second	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC second of the file
 KfCdFileEntry	0x02	0x01	sector	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC sector of the file
@@ -242,97 +242,97 @@ KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	semantic_types.h;asm;effect
 KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	semantic_types.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
 KfMagicRecord	0x10	0x02	mp_cost	u16	supported	asm;player_update	compared with and subtracted from vitals.current_mp when casting
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	asm	meaning unresolved
-KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
-KfMapCell	0x01	0x01	x	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
-KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
-KfMapCopyRegion	0x01	0x01	source_z	u8	supported	semantic_types.h;asm;xrefs	source z
-KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	semantic_types.h;asm;xrefs	destination x
-KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	semantic_types.h;asm;xrefs	destination z
-KfMapCopyRegion	0x04	0x01	width	u8	supported	semantic_types.h;asm;xrefs	region width
-KfMapCopyRegion	0x05	0x01	height	u8	supported	semantic_types.h;asm;xrefs	region height
-KfMapEvent	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	active state
-KfMapEvent	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
-KfMapEvent	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
-KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied from the definition tag
-KfMapEvent	0x08	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
-KfMapEvent	0x09	0x01	image_index	u8	supported	semantic_types.h;asm;xrefs	current image index
-KfMapEvent	0x0a	0x01	image_dirty	u8	supported	semantic_types.h;asm;xrefs	image refresh flag
-KfMapEvent	0x0b	0x01	image_delay	u8	supported	semantic_types.h;asm;xrefs	image refresh delay
-KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0e	0x01	unknown_0e	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x10	0x01	unknown_10	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x11	0x01	unknown_11	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x12	0x02	rotation_phase	u16	supported	semantic_types.h;asm;xrefs	animated rotation phase
-KfMapEvent	0x14	0x04	position_x	s32	supported	semantic_types.h;asm;xrefs	world x
-KfMapEvent	0x18	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world z
-KfMapEvent	0x1c	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapEvent	0x1e	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z
-KfMapEvent	0x20	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
-KfMapEvent	0x22	0x02	unknown_22	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x24	0x04	reference_x	s32	supported	semantic_types.h;asm;xrefs	query reference x
-KfMapEvent	0x28	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
-KfMapEvent	0x2c	0x04	reference_z	s32	supported	semantic_types.h;asm;xrefs	query reference z
-KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x34	0x02	unknown_34	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x36	0x02	rotation	s16	supported	semantic_types.h;asm;xrefs	current rotation
-KfMapEvent	0x38	0x02	unknown_38	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x40	0x02	rotation_target	s16	supported	semantic_types.h;asm;xrefs	target rotation
-KfMapEvent	0x42	0x02	unknown_42	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	initial state
-KfMapEventDefinition	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
-KfMapEventDefinition	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
-KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	semantic_types.h;asm;xrefs	map cell z
-KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied into the runtime slot
-KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
-KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	semantic_types.h;asm;xrefs	z position offset
-KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	semantic_types.h;asm;xrefs	x position offset
-KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	semantic_types.h;asm;xrefs	initial rotation
-KfMapEventDefinition	0x14	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
-KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;xrefs	object definition ID
-KfMapObject	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x02	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapObject	0x04	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z
-KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x08	0x04	position_x	s32	supported	semantic_types.h;asm;xrefs	world x
-KfMapObject	0x0c	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
-KfMapObject	0x10	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world z
-KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	object rotation
-KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied verbatim from the placement record
-KfMapObject	0x28	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
-KfMapObject	0x29	0x01	unknown_29	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x2a	0x02	action_timer	u16	supported	semantic_types.h;asm;xrefs	action timer
-KfMapObjectDefinition	0x00	0x01	behavior_type	u8	supported	semantic_types.h;asm;xrefs	behavior selector
-KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
-KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
-KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObjectLink	0x00	0x01	link_id	u8	supported	semantic_types.h;asm;map_object_pool_load	trigger link id
-KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	semantic_types.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
-KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	semantic_types.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
-KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;map_object_pool_load	vertical velocity
-KfMapObjectLink	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;map_object_pool_load	meaning unresolved
-KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
-KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;map_object_pool_load	meaning unresolved
-KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	semantic_types.h;asm;map_object_pool_load	map tile z
-KfMapObjectPlacement	0x03	0x01	tile_x	u8	supported	semantic_types.h;asm;map_object_pool_load	map tile x
-KfMapObjectPlacement	0x04	0x02	yaw	u16	supported	semantic_types.h;asm;map_object_pool_load	initial yaw, masked to 12 bits
-KfMapObjectPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;map_object_pool_load	offset within the tile
-KfMapObjectPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;map_object_pool_load	offset within the tile
-KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;map_object_pool_load	height offset above the floor height grid
-KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied into the pool object
-KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
-KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapCell	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
+KfMapCell	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
+KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x
+KfMapCopyRegion	0x01	0x01	source_z	u8	supported	game_map.h;asm;xrefs	source z
+KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destination x
+KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	game_map.h;asm;xrefs	destination z
+KfMapCopyRegion	0x04	0x01	width	u8	supported	game_map.h;asm;xrefs	region width
+KfMapCopyRegion	0x05	0x01	height	u8	supported	game_map.h;asm;xrefs	region height
+KfMapEvent	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	active state
+KfMapEvent	0x01	0x01	kind	u8	supported	game_map.h;asm;xrefs	event kind
+KfMapEvent	0x02	0x01	variant	u8	supported	game_map.h;asm;xrefs	event variant
+KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	game_map.h;asm;xrefs	five opaque bytes copied from the definition tag
+KfMapEvent	0x08	0x01	image_limit	u8	supported	game_map.h;asm;xrefs	maximum image index
+KfMapEvent	0x09	0x01	image_index	u8	supported	game_map.h;asm;xrefs	current image index
+KfMapEvent	0x0a	0x01	image_dirty	u8	supported	game_map.h;asm;xrefs	image refresh flag
+KfMapEvent	0x0b	0x01	image_delay	u8	supported	game_map.h;asm;xrefs	image refresh delay
+KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0e	0x01	unknown_0e	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0f	0x01	unknown_0f	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x10	0x01	unknown_10	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x11	0x01	unknown_11	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x12	0x02	rotation_phase	u16	supported	game_map.h;asm;xrefs	animated rotation phase
+KfMapEvent	0x14	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x
+KfMapEvent	0x18	0x04	position_z	s32	supported	game_map.h;asm;xrefs	world z
+KfMapEvent	0x1c	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
+KfMapEvent	0x1e	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
+KfMapEvent	0x20	0x02	radius	u16	supported	game_map.h;asm;xrefs	interaction radius
+KfMapEvent	0x22	0x02	unknown_22	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x24	0x04	reference_x	s32	supported	game_map.h;asm;xrefs	query reference x
+KfMapEvent	0x28	0x04	position_y	s32	supported	game_map.h;asm;xrefs	world y
+KfMapEvent	0x2c	0x04	reference_z	s32	supported	game_map.h;asm;xrefs	query reference z
+KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x34	0x02	unknown_34	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x36	0x02	rotation	s16	supported	game_map.h;asm;xrefs	current rotation
+KfMapEvent	0x38	0x02	unknown_38	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x40	0x02	rotation_target	s16	supported	game_map.h;asm;xrefs	target rotation
+KfMapEvent	0x42	0x02	unknown_42	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	initial state
+KfMapEventDefinition	0x01	0x01	kind	u8	supported	game_map.h;asm;xrefs	event kind
+KfMapEventDefinition	0x02	0x01	variant	u8	supported	game_map.h;asm;xrefs	event variant
+KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	game_map.h;asm;xrefs	map cell z
+KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	game_map.h;asm;xrefs	map cell x
+KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	game_map.h;asm;xrefs	five opaque bytes copied into the runtime slot
+KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	game_map.h;asm;xrefs	maximum image index
+KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	game_map.h;asm;xrefs	z position offset
+KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	game_map.h;asm;xrefs	x position offset
+KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	game_map.h;asm;xrefs	initial rotation
+KfMapEventDefinition	0x14	0x02	radius	u16	supported	game_map.h;asm;xrefs	interaction radius
+KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x00	0x01	object_id	u8	supported	game_map.h;asm;xrefs	object definition ID
+KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
+KfMapObject	0x04	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
+KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x08	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x
+KfMapObject	0x0c	0x04	position_y	s32	supported	game_map.h;asm;xrefs	world y
+KfMapObject	0x10	0x04	position_z	s32	supported	game_map.h;asm;xrefs	world z
+KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	game_map.h;asm;xrefs	object rotation
+KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied verbatim from the placement record
+KfMapObject	0x28	0x01	action	u8	supported	game_map.h;asm;xrefs	action dispatcher selector
+KfMapObject	0x29	0x01	unknown_29	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x2a	0x02	action_timer	u16	supported	game_map.h;asm;xrefs	action timer
+KfMapObjectDefinition	0x00	0x01	behavior_type	u8	supported	game_map.h;asm;xrefs	behavior selector
+KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
+KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
+KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObjectLink	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load	trigger link id
+KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	game_map.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
+KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	game_map.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
+KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	game_map.h;asm;map_object_pool_load	vertical velocity
+KfMapObjectLink	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
+KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	game_map.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
+KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
+KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	game_map.h;asm;map_object_pool_load	map tile z
+KfMapObjectPlacement	0x03	0x01	tile_x	u8	supported	game_map.h;asm;map_object_pool_load	map tile x
+KfMapObjectPlacement	0x04	0x02	yaw	u16	supported	game_map.h;asm;map_object_pool_load	initial yaw, masked to 12 bits
+KfMapObjectPlacement	0x06	0x02	local_z	s16	supported	game_map.h;asm;map_object_pool_load	offset within the tile
+KfMapObjectPlacement	0x08	0x02	local_x	s16	supported	game_map.h;asm;map_object_pool_load	offset within the tile
+KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	game_map.h;asm;map_object_pool_load	height offset above the floor height grid
+KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied into the pool object
+KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfNotificationSprite	0x00	0x01	active	u8	supported	semantic_types.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v

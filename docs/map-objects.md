@@ -25,6 +25,11 @@ stride. Region ID `0xff` disables the operation. Bytes inside this table had
 previously produced short false-positive strings; the exact table boundary and
 six-byte indexing supersede them.
 
+`include/kf/game_map.h` owns the copy-region, map-object, map-event, and
+camera-path layouts, their complete runtime aggregates, and the map-owned
+global declarations. The separate `map_data.h` retains ownership of the five
+100-by-100 cell grids.
+
 `map_object_definitions` is now typed as 160 eight-byte records. Independent
 consumers form `object_id * 8`, and the `0x500`-byte loader extent equals
 `160 * 8`. The reviewed fields are a behavior type and unsigned collision and

@@ -2,8 +2,7 @@
 #define KF_GAME_SYSTEM_H
 
 /*
- * Core runtime prototypes: memory, pools, game loop, save, cd,
- * assets, input and misc helpers.
+ * Core runtime prototypes: game loop, assets, input, and misc helpers.
  *
  * Generated during extern-crutch removal: declarations that were duplicated
  * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
@@ -11,24 +10,11 @@
  * codegen.
  */
 
-#include <kf/semantic_types.h>
+#include <kf/game_actor.h>
 
 extern void func_80014674(u32 mode);
 extern void func_8002718c(void);
 extern void func_800292f8(s32 object);
-extern void map_ambient_script_floor1(void);
-extern void map_ambient_script_floor2(void);
-extern void map_ambient_script_floor3(void);
-extern void map_ambient_script_floor4(void);
-extern void map_ambient_script_floor5(void);
-extern void map_action_script_floor1(void);
-extern void map_action_script_floor2(void);
-extern void map_action_script_floor3(void);
-extern void map_action_script_floor4(void);
-extern void map_event_timers_reset(void);
-extern void map_event_pool_update(void);
-extern void map_world_state_persist(void);
-extern void map_unload_floor(void);
 extern void func_800365f8(void);
 extern void func_80036d3c(KfActor *actor);
 extern void asset_aux_block_load(const u32 *source);

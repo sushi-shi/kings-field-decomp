@@ -3,7 +3,7 @@
 
 /* OPEN.EXE resource loading and its opening-only placement consumer. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_map.h>
 
 extern void opening_resources_load_scene0(void);
 extern void opening_resources_load_scene1(void);

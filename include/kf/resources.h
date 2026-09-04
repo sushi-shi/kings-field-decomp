@@ -3,7 +3,8 @@
 
 /* Resource-stream helpers shared by the GAME and OPEN overlays. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
+#include <kf/psyq.h>
 
 extern void tim_upload_images(u_long *tim_data);
 extern const u32 *resource_stream_copy_words(

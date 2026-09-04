@@ -1,5 +1,6 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/resources.h>
+#include <kf/game_map.h>
 #include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
