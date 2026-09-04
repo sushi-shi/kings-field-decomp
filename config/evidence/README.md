@@ -177,6 +177,12 @@ controller and its nine-point camera path. It proves the display-enable and
 entity transitions, camera-phase gate, synchronized GTE/DRAWENV brightness,
 and closing color fade. Both the function and owned path match retail exactly.
 
+`open_semantic_opening_controller.tsv` records the top-level OPEN opening and
+ending dispatcher. It proves the entry-mode signature, runtime initialization,
+scene action graph, temporary arena rewind, early load-failure return, common
+shutdown path, and ownership of the initial TIM path and two MIX literals. The
+function and all owned data match retail exactly.
+
 `open_vendor_libetc_pad.tsv` records the OPEN `LIBETC` interrupt-tail helper
 and six-function `PAD.OBJ` run. Complete GAME/OPEN instruction-shape identity,
 archive order and exports, and the retail `pad.c` v1.17 marker prove Sony

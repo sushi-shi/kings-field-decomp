@@ -1,0 +1,129 @@
+#include <kf/address.h>
+#include <kf/audio.h>
+#include <kf/cd_file.h>
+#include <kf/memory.h>
+#include <kf/open_controller.h>
+#include <kf/open_ending_scene.h>
+#include <kf/open_opening_helpers.h>
+#include <kf/open_render.h>
+#include <kf/open_resources.h>
+#include <kf/open_scene1.h>
+#include <kf/open_scene3.h>
+#include <kf/psyq.h>
+#include <kf/psyq_libc.h>
+#include <kf/psyq_pad.h>
+#include <kf/resources.h>
+
+#define OPEN_RUNTIME_CLEAR_SIZE 0x24788
+
+/*
+ * Cursor-relative retail accesses prove this allocator prefix layout. Its
+ * canonical data ownership stays split until the allocator TU is resolved.
+ */
+typedef struct {
+    u8 *cursor;
+    u32 stack[17];
+} OpeningAllocationState;
+
+typedef struct {
+    u8 *start;
+    u8 *end;
+    OpeningAllocationState allocation;
+} OpeningArenaState;
+
+#define OPENING_ARENA_FROM_ALLOCATION(state) \
+    ((OpeningArenaState *)((u8 *)(state) - \
+                           (u32)&((OpeningArenaState *)0)->allocation))
+
+DATA(0x800372d4, 0x6)
+char opening_initial_tim_path[6] = "B0\\L0.";
+
+RODATA(0x80012020, 0x18)
+
+ADDRESS(0x800156bc, 0x214)
+void opening_run(s32 display_mode)
+{
+    void *tim_data;
+    OpeningAllocationState *allocation_state;
+    s32 scene3_action;
+    s32 skip_action;
+
+    PadInit(0);
+    /* Retail clears the display state and the contiguous opening runtime BSS. */
+    memset(&display_state, 0, OPEN_RUNTIME_CLEAR_SIZE);
+    memset(&opening_entity_state, 0, sizeof opening_entity_state);
+    memory_set_allocation_mode(0);
+    audio_initialize();
+    display_initialize(display_mode);
+    opening_entity_pool_reset();
+    memory_set_allocation_mode(1);
+    memory_capture_system_heap_start();
+    memory_reset_system_heap();
+
+    switch (display_mode) {
+    case 1:
+        SetDispMask(1);
+        if (cd_file_load_into(
+                display_state.asset_load_buffer,
+                opening_initial_tim_path) != 0) {
+            return;
+        }
+        scene3_action = 1;
+        tim_upload_images((u_long *)display_state.asset_load_buffer);
+        skip_action = 2;
+        opening_fade_in();
+        cd_file_load_allocated(&tim_data, "B0\\MIX0.");
+        allocation_state = (OpeningAllocationState *)&memory_arena_cursor;
+        tim_upload_images((u_long *)tim_data);
+        memory_release_last();
+        opening_input_action = 0;
+
+opening_scene0:
+        func_80014268();
+        if (opening_input_action == scene3_action) {
+            goto opening_scene1;
+        }
+        if (opening_input_action != skip_action) {
+            goto opening_scene1;
+        }
+
+opening_reload:
+        allocation_state->stack[0] = 0;
+        allocation_state->cursor =
+            OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
+        cd_file_load_allocated(&tim_data, "B0\\MIX3.");
+        tim_upload_images((u_long *)tim_data);
+        memory_release_last();
+        goto opening_complete;
+
+opening_scene1:
+        opening_input_action = 0;
+        opening_scene1_run();
+        if (opening_input_action == scene3_action) {
+            goto opening_scene3;
+        }
+        if (opening_input_action == skip_action) {
+            goto opening_reload;
+        }
+        goto opening_scene0;
+
+opening_scene3:
+        audio_stop_sequence(1);
+        opening_input_action = 0;
+        opening_scene3_run();
+
+opening_complete:
+        audio_stop_sequence(1);
+        break;
+
+    case 0xfe:
+        opening_ending_scene_run();
+        func_80014e28();
+        break;
+    }
+
+    opening_fade_in();
+    audio_shutdown();
+    ResetGraph(3);
+    PadStop();
+}

@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 492)
         self.assertEqual(counts["typed_returns"], 492)
         self.assertEqual(counts["parameterized"], 316)
-        self.assertEqual(counts["data"], 3084)
+        self.assertEqual(counts["data"], 3085)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -1185,6 +1185,55 @@ class InventoryTests(unittest.TestCase):
             },
         )
 
+    def test_open_opening_controller_campaign_is_exactly_modeled(self) -> None:
+        evidence_path = (
+            CONFIG / "evidence/open_semantic_opening_controller.tsv"
+        )
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";")) or "void"
+        signature = f"{identity.return_type} {identity.name}({parameters})"
+        self.assertEqual(row["final_name"], identity.name)
+        self.assertEqual(row["final_signature"], signature)
+        self.assertEqual(row["current_match"], "100.000000000% exact")
+        self.assertIn(evidence_path.name, identity.evidence)
+
+        data = load_data_identities(RETAIL_CONFIG)
+        path = data[("OPEN.EXE", 0x800372D4)]
+        self.assertEqual(
+            (path.name, path.storage, path.datatype, path.size),
+            ("opening_initial_tim_path", "load", "char[6]", 0x6),
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_opening_controller"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 48)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        calls = [reloc for reloc in campaign_rows if reloc["opcode"] == "jal"]
+        self.assertNotIn("", {reloc["target_name"] for reloc in calls})
+        self.assertEqual(
+            {
+                reloc["target_name"]
+                for reloc in campaign_rows
+                if parse_int(reloc["target_va"])
+                in {0x800156BC, 0x800372D4, 0x80049A4C, 0x80075850}
+            },
+            {
+                "opening_run",
+                "opening_initial_tim_path",
+                "display_state",
+                "memory_arena_cursor",
+            },
+        )
+
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
@@ -1285,7 +1334,8 @@ class InventoryTests(unittest.TestCase):
         campaign_rows = [
             row
             for row in relocation_rows
-            if row["provenance"] == "manual:open_semantic_render_init"
+            if "manual:open_semantic_render_init"
+            in row["provenance"].split(";")
         ]
         self.assertEqual(len(campaign_rows), 62)
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
