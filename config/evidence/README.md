@@ -59,6 +59,11 @@ the two recovered signed timers to `KfPlayerState` offsets `0x50` and `0x52`
 and records the relocation-only causes behind three initially non-exact helper
 objects.
 
+`game_semantic_menu_interaction_api.tsv` records the player-facing map-action
+dispatcher and modal-menu boundary. It proves the read-only position input,
+mutable rotation output, and the variadic O32 home-slot contract shared by the
+player-update and map-interaction units.
+
 `game_semantic_display_tmd.tsv` records eleven related GAME/OPEN function
 pairs for frame submission, view transforms, TMD registration/access, and
 primitive-index preparation. It supports complete `KfPrimitiveBuffer` and

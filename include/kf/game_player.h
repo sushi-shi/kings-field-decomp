@@ -36,6 +36,7 @@ extern void player_select_magic(u8 magic_id);
 extern void player_set_equipment_slot(u8 item_id, u8 slot);
 extern void player_status_apply_effect4(void);
 extern void player_sync_position_to_map(void);
+extern void player_use_item(u8 item_id);
 extern void player_update(void);
 extern void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_out);
 extern void player_update_vertical_motion(void);

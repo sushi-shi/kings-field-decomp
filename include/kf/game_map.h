@@ -27,6 +27,8 @@ extern void map_event_refresh_image_for_progress(KfMapEvent *event);
 extern void map_event_set_current(KfMapEvent *event);
 extern s32 map_floor_height_at_position(const VECTOR *position);
 extern s32 map_floor_height_for_cell_position( u16 cell_index, s32 point_x, s32 point_z);
+extern void map_interaction_dispatch(
+    const VECTOR *position, SVECTOR *rotation);
 extern void map_load_floor(void);
 extern void map_object_definitions_load(const KfMapObjectDefinition *definitions);
 extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);

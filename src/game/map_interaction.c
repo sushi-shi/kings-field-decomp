@@ -10,9 +10,6 @@ extern u8 DAT_800652a8[240];
 /* Loaded camera-path point table (points begin at +8); extent unresolved. */
 /* Full-screen image path template "KAN\B0\K000.TIM". */
 
-/* This menu helper is called with varying arities. */
-extern u32 menu_enter_mode(s32 arg0, ...);
-
 /* Object-behaviour dispatch followed by the current-floor action dispatch. */
 RODATA(0x80012a7c, 0x164)
 

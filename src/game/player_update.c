@@ -2,11 +2,7 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-
-extern s32 menu_enter_mode(s32 arg0);
-extern void map_interaction_dispatch();
 extern s32 rand(void);
-extern void player_use_item();
 
 ADDRESS(0x80018880, 0x1a1c)
 void player_update(void)
