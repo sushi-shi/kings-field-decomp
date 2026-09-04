@@ -30,6 +30,8 @@ extern void *primitive_buffer_allocate(u16 byte_count);
 extern void render_initialize(void);
 extern void display_begin_frame(void);
 extern void display_present_frame(void);
+extern void sprite_add_f4(
+    const u16 *position, const u8 *color, u16 ot_index);
 extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
                            u8 *color, u16 ot_index);
 extern void opening_fade_in(void);

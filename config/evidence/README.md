@@ -139,6 +139,12 @@ K&R call boundary, and connects the 12-bit signed angular delta to its three
 rotation-component consumers and the exact GAME homolog. Both functions and
 the owned BSS word match retail exactly.
 
+`open_semantic_sprite_f4.tsv` records the OPEN flat-shaded quad builder appended
+to the contiguous sprite unit. It proves the complete 24-byte `POLY_F4` packet,
+typed rectangle and RGB inputs, masked ordering-table index, and GPU provider
+boundary. The F4 helper matches retail exactly without changing the adjacent
+FT4 helper's independently recorded non-exact result.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five
