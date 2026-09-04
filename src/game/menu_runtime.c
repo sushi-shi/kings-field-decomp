@@ -7,7 +7,6 @@
  * 0x800291ec..0x8002b078. The original source boundary is WIP.
  */
 
-extern s16 DAT_80058dc0[][10];
 extern u16 DAT_80057b72;
 
 /* The numbered-item TIM path template used by menu_load_item_texture. */
@@ -89,7 +88,7 @@ void menu_draw_item_name_frame(s32 item_id)
     SetTransMatrix(&rotation);
     menu_render_item_model();
 
-    name = DAT_80058dc0[item_id];
+    name = item_name_rows[item_id].codes;
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     string.x = 0x80;
     string.y = 0x24;

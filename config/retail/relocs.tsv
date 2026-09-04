@@ -3765,13 +3765,13 @@ GAME.EXE	0x80020da4	0xf5a4	0x80020da8	mips_hi16_lo16	reachable-code	0x800580e8	b
 GAME.EXE	0x80020e0c	0xf60c		mips26	reachable-code	0x80020e48	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80020e48	0xf648	0x80020e4c	mips_hi16_lo16	reachable-code	0x80058478	bss	DAT_80058478	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80020eb0	0xf6b0		mips26	reachable-code	0x80020ee8	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80020f0c	0xf70c	0x80020f10	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80020f0c	0xf70c	0x80020f10	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80020f74	0xf774		mips26	reachable-code	0x80020fb0	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80020fb0	0xf7b0	0x80020fb4	mips_hi16_lo16	reachable-code	0x80059400	bss	DAT_80059400	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80020fb0	0xf7b0	0x80020fb4	mips_hi16_lo16	reachable-code	0x80059400	bss	magic_name_rows	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021018	0xf818		mips26	reachable-code	0x80021050	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021068	0xf868	0x8002106c	mips_hi16_lo16	reachable-code	0x800594b8	bss	DAT_800594b8	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021068	0xf868	0x8002106c	mips_hi16_lo16	reachable-code	0x800594b8	bss	item_buy_prices	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800210d0	0xf8d0		mips26	reachable-code	0x80021108	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021108	0xf908	0x8002110c	mips_hi16_lo16	reachable-code	0x800595f8	bss	DAT_800595f8	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021108	0xf908	0x8002110c	mips_hi16_lo16	reachable-code	0x800595f8	bss	item_sell_prices	lui+addiu	t0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021170	0xf970		mips26	reachable-code	0x800211a4	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800211a4	0xf9a4		mips26	reachable-code	0x8001ac8c	load	memory_release_last	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800211ac	0xf9ac	0x800211b0	mips_hi16_lo16	reachable-code	0x8006b734	bss	cd_file_table	lui+addiu	s1	paired-reviewed	reviewed	manual:game_item
@@ -3812,9 +3812,9 @@ GAME.EXE	0x80021508	0xfd08		mips26	reachable-code	0x8002138c	load		j		control-fl
 GAME.EXE	0x8002156c	0xfd6c		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021580	0xfd80		mips26	reachable-code	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x8002159c	0xfd9c	0x800215a0	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	v1	paired-reviewed	reviewed	manual:game_item
-GAME.EXE	0x800215ac	0xfdac	0x800215b0	mips_hi16_lo16	reachable-code	0x80059108	bss	DAT_80059108	lui+addiu	t2	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x800215ac	0xfdac	0x800215b0	mips_hi16_lo16	reachable-code	0x80059108	bss	item_name_rows	lui+addiu	t2	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800215c8	0xfdc8	0x800215cc	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
-GAME.EXE	0x8002164c	0xfe4c	0x80021650	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	t2	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x8002164c	0xfe4c	0x80021650	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	t2	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021678	0xfe78	0x8002167c	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021710	0xff10		mips26	reachable-code	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021738	0xff38		mips26	reachable-code	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3837,7 +3837,7 @@ GAME.EXE	0x80021928	0x10128		mips26	reachable-code	0x80021950	load		j		control-f
 GAME.EXE	0x8002193c	0x1013c		mips26	reachable-code	0x80021950	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021960	0x10160		mips26	reachable-code	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021970	0x10170		mips26	reachable-code	0x80021a10	load		j		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x8002199c	0x1019c	0x800219a0	mips_hi16_lo16	reachable-code	0x800594b8	bss	DAT_800594b8	lui+addiu	v0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x8002199c	0x1019c	0x800219a0	mips_hi16_lo16	reachable-code	0x800594b8	bss	item_buy_prices	lui+addiu	v0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800219b8	0x101b8	0x800219bc	mips_hi16_lo16	reachable-code	0x800a07ac	bss	player_state	lui+lw	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x800219d0	0x101d0		mips26	reachable-code	0x8002b150	load	menu_play_input_sound	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x800219d8	0x101d8		mips26	reachable-code	0x80021a10	load		j		control-flow-reviewed	reviewed	manual:game_item
@@ -3849,14 +3849,14 @@ GAME.EXE	0x80021a38	0x10238		mips26	reachable-code	0x80027b7c	load	menu_draw_ite
 GAME.EXE	0x80021a40	0x10240		mips26	reachable-code	0x80028a70	load	menu_list_render	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021a48	0x10248		mips26	reachable-code	0x8002176c	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021a50	0x10250		mips26	reachable-code	0x8002af0c	load	game_state_acknowledge_pending	jal		control-flow-reviewed	reviewed	manual:game_item
-GAME.EXE	0x80021a7c	0x1027c	0x80021a80	mips_hi16_lo16	reachable-code	0x800594b8	bss	DAT_800594b8	lui+addiu	v0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021a7c	0x1027c	0x80021a80	mips_hi16_lo16	reachable-code	0x800594b8	bss	item_buy_prices	lui+addiu	v0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021a94	0x10294	0x80021a98	mips_hi16_lo16	reachable-code	0x800a07ac	bss	player_state	lui+addiu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80021aac	0x102ac	0x80021ab0	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021ac4	0x102c4	0x80021ac8	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021b30	0x10330		mips26	reachable-code	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021b44	0x10344		mips26	reachable-code	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021b54	0x10354	0x80021b58	mips_hi16_lo16	reachable-code	0x800a07e4	bss	player_state	lui+addiu	t2	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x80021b5c	0x1035c	0x80021b60	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	t4	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021b5c	0x1035c	0x80021b60	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	t4	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021b64	0x10364	0x80021b68	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	s6	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021c94	0x10494		mips26	reachable-code	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021cbc	0x104bc		mips26	reachable-code	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3888,7 +3888,7 @@ GAME.EXE	0x80021f70	0x10770		mips26	reachable-code	0x80028a70	load	menu_list_ren
 GAME.EXE	0x80021f78	0x10778		mips26	reachable-code	0x80021cf0	load		j		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021f80	0x10780		mips26	reachable-code	0x8002af0c	load	game_state_acknowledge_pending	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80021f98	0x10798	0x80021f9c	mips_hi16_lo16	reachable-code	0x800a07ac	bss	player_state	lui+addiu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x80021fa8	0x107a8	0x80021fac	mips_hi16_lo16	reachable-code	0x800595f8	bss	DAT_800595f8	lui+addiu	v0	paired-reviewed	reviewed	manual:game_item
+GAME.EXE	0x80021fa8	0x107a8	0x80021fac	mips_hi16_lo16	reachable-code	0x800595f8	bss	item_sell_prices	lui+addiu	v0	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022030	0x10830	0x80022034	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	at	paired-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022040	0x10840		mips26	reachable-code	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_item
 GAME.EXE	0x80022098	0x10898		mips26	reachable-code	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_item
@@ -3977,10 +3977,10 @@ GAME.EXE	0x80022634	0x10e34		mips26	reachable-code	0x8005012c	load	pad_read	jal	
 GAME.EXE	0x80022648	0x10e48		mips26	reachable-code	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022650	0x10e50	0x80022654	mips_hi16_lo16	reachable-code	0x800652df	bss	DAT_800652a8	lui+lbu	v0	paired-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x80022658	0x10e58	0x8002265c	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	s5	paired-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022670	0x10e70	0x80022674	mips_hi16_lo16	reachable-code	0x8005920c	bss	DAT_8005920c	lui+addiu	v1	paired-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x800226dc	0x10edc	0x800226e0	mips_hi16_lo16	reachable-code	0x80059374	bss	DAT_80059374	lui+addiu	v1	paired-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x80022734	0x10f34	0x80022738	mips_hi16_lo16	reachable-code	0x80059108	bss	DAT_80059108	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu
-GAME.EXE	0x800227dc	0x10fdc	0x800227e0	mips_hi16_lo16	reachable-code	0x800591d0	bss	DAT_800591d0	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022670	0x10e70	0x80022674	mips_hi16_lo16	reachable-code	0x8005920c	bss	item_name_rows	lui+addiu	v1	paired-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x800226dc	0x10edc	0x800226e0	mips_hi16_lo16	reachable-code	0x80059374	bss	item_name_rows	lui+addiu	v1	paired-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x80022734	0x10f34	0x80022738	mips_hi16_lo16	reachable-code	0x80059108	bss	item_name_rows	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu
+GAME.EXE	0x800227dc	0x10fdc	0x800227e0	mips_hi16_lo16	reachable-code	0x800591d0	bss	item_name_rows	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x8002288c	0x1108c		mips26	reachable-code	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800228b4	0x110b4		mips26	reachable-code	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_menu
 GAME.EXE	0x800228d4	0x110d4		mips26	reachable-code	0x800279c4	load	menu_item_model_preview	jal		control-flow-reviewed	reviewed	manual:game_menu
@@ -4067,7 +4067,7 @@ GAME.EXE	0x80023138	0x11938		mips26	instruction-word	0x8005012c	load	pad_read	ja
 GAME.EXE	0x80023148	0x11948		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800231a8	0x119a8		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800231bc	0x119bc		mips26	instruction-word	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
-GAME.EXE	0x800231d0	0x119d0	0x800231d4	mips_hi16_lo16	reachable-code	0x80059400	bss	DAT_80059400	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu_panels
+GAME.EXE	0x800231d0	0x119d0	0x800231d4	mips_hi16_lo16	reachable-code	0x80059400	bss	magic_name_rows	lui+addiu	t2	paired-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800231e0	0x119e0	0x800231e4	mips_hi16_lo16	reachable-code	0x8009ce60	bss	magic_records	lui+addiu	at	paired-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023260	0x11a60		mips26	instruction-word	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023288	0x11a88		mips26	instruction-word	0x8002af48	load	menu_load_item_texture	jal		control-flow-reviewed	reviewed	manual:game_menu_panels
@@ -4156,7 +4156,7 @@ GAME.EXE	0x8002396c	0x1216c		mips26	reachable-code	0x800239a0	load		j		control-f
 GAME.EXE	0x80023978	0x12178		mips26	reachable-code	0x800239a0	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023984	0x12184		mips26	reachable-code	0x800239a0	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023990	0x12190		mips26	reachable-code	0x800239a0	load		j		control-flow-reviewed	reviewed	manual:game_menu_select
-GAME.EXE	0x800239b8	0x121b8	0x800239bc	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	v1	paired-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x800239b8	0x121b8	0x800239bc	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	v1	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023a80	0x12280		mips26	instruction-word	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023ab4	0x122b4		mips26	instruction-word	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023af0	0x122f0		mips26	instruction-word	0x80028380	load	menu_list_interact	jal		control-flow-reviewed	reviewed	manual:game_menu_select
@@ -4209,7 +4209,7 @@ GAME.EXE	0x80023e58	0x12658		mips26	reachable-code	0x80023e74	load		j		control-f
 GAME.EXE	0x80023e60	0x12660	0x80023e64	mips_hi16_lo16	reachable-code	0x800a0815	bss	player_state	lui+sb	s3	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80023e6c	0x1266c		mips26	instruction-word	0x80016848	load	player_set_equipment_slot	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80023ec8	0x126c8		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_select
-GAME.EXE	0x80023ee0	0x126e0	0x80023ee4	mips_hi16_lo16	reachable-code	0x80059450	bss	DAT_80059450	lui+addiu	t1	paired-reviewed	reviewed	manual:game_menu_select
+GAME.EXE	0x80023ee0	0x126e0	0x80023ee4	mips_hi16_lo16	reachable-code	0x80059450	bss	magic_name_rows	lui+addiu	t1	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023ef0	0x126f0	0x80023ef4	mips_hi16_lo16	reachable-code	0x8009ce60	bss	magic_records	lui+addiu	at	paired-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023fac	0x127ac		mips26	instruction-word	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_menu_select
 GAME.EXE	0x80023fc4	0x127c4		mips26	instruction-word	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_menu_select
@@ -4371,7 +4371,7 @@ GAME.EXE	0x80024974	0x13174		mips26	reachable-code	0x8005012c	load		jal		control
 GAME.EXE	0x800249d4	0x131d4		mips26	instruction-word	0x8005012c	load	pad_read	jal		control-flow-reviewed	reviewed	manual:game_menu_item_drop
 GAME.EXE	0x800249e8	0x131e8		mips26	instruction-word	0x8002ad6c	load	menu_list_init	jal		control-flow-reviewed	reviewed	manual:game_menu_item_drop
 GAME.EXE	0x800249f8	0x131f8	0x800249fc	mips_hi16_lo16	reachable-code	0x800a07e4	bss	player_state	lui+addiu	t2	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x80024a00	0x13200	0x80024a04	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	t4	paired-reviewed	reviewed	manual:game_menu_item_drop
+GAME.EXE	0x80024a00	0x13200	0x80024a04	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	t4	paired-reviewed	reviewed	manual:game_menu_item_drop
 GAME.EXE	0x80024a08	0x13208	0x80024a0c	mips_hi16_lo16	reachable-code	0x800652a8	bss	DAT_800652a8	lui+addiu	s5	paired-reviewed	reviewed	manual:game_menu_item_drop
 GAME.EXE	0x80024b30	0x13330		mips26	instruction-word	0x8002abb4	load	menu_frame_begin	jal		control-flow-reviewed	reviewed	manual:game_menu_item_drop
 GAME.EXE	0x80024b58	0x13358		mips26	instruction-word	0x8002aea4	load	menu_load_item_model	jal		control-flow-reviewed	reviewed	manual:game_menu_item_drop
@@ -4838,107 +4838,107 @@ GAME.EXE	0x80027154	0x15954		mips26	reachable-code	0x8002a310	load		jal		control
 GAME.EXE	0x8002718c	0x1598c	0x80027190	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800271b0	0x159b0	0x800271b4	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+sw	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800271b8	0x159b8	0x800271bc	mips_hi16_lo16	reachable-code	0x800a07e4	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800271d8	0x159d8	0x800271dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800271e8	0x159e8	0x800271ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800271f8	0x159f8	0x800271fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027208	0x15a08	0x8002720c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027218	0x15a18	0x8002721c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027228	0x15a28	0x8002722c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027238	0x15a38	0x8002723c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027248	0x15a48	0x8002724c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027278	0x15a78	0x8002727c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027288	0x15a88	0x8002728c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800271d8	0x159d8	0x800271dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800271e8	0x159e8	0x800271ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800271f8	0x159f8	0x800271fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027208	0x15a08	0x8002720c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027218	0x15a18	0x8002721c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027228	0x15a28	0x8002722c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027238	0x15a38	0x8002723c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027248	0x15a48	0x8002724c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027278	0x15a78	0x8002727c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027288	0x15a88	0x8002728c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800272a4	0x15aa4	0x800272a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800272ac	0x15aac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800272b8	0x15ab8	0x800272bc	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800272d8	0x15ad8	0x800272dc	mips_hi16_lo16	reachable-code	0x80059403	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800272e8	0x15ae8	0x800272ec	mips_hi16_lo16	reachable-code	0x80059400	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800272f8	0x15af8	0x800272fc	mips_hi16_lo16	reachable-code	0x80059407	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027308	0x15b08	0x8002730c	mips_hi16_lo16	reachable-code	0x80059404	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027318	0x15b18	0x8002731c	mips_hi16_lo16	reachable-code	0x8005940b	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027328	0x15b28	0x8002732c	mips_hi16_lo16	reachable-code	0x80059408	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027338	0x15b38	0x8002733c	mips_hi16_lo16	reachable-code	0x8005940f	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027348	0x15b48	0x8002734c	mips_hi16_lo16	reachable-code	0x8005940c	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027378	0x15b78	0x8002737c	mips_hi16_lo16	reachable-code	0x80059413	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027388	0x15b88	0x8002738c	mips_hi16_lo16	reachable-code	0x80059410	bss	DAT_80059400	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800272d8	0x15ad8	0x800272dc	mips_hi16_lo16	reachable-code	0x80059403	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800272e8	0x15ae8	0x800272ec	mips_hi16_lo16	reachable-code	0x80059400	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800272f8	0x15af8	0x800272fc	mips_hi16_lo16	reachable-code	0x80059407	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027308	0x15b08	0x8002730c	mips_hi16_lo16	reachable-code	0x80059404	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027318	0x15b18	0x8002731c	mips_hi16_lo16	reachable-code	0x8005940b	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027328	0x15b28	0x8002732c	mips_hi16_lo16	reachable-code	0x80059408	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027338	0x15b38	0x8002733c	mips_hi16_lo16	reachable-code	0x8005940f	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027348	0x15b48	0x8002734c	mips_hi16_lo16	reachable-code	0x8005940c	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027378	0x15b78	0x8002737c	mips_hi16_lo16	reachable-code	0x80059413	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027388	0x15b88	0x8002738c	mips_hi16_lo16	reachable-code	0x80059410	bss	magic_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800273a4	0x15ba4	0x800273a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800273ac	0x15bac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800273b8	0x15bb8	0x800273bc	mips_hi16_lo16	reachable-code	0x800a0812	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800273d8	0x15bd8	0x800273dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800273e8	0x15be8	0x800273ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800273f8	0x15bf8	0x800273fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027408	0x15c08	0x8002740c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027418	0x15c18	0x8002741c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027428	0x15c28	0x8002742c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027438	0x15c38	0x8002743c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027448	0x15c48	0x8002744c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027478	0x15c78	0x8002747c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027488	0x15c88	0x8002748c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800273d8	0x15bd8	0x800273dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800273e8	0x15be8	0x800273ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800273f8	0x15bf8	0x800273fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027408	0x15c08	0x8002740c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027418	0x15c18	0x8002741c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027428	0x15c28	0x8002742c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027438	0x15c38	0x8002743c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027448	0x15c48	0x8002744c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027478	0x15c78	0x8002747c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027488	0x15c88	0x8002748c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800274a4	0x15ca4	0x800274a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800274ac	0x15cac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800274b8	0x15cb8	0x800274bc	mips_hi16_lo16	reachable-code	0x800a0810	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800274d8	0x15cd8	0x800274dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800274e8	0x15ce8	0x800274ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800274f8	0x15cf8	0x800274fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027508	0x15d08	0x8002750c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027518	0x15d18	0x8002751c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027528	0x15d28	0x8002752c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027538	0x15d38	0x8002753c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027548	0x15d48	0x8002754c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027578	0x15d78	0x8002757c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027588	0x15d88	0x8002758c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800274d8	0x15cd8	0x800274dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800274e8	0x15ce8	0x800274ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800274f8	0x15cf8	0x800274fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027508	0x15d08	0x8002750c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027518	0x15d18	0x8002751c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027528	0x15d28	0x8002752c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027538	0x15d38	0x8002753c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027548	0x15d48	0x8002754c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027578	0x15d78	0x8002757c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027588	0x15d88	0x8002758c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800275a4	0x15da4	0x800275a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800275ac	0x15dac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800275b8	0x15db8	0x800275bc	mips_hi16_lo16	reachable-code	0x800a0811	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800275d8	0x15dd8	0x800275dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800275e8	0x15de8	0x800275ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800275f8	0x15df8	0x800275fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027608	0x15e08	0x8002760c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027618	0x15e18	0x8002761c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027628	0x15e28	0x8002762c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027638	0x15e38	0x8002763c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027648	0x15e48	0x8002764c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027678	0x15e78	0x8002767c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027688	0x15e88	0x8002768c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800275d8	0x15dd8	0x800275dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800275e8	0x15de8	0x800275ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800275f8	0x15df8	0x800275fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027608	0x15e08	0x8002760c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027618	0x15e18	0x8002761c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027628	0x15e28	0x8002762c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027638	0x15e38	0x8002763c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027648	0x15e48	0x8002764c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027678	0x15e78	0x8002767c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027688	0x15e88	0x8002768c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800276a4	0x15ea4	0x800276a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800276ac	0x15eac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800276b8	0x15eb8	0x800276bc	mips_hi16_lo16	reachable-code	0x800a0813	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800276d8	0x15ed8	0x800276dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800276e8	0x15ee8	0x800276ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800276f8	0x15ef8	0x800276fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027708	0x15f08	0x8002770c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027718	0x15f18	0x8002771c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027728	0x15f28	0x8002772c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027738	0x15f38	0x8002773c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027748	0x15f48	0x8002774c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027778	0x15f78	0x8002777c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027788	0x15f88	0x8002778c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800276d8	0x15ed8	0x800276dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800276e8	0x15ee8	0x800276ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800276f8	0x15ef8	0x800276fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027708	0x15f08	0x8002770c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027718	0x15f18	0x8002771c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027728	0x15f28	0x8002772c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027738	0x15f38	0x8002773c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027748	0x15f48	0x8002774c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027778	0x15f78	0x8002777c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027788	0x15f88	0x8002778c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800277a4	0x15fa4	0x800277a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800277ac	0x15fac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800277b8	0x15fb8	0x800277bc	mips_hi16_lo16	reachable-code	0x800a0814	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800277d8	0x15fd8	0x800277dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800277e8	0x15fe8	0x800277ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800277f8	0x15ff8	0x800277fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027808	0x16008	0x8002780c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027818	0x16018	0x8002781c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027828	0x16028	0x8002782c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027838	0x16038	0x8002783c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027848	0x16048	0x8002784c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027878	0x16078	0x8002787c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027888	0x16088	0x8002788c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800277d8	0x15fd8	0x800277dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800277e8	0x15fe8	0x800277ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800277f8	0x15ff8	0x800277fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027808	0x16008	0x8002780c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027818	0x16018	0x8002781c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027828	0x16028	0x8002782c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027838	0x16038	0x8002783c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027848	0x16048	0x8002784c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027878	0x16078	0x8002787c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027888	0x16088	0x8002788c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800278a4	0x160a4	0x800278a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800278ac	0x160ac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800278b8	0x160b8	0x800278bc	mips_hi16_lo16	reachable-code	0x800a0815	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800278d8	0x160d8	0x800278dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800278e8	0x160e8	0x800278ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x800278f8	0x160f8	0x800278fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027908	0x16108	0x8002790c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027918	0x16118	0x8002791c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027928	0x16128	0x8002792c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027938	0x16138	0x8002793c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027948	0x16148	0x8002794c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027978	0x16178	0x8002797c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
-GAME.EXE	0x80027988	0x16188	0x8002798c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	DAT_80058dc0	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800278d8	0x160d8	0x800278dc	mips_hi16_lo16	reachable-code	0x80058dc3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800278e8	0x160e8	0x800278ec	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x800278f8	0x160f8	0x800278fc	mips_hi16_lo16	reachable-code	0x80058dc7	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027908	0x16108	0x8002790c	mips_hi16_lo16	reachable-code	0x80058dc4	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027918	0x16118	0x8002791c	mips_hi16_lo16	reachable-code	0x80058dcb	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027928	0x16128	0x8002792c	mips_hi16_lo16	reachable-code	0x80058dc8	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027938	0x16138	0x8002793c	mips_hi16_lo16	reachable-code	0x80058dcf	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027948	0x16148	0x8002794c	mips_hi16_lo16	reachable-code	0x80058dcc	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027978	0x16178	0x8002797c	mips_hi16_lo16	reachable-code	0x80058dd3	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
+GAME.EXE	0x80027988	0x16188	0x8002798c	mips_hi16_lo16	reachable-code	0x80058dd0	bss	item_name_rows	lui+addiu	at	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800279a4	0x161a4	0x800279a8	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800279ac	0x161ac		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_draw_name_list
 GAME.EXE	0x800279fc	0x161fc	0x80027a00	mips_hi16_lo16	reachable-code	0x80057b72	load		lui+addiu	v1	paired-reviewed	reviewed	manual:reloc_sweep
@@ -4948,7 +4948,7 @@ GAME.EXE	0x80027a60	0x16260		mips26	reachable-code	0x8004d7b4	load	SetLightMatri
 GAME.EXE	0x80027a68	0x16268		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	manual:reloc_sweep
 GAME.EXE	0x80027a70	0x16270		mips26	reachable-code	0x8004d814	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	manual:reloc_sweep
 GAME.EXE	0x80027a78	0x16278		mips26	reachable-code	0x8001ed38	load		jal		control-flow-reviewed	reviewed	manual:reloc_sweep
-GAME.EXE	0x80027a88	0x16288	0x80027a8c	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_item_model_preview
+GAME.EXE	0x80027a88	0x16288	0x80027a8c	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_item_model_preview
 GAME.EXE	0x80027a98	0x16298	0x80027a9c	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v0	paired-reviewed	reviewed	manual:menu_item_model_preview
 GAME.EXE	0x80027abc	0x162bc	0x80027ac0	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+sw	at	paired-reviewed	reviewed	manual:reloc_sweep
 GAME.EXE	0x80027ae0	0x162e0	0x80027ae4	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_item_model_preview
@@ -4966,13 +4966,13 @@ GAME.EXE	0x80027c28	0x16428		mips26	reachable-code	0x8004d7b4	load	SetLightMatri
 GAME.EXE	0x80027c30	0x16430		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027c38	0x16438		mips26	reachable-code	0x8004d814	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027c40	0x16440		mips26	reachable-code	0x8001ed38	load		jal		control-flow-reviewed	reviewed	manual:menu_item_detail
-GAME.EXE	0x80027c50	0x16450	0x80027c54	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_item_detail
+GAME.EXE	0x80027c50	0x16450	0x80027c54	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027c60	0x16460	0x80027c64	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v0	paired-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027c84	0x16484	0x80027c88	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+sw	at	paired-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027ca8	0x164a8	0x80027cac	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027cb0	0x164b0		mips26	reachable-code	0x80029de0	load		jal		control-flow-reviewed	reviewed	manual:menu_item_detail
-GAME.EXE	0x80027ccc	0x164cc	0x80027cd0	mips_hi16_lo16	reachable-code	0x800595f8	bss	DAT_800595f8	lui+addiu	v0	paired-reviewed	reviewed	manual:menu_item_detail
-GAME.EXE	0x80027cdc	0x164dc	0x80027ce0	mips_hi16_lo16	reachable-code	0x800594b8	bss	DAT_800594b8	lui+addiu	v0	paired-reviewed	reviewed	manual:menu_item_detail
+GAME.EXE	0x80027ccc	0x164cc	0x80027cd0	mips_hi16_lo16	reachable-code	0x800595f8	bss	item_sell_prices	lui+addiu	v0	paired-reviewed	reviewed	manual:menu_item_detail
+GAME.EXE	0x80027cdc	0x164dc	0x80027ce0	mips_hi16_lo16	reachable-code	0x800594b8	bss	item_buy_prices	lui+addiu	v0	paired-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027d00	0x16500		mips26	reachable-code	0x8002adf8	load		jal		control-flow-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027d08	0x16508	0x80027d0c	mips_hi16_lo16	reachable-code	0x800583e8	bss	DAT_800583e8	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_item_detail
 GAME.EXE	0x80027d10	0x16510		mips26	reachable-code	0x8002a310	load		jal		control-flow-reviewed	reviewed	manual:menu_item_detail
@@ -5233,7 +5233,7 @@ GAME.EXE	0x80029390	0x17b90		mips26	reachable-code	0x8004d7b4	load	SetLightMatri
 GAME.EXE	0x80029398	0x17b98		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293a0	0x17ba0		mips26	reachable-code	0x8004d814	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293a8	0x17ba8		mips26	reachable-code	0x8001ed38	load	menu_render_item_model	jal		control-flow-reviewed	reviewed	manual:menu_draw_item_name_frame
-GAME.EXE	0x800293b8	0x17bb8	0x800293bc	mips_hi16_lo16	reachable-code	0x80058dc0	bss	DAT_80058dc0	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_draw_item_name_frame
+GAME.EXE	0x800293b8	0x17bb8	0x800293bc	mips_hi16_lo16	reachable-code	0x80058dc0	bss	item_name_rows	lui+addiu	v1	paired-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293c8	0x17bc8	0x800293cc	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v0	paired-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x800293ec	0x17bec	0x800293f0	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+sw	at	paired-reviewed	reviewed	manual:menu_draw_item_name_frame
 GAME.EXE	0x80029410	0x17c10	0x80029414	mips_hi16_lo16	reachable-code	0x800583f4	bss	DAT_800583f4	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_draw_item_name_frame

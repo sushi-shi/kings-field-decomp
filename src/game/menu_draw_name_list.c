@@ -2,15 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* One ten-glyph name record, copied as a block from the name tables. */
-typedef struct MenuName {
-    s16 glyphs[10];
-} MenuName;
-
-/* Item and magic name glyph tables (ten glyph codes per entry). */
-extern MenuName DAT_80058dc0[];
-extern MenuName DAT_80059400[];
-
 /*
  * Draw the equipment column of the status panel: the equipped weapon and the
  * selected magic (from their own name tables) followed by the six worn armour
@@ -28,42 +19,50 @@ void menu_draw_name_list(void)
     gs.x = 0xae;
     gs.y = 0x28;
     if (player_state.equipped_weapon_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_weapon_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_weapon_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.selected_magic_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80059400[player_state.selected_magic_id];
+        *(MenuGlyphRow *)gs.codes =
+            magic_name_rows[player_state.selected_magic_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.equipped_body_armor_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_body_armor_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_body_armor_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.equipped_shield_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_shield_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_shield_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.equipped_head_armor_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_head_armor_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_head_armor_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.equipped_arm_armor_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_arm_armor_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_arm_armor_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.equipped_leg_armor_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_leg_armor_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_leg_armor_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
     gs.y += 0x14;
     if (player_state.equipped_accessory_id != 0xff) {
-        *(MenuName *)gs.codes = DAT_80058dc0[player_state.equipped_accessory_id];
+        *(MenuGlyphRow *)gs.codes =
+            item_name_rows[player_state.equipped_accessory_id];
         menu_draw_string(&DAT_800583f4, &gs);
     }
 }

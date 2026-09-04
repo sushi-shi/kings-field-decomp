@@ -27,6 +27,11 @@ typedef struct MenuGlyphString {
     s16 codes[10];
 } MenuGlyphString;
 
+/* One runtime-loaded menu name: ten glyph codes selected by item or spell ID. */
+typedef struct MenuGlyphRow {
+    s16 codes[10];
+} MenuGlyphRow;
+
 /*
  * Texture-page, CLUT, texel-origin, and extent descriptor shared by menu
  * sprites and font atlases. Retail reads every field as a halfword for
@@ -77,6 +82,10 @@ extern MenuSpriteDef DAT_80058424;
 extern MenuSpriteDef DAT_80058430;
 extern MenuSpriteDef DAT_8005846c;
 extern MenuLabelCell DAT_80058494[];
+extern MenuGlyphRow item_name_rows[80];
+extern MenuGlyphRow magic_name_rows[9];
+extern u16 item_buy_prices[80][2];
+extern u16 item_sell_prices[80][2];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);

@@ -4,10 +4,6 @@
 
 /* Player object and the double-buffered display state. */
 
-/* Twenty-byte magic records (learned flag + MP cost) and the spell-name
- * string table (10 halfwords per label). */
-extern s16 DAT_80059400[];
-
 /* Shared menu primitives: frame begin/flush, hub background, list-panel
  * background, input sound cue, and the vsync/pad poll. */
 
@@ -44,7 +40,7 @@ s32 menu_magic_panel(void)
     menu_list_init(&ctx, 0, 1);
 
     found = 0;
-    name = DAT_80059400;
+    name = magic_name_rows[0].codes;
     for (code = 0; code < 4; code++, name += 10) {
         if (magic_records[code].learned == 1) {
             for (j = 0; j < 10; j++)

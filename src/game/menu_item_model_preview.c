@@ -1,9 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game.h>
-/* Item name table (ten glyph codes per item). Runtime-indexed. */
-extern s16 DAT_80058dc0[][10];
-
 /* Y-axis spin angle carried alongside the preview rotation SVECTOR. */
 extern u16 DAT_80057b72;
 
@@ -52,7 +49,7 @@ void menu_item_model_preview(s32 item_id)
 
         gs.x = 0xae;
         gs.y = 0x24;
-        name = DAT_80058dc0[item_id];
+        name = item_name_rows[item_id].codes;
         for (i = 0; i < 10; i++) {
             gs.codes[i] = name[i];
         }

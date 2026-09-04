@@ -2,11 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Item-name and spell-name string tables (10 halfwords per label). The
- * equipment/item panels index DAT_80058dc0 by item id; the spell panel starts
- * at DAT_80059450 (the fifth spell name). */
-extern s16 DAT_80058dc0[];
-
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
  * and the deferred state acknowledgement. */
 
@@ -82,7 +77,7 @@ void menu_equip_select(s32 object)
     owned = &DAT_800652a8[start];
     for (i = start; i < end; i++, owned++) {
         if (*owned != 0) {
-            name = &DAT_80058dc0[i * 10];
+            name = item_name_rows[i].codes;
             for (j = 0; j < 10; j++)
                 labels[k][j] = name[j];
             codes[k] = i;
@@ -243,7 +238,7 @@ void menu_spell_select(void)
         ;
 
     k = 0;
-    name = DAT_80059450;
+    name = magic_name_rows[4].codes;
     for (code = 4; code < 9; code++, name += 10) {
         if (magic_records[code].learned == 1) {
             for (j = 0; j < 10; j++)

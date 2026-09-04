@@ -64,6 +64,11 @@ dispatcher and modal-menu boundary. It proves the read-only position input,
 mutable rotation output, and the variadic O32 home-slot contract shared by the
 player-update and map-interaction units.
 
+`game_semantic_item_menu_data.tsv` records the four consecutive banks loaded
+from `COM\\STAT.DAT`: 80 item-name rows, 9 magic-name rows, and the two 80-by-2
+buy/sell price tables. It also records every affected consumer and proves that
+the former interior address identities are aggregate row addends.
+
 `game_semantic_display_tmd.tsv` records eleven related GAME/OPEN function
 pairs for frame submission, view transforms, TMD registration/access, and
 primitive-index preparation. It supports complete `KfPrimitiveBuffer` and

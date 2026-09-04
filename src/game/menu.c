@@ -175,19 +175,19 @@ s32 menu_use_item_panel(void)
     found = 0;
     if (inv[0x37] != 0) {
         for (j = 0; j < 10; j++)
-            labels[found][j] = DAT_8005920c[j];
+            labels[found][j] = item_name_rows[0x37].codes[j];
         counts[found] = inv[0x37];
         codes[found] = 0x37;
         found++;
     }
     if (inv[0x49] != 0) {
         for (j = 0; j < 10; j++)
-            labels[found][j] = DAT_80059374[j];
+            labels[found][j] = item_name_rows[0x49].codes[j];
         counts[found] = inv[0x49];
         codes[found] = 0x49;
         found++;
     }
-    name = DAT_80059108;
+    name = item_name_rows[0x2a].codes;
     for (code = 0x2a; code < 0x30; code++, name += 10) {
         if (code != 0x37 && code != 0x49 && inv[code] != 0) {
             for (j = 0; j < 10; j++)
@@ -197,7 +197,7 @@ s32 menu_use_item_panel(void)
             found++;
         }
     }
-    name = DAT_800591d0;
+    name = item_name_rows[0x34].codes;
     for (code = 0x34; code < 0x50; code++, name += 10) {
         if (code != 0x37 && code != 0x49 && inv[code] != 0) {
             for (j = 0; j < 10; j++)

@@ -9,13 +9,6 @@
  * save-slot summary rows. All draw through the shared glyph-string workspace
  * and sprite descriptors. Module boundary is WIP.
  */
-/* Item name table (ten glyph codes per item) and the two price tables
- * (two price columns per item).  Runtime-indexed, so only the base is
- * relocated. */
-extern s16 DAT_80058dc0[][10];
-extern u16 DAT_800594b8[][2];
-extern u16 DAT_800595f8[][2];
-
 /* Icon anchor: {x, y} reused as a one-glyph label origin by the icon draw. */
 extern MenuGlyphString DAT_80058c10;
 
@@ -72,7 +65,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = 0xae;
     gs.y = 0x24;
-    name = DAT_80058dc0[object];
+    name = item_name_rows[object].codes;
     for (i = 0; i < 10; i++) {
         gs.codes[i] = name[i];
     }
@@ -80,7 +73,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = 0xc8;
     gs.y += 18;
-    prices = (mode != 0) ? DAT_800595f8 : DAT_800594b8;
+    prices = (mode != 0) ? item_sell_prices : item_buy_prices;
     menu_format_number(prices[object][col - 1], 6, 0, gs.codes);
     menu_draw_number(&DAT_800583e8, &gs);
 

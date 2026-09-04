@@ -10,9 +10,6 @@
  * the shared menu draw primitives. Module boundary is WIP.
  */
 
-/* Item-name string table: ten halfwords (a 20-byte label) per item id. */
-extern s16 DAT_80058dc0[];
-
 /*
  * Drop-item panel dispatched by the hub menu (slot 4).  Builds a scrollable
  * list of every held item, subtracting one copy of any item currently worn in
@@ -51,7 +48,7 @@ void menu_drop_item(void)
      * body, arm and leg armour, and accessory. */
     equip = &player_state.equipped_weapon_id;
     inv = DAT_800652a8;
-    name = DAT_80058dc0;
+    name = item_name_rows[0].codes;
     for (code = 0; code < 80; code++, name += 10) {
         if (inv[code] != 0) {
             counts[found] = inv[code];

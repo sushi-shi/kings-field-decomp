@@ -4,12 +4,6 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-/* Item stat banks loaded contiguously from COM\STAT.DAT (opaque records). */
-extern u8 DAT_80058dc0[];
-extern u8 DAT_80059400[];
-extern u8 DAT_800594b8[];
-extern u8 DAT_800595f8[];
-
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
 
 /* Item sub-panels dispatched by the item menu (defined below). */
@@ -82,13 +76,13 @@ void item_load_database(void)
     src += 912;
     memcpy(DAT_80058478, src, 2376);
     src += 2376;
-    memcpy(DAT_80058dc0, src, 1600);
-    src += 1600;
-    memcpy(DAT_80059400, src, 180);
-    src += 180;
-    memcpy(DAT_800594b8, src, 320);
-    src += 320;
-    memcpy(DAT_800595f8, src, 320);
+    memcpy(item_name_rows, src, sizeof(item_name_rows));
+    src += sizeof(item_name_rows);
+    memcpy(magic_name_rows, src, sizeof(magic_name_rows));
+    src += sizeof(magic_name_rows);
+    memcpy(item_buy_prices, src, sizeof(item_buy_prices));
+    src += sizeof(item_buy_prices);
+    memcpy(item_sell_prices, src, sizeof(item_sell_prices));
 
     memory_release_last();
 
@@ -221,7 +215,7 @@ void item_menu_buy(s32 arg)
     for (slot = 42; slot < 80; slot++) {
         if (inv[slot] != 0 && DAT_800652a8[slot] < 99) {
             for (j = 0; j < 10; j++)
-                entries[found][j] = DAT_80059108[(slot - 42) * 10 + j];
+                entries[found][j] = item_name_rows[slot].codes[j];
             category[found] = inv[slot];
             index[found] = slot;
             found++;
@@ -230,7 +224,7 @@ void item_menu_buy(s32 arg)
     for (slot = 0; slot < 42; slot++) {
         if (inv[slot] != 0 && DAT_800652a8[slot] < 99) {
             for (j = 0; j < 10; j++)
-                entries[found][j] = ((s16 *)DAT_80058dc0)[slot * 10 + j];
+                entries[found][j] = item_name_rows[slot].codes[j];
             category[found] = inv[slot];
             index[found] = slot;
             found++;
@@ -306,7 +300,7 @@ void item_menu_buy(s32 arg)
                 return;
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             if (player_state.gold
-                    < ((u16 *)DAT_800594b8)[index[ctx.selected_index] * 2 + arg - 1]) {
+                    < item_buy_prices[index[ctx.selected_index]][arg - 1]) {
                 menu_play_input_sound(2);
             } else {
                 menu_play_input_sound(1);
@@ -327,7 +321,7 @@ void item_menu_buy(s32 arg)
     if (selection != -1) {
         if (selection == 0x34)
             inv[52]--;
-        player_state.gold -= ((u16 *)DAT_800594b8)[selection * 2 + arg - 1];
+        player_state.gold -= item_buy_prices[selection][arg - 1];
         DAT_800652a8[selection]++;
     }
 }
@@ -372,7 +366,7 @@ void item_menu_sell(s32 arg)
                 category[found]--;
             if (category[found] != 0) {
                 for (j = 0; j < 10; j++)
-                    entries[found][j] = ((s16 *)DAT_80058dc0)[slot * 10 + j];
+                    entries[found][j] = item_name_rows[slot].codes[j];
                 index[found] = slot;
                 found++;
             }
@@ -464,7 +458,7 @@ void item_menu_sell(s32 arg)
     game_state_acknowledge_pending();
     if (selection != -1) {
         inv[selection]--;
-        player_state.gold += ((u16 *)DAT_800595f8)[selection * 2 + arg - 1];
+        player_state.gold += item_sell_prices[selection][arg - 1];
     }
 }
 
