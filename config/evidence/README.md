@@ -163,6 +163,11 @@ proves the forwarded view-transform arguments, geometry-screen distance 200,
 the two ordered scene-render passes, and the display begin/present boundary.
 The function matches retail exactly.
 
+`open_semantic_opening_render_entities.tsv` records the active-entity render
+pass and its per-entity referent. It proves the TMD slot, 32-record pool walk,
+byte-wide active-object test, 40-byte entity stride, and all three frame-level
+callers. The render pass matches retail exactly.
+
 `open_semantic_sound_ref.tsv` records the packed OPEN sound wrapper and its
 managed-voice referent. It proves the three byte-wide sound fields, signed
 volume duplication into the two O32 stack arguments, active-VAB aggregate

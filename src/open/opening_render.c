@@ -8,7 +8,7 @@ void opening_render_frame(const VECTOR *position, const SVECTOR *rotation)
     render_set_view_transform(position, rotation);
     display_begin_frame();
     SetGeomScreen(200);
-    func_80019520();
+    opening_render_entities();
     display_present_frame();
 }
 

@@ -75,7 +75,7 @@ void opening_scene3_run(void)
             &opening_camera_path_state.rotation);
         display_begin_frame();
         SetGeomScreen(200);
-        func_80019520();
+        opening_render_entities();
         overlay_index = 0;
         overlay_rect = opening_scene3_overlay_rects[0];
         overlay_y = (s16 *)&overlay_rect[1];

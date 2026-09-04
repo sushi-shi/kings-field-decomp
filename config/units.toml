@@ -687,6 +687,12 @@ source = "src/open/opening_scene0_render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.opening_render_entities"
+image = "OPEN.EXE"
+source = "src/open/opening_render_entities.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.item"
 image = "OPEN.EXE"
 source = "src/open/item.c"
