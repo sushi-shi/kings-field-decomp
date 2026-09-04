@@ -213,8 +213,10 @@ record are owned by `include/kf/game_effect.h`. `KfWeaponRecord` and
 `KfArmorRecord` are owned with their consecutive resource loaders by
 `include/kf/game_equipment.h`. The player progress, growth, vitals, charge,
 motion, saved-state, and floor-entry layouts are owned with the player globals
-and operations by `include/kf/game_player.h`.
-The remaining checked collision and render-state layouts still live in
+and operations by `include/kf/game_player.h`. `KfCollisionTarget` is owned with
+the world-collision data and query operations by
+`include/kf/game_collision.h`.
+The remaining checked render-state layouts still live in
 `include/kf/semantic_types.h`. Their sizes are
 checked against `config/retail/structures.tsv` by `kf inventory check`;
 inventory-only vectors such as `KfVec4s` and `KfVec4i` do not acquire C

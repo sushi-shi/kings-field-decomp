@@ -172,8 +172,6 @@ extern u32 map_world_state_base;
 extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);
 extern void camera_path_compute_segment(KfCameraPathState *path);
 extern void camera_path_step(KfCameraPathState *path, s32 y_offset);
-extern void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta);
-extern u32 collision_query_world( s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags);
 extern void map_apply_copy_region(u8 region_id);
 extern void map_ambient_script_floor1(void);
 extern void map_ambient_script_floor2(void);
@@ -194,8 +192,6 @@ extern void map_event_pool_update(void);
 extern void map_event_refresh_image_for_progress(KfMapEvent *event);
 extern void map_event_set_current(KfMapEvent *event);
 extern void map_event_timers_reset(void);
-extern s32 map_floor_height_at_position(const VECTOR *position);
-extern s32 map_floor_height_for_cell_position( u16 cell_index, s32 point_x, s32 point_z);
 extern void map_interaction_dispatch(
     const VECTOR *position, SVECTOR *rotation);
 extern void map_load_floor(void);

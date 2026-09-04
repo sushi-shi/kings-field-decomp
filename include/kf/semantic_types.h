@@ -7,6 +7,7 @@
 #include <kf/game_math.h>
 #include <kf/game_actor.h>
 #include <kf/game_map.h>
+#include <kf/game_collision.h>
 #include <kf/item.h>
 #include <kf/magic.h>
 #include <kf/game_effect.h>
@@ -67,20 +68,6 @@ typedef struct KfEffectSprite {
     u8 unknown_16[2];
     u8 anchor[4];
 } KfEffectSprite;
-
-/*
- * Optional output from the world collision query.  The query copies a
- * transform from the selected player, actor, map object, or map event and
- * records the selected object's collision radius.  The final six bytes are
- * retained because the next independently referenced state begins at +0x20;
- * their meaning is not yet known.
- */
-typedef struct KfCollisionTarget {
-    VECTOR position;
-    SVECTOR rotation;
-    u16 radius;
-    u8 unknown_1a[0x06];
-} KfCollisionTarget;
 
 /* Header shared by static and animated model assets in the asset registry. */
 typedef struct KfAssetHeader {

@@ -352,6 +352,16 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, player_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_collision_layout_lives_in_the_collision_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        collision_header = (
+            REPO / "include/kf/game_collision.h"
+        ).read_text()
+        declaration = "typedef struct KfCollisionTarget"
+        self.assertIn(declaration, collision_header)
+        self.assertNotIn(declaration, semantic_types)
+        self.assertIn("extern KfCollisionTarget collision_target;", collision_header)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

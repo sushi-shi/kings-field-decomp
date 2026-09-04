@@ -20,6 +20,7 @@
 #include <kf/game_render.h>
 #include <kf/notify.h>
 #include <kf/game_map.h>
+#include <kf/game_collision.h>
 #include <kf/game_actor.h>
 #include <kf/game_effect.h>
 #include <kf/game_equipment.h>

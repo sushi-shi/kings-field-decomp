@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_player.h>
+#include <kf/game_collision.h>
 #include <kf/game.h>
 
 /*
