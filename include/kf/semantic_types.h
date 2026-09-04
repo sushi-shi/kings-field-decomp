@@ -5,6 +5,7 @@
 #include <kf/psyq.h>
 #include <kf/audio.h>
 #include <kf/game_math.h>
+#include <kf/game_actor.h>
 
 /*
  * Layout identities supported by the semantic inventory. Their original
@@ -74,103 +75,6 @@ typedef struct KfCollisionTarget {
     u16 radius;
     u8 unknown_1a[0x06];
 } KfCollisionTarget;
-
-/*
- * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
- * pool of 128 0x48-byte live actors.  Only fields exercised by the reviewed
- * core routines are named; the remaining bytes deliberately stay opaque.
- */
-/*
- * Per-action tables are indexed by KF_ACTOR_ACTION_INDEX(action): the hit
- * action (5) and death action (6) occupy entries 3 and 4, and the eight
- * effect actions occupy entries 8..15 (actor_update_effect_action).
- */
-typedef struct KfActorDefinition {
-    u8 unknown_00[0x03];
-    u8 status_effect;
-    u8 status_effect_chance;
-    u8 action_parameters[8];
-    u8 move_speed;
-    u8 action_animations[16];
-    u8 turn_rate;
-    SoundRef sounds[3];
-    struct KfVec3s attachment_offsets[2];
-    s16 unknown_34;
-    s16 unknown_36;
-    u8 unknown_38[2];
-    u16 action_animation_steps[16];
-    u16 action_animation_phases[16];
-    u16 collision_radius;
-    u16 collision_height;
-    u16 awareness_distance;
-    u16 initial_health;
-    u16 unknown_82;
-    u16 experience_reward;
-    u16 attack_components[3];
-    u16 defenses[5];
-    u16 unknown_96;
-} KfActorDefinition;
-
-#define KF_ACTOR_ACTION_INDEX(action) ((action) - 2)
-
-typedef struct KfActorActionProfile {
-    s16 far_distance;
-    s16 far_weight;
-    s16 near_distance;
-    s16 middle_weight;
-    s16 near_weight;
-} KfActorActionProfile;
-
-/* 16-byte actor placement record from the map's MIXA.DAT stream. */
-typedef struct KfActorPlacement {
-    u8 slot_state;
-    u8 definition_flags;
-    u8 heading_quadrant;
-    u8 tile_z;
-    u8 tile_x;
-    u8 unknown_05;
-    u8 unknown_06;
-    u8 unknown_07[3];
-    s16 local_z;
-    s16 local_x;
-    u8 unknown_0e[2];
-} KfActorPlacement;
-
-typedef struct KfActor {
-    u8 slot_state;
-    u8 definition_id;
-    u8 variant;
-    u8 heading_quadrant;
-    u8 tile_z;
-    u8 tile_x;
-    u8 lifecycle;
-    u8 unknown_07;
-    u8 action;
-    u8 unknown_09;
-    u8 animation_id;
-    u8 vertical_state;
-    u8 unknown_0c[2];
-    s16 local_z;
-    s16 local_x;
-    u16 animation_phase;
-    u16 health;
-    u16 cell_x;
-    u16 cell_z;
-    s16 unknown_1a;
-    VECTOR position;
-    struct KfEulerAngles rotation;
-    u16 unknown_32;
-    u32 unknown_34;
-    u8 action_timer;
-    u8 collision_state;
-    s16 movement_yaw;
-    s16 animation_step;
-    s16 vertical_velocity;
-    s16 movement_x;
-    s16 movement_z;
-    s16 movement_y;
-    u8 unknown_46[2];
-} KfActor;
 
 typedef struct KfMapCell {
     u8 z;
@@ -639,28 +543,6 @@ typedef struct KfFloorEntryCell {
 } KfFloorEntryCell;
 
 /* === end player === */
-/* === actor layouts === */
-
-/*
- * The actor system state is one object: actor routines address a definition
- * as the actor array base minus 0x720 (`addiu ...,-1824`) and the current
- * actor pointer as the array base plus 0x241c (`addiu ...,9244`), arithmetic
- * the compiler only emits inside one aggregate. The members after the arrays
- * are the retail order of the formerly separate identities.
- */
-typedef struct KfActorState {
-    KfActorDefinition definitions[12];
-    KfActor actors[128];
-    VECTOR player_position;
-    SVECTOR player_rotation;
-    KfActorDefinition *current_definition;
-    KfActor *current;
-    u16 current_index;
-    u16 current_definition_id;
-    KfActor *player_target;
-} KfActorState;
-
-/* === end actor === */
 /* One reversed ordering table of 0x4000 entries (ClearOTagR/DrawOTag). */
 typedef struct KfOrderingTable {
     u32 entries[0x4000];
