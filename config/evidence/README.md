@@ -74,6 +74,11 @@ the former interior address identities are aggregate row addends.
 layout is one title plus ten 0x18-byte row labels and resolves the item-detail
 panel's former interior-address label.
 
+`game_semantic_menu_list_tiles.tsv` records the four consecutive 0x0c-byte
+tile descriptors inside the preceding menu-runtime load. It proves the mixed
+halfword/byte field layout and the backdrop, row, end, and selected ordering
+from the sole renderer's instruction widths and referents.
+
 `game_semantic_render_cell_windows.tsv` records the 16 runtime-loaded
 `KfCellWindow` records, the per-frame active-window pointer, and the loader,
 selector, and entity-culling functions that prove their extents and fields.

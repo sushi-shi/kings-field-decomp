@@ -53,6 +53,25 @@ typedef struct MenuSpriteDef {
     u16 height;
 } MenuSpriteDef;
 
+/* Menu-list tile descriptor with byte-sized texture coordinates. */
+typedef struct MenuTileSprite {
+    u16 tpage;
+    u16 clut;
+    u8 u;
+    u8 unknown_05;
+    u8 v;
+    u8 unknown_07;
+    u16 width;
+    u16 height;
+} MenuTileSprite;
+
+typedef enum MenuListTileIndex {
+    MENU_LIST_TILE_BACKDROP,
+    MENU_LIST_TILE_ROW,
+    MENU_LIST_TILE_END,
+    MENU_LIST_TILE_SELECTED,
+} MenuListTileIndex;
+
 /* Eight-byte cell in the runtime-loaded menu label bank. */
 typedef struct MenuLabelCell {
     u16 halfwords[4];
@@ -87,6 +106,7 @@ extern MenuSpriteDef DAT_80058418;
 extern MenuSpriteDef DAT_80058424;
 extern MenuSpriteDef DAT_80058430;
 extern MenuSpriteDef DAT_8005846c;
+extern MenuTileSprite menu_list_tiles[4];
 extern MenuLabelCell DAT_80058494[];
 extern MenuWindowLayout menu_window_layouts[9];
 extern MenuGlyphRow item_name_rows[80];

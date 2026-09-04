@@ -5131,37 +5131,37 @@ GAME.EXE	0x80028b84	0x17384	0x80028b88	mips_hi16_lo16	reachable-code	0x800583f4	
 GAME.EXE	0x80028b8c	0x1738c		mips26	reachable-code	0x80029de0	load	menu_draw_string	jal		control-flow-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028bf8	0x173f8	0x80028bfc	mips_hi16_lo16	reachable-code	0x800583e8	bss	DAT_800583e8	lui+addiu	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028c00	0x17400		mips26	reachable-code	0x8002a310	load	menu_draw_number	jal		control-flow-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028c34	0x17434	0x80028c38	mips_hi16_lo16	reachable-code	0x8005843c	bss	DAT_8005843c	lui+addiu	s0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028c34	0x17434	0x80028c38	mips_hi16_lo16	reachable-code	0x8005843c	bss	menu_list_tiles	lui+addiu	s0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028c3c	0x1743c		mips26	reachable-code	0x8002accc	load	primitive_buffer_begin_poly_ft4	jal		control-flow-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028c44	0x17444	0x80028c48	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028c58	0x17458	0x80028c5c	mips_hi16_lo16	reachable-code	0x8005843e	bss	DAT_8005843c	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028c84	0x17484	0x80028c88	mips_hi16_lo16	reachable-code	0x80058444	bss	DAT_8005843c	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028cb4	0x174b4	0x80028cb8	mips_hi16_lo16	reachable-code	0x80058446	bss	DAT_8005843c	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028ccc	0x174cc	0x80028cd0	mips_hi16_lo16	reachable-code	0x80058444	bss	DAT_8005843c	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028ce4	0x174e4	0x80028ce8	mips_hi16_lo16	reachable-code	0x80058446	bss	DAT_8005843c	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028cf8	0x174f8	0x80028cfc	mips_hi16_lo16	reachable-code	0x80058440	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028c58	0x17458	0x80028c5c	mips_hi16_lo16	reachable-code	0x8005843e	bss	menu_list_tiles	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028c84	0x17484	0x80028c88	mips_hi16_lo16	reachable-code	0x80058444	bss	menu_list_tiles	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028cb4	0x174b4	0x80028cb8	mips_hi16_lo16	reachable-code	0x80058446	bss	menu_list_tiles	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028ccc	0x174cc	0x80028cd0	mips_hi16_lo16	reachable-code	0x80058444	bss	menu_list_tiles	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028ce4	0x174e4	0x80028ce8	mips_hi16_lo16	reachable-code	0x80058446	bss	menu_list_tiles	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028cf8	0x174f8	0x80028cfc	mips_hi16_lo16	reachable-code	0x80058440	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028d08	0x17508	0x80028d0c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d10	0x17510	0x80028d14	mips_hi16_lo16	reachable-code	0x80058442	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d20	0x17520	0x80028d24	mips_hi16_lo16	reachable-code	0x80058440	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d28	0x17528	0x80028d2c	mips_hi16_lo16	reachable-code	0x80058444	bss	DAT_8005843c	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d10	0x17510	0x80028d14	mips_hi16_lo16	reachable-code	0x80058442	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d20	0x17520	0x80028d24	mips_hi16_lo16	reachable-code	0x80058440	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d28	0x17528	0x80028d2c	mips_hi16_lo16	reachable-code	0x80058444	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028d30	0x17530	0x80028d34	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028d40	0x17540	0x80028d44	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d48	0x17548	0x80028d4c	mips_hi16_lo16	reachable-code	0x80058442	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d48	0x17548	0x80028d4c	mips_hi16_lo16	reachable-code	0x80058442	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028d58	0x17558	0x80028d5c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d60	0x17560	0x80028d64	mips_hi16_lo16	reachable-code	0x80058440	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d70	0x17570	0x80028d74	mips_hi16_lo16	reachable-code	0x80058442	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d78	0x17578	0x80028d7c	mips_hi16_lo16	reachable-code	0x80058446	bss	DAT_8005843c	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d60	0x17560	0x80028d64	mips_hi16_lo16	reachable-code	0x80058440	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d70	0x17570	0x80028d74	mips_hi16_lo16	reachable-code	0x80058442	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d78	0x17578	0x80028d7c	mips_hi16_lo16	reachable-code	0x80058446	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028d80	0x17580	0x80028d84	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d90	0x17590	0x80028d94	mips_hi16_lo16	reachable-code	0x80058440	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028d98	0x17598	0x80028d9c	mips_hi16_lo16	reachable-code	0x80058444	bss	DAT_8005843c	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d90	0x17590	0x80028d94	mips_hi16_lo16	reachable-code	0x80058440	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028d98	0x17598	0x80028d9c	mips_hi16_lo16	reachable-code	0x80058444	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028da0	0x175a0	0x80028da4	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028db0	0x175b0	0x80028db4	mips_hi16_lo16	reachable-code	0x80058442	bss	DAT_8005843c	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028db8	0x175b8	0x80028dbc	mips_hi16_lo16	reachable-code	0x80058446	bss	DAT_8005843c	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028db0	0x175b0	0x80028db4	mips_hi16_lo16	reachable-code	0x80058442	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028db8	0x175b8	0x80028dbc	mips_hi16_lo16	reachable-code	0x80058446	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028dc0	0x175c0	0x80028dc4	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028dd0	0x175d0	0x80028dd4	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028dd8	0x175d8		mips26	reachable-code	0x80054348	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028de0	0x175e0		mips26	reachable-code	0x8002ad1c	load	primitive_buffer_commit_poly_ft4	jal		control-flow-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028dfc	0x175fc	0x80028e00	mips_hi16_lo16	reachable-code	0x80058448	bss	DAT_80058448	lui+addiu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028dfc	0x175fc	0x80028e00	mips_hi16_lo16	reachable-code	0x80058448	bss	menu_list_tiles	lui+addiu	v0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028e20	0x17620		mips26	reachable-code	0x8002accc	load	primitive_buffer_begin_poly_ft4	jal		control-flow-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028e28	0x17628	0x80028e2c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028eec	0x176ec	0x80028ef0	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
@@ -5174,32 +5174,32 @@ GAME.EXE	0x80028f78	0x17778	0x80028f7c	mips_hi16_lo16	reachable-code	0x80057e88	
 GAME.EXE	0x80028f88	0x17788	0x80028f8c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028f90	0x17790		mips26	reachable-code	0x80054348	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028f98	0x17798		mips26	reachable-code	0x8002ad1c	load	primitive_buffer_commit_poly_ft4	jal		control-flow-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028fb4	0x177b4	0x80028fb8	mips_hi16_lo16	reachable-code	0x80058454	bss	DAT_80058454	lui+addiu	s0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028fb4	0x177b4	0x80028fb8	mips_hi16_lo16	reachable-code	0x80058454	bss	menu_list_tiles	lui+addiu	s0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028fbc	0x177bc		mips26	reachable-code	0x8002accc	load	primitive_buffer_begin_poly_ft4	jal		control-flow-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80028fc4	0x177c4	0x80028fc8	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80028fd8	0x177d8	0x80028fdc	mips_hi16_lo16	reachable-code	0x80058456	bss	DAT_80058454	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x8002901c	0x1781c	0x80029020	mips_hi16_lo16	reachable-code	0x8005845c	bss	DAT_80058454	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029074	0x17874	0x80029078	mips_hi16_lo16	reachable-code	0x8005845e	bss	DAT_80058454	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029090	0x17890	0x80029094	mips_hi16_lo16	reachable-code	0x8005845c	bss	DAT_80058454	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x800290b8	0x178b8	0x800290bc	mips_hi16_lo16	reachable-code	0x8005845e	bss	DAT_80058454	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x800290d0	0x178d0	0x800290d4	mips_hi16_lo16	reachable-code	0x80058458	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80028fd8	0x177d8	0x80028fdc	mips_hi16_lo16	reachable-code	0x80058456	bss	menu_list_tiles	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x8002901c	0x1781c	0x80029020	mips_hi16_lo16	reachable-code	0x8005845c	bss	menu_list_tiles	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029074	0x17874	0x80029078	mips_hi16_lo16	reachable-code	0x8005845e	bss	menu_list_tiles	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029090	0x17890	0x80029094	mips_hi16_lo16	reachable-code	0x8005845c	bss	menu_list_tiles	lui+lhu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x800290b8	0x178b8	0x800290bc	mips_hi16_lo16	reachable-code	0x8005845e	bss	menu_list_tiles	lui+lhu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x800290d0	0x178d0	0x800290d4	mips_hi16_lo16	reachable-code	0x80058458	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x800290e0	0x178e0	0x800290e4	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x800290e8	0x178e8	0x800290ec	mips_hi16_lo16	reachable-code	0x8005845a	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x800290f8	0x178f8	0x800290fc	mips_hi16_lo16	reachable-code	0x80058458	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029100	0x17900	0x80029104	mips_hi16_lo16	reachable-code	0x8005845c	bss	DAT_80058454	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x800290e8	0x178e8	0x800290ec	mips_hi16_lo16	reachable-code	0x8005845a	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x800290f8	0x178f8	0x800290fc	mips_hi16_lo16	reachable-code	0x80058458	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029100	0x17900	0x80029104	mips_hi16_lo16	reachable-code	0x8005845c	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80029108	0x17908	0x8002910c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80029118	0x17918	0x8002911c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029120	0x17920	0x80029124	mips_hi16_lo16	reachable-code	0x8005845a	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029120	0x17920	0x80029124	mips_hi16_lo16	reachable-code	0x8005845a	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80029130	0x17930	0x80029134	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v1	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029138	0x17938	0x8002913c	mips_hi16_lo16	reachable-code	0x80058458	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029148	0x17948	0x8002914c	mips_hi16_lo16	reachable-code	0x8005845a	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029150	0x17950	0x80029154	mips_hi16_lo16	reachable-code	0x8005845e	bss	DAT_80058454	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029138	0x17938	0x8002913c	mips_hi16_lo16	reachable-code	0x80058458	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029148	0x17948	0x8002914c	mips_hi16_lo16	reachable-code	0x8005845a	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029150	0x17950	0x80029154	mips_hi16_lo16	reachable-code	0x8005845e	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80029158	0x17958	0x8002915c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029168	0x17968	0x8002916c	mips_hi16_lo16	reachable-code	0x80058458	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029170	0x17970	0x80029174	mips_hi16_lo16	reachable-code	0x8005845c	bss	DAT_80058454	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029168	0x17968	0x8002916c	mips_hi16_lo16	reachable-code	0x80058458	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029170	0x17970	0x80029174	mips_hi16_lo16	reachable-code	0x8005845c	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80029178	0x17978	0x8002917c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029188	0x17988	0x8002918c	mips_hi16_lo16	reachable-code	0x8005845a	bss	DAT_80058454	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
-GAME.EXE	0x80029190	0x17990	0x80029194	mips_hi16_lo16	reachable-code	0x8005845e	bss	DAT_80058454	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029188	0x17988	0x8002918c	mips_hi16_lo16	reachable-code	0x8005845a	bss	menu_list_tiles	lui+lbu	v0	paired-reviewed	reviewed	manual:menu_list_render
+GAME.EXE	0x80029190	0x17990	0x80029194	mips_hi16_lo16	reachable-code	0x8005845e	bss	menu_list_tiles	lui+lbu	v1	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x80029198	0x17998	0x8002919c	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x800291a8	0x179a8	0x800291ac	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	a0	paired-reviewed	reviewed	manual:menu_list_render
 GAME.EXE	0x800291b0	0x179b0		mips26	reachable-code	0x80054348	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	manual:menu_list_render

@@ -2,29 +2,12 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Window-tile sprite descriptor: byte texel origin, halfword tile size. */
-typedef struct MenuTileSprite {
-    u16 tpage;
-    u16 clut;
-    u8 u;
-    u8 reserved5;
-    u8 v;
-    u8 reserved7;
-    u16 width;
-    u16 height;
-} MenuTileSprite;
-
 /* Positioned glyph run: origin then codes terminated by -1. */
 typedef struct MenuGlyphBuffer {
     u16 x;
     u16 y;
     s16 codes[22];
 } MenuGlyphBuffer;
-
-extern MenuTileSprite DAT_8005843c;  /* list backdrop tile */
-extern MenuTileSprite DAT_80058448;  /* normal row highlight */
-extern MenuTileSprite DAT_80058454;  /* scroll-end tile */
-extern MenuTileSprite DAT_80058460;  /* selected row highlight */
 
 /*
  * Render a scrollable menu list: the optional title label, the visible glyph
@@ -37,7 +20,7 @@ ADDRESS(0x80028a70, 0x77c)
 void menu_list_render(const KfMenuList *list)
 {
     MenuGlyphBuffer gs;
-    MenuTileSprite *tile;
+    const MenuTileSprite *tile;
     s16 *src;
     u8 *counts;
     s32 row;
@@ -90,25 +73,26 @@ void menu_list_render(const KfMenuList *list)
         } while (row < list->visible_rows && row < list->entry_count);
     }
 
+    tile = &menu_list_tiles[MENU_LIST_TILE_BACKDROP];
     primitive_buffer_begin_poly_ft4();
-    current_poly_ft4->tpage = DAT_8005843c.tpage;
-    current_poly_ft4->clut = DAT_8005843c.clut;
+    current_poly_ft4->tpage = tile->tpage;
+    current_poly_ft4->clut = tile->clut;
     current_poly_ft4->x0 = list->list_x;
     current_poly_ft4->y0 = list->list_y;
-    current_poly_ft4->x1 = list->list_x + DAT_8005843c.width;
+    current_poly_ft4->x1 = list->list_x + tile->width;
     current_poly_ft4->y1 = list->list_y;
     current_poly_ft4->x2 = list->list_x;
-    current_poly_ft4->y2 = list->list_y + DAT_8005843c.height;
-    current_poly_ft4->x3 = list->list_x + DAT_8005843c.width;
-    current_poly_ft4->y3 = list->list_y + DAT_8005843c.height;
-    current_poly_ft4->u0 = DAT_8005843c.u;
-    current_poly_ft4->v0 = DAT_8005843c.v;
-    current_poly_ft4->u1 = DAT_8005843c.u + DAT_8005843c.width;
-    current_poly_ft4->v1 = DAT_8005843c.v;
-    current_poly_ft4->u2 = DAT_8005843c.u;
-    current_poly_ft4->v2 = DAT_8005843c.v + DAT_8005843c.height;
-    current_poly_ft4->u3 = DAT_8005843c.u + DAT_8005843c.width;
-    current_poly_ft4->v3 = DAT_8005843c.v + DAT_8005843c.height;
+    current_poly_ft4->y2 = list->list_y + tile->height;
+    current_poly_ft4->x3 = list->list_x + tile->width;
+    current_poly_ft4->y3 = list->list_y + tile->height;
+    current_poly_ft4->u0 = tile->u;
+    current_poly_ft4->v0 = tile->v;
+    current_poly_ft4->u1 = tile->u + tile->width;
+    current_poly_ft4->v1 = tile->v;
+    current_poly_ft4->u2 = tile->u;
+    current_poly_ft4->v2 = tile->v + tile->height;
+    current_poly_ft4->u3 = tile->u + tile->width;
+    current_poly_ft4->v3 = tile->v + tile->height;
     SetSemiTrans(current_poly_ft4, 1);
     primitive_buffer_commit_poly_ft4(2000);
 
@@ -116,9 +100,9 @@ void menu_list_render(const KfMenuList *list)
         slot = 0;
         yoff = 0;
         do {
-            tile = &DAT_80058448;
+            tile = &menu_list_tiles[MENU_LIST_TILE_ROW];
             if (slot == list->cursor_row) {
-                tile = &DAT_80058460;
+                tile = &menu_list_tiles[MENU_LIST_TILE_SELECTED];
             }
             slot++;
             primitive_buffer_begin_poly_ft4();
@@ -146,25 +130,28 @@ void menu_list_render(const KfMenuList *list)
         } while ((s32)slot < list->visible_rows);
     }
 
+    tile = &menu_list_tiles[MENU_LIST_TILE_END];
     primitive_buffer_begin_poly_ft4();
-    current_poly_ft4->tpage = DAT_80058454.tpage;
-    current_poly_ft4->clut = DAT_80058454.clut;
+    current_poly_ft4->tpage = tile->tpage;
+    current_poly_ft4->clut = tile->clut;
     current_poly_ft4->x0 = list->list_x;
     current_poly_ft4->y0 = list->list_y + list->visible_rows * 0xc + 3;
-    current_poly_ft4->x1 = list->list_x + DAT_80058454.width;
+    current_poly_ft4->x1 = list->list_x + tile->width;
     current_poly_ft4->y1 = list->list_y + list->visible_rows * 0xc + 3;
     current_poly_ft4->x2 = list->list_x;
-    current_poly_ft4->y2 = list->list_y + list->visible_rows * 0xc + DAT_80058454.height + 3;
-    current_poly_ft4->x3 = list->list_x + DAT_80058454.width;
-    current_poly_ft4->y3 = list->list_y + list->visible_rows * 0xc + DAT_80058454.height + 3;
-    current_poly_ft4->u0 = DAT_80058454.u;
-    current_poly_ft4->v0 = DAT_80058454.v;
-    current_poly_ft4->u1 = DAT_80058454.u + DAT_80058454.width;
-    current_poly_ft4->v1 = DAT_80058454.v;
-    current_poly_ft4->u2 = DAT_80058454.u;
-    current_poly_ft4->v2 = DAT_80058454.v + DAT_80058454.height;
-    current_poly_ft4->u3 = DAT_80058454.u + DAT_80058454.width;
-    current_poly_ft4->v3 = DAT_80058454.v + DAT_80058454.height;
+    current_poly_ft4->y2 = list->list_y + list->visible_rows * 0xc +
+                           tile->height + 3;
+    current_poly_ft4->x3 = list->list_x + tile->width;
+    current_poly_ft4->y3 = list->list_y + list->visible_rows * 0xc +
+                           tile->height + 3;
+    current_poly_ft4->u0 = tile->u;
+    current_poly_ft4->v0 = tile->v;
+    current_poly_ft4->u1 = tile->u + tile->width;
+    current_poly_ft4->v1 = tile->v;
+    current_poly_ft4->u2 = tile->u;
+    current_poly_ft4->v2 = tile->v + tile->height;
+    current_poly_ft4->u3 = tile->u + tile->width;
+    current_poly_ft4->v3 = tile->v + tile->height;
     SetSemiTrans(current_poly_ft4, 1);
     primitive_buffer_commit_poly_ft4(2000);
 
