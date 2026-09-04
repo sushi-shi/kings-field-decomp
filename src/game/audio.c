@@ -192,23 +192,23 @@ u32 audio_play_spatial(
 }
 
 ADDRESS(0x80032fb8, 0x30)
-void audio_play_spatial_default_range(
+u32 audio_play_spatial_default_range(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume)
 {
-    audio_play_spatial(sound, position, volume, 0x3e80, 0x6d60);
+    return audio_play_spatial(sound, position, volume, 0x3e80, 0x6d60);
 }
 
 ADDRESS(0x80032fe8, 0x2c)
-void audio_play_spatial_range(
+u32 audio_play_spatial_range(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume,
     s32 max_distance,
     s32 attenuation_distance)
 {
-    audio_play_spatial(
+    return audio_play_spatial(
         sound,
         position,
         volume,

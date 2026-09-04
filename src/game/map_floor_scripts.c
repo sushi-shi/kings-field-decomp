@@ -24,8 +24,6 @@ extern u8 DAT_800652a8[240];
 extern u8 map_world_state_base[4];
 /* Camera-path / positional-audio data block; +0x40 ambience, +0x50 matrix. */
 
-extern void audio_play_spatial_default_range(
-    const SoundRef *sound, const VECTOR *position, s16 volume);
 extern int rand(void);
 
 /* The two TIM cut-in paths shown by map_ambient_script_floor5. */

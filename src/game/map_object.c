@@ -8,8 +8,6 @@ extern u8 map_world_state_base[4];
 
 /* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
 extern s32 rand(void);
-extern void audio_play_spatial_default_range(
-    const SoundRef *sound, const VECTOR *position, s16 volume);
 
 #define MAP_OBJECT_COUNT 190
 #define MAP_OBJECT_NONE 0xff

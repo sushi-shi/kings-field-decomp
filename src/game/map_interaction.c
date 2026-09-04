@@ -10,8 +10,6 @@ extern u8 DAT_800652a8[240];
 /* Loaded camera-path point table (points begin at +8); extent unresolved. */
 /* Full-screen image path template "KAN\B0\K000.TIM". */
 
-extern void audio_play_spatial_default_range(const SoundRef *sound, const VECTOR *position, s16 volume);
-
 /* This menu helper is called with varying arities. */
 extern u32 menu_enter_mode(s32 arg0, ...);
 

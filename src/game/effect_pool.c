@@ -30,12 +30,6 @@
  * See docs/patterns/source-shapes-gcc257.md.
  */
 
-extern void audio_play_spatial_default_range(
-    const SoundRef *sound, const VECTOR *position, s16 volume);
-extern void audio_play_spatial_range(
-    const SoundRef *sound, const VECTOR *position, s16 volume,
-    s32 max_distance, s32 attenuation_distance);
-
 /* effect_pool_construct kind-dispatch jump table (kinds 0x04..0x30). */
 
 ADDRESS(0x80036f00, 0x44)

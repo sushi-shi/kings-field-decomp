@@ -20,6 +20,11 @@ extern void audio_play_voice(
 extern u32 audio_play_spatial(
     const SoundRef *sound, const VECTOR *position, s16 volume, s32 max_distance,
     s32 attenuation_distance);
+extern u32 audio_play_spatial_default_range(
+    const SoundRef *sound, const VECTOR *position, s16 volume);
+extern u32 audio_play_spatial_range(
+    const SoundRef *sound, const VECTOR *position, s16 volume,
+    s32 max_distance, s32 attenuation_distance);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
 extern void audio_set_listener_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);

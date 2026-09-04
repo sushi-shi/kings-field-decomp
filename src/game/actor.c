@@ -9,18 +9,6 @@
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
-/* Psy-Q LIBGTE: long SquareRoot0(long a). */
-extern void audio_play_spatial_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume,
-    s32 max_distance,
-    s32 attenuation_distance);
-extern void audio_play_spatial_default_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume);
-
 /*
  * Twenty-five ten-byte action-selection profiles indexed by profile_index in
  * actor_try_select_profiled_action: {far_distance, far_weight, near_distance,
