@@ -206,10 +206,11 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfPlayerLevelGrowth`, `KfPlayerMotionState`, `KfPlayerVitals`,
 `KfPlayerAttackChargeState`, `KfPlayerState`, `KfWeaponRecord`,
 `KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`, `KfScreenVertex`,
-`KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and `KfSavePayload`
-are owned by `include/kf/game_save.h`; the remaining inventory-only layouts in
-this list still live in `include/kf/semantic_types.h`. Their sizes are checked
-against `config/retail/structures.tsv` by `kf inventory check`; established
+`KfCdFileEntry` is owned by `include/kf/game_cd.h`; `KfSaveSlotSummary`,
+`KfSaveDirectory`, `KfSaveHeader`, and `KfSavePayload` are owned by
+`include/kf/game_save.h`. The remaining inventory-only layouts in this list
+still live in `include/kf/semantic_types.h`. Their sizes are checked against
+`config/retail/structures.tsv` by `kf inventory check`; established
 reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`.
 A type name records only fields and extents supported by the current MIPS
 access pattern; it does not claim the original source spelling.

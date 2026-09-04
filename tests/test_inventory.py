@@ -214,6 +214,13 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, save_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_game_cd_layout_lives_in_the_game_cd_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        game_cd = (REPO / "include/kf/game_cd.h").read_text()
+        declaration = "typedef struct KfCdFileEntry"
+        self.assertIn(declaration, game_cd)
+        self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

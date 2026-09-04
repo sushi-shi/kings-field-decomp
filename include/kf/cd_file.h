@@ -3,7 +3,7 @@
 
 /* King's Field file loading and state at the Psy-Q CD-ROM boundary. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
 #include <kf/psyq_cd.h>
 
 extern CdlFILE cd_search_file;

@@ -47,19 +47,6 @@ typedef struct KfPrimitiveBuffer {
 } KfPrimitiveBuffer;
 
 /*
- * CD file record used by the game's own file table (cd_file_table): the
- * older libcd CdlFILE layout with a 12-byte name, 20 bytes per entry.
- */
-typedef struct KfCdFileEntry {
-    u8 minute;
-    u8 second;
-    u8 sector;
-    u8 track;
-    u32 size;
-    u8 name[12];
-} KfCdFileEntry;
-
-/*
  * 12-byte header of an unlinked TMD payload.  The format stores the object
  * count as a 32-bit word; the game reads only its low halfword (lhu).
  */

@@ -410,6 +410,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/game_types.h",
         REPO / "include/kf/semantic_types.h",
         REPO / "include/kf/game_save.h",
+        REPO / "include/kf/game_cd.h",
     )
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)

@@ -126,12 +126,12 @@ KfCameraPathState	0x4c	0x10	rotation_delta	VECTOR	supported	semantic_types.h;asm
 KfCameraPathState	0x5c	0x02	point_index	s16	supported	semantic_types.h;asm;xrefs	current path point index
 KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;xrefs	segment frame countdown
-KfCdFileEntry	0x00	0x01	minute	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC minute of the file
-KfCdFileEntry	0x01	0x01	second	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC second of the file
-KfCdFileEntry	0x02	0x01	sector	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC sector of the file
-KfCdFileEntry	0x03	0x01	track	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
-KfCdFileEntry	0x04	0x04	size	u32	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
-KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
+KfCdFileEntry	0x00	0x01	minute	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC minute of the file
+KfCdFileEntry	0x01	0x01	second	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC second of the file
+KfCdFileEntry	0x02	0x01	sector	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC sector of the file
+KfCdFileEntry	0x03	0x01	track	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
+KfCdFileEntry	0x04	0x04	size	u32	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
+KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
 KfCellWindow	0x00	0x02	width	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row width and inner-loop bound
 KfCellWindow	0x02	0x02	height	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row count and outer-loop bound
 KfCellWindow	0x04	0x02	origin_x	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
