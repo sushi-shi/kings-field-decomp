@@ -227,12 +227,6 @@ source = "src/game/render_sprite.c"
 profile = "probe-gcc257-o2-nosched"
 
 [[unit]]
-unit = "game.render_map_cell"
-image = "GAME.EXE"
-source = "src/game/render_map_cell.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.render_map_cells"
 image = "GAME.EXE"
 source = "src/game/render_map_cells.c"

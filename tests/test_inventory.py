@@ -550,6 +550,32 @@ class InventoryTests(unittest.TestCase):
             ("current_poly_ft4", "POLY_FT4 *", 4),
         )
 
+    def test_render_map_cells_tu_is_gapless_and_supported(self) -> None:
+        evidence_path = CONFIG / "evidence/game_tu_render_map_cells.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 2)
+
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in rows
+        ]
+        self.assertEqual(spans, [(0x8001E5EC, 0x250), (0x8001E83C, 0x168)])
+        self.assertEqual(spans[0][0] + spans[0][1], spans[1][0])
+
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertEqual(identity.signature_confidence, "supported")
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        units = (CONFIG / "units.toml").read_text()
+        self.assertEqual(units.count('source = "src/game/render_map_cells.c"'), 1)
+        self.assertNotIn('source = "src/game/render_map_cell.c"', units)
+
     def test_menu_runtime_tu_is_gapless_and_uses_one_unit(self) -> None:
         presentation_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
         runtime_path = CONFIG / "evidence/game_tu_menu_runtime.tsv"
