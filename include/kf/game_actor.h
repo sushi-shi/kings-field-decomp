@@ -13,6 +13,8 @@
 #include <kf/semantic_types.h>
 
 extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
+extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
+extern void actor_advance_animation_wrapped(KfActor *actor, s16 delta);
 extern void actor_apply_horizontal_movement(void);
 extern void actor_apply_random_movement(s16 step, s16 limit);
 extern void actor_bind_current(KfActor *actor);
@@ -42,6 +44,9 @@ extern void actor_pool_spawn(
     u8 definition_id, const struct KfVec3i *position,
     const struct KfVec3s *rotation);
 extern void actor_pool_update(void);
+extern s32 actor_distance_to_point(
+    const KfActor *actor, s32 point_x, s32 point_y, s32 point_z,
+    s32 max_distance, s32 actor_height, s32 point_height);
 extern void actor_prepare_charge_toward_player(void);
 extern void actor_select_next_action(s32 player_distance);
 extern void actor_set_action(KfActor *actor, u8 action);
@@ -50,6 +55,9 @@ extern u8 actor_try_select_action_distance_facing( u8 action, s32 distance, u16 
 extern u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance);
 extern u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance);
 extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u16 chance);
+extern void actor_try_attack_player(
+    u16 minimum_distance, u16 maximum_distance,
+    s16 angle_offset, s16 angle_tolerance);
 extern void actor_update_awareness(void);
 extern void actor_update_current_action(void);
 extern void actor_update_effect_action(s32 action);

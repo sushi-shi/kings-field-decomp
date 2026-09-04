@@ -2,17 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void actor_advance_animation_clamped();
-extern void actor_advance_animation_wrapped();
-extern s32 actor_distance_to_point(
-    const KfActor *actor,
-    s32 point_x,
-    s32 point_y,
-    s32 point_z,
-    s32 max_distance,
-    s32 actor_height,
-    s32 point_height);
-extern void actor_try_attack_player();
 extern s32 rand(void);
 
 #define ACTOR_ACTION_NONE 0xff
