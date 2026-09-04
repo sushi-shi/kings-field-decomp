@@ -158,6 +158,11 @@ identities. It proves the paired entity yaw, camera thresholds, one-shot sound,
 input-controlled color fade, listener update, and frame loop. The function and
 both owned data objects match retail exactly.
 
+`open_semantic_opening_scene0_render.tsv` records the scene-0 frame wrapper. It
+proves the forwarded view-transform arguments, geometry-screen distance 200,
+the two ordered scene-render passes, and the display begin/present boundary.
+The function matches retail exactly.
+
 `open_semantic_opening_scene1.tsv` records the contiguous OPEN scene-1 fade
 renderer and controller. It proves the two textured half-screen packets, their
 texture-page origins and shade width, the 0-to-128 and 128-to-0 transitions,

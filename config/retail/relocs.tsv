@@ -12125,12 +12125,12 @@ OPEN.EXE	0x80019390	0x7b90	0x80019394	mips_hi16_lo16	reachable-code	0x8006da36	b
 OPEN.EXE	0x8001939c	0x7b9c	0x800193a0	mips_hi16_lo16	reachable-code	0x8006da28	bss	DAT_8006da28	lui+sh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800193f8	0x7bf8	0x800193fc	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	DAT_8006e1c8	lui+lw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80019488	0x7c88		mips26	reachable-code	0x800190f4	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800194e0	0x7ce0		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800194e8	0x7ce8		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800194f0	0x7cf0		mips26	reachable-code	0x8002c15c	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800194f8	0x7cf8		mips26	reachable-code	0x80018d8c	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019500	0x7d00		mips26	reachable-code	0x80019240	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019508	0x7d08		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
+OPEN.EXE	0x800194e0	0x7ce0		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene0_render
+OPEN.EXE	0x800194e8	0x7ce8		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene0_render
+OPEN.EXE	0x800194f0	0x7cf0		mips26	reachable-code	0x8002c15c	load	SetGeomScreen	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene0_render
+OPEN.EXE	0x800194f8	0x7cf8		mips26	reachable-code	0x80018d8c	load	opening_render_map_cells	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene0_render
+OPEN.EXE	0x80019500	0x7d00		mips26	reachable-code	0x80019240	load	opening_render_entities_and_items	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene0_render
+OPEN.EXE	0x80019508	0x7d08		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene0_render
 OPEN.EXE	0x80019534	0x7d34		mips26	reachable-code	0x80016e68	load	tmd_select	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x8001953c	0x7d3c	0x80019540	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80019560	0x7d60		mips26	reachable-code	0x80018ecc	load		jal		control-flow	candidate	investigation:relocs.tsv

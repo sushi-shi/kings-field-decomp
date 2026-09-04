@@ -1300,6 +1300,43 @@ class InventoryTests(unittest.TestCase):
             },
         )
 
+    def test_open_opening_scene0_render_is_exactly_modeled(self) -> None:
+        evidence_path = (
+            CONFIG / "evidence/open_semantic_opening_scene0_render.tsv"
+        )
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";")) or "void"
+        signature = f"{identity.return_type} {identity.name}({parameters})"
+        self.assertEqual(row["final_name"], identity.name)
+        self.assertEqual(row["final_signature"], signature)
+        self.assertEqual(row["current_match"], "100.000000000% exact")
+        self.assertIn(evidence_path.name, identity.evidence)
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_opening_scene0_render"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 6)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        self.assertEqual(
+            {reloc["target_name"] for reloc in campaign_rows},
+            {
+                "SetGeomScreen",
+                "display_begin_frame",
+                "display_present_frame",
+                "opening_render_entities_and_items",
+                "opening_render_map_cells",
+                "render_set_view_transform",
+            },
+        )
+
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
