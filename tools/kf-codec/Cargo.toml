@@ -1,0 +1,9 @@
+[package]
+name = "kf-codec"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+# Allocation-free readers and writers for the retail data containers.
+[lib]
+path = "src/lib.rs"

@@ -226,6 +226,7 @@
         pyghidra
         pytest
         pyyaml
+        unicorn
       ]);
 
       pythonSync = pkgs.writeShellApplication {
@@ -455,6 +456,9 @@
           xxd
           gnutar
           xz
+          cargo
+          rustc
+          rustfmt
         ]);
 
         shellHook = ''
@@ -490,7 +494,7 @@
       };
 
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
-        nativeBuildInputs = [ pkgs.python3 ];
+        nativeBuildInputs = [ analysisPython ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
       } ''
         mkdir project
@@ -567,6 +571,18 @@
         python3 ${./tests/psylink_order_smoke.py}
         touch "$out"
       '';
+
+      codecTests = pkgs.runCommand "kings-field-codec-tests" {
+        nativeBuildInputs = [ pkgs.cargo pkgs.rustc pkgs.rustfmt pkgs.stdenv.cc ];
+      } ''
+        cp -r ${./tools} tools
+        chmod -R u+w tools
+        export CARGO_TARGET_DIR="$TMPDIR/cargo-target"
+        cargo fmt --manifest-path tools/Cargo.toml --all -- --check
+        cargo check --offline --manifest-path tools/Cargo.toml --lib
+        cargo test --offline --manifest-path tools/Cargo.toml
+        touch "$out"
+      '';
     in {
       packages.${system} = {
         inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
@@ -586,6 +602,7 @@
         retail-config = retailConfigTests;
         objdiff-mips = objdiffMipsTests;
         psylink-order = psylinkOrderTests;
+        codecs = codecTests;
       };
     };
 }

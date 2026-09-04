@@ -43,3 +43,6 @@ promotes a probe to a proven historical toolchain.
   narrowing in preparation, and the shared GAME/OPEN TMD interface.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
+- [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
+  parser write guards, load-delay audit, and reduced Unicorn memory-hook
+  control-flow defects.
