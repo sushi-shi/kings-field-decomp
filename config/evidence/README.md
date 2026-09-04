@@ -132,6 +132,13 @@ table slot, two display-state referents, and the GPU provider boundary. Both
 functions match retail exactly; the following textured-quad helper remains a
 separate WIP unit because adjacency alone does not prove its original owner.
 
+`open_semantic_opening_helpers.tsv` records the contiguous OPEN controller-input
+and angular-math helper pair. It proves the joined action-state store and its
+three opening-controller meanings, preserves the ignored PAD identifier at the
+K&R call boundary, and connects the 12-bit signed angular delta to its three
+rotation-component consumers and the exact GAME homolog. Both functions and
+the owned BSS word match retail exactly.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five

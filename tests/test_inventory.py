@@ -823,6 +823,53 @@ class InventoryTests(unittest.TestCase):
             {("display_state", 0x80049A68), ("ordering_table", 0x80069A6C)},
         )
 
+    def test_open_opening_helpers_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_opening_helpers.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 2)
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+            self.assertEqual(row["current_match"], "100.000000000% exact")
+
+        pad_read = identities[("OPEN.EXE", 0x8002FF00)]
+        self.assertEqual(
+            (pad_read.name, pad_read.owner, pad_read.action),
+            ("pad_read", "pad", "read"),
+        )
+
+        data = load_data_identities(RETAIL_CONFIG)
+        action = data[("OPEN.EXE", 0x80043178)]
+        self.assertEqual(
+            (action.name, action.storage, action.datatype, action.size),
+            ("opening_input_action", "bss", "u32", 4),
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if "manual:open_semantic_opening_helpers"
+            in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 24)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {row["target_name"] for row in campaign_rows})
+        action_rows = [
+            row
+            for row in campaign_rows
+            if parse_int(row["target_va"]) == 0x80043178
+        ]
+        self.assertEqual(len(action_rows), 12)
+        self.assertEqual(
+            {row["target_name"] for row in action_rows}, {"opening_input_action"}
+        )
+
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
