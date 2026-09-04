@@ -27,7 +27,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     remaining = object->primitive_count;
     packet = payload + object->primitive_offset + 12;
     normals = payload + object->normal_offset + 12;
-    vertices = DAT_800911b0;
+    vertices = tmd_projected_vertices;
     if (remaining == 0) {
         return;
     }
@@ -392,7 +392,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     remaining = object->primitive_count;
     packet = payload + object->primitive_offset + 12;
     normals = payload + object->normal_offset + 12;
-    vertices = DAT_800911b0;
+    vertices = tmd_projected_vertices;
     if (remaining == 0) {
         return;
     }
@@ -580,7 +580,7 @@ void render_enqueue_map(u16 object_index)
     tmd_project_vertices(object->vertex_count);
     packet = payload + object->primitive_offset + 12;
     remaining = object->primitive_count;
-    vertices = DAT_800911b0;
+    vertices = tmd_projected_vertices;
     if (remaining == 0) {
         return;
     }

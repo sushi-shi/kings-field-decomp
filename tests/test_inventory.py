@@ -51,12 +51,53 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 485)
         self.assertEqual(counts["typed_returns"], 485)
         self.assertEqual(counts["parameterized"], 316)
-        self.assertEqual(counts["data"], 3061)
+        self.assertEqual(counts["data"], 3054)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 76)
         self.assertEqual(counts["structure_fields"], 663)
         self.assertEqual(counts["structure_fields_named"], 540)
+
+    def test_game_tmd_buffer_prefixes_have_one_array_identity_each(self) -> None:
+        game = index("GAME.EXE")
+        for base, size, name, datatype in (
+            (0x800911B0, 8, "tmd_projected_vertices", "KfScreenVertex[]"),
+            (0x800930F0, 24, "tmd_morph_scratch", "SVECTOR[]"),
+        ):
+            datum = game.datum(base)
+            self.assertEqual((datum.name, datum.datatype, datum.size),
+                             (name, datatype, size))
+            for offset in range(1, size):
+                self.assertIsNone(game.datum(base + offset))
+                self.assertEqual(game.data_owner(base + offset), datum)
+            # Referenced prefixes are not complete-object capacity claims.
+            self.assertEqual(datum.unit, "")
+            self.assertIn("not complete capacity", datum.note)
+        opening = index("OPEN.EXE").datum(0x80069B80)
+        self.assertEqual((opening.name, opening.datatype, opening.size),
+                         ("tmd_projected_vertices", "KfScreenVertex[1000]", 0x1F40))
+
+    def test_tmd_buffer_relocations_preserve_numeric_interior_targets(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        expected = {
+            0x8001C624: (0x800911B0, "tmd_projected_vertices"),
+            0x8001C6C4: (0x800911B0, "tmd_projected_vertices"),
+            0x8001C770: (0x800911B0, "tmd_projected_vertices"),
+            0x800208B0: (0x800930F8, "tmd_morph_scratch"),
+            0x800208FC: (0x800930F0, "tmd_morph_scratch"),
+        }
+        found = {
+            parse_int(row["site_va"]): row for row in rows
+            if row["image"] == "GAME.EXE" and parse_int(row["site_va"]) in expected
+        }
+        self.assertEqual(set(found), set(expected))
+        for site, (target, name) in expected.items():
+            row = found[site]
+            self.assertEqual((parse_int(row["target_va"]), row["target_name"]),
+                             (target, name))
+            self.assertEqual(parse_int(row["paired_site_va"]), site + 4)
+            self.assertEqual((row["kind"], row["opcode"], row["status"]),
+                             ("mips_hi16_lo16", "lui+addiu", "reviewed"))
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)

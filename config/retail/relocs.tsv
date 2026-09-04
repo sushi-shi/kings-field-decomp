@@ -3161,15 +3161,15 @@ GAME.EXE	0x8001c51c	0xad1c		mips26	instruction-word	0x8001c584	load		j		range-fi
 GAME.EXE	0x8001c5b8	0xadb8	0x8001c5bc	mips_hi16_lo16	reachable-code	0x80090fc8	bss	tmd_state	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001c5d4	0xadd4		mips26	reachable-code	0x8001c2b0	load	tmd_prepare_primitive_indices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001c5f4	0xadf4		mips26	reachable-code	0x8001ac8c	load	memory_release_last	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001c624	0xae24	0x8001c628	mips_hi16_lo16	reachable-code	0x800911b0	bss	DAT_800911b0	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001c624	0xae24	0x8001c628	mips_hi16_lo16	reachable-code	0x800911b0	bss	tmd_projected_vertices	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001c62c	0xae2c	0x8001c630	mips_hi16_lo16	reachable-code	0x800910bc	bss	current_tmd_vertices	lui+lw	s3	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001c64c	0xae4c		mips26	reachable-code	0x8004da4c	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001c66c	0xae6c		mips26	reachable-code	0x8004cb58	load		jal		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001c6c4	0xaec4	0x8001c6c8	mips_hi16_lo16	reachable-code	0x800911b0	bss	DAT_800911b0	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001c6c4	0xaec4	0x8001c6c8	mips_hi16_lo16	reachable-code	0x800911b0	bss	tmd_projected_vertices	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001c6cc	0xaecc	0x8001c6d0	mips_hi16_lo16	reachable-code	0x800910bc	bss	current_tmd_vertices	lui+lw	s3	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001c6f0	0xaef0		mips26	reachable-code	0x8004da4c	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001c710	0xaf10		mips26	reachable-code	0x8004cb58	load		jal		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001c770	0xaf70	0x8001c774	mips_hi16_lo16	reachable-code	0x800911b0	bss	DAT_800911b0	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
+GAME.EXE	0x8001c770	0xaf70	0x8001c774	mips_hi16_lo16	reachable-code	0x800911b0	bss	tmd_projected_vertices	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001c778	0xaf78	0x8001c77c	mips_hi16_lo16	reachable-code	0x800910bc	bss	current_tmd_vertices	lui+lw	s3	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001c798	0xaf98		mips26	reachable-code	0x8004dadc	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001c828	0xb028		mips26	reachable-code	0x8001c114	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
@@ -3739,8 +3739,8 @@ GAME.EXE	0x800207d4	0xefd4		mips26	reachable-code	0x8002059c	load		jal		control-
 GAME.EXE	0x800207dc	0xefdc		mips26	reachable-code	0x8001c148	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x800207ec	0xefec	0x800207f0	mips_hi16_lo16	reachable-code	0x800910bc	bss	current_tmd_vertices	lui+lw	a0	paired-reviewed	reviewed	manual-match:game_render_instance_pool
 GAME.EXE	0x80020870	0xf070		mips26	reachable-code	0x8004c860	load	gteMIMefunc	jal		control-flow-reviewed	reviewed	manual-match:game_render_instance_pool
-GAME.EXE	0x800208b0	0xf0b0	0x800208b4	mips_hi16_lo16	reachable-code	0x800930f8	bss	DAT_800930f8	lui+addiu	a1	paired-reviewed	reviewed	manual-match:game_render_instance_pool
-GAME.EXE	0x800208fc	0xf0fc	0x80020900	mips_hi16_lo16	reachable-code	0x800930f0	bss	DAT_800930f0	lui+addiu	s1	paired-reviewed	reviewed	manual-match:game_render_instance_pool
+GAME.EXE	0x800208b0	0xf0b0	0x800208b4	mips_hi16_lo16	reachable-code	0x800930f8	bss	tmd_morph_scratch	lui+addiu	a1	paired-reviewed	reviewed	manual-match:game_render_instance_pool
+GAME.EXE	0x800208fc	0xf0fc	0x80020900	mips_hi16_lo16	reachable-code	0x800930f0	bss	tmd_morph_scratch	lui+addiu	s1	paired-reviewed	reviewed	manual-match:game_render_instance_pool
 GAME.EXE	0x80020924	0xf124		mips26	reachable-code	0x8004c860	load	gteMIMefunc	jal		control-flow-reviewed	reviewed	manual-match:game_render_instance_pool
 GAME.EXE	0x80020934	0xf134		mips26	reachable-code	0x8001c138	load	tmd_set_current_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x80020978	0xf178	0x8002097c	mips_hi16_lo16	reachable-code	0x800910c0	bss	DAT_800910c0	lui+addiu	v1	paired-reviewed	reviewed	manual-match:game_match_campaign_30

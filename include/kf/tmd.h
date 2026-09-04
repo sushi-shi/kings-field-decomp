@@ -165,6 +165,10 @@ typedef struct KfScreenVertex {
     s16 p2;
 } KfScreenVertex;
 
+/* Separate state in each image; GAME's projected-array capacity is unresolved. */
+extern SVECTOR *current_tmd_vertices;
+extern KfScreenVertex tmd_projected_vertices[];
+
 /* GAME.EXE and OPEN.EXE implement this interface with separate state. */
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern void tmd_prepare_primitive_indices(void);

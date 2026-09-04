@@ -1779,15 +1779,8 @@ GAME.EXE	0x80090fa8	0x24	tmd_state	unknown	bss	KfTmdState	tmd	supported	game_sem
 GAME.EXE	0x80090fcc	0x4	asset_registry_entries	global	bss	KfAssetHeader **	asset_registry	supported	game_match_campaign_30.tsv;reviewed-reloc;asm;game_asset.h	indexed model-asset header pointer table
 GAME.EXE	0x800910bc	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 GAME.EXE	0x800910c0	0xf0	pool_records	global	bss	KfPoolRecord[12]	pool	supported	game_match_campaign_30.tsv;reviewed-reloc;asm	12 records of stride 20
-GAME.EXE	0x800911b0	0x2	DAT_800911b0	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800911b2	0x2	DAT_800911b2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800911b4	0x2	DAT_800911b4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800911b6	0x2	DAT_800911b6	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800930f0	0x8	DAT_800930f0	unknown	bss	SVECTOR		address-only	asm;render-morph-scratch	morph blend scratch vertex buffer base
-GAME.EXE	0x800930f8	0x4	DAT_800930f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x800930fc	0x4	DAT_800930fc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80093100	0x4	DAT_80093100	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80093104	0x4	DAT_80093104	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x800911b0	0x8	tmd_projected_vertices	unknown	bss	KfScreenVertex[]	tmd	supported	asm;cfg;xrefs;ghidra-12.0.4-memory-xref;game_semantic_tmd_buffer_views.tsv	projection output array with eight-byte stride; size records the referenced first-entry span, not complete capacity; four former halfword identities are fields of that entry; no complete-object DATA claim
+GAME.EXE	0x800930f0	0x18	tmd_morph_scratch	unknown	bss	SVECTOR[]	render	supported	asm;cfg;xrefs;ghidra-12.0.4-memory-xref;game_semantic_tmd_buffer_views.tsv	morph scratch array; copied vertices start at element 1 (+8); size merges the existing referenced prefix, not complete capacity; interior words are not independent globals; no complete-object DATA claim
 GAME.EXE	0x80095038	0x6	effect5_texture_pages	global	bss	u16[3]	display	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read	three texture-page IDs prepared for floor mode five and indexed by the actor descriptor high nibble
 GAME.EXE	0x80095048	0x6	effect5_texture_cluts	global	bss	u16[3]	display	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;paired-index	three CLUT IDs paired with effect5_texture_pages
 GAME.EXE	0x80095058	0x2	active_render_clut	unknown	bss	u16	render	supported	game_semantic_render_material.tsv;asm;LIBGPU.H	active palette selector copied into GPU primitive CLUT fields; enclosing graphics object and storage definition remain WIP

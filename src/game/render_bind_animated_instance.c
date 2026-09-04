@@ -1,27 +1,13 @@
 #include <kf/address.h>
-#include <kf/psyq.h>
 #include <kf/game_asset.h>
-#include <kf/game_types.h>
-#include <kf/game.h>
+#include <kf/game_render.h>
+#include <kf/memory.h>
+#include <kf/pool.h>
+#include <kf/psyq.h>
 
-/*
- * Binds and refreshes one animated model instance for the entity renderers
- * (render_actor, render_actor_sprite, render_map_event, render_weapon,
- * render_effect_sprites).  The instance's vertex cache lives in a pool record
- * reached through the caller's anchor slot.  The routine selects the animation
- * clip (tag) and the keyframe that the phase (variant) falls into, morphs the
- * base TMD vertices toward that keyframe at full weight, then blends the rest
- * pose toward the next keyframe by the sub-keyframe fraction before installing
- * the result as the current TMD vertex array.  A same-tag/same-keyframe hit
- * reuses the cached morph and only re-runs the per-frame fractional blend.
- *
- * WIP: the animation asset format (clip/keyframe/morph tables) and the scratch
- * vertex buffers at 0x800930f0/0x800930f8 are modelled locally until their
- * owners are reconstructed.  The keyframe index (kf_index) is deliberately left
- * uninitialised, matching the retail body.
- */
+/* Cache full-weight keyframe morphs in a pool record; blend into shared scratch. */
 
-/* asset base + clip_table[tag]: one animation clip. */
+/* asset base + clip_table[clip_index]: one animation clip. */
 typedef struct KfAnimClip {
     u16 keyframe_count; /* +0 */
     u16 unknown_02;     /* +2 */
@@ -46,145 +32,154 @@ typedef struct KfMorphObject {
 } KfMorphObject;
 
 ADDRESS(0x800205d4, 0x3a4)
-u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count)
+u16 *render_bind_animated_instance(
+    void *anchor, u16 asset_index, u16 clip_index, u16 phase, u16 vertex_count)
 {
     KfPoolRecord *record = *(KfPoolRecord **)anchor;
-    KfAssetHeader *ah = asset_registry_entries[asset];
+    KfAssetHeader *asset_header = asset_registry_entries[asset_index];
     KfAnimClip *clip;
-    KfAnimKeyframe *kf;
-    KfMorphObject *obj;
+    KfAnimKeyframe *keyframe;
+    KfMorphObject *morph_object;
     u32 *object_table;
-    u32 *s;
-    u32 *d;
-    void *alloc;
-    u16 vc;
-    u16 mc;
-    u16 accum;
-    u16 prev;
-    u16 kf_index;
-    u16 frac;
-    u16 i;
+    u32 *source_words;
+    u32 *destination_words;
+    void *allocation;
+    u16 vertices_left;
+    u16 morphs_left;
+    u16 phase_end;
+    u16 phase_start;
+    /* Retail uses the incoming s5 value without initializing it. */
+    u16 keyframe_index;
+    u16 blend_fraction;
+    u16 keyframes_left;
 
-    if (ah->animation_data == 0) {
+    if (asset_header->animation_data == 0) {
         if (record != 0) {
             pool_record_release(record);
         }
-        asset_registry_select(asset);
+        asset_registry_select(asset_index);
         tmd_select_object_vertices(0);
         return (u16 *)1;
     }
 
     if (record != 0) {
-        goto have_record;
+        goto check_record;
     }
     record = pool_allocate();
     if (record == 0) {
         return (u16 *)0;
     }
 
-reinit:
-    record->unknown_02 = asset;
+reinitialize_record:
+    record->unknown_02 = asset_index;
     record->backlink = (u32 *)anchor;
     do {
-        alloc = memory_malloc_checked(count << 3);
-        record->allocation = alloc;
-        if (alloc == 0) {
+        allocation = memory_malloc_checked(vertex_count << 3);
+        record->allocation = allocation;
+        if (allocation == 0) {
             pool_release_all();
         }
-    } while (alloc == 0);
+    } while (allocation == 0);
     *(KfPoolRecord **)anchor = record;
-    goto search;
+    goto find_keyframe;
 
-have_record:
-    if (record->unknown_02 == asset) {
-        goto search;
+check_record:
+    if (record->unknown_02 == asset_index) {
+        goto find_keyframe;
     }
     pool_record_release(record);
     record->value_04 = 0xff;
-    goto reinit;
+    goto reinitialize_record;
 
-search:
-    accum = 0;
-    prev = 0;
-    clip = (KfAnimClip *)((char *)ah
-                          + ((u32 *)((char *)ah + ah->clip_table_offset))[tag]);
-    i = clip->keyframe_count;
-    if (i != 0) {
-        u32 *kfp = clip->keyframes;
+find_keyframe:
+    phase_end = 0;
+    phase_start = 0;
+    clip = (KfAnimClip *)((char *)asset_header
+        + ((u32 *)((char *)asset_header
+                  + asset_header->clip_table_offset))[clip_index]);
+    keyframes_left = clip->keyframe_count;
+    if (keyframes_left != 0) {
+        u32 *keyframe_offsets = clip->keyframes;
 
-        i = i - 1;
+        keyframes_left = keyframes_left - 1;
         do {
-            kf = (KfAnimKeyframe *)((char *)ah + *kfp);
-            kfp++;
-            accum += kf->duration;
-            if (variant < accum) {
-                u32 f = ((u32)(u16)(variant - prev) << 12) / kf->duration;
+            keyframe = (KfAnimKeyframe *)((char *)asset_header + *keyframe_offsets);
+            keyframe_offsets++;
+            phase_end += keyframe->duration;
+            if (phase < phase_end) {
+                u32 forward_fraction = ((u32)(u16)(phase - phase_start) << 12)
+                    / keyframe->duration;
 
-                frac = kf->reverse == 0 ? f : 0x1000 - f;
-                goto blend;
+                blend_fraction = keyframe->reverse == 0
+                    ? forward_fraction : 0x1000 - forward_fraction;
+                goto update_vertex_cache;
             }
-            prev = accum;
-            kf_index++;
-        } while (i-- != 0);
+            phase_start = phase_end;
+            keyframe_index++;
+        } while (keyframes_left-- != 0);
     }
-    kf_index--;
-    frac = 0x1000;
+    keyframe_index--;
+    blend_fraction = 0x1000;
 
-blend:
-    if (record->value_04 == tag && record->unknown_06 == kf_index) {
-        goto finalize;
+update_vertex_cache:
+    if (record->value_04 == clip_index && record->unknown_06 == keyframe_index) {
+        goto blend_scratch;
     }
 
-    object_table = (u32 *)((char *)ah + ah->object_table_offset);
-    asset_registry_select(asset);
+    object_table = (u32 *)((char *)asset_header + asset_header->object_table_offset);
+    asset_registry_select(asset_index);
     tmd_select_object_vertices(0);
 
-    s = (u32 *)current_tmd_vertices;
-    d = (u32 *)record->allocation;
-    vc = count;
+    source_words = (u32 *)current_tmd_vertices;
+    destination_words = (u32 *)record->allocation;
+    vertices_left = vertex_count;
     do {
-        *d++ = *s++;
-        *d++ = *s++;
-    } while (--vc != 0);
+        *destination_words++ = *source_words++;
+        *destination_words++ = *source_words++;
+    } while (--vertices_left != 0);
 
-    mc = kf->morph_count;
-    if (mc != 0) {
-        u16 *mi = kf->morph_indices;
+    morphs_left = keyframe->morph_count;
+    if (morphs_left != 0) {
+        u16 *morph_indices = keyframe->morph_indices;
 
-        mc = mc - 1;
+        morphs_left = morphs_left - 1;
         do {
-            obj = (KfMorphObject *)((char *)ah + object_table[*mi]);
-            mi++;
-            gteMIMefunc(&((SVECTOR *)record->allocation)[obj->base_vertex],
-                        obj->deltas, obj->vertex_count, 0x1000);
-        } while (mc-- != 0);
+            morph_object = (KfMorphObject *)(
+                (char *)asset_header + object_table[*morph_indices]);
+            morph_indices++;
+            gteMIMefunc(&((SVECTOR *)record->allocation)[morph_object->base_vertex],
+                        morph_object->deltas, morph_object->vertex_count, 0x1000);
+        } while (morphs_left-- != 0);
     }
 
-    record->unknown_08 = (u32)(KfMorphObject *)((char *)ah + object_table[kf->rest_index]);
+    record->unknown_08 = (u32)(KfMorphObject *)(
+        (char *)asset_header + object_table[keyframe->rest_index]);
 
-finalize:
-    record->unknown_06 = kf_index;
-    record->value_04 = tag;
+blend_scratch:
+    record->unknown_06 = keyframe_index;
+    record->value_04 = clip_index;
 
-    s = (u32 *)record->allocation;
-    d = DAT_800930f8;
-    vc = count;
+    source_words = (u32 *)record->allocation;
+    destination_words = (u32 *)&tmd_morph_scratch[1];
+    vertices_left = vertex_count;
     do {
-        *d++ = *s++;
-        *d++ = *s++;
-    } while (--vc != 0);
+        *destination_words++ = *source_words++;
+        *destination_words++ = *source_words++;
+    } while (--vertices_left != 0);
 
-    obj = (KfMorphObject *)record->unknown_08;
+    morph_object = (KfMorphObject *)record->unknown_08;
     {
-        SVECTOR *dst = &DAT_800930f0[obj->base_vertex];
-        u32 save0 = ((u32 *)dst)[0];
-        u32 save1 = ((u32 *)dst)[1];
+        SVECTOR *scratch_vertex = &tmd_morph_scratch[morph_object->base_vertex];
+        u32 saved_xy_word = ((u32 *)scratch_vertex)[0];
+        u32 saved_z_pad_word = ((u32 *)scratch_vertex)[1];
 
-        gteMIMefunc(dst, (SVECTOR *)((char *)obj + 4), obj->vertex_count + 1, frac);
-        ((u32 *)dst)[0] = save0;
-        ((u32 *)dst)[1] = save1;
+        /* Blend the header-sized extra vector too, then restore its scratch entry. */
+        gteMIMefunc(scratch_vertex, (SVECTOR *)&morph_object->base_vertex,
+                    morph_object->vertex_count + 1, blend_fraction);
+        ((u32 *)scratch_vertex)[0] = saved_xy_word;
+        ((u32 *)scratch_vertex)[1] = saved_z_pad_word;
     }
-    tmd_set_current_vertices(&DAT_800930f0[1]);
+    tmd_set_current_vertices(&tmd_morph_scratch[1]);
     record->state = 2;
     return (u16 *)record;
 }

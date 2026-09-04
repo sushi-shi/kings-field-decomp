@@ -42,8 +42,6 @@ extern int DAT_8005b270[]; /* jmp_buf */
 extern void *DAT_8005b274; /* live abort handler slot (jmp_buf + 4) */
 extern int DAT_80063278; /* installed abort handler */
 extern u8 DAT_800652a8[240]; /* inventory and progress flag block */
-extern SVECTOR DAT_800930f0[]; /* morph scratch base */
-extern u32 DAT_800930f8[]; /* base+keyframe scratch (== &DAT_800930f0[1]) */
 extern u16 DAT_80095060;
 extern u16 DAT_80095062;
 extern u8 DAT_80095064;

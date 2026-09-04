@@ -442,7 +442,7 @@ void tmd_project_vertices(s32 count)
     long unused_depth;
     s32 remaining;
 
-    projected = DAT_800911b0;
+    projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
@@ -465,7 +465,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     long unused_depth;
     s32 remaining;
 
-    projected = DAT_800911b0;
+    projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
@@ -486,7 +486,7 @@ void tmd_transform_vertices(s32 count)
     long gte_flags;
     s32 remaining;
 
-    projected = DAT_800911b0;
+    projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTrans(vertex, &transformed, &gte_flags);

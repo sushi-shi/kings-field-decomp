@@ -63,9 +63,9 @@ typedef struct KfRenderState {
     MATRIX quadrant_matrices[4];
 } KfRenderState;
 
-extern KfScreenVertex DAT_800911b0[];
+/* Copied vertices begin at element 1; the complete capacity is unresolved. */
+extern SVECTOR tmd_morph_scratch[];
 extern MATRIX color_matrix_table[7];
-extern SVECTOR *current_tmd_vertices;
 extern POLY_FT4 *current_poly_ft4;
 extern DISPENV display_disp_environments[2];
 extern DRAWENV display_draw_environments[2];
@@ -109,7 +109,7 @@ extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
 extern void render_actor_sprite(KfEffectRenderView *sprite);
 extern u16 *render_bind_animated_instance(
-    void *anchor, u16 asset, u16 tag, u16 variant, u16 vertex_count);
+    void *anchor, u16 asset_index, u16 clip_index, u16 phase, u16 vertex_count);
 extern void render_effect_sprites(void);
 extern void render_enqueue_map(u16 object_index);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);

@@ -88,3 +88,88 @@ After deleting the old source, `kf build --reconfigure` is needed to
 replace the generated Ninja graph's dependency on that path. Comparisons
 against the old module target are stale until the new graph and retail
 target have been rebuilt.
+
+## Projection and morph-buffer identities
+
+The follow-up evidence pass is in
+`config/evidence/game_semantic_tmd_buffer_views.tsv`. It covers the three
+projection writers, the three polygon emitters, and
+`GAME.EXE:0x800205d4 render_bind_animated_instance`.
+
+`GAME.EXE:0x800911b0` is `tmd_projected_vertices`, an array of
+`KfScreenVertex`. The writers advance eight bytes and fill packed screen
+coordinates at offset 0, depth at 4, and doubled perspective at 6. The
+emitters consume those fields through prepared vertex byte offsets. Their
+retail base calculation is `(u8 *)&tmd_state.current_asset + 0x1e8`, numerically
+`0x800911b0`; it is not a read through the current-asset pointer. The four
+old halfword identities describe fields of one entry, not four globals.
+Both images now obtain this array's declaration and `current_tmd_vertices`
+from `tmd.h`. OPEN retains its existing 1000-entry definition and DATA claim.
+
+`GAME.EXE:0x800930f0` is `tmd_morph_scratch`, an `SVECTOR` array declared in
+`game_render.h`. The binder copies two words per vertex to `0x800930f8`,
+then installs that same address as the current vertex cursor. The final
+blend starts at scratch plus the morph object's `base_vertex * 8`. It
+includes the eight bytes at the object's `base_vertex` and `vertex_count`
+fields as an extra input vector, saves/restores the corresponding scratch
+entry, and blends the following actual delta vectors. Source now spells
+the copy destination and installed cursor as `&tmd_morph_scratch[1]` and
+the extra input's address through its first field. The former interior
+word identities are removed.
+
+The GAME inventory extents are deliberately only the existing referenced
+prefixes: eight bytes for projected vertices and 24 bytes for morph
+scratch. They are not complete-object sizes or array capacities. Source
+declarations remain unsized, linkage scope remains unknown, and neither
+prefix receives a DATA claim. Neighbor spacing of 1000 and 1001 vectors,
+and OPEN's separate capacity check, do not alone prove GAME's capacities
+or its enclosing graphics-state layout. No such aggregate is introduced.
+
+All five reviewed address-pair rows retain their numeric sites, targets,
+opcodes, evidence classes, and review status. In particular, the copy
+target is still `0x800930f8`; its delinked referent is now
+`tmd_morph_scratch + 8`, not an independent symbol. The three emitters'
+existing extra source-level array references are still a wider ownership
+residue; no synthetic retail relocation was added for them.
+
+The binder now includes its asset, render, pool, memory, and SDK headers
+directly instead of the game umbrella. All five callers were inspected:
+the anchor is their record slot, the asset and clip select offset tables,
+the phase selects a keyframe interval, and the fifth O32 argument is the
+TMD vertex count narrowed to a halfword by the callee. These names are
+shared by source, public declaration, and function identity. Local names
+identify phase bounds, keyframe offsets, morph indices, copy cursors,
+countdowns, saved words, and blend fractions. The private variable-tail
+asset views stay private; this pass does not claim their full extents.
+
+The retail keyframe index uses incoming `$s5` without initialization. Its
+uninitialized C local remains explicitly marked; no initialization or
+control-flow repair is inferred. The zero/one/record return convention,
+halfword loops, allocation retry, and full-weight `0x1000` morphs are
+unchanged. `gteMIMefunc` is separately vendored: extracting `LIBGTE.LIB`
+with the pinned `psyk`, then reading `MSC.OBJ` at XDEF offset `0x61c`,
+reproduces all 128 unmasked bytes at `GAME.EXE:0x8004c860`. The real
+`LIBGTE.H` declaration supplies `SVECTOR *` and `long` arguments. No SDK
+body is reconstructed as game progress.
+
+### Verification
+
+All seven objdiff scores remain unchanged: projection
+98.846150% / 98.953490% / 100%; emitters
+52.039013% / 60.490950% / 17.954199%; binder 90.793990%.
+The first retail differences remain the projection counter registers,
+the native emitter's 88-versus-96-byte frame, the other emitters'
+current-asset setup, and the binder's early jump to its four-byte-shifted
+compiled epilogue. The binder also retains the previously observed loop,
+branch-layout, and register differences. These are not attributed to a
+compiler mechanism.
+
+Compared with the pre-cleanup objects, render and emitter `.text` bytes
+are unchanged. Binder `.text` changes only the low relocation addend at
+object offset `0x2e0`, from zero against the old interior symbol to eight
+against the shared base. All ordered relocation offsets, kinds, and
+referents otherwise agree after identity renaming. The initial isolated
+check preserved all 340 historically exact functions and 55 data-owning
+units. Integration with the concurrent OPEN campaign at `24d4c7a` expands
+the baseline to 348 exact non-vendored functions and 58 data-owning units;
+all remain exact with this cleanup applied.

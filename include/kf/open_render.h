@@ -60,8 +60,6 @@ extern KfTmdStateOpen tmd_state;
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
 extern u32 *ordering_table;
-extern SVECTOR *current_tmd_vertices;
-extern KfScreenVertex tmd_projected_vertices[1000];
 extern MATRIX light_quadrant_matrices[4];
 extern MATRIX color_matrix_table[5];
 extern KfSpriteQuad floor_item_sprites[7];
