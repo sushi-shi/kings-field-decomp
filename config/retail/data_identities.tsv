@@ -2923,6 +2923,7 @@ OPEN.EXE	0x80037768	0x4	DAT_80037768	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x80037770	0x4	DAT_80037770	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800377a0	0x18	cd_search_file	unknown	bss	CdlFILE	cd_file	supported	open_semantic_cd_file.tsv;asm;CdSearchFile;GAME-overlay-layout	CdlFILE filled by CdSearchFile; exact adjacency to the path buffer and the zero-padded load tail support BSS ownership
 OPEN.EXE	0x800377b8	0x50	cd_path_buffer	unknown	bss	char[80]	cd_file	supported	open_semantic_cd_file.tsv;asm;GAME-overlay-layout	80-byte path buffer following the CdlFILE exactly as in GAME; its final eight bytes extend beyond the padded load image
+OPEN.EXE	0x80037808	0x158	audio_sequence_table	unknown	bss	u8[SS_SEQ_TABSIZ * 2]	audio	supported	open_semantic_resources.tsv;asm;SsSetTableSize;Psy-Q-2.5-LIBSND.H:SS_SEQ_TABSIZ;GAME-overlay-homolog	344-byte workspace supplied to SsSetTableSize for two sequences and one track
 OPEN.EXE	0x800379c0	0x1	DAT_800379c0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800379c1	0x1	DAT_800379c1	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800379c8	0x4	DAT_800379c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -3102,24 +3103,7 @@ OPEN.EXE	0x8006e048	0x100	render_state	unknown	bss	KfRenderStateOpen	render	supp
 OPEN.EXE	0x8006e148	0x80	light_quadrant_matrices	unknown	bss	MATRIX[4]	render	supported	asm;render_initialize;absolute-address	products of the light matrix with each yaw-quadrant matrix, addressed absolutely by render_initialize while the quadrant matrices fold from the light matrix base register
 OPEN.EXE	0x8006e1c8	0x4	DAT_8006e1c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006e1cc	0x2	tmd_projection_shift	global	bss	s16	tmd	supported	open_semantic_projection.tsv;asm;xrefs;lh;sllv;srav	signed shift count applied to projected perspective/depth values; display initialization sets the normal value to one
-OPEN.EXE	0x8006e1d0	0x4	DAT_8006e1d0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1d4	0x2	DAT_8006e1d4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1d8	0x4	DAT_8006e1d8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1dc	0x2	DAT_8006e1dc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1e0	0x4	DAT_8006e1e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1e4	0x4	DAT_8006e1e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1e8	0x4	DAT_8006e1e8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1ec	0x4	DAT_8006e1ec	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1f0	0x4	DAT_8006e1f0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1f4	0x4	DAT_8006e1f4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1f8	0x4	DAT_8006e1f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e1fc	0x2	DAT_8006e1fc	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e20c	0x2	DAT_8006e20c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e20e	0x2	DAT_8006e20e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e210	0x2	DAT_8006e210	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e224	0x2	DAT_8006e224	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e238	0x2	DAT_8006e238	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006e24c	0x2	DAT_8006e24c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x8006e1d0	0x90	audio_state	unknown	bss	KfAudioState	audio	supported	open_semantic_resources.tsv;asm;base-register;audio_initialize;audio-control-family;GAME-overlay-homolog	OPEN audio runtime aggregate; audio_initialize reaches the voice-ID slots from the sequence-buffer field and the next known object begins at the exact 0x90-byte KfAudioState extent
 OPEN.EXE	0x8006e260	0x2710	map_floor_height_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	second map grid copied from MIXA0; placement consumers multiply its cells by -100 as floor heights
 OPEN.EXE	0x80070970	0x4	DAT_80070970	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80070978	0x2710	map_collision_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	fifth map grid copied from MIXA0; GAME homolog identifies the per-cell collision-kind grid
