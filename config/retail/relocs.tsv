@@ -10456,23 +10456,23 @@ OPEN.EXE	0x80012224	0xa24		mips32_candidate	raw-word	0x800182e8	load		.word		ran
 OPEN.EXE	0x80012228	0xa28		mips32_candidate	raw-word	0x80017fe4	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001222c	0xa2c		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80012230	0xa30		mips32_candidate	raw-word	0x80017bc8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012238	0xa38		mips32_candidate	raw-word	0x80019000	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001223c	0xa3c		mips32_candidate	raw-word	0x80019000	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012240	0xa40		mips32_candidate	raw-word	0x80019000	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012244	0xa44		mips32_candidate	raw-word	0x80019000	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012248	0xa48		mips32_candidate	raw-word	0x800190a4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001224c	0xa4c		mips32_candidate	raw-word	0x800190a4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012250	0xa50		mips32_candidate	raw-word	0x800190a4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012254	0xa54		mips32_candidate	raw-word	0x800190a4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012258	0xa58		mips32_candidate	raw-word	0x800190a4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001225c	0xa5c		mips32_candidate	raw-word	0x80019000	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012260	0xa60		mips32_candidate	raw-word	0x80019008	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012264	0xa64		mips32_candidate	raw-word	0x80019008	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012268	0xa68		mips32_candidate	raw-word	0x80019014	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001226c	0xa6c		mips32_candidate	raw-word	0x80019014	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012270	0xa70		mips32_candidate	raw-word	0x8001902c	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012274	0xa74		mips32_candidate	raw-word	0x80019060	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012278	0xa78		mips32_candidate	raw-word	0x80019068	load		.word		range-only	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80012238	0xa38		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x8001223c	0xa3c		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012240	0xa40		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012244	0xa44		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012248	0xa48		mips32_candidate	raw-word	0x800190a4	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x8001224c	0xa4c		mips32_candidate	raw-word	0x800190a4	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012250	0xa50		mips32_candidate	raw-word	0x800190a4	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012254	0xa54		mips32_candidate	raw-word	0x800190a4	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012258	0xa58		mips32_candidate	raw-word	0x800190a4	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x8001225c	0xa5c		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012260	0xa60		mips32_candidate	raw-word	0x80019008	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012264	0xa64		mips32_candidate	raw-word	0x80019008	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012268	0xa68		mips32_candidate	raw-word	0x80019014	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x8001226c	0xa6c		mips32_candidate	raw-word	0x80019014	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012270	0xa70		mips32_candidate	raw-word	0x8001902c	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012274	0xa74		mips32_candidate	raw-word	0x80019060	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80012278	0xa78		mips32_candidate	raw-word	0x80019068	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x800123f0	0xbf0		mips32_candidate	raw-word	0x8001b4f8	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800123f4	0xbf4		mips32_candidate	raw-word	0x8001b4f0	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800123f8	0xbf8		mips32_candidate	raw-word	0x8001b500	load		.word		range-only	candidate	investigation:relocs.tsv
@@ -12070,38 +12070,40 @@ OPEN.EXE	0x80018e34	0x7634	0x80018e38	mips_hi16_lo16	reachable-code	0x8006e1c8	b
 OPEN.EXE	0x80018e60	0x7660		mips26	reachable-code	0x80018bbc	load	render_map_cell	jal		control-flow-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018e78	0x7678		mips26	reachable-code	0x80018e9c	load		j		control-flow-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018e80	0x7680	0x80018e84	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_map_render
-OPEN.EXE	0x80018eec	0x76ec		mips26	reachable-code	0x8002d558	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018efc	0x76fc		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018f04	0x7704	0x80018f08	mips_hi16_lo16	reachable-code	0x8006e0ac	bss	render_state	lui+addiu	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80018f24	0x7724	0x80018f28	mips_hi16_lo16	reachable-code	0x8006e0b0	bss	render_state	lui+lhu	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80018f3c	0x773c	0x80018f40	mips_hi16_lo16	reachable-code	0x8006e0b4	bss	render_state	lui+lhu	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80018f4c	0x774c		mips26	reachable-code	0x8002d8b0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018f5c	0x775c		mips26	reachable-code	0x80015a20	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018f84	0x7784		mips26	reachable-code	0x8002d310	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018f98	0x7798		mips26	reachable-code	0x8002cba8	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018fa4	0x77a4		mips26	reachable-code	0x8002cef0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018fac	0x77ac		mips26	reachable-code	0x8002d558	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018fb4	0x77b4		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018fbc	0x77bc		mips26	reachable-code	0x8002d588	load	SetLightMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018fe4	0x77e4	0x80018fe8	mips_hi16_lo16	reachable-code	0x80012238	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019000	0x7800		mips26	instruction-word	0x800190a8	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001900c	0x780c		mips26	instruction-word	0x80019020	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019024	0x7824		mips26	instruction-word	0x800190a8	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019030	0x7830		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019038	0x7838		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019044	0x7844		mips26	instruction-word	0x80017458	load	tmd_project_vertices_perspective_right	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
-OPEN.EXE	0x80019050	0x7850		mips26	instruction-word	0x8001764c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019058	0x7858		mips26	instruction-word	0x800190d8	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019060	0x7860		mips26	instruction-word	0x8001906c	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019070	0x7870		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019078	0x7878		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019084	0x7884		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
-OPEN.EXE	0x80019094	0x7894		mips26	instruction-word	0x80018344	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001909c	0x789c		mips26	instruction-word	0x800190d8	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800190ac	0x78ac		mips26	reachable-code	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800190b4	0x78b4		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800190c0	0x78c0		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
-OPEN.EXE	0x800190d0	0x78d0		mips26	reachable-code	0x8001764c	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80018ee4	0x76e4	0x80018ee8	mips_hi16_lo16	reachable-code	0x8006e048	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_entity_render
+OPEN.EXE	0x80018eec	0x76ec		mips26	reachable-code	0x8002d558	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018ef4	0x76f4	0x80018ef8	mips_hi16_lo16	reachable-code	0x8006e048	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_entity_render
+OPEN.EXE	0x80018efc	0x76fc		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f04	0x7704	0x80018f08	mips_hi16_lo16	reachable-code	0x8006e0ac	bss	render_state	lui+addiu	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f24	0x7724	0x80018f28	mips_hi16_lo16	reachable-code	0x8006e0b0	bss	render_state	lui+lhu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f3c	0x773c	0x80018f40	mips_hi16_lo16	reachable-code	0x8006e0b4	bss	render_state	lui+lhu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f4c	0x774c		mips26	reachable-code	0x8002d8b0	load	RotTrans	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f5c	0x775c		mips26	reachable-code	0x80015a20	load	matrix_set_rotation_yxz	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f84	0x7784		mips26	reachable-code	0x8002d310	load	ScaleMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018f98	0x7798		mips26	reachable-code	0x8002cba8	load	MulMatrix0	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018fa4	0x77a4		mips26	reachable-code	0x8002cef0	load	MulMatrix2	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018fac	0x77ac		mips26	reachable-code	0x8002d558	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018fb4	0x77b4		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018fbc	0x77bc		mips26	reachable-code	0x8002d588	load	SetLightMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80018fe4	0x77e4	0x80018fe8	mips_hi16_lo16	reachable-code	0x80012238	load		lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019000	0x7800		mips26	instruction-word	0x800190a8	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x8001900c	0x780c		mips26	instruction-word	0x80019020	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019024	0x7824		mips26	instruction-word	0x800190a8	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019030	0x7830		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019038	0x7838		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019044	0x7844		mips26	instruction-word	0x80017458	load	tmd_project_vertices_perspective_right	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection;manual:open_semantic_entity_render
+OPEN.EXE	0x80019050	0x7850		mips26	instruction-word	0x8001764c	load	func_8001764c	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019058	0x7858		mips26	instruction-word	0x800190d8	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019060	0x7860		mips26	instruction-word	0x8001906c	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019070	0x7870		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019078	0x7878		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019084	0x7884		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection;manual:open_semantic_entity_render
+OPEN.EXE	0x80019094	0x7894		mips26	instruction-word	0x80018344	load	func_80018344	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x8001909c	0x789c		mips26	instruction-word	0x800190d8	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x800190ac	0x78ac		mips26	reachable-code	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_render
+OPEN.EXE	0x800190b4	0x78b4		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_render
+OPEN.EXE	0x800190c0	0x78c0		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection;manual:open_semantic_entity_render
+OPEN.EXE	0x800190d0	0x78d0		mips26	reachable-code	0x8001764c	load	func_8001764c	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x80019110	0x7910		mips26	reachable-code	0x8002d558	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019120	0x7920		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019128	0x7928	0x8001912c	mips_hi16_lo16	reachable-code	0x8006e0ac	bss	render_state	lui+addiu	s2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan

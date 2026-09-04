@@ -90,6 +90,8 @@ extern void tmd_project_vertices(s32 count);
 extern void tmd_project_vertices_perspective_right(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
+extern void func_8001764c(u16 object_index, s16 depth_bias);
+extern void func_80018344(u16 object_index, s16 depth_bias);
 extern void render_map_cell(s32 col, s32 row, u8 cell);
 extern void func_800185e8(u16 object_index);
 

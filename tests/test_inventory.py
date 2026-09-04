@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 485)
         self.assertEqual(counts["typed_returns"], 485)
         self.assertEqual(counts["parameterized"], 316)
-        self.assertEqual(counts["data"], 3088)
+        self.assertEqual(counts["data"], 3071)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -2272,7 +2272,7 @@ class InventoryTests(unittest.TestCase):
         campaign_rows = [
             item
             for item in relocation_rows
-            if item["provenance"] == "manual:open_semantic_projection"
+            if "manual:open_semantic_projection" in item["provenance"].split(";")
         ]
         self.assertEqual(len(campaign_rows), 24)
         self.assertEqual({item["status"] for item in campaign_rows}, {"reviewed"})
