@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 499)
         self.assertEqual(counts["typed_returns"], 499)
         self.assertEqual(counts["parameterized"], 318)
-        self.assertEqual(counts["data"], 3081)
+        self.assertEqual(counts["data"], 3083)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -1026,6 +1026,64 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             {reloc["target_name"] for reloc in state_rows},
             {"opening_entity_state"},
+        )
+
+    def test_open_scene3_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_opening_scene3.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";")) or "void"
+        signature = f"{identity.return_type} {identity.name}({parameters})"
+        self.assertEqual(row["final_name"], identity.name)
+        self.assertEqual(row["final_signature"], signature)
+        self.assertIn(evidence_path.name, identity.evidence)
+        self.assertEqual(row["current_match"], "99.931370000% complete C")
+
+        self.assertEqual(
+            identities[("OPEN.EXE", 0x80019600)].name,
+            "lighting_set_color_matrix",
+        )
+        self.assertEqual(
+            identities[("OPEN.EXE", 0x8001A1B0)].name,
+            "audio_set_listener_transform",
+        )
+
+        data = load_data_identities(RETAIL_CONFIG)
+        expected_data = {
+            0x800356D0: ("opening_scene3_camera_path", "KfCameraPathPoint[3]", 0x54),
+            0x80035878: ("opening_scene3_overlay_rects", "u16[2][4]", 0x10),
+            0x80037284: ("opening_scene3_overlay_uv", "u8[8]", 0x08),
+            0x8003728C: ("opening_scene3_overlay_color", "u8[4]", 0x04),
+        }
+        for va, expected in expected_data.items():
+            datum = data[("OPEN.EXE", va)]
+            self.assertEqual((datum.name, datum.datatype, datum.size), expected)
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_opening_scene3"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 55)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {reloc["target_name"] for reloc in campaign_rows})
+        self.assertEqual(
+            {
+                reloc["target_name"]
+                for reloc in campaign_rows
+                if parse_int(reloc["target_va"])
+                in {0x80014804, 0x80019600, 0x8001A1B0}
+            },
+            {
+                "opening_scene3_run",
+                "lighting_set_color_matrix",
+                "audio_set_listener_transform",
+            },
         )
 
     def test_open_resources_campaign_matches_curated_identities(self) -> None:

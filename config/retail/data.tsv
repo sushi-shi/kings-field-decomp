@@ -5135,11 +5135,11 @@ OPEN.EXE	0x800351fa	0x239fa	0x4	string	byte-pattern		ascii	investigation:string-
 OPEN.EXE	0x800352a0	0x23aa0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800352b0	0x23ab0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800352c0	0x23ac0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800354f0	0x23cf0	0x38a	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x8003587a	0x2407a	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8003587c	0x2407c	0x6	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80035882	0x24082	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80035884	0x24084	0x6	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800354f0	0x23cf0	0x1e0	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800356d0	0x23ed0	0x54	data	reviewed	opening_scene3_camera_path	KfCameraPathPoint[3]	manual:open_semantic_opening_scene3	three-point scene-3 camera path ending in the x=-1 sentinel
+OPEN.EXE	0x80035724	0x23f24	0x154	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035878	0x24078	0x10	data	reviewed	opening_scene3_overlay_rects	u16[2][4]	manual:open_semantic_opening_scene3	two mutable overlay rectangles with initial y positions 256 and 512
+OPEN.EXE	0x80035888	0x24088	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x8003588a	0x2408a	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x8003588c	0x2408c	0x6	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80035892	0x24092	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -5272,7 +5272,10 @@ OPEN.EXE	0x80037244	0x25a44	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 OPEN.EXE	0x80037248	0x25a48	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x8003724c	0x25a4c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80037250	0x25a50	0x32	string	byte-pattern		ascii	investigation:string-census	escaped text: $Id: vsync.c,v 1.11 1994/10/15 12:31:01 suzu Exp $
-OPEN.EXE	0x80037282	0x25a82	0x1e	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80037282	0x25a82	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80037284	0x25a84	0x8	data	reviewed	opening_scene3_overlay_uv	u8[8]	manual:open_semantic_opening_scene3	shared overlay texture rectangle {u, v, width, height} in even bytes
+OPEN.EXE	0x8003728c	0x25a8c	0x4	data	reviewed	opening_scene3_overlay_color	u8[4]	manual:open_semantic_opening_scene3	RGB 200 modulation color with one pad byte
+OPEN.EXE	0x80037290	0x25a90	0x10	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372a0	0x25aa0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372a4	0x25aa4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372a8	0x25aa8	0x18	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

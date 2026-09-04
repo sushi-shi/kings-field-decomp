@@ -2691,8 +2691,8 @@ OPEN.EXE	0x80013724	0x4	DAT_80013724	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x80013728	0x4	DAT_80013728	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8001372c	0x4	DAT_8001372c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80013730	0x4	DAT_80013730	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8003587a	0x2	DAT_8003587a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80035882	0x2	DAT_80035882	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800356d0	0x54	opening_scene3_camera_path	global	load	KfCameraPathPoint[3]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;opening_camera_path_begin	three-point scene-3 camera path ending in the x=-1 sentinel
+OPEN.EXE	0x80035878	0x10	opening_scene3_overlay_rects	global	load	u16[2][4]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	two mutable textured-overlay rectangles with initial y positions 256 and 512
 OPEN.EXE	0x8003588a	0x2	DAT_8003588a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035892	0x2	DAT_80035892	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800358ca	0x2	DAT_800358ca	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2788,6 +2788,8 @@ OPEN.EXE	0x80037228	0x4	DAT_80037228	unknown	load	undefined *		address-only	data
 OPEN.EXE	0x80037244	0x4	DAT_80037244	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037248	0x4	DAT_80037248	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003724c	0x4	DAT_8003724c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037284	0x8	opening_scene3_overlay_uv	global	load	u8[8]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	texture-coordinate rectangle stored in even bytes {u, v, width, height}
+OPEN.EXE	0x8003728c	0x4	opening_scene3_overlay_color	global	load	u8[4]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	RGB 200 modulation color plus one pad byte
 OPEN.EXE	0x800372a0	0x4	DAT_800372a0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372a4	0x4	DAT_800372a4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372c0	0x8	opening_fade_rect	global	load	u16[4]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	full-screen fade rectangle {x, y, width, height}

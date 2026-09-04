@@ -165,6 +165,13 @@ staggered scale/yaw animation. The semantic C reaches 94.685036%; retail keeps
 a dead three-word stack snapshot that the humane source intentionally omits,
 with the frame/register residue left unattributed.
 
+`open_semantic_opening_scene3.tsv` records the OPEN scene-3 controller and its
+four owned load-image objects. It proves the resource, entity, camera,
+color-matrix, textured-overlay, input, and transition phases; the data matches
+retail exactly and the complete semantic C reaches 99.931370%. The only text
+residue is a 16-byte larger retail stack allocation whose unused source object
+cannot be identified without inventing padding.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five
