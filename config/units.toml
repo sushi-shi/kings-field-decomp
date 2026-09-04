@@ -585,6 +585,12 @@ source = "src/open/cd_file.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.resources"
+image = "OPEN.EXE"
+source = "src/open/resources.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.render_init"
 image = "OPEN.EXE"
 source = "src/open/render_init.c"

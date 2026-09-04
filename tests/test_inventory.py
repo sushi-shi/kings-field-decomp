@@ -50,7 +50,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["functions"], 509)
         self.assertEqual(counts["signatures_started"], 509)
         self.assertEqual(counts["typed_returns"], 509)
-        self.assertEqual(counts["parameterized"], 321)
+        self.assertEqual(counts["parameterized"], 322)
         self.assertEqual(counts["data"], 3195)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -730,6 +730,30 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(calls), 16)
         self.assertEqual(len(body_data), 26)
         self.assertEqual({row["status"] for row in calls + body_data}, {"reviewed"})
+
+    def test_open_resources_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 2)
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if "manual:open_semantic_resources" in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 17)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        calls = [row for row in campaign_rows if row["opcode"] == "jal"]
+        self.assertNotIn("", {row["target_name"] for row in calls})
 
     def test_map_resources_relocations_and_data_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

@@ -59,6 +59,5 @@ extern s32 save_file_cleanup_temporary(void);
 extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
 extern s32 save_system_read_slot(s16 slot_id);
 extern s32 save_system_write_slot(s16 slot_id);
-extern void tim_upload_images(u_long *tim_data);
 
 #endif

@@ -118,6 +118,11 @@ its caller-provided and allocator-provided destination contracts, the shared
 CD path/state objects, and the provider boundary at Psy-Q CD-ROM and libc
 calls. Both functions and the unit's two path literals match retail exactly.
 
+`open_semantic_resources.tsv` records the first two functions in the OPEN
+resource-loading run: the TIM upload wrapper shared with GAME and a counted
+word-stream copier used to populate five grids. It distinguishes the game
+wrappers from their proven Psy-Q GPU provider calls and keeps TU ownership WIP.
+
 `psyq_release_25_text_sections.tsv` is the `.text` subset of the relocation-
 aware object match report produced during the original King's Field
 investigation. Each address was found by masking only link-editable bits in a
