@@ -499,6 +499,9 @@ KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	game_save.h;asm;xrefs	individua
 KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
 KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
+KfSpriteMaterial	0x00	0x02	clut	u16	supported	open_render.h;open_semantic_sprite_render.tsv;asm;lhu;POLY_FT4	CLUT selector copied to GPU packet offset 14
+KfSpriteMaterial	0x02	0x02	tpage	u16	supported	open_render.h;open_semantic_sprite_render.tsv;asm;lhu;POLY_FT4	texture page selector copied to GPU packet offset 22
+KfSpriteMaterial	0x04	0x04	color	CVECTOR	supported	open_render.h;open_semantic_sprite_render.tsv;asm;NormalColorDpq	RGB bytes set by scene writers and command byte copied from the initialized primitive
 KfSpriteQuad	0x00	0x01	u	u8	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
 KfSpriteQuad	0x01	0x01	v	u8	supported	render_types.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
 KfSpriteQuad	0x02	0x01	u_span	u8	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span

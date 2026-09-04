@@ -2789,6 +2789,7 @@ OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported
 OPEN.EXE	0x800372e8	0x8	opening_ending_sequence_path	unknown	load	char[8]	opening_resources	supported	open_semantic_resources.tsv;asm;direct-bytes;sole-xref	B0\\END. sequence path used by the ending resource loader
 OPEN.EXE	0x800372f3	0x1	DAT_800372f3	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372fb	0x1	DAT_800372fb	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800372fc	0x8	render_sprite_light_normal	global	load	SVECTOR	render_sprite	supported	open_semantic_sprite_render.tsv;retail-bytes;asm;NormalColorDpq	initialized positive-Z Q12 normal passed to the projected sprite shading call
 OPEN.EXE	0x80037304	0x4	audio_voice_slot_index	global	load	s32	audio	supported	open_semantic_audio_play_voice.tsv;asm;xrefs;retail-initial-value-9;GAME-overlay-homolog	managed sound-effect ring index advanced modulo ten before each voice
 OPEN.EXE	0x80037314	0x4	DAT_80037314	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003736f	0x1	DAT_8003736f	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -3028,12 +3029,7 @@ OPEN.EXE	0x80069b28	0x28	display_disp_environments	global	bss	DISPENV[2]	display
 OPEN.EXE	0x80069b58	0xc	tmd_state	unknown	bss	KfTmdStateOpen	tmd	supported	asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
 OPEN.EXE	0x80069b68	0x4	current_tmd_vertices	global	bss	SVECTOR *	tmd	supported	game_semantic_display_tmd.tsv;asm;xrefs	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 OPEN.EXE	0x80069b80	0x1f40	tmd_projected_vertices	global	bss	KfScreenVertex[1000]	tmd	supported	open_semantic_projection.tsv;game_semantic_projection_scratch.tsv;asm;xrefs;1000-guard;8-byte-stride	projection scratch buffer shared by TMD projection producers and polygon consumers; the guard rejects counts at the 1000-record capacity
-OPEN.EXE	0x8006da28	0x2	DAT_8006da28	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da2a	0x2	DAT_8006da2a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da2c	0x1	DAT_8006da2c	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da2d	0x1	DAT_8006da2d	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da2e	0x1	DAT_8006da2e	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8006da2f	0x1	DAT_8006da2f	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x8006da28	0x8	render_sprite_material	global	bss	KfSpriteMaterial	render_sprite	supported	open_semantic_sprite_render.tsv;asm;base-register;NormalColorDpq;scene-writers	two texture selector halfwords and one CVECTOR; sprite renderer derives the color address from the clut base plus four
 OPEN.EXE	0x8006da36	0x2	DAT_8006da36	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da38	0x2	DAT_8006da38	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8006da3a	0x2	floor_item_count	global	bss	u16	item	supported	open_semantic_resources.tsv;asm;item_load_floor_placements	floor-item count reset and incremented while scanning the sentinel-terminated placement list

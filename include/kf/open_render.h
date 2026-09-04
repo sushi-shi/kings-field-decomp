@@ -36,6 +36,13 @@ typedef struct KfRenderStateOpen {
     MATRIX quadrant_matrices[4];
 } KfRenderStateOpen;
 
+/* Texture selectors followed by the SDK color used for projected sprites. */
+typedef struct KfSpriteMaterial {
+    u16 clut;
+    u16 tpage;
+    CVECTOR color;
+} KfSpriteMaterial;
+
 extern KfDisplayStateOpen display_state;
 extern KfRenderStateOpen render_state;
 extern KfTmdStateOpen tmd_state;
@@ -47,6 +54,8 @@ extern KfScreenVertex tmd_projected_vertices[1000];
 extern MATRIX light_quadrant_matrices[4];
 extern MATRIX color_matrix_table[5];
 extern KfSpriteQuad floor_item_sprites[7];
+extern SVECTOR render_sprite_light_normal;
+extern KfSpriteMaterial render_sprite_material;
 
 extern KfCellWindow render_cell_windows[16];
 extern const KfCellWindow *active_cell_window;

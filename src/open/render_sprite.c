@@ -1,0 +1,57 @@
+#include <kf/address.h>
+#include <kf/open_render.h>
+
+DATA(0x800372fc, 0x8)
+SVECTOR render_sprite_light_normal = {0, 0, 0x1000, 0};
+
+DATA(0x8006da28, 0x8)
+KfSpriteMaterial render_sprite_material;
+
+ADDRESS(0x800189a0, 0x21c)
+void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
+{
+    SVECTOR corners[4];
+    SVECTOR anchor;
+    long anchor_sxy;
+    long p;
+    long clip_flag;
+    long sxy0;
+    long sxy1;
+    long sxy2;
+    long sxy3;
+    POLY_FT4 *prim;
+    s32 otz;
+
+    corners[0].vx = corners[2].vx = sprite->x;
+    corners[1].vx = corners[3].vx = sprite->x + sprite->w;
+    corners[0].vy = corners[1].vy = sprite->y;
+    corners[2].vy = corners[3].vy = sprite->y + sprite->h;
+    corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;
+    anchor.vx = anchor.vy = anchor.vz = 0;
+    otz = RotTransPers(&anchor, &anchor_sxy, &p, &clip_flag);
+    RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],
+                  &sxy0, &sxy1, &sxy2, &sxy3, &p, &clip_flag);
+
+    prim = primitive_buffer_allocate(sizeof(POLY_FT4));
+    SetPolyFT4(prim);
+    prim->clut = render_sprite_material.clut;
+    prim->tpage = render_sprite_material.tpage;
+    /* GTE screen coordinates are copied into the GPU packet as packed words. */
+    *(long *)&prim->x0 = sxy0;
+    *(long *)&prim->x1 = sxy1;
+    *(long *)&prim->x2 = sxy2;
+    *(long *)&prim->x3 = sxy3;
+    prim->u0 = prim->u2 = sprite->u;
+    prim->u1 = prim->u3 = sprite->u + sprite->u_span;
+    prim->v0 = prim->v1 = sprite->v;
+    prim->v2 = prim->v3 = sprite->v + sprite->v_span;
+    render_sprite_material.color.cd = prim->code;
+    if (flag == 1) {
+        p += p >> 1;
+    }
+    NormalColorDpq(&render_sprite_light_normal, &render_sprite_material.color,
+                   p, (CVECTOR *)&prim->r0);
+    if (otz + depth_bias >= 5) {
+        AddPrim(&ordering_table[(otz + depth_bias) & 0x3fff], prim);
+    }
+}

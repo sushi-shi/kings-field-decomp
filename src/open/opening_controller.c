@@ -70,12 +70,12 @@ void opening_run(s32 display_mode)
             return;
         }
         scene3_action = 1;
-        tim_upload_images((u_long *)display_state.asset_load_buffer);
+        tim_upload_images(display_state.asset_load_buffer);
         skip_action = 2;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
         allocation_state = (OpeningAllocationState *)&memory_arena_cursor;
-        tim_upload_images((u_long *)tim_data);
+        tim_upload_images(tim_data);
         memory_release_last();
         opening_input_action = 0;
 
@@ -93,7 +93,7 @@ opening_reload:
         allocation_state->cursor =
             OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
         cd_file_load_allocated(&tim_data, "B0\\MIX3.");
-        tim_upload_images((u_long *)tim_data);
+        tim_upload_images(tim_data);
         memory_release_last();
         goto opening_complete;
 

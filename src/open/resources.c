@@ -205,14 +205,14 @@ void opening_resources_load_scene1(void)
 ADDRESS(0x800165c4, 0xf0)
 void opening_resources_load_scene3(void)
 {
-    u8 *tim_stream;
+    u_long *tim_stream;
     u8 *stream;
 
     memory_allocation_reset();
     memory_arena_cursor = opening_scene1_arena_cursor;
     audio_play_sequence_file("B0\\OPEN3.");
     cd_file_load_allocated((void **)&tim_stream, "B0\\MIX3.");
-    tim_upload_images((u_long *)tim_stream);
+    tim_upload_images(tim_stream);
     memory_release_last();
     cd_file_load_allocated((void **)&stream, "B0\\MIXA3.");
     opening_entity_pool_load_placements(
@@ -229,14 +229,14 @@ void opening_resources_load_scene3(void)
 ADDRESS(0x800166b4, 0x134)
 void opening_resources_load_ending(void)
 {
-    u8 *tim_stream;
+    u_long *tim_stream;
     u8 *stream;
     u8 *vab_chunk;
     u8 **arena_cursor = &memory_arena_cursor;
 
     memory_allocation_reset();
     cd_file_load_allocated((void **)&tim_stream, "B0\\MIX9.");
-    tim_upload_images((u_long *)tim_stream);
+    tim_upload_images(tim_stream);
     memory_release_last();
     cd_file_load_allocated((void **)&stream, "B0\\MIXAE.");
     audio_load_vab(stream + 4, (vab_chunk = STREAM_NEXT(stream)) + 4);

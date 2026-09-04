@@ -28,3 +28,6 @@ promotes a probe to a proven historical toolchain.
 - [open-floor-item-render-residue.md](open-floor-item-render-residue.md):
   typed floor-item sprite descriptors and the extra facing-byte mask shared
   by the GAME and OPEN retail renderers.
+- [open-sprite-render.md](open-sprite-render.md): typed sprite material,
+  SDK packet ownership, and the depth/texture source forms behind the exact
+  OPEN projected-sprite renderer.

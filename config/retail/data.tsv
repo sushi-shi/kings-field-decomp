@@ -5296,7 +5296,7 @@ OPEN.EXE	0x800372f0	0x25af0	0x3	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x800372f3	0x25af3	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372f4	0x25af4	0x7	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372fb	0x25afb	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800372fc	0x25afc	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800372fc	0x25afc	0x8	defined	reviewed	render_sprite_light_normal	SVECTOR	manual:open_semantic_sprite_render	initialized {0, 0, 0x1000, 0} normal passed to NormalColorDpq by render_enqueue_sprite
 OPEN.EXE	0x80037304	0x25b04	0x4	defined	direct-references	audio_voice_slot_index	s32	manual:open_semantic_audio_play_voice	loaded ring index initialized to nine and advanced modulo ten before each managed sound-effect voice
 OPEN.EXE	0x80037308	0x25b08	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x8003730c	0x25b0c	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: none
