@@ -101,15 +101,9 @@ source = "src/game/matrix_rotation.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_weapon"
+unit = "game.equipment"
 image = "GAME.EXE"
-source = "src/game/player_weapon.c"
-profile = "probe-gcc260-o2-g0"
-
-[[unit]]
-unit = "game.asset_aux_block"
-image = "GAME.EXE"
-source = "src/game/asset_aux_block.c"
+source = "src/game/equipment.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -185,12 +179,6 @@ source = "src/game/resources.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.display"
-image = "GAME.EXE"
-source = "src/game/display.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.render"
 image = "GAME.EXE"
 source = "src/game/render.c"
@@ -203,21 +191,9 @@ source = "src/game/tmd_project.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.render_enqueue_tmd"
-image = "GAME.EXE"
-source = "src/game/render_enqueue_tmd.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.render_enqueue_model"
-image = "GAME.EXE"
-source = "src/game/render_enqueue_model.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.render_enqueue"
 image = "GAME.EXE"
-source = "src/game/render_enqueue.c"
+source = "src/game/render_enqueuers.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -547,10 +523,18 @@ profile = "probe-gcc257-o2-g0"
 
 
 [[unit]]
+unit = "game.intr_tail"
+image = "GAME.EXE"
+source = "src/vendor/game_libetc_intr_tail.c"
+profile = "probe-gcc257-o2-plain"
+scope = "vendored"
+
+[[unit]]
 unit = "game.pad"
 image = "GAME.EXE"
-source = "src/game/pad.c"
+source = "src/vendor/game_libetc_pad.c"
 profile = "probe-gcc257-o2-plain"
+scope = "vendored"
 
 [[unit]]
 unit = "open.main"
@@ -735,7 +719,14 @@ source = "src/open/audio_play_voice.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "open.debug_printf"
+unit = "open.debug"
 image = "OPEN.EXE"
-source = "src/open/debug_printf.c"
+source = "src/open/debug.c"
 profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.pad"
+image = "OPEN.EXE"
+source = "src/vendor/open_libetc_pad.c"
+profile = "probe-gcc257-o2-plain"
+scope = "vendored"

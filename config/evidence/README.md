@@ -5,11 +5,25 @@ the curated retail inventories; it does not contain Sony binaries.
 
 `game_match_campaign_30.tsv` records the pre-edit MIPS evidence and final
 matching verdicts for the first GAME reconstruction campaign.
+`game_tu_equipment.tsv` records the shared resource-loader, table-extent,
+caller, and compiler-profile evidence for consolidating the contiguous weapon,
+armor, and player-charge helper run into one WIP equipment module.
 `game_semantic_math_lifecycle.tsv` records the assembly, CFG, xref, SDK-header,
 and vendored-negative-control evidence behind the first lifecycle/frame-pacer
 and fixed-point helper names. These campaign tables support identities in
 `function_identities.tsv` and `data_identities.tsv`; they are not recovered
 original symbols.
+
+`game_semantic_unresolved_functions.tsv` records the reviewed residual GAME
+address identities: one behaviorally redundant map-load wrapper and two
+unreferenced return stubs. It supports their body-level signatures while
+deliberately leaving purpose, ownership, and the return-carved stub boundaries
+unresolved.
+
+`game_open_semantic_diagnostic_sink.tsv` records the identical no-op variadic
+sink in both overlays. Caller formats and the four O32 argument-home stores
+support one shared internal prototype while the archive controls reject Sony
+provider ownership.
 
 `game_semantic_audio_control.tsv` records the per-function retail, caller,
 string, shared-state, and Psy-Q 2.5 header evidence for GAME audio
@@ -59,6 +73,11 @@ three adjacent lighting-preset wrappers, and status-effect helper 4. It ties
 the two recovered signed timers to `KfPlayerState` offsets `0x50` and `0x52`
 and records the relocation-only causes behind three initially non-exact helper
 objects.
+
+`game_semantic_player_warp.tsv` records the player-position shimmer wrapper,
+blocking shimmer animator, floor-trigger dispatcher, and the adjacent actor
+definition-5-to-6 color-fade transition. The names describe only observed
+state transitions; the actor's character identity remains unresolved.
 
 `game_semantic_menu_interaction_api.tsv` records the player-facing map-action
 dispatcher and modal-menu boundary. It proves the read-only position input,

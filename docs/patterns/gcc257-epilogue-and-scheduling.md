@@ -60,13 +60,13 @@ normalized instruction plus relocation listings against the carved targets
 | 2.8.0, 2.8.1 `-O2` | 14 |
 | 2.91.66 `-O2` | 12 |
 
-Two units discriminate in opposite directions and keep the attribution
-open: `player_weapon_load_records_and_mirror_angles` (`0x800150a8`) is exact only
-under 2.6.0 (`move v1,a1` scheduled before the loop load), while
-`game_state_acknowledge_pending` (`0x8002af0c`) is exact only under 2.6.0
-with `-fno-schedule-insns2`. 2.5.7 matches every other unit that 2.6.0
-matched. The retail compiler is therefore a 2.5/2.6-era MIPS GCC whose
-epilogue is emitted in the 2.5.7 form; the exact build is still unproven.
+The original opposite discriminator no longer holds: the current
+`-mcpu=r2000` GCC 2.5.7 probe also matches
+`weapon_records_load_and_mirror_angles` (`0x800150a8`) exactly, including the
+`move v1,a1` schedule before the loop load. `menu_release_item_model`
+(`0x8002af0c`) remains a separate scheduling-profile discriminator. The retail
+compiler is still only narrowed to a 2.5/2.6-era MIPS GCC; the exact build
+remains unproven.
 
 ## GCC 2.5.8 control
 

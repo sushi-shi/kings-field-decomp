@@ -38,7 +38,7 @@ class OverlayLineageTests(unittest.TestCase):
     def test_evidence_matches_contiguous_function_inventory(self) -> None:
         rows = load_rows()
         verify_inventory(rows)
-        self.assertEqual(len(rows), 151)
+        self.assertEqual(len(rows), 158)
         self.assertEqual(
             {row.address_delta for row in rows},
             {
@@ -54,8 +54,8 @@ class OverlayLineageTests(unittest.TestCase):
                 0x2031C,
             },
         )
-        self.assertEqual(sum(row.total_words for row in rows), 8515)
-        self.assertEqual(sum(row.shape_words for row in rows), 8515)
+        self.assertEqual(sum(row.total_words for row in rows), 8635)
+        self.assertEqual(sum(row.shape_words for row in rows), 8635)
 
     def test_pinned_psyq_corpus_contains_archive_anchors(self) -> None:
         signature_dir = signature_directory_from_environment()

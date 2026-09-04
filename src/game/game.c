@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_player.h>
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
@@ -102,7 +102,7 @@ void game_shutdown(void)
 {
     memory_card_shutdown_events();
     audio_shutdown();
-    pad_stop();
+    PadStop();
     ResetGraph(3);
 }
 

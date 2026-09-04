@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
@@ -39,7 +39,7 @@ void menu_equip_select(s32 object)
     s32 prev;
     s32 selection = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
 
     switch (object) {
@@ -111,13 +111,13 @@ void menu_equip_select(s32 object)
         }
         confirm = 0;
         if (selection != -99) {
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
 
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);
@@ -173,7 +173,7 @@ void menu_equip_select(s32 object)
         menu_present_frame();
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if (selection != -1) {
         switch (object) {
         case 0:
@@ -234,7 +234,7 @@ void menu_spell_select(void)
     s32 prev;
     s32 selection = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
 
     k = 0;
@@ -278,7 +278,7 @@ void menu_spell_select(void)
                 selection = ctx.selected_index;
         }
         if (selection != -99) {
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             break;
         }
@@ -286,7 +286,7 @@ void menu_spell_select(void)
         menu_frame_begin();
         confirm = 0;
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(0);

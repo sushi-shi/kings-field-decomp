@@ -1,652 +1,652 @@
 # MANUALLY MANAGED - exact target offsets/extents for every field in structures.tsv.
 # opaque means the byte range is modeled for layout but has no supported semantic meaning yet.
 structure	offset	size	name	datatype	meaning_confidence	evidence	note
-KfActor	0x00	0x01	slot_state	u8	supported	semantic_types.h;asm;xrefs	allocation/activity state
-KfActor	0x01	0x01	definition_id	u8	supported	semantic_types.h;asm;xrefs	index into actor definitions
-KfActor	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	actor variant selector
-KfActor	0x03	0x01	heading_quadrant	u8	supported	semantic_types.h;asm;xrefs	coarse heading selector
-KfActor	0x04	0x01	tile_z	u8	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	map tile z; world position.z = tile_z * 2000 + local_z (actor_initialize_slot, actor_pool_load_placements)
-KfActor	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	map tile x; world position.x = tile_x * 2000 + local_x
-KfActor	0x06	0x01	lifecycle	u8	supported	semantic_types.h;asm;xrefs	actor lifecycle state
-KfActor	0x07	0x01	unknown_07	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x08	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
-KfActor	0x09	0x01	unknown_09	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x0a	0x01	animation_id	u8	supported	semantic_types.h;asm;xrefs	animation selector
-KfActor	0x0b	0x01	vertical_state	u8	supported	semantic_types.h;asm;xrefs	vertical movement selector
-KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x0e	0x02	local_z	s16	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along z added to tile_z * 2000
-KfActor	0x10	0x02	local_x	s16	supported	semantic_types.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along x added to tile_x * 2000
-KfActor	0x12	0x02	animation_phase	u16	supported	semantic_types.h;asm;xrefs	animation phase/progress
-KfActor	0x14	0x02	health	u16	supported	semantic_types.h;asm;xrefs	current actor health
-KfActor	0x16	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x; every band load is lhu
-KfActor	0x18	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z; every band load is lhu
-KfActor	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x1c	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as VECTOR
-KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	actor rotation
-KfActor	0x32	0x02	unknown_32	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x34	0x04	unknown_34	u32	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActor	0x38	0x01	action_timer	u8	supported	semantic_types.h;asm;xrefs	action countdown; loaded lbu and seeded with 0xff
-KfActor	0x39	0x01	collision_state	u8	supported	semantic_types.h;asm;xrefs	collision result/state
-KfActor	0x3a	0x02	movement_yaw	s16	supported	semantic_types.h;asm;xrefs	movement heading
-KfActor	0x3c	0x02	animation_step	s16	supported	semantic_types.h;asm;xrefs	animation increment
-KfActor	0x3e	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;xrefs	vertical velocity
-KfActor	0x40	0x02	movement_x	s16	supported	semantic_types.h;asm;xrefs	x movement component
-KfActor	0x42	0x02	movement_z	s16	supported	semantic_types.h;asm;xrefs	z movement component
-KfActor	0x44	0x02	movement_y	s16	supported	semantic_types.h;asm;xrefs	y movement component
-KfActor	0x46	0x02	unknown_46	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfActorActionProfile	0x00	0x02	far_distance	s16	supported	semantic_types.h;asm;xrefs	far distance threshold
-KfActorActionProfile	0x02	0x02	far_weight	s16	supported	semantic_types.h;asm;xrefs	far action weight
-KfActorActionProfile	0x04	0x02	near_distance	s16	supported	semantic_types.h;asm;xrefs	near distance threshold
-KfActorActionProfile	0x06	0x02	middle_weight	s16	supported	semantic_types.h;asm;xrefs	middle action weight
-KfActorActionProfile	0x08	0x02	near_weight	s16	supported	semantic_types.h;asm;xrefs	near action weight
-KfActorDefinition	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	meaning unresolved
-KfActorDefinition	0x03	0x01	status_effect	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	status effect flags passed to player_apply_damage by actor_try_attack_player
-KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per-hit chance out of 256 compared with rand() >> 7; zero disables
-KfActorDefinition	0x05	0x08	action_parameters	u8[8]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per special action byte: effect code for actor_spawn_action_effect, profile index (entries 0..2) and chance (entries 3..5) for actor_select_next_action
-KfActorDefinition	0x0d	0x01	move_speed	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	scale applied to the forward vector by actor_move_along_heading
-KfActorDefinition	0x0e	0x10	action_animations	u8[16]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation id per action index (action - 2); entries 3 and 4 are the hit and death animations, 0xff means none
-KfActorDefinition	0x1e	0x01	turn_rate	u8	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	angle_approach step for actor_move_along_heading; halved-and-a-half while colliding
-KfActorDefinition	0x1f	0x09	sounds	SoundRef[3]	supported	semantic_types.h;asm;actor_update_current_action	three sound refs handed to actor_play_sound_at_phase at 0x1f, 0x22 and 0x25
-KfActorDefinition	0x28	0x0c	attachment_offsets	KfVec3s[2]	supported	semantic_types.h;asm;actor_spawn_action_effect	effect attachment offsets rotated by the actor angles; indexed by the attachment index
-KfActorDefinition	0x34	0x02	unknown_34	s16	opaque	semantic_types.h;asm;actor_select_next_action	chance passed for ground action 0x10 and distance-facing action 0x11
-KfActorDefinition	0x36	0x02	unknown_36	s16	opaque	semantic_types.h;asm;actor_select_next_action	distance scale passed for distance-facing action 0x11
-KfActorDefinition	0x38	0x02	unknown_38	u8[2]	opaque	semantic_types.h;asm;actor_select_next_action	meaning unresolved
-KfActorDefinition	0x3a	0x20	action_animation_steps	u16[16]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation step per action index; the boss death sequence keys effects on entry 4
-KfActorDefinition	0x5a	0x20	action_animation_phases	u16[16]	supported	semantic_types.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation phase threshold per action index
-KfActorDefinition	0x7a	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
-KfActorDefinition	0x7c	0x02	collision_height	u16	supported	semantic_types.h;asm;xrefs	collision height
-KfActorDefinition	0x7e	0x02	awareness_distance	u16	supported	semantic_types.h;asm;xrefs	awareness range
-KfActorDefinition	0x80	0x02	initial_health	u16	supported	semantic_types.h;asm;xrefs	spawn health
-KfActorDefinition	0x82	0x02	unknown_82	u16	opaque	semantic_types.h;asm;xrefs	halfword handed to effect_pool_construct as the first argument by actor_spawn_action_effect
-KfActorDefinition	0x84	0x02	experience_reward	u16	supported	semantic_types.h;asm;xrefs	passed to player_add_experience when the actor dies
-KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	semantic_types.h;asm;xrefs	three attack components
-KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	semantic_types.h;asm;xrefs	five defense components
-KfActorDefinition	0x96	0x02	unknown_96	u16	opaque	semantic_types.h;asm;xrefs	halfword scaling the random debris count in actor_update_current_action
-KfActorPlacement	0x00	0x01	slot_state	u8	supported	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
-KfActorPlacement	0x01	0x01	definition_flags	u8	supported	semantic_types.h;asm;actor_pool_load_placements	low five bits are the definition id, bit 5 the variant flag
-KfActorPlacement	0x02	0x01	heading_quadrant	u8	supported	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.heading_quadrant
-KfActorPlacement	0x03	0x01	tile_z	u8	supported	semantic_types.h;asm;actor_pool_load_placements	map tile z
-KfActorPlacement	0x04	0x01	tile_x	u8	supported	semantic_types.h;asm;actor_pool_load_placements	map tile x
-KfActorPlacement	0x05	0x01	unknown_05	u8	opaque	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.unknown_07
-KfActorPlacement	0x06	0x01	unknown_06	u8	opaque	semantic_types.h;asm;actor_pool_load_placements	copied to KfActor.unknown_09
-KfActorPlacement	0x07	0x03	unknown_07	u8[3]	opaque	semantic_types.h;asm;actor_pool_load_placements	not read by the loader
-KfActorPlacement	0x0a	0x02	local_z	s16	supported	semantic_types.h;asm;actor_pool_load_placements	local offset along z
-KfActorPlacement	0x0c	0x02	local_x	s16	supported	semantic_types.h;asm;actor_pool_load_placements	local offset along x
-KfActorPlacement	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;actor_pool_load_placements	not read by the loader
-KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	semantic_types.h;asm;xrefs	map-loaded actor definitions
-KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	semantic_types.h;asm;xrefs	live actor records
-KfActorState	0x2b20	0x10	player_position	VECTOR	supported	semantic_types.h;asm;xrefs	player position snapshot copied each frame
-KfActorState	0x2b30	0x08	player_rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	player rotation snapshot copied each frame
-KfActorState	0x2b38	0x04	current_definition	KfActorDefinition *	supported	semantic_types.h;asm;xrefs	definition of the actor being updated
-KfActorState	0x2b3c	0x04	current	KfActor *	supported	semantic_types.h;asm;xrefs	actor being updated
-KfActorState	0x2b40	0x02	current_index	u16	supported	semantic_types.h;asm;xrefs	index of the actor being updated
-KfActorState	0x2b42	0x02	current_definition_id	u16	supported	semantic_types.h;asm;xrefs	definition id of the actor being updated
-KfActorState	0x2b44	0x04	player_target	KfActor *	supported	semantic_types.h;asm;xrefs	actor targeted by the player
-KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	asm;player_recalculate_combat_stats	meaning unresolved
-KfArmorRecord	0x02	0x02	defense_component0	u16	supported	asm;player_recalculate_combat_stats	added twice to damage_defense_component0
-KfArmorRecord	0x04	0x02	defense_component1	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component1
-KfArmorRecord	0x06	0x02	defense_component2	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component2
-KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	asm;player_recalculate_combat_stats	added to status_effect2_resistance
-KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component3
-KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component4
-KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
-KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	asm;player_recalculate_combat_stats	meaning unresolved
-KfAssetHeader	0x00	0x04	byte_size	u32	supported	semantic_types.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
-KfAssetHeader	0x04	0x04	animation_data	s32	candidate	semantic_types.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
-KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	semantic_types.h;asm;asset_registry_select	byte offset from header to TMD payload
-KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
-KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
-KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
-KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
-KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
-KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	semantic_types.h;asm;xrefs	allocated SEQ buffer
-KfAudioState	0x0c	0x02	sequence_id	s16	supported	semantic_types.h;asm;xrefs	open sequence identifier
-KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
-KfAudioState	0x10	0x04	sequence_active	s32	supported	semantic_types.h;asm;xrefs	one while a map sequence plays
-KfAudioState	0x14	0x10	listener_position	VECTOR	supported	semantic_types.h;asm;xrefs	listener position for spatial voices
-KfAudioState	0x24	0x08	listener_rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	listener rotation for spatial voices
-KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	semantic_types.h;asm;xrefs	ten voice slots
-KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
-KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
-KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers
-KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	semantic_types.h;asm;xrefs	tone numbers
-KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	semantic_types.h;asm;xrefs	note numbers
-KfCameraPathPoint	0x00	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	path position
-KfCameraPathPoint	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	path rotation
-KfCameraPathPoint	0x18	0x02	speed	s16	supported	semantic_types.h;asm;xrefs	segment speed
-KfCameraPathPoint	0x1a	0x02	unknown_1a	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfCameraPathState	0x00	0x04	points	KfCameraPathPoint *	supported	semantic_types.h;asm;xrefs	path point cursor/base
-KfCameraPathState	0x04	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	current integer position
-KfCameraPathState	0x14	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	current integer rotation
-KfCameraPathState	0x1c	0x10	position_fixed	VECTOR	supported	semantic_types.h;asm;xrefs	fixed-point position
-KfCameraPathState	0x2c	0x10	rotation_fixed	VECTOR	supported	semantic_types.h;asm;xrefs	fixed-point rotation
-KfCameraPathState	0x3c	0x10	position_delta	VECTOR	supported	semantic_types.h;asm;xrefs	per-frame position delta
-KfCameraPathState	0x4c	0x10	rotation_delta	VECTOR	supported	semantic_types.h;asm;xrefs	per-frame rotation delta
-KfCameraPathState	0x5c	0x02	point_index	s16	supported	semantic_types.h;asm;xrefs	current path point index
-KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	semantic_types.h;asm;xrefs	segment frame countdown
-KfCdFileEntry	0x00	0x01	minute	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC minute of the file
-KfCdFileEntry	0x01	0x01	second	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC second of the file
-KfCdFileEntry	0x02	0x01	sector	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC sector of the file
-KfCdFileEntry	0x03	0x01	track	u8	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
-KfCdFileEntry	0x04	0x04	size	u32	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
-KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	semantic_types.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
-KfCellWindow	0x00	0x02	width	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row width and inner-loop bound
-KfCellWindow	0x02	0x02	height	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	row count and outer-loop bound
-KfCellWindow	0x04	0x02	origin_x	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
-KfCellWindow	0x06	0x02	origin_z	u16	supported	semantic_types.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
-KfCellWindow	0x08	0xc4	cells	u8[196]	supported	semantic_types.h;game_semantic_render_cell_windows.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	row-major visibility bytes filling the remainder of each 204-byte window record
-KfCollisionTarget	0x00	0x10	position	VECTOR	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
-KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
-KfCollisionTarget	0x18	0x02	radius	u16	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
-KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
-KfDisplayState	0x00	0x01	buffer_index	u8	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayStateOpen	0x00	0x01	buffer_index	u8	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x01	0x03	unknown_01	u8[3]	opaque	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfEffectRecord	0x00	0x01	type	u8	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
-KfEffectRecord	0x01	0x01	kind	u8	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
-KfEffectRecord	0x02	0x01	unknown_02	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x03	0x01	unknown_03	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x04	0x01	unknown_04	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x05	0x01	unknown_05	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x06	0x01	id	u8	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	owning object id passed to the constructor
-KfEffectRecord	0x07	0x01	unknown_07	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	byte set to 1 by map object actions 81 and 82
-KfEffectRecord	0x08	0x02	unknown_08	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	12-bit angle swept by map object action 83
-KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x0c	0x10	position	VECTOR	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
-KfEffectRecord	0x1c	0x02	rotation_x	u16	candidate	asm;effect_pool_constructor;effect_pool_spawn_typed	first component of the 16-bit triple at 0x1c
-KfEffectRecord	0x1e	0x02	rotation_y	u16	candidate	asm;effect_pool_constructor;effect_pool_spawn_typed	second component of the 16-bit triple at 0x1c; warp shimmer sweeps it as a rotation phase
-KfEffectRecord	0x20	0x02	rotation_z	u16	candidate	asm;effect_pool_constructor;effect_pool_spawn_typed	third component of the 16-bit triple at 0x1c
-KfEffectRecord	0x22	0x02	unknown_22	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x24	0x02	scale_x	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
-KfEffectRecord	0x26	0x02	scale_y	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
-KfEffectRecord	0x28	0x02	scale_z	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
-KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x2c	0x02	direction_x	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	direction x copied from the constructor SVECTOR argument
-KfEffectRecord	0x2e	0x02	direction_y	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	direction y copied from the constructor SVECTOR argument
-KfEffectRecord	0x30	0x02	direction_z	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	direction z copied from the constructor SVECTOR argument
-KfEffectRecord	0x32	0x02	unknown_32	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x34	0x04	unknown_34	u8[4]	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x38	0x02	unknown_38	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	sound handle written by several effect kinds
-KfEffectRecord	0x3a	0x02	unknown_3a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRenderView	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;render_actor_sprite	header bytes interpreted by effect behavior
-KfEffectRenderView	0x03	0x01	sprite_id	u8	supported	semantic_types.h;asm;render_actor_sprite	0xff skips the record; otherwise selects the billboard or model asset
-KfEffectRenderView	0x04	0x01	mode	u8	supported	semantic_types.h;asm;render_actor_sprite	0xff selects the billboard path; other values select animation clips
-KfEffectRenderView	0x05	0x03	unknown_05	u8[3]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved header bytes
-KfEffectRenderView	0x08	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_actor_sprite	variant argument passed to render_bind_animated_instance
-KfEffectRenderView	0x0a	0x02	unknown_0a	u8[2]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before position
-KfEffectRenderView	0x0c	0x02	position_x	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position x halfword used by the renderer
-KfEffectRenderView	0x0e	0x02	unknown_0e	u16	opaque	semantic_types.h;asm;render_actor_sprite	high halfword of the effect position x word
-KfEffectRenderView	0x10	0x02	position_y	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position y halfword used by the renderer
-KfEffectRenderView	0x12	0x02	unknown_12	u16	opaque	semantic_types.h;asm;render_actor_sprite	high halfword of the effect position y word
-KfEffectRenderView	0x14	0x02	position_z	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position z halfword used by the renderer
-KfEffectRenderView	0x16	0x06	unknown_16	u8[6]	opaque	semantic_types.h;asm;render_actor_sprite	high position-z halfword and VECTOR pad word
-KfEffectRenderView	0x1c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;render_actor_sprite	model rotation passed to matrix_set_rotation_yxz
-KfEffectRenderView	0x22	0x02	unknown_22	u8[2]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before scale
-KfEffectRenderView	0x24	0x02	scale_x	s16	supported	semantic_types.h;asm;render_actor_sprite	model x scale
-KfEffectRenderView	0x26	0x02	scale_y	s16	supported	semantic_types.h;asm;render_actor_sprite	model y scale
-KfEffectRenderView	0x28	0x02	scale_z	s16	supported	semantic_types.h;asm;render_actor_sprite	model z scale
-KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before animation anchor
-KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
-KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved tail
-KfEffectSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
-KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	semantic_types.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
-KfEffectSprite	0x02	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
-KfEffectSprite	0x04	0x02	scale	u16	supported	semantic_types.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
-KfEffectSprite	0x06	0x02	translation_x	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation X
-KfEffectSprite	0x08	0x02	translation_y	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation Y
-KfEffectSprite	0x0a	0x02	translation_z	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation Z
-KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the rotation vector
-KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
-KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the animation anchor
-KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
-KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
-KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
-KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle
-KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
-KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
-KfFloorItem	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id copied from the placement record
-KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
-KfFloorItem	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
-KfFloorItem	0x04	0x04	position_x	s32	supported	semantic_types.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
-KfFloorItem	0x08	0x04	position_y	s32	supported	semantic_types.h;asm;func_80020b4c	world y = local_y - floor_height*100
-KfFloorItem	0x0c	0x04	position_z	s32	supported	semantic_types.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
-KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	semantic_types.h;func_80020b4c	not written by the loader
-KfFloorItem	0x14	0x01	animation_frame	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
-KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	semantic_types.h;func_80020b4c	not written by the loader
-KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	semantic_types.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
-KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	semantic_types.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
-KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	semantic_types.h;asm;func_80020b4c	meaning unresolved
-KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	semantic_types.h;asm;func_80020b4c	map tile z (floor-height grid row)
-KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;func_80020b4c	map tile x (floor-height grid column)
-KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
-KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
-KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;func_80020b4c	height offset above the floor height grid
-KfHudSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
-KfHudSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
-KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
-KfMagicRecord	0x00	0x01	learned	u8	supported	asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
-KfMagicRecord	0x01	0x01	charge_rate	u8	supported	asm;player_update	fixed6_ratio_step span while charging magic
-KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	semantic_types.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
-KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	semantic_types.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
-KfMagicRecord	0x10	0x02	mp_cost	u16	supported	asm;player_update	compared with and subtracted from vitals.current_mp when casting
-KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	asm	meaning unresolved
-KfMapCell	0x00	0x01	z	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
-KfMapCell	0x01	0x01	x	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
-KfMapCopyRegion	0x00	0x01	source_x	u8	supported	semantic_types.h;asm;xrefs	source x
-KfMapCopyRegion	0x01	0x01	source_z	u8	supported	semantic_types.h;asm;xrefs	source z
-KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	semantic_types.h;asm;xrefs	destination x
-KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	semantic_types.h;asm;xrefs	destination z
-KfMapCopyRegion	0x04	0x01	width	u8	supported	semantic_types.h;asm;xrefs	region width
-KfMapCopyRegion	0x05	0x01	height	u8	supported	semantic_types.h;asm;xrefs	region height
-KfMapEvent	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	active state
-KfMapEvent	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
-KfMapEvent	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
-KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied from the definition tag
-KfMapEvent	0x08	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
-KfMapEvent	0x09	0x01	image_index	u8	supported	semantic_types.h;asm;xrefs	current image index
-KfMapEvent	0x0a	0x01	image_dirty	u8	supported	semantic_types.h;asm;xrefs	image refresh flag
-KfMapEvent	0x0b	0x01	image_delay	u8	supported	semantic_types.h;asm;xrefs	image refresh delay
-KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0e	0x01	unknown_0e	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x10	0x01	unknown_10	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x11	0x01	unknown_11	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x12	0x02	rotation_phase	u16	supported	semantic_types.h;asm;xrefs	animated rotation phase
-KfMapEvent	0x14	0x04	position_x	s32	supported	semantic_types.h;asm;xrefs	world x
-KfMapEvent	0x18	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world z
-KfMapEvent	0x1c	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapEvent	0x1e	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z
-KfMapEvent	0x20	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
-KfMapEvent	0x22	0x02	unknown_22	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x24	0x04	reference_x	s32	supported	semantic_types.h;asm;xrefs	query reference x
-KfMapEvent	0x28	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
-KfMapEvent	0x2c	0x04	reference_z	s32	supported	semantic_types.h;asm;xrefs	query reference z
-KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x34	0x02	unknown_34	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x36	0x02	rotation	s16	supported	semantic_types.h;asm;xrefs	current rotation
-KfMapEvent	0x38	0x02	unknown_38	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x40	0x02	rotation_target	s16	supported	semantic_types.h;asm;xrefs	target rotation
-KfMapEvent	0x42	0x02	unknown_42	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x00	0x01	state	u8	supported	semantic_types.h;asm;xrefs	initial state
-KfMapEventDefinition	0x01	0x01	kind	u8	supported	semantic_types.h;asm;xrefs	event kind
-KfMapEventDefinition	0x02	0x01	variant	u8	supported	semantic_types.h;asm;xrefs	event variant
-KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	semantic_types.h;asm;xrefs	map cell z
-KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	semantic_types.h;asm;xrefs	five opaque bytes copied into the runtime slot
-KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	semantic_types.h;asm;xrefs	maximum image index
-KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	semantic_types.h;asm;xrefs	z position offset
-KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	semantic_types.h;asm;xrefs	x position offset
-KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	semantic_types.h;asm;xrefs	initial rotation
-KfMapEventDefinition	0x14	0x02	radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
-KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;xrefs	object definition ID
-KfMapObject	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x02	0x02	cell_x	u16	supported	semantic_types.h;asm;xrefs	map cell x
-KfMapObject	0x04	0x02	cell_z	u16	supported	semantic_types.h;asm;xrefs	map cell z
-KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x08	0x04	position_x	s32	supported	semantic_types.h;asm;xrefs	world x
-KfMapObject	0x0c	0x04	position_y	s32	supported	semantic_types.h;asm;xrefs	world y
-KfMapObject	0x10	0x04	position_z	s32	supported	semantic_types.h;asm;xrefs	world z
-KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;xrefs	object rotation
-KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied verbatim from the placement record
-KfMapObject	0x28	0x01	action	u8	supported	semantic_types.h;asm;xrefs	action dispatcher selector
-KfMapObject	0x29	0x01	unknown_29	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObject	0x2a	0x02	action_timer	u16	supported	semantic_types.h;asm;xrefs	action timer
-KfMapObjectDefinition	0x00	0x01	behavior_type	u8	supported	semantic_types.h;asm;xrefs	behavior selector
-KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	semantic_types.h;asm;xrefs	collision radius
-KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	semantic_types.h;asm;xrefs	interaction radius
-KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfMapObjectLink	0x00	0x01	link_id	u8	supported	semantic_types.h;asm;map_object_pool_load	trigger link id
-KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	semantic_types.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
-KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	semantic_types.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
-KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	semantic_types.h;asm;map_object_pool_load	vertical velocity
-KfMapObjectLink	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;map_object_pool_load	meaning unresolved
-KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	semantic_types.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
-KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;map_object_pool_load	meaning unresolved
-KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	semantic_types.h;asm;map_object_pool_load	map tile z
-KfMapObjectPlacement	0x03	0x01	tile_x	u8	supported	semantic_types.h;asm;map_object_pool_load	map tile x
-KfMapObjectPlacement	0x04	0x02	yaw	u16	supported	semantic_types.h;asm;map_object_pool_load	initial yaw, masked to 12 bits
-KfMapObjectPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;map_object_pool_load	offset within the tile
-KfMapObjectPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;map_object_pool_load	offset within the tile
-KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;map_object_pool_load	height offset above the floor height grid
-KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied into the pool object
-KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
-KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
-KfNotificationSprite	0x00	0x01	active	u8	supported	semantic_types.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
-KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
-KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
-KfOpeningEntity	0x00	0x01	object_id	u8	supported	semantic_types.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
-KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
-KfOpeningEntity	0x02	0x02	cell_x	u16	supported	semantic_types.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record
-KfOpeningEntity	0x04	0x02	cell_z	u16	supported	semantic_types.h;open_semantic_resources.tsv;asm	map cell z copied from the placement record
-KfOpeningEntity	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
-KfOpeningEntity	0x08	0x10	position	VECTOR	supported	semantic_types.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	world xyz plus the SDK VECTOR pad lane; transition helper copies all four words
-KfOpeningEntity	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;open_semantic_resources.tsv;asm	zero x/z and 12-bit placement yaw
-KfOpeningEntity	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
-KfOpeningEntity	0x20	0x08	scale	SVECTOR	supported	semantic_types.h;open_semantic_resources.tsv;asm	xyz initialized to 0x1000; trailing SVECTOR pad remains untouched
-KfOpeningEntityState	0x000	0x500	entities	KfOpeningEntity[32]	supported	semantic_types.h;open_semantic_resources.tsv;asm;40-byte-stride	opening entity runtime records
-KfOpeningEntityState	0x500	0x0a	unknown_500	u8[10]	opaque	semantic_types.h;open_semantic_resources.tsv	unreferenced gap between the records and controls
-KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	semantic_types.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
-KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	semantic_types.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
-KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	semantic_types.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
-KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
-KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
-KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle
-KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	semantic_types.h;asm;xrefs	current POWER charge
-KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	semantic_types.h;asm;xrefs	attack-time POWER snapshot
-KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	level maximum HP
-KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	level maximum MP
-KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	semantic_types.h;asm;xrefs	physical-power increment
-KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	semantic_types.h;asm;xrefs	magic increment
-KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	semantic_types.h;asm;xrefs	cumulative level threshold
-KfPlayerMotionState	0x00	0x02	strafe_velocity	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
-KfPlayerMotionState	0x02	0x02	forward_velocity	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
-KfPlayerMotionState	0x04	0x02	movement_speed	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
-KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
-KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
-KfPlayerProgressState	0x00	0x01	level	u8	supported	semantic_types.h;asm;xrefs	player level
-KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	semantic_types.h;asm;xrefs	current dungeon floor
-KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	semantic_types.h;asm;xrefs	highest reached floor
-KfPlayerState	0x00	0x04	experience	s32	supported	semantic_types.h;data_identities.tsv;slt-compares	member of the player_state aggregate
-KfPlayerState	0x04	0x04	next_level_experience	s32	supported	semantic_types.h;data_identities.tsv;slt-compares	member of the player_state aggregate
-KfPlayerState	0x08	0x04	progress_state	KfPlayerProgressState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x0c	0x01	map_variant	u8	supported	semantic_types.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
-KfPlayerState	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x0e	0x01	weapon_charge_delay	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x10	0x08	vitals	KfPlayerVitals	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x18	0x04	attack_charge_state	KfPlayerAttackChargeState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x1c	0x02	magic_charge	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x1e	0x02	physical_power_training	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x20	0x02	magic_training	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x22	0x02	base_physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x24	0x02	base_magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x26	0x02	physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x28	0x02	magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x2c	0x04	gold	u32	supported	semantic_types.h;asm;menu;item-buy-sell	player gold total
-KfPlayerState	0x30	0x02	attack_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x32	0x02	attack_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x34	0x02	attack_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x36	0x02	attack_component3	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x38	0x02	attack_component4	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x42	0x02	status_effect2_resistance	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4c	0x02	status_effect2_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4e	0x02	status_effect3_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x50	0x02	status_effect4_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
-KfPlayerState	0x52	0x02	light_effect_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
-KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x58	0x04	unknown_58	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x74	0x04	unknown_74	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x78	0x01	unknown_78	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x79	0x01	unknown_79	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7c	0x04	equipped_shield_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x80	0x04	equipped_head_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x84	0x04	equipped_body_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x98	0x02	unknown_98	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xa2	0x01	update_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb4	0x04	floor_height	s32	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xce	0x06	unknown_ce	u8[6]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xd4	0x02	view_bob_offset	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xd6	0x02	view_bob_phase	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xd8	0x02	death_camera_pitch_step	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xda	0x02	death_visual_blend	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xdc	0x02	vertical_velocity	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xde	0x01	vertical_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xdf	0x01	unknown_df	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	maximum HP
-KfPlayerVitals	0x02	0x02	current_hp	u16	supported	semantic_types.h;asm;xrefs	current HP
-KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	maximum MP
-KfPlayerVitals	0x06	0x02	current_mp	u16	supported	semantic_types.h;asm;xrefs	current MP
-KfPoolRecord	0x00	0x02	state	s16	supported	game_types.h;asm;xrefs	allocation state
-KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x04	0x02	value_04	u16	candidate	game_types.h;asm;xrefs	accessed value; exact meaning unresolved
-KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	game_types.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x0c	0x04	allocation	void *	supported	game_types.h;asm;xrefs	allocated object pointer
-KfPoolRecord	0x10	0x04	backlink	u32 *	supported	game_types.h;asm;xrefs	owner backlink pointer
-KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
-KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
-KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
-KfRenderState	0x00	0x20	view_matrix	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x20	0x20	pitch_matrix	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x60	0x20	light_matrix_copy	MATRIX	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x80	0x20	unknown_80	MATRIX	opaque	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xa4	0x10	view_position	VECTOR	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xb4	0x08	view_rotation	SVECTOR	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0xc0	0x80	quadrant_matrices	MATRIX[4]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x00	0x20	view_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x20	0x20	pitch_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x40	0x20	light_matrix	MATRIX	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x60	0x04	fog_near_distance	s32	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	semantic_types.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	semantic_types.h;asm;xrefs	four save-slot identifiers
-KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	semantic_types.h;asm;xrefs	reserved/unknown header range
-KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	semantic_types.h;asm;xrefs	four slot summaries
-KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	semantic_types.h;PlayStation-save-format	standard save header and icons
-KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	semantic_types.h;asm;xrefs	King's Field directory
-KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
-KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	semantic_types.h;asm	not touched by the write/read pair
-KfSavePayload	0x30c	0x2134	world_state	u32[2125]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the DAT_8009ddb4 block; word-aligned copy loop plus one word
-KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;alignment-checked-copy	verbatim copy of the DAT_800652a8 block; runtime-alignment-checked copy loop
-KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	semantic_types.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
-KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	semantic_types.h;asm	not touched by the write/read pair
-KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	individual summary meanings unresolved
-KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
-KfScreenVertex	0x04	0x02	sz	s16	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
-KfScreenVertex	0x06	0x02	p2	s16	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
-KfSpriteQuad	0x00	0x01	u	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
-KfSpriteQuad	0x01	0x01	v	u8	supported	semantic_types.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
-KfSpriteQuad	0x02	0x01	u_span	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
-KfSpriteQuad	0x03	0x01	v_span	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
-KfSpriteQuad	0x04	0x02	x	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
-KfSpriteQuad	0x06	0x02	y	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
-KfSpriteQuad	0x08	0x02	w	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
-KfSpriteQuad	0x0a	0x02	h	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
-KfTmdF3	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x08	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x0a	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF4	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x08	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x0a	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x0c	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x0e	0x02	pad	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdFt3	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x0a	0x02	pad	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x0c	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x0e	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x10	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt3	0x12	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
-KfTmdFt4	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x0a	0x02	pad0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x0c	0x01	tu3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x0d	0x01	tv3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x0e	0x02	pad1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x10	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x12	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x14	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x16	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x18	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdFt4	0x1a	0x02	pad2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
-KfTmdG3	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x08	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x0a	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x0c	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x0e	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG4	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x03	0x01	mode	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x04	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x06	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x08	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x0a	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x0c	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x0e	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x10	0x02	n3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x12	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdGt3	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x0a	0x02	pad	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x0c	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x0e	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x10	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x12	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x14	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt3	0x16	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
-KfTmdGt4	0x00	0x01	tu0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x01	0x01	tv0	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x02	0x02	cba	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x04	0x01	tu1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x05	0x01	tv1	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x06	0x02	tsb	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x08	0x01	tu2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x09	0x01	tv2	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x0a	0x02	pad0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x0c	0x01	tu3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x0d	0x01	tv3	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x0e	0x02	pad1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x10	0x02	n0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x12	0x02	v0	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x14	0x02	n1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x16	0x02	v1	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x18	0x02	n2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x1a	0x02	v2	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x1c	0x02	n3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdGt4	0x1e	0x02	v3	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
-KfTmdHeader	0x00	0x04	id	u32	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x04	0x04	flags	u32	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x08	0x02	object_count	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x0a	0x02	object_count_high	u16	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdObject	0x00	0x04	vertex_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
-KfTmdObject	0x04	0x04	vertex_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record
-KfTmdObject	0x08	0x04	normal_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	offset from the TMD object-table base to the normal array
-KfTmdObject	0x0c	0x04	normal_count	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	normal count in the standard object record
-KfTmdObject	0x10	0x04	primitive_offset	u32	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
-KfTmdObject	0x14	0x02	primitive_count	u16	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop; read as a halfword (lhu)
-KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	upper halfword of the 32-bit TMD primitive count, unread by the game
-KfTmdObject	0x18	0x04	scale	s32	supported	semantic_types.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
-KfTmdState	0x00	0x20	slots	u8 *[8]	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdState	0x20	0x04	current_asset	void *	supported	semantic_types.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	semantic_types.h;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfVec3i	0x00	0x04	x	s32	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVec3i	0x04	0x04	y	s32	supported	semantic_types.h;asm;xrefs	y coordinate
-KfVec3i	0x08	0x04	z	s32	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVec3s	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVec3s	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y coordinate
-KfVec3s	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
-KfVecXZs	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x coordinate
-KfVecXZs	0x02	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z coordinate
-KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
-KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
-KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x10	0x02	unknown_10	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
-KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	semantic_types.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
-KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-SoundRef	0x00	0x01	program	u8	supported	semantic_types.h;Psy-Q-LIBSND	program number
-SoundRef	0x01	0x01	tone	u8	supported	semantic_types.h;Psy-Q-LIBSND	tone number
-SoundRef	0x02	0x01	note	u8	supported	semantic_types.h;Psy-Q-LIBSND	note number
+KfActor	0x00	0x01	slot_state	u8	supported	game_actor.h;asm;xrefs	allocation/activity state
+KfActor	0x01	0x01	definition_id	u8	supported	game_actor.h;asm;xrefs	index into actor definitions
+KfActor	0x02	0x01	variant	u8	supported	game_actor.h;asm;xrefs	actor variant selector
+KfActor	0x03	0x01	heading_quadrant	u8	supported	game_actor.h;asm;xrefs	coarse heading selector
+KfActor	0x04	0x01	tile_z	u8	supported	game_actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	map tile z; world position.z = tile_z * 2000 + local_z (actor_initialize_slot, actor_pool_load_placements)
+KfActor	0x05	0x01	tile_x	u8	supported	game_actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	map tile x; world position.x = tile_x * 2000 + local_x
+KfActor	0x06	0x01	lifecycle	u8	supported	game_actor.h;asm;xrefs	actor lifecycle state
+KfActor	0x07	0x01	unknown_07	u8	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x08	0x01	action	u8	supported	game_actor.h;asm;xrefs	action dispatcher selector
+KfActor	0x09	0x01	unknown_09	u8	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x0a	0x01	animation_id	u8	supported	game_actor.h;asm;xrefs	animation selector
+KfActor	0x0b	0x01	vertical_state	u8	supported	game_actor.h;asm;xrefs	vertical movement selector
+KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x0e	0x02	local_z	s16	supported	game_actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along z added to tile_z * 2000
+KfActor	0x10	0x02	local_x	s16	supported	game_actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along x added to tile_x * 2000
+KfActor	0x12	0x02	animation_phase	u16	supported	game_actor.h;asm;xrefs	animation phase/progress
+KfActor	0x14	0x02	health	u16	supported	game_actor.h;asm;xrefs	current actor health
+KfActor	0x16	0x02	cell_x	u16	supported	game_actor.h;asm;xrefs	map cell x; every band load is lhu
+KfActor	0x18	0x02	cell_z	u16	supported	game_actor.h;asm;xrefs	map cell z; every band load is lhu
+KfActor	0x1a	0x02	unknown_1a	s16	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x1c	0x10	position	VECTOR	supported	game_actor.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as VECTOR
+KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	game_actor.h;asm;xrefs	actor rotation
+KfActor	0x32	0x02	unknown_32	u16	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x34	0x04	unknown_34	u32	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x38	0x01	action_timer	u8	supported	game_actor.h;asm;xrefs	action countdown; loaded lbu and seeded with 0xff
+KfActor	0x39	0x01	collision_state	u8	supported	game_actor.h;asm;xrefs	collision result/state
+KfActor	0x3a	0x02	movement_yaw	s16	supported	game_actor.h;asm;xrefs	movement heading
+KfActor	0x3c	0x02	animation_step	s16	supported	game_actor.h;asm;xrefs	animation increment
+KfActor	0x3e	0x02	vertical_velocity	s16	supported	game_actor.h;asm;xrefs	vertical velocity
+KfActor	0x40	0x02	movement_x	s16	supported	game_actor.h;asm;xrefs	x movement component
+KfActor	0x42	0x02	movement_z	s16	supported	game_actor.h;asm;xrefs	z movement component
+KfActor	0x44	0x02	movement_y	s16	supported	game_actor.h;asm;xrefs	y movement component
+KfActor	0x46	0x02	unknown_46	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActorActionProfile	0x00	0x02	far_distance	s16	supported	game_actor.h;asm;xrefs	far distance threshold
+KfActorActionProfile	0x02	0x02	far_weight	s16	supported	game_actor.h;asm;xrefs	far action weight
+KfActorActionProfile	0x04	0x02	near_distance	s16	supported	game_actor.h;asm;xrefs	near distance threshold
+KfActorActionProfile	0x06	0x02	middle_weight	s16	supported	game_actor.h;asm;xrefs	middle action weight
+KfActorActionProfile	0x08	0x02	near_weight	s16	supported	game_actor.h;asm;xrefs	near action weight
+KfActorDefinition	0x00	0x03	unknown_00	u8[3]	opaque	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	meaning unresolved
+KfActorDefinition	0x03	0x01	status_effect	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	status effect flags passed to player_apply_damage by actor_try_attack_player
+KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per-hit chance out of 256 compared with rand() >> 7; zero disables
+KfActorDefinition	0x05	0x08	action_parameters	u8[8]	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per special action byte: effect code for actor_spawn_action_effect, profile index (entries 0..2) and chance (entries 3..5) for actor_select_next_action
+KfActorDefinition	0x0d	0x01	move_speed	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	scale applied to the forward vector by actor_move_along_heading
+KfActorDefinition	0x0e	0x10	action_animations	u8[16]	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation id per action index (action - 2); entries 3 and 4 are the hit and death animations, 0xff means none
+KfActorDefinition	0x1e	0x01	turn_rate	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	angle_approach step for actor_move_along_heading; halved-and-a-half while colliding
+KfActorDefinition	0x1f	0x09	sounds	SoundRef[3]	supported	game_actor.h;asm;actor_update_current_action	three sound refs handed to actor_play_sound_at_phase at 0x1f, 0x22 and 0x25
+KfActorDefinition	0x28	0x0c	attachment_offsets	KfVec3s[2]	supported	game_actor.h;asm;actor_spawn_action_effect	effect attachment offsets rotated by the actor angles; indexed by the attachment index
+KfActorDefinition	0x34	0x02	unknown_34	s16	opaque	game_actor.h;asm;actor_select_next_action	chance passed for ground action 0x10 and distance-facing action 0x11
+KfActorDefinition	0x36	0x02	unknown_36	s16	opaque	game_actor.h;asm;actor_select_next_action	distance scale passed for distance-facing action 0x11
+KfActorDefinition	0x38	0x02	unknown_38	u8[2]	opaque	game_actor.h;asm;actor_select_next_action	meaning unresolved
+KfActorDefinition	0x3a	0x20	action_animation_steps	u16[16]	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation step per action index; the boss death sequence keys effects on entry 4
+KfActorDefinition	0x5a	0x20	action_animation_phases	u16[16]	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	animation phase threshold per action index
+KfActorDefinition	0x7a	0x02	collision_radius	u16	supported	game_actor.h;asm;xrefs	collision radius
+KfActorDefinition	0x7c	0x02	collision_height	u16	supported	game_actor.h;asm;xrefs	collision height
+KfActorDefinition	0x7e	0x02	awareness_distance	u16	supported	game_actor.h;asm;xrefs	awareness range
+KfActorDefinition	0x80	0x02	initial_health	u16	supported	game_actor.h;asm;xrefs	spawn health
+KfActorDefinition	0x82	0x02	unknown_82	u16	opaque	game_actor.h;asm;xrefs	halfword handed to effect_pool_construct as the first argument by actor_spawn_action_effect
+KfActorDefinition	0x84	0x02	experience_reward	u16	supported	game_actor.h;asm;xrefs	passed to player_add_experience when the actor dies
+KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	game_actor.h;asm;xrefs	three attack components
+KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	game_actor.h;asm;xrefs	five defense components
+KfActorDefinition	0x96	0x02	unknown_96	u16	opaque	game_actor.h;asm;xrefs	halfword scaling the random debris count in actor_update_current_action
+KfActorPlacement	0x00	0x01	slot_state	u8	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
+KfActorPlacement	0x01	0x01	definition_flags	u8	supported	game_actor.h;asm;actor_pool_load_placements	low five bits are the definition id, bit 5 the variant flag
+KfActorPlacement	0x02	0x01	heading_quadrant	u8	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.heading_quadrant
+KfActorPlacement	0x03	0x01	tile_z	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile z
+KfActorPlacement	0x04	0x01	tile_x	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile x
+KfActorPlacement	0x05	0x01	unknown_05	u8	opaque	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.unknown_07
+KfActorPlacement	0x06	0x01	unknown_06	u8	opaque	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.unknown_09
+KfActorPlacement	0x07	0x03	unknown_07	u8[3]	opaque	game_actor.h;asm;actor_pool_load_placements	not read by the loader
+KfActorPlacement	0x0a	0x02	local_z	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along z
+KfActorPlacement	0x0c	0x02	local_x	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along x
+KfActorPlacement	0x0e	0x02	unknown_0e	u8[2]	opaque	game_actor.h;asm;actor_pool_load_placements	not read by the loader
+KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	game_actor.h;asm;xrefs	map-loaded actor definitions
+KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	game_actor.h;asm;xrefs	live actor records
+KfActorState	0x2b20	0x10	player_position	VECTOR	supported	game_actor.h;asm;xrefs	player position snapshot copied each frame
+KfActorState	0x2b30	0x08	player_rotation	SVECTOR	supported	game_actor.h;asm;xrefs	player rotation snapshot copied each frame
+KfActorState	0x2b38	0x04	current_definition	KfActorDefinition *	supported	game_actor.h;asm;xrefs	definition of the actor being updated
+KfActorState	0x2b3c	0x04	current	KfActor *	supported	game_actor.h;asm;xrefs	actor being updated
+KfActorState	0x2b40	0x02	current_index	u16	supported	game_actor.h;asm;xrefs	index of the actor being updated
+KfActorState	0x2b42	0x02	current_definition_id	u16	supported	game_actor.h;asm;xrefs	definition id of the actor being updated
+KfActorState	0x2b44	0x04	player_target	KfActor *	supported	game_actor.h;asm;xrefs	actor targeted by the player
+KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
+KfArmorRecord	0x02	0x02	defense_component0	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added twice to damage_defense_component0
+KfArmorRecord	0x04	0x02	defense_component1	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component1
+KfArmorRecord	0x06	0x02	defense_component2	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component2
+KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to status_effect2_resistance
+KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component3
+KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component4
+KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
+KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
+KfAssetHeader	0x00	0x04	byte_size	u32	supported	game_asset.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
+KfAssetHeader	0x04	0x04	animation_data	s32	candidate	game_asset.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
+KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	game_asset.h;asm;asset_registry_select	byte offset from header to TMD payload
+KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	game_asset.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
+KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	game_asset.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
+KfAudioState	0x00	0x04	vab_header	u8 *	supported	audio.h;asm;xrefs	loaded VAB header pointer
+KfAudioState	0x04	0x02	active_vab_id	s16	supported	audio.h;asm;xrefs	active VAB identifier; minus one after close
+KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
+KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	audio.h;asm;xrefs	allocated SEQ buffer
+KfAudioState	0x0c	0x02	sequence_id	s16	supported	audio.h;asm;xrefs	open sequence identifier
+KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
+KfAudioState	0x10	0x04	sequence_active	s32	supported	audio.h;asm;xrefs	one while a map sequence plays
+KfAudioState	0x14	0x10	listener_position	VECTOR	supported	audio.h;asm;xrefs	listener position for spatial voices
+KfAudioState	0x24	0x08	listener_rotation	SVECTOR	supported	audio.h;asm;xrefs	listener rotation for spatial voices
+KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	audio.h;asm;xrefs	ten voice slots
+KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	audio.h;asm;xrefs	active voice IDs
+KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	audio.h;asm;xrefs	VAB IDs
+KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	audio.h;asm;xrefs	program numbers
+KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	audio.h;asm;xrefs	tone numbers
+KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	audio.h;asm;xrefs	note numbers
+KfCameraPathPoint	0x00	0x10	position	VECTOR	supported	game_map.h;asm;xrefs	path position
+KfCameraPathPoint	0x10	0x08	rotation	SVECTOR	supported	game_map.h;asm;xrefs	path rotation
+KfCameraPathPoint	0x18	0x02	speed	s16	supported	game_map.h;asm;xrefs	segment speed
+KfCameraPathPoint	0x1a	0x02	unknown_1a	s16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfCameraPathState	0x00	0x04	points	KfCameraPathPoint *	supported	game_map.h;asm;xrefs	path point cursor/base
+KfCameraPathState	0x04	0x10	position	VECTOR	supported	game_map.h;asm;xrefs	current integer position
+KfCameraPathState	0x14	0x08	rotation	SVECTOR	supported	game_map.h;asm;xrefs	current integer rotation
+KfCameraPathState	0x1c	0x10	position_fixed	VECTOR	supported	game_map.h;asm;xrefs	fixed-point position
+KfCameraPathState	0x2c	0x10	rotation_fixed	VECTOR	supported	game_map.h;asm;xrefs	fixed-point rotation
+KfCameraPathState	0x3c	0x10	position_delta	VECTOR	supported	game_map.h;asm;xrefs	per-frame position delta
+KfCameraPathState	0x4c	0x10	rotation_delta	VECTOR	supported	game_map.h;asm;xrefs	per-frame rotation delta
+KfCameraPathState	0x5c	0x02	point_index	s16	supported	game_map.h;asm;xrefs	current path point index
+KfCameraPathState	0x5e	0x02	unknown_5e	s16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfCameraPathState	0x60	0x04	frames_remaining	s32	supported	game_map.h;asm;xrefs	segment frame countdown
+KfCdFileEntry	0x00	0x01	minute	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC minute of the file
+KfCdFileEntry	0x01	0x01	second	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC second of the file
+KfCdFileEntry	0x02	0x01	sector	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC sector of the file
+KfCdFileEntry	0x03	0x01	track	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
+KfCdFileEntry	0x04	0x04	size	u32	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
+KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
+KfCellWindow	0x00	0x02	width	u16	supported	game_render.h;asm;render_map_cells;render_entities	row width and inner-loop bound
+KfCellWindow	0x02	0x02	height	u16	supported	game_render.h;asm;render_map_cells;render_entities	row count and outer-loop bound
+KfCellWindow	0x04	0x02	origin_x	u16	supported	game_render.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
+KfCellWindow	0x06	0x02	origin_z	u16	supported	game_render.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
+KfCellWindow	0x08	0xc4	cells	u8[196]	supported	game_render.h;game_semantic_render_cell_windows.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	row-major visibility bytes filling the remainder of each 204-byte window record
+KfCollisionTarget	0x00	0x10	position	VECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
+KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
+KfCollisionTarget	0x18	0x02	radius	u16	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
+KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
+KfDisplayState	0x00	0x01	buffer_index	u8	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayStateOpen	0x00	0x01	buffer_index	u8	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x01	0x03	unknown_01	u8[3]	opaque	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
+KfEffectRecord	0x01	0x01	kind	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
+KfEffectRecord	0x02	0x01	unknown_02	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x03	0x01	unknown_03	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x04	0x01	unknown_04	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x05	0x01	unknown_05	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x06	0x01	id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	owning object id passed to the constructor
+KfEffectRecord	0x07	0x01	unknown_07	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	byte set to 1 by map object actions 81 and 82
+KfEffectRecord	0x08	0x02	unknown_08	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	12-bit angle swept by map object action 83
+KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x0c	0x10	position	VECTOR	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
+KfEffectRecord	0x1c	0x02	rotation_x	u16	candidate	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	first component of the 16-bit triple at 0x1c
+KfEffectRecord	0x1e	0x02	rotation_y	u16	candidate	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	second component of the 16-bit triple at 0x1c; warp shimmer sweeps it as a rotation phase
+KfEffectRecord	0x20	0x02	rotation_z	u16	candidate	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	third component of the 16-bit triple at 0x1c
+KfEffectRecord	0x22	0x02	unknown_22	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x24	0x02	scale_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
+KfEffectRecord	0x26	0x02	scale_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
+KfEffectRecord	0x28	0x02	scale_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
+KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x2c	0x02	direction_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction x copied from the constructor SVECTOR argument
+KfEffectRecord	0x2e	0x02	direction_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction y copied from the constructor SVECTOR argument
+KfEffectRecord	0x30	0x02	direction_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction z copied from the constructor SVECTOR argument
+KfEffectRecord	0x32	0x02	unknown_32	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x34	0x04	unknown_34	u8[4]	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x38	0x02	unknown_38	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	sound handle written by several effect kinds
+KfEffectRecord	0x3a	0x02	unknown_3a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRenderView	0x00	0x03	unknown_00	u8[3]	opaque	game_effect.h;asm;render_actor_sprite	header bytes interpreted by effect behavior
+KfEffectRenderView	0x03	0x01	sprite_id	u8	supported	game_effect.h;asm;render_actor_sprite	0xff skips the record; otherwise selects the billboard or model asset
+KfEffectRenderView	0x04	0x01	mode	u8	supported	game_effect.h;asm;render_actor_sprite	0xff selects the billboard path; other values select animation clips
+KfEffectRenderView	0x05	0x03	unknown_05	u8[3]	opaque	game_effect.h;asm;render_actor_sprite	unresolved header bytes
+KfEffectRenderView	0x08	0x02	asset_variant	u16	supported	game_effect.h;asm;render_actor_sprite	variant argument passed to render_bind_animated_instance
+KfEffectRenderView	0x0a	0x02	unknown_0a	u8[2]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before position
+KfEffectRenderView	0x0c	0x02	position_x	u16	supported	game_effect.h;asm;render_actor_sprite	low world-position x halfword used by the renderer
+KfEffectRenderView	0x0e	0x02	unknown_0e	u16	opaque	game_effect.h;asm;render_actor_sprite	high halfword of the effect position x word
+KfEffectRenderView	0x10	0x02	position_y	u16	supported	game_effect.h;asm;render_actor_sprite	low world-position y halfword used by the renderer
+KfEffectRenderView	0x12	0x02	unknown_12	u16	opaque	game_effect.h;asm;render_actor_sprite	high halfword of the effect position y word
+KfEffectRenderView	0x14	0x02	position_z	u16	supported	game_effect.h;asm;render_actor_sprite	low world-position z halfword used by the renderer
+KfEffectRenderView	0x16	0x06	unknown_16	u8[6]	opaque	game_effect.h;asm;render_actor_sprite	high position-z halfword and VECTOR pad word
+KfEffectRenderView	0x1c	0x06	rotation	KfEulerAngles	supported	game_effect.h;asm;render_actor_sprite	model rotation passed to matrix_set_rotation_yxz
+KfEffectRenderView	0x22	0x02	unknown_22	u8[2]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before scale
+KfEffectRenderView	0x24	0x02	scale_x	s16	supported	game_effect.h;asm;render_actor_sprite	model x scale
+KfEffectRenderView	0x26	0x02	scale_y	s16	supported	game_effect.h;asm;render_actor_sprite	model y scale
+KfEffectRenderView	0x28	0x02	scale_z	s16	supported	game_effect.h;asm;render_actor_sprite	model z scale
+KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before animation anchor
+KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	game_effect.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
+KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	game_effect.h;asm;render_actor_sprite	unresolved tail
+KfEffectSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
+KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	game_render.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
+KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game_render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
+KfEffectSprite	0x04	0x02	scale	u16	supported	game_render.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
+KfEffectSprite	0x06	0x02	translation_x	s16	supported	game_render.h;asm;render_effect_sprites	model translation X
+KfEffectSprite	0x08	0x02	translation_y	s16	supported	game_render.h;asm;render_effect_sprites	model translation Y
+KfEffectSprite	0x0a	0x02	translation_z	s16	supported	game_render.h;asm;render_effect_sprites	model translation Z
+KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before the rotation vector
+KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	game_render.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
+KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before the animation anchor
+KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	game_render.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
+KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
+KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
+KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
+KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.x
+KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
+KfFloorItem	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id copied from the placement record
+KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
+KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
+KfFloorItem	0x04	0x04	position_x	s32	supported	item.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
+KfFloorItem	0x08	0x04	position_y	s32	supported	item.h;asm;func_80020b4c	world y = local_y - floor_height*100
+KfFloorItem	0x0c	0x04	position_z	s32	supported	item.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
+KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	item.h;func_80020b4c	not written by the loader
+KfFloorItem	0x14	0x01	animation_frame	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
+KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	item.h;func_80020b4c	not written by the loader
+KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
+KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
+KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
+KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	item.h;asm;func_80020b4c	map tile z (floor-height grid row)
+KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	item.h;asm;func_80020b4c	map tile x (floor-height grid column)
+KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	item.h;asm;func_80020b4c	offset within the tile
+KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	item.h;asm;func_80020b4c	offset within the tile
+KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	item.h;asm;func_80020b4c	height offset above the floor height grid
+KfHudSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
+KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game_render.h;retail-initializers	unread byte before the sprite descriptor
+KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game_render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
+KfMagicRecord	0x00	0x01	learned	u8	supported	magic.h;asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
+KfMagicRecord	0x01	0x01	charge_rate	u8	supported	magic.h;asm;player_update	fixed6_ratio_step span while charging magic
+KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
+KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	magic.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
+KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared with and subtracted from vitals.current_mp when casting
+KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
+KfMapCell	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
+KfMapCell	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
+KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x
+KfMapCopyRegion	0x01	0x01	source_z	u8	supported	game_map.h;asm;xrefs	source z
+KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destination x
+KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	game_map.h;asm;xrefs	destination z
+KfMapCopyRegion	0x04	0x01	width	u8	supported	game_map.h;asm;xrefs	region width
+KfMapCopyRegion	0x05	0x01	height	u8	supported	game_map.h;asm;xrefs	region height
+KfMapEvent	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	active state
+KfMapEvent	0x01	0x01	kind	u8	supported	game_map.h;asm;xrefs	event kind
+KfMapEvent	0x02	0x01	variant	u8	supported	game_map.h;asm;xrefs	event variant
+KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	game_map.h;asm;xrefs	five opaque bytes copied from the definition tag
+KfMapEvent	0x08	0x01	image_limit	u8	supported	game_map.h;asm;xrefs	maximum image index
+KfMapEvent	0x09	0x01	image_index	u8	supported	game_map.h;asm;xrefs	current image index
+KfMapEvent	0x0a	0x01	image_dirty	u8	supported	game_map.h;asm;xrefs	image refresh flag
+KfMapEvent	0x0b	0x01	image_delay	u8	supported	game_map.h;asm;xrefs	image refresh delay
+KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0e	0x01	unknown_0e	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0f	0x01	unknown_0f	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x10	0x01	unknown_10	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x11	0x01	unknown_11	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x12	0x02	rotation_phase	u16	supported	game_map.h;asm;xrefs	animated rotation phase
+KfMapEvent	0x14	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x
+KfMapEvent	0x18	0x04	position_z	s32	supported	game_map.h;asm;xrefs	world z
+KfMapEvent	0x1c	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
+KfMapEvent	0x1e	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
+KfMapEvent	0x20	0x02	radius	u16	supported	game_map.h;asm;xrefs	interaction radius
+KfMapEvent	0x22	0x02	unknown_22	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x24	0x04	reference_x	s32	supported	game_map.h;asm;xrefs	query reference x
+KfMapEvent	0x28	0x04	position_y	s32	supported	game_map.h;asm;xrefs	world y
+KfMapEvent	0x2c	0x04	reference_z	s32	supported	game_map.h;asm;xrefs	query reference z
+KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x34	0x02	unknown_34	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x36	0x02	rotation	s16	supported	game_map.h;asm;xrefs	current rotation
+KfMapEvent	0x38	0x02	unknown_38	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x40	0x02	rotation_target	s16	supported	game_map.h;asm;xrefs	target rotation
+KfMapEvent	0x42	0x02	unknown_42	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	initial state
+KfMapEventDefinition	0x01	0x01	kind	u8	supported	game_map.h;asm;xrefs	event kind
+KfMapEventDefinition	0x02	0x01	variant	u8	supported	game_map.h;asm;xrefs	event variant
+KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	game_map.h;asm;xrefs	map cell z
+KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	game_map.h;asm;xrefs	map cell x
+KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	game_map.h;asm;xrefs	five opaque bytes copied into the runtime slot
+KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	game_map.h;asm;xrefs	maximum image index
+KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	game_map.h;asm;xrefs	z position offset
+KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	game_map.h;asm;xrefs	x position offset
+KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	game_map.h;asm;xrefs	initial rotation
+KfMapEventDefinition	0x14	0x02	radius	u16	supported	game_map.h;asm;xrefs	interaction radius
+KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x00	0x01	object_id	u8	supported	game_map.h;asm;xrefs	object definition ID
+KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
+KfMapObject	0x04	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
+KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x08	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x
+KfMapObject	0x0c	0x04	position_y	s32	supported	game_map.h;asm;xrefs	world y
+KfMapObject	0x10	0x04	position_z	s32	supported	game_map.h;asm;xrefs	world z
+KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	game_map.h;asm;xrefs	object rotation
+KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied verbatim from the placement record
+KfMapObject	0x28	0x01	action	u8	supported	game_map.h;asm;xrefs	action dispatcher selector
+KfMapObject	0x29	0x01	unknown_29	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x2a	0x02	action_timer	u16	supported	game_map.h;asm;xrefs	action timer
+KfMapObjectDefinition	0x00	0x01	behavior_type	u8	supported	game_map.h;asm;xrefs	behavior selector
+KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
+KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
+KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObjectLink	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load	trigger link id
+KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	game_map.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
+KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	game_map.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
+KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	game_map.h;asm;map_object_pool_load	vertical velocity
+KfMapObjectLink	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
+KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	game_map.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
+KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
+KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	game_map.h;asm;map_object_pool_load	map tile z
+KfMapObjectPlacement	0x03	0x01	tile_x	u8	supported	game_map.h;asm;map_object_pool_load	map tile x
+KfMapObjectPlacement	0x04	0x02	yaw	u16	supported	game_map.h;asm;map_object_pool_load	initial yaw, masked to 12 bits
+KfMapObjectPlacement	0x06	0x02	local_z	s16	supported	game_map.h;asm;map_object_pool_load	offset within the tile
+KfMapObjectPlacement	0x08	0x02	local_x	s16	supported	game_map.h;asm;map_object_pool_load	offset within the tile
+KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	game_map.h;asm;map_object_pool_load	height offset above the floor height grid
+KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied into the pool object
+KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
+KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
+KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
+KfOpeningEntity	0x00	0x01	object_id	u8	supported	open_resources.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
+KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x02	0x02	cell_x	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record
+KfOpeningEntity	0x04	0x02	cell_z	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell z copied from the placement record
+KfOpeningEntity	0x06	0x02	unknown_06	u8[2]	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x08	0x10	position	VECTOR	supported	open_resources.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	world xyz plus the SDK VECTOR pad lane; transition helper copies all four words
+KfOpeningEntity	0x18	0x06	rotation	KfEulerAngles	supported	open_resources.h;open_semantic_resources.tsv;asm	zero x/z and 12-bit placement yaw
+KfOpeningEntity	0x1e	0x02	unknown_1e	u16	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
+KfOpeningEntity	0x20	0x08	scale	SVECTOR	supported	open_resources.h;open_semantic_resources.tsv;asm	xyz initialized to 0x1000; trailing SVECTOR pad remains untouched
+KfOpeningEntityState	0x000	0x500	entities	KfOpeningEntity[32]	supported	open_resources.h;open_semantic_resources.tsv;asm;40-byte-stride	opening entity runtime records
+KfOpeningEntityState	0x500	0x0a	unknown_500	u8[10]	opaque	open_resources.h;open_semantic_resources.tsv	unreferenced gap between the records and controls
+KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
+KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
+KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
+KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
+KfPitchYaw	0x00	0x02	pitch	s16	supported	game_math.h;asm;xrefs	pitch angle
+KfPitchYaw	0x02	0x02	yaw	s16	supported	game_math.h;asm;xrefs	yaw angle
+KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
+KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	game_player.h;asm;xrefs	attack-time POWER snapshot
+KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	level maximum HP
+KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	level maximum MP
+KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	game_player.h;asm;xrefs	physical-power increment
+KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	game_player.h;asm;xrefs	magic increment
+KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	game_player.h;asm;xrefs	cumulative level threshold
+KfPlayerMotionState	0x00	0x02	strafe_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
+KfPlayerMotionState	0x02	0x02	forward_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
+KfPlayerMotionState	0x04	0x02	movement_speed	u16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
+KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
+KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
+KfPlayerProgressState	0x00	0x01	level	u8	supported	game_player.h;asm;xrefs	player level
+KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	game_player.h;asm;xrefs	meaning unresolved
+KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	game_player.h;asm;xrefs	current dungeon floor
+KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	game_player.h;asm;xrefs	highest reached floor
+KfPlayerState	0x00	0x04	experience	s32	supported	game_player.h;data_identities.tsv;slt-compares	member of the player_state aggregate
+KfPlayerState	0x04	0x04	next_level_experience	s32	supported	game_player.h;data_identities.tsv;slt-compares	member of the player_state aggregate
+KfPlayerState	0x08	0x04	progress_state	KfPlayerProgressState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x0c	0x01	map_variant	u8	supported	game_player.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
+KfPlayerState	0x0d	0x01	unknown_0d	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x0e	0x01	weapon_charge_delay	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x0f	0x01	unknown_0f	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x10	0x08	vitals	KfPlayerVitals	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x18	0x04	attack_charge_state	KfPlayerAttackChargeState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x1c	0x02	magic_charge	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x1e	0x02	physical_power_training	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x20	0x02	magic_training	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x22	0x02	base_physical_power	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x24	0x02	base_magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x26	0x02	physical_power	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x28	0x02	magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x2c	0x04	gold	u32	supported	game_player.h;asm;menu;item-buy-sell	player gold total
+KfPlayerState	0x30	0x02	attack_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x32	0x02	attack_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x34	0x02	attack_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x36	0x02	attack_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x38	0x02	attack_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x42	0x02	status_effect2_resistance	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4c	0x02	status_effect2_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4e	0x02	status_effect3_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x50	0x02	status_effect4_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
+KfPlayerState	0x52	0x02	light_effect_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
+KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x58	0x04	unknown_58	u32	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x74	0x04	unknown_74	u32	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x78	0x01	unknown_78	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x79	0x01	unknown_79	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x7c	0x04	equipped_shield_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x80	0x04	equipped_head_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x84	0x04	equipped_body_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x98	0x02	unknown_98	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xa2	0x01	update_state	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb4	0x04	floor_height	s32	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xce	0x06	unknown_ce	u8[6]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0xd4	0x02	view_bob_offset	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xd6	0x02	view_bob_phase	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xd8	0x02	death_camera_pitch_step	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xda	0x02	death_visual_blend	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xdc	0x02	vertical_velocity	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xde	0x01	vertical_state	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xdf	0x01	unknown_df	u8[1]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	maximum HP
+KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game_player.h;asm;xrefs	current HP
+KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	maximum MP
+KfPlayerVitals	0x06	0x02	current_mp	u16	supported	game_player.h;asm;xrefs	current MP
+KfPoolRecord	0x00	0x02	state	s16	supported	pool.h;asm;xrefs	allocation state
+KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	pool.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x04	0x02	value_04	u16	candidate	pool.h;asm;xrefs	accessed value; exact meaning unresolved
+KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	pool.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	pool.h;asm;xrefs	meaning unresolved
+KfPoolRecord	0x0c	0x04	allocation	void *	supported	pool.h;asm;xrefs	allocated object pointer
+KfPoolRecord	0x10	0x04	backlink	u32 *	supported	pool.h;asm;xrefs	owner backlink pointer
+KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
+KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
+KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
+KfRenderState	0x00	0x20	view_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x20	0x20	pitch_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x60	0x20	light_matrix_copy	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0x80	0x20	unknown_80	MATRIX	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xa4	0x10	view_position	VECTOR	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xb4	0x08	view_rotation	SVECTOR	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xbc	0x04	view_cell	KfVecXZs	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderState	0xc0	0x80	quadrant_matrices	MATRIX[4]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x00	0x20	view_matrix	MATRIX	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x20	0x20	pitch_matrix	MATRIX	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x40	0x20	light_matrix	MATRIX	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x60	0x04	fog_near_distance	s32	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	game_save.h;asm;xrefs	four save-slot identifiers
+KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	game_save.h;asm;xrefs	reserved/unknown header range
+KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	game_save.h;asm;xrefs	four slot summaries
+KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	game_save.h;PlayStation-save-format	standard save header and icons
+KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	game_save.h;asm;xrefs	King's Field directory
+KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	game_save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
+KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	game_save.h;asm	not touched by the write/read pair
+KfSavePayload	0x30c	0x2134	world_state	u32[2125]	supported	game_save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the DAT_8009ddb4 block; word-aligned copy loop plus one word
+KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	game_save.h;save_file_write_slot;save_file_read_slot;alignment-checked-copy	verbatim copy of the DAT_800652a8 block; runtime-alignment-checked copy loop
+KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	game_save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
+KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game_save.h;asm	not touched by the write/read pair
+KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	game_save.h;asm;xrefs	individual summary meanings unresolved
+KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
+KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
+KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
+KfSpriteQuad	0x00	0x01	u	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
+KfSpriteQuad	0x01	0x01	v	u8	supported	game_render.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
+KfSpriteQuad	0x02	0x01	u_span	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
+KfSpriteQuad	0x03	0x01	v_span	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
+KfSpriteQuad	0x04	0x02	x	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
+KfSpriteQuad	0x06	0x02	y	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
+KfSpriteQuad	0x08	0x02	w	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
+KfSpriteQuad	0x0a	0x02	h	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
+KfTmdF3	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x08	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x0a	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF4	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x08	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x0a	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x0c	0x02	v3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x0e	0x02	pad	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdFt3	0x00	0x01	tu0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x01	0x01	tv0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x02	0x02	cba	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x04	0x01	tu1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x05	0x01	tv1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x06	0x02	tsb	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x08	0x01	tu2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x09	0x01	tv2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x0a	0x02	pad	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x0c	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x0e	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x10	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt3	0x12	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt3 field
+KfTmdFt4	0x00	0x01	tu0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x01	0x01	tv0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x02	0x02	cba	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x04	0x01	tu1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x05	0x01	tv1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x06	0x02	tsb	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x08	0x01	tu2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x09	0x01	tv2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0a	0x02	pad0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0c	0x01	tu3	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0d	0x01	tv3	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x0e	0x02	pad1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x10	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x12	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x14	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x16	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x18	0x02	v3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdFt4	0x1a	0x02	pad2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdFt4 field
+KfTmdG3	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x08	0x02	n1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x0a	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x0c	0x02	n2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x0e	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG4	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x08	0x02	n1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x0a	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x0c	0x02	n2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x0e	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x10	0x02	n3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x12	0x02	v3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdGt3	0x00	0x01	tu0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x01	0x01	tv0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x02	0x02	cba	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x04	0x01	tu1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x05	0x01	tv1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x06	0x02	tsb	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x08	0x01	tu2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x09	0x01	tv2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x0a	0x02	pad	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x0c	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x0e	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x10	0x02	n1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x12	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x14	0x02	n2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt3	0x16	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt3 field
+KfTmdGt4	0x00	0x01	tu0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x01	0x01	tv0	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x02	0x02	cba	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x04	0x01	tu1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x05	0x01	tv1	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x06	0x02	tsb	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x08	0x01	tu2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x09	0x01	tv2	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0a	0x02	pad0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0c	0x01	tu3	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0d	0x01	tv3	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x0e	0x02	pad1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x10	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x12	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x14	0x02	n1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x16	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x18	0x02	n2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x1a	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x1c	0x02	n3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdGt4	0x1e	0x02	v3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
+KfTmdHeader	0x00	0x04	id	u32	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x04	0x04	flags	u32	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x08	0x02	object_count	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x0a	0x02	object_count_high	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdObject	0x00	0x04	vertex_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
+KfTmdObject	0x04	0x04	vertex_count	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record
+KfTmdObject	0x08	0x04	normal_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	offset from the TMD object-table base to the normal array
+KfTmdObject	0x0c	0x04	normal_count	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	normal count in the standard object record
+KfTmdObject	0x10	0x04	primitive_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
+KfTmdObject	0x14	0x02	primitive_count	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop; read as a halfword (lhu)
+KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	upper halfword of the 32-bit TMD primitive count, unread by the game
+KfTmdObject	0x18	0x04	scale	s32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
+KfTmdState	0x00	0x20	slots	u8 *[8]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdState	0x20	0x04	current_asset	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfVec3i	0x00	0x04	x	s32	supported	game_math.h;asm;xrefs	x coordinate
+KfVec3i	0x04	0x04	y	s32	supported	game_math.h;asm;xrefs	y coordinate
+KfVec3i	0x08	0x04	z	s32	supported	game_math.h;asm;xrefs	z coordinate
+KfVec3s	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
+KfVec3s	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y coordinate
+KfVec3s	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
+KfVecXZs	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
+KfVecXZs	0x02	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
+KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
+KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	game_equipment.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
+KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x10	0x02	unknown_10	u8[2]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
+KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	game_equipment.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
+KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+SoundRef	0x00	0x01	program	u8	supported	audio.h;Psy-Q-LIBSND	program number
+SoundRef	0x01	0x01	tone	u8	supported	audio.h;Psy-Q-LIBSND	tone number
+SoundRef	0x02	0x01	note	u8	supported	audio.h;Psy-Q-LIBSND	note number

@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /*
@@ -23,7 +23,7 @@ s32 menu_two_option_prompt(
     s32 prev;
     s32 result = -99;
 
-    while (pad_read(1) != 0)
+    while (PadRead(1) != 0)
         ;
 
     if ((u32)(kind - 4) < 2)
@@ -48,14 +48,14 @@ s32 menu_two_option_prompt(
             menu_draw_window(kind, count, highlight_row, 1);
             menu_draw_two_option(&label_a, &label_b, selected, highlight);
             menu_present_frame();
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             return result;
         }
 
         highlight = 0;
         prev = input;
-        input = pad_read(1);
+        input = PadRead(1);
         if (((input & 0x1000) != 0 && (prev & 0x1000) == 0) ||
             ((input & 0x4000) != 0 && (prev & 0x4000) == 0)) {
             menu_play_input_sound(0);

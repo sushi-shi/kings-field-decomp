@@ -1,6 +1,6 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
-#include <kf/game.h>
+#include <kf/game_asset.h>
+#include <kf/game_render.h>
 
 /*
  * Registers every asset of a TMD archive: a u16 count, then chunks that each

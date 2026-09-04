@@ -1,6 +1,6 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
-#include <kf/semantic_types.h>
+#include <kf/game_asset.h>
 #include <kf/game_types.h>
 #include <kf/game.h>
 
@@ -48,7 +48,7 @@ typedef struct KfMorphObject {
 ADDRESS(0x800205d4, 0x3a4)
 u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count)
 {
-    struct KfPoolRecord *record = *(struct KfPoolRecord **)anchor;
+    KfPoolRecord *record = *(KfPoolRecord **)anchor;
     KfAssetHeader *ah = asset_registry_entries[asset];
     KfAnimClip *clip;
     KfAnimKeyframe *kf;
@@ -92,7 +92,7 @@ reinit:
             pool_release_all();
         }
     } while (alloc == 0);
-    *(struct KfPoolRecord **)anchor = record;
+    *(KfPoolRecord **)anchor = record;
     goto search;
 
 have_record:

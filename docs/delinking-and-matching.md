@@ -107,23 +107,21 @@ non-reachable-code candidates, 2,501 sites outside current function extents,
 3,177 candidate BSS targets outside the loaded image, 130 candidates owned by
 the seven fragmented functions, and one unsigned-low HI/LO pair.
 
-Carving the whole image is not the same as selecting decomp work. The 876
+Carving the whole image is not the same as selecting decomp work. The 1,126
 functions in `functions_vendored.tsv` are excluded when objdiff projects are
 generated:
 
-| Target | Carved target/reference objects | Vendored objects excluded | Non-vendored match units |
+| Target | Carved target/reference objects | Vendored objects excluded | Eligible functions |
 | --- | ---: | ---: | ---: |
 | `PSX.EXE` | 9 | 8 | 1 |
-| `GAME.EXE` | 932 | 440 | 492 |
-| `OPEN.EXE` | 665 | 424 | 241 |
-| **Total** | **1,606** | **872** | **734** |
+| `GAME.EXE` | 933 | 571 | 362 |
+| `OPEN.EXE` | 665 | 543 | 122 |
+| **Total** | **1,607** | **1,122** | **485** |
 
 The provider inventory has four additional fragmented functions—two per
-overlay—which have no carved object. The match-unit counts also exclude the
-remaining three fragmented non-vendored functions. Vendored objects exist only
-to preserve executable topology, provider evidence, symbol identities, and
-call relocation targets. They do not count as source reconstruction or
-progress.
+overlay—which have no carved object. Vendored objects exist only to preserve
+executable topology, provider evidence, symbol identities, and call relocation
+targets. They do not count as source reconstruction or progress.
 
 ## MIPS analysis implications
 
@@ -203,7 +201,7 @@ incremental Ninja graph. The normal commands are:
 | `kf try --unit ID [--source FILE]` | compile one unit into a scratch object and diff it per function against its module target without touching the build tree |
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
-| `kf check [--strict]` | fail on data mismatches/incomplete comparisons, unchanged-input regressions, lost banked rows, or invalid/stale reports |
+| `kf check [--strict]` | fail on data mismatches/incomplete comparisons, non-exact vendored source verification, unchanged-input regressions, lost banked rows, or invalid/stale reports |
 | `kf bank [--unit ID] [--dirty]` | manually update all fresh scores, or only selected units when every selected function is exactly 100% |
 
 Status separates eligible, manifested, compiled, scored, and exact functions.
@@ -228,12 +226,15 @@ The generated objdiff project pairs every target object with:
 build/objdiff/<image>/base/<same target-object filename>
 ```
 
-Only non-vendored objects become units. `vendored_excluded.tsv` records every
-provider-owned target intentionally omitted from the project. Until a game
-reconstruction exists, `pairings.tsv` records the function as `unstarted`; it
-does not enter the objdiff project. A manifested source whose build object is
-absent is separately recorded as `manifest-missing-base`. Regenerate the
-project after adding a base object, then run:
+Only non-vendored objects become progress units. `vendored_excluded.tsv`
+records every provider-owned per-function target omitted from progress. An
+explicit `scope = "vendored"` manifest unit may still pair a reconstructed
+provider module for strict 100% source verification; it is compiled and
+checked but excluded from the denominator and bank. Until a game
+reconstruction exists, `pairings.tsv` records a non-vendored function as
+`unstarted`; it does not enter the objdiff project. A manifested source whose
+build object is absent is separately recorded as `manifest-missing-base`.
+Regenerate the project after adding a base object, then run:
 
 ```sh
 kf-objdiff-report --project-dir build/objdiff/game

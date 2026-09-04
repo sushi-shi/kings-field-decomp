@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_actor.h>
 #include <kf/game.h>
 
 #define ACTOR_SLOT_FREE 0xff

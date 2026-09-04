@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/debug.h>
 #include <kf/game_math.h>
 #include <kf/open_render.h>
 
@@ -72,12 +73,12 @@ void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix)
 ADDRESS(0x80015a88, 0x84)
 void debug_dump_matrix(const MATRIX *matrix)
 {
-    debug_printf(debug_matrix_label);
-    debug_printf("  [%05d,%05d,%05d]\n",
+    debug_printf_sink(debug_matrix_label);
+    debug_printf_sink("  [%05d,%05d,%05d]\n",
         matrix->m[0][0], matrix->m[0][1], matrix->m[0][2]);
-    debug_printf("  [%05d,%05d,%05d]\n",
+    debug_printf_sink("  [%05d,%05d,%05d]\n",
         matrix->m[1][0], matrix->m[1][1], matrix->m[1][2]);
-    debug_printf("  [%05d,%05d,%05d]\n",
+    debug_printf_sink("  [%05d,%05d,%05d]\n",
         matrix->m[2][0], matrix->m[2][1], matrix->m[2][2]);
 }
 

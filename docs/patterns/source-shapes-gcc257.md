@@ -8,7 +8,7 @@ other compilers.
 | --- | --- | --- |
 | `addiu c,c,-1; move ...; sll/sra 16; bne c,-1` | `s16 count = 8; do { ... } while (--count != -1);` | `matrix_interpolate` `0x800202fc` |
 | `addiu c,c,-1; bnez c` | `s32 count = N; do { ... } while (--count != 0);` | `actor_definitions_load` `0x80030a6c` |
-| `move v1,a1; ...; addiu a1,-1; bnez v1` | `while (count-- != 0)` with `s32 count` | `player_weapon_load_records_and_mirror_angles` `0x800150a8` (2.6.0 only) |
+| `move v1,a1; ...; addiu a1,-1; bnez v1` | `while (count-- != 0)` with an `s32` count | `weapon_records_load_and_mirror_angles` `0x800150a8` |
 | `lhu v1,field; addu v1,v1,a0` (load lands in the result register) | `s32 value = field;` then `value += delta;` as two statements | `player_adjust_mp` `0x800156bc` |
 | `lhu v0,field; addu v1,v0,a0` | single expression `field + delta` | rejected form of the same unit |
 | `beqz a2,<second test>` | two sequential `if` blocks, not nested | `audio_set_listener_transform` `0x8003303c` |
@@ -97,7 +97,7 @@ and player-death band:
 | --- | --- | --- |
 | `jal __main` as the first call, SNMAIN `start` tail-calls the body | the function is `main`; GCC inserts the hook only for that name | `main` `0x8001428c` |
 | `lui/ori` address formation without relocations | numeric address constants in source (BSS start, heap base) | `main` |
-| store inside a loop that never advances the pointer | plain `int *`; a `volatile` view hoists nothing but changes the loop form | `func_80014268` `0x80014268` |
+| store inside a loop that never advances the pointer | plain `int *`; a `volatile` view hoists nothing but changes the loop form | `repeat_store_word` `0x80014268` |
 | `sll/sra` of a divided value before `*100`, `andi 0xffff` at each grid access | `s32 cell = x / 2000 + (s16)(z / 2000) * 100` indexed as `(u16)cell` | `collision_query_world` `0x8001a5ac` |
 | a `bne` to a trailing block for the uncommon case, `j loop` at its end | nested `if`/`else` blocks, not `continue` | `game_main_loop` `0x800146b8` |
 | `beq` on two `lhu` values, copies done as two `lbu`/`sb` pairs | `*(u16 *)&a != *(u16 *)&b` compare with byte-wise member copies | `game_main_loop` |
@@ -162,7 +162,7 @@ before the two `lw` loads in `player_distance_to_point_in_cone`; `move v0,a0`
 before the stack-argument loads in `player_apply_radial_damage`). Applied to
 every enrolled unit it produced no regressions and made ten more units exact:
 `matrix_set_rotation_yxz`, the four vector scale helpers,
-`primitive_buffer_commit_poly_ft4`, `game_state_acknowledge_pending`
+`primitive_buffer_commit_poly_ft4`, `menu_release_item_model`
 (previously exact only under 2.6.0 without the second scheduling pass),
 `save_workspace_allocate`, `audio_play_spatial_range`, `sound_ref_play`.
 `probe-gcc257-o2-g0` now carries `cc1_flags = ["-mcpu=r3000"]`.
@@ -218,7 +218,7 @@ Open residues (not steered):
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `func_80014268` `0x80014268` |
+| `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `repeat_store_word` `0x80014268` |
 | the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_asset = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
 | the same frame in `tmd_prepare_primitive_indices` `0x8001c2b0` | not reproduced; the function stores nothing to a global, so the folded pseudo must come from another expression; open | residue |
 
@@ -296,11 +296,13 @@ Residues left in the same module (not steered):
 
 ## render enqueue
 
-Witnesses come from `src/game/render_enqueue.c` (`game.render_enqueue`,
-`0x8001de18..0x8001e480`): the projected textured-sprite enqueuer
-`func_8001e230` and the lit map-geometry emitter `func_8001de18`. Both are
-structurally exact (call set, referents, widths, control flow) yet blocked
-below exact by two distinct walls.
+Witnesses come from `src/game/render_enqueuers.c` (`game.render_enqueue`,
+`0x8001c7f8..0x8001e480`). The four consumers are one evidenced TU: their text
+order (TMD, model, map, sprite) is mirrored exactly by the gapless load-data
+run at `0x80057b58..0x80057b6c` (three neutral `CVECTOR`s followed by the
+sprite `SVECTOR` light normal). The projected textured-sprite enqueuer
+`func_8001e230` and lit map-geometry emitter `func_8001de18` are structurally
+complete but remain below exact for two distinct walls.
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
@@ -394,13 +396,21 @@ Verdict: the aggregate is the correct structural model and is byte-clean where
 tested (`func_8001e230` stayed `88.2%` under the migration, confirming
 single-object member migrations do not shift bytes), but it closes neither
 enqueuer nor the initializer to exact -- both residues are the unattributed
-gcc-2.5.7 register-allocation/scheduling wall class (compare the
-`tmd_project_vertices` two-store-giv residue and the `func_8001e230`
-post-reload-scheduler residue). Landing the model is high-ripple (it renames
+  gcc-2.5.7 register-allocation/scheduling wall class (compare the
+  `tmd_project_vertices` two-store-giv residue and the `func_8001e230`
+  post-reload-scheduler residue). Landing the model is high-ripple (it renames
 `display_state`/`tmd_state`/`render_state`/`display_draw_environments` and the
 buffers across ~28 units and retargets ~230 relocation sites) and banks no new
-function, so it is deferred until the compiler/regalloc attribution is settled;
-until then the individual identities stay.
+  function, so it is deferred until the compiler/regalloc attribution is settled;
+  until then the individual identities stay.
+
+The later TU/data-ownership pass recovered `map_textured_primitive_color` at
+`0x80057b60` and its interior `cd` referent at `+3`, plus
+`render_sprite_light_normal` at `0x80057b64`. This keeps all other consumer
+scores unchanged, makes the combined four-object data contribution exact, and
+raises `render_enqueue_map` from `12.854961%` to `18.305344%`. Its first
+remaining divergence is still the aggregate base formation described above;
+the later frame/register-allocation residue remains unattributed.
 
 ## memory
 
@@ -577,7 +587,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
-| `sw s5,DAT_80057b30; j` past a second `sw s5` that precedes `jal player_update_vertical_motion` | the item-use branch and the movement branch each store the held input; the movement branch also calls `player_update_vertical_motion()`, so the tails differ and cross-jumping cannot merge the stores | `player_update` `0x80018880` |
+| `sw s5,player_previous_input; j` past a second `sw s5` that precedes `jal player_update_vertical_motion` | the item-use branch and the movement branch each store the held input; the movement branch also calls `player_update_vertical_motion()`, so the tails differ and cross-jumping cannot merge the stores | `player_update` `0x80018880` |
 | `slt v1,forward,-limit; bnez` with the clamp store as the branch target | `if (forward >= -limit) field = forward; else field = -limit;` for the backward/left cases; the forward/right cases keep `if (forward > limit) field = limit; else field = forward;` | same |
 | `lh s0,0(s3); mult s0,s0; mflo s0` | `strafe_sq = player_state.motion_state.strafe_velocity; strafe_sq *= strafe_sq;` (load into the accumulator, square in place); direct member access, no pointer local | same |
 | `mflo a0; lh; bgez; move s2,a0; negu s2,a0` | `strafe = strafe_sq / magnitude; if (strafe_velocity < 0) strafe = -(strafe_sq / magnitude);` (the second division is CSE'd; a separate `if/else` keeps two divisions) | same |
@@ -891,9 +901,10 @@ Residues recorded in the module (not steered):
 
 ## player warp / floor transition (0x80036618..0x80036e38)
 
-`src/game/player_warp.c` reconstructs the warp band. `func_80036d3c` (the actor
-colour-fade sequence) is exact: two `blend` loops over `lighting_set_color_matrix`
-with the map-event activations and actor position/rotation ramps. `func_80036e38`
+`src/game/player_warp.c` reconstructs the warp band.
+`actor_transform_definition5_to6` (the actor colour-fade sequence) is exact:
+two `blend` loops over `lighting_set_color_matrix` with the map-event
+state assignments and actor position/rotation ramps. `func_80036e38`
 (`src/game/func_80036e38.c`) is exact once modelled as a K&R varargs function
 `u32 f(s32 mode, ...)`: retail spills `a0`-`a3` to the incoming home slots and
 reads `mode` from `[0]` and the flag byte from `[4]` (`lbu`), keeping only the
@@ -959,7 +970,7 @@ Residues recorded in `game.menu_select` (`func_800238d8`, `func_80023e9c`):
 `src/game/func_80036f44.c` reconstructs the effect-pool spawn band. The
 KfEffectRecord layout (60-byte stride: header bytes, a `VECTOR position` at
 0x0c, and rotation/scale/direction 16-bit triples at 0x1c/0x24/0x2c) is proven
-from the two constructors and modelled in `kf/semantic_types.h`; the default
+from the two constructors and modelled in `kf/game_effect.h`; the default
 scale is 0x1000 and the direction triple is copied from the SVECTOR argument.
 
 `func_80037770` is exact: a specialised constructor (`player_use_item` caller)
@@ -999,37 +1010,45 @@ Residue recorded (not steered):
   arithmetic, referents, call set and per-kind semantics all match; the residue
   is codegen shape, not source facts, and is not steered.
 
-`func_80037850` (the 0x76c effect step/collision routine at the tail of the
-band) is deferred: it is a divide-by-2000 cell walker with its own 6-case jump
-table (`0x80012ce0`) and unresolved `map_cell_attribute_height_table` lookups,
-the same collision-math + cross-jump residue class, and is left NOT-started
-pending cell-attribute data ownership rather than reconstructed speculatively.
+`effect_map_collision` (the 0x76c routine at `0x80037850`) was subsequently
+reconstructed after the cell-attribute owners were reviewed. It is a
+divide-by-2000 cell walker with its own six-case jump table (`0x80012ce0`) and
+currently scores `71.711580%`; the remaining collision-math/cross-jump residue
+is documented rather than treated as an unstarted function.
 
 ## pad
 
-Campaign over the contiguous controller band `0x8005005c..0x8005023c` (module
-`game.pad`, seven small leaves): a critical-section guard plus three PAD entry
-points (`func_800500b8`/`func_8005012c`/`func_80050170`) that dispatch on a
-stored pad identifier, each backed by a "Bad PadIdentifier" reporting stub.
+Campaign over the adjacent GAME vendored band `0x8005005c..0x8005023c` and
+the homologous OPEN PAD band `0x8002fe8c..0x80030010`: the
+`game.intr_tail` critical-section helper has INTR.OBJ lineage, while both sets
+of six PAD functions have PAD.OBJ lineage. The three public PAD entry points
+dispatch on the archive-named private `PadIdentifier`; `pad_buf` holds the word
+returned by the low-level PAD API and `pad_status` is cleared during init. Each
+invalid-identifier path reaches a private "Bad PadIdentifier" reporting stub.
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `sw a0,id; sw zero,buf1; li v0,-1; sw v0,buf0; bnez a0` then `PAD_init2`/stub both called `(0x20000001, &buf0)` with `move s0,v0` in the following `jal`'s slot | store the three globals, `result = id==0 ? PAD_init2(...) : stub(...)`, then a void call, `return result` | `func_800500b8` `0x800500b8` (EXACT) |
-| `lw v0,id; addiu sp; bnez v0; sw ra(slot)` then `return ~buf0` | `if (id==0) PAD_dr(); else stub(); return ~buf0;` — the tested load feeds the branch, so the probe hoists it above the frame | `func_8005012c` `0x8005012c` (EXACT) |
-| bad-identifier stub `printf(fmt, id)` with no return statement, consumed in a value context by the caller | K&R `u32 stub() { printf(fmt, id); }` — declares no parameters, falls off the end; the caller passes extra args and reads the incidental `v0` | `func_800500b8` -> `pad_init_bad_identifier` |
+| `sw a0,PadIdentifier; sw zero,pad_status; li v0,-1; sw v0,pad_buf; bnez a0` then `PAD_init2`/stub both called `(0x20000001, &pad_buf)` with `move s0,v0` in the following `jal`'s slot | store the three private globals, select the call into `result`, then call `ResetCallback` and return `result` | `PadInit` in GAME and OPEN (EXACT) |
+| `lw v0,PadIdentifier; addiu sp; bnez v0; sw ra(slot)` then `return ~pad_buf` | `if (PadIdentifier==0) PAD_dr(); else stub(); return ~pad_buf;` — the tested load feeds the branch, so the probe hoists it above the frame | `PadRead` in GAME and OPEN (EXACT) |
+| bad-identifier stub `printf(fmt, PadIdentifier)` with no return statement, consumed in a value context by the caller | K&R `u32 stub() { printf(fmt, PadIdentifier); }` — declares no parameters, falls off the end; the caller passes extra args and reads the incidental `v0` | `PadInit` -> `pad_init_bad_identifier` in both images (EXACT) |
 
-Open residue recorded during the same campaign (not steered): retail hoists the
-first data load above the frame allocation / register saves whenever the loaded
-value feeds a *call argument* (`lw a1,pad_identifier` before `addiu sp` in the
-three `printf` stubs) or a *callee-saved register* (`sw s1` then `lw s1,state`
-before `sw ra`/`sw s0` in `critical_section_set`). The probe cc1psx-257 hoists
-a load above the frame only when it feeds the immediately following branch (the
-`func_8005012c` case above), and otherwise emits frame-then-load; `-mcpu=r2000`,
-`-mcpu=r3000`, and `-fschedule-insns` all produce the same frame-first order.
-The referents, call set, CFG and instruction selection are otherwise identical,
-so `critical_section_set`, `pad_init_bad_identifier`, `pad_read_bad_identifier`
-and `pad_stop_bad_identifier` sit one prologue reorder from exact. Left as an
-unattributed load-placement residue rather than steered with dead code.
+The original `probe-gcc257-o2-g0` campaign left a repeatable load-placement
+residue: retail hoists the first data load above the frame allocation / register
+saves whenever the loaded value feeds a call argument or a callee-saved
+register. The later `probe-gcc257-o2-plain` profile reproduces that schedule;
+all thirteen current LIBETC source-verification functions are now exact without
+source steering: the GAME INTR tail, both six-function PAD copies, their
+overlay-specific data, and both literal ranges. The old residue remains useful
+evidence for these units' profile selection, not an open function mismatch.
+
+One data-side detail matters when reconstructing PAD.OBJ. The pinned
+GCC/maspsx path places separately defined file-static tentative BSS words at
+eight-byte object offsets even though each object is four bytes. GAME keeps all
+three PAD statics in BSS, while OPEN links `pad_buf` and `pad_status` as
+zero-initialized load data and only `PadIdentifier` in BSS. The delinker now
+uses an eight-byte candidate alignment only for static BSS claims whose retail
+addresses support it; retaining generic four-byte packing made GAME's modeled
+PAD `.bss` 16 bytes while the reconstruction emitted 32 bytes.
 
 ## debug/format
 
@@ -1136,7 +1155,7 @@ list-widget panels of the same shape as the banked `func_800238d8`
 (`menu_select`) and `func_80022608` (`menu`): a windowed cursor over rows drawn
 by the shared `func_8002abb4`/`func_80028914`/`func_80027ee4`/`func_8002ac34`
 frame helpers, an edge-triggered pad loop (`0x1000`/`0x4000`/`0x20`/`0x40`), and
-a `pad_read(1)`-release wait. Roles: `func_800249a8` drops a held item
+a `PadRead(1)`-release wait. Roles: `func_800249a8` drops a held item
 (filtering equipped copies via the seven equipment ids at `player_state+0x64`
 and `+0x90..+0x95`, then decrementing `DAT_800652a8[code]`); `func_80024e64` is
 the save/load hub; `func_800250c4` is the save panel (three slots, a

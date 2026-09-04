@@ -380,7 +380,7 @@ def _align(value: int, alignment: int) -> int:
 
 
 def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
-    """Calculate the target's 32-bit C layouts from the two checked headers."""
+    """Calculate target 32-bit C layouts from the ordered owner headers."""
     primitive_layouts = {
         "s8": (1, 1),
         "u8": (1, 1),
@@ -406,10 +406,36 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         r"(.+?)\s+(\**)([A-Za-z_]\w*)((?:\s*\[\s*(?:0x[0-9a-fA-F]+|\d+)\s*\])*)"
     )
     array_pattern = re.compile(r"\[\s*(0x[0-9a-fA-F]+|\d+)\s*\]")
-    for path in (REPO / "include/kf/game_types.h", REPO / "include/kf/semantic_types.h"):
+    checked_headers = (
+        REPO / "include/kf/game_types.h",
+        REPO / "include/kf/audio.h",
+        REPO / "include/kf/game_math.h",
+        REPO / "include/kf/game_actor.h",
+        REPO / "include/kf/game_map.h",
+        REPO / "include/kf/game_collision.h",
+        REPO / "include/kf/item.h",
+        REPO / "include/kf/pool.h",
+        REPO / "include/kf/magic.h",
+        REPO / "include/kf/game_effect.h",
+        REPO / "include/kf/game_equipment.h",
+        REPO / "include/kf/game_player.h",
+        REPO / "include/kf/render_types.h",
+        REPO / "include/kf/game_asset.h",
+        REPO / "include/kf/game_render.h",
+        REPO / "include/kf/notify.h",
+        REPO / "include/kf/open_render.h",
+        REPO / "include/kf/open_resources.h",
+        REPO / "include/kf/semantic_types.h",
+        REPO / "include/kf/game_save.h",
+        REPO / "include/kf/game_cd.h",
+        REPO / "include/kf/tmd.h",
+    )
+    for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
         for match in definition_pattern.finditer(text):
             name, body = match.groups()
+            if name in layouts:
+                raise ValueError(f"{path}: duplicate checked structure {name}")
             offset = 0
             alignment = 1
             fields = []
@@ -463,8 +489,16 @@ def _check_identifier(path: Path, field: str, value: str, key: tuple[str, int]) 
 
 
 def _check_parameters(path: Path, value: str, key: tuple[str, int]) -> None:
-    for parameter in value.split(";"):
+    parameters = value.split(";")
+    for index, parameter in enumerate(parameters):
         if not parameter:
+            continue
+        if parameter == "...":
+            if index == 0 or index != len(parameters) - 1:
+                raise ValueError(
+                    f"{path}: variadic marker must follow named parameters "
+                    f"and appear last at {key!r}"
+                )
             continue
         type_name, separator, name = parameter.rpartition(" ")
         declarator_name = name.lstrip("*")
@@ -644,8 +678,13 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
             raise ValueError(f"{data_path}: invalid confidence/scope at {key!r}")
         if key in data_starts:
             structural = structural_data_by_start[key]
-            if row.storage != "load" or row.size != parse_int(structural["size"]):
-                raise ValueError(f"{data_path}: load extent differs at {key!r}")
+            if (
+                row.size != parse_int(structural["size"])
+                or (row.storage == "bss" and structural["kind"] != "bss")
+            ):
+                raise ValueError(
+                    f"{data_path}: structural storage/extent differs at {key!r}"
+                )
         elif row.storage != "bss":
             raise ValueError(f"{data_path}: BSS identity uses load storage at {key!r}")
         if not row.name:
@@ -1231,10 +1270,11 @@ def propose_ghidra_signatures(
             and candidate["status"] == "decompiled"
             and identity.signature_confidence in {"address-only", "candidate"}
         ):
+            variadic = identity.parameters.endswith(";...")
             current_parameters = [
                 (_parameter_name(value), "*" in value.rpartition(" ")[0])
                 for value in identity.parameters.split(";")
-                if value
+                if value and value != "..."
             ]
             proposed_parameters = []
             for parameter in candidate["parameters"]:
@@ -1257,6 +1297,8 @@ def propose_ghidra_signatures(
                 proposed_parameters.append(
                     f"{_ghidra_type(datatype)} {name}"
                 )
+            if variadic:
+                proposed_parameters.append("...")
             parameters = ";".join(proposed_parameters)
             return_type = _ghidra_type(str(candidate["return_type"]))
             channel = "ghidra-12.0.4-decompiler-candidate"

@@ -90,9 +90,10 @@ def _render(ctx: Context, row: dict[str, object]) -> str:
                 f"in_body={row['in_body']}"
             )
             if binding["return_type"] or binding["parameters"]:
+                parameters = (binding["parameters"] or "").replace(";", ", ")
                 signature = (
                     f"{binding['return_type'] or 'unknown'} {binding['name']}"
-                    f"({binding['parameters'] or 'void'})"
+                    f"({parameters or 'void'})"
                 )
                 lines.append(
                     f"identity: {signature} "

@@ -191,27 +191,45 @@ declarations so argument names and widths can be refined independently. Data
 rows carry an exact admitted extent, load/BSS storage, tentative linkage scope,
 datatype, and owner.
 
-The structure inventory currently covers 64 types and 582 fields. 474 fields
-have supported semantic names and 108 exact ranges remain explicitly opaque.
+The structure inventory currently covers 71 types and 635 fields. 521 fields
+have supported semantic names and 114 exact ranges remain explicitly opaque.
 `kf inventory check` derives the 32-bit layouts from the checked C headers and
 rejects any TSV disagreement in size, offset, extent, name, or datatype.
 
-Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
-`KfVec4s`, `KfVec4i`, `KfPitchYaw`, `KfEulerAngles`, `KfActorDefinition`,
-`KfActorActionProfile`, `SoundRef`, `KfAudioVoiceSlots`, `KfActor`,
-`KfActorPlacement`,
-`KfMapCopyRegion`, `KfMapObjectPlacement`, `KfMapObjectDefinition`,
-`KfMapObject`, `KfCameraPathPoint`, `KfCameraPathState`,
-`KfMapEventDefinition`, `KfMapEvent`, `KfMapCell`, `KfPlayerProgressState`,
-`KfPlayerLevelGrowth`, `KfPlayerMotionState`, `KfPlayerVitals`,
-`KfPlayerAttackChargeState`, `KfPlayerState`, `KfWeaponRecord`,
-`KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`, `KfScreenVertex`,
-`KfSaveSlotSummary`, `KfSaveDirectory`, `KfSaveHeader`, and
-`KfSavePayload` live in `include/kf/semantic_types.h`, with their sizes checked
-against `config/retail/structures.tsv` by `kf inventory check`; established
-reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`. A
-type name records only fields and extents supported by the current MIPS access
-pattern; it does not claim the original source spelling.
+`KfCdFileEntry` is owned by `include/kf/game_cd.h`; `KfSaveSlotSummary`,
+`KfSaveDirectory`, `KfSaveHeader`, and `KfSavePayload` are owned by
+`include/kf/game_save.h`; the shared TMD payload, primitive, and projection
+layouts are owned by `include/kf/tmd.h`; and `SoundRef`, `KfAudioVoiceSlots`,
+and `KfAudioState` are owned by `include/kf/audio.h`. The game-owned
+`KfVecXZs`, `KfVec3s`, `KfVec3i`, `KfPitchYaw`, and `KfEulerAngles` layouts
+are owned alongside their operations by `include/kf/game_math.h`; and the
+actor layouts and state aggregate are owned by `include/kf/game_actor.h`.
+The map cell, copy-region, map-object, map-event, and camera-path layouts are
+owned by `include/kf/game_map.h`; and the serialized and runtime floor-item
+layouts are owned with their loader interface by `include/kf/item.h`.
+`KfMagicRecord` is owned with the spell loader and cast interface by
+`include/kf/magic.h`; and the runtime and rendering views of the effect-pool
+record are owned by `include/kf/game_effect.h`. `KfWeaponRecord` and
+`KfArmorRecord` are owned with their consecutive resource loaders by
+`include/kf/game_equipment.h`. The player progress, growth, vitals, charge,
+motion, saved-state, and floor-entry layouts are owned with the player globals
+and operations by `include/kf/game_player.h`. `KfCollisionTarget` is owned with
+the world-collision data and query operations by
+`include/kf/game_collision.h`.
+Shared primitive-buffer and ordering-table layouts live in
+`include/kf/render_types.h`; GAME and OPEN display, TMD-registration, and
+render-state aggregates live in `include/kf/game_render.h` and
+`include/kf/open_render.h`. Asset-registry and notification records live with
+their interfaces in `include/kf/game_asset.h` and `include/kf/notify.h`.
+`include/kf/semantic_types.h` remains only as a compatibility umbrella and
+defines no checked layouts. All owner-header layouts are checked against
+`config/retail/structures.tsv` by `kf inventory check`;
+inventory-only vectors such as `KfVec4s` and `KfVec4i` do not acquire C
+declarations until a reconstructed interface needs them, and established
+reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`.
+A type name records only fields and extents
+supported by the current MIPS access pattern; it does not claim the original
+source spelling.
 
 The confidence values are `address-only`, `candidate`, `supported`, and
 `proven`. `proven` is reserved for a recovered source symbol/signature or an

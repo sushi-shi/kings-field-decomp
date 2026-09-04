@@ -12,7 +12,7 @@ from scripts.kf.inventory import (
     load_structure_identities,
     validate,
 )
-from scripts.kf.paths import CONFIG, RETAIL_CONFIG
+from scripts.kf.paths import CONFIG, REPO, RETAIL_CONFIG
 from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
 
@@ -47,11 +47,11 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 492)
-        self.assertEqual(counts["signatures_started"], 492)
-        self.assertEqual(counts["typed_returns"], 492)
-        self.assertEqual(counts["parameterized"], 317)
-        self.assertEqual(counts["data"], 3087)
+        self.assertEqual(counts["functions"], 485)
+        self.assertEqual(counts["signatures_started"], 485)
+        self.assertEqual(counts["typed_returns"], 485)
+        self.assertEqual(counts["parameterized"], 316)
+        self.assertEqual(counts["data"], 3088)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -161,13 +161,36 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/game_semantic_math_lifecycle.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(rows), 17)
+        self.assertEqual(len(rows), 18)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
             signature = (
                 f"{identity.return_type} {identity.name}({parameters})"
             )
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_reviewed_unresolved_functions_keep_address_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_unresolved_functions.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        expected = {
+            ("GAME.EXE", 0x800365F8),
+            ("GAME.EXE", 0x80036E30),
+            ("GAME.EXE", 0x8003AC4C),
+        }
+
+        self.assertEqual(
+            {(row["image"], parse_int(row["va"])) for row in rows}, expected
+        )
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(identity.name_confidence, "address-only")
+            self.assertEqual(identity.signature_confidence, "supported")
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
@@ -200,6 +223,201 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_save_layouts_live_in_the_save_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        save_header = (REPO / "include/kf/game_save.h").read_text()
+        for structure in (
+            "KfSaveSlotSummary",
+            "KfSaveDirectory",
+            "KfSaveHeader",
+            "KfSavePayload",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, save_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_game_cd_layout_lives_in_the_game_cd_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        game_cd = (REPO / "include/kf/game_cd.h").read_text()
+        declaration = "typedef struct KfCdFileEntry"
+        self.assertIn(declaration, game_cd)
+        self.assertNotIn(declaration, semantic_types)
+
+    def test_tmd_layouts_live_in_the_shared_tmd_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        tmd_header = (REPO / "include/kf/tmd.h").read_text()
+        for structure in (
+            "KfTmdHeader",
+            "KfTmdObject",
+            "KfTmdF3",
+            "KfTmdG3",
+            "KfTmdF4",
+            "KfTmdG4",
+            "KfTmdFt3",
+            "KfTmdGt3",
+            "KfTmdFt4",
+            "KfTmdGt4",
+            "KfScreenVertex",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, tmd_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_audio_layouts_live_in_the_audio_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        audio_header = (REPO / "include/kf/audio.h").read_text()
+        for structure in (
+            "SoundRef",
+            "KfAudioVoiceSlots",
+            "KfAudioState",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, audio_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_math_layouts_live_in_the_game_math_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        math_header = (REPO / "include/kf/game_math.h").read_text()
+        for structure in (
+            "KfVecXZs",
+            "KfVec3s",
+            "KfVec3i",
+            "KfPitchYaw",
+            "KfEulerAngles",
+        ):
+            declaration = f"struct {structure} {{"
+            self.assertIn(declaration, math_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_actor_layouts_live_in_the_actor_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        actor_header = (REPO / "include/kf/game_actor.h").read_text()
+        for structure in (
+            "KfActorDefinition",
+            "KfActorActionProfile",
+            "KfActorPlacement",
+            "KfActor",
+            "KfActorState",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, actor_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_map_layouts_live_in_the_map_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        map_header = (REPO / "include/kf/game_map.h").read_text()
+        for structure in (
+            "KfMapCell",
+            "KfMapCopyRegion",
+            "KfMapObjectLink",
+            "KfMapObjectPlacement",
+            "KfMapObjectDefinition",
+            "KfMapObject",
+            "KfCameraPathPoint",
+            "KfCameraPathState",
+            "KfMapEventTag",
+            "KfMapEventDefinition",
+            "KfMapEvent",
+            "KfMapObjectState",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, map_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_floor_item_layouts_live_in_the_item_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        item_header = (REPO / "include/kf/item.h").read_text()
+        for structure in ("KfFloorItemPlacement", "KfFloorItem"):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, item_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_magic_layout_lives_in_the_magic_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        magic_header = (REPO / "include/kf/magic.h").read_text()
+        declaration = "typedef struct KfMagicRecord"
+        self.assertIn(declaration, magic_header)
+        self.assertNotIn(declaration, semantic_types)
+
+    def test_effect_layouts_live_in_the_effect_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        effect_header = (REPO / "include/kf/game_effect.h").read_text()
+        for structure in ("KfEffectRecord", "KfEffectRenderView"):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, effect_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_equipment_layouts_live_in_the_equipment_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        equipment_header = (
+            REPO / "include/kf/game_equipment.h"
+        ).read_text()
+        for structure in ("KfWeaponRecord", "KfArmorRecord"):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, equipment_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_player_layouts_live_in_the_player_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        player_header = (REPO / "include/kf/game_player.h").read_text()
+        self.assertNotIn("#include <kf/semantic_types.h>", player_header)
+        for structure in (
+            "KfPlayerProgressState",
+            "KfPlayerLevelGrowth",
+            "KfPlayerVitals",
+            "KfPlayerAttackChargeState",
+            "KfPlayerMotionState",
+            "KfPlayerState",
+            "KfFloorEntryCell",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, player_header)
+            self.assertNotIn(declaration, semantic_types)
+
+    def test_collision_layout_lives_in_the_collision_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        collision_header = (
+            REPO / "include/kf/game_collision.h"
+        ).read_text()
+        declaration = "typedef struct KfCollisionTarget"
+        self.assertIn(declaration, collision_header)
+        self.assertNotIn(declaration, semantic_types)
+        self.assertIn("extern KfCollisionTarget collision_target;", collision_header)
+
+    def test_render_layouts_live_in_their_owner_headers(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        owners = {
+            "render_types.h": ("KfPrimitiveBuffer", "KfOrderingTable"),
+            "game_asset.h": ("KfAssetHeader",),
+            "game_render.h": (
+                "KfSpriteQuad",
+                "KfHudSprite",
+                "KfEffectSprite",
+                "KfCellWindow",
+                "KfDisplayState",
+                "KfTmdState",
+                "KfRenderState",
+            ),
+            "notify.h": ("KfNotificationSprite",),
+            "open_render.h": (
+                "KfDisplayStateOpen",
+                "KfTmdStateOpen",
+                "KfRenderStateOpen",
+            ),
+        }
+        for header_name, structures in owners.items():
+            owner_header = (REPO / "include/kf" / header_name).read_text()
+            for structure in structures:
+                declaration = f"typedef struct {structure}"
+                self.assertIn(declaration, owner_header)
+                self.assertNotIn(declaration, semantic_types)
+
+    def test_sources_include_semantic_owner_headers_directly(self) -> None:
+        for source in (REPO / "src").rglob("*.c"):
+            self.assertNotIn(
+                "#include <kf/semantic_types.h>", source.read_text()
+            )
 
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
@@ -441,7 +659,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x8001A7A8]["target_name"], "collision_target")
         self.assertEqual(
             by_site[0x8001B2A4]["target_name"],
-            "player_weapon_load_records_and_mirror_angles",
+            "weapon_records_load_and_mirror_angles",
         )
         self.assertEqual(
             by_site[0x8002E9D4]["target_name"],
@@ -461,6 +679,35 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        expected_state = {
+            0x80057B30: ("player_previous_input", "load", "u32"),
+            0x80057E68: ("player_movement_velocity_limit", "bss", "s32"),
+            0x80057E70: ("player_turn_step_limit", "bss", "s32"),
+        }
+        for va, (name, storage, datatype) in expected_state.items():
+            datum = data_identities[("GAME.EXE", va)]
+            self.assertEqual(
+                (
+                    datum.name,
+                    datum.scope,
+                    datum.storage,
+                    datum.datatype,
+                    datum.owner,
+                    datum.confidence,
+                ),
+                (name, "static", storage, datatype, "player", "supported"),
+            )
+
+        _, structural_rows = read_tsv(RETAIL_CONFIG / "data.tsv")
+        structural_by_va = {
+            parse_int(row["va"]): row
+            for row in structural_rows
+            if row["image"] == "GAME.EXE"
+        }
+        self.assertEqual(structural_by_va[0x80057E68]["kind"], "bss")
+        self.assertEqual(structural_by_va[0x80057E70]["kind"], "bss")
+
     def test_player_update_relocations_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         campaign_rows = tuple(
@@ -474,11 +721,48 @@ class InventoryTests(unittest.TestCase):
         by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
         for site in (0x800187B8, 0x80018804, 0x80018838):
             self.assertEqual(by_site[site]["target_name"], "color_matrix_table")
+        expected_player_state = {
+            0x80018934: ("player_previous_input", "load"),
+            0x80018A5C: ("player_movement_velocity_limit", "bss"),
+            0x80018A7C: ("player_turn_step_limit", "bss"),
+        }
+        for site, (name, region) in expected_player_state.items():
+            self.assertEqual(
+                (by_site[site]["target_name"], by_site[site]["target_region"]),
+                (name, region),
+            )
         self.assertEqual(by_site[0x8001882C]["channel"], "instruction-word")
         self.assertEqual(
             by_site[0x80023600]["target_name"],
             "player_status_apply_effect4",
         )
+
+    def test_player_warp_campaign_matches_curated_identities(self) -> None:
+        evidence_path = CONFIG / "evidence/game_semantic_player_warp.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 4)
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+    def test_actor_definition_transition_call_is_named(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        call = next(
+            row
+            for row in rows
+            if row["image"] == "GAME.EXE"
+            and parse_int(row["site_va"]) == 0x8002FF30
+        )
+        self.assertEqual(
+            call["target_name"],
+            "actor_transform_definition5_to6",
+        )
+        self.assertEqual(call["status"], "reviewed")
 
     def test_collision_grid_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_collision_grid.tsv"
@@ -576,6 +860,40 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(units.count('source = "src/game/render_map_cells.c"'), 1)
         self.assertNotIn('source = "src/game/render_map_cell.c"', units)
 
+    def test_equipment_tu_is_gapless_and_supported(self) -> None:
+        evidence_path = CONFIG / "evidence/game_tu_equipment.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 3)
+
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in rows
+        ]
+        self.assertEqual(
+            spans,
+            [
+                (0x800150A8, 0x54),
+                (0x800150FC, 0x2C),
+                (0x80015128, 0x3C),
+            ],
+        )
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        units = (CONFIG / "units.toml").read_text()
+        self.assertEqual(units.count('source = "src/game/equipment.c"'), 1)
+        self.assertNotIn('source = "src/game/player_weapon.c"', units)
+        self.assertNotIn('source = "src/game/asset_aux_block.c"', units)
+
     def test_menu_runtime_tu_is_gapless_and_uses_one_unit(self) -> None:
         presentation_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
         runtime_path = CONFIG / "evidence/game_tu_menu_runtime.tsv"
@@ -610,6 +928,154 @@ class InventoryTests(unittest.TestCase):
             identity.parameters,
             "s32 value;s32 count;s32 pad_zero;s16 * out",
         )
+        release = load_function_identities(RETAIL_CONFIG, required=True)[
+            ("GAME.EXE", 0x8002AF0C)
+        ]
+        self.assertEqual(release.name, "menu_release_item_model")
+        self.assertEqual(release.owner, "menu")
+        pending = load_data_identities(RETAIL_CONFIG)[
+            ("GAME.EXE", 0x80057B6C)
+        ]
+        self.assertEqual(
+            (pending.name, pending.datatype, pending.owner),
+            ("menu_item_model_allocation_pending", "s32", "menu"),
+        )
+
+        _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        calls = [
+            row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+            and row["target_va"] == "0x8002af0c"
+        ]
+        self.assertEqual(len(calls), 8)
+        self.assertEqual(
+            {row["target_name"] for row in calls},
+            {"menu_release_item_model"},
+        )
+        state_references = [
+            row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+            and row["target_va"] == "0x80057b6c"
+        ]
+        self.assertEqual(len(state_references), 3)
+        self.assertEqual(
+            {row["target_name"] for row in state_references},
+            {"menu_item_model_allocation_pending"},
+        )
+        self.assertEqual(
+            {row["status"] for row in state_references},
+            {"reviewed"},
+        )
+
+    def test_pad_vendor_units_own_private_state_and_literals(self) -> None:
+        campaigns = (
+            ("GAME.EXE", "game_vendor_pad.tsv", 0x800500B8, 0x8005023C),
+            ("OPEN.EXE", "open_vendor_pad.tsv", 0x8002FE8C, 0x80030010),
+        )
+        campaign_addresses = {}
+        for image, filename, start, end in campaigns:
+            _, rows = read_tsv(CONFIG / f"evidence/{filename}")
+            self.assertEqual(len(rows), 6)
+            spans = [
+                (parse_int(row["va"]), parse_int(row["extent"]))
+                for row in rows
+            ]
+            self.assertEqual(spans[0][0], start)
+            self.assertEqual(spans[-1][0] + spans[-1][1], end)
+            for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+                self.assertEqual(va + extent, next_va)
+            campaign_addresses[image] = tuple(va for va, _extent in spans)
+
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        _, vendored_rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in vendored_rows
+        }
+        expected_names = (
+            "PadInit",
+            "PadRead",
+            "PadStop",
+            "pad_init_bad_identifier",
+            "pad_read_bad_identifier",
+            "pad_stop_bad_identifier",
+        )
+        for image, addresses in campaign_addresses.items():
+            for va, name in zip(addresses, expected_names):
+                self.assertNotIn((image, va), identities)
+                vendor = vendored[(image, va)]
+                self.assertEqual(vendor["name"], name)
+                self.assertEqual(
+                    (vendor["provider"], vendor["library"], vendor["confidence"]),
+                    (
+                        "Sony Computer Entertainment",
+                        "LIBETC.LIB",
+                        "sdk-lineage-supported",
+                    ),
+                )
+
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        expected_state = {
+            ("GAME.EXE", 0x80058020): ("pad_buf", "bss", "u32"),
+            ("GAME.EXE", 0x80058028): ("pad_status", "bss", "u32"),
+            ("GAME.EXE", 0x8006BD88): ("PadIdentifier", "bss", "s32"),
+            ("OPEN.EXE", 0x80037760): ("pad_buf", "load", "u32"),
+            ("OPEN.EXE", 0x80037768): ("pad_status", "load", "u32"),
+            ("OPEN.EXE", 0x80049528): ("PadIdentifier", "bss", "s32"),
+        }
+        expected_references = {
+            "pad_buf": 4,
+            "pad_status": 1,
+            "PadIdentifier": 6,
+        }
+        _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        for identity, (name, storage, datatype) in expected_state.items():
+            datum = data_identities[identity]
+            self.assertEqual(
+                (
+                    datum.name,
+                    datum.scope,
+                    datum.storage,
+                    datum.datatype,
+                    datum.owner,
+                    datum.confidence,
+                ),
+                (name, "static", storage, datatype, "pad", "supported"),
+            )
+            references = [
+                row
+                for row in relocations
+                if row["image"] == identity[0]
+                and row["target_va"] == f"0x{identity[1]:08x}"
+            ]
+            self.assertEqual(len(references), expected_references[name])
+            self.assertEqual({row["target_name"] for row in references}, {name})
+            self.assertEqual({row["status"] for row in references}, {"reviewed"})
+
+        sources = (
+            (REPO / "src/vendor/game_libetc_pad.c").read_text(),
+            (REPO / "src/vendor/open_libetc_pad.c").read_text(),
+        )
+        game_state = (REPO / "include/kf/game_state.h").read_text()
+        vendor_header = (REPO / "include/kf/psyq_pad.h").read_text()
+        for source in sources:
+            self.assertIn("static u32 pad_buf", source)
+            self.assertIn("static u32 pad_status", source)
+            self.assertIn("static s32 PadIdentifier;", source)
+            self.assertNotIn("DAT_", source)
+            for literal in (
+                "PAD_init: Bad PadIdentifier %d\\n",
+                "PAD_dr  : Bad PadIdentifier %d\\n",
+                "StopPAD : Bad PadIdentifier %d\\n",
+            ):
+                self.assertIn(literal, source)
+        self.assertNotIn("DAT_80058020", game_state)
+        self.assertNotIn("DAT_80058028", game_state)
+        self.assertIn("extern u32 PadInit(s32 identifier);", vendor_header)
+        self.assertIn("extern u32 PadRead();", vendor_header)
+        self.assertFalse((REPO / "include/kf/game_pad.h").exists())
 
     def test_menu_presentation_tu_and_interfaces_are_curated(self) -> None:
         evidence_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
@@ -677,7 +1143,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/game_semantic_projection_scratch.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 7)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -694,6 +1160,64 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             _structure_field("KfScreenVertex", 0x06), ("p2", "s16", 2)
+        )
+
+        enqueuers = rows[3:]
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in enqueuers
+        ]
+        self.assertEqual(
+            spans,
+            [
+                (0x8001C7F8, 0xF38),
+                (0x8001D730, 0x6E8),
+                (0x8001DE18, 0x418),
+                (0x8001E230, 0x250),
+            ],
+        )
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        data = load_data_identities(RETAIL_CONFIG)
+        self.assertEqual(
+            [
+                (data[("GAME.EXE", va)].name, data[("GAME.EXE", va)].datatype)
+                for va in (0x80057B58, 0x80057B5C, 0x80057B60, 0x80057B64)
+            ],
+            [
+                ("tmd_textured_primitive_color", "CVECTOR"),
+                ("model_textured_primitive_color", "CVECTOR"),
+                ("map_textured_primitive_color", "CVECTOR"),
+                ("render_sprite_light_normal", "SVECTOR"),
+            ],
+        )
+
+        source = (REPO / "src/game/render_enqueuers.c").read_text()
+        self.assertEqual(source.count("\nADDRESS("), 4)
+        self.assertEqual(source.count("\nDATA("), 4)
+        self.assertNotIn("DAT_80057b63", source)
+        self.assertNotIn("DAT_80057b64", source)
+        for obsolete in (
+            "src/game/render_enqueue.c",
+            "src/game/render_enqueue_tmd.c",
+            "src/game/render_enqueue_model.c",
+        ):
+            self.assertFalse((REPO / obsolete).exists())
+
+        _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        by_site = {
+            parse_int(row["site_va"]): row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+        }
+        self.assertEqual(
+            by_site[0x8001DE98]["target_name"],
+            "map_textured_primitive_color",
+        )
+        self.assertEqual(
+            by_site[0x8001E41C]["target_name"],
+            "render_sprite_light_normal",
         )
 
     def test_map_resources_campaign_matches_curated_identities(self) -> None:
@@ -1699,6 +2223,31 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x80017408]["target_name"], "tmd_projection_shift")
         self.assertEqual(by_site[0x8001741C]["target_name"], "ReadSZ2")
         self.assertEqual(by_site[0x800190C0]["target_name"], "tmd_project_vertices")
+
+    def test_game_open_diagnostic_sink_is_semantically_modeled(self) -> None:
+        evidence_path = CONFIG / "evidence/game_open_semantic_diagnostic_sink.tsv"
+        _, rows = read_tsv(evidence_path)
+        self.assertEqual(len(rows), 2)
+
+        functions = load_function_identities(RETAIL_CONFIG, required=True)
+        expected = {
+            ("GAME.EXE", 0x8003AC34),
+            ("OPEN.EXE", 0x8001A814),
+        }
+        self.assertEqual(
+            {(row["image"], parse_int(row["va"])) for row in rows}, expected
+        )
+        for row in rows:
+            identity = functions[(row["image"], parse_int(row["va"]))]
+            self.assertEqual(
+                (identity.name, identity.return_type, identity.parameters),
+                ("debug_printf_sink", "void", "const char *format;..."),
+            )
+            self.assertEqual(
+                row["final_signature"],
+                "void debug_printf_sink(const char *format, ...)",
+            )
+            self.assertIn(evidence_path.name, identity.evidence)
 
     def test_map_resources_relocations_and_data_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

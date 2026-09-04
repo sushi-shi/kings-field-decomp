@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /* Positioned option label: origin then glyph codes terminated by -1. */
@@ -32,7 +32,7 @@ s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
     highlight = 0;
     prev_pad = 0;
     result = -99;
-    while (pad_read(1) != 0) {
+    while (PadRead(1) != 0) {
     }
 
     opt0.x = 0x60;
@@ -105,14 +105,14 @@ opt0_done:
                 (const MenuGlyphString *)&opt1,
                 selected, highlight);
             menu_present_frame();
-            while (pad_read(1) != 0) {
+            while (PadRead(1) != 0) {
             }
             return result;
         }
 
         highlight = 0;
         menu_frame_begin();
-        pad = pad_read(1);
+        pad = PadRead(1);
         if (((pad & 0x1000) == 0 || (prev_pad & 0x1000) != 0) &&
             ((pad & 0x4000) == 0 || (prev_pad & 0x4000) != 0)) {
             if ((pad & 0x20) == 0 || (prev_pad & 0x20) != 0) {

@@ -123,6 +123,48 @@ class ClaimBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "already claimed"):
             self._bind((Claim(0x80010000, 0x10, "first", 1),), {("GAME.EXE", 0x80010000): "other"})
 
+    def test_claim_scope_must_match_function_ownership(self) -> None:
+        vendored = Function(
+            "GAME.EXE",
+            0x80010000,
+            0x10,
+            0x10,
+            1,
+            "vendor_entry",
+            "test",
+            "test",
+            "Sony Computer Entertainment",
+            "LIBETC.LIB",
+        )
+        catalog = _catalog(vendored)
+        claim = (Claim(0x80010000, 0x10, "vendor_entry", 1),)
+        arguments = (
+            Path("units.toml"),
+            "game.vendor",
+            "GAME.EXE",
+            Path("src/vendor/unit.c"),
+            claim,
+            catalog,
+            {},
+            {},
+        )
+        with self.assertRaisesRegex(ValueError, "scope = .vendored."):
+            _bind_claims(*arguments)
+        self.assertEqual(_bind_claims(*arguments, "vendored"), (vendored,))
+
+        with self.assertRaisesRegex(ValueError, "claims non-vendored"):
+            _bind_claims(
+                Path("units.toml"),
+                "game.vendor",
+                "GAME.EXE",
+                Path("src/vendor/unit.c"),
+                (Claim(0x80010010, 0x20, "second", 1),),
+                self.catalog,
+                self.identities,
+                {},
+                "vendored",
+            )
+
 
 
 class DataClaimBindingTests(unittest.TestCase):

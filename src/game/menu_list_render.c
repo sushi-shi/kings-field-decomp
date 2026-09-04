@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /* Positioned glyph run: origin then codes terminated by -1. */

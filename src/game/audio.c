@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/audio.h>
 #include <kf/psyq_audio.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>

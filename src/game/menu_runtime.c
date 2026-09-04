@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /*
@@ -575,30 +575,30 @@ void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
     }
 }
 
-/* Load and register the selected item model, preserving the pending owner. */
+/* Release the previous item model, then load and register the selection. */
 ADDRESS(0x8002aea4, 0x68)
 u32 menu_load_item_model(s32 id)
 {
     void *asset;
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if (id != 0xff) {
         if (cd_file_load_table_entry(&asset, id) != 0) {
             return 1;
         }
         tmd_register(4, asset);
-        pending_game_state = 1;
+        menu_item_model_allocation_pending = 1;
     }
     DAT_80057b72 = 0;
     return 0;
 }
 
 ADDRESS(0x8002af0c, 0x3c)
-void game_state_acknowledge_pending(void)
+void menu_release_item_model(void)
 {
-    if (pending_game_state == 1) {
+    if (menu_item_model_allocation_pending == 1) {
         tmd_release_last_allocation(4);
-        pending_game_state = 0;
+        menu_item_model_allocation_pending = 0;
     }
 }
 

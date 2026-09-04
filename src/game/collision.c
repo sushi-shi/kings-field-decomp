@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_collision.h>
 #include <kf/game.h>
 
 /*

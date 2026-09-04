@@ -1,6 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
-#include <kf/game.h>
+#include <kf/game_render.h>
 
 /*
  * Vertex projection primitives that feed the polygon emitters.  Each walks the

@@ -1,7 +1,9 @@
 #ifndef KF_OPEN_OPENING_RENDER_H
 #define KF_OPEN_OPENING_RENDER_H
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
+#include <kf/open_resources.h>
+#include <kf/psyq.h>
 
 extern void opening_render_frame(
     const VECTOR *position, const SVECTOR *rotation);

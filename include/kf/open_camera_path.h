@@ -1,7 +1,7 @@
 #ifndef KF_OPEN_CAMERA_PATH_H
 #define KF_OPEN_CAMERA_PATH_H
 
-#include <kf/semantic_types.h>
+#include <kf/game_map.h>
 
 extern KfCameraPathState opening_camera_path_state;
 

@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /*
@@ -13,6 +13,7 @@
 ADDRESS(0x80036e30, 0x8)
 void func_80036e30(void)
 {
+    /* Unreferenced return stub; purpose and original owner are unresolved. */
 }
 
 ADDRESS(0x80036e38, 0xc8)

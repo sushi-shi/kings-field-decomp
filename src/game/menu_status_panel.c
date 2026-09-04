@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 
@@ -120,14 +120,14 @@ void menu_status_panel(void)
         }
 
         if (frame == 2) {
-            while (pad_read(1) != 0) {
+            while (PadRead(1) != 0) {
             }
             goto advance;
         }
-        input = pad_read(1);
+        input = PadRead(1);
         if (input != 0) {
             menu_play_input_sound(2);
-            while (pad_read(1) != 0) {
+            while (PadRead(1) != 0) {
             }
             return;
         }

@@ -1,5 +1,9 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_resources.h>
+#include <kf/resources.h>
+#include <kf/game_equipment.h>
+#include <kf/game_map.h>
+#include <kf/game_player.h>
 #include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
@@ -50,9 +54,10 @@ void common_resources_load(void)
     asset_registry_set(0x15, stream + 4);
     block = STREAM_NEXT(stream);
     memcpy(render_cell_windows, block + 4, sizeof render_cell_windows);
-    player_weapon_load_records_and_mirror_angles(
+    weapon_records_load_and_mirror_angles(
         (const KfWeaponRecord *)(STREAM_NEXT(stream) + 4));
-    asset_aux_block_load((u32 *)(STREAM_NEXT(stream) + 4));
+    armor_records_load(
+        (const KfArmorRecord *)(STREAM_NEXT(stream) + 4));
     magic_load_records(STREAM_NEXT(stream) + 4);
     map_object_definitions_load(
         (KfMapObjectDefinition *)(STREAM_NEXT(stream) + 4));

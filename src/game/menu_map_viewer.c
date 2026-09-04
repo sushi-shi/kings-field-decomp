@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 
@@ -94,13 +94,13 @@ void menu_map_viewer(s32 item_code)
         if (frame < 2) {
             frame++;
         } else if (frame == 2) {
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             frame++;
         } else {
-            if (pad_read(1) == 0)
+            if (PadRead(1) == 0)
                 continue;
-            while (pad_read(1) != 0)
+            while (PadRead(1) != 0)
                 ;
             return;
         }

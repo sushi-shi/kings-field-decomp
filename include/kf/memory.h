@@ -3,7 +3,7 @@
 
 /* Shared GAME/OPEN LIFO arena and heap-allocation interface. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
 
 extern u8 *memory_arena_start;
 extern u8 *memory_arena_end;

@@ -5,19 +5,21 @@ Structure recovery is a first-class part of the semantic inventory:
 - `config/retail/structures.tsv` records each target type and complete size;
 - `config/retail/structure_fields.tsv` records every field's offset, extent,
   datatype, semantic confidence, evidence, and note;
-- `include/kf/game_types.h` and `include/kf/semantic_types.h` are the C forms
-  used by reconstructions.
+- the ordered owner headers under `include/kf/` are the C forms used by
+  reconstructions; `semantic_types.h` is now a compatibility umbrella and
+  defines no layouts of its own.
 
-`kf inventory check` calculates the PlayStation 32-bit C layout from both
-headers and compares it with both TSVs. It rejects missing types or fields and
-any disagreement in size, offset, extent, name, or datatype. A full `kf build`
-also compiles the header's size/offset assertions with the pinned target
-compiler.
+`kf inventory check` calculates the PlayStation 32-bit C layout from those
+headers and compares it with both TSVs. It rejects missing or duplicate types
+and fields and any disagreement in size, offset, extent, name, or datatype.
+The repository deliberately carries no compile-time size/offset assertions.
 
-The current inventory contains 38 structures and 322 fields. Of those fields,
-247 have candidate-or-better meanings; 75 ranges are explicitly `opaque`.
+The current inventory contains 71 structures and 635 fields. Of those fields,
+521 have candidate-or-better meanings; 114 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
+
+Selected checked layouts:
 
 | Structure | Size | Structure | Size |
 | --- | ---: | --- | ---: |

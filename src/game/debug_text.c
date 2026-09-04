@@ -1,6 +1,6 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
-#include <kf/game.h>
+#include <kf/debug.h>
+#include <kf/game_types.h>
 
 /*
  * Custom text-formatting / debug band 0x8003a7dc..0x8003ac4b (GAME.EXE).
@@ -20,7 +20,7 @@
  *                     %0<width> zero-pad, and '\n' emitted as '\r'. The third
  *                     argument is the base of the caller's 4-byte argument
  *                     slots (a va_list-style pointer).
- *   debug_print       variadic diagnostic sink; in this build it only spills
+ *   debug_printf_sink variadic diagnostic sink; in this build it only spills
  *                     its argument registers and returns (output disabled).
  *
  * format_number_buffer is anchored at the address the itoa helpers reference
@@ -42,7 +42,7 @@ static char format_number_buffer[24];
 ADDRESS(0x8003a7dc, 0x40)
 void debug_stop(void)
 {
-    debug_print("DEBUG STOP !!!\n");
+    debug_printf_sink("DEBUG STOP !!!\n");
     debug_stop_flag = debug_stop_flag == 0;
 }
 
@@ -199,11 +199,12 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
 }
 
 ADDRESS(0x8003ac34, 0x18)
-void debug_print(int __builtin_va_alist)
+void debug_printf_sink(const char *format, ...)
 {
 }
 
 ADDRESS(0x8003ac4c, 0x8)
 void func_8003ac4c(void)
 {
+    /* Unreferenced return stub at the game/runtime boundary. */
 }

@@ -65,6 +65,7 @@ class Unit:
     data: tuple[Datum, ...] = ()
     rodata: tuple[int, int] | None = None
     defines: tuple[str, ...] = ()
+    scope: str = "decomp"
 
     @property
     def va(self) -> int:
@@ -183,6 +184,7 @@ def _bind_claims(
     catalog,
     identities: dict[tuple[str, int], str],
     claimed: dict[tuple[str, int], str],
+    unit_scope: str = "decomp",
 ) -> tuple[Function, ...]:
     """Validate one source's claims and return its admitted functions in order."""
     functions: list[Function] = []
@@ -192,8 +194,16 @@ def _bind_claims(
         function = starts.get(claim.va)
         if function is None:
             raise ValueError(f"{where}: ADDRESS({claim.va:#x}) is not an admitted {image} function")
-        if function.scope == "vendored":
-            raise ValueError(f"{where}: {function.symbol} is vendored library code")
+        if function.scope != unit_scope:
+            if function.scope == "vendored":
+                raise ValueError(
+                    f"{where}: {function.symbol} is vendored library code; "
+                    "the unit must declare scope = \"vendored\""
+                )
+            raise ValueError(
+                f"{where}: vendored verification unit claims non-vendored "
+                f"function {function.symbol}"
+            )
         if function.fragments != 1:
             raise ValueError(f"{where}: {function.symbol} is fragmented")
         if claim.size != function.body_size:
@@ -371,7 +381,7 @@ def load(
         if not isinstance(row, dict):
             raise ValueError(f"{path}: unit #{index} is not a table")
         required = {"unit", "image", "source", "profile"}
-        optional = {"bind", "defines"}
+        optional = {"bind", "defines", "scope"}
         missing = required - set(row)
         extra = set(row) - required - optional
         if "va" in extra:
@@ -399,6 +409,11 @@ def load(
             raise ValueError(f"{path}: unit {name!r} source must be repo-relative")
         source_path = REPO / source
         profile = profiles[profile_name]
+        scope = str(row.get("scope", "decomp"))
+        if scope not in {"decomp", "vendored"}:
+            raise ValueError(
+                f"{path}: unit {name!r} scope must be 'decomp' or 'vendored'"
+            )
         if source.suffix.lower() not in LANGUAGE_SUFFIXES[profile.language]:
             raise ValueError(
                 f"{path}: unit {name!r} source suffix does not match {profile.language}"
@@ -466,7 +481,17 @@ def load(
             rodata = (claim.va, claim.size)
         if not claims:
             raise ValueError(f"{path}: unit {name!r} source has no ADDRESS() claim: {source}")
-        functions = _bind_claims(path, name, image, source, claims, catalog, identities, claimed)
+        functions = _bind_claims(
+            path,
+            name,
+            image,
+            source,
+            claims,
+            catalog,
+            identities,
+            claimed,
+            scope,
+        )
         data = _bind_data_claims(name, image, source, data_claims, curated_data, claimed_data)
         if units and units[-1].image == image and units[-1].va >= functions[0].va:
             raise ValueError(
@@ -474,7 +499,17 @@ def load(
                 f"{units[-1].unit!r} at {units[-1].va:#x}; units follow the linked order"
             )
         units.append(
-            Unit(name, image, source.as_posix(), profile_name, functions, data, rodata, defines)
+            Unit(
+                name,
+                image,
+                source.as_posix(),
+                profile_name,
+                functions,
+                data,
+                rodata,
+                defines,
+                scope,
+            )
         )
         for ordinal, (claim, function) in enumerate(zip(claims, functions)):
             binding_rows.append({

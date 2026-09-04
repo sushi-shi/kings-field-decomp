@@ -31,10 +31,12 @@ globals therefore form one contiguous actor subsystem. The old Ghidra-derived
 identities for addresses inside the two arrays were fields/elements, not
 separate C globals; curation replaces them with the owning array extents.
 
-`KfActorDefinition`, `KfActorActionProfile`, `SoundRef`, and `KfActor` are
-declared in `include/kf/semantic_types.h`; the structure inventory validates
-their exact `0x98`, `0x0a`, `0x03`, and `0x48` sizes. Unknown bytes remain
-explicit padding. The currently supported actor fields include the slot/free
+`include/kf/game_actor.h` owns `KfActorDefinition`, `KfActorActionProfile`,
+`KfActorPlacement`, `KfActor`, the complete `KfActorState` aggregate, and the
+actor-owned globals and operations. The packed `SoundRef` embedded by actor
+definitions remains owned by `include/kf/audio.h`. The structure inventory
+validates all of these layouts; unknown bytes remain explicit padding. The
+currently supported actor fields include the slot/free
 marker, definition ID, tile/local/world positions, lifecycle,
 action and timer, animation phase and step, health, rotation, and movement
 components. Definition fields used by the reviewed functions include collision

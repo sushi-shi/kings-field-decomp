@@ -701,6 +701,26 @@ class ModuleObjectTests(unittest.TestCase):
         self.assertEqual(names["only"][5], section_names.index(".text") + 1)
         self.assertEqual(names["callee"][5], 0)  # undefined
 
+    def test_module_preserves_static_bss_eight_byte_alignment(self) -> None:
+        function = Function("GAME.EXE", 0x80010000, 8, 8, 1, "only", "test", "test")
+        carved = {0x80010000: (struct.pack("<2I", 0x03E00008, 0), [])}
+        module = Module(
+            "GAME.EXE", "game.unit", "unit", (0x80010000,),
+            (
+                Datum(0x80058020, 4, "first", "bss", "static"),
+                Datum(0x80058028, 4, "second", "bss", "static"),
+                Datum(0x8006BD88, 4, "third", "bss", "static"),
+            ),
+        )
+        built = _module_object(module, {function.va: function}, carved)
+        self.assertEqual(built.bss_size, 0x14)
+        sections = elf_sections(built.data)
+        self.assertEqual(sections[".bss"][5], 0x20)
+        names = {name: symbol for name, symbol in elf_symbols(built.data)}
+        self.assertEqual(names["first"][1], 0)
+        self.assertEqual(names["second"][1], 8)
+        self.assertEqual(names["third"][1], 0x10)
+
 
 class ModuleRodataTests(unittest.TestCase):
     def test_module_rodata_rebases_in_module_code_pointers(self) -> None:

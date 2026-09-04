@@ -1,5 +1,6 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_actor.h>
+#include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
@@ -905,7 +906,7 @@ void actor_update_current_action(void)
         break;
     case 127:
         if (player_state.progress_state.current_floor == 4 && actor->definition_id == 5) {
-            func_80036d3c(actor);
+            actor_transform_definition5_to6(actor);
             actor_initialize(actor);
             return;
         }

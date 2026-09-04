@@ -1,7 +1,7 @@
 #ifndef KF_OPEN_OPENING_HELPERS_H
 #define KF_OPEN_OPENING_HELPERS_H
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
 
 extern u32 opening_input_action;
 

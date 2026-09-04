@@ -184,12 +184,30 @@ def current_state(
         base = _base_path(unit)
         digest = input_hash(unit, manifest, scanner)
         unit_scores = report_scores.get(unit.image, {}).get(unit.unit)
+        if unit.scope == "vendored" and unit_scores is None:
+            failures.append(
+                f"{unit.image}: vendored source-verification unit "
+                f"{unit.unit!r} is absent from the objdiff report"
+            )
         for function in unit.functions:
-            target = universe[(unit.image, function.va)]
+            identity = unit.image, function.va
+            target = universe.get(identity)
+            if target is None:
+                target = Target(
+                    function.image,
+                    function.va,
+                    function.symbol,
+                    function.body_size,
+                )
             pct = None if unit_scores is None else unit_scores.get(function.symbol)
             if unit_scores is not None and pct is None:
                 failures.append(
                     f"{unit.image}: report unit {unit.unit!r} lacks function {function.symbol}"
+                )
+            elif unit.scope == "vendored" and pct is not None and pct != 100.0:
+                failures.append(
+                    f"{unit.image}: vendored source verification {function.symbol} "
+                    f"is {pct:.9f}%, expected 100%"
                 )
             rows.append(Current(
                 target,
@@ -202,6 +220,11 @@ def current_state(
     return manifest, universe, rows, failures
 
 
+def _eligible_rows(rows: Iterable[Current]) -> list[Current]:
+    """Progress rows only; vendored source verification never enters the ledger."""
+    return [row for row in rows if row.unit.scope == "decomp"]
+
+
 def _summary(
     images: Iterable[str], universe: dict[tuple[str, int], Target], rows: list[Current],
     *, loose: bool,
@@ -210,7 +233,11 @@ def _summary(
     result: dict[str, dict[str, int | float]] = {}
     for image in images:
         targets = [target for target in universe.values() if target.image == image]
-        current = [row for row in rows if row.target.image == image]
+        current = [
+            row for row in rows
+            if row.target.image == image
+            and (row.target.image, row.target.va) in universe
+        ]
         scored = [row for row in current if row.pct is not None]
         exact = [row for row in scored if row.pct is not None and row.pct >= threshold]
         eligible_code = sum(target.code_size for target in targets)
@@ -274,12 +301,13 @@ def snapshot(
 ) -> tuple[dict, list[str]]:
     selected = tuple(images)
     _manifest, universe, rows, failures = current_state(selected)
+    eligible_rows = _eligible_rows(rows)
     baseline = {
         identity: row for identity, row in load_baseline().items()
-        if identity[0] in selected
+        if identity[0] in selected and identity in universe
     }
-    buckets = classifications(rows, baseline)
-    summaries = _summary(selected, universe, rows, loose=loose)
+    buckets = classifications(eligible_rows, baseline)
+    summaries = _summary(selected, universe, eligible_rows, loose=loose)
     totals: dict[str, int | float] = {}
     integer_fields = (
         "eligible_functions", "manifested_functions", "compiled_functions",
@@ -305,6 +333,15 @@ def snapshot(
         "total": totals,
         "changes": {name.lower(): len(values) for name, values in buckets.items()},
         "failures": failures,
+        "vendored_verification": {
+            "functions": sum(row.unit.scope == "vendored" for row in rows),
+            "compiled": sum(
+                row.compiled for row in rows if row.unit.scope == "vendored"
+            ),
+            "exact": sum(
+                row.pct == 100.0 for row in rows if row.unit.scope == "vendored"
+            ),
+        },
     }
     return document, failures
 
@@ -343,15 +380,23 @@ def print_status(
     changes = document["changes"]
     nonzero = [f"{name}={count}" for name, count in changes.items() if count]
     print("ledger: " + (", ".join(nonzero) if nonzero else "no changes"))
+    verification = document["vendored_verification"]
+    if verification["functions"]:
+        print(
+            "vendored source verification: "
+            f"{verification['exact']}/{verification['functions']} exact, "
+            f"{verification['compiled']} compiled"
+        )
     for failure in failures:
         print(f"WARNING: {failure}", file=sys.stderr)
     if show_all:
         _manifest, _universe, rows, _failures = current_state(selected)
         for row in sorted(rows, key=lambda item: (item.target.image, item.target.va)):
             pct = "n/a" if row.pct is None else f"{row.pct:.6f}%"
+            suffix = " [vendored verification]" if row.unit.scope == "vendored" else ""
             print(
                 f"{image_key(row.target.image)}:{row.target.va:#010x} "
-                f"{row.unit.unit} {pct}"
+                f"{row.unit.unit} {pct}{suffix}"
             )
     return 0
 
@@ -379,12 +424,13 @@ def check(
     images: Iterable[str] = IMAGE_LAYOUTS, *, strict: bool = False,
 ) -> int:
     selected = tuple(images)
-    _manifest, _universe, rows, failures = current_state(selected)
+    _manifest, universe, rows, failures = current_state(selected)
+    eligible_rows = _eligible_rows(rows)
     baseline = {
         identity: row for identity, row in load_baseline().items()
-        if identity[0] in selected
+        if identity[0] in selected and identity in universe
     }
-    buckets = classifications(rows, baseline)
+    buckets = classifications(eligible_rows, baseline)
     print_status(selected)
     bad = bool(failures or buckets["REGRESS"] or buckets["LOST"])
     strict_changed = [
@@ -537,10 +583,14 @@ def bank(
             "refusing to bank from unstaged/untracked build inputs:\n"
             f"{shown}\nstage or commit them first (`kf bank --dirty` overrides)"
         )
-    _manifest, _universe, rows, failures = current_state()
+    _manifest, universe, rows, failures = current_state()
     if failures:
         raise ValueError("refusing to bank: " + "; ".join(failures))
-    old = load_baseline()
+    rows = _eligible_rows(rows)
+    old = {
+        identity: row for identity, row in load_baseline().items()
+        if identity in universe
+    }
     units = tuple(dict.fromkeys(selected_units or ()))
     functions = tuple(dict.fromkeys(selected_functions or ()))
     output = _bank_rows(rows, old, units, functions)

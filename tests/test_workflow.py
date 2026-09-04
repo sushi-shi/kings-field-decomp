@@ -17,6 +17,7 @@ from scripts.kf.progress import (
     Current,
     Target,
     _bank_rows,
+    _eligible_rows,
     _report_scores,
     _summary,
     classifications,
@@ -61,8 +62,22 @@ class ManifestTests(unittest.TestCase):
         )
         self.assertTrue(all(unit.source_path.is_file() for unit in manifest.units))
         self.assertTrue(all(
-            function.scope == "decomp"
+            function.scope == unit.scope
             for unit in manifest.units for function in unit.functions
+        ))
+        vendor_units = {
+            unit.unit: unit
+            for unit in manifest.units
+            if unit.scope == "vendored"
+        }
+        self.assertEqual(
+            set(vendor_units),
+            {"game.intr_tail", "game.pad", "open.pad"},
+        )
+        self.assertTrue(all(
+            function.scope == "vendored"
+            for unit in vendor_units.values()
+            for function in unit.functions
         ))
         # Units follow the linked order inside each image, and every unit is a
         # contiguous run of ascending claims.
@@ -75,6 +90,25 @@ class ManifestTests(unittest.TestCase):
 
 
 class ProgressTests(unittest.TestCase):
+    def test_vendored_verification_rows_do_not_enter_progress(self) -> None:
+        row = sample_current(100.0)
+        vendored = Current(
+            row.target,
+            Unit(
+                row.unit.unit,
+                row.unit.image,
+                row.unit.source,
+                row.unit.profile,
+                row.unit.functions,
+                scope="vendored",
+            ),
+            row.input_sha256,
+            row.pct,
+            row.compiled,
+            row.scored,
+        )
+        self.assertEqual(_eligible_rows([row, vendored]), [row])
+
     def test_exact_is_strict_unless_loose_is_requested(self) -> None:
         row = sample_current(99.997)
         universe = {(row.target.image, row.target.va): row.target}

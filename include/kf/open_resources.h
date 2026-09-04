@@ -3,7 +3,28 @@
 
 /* OPEN.EXE resource loading and its opening-only placement consumer. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_map.h>
+
+/* OPEN title-scene entity and its 32-slot runtime pool. */
+typedef struct KfOpeningEntity {
+    u8 object_id;
+    u8 unknown_01;
+    u16 cell_x;
+    u16 cell_z;
+    u8 unknown_06[2];
+    VECTOR position;
+    struct KfEulerAngles rotation;
+    u16 unknown_1e;
+    SVECTOR scale;
+} KfOpeningEntity;
+
+typedef struct KfOpeningEntityState {
+    KfOpeningEntity entities[32];
+    u8 unknown_500[10];
+    u16 unknown_control_50a;
+    u16 unknown_control_50c;
+    u16 unknown_control_50e;
+} KfOpeningEntityState;
 
 extern KfOpeningEntityState opening_entity_state;
 

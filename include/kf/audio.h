@@ -4,9 +4,45 @@
 /*
  * GAME/OPEN audio glue over the Psy-Q sequence and SPU services. Some policy
  * entry points are overlay-specific, while VAB load/close is shared.
+ *
+ * These layouts belong to that boundary rather than the semantic catch-all:
+ * SoundRef is the packed game sound selector, and KfAudioState is GAME's
+ * proved sequence/listener/voice aggregate.
  */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
+#include <kf/psyq.h>
+
+typedef struct SoundRef {
+    u8 program;
+    u8 tone;
+    u8 note;
+} SoundRef;
+
+typedef struct KfAudioVoiceSlots {
+    s16 voice_ids[10];
+    s16 vab_ids[10];
+    s16 programs[10];
+    s16 tones[10];
+    s16 notes[10];
+} KfAudioVoiceSlots;
+
+typedef struct KfAudioState {
+    u8 *vab_header;
+    s16 active_vab_id;
+    u8 unknown_06[2];
+    u8 *sequence_buffer;
+    s16 sequence_id;
+    u8 unknown_0e[2];
+    s32 sequence_active;
+    VECTOR listener_position;
+    SVECTOR listener_rotation;
+    KfAudioVoiceSlots voice_slots;
+} KfAudioState;
+
+extern u8 audio_sequence_table[];
+extern KfAudioState audio_state;
+extern s32 audio_voice_slot_index;
 
 extern void audio_initialize(void);
 extern void audio_shutdown(void);

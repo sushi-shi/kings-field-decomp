@@ -1,5 +1,6 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_collision.h>
+#include <kf/game_effect.h>
 #include <kf/game.h>
 
 /* Per-attribute collision shape record in map_cell_attribute_height_table+0x200. */

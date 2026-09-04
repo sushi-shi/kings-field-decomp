@@ -4,8 +4,9 @@
 #include <kf/game.h>
 
 ADDRESS(0x80014268, 0x24)
-void func_80014268(int *destination, int count, int value)
+void repeat_store_word(int *destination, int count, int value)
 {
+    /* Retail deliberately stores to the same word on every iteration. */
     while (count-- != 0) {
         *destination = value;
     }
@@ -19,10 +20,10 @@ void func_80014268(int *destination, int count, int value)
 ADDRESS(0x8001428c, 0x88)
 void main(s32 entry_arg0, u32 *entry_args)
 {
-    func_80014268((int *)0x80058060, 0x67fe8, 0);
+    repeat_store_word((int *)0x80058060, 0x67fe8, 0);
     InitHeap((u32 *)0x800a0980, 0x157680);
     CdInit();
-    pad_initialize(0);
+    PadInit(0);
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();

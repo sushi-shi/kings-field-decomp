@@ -7,6 +7,13 @@ per-function dossiers are in
 `config/evidence/game_semantic_display_tmd.tsv`; `kf lineage` checks all 541
 instructions admitted by this campaign.
 
+GAME's reconstructed `game.render` module now owns the filled contiguous run
+`0x8001b7b0..0x8001c60c`.  The former `game.display` split ended immediately
+before `render_initialize`, which `display_initialize` calls directly, and
+both halves operate on the same graphics state family with the same compiler
+profile.  That is enough evidence to consolidate the reconstruction unit; the
+module boundary remains WIP rather than a claim about the historical filename.
+
 ## Function identities
 
 | Action | GAME | OPEN | Contract |
@@ -50,13 +57,19 @@ typedef struct KfTmdObject {
     u32 normal_offset;     /* +0x08 */
     u32 normal_count;      /* +0x0c */
     u32 primitive_offset;  /* +0x10 */
-    u32 primitive_count;   /* +0x14 */
+    u16 primitive_count;   /* +0x14 */
+    u16 primitive_count_high; /* +0x16 */
     s32 scale;             /* +0x18 */
 } KfTmdObject; /* 0x1c */
 ```
 
-These are checked definitions in `include/kf/semantic_types.h`, not inferred
-names in prose. `config/retail/structures.tsv` records the complete sizes and
+`KfPrimitiveBuffer` is shared by the two overlays through
+`include/kf/render_types.h`. `KfTmdObject`, the TMD header and primitive packet
+bodies, and the shared projected-vertex record are checked definitions in
+`include/kf/tmd.h`, not inferred names in prose. Overlay-specific display,
+TMD-registration, and render-state aggregates live in `game_render.h` and
+`open_render.h`.
+`config/retail/structures.tsv` records the complete sizes and
 `structure_fields.tsv` records every field offset, size, type, confidence, and
 evidence.
 

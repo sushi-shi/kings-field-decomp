@@ -9,7 +9,8 @@
  * spellings remain unresolved WIP identities.
  */
 
-#include <kf/semantic_types.h>
+#include <kf/game_save.h>
+#include <kf/psyq.h>
 
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
@@ -113,6 +114,7 @@ extern MenuGlyphRow item_name_rows[80];
 extern MenuGlyphRow magic_name_rows[9];
 extern u16 item_buy_prices[80][2];
 extern u16 item_sell_prices[80][2];
+extern s32 menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
 extern void item_menu_root(s32 arg);
@@ -152,6 +154,7 @@ extern s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
 extern void menu_list_render(const KfMenuList *list);
 extern u32 menu_load_item_model(s32 id);
 extern u32 menu_load_item_texture(s32 id);
+extern void menu_release_item_model(void);
 extern s32 menu_load_panel(void);
 extern s32 menu_magic_panel(void);
 extern void menu_map_viewer(s32 item_code);

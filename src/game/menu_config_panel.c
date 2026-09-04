@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/game_menu.h>
 #include <kf/game.h>
 
 /*
@@ -45,7 +45,7 @@ void menu_config_panel(void)
     confirm = 0;
     phase = -99;
     prev = 0;
-    while (pad_read(1) != 0) {
+    while (PadRead(1) != 0) {
     }
 
     la = (MenuGlyphString *)&params.pt_a;
@@ -78,7 +78,7 @@ void menu_config_panel(void)
             menu_config_panel_draw(params);
             menu_draw_window(6, 5, row, confirm);
             menu_present_frame();
-            while (pad_read(1) != 0) {
+            while (PadRead(1) != 0) {
             }
         }
         if (phase != -99) {
@@ -97,7 +97,7 @@ void menu_config_panel(void)
         }
         confirm = 0;
         menu_frame_begin();
-        pad = pad_read();
+        pad = PadRead();
         if ((pad & 0x1000) == 0 || (prev & 0x1000) != 0) {
             if ((pad & 0x4000) == 0 || (prev & 0x4000) != 0) {
                 if (((pad & 0x2000) == 0 || (prev & 0x2000) != 0) &&

@@ -1,7 +1,8 @@
 #ifndef KF_OPEN_SCENE0_H
 #define KF_OPEN_SCENE0_H
 
-#include <kf/semantic_types.h>
+#include <kf/audio.h>
+#include <kf/game_map.h>
 
 extern KfCameraPathPoint opening_scene0_camera_path[17];
 extern SoundRef opening_scene0_sound;

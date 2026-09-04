@@ -1,16 +1,130 @@
 #ifndef KF_GAME_ACTOR_H
 #define KF_GAME_ACTOR_H
 
-/*
- * Actor and combatant prototypes.
- *
- * Generated during extern-crutch removal: declarations that were duplicated
- * as `extern` across src/game/*.c now live here once. DAT_/func_ spellings
- * remain unresolved WIP identities. Byte-neutral: a declaration never changes
- * codegen.
- */
+/* Actor and combatant layouts, state, and operations. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_types.h>
+#include <kf/psyq.h>
+#include <kf/audio.h>
+#include <kf/game_math.h>
+
+/*
+ * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
+ * pool of 128 0x48-byte live actors. Only reviewed fields are named; the
+ * remaining bytes deliberately stay opaque.
+ *
+ * Per-action tables are indexed by KF_ACTOR_ACTION_INDEX(action): the hit
+ * action (5) and death action (6) occupy entries 3 and 4, and the eight
+ * effect actions occupy entries 8..15 (actor_update_effect_action).
+ */
+typedef struct KfActorDefinition {
+    u8 unknown_00[0x03];
+    u8 status_effect;
+    u8 status_effect_chance;
+    u8 action_parameters[8];
+    u8 move_speed;
+    u8 action_animations[16];
+    u8 turn_rate;
+    SoundRef sounds[3];
+    struct KfVec3s attachment_offsets[2];
+    s16 unknown_34;
+    s16 unknown_36;
+    u8 unknown_38[2];
+    u16 action_animation_steps[16];
+    u16 action_animation_phases[16];
+    u16 collision_radius;
+    u16 collision_height;
+    u16 awareness_distance;
+    u16 initial_health;
+    u16 unknown_82;
+    u16 experience_reward;
+    u16 attack_components[3];
+    u16 defenses[5];
+    u16 unknown_96;
+} KfActorDefinition;
+
+#define KF_ACTOR_ACTION_INDEX(action) ((action) - 2)
+
+typedef struct KfActorActionProfile {
+    s16 far_distance;
+    s16 far_weight;
+    s16 near_distance;
+    s16 middle_weight;
+    s16 near_weight;
+} KfActorActionProfile;
+
+/* 16-byte actor placement record from the map's MIXA.DAT stream. */
+typedef struct KfActorPlacement {
+    u8 slot_state;
+    u8 definition_flags;
+    u8 heading_quadrant;
+    u8 tile_z;
+    u8 tile_x;
+    u8 unknown_05;
+    u8 unknown_06;
+    u8 unknown_07[3];
+    s16 local_z;
+    s16 local_x;
+    u8 unknown_0e[2];
+} KfActorPlacement;
+
+typedef struct KfActor {
+    u8 slot_state;
+    u8 definition_id;
+    u8 variant;
+    u8 heading_quadrant;
+    u8 tile_z;
+    u8 tile_x;
+    u8 lifecycle;
+    u8 unknown_07;
+    u8 action;
+    u8 unknown_09;
+    u8 animation_id;
+    u8 vertical_state;
+    u8 unknown_0c[2];
+    s16 local_z;
+    s16 local_x;
+    u16 animation_phase;
+    u16 health;
+    u16 cell_x;
+    u16 cell_z;
+    s16 unknown_1a;
+    VECTOR position;
+    struct KfEulerAngles rotation;
+    u16 unknown_32;
+    u32 unknown_34;
+    u8 action_timer;
+    u8 collision_state;
+    s16 movement_yaw;
+    s16 animation_step;
+    s16 vertical_velocity;
+    s16 movement_x;
+    s16 movement_z;
+    s16 movement_y;
+    u8 unknown_46[2];
+} KfActor;
+
+/*
+ * Actor routines derive the definition array and current context from the
+ * live-actor base through one register, proving this complete aggregate.
+ */
+typedef struct KfActorState {
+    KfActorDefinition definitions[12];
+    KfActor actors[128];
+    VECTOR player_position;
+    SVECTOR player_rotation;
+    KfActorDefinition *current_definition;
+    KfActor *current;
+    u16 current_index;
+    u16 current_definition_id;
+    KfActor *player_target;
+} KfActorState;
+
+extern KfActorActionProfile actor_action_profiles[25];
+extern KfActorState actor_state;
+extern const SoundRef boss_death_loop_sound;
+extern SoundRef boss_death_phase_sounds[4];
+extern u8 boss_defeat_complete;
 
 extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
@@ -61,5 +175,6 @@ extern void actor_try_attack_player(
 extern void actor_update_awareness(void);
 extern void actor_update_current_action(void);
 extern void actor_update_effect_action(s32 action);
+extern void actor_transform_definition5_to6(KfActor *actor);
 
 #endif

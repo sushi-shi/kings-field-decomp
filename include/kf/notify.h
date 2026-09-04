@@ -3,7 +3,14 @@
 
 /* On-screen notification queue and its per-frame presentation state machine. */
 
-#include <kf/semantic_types.h>
+#include <kf/game_render.h>
+
+/* One row of the six-sprite on-screen notification display. */
+typedef struct KfNotificationSprite {
+    u8 active;
+    u8 unknown_01;
+    KfSpriteQuad sprite;
+} KfNotificationSprite;
 
 /*
  * The menu formatter writes signed glyphs (including -1), while the

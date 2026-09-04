@@ -36,7 +36,7 @@ its gameplay meaning is still `candidate`.
 
 | Address | Identity | Main evidence |
 | --- | --- | --- |
-| `0x800150a8` | `player_weapon_load_records_and_mirror_angles` | exact 16-by-`0x2c` copy and field transform |
+| `0x800150a8` | `weapon_records_load_and_mirror_angles` | exact 16-by-`0x2c` copy and field transform |
 | `0x800171fc` | `player_move_horizontal` | collision query, grids, transform state, sole typed caller |
 | `0x80017cf8` | `player_warp_to_floor_entry` | current-floor state and five-entry cell table |
 | `0x80017e3c` | `player_update_transform_snapshot` | typed position/rotation consumers and halfword offsets |
@@ -58,5 +58,6 @@ case labels rather than invented function starts.
 The per-function evidence and unresolved points are preserved in
 `config/evidence/game_semantic_player_interactions.tsv`. Canonical sizes and
 fields live in `config/retail/structures.tsv` and
-`config/retail/structure_fields.tsv`; the checked C declarations and target
-layout assertions live in `include/kf/semantic_types.h`.
+`config/retail/structure_fields.tsv`; checked C declarations live in the
+subsystem owner headers, chiefly `include/kf/game_player.h`,
+`include/kf/game_collision.h`, and `include/kf/item.h` for this campaign.
