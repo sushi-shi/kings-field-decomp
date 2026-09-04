@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /* Error messages and the sequence path template of this unit in the retail data region. */
@@ -9,10 +10,6 @@ RODATA(0x80012a14, 0x40)
 /* Unresolved helpers: a VAB-head loader and the game file loader.
  * Sequence operations come from LIBSND.H (Psy-Q, now vendored). */
 extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
-
-/* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
-extern int printf();
-extern void *memset();
 
 ADDRESS(0x800328e0, 0xa4)
 void audio_initialize(void)

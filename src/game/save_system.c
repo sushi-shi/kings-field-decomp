@@ -2,14 +2,12 @@
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
 #include <kf/psyq_kernel.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /* Jump tables and string literals of this unit in the retail data region. */
 RODATA(0x8001235c, 0x178)
 
-/* Psy-Q Release 2.5 MEMORY.H declares memset and memcpy without prototypes. */
-extern void *memset();
-extern void *memcpy();
 /* LIBSND.H: int SsVoKeyOn(long, long, unsigned short, unsigned short); */
 /* Memory-card create requests carry the block count in the high halfword. */
 #define SAVE_FILE_BLOCKS 5

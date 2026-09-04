@@ -1,11 +1,9 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game_cd.h>
-#include <MEMORY.H>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-/* Psy-Q Release 2.5 headers declare strcat without a prototype. */
-extern char *strcat();
 /* CD failure handler: 0 after a failed search, 1 after failed reads. */
 
 DATA(0x80057b3c, 0x5)

@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
 #include <kf/psyq_kernel.h>
-#include <MALLOC.H>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /* Bytes reserved past the arena cursor in allocation mode 1; OPEN.EXE budgets more. */

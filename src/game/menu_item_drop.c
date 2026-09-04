@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /*
@@ -8,9 +9,6 @@
  * the save and load slot panels. They share the windowed-cursor input loop and
  * the shared menu draw primitives. Module boundary is WIP.
  */
-
-/* Psy-Q MEMORY.H declares memset without a prototype. */
-extern void *memset();
 
 /* Player object and the 240-byte inventory / progress-flag block. */
 extern u8 DAT_800652a8[240];

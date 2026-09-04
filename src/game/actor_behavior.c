@@ -1,8 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
-
-extern s32 rand(void);
 
 #define ACTOR_ACTION_NONE 0xff
 #define MAP_TILE_SIZE 2000

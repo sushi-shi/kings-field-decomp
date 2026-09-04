@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 
@@ -12,9 +13,6 @@
 
 
 RODATA(0x80012030, 0x18)
-
-/* "...\0" image path whose two decimal digits at [9] and [10] select the weapon. */
-extern void exit(s32 status);
 
 /* Stores the item id into one of the six armor slots, re-resolves the five armor record pointers, and recalculates. */
 ADDRESS(0x80016848, 0x1e8)
@@ -72,6 +70,7 @@ void player_set_equipment_slot(u8 item_id, u8 slot)
     player_recalculate_combat_stats();
 }
 
+/* weapon_image_path_template has decimal weapon-id digits at [9] and [10]. */
 ADDRESS(0x80016a30, 0xf4)
 void player_equip_weapon(u8 weapon_id)
 {

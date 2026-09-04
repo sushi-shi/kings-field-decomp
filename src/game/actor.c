@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /* Unresolved flag consulted before damaging definition 7 on floor 5. */
@@ -7,8 +8,6 @@
  * Shared pool of 48 sixty-byte effect records whose first byte is 0xff when free.
  */
 
-/* Psy-Q LIBC: int rand(void). */
-extern s32 rand(void);
 /*
  * Twenty-five ten-byte action-selection profiles indexed by profile_index in
  * actor_try_select_profiled_action: {far_distance, far_weight, near_distance,

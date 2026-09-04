@@ -1,13 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game_cd.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
-
-/* Psy-Q LIBC. */
-extern s32 rand(void);
-extern void *memset();
-extern void *memcpy();
-extern void exit(s32 status);
 
 /* Item stat banks loaded contiguously from COM\STAT.DAT (opaque records). */
 extern u8 DAT_80058dc0[];

@@ -1,10 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq_kernel.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
-
-/* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
-extern void *memset();
 
 /*
  * Both counters live in the retail load image four bytes apart as explicitly

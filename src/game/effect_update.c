@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /*
@@ -28,8 +29,6 @@
 
 /* Base datum holding the scripted floor-deformation segment records that
  * effect_floor_deform_line reads from offset 0x21 (7-byte records); extent WIP. */
-
-extern s32 rand(void);
 
 /* Dense effect-kind dispatch table for kinds 4 through 52. */
 RODATA(0x80012cf8, 0xc4)

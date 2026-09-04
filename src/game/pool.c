@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 #include <kf/pool.h>
 
@@ -9,8 +10,6 @@
  * are marked stale (1) each frame so the render pass can revalidate them
  * before pool_release_stale frees whatever was not touched.
  */
-
-extern void free(void *allocation);
 
 ADDRESS(0x80020978, 0x30)
 void pool_reset(void)

@@ -1,11 +1,10 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game_cd.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 extern u16 DAT_80095038;
-
-extern void exit(s32 status);
 
 #define CD_SECTOR_SIZE 0x800
 #define CD_SECTOR_SHIFT 11

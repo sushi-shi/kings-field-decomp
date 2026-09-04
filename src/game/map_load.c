@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /*
@@ -30,7 +31,6 @@ extern u32 map_world_state_base;
 /* Player inventory / key-item flag array. */
 extern u8 DAT_800652a8[240];
 
-extern int rand(void);
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
 RODATA(0x80012bfc, 0x14)
 

@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /*
@@ -23,8 +24,6 @@
 /* Ambient floor-script countdown, reloaded to 10. */
 /* Start of the persistent world-state block (save_system world_state base). */
 extern u32 map_world_state_base;
-
-extern int rand(void);
 
 /* Per-floor ambient-event scripts dispatched by current_floor. */
 

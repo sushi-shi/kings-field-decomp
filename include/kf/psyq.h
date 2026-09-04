@@ -10,8 +10,8 @@
  * LIBSND and LIBCD stay in kf/psyq_audio.h so their declarations are limited
  * to audio/CD users. KERNEL and the BIOS file interfaces stay in
  * kf/psyq_kernel.h, which also supplies the release's missing LIBAPI
- * declarations and case-sensitive include shim. MEMORY.H is left out so
- * memcpy and memset remain GCC builtins.
+ * declarations and case-sensitive include shim. C runtime declarations stay
+ * in kf/psyq_libc.h so only their callers include MEMORY.H and MALLOC.H.
  */
 #include <sys/types.h>
 #include <LIBGTE.H>

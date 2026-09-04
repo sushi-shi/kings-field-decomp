@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 
@@ -461,9 +462,6 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
     return defense + (attack * attack) / (base_power * 2);
 }
 
-
-/* Psy-Q LIBC: int rand(void). */
-extern s32 rand(void);
 
 /*
  * Applies the four status bits (poison, curse blocked by accessory 0x31,

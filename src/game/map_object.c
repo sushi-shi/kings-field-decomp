@@ -1,13 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 RODATA(0x80012888, 0x18c)
 
 extern u8 map_world_state_base[4];
 
-/* Psy-Q LIBC: int rand(void); LIBGTE: rsin, rcos, ApplyMatrix. */
-extern s32 rand(void);
+/* Psy-Q LIBGTE: rsin, rcos, ApplyMatrix. */
 
 #define MAP_OBJECT_COUNT 190
 #define MAP_OBJECT_NONE 0xff

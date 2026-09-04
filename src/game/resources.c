@@ -1,11 +1,8 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq.h>
-#include <MEMORY.H>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
-
-/* Psy-Q Release 2.5 declares strcpy without a prototype. */
-extern char *strcpy();
 
 extern u8 DAT_80065be8[3264];
 

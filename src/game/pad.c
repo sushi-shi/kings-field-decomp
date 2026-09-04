@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq_kernel.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 /*
@@ -15,8 +16,6 @@
  * The three reporting stubs retain their K&R parameter lists because callers
  * pass arguments that the bodies ignore.
  */
-
-extern int printf(const char *format, ...);
 
 ADDRESS(0x8005005c, 0x5c)
 u32 critical_section_set(s32 enable)

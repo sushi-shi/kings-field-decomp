@@ -1,8 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_libc.h>
 #include <kf/game.h>
-
-extern s32 rand(void);
 
 ADDRESS(0x80018880, 0x1a1c)
 void player_update(void)
