@@ -1495,7 +1495,7 @@ GAME.EXE	0x80057b50	0x7	error_screen_path	global	load	char[7]	display	supported	
 GAME.EXE	0x80057b58	0x4	tmd_textured_primitive_color	unknown	load	CVECTOR	render_enqueue_tmd	supported	retail-bytes;asm;xrefs;NormalColorDpq	neutral-grey color used for lit textured TMD packets; byte +3 is the packet code field
 GAME.EXE	0x80057b5c	0x4	model_textured_primitive_color	unknown	load	CVECTOR	render_enqueue_model	supported	retail-bytes;asm;xrefs;NormalColorDpq	neutral-grey color used for lit textured model packets; byte +3 is the packet code field
 GAME.EXE	0x80057b63	0x1	DAT_80057b63	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057b6c	0x4	pending_game_state	global	load	s32	game_state	candidate	game_match_campaign_30.tsv;asm;xrefs	state one is acknowledged and cleared
+GAME.EXE	0x80057b6c	0x4	menu_item_model_allocation_pending	global	load	s32	menu	supported	game_tu_menu_runtime.tsv;asm;xrefs;menu_load_item_model;menu_release_item_model	set to one after registering a loaded item model in TMD slot 4 and cleared after releasing its allocation
 GAME.EXE	0x80057b72	0x2	DAT_80057b72	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b80	0x3	boss_death_loop_sound	unknown	load	SoundRef	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;sound_ref_play	periodic sound used by the boss death sequence; source linkage remains unresolved
 GAME.EXE	0x80057b84	0x4	audio_voice_slot_index	unknown	load	s32	audio	supported	data.tsv:direct-references;game_semantic_audio_spatial.tsv;asm;xrefs;retail-initial-value-9	managed sound-effect ring index advanced modulo ten before each voice; source linkage remains unresolved

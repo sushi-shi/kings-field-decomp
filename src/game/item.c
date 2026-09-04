@@ -317,7 +317,7 @@ void item_menu_buy(s32 arg)
         menu_list_render(&ctx);
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if (selection != -1) {
         if (selection == 0x34)
             inv[52]--;
@@ -455,7 +455,7 @@ void item_menu_sell(s32 arg)
         menu_list_render(&ctx);
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if (selection != -1) {
         inv[selection]--;
         player_state.gold += item_sell_prices[selection][arg - 1];
@@ -563,6 +563,6 @@ s32 item_use_confirm(s32 arg)
             (const MenuGlyphString *)options, choice, confirm);
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     return result;
 }

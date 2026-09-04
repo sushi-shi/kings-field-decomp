@@ -173,7 +173,7 @@ void menu_equip_select(s32 object)
         menu_present_frame();
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if (selection != -1) {
         switch (object) {
         case 0:

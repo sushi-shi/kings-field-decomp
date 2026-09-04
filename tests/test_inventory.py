@@ -866,6 +866,46 @@ class InventoryTests(unittest.TestCase):
             identity.parameters,
             "s32 value;s32 count;s32 pad_zero;s16 * out",
         )
+        release = load_function_identities(RETAIL_CONFIG, required=True)[
+            ("GAME.EXE", 0x8002AF0C)
+        ]
+        self.assertEqual(release.name, "menu_release_item_model")
+        self.assertEqual(release.owner, "menu")
+        pending = load_data_identities(RETAIL_CONFIG)[
+            ("GAME.EXE", 0x80057B6C)
+        ]
+        self.assertEqual(
+            (pending.name, pending.datatype, pending.owner),
+            ("menu_item_model_allocation_pending", "s32", "menu"),
+        )
+
+        _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        calls = [
+            row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+            and row["target_va"] == "0x8002af0c"
+        ]
+        self.assertEqual(len(calls), 8)
+        self.assertEqual(
+            {row["target_name"] for row in calls},
+            {"menu_release_item_model"},
+        )
+        state_references = [
+            row
+            for row in relocations
+            if row["image"] == "GAME.EXE"
+            and row["target_va"] == "0x80057b6c"
+        ]
+        self.assertEqual(len(state_references), 3)
+        self.assertEqual(
+            {row["target_name"] for row in state_references},
+            {"menu_item_model_allocation_pending"},
+        )
+        self.assertEqual(
+            {row["status"] for row in state_references},
+            {"reviewed"},
+        )
 
     def test_menu_presentation_tu_and_interfaces_are_curated(self) -> None:
         evidence_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"

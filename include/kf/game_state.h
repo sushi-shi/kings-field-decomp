@@ -94,7 +94,6 @@ extern const SoundRef gameplay_sound_ref_5;
 extern SoundRef gameplay_sound_ref_6;
 extern const SoundRef gameplay_sound_ref_7;
 extern const SoundRef gameplay_sound_ref_8;
-extern s32 pending_game_state;
 extern char person_image_path_template[14];
 extern struct KfPoolRecord pool_records[];
 extern char talk_image_path_template[];

@@ -150,7 +150,7 @@ void menu_drop_item(void)
         menu_list_render(&ctx);
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if (selection != -1)
         inv[selection]--;
 }

@@ -162,7 +162,7 @@ before the two `lw` loads in `player_distance_to_point_in_cone`; `move v0,a0`
 before the stack-argument loads in `player_apply_radial_damage`). Applied to
 every enrolled unit it produced no regressions and made ten more units exact:
 `matrix_set_rotation_yxz`, the four vector scale helpers,
-`primitive_buffer_commit_poly_ft4`, `game_state_acknowledge_pending`
+`primitive_buffer_commit_poly_ft4`, `menu_release_item_model`
 (previously exact only under 2.6.0 without the second scheduling pass),
 `save_workspace_allocate`, `audio_play_spatial_range`, `sound_ref_play`.
 `probe-gcc257-o2-g0` now carries `cc1_flags = ["-mcpu=r3000"]`.

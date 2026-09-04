@@ -272,7 +272,7 @@ s32 menu_use_item_panel(void)
         } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
             menu_play_input_sound(1);
             if (codes[ctx.selected_index] == 0x37 || codes[ctx.selected_index] == 0x49) {
-                game_state_acknowledge_pending();
+                menu_release_item_model();
                 menu_map_viewer(codes[ctx.selected_index]);
                 menu_play_input_sound(2);
                 if (menu_load_item_model(codes[ctx.selected_index]) != 0)
@@ -291,7 +291,7 @@ s32 menu_use_item_panel(void)
         menu_list_render(&ctx);
     }
 
-    game_state_acknowledge_pending();
+    menu_release_item_model();
     if ((u32)(selection - 0x2a) < 6) {
         inv[selection]--;
         if (selection == 0x2b) {

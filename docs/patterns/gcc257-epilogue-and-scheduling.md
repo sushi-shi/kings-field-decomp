@@ -63,7 +63,7 @@ normalized instruction plus relocation listings against the carved targets
 The original opposite discriminator no longer holds: the current
 `-mcpu=r2000` GCC 2.5.7 probe also matches
 `weapon_records_load_and_mirror_angles` (`0x800150a8`) exactly, including the
-`move v1,a1` schedule before the loop load. `game_state_acknowledge_pending`
+`move v1,a1` schedule before the loop load. `menu_release_item_model`
 (`0x8002af0c`) remains a separate scheduling-profile discriminator. The retail
 compiler is still only narrowed to a 2.5/2.6-era MIPS GCC; the exact build
 remains unproven.
