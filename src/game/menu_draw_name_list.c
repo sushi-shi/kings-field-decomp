@@ -2,21 +2,10 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Positioned glyph run: origin then codes terminated by -1. */
-typedef struct MenuGlyphString {
-    u16 x;
-    u16 y;
-    s16 codes[10];
-} MenuGlyphString;
-
 /* One ten-glyph name record, copied as a block from the name tables. */
 typedef struct MenuName {
     s16 glyphs[10];
 } MenuName;
-
-extern void menu_draw_string(const MenuSpriteDef *font, const MenuGlyphString *str);
-
-extern MenuSpriteDef DAT_800583f4;
 
 /* Item and magic name glyph tables (ten glyph codes per entry). */
 extern MenuName DAT_80058dc0[];

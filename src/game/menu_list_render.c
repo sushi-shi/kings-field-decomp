@@ -15,19 +15,12 @@ typedef struct MenuTileSprite {
 } MenuTileSprite;
 
 /* Positioned glyph run: origin then codes terminated by -1. */
-typedef struct MenuGlyphString {
+typedef struct MenuGlyphBuffer {
     u16 x;
     u16 y;
     s16 codes[22];
-} MenuGlyphString;
+} MenuGlyphBuffer;
 
-extern void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const void *pos);
-extern void menu_draw_string(const MenuSpriteDef *font, const void *str);
-extern void menu_draw_window_backdrop(void);
-
-extern MenuSpriteDef DAT_800583f4;   /* glyph atlas */
-extern MenuSpriteDef DAT_800583e8;   /* number atlas */
-extern MenuSpriteDef DAT_80058424;   /* title icon sprite */
 extern MenuTileSprite DAT_8005843c;  /* list backdrop tile */
 extern MenuTileSprite DAT_80058448;  /* normal row highlight */
 extern MenuTileSprite DAT_80058454;  /* scroll-end tile */
@@ -43,7 +36,7 @@ extern MenuTileSprite DAT_80058460;  /* selected row highlight */
 ADDRESS(0x80028a70, 0x77c)
 void menu_list_render(const KfMenuList *list)
 {
-    MenuGlyphString gs;
+    MenuGlyphBuffer gs;
     MenuTileSprite *tile;
     s16 *src;
     u8 *counts;
@@ -58,8 +51,10 @@ void menu_list_render(const KfMenuList *list)
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
     if (list->title_x != 0) {
-        menu_blit_sprite_translucent(&DAT_80058424, list);
-        menu_draw_string(&DAT_800583f4, list);
+        menu_blit_sprite_translucent(
+            &DAT_80058424, (const MenuPoint *)list);
+        menu_draw_string(
+            &DAT_800583f4, (const MenuGlyphString *)list);
     }
 
     counts = counts + list->scroll_offset;
@@ -74,7 +69,8 @@ void menu_list_render(const KfMenuList *list)
                 gs.codes[i] = src[i];
             }
             src += list->glyphs_per_entry;
-            menu_draw_string(&DAT_800583f4, &gs);
+            menu_draw_string(
+                &DAT_800583f4, (const MenuGlyphString *)&gs);
             if (list->quantities != 0) {
                 tens = *counts / 10;
                 gs.codes[1] = *counts % 10;
@@ -85,7 +81,8 @@ void menu_list_render(const KfMenuList *list)
                     gs.codes[0] = 10;
                 }
                 gs.codes[2] = -1;
-                menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
+                menu_draw_number(
+                    &DAT_800583e8, (const MenuGlyphString *)&gs);
                 counts++;
             }
             row++;

@@ -2,16 +2,8 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Option-box sprites and the font-atlas descriptor (BSS, set up elsewhere). */
-extern MenuSpriteDef DAT_8005840c; /* option box, normal */
-extern MenuSpriteDef DAT_80058418; /* option box, highlighted */
-extern u8 DAT_800583f4[];          /* font-atlas descriptor for menu_draw_string */
-
 /* Double-buffered map-viewer frame quads linked behind the config rows. */
 extern POLY_FT4 DAT_800580e8[2][4];
-
-extern void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const MenuPoint *pos);
-extern void menu_draw_string(const MenuSpriteDef *font, const MenuPoint *str);
 
 /*
  * Config-panel draw request passed by value.  Only the two option-row anchors
@@ -27,12 +19,7 @@ typedef struct ConfigPanelParams {
     s32 *states;
 } ConfigPanelParams;
 
-/* Positioned option label overlaid on the config-row anchors. */
-typedef struct MenuGlyphString {
-    u16 x;
-    u16 y;
-    s16 codes[10];
-} MenuGlyphString;
+void menu_config_panel_draw(ConfigPanelParams params);
 
 extern u32 pad_read();
 extern void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag);
@@ -176,8 +163,12 @@ void menu_config_panel_draw(ConfigPanelParams params)
             box_b = &DAT_80058418;
         }
         menu_blit_sprite_translucent(box_b, &params.pt_b);
-        menu_draw_string((const MenuSpriteDef *)DAT_800583f4, &params.pt_a);
-        menu_draw_string((const MenuSpriteDef *)DAT_800583f4, &params.pt_b);
+        menu_draw_string(
+            &DAT_800583f4,
+            (const MenuGlyphString *)&params.pt_a);
+        menu_draw_string(
+            &DAT_800583f4,
+            (const MenuGlyphString *)&params.pt_b);
         states++;
         params.pt_a.y += 22;
         params.pt_b.y += 22;

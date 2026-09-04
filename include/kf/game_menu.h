@@ -18,6 +18,16 @@ typedef struct MenuPoint {
 } MenuPoint;
 
 /*
+ * Positioned menu text: screen origin followed by the usual ten-code label.
+ * Capacity-specific workspaces use the same proven origin/code prefix.
+ */
+typedef struct MenuGlyphString {
+    u16 x;
+    u16 y;
+    s16 codes[10];
+} MenuGlyphString;
+
+/*
  * Texture-page, CLUT, texel-origin, and extent descriptor shared by menu
  * sprites and font atlases. Retail reads every field as a halfword for
  * screen-space arithmetic; renderers narrow texel coordinates only when
@@ -59,16 +69,35 @@ typedef struct KfMenuList {
 } KfMenuList;
 
 extern MenuLabelCell DAT_80058494[];
+extern MenuSpriteDef DAT_800583e8;
+extern MenuSpriteDef DAT_800583f4;
+extern MenuSpriteDef DAT_8005840c;
+extern MenuSpriteDef DAT_80058418;
+extern MenuSpriteDef DAT_80058424;
+extern MenuSpriteDef DAT_80058430;
+extern MenuSpriteDef DAT_8005846c;
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);
 extern s32 item_use_confirm(s32 arg);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
+extern void menu_blit_sprite(
+    const MenuSpriteDef *sprite, const MenuPoint *position);
+extern void menu_blit_sprite_translucent(
+    const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_config_panel(void);
 extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
-extern void menu_draw_number(u16 *atlas, s16 *str);
+extern void menu_draw_item_name_frame(s32 item_id);
+extern void menu_draw_number(
+    const MenuSpriteDef *font, const MenuGlyphString *string);
+extern void menu_draw_string(
+    const MenuSpriteDef *font, const MenuGlyphString *string);
 extern void menu_draw_stats_header(void);
+extern void menu_draw_two_option(
+    const MenuGlyphString *option0, const MenuGlyphString *option1,
+    s32 selected, s32 highlight);
+extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 count, s32 pad_zero, s16 *out);
 extern void menu_drop_item(void);

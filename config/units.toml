@@ -408,27 +408,9 @@ source = "src/game/menu_list_render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.menu_two_option_dispatch"
+unit = "game.menu_presentation"
 image = "GAME.EXE"
-source = "src/game/menu_two_option_dispatch.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_item_name_frame"
-image = "GAME.EXE"
-source = "src/game/menu_draw_item_name_frame.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_sprite_blit"
-image = "GAME.EXE"
-source = "src/game/menu_sprite_blit.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_number"
-image = "GAME.EXE"
-source = "src/game/menu_draw_number.c"
+source = "src/game/menu_presentation.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

@@ -580,6 +580,51 @@ class InventoryTests(unittest.TestCase):
             "s32 value;s32 count;s32 pad_zero;s16 * out",
         )
 
+    def test_menu_presentation_tu_and_interfaces_are_curated(self) -> None:
+        evidence_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 6)
+
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in rows
+        ]
+        self.assertEqual(spans[0][0], 0x800291EC)
+        self.assertEqual(spans[-1][0] + spans[-1][1], 0x8002A510)
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        units = (CONFIG / "units.toml").read_text()
+        self.assertEqual(
+            units.count('source = "src/game/menu_presentation.c"'), 1
+        )
+        for old_source in (
+            "src/game/menu_two_option_dispatch.c",
+            "src/game/menu_draw_item_name_frame.c",
+            "src/game/menu_sprite_blit.c",
+            "src/game/menu_draw_number.c",
+        ):
+            self.assertNotIn(old_source, units)
+
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        self.assertEqual(
+            data_identities[("GAME.EXE", 0x800583E8)].datatype,
+            "MenuSpriteDef",
+        )
+        self.assertEqual(
+            data_identities[("GAME.EXE", 0x800583F4)].datatype,
+            "MenuSpriteDef",
+        )
+
     def test_menu_list_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_menu_list.tsv"
         _, rows = read_tsv(evidence_path)

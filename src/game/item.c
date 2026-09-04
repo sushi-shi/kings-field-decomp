@@ -27,9 +27,6 @@ extern u32 pad_read();
 void item_menu_buy(s32 arg);
 void item_menu_sell(s32 arg);
 
-/* Item-list panel helpers and the shared inventory / stat data. */
-extern void menu_draw_two_option(void *prompt, void *options, s32 choice, s32 confirm);
-
 extern u8 DAT_800652a8[240];
 
 /*
@@ -519,15 +516,21 @@ s32 item_use_confirm(s32 arg)
 
     menu_frame_begin();
     menu_draw_item_name_frame(arg);
-    menu_draw_two_option(prompt, options, 0, 0);
+    menu_draw_two_option(
+        (const MenuGlyphString *)prompt,
+        (const MenuGlyphString *)options, 0, 0);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_item_name_frame(arg);
-    menu_draw_two_option(prompt, options, 0, 0);
+    menu_draw_two_option(
+        (const MenuGlyphString *)prompt,
+        (const MenuGlyphString *)options, 0, 0);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_item_name_frame(arg);
-    menu_draw_two_option(prompt, options, 0, 0);
+    menu_draw_two_option(
+        (const MenuGlyphString *)prompt,
+        (const MenuGlyphString *)options, 0, 0);
     menu_play_input_sound(0);
     while (pad_read(1) != 0)
         ;
@@ -537,7 +540,9 @@ s32 item_use_confirm(s32 arg)
         if (result != -99) {
             menu_frame_begin();
             menu_draw_item_name_frame(arg);
-            menu_draw_two_option(prompt, options, choice, confirm);
+            menu_draw_two_option(
+                (const MenuGlyphString *)prompt,
+                (const MenuGlyphString *)options, choice, confirm);
             menu_present_frame();
             while (pad_read(1) != 0)
                 ;
@@ -571,7 +576,9 @@ s32 item_use_confirm(s32 arg)
             result = 1;
         }
         menu_draw_item_name_frame(arg);
-        menu_draw_two_option(prompt, options, choice, confirm);
+        menu_draw_two_option(
+            (const MenuGlyphString *)prompt,
+            (const MenuGlyphString *)options, choice, confirm);
     }
 
     game_state_acknowledge_pending();

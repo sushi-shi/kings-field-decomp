@@ -13,7 +13,6 @@ extern u32 pad_read();
 extern void menu_item_model_preview(s32 item_id);
 extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
 extern void menu_add_marker_quad(void);
-extern void menu_draw_two_option(const void *point0, const void *point1, s32 selected, s32 highlight);
 
 /*
  * Drive an interactive scrollable list with a two-option confirm footer.
@@ -90,7 +89,10 @@ opt0_done:
             menu_add_marker_quad();
         }
         menu_list_render(list);
-        menu_draw_two_option(&opt0, &opt1, selected, highlight);
+        menu_draw_two_option(
+            (const MenuGlyphString *)&opt0,
+            (const MenuGlyphString *)&opt1,
+            selected, highlight);
         menu_present_frame();
 
         if (result != -99) {
@@ -103,7 +105,10 @@ opt0_done:
                 menu_add_marker_quad();
             }
             menu_list_render(list);
-            menu_draw_two_option(&opt0, &opt1, selected, highlight);
+            menu_draw_two_option(
+                (const MenuGlyphString *)&opt0,
+                (const MenuGlyphString *)&opt1,
+                selected, highlight);
             menu_present_frame();
             while (pad_read(1) != 0) {
             }

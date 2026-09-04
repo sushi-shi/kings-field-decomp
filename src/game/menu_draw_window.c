@@ -11,16 +11,6 @@
  * for the row backgrounds and as glyph strings for the text.
  */
 extern u8 DAT_80058478[];
-extern MenuSpriteDef DAT_80058424;   /* default row-background sprite */
-extern MenuSpriteDef DAT_80058430;   /* confirmed-selection row background */
-extern MenuSpriteDef DAT_8005846c;   /* selection-cursor sprite */
-extern MenuSpriteDef DAT_800583f4;   /* menu glyph atlas */
-
-extern void menu_blit_sprite_translucent(const MenuSpriteDef *sprite, const MenuPoint *pos);
-extern void menu_blit_sprite(const MenuSpriteDef *sprite, const MenuPoint *pos);
-extern void menu_draw_string(const MenuSpriteDef *font, const MenuPoint *str);
-extern void menu_draw_window_backdrop(void);
-
 /*
  * Draw one menu window: an optional title label (drawn when the record's first
  * halfword is non-zero), then `count` selectable rows, then the shared
@@ -47,7 +37,8 @@ void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     if (*(s16 *)record != 0) {
         menu_blit_sprite_translucent(&DAT_80058424, (const MenuPoint *)record);
-        menu_draw_string(&DAT_800583f4, (const MenuPoint *)record);
+        menu_draw_string(
+            &DAT_800583f4, (const MenuGlyphString *)record);
     }
     if (count > 0) {
         off = 0x18;
@@ -61,7 +52,9 @@ void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
             if (off == highlight * 0x18 + 0x18) {
                 menu_blit_sprite(&DAT_8005846c, (const MenuPoint *)(record + off));
             }
-            menu_draw_string(&DAT_800583f4, (const MenuPoint *)(record + off));
+            menu_draw_string(
+                &DAT_800583f4,
+                (const MenuGlyphString *)(record + off));
             off += 0x18;
         } while (off < count * 0x18 + 0x18);
     }

@@ -3,19 +3,6 @@
 #include <kf/game.h>
 
 
-/* Positioned glyph run: origin then codes terminated by -1. */
-typedef struct MenuGlyphString {
-    u16 x;
-    u16 y;
-    s16 codes[10];
-} MenuGlyphString;
-
-extern void menu_draw_string(const MenuSpriteDef *font, const MenuGlyphString *str);
-
-/* Shared menu font atlas and number atlas descriptors. */
-extern MenuSpriteDef DAT_800583f4;
-extern MenuSpriteDef DAT_800583e8;
-
 /* Item name table (ten glyph codes per item). Runtime-indexed. */
 extern s16 DAT_80058dc0[][10];
 
@@ -85,6 +72,6 @@ void menu_item_model_preview(s32 item_id)
 
         gs.x = 0x117;
         menu_format_number(DAT_800652a8[item_id], 2, 0, gs.codes);
-        menu_draw_number((u16 *)&DAT_800583e8, (s16 *)&gs);
+        menu_draw_number(&DAT_800583e8, &gs);
     }
 }
