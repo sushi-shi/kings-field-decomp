@@ -118,6 +118,7 @@ extern u16 item_sell_prices[80][2];
 extern void item_load_database(void);
 extern void item_menu_root(s32 arg);
 extern s32 item_use_confirm(s32 arg);
+extern void game_state_acknowledge_pending(void);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
 extern void menu_blit_sprite(

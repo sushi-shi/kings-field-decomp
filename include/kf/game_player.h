@@ -188,6 +188,8 @@ extern s32 player_distance_to_point_in_cone(
     const struct KfVec3i *point, s16 facing, s32 max_distance,
     s32 angle_tolerance);
 extern void player_equip_weapon(u8 weapon_id);
+extern void game_initialize_session(void);
+extern void game_state_initialize(void);
 extern void player_increment_magic_training(void);
 extern void player_increment_physical_power_training(void);
 extern s32 player_move_horizontal(s32 heading, s32 distance);

@@ -10,12 +10,14 @@
 #include <kf/map_data.h>
 #include <kf/memory.h>
 #include <kf/game_cd.h>
+#include <kf/game_resources.h>
 #include <kf/game_save.h>
 #include <kf/resources.h>
 #include <kf/item.h>
 #include <kf/game_math.h>
 #include <kf/game_state.h>
 #include <kf/game_system.h>
+#include <kf/game_pad.h>
 #include <kf/game_render.h>
 #include <kf/game_asset.h>
 #include <kf/notify.h>

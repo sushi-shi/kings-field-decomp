@@ -175,5 +175,6 @@ extern void actor_try_attack_player(
 extern void actor_update_awareness(void);
 extern void actor_update_current_action(void);
 extern void actor_update_effect_action(s32 action);
+extern void func_80036d3c(KfActor *actor);
 
 #endif

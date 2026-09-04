@@ -1,8 +1,12 @@
 #include <kf/address.h>
-#include <kf/game_types.h>
+#include <kf/game_pad.h>
+#include <kf/game_state.h>
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>
-#include <kf/game.h>
+
+u32 pad_init_bad_identifier();
+void pad_read_bad_identifier(void);
+void pad_stop_bad_identifier(void);
 
 RODATA(0x80013e8c, 0x60)
 

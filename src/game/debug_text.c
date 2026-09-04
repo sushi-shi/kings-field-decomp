@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
-#include <kf/game.h>
+
+void debug_print();
 
 /*
  * Custom text-formatting / debug band 0x8003a7dc..0x8003ac4b (GAME.EXE).
