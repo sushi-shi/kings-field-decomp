@@ -1,6 +1,5 @@
 #include <kf/address.h>
 #include <kf/game_player.h>
-#include <kf/game.h>
 
 ADDRESS(0x80018858, 0x28)
 void player_status_apply_effect4(void)

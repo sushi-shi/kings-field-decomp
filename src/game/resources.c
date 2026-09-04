@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_resources.h>
 #include <kf/resources.h>
 #include <kf/game_equipment.h>
 #include <kf/game_map.h>

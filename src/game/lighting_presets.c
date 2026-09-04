@@ -1,6 +1,5 @@
 #include <kf/address.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
 
 ADDRESS(0x800187a4, 0x4c)
 void lighting_apply_weapon9_environment(void)

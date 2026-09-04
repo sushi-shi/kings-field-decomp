@@ -1,6 +1,5 @@
 #include <kf/address.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
 
 ADDRESS(0x80014314, 0x1c0)
 void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
