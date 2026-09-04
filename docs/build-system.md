@@ -152,8 +152,10 @@ strict-100% snapshot as `kf status` and replaces only the text between
 
 `kf check` refreshes the block, and `kf build` ends in that check. The check
 also compares every owned `.data`, `.rodata`, and `.bss` contribution against
-the retail-delinked object and fails on any byte, extent, relocation
-type/referent, ownership, or comparison-artifact mismatch. `kf bank` also
+the retail-delinked object by default and fails on any byte, exact object-section
+extent (including assembler-owned writable/switch-table zero tails materialized
+by the delinker),
+relocation type/referent, ownership, or comparison-artifact mismatch. `kf bank` also
 refreshes it after updating the manual ledger. Concurrent per-image checks
 serialize snapshot and replacement through `build/gen/readme.lock`; content is
 written atomically and only when it changes. README generation never changes

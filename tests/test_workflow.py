@@ -5,7 +5,9 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
+from scripts.kf import progress
 from scripts.kf.delink import Function
 from scripts.kf.graph import _build_line, _write_generator
 from scripts.kf.manifest import Unit, load as load_manifest
@@ -79,6 +81,19 @@ class ProgressTests(unittest.TestCase):
         loose = _summary(("GAME.EXE",), universe, [row], loose=True)
         self.assertEqual(strict["GAME.EXE"]["exact_functions"], 0)
         self.assertEqual(loose["GAME.EXE"]["exact_functions"], 1)
+
+    def test_default_check_always_gates_data(self) -> None:
+        with (
+            mock.patch.object(progress, "current_state", return_value=(None, {}, [], [])),
+            mock.patch.object(progress, "load_baseline", return_value={}),
+            mock.patch.object(progress, "print_status", return_value=0),
+            mock.patch.object(progress, "_report_cleanliness"),
+            mock.patch("scripts.kf.data_match.run", return_value=1) as data_gate,
+            mock.patch("scripts.kf.readme.refresh", return_value=False),
+            mock.patch("builtins.print"),
+        ):
+            self.assertEqual(progress.check(("GAME.EXE",)), 1)
+        data_gate.assert_called_once()
 
     def test_missing_objdiff_fuzzy_field_means_zero(self) -> None:
         scores, failures = _report_scores({

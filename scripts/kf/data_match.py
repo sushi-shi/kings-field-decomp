@@ -196,33 +196,25 @@ def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None
                            f"reconstruction has {rc_size} B, retail has none")
     rt_rel = retail.relocations(name)
     rc_rel = recon.relocations(name)
-    # The retail-delinked module packs exactly the claimed bytes; GNU `as` pads
-    # the reconstruction's section to its 16-byte alignment. So compare content
-    # over the shared extent (reloc-masked) and treat a zero-only tail on the
-    # longer side as benign alignment padding, mirroring objdiff's symbol-level
-    # data scoring rather than flagging every alignment pad as a mismatch.
-    overlap = min(rt_size, rc_size)
+    # Strict means the complete object-section extent is part of the comparison.
+    # The delinker materializes deterministic assembler-owned writable-section
+    # tails in its target object; no mismatch is forgiven here.
+    if rt_size != rc_size:
+        return SectionDiff(
+            name,
+            rt_size,
+            rc_size,
+            "size",
+            f"section extent differs ({rt_size} B retail vs {rc_size} B reconstruction)",
+        )
     rt_bytes = _masked(rt, rt_rel)
     rc_bytes = _masked(rc, rc_rel)
-    first = next((i for i in range(overlap) if rt_bytes[i] != rc_bytes[i]), None)
+    first = next((i for i in range(rt_size) if rt_bytes[i] != rc_bytes[i]), None)
     if first is not None:
         return SectionDiff(name, rt_size, rc_size, "bytes",
                            f"masked content diverges at +{first:#x} "
                            f"(retail {rt_bytes[first]:#04x} vs "
                            f"reconstruction {rc_bytes[first]:#04x})")
-    padded = (rt_size + 15) & ~15
-    if rc_size > rt_size and any(rc_bytes[rt_size:]):
-        extra = next(i for i in range(rt_size, rc_size) if rc_bytes[i])
-        return SectionDiff(name, rt_size, rc_size, "extra-tail",
-                           f"reconstruction emits {rc_size - rt_size} extra byte(s) "
-                           f"past the retail extent, non-zero at +{extra:#x}")
-    if rc_size > padded:
-        return SectionDiff(name, rt_size, rc_size, "extra-tail",
-                           f"reconstruction extent exceeds retail's 16-byte "
-                           f"alignment padding ({rc_size} B vs {padded} B padded)")
-    if rt_size > rc_size:
-        return SectionDiff(name, rt_size, rc_size, "short",
-                           f"reconstruction is {rt_size - rc_size} byte(s) short")
     rt_key = [(r.offset, r.type, r.symbol) for r in rt_rel]
     rc_key = [(r.offset, r.type, r.symbol) for r in rc_rel]
     if rt_key != rc_key:
@@ -247,17 +239,10 @@ def _diff_bss(retail: Elf, recon: Elf) -> SectionDiff | None:
     rc = sum(recon.sections[s].size for s in BSS_SECTIONS if s in recon.sections)
     if rt == 0 and rc == 0:
         return None
-    # `.bss` has no bytes to match; only its size/ownership is checkable, and
-    # the reconstruction's is padded to 16-byte section alignment.
-    padded = (rt + 15) & ~15
-    if rc < rt:
+    # `.bss` has no bytes to compare, so strict ownership is exact section size.
+    if rc != rt:
         return SectionDiff(".bss", rt, rc, "size",
-                           f"reconstruction owns {rc} B, retail {rt} B "
-                           f"(missing uninitialized storage)")
-    if rc > padded:
-        return SectionDiff(".bss", rt, rc, "size",
-                           f"reconstruction owns {rc} B, retail {rt} B "
-                           f"(extra uninitialized storage beyond alignment)")
+                           f"reconstruction owns {rc} B, retail {rt} B")
     return SectionDiff(".bss", rt, rc, "match")
 
 

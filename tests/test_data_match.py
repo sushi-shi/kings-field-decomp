@@ -48,26 +48,23 @@ class InitSectionDiffTest(unittest.TestCase):
             rc = _obj(Path(td) / "rc.o", rodata=b"ABCD")
             self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "match")
 
-    def test_trailing_zero_padding_matches(self) -> None:
-        # GNU as pads the reconstruction to alignment; a zero-only tail is benign.
+    def test_trailing_zero_padding_diverges(self) -> None:
         with TemporaryDirectory() as td:
             rt = _obj(Path(td) / "rt.o", rodata=b"ABCDE")             # 5 B, exact
             rc = _obj(Path(td) / "rc.o", rodata=b"ABCDE\x00\x00\x00")  # padded to 8
-            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "match")
+            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "size")
 
     def test_zero_padding_beyond_section_alignment_diverges(self) -> None:
         with TemporaryDirectory() as td:
             rt = _obj(Path(td) / "rt.o", rodata=b"A")
             rc = _obj(Path(td) / "rc.o", rodata=b"A" + b"\0" * 31)
-            self.assertEqual(
-                _diff_init_section(".rodata", rt, rc).status, "extra-tail"
-            )
+            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "size")
 
     def test_zero_only_retail_tail_is_still_missing(self) -> None:
         with TemporaryDirectory() as td:
             rt = _obj(Path(td) / "rt.o", rodata=b"A\0\0\0")
             rc = _obj(Path(td) / "rc.o", rodata=b"A")
-            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "short")
+            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "size")
 
     def test_content_byte_divergence(self) -> None:
         with TemporaryDirectory() as td:
@@ -127,11 +124,11 @@ class InitSectionDiffTest(unittest.TestCase):
 
 
 class BssDiffTest(unittest.TestCase):
-    def test_alignment_padding_matches(self) -> None:
+    def test_alignment_padding_diverges(self) -> None:
         with TemporaryDirectory() as td:
             rt = _obj(Path(td) / "rt.o", bss=24)
             rc = _obj(Path(td) / "rc.o", bss=32)   # padded up to 16-align
-            self.assertEqual(_diff_bss(rt, rc).status, "match")
+            self.assertEqual(_diff_bss(rt, rc).status, "size")
 
     def test_missing_storage_flagged(self) -> None:
         with TemporaryDirectory() as td:

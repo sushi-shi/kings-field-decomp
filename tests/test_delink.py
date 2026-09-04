@@ -617,9 +617,10 @@ class ModuleObjectTests(unittest.TestCase):
         sections = elf_sections(built.data)
         data_header = sections[".data"]
         self.assertEqual(built.data[data_header[4]:data_header[4] + data_header[5]],
-                         b"\x01\x02\x03\x04\x05\0\0\0\x09\x0a\x0b\x0c")
+                         b"\x01\x02\x03\x04\x05\0\0\0\x09\x0a\x0b\x0c"
+                         b"\0\0\0\0")
         self.assertEqual(sections[".bss"][1], 8)  # SHT_NOBITS
-        self.assertEqual(sections[".bss"][5], 0x18)
+        self.assertEqual(sections[".bss"][5], 0x20)
         rel_data = sections[".rel.data"]
         self.assertEqual(rel_data[5], 8)
         symbols = elf_symbols(built.data)
@@ -666,6 +667,22 @@ class ModuleRodataTests(unittest.TestCase):
             [MipsRelocation(0, "R_MIPS_32", ".text"), MipsRelocation(4, "R_MIPS_32", ".text")],
         )
         self.assertIn(".rel.rodata", sections)
+
+    def test_module_switch_table_rodata_materializes_probe_alignment_tail(self) -> None:
+        function = Function("GAME.EXE", 0x80010000, 8, 8, 1, "first", "test", "test")
+        carved = {0x80010000: (struct.pack("<2I", 0x03E00008, 0), [])}
+        module = Module(
+            "GAME.EXE", "game.switch", "switch", (0x80010000,), (),
+            (0x80012000, 0x0C),
+        )
+        blob = struct.pack("<I", 0x80010000) + b"literal\0"
+        built = _module_object(module, {function.va: function}, carved, {}, blob)
+        self.assertEqual(built.rodata_size, 0x0C)
+        sections = elf_sections(built.data)
+        header = sections[".rodata"]
+        rodata = built.data[header[4]:header[4] + header[5]]
+        self.assertEqual(header[5], 0x10)
+        self.assertEqual(rodata, struct.pack("<I", 0) + b"literal\0" + b"\0" * 4)
 
     def test_code_reference_inside_the_claimed_range_resolves_to_rodata(self) -> None:
         function = Function("GAME.EXE", 0x80010000, 8, 8, 1, "first", "test", "test")
