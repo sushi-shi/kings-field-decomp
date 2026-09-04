@@ -621,15 +621,13 @@ KfTmdGt4	0x1c	0x02	n3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-
 KfTmdGt4	0x1e	0x02	v3	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdGt4 field
 KfTmdHeader	0x00	0x04	id	u32	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
 KfTmdHeader	0x04	0x04	flags	u32	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x08	0x02	object_count	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
-KfTmdHeader	0x0a	0x02	object_count_high	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdHeader field
+KfTmdHeader	0x08	0x04	object_count	u32	supported	tmd.h;game_semantic_tmd_counts.tsv;Sony-File-Formats-1998:p2-25	word-sized format count; both index-preparation routines intentionally narrow it to u16
 KfTmdObject	0x00	0x04	vertex_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the vertex array
 KfTmdObject	0x04	0x04	vertex_count	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	vertex count in the standard object record
 KfTmdObject	0x08	0x04	normal_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	offset from the TMD object-table base to the normal array
 KfTmdObject	0x0c	0x04	normal_count	u32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	normal count in the standard object record
 KfTmdObject	0x10	0x04	primitive_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
-KfTmdObject	0x14	0x02	primitive_count	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	primitive count consumed by the in-place index preparation loop; read as a halfword (lhu)
-KfTmdObject	0x16	0x02	primitive_count_high	u16	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	upper halfword of the 32-bit TMD primitive count, unread by the game
+KfTmdObject	0x14	0x04	primitive_count	u32	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	word-sized count read with lw by all three polygon emitters; both index-preparation routines narrow it to u16
 KfTmdObject	0x18	0x04	scale	s32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
 KfTmdState	0x00	0x20	slots	u8 *[8]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdState	0x20	0x04	current_asset	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate

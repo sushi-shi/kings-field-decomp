@@ -1,17 +1,16 @@
 #ifndef KF_TMD_H
 #define KF_TMD_H
 
-/* Shared PlayStation TMD payload, primitive packet, and projection layouts. */
+/* Shared TMD payload, primitive packet, projection layouts, and game APIs. */
 
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 
-/* The game reads the 32-bit object count as two explicit halfwords. */
+/* On-disk counts are words; individual consumers may narrow them. */
 typedef struct KfTmdHeader {
     u32 id;
     u32 flags;
-    u16 object_count;
-    u16 object_count_high;
+    u32 object_count;
 } KfTmdHeader;
 
 /* Standard 0x1c-byte object-table record in an unlinked TMD payload. */
@@ -21,8 +20,7 @@ typedef struct KfTmdObject {
     u32 normal_offset;
     u32 normal_count;
     u32 primitive_offset;
-    u16 primitive_count;
-    u16 primitive_count_high;
+    u32 primitive_count;
     s32 scale;
 } KfTmdObject;
 
@@ -166,5 +164,15 @@ typedef struct KfScreenVertex {
     s16 sz;
     s16 p2;
 } KfScreenVertex;
+
+/* GAME.EXE and OPEN.EXE implement this interface with separate state. */
+extern KfTmdObject *tmd_get_object(u16 object_index);
+extern void tmd_prepare_primitive_indices(void);
+extern void tmd_project_vertices(s32 count);
+extern void tmd_register(u16 slot, u8 *tmd);
+extern void tmd_release_last_allocation(s32 slot);
+extern void tmd_select(u16 slot);
+extern void tmd_select_object_vertices(u16 object_index);
+extern void tmd_set_current_vertices(SVECTOR *vertices);
 
 #endif

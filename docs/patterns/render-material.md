@@ -70,7 +70,7 @@ This is a semantic improvement, not an exact match claim.
 The other five consumers retain their prior scores, including both exact
 renderers. All 340 exact game functions remain exact (GAME 260, OPEN 79,
 PSX 1), and all 55 data-owning units pass strict data comparison. The existing
-vendor exclusions remain unchanged. Remaining TMD issues are not all codegen
-residues: for example `render_enqueue_model` still reads a source halfword
-primitive count where retail reads a word. That width needs a separate
-caller/consumer inventory pass.
+vendor exclusions remain unchanged. The subsequent
+[TMD count-width campaign](tmd-counts.md) corrects the source halfword
+primitive count where the three retail polygon emitters read a word.
+Broader TMD ownership and packet-dispatch differences remain unresolved.

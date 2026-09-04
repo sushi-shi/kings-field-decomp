@@ -138,9 +138,16 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         }
         self.assertEqual(tmd["vertex_offset"], (0x00, 4, "u32"))
         self.assertEqual(tmd["primitive_offset"], (0x10, 4, "u32"))
-        self.assertEqual(tmd["primitive_count"], (0x14, 2, "u16"))
-        self.assertEqual(tmd["primitive_count_high"], (0x16, 2, "u16"))
+        self.assertEqual(tmd["primitive_count"], (0x14, 4, "u32"))
+        self.assertNotIn("primitive_count_high", tmd)
         self.assertEqual(tmd["scale"], (0x18, 4, "s32"))
+        header = {
+            row.name: (row.offset, row.size, row.datatype)
+            for row in fields
+            if row.structure == "KfTmdHeader"
+        }
+        self.assertEqual(header["object_count"], (0x08, 4, "u32"))
+        self.assertNotIn("object_count_high", header)
 
     def test_image_qualified_state_owns_interior_addresses(self) -> None:
         identities = load_data_identities(RETAIL_CONFIG)

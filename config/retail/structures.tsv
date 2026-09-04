@@ -66,8 +66,8 @@ KfTmdG3	0x10	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	
 KfTmdG4	0x14	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	gouraud quad packet body (mode 0x38): colour word then four normal/vertex pairs
 KfTmdGt3	0x18	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	gouraud textured triangle packet body (mode 0x34): three uv words then normal/vertex pairs
 KfTmdGt4	0x20	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	gouraud textured quad packet body (mode 0x3c): four uv words then four normal/vertex pairs
-KfTmdHeader	0xc	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	12-byte TMD payload header; the game reads the object count as a halfword
-KfTmdObject	0x1c	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	standard TMD object-table record; object stride and primitive fields are exercised by both overlays
+KfTmdHeader	0xc	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	three-word TMD header; preparation narrows the on-disk object count to u16
+KfTmdObject	0x1c	supported	tmd.h;game_semantic_display_tmd.tsv;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	seven-word object record shared by both overlays; full primitive count used by renderers and narrowed by preparation
 KfTmdState	0x24	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 KfTmdStateOpen	0xc	supported	open_render.h;asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
 KfVec3i	0x0c	supported	game_math.h;asm;xrefs	three signed 32-bit coordinates

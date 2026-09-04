@@ -55,8 +55,8 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 74)
-        self.assertEqual(counts["structure_fields"], 655)
-        self.assertEqual(counts["structure_fields_named"], 534)
+        self.assertEqual(counts["structure_fields"], 653)
+        self.assertEqual(counts["structure_fields_named"], 532)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -263,6 +263,40 @@ class InventoryTests(unittest.TestCase):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, tmd_header)
             self.assertNotIn(declaration, semantic_types)
+
+    def test_common_tmd_api_has_one_owner_header(self) -> None:
+        expected = {
+            "tmd_get_object": ("KfTmdObject *", "u16 object_index"),
+            "tmd_prepare_primitive_indices": ("void", ""),
+            "tmd_project_vertices": ("void", "s32 count"),
+            "tmd_register": ("void", "u16 slot;u8 *tmd"),
+            "tmd_release_last_allocation": ("void", "s32 slot"),
+            "tmd_select": ("void", "u16 slot"),
+            "tmd_select_object_vertices": ("void", "u16 object_index"),
+            "tmd_set_current_vertices": ("void", "SVECTOR *vertices"),
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        common = (REPO / "include/kf/tmd.h").read_text()
+        for image, filename in (
+            ("GAME.EXE", "game_render.h"),
+            ("OPEN.EXE", "open_render.h"),
+        ):
+            header = (REPO / "include/kf" / filename).read_text()
+            self.assertIn("#include <kf/tmd.h>", header)
+            functions = {
+                row.name: row for (owner_image, _va), row in identities.items()
+                if owner_image == image
+            }
+            for name, (return_type, parameters) in expected.items():
+                with self.subTest(image=image, name=name):
+                    identity = functions[name]
+                    self.assertEqual(identity.return_type, return_type)
+                    self.assertEqual(identity.parameters, parameters)
+                    arguments = parameters.replace(";", ", ") or "void"
+                    separator = "" if return_type.endswith("*") else " "
+                    declaration = f"extern {return_type}{separator}{name}({arguments});"
+                    self.assertEqual(common.count(declaration), 1)
+                    self.assertNotIn(f"{name}(", header)
 
     def test_audio_layouts_live_in_the_audio_owner_header(self) -> None:
         semantic_types = (REPO / "include/kf/semantic_types.h").read_text()

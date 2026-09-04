@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/game_render.h>
+#include <kf/tmd.h>
 
 DATA(0x80057b58, 0x4)
 CVECTOR tmd_textured_primitive_color = {0x80, 0x80, 0x80, 0};
@@ -17,7 +18,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     u8 *normals;
     u8 *packet;
     KfScreenVertex *vertices;
-    s32 remaining;
+    u32 remaining;
     u32 header;
     s32 otz;
 
@@ -377,7 +378,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     u8 *normals;
     u8 *packet;
     KfScreenVertex *vertices;
-    s32 remaining;
+    u32 remaining;
     u32 header;
     u32 type;
     s32 otz;
@@ -563,7 +564,7 @@ void render_enqueue_map(u16 object_index)
     u8 *normals;
     u8 *packet;
     KfScreenVertex *vertices;
-    s32 remaining;
+    u32 remaining;
     u32 header;
     CVECTOR shade;
     POLY_GT4 *prim;

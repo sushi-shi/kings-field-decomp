@@ -71,15 +71,7 @@ extern void sprite_add_f4(
 extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
                            u8 *color, u16 ot_index);
 extern void opening_fade_in(void);
-extern void tmd_select(u16 index);
-extern KfTmdObject *tmd_get_object(u16 index);
-extern void tmd_set_current_vertices(SVECTOR *vertices);
-extern void tmd_select_object_vertices(u16 index);
 extern void render_set_view_transform(
     const VECTOR *position, const SVECTOR *rotation);
-extern void tmd_prepare_primitive_indices(void);
-extern void tmd_register(u16 slot, u8 *tmd);
-extern void tmd_release_last_allocation(s32 slot);
-extern void tmd_project_vertices(s32 count);
 
 #endif

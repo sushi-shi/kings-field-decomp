@@ -27,3 +27,5 @@ promotes a probe to a proven historical toolchain.
   between the recovered notification fields and the wider graphics object.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
+- [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
+  narrowing in preparation, and the shared GAME/OPEN TMD interface.

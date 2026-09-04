@@ -2,6 +2,7 @@
 #include <kf/memory.h>
 #include <kf/debug.h>
 #include <kf/open_render.h>
+#include <kf/tmd.h>
 
 /*
  * OPEN.EXE display, TMD, and projection bodies following render initialization.
@@ -113,14 +114,14 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     u32 word;
 
-    object_count = ((KfTmdHeader *)tmd_state.current_asset)->object_count;
+    object_count = (u16)((KfTmdHeader *)tmd_state.current_asset)->object_count;
     objects_left = object_count - 1;
     object = TMD_OBJECTS(tmd_state.current_asset);
     if (object_count == 0) {
         return;
     }
     do {
-        primitive_count = object->primitive_count;
+        primitive_count = (u16)object->primitive_count;
         packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + 12);
         if (primitive_count != 0) {
             primitives_left = primitive_count;
