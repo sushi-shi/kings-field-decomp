@@ -233,6 +233,9 @@ KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	semantic_types.h;asm;func_800
 KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
 KfFloorItemPlacement	0x08	0x02	local_x	s16	supported	semantic_types.h;asm;func_80020b4c	offset within the tile
 KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;func_80020b4c	height offset above the floor height grid
+KfHudSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
+KfHudSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
+KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
 KfMagicRecord	0x00	0x01	learned	u8	supported	asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
 KfMagicRecord	0x01	0x01	charge_rate	u8	supported	asm;player_update	fixed6_ratio_step span while charging magic
 KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	semantic_types.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references

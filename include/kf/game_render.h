@@ -18,6 +18,7 @@ extern const KfCellWindow *active_cell_window;
 extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];
 extern KfEffectSprite effect_sprites[2];
+extern KfHudSprite hud_sprites[14];
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);
@@ -49,7 +50,7 @@ extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_entities(void);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern void render_hud_gauges(u8 *table);
+extern void render_hud_gauges(KfHudSprite *table);
 extern void render_initialize(void);
 extern void render_map_cell(s32 col, s32 row, char cell);
 extern void render_map_cells(void);

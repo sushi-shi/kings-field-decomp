@@ -3625,10 +3625,10 @@ GAME.EXE	0x8001fe10	0xe610		mips26	reachable-code	0x8004cb08	load		jal		control-
 GAME.EXE	0x8001fe18	0xe618		mips26	reachable-code	0x8001e83c	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001fe20	0xe620	0x8001fe24	mips_hi16_lo16	reachable-code	0x80055fe8	load		lui+addiu	a0	paired-reachable	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001fe28	0xe628		mips26	reachable-code	0x8004d7b4	load	SetLightMatrix	jal		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001fe30	0xe630	0x8001fe34	mips_hi16_lo16	reachable-code	0x80055c94	load	DAT_80055c94	lui+addiu	t1	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001fe3c	0xe63c	0x8001fe40	mips_hi16_lo16	reachable-code	0x80055ca2	load	DAT_80055ca2	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001fe44	0xe644	0x8001fe48	mips_hi16_lo16	reachable-code	0x80055cb0	load	DAT_80055cb0	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8001fe4c	0xe64c	0x8001fe50	mips_hi16_lo16	reachable-code	0x80055cbe	load	DAT_80055cbe	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001fe30	0xe630	0x8001fe34	mips_hi16_lo16	reachable-code	0x80055c94	load	hud_sprites	lui+addiu	t1	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8001fe3c	0xe63c	0x8001fe40	mips_hi16_lo16	reachable-code	0x80055ca2	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8001fe44	0xe644	0x8001fe48	mips_hi16_lo16	reachable-code	0x80055cb0	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8001fe4c	0xe64c	0x8001fe50	mips_hi16_lo16	reachable-code	0x80055cbe	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
 GAME.EXE	0x8001fe54	0xe654	0x8001fe58	mips_hi16_lo16	reachable-code	0x800a0818	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001fe68	0xe668	0x8001fe6c	mips_hi16_lo16	reachable-code	0x800a0790	bss	player_state	lui+lhu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001fea4	0xe6a4	0x8001fea8	mips_hi16_lo16	reachable-code	0x800a0792	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
@@ -3637,36 +3637,36 @@ GAME.EXE	0x8001ff30	0xe730	0x8001ff34	mips_hi16_lo16	reachable-code	0x800a0796	b
 GAME.EXE	0x8001ff80	0xe780	0x8001ff84	mips_hi16_lo16	reachable-code	0x800a0798	bss	player_state	lui+lhu	a2	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001ffb8	0xe7b8	0x8001ffbc	mips_hi16_lo16	reachable-code	0x800a079c	bss	player_state	lui+lhu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001fff0	0xe7f0	0x8001fff4	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+lhu	t0	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x8001fffc	0xe7fc	0x80020000	mips_hi16_lo16	reachable-code	0x80055c5c	load	DAT_80055c5c	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020004	0xe804	0x80020008	mips_hi16_lo16	reachable-code	0x80055c6a	load	DAT_80055c6a	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8002000c	0xe80c	0x80020010	mips_hi16_lo16	reachable-code	0x80055c78	load	DAT_80055c78	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020014	0xe814	0x80020018	mips_hi16_lo16	reachable-code	0x80055c86	load	DAT_80055c86	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8002001c	0xe81c	0x80020020	mips_hi16_lo16	reachable-code	0x80055ccc	load	DAT_80055ccc	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020024	0xe824	0x80020028	mips_hi16_lo16	reachable-code	0x80055cda	load	DAT_80055cda	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8002002c	0xe82c	0x80020030	mips_hi16_lo16	reachable-code	0x80055ce8	load	DAT_80055ce8	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020034	0xe834	0x80020038	mips_hi16_lo16	reachable-code	0x80055cf6	load	DAT_80055cf6	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x8002003c	0xe83c	0x80020040	mips_hi16_lo16	reachable-code	0x80055c66	load	DAT_80055c66	lui+sh	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020048	0xe848	0x8002004c	mips_hi16_lo16	reachable-code	0x80055c74	load	DAT_80055c74	lui+sh	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020050	0xe850	0x80020054	mips_hi16_lo16	reachable-code	0x80055c82	load	DAT_80055c82	lui+sh	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020058	0xe858	0x8002005c	mips_hi16_lo16	reachable-code	0x80055c90	load	DAT_80055c90	lui+sh	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020068	0xe868	0x8002006c	mips_hi16_lo16	reachable-code	0x80055cbe	load	DAT_80055cbe	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001fffc	0xe7fc	0x80020000	mips_hi16_lo16	reachable-code	0x80055c5c	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020004	0xe804	0x80020008	mips_hi16_lo16	reachable-code	0x80055c6a	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8002000c	0xe80c	0x80020010	mips_hi16_lo16	reachable-code	0x80055c78	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020014	0xe814	0x80020018	mips_hi16_lo16	reachable-code	0x80055c86	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8002001c	0xe81c	0x80020020	mips_hi16_lo16	reachable-code	0x80055ccc	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020024	0xe824	0x80020028	mips_hi16_lo16	reachable-code	0x80055cda	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8002002c	0xe82c	0x80020030	mips_hi16_lo16	reachable-code	0x80055ce8	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020034	0xe834	0x80020038	mips_hi16_lo16	reachable-code	0x80055cf6	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x8002003c	0xe83c	0x80020040	mips_hi16_lo16	reachable-code	0x80055c66	load	hud_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020048	0xe848	0x8002004c	mips_hi16_lo16	reachable-code	0x80055c74	load	hud_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020050	0xe850	0x80020054	mips_hi16_lo16	reachable-code	0x80055c82	load	hud_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020058	0xe858	0x8002005c	mips_hi16_lo16	reachable-code	0x80055c90	load	hud_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x80020068	0xe868	0x8002006c	mips_hi16_lo16	reachable-code	0x80055cbe	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
 GAME.EXE	0x80020070	0xe870		mips26	reachable-code	0x800200f8	load		j		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020080	0xe880	0x80020084	mips_hi16_lo16	reachable-code	0x80055cb0	load	DAT_80055cb0	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x80020080	0xe880	0x80020084	mips_hi16_lo16	reachable-code	0x80055cb0	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
 GAME.EXE	0x80020088	0xe888		mips26	reachable-code	0x800200f8	load		j		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x80020098	0xe898		mips26	reachable-code	0x800200f8	load		j		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200a8	0xe8a8	0x800200ac	mips_hi16_lo16	reachable-code	0x80055ca2	load	DAT_80055ca2	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x800200a8	0xe8a8	0x800200ac	mips_hi16_lo16	reachable-code	0x80055ca2	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
 GAME.EXE	0x800200b0	0xe8b0		mips26	reachable-code	0x800200f8	load		j		control-flow	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200b8	0xe8b8	0x800200bc	mips_hi16_lo16	reachable-code	0x80055c5c	load	DAT_80055c5c	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200c0	0xe8c0	0x800200c4	mips_hi16_lo16	reachable-code	0x80055c6a	load	DAT_80055c6a	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200c8	0xe8c8	0x800200cc	mips_hi16_lo16	reachable-code	0x80055c78	load	DAT_80055c78	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200d0	0xe8d0	0x800200d4	mips_hi16_lo16	reachable-code	0x80055c86	load	DAT_80055c86	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200d8	0xe8d8	0x800200dc	mips_hi16_lo16	reachable-code	0x80055ccc	load	DAT_80055ccc	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200e0	0xe8e0	0x800200e4	mips_hi16_lo16	reachable-code	0x80055cda	load	DAT_80055cda	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200e8	0xe8e8	0x800200ec	mips_hi16_lo16	reachable-code	0x80055ce8	load	DAT_80055ce8	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x800200f0	0xe8f0	0x800200f4	mips_hi16_lo16	reachable-code	0x80055cf6	load	DAT_80055cf6	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x800200b8	0xe8b8	0x800200bc	mips_hi16_lo16	reachable-code	0x80055c5c	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200c0	0xe8c0	0x800200c4	mips_hi16_lo16	reachable-code	0x80055c6a	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200c8	0xe8c8	0x800200cc	mips_hi16_lo16	reachable-code	0x80055c78	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200d0	0xe8d0	0x800200d4	mips_hi16_lo16	reachable-code	0x80055c86	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200d8	0xe8d8	0x800200dc	mips_hi16_lo16	reachable-code	0x80055ccc	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200e0	0xe8e0	0x800200e4	mips_hi16_lo16	reachable-code	0x80055cda	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200e8	0xe8e8	0x800200ec	mips_hi16_lo16	reachable-code	0x80055ce8	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
+GAME.EXE	0x800200f0	0xe8f0	0x800200f4	mips_hi16_lo16	reachable-code	0x80055cf6	load	hud_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
 GAME.EXE	0x800200f8	0xe8f8	0x800200fc	mips_hi16_lo16	reachable-code	0x800a0819	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80020100	0xe900	0x80020104	mips_hi16_lo16	reachable-code	0x80095756	bss	render_state	lui+lhu	v0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x80020108	0xe908	0x8002010c	mips_hi16_lo16	reachable-code	0x80055d04	load	DAT_80055d04	lui+addiu	s0	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x80020108	0xe908	0x8002010c	mips_hi16_lo16	reachable-code	0x80055d04	load	hud_sprites	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
 GAME.EXE	0x80020114	0xe914	0x80020118	mips_hi16_lo16	reachable-code	0x80055d74	load	effect_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
 GAME.EXE	0x80020124	0xe924	0x80020128	mips_hi16_lo16	reachable-code	0x80055d86	load	effect_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
 GAME.EXE	0x8002012c	0xe92c		mips26	reachable-code	0x8001f8b0	load		jal		control-flow	reviewed	investigation:relocs.tsv

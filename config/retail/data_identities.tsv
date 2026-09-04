@@ -1356,23 +1356,7 @@ GAME.EXE	0x80055858	0x20	DAT_80055858	unknown	load	MATRIX	lighting	supported	asm
 GAME.EXE	0x80055878	0x40	DAT_80055878	unknown	load	SVECTOR[8]	player	supported	asm;player_update	view_rotation_offset table indexed by update_state 1..7; entry 0 restores the neutral offset
 GAME.EXE	0x800558b8	0x238	map_cell_attribute_height_table	unknown	load	s16[284]	collision	supported	asm;xrefs;collision_query_world;2-byte-stride-by-attribute	signed height offset per cell attribute added to the query height and floor; extent WIP
 GAME.EXE	0x80055af0	0xc	map_resource_path	unknown	load	char[12]	map_resource	supported	game_semantic_map_resources.tsv;asm;xrefs;raw-bytes	mutable B0\\ path shared by the floor selector and map-resource loaders; source linkage remains unresolved
-GAME.EXE	0x80055c5c	0x1	DAT_80055c5c	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c66	0x2	DAT_80055c66	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c6a	0x1	DAT_80055c6a	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c74	0x2	DAT_80055c74	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c78	0x1	DAT_80055c78	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c82	0x2	DAT_80055c82	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c86	0x1	DAT_80055c86	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c90	0x2	DAT_80055c90	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055c94	0x1	DAT_80055c94	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ca2	0x1	DAT_80055ca2	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055cb0	0x1	DAT_80055cb0	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055cbe	0x1	DAT_80055cbe	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ccc	0x1	DAT_80055ccc	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055cda	0x1	DAT_80055cda	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ce8	0x1	DAT_80055ce8	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055cf6	0x1	DAT_80055cf6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d04	0x4	DAT_80055d04	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055c5c	0xc4	hud_sprites	global	load	KfHudSprite[14]	render	supported	game_semantic_hud_sprites.tsv;retail-bytes;asm;xrefs	thirteen HUD gauge, status and auxiliary sprite rows followed by a 0xff sentinel; geometry_render owns the array and render_frame updates its live fields
 GAME.EXE	0x80055d20	0x54	notification_sprites	global	load	KfNotificationSprite[6]	notify	supported	game_semantic_notification_sprites.tsv;retail-bytes;asm;xrefs	six initialized 14-byte screen-sprite records; notify_effect_update drives active and texture cells, and render_frame emits the active rows
 GAME.EXE	0x80055d74	0x38	effect_sprites	global	load	KfEffectSprite[2]	render_frame	supported	game_semantic_effect_sprites.tsv;retail-bytes;asm;xrefs	animated model-sprite list: one initialized row followed by a 0xff terminator; render_frame updates row zero state and screen-facing Z rotation
 GAME.EXE	0x80055dac	0x2	DAT_80055dac	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

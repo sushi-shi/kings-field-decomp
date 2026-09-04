@@ -239,6 +239,13 @@ typedef struct KfSpriteQuad {
     u16 h;
 } KfSpriteQuad;
 
+/* One row of the sentinel-terminated HUD gauge and status-sprite table. */
+typedef struct KfHudSprite {
+    u8 state;
+    u8 unknown_01;
+    KfSpriteQuad sprite;
+} KfHudSprite;
+
 /* One 14-byte row of the six-sprite on-screen notification display. */
 typedef struct KfNotificationSprite {
     u8 active;
