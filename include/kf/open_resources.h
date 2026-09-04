@@ -19,4 +19,5 @@ extern void opening_resources_load_scene3(void);
 extern void opening_resources_load_ending(void);
 extern void opening_resources_load_ending_entities(void);
 extern void opening_resources_load_ending_sequence(void);
+extern void func_800156bc(s32 arg0);
 #endif

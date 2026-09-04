@@ -553,6 +553,12 @@ source = "src/game/pad.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]
+unit = "open.main"
+image = "OPEN.EXE"
+source = "src/open/main.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.sprite_add_ft4"
 image = "OPEN.EXE"
 source = "src/open/sprite_add_ft4.c"

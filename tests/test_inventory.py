@@ -744,7 +744,7 @@ class InventoryTests(unittest.TestCase):
             for row in rows
             if "manual:open_cd_file" in row["provenance"].split(";")
         ]
-        self.assertEqual(len(campaign_rows), 43)
+        self.assertEqual(len(campaign_rows), 42)
         self.assertNotIn("", {row["target_name"] for row in campaign_rows})
 
         calls = [row for row in campaign_rows if row["kind"] == "mips26"]
@@ -756,6 +756,38 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(calls), 16)
         self.assertEqual(len(body_data), 26)
         self.assertEqual({row["status"] for row in calls + body_data}, {"reviewed"})
+
+    def test_open_startup_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_startup.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 2)
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+            self.assertEqual(row["current_match"], "100.000000000% exact")
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if "manual:open_semantic_startup" in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 7)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {row["target_name"] for row in campaign_rows})
+        self.assertNotIn(
+            0x8001376C,
+            {
+                parse_int(row["site_va"])
+                for row in relocation_rows
+                if row["image"] == "OPEN.EXE"
+            },
+        )
 
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"

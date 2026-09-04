@@ -11205,13 +11205,12 @@ OPEN.EXE	0x80013724	0x1f24		mips32_candidate	raw-word	0x80034da4	load		.word		ra
 OPEN.EXE	0x80013728	0x1f28		mips32_candidate	raw-word	0x80035198	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001372c	0x1f2c		mips32_candidate	raw-word	0x80035198	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80013730	0x1f30		mips32_candidate	raw-word	0x80034fc4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80013764	0x1f64		mips26	reachable-code	0x8001aa74	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001376c	0x1f6c	0x80013770	mips_hi16_lo16	reachable-code	0x800377a0	bss	cd_search_file	lui+ori	a0	paired-reachable	candidate	investigation:relocs.tsv;manual:open_cd_file
-OPEN.EXE	0x8001377c	0x1f7c		mips26	reachable-code	0x80013734	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80013784	0x1f84		mips26	reachable-code	0x8001c390	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80013798	0x1f98		mips26	reachable-code	0x80030150	load	InitHeap	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800137a0	0x1fa0		mips26	reachable-code	0x800301c0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800137ac	0x1fac		mips26	reachable-code	0x800156bc	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80013764	0x1f64		mips26	reachable-code	0x8001aa74	load	__main	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x8001377c	0x1f7c		mips26	reachable-code	0x80013734	load	func_80013734	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x80013784	0x1f84		mips26	reachable-code	0x8001c390	load	CdInit	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x80013798	0x1f98		mips26	reachable-code	0x80030150	load	InitHeap	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x800137a0	0x1fa0		mips26	reachable-code	0x800301c0	load	ExitCriticalSection	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x800137ac	0x1fac		mips26	reachable-code	0x800156bc	load	func_800156bc	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
 OPEN.EXE	0x800137cc	0x1fcc		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x800137d4	0x1fd4		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x800137dc	0x1fdc		mips26	reachable-code	0x8002c15c	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -12278,7 +12277,7 @@ OPEN.EXE	0x8001aa40	0x9240	0x8001aa44	mips_hi16_lo16	reachable-code	0x80069a87	b
 OPEN.EXE	0x8001aa50	0x9250	0x8001aa54	mips_hi16_lo16	reachable-code	0x80069a88	bss	DAT_80069a88	lui+sb	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8001aa58	0x9258	0x8001aa5c	mips_hi16_lo16	reachable-code	0x80069ae4	bss	DAT_80069ae4	lui+sb	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8001aa7c	0x927c	0x8001aa80	mips_hi16_lo16	reachable-code	0x80037284	load		lui+addiu	gp	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001aa84	0x9284		mips26	reachable-code	0x80013758	load		j		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001aa84	0x9284		mips26	reachable-code	0x80013758	load	main	j		control-flow-reviewed	reviewed	manual:open_semantic_startup
 OPEN.EXE	0x8001aa94	0x9294		mips26	reachable-code	0x8001b71c	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001aaac	0x92ac	0x8001aab0	mips_hi16_lo16	instruction-word	0x80037314	load		lui+lw	v0	paired-pattern	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001aab4	0x92b4	0x8001aab8	mips_hi16_lo16	instruction-word	0x80037314	load		lui+sw	at	paired-pattern	candidate	investigation:relocs.tsv

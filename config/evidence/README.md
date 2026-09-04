@@ -119,6 +119,12 @@ its caller-provided and allocator-provided destination contracts, the shared
 CD path/state objects, and the provider boundary at Psy-Q CD-ROM and libc
 calls. Both functions and the unit's two path literals match retail exactly.
 
+`open_semantic_startup.tsv` records the contiguous OPEN entry pair: a native
+`int` post-decrement loop that clears the overlay BSS and `main`, whose name
+causes GCC to emit the `__main` hook. It preserves the retail raw BSS and heap
+address constants while curating only the seven proven control-flow
+relocations. Both functions match retail exactly.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five
