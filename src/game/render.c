@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_cd.h>
 #include <kf/game_render.h>
+#include <kf/notify.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 #include <kf/tmd.h>
@@ -216,9 +217,9 @@ void render_initialize(void)
     DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
     DAT_8009506c = 0x1c;
-    notification_effect_phase = 0;
-    notification_queue_tail = 0;
-    notification_queue_head = 0;
+    notification_state.effect_phase = 0;
+    notification_state.queue_tail = 0;
+    notification_state.queue_head = 0;
     flag = notification_message_ids;
     count = 7;
     do {

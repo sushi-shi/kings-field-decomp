@@ -1803,12 +1803,8 @@ GAME.EXE	0x80095066	0x2	DAT_80095066	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80095068	0x2	DAT_80095068	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506a	0x2	DAT_8009506a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506c	0x2	DAT_8009506c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	u8[8]	notify	supported	asm;cfg;xrefs;notify_queue.c;render.c	eight-entry message ring; 0xff marks an empty slot
-GAME.EXE	0x80095086	0x1	notification_queue_tail	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update	message ring read/dequeue cursor, wrapped modulo eight
-GAME.EXE	0x80095087	0x1	notification_queue_head	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_enqueue	message ring write cursor, wrapped modulo eight
-GAME.EXE	0x80095088	0x1	notification_effect_phase	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update;map_interaction	on-screen notification state-machine phase
-GAME.EXE	0x80095089	0x1	notification_hold_frames	global	bss	u8	notify	supported	asm;cfg;xrefs;notify_effect_update	15-frame notification display hold counter
-GAME.EXE	0x8009508a	0x2	notification_effect_angle_x	global	bss	u16	notify	supported	asm;cfg;xrefs;notify_effect_update;render_frame	X rotation applied to notification sprites, advanced by 128 to 512 during phase 3
+GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	u8[8]	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;render_initialize	eight-entry message ring; 0xff marks an empty slot; every consumer materializes its own array base
+GAME.EXE	0x80095076	0x16	notification_state	global	bss	KfNotificationState	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;head-minus-17;phase-minus-18	eight numeric payloads with byte cursors, phase, hold counter, and halfword sprite rotation; larger graphics-context ownership remains under investigation
 GAME.EXE	0x8009508c	0x2	DAT_8009508c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009508e	0x2	DAT_8009508e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80095090	0x2	floor_item_count	unknown	bss	u16	item	supported	asm;xrefs;func_80020b4c;render_initialize	count of active floor-item placements expanded by the map item loader

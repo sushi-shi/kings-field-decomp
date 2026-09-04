@@ -21,12 +21,18 @@ typedef union KfNotificationDigitBuffer {
     u16 values[12];
 } KfNotificationDigitBuffer;
 
+/* Numeric payloads and the queue's presentation state share one retail base. */
+typedef struct KfNotificationState {
+    u16 message_payloads[8];
+    u8 queue_tail;
+    u8 queue_head;
+    u8 effect_phase;
+    u8 hold_frames;
+    u16 effect_angle_x;
+} KfNotificationState;
+
 extern u8 notification_message_ids[8];
-extern u8 notification_queue_tail;
-extern u8 notification_queue_head;
-extern u8 notification_effect_phase;
-extern u8 notification_hold_frames;
-extern u16 notification_effect_angle_x;
+extern KfNotificationState notification_state;
 extern KfNotificationSprite notification_sprites[6];
 extern void notify_enqueue(s32 message_id, ...);
 extern void notify_effect_update(void);

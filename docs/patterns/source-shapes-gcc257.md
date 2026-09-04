@@ -346,6 +346,13 @@ Residues, both blocked (not steerable from C under this probe):
 
 ## graphics-context aggregate (`0x80090ebc..0x800957e0`)
 
+The section below records the earlier aggregate hypothesis and GCC 2.5.7
+experiment. Its claims about original declaration boundaries and compiler
+mechanisms exceed what the linked bytes alone establish. The later
+[notification-state pass](notification-state.md) records the exact-function
+regressions under the current probe and the narrower field relationships that
+have been verified. The complete original object boundary remains unresolved.
+
 The base-register arithmetic in `func_8001de18` (`&tmd_state.current_asset`
 reaching `display_state.ordering_table` at `-756` off the `+488` buffer
 pointer) and in the display initializer `func_8001bb94` (`&draw_env[0].dtd`

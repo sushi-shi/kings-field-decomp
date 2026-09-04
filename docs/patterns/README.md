@@ -22,3 +22,6 @@ promotes a probe to a proven historical toolchain.
 - [psyq-cpe-tail-and-bss.md](psyq-cpe-tail-and-bss.md): the CPE v1 prefix
   embedded at GAME's initialized-data tail, and why referenced storage inside
   the final page can still be original BSS rather than initialized source data.
+- [notification-state.md](notification-state.md): retail payload/control
+  base relationships, the variadic enqueue signature, and the distinction
+  between the recovered notification fields and the wider graphics object.
