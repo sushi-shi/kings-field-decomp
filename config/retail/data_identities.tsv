@@ -1528,8 +1528,8 @@ GAME.EXE	0x80057b3c	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	as
 GAME.EXE	0x80057b44	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	";1": ISO 9660 version suffix appended to every CD path
 GAME.EXE	0x80057b48	0x8	map_mix_tim_filename	unknown	load	char[8]	resources	supported	asm;map_resources_load	"MIX.TIM": .data file name handed to map_resource_load_file for the floor texture image
 GAME.EXE	0x80057b50	0x7	error_screen_path	global	load	char[7]	display	supported	asm;func_8001b7b0;CdSearchFile	fatal-error screen disc path; byte 2 set to the stage digit before the search
-GAME.EXE	0x80057b5b	0x1	DAT_80057b5b	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057b5f	0x1	DAT_80057b5f	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057b58	0x4	tmd_textured_primitive_color	unknown	load	CVECTOR	render_enqueue_tmd	supported	retail-bytes;asm;xrefs;NormalColorDpq	neutral-grey color used for lit textured TMD packets; byte +3 is the packet code field
+GAME.EXE	0x80057b5c	0x4	model_textured_primitive_color	unknown	load	CVECTOR	render_enqueue_model	supported	retail-bytes;asm;xrefs;NormalColorDpq	neutral-grey color used for lit textured model packets; byte +3 is the packet code field
 GAME.EXE	0x80057b63	0x1	DAT_80057b63	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057b6c	0x4	pending_game_state	global	load	s32	game_state	candidate	game_match_campaign_30.tsv;asm;xrefs	state one is acknowledged and cleared
 GAME.EXE	0x80057b72	0x2	DAT_80057b72	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

@@ -149,6 +149,33 @@ class DisplayTmdInventoryTests(unittest.TestCase):
                 row = identities[(image, va)]
                 self.assertEqual((row.name, row.size, row.datatype), shape)
 
+    def test_textured_packet_colors_own_their_code_fields(self) -> None:
+        identities = load_data_identities(RETAIL_CONFIG)
+        expected = {
+            0x80057B58: "tmd_textured_primitive_color",
+            0x80057B5C: "model_textured_primitive_color",
+        }
+        for va, name in expected.items():
+            row = identities[("GAME.EXE", va)]
+            self.assertEqual((row.name, row.size, row.datatype), (name, 4, "CVECTOR"))
+            self.assertEqual(row.storage, "load")
+            self.assertEqual(row.confidence, "supported")
+        self.assertNotIn(("GAME.EXE", 0x80057B5B), identities)
+        self.assertNotIn(("GAME.EXE", 0x80057B5F), identities)
+
+        _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        references = [
+            row
+            for row in rows
+            if row["image"] == "GAME.EXE"
+            and parse_int(row["target_va"]) in (0x80057B5B, 0x80057B5F)
+        ]
+        self.assertEqual(len(references), 10)
+        for row in references:
+            owner_va = parse_int(row["target_va"]) - 3
+            self.assertEqual(row["target_name"], expected[owner_va])
+            self.assertEqual(row["status"], "reviewed")
+
     def test_decoded_relocations_and_direct_calls_are_reviewed(self) -> None:
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         display_rows = [

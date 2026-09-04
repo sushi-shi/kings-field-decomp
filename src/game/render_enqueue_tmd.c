@@ -3,8 +3,8 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern u8 DAT_80057b5b;        /* last textured primitive code */
-extern CVECTOR DAT_80057b58;   /* base colour for textured primitives */
+DATA(0x80057b58, 0x4)
+CVECTOR tmd_textured_primitive_color = {0x80, 0x80, 0x80, 0};
 
 #define VTX(off) ((KfScreenVertex *)((u8 *)vertices + (off)))
 
@@ -12,7 +12,7 @@ extern CVECTOR DAT_80057b58;   /* base colour for textured primitives */
  * Emit one prepared TMD object across the full primitive-type set: flat (F3/F4),
  * flat textured (FT3/FT4), Gouraud (G3/G4) and Gouraud textured (GT3/GT4),
  * each with a semi-transparent variant.  Untextured packets shade from their own
- * packet colour; textured packets take the material colour DAT_80057b58 and the
+ * packet colour; textured packets take tmd_textured_primitive_color and the
  * packet's own CLUT/tpage.  Every packet is back-face clipped against the
  * projected screen vertices and sorted at the averaged depth biased by the tag.
  *
@@ -92,7 +92,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyFT3(prim);
-                DAT_80057b5b = prim->code;
+                tmd_textured_primitive_color.cd = prim->code;
                 prim->clut = p->cba;
                 prim->tpage = p->tsb;
                 *(long *)&prim->x0 = *(long *)&va->sxy;
@@ -101,7 +101,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 *(u16 *)&prim->u0 = *(u16 *)&p->tu0;
                 *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
                 *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), &DAT_80057b58,
+                NormalColorDpq((SVECTOR *)(normals + p->n0), &tmd_textured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
@@ -159,7 +159,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyFT4(prim);
-                DAT_80057b5b = prim->code;
+                tmd_textured_primitive_color.cd = prim->code;
                 prim->clut = p->cba;
                 prim->tpage = p->tsb;
                 *(long *)&prim->x0 = *(long *)&va->sxy;
@@ -170,7 +170,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
                 *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
                 *(u16 *)&prim->u3 = *(u16 *)&p->tu3;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), &DAT_80057b58,
+                NormalColorDpq((SVECTOR *)(normals + p->n0), &tmd_textured_primitive_color,
                                (va->p2 + vc->p2 + vb->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
@@ -248,7 +248,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyGT3(prim);
-                DAT_80057b5b = prim->code;
+                tmd_textured_primitive_color.cd = prim->code;
                 prim->clut = p->cba;
                 prim->tpage = p->tsb;
                 *(long *)&prim->x0 = *(long *)&va->sxy;
@@ -258,7 +258,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
                 *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
                 NormalColorDpq3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), &DAT_80057b58, va->p2,
+                                (SVECTOR *)(normals + p->n2), &tmd_textured_primitive_color, va->p2,
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
@@ -347,7 +347,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyGT4(prim);
-                DAT_80057b5b = prim->code;
+                tmd_textured_primitive_color.cd = prim->code;
                 prim->clut = p->cba;
                 prim->tpage = p->tsb;
                 *(long *)&prim->x0 = *(long *)&va->sxy;
@@ -359,9 +359,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
                 *(u16 *)&prim->u3 = *(u16 *)&p->tu3;
                 NormalColorDpq3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), &DAT_80057b58, va->p2,
+                                (SVECTOR *)(normals + p->n2), &tmd_textured_primitive_color, va->p2,
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
-                NormalColorDpq((SVECTOR *)(normals + p->n3), &DAT_80057b58, va->p2,
+                NormalColorDpq((SVECTOR *)(normals + p->n3), &tmd_textured_primitive_color, va->p2,
                                (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
