@@ -487,8 +487,16 @@ def _check_identifier(path: Path, field: str, value: str, key: tuple[str, int]) 
 
 
 def _check_parameters(path: Path, value: str, key: tuple[str, int]) -> None:
-    for parameter in value.split(";"):
+    parameters = value.split(";")
+    for index, parameter in enumerate(parameters):
         if not parameter:
+            continue
+        if parameter == "...":
+            if index == 0 or index != len(parameters) - 1:
+                raise ValueError(
+                    f"{path}: variadic marker must follow named parameters "
+                    f"and appear last at {key!r}"
+                )
             continue
         type_name, separator, name = parameter.rpartition(" ")
         declarator_name = name.lstrip("*")
@@ -1255,10 +1263,11 @@ def propose_ghidra_signatures(
             and candidate["status"] == "decompiled"
             and identity.signature_confidence in {"address-only", "candidate"}
         ):
+            variadic = identity.parameters.endswith(";...")
             current_parameters = [
                 (_parameter_name(value), "*" in value.rpartition(" ")[0])
                 for value in identity.parameters.split(";")
-                if value
+                if value and value != "..."
             ]
             proposed_parameters = []
             for parameter in candidate["parameters"]:
@@ -1281,6 +1290,8 @@ def propose_ghidra_signatures(
                 proposed_parameters.append(
                     f"{_ghidra_type(datatype)} {name}"
                 )
+            if variadic:
+                proposed_parameters.append("...")
             parameters = ";".join(proposed_parameters)
             return_type = _ghidra_type(str(candidate["return_type"]))
             channel = "ghidra-12.0.4-decompiler-candidate"

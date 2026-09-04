@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/memory.h>
+#include <kf/open_debug.h>
 #include <kf/open_render.h>
 
 /*
@@ -238,7 +239,7 @@ void tmd_project_vertices(s32 count)
     long unused_depth;
 
     if (count >= 1000) {
-        func_8001a814("POINT OVER !!!!!!\n");
+        debug_printf_sink("POINT OVER !!!!!!\n");
         return;
     }
     out = tmd_projected_vertices;

@@ -480,7 +480,7 @@ OPEN.EXE	0x8001a3fc	func_8001a3fc			void *	s32 arg0	address-only	candidate	mips-
 OPEN.EXE	0x8001a4dc	func_8001a4dc			void *	u32 arg0	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8001a568	func_8001a568			char *	char * arg0;char arg1;u8 arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x8001a5d4	func_8001a5d4			s32	u8 * arg0;u8 * arg1;void * arg2	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
-OPEN.EXE	0x8001a814	func_8001a814			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
+OPEN.EXE	0x8001a814	debug_printf_sink	debug	printf_sink	void	const char *format;...	supported	supported	open_semantic_diagnostic_sink.tsv;asm;cfg;five-callers;variadic-o32-argument-save;diagnostic-strings;reconstructed-body	no-op variadic diagnostic sink retained by matrix-dump and TMD projection callers
 OPEN.EXE	0x8001a82c	func_8001a82c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80022c7c	func_80022c7c			u8	s32 object;s32 arg1	address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
 OPEN.EXE	0x80022d2c	func_80022d2c			void		address-only	candidate	mips-live-in-heuristic;ghidra-12.0.4-decompiler-candidate	Ghidra/static signature seed; requires caller and body review
