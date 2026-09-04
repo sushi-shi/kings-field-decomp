@@ -50,13 +50,17 @@ typedef struct KfTmdObject {
     u32 normal_offset;     /* +0x08 */
     u32 normal_count;      /* +0x0c */
     u32 primitive_offset;  /* +0x10 */
-    u32 primitive_count;   /* +0x14 */
+    u16 primitive_count;   /* +0x14 */
+    u16 primitive_count_high; /* +0x16 */
     s32 scale;             /* +0x18 */
 } KfTmdObject; /* 0x1c */
 ```
 
-These are checked definitions in `include/kf/semantic_types.h`, not inferred
-names in prose. `config/retail/structures.tsv` records the complete sizes and
+`KfPrimitiveBuffer` remains in `include/kf/semantic_types.h` pending wider
+display-state ownership work. `KfTmdObject`, the TMD header and primitive
+packet bodies, and the shared projected-vertex record are checked definitions
+in `include/kf/tmd.h`, not inferred names in prose.
+`config/retail/structures.tsv` records the complete sizes and
 `structure_fields.tsv` records every field offset, size, type, confidence, and
 evidence.
 

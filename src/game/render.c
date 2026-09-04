@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/semantic_types.h>
+#include <kf/tmd.h>
 #include <kf/game.h>
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */

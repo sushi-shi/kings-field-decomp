@@ -4,6 +4,7 @@
 /* OPEN.EXE display, render, and TMD state shared across render units. */
 
 #include <kf/semantic_types.h>
+#include <kf/tmd.h>
 
 extern KfDisplayStateOpen display_state;
 extern KfRenderStateOpen render_state;

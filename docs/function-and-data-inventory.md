@@ -208,12 +208,14 @@ Shared inventory-only layout names such as `KfVecXZs`, `KfVec3s`, `KfVec3i`,
 `KfCollisionTarget`, `KfPrimitiveBuffer`, `KfTmdObject`, `KfScreenVertex`,
 `KfCdFileEntry` is owned by `include/kf/game_cd.h`; `KfSaveSlotSummary`,
 `KfSaveDirectory`, `KfSaveHeader`, and `KfSavePayload` are owned by
-`include/kf/game_save.h`. The remaining inventory-only layouts in this list
-still live in `include/kf/semantic_types.h`. Their sizes are checked against
-`config/retail/structures.tsv` by `kf inventory check`; established
-reconstruction types such as `KfMatrix` remain in `include/kf/game_types.h`.
-A type name records only fields and extents supported by the current MIPS
-access pattern; it does not claim the original source spelling.
+`include/kf/game_save.h`; the shared TMD payload, primitive, and projection
+layouts are owned by `include/kf/tmd.h`. The remaining inventory-only layouts
+in this list still live in `include/kf/semantic_types.h`. Their sizes are
+checked against `config/retail/structures.tsv` by `kf inventory check`;
+established reconstruction types such as `KfMatrix` remain in
+`include/kf/game_types.h`. A type name records only fields and extents
+supported by the current MIPS access pattern; it does not claim the original
+source spelling.
 
 The confidence values are `address-only`, `candidate`, `supported`, and
 `proven`. `proven` is reserved for a recovered source symbol/signature or an

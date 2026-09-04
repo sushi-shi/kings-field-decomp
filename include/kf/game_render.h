@@ -11,6 +11,7 @@
  */
 
 #include <kf/semantic_types.h>
+#include <kf/tmd.h>
 
 extern KfScreenVertex DAT_800911b0[];
 extern KfCellWindow render_cell_windows[16];

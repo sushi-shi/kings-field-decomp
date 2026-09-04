@@ -221,6 +221,26 @@ class InventoryTests(unittest.TestCase):
         self.assertIn(declaration, game_cd)
         self.assertNotIn(declaration, semantic_types)
 
+    def test_tmd_layouts_live_in_the_shared_tmd_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        tmd_header = (REPO / "include/kf/tmd.h").read_text()
+        for structure in (
+            "KfTmdHeader",
+            "KfTmdObject",
+            "KfTmdF3",
+            "KfTmdG3",
+            "KfTmdF4",
+            "KfTmdG4",
+            "KfTmdFt3",
+            "KfTmdGt3",
+            "KfTmdFt4",
+            "KfTmdGt4",
+            "KfScreenVertex",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, tmd_header)
+            self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)
