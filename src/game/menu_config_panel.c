@@ -2,9 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Double-buffered map-viewer frame quads linked behind the config rows. */
-extern POLY_FT4 DAT_800580e8[2][4];
-
 /*
  * Config-panel draw request passed by value.  Only the two option-row anchors
  * and the per-row selection array are consumed; the reserved gaps preserve the

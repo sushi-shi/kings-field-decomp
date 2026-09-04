@@ -584,14 +584,14 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(rows), 6)
+        self.assertEqual(len(rows), 7)
 
         spans = [
             (parse_int(row["va"]), parse_int(row["extent"]))
             for row in rows
         ]
         self.assertEqual(spans[0][0], 0x800291EC)
-        self.assertEqual(spans[-1][0] + spans[-1][1], 0x8002A510)
+        self.assertEqual(spans[-1][0] + spans[-1][1], 0x8002ABB4)
         for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
             self.assertEqual(va + extent, next_va)
 
@@ -612,6 +612,7 @@ class InventoryTests(unittest.TestCase):
             "src/game/menu_draw_item_name_frame.c",
             "src/game/menu_sprite_blit.c",
             "src/game/menu_draw_number.c",
+            "src/game/menu_window_backdrop.c",
         ):
             self.assertNotIn(old_source, units)
 
@@ -623,6 +624,10 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             data_identities[("GAME.EXE", 0x800583F4)].datatype,
             "MenuSpriteDef",
+        )
+        self.assertEqual(
+            data_identities[("GAME.EXE", 0x800580E8)].datatype,
+            "POLY_FT4[2][4]",
         )
 
     def test_menu_list_campaign_matches_curated_identities(self) -> None:

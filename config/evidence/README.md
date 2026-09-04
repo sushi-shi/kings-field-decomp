@@ -72,11 +72,12 @@ menu frame helpers through numbered TIM loading. It supports replacing four
 reconstruction-only units with one WIP contiguous module while keeping the
 surrounding menu backdrop and save-system boundaries explicitly unresolved.
 
-`game_tu_menu_presentation.tsv` records the six gapless GAME functions from
-the two-option dispatcher through the number renderer. It supports one shared
-glyph-string interface, typed font/sprite descriptors, and replacing four
-reconstruction-only units with one WIP contiguous module while retaining the
-neighboring list renderer and window backdrop as unresolved boundaries.
+`game_tu_menu_presentation.tsv` records the seven gapless GAME functions from
+the two-option dispatcher through the window-backdrop renderer. It supports
+one shared glyph-string interface, typed font/sprite descriptors and border
+quads, and replacing five reconstruction-only units with one WIP contiguous
+module while retaining the neighboring list renderer and menu runtime as
+unresolved boundaries.
 
 `game_open_semantic_memory_allocator.tsv` records the seven-function LIFO
 allocator duplicated in GAME and OPEN, including its signed interfaces, two

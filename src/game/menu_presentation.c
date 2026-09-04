@@ -3,8 +3,9 @@
 #include <kf/game.h>
 
 /*
- * Two-option, item-preview, sprite, text, and number drawing form one gapless
- * linked run (0x800291ec..0x8002a510). The original source boundary is WIP.
+ * Two-option, item-preview, sprite, text, number, and window-backdrop drawing
+ * form one gapless linked run (0x800291ec..0x8002abb4). The original source
+ * boundary is WIP.
  */
 
 extern s16 DAT_80058dc0[][10];
@@ -246,9 +247,6 @@ void menu_blit_sprite(
  * Render a positioned glyph string. The low 12 code bits select a 14x12 atlas
  * cell; bits 0x1000 and 0x2000 overlay the two decoration cells. Each emitted
  * quad links at ordering-table depth 1000.
- *
- * The only known residue is the equivalent low-byte immediate form used for
- * the two decorated right edges; see docs/patterns/source-shapes-gcc257.md.
  */
 ADDRESS(0x80029de0, 0x530)
 void menu_draw_string(
@@ -335,10 +333,6 @@ void menu_draw_string(
  * Render a fixed-pitch digit run from a single-column atlas. Each signed code
  * selects an eleven-texel row, screen positions advance seven pixels, and all
  * quads link at ordering-table depth 1000.
- *
- * The one-instruction residue is an unattributed scheduling choice: the probe
- * initializes xoff in the prologue while retail does so after the initial
- * terminator test.
  */
 ADDRESS(0x8002a310, 0x200)
 void menu_draw_number(
@@ -371,4 +365,117 @@ void menu_draw_number(
         current_poly_ft4->v3 = label->codes[i] * 11 + font->height;
         primitive_buffer_commit_poly_ft4(1000);
     }
+}
+
+/*
+ * Draw the shared translucent menu-window backdrop.  Four semi-transparent
+ * textured tiles built in the primitive workspace cover the window interior in
+ * a 2x2 grid at (166,16), (237,16), (166,120), (237,120) -- all linked at
+ * ordering-table depth 2900 -- then the four persistent border quads are
+ * enqueued at depth 3000.  Shared by the status panel, the option-window
+ * renderer and the scrollable list widget.
+ */
+ADDRESS(0x8002a510, 0x6a4)
+void menu_draw_window_backdrop(void)
+{
+    primitive_buffer_begin_poly_ft4();
+    SetSemiTrans(current_poly_ft4, 1);
+    current_poly_ft4->tpage = DAT_80058400;
+    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->x0 = 166;
+    current_poly_ft4->y0 = 16;
+    current_poly_ft4->x1 = DAT_80058408 + 166;
+    current_poly_ft4->y1 = 16;
+    current_poly_ft4->x2 = 166;
+    current_poly_ft4->y2 = DAT_8005840a + 16;
+    current_poly_ft4->x3 = DAT_80058408 + 166;
+    current_poly_ft4->y3 = DAT_8005840a + 16;
+    current_poly_ft4->u0 = DAT_80058404;
+    current_poly_ft4->v0 = DAT_80058406;
+    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v1 = DAT_80058406;
+    current_poly_ft4->u2 = DAT_80058404;
+    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    primitive_buffer_commit_poly_ft4(2900);
+
+    primitive_buffer_begin_poly_ft4();
+    SetSemiTrans(current_poly_ft4, 1);
+    current_poly_ft4->tpage = DAT_80058400;
+    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->x0 = 237;
+    current_poly_ft4->y0 = 16;
+    current_poly_ft4->x1 = DAT_80058408 + 237;
+    current_poly_ft4->y1 = 16;
+    current_poly_ft4->x2 = 237;
+    current_poly_ft4->y2 = DAT_8005840a + 16;
+    current_poly_ft4->x3 = DAT_80058408 + 237;
+    current_poly_ft4->y3 = DAT_8005840a + 16;
+    current_poly_ft4->u0 = DAT_80058404;
+    current_poly_ft4->v0 = DAT_80058406;
+    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v1 = DAT_80058406;
+    current_poly_ft4->u2 = DAT_80058404;
+    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    primitive_buffer_commit_poly_ft4(2900);
+
+    primitive_buffer_begin_poly_ft4();
+    SetSemiTrans(current_poly_ft4, 1);
+    current_poly_ft4->tpage = DAT_80058400;
+    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->x0 = 166;
+    current_poly_ft4->y0 = 120;
+    current_poly_ft4->x1 = DAT_80058408 + 166;
+    current_poly_ft4->y1 = 120;
+    current_poly_ft4->x2 = 166;
+    current_poly_ft4->y2 = DAT_8005840a + 120;
+    current_poly_ft4->x3 = DAT_80058408 + 166;
+    current_poly_ft4->y3 = DAT_8005840a + 120;
+    current_poly_ft4->u0 = DAT_80058404;
+    current_poly_ft4->v0 = DAT_80058406;
+    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v1 = DAT_80058406;
+    current_poly_ft4->u2 = DAT_80058404;
+    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    primitive_buffer_commit_poly_ft4(2900);
+
+    primitive_buffer_begin_poly_ft4();
+    SetSemiTrans(current_poly_ft4, 1);
+    current_poly_ft4->tpage = DAT_80058400;
+    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->x0 = 237;
+    current_poly_ft4->y0 = 120;
+    current_poly_ft4->x1 = DAT_80058408 + 237;
+    current_poly_ft4->y1 = 120;
+    current_poly_ft4->x2 = 237;
+    current_poly_ft4->y2 = DAT_8005840a + 120;
+    current_poly_ft4->x3 = DAT_80058408 + 237;
+    current_poly_ft4->y3 = DAT_8005840a + 120;
+    current_poly_ft4->u0 = DAT_80058404;
+    current_poly_ft4->v0 = DAT_80058406;
+    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v1 = DAT_80058406;
+    current_poly_ft4->u2 = DAT_80058404;
+    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
+    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    primitive_buffer_commit_poly_ft4(2900);
+
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &DAT_800580e8[display_state.buffer_index][3]);
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &DAT_800580e8[display_state.buffer_index][2]);
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &DAT_800580e8[display_state.buffer_index][1]);
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &DAT_800580e8[display_state.buffer_index][0]);
 }

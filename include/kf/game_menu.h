@@ -68,7 +68,7 @@ typedef struct KfMenuList {
     u8 *quantities;
 } KfMenuList;
 
-extern MenuLabelCell DAT_80058494[];
+extern POLY_FT4 DAT_800580e8[2][4];
 extern MenuSpriteDef DAT_800583e8;
 extern MenuSpriteDef DAT_800583f4;
 extern MenuSpriteDef DAT_8005840c;
@@ -76,6 +76,7 @@ extern MenuSpriteDef DAT_80058418;
 extern MenuSpriteDef DAT_80058424;
 extern MenuSpriteDef DAT_80058430;
 extern MenuSpriteDef DAT_8005846c;
+extern MenuLabelCell DAT_80058494[];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 extern void item_load_database(void);

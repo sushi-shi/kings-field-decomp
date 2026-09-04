@@ -3,8 +3,8 @@
 # a higher one is a regression and fails `kf verify board --gate`.
 # Never hand-edit to raise a floor - reconstruct/name the symbol instead.
 src func_ refs	30
-src DAT_ refs	982
-GAME extern decls	696
+src DAT_ refs	979
+GAME extern decls	693
 pointer casts	899
 void* views	49
 byte-array views	30

@@ -13,7 +13,6 @@ extern void *CdSearchFile(void *slot, char *filename);
 extern KfCdFileEntry cd_file_table[80];
 
 /* Item stat banks loaded contiguously from COM\STAT.DAT (opaque records). */
-extern u8 DAT_800580e8[];
 extern u8 DAT_80058dc0[];
 extern u8 DAT_80059400[];
 extern u8 DAT_800594b8[];
