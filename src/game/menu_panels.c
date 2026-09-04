@@ -10,7 +10,6 @@ extern s16 DAT_80059400[];
 
 /* Shared menu primitives: frame begin/flush, hub background, list-panel
  * background, input sound cue, and the vsync/pad poll. */
-extern u32 pad_read();
 
 /* Cursor/list widget helpers (init, render, query). */
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

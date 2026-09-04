@@ -7,7 +7,6 @@ extern CdlFILE cd_search_file;
 extern CdlLOC cd_read_location;
 extern u16 DAT_80095038;
 
-extern u32 pad_read();
 extern void exit(s32 status);
 
 #define CD_SECTOR_SIZE 0x800

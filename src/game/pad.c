@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_kernel.h>
 #include <kf/game.h>
 
 /*
@@ -11,28 +12,11 @@
  * declare no parameters and fall off the end, so pad_initialize consumes the
  * incidental v0 the same way the retail program does.
  *
- * pad_initialize/pad_read/pad_stop stay address-derived here because
- * they are the public PAD API referenced from many other translation units;
- * proposed names (pad_initialize/pad_read/pad_stop) are in the reconstruction
- * report. DAT_80057d24/DAT_8006bd88/DAT_80058020/DAT_80058028 likewise remain
- * address-derived WIP identities (critical-section state, pad identifier, and
- * the two pad data words).
- *
- * pad_initialize/pad_read/pad_stop are exact. critical_section_set and
- * the three stubs are structurally exact but one prologue reorder short: retail
- * hoists the first data load above the frame allocation when it feeds a call
- * argument or a callee-saved register, which cc1psx-257 does not reproduce (see
- * docs/patterns/source-shapes-gcc257.md, pad campaign). Not steered with dead
- * code.
+ * The three reporting stubs retain their K&R parameter lists because callers
+ * pass arguments that the bodies ignore.
  */
 
-extern void EnterCriticalSection(void);
-extern void ExitCriticalSection(void);
-extern u32 PAD_init2();
-extern void PAD_dr(void);
-extern void StopPAD2(void);
 extern int printf(const char *format, ...);
-extern void ResetCallback(void);
 
 ADDRESS(0x8005005c, 0x5c)
 u32 critical_section_set(s32 enable)

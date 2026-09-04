@@ -3,7 +3,6 @@
 #include <kf/game.h>
 
 
-extern u32 pad_read(s32 mode);
 extern s32 menu_enter_mode(s32 arg0);
 extern void map_interaction_dispatch();
 extern KfEffectRecord *effect_pool_construct();

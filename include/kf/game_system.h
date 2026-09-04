@@ -40,7 +40,6 @@ extern s32 cd_file_load_allocated(
 extern s32 cd_file_load_into(void *destination, const char *relative_path);
 extern s32 cd_file_load_table_entry(void **destination, s32 index);
 extern void common_resources_load(void);
-extern s32 format(const char *device);
 extern char *format_int_dec(s32 value);
 extern char *format_int_hex(u32 value);
 extern char *format_pad_left(char *string, char pad, u8 width);
@@ -63,6 +62,7 @@ extern void memory_release_last(void);
 extern void memory_reset_system_heap(void);
 extern u32 pad_init_bad_identifier();
 extern u32 pad_initialize(s32 identifier);
+extern u32 pad_read();
 extern void pad_read_bad_identifier(void);
 extern void pad_stop(void);
 extern void pad_stop_bad_identifier(void);

@@ -18,7 +18,6 @@ typedef struct ConfigPanelParams {
 
 void menu_config_panel_draw(ConfigPanelParams params);
 
-extern u32 pad_read();
 extern void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag);
 
 /*

@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_types.h>
+#include <kf/psyq_kernel.h>
 #include <MALLOC.H>
 #include <kf/game.h>
 
@@ -9,9 +10,6 @@
 #else
 #define MEMORY_ARENA_LIMIT 0xfefff
 #endif
-
-/* KERNEL.H (Psy-Q Release 2.5) declares InitHeap without a prototype. */
-extern void InitHeap();
 
 /* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
 

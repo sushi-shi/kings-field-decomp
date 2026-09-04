@@ -13,7 +13,6 @@ extern u8 DAT_800652a8[240];
  * input sound cue, and the vsync/pad poll. */
 extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern u32 pad_read();
 
 /* Menu sub-panels dispatched by the hub menu. */
 s32 menu_use_item_panel(void);

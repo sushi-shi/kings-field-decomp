@@ -1,20 +1,13 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
+#include <kf/psyq_kernel.h>
 #include <kf/game.h>
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
 extern void *memset();
-/* Psy-Q KERNEL: OpenEvent(desc, spec, mode, func), EnableEvent, CloseEvent; LIBGPU SetDispMask. */
-extern s32 OpenEvent(u32 descriptor, s32 spec, s32 mode, void (*handler)(void));
-extern s32 EnableEvent(s32 event);
-extern s32 CloseEvent(s32 event);
-
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern u32 player_warp_trigger_update(void);
-
-extern void EnterCriticalSection(void);
-extern void ExitCriticalSection(void);
 
 /*
  * Both counters live in the retail load image four bytes apart as explicitly

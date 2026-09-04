@@ -14,7 +14,6 @@ extern s16 DAT_80058dc0[];
 
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
  * and the deferred state acknowledgement. */
-extern u32 pad_read();
 
 /* Item-list widget helpers (init, render, preview, query). */
 

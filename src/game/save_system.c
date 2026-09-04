@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/psyq_audio.h>
-#include <KERNEL.H>
+#include <kf/psyq_kernel.h>
 #include <kf/game.h>
 
 /* Jump tables and string literals of this unit in the retail data region. */
@@ -10,33 +10,7 @@ RODATA(0x8001235c, 0x178)
 /* Psy-Q Release 2.5 MEMORY.H declares memset and memcpy without prototypes. */
 extern void *memset();
 extern void *memcpy();
-/* Release 2.5 ships no LIBAPI header; these BIOS entry points are declared here. */
-extern s32 OpenEvent(u32 descriptor, s32 spec, s32 mode, void *handler);
-extern s32 EnableEvent(s32 event);
-extern s32 TestEvent(s32 event);
-extern s32 UnDeliverEvent(s32 event);
-extern s32 CloseEvent(s32 event);
-extern void StartCARD2(void);
-extern void StopCARD2(void);
-extern void _bu_init(void);
-extern void _card_auto(s32 enable);
-extern s32 _card_info(s32 channel);
-extern void _new_card(void);
-extern s32 open(const char *name, s32 mode);
-extern s32 close(s32 file);
-extern s32 lseek(s32 file, s32 offset, s32 origin);
-extern s32 read(s32 file, void *buffer, s32 length);
-extern s32 write(s32 file, const void *buffer, s32 length);
-extern s32 erase(const char *name);
 /* LIBSND.H: int SsVoKeyOn(long, long, unsigned short, unsigned short); */
-
-/*
- * SYS/FILE.H maps these to the FCNTL.H FREAD/FWRITE/FCREAT bits; that header
- * chain uses lowercase include paths the pinned host cannot resolve.
- */
-#define O_RDONLY 0x0001
-#define O_WRONLY 0x0002
-#define O_CREAT 0x0200
 /* Memory-card create requests carry the block count in the high halfword. */
 #define SAVE_FILE_BLOCKS 5
 /* Shift-JIS card title; retail keeps it as a literal in this unit's read-only data. */
@@ -51,8 +25,6 @@ extern s32 erase(const char *name);
  */
 extern u32 map_world_state_base[];
 extern u8 DAT_800652a8[];
-
-extern s32 pad_read(s32 mode);
 
 void memory_card_clear_events(void);
 s32 memory_card_wait_event(void);

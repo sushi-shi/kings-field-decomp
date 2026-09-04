@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern u32 pad_read();
 
 RODATA(0x800122e4, 0xc)
 

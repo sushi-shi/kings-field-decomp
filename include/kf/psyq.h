@@ -7,9 +7,10 @@
  * a TU pulls each in exactly once and gets the real library prototypes and
  * types rather than hand-rolled externs.
  *
- * LIBSND, LIBCD and LIBSPU are intentionally not pulled in here: they include
- * a lower-case sys header path that does not resolve on a case-sensitive host,
- * so Ss and Cd routines keep explicit declarations. MEMORY.H is left out so
+ * LIBSND and LIBCD stay in kf/psyq_audio.h so their declarations are limited
+ * to audio/CD users. KERNEL and the BIOS file interfaces stay in
+ * kf/psyq_kernel.h, which also supplies the release's missing LIBAPI
+ * declarations and case-sensitive include shim. MEMORY.H is left out so
  * memcpy and memset remain GCC builtins.
  */
 #include <sys/types.h>

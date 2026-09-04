@@ -2,7 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern u32 pad_read();
 extern void menu_draw_status_details(void);
 extern void menu_draw_window_backdrop(void);
 

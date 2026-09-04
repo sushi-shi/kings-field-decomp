@@ -20,7 +20,6 @@ extern u8 DAT_800595f8[];
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
 extern void menu_draw_window(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-extern u32 pad_read();
 
 /* Item sub-panels dispatched by the item menu (defined below). */
 void item_menu_buy(s32 arg);

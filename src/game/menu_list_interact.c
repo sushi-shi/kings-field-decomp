@@ -9,7 +9,6 @@ typedef struct MenuOption {
     s16 codes[4];
 } MenuOption;
 
-extern u32 pad_read();
 extern void menu_item_model_preview(s32 item_id);
 extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
 extern void menu_add_marker_quad(void);

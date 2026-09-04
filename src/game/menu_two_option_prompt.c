@@ -4,7 +4,6 @@
 
 extern void menu_draw_dialog_frame(void *arg0, s32 arg1);
 extern void menu_draw_window(s32 object, s32 arg1, s32 arg2, s32 arg3);
-extern u32 pad_read();
 
 /*
  * Interactive two-option confirm dialog.  Draws the window and the two labels
