@@ -676,8 +676,13 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
             raise ValueError(f"{data_path}: invalid confidence/scope at {key!r}")
         if key in data_starts:
             structural = structural_data_by_start[key]
-            if row.storage != "load" or row.size != parse_int(structural["size"]):
-                raise ValueError(f"{data_path}: load extent differs at {key!r}")
+            if (
+                row.size != parse_int(structural["size"])
+                or (row.storage == "bss" and structural["kind"] != "bss")
+            ):
+                raise ValueError(
+                    f"{data_path}: structural storage/extent differs at {key!r}"
+                )
         elif row.storage != "bss":
             raise ValueError(f"{data_path}: BSS identity uses load storage at {key!r}")
         if not row.name:

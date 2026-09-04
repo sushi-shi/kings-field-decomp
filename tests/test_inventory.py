@@ -679,6 +679,35 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        expected_state = {
+            0x80057B30: ("player_previous_input", "load", "u32"),
+            0x80057E68: ("player_movement_velocity_limit", "bss", "s32"),
+            0x80057E70: ("player_turn_step_limit", "bss", "s32"),
+        }
+        for va, (name, storage, datatype) in expected_state.items():
+            datum = data_identities[("GAME.EXE", va)]
+            self.assertEqual(
+                (
+                    datum.name,
+                    datum.scope,
+                    datum.storage,
+                    datum.datatype,
+                    datum.owner,
+                    datum.confidence,
+                ),
+                (name, "static", storage, datatype, "player", "supported"),
+            )
+
+        _, structural_rows = read_tsv(RETAIL_CONFIG / "data.tsv")
+        structural_by_va = {
+            parse_int(row["va"]): row
+            for row in structural_rows
+            if row["image"] == "GAME.EXE"
+        }
+        self.assertEqual(structural_by_va[0x80057E68]["kind"], "bss")
+        self.assertEqual(structural_by_va[0x80057E70]["kind"], "bss")
+
     def test_player_update_relocations_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         campaign_rows = tuple(
@@ -692,6 +721,16 @@ class InventoryTests(unittest.TestCase):
         by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
         for site in (0x800187B8, 0x80018804, 0x80018838):
             self.assertEqual(by_site[site]["target_name"], "color_matrix_table")
+        expected_player_state = {
+            0x80018934: ("player_previous_input", "load"),
+            0x80018A5C: ("player_movement_velocity_limit", "bss"),
+            0x80018A7C: ("player_turn_step_limit", "bss"),
+        }
+        for site, (name, region) in expected_player_state.items():
+            self.assertEqual(
+                (by_site[site]["target_name"], by_site[site]["target_region"]),
+                (name, region),
+            )
         self.assertEqual(by_site[0x8001882C]["channel"], "instruction-word")
         self.assertEqual(
             by_site[0x80023600]["target_name"],

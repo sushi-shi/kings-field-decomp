@@ -4,6 +4,15 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+DATA(0x80057b30, 0x4)
+static u32 player_previous_input = 0;
+
+DATA(0x80057e68, 0x4)
+static s32 player_movement_velocity_limit;
+
+DATA(0x80057e70, 0x4)
+static s32 player_turn_step_limit;
+
 ADDRESS(0x80018880, 0x1a1c)
 void player_update(void)
 {
@@ -47,7 +56,7 @@ void player_update(void)
     if (input & 0x100) {
         input = 0x40;
     }
-    if ((input & 0x40) && !(DAT_80057b30 & 0x40) && player_state.weapon_attack_phase == -1) {
+    if ((input & 0x40) && !(player_previous_input & 0x40) && player_state.weapon_attack_phase == -1) {
         item = menu_enter_mode(0);
         if (item >= 0) {
             player_use_item(item);
@@ -64,64 +73,64 @@ void player_update(void)
             game_exit_code = 1;
             return;
         }
-        DAT_80057b30 = input;
+        player_previous_input = input;
     } else {
-        if ((input & 0x20) && !(DAT_80057b30 & 0x20)) {
+        if ((input & 0x20) && !(player_previous_input & 0x20)) {
             map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
         if (player_state.status_effect_flags & 0x8) {
-            DAT_80057e68 = 36;
-            DAT_80057e70 = 5;
+            player_movement_velocity_limit = 36;
+            player_turn_step_limit = 5;
         } else {
-            DAT_80057e68 = 180;
-            DAT_80057e70 = 28;
+            player_movement_velocity_limit = 180;
+            player_turn_step_limit = 28;
         }
         if (input & 0x1000) {
-            forward = player_state.motion_state.forward_velocity + (DAT_80057e68 >> 2);
-            if (forward > DAT_80057e68) {
-                player_state.motion_state.forward_velocity = DAT_80057e68;
+            forward = player_state.motion_state.forward_velocity + (player_movement_velocity_limit >> 2);
+            if (forward > player_movement_velocity_limit) {
+                player_state.motion_state.forward_velocity = player_movement_velocity_limit;
             } else {
                 player_state.motion_state.forward_velocity = forward;
             }
         } else if (input & 0x4000) {
-            forward = player_state.motion_state.forward_velocity - (DAT_80057e68 >> 2);
-            if (forward >= -DAT_80057e68) {
+            forward = player_state.motion_state.forward_velocity - (player_movement_velocity_limit >> 2);
+            if (forward >= -player_movement_velocity_limit) {
                 player_state.motion_state.forward_velocity = forward;
             } else {
-                player_state.motion_state.forward_velocity = -DAT_80057e68;
+                player_state.motion_state.forward_velocity = -player_movement_velocity_limit;
             }
         } else if (player_state.motion_state.forward_velocity > 0) {
-            player_state.motion_state.forward_velocity -= DAT_80057e68 >> 3;
+            player_state.motion_state.forward_velocity -= player_movement_velocity_limit >> 3;
             if (player_state.motion_state.forward_velocity < 0) {
                 player_state.motion_state.forward_velocity = 0;
             }
         } else if (player_state.motion_state.forward_velocity < 0) {
-            player_state.motion_state.forward_velocity += DAT_80057e68 >> 3;
+            player_state.motion_state.forward_velocity += player_movement_velocity_limit >> 3;
             if (player_state.motion_state.forward_velocity > 0) {
                 player_state.motion_state.forward_velocity = 0;
             }
         }
         if (input & 0x8) {
-            strafe = player_state.motion_state.strafe_velocity + (DAT_80057e68 >> 2);
-            if (strafe > DAT_80057e68) {
-                player_state.motion_state.strafe_velocity = DAT_80057e68;
+            strafe = player_state.motion_state.strafe_velocity + (player_movement_velocity_limit >> 2);
+            if (strafe > player_movement_velocity_limit) {
+                player_state.motion_state.strafe_velocity = player_movement_velocity_limit;
             } else {
                 player_state.motion_state.strafe_velocity = strafe;
             }
         } else if (input & 0x4) {
-            strafe = player_state.motion_state.strafe_velocity - (DAT_80057e68 >> 2);
-            if (strafe >= -DAT_80057e68) {
+            strafe = player_state.motion_state.strafe_velocity - (player_movement_velocity_limit >> 2);
+            if (strafe >= -player_movement_velocity_limit) {
                 player_state.motion_state.strafe_velocity = strafe;
             } else {
-                player_state.motion_state.strafe_velocity = -DAT_80057e68;
+                player_state.motion_state.strafe_velocity = -player_movement_velocity_limit;
             }
         } else if (player_state.motion_state.strafe_velocity > 0) {
-            player_state.motion_state.strafe_velocity -= DAT_80057e68 >> 2;
+            player_state.motion_state.strafe_velocity -= player_movement_velocity_limit >> 2;
             if (player_state.motion_state.strafe_velocity < 0) {
                 player_state.motion_state.strafe_velocity = 0;
             }
         } else if (player_state.motion_state.strafe_velocity < 0) {
-            player_state.motion_state.strafe_velocity += DAT_80057e68 >> 2;
+            player_state.motion_state.strafe_velocity += player_movement_velocity_limit >> 2;
             if (player_state.motion_state.strafe_velocity > 0) {
                 player_state.motion_state.strafe_velocity = 0;
             }
@@ -157,22 +166,22 @@ void player_update(void)
         }
         player_update_view_bob();
         if (input & 0x8000) {
-            player_state.motion_state.yaw_step += DAT_80057e70 >> 2;
-            if (player_state.motion_state.yaw_step > DAT_80057e70) {
-                player_state.motion_state.yaw_step = DAT_80057e70;
+            player_state.motion_state.yaw_step += player_turn_step_limit >> 2;
+            if (player_state.motion_state.yaw_step > player_turn_step_limit) {
+                player_state.motion_state.yaw_step = player_turn_step_limit;
             }
         } else if (input & 0x2000) {
-            player_state.motion_state.yaw_step -= DAT_80057e70 >> 2;
-            if (player_state.motion_state.yaw_step < -DAT_80057e70) {
-                player_state.motion_state.yaw_step = -DAT_80057e70;
+            player_state.motion_state.yaw_step -= player_turn_step_limit >> 2;
+            if (player_state.motion_state.yaw_step < -player_turn_step_limit) {
+                player_state.motion_state.yaw_step = -player_turn_step_limit;
             }
         } else if (player_state.motion_state.yaw_step > 0) {
-            player_state.motion_state.yaw_step -= DAT_80057e70 >> 2;
+            player_state.motion_state.yaw_step -= player_turn_step_limit >> 2;
             if (player_state.motion_state.yaw_step < 0) {
                 player_state.motion_state.yaw_step = 0;
             }
         } else if (player_state.motion_state.yaw_step < 0) {
-            player_state.motion_state.yaw_step += DAT_80057e70 >> 2;
+            player_state.motion_state.yaw_step += player_turn_step_limit >> 2;
             if (player_state.motion_state.yaw_step > 0) {
                 player_state.motion_state.yaw_step = 0;
             }
@@ -211,11 +220,11 @@ void player_update(void)
                 player_state.camera_rotation.vx = -191;
             }
         }
-        if ((input & 0x10) && !(DAT_80057b30 & 0x10)) {
+        if ((input & 0x10) && !(player_previous_input & 0x10)) {
             player_begin_weapon_attack();
         }
         if (player_state.equipped_head_armor_id != 0x17) {
-            if ((input & 0x80) && !(DAT_80057b30 & 0x80)) {
+            if ((input & 0x80) && !(player_previous_input & 0x80)) {
                 if (player_state.weapon_attack_fully_charged == 1) {
                     player_state.weapon_attack_fully_charged = 0;
                     switch (player_state.equipped_weapon_id) {
@@ -374,7 +383,7 @@ void player_update(void)
             player_state.unknown_79--;
         }
     store_input:
-        DAT_80057b30 = input;
+        player_previous_input = input;
         player_update_vertical_motion();
     }
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);

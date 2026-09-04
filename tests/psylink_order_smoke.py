@@ -134,6 +134,9 @@ def main() -> int:
         run(dosbox, cwd=root, env=dosbox_env)
         for name in ("D12.TXT", "D21.TXT", "A123.TXT", "A213.TXT", "R87.TXT"):
             assert_link_succeeded(root / name)
+        for name in ("D12.CPE", "D21.CPE", "A123.CPE", "A213.CPE", "R87.CPE"):
+            if (root / name).read_bytes()[:6] != b"CPE\x01\x08\x00":
+                raise RuntimeError(f"{name}: missing CPE v1/select-unit-0 prefix")
 
         if (
             symbol_address(root / "D12.SYM", "SetRCnt"),

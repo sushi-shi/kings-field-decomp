@@ -585,7 +585,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
-| `sw s5,DAT_80057b30; j` past a second `sw s5` that precedes `jal player_update_vertical_motion` | the item-use branch and the movement branch each store the held input; the movement branch also calls `player_update_vertical_motion()`, so the tails differ and cross-jumping cannot merge the stores | `player_update` `0x80018880` |
+| `sw s5,player_previous_input; j` past a second `sw s5` that precedes `jal player_update_vertical_motion` | the item-use branch and the movement branch each store the held input; the movement branch also calls `player_update_vertical_motion()`, so the tails differ and cross-jumping cannot merge the stores | `player_update` `0x80018880` |
 | `slt v1,forward,-limit; bnez` with the clamp store as the branch target | `if (forward >= -limit) field = forward; else field = -limit;` for the backward/left cases; the forward/right cases keep `if (forward > limit) field = limit; else field = forward;` | same |
 | `lh s0,0(s3); mult s0,s0; mflo s0` | `strafe_sq = player_state.motion_state.strafe_velocity; strafe_sq *= strafe_sq;` (load into the accumulator, square in place); direct member access, no pointer local | same |
 | `mflo a0; lh; bgez; move s2,a0; negu s2,a0` | `strafe = strafe_sq / magnitude; if (strafe_velocity < 0) strafe = -(strafe_sq / magnitude);` (the second division is CSE'd; a separate `if/else` keeps two divisions) | same |

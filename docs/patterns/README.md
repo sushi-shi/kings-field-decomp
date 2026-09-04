@@ -19,3 +19,6 @@ promotes a probe to a proven historical toolchain.
   functions, worse where it diverges); the residue ceiling is an unattributed
   scheduling/regalloc residue, and `-mcpu=r2000` is a per-TU discriminator, not
   a global truth.
+- [psyq-cpe-tail-and-bss.md](psyq-cpe-tail-and-bss.md): the CPE v1 prefix
+  embedded at GAME's initialized-data tail, and why referenced storage inside
+  the final page can still be original BSS rather than initialized source data.

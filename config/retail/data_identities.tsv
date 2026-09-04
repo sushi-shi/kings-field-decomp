@@ -1487,7 +1487,7 @@ GAME.EXE	0x80057b14	0x8	fade_screen_rect	global	load	u16[4]	display	supported	as
 GAME.EXE	0x80057b1c	0x8	fade_screen_uv	global	load	u8[8]	display	supported	asm;func_800144d4;sprite_add_ft4	texture-coordinate rect (even bytes u,v,w,h) of the faded full-screen transition image
 GAME.EXE	0x80057b24	0x4	fade_screen_color	global	load	u8[4]	display	supported	asm;func_800144d4	base modulation color ramped up 6 per frame during the fade-in
 GAME.EXE	0x80057b28	0x7	fade_screen_path	global	load	char[7]	display	supported	asm;func_800144d4;cd_file_load_into	disc file name loaded and faded in by func_800144d4
-GAME.EXE	0x80057b30	0x4	DAT_80057b30	unknown	load	u32	player	supported	asm;player_update	previous frame input bits held for edge detection
+GAME.EXE	0x80057b30	0x4	player_previous_input	static	load	u32	player	supported	game_semantic_player_update.tsv;asm;xrefs;retail-zero	zero-initialized previous frame input bits held exclusively by and defined in player_update for edge detection
 GAME.EXE	0x80057b3c	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	"\\KF\\": five bytes copied to the head of the CD path buffer before the file name
 GAME.EXE	0x80057b44	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	";1": ISO 9660 version suffix appended to every CD path
 GAME.EXE	0x80057b48	0x8	map_mix_tim_filename	unknown	load	char[8]	resources	supported	asm;map_resources_load	"MIX.TIM": .data file name handed to map_resource_load_file for the floor texture image
@@ -1583,8 +1583,8 @@ GAME.EXE	0x80057e58	0x4	DAT_80057e58	unknown	load	pointer		address-only	data.tsv
 GAME.EXE	0x80057e5c	0x4	DAT_80057e5c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057e60	0x4	DAT_80057e60	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057e64	0x4	DAT_80057e64	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057e68	0x4	DAT_80057e68	unknown	load	s32	player	supported	asm;player_update	player movement velocity limit
-GAME.EXE	0x80057e70	0x4	DAT_80057e70	unknown	load	s32	player	supported	asm;player_update	player turn step limit
+GAME.EXE	0x80057e68	0x4	player_movement_velocity_limit	static	bss	s32	player	supported	game_semantic_player_update.tsv;asm;xrefs;write-before-read;CPE-tail-signature	horizontal forward/strafe velocity limit selected as 36 under status effect 8 and 180 otherwise; exclusive xrefs and static-common spacing support player_update ownership
+GAME.EXE	0x80057e70	0x4	player_turn_step_limit	static	bss	s32	player	supported	game_semantic_player_update.tsv;asm;xrefs;write-before-read;CPE-tail-signature	yaw-step limit selected as 5 under status effect 8 and 28 otherwise; exclusive xrefs and static-common spacing support player_update ownership
 GAME.EXE	0x80057e78	0x4	player_death_saved_fog_near	unknown	load	s32	player_death	supported	game_semantic_player_death.tsv;asm;xrefs;fog_interpolate_near	snapshots fog_near_distance at death entry and supplies both forward and reverse visual transitions; source linkage unresolved
 GAME.EXE	0x80057e80	0x4	cd_read_location	unknown	load	CdlLOC	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	CdlLOC copied from the searched file position and passed to CdControl(CdlSetloc)
 GAME.EXE	0x80057e88	0x4	current_poly_ft4	global	load	POLY_FT4 *	menu_frame	supported	game_semantic_menu_frame.tsv;game_match_campaign_30.tsv;asm;SetPolyFT4;AddPrim;retail-zero	current menu textured-quad allocation cursor owned by the consolidated frame/primitive-buffer unit

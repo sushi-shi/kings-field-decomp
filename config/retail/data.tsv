@@ -2881,7 +2881,7 @@ GAME.EXE	0x80057b1c	0x4631c	0x8	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 GAME.EXE	0x80057b24	0x46324	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057b28	0x46328	0x7	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\L0.
 GAME.EXE	0x80057b2f	0x4632f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057b30	0x46330	0x4	defined	reviewed	DAT_80057b30	u32	manual:game_semantic_player_update	previous frame input bits held for edge detection
+GAME.EXE	0x80057b30	0x46330	0x4	defined	reviewed	player_previous_input	u32	manual:game_semantic_player_update	zero-initialized previous frame input bits held exclusively by player_update for edge detection
 GAME.EXE	0x80057b34	0x46334	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b3c	0x4633c	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: \\KF\\
 GAME.EXE	0x80057b41	0x46341	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -3052,9 +3052,9 @@ GAME.EXE	0x80057e58	0x46658	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/gh
 GAME.EXE	0x80057e5c	0x4665c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e60	0x46660	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e64	0x46664	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80057e68	0x46668	0x4	defined	reviewed	DAT_80057e68	s32	manual:game_semantic_player_update	player movement velocity limit
+GAME.EXE	0x80057e68	0x46668	0x4	bss	reviewed	player_movement_velocity_limit	s32	manual:game_semantic_player_update	TU-private write-before-read horizontal velocity limit; apparent load bytes are the CPE header at the source-data tail, not an initializer
 GAME.EXE	0x80057e6c	0x4666c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e70	0x46670	0x4	defined	reviewed	DAT_80057e70	s32	manual:game_semantic_player_update	player turn step limit
+GAME.EXE	0x80057e70	0x46670	0x4	bss	reviewed	player_turn_step_limit	s32	manual:game_semantic_player_update	TU-private write-before-read yaw-step limit; address lies in the CPE residue/zero-filled tail rather than initialized source data
 GAME.EXE	0x80057e74	0x46674	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e78	0x46678	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e7c	0x4667c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
