@@ -161,7 +161,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/game_semantic_math_lifecycle.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(rows), 17)
+        self.assertEqual(len(rows), 18)
         for row in rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"

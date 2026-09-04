@@ -97,7 +97,7 @@ and player-death band:
 | --- | --- | --- |
 | `jal __main` as the first call, SNMAIN `start` tail-calls the body | the function is `main`; GCC inserts the hook only for that name | `main` `0x8001428c` |
 | `lui/ori` address formation without relocations | numeric address constants in source (BSS start, heap base) | `main` |
-| store inside a loop that never advances the pointer | plain `int *`; a `volatile` view hoists nothing but changes the loop form | `func_80014268` `0x80014268` |
+| store inside a loop that never advances the pointer | plain `int *`; a `volatile` view hoists nothing but changes the loop form | `repeat_store_word` `0x80014268` |
 | `sll/sra` of a divided value before `*100`, `andi 0xffff` at each grid access | `s32 cell = x / 2000 + (s16)(z / 2000) * 100` indexed as `(u16)cell` | `collision_query_world` `0x8001a5ac` |
 | a `bne` to a trailing block for the uncommon case, `j loop` at its end | nested `if`/`else` blocks, not `continue` | `game_main_loop` `0x800146b8` |
 | `beq` on two `lhu` values, copies done as two `lbu`/`sb` pairs | `*(u16 *)&a != *(u16 *)&b` compare with byte-wise member copies | `game_main_loop` |
@@ -218,7 +218,7 @@ Open residues (not steered):
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `func_80014268` `0x80014268` |
+| `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `repeat_store_word` `0x80014268` |
 | the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_asset = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
 | the same frame in `tmd_prepare_primitive_indices` `0x8001c2b0` | not reproduced; the function stores nothing to a global, so the folded pseudo must come from another expression; open | residue |
 

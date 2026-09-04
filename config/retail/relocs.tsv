@@ -1552,7 +1552,7 @@ GAME.EXE	0x8001425c	0x2a5c		mips32_candidate	raw-word	0x800554b4	load		.word		ra
 GAME.EXE	0x80014260	0x2a60		mips32_candidate	raw-word	0x800554b4	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014264	0x2a64		mips32_candidate	raw-word	0x800552e0	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014298	0x2a98		mips26	reachable-code	0x8003ac54	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x800142b0	0x2ab0		mips26	reachable-code	0x80014268	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x800142b0	0x2ab0		mips26	reachable-code	0x80014268	load	repeat_store_word	jal		control-flow-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x800142c4	0x2ac4		mips26	reachable-code	0x8005040c	load	InitHeap	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142cc	0x2acc		mips26	reachable-code	0x8003c570	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142d4	0x2ad4		mips26	reachable-code	0x800500b8	load	PadInit	jal		control-flow	candidate	investigation:relocs.tsv
