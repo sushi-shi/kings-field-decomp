@@ -547,12 +547,6 @@ profile = "probe-gcc257-o2-g0"
 
 
 [[unit]]
-unit = "game.func_80045f7c"
-image = "GAME.EXE"
-source = "src/game/func_80045f7c.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.pad"
 image = "GAME.EXE"
 source = "src/game/pad.c"

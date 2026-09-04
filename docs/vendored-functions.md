@@ -13,13 +13,13 @@ KFIII executable contributes to this list.
 | image | Release 2.5 exact object | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 186 | 144 | 125 | 58 | 51 | 564 |
-| `OPEN.EXE` | 184 | 143 | 114 | 58 | 37 | 536 |
-| **total** | **378** | **287** | **239** | **116** | **88** | **1,108** |
+| `GAME.EXE` | 186 | 146 | 125 | 58 | 51 | 566 |
+| `OPEN.EXE` | 184 | 145 | 114 | 58 | 37 | 538 |
+| **total** | **378** | **291** | **239** | **116** | **88** | **1,112** |
 
-The 1,108 rows comprise 1,082 named functions and 26 anonymous internal
+The 1,112 rows comprise 1,086 named functions and 26 anonymous internal
 functions whose containing Sony object is known. Provider counts are: 275
-`LIBGTE`, 244 `LIBSND`, 214 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
+`LIBGTE`, 248 `LIBSND`, 214 `LIBGPU`, 144 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
 34 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
 `LIBSN`, and eight fully fixed `memcpy` copies whose exact member remains
 ambiguous across `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party
@@ -195,6 +195,13 @@ The preceding 0x30-byte helper exactly matches `memcpy`/`_memcpy`-shaped
 functions from three SDK object identities, and the same body occurs four times
 per retail image. That proves a Sony `memcpy` body while leaving the exact
 archive member ambiguous, so all eight copies use `fid-release25-ambiguous`.
+
+The four `SsUtAutoVol`/`SsUtAutoPan` rows also use the conservative ambiguous
+FID channel because their seven-instruction bodies are identical. Unlike the
+multi-object `memcpy` copies, their names are resolved by their consecutive
+`VMANAGER.OBJ` offsets: `0x39bc` follows exact `SsUtSetVVol`, `0x39d8`
+precedes exact `SsUtReverbOn`, and both overlays preserve that order and every
+instruction byte.
 
 ## TSV contract
 

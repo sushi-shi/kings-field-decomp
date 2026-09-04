@@ -47,10 +47,10 @@ class FakeReference:
 class InventoryTests(unittest.TestCase):
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 503)
-        self.assertEqual(counts["signatures_started"], 503)
-        self.assertEqual(counts["typed_returns"], 503)
-        self.assertEqual(counts["parameterized"], 320)
+        self.assertEqual(counts["functions"], 499)
+        self.assertEqual(counts["signatures_started"], 499)
+        self.assertEqual(counts["typed_returns"], 499)
+        self.assertEqual(counts["parameterized"], 316)
         self.assertEqual(counts["data"], 3165)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -1098,6 +1098,28 @@ class InventoryTests(unittest.TestCase):
                 vendored[key]["confidence"],
                 "sdk-lineage-supported",
             )
+            self.assertNotIn(key, identities)
+
+    def test_vmanager_auto_controls_are_order_resolved_in_both_overlays(self) -> None:
+        _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
+        vendored = {
+            (row["image"], parse_int(row["va"])): row
+            for row in rows
+        }
+        expected = {
+            ("GAME.EXE", 0x80045F7C): ("SsUtAutoVol", 0x39BC),
+            ("GAME.EXE", 0x80045F98): ("SsUtAutoPan", 0x39D8),
+            ("OPEN.EXE", 0x80025D9C): ("SsUtAutoVol", 0x39BC),
+            ("OPEN.EXE", 0x80025DB8): ("SsUtAutoPan", 0x39D8),
+        }
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        for key, (name, member_offset) in expected.items():
+            row = vendored[key]
+            self.assertEqual(row["name"], name)
+            self.assertEqual(row["library"], "LIBSND.LIB")
+            self.assertEqual(row["module"], "VMANAGER")
+            self.assertEqual(parse_int(row["member_offset"]), member_offset)
+            self.assertEqual(row["confidence"], "fid-release25-ambiguous")
             self.assertNotIn(key, identities)
 
     def test_libgpu_graph_state_accessors_are_vendored_in_both_overlays(self) -> None:
