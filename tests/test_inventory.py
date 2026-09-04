@@ -317,6 +317,14 @@ class InventoryTests(unittest.TestCase):
         self.assertIn(declaration, magic_header)
         self.assertNotIn(declaration, semantic_types)
 
+    def test_effect_layouts_live_in_the_effect_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        effect_header = (REPO / "include/kf/game_effect.h").read_text()
+        for structure in ("KfEffectRecord", "KfEffectRenderView"):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, effect_header)
+            self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

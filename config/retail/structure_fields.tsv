@@ -154,52 +154,52 @@ KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	semantic_types.h
 KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfEffectRecord	0x00	0x01	type	u8	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
-KfEffectRecord	0x01	0x01	kind	u8	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
-KfEffectRecord	0x02	0x01	unknown_02	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x03	0x01	unknown_03	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x04	0x01	unknown_04	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x05	0x01	unknown_05	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x06	0x01	id	u8	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	owning object id passed to the constructor
-KfEffectRecord	0x07	0x01	unknown_07	u8	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	byte set to 1 by map object actions 81 and 82
-KfEffectRecord	0x08	0x02	unknown_08	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	12-bit angle swept by map object action 83
-KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x0c	0x10	position	VECTOR	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
-KfEffectRecord	0x1c	0x02	rotation_x	u16	candidate	asm;effect_pool_constructor;effect_pool_spawn_typed	first component of the 16-bit triple at 0x1c
-KfEffectRecord	0x1e	0x02	rotation_y	u16	candidate	asm;effect_pool_constructor;effect_pool_spawn_typed	second component of the 16-bit triple at 0x1c; warp shimmer sweeps it as a rotation phase
-KfEffectRecord	0x20	0x02	rotation_z	u16	candidate	asm;effect_pool_constructor;effect_pool_spawn_typed	third component of the 16-bit triple at 0x1c
-KfEffectRecord	0x22	0x02	unknown_22	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x24	0x02	scale_x	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
-KfEffectRecord	0x26	0x02	scale_y	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
-KfEffectRecord	0x28	0x02	scale_z	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
-KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x2c	0x02	direction_x	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	direction x copied from the constructor SVECTOR argument
-KfEffectRecord	0x2e	0x02	direction_y	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	direction y copied from the constructor SVECTOR argument
-KfEffectRecord	0x30	0x02	direction_z	u16	supported	asm;effect_pool_constructor;effect_pool_spawn_typed	direction z copied from the constructor SVECTOR argument
-KfEffectRecord	0x32	0x02	unknown_32	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x34	0x04	unknown_34	u8[4]	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x38	0x02	unknown_38	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	sound handle written by several effect kinds
-KfEffectRecord	0x3a	0x02	unknown_3a	u16	opaque	asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRenderView	0x00	0x03	unknown_00	u8[3]	opaque	semantic_types.h;asm;render_actor_sprite	header bytes interpreted by effect behavior
-KfEffectRenderView	0x03	0x01	sprite_id	u8	supported	semantic_types.h;asm;render_actor_sprite	0xff skips the record; otherwise selects the billboard or model asset
-KfEffectRenderView	0x04	0x01	mode	u8	supported	semantic_types.h;asm;render_actor_sprite	0xff selects the billboard path; other values select animation clips
-KfEffectRenderView	0x05	0x03	unknown_05	u8[3]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved header bytes
-KfEffectRenderView	0x08	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_actor_sprite	variant argument passed to render_bind_animated_instance
-KfEffectRenderView	0x0a	0x02	unknown_0a	u8[2]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before position
-KfEffectRenderView	0x0c	0x02	position_x	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position x halfword used by the renderer
-KfEffectRenderView	0x0e	0x02	unknown_0e	u16	opaque	semantic_types.h;asm;render_actor_sprite	high halfword of the effect position x word
-KfEffectRenderView	0x10	0x02	position_y	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position y halfword used by the renderer
-KfEffectRenderView	0x12	0x02	unknown_12	u16	opaque	semantic_types.h;asm;render_actor_sprite	high halfword of the effect position y word
-KfEffectRenderView	0x14	0x02	position_z	u16	supported	semantic_types.h;asm;render_actor_sprite	low world-position z halfword used by the renderer
-KfEffectRenderView	0x16	0x06	unknown_16	u8[6]	opaque	semantic_types.h;asm;render_actor_sprite	high position-z halfword and VECTOR pad word
-KfEffectRenderView	0x1c	0x06	rotation	KfEulerAngles	supported	semantic_types.h;asm;render_actor_sprite	model rotation passed to matrix_set_rotation_yxz
-KfEffectRenderView	0x22	0x02	unknown_22	u8[2]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before scale
-KfEffectRenderView	0x24	0x02	scale_x	s16	supported	semantic_types.h;asm;render_actor_sprite	model x scale
-KfEffectRenderView	0x26	0x02	scale_y	s16	supported	semantic_types.h;asm;render_actor_sprite	model y scale
-KfEffectRenderView	0x28	0x02	scale_z	s16	supported	semantic_types.h;asm;render_actor_sprite	model z scale
-KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before animation anchor
-KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
-KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved tail
+KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
+KfEffectRecord	0x01	0x01	kind	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
+KfEffectRecord	0x02	0x01	unknown_02	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x03	0x01	unknown_03	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x04	0x01	unknown_04	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x05	0x01	unknown_05	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x06	0x01	id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	owning object id passed to the constructor
+KfEffectRecord	0x07	0x01	unknown_07	u8	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	byte set to 1 by map object actions 81 and 82
+KfEffectRecord	0x08	0x02	unknown_08	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	12-bit angle swept by map object action 83
+KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x0c	0x10	position	VECTOR	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
+KfEffectRecord	0x1c	0x02	rotation_x	u16	candidate	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	first component of the 16-bit triple at 0x1c
+KfEffectRecord	0x1e	0x02	rotation_y	u16	candidate	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	second component of the 16-bit triple at 0x1c; warp shimmer sweeps it as a rotation phase
+KfEffectRecord	0x20	0x02	rotation_z	u16	candidate	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	third component of the 16-bit triple at 0x1c
+KfEffectRecord	0x22	0x02	unknown_22	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x24	0x02	scale_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
+KfEffectRecord	0x26	0x02	scale_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
+KfEffectRecord	0x28	0x02	scale_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
+KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x2c	0x02	direction_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction x copied from the constructor SVECTOR argument
+KfEffectRecord	0x2e	0x02	direction_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction y copied from the constructor SVECTOR argument
+KfEffectRecord	0x30	0x02	direction_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction z copied from the constructor SVECTOR argument
+KfEffectRecord	0x32	0x02	unknown_32	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x34	0x04	unknown_34	u8[4]	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x38	0x02	unknown_38	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	sound handle written by several effect kinds
+KfEffectRecord	0x3a	0x02	unknown_3a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRenderView	0x00	0x03	unknown_00	u8[3]	opaque	game_effect.h;asm;render_actor_sprite	header bytes interpreted by effect behavior
+KfEffectRenderView	0x03	0x01	sprite_id	u8	supported	game_effect.h;asm;render_actor_sprite	0xff skips the record; otherwise selects the billboard or model asset
+KfEffectRenderView	0x04	0x01	mode	u8	supported	game_effect.h;asm;render_actor_sprite	0xff selects the billboard path; other values select animation clips
+KfEffectRenderView	0x05	0x03	unknown_05	u8[3]	opaque	game_effect.h;asm;render_actor_sprite	unresolved header bytes
+KfEffectRenderView	0x08	0x02	asset_variant	u16	supported	game_effect.h;asm;render_actor_sprite	variant argument passed to render_bind_animated_instance
+KfEffectRenderView	0x0a	0x02	unknown_0a	u8[2]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before position
+KfEffectRenderView	0x0c	0x02	position_x	u16	supported	game_effect.h;asm;render_actor_sprite	low world-position x halfword used by the renderer
+KfEffectRenderView	0x0e	0x02	unknown_0e	u16	opaque	game_effect.h;asm;render_actor_sprite	high halfword of the effect position x word
+KfEffectRenderView	0x10	0x02	position_y	u16	supported	game_effect.h;asm;render_actor_sprite	low world-position y halfword used by the renderer
+KfEffectRenderView	0x12	0x02	unknown_12	u16	opaque	game_effect.h;asm;render_actor_sprite	high halfword of the effect position y word
+KfEffectRenderView	0x14	0x02	position_z	u16	supported	game_effect.h;asm;render_actor_sprite	low world-position z halfword used by the renderer
+KfEffectRenderView	0x16	0x06	unknown_16	u8[6]	opaque	game_effect.h;asm;render_actor_sprite	high position-z halfword and VECTOR pad word
+KfEffectRenderView	0x1c	0x06	rotation	KfEulerAngles	supported	game_effect.h;asm;render_actor_sprite	model rotation passed to matrix_set_rotation_yxz
+KfEffectRenderView	0x22	0x02	unknown_22	u8[2]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before scale
+KfEffectRenderView	0x24	0x02	scale_x	s16	supported	game_effect.h;asm;render_actor_sprite	model x scale
+KfEffectRenderView	0x26	0x02	scale_y	s16	supported	game_effect.h;asm;render_actor_sprite	model y scale
+KfEffectRenderView	0x28	0x02	scale_z	s16	supported	game_effect.h;asm;render_actor_sprite	model z scale
+KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before animation anchor
+KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	game_effect.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
+KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	game_effect.h;asm;render_actor_sprite	unresolved tail
 KfEffectSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
 KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	semantic_types.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
 KfEffectSprite	0x02	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance

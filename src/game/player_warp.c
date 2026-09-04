@@ -25,7 +25,7 @@
  * it marks map events 1 and 2 active, fades the GTE colour matrix toward the
  * global target while raising and spinning the actor, then fades back.
  *
- * The KfEffectRecord layout is modelled in kf/semantic_types.h; the shimmer
+ * The KfEffectRecord layout is modelled in kf/game_effect.h; the shimmer
  * reuses the record's rotation_y halfword as its rotation phase and scale_y as
  * its fade intensity.
  *

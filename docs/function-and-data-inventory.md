@@ -213,7 +213,8 @@ The map cell, copy-region, map-object, map-event, and camera-path layouts are
 owned by `include/kf/game_map.h`; and the serialized and runtime floor-item
 layouts are owned with their loader interface by `include/kf/item.h`.
 `KfMagicRecord` is owned with the spell loader and cast interface by
-`include/kf/magic.h`.
+`include/kf/magic.h`; and the runtime and rendering views of the effect-pool
+record are owned by `include/kf/game_effect.h`.
 The remaining inventory-only layouts in this list still live in
 `include/kf/semantic_types.h`. Their sizes are
 checked against `config/retail/structures.tsv` by `kf inventory check`;
