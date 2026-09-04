@@ -5275,8 +5275,10 @@ OPEN.EXE	0x80037250	0x25a50	0x32	string	byte-pattern		ascii	investigation:string
 OPEN.EXE	0x80037282	0x25a82	0x1e	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372a0	0x25aa0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372a4	0x25aa4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800372a8	0x25aa8	0x28	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800372d0	0x25ad0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x800372a8	0x25aa8	0x18	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800372c0	0x25ac0	0x8	data	reviewed	opening_fade_rect	u16[4]	manual:open_semantic_opening_fade	full-screen fade rectangle {x, y, width, height}
+OPEN.EXE	0x800372c8	0x25ac8	0x8	data	reviewed	opening_fade_uv	u8[8]	manual:open_semantic_opening_fade	texture-coordinate rectangle stored in even bytes {u, v, width, height}
+OPEN.EXE	0x800372d0	0x25ad0	0x4	data	reviewed	opening_fade_color	u8[4]	manual:open_semantic_opening_fade	base modulation color copied locally and ramped during the fade
 OPEN.EXE	0x800372d4	0x25ad4	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\L0.
 OPEN.EXE	0x800372da	0x25ada	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372dc	0x25adc	0x5	string	byte-pattern		ascii	manual:open_cd_file	escaped text: \\KF\\ including terminator

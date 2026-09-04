@@ -553,6 +553,18 @@ source = "src/game/pad.c"
 profile = "probe-gcc257-o2-plain"
 
 [[unit]]
+unit = "open.sprite_add_ft4"
+image = "OPEN.EXE"
+source = "src/open/sprite_add_ft4.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.opening_fade"
+image = "OPEN.EXE"
+source = "src/open/opening_fade.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.matrix_rotation"
 image = "OPEN.EXE"
 source = "src/open/matrix_rotation.c"
