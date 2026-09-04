@@ -42,8 +42,8 @@ void render_floor_item(KfFloorItem *item)
     u32 frame_count;
     s16 screen_scale;
 
-    SetRotMatrix((MATRIX *)&render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&render_state.view_matrix);
+    SetRotMatrix(&render_state.view_matrix);
+    SetTransMatrix(&render_state.view_matrix);
     screen.vx = (u16)item->position_x - (u16)render_state.view_position.vx;
     screen.vy = (u16)item->position_y - (u16)render_state.view_position.vy;
     screen.vz = (u16)item->position_z - (u16)render_state.view_position.vz;
@@ -51,11 +51,11 @@ void render_floor_item(KfFloorItem *item)
     facing = item->facing_and_frame_count & 0xf0;
     if (facing != 0) {
         matrix_set_rotation_y((facing - 16) << 6, &model);
-        MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
+        MulMatrix2(&render_state.view_matrix, &model);
         SetRotMatrix(&model);
         screen_scale = 0x96;
     } else {
-        SetRotMatrix((MATRIX *)&render_state.pitch_matrix);
+        SetRotMatrix(&render_state.pitch_matrix);
         screen_scale = 0xc8;
     }
     SetTransMatrix(&model);

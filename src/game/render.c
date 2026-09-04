@@ -178,13 +178,13 @@ void render_initialize(void)
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[0]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[0]);
     angles.vy = 0xc00;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[3]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[3]);
     angles.vy = 0x800;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[2]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[2]);
     angles.vy = 0x400;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[1]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[1]);
     render_state.light_matrix.m[0][0] = 3800;
     render_state.light_matrix.m[0][1] = -2800;
     render_state.light_matrix.m[0][2] = 0;
@@ -196,21 +196,21 @@ void render_initialize(void)
     render_state.light_matrix.m[2][2] = 800;
     render_state.light_matrix_copy = render_state.light_matrix;
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[0],
-        (MATRIX *)&light_quadrant_matrices[0]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[0],
+        &light_quadrant_matrices[0]);
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[1],
-        (MATRIX *)&light_quadrant_matrices[1]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[1],
+        &light_quadrant_matrices[1]);
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[2],
-        (MATRIX *)&light_quadrant_matrices[2]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[2],
+        &light_quadrant_matrices[2]);
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[3],
-        (MATRIX *)&light_quadrant_matrices[3]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[3],
+        &light_quadrant_matrices[3]);
     DAT_8009508e = GetTPage(1, 0, 0x380, 0);
     DAT_8009508c = 0x7a40;
     DAT_80095062 = GetTPage(0, 0, 0x380, 0x100);
@@ -291,12 +291,12 @@ void render_set_view_transform(
     }
     if (rotation != 0) {
         render_state.view_rotation = *rotation;
-        RotMatrix((SVECTOR *)&render_state.view_rotation, (MATRIX *)&render_state.view_matrix);
+        RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
         angles.vz = 0;
         angles.vy = 0;
     }
     angles.vx = render_state.view_rotation.vx;
-    RotMatrix(&angles, (MATRIX *)&render_state.pitch_matrix);
+    RotMatrix(&angles, &render_state.pitch_matrix);
 }
 
 /*

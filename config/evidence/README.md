@@ -3,6 +3,11 @@
 This directory preserves the small, reviewable inputs behind
 the curated retail inventories; it does not contain Sony binaries.
 
+`open_semantic_unlit_triangles.tsv` records the OPEN-only unlit triangle
+emitter and its exact entity-render caller control. The companion
+`render_typed_matrix_cast_cleanup.tsv` records byte-identical redundant-cast
+cleanup in existing render consumers; those rows are not new GAME progress.
+
 `game_match_campaign_30.tsv` records the pre-edit MIPS evidence and final
 matching verdicts for the first GAME reconstruction campaign.
 `game_tu_equipment.tsv` records the shared resource-loader, table-extent,

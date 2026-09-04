@@ -22,8 +22,8 @@ void render_actor(KfActor *actor)
     u16 asset;
     int high;
 
-    SetRotMatrix((MATRIX *)&render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&render_state.view_matrix);
+    SetRotMatrix(&render_state.view_matrix);
+    SetTransMatrix(&render_state.view_matrix);
     screen.vx = (u16)actor->position.vx - (u16)render_state.view_position.vx;
     screen.vy = (u16)actor->position.vy - (u16)render_state.view_position.vy;
     screen.vz = (u16)actor->position.vz - (u16)render_state.view_position.vz;
@@ -32,7 +32,7 @@ void render_actor(KfActor *actor)
     matrix_set_rotation_y(-actor->rotation.y, &rot_y);
     MulMatrix2(&rot_y, &model);
     MulMatrix0(&render_light_matrices[0], &model, &light);
-    MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
+    MulMatrix2(&render_state.view_matrix, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
     SetLightMatrix(&light);
@@ -70,8 +70,8 @@ void render_map_object(KfMapObject *object)
     u16 id;
     s16 depth;
 
-    SetRotMatrix((MATRIX *)&render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&render_state.view_matrix);
+    SetRotMatrix(&render_state.view_matrix);
+    SetTransMatrix(&render_state.view_matrix);
     screen.vx = (u16)object->position_x - (u16)render_state.view_position.vx;
     screen.vy = (u16)object->position_y - (u16)render_state.view_position.vy;
     screen.vz = (u16)object->position_z - (u16)render_state.view_position.vz;
@@ -79,8 +79,8 @@ void render_map_object(KfMapObject *object)
     matrix_set_rotation_x(object->rotation.x, &rot_x);
     matrix_set_rotation_y(object->rotation.y, &model);
     MulMatrix(&model, &rot_x);
-    MulMatrix0((MATRIX *)&render_state.light_matrix, &model, &light);
-    MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
+    MulMatrix0(&render_state.light_matrix, &model, &light);
+    MulMatrix2(&render_state.view_matrix, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
     SetLightMatrix(&light);

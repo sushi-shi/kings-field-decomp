@@ -84,7 +84,7 @@ void opening_entity_render(KfOpeningEntity *entity)
     render_alternate:
         tmd_select_object_vertices(object_id);
         tmd_project_vertices(tmd_get_object(object_id)->vertex_count);
-        func_80018344(object_id, depth);
+        render_enqueue_unlit_triangles(object_id, depth);
         return;
     default:
         depth = 0;

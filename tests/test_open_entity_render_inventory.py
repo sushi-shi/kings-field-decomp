@@ -70,7 +70,7 @@ class OpenEntityRenderTests(unittest.TestCase):
             0x80019044: (0x80017458, "tmd_project_vertices_perspective_right"),
             0x80019050: (0x8001764C, "func_8001764c"),
             0x80019084: (0x8001738C, "tmd_project_vertices"),
-            0x80019094: (0x80018344, "func_80018344"),
+            0x80019094: (0x80018344, "render_enqueue_unlit_triangles"),
             0x800190C0: (0x8001738C, "tmd_project_vertices"),
             0x800190D0: (0x8001764C, "func_8001764c"),
         }

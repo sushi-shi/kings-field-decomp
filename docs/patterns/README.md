@@ -41,6 +41,8 @@ promotes a probe to a proven historical toolchain.
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
   narrowing in preparation, and the shared GAME/OPEN TMD interface.
+- [open-unlit-triangles.md](open-unlit-triangles.md): the unlit F3/FT3 path,
+  packed GPU accesses, and the unresolved graphics-wide shared-base relation.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
