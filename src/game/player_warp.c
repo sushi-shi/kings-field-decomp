@@ -39,7 +39,7 @@
 #define EFFECT_INTENSITY(e) ((e)->scale_y)
 
 ADDRESS(0x80036618, 0x238)
-void player_warp_shimmer(s16 mode, VECTOR *position)
+void player_warp_shimmer(s32 mode, VECTOR *position)
 {
     KfEffectRecord *effects[4];
     struct {
@@ -50,8 +50,9 @@ void player_warp_shimmer(s16 mode, VECTOR *position)
     s16 intensity_delta;
     s16 frame;
     s16 i;
+    s16 mode_value = mode;
 
-    switch (mode) {
+    switch (mode_value) {
     case 0:
     case 2:
         intensity = 0;
@@ -95,7 +96,7 @@ void player_warp_shimmer(s16 mode, VECTOR *position)
         frame_pacer_wait();
     }
 
-    if (mode != 2) {
+    if (mode_value != 2) {
         for (i = 0; i < 4; i++) {
             effects[i]->type = 0xff;
         }
@@ -163,7 +164,7 @@ void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
 RODATA(0x80012c14, 0x14)
 
 ADDRESS(0x80036af0, 0x24c)
-void player_warp_trigger_update(void)
+u32 player_warp_trigger_update(void)
 {
     u32 cell;
 
@@ -178,6 +179,7 @@ void player_warp_trigger_update(void)
             player_warp_change_floor(4, 0);
         } else if (cell == 0x0f020000) {
             if (boss_defeat_complete) {
+                return 1;
             }
         }
         break;
@@ -232,6 +234,7 @@ void player_warp_trigger_update(void)
         }
         break;
     }
+    return 0;
 }
 
 ADDRESS(0x80036d3c, 0xf4)

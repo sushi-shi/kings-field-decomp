@@ -5,7 +5,6 @@
 
 /* Psy-Q Release 2.5 MEMORY.H declares memset without a prototype. */
 extern void *memset();
-extern u32 player_warp_trigger_update(void);
 
 /*
  * Both counters live in the retail load image four bytes apart as explicitly

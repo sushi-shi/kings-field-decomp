@@ -533,9 +533,6 @@ done:
 }
 
 
-/* Entry cell per floor, one-based floor number; stored x first, unlike KfMapCell. */
-extern void player_warp_shimmer(s16 object, void *arg1);
-
 ADDRESS(0x80017cf8, 0x144)
 void player_warp_to_floor_entry(void)
 {
