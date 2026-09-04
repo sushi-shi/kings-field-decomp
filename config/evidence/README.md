@@ -145,6 +145,13 @@ typed rectangle and RGB inputs, masked ordering-table index, and GPU provider
 boundary. The F4 helper matches retail exactly without changing the adjacent
 FT4 helper's independently recorded non-exact result.
 
+`open_semantic_camera_path.tsv` records the contiguous three-function OPEN
+camera interpolator and folds its former field globals into one proven
+`KfCameraPathState`. Segment computation and initialization match retail
+exactly. Frame stepping is complete semantic C at 97.777780%; after referents,
+calls, CFG, widths, constants, and instruction ordering agree, only a
+four-register permutation across independent Q4 lanes remains unattributed.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five

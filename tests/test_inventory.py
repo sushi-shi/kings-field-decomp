@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 499)
         self.assertEqual(counts["typed_returns"], 499)
         self.assertEqual(counts["parameterized"], 318)
-        self.assertEqual(counts["data"], 3101)
+        self.assertEqual(counts["data"], 3081)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -902,6 +902,60 @@ class InventoryTests(unittest.TestCase):
                 "AddPrim",
                 "sprite_add_f4",
             },
+        )
+
+    def test_open_camera_path_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_camera_path.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 3)
+        expected_scores = {
+            0x80013CF4: "100.000000000% exact",
+            0x80014004: "100.000000000% exact",
+            0x80014100: "97.777780000% complete C",
+        }
+        for row in evidence_rows:
+            va = parse_int(row["va"])
+            identity = identities[(row["image"], va)]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+            self.assertEqual(row["current_match"], expected_scores[va])
+
+        data = load_data_identities(RETAIL_CONFIG)
+        state = data[("OPEN.EXE", 0x800757D8)]
+        self.assertEqual(
+            (state.name, state.storage, state.datatype, state.size),
+            ("opening_camera_path_state", "bss", "KfCameraPathState", 0x64),
+        )
+        self.assertFalse(
+            any(
+                image == "OPEN.EXE" and 0x800757D8 < va < 0x8007583C
+                for image, va in data
+            )
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if "manual:open_semantic_camera_path" in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 71)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {row["target_name"] for row in campaign_rows})
+        state_rows = [
+            row
+            for row in relocation_rows
+            if row["image"] == "OPEN.EXE"
+            and 0x800757D8 <= parse_int(row["target_va"]) < 0x8007583C
+        ]
+        self.assertEqual(len(state_rows), 77)
+        self.assertEqual(
+            {row["target_name"] for row in state_rows},
+            {"opening_camera_path_state"},
         )
 
     def test_open_resources_campaign_matches_curated_identities(self) -> None:

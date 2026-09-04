@@ -11232,89 +11232,89 @@ OPEN.EXE	0x80013c78	0x2478		mips26	reachable-code	0x8002ff00	load	pad_read	jal		
 OPEN.EXE	0x80013c94	0x2494	0x80013c98	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80013ccc	0x24cc		mips26	reachable-code	0x80013ce4	load	angle_shortest_delta+0x38	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80013cdc	0x24dc		mips26	reachable-code	0x80013cec	load	angle_shortest_delta+0x40	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x80013d0c	0x250c	0x80013d10	mips_hi16_lo16	reachable-code	0x80075834	bss	DAT_80075834	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013d50	0x2550		mips26	reachable-code	0x80013fe8	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80013d58	0x2558	0x80013d5c	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013d74	0x2574	0x80013d78	mips_hi16_lo16	reachable-code	0x800757e0	bss	DAT_800757e0	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013d94	0x2594	0x80013d98	mips_hi16_lo16	reachable-code	0x800757e4	bss	DAT_800757e4	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013dbc	0x25bc		mips26	reachable-code	0x8002c730	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80013e0c	0x260c	0x80013e10	mips_hi16_lo16	reachable-code	0x80075814	bss	DAT_80075814	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013e5c	0x265c	0x80013e60	mips_hi16_lo16	reachable-code	0x80075818	bss	DAT_80075818	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013eac	0x26ac	0x80013eb0	mips_hi16_lo16	reachable-code	0x8007581c	bss	DAT_8007581c	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013ee8	0x26e8	0x80013eec	mips_hi16_lo16	reachable-code	0x800757ec	bss	DAT_800757ec	lui+lh	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013ef0	0x26f0	0x80013ef4	mips_hi16_lo16	reachable-code	0x80075838	bss	DAT_80075838	lui+sw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013efc	0x26fc		mips26	reachable-code	0x80013cac	load	angle_shortest_delta	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x80013f08	0x2708	0x80013f0c	mips_hi16_lo16	reachable-code	0x800757ee	bss	DAT_800757ec	lui+lh	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013f14	0x2714		mips26	reachable-code	0x80013cac	load	angle_shortest_delta	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x80013f20	0x2720	0x80013f24	mips_hi16_lo16	reachable-code	0x800757f0	bss	DAT_800757f0	lui+lh	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013f2c	0x272c		mips26	reachable-code	0x80013cac	load	angle_shortest_delta	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x80013f34	0x2734	0x80013f38	mips_hi16_lo16	reachable-code	0x80075838	bss	DAT_80075838	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013fd0	0x27d0	0x80013fd4	mips_hi16_lo16	reachable-code	0x80075824	bss	DAT_80075824	lui+sw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013fd8	0x27d8	0x80013fdc	mips_hi16_lo16	reachable-code	0x80075828	bss	DAT_80075828	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80013fe0	0x27e0	0x80013fe4	mips_hi16_lo16	reachable-code	0x8007582c	bss	DAT_8007582c	lui+sw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001400c	0x280c	0x80014010	mips_hi16_lo16	reachable-code	0x800757d8	bss	DAT_800757d8	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014014	0x2814	0x80014018	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014040	0x2840	0x80014044	mips_hi16_lo16	reachable-code	0x800757ec	bss	DAT_800757ec	lui+addiu	a2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014068	0x2868	0x8001406c	mips_hi16_lo16	reachable-code	0x80075834	bss	DAT_80075834	lui+sh	zero	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014070	0x2870	0x80014074	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014078	0x2878	0x8001407c	mips_hi16_lo16	reachable-code	0x800757e0	bss	DAT_800757e0	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014084	0x2884	0x80014088	mips_hi16_lo16	reachable-code	0x800757f4	bss	DAT_800757f4	lui+sw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014090	0x2890	0x80014094	mips_hi16_lo16	reachable-code	0x800757f8	bss	DAT_800757f8	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014098	0x2898	0x8001409c	mips_hi16_lo16	reachable-code	0x800757e4	bss	DAT_800757e4	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140a0	0x28a0	0x800140a4	mips_hi16_lo16	reachable-code	0x800757ec	bss	DAT_800757ec	lui+lh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140ac	0x28ac	0x800140b0	mips_hi16_lo16	reachable-code	0x800757fc	bss	DAT_800757fc	lui+sw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140b8	0x28b8	0x800140bc	mips_hi16_lo16	reachable-code	0x80075804	bss	DAT_80075804	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140c0	0x28c0	0x800140c4	mips_hi16_lo16	reachable-code	0x800757ee	bss	DAT_800757ec	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140c8	0x28c8	0x800140cc	mips_hi16_lo16	reachable-code	0x800757f0	bss	DAT_800757f0	lui+lh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140d4	0x28d4	0x800140d8	mips_hi16_lo16	reachable-code	0x80075808	bss	DAT_80075808	lui+sw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140e0	0x28e0	0x800140e4	mips_hi16_lo16	reachable-code	0x8007580c	bss	DAT_8007580c	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800140e8	0x28e8		mips26	reachable-code	0x80013cf4	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014114	0x2914	0x80014118	mips_hi16_lo16	reachable-code	0x80075838	bss	DAT_80075838	lui+addiu	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014138	0x2938		mips26	reachable-code	0x80013cf4	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014150	0x2950	0x80014154	mips_hi16_lo16	reachable-code	0x800757f4	bss	DAT_800757f4	lui+lw	t1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014158	0x2958	0x8001415c	mips_hi16_lo16	reachable-code	0x80075814	bss	DAT_80075814	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014160	0x2960	0x80014164	mips_hi16_lo16	reachable-code	0x800757f8	bss	DAT_800757f8	lui+lw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014168	0x2968	0x8001416c	mips_hi16_lo16	reachable-code	0x80075818	bss	DAT_80075818	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014170	0x2970	0x80014174	mips_hi16_lo16	reachable-code	0x800757fc	bss	DAT_800757fc	lui+lw	t0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014178	0x2978	0x8001417c	mips_hi16_lo16	reachable-code	0x80075804	bss	DAT_80075804	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014180	0x2980	0x80014184	mips_hi16_lo16	reachable-code	0x80075828	bss	DAT_80075828	lui+lw	a2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014188	0x2988	0x8001418c	mips_hi16_lo16	reachable-code	0x8007582c	bss	DAT_8007582c	lui+lw	a3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014194	0x2994	0x80014198	mips_hi16_lo16	reachable-code	0x800757f4	bss	DAT_800757f4	lui+sw	t1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141a0	0x29a0	0x800141a4	mips_hi16_lo16	reachable-code	0x800757f8	bss	DAT_800757f8	lui+sw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141ac	0x29ac	0x800141b0	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+sw	t1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141bc	0x29bc	0x800141c0	mips_hi16_lo16	reachable-code	0x800757e0	bss	DAT_800757e0	lui+sw	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141c4	0x29c4	0x800141c8	mips_hi16_lo16	reachable-code	0x8007581c	bss	DAT_8007581c	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141cc	0x29cc	0x800141d0	mips_hi16_lo16	reachable-code	0x80075824	bss	DAT_80075824	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141d8	0x29d8	0x800141dc	mips_hi16_lo16	reachable-code	0x800757fc	bss	DAT_800757fc	lui+sw	t0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141e4	0x29e4	0x800141e8	mips_hi16_lo16	reachable-code	0x80075804	bss	DAT_80075804	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800141f0	0x29f0	0x800141f4	mips_hi16_lo16	reachable-code	0x800757e4	bss	DAT_800757e4	lui+sw	t0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014200	0x2a00	0x80014204	mips_hi16_lo16	reachable-code	0x800757ec	bss	DAT_800757ec	lui+sh	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014208	0x2a08	0x8001420c	mips_hi16_lo16	reachable-code	0x80075808	bss	DAT_80075808	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014210	0x2a10	0x80014214	mips_hi16_lo16	reachable-code	0x8007580c	bss	DAT_8007580c	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001421c	0x2a1c	0x80014220	mips_hi16_lo16	reachable-code	0x80075808	bss	DAT_80075808	lui+sw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014228	0x2a28	0x8001422c	mips_hi16_lo16	reachable-code	0x8007580c	bss	DAT_8007580c	lui+sw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014238	0x2a38	0x8001423c	mips_hi16_lo16	reachable-code	0x800757ee	bss	DAT_800757ec	lui+sh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014248	0x2a48	0x8001424c	mips_hi16_lo16	reachable-code	0x800757f0	bss	DAT_800757f0	lui+sh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80013d0c	0x250c	0x80013d10	mips_hi16_lo16	reachable-code	0x80075834	bss	opening_camera_path_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013d50	0x2550		mips26	reachable-code	0x80013fe8	load	opening_camera_path_compute_segment+0x2f4	j		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013d58	0x2558	0x80013d5c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013d74	0x2574	0x80013d78	mips_hi16_lo16	reachable-code	0x800757e0	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013d94	0x2594	0x80013d98	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013dbc	0x25bc		mips26	reachable-code	0x8002c730	load	SquareRoot0	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013e0c	0x260c	0x80013e10	mips_hi16_lo16	reachable-code	0x80075814	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013e5c	0x265c	0x80013e60	mips_hi16_lo16	reachable-code	0x80075818	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013eac	0x26ac	0x80013eb0	mips_hi16_lo16	reachable-code	0x8007581c	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013ee8	0x26e8	0x80013eec	mips_hi16_lo16	reachable-code	0x800757ec	bss	opening_camera_path_state	lui+lh	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013ef0	0x26f0	0x80013ef4	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013efc	0x26fc		mips26	reachable-code	0x80013cac	load	angle_shortest_delta	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_camera_path
+OPEN.EXE	0x80013f08	0x2708	0x80013f0c	mips_hi16_lo16	reachable-code	0x800757ee	bss	opening_camera_path_state	lui+lh	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013f14	0x2714		mips26	reachable-code	0x80013cac	load	angle_shortest_delta	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_camera_path
+OPEN.EXE	0x80013f20	0x2720	0x80013f24	mips_hi16_lo16	reachable-code	0x800757f0	bss	opening_camera_path_state	lui+lh	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013f2c	0x272c		mips26	reachable-code	0x80013cac	load	angle_shortest_delta	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_camera_path
+OPEN.EXE	0x80013f34	0x2734	0x80013f38	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013fd0	0x27d0	0x80013fd4	mips_hi16_lo16	reachable-code	0x80075824	bss	opening_camera_path_state	lui+sw	a1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013fd8	0x27d8	0x80013fdc	mips_hi16_lo16	reachable-code	0x80075828	bss	opening_camera_path_state	lui+sw	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80013fe0	0x27e0	0x80013fe4	mips_hi16_lo16	reachable-code	0x8007582c	bss	opening_camera_path_state	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x8001400c	0x280c	0x80014010	mips_hi16_lo16	reachable-code	0x800757d8	bss	opening_camera_path_state	lui+sw	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014014	0x2814	0x80014018	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a2	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014040	0x2840	0x80014044	mips_hi16_lo16	reachable-code	0x800757ec	bss	opening_camera_path_state	lui+addiu	a2	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014068	0x2868	0x8001406c	mips_hi16_lo16	reachable-code	0x80075834	bss	opening_camera_path_state	lui+sh	zero	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014070	0x2870	0x80014074	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014078	0x2878	0x8001407c	mips_hi16_lo16	reachable-code	0x800757e0	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014084	0x2884	0x80014088	mips_hi16_lo16	reachable-code	0x800757f4	bss	opening_camera_path_state	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014090	0x2890	0x80014094	mips_hi16_lo16	reachable-code	0x800757f8	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014098	0x2898	0x8001409c	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140a0	0x28a0	0x800140a4	mips_hi16_lo16	reachable-code	0x800757ec	bss	opening_camera_path_state	lui+lh	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140ac	0x28ac	0x800140b0	mips_hi16_lo16	reachable-code	0x800757fc	bss	opening_camera_path_state	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140b8	0x28b8	0x800140bc	mips_hi16_lo16	reachable-code	0x80075804	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140c0	0x28c0	0x800140c4	mips_hi16_lo16	reachable-code	0x800757ee	bss	opening_camera_path_state	lui+lh	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140c8	0x28c8	0x800140cc	mips_hi16_lo16	reachable-code	0x800757f0	bss	opening_camera_path_state	lui+lh	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140d4	0x28d4	0x800140d8	mips_hi16_lo16	reachable-code	0x80075808	bss	opening_camera_path_state	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140e0	0x28e0	0x800140e4	mips_hi16_lo16	reachable-code	0x8007580c	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800140e8	0x28e8		mips26	reachable-code	0x80013cf4	load	opening_camera_path_compute_segment	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014114	0x2914	0x80014118	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+addiu	s1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014138	0x2938		mips26	reachable-code	0x80013cf4	load	opening_camera_path_compute_segment	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014150	0x2950	0x80014154	mips_hi16_lo16	reachable-code	0x800757f4	bss	opening_camera_path_state	lui+lw	t1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014158	0x2958	0x8001415c	mips_hi16_lo16	reachable-code	0x80075814	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014160	0x2960	0x80014164	mips_hi16_lo16	reachable-code	0x800757f8	bss	opening_camera_path_state	lui+lw	a1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014168	0x2968	0x8001416c	mips_hi16_lo16	reachable-code	0x80075818	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014170	0x2970	0x80014174	mips_hi16_lo16	reachable-code	0x800757fc	bss	opening_camera_path_state	lui+lw	t0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014178	0x2978	0x8001417c	mips_hi16_lo16	reachable-code	0x80075804	bss	opening_camera_path_state	lui+lw	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014180	0x2980	0x80014184	mips_hi16_lo16	reachable-code	0x80075828	bss	opening_camera_path_state	lui+lw	a2	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014188	0x2988	0x8001418c	mips_hi16_lo16	reachable-code	0x8007582c	bss	opening_camera_path_state	lui+lw	a3	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014194	0x2994	0x80014198	mips_hi16_lo16	reachable-code	0x800757f4	bss	opening_camera_path_state	lui+sw	t1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141a0	0x29a0	0x800141a4	mips_hi16_lo16	reachable-code	0x800757f8	bss	opening_camera_path_state	lui+sw	a1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141ac	0x29ac	0x800141b0	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+sw	t1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141bc	0x29bc	0x800141c0	mips_hi16_lo16	reachable-code	0x800757e0	bss	opening_camera_path_state	lui+sw	a1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141c4	0x29c4	0x800141c8	mips_hi16_lo16	reachable-code	0x8007581c	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141cc	0x29cc	0x800141d0	mips_hi16_lo16	reachable-code	0x80075824	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141d8	0x29d8	0x800141dc	mips_hi16_lo16	reachable-code	0x800757fc	bss	opening_camera_path_state	lui+sw	t0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141e4	0x29e4	0x800141e8	mips_hi16_lo16	reachable-code	0x80075804	bss	opening_camera_path_state	lui+sw	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800141f0	0x29f0	0x800141f4	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+sw	t0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014200	0x2a00	0x80014204	mips_hi16_lo16	reachable-code	0x800757ec	bss	opening_camera_path_state	lui+sh	a0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014208	0x2a08	0x8001420c	mips_hi16_lo16	reachable-code	0x80075808	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014210	0x2a10	0x80014214	mips_hi16_lo16	reachable-code	0x8007580c	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x8001421c	0x2a1c	0x80014220	mips_hi16_lo16	reachable-code	0x80075808	bss	opening_camera_path_state	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014228	0x2a28	0x8001422c	mips_hi16_lo16	reachable-code	0x8007580c	bss	opening_camera_path_state	lui+sw	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014238	0x2a38	0x8001423c	mips_hi16_lo16	reachable-code	0x800757ee	bss	opening_camera_path_state	lui+sh	v0	paired-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014248	0x2a48	0x8001424c	mips_hi16_lo16	reachable-code	0x800757f0	bss	opening_camera_path_state	lui+sh	v1	paired-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x8001427c	0x2a7c		mips26	reachable-code	0x80016348	load	opening_resources_load_scene0	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80014284	0x2a84	0x80014288	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8001428c	0x2a8c		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80014294	0x2a94	0x80014298	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800142a0	0x2aa0		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x800142b4	0x2ab4	0x800142b8	mips_hi16_lo16	reachable-code	0x800354f4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800142bc	0x2abc		mips26	reachable-code	0x80014004	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800142bc	0x2abc		mips26	reachable-code	0x80014004	load	opening_camera_path_begin	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x800142c4	0x2ac4		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x800142cc	0x2acc		mips26	reachable-code	0x80014100	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800142d4	0x2ad4	0x800142d8	mips_hi16_lo16	reachable-code	0x80075834	bss	DAT_80075834	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x800142cc	0x2acc		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x800142d4	0x2ad4	0x800142d8	mips_hi16_lo16	reachable-code	0x80075834	bss	opening_camera_path_state	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800142fc	0x2afc	0x80014300	mips_hi16_lo16	reachable-code	0x80035874	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014304	0x2b04		mips26	reachable-code	0x8001a220	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001432c	0x2b2c	0x80014330	mips_hi16_lo16	reachable-code	0x80075834	bss	DAT_80075834	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x8001432c	0x2b2c	0x80014330	mips_hi16_lo16	reachable-code	0x80075834	bss	opening_camera_path_state	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014344	0x2b44	0x80014348	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80014360	0x2b60		mips26	reachable-code	0x8001437c	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001437c	0x2b7c	0x80014380	mips_hi16_lo16	reachable-code	0x80035964	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001438c	0x2b8c		mips26	reachable-code	0x80019600	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014394	0x2b94	0x80014398	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014394	0x2b94	0x80014398	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8001439c	0x2b9c		mips26	reachable-code	0x8001a1b0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800143a4	0x2ba4	0x800143a8	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x800143a4	0x2ba4	0x800143a8	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800143ac	0x2bac		mips26	reachable-code	0x800194d8	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800143b4	0x2bb4		mips26	reachable-code	0x800142c4	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800143bc	0x2bbc		mips26	reachable-code	0x80019e24	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -11356,22 +11356,22 @@ OPEN.EXE	0x80014890	0x3090		mips26	reachable-code	0x800199e0	load	opening_entity
 OPEN.EXE	0x80014898	0x3098	0x8001489c	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800148a4	0x30a4		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x800148b4	0x30b4	0x800148b8	mips_hi16_lo16	reachable-code	0x800356d0	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800148bc	0x30bc		mips26	reachable-code	0x80014004	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800148bc	0x30bc		mips26	reachable-code	0x80014004	load	opening_camera_path_begin	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x800148c8	0x30c8	0x800148cc	mips_hi16_lo16	reachable-code	0x80035964	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800148d8	0x30d8		mips26	reachable-code	0x80019600	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800148e0	0x30e0	0x800148e4	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x800148e0	0x30e0	0x800148e4	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800148e8	0x30e8		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x800148f0	0x30f0		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80014914	0x3114		mips26	reachable-code	0x800148c8	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014920	0x3120	0x80014924	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014920	0x3120	0x80014924	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014934	0x3134		mips26	reachable-code	0x8001a1b0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001493c	0x313c	0x80014940	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x8001493c	0x313c	0x80014940	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014944	0x3144		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x8001494c	0x314c		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80014954	0x3154	0x80014958	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x8001497c	0x317c	0x80014980	mips_hi16_lo16	reachable-code	0x80075838	bss	DAT_80075838	lui+addiu	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x8001497c	0x317c	0x80014980	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+addiu	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014984	0x3184		mips26	reachable-code	0x8002f050	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001498c	0x318c		mips26	reachable-code	0x80014100	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001498c	0x318c		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x800149ac	0x31ac		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x800149b4	0x31b4		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x800149bc	0x31bc		mips26	reachable-code	0x8002c15c	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -11383,13 +11383,13 @@ OPEN.EXE	0x80014a2c	0x322c		mips26	reachable-code	0x8001399c	load		jal		control-
 OPEN.EXE	0x80014a54	0x3254		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80014a5c	0x325c		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80014a64	0x3264	0x80014a68	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x80014a78	0x3278	0x80014a7c	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014a80	0x3280	0x80014a84	mips_hi16_lo16	reachable-code	0x800757e4	bss	DAT_800757e4	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014a78	0x3278	0x80014a7c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014a80	0x3280	0x80014a84	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014a88	0x3288	0x80014a8c	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	a1	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80014aa8	0x32a8		mips26	reachable-code	0x80014608	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014ab4	0x32b4	0x80014ab8	mips_hi16_lo16	reachable-code	0x80035944	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014ac4	0x32c4		mips26	reachable-code	0x80019600	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014acc	0x32cc	0x80014ad0	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014acc	0x32cc	0x80014ad0	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014ad4	0x32d4		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x80014af8	0x32f8	0x80014afc	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80014b0c	0x330c		mips26	reachable-code	0x80014608	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -11399,19 +11399,19 @@ OPEN.EXE	0x80014b68	0x3368		mips26	reachable-code	0x800199e0	load	opening_entity
 OPEN.EXE	0x80014b70	0x3370	0x80014b74	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014b7c	0x337c		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80014b8c	0x338c	0x80014b90	mips_hi16_lo16	reachable-code	0x80035724	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014b94	0x3394		mips26	reachable-code	0x80014004	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014ba8	0x33a8	0x80014bac	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014bb0	0x33b0	0x80014bb4	mips_hi16_lo16	reachable-code	0x800757e4	bss	DAT_800757e4	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014b94	0x3394		mips26	reachable-code	0x80014004	load	opening_camera_path_begin	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
+OPEN.EXE	0x80014ba8	0x33a8	0x80014bac	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014bb0	0x33b0	0x80014bb4	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014bc0	0x33c0		mips26	reachable-code	0x80030538	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014bcc	0x33cc		mips26	reachable-code	0x80014608	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014bd4	0x33d4	0x80014bd8	mips_hi16_lo16	reachable-code	0x80035964	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014be4	0x33e4		mips26	reachable-code	0x80019600	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014bec	0x33ec	0x80014bf0	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014bec	0x33ec	0x80014bf0	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014bf4	0x33f4		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x80014c18	0x3418		mips26	reachable-code	0x80014608	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014c28	0x3428	0x80014c2c	mips_hi16_lo16	reachable-code	0x80075838	bss	DAT_80075838	lui+addiu	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014c28	0x3428	0x80014c2c	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+addiu	s3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014c30	0x3430		mips26	reachable-code	0x8002f050	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014c38	0x3438		mips26	reachable-code	0x80014100	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80014c38	0x3438		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x80014c90	0x3490		mips26	reachable-code	0x8001a1b0	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014c9c	0x349c		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x80014cb4	0x34b4		mips26	reachable-code	0x8002c090	load	SetBackColor	jal		control-flow	candidate	investigation:relocs.tsv
@@ -11423,7 +11423,7 @@ OPEN.EXE	0x80014ce4	0x34e4	0x80014ce8	mips_hi16_lo16	reachable-code	0x80069ae5	b
 OPEN.EXE	0x80014cec	0x34ec	0x80014cf0	mips_hi16_lo16	reachable-code	0x80069ae6	bss	DAT_80069ae6	lui+sb	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014cf4	0x34f4	0x80014cf8	mips_hi16_lo16	reachable-code	0x80069ae7	bss	DAT_80069ae7	lui+sb	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014d28	0x3528		mips26	reachable-code	0x80014d34	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014d34	0x3534	0x80014d38	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014d34	0x3534	0x80014d38	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014d3c	0x353c		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x80014d44	0x3544		mips26	reachable-code	0x80014c30	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014d74	0x3574		mips26	reachable-code	0x8002c090	load	SetBackColor	jal		control-flow	candidate	investigation:relocs.tsv
@@ -11436,7 +11436,7 @@ OPEN.EXE	0x80014dac	0x35ac	0x80014db0	mips_hi16_lo16	reachable-code	0x80069ae6	b
 OPEN.EXE	0x80014db4	0x35b4	0x80014db8	mips_hi16_lo16	reachable-code	0x80069ae7	bss	DAT_80069ae7	lui+sb	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014dbc	0x35bc	0x80014dc0	mips_hi16_lo16	reachable-code	0x80035944	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014dcc	0x35cc		mips26	reachable-code	0x80019600	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014dd4	0x35d4	0x80014dd8	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80014dd4	0x35d4	0x80014dd8	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80014ddc	0x35dc		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
 OPEN.EXE	0x80014e54	0x3654	0x80014e58	mips_hi16_lo16	reachable-code	0x80012000	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014e9c	0x369c	0x80014ea0	mips_hi16_lo16	reachable-code	0x8006e088	bss	render_state	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
@@ -11464,13 +11464,13 @@ OPEN.EXE	0x800150a4	0x38a4		mips26	reachable-code	0x800199e0	load	opening_entity
 OPEN.EXE	0x800150ac	0x38ac	0x800150b0	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x800150b8	0x38b8		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x800150c0	0x38c0	0x800150c4	mips_hi16_lo16	reachable-code	0x80035820	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015108	0x3908		mips26	reachable-code	0x80014004	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80015108	0x3908		mips26	reachable-code	0x80014004	load	opening_camera_path_begin	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x80015114	0x3914		mips26	reachable-code	0x8002f288	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80015124	0x3924		mips26	reachable-code	0x8002c090	load	SetBackColor	jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80015134	0x3934		mips26	reachable-code	0x8002c0b0	load	SetFarColor	jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80015140	0x3940	0x80015144	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+sh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015148	0x3948	0x8001514c	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015150	0x3950	0x80015154	mips_hi16_lo16	reachable-code	0x800757e4	bss	DAT_800757e4	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80015148	0x3948	0x8001514c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80015150	0x3950	0x80015154	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80015160	0x3960	0x80015164	mips_hi16_lo16	reachable-code	0x8006da2c	bss	DAT_8006da2c	lui+sb	zero	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80015168	0x3968	0x8001516c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	DAT_8006da2d	lui+sb	zero	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80015170	0x3970	0x80015174	mips_hi16_lo16	reachable-code	0x8006da2e	bss	DAT_8006da2e	lui+sb	zero	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
@@ -11487,10 +11487,10 @@ OPEN.EXE	0x80015250	0x3a50		mips26	reachable-code	0x800152dc	load		j		control-fl
 OPEN.EXE	0x80015278	0x3a78		mips26	reachable-code	0x800152dc	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800152bc	0x3abc		mips26	reachable-code	0x80026654	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800152d4	0x3ad4		mips26	reachable-code	0x80016840	load	opening_resources_load_ending_sequence	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x800152dc	0x3adc	0x800152e0	mips_hi16_lo16	reachable-code	0x80075838	bss	DAT_80075838	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800152f0	0x3af0		mips26	reachable-code	0x80014100	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800152dc	0x3adc	0x800152e0	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x800152f0	0x3af0		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
 OPEN.EXE	0x80015314	0x3b14		mips26	reachable-code	0x8001534c	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001534c	0x3b4c	0x80015350	mips_hi16_lo16	reachable-code	0x800757dc	bss	DAT_800757dc	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x8001534c	0x3b4c	0x80015350	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80015354	0x3b54		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x8001535c	0x3b5c		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80015364	0x3b64		mips26	reachable-code	0x8002c15c	load		jal		control-flow	candidate	investigation:relocs.tsv

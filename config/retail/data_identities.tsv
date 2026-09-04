@@ -3068,27 +3068,7 @@ OPEN.EXE	0x800757c2	0x2	DAT_800757c2	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x800757c4	0x4	DAT_800757c4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800757c8	0x4	DAT_800757c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800757d0	0x4	VBLANK_MINUS	unknown	bss	s32	audio	supported	TEMPO.OBJ:XREF;asm;cross-overlay-lineage	OPEN copy of the LIBSND internal video-rate divisor; source linkage remains unresolved
-OPEN.EXE	0x800757d8	0x4	DAT_800757d8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757dc	0x4	DAT_800757dc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757e0	0x4	DAT_800757e0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757e4	0x4	DAT_800757e4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757e8	0x4	DAT_800757e8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757ec	0x4	DAT_800757ec	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757f0	0x4	DAT_800757f0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757f4	0x4	DAT_800757f4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757f8	0x4	DAT_800757f8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x800757fc	0x4	DAT_800757fc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075804	0x4	DAT_80075804	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075808	0x4	DAT_80075808	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8007580c	0x4	DAT_8007580c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075814	0x4	DAT_80075814	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075818	0x4	DAT_80075818	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8007581c	0x4	DAT_8007581c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075824	0x4	DAT_80075824	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075828	0x4	DAT_80075828	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x8007582c	0x4	DAT_8007582c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075834	0x2	DAT_80075834	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80075838	0x4	DAT_80075838	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x800757d8	0x64	opening_camera_path_state	global	bss	KfCameraPathState	opening_camera_path	supported	open_semantic_camera_path.tsv;asm;cfg;xrefs;GAME-camera-path-layout	global 0x64-byte opening camera interpolator; source point zero seeds the live transform before point_index advances to the first segment target
 OPEN.EXE	0x80075848	0x4	memory_arena_start	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	base restored by memory_allocation_reset; separate symbol retained because no enclosing source object is proved
 OPEN.EXE	0x8007584c	0x4	memory_arena_end	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	inclusive arena end; mode 0 sets 0x801effff and mode 1 derives it from the cursor
 OPEN.EXE	0x80075850	0x4	memory_arena_cursor	unknown	bss	u8 *	memory	supported	game_open_semantic_memory_allocator.tsv;asm;xrefs;cross-overlay-lineage	null selects checked Psy-Q heap allocation; nonnull selects four-byte-aligned linear allocation
