@@ -132,11 +132,11 @@ KfCdFileEntry	0x02	0x01	sector	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	
 KfCdFileEntry	0x03	0x01	track	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
 KfCdFileEntry	0x04	0x04	size	u32	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
 KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
-KfCellWindow	0x00	0x02	width	u16	supported	game_render.h;asm;render_map_cells;render_entities	row width and inner-loop bound
-KfCellWindow	0x02	0x02	height	u16	supported	game_render.h;asm;render_map_cells;render_entities	row count and outer-loop bound
-KfCellWindow	0x04	0x02	origin_x	u16	supported	game_render.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
-KfCellWindow	0x06	0x02	origin_z	u16	supported	game_render.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
-KfCellWindow	0x08	0xc4	cells	u8[196]	supported	game_render.h;game_semantic_render_cell_windows.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	row-major visibility bytes filling the remainder of each 204-byte window record
+KfCellWindow	0x00	0x02	width	u16	supported	render_types.h;asm;render_map_cells;render_entities	row width and inner-loop bound
+KfCellWindow	0x02	0x02	height	u16	supported	render_types.h;asm;render_map_cells;render_entities	row count and outer-loop bound
+KfCellWindow	0x04	0x02	origin_x	u16	supported	render_types.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin
+KfCellWindow	0x06	0x02	origin_z	u16	supported	render_types.h;asm;render_map_cells;render_entities	map-cell z coordinate of the window origin
+KfCellWindow	0x08	0xc4	cells	u8[196]	supported	render_types.h;game_semantic_render_cell_windows.tsv;open_semantic_map_render.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	row-major visibility bytes filling the remainder of each 204-byte window record
 KfCollisionTarget	0x00	0x10	position	VECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform position copied from the selected player, actor, map object, or map event
 KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family

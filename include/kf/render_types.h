@@ -17,4 +17,13 @@ typedef struct KfOrderingTable {
     u32 entries[0x4000];
 } KfOrderingTable;
 
+/* Per-yaw row-major visible-cell window shared by GAME and OPEN. */
+typedef struct KfCellWindow {
+    u16 width;
+    u16 height;
+    u16 origin_x;
+    u16 origin_z;
+    u8 cells[196];
+} KfCellWindow;
+
 #endif

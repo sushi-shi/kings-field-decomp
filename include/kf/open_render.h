@@ -46,7 +46,8 @@ extern KfScreenVertex tmd_projected_vertices[1000];
 extern MATRIX light_quadrant_matrices[4];
 extern MATRIX color_matrix_table[5];
 
-extern u32 DAT_800439d8;
+extern KfCellWindow render_cell_windows[16];
+extern const KfCellWindow *active_cell_window;
 extern u16 DAT_8006da36;
 extern u16 DAT_8006da38;
 extern u32 DAT_8006e040;
@@ -89,5 +90,7 @@ extern void tmd_project_vertices(s32 count);
 extern void tmd_project_vertices_perspective_right(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
+extern void render_map_cell(s32 col, s32 row, u8 cell);
+extern void func_800185e8(u16 object_index);
 
 #endif

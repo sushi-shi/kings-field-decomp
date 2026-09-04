@@ -388,13 +388,12 @@ class InventoryTests(unittest.TestCase):
     def test_render_layouts_live_in_their_owner_headers(self) -> None:
         semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         owners = {
-            "render_types.h": ("KfPrimitiveBuffer", "KfOrderingTable"),
+            "render_types.h": ("KfPrimitiveBuffer", "KfOrderingTable", "KfCellWindow"),
             "game_asset.h": ("KfAssetHeader",),
             "game_render.h": (
                 "KfSpriteQuad",
                 "KfHudSprite",
                 "KfEffectSprite",
-                "KfCellWindow",
                 "KfDisplayState",
                 "KfTmdState",
                 "KfRenderState",

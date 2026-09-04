@@ -37,7 +37,7 @@ void render_initialize(void)
     u8 *buffer;
 
     display_state.buffer_index = 0xff;
-    cd_file_load_into(&DAT_800439d8, "B0\\RTBL.");
+    cd_file_load_into(render_cell_windows, "B0\\RTBL.");
     buffer = memory_allocate(0x4c2c0);
     display_state.asset_load_buffer = buffer;
     display_state.primitive_buffers[0].start = buffer;

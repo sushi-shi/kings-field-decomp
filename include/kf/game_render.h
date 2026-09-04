@@ -44,15 +44,6 @@ typedef struct KfEffectSprite {
     u8 anchor[4];
 } KfEffectSprite;
 
-/* Per-yaw row-major visible-cell window. */
-typedef struct KfCellWindow {
-    u16 width;
-    u16 height;
-    u16 origin_x;
-    u16 origin_z;
-    u8 cells[196];
-} KfCellWindow;
-
 /* Double-buffered GAME.EXE display state. */
 typedef struct KfDisplayState {
     u8 buffer_index;
