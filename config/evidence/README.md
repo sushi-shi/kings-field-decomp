@@ -168,6 +168,11 @@ pass and its per-entity referent. It proves the TMD slot, 32-record pool walk,
 byte-wide active-object test, 40-byte entity stride, and all three frame-level
 callers. The render pass matches retail exactly.
 
+`open_semantic_matrix.tsv` records the contiguous OPEN matrix interpolator and
+its color/light installation wrappers. It proves the nine signed Q12 element
+operations, typed stack matrices, four ordered calls, and exact GAME homologs.
+All three functions match retail exactly.
+
 `open_semantic_sound_ref.tsv` records the packed OPEN sound wrapper and its
 managed-voice referent. It proves the three byte-wide sound fields, signed
 volume duplication into the two O32 stack arguments, active-VAB aggregate

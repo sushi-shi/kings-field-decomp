@@ -26,7 +26,11 @@ extern u32 primitive_allocation_count;
 
 extern void display_initialize(s32 mode);
 extern void lighting_set_active_color_matrix(s32 index);
+extern void matrix_interpolate(
+    const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void lighting_set_color_matrix(
+    const MATRIX *from, const MATRIX *to, s32 blend);
+extern void lighting_set_light_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
 extern void *primitive_buffer_allocate(u16 byte_count);
 extern void render_initialize(void);

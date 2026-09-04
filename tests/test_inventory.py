@@ -1376,6 +1376,49 @@ class InventoryTests(unittest.TestCase):
             },
         )
 
+    def test_open_matrix_campaign_is_exactly_modeled(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_matrix.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 3)
+        self.assertEqual(
+            {parse_int(row["va"]) for row in evidence_rows},
+            {0x80019598, 0x80019600, 0x8001962C},
+        )
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertEqual(row["current_match"], "100.000000000% exact")
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        self.assertEqual(
+            {
+                identities[("OPEN.EXE", va)].name
+                for va in {0x80019598, 0x80019600, 0x8001962C}
+            },
+            {
+                "matrix_interpolate",
+                "lighting_set_color_matrix",
+                "lighting_set_light_matrix",
+            },
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_matrix" in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 4)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        self.assertEqual(
+            {reloc["target_name"] for reloc in campaign_rows},
+            {"matrix_interpolate", "SetColorMatrix", "SetLightMatrix"},
+        )
+
     def test_open_sound_ref_is_exactly_modeled(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_sound_ref.tsv"
         _, evidence_rows = read_tsv(evidence_path)

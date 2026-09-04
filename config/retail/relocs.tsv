@@ -12134,10 +12134,10 @@ OPEN.EXE	0x80019508	0x7d08		mips26	reachable-code	0x80016dd0	load	display_presen
 OPEN.EXE	0x80019534	0x7d34		mips26	reachable-code	0x80016e68	load	tmd_select	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_render_entities
 OPEN.EXE	0x8001953c	0x7d3c	0x80019540	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_render_entities
 OPEN.EXE	0x80019560	0x7d60		mips26	reachable-code	0x80018ecc	load	opening_entity_render	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_render_entities
-OPEN.EXE	0x8001960c	0x7e0c		mips26	reachable-code	0x80019598	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019614	0x7e14		mips26	reachable-code	0x8002d5b8	load	SetColorMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019638	0x7e38		mips26	instruction-word	0x80019598	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019640	0x7e40		mips26	instruction-word	0x8002d588	load	SetLightMatrix	jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001960c	0x7e0c		mips26	reachable-code	0x80019598	load	matrix_interpolate	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
+OPEN.EXE	0x80019614	0x7e14		mips26	reachable-code	0x8002d5b8	load	SetColorMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
+OPEN.EXE	0x80019638	0x7e38		mips26	instruction-word	0x80019598	load	matrix_interpolate	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
+OPEN.EXE	0x80019640	0x7e40		mips26	instruction-word	0x8002d588	load	SetLightMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
 OPEN.EXE	0x8001967c	0x7e7c	0x80019680	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x80019684	0x7e84		mips26	instruction-word	0x8002f288	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800196a4	0x7ea4	0x800196a8	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan

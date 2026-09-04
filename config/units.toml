@@ -693,6 +693,12 @@ source = "src/open/opening_render_entities.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.matrix"
+image = "OPEN.EXE"
+source = "src/open/matrix.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.item"
 image = "OPEN.EXE"
 source = "src/open/item.c"
