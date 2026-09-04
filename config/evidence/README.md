@@ -8,6 +8,12 @@ emitter and its exact entity-render caller control. The companion
 `render_typed_matrix_cast_cleanup.tsv` records byte-identical redundant-cast
 cleanup in existing render consumers; those rows are not new GAME progress.
 
+`open_semantic_map_enqueue.tsv` records OPEN's lit map polygon emitter,
+its complete colour owner, and unchanged map-cell caller control.
+`game_open_semantic_packed_projection.tsv` records the eleven-function
+byte-identical shared packed-coordinate type correction; object hashes and
+remaining map-renderer differences are in `docs/patterns/open-map-enqueue.md`.
+
 `game_match_campaign_30.tsv` records the pre-edit MIPS evidence and final
 matching verdicts for the first GAME reconstruction campaign.
 `game_tu_equipment.tsv` records the shared resource-loader, table-extent,

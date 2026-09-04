@@ -65,6 +65,7 @@ extern MATRIX color_matrix_table[5];
 extern KfSpriteQuad floor_item_sprites[7];
 extern MATRIX floor_item_light_matrix;
 extern SVECTOR render_sprite_light_normal;
+extern CVECTOR map_textured_primitive_color;
 extern KfFloorItemStateOpen floor_item_state;
 
 extern KfCellWindow render_cell_windows[16];
@@ -106,6 +107,6 @@ extern void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_map_cell(s32 col, s32 row, u8 cell);
-extern void func_800185e8(u16 object_index);
+extern void render_enqueue_map(u16 object_index);
 
 #endif

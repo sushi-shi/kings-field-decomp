@@ -665,6 +665,12 @@ source = "src/open/render_unlit.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.render_map"
+image = "OPEN.EXE"
+source = "src/open/render_map.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.render_sprite"
 image = "OPEN.EXE"
 source = "src/open/render_sprite.c"

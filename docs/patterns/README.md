@@ -43,6 +43,8 @@ promotes a probe to a proven historical toolchain.
   narrowing in preparation, and the shared GAME/OPEN TMD interface.
 - [open-unlit-triangles.md](open-unlit-triangles.md): the unlit F3/FT3 path,
   packed GPU accesses, and the unresolved graphics-wide shared-base relation.
+- [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
+  the complete colour owner, and byte-identical shared packed-coordinate types.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated

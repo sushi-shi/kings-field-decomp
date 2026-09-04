@@ -388,6 +388,8 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         "u16": (2, 2),
         "s32": (4, 4),
         "u32": (4, 4),
+        # Target O32/Psy-Q long, independent of the host Python ABI.
+        "long": (4, 4),
         # Psy-Q SDK fixed-layout types (declared in the real LIBGTE headers,
         # not parsed here); registered so project structs can use them.
         "MATRIX": (0x20, 4),

@@ -160,7 +160,7 @@ typedef struct KfTmdGt4 {
 
 /* One GTE-projected vertex consumed by the polygon enqueue paths. */
 typedef struct KfScreenVertex {
-    DVECTOR sxy;
+    long sxy; /* SDK packed screen X/Y word; non-perspective paths write its halves. */
     s16 sz;
     s16 p2;
 } KfScreenVertex;

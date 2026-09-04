@@ -32,6 +32,11 @@ the countdown is `remaining`. SDK output locals are `perspective`,
 The existing low-halfword conversions and arithmetic depth shift are
 unchanged.
 
+The subsequent [OPEN map campaign](open-map-enqueue.md) models the shared
+packed screen-coordinate field directly as SDK `long`, retaining the
+non-perspective halfword writers through `DVECTOR`. All four existing
+producer/consumer objects stayed byte-identical after rebuilding.
+
 The second local passed to `ReadSZ2` is `unused_depth`, not a second
 observed depth result. GAME callers materialize pointers to stack offsets
 24 and 28. Retail `ReadSZ2` at `GAME.EXE:0x8004cb58` is exactly:

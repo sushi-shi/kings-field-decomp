@@ -53,7 +53,7 @@ void render_map_cell(s32 col, s32 row, u8 cell)
     SetTransMatrix(&cell_matrix);
     SetLightMatrix(&light_quadrant_matrices[orientation]);
     tmd_select_object_vertices(object_index);
-    func_800185e8(object_index);
+    render_enqueue_map(object_index);
 }
 
 ADDRESS(0x80018d8c, 0x140)

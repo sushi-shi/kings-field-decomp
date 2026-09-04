@@ -28,6 +28,30 @@ typedef char screen_vertex_size[sizeof(KfScreenVertex) == 8 ? 1 : -1];
 CHECK_OFFSET(KfScreenVertex, sxy, 0);
 CHECK_OFFSET(KfScreenVertex, sz, 4);
 CHECK_OFFSET(KfScreenVertex, p2, 6);
+typedef char packed_xy_size[sizeof(long) == 4 ? 1 : -1];
+typedef char screen_halfword_view_size[sizeof(DVECTOR) == 4 ? 1 : -1];
+CHECK_OFFSET(DVECTOR, vx, 0);
+CHECK_OFFSET(DVECTOR, vy, 2);
+
+typedef struct TargetLongAlignment {
+    u8 before;
+    long word;
+    u8 after;
+} TargetLongAlignment;
+typedef char target_long_alignment[sizeof(TargetLongAlignment) == 12 ? 1 : -1];
+CHECK_OFFSET(TargetLongAlignment, word, 4);
+CHECK_OFFSET(TargetLongAlignment, after, 8);
+
+long screen_vertex_read_xy(const KfScreenVertex *vertex)
+{
+    return vertex->sxy;
+}
+
+void screen_vertex_write_xy(KfScreenVertex *vertex, long xy)
+{
+    vertex->sxy = xy;
+}
+
 typedef char primitive_count_size[
     sizeof(((KfTmdObject *)0)->primitive_count) == 4 ? 1 : -1];
 CHECK_OFFSET(KfTmdObject, primitive_count, 20);

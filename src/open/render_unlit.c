@@ -27,8 +27,8 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(vertices + triangle->v0);
             vertex1 = (KfScreenVertex *)(vertices + triangle->v1);
             vertex2 = (KfScreenVertex *)(vertices + triangle->v2);
-            if (NormalClip(*(long *)&vertex0->sxy, *(long *)&vertex1->sxy,
-                           *(long *)&vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy, vertex1->sxy,
+                           vertex2->sxy) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_FT3));
@@ -37,9 +37,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             prim->clut = triangle->cba;
             prim->tpage = triangle->tsb;
             /* Packed GTE coordinates and texture pairs retain their word widths. */
-            *(long *)&prim->x0 = *(long *)&vertex0->sxy;
-            *(long *)&prim->x1 = *(long *)&vertex1->sxy;
-            *(long *)&prim->x2 = *(long *)&vertex2->sxy;
+            *(long *)&prim->x0 = vertex0->sxy;
+            *(long *)&prim->x1 = vertex1->sxy;
+            *(long *)&prim->x2 = vertex2->sxy;
             *(u16 *)&prim->u0 = *(u16 *)&triangle->tu0;
             *(u16 *)&prim->u1 = *(u16 *)&triangle->tu1;
             *(u16 *)&prim->u2 = *(u16 *)&triangle->tu2;
@@ -55,16 +55,16 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(vertices + triangle->v0);
             vertex1 = (KfScreenVertex *)(vertices + triangle->v1);
             vertex2 = (KfScreenVertex *)(vertices + triangle->v2);
-            if (NormalClip(*(long *)&vertex0->sxy, *(long *)&vertex1->sxy,
-                           *(long *)&vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy, vertex1->sxy,
+                           vertex2->sxy) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_F3));
             primitive = prim;
             SetPolyF3(prim);
-            *(long *)&prim->x0 = *(long *)&vertex0->sxy;
-            *(long *)&prim->x1 = *(long *)&vertex1->sxy;
-            *(long *)&prim->x2 = *(long *)&vertex2->sxy;
+            *(long *)&prim->x0 = vertex0->sxy;
+            *(long *)&prim->x1 = vertex1->sxy;
+            *(long *)&prim->x2 = vertex2->sxy;
             prim->r0 = triangle->r;
             prim->g0 = triangle->g;
             prim->b0 = triangle->b;

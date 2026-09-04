@@ -5,6 +5,7 @@ import unittest
 from scripts.kf.inventory import (
     _data_access,
     _ghidra_type,
+    _header_structure_layouts,
     _signature_hints,
     load_data_identities,
     load_function_identities,
@@ -45,6 +46,13 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_packed_screen_word_uses_target_long_layout(self) -> None:
+        layout = _header_structure_layouts()["KfScreenVertex"]
+        self.assertEqual((layout.size, layout.alignment), (8, 4))
+        self.assertEqual([(f.offset, f.size, f.name, f.datatype) for f in layout.fields],
+                         [(0, 4, "sxy", "long"), (4, 2, "sz", "s16"),
+                          (6, 2, "p2", "s16")])
+
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
         self.assertEqual(counts["functions"], 485)
@@ -1228,7 +1236,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
 
         self.assertEqual(
-            _structure_field("KfScreenVertex", 0x00), ("sxy", "DVECTOR", 4)
+            _structure_field("KfScreenVertex", 0x00), ("sxy", "long", 4)
         )
         self.assertEqual(
             _structure_field("KfScreenVertex", 0x04), ("sz", "s16", 2)

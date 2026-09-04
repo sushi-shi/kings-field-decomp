@@ -12007,27 +12007,27 @@ OPEN.EXE	0x800184c0	0x6cc0		mips26	instruction-word	0x8002dc20	load	NormalClip	j
 OPEN.EXE	0x800184d0	0x6cd0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_unlit_triangles
 OPEN.EXE	0x800184dc	0x6cdc		mips26	instruction-word	0x8003407c	load	SetPolyF3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_unlit_triangles
 OPEN.EXE	0x80018598	0x6d98		mips26	instruction-word	0x80033f74	load	AddPrim	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_unlit_triangles
-OPEN.EXE	0x80018614	0x6e14		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80018620	0x6e20	0x80018624	mips_hi16_lo16	reachable-code	0x80069b60	bss	tmd_state	lui+addiu	s1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001863c	0x6e3c		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
-OPEN.EXE	0x80018668	0x6e68	0x8001866c	mips_hi16_lo16	reachable-code	0x800372fb	load		lui+addiu	fp	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800186b8	0x6eb8		mips26	reachable-code	0x8002dc20	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800186d0	0x6ed0		mips26	reachable-code	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x800186dc	0x6edc		mips26	reachable-code	0x80034108	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001876c	0x6f6c		mips26	reachable-code	0x8002db60	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001877c	0x6f7c		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001878c	0x6f8c		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001879c	0x6f9c		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800187ac	0x6fac		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800187e8	0x6fe8		mips26	reachable-code	0x80018940	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018814	0x7014		mips26	reachable-code	0x8002dc20	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018824	0x7024		mips26	reachable-code	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80018830	0x7030		mips26	reachable-code	0x800340b8	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800188a8	0x70a8		mips26	reachable-code	0x8002db60	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800188b8	0x70b8		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800188c8	0x70c8		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800188d8	0x70d8		mips26	reachable-code	0x8002d998	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018948	0x7148		mips26	reachable-code	0x80033f74	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80018614	0x6e14		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_map_enqueue
+OPEN.EXE	0x80018620	0x6e20	0x80018624	mips_hi16_lo16	reachable-code	0x80069b60	bss	tmd_state	lui+addiu	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_map_enqueue
+OPEN.EXE	0x8001863c	0x6e3c		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection;manual:open_semantic_map_enqueue
+OPEN.EXE	0x80018668	0x6e68	0x8001866c	mips_hi16_lo16	reachable-code	0x800372fb	load	map_textured_primitive_color	lui+addiu	fp	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800186b8	0x6eb8		mips26	reachable-code	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800186d0	0x6ed0		mips26	reachable-code	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800186dc	0x6edc		mips26	reachable-code	0x80034108	load	SetPolyGT4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x8001876c	0x6f6c		mips26	reachable-code	0x8002db60	load	NormalColorCol	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x8001877c	0x6f7c		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x8001878c	0x6f8c		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x8001879c	0x6f9c		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800187ac	0x6fac		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800187e8	0x6fe8		mips26	reachable-code	0x80018940	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x80018814	0x7014		mips26	reachable-code	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x80018824	0x7024		mips26	reachable-code	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_map_enqueue
+OPEN.EXE	0x80018830	0x7030		mips26	reachable-code	0x800340b8	load	SetPolyGT3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800188a8	0x70a8		mips26	reachable-code	0x8002db60	load	NormalColorCol	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800188b8	0x70b8		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800188c8	0x70c8		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x800188d8	0x70d8		mips26	reachable-code	0x8002d998	load	DpqColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
+OPEN.EXE	0x80018948	0x7148		mips26	reachable-code	0x80033f74	load	AddPrim	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_map_enqueue
 OPEN.EXE	0x80018a38	0x7238		mips26	reachable-code	0x8002d820	load	RotTransPers	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sprite_render
 OPEN.EXE	0x80018a78	0x7278		mips26	reachable-code	0x8002de88	load	RotTransPers4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sprite_render
 OPEN.EXE	0x80018a80	0x7280		mips26	reachable-code	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_sprite_render
@@ -12057,7 +12057,7 @@ OPEN.EXE	0x80018d44	0x7544		mips26	reachable-code	0x8002d558	load	SetRotMatrix	j
 OPEN.EXE	0x80018d4c	0x754c		mips26	reachable-code	0x8002d5e8	load	SetTransMatrix	jal		control-flow-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018d58	0x7558		mips26	reachable-code	0x8002d588	load	SetLightMatrix	jal		control-flow-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018d64	0x7564		mips26	reachable-code	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_map_render
-OPEN.EXE	0x80018d6c	0x756c		mips26	reachable-code	0x800185e8	load	func_800185e8	jal		control-flow-reviewed	reviewed	manual:open_semantic_map_render
+OPEN.EXE	0x80018d6c	0x756c		mips26	reachable-code	0x800185e8	load	render_enqueue_map	jal		control-flow-reviewed	reviewed	manual:open_semantic_map_render;manual:open_semantic_map_enqueue
 OPEN.EXE	0x80018db0	0x75b0	0x80018db4	mips_hi16_lo16	reachable-code	0x8006e0bf	bss	render_state	lui+lb	v0	paired-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018dd4	0x75d4	0x80018dd8	mips_hi16_lo16	reachable-code	0x800439d8	bss	render_cell_windows	lui+addiu	v1	paired-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018de0	0x75e0	0x80018de4	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	active_cell_window	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_map_render

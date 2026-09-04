@@ -445,7 +445,7 @@ void tmd_project_vertices(s32 count)
     projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
-        RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
+        RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << 1;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = (u16)depth;
@@ -468,7 +468,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
-        RotTransPers(vertex, (long *)&projected->sxy, &perspective, &gte_flags);
+        RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << 1;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = depth >> shift;
@@ -490,8 +490,8 @@ void tmd_transform_vertices(s32 count)
     vertex = current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTrans(vertex, &transformed, &gte_flags);
-        projected->sxy.vx = transformed.vx;
-        projected->sxy.vy = transformed.vy;
+        ((DVECTOR *)&projected->sxy)->vx = transformed.vx;
+        ((DVECTOR *)&projected->sxy)->vy = transformed.vy;
         projected->p2 = transformed.vz;
         projected->sz = transformed.vz;
         projected++;
