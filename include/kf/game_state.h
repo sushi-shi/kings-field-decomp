@@ -80,11 +80,6 @@ extern u8 DAT_800652a8[240]; /* inventory and progress flag block */
 extern u32 DAT_8006bd88;
 extern SVECTOR DAT_800930f0[]; /* morph scratch base */
 extern u32 DAT_800930f8[]; /* base+keyframe scratch (== &DAT_800930f0[1]) */
-extern u16 DAT_8009503a;
-extern u16 DAT_8009503c;
-extern u16 DAT_80095048;
-extern u16 DAT_8009504a;
-extern u16 DAT_8009504c;
 extern u16 DAT_80095058; /* clut; the colour CVECTOR follows four bytes on */
 extern u16 DAT_8009505a; /* tpage */
 extern u8 DAT_8009505c;

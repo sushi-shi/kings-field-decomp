@@ -1853,12 +1853,8 @@ GAME.EXE	0x800930f8	0x4	DAT_800930f8	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x800930fc	0x4	DAT_800930fc	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80093100	0x4	DAT_80093100	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80093104	0x4	DAT_80093104	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095038	0x2	DAT_80095038	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009503a	0x2	DAT_8009503a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009503c	0x2	DAT_8009503c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80095048	0x2	DAT_80095048	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009504a	0x2	DAT_8009504a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009504c	0x2	DAT_8009504c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80095038	0x6	effect5_texture_pages	global	bss	u16[3]	display	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read	three texture-page IDs prepared for floor mode five and indexed by the actor descriptor high nibble
+GAME.EXE	0x80095048	0x6	effect5_texture_cluts	global	bss	u16[3]	display	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;paired-index	three CLUT IDs paired with effect5_texture_pages
 GAME.EXE	0x80095058	0x2	DAT_80095058	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009505a	0x2	DAT_8009505a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009505c	0x1	DAT_8009505c	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

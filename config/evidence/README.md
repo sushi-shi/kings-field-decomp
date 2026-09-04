@@ -73,6 +73,10 @@ the former interior address identities are aggregate row addends.
 `KfCellWindow` records, the per-frame active-window pointer, and the loader,
 selector, and entity-culling functions that prove their extents and fields.
 
+`game_semantic_effect5_texture_tables.tsv` records the two three-entry texture
+page and CLUT tables prepared for floor mode five and their paired actor-render
+consumer. It proves that six former halfword identities were two indexed banks.
+
 `game_semantic_display_tmd.tsv` records eleven related GAME/OPEN function
 pairs for frame submission, view transforms, TMD registration/access, and
 primitive-index preparation. It supports complete `KfPrimitiveBuffer` and
