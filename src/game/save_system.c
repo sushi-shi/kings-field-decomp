@@ -516,7 +516,7 @@ s32 save_file_read_slot(s16 slot_id)
     s32 payload_size;
     s32 header_size;
     u8 *weapon_asset_buffer;
-    u32 saved_07f4;
+    struct KfPoolRecord *saved_weapon_animation_cache;
 
     payload_size = sizeof(KfSavePayload);
     header_size = sizeof(KfSaveHeader);
@@ -584,7 +584,7 @@ s32 save_file_read_slot(s16 slot_id)
         return 0xd;
     }
     weapon_asset_buffer = player_state.weapon_asset_buffer;
-    saved_07f4 = player_state.unknown_74;
+    saved_weapon_animation_cache = player_state.weapon_animation_cache;
     memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
     memcpy(&map_world_state_base, save_payload_buffer->world_state,
@@ -596,7 +596,7 @@ s32 save_file_read_slot(s16 slot_id)
         record += 20;
     }
     player_state.weapon_asset_buffer = weapon_asset_buffer;
-    player_state.unknown_74 = saved_07f4;
+    player_state.weapon_animation_cache = saved_weapon_animation_cache;
     return 1;
 }
 

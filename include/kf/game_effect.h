@@ -11,6 +11,8 @@
 #include <kf/game_math.h>
 #include <kf/magic.h>
 
+struct KfPoolRecord;
+
 /*
  * Effect pool record (60-byte stride, pool in effect_pool_records). The pool
  * constructors establish the field layout: byte 0 is the type tag (0xff marks
@@ -44,7 +46,7 @@ typedef struct KfEffectRecord {
     u16 direction_y;     /* 0x2e */
     u16 direction_z;     /* 0x30 */
     u16 unknown_32;      /* 0x32 */
-    u8 unknown_34[4];    /* 0x34 */
+    struct KfPoolRecord *animation_cache; /* 0x34 */
     u16 unknown_38;      /* 0x38 */
     u16 unknown_3a;      /* 0x3a */
 } KfEffectRecord;
@@ -71,7 +73,7 @@ typedef struct KfEffectRenderView {
     s16 scale_y;
     s16 scale_z;
     u8 unknown_2a[10];
-    u8 anchor[4];
+    struct KfPoolRecord *animation_cache;
     u8 unknown_38[4];
 } KfEffectRenderView;
 

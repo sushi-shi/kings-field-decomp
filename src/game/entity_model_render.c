@@ -41,8 +41,9 @@ void render_actor(KfActor *actor)
     asset = descriptor & 0xf;
     asset_registry_select(asset);
     object = tmd_get_object(0);
-    if (render_bind_animated_instance(&actor->unknown_34, asset, actor->animation_id,
-                      actor->animation_phase, object->vertex_count) == 0) {
+    if (render_bind_animated_instance(
+            &actor->animation_cache, asset, actor->animation_id,
+            actor->animation_phase, object->vertex_count) == 0) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);
     } else {

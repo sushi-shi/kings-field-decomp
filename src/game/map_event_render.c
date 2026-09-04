@@ -1,6 +1,7 @@
 #include <kf/address.h>
+#include <kf/game_asset.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/psyq.h>
 
 /*
  * Map-event model emitter invoked by the frame renderer's pool sweep
@@ -12,9 +13,8 @@
 
 /*
  * The world position is taken from the low halves of the event's reference and
- * y coordinates; the render-rotation vector overlaps the event's rotation field
- * and its neighbours, and the visibility anchor sits inside the trailing bytes,
- * so both are reached through views of KfMapEvent until that block is modelled.
+ * y coordinates. The eight-byte render-rotation view overlaps the rotation
+ * field and its neighbours, ending immediately before animation_cache.
  */
 ADDRESS(0x8001f0c4, 0x154)
 void render_map_event(KfMapEvent *event)
@@ -40,7 +40,7 @@ void render_map_event(KfMapEvent *event)
     asset_registry_select(asset);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
-            &event->unknown_3a[2], asset, event->unknown_0f, event->rotation_phase,
+            &event->animation_cache, asset, event->unknown_0f, event->rotation_phase,
             object->vertex_count) == 0) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);

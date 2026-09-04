@@ -89,7 +89,7 @@ void player_equip_weapon(u8 weapon_id)
         asset_registry_set(0x14, player_state.weapon_asset_buffer);
     }
     player_state.weapon_attack_phase = -1;
-    player_state.unknown_74 = 0;
+    player_state.weapon_animation_cache = 0;
     player_recalculate_combat_stats();
 }
 

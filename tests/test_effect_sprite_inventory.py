@@ -34,7 +34,7 @@ class EffectSpriteInventoryTests(unittest.TestCase):
                 "unknown_0c": (0x0C, 2, "u8[2]"),
                 "rotation": (0x0E, 8, "SVECTOR"),
                 "unknown_16": (0x16, 2, "u8[2]"),
-                "anchor": (0x18, 4, "u8[4]"),
+                "animation_cache": (0x18, 4, "KfPoolRecord *"),
             },
         )
 

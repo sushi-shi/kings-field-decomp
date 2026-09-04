@@ -8,6 +8,8 @@
 #include <kf/game_map.h>
 #include <kf/magic.h>
 
+struct KfPoolRecord;
+
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;
@@ -108,7 +110,7 @@ typedef struct KfPlayerState {
     u8 *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
-    u32 unknown_74;
+    struct KfPoolRecord *weapon_animation_cache;
     u8 unknown_78;
     u8 unknown_79;
     u8 weapon_attack_fully_charged;

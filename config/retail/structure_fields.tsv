@@ -24,7 +24,7 @@ KfActor	0x1a	0x02	unknown_1a	s16	opaque	game_actor.h;asm;xrefs	meaning unresolve
 KfActor	0x1c	0x10	position	VECTOR	supported	game_actor.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as VECTOR
 KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	game_actor.h;asm;xrefs	actor rotation
 KfActor	0x32	0x02	unknown_32	u16	opaque	game_actor.h;asm;xrefs	meaning unresolved
-KfActor	0x34	0x04	unknown_34	u32	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_actor.h;asm;game_semantic_animation_slots.tsv	live animation record installed by the binder through the actor slot and cleared by actor_pool_clear or pool_record_release
 KfActor	0x38	0x01	action_timer	u8	supported	game_actor.h;asm;xrefs	action countdown; loaded lbu and seeded with 0xff
 KfActor	0x39	0x01	collision_state	u8	supported	game_actor.h;asm;xrefs	collision result/state
 KfActor	0x3a	0x02	movement_yaw	s16	supported	game_actor.h;asm;xrefs	movement heading
@@ -177,7 +177,7 @@ KfEffectRecord	0x2c	0x02	direction_x	u16	supported	game_effect.h;asm;effect_pool
 KfEffectRecord	0x2e	0x02	direction_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction y copied from the constructor SVECTOR argument
 KfEffectRecord	0x30	0x02	direction_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction z copied from the constructor SVECTOR argument
 KfEffectRecord	0x32	0x02	unknown_32	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x34	0x04	unknown_34	u8[4]	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;asm;game_semantic_animation_slots.tsv	live animation record; same word and type as the KfEffectRenderView slot passed to the binder
 KfEffectRecord	0x38	0x02	unknown_38	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	sound handle written by several effect kinds
 KfEffectRecord	0x3a	0x02	unknown_3a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
 KfEffectRenderView	0x00	0x03	unknown_00	u8[3]	opaque	game_effect.h;asm;render_actor_sprite	header bytes interpreted by effect behavior
@@ -197,8 +197,8 @@ KfEffectRenderView	0x22	0x02	unknown_22	u8[2]	opaque	game_effect.h;asm;render_ac
 KfEffectRenderView	0x24	0x02	scale_x	s16	supported	game_effect.h;asm;render_actor_sprite	model x scale
 KfEffectRenderView	0x26	0x02	scale_y	s16	supported	game_effect.h;asm;render_actor_sprite	model y scale
 KfEffectRenderView	0x28	0x02	scale_z	s16	supported	game_effect.h;asm;render_actor_sprite	model z scale
-KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before animation anchor
-KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	game_effect.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
+KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before animation_cache
+KfEffectRenderView	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by render_bind_animated_instance and cleared through the record owner_slot on release
 KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	game_effect.h;asm;render_actor_sprite	unresolved tail
 KfEffectSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
 KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	game_render.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
@@ -209,8 +209,8 @@ KfEffectSprite	0x08	0x02	translation_y	s16	supported	game_render.h;asm;render_ef
 KfEffectSprite	0x0a	0x02	translation_z	s16	supported	game_render.h;asm;render_effect_sprites	model translation Z
 KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before the rotation vector
 KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	game_render.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
-KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before the animation anchor
-KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	game_render.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
+KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before animation_cache
+KfEffectSprite	0x18	0x04	animation_cache	KfPoolRecord *	supported	game_render.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by the binder; both retail effect_sprites initializers contain null pointers
 KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
@@ -285,7 +285,8 @@ KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	game_map.h;asm;xrefs	meaning unreso
 KfMapEvent	0x34	0x02	unknown_34	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x36	0x02	rotation	s16	supported	game_map.h;asm;xrefs	current rotation
 KfMapEvent	0x38	0x02	unknown_38	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x3a	0x06	unknown_3a	u8[6]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x3a	0x02	unknown_3a	u8[2]	opaque	game_map.h;asm;game_semantic_animation_slots.tsv	trailing halfword of the eight-byte rotation view starting at 0x34
+KfMapEvent	0x3c	0x04	animation_cache	KfPoolRecord *	supported	game_map.h;asm;game_semantic_animation_slots.tsv	live animation record installed through the event+0x3c slot; follows the rotation view and precedes rotation_target without overlap
 KfMapEvent	0x40	0x02	rotation_target	s16	supported	game_map.h;asm;xrefs	target rotation
 KfMapEvent	0x42	0x02	unknown_42	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	initial state
@@ -429,7 +430,7 @@ KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game_p
 KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x74	0x04	unknown_74	u32	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x74	0x04	weapon_animation_cache	KfPoolRecord *	supported	game_player.h;asm;game_semantic_animation_slots.tsv	equipped weapon animation record; cleared on equip, passed by address to the binder, and preserved across save-file player-state copies
 KfPlayerState	0x78	0x01	unknown_78	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x79	0x01	unknown_79	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate

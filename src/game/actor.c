@@ -198,7 +198,7 @@ void actor_pool_clear(void)
     for (index = 0; index < 128; index++, actor++) {
         actor->slot_state = 0xff;
         actor->lifecycle = 0;
-        actor->unknown_34 = 0;
+        actor->animation_cache = 0;
     }
 }
 

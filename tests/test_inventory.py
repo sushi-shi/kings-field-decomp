@@ -64,8 +64,49 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 76)
-        self.assertEqual(counts["structure_fields"], 663)
-        self.assertEqual(counts["structure_fields_named"], 543)
+        self.assertEqual(counts["structure_fields"], 664)
+        self.assertEqual(counts["structure_fields_named"], 547)
+
+    def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
+        structures = load_structure_identities(RETAIL_CONFIG)
+        slots = (
+            ("KfActor", 0x48, 0x34, "animation_cache"),
+            ("KfEffectRecord", 0x3C, 0x34, "animation_cache"),
+            ("KfEffectRenderView", 0x3C, 0x34, "animation_cache"),
+            ("KfMapEvent", 0x44, 0x3C, "animation_cache"),
+            ("KfPlayerState", 0xE0, 0x74, "weapon_animation_cache"),
+            ("KfEffectSprite", 0x1C, 0x18, "animation_cache"),
+        )
+        for structure, size, offset, name in slots:
+            with self.subTest(structure=structure):
+                self.assertEqual(structures[structure].size, size)
+                self.assertEqual(_structure_field(structure, offset),
+                                 (name, "KfPoolRecord *", 4))
+        # The rotation view occupies 0x34..0x3b, not the cache pointer.
+        self.assertEqual(_structure_field("KfMapEvent", 0x3A),
+                         ("unknown_3a", "u8[2]", 2))
+        self.assertEqual(_structure_field("KfMapEvent", 0x40),
+                         ("rotation_target", "s16", 2))
+
+    def test_animation_binder_slot_api_belongs_to_pool_header(self) -> None:
+        identity = load_function_identities(RETAIL_CONFIG)[("GAME.EXE", 0x800205D4)]
+        self.assertEqual(identity.parameters,
+                         "KfPoolRecord ** owner_slot;u16 asset_index;u16 clip_index;"
+                         "u16 phase;u16 vertex_count")
+        pool_header = (REPO / "include/kf/pool.h").read_text()
+        render_header = (REPO / "include/kf/game_render.h").read_text()
+        self.assertIn("extern u16 *render_bind_animated_instance(\n"
+                      "    KfPoolRecord **owner_slot", pool_header)
+        self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
+        self.assertIn("#include <kf/pool.h>", render_header)
+
+    def test_animation_slot_renderers_use_direct_internal_and_vendor_headers(self) -> None:
+        for name in ("entity_render", "map_event_render", "geometry_render"):
+            with self.subTest(unit=name):
+                source = (REPO / f"src/game/{name}.c").read_text()
+                self.assertNotIn("#include <kf/game.h>", source)
+                self.assertIn("#include <kf/game_asset.h>", source)
+                self.assertIn("#include <kf/psyq.h>", source)
 
     def test_animation_pool_record_fields_and_complete_owner(self) -> None:
         fields = (

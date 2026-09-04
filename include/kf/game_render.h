@@ -7,6 +7,7 @@
 #include <kf/game_effect.h>
 #include <kf/game_map.h>
 #include <kf/item.h>
+#include <kf/pool.h>
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
@@ -29,7 +30,7 @@ typedef struct KfEffectSprite {
     u8 unknown_0c[2];
     SVECTOR rotation;
     u8 unknown_16[2];
-    u8 anchor[4];
+    KfPoolRecord *animation_cache;
 } KfEffectSprite;
 
 /* Double-buffered GAME.EXE display state. */
@@ -108,8 +109,6 @@ extern void primitive_buffer_begin_poly_ft4(void);
 extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
 extern void render_actor_sprite(KfEffectRenderView *sprite);
-extern u16 *render_bind_animated_instance(
-    void *anchor, u16 asset_index, u16 clip_index, u16 phase, u16 vertex_count);
 extern void render_effect_sprites(void);
 extern void render_enqueue_map(u16 object_index);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);

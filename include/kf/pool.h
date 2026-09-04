@@ -22,6 +22,10 @@ typedef struct KfPoolRecord {
 
 extern KfPoolRecord pool_records[12];
 
+/* Returns zero on pool exhaustion, one for a static asset, or the live record. */
+extern u16 *render_bind_animated_instance(
+    KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
+    u16 vertex_count);
 extern void pool_reset(void);
 extern void pool_mark_allocated(void);
 extern void pool_record_release(KfPoolRecord *record);

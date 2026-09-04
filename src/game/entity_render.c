@@ -1,6 +1,9 @@
 #include <kf/address.h>
+#include <kf/game_asset.h>
+#include <kf/game_math.h>
 #include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/game_state.h>
+#include <kf/psyq.h>
 
 /*
  * Per-entity billboard/model emitters invoked by the frame renderer's pool
@@ -8,15 +11,8 @@
  * the matching asset, and hands the result to the shared sprite/model draw
  * helpers.
  *
- * WIP: the pool record layouts and the sprite descriptor tables in the
- * 0x80055afc load-data blob are unresolved, so entity fields and the tables are
- * reached through byte views until their owners are reconstructed.
- *
- * Codegen residue (render_floor_item): retail zero-extends the masked facing nibble
- * with a redundant `andi 0xff` after `andi 0xf0` before its `beqz`/subtract; the
- * value provably fits a byte, so the rebuilt gcc-2.5.7 probe elides the second
- * mask (the inverse of the byte-field cases in docs/patterns/source-shapes-
- * gcc257.md).  The single extra instruction is the only divergence.
+ * WIP: the sprite descriptor tables in the 0x80055afc load-data blob retain
+ * byte views until their enclosing owner is reconstructed.
  */
 
 /*
@@ -79,7 +75,7 @@ void render_floor_item(KfFloorItem *item)
  * bound, tested for visibility, and projected against the view matrix.
  */
 ADDRESS(0x8001eedc, 0x1e8)
-void render_actor_sprite(KfEffectRenderView *actor)
+void render_actor_sprite(KfEffectRenderView *sprite)
 {
     SVECTOR screen;
     VECTOR scale;
@@ -88,34 +84,34 @@ void render_actor_sprite(KfEffectRenderView *actor)
     u16 asset;
     KfTmdObject *object;
 
-    if (actor->sprite_id == 0xff) {
+    if (sprite->sprite_id == 0xff) {
         return;
     }
     SetRotMatrix((MATRIX *)&render_state.view_matrix);
     SetTransMatrix((MATRIX *)&render_state.view_matrix);
-    screen.vx = actor->position_x - (u16)render_state.view_position.vx;
-    screen.vy = actor->position_y - (u16)render_state.view_position.vy;
-    screen.vz = actor->position_z - (u16)render_state.view_position.vz;
+    screen.vx = sprite->position_x - (u16)render_state.view_position.vx;
+    screen.vy = sprite->position_y - (u16)render_state.view_position.vy;
+    screen.vz = sprite->position_z - (u16)render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    matrix_set_rotation_yxz(&actor->rotation, &model);
-    scale.vx = actor->scale_x;
-    scale.vy = actor->scale_y;
-    scale.vz = actor->scale_z;
+    matrix_set_rotation_yxz(&sprite->rotation, &model);
+    scale.vx = sprite->scale_x;
+    scale.vy = sprite->scale_y;
+    scale.vz = sprite->scale_z;
     ScaleMatrix(&model, &scale);
-    if (actor->mode == 0xff) {
+    if (sprite->mode == 0xff) {
         MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        render_enqueue_sprite((KfSpriteQuad *)&DAT_80055afc[0x58 + actor->sprite_id * 12], 0, 0);
+        render_enqueue_sprite((KfSpriteQuad *)&DAT_80055afc[0x58 + sprite->sprite_id * 12], 0, 0);
     } else {
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        asset = actor->sprite_id + 30;
+        asset = sprite->sprite_id + 30;
         asset_registry_select(asset);
         object = tmd_get_object(0);
         if (render_bind_animated_instance(
-                &actor->anchor, asset, actor->mode, actor->asset_variant,
+                &sprite->animation_cache, asset, sprite->mode, sprite->asset_variant,
                 object->vertex_count) == 0) {
             tmd_select_object_vertices(0);
             tmd_project_vertices(tmd_get_object(0)->vertex_count);

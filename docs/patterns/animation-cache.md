@@ -43,11 +43,11 @@ extent inferred solely from the next global. The adjacent projected-vertex
 and morph-scratch arrays still have only referenced-prefix extents in the
 inventory; this campaign does not invent their capacities.
 
-`pool.h` owns the shared record and lifecycle API and imports the SDK's
+`pool.h` owns the shared record, binder and lifecycle API and imports the SDK's
 `SVECTOR`. The morph object is forward-declared there, with its private format
-definition in the owner source. The binder retains its public rendering API
-in `game_render.h`; its opaque anchor parameter remains unchanged because
-the five caller object families still require their own field recovery.
+definition in the owner source. `game_render.h` includes the pool interface;
+it no longer owns a duplicate binder declaration. The caller-slot campaign
+below recovers the five object families and the typed `KfPoolRecord **` API.
 The implementation includes the asset, rendering, memory, pool and vendor
 interfaces directly, without the umbrella `game.h`.
 
@@ -111,3 +111,90 @@ The campaign removes one TU; the shared record layout remains 20 bytes and
 three previously opaque fields acquire supported meanings. The oracle's
 candidate path and rebuild unit now follow `game.pool`, with a regression
 test against manifest ownership.
+
+## Caller-slot type recovery
+
+The follow-up campaign starts from `fa4c113`. Its nine per-function snapshots
+and verdicts are in
+[`game_semantic_animation_slots.tsv`](../../config/evidence/game_semantic_animation_slots.tsv).
+Seven functions start exact; `render_actor` and the binder start at
+91.406010% and 90.793990%. The Function Match Plan is to replace opaque slots
+with the pointer type proved by the complete bind/release chain, without
+changing record extents, argument widths, control flow, constants or returns.
+
+| Shared object view | Slot offset | Recovered field |
+| --- | --- | --- |
+| `KfActor` | `0x34` | `animation_cache` |
+| `KfEffectRecord` and `KfEffectRenderView` | `0x34` | `animation_cache` |
+| `KfMapEvent` | `0x3c` | `animation_cache` |
+| `KfPlayerState` | `0x74` | `weapon_animation_cache` |
+| `KfEffectSprite` | `0x18` | `animation_cache` |
+
+Every field is a `KfPoolRecord *`, and each binder call passes its address.
+The binder loads the record pointer from that slot, stores the slot address
+in `record->owner_slot`, and installs the new record through the slot.
+`pool_record_release` clears it through the saved slot address. Thus these
+are not private byte buffers, integers or pointers directly to vertex data.
+The zero/one/record binder return remains unchanged; this campaign does not
+pretend the tagged result is always a dereferenceable record pointer.
+
+The two effect views retain the same field type and offset. Map events split
+the old six-byte `unknown_3a` span into two opaque bytes and the pointer at
+`0x3c`. The eight-byte rotation view at `0x34` ends exactly before that pointer;
+`rotation_target` remains at `0x40`. All six structure sizes are unchanged.
+Headers needing only the pointer forward-declare `struct KfPoolRecord`.
+
+`player_equip_weapon` clears the weapon slot, and `actor_pool_clear` clears
+each actor slot. `save_file_read_slot` preserves the live weapon buffer and
+animation record across the player-state copy. Its old integer local
+`saved_07f4` is now `saved_weapon_animation_cache`, with the pointer type.
+This restoration is part of retail behavior: serialized pointer bytes must
+not replace the live runtime pointers.
+
+The `effect_sprites[2]` initializer changes from four zero bytes to a null
+pointer initializer. Both slot words are zero in the retail 56-byte object;
+neither the sentinel nor any other byte changes. No new overlapping datum,
+storage claim or inferred array capacity is introduced.
+
+`entity_render`, `map_event_render` and `geometry_render` now import their
+asset/render/math/player/state dependencies and Psy-Q interface directly,
+without `game.h` or local extern replacements. The unresolved sprite table
+still uses its existing `game_state.h` declaration; no owner is invented.
+
+Additional vendor controls compare twelve unmasked bytes at each Release 2.5
+`LIBAPI.LIB` XDEF offset zero: `open` (`GAME:0x800504dc`, `A50.OBJ`), `lseek`
+(`0x8005027c`, `A51.OBJ`), `read` (`0x8005047c`, `A52.OBJ`), `close`
+(`0x8005029c`, `A54.OBJ`) and `exit` (`0x800504ec`, `A56.OBJ`). All match.
+These remain separately vendored; equipment and save policy remain game code.
+
+After rebuilding, all 112 units have identical allocated-section bytes and
+ordered relocation tuples to the pre-edit build. The comparison hashes each
+allocated ELF section's name, size and bytes, plus relocations' target section,
+offset, type and symbol in source order (section symbols use the section name).
+Debug-line metadata is excluded; instructions, data and relocation addends in
+allocated bytes are not. This includes unchanged neighboring functions and
+both effect-sprite initializers, not just the nine edited functions.
+
+All seven exact campaign functions remain exact. The two fuzzy scores are
+unchanged: `render_actor` still first differs at its 160-byte compiled frame
+versus retail's 168 bytes; the binder still first differs at the jump to
+epilogue `+0x378` versus `+0x374`. These are existing, unattributed residues,
+not reasons to add padding, artificial locals or scheduling workarounds.
+The complete three-image audit preserves all 349 historically exact game
+functions and all 13 vendor verification functions; all 59 data owners match.
+
+The full animation oracle passes 1,136 retail/C/Rust cases, including the
+seven current allocation/reinitialization/release controls. All 354 repository
+tests pass with the Rust driver built, with no skips; `ruff check scripts tests`
+and `git diff --check` pass. Only the seven exact edited functions and the six
+exact cache-lifecycle functions are banked. No TU or vendored denominator
+changes belong to this follow-up campaign.
+
+Integration onto `69ca614` (the separately committed OPEN map-render campaign)
+rebuilds all 113 units and passes all 359 tests. All animation-slot objects
+retain their verified allocated bytes and ordered relocations; the only
+fingerprint differences from the original 112-unit comparison are the new
+`open.render_map` and its renamed call target in `open.render_map_cells`.
+The combined tree keeps all 349 historically exact functions and 13 vendor
+controls exact, with 60 matching data owners. The exact-only bank inputs are
+refreshed for this integrated base.

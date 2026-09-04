@@ -8,6 +8,8 @@
 #include <kf/audio.h>
 #include <kf/game_math.h>
 
+struct KfPoolRecord;
+
 /*
  * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
  * pool of 128 0x48-byte live actors. Only reviewed fields are named; the
@@ -92,7 +94,7 @@ typedef struct KfActor {
     VECTOR position;
     struct KfEulerAngles rotation;
     u16 unknown_32;
-    u32 unknown_34;
+    struct KfPoolRecord *animation_cache;
     u8 action_timer;
     u8 collision_state;
     s16 movement_yaw;

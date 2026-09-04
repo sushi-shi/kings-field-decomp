@@ -44,9 +44,10 @@ KfPoolRecord pool_records[12];
 
 ADDRESS(0x800205d4, 0x3a4)
 u16 *render_bind_animated_instance(
-    void *anchor, u16 asset_index, u16 clip_index, u16 phase, u16 vertex_count)
+    KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
+    u16 vertex_count)
 {
-    KfPoolRecord *record = *(KfPoolRecord **)anchor;
+    KfPoolRecord *record = *owner_slot;
     KfAssetHeader *asset_header = asset_registry_entries[asset_index];
     KfAnimClip *clip;
     KfAnimKeyframe *keyframe;
@@ -83,7 +84,7 @@ u16 *render_bind_animated_instance(
 
 reinitialize_record:
     record->asset_index = asset_index;
-    record->owner_slot = (KfPoolRecord **)anchor;
+    record->owner_slot = owner_slot;
     do {
         allocation = memory_malloc_checked(vertex_count << 3);
         record->cached_vertices = allocation;
@@ -91,7 +92,7 @@ reinitialize_record:
             pool_release_all();
         }
     } while (allocation == 0);
-    *(KfPoolRecord **)anchor = record;
+    *owner_slot = record;
     goto find_keyframe;
 
 check_record:

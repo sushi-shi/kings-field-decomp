@@ -7,6 +7,8 @@
 #include <kf/psyq.h>
 #include <kf/game_math.h>
 
+struct KfPoolRecord;
+
 typedef struct KfMapCell {
     u8 z;
     u8 x;
@@ -144,7 +146,8 @@ typedef struct KfMapEvent {
     u16 unknown_34;
     s16 rotation;
     u16 unknown_38;
-    u8 unknown_3a[6];
+    u8 unknown_3a[2];
+    struct KfPoolRecord *animation_cache;
     s16 rotation_target;
     u16 unknown_42;
 } KfMapEvent;
