@@ -62,6 +62,8 @@ extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
 extern void lighting_set_light_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
+extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
+extern void fog_set_near(s32 distance);
 extern void *primitive_buffer_allocate(u16 byte_count);
 extern void render_initialize(void);
 extern void display_begin_frame(void);

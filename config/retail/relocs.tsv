@@ -12138,10 +12138,10 @@ OPEN.EXE	0x8001960c	0x7e0c		mips26	reachable-code	0x80019598	load	matrix_interpo
 OPEN.EXE	0x80019614	0x7e14		mips26	reachable-code	0x8002d5b8	load	SetColorMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
 OPEN.EXE	0x80019638	0x7e38		mips26	instruction-word	0x80019598	load	matrix_interpolate	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
 OPEN.EXE	0x80019640	0x7e40		mips26	instruction-word	0x8002d588	load	SetLightMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
-OPEN.EXE	0x8001967c	0x7e7c	0x80019680	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019684	0x7e84		mips26	instruction-word	0x8002f288	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800196a4	0x7ea4	0x800196a8	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800196ac	0x7eac		mips26	instruction-word	0x8002f288	load		jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001967c	0x7e7c	0x80019680	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_matrix
+OPEN.EXE	0x80019684	0x7e84		mips26	instruction-word	0x8002f288	load	SetFogNear	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
+OPEN.EXE	0x800196a4	0x7ea4	0x800196a8	mips_hi16_lo16	reachable-code	0x8006e0a8	bss	render_state	lui+sw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_matrix
+OPEN.EXE	0x800196ac	0x7eac		mips26	instruction-word	0x8002f288	load	SetFogNear	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_matrix
 OPEN.EXE	0x80019804	0x8004	0x80019808	mips_hi16_lo16	reachable-code	0x8006da3a	bss	floor_item_count	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x8001984c	0x804c	0x80019850	mips_hi16_lo16	reachable-code	0x8006da40	bss	floor_items	lui+addiu	s3	paired-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80019868	0x8068	0x8001986c	mips_hi16_lo16	reachable-code	0x8006e260	bss	map_floor_height_grid	lui+addiu	s4	paired-reviewed	reviewed	manual:open_semantic_resources

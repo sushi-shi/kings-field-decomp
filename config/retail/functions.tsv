@@ -1029,7 +1029,7 @@ OPEN.EXE	0x80019520	0x7d20	0x78	0x78	1	function	ghidra-analysis			Ghidra-12.0.4/
 OPEN.EXE	0x80019598	0x7d98	0x68	0x68	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80019600	0x7e00	0x2c	0x2c	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8001962c	0x7e2c	0x2c	0x2c	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
-OPEN.EXE	0x8001966c	0x7e6c	0x30	0x30	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
+OPEN.EXE	0x80019658	0x7e58	0x44	0x44	1	function	manual-disassembly			manual:open_semantic_matrix	decoded arithmetic prefix feeds live v0 into the framed SetFogNear call; complete body matches GAME fog_interpolate_near
 OPEN.EXE	0x8001969c	0x7e9c	0x28	0x28	1	function	mips-frame-carve			scripts/kf/audit_functions.py	anonymous WIP start; stack-frame+ra-save+matching-stack-return
 OPEN.EXE	0x800196c4	0x7ec4	0x88	0x88	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8001974c	0x7f4c	0x98	0x98	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code

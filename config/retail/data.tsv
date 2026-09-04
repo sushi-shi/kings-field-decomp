@@ -4336,7 +4336,6 @@ OPEN.EXE	0x80019332	0x7b32	0x5	string	byte-pattern		shift_jis	investigation:stri
 OPEN.EXE	0x800193a6	0x7ba6	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: b&!蓮
 OPEN.EXE	0x80019496	0x7c96	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: b&!蓮
 OPEN.EXE	0x800195ce	0x7dce	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: #%!H`
-OPEN.EXE	0x80019658	0x7e58	0x14	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80019852	0x8052	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: s&!摺
 OPEN.EXE	0x8001986b	0x806b	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <`笏&
 OPEN.EXE	0x80019997	0x8197	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <8符$
