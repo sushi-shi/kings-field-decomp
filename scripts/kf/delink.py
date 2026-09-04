@@ -499,7 +499,9 @@ def _apply_relocation(
         ]
         action = "paired-symbol"
         kinds = "R_MIPS_HI16+R_MIPS_LO16"
-    elif row["kind"] == "mips32_candidate" and policy == "all":
+    elif row["kind"] == "mips32_candidate" and (
+        policy == "all" or row["status"] == "reviewed"
+    ):
         _put_word(blob, offset, addend)
         relocations = [MipsRelocation(offset, "R_MIPS_32", symbol)]
         action = "raw-word"
@@ -906,7 +908,8 @@ def delink(
 
         # Claimed load data is carved from the image the same way; every
         # relocation candidate sited inside it goes through the shared
-        # validator, so raw pointer words stay withheld under the safe policy.
+        # validator. Raw pointer words stay withheld under the safe policy
+        # unless their exact site, target, and semantic owner were reviewed.
         data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]] = {}
         for datum in claimed_load_data:
             start = expected.file_offset(datum.va)

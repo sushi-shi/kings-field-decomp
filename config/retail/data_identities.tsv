@@ -4,9 +4,9 @@
 # Directly accessed Ghidra RAM extents are merged address-only BSS candidates.
 # Future analysis writes build/function-inventory proposals and never overwrites this file.
 image	va	size	name	scope	storage	datatype	owner	confidence	evidence	note
-PSX.EXE	0x80010000	0x14	overlay_path_GAME	global	load			supported	data.tsv:direct-bytes	initial data-identity seed
-PSX.EXE	0x80010014	0x14	overlay_path_OPEN	global	load			supported	data.tsv:direct-bytes	initial data-identity seed
-PSX.EXE	0x80010224	0x8	overlay_path_table	global	load			supported	data.tsv:direct-references	initial data-identity seed
+PSX.EXE	0x80010000	0x14	overlay_path_GAME	global	load	const char[20]	bootstrap	supported	psx_semantic_bootstrap_paths.tsv;retail-bytes;pointer-referent	padded GAME.EXE CD-ROM path owned by the main translation unit; global linkage keeps the reviewed table referent named in the working model
+PSX.EXE	0x80010014	0x14	overlay_path_OPEN	global	load	const char[20]	bootstrap	supported	psx_semantic_bootstrap_paths.tsv;retail-bytes;pointer-referent	padded OPEN.EXE CD-ROM path owned by the main translation unit; global linkage keeps the reviewed table referent named in the working model
+PSX.EXE	0x80010224	0x8	overlay_path_table	global	load	const char *[2]	bootstrap	supported	psx_semantic_bootstrap_paths.tsv;retail-bytes;asm;xrefs	OPEN/GAME path pointers in the exact order consumed by main
 PSX.EXE	0x8001022c	0x4	_stacksize	global	load			supported	data.tsv:exact-linked-symbol	initial data-identity seed
 PSX.EXE	0x80010230	0x4	SNMAIN_sbss	global	load			supported	data.tsv:exact-linked-section	initial data-identity seed
 PSX.EXE	0x80010234	0x4	DAT_80010234	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

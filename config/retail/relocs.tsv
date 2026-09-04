@@ -6,7 +6,7 @@
 image	site_va	site_file_offset	paired_site_va	kind	channel	target_va	target_region	target_name	opcode	register	confidence	status	provenance
 PSX.EXE	0x80010034	0x834		mips26	reachable-code	0x800100f8	load	__main	jal		control-flow	candidate	investigation:relocs.tsv
 PSX.EXE	0x8001003c	0x83c		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x8001004c	0x84c	0x80010050	mips_hi16_lo16	reachable-code	0x80010224	load	overlay_path_table	lui+addiu	s1	paired-reachable	candidate	investigation:relocs.tsv
+PSX.EXE	0x8001004c	0x84c	0x80010050	mips_hi16_lo16	reachable-code	0x80010224	load	overlay_path_table	lui+addiu	s1	paired-reviewed	reviewed	manual:psx_semantic_bootstrap_paths
 PSX.EXE	0x8001005c	0x85c		mips26	reachable-code	0x800101d4	load	_96_init	jal		control-flow	candidate	investigation:relocs.tsv
 PSX.EXE	0x80010068	0x868		mips26	reachable-code	0x800101f4	load	Load	jal		control-flow	candidate	investigation:relocs.tsv
 PSX.EXE	0x80010078	0x878		mips26	reachable-code	0x80010214	load	_96_remove	jal		control-flow	candidate	investigation:relocs.tsv
@@ -28,8 +28,8 @@ PSX.EXE	0x80010188	0x988	0x8001018c	mips_hi16_lo16	reachable-code	0x80010230	loa
 PSX.EXE	0x80010194	0x994		mips26	reachable-code	0x800101e4	load	InitHeap	jal		control-flow	candidate	investigation:relocs.tsv
 PSX.EXE	0x8001019c	0x99c	0x800101a0	mips_hi16_lo16	reachable-code	0x80010230	load	SNMAIN_sbss	lui+lw	ra	paired-reachable	candidate	investigation:relocs.tsv
 PSX.EXE	0x800101a8	0x9a8		mips26	reachable-code	0x80010028	load	main	jal		control-flow	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010224	0xa24		mips32_candidate	raw-word	0x80010014	load	overlay_path_OPEN	.word		range-only	candidate	investigation:relocs.tsv
-PSX.EXE	0x80010228	0xa28		mips32_candidate	raw-word	0x80010000	load	overlay_path_GAME	.word		range-only	candidate	investigation:relocs.tsv
+PSX.EXE	0x80010224	0xa24		mips32_candidate	raw-word	0x80010014	load	overlay_path_OPEN	.word		pointer-reviewed	reviewed	manual:psx_semantic_bootstrap_paths
+PSX.EXE	0x80010228	0xa28		mips32_candidate	raw-word	0x80010000	load	overlay_path_GAME	.word		pointer-reviewed	reviewed	manual:psx_semantic_bootstrap_paths
 GAME.EXE	0x80012000	0x800		mips32_candidate	raw-word	0x80015d88	load		.word		pointer-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80012004	0x804		mips32_candidate	raw-word	0x80015db4	load		.word		pointer-reviewed	reviewed	manual:game_semantic_player_stats
 GAME.EXE	0x80012008	0x808		mips32_candidate	raw-word	0x80015db4	load		.word		pointer-reviewed	reviewed	manual:game_semantic_player_stats

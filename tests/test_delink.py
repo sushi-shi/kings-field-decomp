@@ -224,6 +224,67 @@ class MipsElfTests(unittest.TestCase):
         )
         self.assertEqual(used["source_channel"], "instruction-word")
 
+    def test_reviewed_raw_pointer_word_is_safe(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80050000, 4, 4, 1, "table", "test", "test"
+        )
+        target = DataObject("GAME.EXE", 0x80012000, 0x14, "path")
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": (target,)},
+        )
+        blob = bytearray(struct.pack("<I", target.va))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": "",
+            "kind": "mips32_candidate",
+            "channel": "raw-word",
+            "target_va": f"{target.va:#x}",
+            "target_region": "load",
+            "target_name": target.symbol,
+            "opcode": ".word",
+            "confidence": "pointer-reviewed",
+            "status": "reviewed",
+        }
+        relocations, used = _apply_relocation(
+            blob, function, row, catalog, "safe"
+        )
+        self.assertEqual(
+            relocations,
+            [MipsRelocation(0, "R_MIPS_32", target.symbol)],
+        )
+        self.assertEqual(struct.unpack("<I", blob)[0], 0)
+        self.assertEqual(used["action"], "raw-word")
+
+    def test_unreviewed_raw_pointer_word_is_not_safe(self) -> None:
+        function = Function(
+            "GAME.EXE", 0x80050000, 4, 4, 1, "table", "test", "test"
+        )
+        target = DataObject("GAME.EXE", 0x80012000, 0x14, "path")
+        catalog = Catalog(
+            functions={"GAME.EXE": (function,)},
+            function_starts={"GAME.EXE": {function.va: function}},
+            data={"GAME.EXE": (target,)},
+        )
+        blob = bytearray(struct.pack("<I", target.va))
+        row = {
+            "image": "GAME.EXE",
+            "site_va": f"{function.va:#x}",
+            "paired_site_va": "",
+            "kind": "mips32_candidate",
+            "channel": "raw-word",
+            "target_va": f"{target.va:#x}",
+            "target_region": "load",
+            "target_name": target.symbol,
+            "opcode": ".word",
+            "confidence": "range-only",
+            "status": "candidate",
+        }
+        with self.assertRaisesRegex(ValueError, "non-reachable-code-channel"):
+            _apply_relocation(blob, function, row, catalog, "safe")
+
     def test_address_named_symbol_preserves_interior_addend(self) -> None:
         function = Function(
             "GAME.EXE", 0x80010000, 8, 8, 1, "test", "test", "test"

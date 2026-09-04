@@ -2,10 +2,19 @@
 #include <kf/game_types.h>
 #include <kf/psyq_kernel.h>
 
-extern char *overlay_path_table[2];
+RODATA(0x80010000, 0x28)
 
-/* GAME.EXE and OPEN.EXE are run in turn; each returns its successor through the
- * argument block, so the loop never exits. */
+const char overlay_path_GAME[20] = "cdrom:GAME.EXE;1";
+const char overlay_path_OPEN[20] = "cdrom:OPEN.EXE;1";
+
+DATA(0x80010224, 0x8)
+const char *overlay_path_table[2] = {
+    overlay_path_OPEN,
+    overlay_path_GAME,
+};
+
+/* OPEN.EXE and GAME.EXE are run in turn; each returns its successor through
+ * the argument block, so the loop never exits. */
 ADDRESS(0x80010028, 0xd0)
 void main(void)
 {

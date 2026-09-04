@@ -163,7 +163,9 @@ def validate_relocation(
             paired_word,
         )
 
-    if row["kind"] == "mips32_candidate" and policy == "all":
+    if row["kind"] == "mips32_candidate" and (
+        policy == "all" or row["status"] == "reviewed"
+    ):
         if word != target:
             raise ValueError("decoded-target-mismatch")
         return RelocationValidation(site, target, offset, word=word)
