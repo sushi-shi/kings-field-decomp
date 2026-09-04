@@ -12230,8 +12230,8 @@ OPEN.EXE	0x8001a170	0x8970		mips26	instruction-word	0x80019f44	load		jal		range-
 OPEN.EXE	0x8001a198	0x8998		mips26	instruction-word	0x8002b478	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001a1bc	0x89bc	0x8001a1c0	mips_hi16_lo16	reachable-code	0x8006e1e4	bss	DAT_8006e1e4	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8001a1f0	0x89f0	0x8001a1f4	mips_hi16_lo16	reachable-code	0x8006e1f4	bss	DAT_8006e1f4	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a22c	0x8a2c	0x8001a230	mips_hi16_lo16	reachable-code	0x8006e1d4	bss	DAT_8006e1d4	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a250	0x8a50		mips26	reachable-code	0x8001a268	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001a22c	0x8a2c	0x8001a230	mips_hi16_lo16	reachable-code	0x8006e1d4	bss	audio_state	lui+lh	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sound_ref;aggregate-owner
+OPEN.EXE	0x8001a250	0x8a50		mips26	reachable-code	0x8001a268	load	audio_play_voice	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sound_ref
 OPEN.EXE	0x8001a2c0	0x8ac0	0x8001a2c4	mips_hi16_lo16	reachable-code	0x80037304	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001a2d0	0x8ad0	0x8001a2d4	mips_hi16_lo16	reachable-code	0x80037304	load		lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001a2e0	0x8ae0	0x8001a2e4	mips_hi16_lo16	reachable-code	0x80037304	load		lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv

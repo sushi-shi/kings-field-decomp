@@ -705,6 +705,12 @@ source = "src/open/audio.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.sound_ref"
+image = "OPEN.EXE"
+source = "src/open/sound_ref.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.debug_printf"
 image = "OPEN.EXE"
 source = "src/open/debug_printf.c"

@@ -163,6 +163,12 @@ proves the forwarded view-transform arguments, geometry-screen distance 200,
 the two ordered scene-render passes, and the display begin/present boundary.
 The function matches retail exactly.
 
+`open_semantic_sound_ref.tsv` records the packed OPEN sound wrapper and its
+managed-voice referent. It proves the three byte-wide sound fields, signed
+volume duplication into the two O32 stack arguments, active-VAB aggregate
+referent, and game-owned ten-slot policy boundary. The wrapper matches retail
+exactly.
+
 `open_semantic_opening_scene1.tsv` records the contiguous OPEN scene-1 fade
 renderer and controller. It proves the two textured half-screen packets, their
 texture-page origins and shade width, the 0-to-128 and 128-to-0 transitions,
