@@ -54,6 +54,8 @@ extern void render_enqueue_model(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_entities(void);
+extern void render_frame(
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void render_hud_gauges(u8 *table);
 extern void render_initialize(void);
 extern void render_map_cell(s32 col, s32 row, char cell);
@@ -61,7 +63,8 @@ extern void render_map_cells(void);
 extern void render_map_event(KfMapEvent *event);
 extern void render_map_object(KfMapObject *object);
 extern void render_screen_sprite(KfSpriteQuad *sprite);
-extern void render_set_view_transform(VECTOR *position, SVECTOR *rotation);
+extern void render_set_view_transform(
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);
 extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut, u8 *color, u16 ot_index);

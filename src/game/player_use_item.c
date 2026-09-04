@@ -10,7 +10,6 @@ extern u8 DAT_800652a8[240];
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *effect_pool_spawn_typed();
 /* Image paths whose decimal digits are patched before display. */
-extern void render_frame(s32 first, s32 second);
 
 ADDRESS(0x80017edc, 0xc8)
 void actor_show_info_image(const KfActor *actor)

@@ -36,7 +36,6 @@
  */
 
 extern KfEffectRecord *effect_pool_construct();
-extern void render_frame(VECTOR *position, SVECTOR *rotation);
 
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)

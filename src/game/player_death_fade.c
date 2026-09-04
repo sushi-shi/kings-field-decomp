@@ -2,9 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void render_frame(
-    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-
 /*
  * Fades the colour matrix and near fog from `color_from` toward the death
  * palette (table entry 4) and darkens the 8-bit brightness in step.

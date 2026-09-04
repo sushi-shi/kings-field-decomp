@@ -26,7 +26,6 @@ extern u8 map_world_state_base[4];
 
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern void render_frame(s32 first, s32 second);
 extern int rand(void);
 
 /* The two TIM cut-in paths shown by map_ambient_script_floor5. */

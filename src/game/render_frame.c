@@ -19,7 +19,7 @@
 extern u8 DAT_80055d74;
 
 ADDRESS(0x8001fde4, 0x518)
-void render_frame(VECTOR *position, SVECTOR *rotation)
+void render_frame(const VECTOR *position, const SVECTOR *rotation)
 {
     MATRIX model;
     SVECTOR spin;

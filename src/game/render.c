@@ -141,7 +141,8 @@ void tmd_select_object_vertices(u16 index)
 }
 
 ADDRESS(0x8001c184, 0x12c)
-void render_set_view_transform(VECTOR *position, SVECTOR *rotation)
+void render_set_view_transform(
+    const VECTOR *position, const SVECTOR *rotation)
 {
     SVECTOR angles;
 

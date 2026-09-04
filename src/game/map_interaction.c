@@ -13,7 +13,6 @@ extern u8 DAT_800652a8[240];
 extern void audio_play_spatial_default_range(const SoundRef *sound, const VECTOR *position, s16 volume);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
-extern void render_frame();
 extern u32 menu_enter_mode(s32 arg0, ...);
 extern u8 *effect_pool_construct();
 

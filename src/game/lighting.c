@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void render_frame(s32 first, s32 second);
-
 /*
  * Seven colour matrices for lighting/screen fades; entries 0, 3 and 4 are the
  * player-death fade endpoints. Each is a MATRIX (short m[3][3], long t[3]).

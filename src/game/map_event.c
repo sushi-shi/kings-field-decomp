@@ -2,8 +2,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-extern void render_frame(s32 first, s32 second);
-
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)
 {
