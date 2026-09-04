@@ -15,14 +15,13 @@ not be measured keeps its committed floor rather than being blessed away.
     python3 -m scripts.kf.cleanliness            # counts + delta vs the floors
     python3 -m scripts.kf.cleanliness --gate     # exit 1 on any ratchet rise
     python3 -m scripts.kf.cleanliness --update    # bless: rewrite the floor file
-    python3 -m scripts.kf.cleanliness --externs   # list the GAME extern crutches
+    python3 -m scripts.kf.cleanliness --externs   # list source-local extern crutches
 
-The extern-disallow gate is the ``GAME extern decls`` row: an ``extern``
-declaration whose declared symbol is a curated GAME identity (function or
-global) or an address-derived ``func_``/``DAT_`` name. SDK/libc externs
-(``rand``, ``memset``, Psy-Q APIs) are excluded because they name vendored
-symbols, not reconstructed game state. Driving this row to 0 replaces the
-``extern`` crutches with real header includes.
+The extern-disallow gates inspect translation units, not headers. ``GAME
+extern decls`` counts declarations of curated game identities while
+``source-local extern decls`` also catches SDK/libc declarations. Driving both
+to 0 replaces local declaration crutches with the proper internal or vendor
+header while allowing those headers to declare their interfaces normally.
 """
 
 from __future__ import annotations
@@ -118,20 +117,30 @@ def _is_game_extern(symbol: str, game: set[str]) -> bool:
     return symbol in game or ADDRESS_DERIVED.fullmatch(symbol) is not None
 
 
-def game_extern_sites() -> list[tuple[str, int, str]]:
-    """Every ``extern`` of a GAME symbol as ``(relative path, line, symbol)``."""
-    game = game_symbols()
+def source_extern_sites() -> list[tuple[str, int, str]]:
+    """Every source-local ``extern`` as ``(relative path, line, symbol)``."""
     sites: list[tuple[str, int, str]] = []
     for path in _source_files():
+        if path.suffix != ".c":
+            continue
         raw = path.read_text(errors="ignore")
         code = strip_source(raw)
         for match in EXTERN_DECL.finditer(code):
             symbol = _extern_symbol(match.group(1))
-            if symbol is None or not _is_game_extern(symbol, game):
+            if symbol is None:
                 continue
             line = code.count("\n", 0, match.start()) + 1
             sites.append((str(path.relative_to(REPO)), line, symbol))
     return sites
+
+
+def game_extern_sites() -> list[tuple[str, int, str]]:
+    """Every source-local ``extern`` of a curated GAME symbol."""
+    game = game_symbols()
+    return [
+        site for site in source_extern_sites()
+        if _is_game_extern(site[2], game)
+    ]
 
 
 def _source_files() -> list[Path]:
@@ -161,7 +170,8 @@ def _count_game_externs(code: str, game: set[str]) -> int:
 SOURCE_METRICS: tuple[tuple[str, object, bool], ...] = (
     ("src func_ refs", FUNC_REF, False),
     ("src DAT_ refs", DAT_REF, False),
-    ("GAME extern decls", _count_game_externs, False),
+    ("GAME extern decls", _count_game_externs, True),
+    ("source-local extern decls", EXTERN_DECL, True),
     ("pointer casts", POINTER_CAST, True),
     ("void* views", VOID_STAR, True),
     ("byte-array views", BYTE_ARRAY_VIEW, True),
@@ -282,14 +292,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--update", action="store_true",
                         help="MANUAL bless: rewrite the committed floor file")
     parser.add_argument("--externs", action="store_true",
-                        help="list every GAME extern crutch (path:line symbol)")
+                        help="list every source-local extern crutch")
     args = parser.parse_args(argv)
 
     if args.externs:
-        sites = game_extern_sites()
+        sites = source_extern_sites()
         for path, line, symbol in sites:
             print(f"{path}:{line}\t{symbol}")
-        print(f"# {len(sites)} GAME extern declaration(s)")
+        print(f"# {len(sites)} source-local extern declaration(s)")
         return 0
 
     rows = count()

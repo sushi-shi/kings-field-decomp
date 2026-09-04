@@ -3,10 +3,6 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
-/* Global material clut/tpage set by the caller (render_actor). */
-extern u16 DAT_80095058;   /* clut */
-extern u16 DAT_8009505a;   /* tpage */
-
 DATA(0x80057b5c, 0x4)
 CVECTOR model_textured_primitive_color = {0x80, 0x80, 0x80, 0};
 

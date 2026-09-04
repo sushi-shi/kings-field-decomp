@@ -1,8 +1,6 @@
 #include <kf/address.h>
 #include <kf/semantic_types.h>
 #include <kf/game.h>
-/* Y-axis spin angle carried alongside the preview rotation SVECTOR. */
-extern u16 DAT_80057b72;
 
 /*
  * Draw a spinning 3D model preview of the inventory item plus its name and held

@@ -36,6 +36,7 @@ extern void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive);
 extern void asset_registry_select(u16 index);
 extern void asset_registry_set(u16 index, void *asset);
 extern void common_resources_load(void);
+extern void debug_print();
 extern char *format_int_dec(s32 value);
 extern char *format_int_hex(u32 value);
 extern char *format_pad_left(char *string, char pad, u8 width);

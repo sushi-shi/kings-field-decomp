@@ -45,8 +45,6 @@ typedef struct KfMorphObject {
     SVECTOR deltas[1]; /* +12: signed vertex deltas */
 } KfMorphObject;
 
-extern void gteMIMefunc(SVECTOR *dst, SVECTOR *delta, long count, long frac);
-
 ADDRESS(0x800205d4, 0x3a4)
 u16 *render_bind_animated_instance(void *anchor, u16 asset, u16 tag, u16 variant, u16 count)
 {

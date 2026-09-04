@@ -7,9 +7,7 @@
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
 
-/* Unresolved helpers: a VAB-head loader and the game file loader.
- * Sequence operations come from LIBSND.H (Psy-Q, now vendored). */
-extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
+/* Sequence and VAB operations come from the pinned Psy-Q LIBSND.H. */
 
 ADDRESS(0x800328e0, 0xa4)
 void audio_initialize(void)

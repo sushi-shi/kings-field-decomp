@@ -30,8 +30,6 @@
  * underflow stays inside the free BSS gap above audio_sequence_table).
  */
 
-extern void debug_print();
-
 /* "DEBUG STOP !!!" literal owned by this unit in the shared rodata pool. */
 RODATA(0x80012dd4, 0x10)
 

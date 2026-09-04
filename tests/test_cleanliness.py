@@ -113,6 +113,9 @@ class GateTest(unittest.TestCase):
 
 
 class LiveCountTest(unittest.TestCase):
+    def test_source_has_no_local_extern_declarations(self) -> None:
+        self.assertEqual(cleanliness.source_extern_sites(), [])
+
     def test_committed_baseline_matches_live_counts(self) -> None:
         # the seeded floors must equal the live counts, so day-one is green.
         if not cleanliness.BASELINE.is_file():

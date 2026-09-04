@@ -7,8 +7,6 @@
  * 0x800291ec..0x8002b078. The original source boundary is WIP.
  */
 
-extern u16 DAT_80057b72;
-
 /* The numbered-item TIM path template used by menu_load_item_texture. */
 RODATA(0x80012350, 0xc)
 
