@@ -2,8 +2,41 @@
 #include <kf/map_data.h>
 #include <kf/open_resources.h>
 
-DATA(0x80049538, 0x500)
-KfOpeningEntity opening_entities[32];
+DATA(0x80049538, 0x510)
+KfOpeningEntityState opening_entity_state;
+
+ADDRESS(0x80019994, 0x4c)
+void opening_entity_pool_reset(void)
+{
+    KfOpeningEntity *entity = opening_entity_state.entities;
+    u16 remaining = 31;
+
+    do {
+        entity->object_id = 0xff;
+        entity++;
+    } while (remaining-- != 0);
+
+    opening_entity_state.unknown_control_50e = 0;
+    opening_entity_state.unknown_control_50c = 0;
+    opening_entity_state.unknown_control_50a = 0;
+}
+
+ADDRESS(0x800199e0, 0x44)
+KfOpeningEntity *opening_entity_find_by_object_id(
+    KfOpeningEntity *entities, u8 object_id)
+{
+    KfOpeningEntity *entity = entities;
+
+    if (entity->object_id != 0xff) {
+        do {
+            if (entity->object_id == object_id)
+                return entity;
+            entity++;
+        } while (entity->object_id != 0xff);
+    }
+
+    return 0;
+}
 
 ADDRESS(0x80019a24, 0x180)
 void opening_entity_pool_load_placements(
@@ -11,7 +44,7 @@ void opening_entity_pool_load_placements(
 {
     u16 exhausted = 0;
     const KfMapObjectPlacement *placement = placements;
-    KfOpeningEntity *entity = opening_entities;
+    KfOpeningEntity *entity = opening_entity_state.entities;
     u16 remaining = 31;
 
     do {

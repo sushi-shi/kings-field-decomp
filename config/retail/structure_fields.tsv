@@ -348,6 +348,11 @@ KfOpeningEntity	0x14	0x04	unknown_14	u8[4]	opaque	semantic_types.h;open_semantic
 KfOpeningEntity	0x18	0x06	rotation	KfEulerAngles	supported	semantic_types.h;open_semantic_resources.tsv;asm	zero x/z and 12-bit placement yaw
 KfOpeningEntity	0x1e	0x02	unknown_1e	u16	opaque	semantic_types.h;open_semantic_resources.tsv	meaning unresolved
 KfOpeningEntity	0x20	0x08	scale	SVECTOR	supported	semantic_types.h;open_semantic_resources.tsv;asm	xyz initialized to 0x1000; trailing SVECTOR pad remains untouched
+KfOpeningEntityState	0x000	0x500	entities	KfOpeningEntity[32]	supported	semantic_types.h;open_semantic_resources.tsv;asm;40-byte-stride	opening entity runtime records
+KfOpeningEntityState	0x500	0x0a	unknown_500	u8[10]	opaque	semantic_types.h;open_semantic_resources.tsv	unreferenced gap between the records and controls
+KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	semantic_types.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
+KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	semantic_types.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
+KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	semantic_types.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle

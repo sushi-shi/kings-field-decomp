@@ -544,6 +544,14 @@ typedef struct KfOpeningEntity {
     SVECTOR scale;
 } KfOpeningEntity;
 
+typedef struct KfOpeningEntityState {
+    KfOpeningEntity entities[32];
+    u8 unknown_500[10];
+    u16 unknown_control_50a;
+    u16 unknown_control_50c;
+    u16 unknown_control_50e;
+} KfOpeningEntityState;
+
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
  * stream, and the runtime floor-item entry (24 bytes) the loader expands it

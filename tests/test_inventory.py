@@ -51,12 +51,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 499)
         self.assertEqual(counts["typed_returns"], 499)
         self.assertEqual(counts["parameterized"], 317)
-        self.assertEqual(counts["data"], 3104)
+        self.assertEqual(counts["data"], 3101)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 72)
-        self.assertEqual(counts["structure_fields"], 647)
-        self.assertEqual(counts["structure_fields_named"], 529)
+        self.assertEqual(counts["structures"], 73)
+        self.assertEqual(counts["structure_fields"], 652)
+        self.assertEqual(counts["structure_fields_named"], 530)
 
     def test_structure_inventory_exposes_sizes_offsets_and_opaque_ranges(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -761,7 +761,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(evidence_rows), 16)
+        self.assertEqual(len(evidence_rows), 18)
         for row in evidence_rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -776,7 +776,7 @@ class InventoryTests(unittest.TestCase):
             for row in relocation_rows
             if "manual:open_semantic_resources" in row["provenance"].split(";")
         ]
-        self.assertEqual(len(campaign_rows), 102)
+        self.assertEqual(len(campaign_rows), 115)
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         calls = [row for row in campaign_rows if row["opcode"] == "jal"]
         self.assertNotIn("", {row["target_name"] for row in calls})
