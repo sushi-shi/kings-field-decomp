@@ -12214,22 +12214,22 @@ OPEN.EXE	0x80019ee0	0x86e0		mips26	reachable-code	0x8001e760	load		jal		control-
 OPEN.EXE	0x80019f04	0x8704	0x80019f08	mips_hi16_lo16	reachable-code	0x8006e1d4	bss	audio_state	lui+addiu	s0	paired-reviewed	reviewed	manual:open_semantic_resources;aggregate-owner
 OPEN.EXE	0x80019f1c	0x871c		mips26	reachable-code	0x800243e0	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80019f2c	0x872c	0x80019f30	mips_hi16_lo16	reachable-code	0x8006e1d0	bss	audio_state	lui+sw	zero	paired-reviewed	reviewed	manual:open_semantic_resources;aggregate-owner
-OPEN.EXE	0x80019f6c	0x876c	0x80019f70	mips_hi16_lo16	reachable-code	0x8006e1e4	bss	DAT_8006e1e4	lui+addiu	s4	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019f90	0x8790	0x80019f94	mips_hi16_lo16	reachable-code	0x8006e1e8	bss	DAT_8006e1e8	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80019fe4	0x87e4		mips26	instruction-word	0x8002c730	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80019ffc	0x87fc		mips26	instruction-word	0x8001a104	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a060	0x8860		mips26	instruction-word	0x80015ce4	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a068	0x8868	0x8001a06c	mips_hi16_lo16	reachable-code	0x8006e1f6	bss	DAT_8006e1f4	lui+lh	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a0a4	0x88a4		mips26	instruction-word	0x8001a0e0	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a0ac	0x88ac		mips26	instruction-word	0x8002f050	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a0c4	0x88c4		mips26	instruction-word	0x8002f158	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a0ec	0x88ec	0x8001a0f0	mips_hi16_lo16	reachable-code	0x8006e1d4	bss	DAT_8006e1d4	lui+lh	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a0f8	0x88f8		mips26	reachable-code	0x8001a268	load	audio_play_voice	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_play_voice
-OPEN.EXE	0x8001a144	0x8944		mips26	instruction-word	0x80019f44	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a170	0x8970		mips26	instruction-word	0x80019f44	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a198	0x8998		mips26	instruction-word	0x8002b478	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a1bc	0x89bc	0x8001a1c0	mips_hi16_lo16	reachable-code	0x8006e1e4	bss	DAT_8006e1e4	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a1f0	0x89f0	0x8001a1f4	mips_hi16_lo16	reachable-code	0x8006e1f4	bss	DAT_8006e1f4	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x80019f6c	0x876c	0x80019f70	mips_hi16_lo16	reachable-code	0x8006e1e4	bss	audio_state	lui+addiu	s4	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_audio_spatial;aggregate-owner
+OPEN.EXE	0x80019f90	0x8790	0x80019f94	mips_hi16_lo16	reachable-code	0x8006e1e8	bss	audio_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_audio_spatial;aggregate-owner
+OPEN.EXE	0x80019fe4	0x87e4		mips26	reachable-code	0x8002c730	load	SquareRoot0	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x80019ffc	0x87fc		mips26	reachable-code	0x8001a104	load	audio_play_spatial+0x1c0	j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a060	0x8860		mips26	reachable-code	0x80015ce4	load	vector_xz_to_angle	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a068	0x8868	0x8001a06c	mips_hi16_lo16	reachable-code	0x8006e1f6	bss	audio_state	lui+lh	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_audio_spatial;aggregate-owner
+OPEN.EXE	0x8001a0a4	0x88a4		mips26	reachable-code	0x8001a0e0	load	audio_play_spatial+0x19c	j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a0ac	0x88ac		mips26	reachable-code	0x8002f050	load	rsin	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a0c4	0x88c4		mips26	reachable-code	0x8002f158	load	rcos	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a0ec	0x88ec	0x8001a0f0	mips_hi16_lo16	reachable-code	0x8006e1d4	bss	audio_state	lui+lh	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_audio_spatial;aggregate-owner
+OPEN.EXE	0x8001a0f8	0x88f8		mips26	reachable-code	0x8001a268	load	audio_play_voice	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_play_voice;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a144	0x8944		mips26	reachable-code	0x80019f44	load	audio_play_spatial	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a170	0x8970		mips26	reachable-code	0x80019f44	load	audio_play_spatial	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a198	0x8998		mips26	reachable-code	0x8002b478	load	SsVoKeyOff	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_spatial
+OPEN.EXE	0x8001a1bc	0x89bc	0x8001a1c0	mips_hi16_lo16	reachable-code	0x8006e1e4	bss	audio_state	lui+addiu	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_audio_spatial;aggregate-owner
+OPEN.EXE	0x8001a1f0	0x89f0	0x8001a1f4	mips_hi16_lo16	reachable-code	0x8006e1f4	bss	audio_state	lui+addiu	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_audio_spatial;aggregate-owner
 OPEN.EXE	0x8001a22c	0x8a2c	0x8001a230	mips_hi16_lo16	reachable-code	0x8006e1d4	bss	audio_state	lui+lh	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sound_ref;aggregate-owner
 OPEN.EXE	0x8001a250	0x8a50		mips26	reachable-code	0x8001a268	load	audio_play_voice	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_sound_ref;manual:open_semantic_audio_play_voice
 OPEN.EXE	0x8001a2c0	0x8ac0	0x8001a2c4	mips_hi16_lo16	reachable-code	0x80037304	load	audio_voice_slot_index	lui+lw	v0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_play_voice

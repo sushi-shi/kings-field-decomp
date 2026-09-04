@@ -1415,6 +1415,46 @@ class InventoryTests(unittest.TestCase):
             },
         )
 
+    def test_open_audio_spatial_run_is_exactly_modeled(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_audio_spatial.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 5)
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertEqual(row["current_match"], "100.000000000% exact")
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_audio_spatial"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 16)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {reloc["target_name"] for reloc in campaign_rows})
+        self.assertEqual(
+            {reloc["target_name"] for reloc in campaign_rows},
+            {
+                "SquareRoot0",
+                "SsVoKeyOff",
+                "audio_play_spatial",
+                "audio_play_spatial+0x19c",
+                "audio_play_spatial+0x1c0",
+                "audio_play_voice",
+                "audio_state",
+                "rcos",
+                "rsin",
+                "vector_xz_to_angle",
+            },
+        )
+
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
