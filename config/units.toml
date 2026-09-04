@@ -671,9 +671,9 @@ source = "src/open/render_map_cells.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "open.opening_entity_render"
+unit = "open.entity_render"
 image = "OPEN.EXE"
-source = "src/open/opening_entity_render.c"
+source = "src/open/entity_render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

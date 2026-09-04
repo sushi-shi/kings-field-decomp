@@ -12,7 +12,7 @@
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
 #define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + 12))
 /* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
-#define TMD_PACKET_BODY(packet) ((u8 *)(packet) + 4)
+#define TMD_PACKET_BODY(packet) ((packet) + 4)
 
 #define TMD_F3 0x20
 #define TMD_FT3 0x24

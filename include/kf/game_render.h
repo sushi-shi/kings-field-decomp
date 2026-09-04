@@ -10,18 +10,6 @@
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
-/* Texture rectangle followed by its screen-space rectangle. */
-typedef struct KfSpriteQuad {
-    u8 u;
-    u8 v;
-    u8 u_span;
-    u8 v_span;
-    u16 x;
-    u16 y;
-    u16 w;
-    u16 h;
-} KfSpriteQuad;
-
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */
 typedef struct KfHudSprite {
     u8 state;

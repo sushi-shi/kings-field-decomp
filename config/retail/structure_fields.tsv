@@ -499,14 +499,14 @@ KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	game_save.h;asm;xrefs	individua
 KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
 KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
-KfSpriteQuad	0x00	0x01	u	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
-KfSpriteQuad	0x01	0x01	v	u8	supported	game_render.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
-KfSpriteQuad	0x02	0x01	u_span	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
-KfSpriteQuad	0x03	0x01	v_span	u8	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
-KfSpriteQuad	0x04	0x02	x	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
-KfSpriteQuad	0x06	0x02	y	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
-KfSpriteQuad	0x08	0x02	w	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
-KfSpriteQuad	0x0a	0x02	h	u16	supported	game_render.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
+KfSpriteQuad	0x00	0x01	u	u8	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
+KfSpriteQuad	0x01	0x01	v	u8	supported	render_types.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
+KfSpriteQuad	0x02	0x01	u_span	u8	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
+KfSpriteQuad	0x03	0x01	v_span	u8	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
+KfSpriteQuad	0x04	0x02	x	u16	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
+KfSpriteQuad	0x06	0x02	y	u16	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
+KfSpriteQuad	0x08	0x02	w	u16	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
+KfSpriteQuad	0x0a	0x02	h	u16	supported	render_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
 KfTmdF3	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field

@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 485)
         self.assertEqual(counts["typed_returns"], 485)
         self.assertEqual(counts["parameterized"], 316)
-        self.assertEqual(counts["data"], 3071)
+        self.assertEqual(counts["data"], 3072)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -388,10 +388,11 @@ class InventoryTests(unittest.TestCase):
     def test_render_layouts_live_in_their_owner_headers(self) -> None:
         semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         owners = {
-            "render_types.h": ("KfPrimitiveBuffer", "KfOrderingTable", "KfCellWindow"),
+            "render_types.h": (
+                "KfPrimitiveBuffer", "KfOrderingTable", "KfCellWindow", "KfSpriteQuad",
+            ),
             "game_asset.h": ("KfAssetHeader",),
             "game_render.h": (
-                "KfSpriteQuad",
                 "KfHudSprite",
                 "KfEffectSprite",
                 "KfDisplayState",

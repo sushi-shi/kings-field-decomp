@@ -2683,6 +2683,7 @@ OPEN.EXE	0x80035878	0x10	opening_scene3_overlay_rects	global	load	u16[2][4]	open
 OPEN.EXE	0x8003588a	0x2	DAT_8003588a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035892	0x2	DAT_80035892	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800358ca	0x2	DAT_800358ca	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800358e0	0x54	floor_item_sprites	global	load	KfSpriteQuad[7]	entity_render	supported	open_semantic_floor_item_render.tsv;retail-bytes;12-byte-index-stride;render_enqueue_sprite;B0-MIXA0	seven consistent sprite descriptors; scene-0 placements use the first four; the last three and original array extent remain a supported working model
 OPEN.EXE	0x80035944	0xa0	color_matrix_table	global	load	MATRIX[5]	lighting	supported	open_semantic_render_init.tsv;asm;xrefs;SetColorMatrix;32-byte-stride	five OPEN colour-matrix presets; the following MATRIX at 0x800359e4 is separately consumed by SetLightMatrix
 OPEN.EXE	0x80035a84	0x4	DAT_80035a84	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035a88	0x4	DAT_80035a88	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

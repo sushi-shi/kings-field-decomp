@@ -1,9 +1,21 @@
 #ifndef KF_RENDER_TYPES_H
 #define KF_RENDER_TYPES_H
 
-/* Display layouts shared by GAME.EXE and OPEN.EXE. */
+/* Rendering layouts shared by GAME.EXE and OPEN.EXE. */
 
 #include <kf/game_types.h>
+
+/* Texture rectangle followed by its screen-space or projected rectangle. */
+typedef struct KfSpriteQuad {
+    u8 u;
+    u8 v;
+    u8 u_span;
+    u8 v_span;
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
+} KfSpriteQuad;
 
 /* One primitive allocation interval and its current write cursor. */
 typedef struct KfPrimitiveBuffer {

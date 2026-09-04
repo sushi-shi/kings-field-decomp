@@ -38,7 +38,7 @@ class OpenEntityRenderTests(unittest.TestCase):
         self.assertIn(evidence.name, identity.evidence)
         self.assertEqual(row["final_signature"],
                          "void opening_entity_render(KfOpeningEntity *entity)")
-        unit = load_manifest().by_name()["open.opening_entity_render"]
+        unit = load_manifest().by_name()["open.entity_render"]
         self.assertEqual(unit.image, "OPEN.EXE")
         self.assertEqual(unit.rodata, (0x80012238, 0x44))
         data = load_data_identities(RETAIL_CONFIG)
