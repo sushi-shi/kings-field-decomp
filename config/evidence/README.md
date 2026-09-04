@@ -172,6 +172,11 @@ retail exactly and the complete semantic C reaches 99.931370%. The only text
 residue is a 16-byte larger retail stack allocation whose unused source object
 cannot be identified without inventing padding.
 
+`open_semantic_opening_ending_scene.tsv` records the OPEN ending-scene
+controller and its nine-point camera path. It proves the display-enable and
+entity transitions, camera-phase gate, synchronized GTE/DRAWENV brightness,
+and closing color fade. Both the function and owned path match retail exactly.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five

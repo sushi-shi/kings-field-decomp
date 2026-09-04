@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 499)
         self.assertEqual(counts["typed_returns"], 499)
         self.assertEqual(counts["parameterized"], 318)
-        self.assertEqual(counts["data"], 3083)
+        self.assertEqual(counts["data"], 3084)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -1083,6 +1083,53 @@ class InventoryTests(unittest.TestCase):
                 "opening_scene3_run",
                 "lighting_set_color_matrix",
                 "audio_set_listener_transform",
+            },
+        )
+
+    def test_open_ending_scene_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = (
+            CONFIG / "evidence/open_semantic_opening_ending_scene.tsv"
+        )
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";")) or "void"
+        signature = f"{identity.return_type} {identity.name}({parameters})"
+        self.assertEqual(row["final_name"], identity.name)
+        self.assertEqual(row["final_signature"], signature)
+        self.assertIn(evidence_path.name, identity.evidence)
+        self.assertEqual(row["current_match"], "100.000000000% exact")
+
+        data = load_data_identities(RETAIL_CONFIG)
+        path = data[("OPEN.EXE", 0x80035724)]
+        self.assertEqual(
+            (path.name, path.storage, path.datatype, path.size),
+            ("opening_ending_camera_path", "load", "KfCameraPathPoint[9]", 0xFC),
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_opening_ending_scene"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 46)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {reloc["target_name"] for reloc in campaign_rows})
+        self.assertEqual(
+            {
+                reloc["target_name"]
+                for reloc in campaign_rows
+                if parse_int(reloc["target_va"])
+                in {0x80014B34, 0x80035724, 0x80069A89, 0x80069AE7}
+            },
+            {
+                "opening_ending_scene_run",
+                "opening_ending_camera_path",
+                "display_draw_environments",
             },
         )
 
