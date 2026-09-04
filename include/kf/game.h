@@ -8,6 +8,7 @@
  */
 
 #include <kf/semantic_types.h>
+#include <kf/game_math.h>
 #include <kf/game_state.h>
 #include <kf/game_system.h>
 #include <kf/game_render.h>

@@ -41,11 +41,6 @@ extern void lighting_apply_weapon9_environment(void);
 extern void lighting_set_active_color_matrix(s32 index);
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
-extern void matrix_interpolate(
-    const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
-extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
-extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
-extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
 extern void menu_render_item_model(void);
 extern void primitive_buffer_begin_poly_ft4(void);
 extern void primitive_buffer_commit_poly_ft4(s32 depth);

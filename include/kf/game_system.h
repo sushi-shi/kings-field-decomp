@@ -31,10 +31,6 @@ extern void map_world_state_persist(void);
 extern void map_unload_floor(void);
 extern void func_800365f8(void);
 extern void func_80036d3c(KfActor *actor);
-extern s16 angle_approach(s16 current, s16 target, s32 step);
-extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
-extern s16 angle_shortest_delta(s32 first, s32 second);
-extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
 extern void asset_aux_block_load(const u32 *source);
 extern void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive);
 extern void asset_registry_select(u16 index);
@@ -44,8 +40,6 @@ extern s32 cd_file_load_allocated(
 extern s32 cd_file_load_into(void *destination, const char *relative_path);
 extern s32 cd_file_load_table_entry(void **destination, s32 index);
 extern void common_resources_load(void);
-extern int fixed6_ratio_step(int value, int divisor);
-extern s32 fixed_vector2_length(s32 x, s32 y);
 extern s32 format(const char *device);
 extern char *format_int_dec(s32 value);
 extern char *format_int_hex(u32 value);
@@ -77,7 +71,5 @@ extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
 extern s32 save_system_read_slot(s16 slot_id);
 extern s32 save_system_write_slot(s16 slot_id);
 extern void tim_upload_images(u_long *tim_data);
-extern void vector2s_scale_shift11(s16 scale, s16 *vector);
-extern void vector3s_scale_shift12(s16 scale, s16 *vector);
 
 #endif

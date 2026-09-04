@@ -14,7 +14,7 @@ void asset_aux_block_load(const u32 *source)
 }
 
 ADDRESS(0x80015128, 0x3c)
-int fixed6_ratio_step(int value, int divisor)
+s32 fixed6_ratio_step(s32 value, s32 divisor)
 {
     return (value << 6) / (divisor + 1) + 1;
 }

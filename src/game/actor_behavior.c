@@ -13,13 +13,8 @@ extern s32 actor_distance_to_point(
     s32 actor_height,
     s32 point_height);
 extern void actor_try_attack_player();
-extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 extern u8 *effect_pool_construct();
-extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s *direction);
 extern s32 rand(void);
-extern void vector3i_add_xz(VECTOR *destination, const struct KfVecXZs *delta);
-extern s32 vector_xz_to_angle(s32 x, s32 z);
 
 #define ACTOR_ACTION_NONE 0xff
 #define MAP_TILE_SIZE 2000
@@ -266,7 +261,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
     s32 threshold;
 
     target = actor->position;
-    vector3i_add_xz(&target, delta);
+    vector3i_add_xz((struct KfVec3i *)&target, delta);
     result = collision_query_world(
         target.vx,
         target.vy,
@@ -376,7 +371,7 @@ s32 actor_move_along_heading(s32 direction, s32 stop_on_collision)
         actor->rotation.y = angle_approach(actor->rotation.y, actor->movement_yaw, definition->turn_rate);
     }
     angle_to_forward_xz(actor->rotation.y, &delta);
-    vector2s_scale_shift11(definition->move_speed, (s16 *)&delta);
+    vector2s_scale_shift11(definition->move_speed, &delta);
     if (direction < 0) {
         delta.x = -delta.x;
         delta.z = -delta.z;
@@ -495,7 +490,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 scale = 800;
             }
             pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
-            vector3s_scale_shift12(scale, (s16 *)&direction);
+            vector3s_scale_shift12(scale, &direction);
             if (effect_code == 8 || effect_code == 22) {
                 effect_pool_construct(
                     definition->unknown_82, 0x23, effect_code, &position, &direction, &angles, 1);
@@ -535,7 +530,7 @@ void actor_prepare_charge_toward_player(void)
         actor_state.player_position.vx - actor->position.vx,
         actor_state.player_position.vz - actor->position.vz);
     angle_to_forward_xz(actor->movement_yaw, &delta);
-    vector2s_scale_shift11(length >> 2, (s16 *)&delta);
+    vector2s_scale_shift11(length >> 2, &delta);
     actor->movement_x = delta.x / 16;
     actor->movement_z = delta.z / 16;
 }
@@ -1039,7 +1034,7 @@ void actor_update_current_action(void)
             target.x = actor->position.vx;
             target.z = actor->position.vz;
             angle_to_forward_xz(actor->rotation.y, &direction);
-            vector2s_scale_shift11(definition->move_speed, (s16 *)&direction);
+            vector2s_scale_shift11(definition->move_speed, &direction);
             vector3i_add_xz(&target, &direction);
             if (actor_pool_find_overlap(target.x, 0xffff, target.z, definition->collision_radius, 0)
                 == -1) {

@@ -11,8 +11,6 @@ RODATA(0x80012a14, 0x40)
 extern s16 SsVabOpenHead(u8 *vab_header, s16 vab_id);
 
 /* Psy-Q Release 2.5 LIBSND.H / LIBGTE.H / LIBC prototypes. */
-/* Declared with an int result here: retail uses the returned angle unmasked. */
-extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern int printf();
 extern void *memset();
 

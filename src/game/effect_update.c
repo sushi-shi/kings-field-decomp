@@ -35,7 +35,6 @@ extern s32 audio_play_spatial_range(
     s32 max_distance, s32 attenuation_distance);
 extern void audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern s32 rand(void);
 
 /* Dense effect-kind dispatch table for kinds 4 through 52. */

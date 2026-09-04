@@ -55,7 +55,7 @@ void map_event_update_wander(void)
     heading = angle_approach(event->rotation, event->rotation_target, 0x46);
     event->rotation = heading;
     angle_to_forward_xz(heading, &forward);
-    vector2s_scale_shift11(0x14, (s16 *)&forward);
+    vector2s_scale_shift11(0x14, &forward);
 
     point.vx = forward.x + event->reference_x;
     point.vz = forward.z + event->reference_z;

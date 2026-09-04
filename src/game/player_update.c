@@ -8,10 +8,6 @@ extern s32 menu_enter_mode(s32 arg0);
 extern void map_interaction_dispatch();
 extern KfEffectRecord *effect_pool_construct();
 extern s32 rand(void);
-extern void matrix_set_rotation_yxz(
-    const struct KfEulerAngles *angles, MATRIX *matrix);
-extern void pitch_yaw_to_forward_vector(
-    const struct KfPitchYaw *angles, struct KfVec3s *direction);
 extern void player_use_item();
 
 ADDRESS(0x80018880, 0x1a1c)
@@ -364,7 +360,7 @@ void player_update(void)
                         }
                     }
                     pitch_yaw_to_forward_vector((const struct KfPitchYaw *)&angles, &direction);
-                    vector3s_scale_shift12(900, (s16 *)&direction);
+                    vector3s_scale_shift12(900, &direction);
                     effect_pool_construct(10, 17, effect, &position, &direction,
                                   &player_state.camera_rotation, attachment, 1);
                     if (effect == 20) {

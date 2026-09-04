@@ -11,7 +11,6 @@ extern u8 DAT_800652a8[240];
 /* Full-screen image path template "KAN\B0\K000.TIM". */
 
 extern void audio_play_spatial_default_range(const SoundRef *sound, const VECTOR *position, s16 volume);
-extern int angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 
 /* Unprototyped helpers: called with varying arities/argument types. */
 extern void render_frame();

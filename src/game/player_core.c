@@ -233,7 +233,6 @@ void player_sync_position_to_map(void)
 }
 
 
-extern s32 vector_xz_to_angle(s32 x, s32 z);
 /* Psy-Q LIBGTE: rsin, rcos. */
 /* Psy-Q LIBGTE: long SquareRoot0(long a); */
 

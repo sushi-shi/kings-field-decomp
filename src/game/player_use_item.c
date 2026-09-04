@@ -9,7 +9,6 @@ extern u8 DAT_800652a8[240];
 /* Psy-Q LIBGTE: rsin, rcos. */
 /* Effect spawner variant called with six arguments; declared without a prototype. */
 extern u8 *effect_pool_spawn_typed();
-extern int angle_within_tolerance(int lhs, int rhs, s16 range);
 /* Image paths whose decimal digits are patched before display. */
 extern void render_frame(s32 first, s32 second);
 

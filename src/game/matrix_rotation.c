@@ -157,37 +157,26 @@ void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s
 }
 
 
-struct VecXZ32 {
-    int x;
-    int unused;
-    int z;
-};
-
-struct VecXZ16 {
-    s16 x;
-    s16 z;
-};
-
 ADDRESS(0x80014e08, 0x40)
-void vector2s_scale_shift11(s16 scale, s16 *vector)
+void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector)
 {
-    s32 x = vector[0] * scale;
-    s32 y = vector[1] * scale;
+    s32 x = vector->x * scale;
+    s32 z = vector->z * scale;
 
-    vector[0] = x >> 11;
-    vector[1] = y >> 11;
+    vector->x = x >> 11;
+    vector->z = z >> 11;
 }
 
 ADDRESS(0x80014e48, 0x5c)
-void vector3s_scale_shift12(s16 scale, s16 *vector)
+void vector3s_scale_shift12(s16 scale, struct KfVec3s *vector)
 {
-    s32 x = vector[0] * scale;
-    s32 y = vector[1] * scale;
-    s32 z = vector[2] * scale;
+    s32 x = vector->x * scale;
+    s32 y = vector->y * scale;
+    s32 z = vector->z * scale;
 
-    vector[0] = x >> 12;
-    vector[1] = y >> 12;
-    vector[2] = z >> 12;
+    vector->x = x >> 12;
+    vector->y = y >> 12;
+    vector->z = z >> 12;
 }
 
 ADDRESS(0x80014ea4, 0x40)
@@ -213,7 +202,8 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
 }
 
 ADDRESS(0x80014f40, 0x2c)
-void vector3i_add_xz(struct VecXZ32 *destination, const struct VecXZ16 *delta)
+void vector3i_add_xz(
+    struct KfVec3i *destination, const struct KfVecXZs *delta)
 {
     destination->x += delta->x;
     destination->z += delta->z;
@@ -240,7 +230,7 @@ int angle_mod_delta_le_half_turn(int lhs, int rhs)
  * checked expansion retail keeps for both signs of z.
  */
 ADDRESS(0x80014fb8, 0xb0)
-u16 vector_xz_to_angle(s32 x, s32 z)
+s32 vector_xz_to_angle(s32 x, s32 z)
 {
     if (z > 0) {
         return catan((x << 12) / z) + 0x800;

@@ -9,9 +9,6 @@
 
 /* Psy-Q LIBC: int rand(void). */
 extern s32 rand(void);
-/* Callers consume the angle unmasked, so the result is passed as a plain int. */
-extern s32 vector_xz_to_angle(s32 x, s32 z);
-extern s32 angle_within_tolerance(s32 angle, s32 target, s16 tolerance);
 /* Psy-Q LIBGTE: long SquareRoot0(long a). */
 extern void audio_play_spatial_range(
     const SoundRef *sound,

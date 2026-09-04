@@ -3,10 +3,6 @@
 #include <kf/game.h>
 #include <kf/magic.h>
 
-extern void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix);
-extern s32 vector_xz_to_angle(s32 x, s32 z);
-extern void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles,
-    struct KfVec3s *direction);
 extern KfEffectRecord *effect_pool_construct(u8 id, u8 type, u8 kind, VECTOR *position,
     SVECTOR *direction, ...);
 extern void effect_pool_set_current(u8 *object);
@@ -107,7 +103,7 @@ void magic_cast(void)
         angles.y = player_state.camera_rotation.vy;
         angles.z = player_state.camera_rotation.vz;
         pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
-        vector3s_scale_shift12(scale, (s16 *)&direction);
+        vector3s_scale_shift12(scale, &direction);
         if (player_state.selected_magic_id == 8) {
             rotation.vx = player_state.camera_rotation.vx;
             rotation.vy = player_state.camera_rotation.vy;
