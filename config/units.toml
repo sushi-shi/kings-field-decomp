@@ -408,12 +408,6 @@ source = "src/game/menu_list_render.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.menu_presentation"
-image = "GAME.EXE"
-source = "src/game/menu_presentation.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.menu_runtime"
 image = "GAME.EXE"
 source = "src/game/menu_runtime.c"
