@@ -330,6 +330,9 @@ KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	semantic_types.h;asm;map_ob
 KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	semantic_types.h;asm;map_object_pool_load	link block copied into the pool object
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	semantic_types.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfNotificationSprite	0x00	0x01	active	u8	supported	semantic_types.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
+KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
+KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	semantic_types.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	semantic_types.h;asm;xrefs	yaw angle
@@ -479,6 +482,14 @@ KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	semantic_types.h;asm;xrefs	indi
 KfScreenVertex	0x00	0x04	sxy	DVECTOR	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm;RotTransPers;NormalClip	packed signed screen x/y written by the GTE and consumed as one word by clipping and GPU packets
 KfScreenVertex	0x04	0x02	sz	s16	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	semantic_types.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
+KfSpriteQuad	0x00	0x01	u	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U origin
+KfSpriteQuad	0x01	0x01	v	u8	supported	semantic_types.h;asm;render_screen_sprite;notification_digit_set_v	texture V origin
+KfSpriteQuad	0x02	0x01	u_span	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture U span
+KfSpriteQuad	0x03	0x01	v_span	u8	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	texture V span
+KfSpriteQuad	0x04	0x02	x	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen X or projected local X
+KfSpriteQuad	0x06	0x02	y	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen Y or projected local Y
+KfSpriteQuad	0x08	0x02	w	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen width
+KfSpriteQuad	0x0a	0x02	h	u16	supported	semantic_types.h;asm;render_screen_sprite;render_enqueue_sprite	screen height
 KfTmdF3	0x00	0x01	r	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x01	0x01	g	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x02	0x01	b	u8	supported	semantic_types.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field

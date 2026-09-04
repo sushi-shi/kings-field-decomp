@@ -1373,16 +1373,7 @@ GAME.EXE	0x80055cda	0x1	DAT_80055cda	unknown	load	undefined1		address-only	data.
 GAME.EXE	0x80055ce8	0x1	DAT_80055ce8	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055cf6	0x1	DAT_80055cf6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055d04	0x4	DAT_80055d04	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d20	0x1	notification_sprite_0_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update;render_frame	record 0 active flag in the six-entry, 14-byte-stride notification sprite table
-GAME.EXE	0x80055d22	0x1	notification_sprite_0_texture_u	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture U origin of notification sprite record 0
-GAME.EXE	0x80055d23	0x1	notification_sprite_0_texture_v	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture V origin of notification sprite record 0
-GAME.EXE	0x80055d2e	0x1	notification_sprite_1_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update;render_frame	record 1 active flag in the six-entry, 14-byte-stride notification sprite table
-GAME.EXE	0x80055d30	0x1	notification_sprite_1_texture_u	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture U origin of notification sprite record 1
-GAME.EXE	0x80055d31	0x1	notification_sprite_1_texture_v	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	texture V origin of notification sprite record 1
-GAME.EXE	0x80055d3c	0x1	notification_sprite_2_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 2 active flag in the six-entry, 14-byte-stride notification sprite table
-GAME.EXE	0x80055d4a	0x1	notification_sprite_3_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 3 active flag in the six-entry, 14-byte-stride notification sprite table
-GAME.EXE	0x80055d58	0x1	notification_sprite_4_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 4 active flag in the six-entry, 14-byte-stride notification sprite table
-GAME.EXE	0x80055d66	0x1	notification_sprite_5_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 5 active flag in the six-entry, 14-byte-stride notification sprite table
+GAME.EXE	0x80055d20	0x54	notification_sprites	global	load	KfNotificationSprite[6]	notify	supported	game_semantic_notification_sprites.tsv;retail-bytes;asm;xrefs	six initialized 14-byte screen-sprite records; notify_effect_update drives active and texture cells, and render_frame emits the active rows
 GAME.EXE	0x80055d74	0x38	effect_sprites	global	load	KfEffectSprite[2]	render_frame	supported	game_semantic_effect_sprites.tsv;retail-bytes;asm;xrefs	animated model-sprite list: one initialized row followed by a 0xff terminator; render_frame updates row zero state and screen-facing Z rotation
 GAME.EXE	0x80055dac	0x2	DAT_80055dac	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055dae	0x2	DAT_80055dae	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

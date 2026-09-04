@@ -227,6 +227,25 @@ typedef struct KfScreenVertex {
     s16 p2;
 } KfScreenVertex;
 
+/* Texture rectangle followed by its screen-space rectangle. */
+typedef struct KfSpriteQuad {
+    u8 u;
+    u8 v;
+    u8 u_span;
+    u8 v_span;
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
+} KfSpriteQuad;
+
+/* One 14-byte row of the six-sprite on-screen notification display. */
+typedef struct KfNotificationSprite {
+    u8 active;
+    u8 unknown_01;
+    KfSpriteQuad sprite;
+} KfNotificationSprite;
+
 /* Animated screen-facing model entry; state 0xff terminates the two-row list. */
 typedef struct KfEffectSprite {
     u8 state;

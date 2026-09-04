@@ -2,6 +2,16 @@
 #include <kf/semantic_types.h>
 #include <kf/game.h>
 
+DATA(0x80055d20, 0x54)
+KfNotificationSprite notification_sprites[6] = {
+    {0, 0, {0, 0, 0x7f, 0x0f, 0xffc0, 0xffa0, 0x7f, 0x0f}},
+    {0, 0, {0, 0, 0x7f, 0x0f, 0xffc4, 0xffa0, 0x7f, 0x0f}},
+    {0, 0, {0xf0, 0, 7, 0x0b, 0xffc4, 0xffa3, 7, 0x0b}},
+    {0, 0, {0xf0, 0, 7, 0x0b, 0xffba, 0xffa3, 7, 0x0b}},
+    {0, 0, {0xf0, 0, 7, 0x0b, 0xffb0, 0xffa3, 7, 0x0b}},
+    {0, 0, {0xf0, 0, 7, 0x0b, 0xffa6, 0xffa3, 7, 0x0b}},
+};
+
 
 /*
  * Notification queue and effect, one contiguous run
@@ -60,10 +70,10 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
  *   phase 2: hold for fifteen frames.
  *   phase 3: rotate out, then clear the records and dequeue the entry.
  *
- * The six 14-byte sprite records are still expressed through their directly
- * referenced fields; record 0 also anchors the four digit descriptors.  The
- * payload table is reached from the phase pointer to reproduce retail's shared
- * base-register schedule.
+ * The six 14-byte notification_sprites rows share one complete descriptor
+ * type; record 0 also anchors the four digit descriptors.  The payload table
+ * is reached from the phase pointer to reproduce retail's shared base-register
+ * schedule.
  *
  * The menu_format_number digit scratch reserves 24 stack bytes (a fixed buffer
  * larger than the four digits used); the exact element count is unverified but
@@ -88,35 +98,35 @@ void notify_effect_update(void)
         notification_effect_angle_x = 0;
         notification_hold_frames = 15;
         if (id == 0x13) {
-            u8 *sprite_records = &notification_sprite_0_active;
+            KfNotificationSprite *sprite_records = notification_sprites;
             KfNotificationDigitBuffer digits;
-            sprite_records[0] = 0;
-            notification_sprite_1_active = 1;
-            notification_sprite_1_texture_u = (id & 0xf0) << 3;
-            notification_sprite_1_texture_v = (id & 0xf) << 4;
+            sprite_records[0].active = 0;
+            notification_sprites[1].active = 1;
+            notification_sprites[1].sprite.u = (id & 0xf0) << 3;
+            notification_sprites[1].sprite.v = (id & 0xf) << 4;
             menu_format_number(
                 ((u16 *)((char *)phase - 18))[tail], 4, 0, digits.formatted);
-            notification_sprite_2_active = 1;
+            notification_sprites[2].active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 30), digits.values[3]);
-            notification_sprite_3_active = 1;
+                &sprite_records[2].sprite, digits.values[3]);
+            notification_sprites[3].active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 44), digits.values[2]);
-            notification_sprite_4_active = 1;
+                &sprite_records[3].sprite, digits.values[2]);
+            notification_sprites[4].active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 58), digits.values[1]);
-            notification_sprite_5_active = 1;
+                &sprite_records[4].sprite, digits.values[1]);
+            notification_sprites[5].active = 1;
             notification_digit_set_v(
-                (KfSpriteQuad *)(sprite_records + 72), digits.values[0]);
+                &sprite_records[5].sprite, digits.values[0]);
         } else {
-            notification_sprite_0_active = 1;
-            notification_sprite_0_texture_u = (id & 0xf0) << 3;
-            notification_sprite_0_texture_v = (id & 0xf) << 4;
-            notification_sprite_5_active = 0;
-            notification_sprite_4_active = 0;
-            notification_sprite_3_active = 0;
-            notification_sprite_2_active = 0;
-            notification_sprite_1_active = 0;
+            notification_sprites[0].active = 1;
+            notification_sprites[0].sprite.u = (id & 0xf0) << 3;
+            notification_sprites[0].sprite.v = (id & 0xf) << 4;
+            notification_sprites[5].active = 0;
+            notification_sprites[4].active = 0;
+            notification_sprites[3].active = 0;
+            notification_sprites[2].active = 0;
+            notification_sprites[1].active = 0;
         }
         break;
     }
@@ -135,12 +145,12 @@ void notify_effect_update(void)
             u8 *tail = phase - 2;
             u8 id;
             notification_effect_angle_x = 512;
-            notification_sprite_5_active = 0;
-            notification_sprite_4_active = 0;
-            notification_sprite_3_active = 0;
-            notification_sprite_2_active = 0;
-            notification_sprite_1_active = 0;
-            notification_sprite_0_active = 0;
+            notification_sprites[5].active = 0;
+            notification_sprites[4].active = 0;
+            notification_sprites[3].active = 0;
+            notification_sprites[2].active = 0;
+            notification_sprites[1].active = 0;
+            notification_sprites[0].active = 0;
             id = notification_message_ids[notification_queue_tail];
             do {
                 notification_message_ids[*tail] = 0xff;

@@ -10,8 +10,8 @@
  * the scene dispatcher (render_entities), draws the held weapon, and presents.
  *
  * WIP: the HUD gauge records at DAT_80055c5c (stride 14, walked by
- * render_hud_gauges) and the notification descriptor globals are unresolved and
- * reached by their individual identities.
+ * render_hud_gauges) remain unresolved and are reached by their individual
+ * identities.
  */
 
 /* HUD gauge table: thirteen drawable 14-byte rows followed by a terminator. */
@@ -29,7 +29,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     SVECTOR spin;
     u8 *status4;
     u8 *tint;
-    u8 *record;
+    KfNotificationSprite *record;
     s16 i;
 
     render_set_view_transform(position, rotation);
@@ -113,21 +113,21 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
 
     DAT_8009505a = DAT_80095068;
     DAT_80095058 = DAT_80095066;
-    record = &notification_sprite_0_active;
-    if (record[0] == 1) {
-        render_enqueue_sprite((KfSpriteQuad *)(record + 2), 0, 0);
+    record = notification_sprites;
+    if (record[0].active == 1) {
+        render_enqueue_sprite(&record[0].sprite, 0, 0);
     }
-    if (notification_sprite_1_active == 1) {
-        render_enqueue_sprite((KfSpriteQuad *)(record + 16), 0, 0);
+    if (notification_sprites[1].active == 1) {
+        render_enqueue_sprite(&record[1].sprite, 0, 0);
     }
-    record += 28;
+    record += 2;
     DAT_8009505a = DAT_8009506c;
     DAT_80095058 = DAT_8009506a;
     for (i = 3; i != -1; i--) {
-        if (record[0] == 1) {
-            render_enqueue_sprite((KfSpriteQuad *)(record + 2), 0, 0);
+        if (record->active == 1) {
+            render_enqueue_sprite(&record->sprite, 0, 0);
         }
-        record += 14;
+        record++;
     }
 
     render_entities();

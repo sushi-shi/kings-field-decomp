@@ -12,18 +12,6 @@
 
 #include <kf/semantic_types.h>
 
-/* Texture rectangle followed by its screen-space rectangle. */
-typedef struct KfSpriteQuad {
-    u8 u;
-    u8 v;
-    u8 u_span;
-    u8 v_span;
-    u16 x;
-    u16 y;
-    u16 w;
-    u16 h;
-} KfSpriteQuad;
-
 extern KfScreenVertex DAT_800911b0[];
 extern KfCellWindow render_cell_windows[16];
 extern const KfCellWindow *active_cell_window;

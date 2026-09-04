@@ -2732,24 +2732,7 @@ GAME.EXE	0x80055cf6	0x444f6	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4
 GAME.EXE	0x80055cf7	0x444f7	0xd	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055d04	0x44504	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055d08	0x44508	0x18	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d20	0x44520	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d21	0x44521	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d22	0x44522	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d23	0x44523	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d24	0x44524	0xa	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d2e	0x4452e	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d2f	0x4452f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d30	0x44530	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d31	0x44531	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d32	0x44532	0xa	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d3c	0x4453c	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d3d	0x4453d	0xd	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d4a	0x4454a	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d4b	0x4454b	0xd	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d58	0x44558	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d59	0x44559	0xd	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055d66	0x44566	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055d67	0x44567	0xd	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055d20	0x44520	0x54	data	reviewed	notification_sprites	KfNotificationSprite[6]	manual:game_semantic_notification_sprites	six initialized 14-byte notification sprite descriptors consumed by notify_effect_update and render_frame
 GAME.EXE	0x80055d74	0x44574	0x38	data	reviewed	effect_sprites	KfEffectSprite[2]	manual:game_semantic_effect_sprites	one initialized live sprite followed by a zeroed 0xff terminator record; 28-byte runtime stride proven by render_effect_sprites
 GAME.EXE	0x80055dac	0x445ac	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055dae	0x445ae	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
