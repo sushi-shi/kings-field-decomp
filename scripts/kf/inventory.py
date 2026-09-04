@@ -408,6 +408,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     array_pattern = re.compile(r"\[\s*(0x[0-9a-fA-F]+|\d+)\s*\]")
     checked_headers = (
         REPO / "include/kf/game_types.h",
+        REPO / "include/kf/audio.h",
         REPO / "include/kf/semantic_types.h",
         REPO / "include/kf/game_save.h",
         REPO / "include/kf/game_cd.h",

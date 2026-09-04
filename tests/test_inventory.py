@@ -241,6 +241,18 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, tmd_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_audio_layouts_live_in_the_audio_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        audio_header = (REPO / "include/kf/audio.h").read_text()
+        for structure in (
+            "SoundRef",
+            "KfAudioVoiceSlots",
+            "KfAudioState",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, audio_header)
+            self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

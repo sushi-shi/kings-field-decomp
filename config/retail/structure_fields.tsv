@@ -97,21 +97,21 @@ KfAssetHeader	0x04	0x04	animation_data	s32	candidate	semantic_types.h;asm;render
 KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	semantic_types.h;asm;asset_registry_select	byte offset from header to TMD payload
 KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
 KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	semantic_types.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
-KfAudioState	0x00	0x04	vab_header	u8 *	supported	semantic_types.h;asm;xrefs	loaded VAB header pointer
-KfAudioState	0x04	0x02	active_vab_id	s16	supported	semantic_types.h;asm;xrefs	active VAB identifier; minus one after close
-KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
-KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	semantic_types.h;asm;xrefs	allocated SEQ buffer
-KfAudioState	0x0c	0x02	sequence_id	s16	supported	semantic_types.h;asm;xrefs	open sequence identifier
-KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	semantic_types.h;asm;xrefs	padding or unresolved
-KfAudioState	0x10	0x04	sequence_active	s32	supported	semantic_types.h;asm;xrefs	one while a map sequence plays
-KfAudioState	0x14	0x10	listener_position	VECTOR	supported	semantic_types.h;asm;xrefs	listener position for spatial voices
-KfAudioState	0x24	0x08	listener_rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	listener rotation for spatial voices
-KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	semantic_types.h;asm;xrefs	ten voice slots
-KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	semantic_types.h;asm;xrefs	active voice IDs
-KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	semantic_types.h;asm;xrefs	VAB IDs
-KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	semantic_types.h;asm;xrefs	program numbers
-KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	semantic_types.h;asm;xrefs	tone numbers
-KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	semantic_types.h;asm;xrefs	note numbers
+KfAudioState	0x00	0x04	vab_header	u8 *	supported	audio.h;asm;xrefs	loaded VAB header pointer
+KfAudioState	0x04	0x02	active_vab_id	s16	supported	audio.h;asm;xrefs	active VAB identifier; minus one after close
+KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
+KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	audio.h;asm;xrefs	allocated SEQ buffer
+KfAudioState	0x0c	0x02	sequence_id	s16	supported	audio.h;asm;xrefs	open sequence identifier
+KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
+KfAudioState	0x10	0x04	sequence_active	s32	supported	audio.h;asm;xrefs	one while a map sequence plays
+KfAudioState	0x14	0x10	listener_position	VECTOR	supported	audio.h;asm;xrefs	listener position for spatial voices
+KfAudioState	0x24	0x08	listener_rotation	SVECTOR	supported	audio.h;asm;xrefs	listener rotation for spatial voices
+KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	audio.h;asm;xrefs	ten voice slots
+KfAudioVoiceSlots	0x00	0x14	voice_ids	s16[10]	supported	audio.h;asm;xrefs	active voice IDs
+KfAudioVoiceSlots	0x14	0x14	vab_ids	s16[10]	supported	audio.h;asm;xrefs	VAB IDs
+KfAudioVoiceSlots	0x28	0x14	programs	s16[10]	supported	audio.h;asm;xrefs	program numbers
+KfAudioVoiceSlots	0x3c	0x14	tones	s16[10]	supported	audio.h;asm;xrefs	tone numbers
+KfAudioVoiceSlots	0x50	0x14	notes	s16[10]	supported	audio.h;asm;xrefs	note numbers
 KfCameraPathPoint	0x00	0x10	position	VECTOR	supported	semantic_types.h;asm;xrefs	path position
 KfCameraPathPoint	0x10	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;xrefs	path rotation
 KfCameraPathPoint	0x18	0x02	speed	s16	supported	semantic_types.h;asm;xrefs	segment speed
@@ -633,6 +633,6 @@ KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	semantic_types.h;game_sem
 KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
 KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	semantic_types.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
 KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-SoundRef	0x00	0x01	program	u8	supported	semantic_types.h;Psy-Q-LIBSND	program number
-SoundRef	0x01	0x01	tone	u8	supported	semantic_types.h;Psy-Q-LIBSND	tone number
-SoundRef	0x02	0x01	note	u8	supported	semantic_types.h;Psy-Q-LIBSND	note number
+SoundRef	0x00	0x01	program	u8	supported	audio.h;Psy-Q-LIBSND	program number
+SoundRef	0x01	0x01	tone	u8	supported	audio.h;Psy-Q-LIBSND	tone number
+SoundRef	0x02	0x01	note	u8	supported	audio.h;Psy-Q-LIBSND	note number

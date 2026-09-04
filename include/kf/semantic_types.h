@@ -3,6 +3,7 @@
 
 #include <kf/game_types.h>
 #include <kf/psyq.h>
+#include <kf/audio.h>
 
 /*
  * Layout identities supported by the semantic inventory. Their original
@@ -100,20 +101,6 @@ typedef struct KfCollisionTarget {
     u16 radius;
     u8 unknown_1a[0x06];
 } KfCollisionTarget;
-
-typedef struct SoundRef {
-    u8 program;
-    u8 tone;
-    u8 note;
-} SoundRef;
-
-typedef struct KfAudioVoiceSlots {
-    s16 voice_ids[10];
-    s16 vab_ids[10];
-    s16 programs[10];
-    s16 tones[10];
-    s16 notes[10];
-} KfAudioVoiceSlots;
 
 /*
  * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
@@ -701,29 +688,6 @@ typedef struct KfActorState {
 } KfActorState;
 
 /* === end actor === */
-/* === map-audio layouts === */
-
-/*
- * One aggregate holds the audio runtime state at 0x80095868. audio_initialize
- * derives the voice-id slot address from the sequence-buffer field with a
- * plain `addiu 54`, which a compiler can only do inside one object; the former
- * separate identities are its fields.
- */
-typedef struct KfAudioState {
-    u8 *vab_header;
-    s16 active_vab_id;
-    u8 unknown_06[2];
-    u8 *sequence_buffer;
-    s16 sequence_id;
-    u8 unknown_0e[2];
-    s32 sequence_active;
-    VECTOR listener_position;
-    SVECTOR listener_rotation;
-    KfAudioVoiceSlots voice_slots;
-} KfAudioState;
-
-/* === end map-audio === */
-
 /* One reversed ordering table of 0x4000 entries (ClearOTagR/DrawOTag). */
 typedef struct KfOrderingTable {
     u32 entries[0x4000];
