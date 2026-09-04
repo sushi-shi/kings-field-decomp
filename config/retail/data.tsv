@@ -5212,7 +5212,9 @@ OPEN.EXE	0x8003588c	0x2408c	0x6	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x80035892	0x24092	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80035894	0x24094	0x36	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800358ca	0x240ca	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800358cc	0x240cc	0x1b8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800358cc	0x240cc	0x78	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035944	0x24144	0xa0	defined	reviewed	color_matrix_table	MATRIX[5]	manual:open_semantic_render_init	five 32-byte colour-matrix presets selected directly or through lighting_set_active_color_matrix
+OPEN.EXE	0x800359e4	0x241e4	0xa0	unclassified	coverage-gap			payload-complement	starts with a separately referenced light MATRIX and continues into LIBCD callback state; ownership remains unresolved
 OPEN.EXE	0x80035a84	0x24284	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80035a88	0x24288	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80035a8c	0x2428c	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -5348,7 +5350,7 @@ OPEN.EXE	0x800372dc	0x25adc	0x5	string	byte-pattern		ascii	manual:open_cd_file	e
 OPEN.EXE	0x800372e1	0x25ae1	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372e4	0x25ae4	0x3	string	byte-pattern		ascii	manual:open_cd_file	escaped text: ;1 including terminator
 OPEN.EXE	0x800372e7	0x25ae7	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800372e8	0x25ae8	0x7	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\END.
+OPEN.EXE	0x800372e8	0x25ae8	0x8	string	reviewed	opening_ending_sequence_path	char[8]	manual:open_semantic_resources	B0\\END. sequence path including its terminating NUL
 OPEN.EXE	0x800372ef	0x25aef	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372f3	0x25af3	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800372f4	0x25af4	0x7	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

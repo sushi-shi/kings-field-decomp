@@ -13,6 +13,7 @@ extern DISPENV display_disp_environments[2];
 extern u32 *ordering_table;
 extern SVECTOR *current_tmd_vertices;
 extern MATRIX light_quadrant_matrices[4];
+extern MATRIX color_matrix_table[5];
 
 extern u32 DAT_800439d8;
 extern u16 DAT_8006da36;
@@ -22,6 +23,7 @@ extern u32 DAT_8006e040;
 extern u32 DAT_8006e044;
 extern u32 DAT_80075928;
 
+extern void lighting_set_active_color_matrix(s32 index);
 extern void render_initialize(void);
 extern void display_begin_frame(void);
 extern void display_present_frame(void);

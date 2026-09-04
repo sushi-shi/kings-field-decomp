@@ -51,7 +51,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 509)
         self.assertEqual(counts["typed_returns"], 509)
         self.assertEqual(counts["parameterized"], 322)
-        self.assertEqual(counts["data"], 3200)
+        self.assertEqual(counts["data"], 3202)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 67)
@@ -735,7 +735,7 @@ class InventoryTests(unittest.TestCase):
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        self.assertEqual(len(evidence_rows), 9)
+        self.assertEqual(len(evidence_rows), 14)
         for row in evidence_rows:
             identity = identities[(row["image"], parse_int(row["va"]))]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
@@ -750,7 +750,7 @@ class InventoryTests(unittest.TestCase):
             for row in relocation_rows
             if "manual:open_semantic_resources" in row["provenance"].split(";")
         ]
-        self.assertEqual(len(campaign_rows), 33)
+        self.assertEqual(len(campaign_rows), 73)
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         calls = [row for row in campaign_rows if row["opcode"] == "jal"]
         self.assertNotIn("", {row["target_name"] for row in calls})
@@ -759,9 +759,9 @@ class InventoryTests(unittest.TestCase):
             row
             for row in relocation_rows
             if row["image"] == "OPEN.EXE"
-            and 0x80016348 <= parse_int(row["site_va"]) < 0x80016510
+            and 0x80016348 <= parse_int(row["site_va"]) < 0x800168DC
         ]
-        self.assertEqual(len(loader_rows), 27)
+        self.assertEqual(len(loader_rows), 90)
         self.assertEqual({row["status"] for row in loader_rows}, {"reviewed"})
         loader_calls = [row for row in loader_rows if row["opcode"] == "jal"]
         self.assertNotIn("", {row["target_name"] for row in loader_calls})
@@ -780,6 +780,43 @@ class InventoryTests(unittest.TestCase):
                 (identity.name, identity.storage, identity.datatype, identity.size),
                 (name, "bss", "u8[100][100]", 0x2710),
             )
+
+    def test_open_render_init_campaign_is_exactly_modeled(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_render_init.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";")) or "void"
+        self.assertEqual(
+            row["final_signature"],
+            f"{identity.return_type} {identity.name}({parameters})",
+        )
+        self.assertIn(evidence_path.name, identity.evidence)
+
+        data = load_data_identities(RETAIL_CONFIG)
+        table = data[("OPEN.EXE", 0x80035944)]
+        self.assertEqual(
+            (table.name, table.storage, table.datatype, table.size),
+            ("color_matrix_table", "load", "MATRIX[5]", 0xA0),
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if row["provenance"] == "manual:open_semantic_render_init"
+        ]
+        self.assertEqual(len(campaign_rows), 3)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        by_site = {parse_int(row["site_va"]): row for row in campaign_rows}
+        self.assertEqual(by_site[0x800168E8]["target_name"], "color_matrix_table")
+        self.assertEqual(by_site[0x800168F0]["target_name"], "SetColorMatrix")
+        self.assertEqual(
+            by_site[0x80016C54]["target_name"],
+            "lighting_set_active_color_matrix",
+        )
 
     def test_map_resources_relocations_and_data_are_reviewed(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

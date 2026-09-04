@@ -2732,6 +2732,7 @@ OPEN.EXE	0x80035882	0x2	DAT_80035882	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x8003588a	0x2	DAT_8003588a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035892	0x2	DAT_80035892	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800358ca	0x2	DAT_800358ca	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80035944	0xa0	color_matrix_table	global	load	MATRIX[5]	lighting	supported	open_semantic_render_init.tsv;asm;xrefs;SetColorMatrix;32-byte-stride	five OPEN colour-matrix presets; the following MATRIX at 0x800359e4 is separately consumed by SetLightMatrix
 OPEN.EXE	0x80035a84	0x4	DAT_80035a84	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035a88	0x4	DAT_80035a88	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035a8c	0x4	DAT_80035a8c	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2828,6 +2829,7 @@ OPEN.EXE	0x800372a4	0x4	DAT_800372a4	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x800372d0	0x4	DAT_800372d0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372dc	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	"\\KF\\": five bytes copied to the head of the OPEN CD path buffer before the file name
 OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	";1": ISO 9660 version suffix appended to every OPEN CD path
+OPEN.EXE	0x800372e8	0x8	opening_ending_sequence_path	unknown	load	char[8]	opening_resources	supported	open_semantic_resources.tsv;asm;direct-bytes;sole-xref	B0\\END. sequence path used by the ending resource loader
 OPEN.EXE	0x800372f3	0x1	DAT_800372f3	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800372fb	0x1	DAT_800372fb	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037304	0x4	DAT_80037304	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2913,8 +2915,8 @@ OPEN.EXE	0x800375cc	0x4	DAT_800375cc	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x800375d0	0x4	DAT_800375d0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375d4	0x4	DAT_800375d4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375d8	0x4	cd_read_location	unknown	load	CdlLOC	cd_file	supported	open_semantic_cd_file.tsv;asm;CdControl	CdlLOC receiving the searched file's minute, second, and sector before CdlSetloc; the fourth byte is not rewritten by these helpers
-OPEN.EXE	0x800375e0	0x4	DAT_800375e0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800375e8	0x4	DAT_800375e8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800375e0	0x4	opening_scene1_arena_cursor	unknown	load	u8 *	opening_resources	supported	open_semantic_resources.tsv;asm;xrefs;scene1-save;scene3-restore	post-VAB arena boundary saved by the scene-one loader and restored before the scene-three resource transition
+OPEN.EXE	0x800375e8	0x4	opening_ending_arena_cursor	unknown	load	u8 *	opening_resources	supported	open_semantic_resources.tsv;asm;xrefs;ending-save;continuation-restore	retained ending VAB arena boundary saved by the ending loader and restored by the following resource continuation
 OPEN.EXE	0x800375f0	0x1	DAT_800375f0	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375f1	0x1	DAT_800375f1	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800375f2	0x1	DAT_800375f2	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

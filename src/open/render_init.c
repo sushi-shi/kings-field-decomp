@@ -3,16 +3,32 @@
 #include <kf/memory.h>
 #include <kf/open_render.h>
 
+DATA(0x80035944, 0xa0)
+MATRIX color_matrix_table[5] = {
+    {{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}, {0, 0, 0}},
+    {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {0, 0, 0}},
+    {{{4095, 4095, 4095}, {4095, 4095, 4095}, {4095, 4095, 4095}}, {0, 0, 0}},
+    {{{170, 682, 682}, {170, 341, 341}, {0, 0, 0}}, {0, 0, 0}},
+    {{{0, 0, 0}, {375, 375, 375}, {0, 0, 0}}, {0, 0, 0}},
+};
+
 /*
- * OPEN.EXE render initialisation. The two functions linked after this body
- * (display-environment setup at 0x80016adc and the primitive allocator at
- * 0x80016cb4) are not reconstructed, so this remains a separate WIP unit.
+ * OPEN.EXE render initialisation. The preceding colour-preset selector shares
+ * the same matrix state and initialization caller. The two functions linked
+ * after this body (display-environment setup at 0x80016adc and the primitive
+ * allocator at 0x80016cb4) are not reconstructed, so this remains a WIP unit.
  * Shared state and the GAME homolog support the render-family interface, not
  * an original TU boundary. This variant loads B0\RTBL., budgets a larger
  * primitive buffer, keeps no light-matrix copy, and sets one texture page.
  */
 
 RODATA(0x80012110, 0xc)
+
+ADDRESS(0x800168dc, 0x2c)
+void lighting_set_active_color_matrix(s32 index)
+{
+    SetColorMatrix(&color_matrix_table[index]);
+}
 
 ADDRESS(0x80016908, 0x1d4)
 void render_initialize(void)
@@ -34,13 +50,13 @@ void render_initialize(void)
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[0]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[0]);
     angles.vy = 0xc00;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[3]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[3]);
     angles.vy = 0x800;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[2]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[2]);
     angles.vy = 0x400;
-    RotMatrix(&angles, (MATRIX *)&render_state.quadrant_matrices[1]);
+    RotMatrix(&angles, &render_state.quadrant_matrices[1]);
     render_state.light_matrix.m[0][0] = 3800;
     render_state.light_matrix.m[0][1] = -2800;
     render_state.light_matrix.m[0][2] = 0;
@@ -51,21 +67,21 @@ void render_initialize(void)
     render_state.light_matrix.m[2][1] = 2700;
     render_state.light_matrix.m[2][2] = 800;
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[0],
-        (MATRIX *)&light_quadrant_matrices[0]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[0],
+        &light_quadrant_matrices[0]);
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[1],
-        (MATRIX *)&light_quadrant_matrices[1]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[1],
+        &light_quadrant_matrices[1]);
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[2],
-        (MATRIX *)&light_quadrant_matrices[2]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[2],
+        &light_quadrant_matrices[2]);
     MulMatrix0(
-        (MATRIX *)&render_state.light_matrix,
-        (MATRIX *)&render_state.quadrant_matrices[3],
-        (MATRIX *)&light_quadrant_matrices[3]);
+        &render_state.light_matrix,
+        &render_state.quadrant_matrices[3],
+        &light_quadrant_matrices[3]);
     DAT_8006da38 = GetTPage(1, 0, 0x340, 0);
     DAT_8006da36 = 0x7a00;
 }

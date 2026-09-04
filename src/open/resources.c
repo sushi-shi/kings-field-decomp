@@ -9,7 +9,16 @@
 #include <kf/psyq.h>
 #include <kf/resources.h>
 
-RODATA(0x8001205c, 0x24)
+DATA(0x800372e8, 0x8)
+char opening_ending_sequence_path[8] = "B0\\END.";
+
+DATA(0x800375e0, 0x4)
+u8 *opening_scene1_arena_cursor = 0;
+
+DATA(0x800375e8, 0x4)
+u8 *opening_ending_arena_cursor = 0;
+
+RODATA(0x8001205c, 0xb4)
 
 /* A resource chunk stores its payload byte length before the payload. */
 #define STREAM_NEXT(stream) ((stream) += *(u32 *)(stream) + 4)
@@ -83,4 +92,104 @@ void opening_resources_load_scene0(void)
     tmd_register(0, STREAM_NEXT(stream) + 4);
     STREAM_NEXT(stream);
     memory_set_allocation_mode(2);
+}
+
+ADDRESS(0x80016510, 0xb4)
+void opening_resources_load_scene1(void)
+{
+    u8 *stream;
+    u8 *vab_chunk;
+
+    audio_stop_sequence(1);
+    audio_close_vab();
+    memory_allocation_reset();
+    cd_file_load_allocated((void **)&stream, "B0\\MIXA1.");
+    audio_load_vab(stream + 4, (vab_chunk = STREAM_NEXT(stream)) + 4);
+    STREAM_NEXT(stream);
+    memory_release_last();
+    opening_scene1_arena_cursor = vab_chunk + 16;
+    memory_arena_cursor = opening_scene1_arena_cursor;
+    memory_set_allocation_mode(2);
+    audio_play_sequence_file("B0\\OPEN1.");
+}
+
+ADDRESS(0x800165c4, 0xf0)
+void opening_resources_load_scene3(void)
+{
+    u8 *tim_stream;
+    u8 *stream;
+
+    memory_allocation_reset();
+    memory_arena_cursor = opening_scene1_arena_cursor;
+    audio_play_sequence_file("B0\\OPEN3.");
+    cd_file_load_allocated((void **)&tim_stream, "B0\\MIX3.");
+    tim_upload_images((u_long *)tim_stream);
+    memory_release_last();
+    cd_file_load_allocated((void **)&stream, "B0\\MIXA3.");
+    opening_entity_pool_load_placements(
+        (const KfMapObjectPlacement *)(stream + 4), -10000);
+    STREAM_NEXT(stream);
+    memory_release_last();
+    cd_file_load_allocated((void **)&stream, "B0\\MIXB3.");
+    tmd_register(1, stream + 4);
+    STREAM_NEXT(stream);
+    memory_release_last();
+    memory_set_allocation_mode(2);
+}
+
+ADDRESS(0x800166b4, 0x134)
+void opening_resources_load_ending(void)
+{
+    u8 *tim_stream;
+    u8 *stream;
+    u8 *vab_chunk;
+    u8 **arena_cursor = &memory_arena_cursor;
+
+    memory_allocation_reset();
+    cd_file_load_allocated((void **)&tim_stream, "B0\\MIX9.");
+    tim_upload_images((u_long *)tim_stream);
+    memory_release_last();
+    cd_file_load_allocated((void **)&stream, "B0\\MIXAE.");
+    audio_load_vab(stream + 4, (vab_chunk = STREAM_NEXT(stream)) + 4);
+    opening_entity_pool_load_placements(
+        (const KfMapObjectPlacement *)(STREAM_NEXT(stream) + 4), -10000);
+    STREAM_NEXT(stream);
+    memory_release_last();
+    *arena_cursor = vab_chunk + 16;
+    audio_play_sequence_file(opening_ending_sequence_path);
+    cd_file_load_allocated((void **)&stream, "B0\\MIXBE.");
+    tmd_register(1, stream + 4);
+    STREAM_NEXT(stream);
+    opening_ending_arena_cursor = *arena_cursor;
+    memory_set_allocation_mode(2);
+}
+
+ADDRESS(0x800167e8, 0x58)
+void opening_resources_load_ending_entities(void)
+{
+    u8 *stream;
+
+    cd_file_load_allocated((void **)&stream, "B0\\MIXAF.");
+    opening_entity_pool_load_placements(
+        (const KfMapObjectPlacement *)(stream + 4), -10000);
+    STREAM_NEXT(stream);
+    memory_release_last();
+}
+
+ADDRESS(0x80016840, 0x9c)
+void opening_resources_load_ending_sequence(void)
+{
+    u8 *stream;
+    u8 *vab_chunk;
+    u8 **arena_cursor = &memory_arena_cursor;
+
+    audio_stop_sequence(0);
+    audio_close_vab();
+    memory_allocation_reset();
+    *arena_cursor = opening_ending_arena_cursor;
+    cd_file_load_allocated((void **)&stream, "B0\\MIXAG.");
+    audio_load_vab(stream + 4, (vab_chunk = STREAM_NEXT(stream)) + 4);
+    memory_release_last();
+    *arena_cursor = vab_chunk + 16;
+    audio_play_sequence_file("B0\\ENDG.");
 }
