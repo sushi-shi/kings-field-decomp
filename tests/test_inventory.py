@@ -335,6 +335,23 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, equipment_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_player_layouts_live_in_the_player_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        player_header = (REPO / "include/kf/game_player.h").read_text()
+        self.assertNotIn("#include <kf/semantic_types.h>", player_header)
+        for structure in (
+            "KfPlayerProgressState",
+            "KfPlayerLevelGrowth",
+            "KfPlayerVitals",
+            "KfPlayerAttackChargeState",
+            "KfPlayerMotionState",
+            "KfPlayerState",
+            "KfFloorEntryCell",
+        ):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, player_header)
+            self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

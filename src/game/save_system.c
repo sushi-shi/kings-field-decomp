@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_save.h>
+#include <kf/game_player.h>
 #include <kf/psyq_audio.h>
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>

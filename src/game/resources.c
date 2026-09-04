@@ -2,6 +2,7 @@
 #include <kf/resources.h>
 #include <kf/game_equipment.h>
 #include <kf/game_map.h>
+#include <kf/game_player.h>
 #include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>

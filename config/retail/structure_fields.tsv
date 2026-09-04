@@ -214,8 +214,8 @@ KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_effe
 KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
-KfFloorEntryCell	0x00	0x1	x	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.x
-KfFloorEntryCell	0x01	0x1	z	u8	supported	semantic_types.h;asm;xrefs	copied into previous_map_cell.z
+KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.x
+KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
 KfFloorItem	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id copied from the placement record
 KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
 KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
@@ -339,109 +339,109 @@ KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;as
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	semantic_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	game_math.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	game_math.h;asm;xrefs	yaw angle
-KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	semantic_types.h;asm;xrefs	current POWER charge
-KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	semantic_types.h;asm;xrefs	attack-time POWER snapshot
-KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	level maximum HP
-KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	level maximum MP
-KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	semantic_types.h;asm;xrefs	physical-power increment
-KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	semantic_types.h;asm;xrefs	magic increment
-KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	semantic_types.h;asm;xrefs	cumulative level threshold
-KfPlayerMotionState	0x00	0x02	strafe_velocity	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
-KfPlayerMotionState	0x02	0x02	forward_velocity	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
-KfPlayerMotionState	0x04	0x02	movement_speed	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
-KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
-KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
-KfPlayerProgressState	0x00	0x01	level	u8	supported	semantic_types.h;asm;xrefs	player level
-KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	semantic_types.h;asm;xrefs	current dungeon floor
-KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	semantic_types.h;asm;xrefs	highest reached floor
-KfPlayerState	0x00	0x04	experience	s32	supported	semantic_types.h;data_identities.tsv;slt-compares	member of the player_state aggregate
-KfPlayerState	0x04	0x04	next_level_experience	s32	supported	semantic_types.h;data_identities.tsv;slt-compares	member of the player_state aggregate
-KfPlayerState	0x08	0x04	progress_state	KfPlayerProgressState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x0c	0x01	map_variant	u8	supported	semantic_types.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
-KfPlayerState	0x0d	0x01	unknown_0d	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x0e	0x01	weapon_charge_delay	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x0f	0x01	unknown_0f	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x10	0x08	vitals	KfPlayerVitals	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x18	0x04	attack_charge_state	KfPlayerAttackChargeState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x1c	0x02	magic_charge	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x1e	0x02	physical_power_training	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x20	0x02	magic_training	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x22	0x02	base_physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x24	0x02	base_magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x26	0x02	physical_power	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x28	0x02	magic	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x2c	0x04	gold	u32	supported	semantic_types.h;asm;menu;item-buy-sell	player gold total
-KfPlayerState	0x30	0x02	attack_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x32	0x02	attack_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x34	0x02	attack_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x36	0x02	attack_component3	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x38	0x02	attack_component4	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x42	0x02	status_effect2_resistance	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4c	0x02	status_effect2_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4e	0x02	status_effect3_timer	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x50	0x02	status_effect4_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
-KfPlayerState	0x52	0x02	light_effect_timer	s16	supported	semantic_types.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
-KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x58	0x04	unknown_58	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x74	0x04	unknown_74	u32	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x78	0x01	unknown_78	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x79	0x01	unknown_79	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7c	0x04	equipped_shield_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x80	0x04	equipped_head_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x84	0x04	equipped_body_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x98	0x02	unknown_98	u8[2]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xa2	0x01	update_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb4	0x04	floor_height	s32	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xce	0x06	unknown_ce	u8[6]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0xd4	0x02	view_bob_offset	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xd6	0x02	view_bob_phase	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xd8	0x02	death_camera_pitch_step	u16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xda	0x02	death_visual_blend	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xdc	0x02	vertical_velocity	s16	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xde	0x01	vertical_state	u8	supported	semantic_types.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xdf	0x01	unknown_df	u8[1]	opaque	semantic_types.h;data_identities.tsv	unresolved bytes
-KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	semantic_types.h;asm;xrefs	maximum HP
-KfPlayerVitals	0x02	0x02	current_hp	u16	supported	semantic_types.h;asm;xrefs	current HP
-KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	semantic_types.h;asm;xrefs	maximum MP
-KfPlayerVitals	0x06	0x02	current_mp	u16	supported	semantic_types.h;asm;xrefs	current MP
+KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
+KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	game_player.h;asm;xrefs	attack-time POWER snapshot
+KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	level maximum HP
+KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	level maximum MP
+KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	game_player.h;asm;xrefs	physical-power increment
+KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	game_player.h;asm;xrefs	magic increment
+KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	game_player.h;asm;xrefs	cumulative level threshold
+KfPlayerMotionState	0x00	0x02	strafe_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
+KfPlayerMotionState	0x02	0x02	forward_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
+KfPlayerMotionState	0x04	0x02	movement_speed	u16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
+KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
+KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
+KfPlayerProgressState	0x00	0x01	level	u8	supported	game_player.h;asm;xrefs	player level
+KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	game_player.h;asm;xrefs	meaning unresolved
+KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	game_player.h;asm;xrefs	current dungeon floor
+KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	game_player.h;asm;xrefs	highest reached floor
+KfPlayerState	0x00	0x04	experience	s32	supported	game_player.h;data_identities.tsv;slt-compares	member of the player_state aggregate
+KfPlayerState	0x04	0x04	next_level_experience	s32	supported	game_player.h;data_identities.tsv;slt-compares	member of the player_state aggregate
+KfPlayerState	0x08	0x04	progress_state	KfPlayerProgressState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x0c	0x01	map_variant	u8	supported	game_player.h;data_identities.tsv;game_semantic_map_resources.tsv;asm;xrefs	current floor-five map/resource variant and CHR filename digit
+KfPlayerState	0x0d	0x01	unknown_0d	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x0e	0x01	weapon_charge_delay	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x0f	0x01	unknown_0f	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x10	0x08	vitals	KfPlayerVitals	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x18	0x04	attack_charge_state	KfPlayerAttackChargeState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x1c	0x02	magic_charge	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x1e	0x02	physical_power_training	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x20	0x02	magic_training	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x22	0x02	base_physical_power	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x24	0x02	base_magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x26	0x02	physical_power	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x28	0x02	magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x2c	0x04	gold	u32	supported	game_player.h;asm;menu;item-buy-sell	player gold total
+KfPlayerState	0x30	0x02	attack_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x32	0x02	attack_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x34	0x02	attack_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x36	0x02	attack_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x38	0x02	attack_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x42	0x02	status_effect2_resistance	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4c	0x02	status_effect2_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4e	0x02	status_effect3_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x50	0x02	status_effect4_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
+KfPlayerState	0x52	0x02	light_effect_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering
+KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x58	0x04	unknown_58	u32	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x74	0x04	unknown_74	u32	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x78	0x01	unknown_78	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x79	0x01	unknown_79	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x7c	0x04	equipped_shield_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x80	0x04	equipped_head_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x84	0x04	equipped_body_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x98	0x02	unknown_98	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xa2	0x01	update_state	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb4	0x04	floor_height	s32	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xce	0x06	unknown_ce	u8[6]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerState	0xd4	0x02	view_bob_offset	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xd6	0x02	view_bob_phase	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xd8	0x02	death_camera_pitch_step	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xda	0x02	death_visual_blend	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xdc	0x02	vertical_velocity	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xde	0x01	vertical_state	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xdf	0x01	unknown_df	u8[1]	opaque	game_player.h;data_identities.tsv	unresolved bytes
+KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	maximum HP
+KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game_player.h;asm;xrefs	current HP
+KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	maximum MP
+KfPlayerVitals	0x06	0x02	current_mp	u16	supported	game_player.h;asm;xrefs	current MP
 KfPoolRecord	0x00	0x02	state	s16	supported	game_types.h;asm;xrefs	allocation state
 KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	game_types.h;asm;xrefs	meaning unresolved
 KfPoolRecord	0x04	0x02	value_04	u16	candidate	game_types.h;asm;xrefs	accessed value; exact meaning unresolved

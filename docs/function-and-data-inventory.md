@@ -211,9 +211,11 @@ layouts are owned with their loader interface by `include/kf/item.h`.
 `include/kf/magic.h`; and the runtime and rendering views of the effect-pool
 record are owned by `include/kf/game_effect.h`. `KfWeaponRecord` and
 `KfArmorRecord` are owned with their consecutive resource loaders by
-`include/kf/game_equipment.h`.
-The remaining checked player, collision, and render-state layouts still live
-in `include/kf/semantic_types.h`. Their sizes are
+`include/kf/game_equipment.h`. The player progress, growth, vitals, charge,
+motion, saved-state, and floor-entry layouts are owned with the player globals
+and operations by `include/kf/game_player.h`.
+The remaining checked collision and render-state layouts still live in
+`include/kf/semantic_types.h`. Their sizes are
 checked against `config/retail/structures.tsv` by `kf inventory check`;
 inventory-only vectors such as `KfVec4s` and `KfVec4i` do not acquire C
 declarations until a reconstructed interface needs them, and established
