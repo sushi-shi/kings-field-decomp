@@ -1,6 +1,6 @@
 #include <kf/address.h>
 #include <kf/memory.h>
-#include <kf/open_debug.h>
+#include <kf/debug.h>
 #include <kf/open_render.h>
 
 /*

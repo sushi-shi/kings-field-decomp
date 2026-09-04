@@ -20,6 +20,11 @@ unreferenced return stubs. It supports their body-level signatures while
 deliberately leaving purpose, ownership, and the return-carved stub boundaries
 unresolved.
 
+`game_open_semantic_diagnostic_sink.tsv` records the identical no-op variadic
+sink in both overlays. Caller formats and the four O32 argument-home stores
+support one shared internal prototype while the archive controls reject Sony
+provider ownership.
+
 `game_semantic_audio_control.tsv` records the per-function retail, caller,
 string, shared-state, and Psy-Q 2.5 header evidence for GAME audio
 initialization, VAB loading, and sequence lifecycle policy. API-name candidates
