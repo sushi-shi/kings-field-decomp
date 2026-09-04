@@ -467,9 +467,11 @@ def _bank_rows(
     rows: list[Current],
     old: dict[tuple[str, int], dict[str, str]],
     selected_units: Iterable[str] | None = None,
+    selected_functions: Iterable[tuple[str, int]] | None = None,
 ) -> list[dict[str, str | int]]:
-    requested = set(selected_units or ())
-    if not requested:
+    requested_units = set(selected_units or ())
+    requested_functions = set(selected_functions or ())
+    if not requested_units and not requested_functions:
         output = {
             (row.target.image, row.target.va): _bank_record(row, old.get(
                 (row.target.image, row.target.va)
@@ -479,20 +481,34 @@ def _bank_rows(
         }
     else:
         present = {row.unit.unit for row in rows}
-        missing = sorted(requested - present)
-        if missing:
-            raise ValueError("unknown bank unit(s): " + ", ".join(missing))
-        selected = [row for row in rows if row.unit.unit in requested]
+        missing_units = sorted(requested_units - present)
+        if missing_units:
+            raise ValueError("unknown bank unit(s): " + ", ".join(missing_units))
+        present_functions = {
+            (row.target.image, row.target.va) for row in rows
+        }
+        missing_functions = sorted(requested_functions - present_functions)
+        if missing_functions:
+            shown = ", ".join(
+                f"{image_key(image)}:{format_hex(va)}"
+                for image, va in missing_functions
+            )
+            raise ValueError("unknown bank function(s): " + shown)
+        selected = [
+            row for row in rows
+            if row.unit.unit in requested_units
+            or (row.target.image, row.target.va) in requested_functions
+        ]
         unscored = [row for row in selected if not row.scored or row.pct is None]
         if unscored:
             raise ValueError(
-                "selected bank unit has unscored function(s): "
+                "selected bank target has unscored function(s): "
                 + ", ".join(row.target.name for row in unscored)
             )
         nonexact = [row for row in selected if row.pct != 100.0]
         if nonexact:
             raise ValueError(
-                "selected bank unit is not exact: "
+                "selected bank target is not exact: "
                 + ", ".join(
                     f"{row.target.name}={row.pct:.9f}%" for row in nonexact
                 )
@@ -509,7 +525,10 @@ def _bank_rows(
 
 
 def bank(
-    *, allow_dirty: bool = False, selected_units: Iterable[str] | None = None,
+    *,
+    allow_dirty: bool = False,
+    selected_units: Iterable[str] | None = None,
+    selected_functions: Iterable[tuple[str, int]] | None = None,
 ) -> int:
     dirty = _dirty_inputs()
     if dirty and not allow_dirty:
@@ -522,8 +541,9 @@ def bank(
     if failures:
         raise ValueError("refusing to bank: " + "; ".join(failures))
     old = load_baseline()
-    selected = tuple(dict.fromkeys(selected_units or ()))
-    output = _bank_rows(rows, old, selected)
+    units = tuple(dict.fromkeys(selected_units or ()))
+    functions = tuple(dict.fromkeys(selected_functions or ()))
+    output = _bank_rows(rows, old, units, functions)
     write_tsv(
         BASELINE,
         BASELINE_FIELDS,
@@ -536,8 +556,12 @@ def bank(
     from scripts.kf.readme import refresh as refresh_readme
 
     refreshed = refresh_readme()
-    if selected:
-        count = sum(row.unit.unit in selected for row in rows)
+    if units or functions:
+        count = sum(
+            row.unit.unit in units
+            or (row.target.image, row.target.va) in functions
+            for row in rows
+        )
         print(
             f"banked {count} selected exact function(s) in "
             f"{BASELINE.relative_to(REPO)}"

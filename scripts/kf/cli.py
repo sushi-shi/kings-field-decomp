@@ -13,7 +13,7 @@ from scripts.kf.local_config import initialize
 from scripts.kf.manifest import load as load_manifest
 from scripts.kf.paths import BUILD, NINJA, REPO
 from scripts.kf.progress import bank, check, current_state, print_status
-from scripts.kf.retail import IMAGE_LAYOUTS
+from scripts.kf.retail import IMAGE_LAYOUTS, parse_int
 
 
 IMAGE_ALIASES = {image_key(image): image for image in IMAGE_LAYOUTS}
@@ -21,6 +21,19 @@ IMAGE_ALIASES = {image_key(image): image for image in IMAGE_LAYOUTS}
 
 def _images(values: list[str] | None) -> tuple[str, ...]:
     return tuple(IMAGE_ALIASES[value] for value in values) if values else tuple(IMAGE_LAYOUTS)
+
+
+def _bank_functions(values: list[str] | None) -> tuple[tuple[str, int], ...]:
+    selected: list[tuple[str, int]] = []
+    for value in values or ():
+        image, separator, address = value.partition(":")
+        if not separator or image not in IMAGE_ALIASES or not address:
+            raise ValueError(
+                f"invalid bank function {value!r}; expected IMAGE:VA "
+                "(for example game:0x800346a8)"
+            )
+        selected.append((IMAGE_ALIASES[image], parse_int(address)))
+    return tuple(selected)
 
 
 def _configure(args: argparse.Namespace) -> int:
@@ -140,6 +153,10 @@ def parser() -> argparse.ArgumentParser:
         "--unit", action="append",
         help="bank only this unit; every selected function must be exactly 100%%",
     )
+    bank_parser.add_argument(
+        "--function", action="append", metavar="IMAGE:VA",
+        help="bank only this image/address function; it must be exactly 100%%",
+    )
 
     sema_parser = subs.add_parser(
         "sema",
@@ -209,7 +226,11 @@ def main(argv: list[str] | None = None) -> int:
             )
         if args.command == "check":
             return check(_images(args.image), strict=args.strict)
-        return bank(allow_dirty=args.dirty, selected_units=args.unit)
+        return bank(
+            allow_dirty=args.dirty,
+            selected_units=args.unit,
+            selected_functions=_bank_functions(args.function),
+        )
     except (OSError, RuntimeError, ValueError) as error:
         print(f"kf {args.command}: {error}", file=sys.stderr)
         return 1

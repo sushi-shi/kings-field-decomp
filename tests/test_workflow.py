@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest import mock
 
 from scripts.kf import progress
+from scripts.kf.cli import _bank_functions
 from scripts.kf.delink import Function
 from scripts.kf.graph import _build_line, _write_generator
 from scripts.kf.manifest import Unit, load as load_manifest
@@ -172,6 +173,44 @@ class ProgressTests(unittest.TestCase):
         row = sample_current(99.999)
         with self.assertRaisesRegex(ValueError, "not exact"):
             _bank_rows([row], {}, (row.unit.unit,))
+
+    def test_selective_function_bank_preserves_unrelated_rows(self) -> None:
+        row = sample_current(100.0)
+        unrelated = {
+            "image": "OPEN.EXE",
+            "va": "0x80020000",
+            "unit": "open.unrelated",
+            "name": "unrelated",
+            "input_sha256": "b" * 64,
+            "best_pct": "80.000000000",
+            "hist_pct": "90.000000000",
+            "banked_pct": "80.000000000",
+            "code_size": "16",
+        }
+        old = {(unrelated["image"], int(unrelated["va"], 16)): unrelated}
+        identity = row.target.image, row.target.va
+        output = _bank_rows([row], old, selected_functions=(identity,))
+        by_identity = {
+            (item["image"], int(str(item["va"]), 16)): item for item in output
+        }
+        self.assertEqual(by_identity[("OPEN.EXE", 0x80020000)], unrelated)
+        self.assertEqual(by_identity[identity]["banked_pct"], "100.000000000")
+
+    def test_selective_function_bank_rejects_nonexact_function(self) -> None:
+        row = sample_current(99.999)
+        identity = row.target.image, row.target.va
+        with self.assertRaisesRegex(ValueError, "not exact"):
+            _bank_rows([row], {}, selected_functions=(identity,))
+
+    def test_bank_function_selector_uses_image_and_address(self) -> None:
+        self.assertEqual(
+            _bank_functions(["game:0x80010000", "open:0x80020000"]),
+            (("GAME.EXE", 0x80010000), ("OPEN.EXE", 0x80020000)),
+        )
+
+    def test_bank_function_selector_rejects_missing_image(self) -> None:
+        with self.assertRaisesRegex(ValueError, "expected IMAGE:VA"):
+            _bank_functions(["0x80010000"])
 
 
 class GraphTests(unittest.TestCase):
