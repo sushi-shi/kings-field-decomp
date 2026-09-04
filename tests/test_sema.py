@@ -6,6 +6,7 @@ from contextlib import redirect_stdout
 
 from scripts.kf.cli import main as cli_main
 from scripts.kf.sema import Context
+from scripts.kf.sema.addr import _render as render_address
 from scripts.kf.sema.cfg import build_graph
 from scripts.kf.sema.evidence import Evidence
 from scripts.kf.sema.image import RetailImage
@@ -49,6 +50,31 @@ def words(*values: int) -> bytes:
 
 
 class SemanticToolTests(unittest.TestCase):
+    def test_address_render_accepts_empty_parameter_field(self) -> None:
+        binding = function(0x80010000, 0x20).as_dict()
+        binding["return_type"] = "void"
+        binding["parameters"] = None
+        row = {
+            "va": 0x80010000,
+            "rva": 0,
+            "region": "text",
+            "file_offset": 0x800,
+            "label": binding["name"],
+            "binding": binding,
+            "offset": 0,
+            "in_body": True,
+            "incoming_counts": {"proven": 0, "validated": 0, "candidate": 0},
+            "outgoing_counts": {"proven": 0, "validated": 0, "candidate": 0},
+            "incoming": [],
+            "outgoing": [],
+        }
+
+        ctx = object.__new__(Context)
+        ctx.image = "GAME.EXE"
+        rendered = render_address(ctx, row)
+
+        self.assertIn("identity: void func_80010000(void)", rendered)
+
     def test_reviewed_xref_outranks_overlapping_candidate(self) -> None:
         evidence = object.__new__(Evidence)
         evidence.image = "GAME.EXE"
