@@ -958,6 +958,39 @@ class InventoryTests(unittest.TestCase):
             {"opening_camera_path_state"},
         )
 
+    def test_open_opening_scene1_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_opening_scene1.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 2)
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+            self.assertEqual(row["current_match"], "100.000000000% exact")
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if "manual:open_semantic_opening_scene1"
+            in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 21)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {row["target_name"] for row in campaign_rows})
+        self.assertEqual(
+            {
+                row["target_name"]
+                for row in campaign_rows
+                if parse_int(row["target_va"]) in {0x800143DC, 0x8001455C}
+            },
+            {"opening_scene1_draw_fade", "opening_scene1_run"},
+        )
+
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_resources.tsv"
         _, evidence_rows = read_tsv(evidence_path)

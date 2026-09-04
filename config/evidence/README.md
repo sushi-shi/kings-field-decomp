@@ -152,6 +152,12 @@ exactly. Frame stepping is complete semantic C at 97.777780%; after referents,
 calls, CFG, widths, constants, and instruction ordering agree, only a
 four-register permutation across independent Q4 lanes remains unattributed.
 
+`open_semantic_opening_scene1.tsv` records the contiguous OPEN scene-1 fade
+renderer and controller. It proves the two textured half-screen packets, their
+texture-page origins and shade width, the 0-to-128 and 128-to-0 transitions,
+the timed input interval, and both sequence-stop modes. Both functions match
+retail exactly.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five

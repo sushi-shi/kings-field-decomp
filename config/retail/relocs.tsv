@@ -11318,26 +11318,26 @@ OPEN.EXE	0x800143a4	0x2ba4	0x800143a8	mips_hi16_lo16	reachable-code	0x800757dc	b
 OPEN.EXE	0x800143ac	0x2bac		mips26	reachable-code	0x800194d8	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800143b4	0x2bb4		mips26	reachable-code	0x800142c4	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800143bc	0x2bbc		mips26	reachable-code	0x80019e24	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800143f0	0x2bf0		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800143f8	0x2bf8	0x800143fc	mips_hi16_lo16	reachable-code	0x80049a68	bss	display_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014414	0x2c14	0x80014418	mips_hi16_lo16	reachable-code	0x80049a68	bss	display_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001442c	0x2c2c		mips26	reachable-code	0x800340e0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014434	0x2c34		mips26	reachable-code	0x800340e0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014448	0x2c48		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014460	0x2c60		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001451c	0x2d1c	0x80014520	mips_hi16_lo16	reachable-code	0x80069a6c	bss	ordering_table	lui+addiu	s2	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014528	0x2d28		mips26	reachable-code	0x80033f74	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014534	0x2d34		mips26	reachable-code	0x80033f74	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001453c	0x2d3c		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80014568	0x2d68		mips26	reachable-code	0x80016510	load	opening_resources_load_scene1	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x80014574	0x2d74		mips26	reachable-code	0x800143dc	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001457c	0x2d7c		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x8001459c	0x2d9c		mips26	reachable-code	0x80019e24	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800145a4	0x2da4		mips26	reachable-code	0x800352c4	load	VSync	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x800145ac	0x2dac		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x800145b4	0x2db4	0x800145b8	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x800145d4	0x2dd4		mips26	reachable-code	0x80019e24	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800145e0	0x2de0		mips26	reachable-code	0x800143dc	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800143f0	0x2bf0		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene1
+OPEN.EXE	0x800143f8	0x2bf8	0x800143fc	mips_hi16_lo16	reachable-code	0x80049a68	bss	display_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014414	0x2c14	0x80014418	mips_hi16_lo16	reachable-code	0x80049a68	bss	display_state	lui+lw	v1	paired-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x8001442c	0x2c2c		mips26	reachable-code	0x800340e0	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014434	0x2c34		mips26	reachable-code	0x800340e0	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014448	0x2c48		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014460	0x2c60		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x8001451c	0x2d1c	0x80014520	mips_hi16_lo16	reachable-code	0x80069a6c	bss	ordering_table	lui+addiu	s2	paired-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014528	0x2d28		mips26	reachable-code	0x80033f74	load	AddPrim	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014534	0x2d34		mips26	reachable-code	0x80033f74	load	AddPrim	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x8001453c	0x2d3c		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014568	0x2d68		mips26	reachable-code	0x80016510	load	opening_resources_load_scene1	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_opening_scene1
+OPEN.EXE	0x80014574	0x2d74		mips26	reachable-code	0x800143dc	load	opening_scene1_draw_fade	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x8001457c	0x2d7c		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_opening_scene1
+OPEN.EXE	0x8001459c	0x2d9c		mips26	reachable-code	0x80019e24	load	audio_stop_sequence	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x800145a4	0x2da4		mips26	reachable-code	0x800352c4	load	VSync	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_opening_scene1
+OPEN.EXE	0x800145ac	0x2dac		mips26	reachable-code	0x80013c70	load	opening_poll_input	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_opening_scene1
+OPEN.EXE	0x800145b4	0x2db4	0x800145b8	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_opening_scene1
+OPEN.EXE	0x800145d4	0x2dd4		mips26	reachable-code	0x80019e24	load	audio_stop_sequence	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
+OPEN.EXE	0x800145e0	0x2de0		mips26	reachable-code	0x800143dc	load	opening_scene1_draw_fade	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
 OPEN.EXE	0x80014648	0x2e48		mips26	reachable-code	0x80014674	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001465c	0x2e5c		mips26	reachable-code	0x80014670	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80014668	0x2e68		mips26	reachable-code	0x80014674	load		j		control-flow	candidate	investigation:relocs.tsv
@@ -11560,7 +11560,7 @@ OPEN.EXE	0x80015814	0x4014		mips26	reachable-code	0x80016298	load	tim_upload_ima
 OPEN.EXE	0x8001581c	0x401c		mips26	reachable-code	0x80015fb0	load	memory_release_last	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015824	0x4024		mips26	reachable-code	0x80015878	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001582c	0x402c	0x80015830	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+sw	zero	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
-OPEN.EXE	0x80015834	0x4034		mips26	reachable-code	0x8001455c	load		jal		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80015834	0x4034		mips26	reachable-code	0x8001455c	load	opening_scene1_run	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
 OPEN.EXE	0x8001583c	0x403c	0x80015840	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers
 OPEN.EXE	0x80015858	0x4058		mips26	reachable-code	0x800157d0	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80015860	0x4060		mips26	reachable-code	0x80019e24	load		jal		control-flow	candidate	investigation:relocs.tsv
