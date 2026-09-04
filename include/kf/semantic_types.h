@@ -227,6 +227,21 @@ typedef struct KfScreenVertex {
     s16 p2;
 } KfScreenVertex;
 
+/* Animated screen-facing model entry; state 0xff terminates the two-row list. */
+typedef struct KfEffectSprite {
+    u8 state;
+    u8 visibility_tag;
+    u16 asset_variant;
+    u16 scale;
+    s16 translation_x;
+    s16 translation_y;
+    s16 translation_z;
+    u8 unknown_0c[2];
+    SVECTOR rotation;
+    u8 unknown_16[2];
+    u8 anchor[4];
+} KfEffectSprite;
+
 /*
  * Optional output from the world collision query.  The query copies a
  * transform from the selected player, actor, map object, or map event and

@@ -3556,7 +3556,7 @@ GAME.EXE	0x8001f894	0xe094		mips26	reachable-code	0x8001c7f8	load		jal		control-
 GAME.EXE	0x8001f8c4	0xe0c4		mips26	reachable-code	0x8004da04	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f8cc	0xe0cc	0x8001f8d0	mips_hi16_lo16	reachable-code	0x80095720	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_geometry_render
 GAME.EXE	0x8001f8d4	0xe0d4		mips26	reachable-code	0x8004d7e4	load	SetColorMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001f8e4	0xe0e4	0x8001f8e8	mips_hi16_lo16	reachable-code	0x80055d74	load		lui+addiu	s2	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001f8e4	0xe0e4	0x8001f8e8	mips_hi16_lo16	reachable-code	0x80055d74	load	effect_sprites	lui+addiu	s2	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
 GAME.EXE	0x8001f920	0xe120		mips26	reachable-code	0x8004e9b8	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f938	0xe138		mips26	reachable-code	0x8004d53c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f940	0xe140		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
@@ -3667,8 +3667,8 @@ GAME.EXE	0x800200f0	0xe8f0	0x800200f4	mips_hi16_lo16	reachable-code	0x80055cf6	l
 GAME.EXE	0x800200f8	0xe8f8	0x800200fc	mips_hi16_lo16	reachable-code	0x800a0819	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80020100	0xe900	0x80020104	mips_hi16_lo16	reachable-code	0x80095756	bss	render_state	lui+lhu	v0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x80020108	0xe908	0x8002010c	mips_hi16_lo16	reachable-code	0x80055d04	load	DAT_80055d04	lui+addiu	s0	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020114	0xe914	0x80020118	mips_hi16_lo16	reachable-code	0x80055d74	load	DAT_80055d74	lui+sb	at	paired-reachable	reviewed	investigation:relocs.tsv
-GAME.EXE	0x80020124	0xe924	0x80020128	mips_hi16_lo16	reachable-code	0x80055d86	load	DAT_80055d86	lui+sh	at	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x80020114	0xe914	0x80020118	mips_hi16_lo16	reachable-code	0x80055d74	load	effect_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
+GAME.EXE	0x80020124	0xe924	0x80020128	mips_hi16_lo16	reachable-code	0x80055d86	load	effect_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
 GAME.EXE	0x8002012c	0xe92c		mips26	reachable-code	0x8001f8b0	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x80020134	0xe934	0x80020138	mips_hi16_lo16	reachable-code	0x80095062	bss	DAT_80095062	lui+lhu	v1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8002013c	0xe93c	0x80020140	mips_hi16_lo16	reachable-code	0x80095060	bss	DAT_80095060	lui+lhu	a1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan

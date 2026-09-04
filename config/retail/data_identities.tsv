@@ -1383,18 +1383,7 @@ GAME.EXE	0x80055d3c	0x1	notification_sprite_2_active	global	load	u8	notify	suppo
 GAME.EXE	0x80055d4a	0x1	notification_sprite_3_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 3 active flag in the six-entry, 14-byte-stride notification sprite table
 GAME.EXE	0x80055d58	0x1	notification_sprite_4_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 4 active flag in the six-entry, 14-byte-stride notification sprite table
 GAME.EXE	0x80055d66	0x1	notification_sprite_5_active	global	load	u8	notify	supported	asm;xrefs;notify_effect_update	record 5 active flag in the six-entry, 14-byte-stride notification sprite table
-GAME.EXE	0x80055d74	0x1	DAT_80055d74	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d75	0x1	DAT_80055d75	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d76	0x2	DAT_80055d76	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d78	0x2	DAT_80055d78	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d7a	0x2	DAT_80055d7a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d7c	0x2	DAT_80055d7c	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d7e	0x2	DAT_80055d7e	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d86	0x2	DAT_80055d86	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d90	0x1	DAT_80055d90	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d96	0x2	DAT_80055d96	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d98	0x2	DAT_80055d98	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055d9a	0x2	DAT_80055d9a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055d74	0x38	effect_sprites	global	load	KfEffectSprite[2]	render_frame	supported	game_semantic_effect_sprites.tsv;retail-bytes;asm;xrefs	animated model-sprite list: one initialized row followed by a 0xff terminator; render_frame updates row zero state and screen-facing Z rotation
 GAME.EXE	0x80055dac	0x2	DAT_80055dac	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055dae	0x2	DAT_80055dae	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055db4	0x2	DAT_80055db4	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

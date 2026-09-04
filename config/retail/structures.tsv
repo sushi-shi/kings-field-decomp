@@ -19,6 +19,7 @@ KfDisplayState	0x20028	supported	semantic_types.h;game_semantic_display_tmd.tsv;
 KfDisplayStateOpen	0x20024	supported	semantic_types.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer is a separate global
 KfEffectRecord	0x3c	supported	asm;effect_pool_constructor;effect_pool_spawn_typed;map_object_pool_update	60-byte record in effect_pool_records; constructors fix the header, VECTOR position and rotation/scale/direction triples
 KfEffectRenderView	0x3c	supported	semantic_types.h;asm;render_actor_sprite;render_entities	60-byte rendering view of an effect_pool_records entry; reads low position halfwords and the sprite-specific header selectors
+KfEffectSprite	0x1c	supported	semantic_types.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
 KfEulerAngles	0x06	supported	semantic_types.h;asm;xrefs	three signed halfword angles
 KfFloorEntryCell	0x2	supported	semantic_types.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	semantic_types.h;asm;func_80020b4c	runtime floor-item table entry

@@ -14,9 +14,13 @@
  * reached by their individual identities.
  */
 
-/* HUD gauge record table (12 records, 14-byte stride, walked by render_hud_gauges). */
+/* HUD gauge table: thirteen drawable 14-byte rows followed by a terminator. */
 
-extern u8 DAT_80055d74;
+DATA(0x80055d74, 0x38)
+KfEffectSprite effect_sprites[2] = {
+    {1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, {0, 0, 0, 0}},
+    {0xff},
+};
 
 ADDRESS(0x8001fde4, 0x518)
 void render_frame(const VECTOR *position, const SVECTOR *rotation)
@@ -80,8 +84,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
 
     tint = &DAT_80055d04;
     *tint = player_state.unknown_98[1];
-    DAT_80055d74 = player_state.unknown_98[1];
-    DAT_80055d86 = -render_state.view_rotation.vy & 0xfff;
+    effect_sprites[0].state = player_state.unknown_98[1];
+    effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & 0xfff;
     render_effect_sprites();
 
     DAT_8009505a = DAT_80095062;

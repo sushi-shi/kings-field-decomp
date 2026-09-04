@@ -12,27 +12,6 @@
 /* Six light/color matrices fed to SetLightMatrix, one per render subsystem. */
 
 /*
- * One entry of the animated decal/sprite table at DAT_80055d74 (stride 28).
- * WIP: field roles beyond the transform inputs are unresolved, so the trailing
- * bytes stay opaque until the table's producers are reconstructed.
- */
-typedef struct KfEffectSprite {
-    u8 state;          /* +0: 1 while the slot is live */
-    u8 visibility_tag; /* +1 */
-    u16 asset_variant; /* +2 */
-    u16 scale;         /* +4: uniform X/Y scale numerator */
-    s16 translation_x; /* +6 */
-    s16 translation_y; /* +8 */
-    s16 translation_z; /* +10 */
-    u8 unknown_0c[2];  /* +12 */
-    SVECTOR rotation;  /* +14 */
-    u8 unknown_16[2];  /* +22 */
-    u8 anchor[4];      /* +24: visibility/projection anchor */
-} KfEffectSprite;
-
-extern KfEffectSprite DAT_80055d74[];
-
-/*
  * Draws the equipped weapon model held in the player's view.  Skips entirely
  * while no weapon swing is in progress (attack phase -1).  The weapon record
  * carries its own geometry-screen distance, an in-view translation, and a
@@ -95,7 +74,7 @@ void render_effect_sprites(void)
     ReadColorMatrix(&saved_color_matrix);
     SetColorMatrix(&render_state.unknown_80);
     scale.vz = 0x1000;
-    entry = DAT_80055d74;
+    entry = effect_sprites;
     while (entry->state == 1) {
         model.t[0] = entry->translation_x;
         model.t[1] = entry->translation_y;

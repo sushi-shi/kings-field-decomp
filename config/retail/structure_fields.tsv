@@ -200,6 +200,17 @@ KfEffectRenderView	0x28	0x02	scale_z	s16	supported	semantic_types.h;asm;render_a
 KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved bytes before animation anchor
 KfEffectRenderView	0x34	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_actor_sprite	animation-pool anchor passed to render_bind_animated_instance
 KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	semantic_types.h;asm;render_actor_sprite	unresolved tail
+KfEffectSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
+KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	semantic_types.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
+KfEffectSprite	0x02	0x02	asset_variant	u16	supported	semantic_types.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
+KfEffectSprite	0x04	0x02	scale	u16	supported	semantic_types.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
+KfEffectSprite	0x06	0x02	translation_x	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation X
+KfEffectSprite	0x08	0x02	translation_y	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation Y
+KfEffectSprite	0x0a	0x02	translation_z	s16	supported	semantic_types.h;asm;render_effect_sprites	model translation Z
+KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the rotation vector
+KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	semantic_types.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
+KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	semantic_types.h;asm;retail-initializer	unread bytes before the animation anchor
+KfEffectSprite	0x18	0x04	anchor	u8[4]	supported	semantic_types.h;asm;render_effect_sprites	animation-pool anchor passed to render_bind_animated_instance
 KfEulerAngles	0x00	0x02	x	s16	supported	semantic_types.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	semantic_types.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	semantic_types.h;asm;xrefs	z angle

@@ -38,7 +38,6 @@ extern u8 DAT_80055cda;
 extern u8 DAT_80055ce8;
 extern u8 DAT_80055cf6;
 extern u8 DAT_80055d04; /* effect sprite tint anchor */
-extern u16 DAT_80055d86;
 extern s16 DAT_80055dac;
 extern s16 DAT_80055dae;
 extern s16 DAT_80055db4;
