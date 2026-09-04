@@ -747,91 +747,6 @@ typedef struct KfSavePayload {
     u8 unknown_2548[56];
 } KfSavePayload;
 
-#define KF_OFFSET_OF(type, member) ((u32)&(((type *)0)->member))
-typedef char KfPrimitiveBuffer_end_offset_is_4[
-    (KF_OFFSET_OF(KfPrimitiveBuffer, end) == 0x04) ? 1 : -1];
-typedef char KfPrimitiveBuffer_cursor_offset_is_8[
-    (KF_OFFSET_OF(KfPrimitiveBuffer, cursor) == 0x08) ? 1 : -1];
-typedef char KfTmdObject_primitive_offset_offset_is_16[
-    (KF_OFFSET_OF(KfTmdObject, primitive_offset) == 0x10) ? 1 : -1];
-typedef char KfTmdObject_primitive_count_offset_is_20[
-    (KF_OFFSET_OF(KfTmdObject, primitive_count) == 0x14) ? 1 : -1];
-typedef char KfScreenVertex_sz_offset_is_4[
-    (KF_OFFSET_OF(KfScreenVertex, sz) == 0x04) ? 1 : -1];
-typedef char KfScreenVertex_p2_offset_is_6[
-    (KF_OFFSET_OF(KfScreenVertex, p2) == 0x06) ? 1 : -1];
-typedef char KfTmdObject_scale_offset_is_24[
-    (KF_OFFSET_OF(KfTmdObject, scale) == 0x18) ? 1 : -1];
-typedef char KfAudioVoiceSlots_vab_ids_offset_is_20[
-    (KF_OFFSET_OF(KfAudioVoiceSlots, vab_ids) == 0x14) ? 1 : -1];
-typedef char KfAudioVoiceSlots_programs_offset_is_40[
-    (KF_OFFSET_OF(KfAudioVoiceSlots, programs) == 0x28) ? 1 : -1];
-typedef char KfAudioVoiceSlots_tones_offset_is_60[
-    (KF_OFFSET_OF(KfAudioVoiceSlots, tones) == 0x3c) ? 1 : -1];
-typedef char KfAudioVoiceSlots_notes_offset_is_80[
-    (KF_OFFSET_OF(KfAudioVoiceSlots, notes) == 0x50) ? 1 : -1];
-typedef char KfCameraPathPoint_speed_offset_is_24[
-    (KF_OFFSET_OF(KfCameraPathPoint, speed) == 0x18) ? 1 : -1];
-typedef char KfCameraPathState_rotation_offset_is_20[
-    (KF_OFFSET_OF(KfCameraPathState, rotation) == 0x14) ? 1 : -1];
-typedef char KfCameraPathState_position_fixed_offset_is_28[
-    (KF_OFFSET_OF(KfCameraPathState, position_fixed) == 0x1c) ? 1 : -1];
-typedef char KfCameraPathState_position_delta_offset_is_60[
-    (KF_OFFSET_OF(KfCameraPathState, position_delta) == 0x3c) ? 1 : -1];
-typedef char KfCameraPathState_point_index_offset_is_92[
-    (KF_OFFSET_OF(KfCameraPathState, point_index) == 0x5c) ? 1 : -1];
-typedef char KfCameraPathState_frames_remaining_offset_is_96[
-    (KF_OFFSET_OF(KfCameraPathState, frames_remaining) == 0x60) ? 1 : -1];
-typedef char KfMapEventDefinition_initial_rotation_offset_is_18[
-    (KF_OFFSET_OF(KfMapEventDefinition, initial_rotation) == 0x12) ? 1 : -1];
-typedef char KfMapEventDefinition_radius_offset_is_20[
-    (KF_OFFSET_OF(KfMapEventDefinition, radius) == 0x14) ? 1 : -1];
-typedef char KfMapEvent_rotation_phase_offset_is_18[
-    (KF_OFFSET_OF(KfMapEvent, rotation_phase) == 0x12) ? 1 : -1];
-typedef char KfMapEvent_position_x_offset_is_20[
-    (KF_OFFSET_OF(KfMapEvent, position_x) == 0x14) ? 1 : -1];
-typedef char KfMapEvent_cell_x_offset_is_28[
-    (KF_OFFSET_OF(KfMapEvent, cell_x) == 0x1c) ? 1 : -1];
-typedef char KfMapEvent_radius_offset_is_32[
-    (KF_OFFSET_OF(KfMapEvent, radius) == 0x20) ? 1 : -1];
-typedef char KfMapEvent_rotation_offset_is_54[
-    (KF_OFFSET_OF(KfMapEvent, rotation) == 0x36) ? 1 : -1];
-typedef char KfMapEvent_rotation_target_offset_is_64[
-    (KF_OFFSET_OF(KfMapEvent, rotation_target) == 0x40) ? 1 : -1];
-typedef char KfPlayerProgressState_current_floor_offset_is_2[
-    (KF_OFFSET_OF(KfPlayerProgressState, current_floor) == 2) ? 1 : -1];
-typedef char KfPlayerLevelGrowth_experience_threshold_offset_is_8[
-    (KF_OFFSET_OF(KfPlayerLevelGrowth, experience_threshold) == 8) ? 1 : -1];
-typedef char KfPlayerVitals_current_hp_offset_is_2[
-    (KF_OFFSET_OF(KfPlayerVitals, current_hp) == 2) ? 1 : -1];
-typedef char KfPlayerVitals_maximum_mp_offset_is_4[
-    (KF_OFFSET_OF(KfPlayerVitals, maximum_mp) == 4) ? 1 : -1];
-typedef char KfPlayerVitals_current_mp_offset_is_6[
-    (KF_OFFSET_OF(KfPlayerVitals, current_mp) == 6) ? 1 : -1];
-typedef char KfPlayerAttackChargeState_committed_offset_is_2[
-    (KF_OFFSET_OF(KfPlayerAttackChargeState, committed) == 2) ? 1 : -1];
-typedef char KfMapCell_x_offset_is_1[
-    (KF_OFFSET_OF(KfMapCell, x) == 1) ? 1 : -1];
-typedef char KfPlayerMotionState_movement_speed_offset_is_4[
-    (KF_OFFSET_OF(KfPlayerMotionState, movement_speed) == 4) ? 1 : -1];
-typedef char KfPlayerMotionState_yaw_step_offset_is_6[
-    (KF_OFFSET_OF(KfPlayerMotionState, yaw_step) == 6) ? 1 : -1];
-typedef char KfPlayerMotionState_pitch_step_offset_is_8[
-    (KF_OFFSET_OF(KfPlayerMotionState, pitch_step) == 8) ? 1 : -1];
-typedef char KfWeaponRecord_charge_rate_offset_is_1[
-    (KF_OFFSET_OF(KfWeaponRecord, charge_rate) == 1) ? 1 : -1];
-typedef char KfWeaponRecord_attack_components_offset_is_2[
-    (KF_OFFSET_OF(KfWeaponRecord, attack_components) == 2) ? 1 : -1];
-typedef char KfWeaponRecord_attack_z_offset_is_18[
-    (KF_OFFSET_OF(KfWeaponRecord, attack_z_offset) == 0x12) ? 1 : -1];
-typedef char KfWeaponRecord_mirrored_angle_offset_is_38[
-    (KF_OFFSET_OF(KfWeaponRecord, mirrored_angle) == 0x26) ? 1 : -1];
-typedef char KfCollisionTarget_rotation_offset_is_16[
-    (KF_OFFSET_OF(KfCollisionTarget, rotation) == 0x10) ? 1 : -1];
-typedef char KfCollisionTarget_radius_offset_is_24[
-    (KF_OFFSET_OF(KfCollisionTarget, radius) == 0x18) ? 1 : -1];
-#undef KF_OFFSET_OF
-
 /* === game-math-death layouts === */
 /* === end game-math-death === */
 
@@ -961,13 +876,6 @@ typedef struct KfActorState {
     u16 current_definition_id;
     KfActor *player_target;
 } KfActorState;
-
-#define KF_ACTOR_STATE_OFFSET_OF(member) ((u32)&(((KfActorState *)0)->member))
-typedef char KfActorState_current_offset_is_0x2b3c[
-    (KF_ACTOR_STATE_OFFSET_OF(current) == 0x2b3c) ? 1 : -1];
-typedef char KfActorState_player_target_offset_is_0x2b44[
-    (KF_ACTOR_STATE_OFFSET_OF(player_target) == 0x2b44) ? 1 : -1];
-#undef KF_ACTOR_STATE_OFFSET_OF
 
 /* === end actor === */
 /* === map-audio layouts === */
