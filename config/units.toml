@@ -583,6 +583,12 @@ source = "src/open/camera_path.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.opening_scene0"
+image = "OPEN.EXE"
+source = "src/open/opening_scene0.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.opening_scene1"
 image = "OPEN.EXE"
 source = "src/open/opening_scene1.c"

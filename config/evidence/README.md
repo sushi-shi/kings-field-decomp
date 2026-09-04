@@ -152,6 +152,12 @@ exactly. Frame stepping is complete semantic C at 97.777780%; after referents,
 calls, CFG, widths, constants, and instruction ordering agree, only a
 four-register permutation across independent Q4 lanes remains unattributed.
 
+`open_semantic_opening_scene0.tsv` records the OPEN scene-0 controller, its
+seventeen-point camera path, packed sound reference, and two sole-use helper
+identities. It proves the paired entity yaw, camera thresholds, one-shot sound,
+input-controlled color fade, listener update, and frame loop. The function and
+both owned data objects match retail exactly.
+
 `open_semantic_opening_scene1.tsv` records the contiguous OPEN scene-1 fade
 renderer and controller. It proves the two textured half-screen packets, their
 texture-page origins and shade width, the 0-to-128 and 128-to-0 transitions,

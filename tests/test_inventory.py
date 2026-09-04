@@ -50,8 +50,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["functions"], 492)
         self.assertEqual(counts["signatures_started"], 492)
         self.assertEqual(counts["typed_returns"], 492)
-        self.assertEqual(counts["parameterized"], 316)
-        self.assertEqual(counts["data"], 3085)
+        self.assertEqual(counts["parameterized"], 317)
+        self.assertEqual(counts["data"], 3087)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 73)
@@ -1231,6 +1231,72 @@ class InventoryTests(unittest.TestCase):
                 "opening_initial_tim_path",
                 "display_state",
                 "memory_arena_cursor",
+            },
+        )
+
+    def test_open_opening_scene0_campaign_is_exactly_modeled(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_opening_scene0.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 1)
+        row = evidence_rows[0]
+        identity = identities[(row["image"], parse_int(row["va"]))]
+        parameters = ", ".join(identity.parameters.split(";")) or "void"
+        signature = f"{identity.return_type} {identity.name}({parameters})"
+        self.assertEqual(row["final_name"], identity.name)
+        self.assertEqual(row["final_signature"], signature)
+        self.assertEqual(row["current_match"], "100.000000000% exact")
+        self.assertIn(evidence_path.name, identity.evidence)
+        self.assertEqual(
+            identities[("OPEN.EXE", 0x800194D8)].name,
+            "opening_scene0_render_frame",
+        )
+        self.assertEqual(
+            identities[("OPEN.EXE", 0x8001A220)].name,
+            "sound_ref_play",
+        )
+
+        data = load_data_identities(RETAIL_CONFIG)
+        path = data[("OPEN.EXE", 0x800354F4)]
+        sound = data[("OPEN.EXE", 0x80035874)]
+        self.assertEqual(
+            (path.name, path.storage, path.datatype, path.size),
+            (
+                "opening_scene0_camera_path",
+                "load",
+                "KfCameraPathPoint[17]",
+                0x1DC,
+            ),
+        )
+        self.assertEqual(
+            (sound.name, sound.storage, sound.datatype, sound.size),
+            ("opening_scene0_sound", "load", "SoundRef", 0x4),
+        )
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            reloc
+            for reloc in relocation_rows
+            if "manual:open_semantic_opening_scene0"
+            in reloc["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 24)
+        self.assertEqual({reloc["status"] for reloc in campaign_rows}, {"reviewed"})
+        calls = [reloc for reloc in campaign_rows if reloc["opcode"] == "jal"]
+        self.assertNotIn("", {reloc["target_name"] for reloc in calls})
+        self.assertEqual(
+            {
+                reloc["target_name"]
+                for reloc in campaign_rows
+                if parse_int(reloc["target_va"])
+                in {0x80014268, 0x800194D8, 0x8001A220, 0x800354F4, 0x80035874}
+            },
+            {
+                "opening_scene0_run",
+                "opening_scene0_render_frame",
+                "sound_ref_play",
+                "opening_scene0_camera_path",
+                "opening_scene0_sound",
             },
         )
 

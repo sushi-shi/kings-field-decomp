@@ -5135,10 +5135,12 @@ OPEN.EXE	0x800351fa	0x239fa	0x4	string	byte-pattern		ascii	investigation:string-
 OPEN.EXE	0x800352a0	0x23aa0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800352b0	0x23ab0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800352c0	0x23ac0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800354f0	0x23cf0	0x1e0	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800354f0	0x23cf0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800354f4	0x23cf4	0x1dc	data	reviewed	opening_scene0_camera_path	KfCameraPathPoint[17]	manual:open_semantic_opening_scene0	seventeen-point scene-0 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x800356d0	0x23ed0	0x54	data	reviewed	opening_scene3_camera_path	KfCameraPathPoint[3]	manual:open_semantic_opening_scene3	three-point scene-3 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x80035724	0x23f24	0xfc	data	reviewed	opening_ending_camera_path	KfCameraPathPoint[9]	manual:open_semantic_opening_ending_scene	nine-point ending camera path ending in the x=-1 sentinel
-OPEN.EXE	0x80035820	0x24020	0x58	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035820	0x24020	0x54	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035874	0x24074	0x4	data	reviewed	opening_scene0_sound	SoundRef	manual:open_semantic_opening_scene0	packed program 9, tone 0, note 0x43 sound reference plus alignment byte
 OPEN.EXE	0x80035878	0x24078	0x10	data	reviewed	opening_scene3_overlay_rects	u16[2][4]	manual:open_semantic_opening_scene3	two mutable overlay rectangles with initial y positions 256 and 512
 OPEN.EXE	0x80035888	0x24088	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x8003588a	0x2408a	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum

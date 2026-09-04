@@ -7,6 +7,7 @@
 #include <kf/open_opening_helpers.h>
 #include <kf/open_render.h>
 #include <kf/open_resources.h>
+#include <kf/open_scene0.h>
 #include <kf/open_scene1.h>
 #include <kf/open_scene3.h>
 #include <kf/psyq.h>
@@ -79,7 +80,7 @@ void opening_run(s32 display_mode)
         opening_input_action = 0;
 
 opening_scene0:
-        func_80014268();
+        opening_scene0_run();
         if (opening_input_action == scene3_action) {
             goto opening_scene1;
         }

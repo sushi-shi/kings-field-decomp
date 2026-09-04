@@ -2691,8 +2691,10 @@ OPEN.EXE	0x80013724	0x4	DAT_80013724	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x80013728	0x4	DAT_80013728	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8001372c	0x4	DAT_8001372c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80013730	0x4	DAT_80013730	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800354f4	0x1dc	opening_scene0_camera_path	global	load	KfCameraPathPoint[17]	opening_scene0	supported	open_semantic_opening_scene0.tsv;asm;retail-bytes;opening_camera_path_begin	seventeen-point scene-0 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x800356d0	0x54	opening_scene3_camera_path	global	load	KfCameraPathPoint[3]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;opening_camera_path_begin	three-point scene-3 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x80035724	0xfc	opening_ending_camera_path	global	load	KfCameraPathPoint[9]	opening_ending_scene	supported	open_semantic_opening_ending_scene.tsv;asm;retail-bytes;opening_camera_path_begin	nine-point ending camera path ending in the x=-1 sentinel
+OPEN.EXE	0x80035874	0x4	opening_scene0_sound	global	load	SoundRef	opening_scene0	supported	open_semantic_opening_scene0.tsv;asm;retail-bytes;sound_ref_play	packed program 9, tone 0, and note 0x43 played once during the scene-0 entity turn
 OPEN.EXE	0x80035878	0x10	opening_scene3_overlay_rects	global	load	u16[2][4]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	two mutable textured-overlay rectangles with initial y positions 256 and 512
 OPEN.EXE	0x8003588a	0x2	DAT_8003588a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035892	0x2	DAT_80035892	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
