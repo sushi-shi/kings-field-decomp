@@ -12,6 +12,8 @@
 
 #include <kf/semantic_types.h>
 
+extern KfMagicRecord magic_records[24];
+
 extern void player_add_experience(s16 amount);
 extern void player_adjust_hp(s32 delta);
 extern void player_adjust_mp(s32 delta);

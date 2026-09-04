@@ -236,12 +236,12 @@ KfFloorItemPlacement	0x0a	0x02	local_y	s16	supported	item.h;asm;func_80020b4c	he
 KfHudSprite	0x00	0x01	state	u8	supported	semantic_types.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	semantic_types.h;retail-initializers	unread byte before the sprite descriptor
 KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	semantic_types.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
-KfMagicRecord	0x00	0x01	learned	u8	supported	asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
-KfMagicRecord	0x01	0x01	charge_rate	u8	supported	asm;player_update	fixed6_ratio_step span while charging magic
-KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	semantic_types.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
-KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	semantic_types.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
-KfMagicRecord	0x10	0x02	mp_cost	u16	supported	asm;player_update	compared with and subtracted from vitals.current_mp when casting
-KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	asm	meaning unresolved
+KfMagicRecord	0x00	0x01	learned	u8	supported	magic.h;asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
+KfMagicRecord	0x01	0x01	charge_rate	u8	supported	magic.h;asm;player_update	fixed6_ratio_step span while charging magic
+KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
+KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	magic.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
+KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared with and subtracted from vitals.current_mp when casting
+KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
 KfMapCell	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCell	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x

@@ -310,6 +310,13 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, item_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_magic_layout_lives_in_the_magic_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        magic_header = (REPO / "include/kf/magic.h").read_text()
+        declaration = "typedef struct KfMagicRecord"
+        self.assertIn(declaration, magic_header)
+        self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)

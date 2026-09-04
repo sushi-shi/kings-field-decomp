@@ -78,7 +78,6 @@ extern u32 DAT_8009569c;
 extern u32 DAT_8009a740;
 extern KfMagicRecord *current_effect_magic_record;
 extern KfEffectRecord *current_effect;
-extern KfMagicRecord magic_records[24];
 extern u8 DAT_8009eafc;
 extern u8 DAT_8009f844;
 extern u8 DAT_8009f845;

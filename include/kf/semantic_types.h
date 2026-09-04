@@ -8,6 +8,7 @@
 #include <kf/game_actor.h>
 #include <kf/game_map.h>
 #include <kf/item.h>
+#include <kf/magic.h>
 
 /*
  * Layout identities supported by the semantic inventory. Their original
@@ -245,15 +246,6 @@ typedef struct KfWeaponRecord {
     u16 mirrored_angle;
     u8 unknown_28[0x04];
 } KfWeaponRecord;
-
-typedef struct KfMagicRecord {
-    u8 learned;
-    u8 charge_rate;
-    SoundRef sounds[2];
-    u16 damage_components[4];
-    u16 mp_cost;
-    u8 unknown_12[0x02];
-} KfMagicRecord;
 
 /* === game-math-death layouts === */
 /* === end game-math-death === */
