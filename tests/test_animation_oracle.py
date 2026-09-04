@@ -6,6 +6,8 @@ import unittest
 
 from scripts.kf.animation_oracle import (
     CANDIDATE_OBJECT,
+    CANDIDATE_UNIT,
+    FUNCTION,
     INITIAL_KF_INDEX,
     AnimationCase,
     apply_gte_mime,
@@ -15,8 +17,9 @@ from scripts.kf.animation_oracle import (
     parse_asset,
     synthetic_cases,
 )
+from scripts.kf.manifest import load as load_manifest
 from scripts.kf.parser_machine import GameSymbols
-from scripts.kf.paths import LOCAL_CONFIG
+from scripts.kf.paths import BUILD, LOCAL_CONFIG
 from scripts.kf.rust_codec import DEFAULT_DRIVER, RustCodec
 from scripts.kf.sema.image import RetailImage
 
@@ -47,6 +50,15 @@ def synthetic_asset() -> bytes:
 
 
 class AnimationOracleTests(unittest.TestCase):
+    def test_candidate_object_follows_the_binder_unit_owner(self) -> None:
+        manifest = load_manifest()
+        unit = manifest.by_identity()[("GAME.EXE", 0x800205D4)]
+
+        self.assertEqual(unit.unit, CANDIDATE_UNIT)
+        self.assertEqual(unit.function.symbol, FUNCTION)
+        self.assertEqual(CANDIDATE_OBJECT,
+                         BUILD / "objdiff" / unit.image_key / "base" / unit.object_name)
+
     def test_bounded_asset_scan_recovers_clip_keyframe_and_morph_tables(self) -> None:
         asset = parse_asset(synthetic_asset(), "fixture")
 
@@ -86,6 +98,8 @@ class AnimationOracleTests(unittest.TestCase):
                 "lifecycle/malloc-retry",
                 "lifecycle/different-asset-reinit",
                 "lifecycle/static-record-release",
+                "lifecycle/malloc-three-retries",
+                "lifecycle/reinit-malloc-retries",
             ],
         )
         self.assertEqual(selected[2].allocation_results, (0, 0x800A0000))
@@ -137,7 +151,7 @@ class AnimationOracleTests(unittest.TestCase):
             lifecycle_cases(),
         )
 
-        self.assertEqual(count, 5)
+        self.assertEqual(count, 7)
 
 
 if __name__ == "__main__":

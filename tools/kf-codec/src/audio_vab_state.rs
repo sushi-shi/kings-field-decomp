@@ -2,7 +2,7 @@
 //!
 //! GAME's `audio_load_vab` wrapper delegates the VH parser and SPU transfer
 //! setup to the Release 2.5 sound library.  This module is an independent,
-//! allocation-free model of the successful path.  Callers supply the Sony
+//! allocation-free model of successful and rejected loads. Callers supply the Sony
 //! work areas explicitly, so tests can compare every mutated byte without
 //! pretending those private SDK tables belong to the on-disc VAB format.
 
@@ -125,11 +125,236 @@ pub struct VabLoadOutput {
     pub calls: [VabServiceCall; SUCCESS_CALL_COUNT],
 }
 
+/// Service results supplied by a caller, not predictions of SPU hardware.
+#[derive(Debug, Clone, Copy)]
+pub struct VabRuntimeInputs {
+    pub load: VabLoadInputs,
+    /// None means that the transfer service accepts its entire request.
+    pub read_result: Option<u32>,
+    /// Sony leaves s3 uninitialized when the automatic bank search finds no
+    /// free slot. Expose that inherited value instead of inventing a bank.
+    pub incoming_bank_id: i16,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum VabRuntimeCall {
+    Spu(VabServiceCall),
+    VSync,
+    SequenceVolume { id: i16, volume: i16 },
+    SequenceStop(i16),
+    SequenceClose(i16),
+    HeaderError,
+    BodyError,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum VabRuntimeOutcome {
+    Complete,
+    HeaderRejected,
+    BodyRejected,
+}
+
+/// Observe the GAME wrapper, including Sony's partial mutations on failure.
+///
+/// This is deliberately separate from the prevalidated success-only API.
+/// The byte before the bank-status array is an explicit caller-owned region:
+/// Sony's automatic-ID (-1) error cleanup clears that byte, not the selected
+/// slot. Rust never performs an out-of-bounds write to reproduce that effect.
+/// Unsafe input extents still return a codec error, not a retail outcome.
+/// Unlike `load_vab_success`, errors may follow partial state changes and
+/// emitted calls; this API is not transactional.
+pub fn load_vab_runtime(
+    vh: &mut [u8],
+    vb: &[u8],
+    game_audio_state: &mut [u8; GAME_AUDIO_STATE_SIZE],
+    regions: SonyVabRegions<'_>,
+    preceding_status: &mut u8,
+    inputs: VabRuntimeInputs,
+    mut emit: impl FnMut(VabRuntimeCall),
+) -> Result<VabRuntimeOutcome, VabStateError> {
+    validate_region("maximum programs", regions.maximum_programs, 2)?;
+    validate_region("open bank count", regions.open_bank_count, 2)?;
+    validate_region("bank status", regions.bank_status, VAB_BANK_SLOTS)?;
+    for (name, bytes) in [
+        ("VH-end pointers", &*regions.vh_end_pointers),
+        ("header pointers", &*regions.header_pointers),
+        ("program pointers", &*regions.program_pointers),
+        ("tone pointers", &*regions.tone_pointers),
+        ("SPU starts", &*regions.spu_start_addresses),
+        ("body sizes", &*regions.body_sizes),
+    ] {
+        validate_region(name, bytes, VAB_POINTER_TABLE_SIZE)?;
+    }
+    for (name, bytes) in [
+        ("current header", &*regions.current_header_pointer),
+        ("current program", &*regions.current_program_pointer),
+        ("current tone", &*regions.current_tone_pointer),
+    ] {
+        validate_region(name, bytes, 4)?;
+    }
+    if read_u32(game_audio_state, GAME_AUDIO_SEQUENCE_ACTIVE_OFFSET) == 1 {
+        let id = read_u16(game_audio_state, 0x0c) as i16;
+        for volume in (0..=75).rev() {
+            emit(VabRuntimeCall::VSync);
+            emit(VabRuntimeCall::SequenceVolume { id, volume });
+        }
+        emit(VabRuntimeCall::SequenceStop(id));
+        emit(VabRuntimeCall::SequenceClose(id));
+        write_u32(game_audio_state, GAME_AUDIO_SEQUENCE_ACTIVE_OFFSET, 0);
+    }
+    emit(VabRuntimeCall::Spu(VabServiceCall::GetInTransfer));
+    if inputs.load.in_transfer == 1 {
+        write_u16(game_audio_state, GAME_AUDIO_VAB_ID_OFFSET, u16::MAX);
+        emit(VabRuntimeCall::HeaderError);
+        return Ok(VabRuntimeOutcome::HeaderRejected);
+    }
+    emit(VabRuntimeCall::Spu(VabServiceCall::SetInTransfer(1)));
+    let free = regions.bank_status.iter().position(|&value| value == 0);
+    let bank = if let Some(bank) = free {
+        regions.bank_status[bank] = 1;
+        let count = read_u16(regions.open_bank_count, 0).wrapping_add(1);
+        write_u16(regions.open_bank_count, 0, count);
+        bank as i16
+    } else {
+        inputs.incoming_bank_id
+    };
+    let mut rejected = bank >= VAB_BANK_SLOTS as i16;
+    let mut body_size = 0u32;
+    let mut sample_count = 0usize;
+    let mut lengths = [0u32; VAB_LENGTH_ENTRIES];
+    if !rejected {
+        let bank = usize::try_from(bank).map_err(|_| VabStateError::NoFreeBank)?;
+        if vh.len() < VAB_HEADER_SIZE {
+            return Err(VabStateError::TruncatedHeader {
+                need: VAB_HEADER_SIZE,
+                have: vh.len(),
+            });
+        }
+        write_table(regions.header_pointers, bank, inputs.load.vh_address);
+        write_u32(regions.current_header_pointer, 0, inputs.load.vh_address);
+        let version = read_u32(vh, 4) as i32;
+        let maximum = match read_u32(vh, 0) {
+            VAB_MAGIC_OLD => Some(VAB_OLD_PROGRAM_SLOTS),
+            VAB_MAGIC_NEW if version < 5 => Some(VAB_OLD_PROGRAM_SLOTS),
+            VAB_MAGIC_NEW => Some(VAB_NEW_PROGRAM_SLOTS),
+            _ => None,
+        };
+        rejected = maximum.is_none();
+        if let Some(maximum) = maximum {
+            write_u16(regions.maximum_programs, 0, maximum as u16);
+            let programs = usize::from(read_u16(vh, 18));
+            rejected = programs > maximum;
+            if !rejected {
+                let tone_at = VAB_HEADER_SIZE + maximum * VAB_PROGRAM_SIZE;
+                let lengths_at = tone_at + programs * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE;
+                let end = lengths_at + VAB_LENGTH_TABLE_SIZE;
+                if end > vh.len() {
+                    return Err(VabStateError::HeaderExtent {
+                        need: end,
+                        have: vh.len(),
+                    });
+                }
+                let program_address = checked_address(inputs.load.vh_address, VAB_HEADER_SIZE)?;
+                let tone_address = checked_address(inputs.load.vh_address, tone_at)?;
+                let end_address = checked_address(inputs.load.vh_address, end)?;
+                write_table(regions.program_pointers, bank, program_address);
+                write_u32(regions.current_program_pointer, 0, program_address);
+                let mut dense = 0u32;
+                for slot in 0..maximum {
+                    let at = VAB_HEADER_SIZE + slot * VAB_PROGRAM_SIZE;
+                    write_u32(vh, at + 8, dense);
+                    if vh[at] != 0 {
+                        dense += 1;
+                    }
+                }
+                write_table(regions.tone_pointers, bank, tone_address);
+                write_u32(regions.current_tone_pointer, 0, tone_address);
+                sample_count = usize::from(vh[22]);
+                // The provider advances across all 256 entries but only reads
+                // sample_count+1 lengths; unused trailing entries are ignored.
+                for (index, length) in lengths.iter_mut().enumerate().take(sample_count + 1) {
+                    *length = u32::from(read_u16(vh, lengths_at + index * 2))
+                        << if version < 5 { 2 } else { 3 };
+                    body_size += *length;
+                }
+                write_table(regions.vh_end_pointers, bank, end_address);
+                emit(VabRuntimeCall::Spu(VabServiceCall::Malloc(body_size)));
+                rejected = inputs.load.spu_allocation == u32::MAX
+                    || inputs.load.spu_allocation.wrapping_add(body_size) > SPU_RAM_LIMIT;
+            }
+        }
+    }
+    if rejected {
+        *preceding_status = 0;
+        emit(VabRuntimeCall::Spu(VabServiceCall::SetInTransfer(0)));
+        let count = read_u16(regions.open_bank_count, 0).wrapping_sub(1);
+        write_u16(regions.open_bank_count, 0, count);
+        write_u16(game_audio_state, GAME_AUDIO_VAB_ID_OFFSET, u16::MAX);
+        emit(VabRuntimeCall::HeaderError);
+        return Ok(VabRuntimeOutcome::HeaderRejected);
+    }
+    let bank = bank as usize;
+    write_table(
+        regions.spu_start_addresses,
+        bank,
+        inputs.load.spu_allocation,
+    );
+    let mut cumulative = 0u32;
+    for (index, length) in lengths.iter().enumerate().take(sample_count + 1) {
+        cumulative += length;
+        let at = VAB_HEADER_SIZE + index / 2 * VAB_PROGRAM_SIZE + 12 + (index & 1) * 2;
+        // Very old 64-program headers with more samples can spill into tone
+        // rows. The supplied full VH bounds the observed write, not a host cast.
+        if at + 2 > vh.len() {
+            return Err(VabStateError::HeaderExtent {
+                need: at + 2,
+                have: vh.len(),
+            });
+        }
+        write_u16(
+            vh,
+            at,
+            (inputs.load.spu_allocation.wrapping_add(cumulative) >> 3) as u16,
+        );
+    }
+    write_table(regions.body_sizes, bank, body_size);
+    regions.bank_status[bank] = 2;
+    write_u16(game_audio_state, GAME_AUDIO_VAB_ID_OFFSET, bank as u16);
+    write_u32(
+        game_audio_state,
+        GAME_AUDIO_VH_POINTER_OFFSET,
+        inputs.load.vh_address,
+    );
+    if body_size as usize > vb.len() {
+        return Err(VabStateError::BodyLength {
+            expected: body_size as usize,
+            actual: vb.len(),
+        });
+    }
+    emit(VabRuntimeCall::Spu(VabServiceCall::SetTransferMode(0)));
+    emit(VabRuntimeCall::Spu(
+        VabServiceCall::SetTransferStartAddress(inputs.load.spu_allocation),
+    ));
+    emit(VabRuntimeCall::Spu(VabServiceCall::Read {
+        source: inputs.load.vb_address,
+        size: body_size,
+    }));
+    if inputs.read_result.unwrap_or(body_size) != body_size {
+        write_u16(game_audio_state, GAME_AUDIO_VAB_ID_OFFSET, u16::MAX);
+        emit(VabRuntimeCall::BodyError);
+        return Ok(VabRuntimeOutcome::BodyRejected);
+    }
+    regions.bank_status[bank] = 1;
+    emit(VabRuntimeCall::Spu(VabServiceCall::IsTransferCompleted(1)));
+    Ok(VabRuntimeOutcome::Complete)
+}
+
 /// Apply the complete successful `audio_load_vab`/Sony state transform.
 ///
 /// The supplied VB bytes are not read by the header parser.  Their extent is
-/// checked against the sum of all 256 VH length entries because the following
-/// transfer consumes exactly that many bytes.
+/// checked against the sum of the sample_count+1 used VH length entries because
+/// the following transfer consumes exactly that many bytes. The parser skips
+/// unused entries while advancing to the end of the 256-entry table.
 pub fn load_vab_success(
     vh: &mut [u8],
     vb: &[u8],
@@ -228,7 +453,7 @@ pub fn load_vab_success(
     let multiplier = if (version as i32) < 5 { 4u32 } else { 8u32 };
     let mut lengths = [0u32; VAB_LENGTH_ENTRIES];
     let mut body_size = 0u32;
-    for (index, length) in lengths.iter_mut().enumerate() {
+    for (index, length) in lengths.iter_mut().enumerate().take(sample_count + 1) {
         let units = u32::from(read_u16(vh, lengths_at + index * 2));
         *length = units
             .checked_mul(multiplier)

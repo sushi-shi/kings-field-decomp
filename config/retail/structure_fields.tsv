@@ -469,13 +469,13 @@ KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	maximu
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game_player.h;asm;xrefs	current HP
 KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	maximum MP
 KfPlayerVitals	0x06	0x02	current_mp	u16	supported	game_player.h;asm;xrefs	current MP
-KfPoolRecord	0x00	0x02	state	s16	supported	pool.h;asm;xrefs	allocation state
-KfPoolRecord	0x02	0x02	unknown_02	u16	opaque	pool.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x04	0x02	value_04	u16	candidate	pool.h;asm;xrefs	accessed value; exact meaning unresolved
-KfPoolRecord	0x06	0x02	unknown_06	u16	opaque	pool.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x08	0x04	unknown_08	u32	opaque	pool.h;asm;xrefs	meaning unresolved
-KfPoolRecord	0x0c	0x04	allocation	void *	supported	pool.h;asm;xrefs	allocated object pointer
-KfPoolRecord	0x10	0x04	backlink	u32 *	supported	pool.h;asm;xrefs	owner backlink pointer
+KfPoolRecord	0x00	0x02	state	s16	supported	pool.h;game_semantic_animation_pool.tsv;asm	0 free; 1 stale; 2 live after the binder refreshes scratch vertices
+KfPoolRecord	0x02	0x02	asset_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020684;GAME:0x800206b8	registry index used to detect an instance asset change
+KfPoolRecord	0x04	0x02	clip_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207ac;GAME:0x800208c0	cached clip index; allocator and asset reinitialization invalidate it with 0xff
+KfPoolRecord	0x06	0x02	keyframe_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207c0;GAME:0x800208ac	cached keyframe index compared with the binder selection
+KfPoolRecord	0x08	0x04	rest_morph	KfMorphObject *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800208a4;GAME:0x800208f8	asset-relative object-table target selected by the keyframe rest index
+KfPoolRecord	0x0c	0x04	cached_vertices	SVECTOR *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
+KfPoolRecord	0x10	0x04	owner_slot	KfPoolRecord **	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020688;GAME:0x800209f4	address of the instance record-pointer slot; release clears the pointed-to slot
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
 KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin

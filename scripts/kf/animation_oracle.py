@@ -40,7 +40,8 @@ from scripts.kf.tmd_oracle import shipped_cases
 
 
 FUNCTION = "render_bind_animated_instance"
-CANDIDATE_OBJECT = BUILD / "objdiff/game/base/800205d4_render_bind_animated_instance.o"
+CANDIDATE_UNIT = "game.pool"
+CANDIDATE_OBJECT = BUILD / "objdiff/game/base/800205d4_pool.o"
 ASSET_VA = 0x80060000
 SCRATCH_VA = 0x800930F0
 ASSET_REGISTRY_VA = 0x80090FCC
@@ -414,6 +415,22 @@ def lifecycle_cases() -> tuple[LifecycleCase, ...]:
             True,
             ASSET_ID,
             (),
+        ),
+        LifecycleCase(
+            "lifecycle/malloc-three-retries",
+            animated,
+            False,
+            True,
+            ASSET_ID,
+            (0, 0, 0, ALLOCATION_VA),
+        ),
+        LifecycleCase(
+            "lifecycle/reinit-malloc-retries",
+            animated,
+            True,
+            True,
+            ASSET_ID - 1,
+            (0, 0, ALLOCATION_VA),
         ),
     )
 
@@ -1040,7 +1057,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             static_cases = static_cases[: args.max_cases]
             lifecycle = lifecycle[: args.max_cases]
         if not args.no_rebuild:
-            rebuild_units(["game.render_bind_animated_instance"])
+            rebuild_units([CANDIDATE_UNIT])
         retail = RetailImage.load("GAME.EXE")
         rust = RustCodec(args.rust_driver or build_driver())
         symbols = GameSymbols.load()

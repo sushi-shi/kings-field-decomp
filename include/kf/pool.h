@@ -2,20 +2,22 @@
 #define KF_POOL_H
 
 /*
- * game.pool (0x80020978-0x80020b4c): the twelve-entry KfPoolRecord cache and
- * its lifecycle. Exports the record management routines other units call.
+ * Twelve-entry animation vertex cache and its per-frame lifecycle.
  */
 
 #include <kf/game_types.h>
+#include <kf/psyq.h>
+
+struct KfMorphObject;
 
 typedef struct KfPoolRecord {
     s16 state;
-    u16 unknown_02;
-    u16 value_04;
-    u16 unknown_06;
-    u32 unknown_08;
-    void *allocation;
-    u32 *backlink;
+    u16 asset_index;
+    u16 clip_index;
+    u16 keyframe_index;
+    struct KfMorphObject *rest_morph;
+    SVECTOR *cached_vertices;
+    struct KfPoolRecord **owner_slot;
 } KfPoolRecord;
 
 extern KfPoolRecord pool_records[12];

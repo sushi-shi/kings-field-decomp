@@ -47,6 +47,10 @@ promotes a probe to a proven historical toolchain.
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
+- [animation-cache.md](animation-cache.md): animation-pool metadata, typed
+  cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
   parser write guards, load-delay audit, and reduced Unicorn memory-hook
   control-flow defects.
+- [game-parser-verification.md](game-parser-verification.md): parser failure
+  controls, VAB partial state and cleanup quirks, and seven-function match review.

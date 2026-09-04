@@ -264,12 +264,6 @@ source = "src/game/asset_registry.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.render_bind_animated_instance"
-image = "GAME.EXE"
-source = "src/game/render_bind_animated_instance.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.pool"
 image = "GAME.EXE"
 source = "src/game/pool.c"
