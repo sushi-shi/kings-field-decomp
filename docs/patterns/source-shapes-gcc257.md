@@ -1016,25 +1016,37 @@ is documented rather than treated as an unstarted function.
 
 ## pad
 
-Campaign over the adjacent vendored bands `0x8005005c..0x8005023c`: the
-`game.intr_tail` critical-section helper has INTR.OBJ lineage, while the six
-`game.pad` functions have PAD.OBJ lineage. The three public PAD entry points
-dispatch on a stored pad identifier and each has a "Bad PadIdentifier"
-reporting stub.
+Campaign over the adjacent GAME vendored band `0x8005005c..0x8005023c` and
+the homologous OPEN PAD band `0x8002fe8c..0x80030010`: the
+`game.intr_tail` critical-section helper has INTR.OBJ lineage, while both sets
+of six PAD functions have PAD.OBJ lineage. The three public PAD entry points
+dispatch on the archive-named private `PadIdentifier`; `pad_buf` holds the word
+returned by the low-level PAD API and `pad_status` is cleared during init. Each
+invalid-identifier path reaches a private "Bad PadIdentifier" reporting stub.
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `sw a0,id; sw zero,buf1; li v0,-1; sw v0,buf0; bnez a0` then `PAD_init2`/stub both called `(0x20000001, &buf0)` with `move s0,v0` in the following `jal`'s slot | store the three globals, `result = id==0 ? PAD_init2(...) : stub(...)`, then a void call, `return result` | `func_800500b8` `0x800500b8` (EXACT) |
-| `lw v0,id; addiu sp; bnez v0; sw ra(slot)` then `return ~buf0` | `if (id==0) PAD_dr(); else stub(); return ~buf0;` — the tested load feeds the branch, so the probe hoists it above the frame | `func_8005012c` `0x8005012c` (EXACT) |
-| bad-identifier stub `printf(fmt, id)` with no return statement, consumed in a value context by the caller | K&R `u32 stub() { printf(fmt, id); }` — declares no parameters, falls off the end; the caller passes extra args and reads the incidental `v0` | `func_800500b8` -> `pad_init_bad_identifier` |
+| `sw a0,PadIdentifier; sw zero,pad_status; li v0,-1; sw v0,pad_buf; bnez a0` then `PAD_init2`/stub both called `(0x20000001, &pad_buf)` with `move s0,v0` in the following `jal`'s slot | store the three private globals, select the call into `result`, then call `ResetCallback` and return `result` | `PadInit` in GAME and OPEN (EXACT) |
+| `lw v0,PadIdentifier; addiu sp; bnez v0; sw ra(slot)` then `return ~pad_buf` | `if (PadIdentifier==0) PAD_dr(); else stub(); return ~pad_buf;` — the tested load feeds the branch, so the probe hoists it above the frame | `PadRead` in GAME and OPEN (EXACT) |
+| bad-identifier stub `printf(fmt, PadIdentifier)` with no return statement, consumed in a value context by the caller | K&R `u32 stub() { printf(fmt, PadIdentifier); }` — declares no parameters, falls off the end; the caller passes extra args and reads the incidental `v0` | `PadInit` -> `pad_init_bad_identifier` in both images (EXACT) |
 
 The original `probe-gcc257-o2-g0` campaign left a repeatable load-placement
 residue: retail hoists the first data load above the frame allocation / register
 saves whenever the loaded value feeds a call argument or a callee-saved
 register. The later `probe-gcc257-o2-plain` profile reproduces that schedule;
-all seven vendored verification functions are now exact without source
-steering. The old residue remains useful evidence for these units' profile
-selection, not an open function mismatch.
+all thirteen current LIBETC source-verification functions are now exact without
+source steering: the GAME INTR tail, both six-function PAD copies, their
+overlay-specific data, and both literal ranges. The old residue remains useful
+evidence for these units' profile selection, not an open function mismatch.
+
+One data-side detail matters when reconstructing PAD.OBJ. The pinned
+GCC/maspsx path places separately defined file-static tentative BSS words at
+eight-byte object offsets even though each object is four bytes. GAME keeps all
+three PAD statics in BSS, while OPEN links `pad_buf` and `pad_status` as
+zero-initialized load data and only `PadIdentifier` in BSS. The delinker now
+uses an eight-byte candidate alignment only for static BSS claims whose retail
+addresses support it; retaining generic four-byte packing made GAME's modeled
+PAD `.bss` 16 bytes while the reconstruction emitted 32 bytes.
 
 ## debug/format
 

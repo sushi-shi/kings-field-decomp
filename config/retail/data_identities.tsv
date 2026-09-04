@@ -1627,8 +1627,8 @@ GAME.EXE	0x80057ff8	0x4	DAT_80057ff8	unknown	load	undefined4		address-only	data.
 GAME.EXE	0x80058000	0x4	DAT_80058000	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80058008	0x4	DAT_80058008	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80058018	0x4	DAT_80058018	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058020	0x4	DAT_80058020	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058028	0x4	DAT_80058028	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80058020	0x4	pad_buf	static	bss	u32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_buf;asm;xrefs	private PAD word initialized to -1, passed to PAD_init2, complemented by PadRead, and referenced nowhere outside PAD.OBJ
+GAME.EXE	0x80058028	0x4	pad_status	static	bss	u32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_status;asm;xrefs	private PAD status word cleared by PadInit and referenced nowhere outside PAD.OBJ
 GAME.EXE	0x80058060	0x20	player_death_saved_color_matrix	unknown	bss	MATRIX	player_death	supported	game_semantic_player_death.tsv;asm;xrefs;ReadColorMatrix	full color-matrix snapshot written at death entry and consumed by the death fade; entry startup also clears its first word, source linkage unresolved
 GAME.EXE	0x80058080	0x18	cd_search_file	unknown	bss	CdlFILE	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	CdlFILE filled by CdSearchFile; its size is rounded up to whole sectors in place
 GAME.EXE	0x80058098	0x50	cd_path_buffer	unknown	bss	char[80]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	assembled CD path (prefix, name, ;1); extent bounded by the next referenced global
@@ -1765,7 +1765,7 @@ GAME.EXE	0x80069018	0x2710	map_cell_orientation_grid	unknown	bss	u8[100][100]	ma
 GAME.EXE	0x8006b728	0x4	DAT_8006b728	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006b730	0x640	cd_file_table	unknown	bss	KfCdFileEntry[80]	cd_file	supported	asm;func_8001ae60;func_80020cfc	20-byte file records (old-layout CdlFILE with a 12-byte name) indexed by func_8001ae60; count bounded by the next identity
 GAME.EXE	0x8006bd70	0x4	DAT_8006bd70	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8006bd88	0x4	pad_identifier	static	bss	s32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-PadIdentifier;asm;xrefs	stored from PadInit's signed identifier parameter, tested by the PAD dispatchers, and printed with %d by all three diagnostic helpers; all six references are confined to the version-skewed PAD.OBJ source-verification unit
+GAME.EXE	0x8006bd88	0x4	PadIdentifier	static	bss	s32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-PadIdentifier;asm;xrefs	archive-named identifier stored from PadInit's signed parameter, tested by the PAD dispatchers, and printed with %d; all six references are confined to PAD.OBJ
 GAME.EXE	0x8006bd90	0x4	DAT_8006bd90	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8006bd98	0x2b48	actor_state	global	bss	KfActorState	actor	supported	game_semantic_actor_core.tsv;asm;main-loop-memset;0x720-copy;0x98-stride;128x0x48-loops;pool-relative-definition-and-current-actor-addresses	actor system state: twelve definitions, the 128 live actors, the player transform snapshot, and the current/target actor pointers; one object because actor routines address a definition as the actor array base minus 0x720 and current_actor as the base plus 0x241c (addiu ...,-1824 / addiu ...,9244)
 GAME.EXE	0x8006e8e0	0x25a8	map_object_state	unknown	bss	KfMapObjectState	map_object	supported	asm;base-register;map_object_pool_clear_link	map object definitions followed by the object pool; map_object_pool_clear_link derives the definition table 1280 bytes below the pool base through one register, so both are one object
@@ -2917,8 +2917,8 @@ OPEN.EXE	0x80037738	0x4	DAT_80037738	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x80037740	0x4	DAT_80037740	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037748	0x4	DAT_80037748	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037758	0x4	DAT_80037758	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037760	0x4	DAT_80037760	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037768	0x4	DAT_80037768	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037760	0x4	pad_buf	static	load	u32	pad	supported	open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_buf;retail-bytes;asm;xrefs	zero-initialized private PAD word set to -1 by PadInit, passed to PAD_init2, and complemented by PadRead
+OPEN.EXE	0x80037768	0x4	pad_status	static	load	u32	pad	supported	open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_status;retail-bytes;asm;xrefs	zero-initialized private PAD status word cleared by PadInit and referenced nowhere outside PAD.OBJ
 OPEN.EXE	0x80037770	0x4	DAT_80037770	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800377a0	0x18	cd_search_file	unknown	bss	CdlFILE	cd_file	supported	open_semantic_cd_file.tsv;asm;CdSearchFile;GAME-overlay-layout	CdlFILE filled by CdSearchFile; exact adjacency to the path buffer and the zero-padded load tail support BSS ownership
 OPEN.EXE	0x800377b8	0x50	cd_path_buffer	unknown	bss	char[80]	cd_file	supported	open_semantic_cd_file.tsv;asm;GAME-overlay-layout	80-byte path buffer following the CdlFILE exactly as in GAME; its final eight bytes extend beyond the padded load image
@@ -3025,7 +3025,7 @@ OPEN.EXE	0x80046de8	0x4	DAT_80046de8	unknown	bss	u32		address-only	ghidra-12.0.4
 OPEN.EXE	0x80046df8	0x2710	map_cell_orientation_grid	unknown	bss	u8[100][100]	map	supported	open_semantic_resources.tsv;asm;0x9c4-word-copy;GAME-overlay-resource-order	third map grid copied from MIXA0; GAME homolog identifies the per-cell orientation grid
 OPEN.EXE	0x80049508	0x4	DAT_80049508	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049510	0x4	DAT_80049510	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80049528	0x4	DAT_80049528	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80049528	0x4	PadIdentifier	static	bss	s32	pad	supported	open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-PadIdentifier;asm;xrefs	archive-named identifier stored from PadInit's signed parameter, tested by the PAD dispatchers, and printed with %d; all six references are confined to PAD.OBJ
 OPEN.EXE	0x80049530	0x4	DAT_80049530	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80049538	0x1	DAT_80049538	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8004953a	0x2	DAT_8004953a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

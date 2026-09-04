@@ -172,7 +172,7 @@ retail by the same amount (91%); 2.4.1 is not closer.
 clean case. Retail `pad_stop_bad_identifier`:
 
 ```
-lui  a1,%hi(pad_identifier)
+lui  a1,%hi(PadIdentifier)
 lw   a1,0(a1)          # independent global load first
 addiu sp,sp,-24        # then the frame
 sw   ra,16(sp)
@@ -180,9 +180,11 @@ sw   ra,16(sp)
 
 The committed `-mcpu=r2000` (== `-mcpu=r3000`; both select the R3000A pipeline
 model) **hoists the frame allocation to the top**, moving `addiu sp`/`sw ra`
-ahead of the load and breaking the match — `pad` scores 3/7. Dropping `-mcpu`
-(plain `-O2`) keeps the load before the frame and makes **all 7 `pad` functions
-exact**, under both 2.5.7 and 2.4.1. Conversely `map_events`, `render_map_cells`
+ahead of the load and breaking the match — the GAME campaign scores 3/7.
+Dropping `-mcpu` (plain `-O2`) keeps the load before the frame and makes **all
+7 GAME functions exact**, under both 2.5.7 and 2.4.1. The homologous OPEN
+PAD.OBJ copy is independently 6/6 exact with the committed 2.5.7 plain profile.
+Conversely `map_events`, `render_map_cells`
 and `render_actor_sprite` are exact **only** under the R3000 schedule
 (`-mcpu=r2000`), and `render_sprite func_8001e480` is exact **only** under
 `-fno-schedule-insns`. No single global flag captures all of them; retail's
@@ -204,8 +206,9 @@ no-`-mcpu` schedule equals 2.5.7's).
    scheduler rebuild is the only remaining lever that could move it. The
    compiler frontend is no longer the tooling gap — 2.4.1 through 2.8.x all run.
 3. **Actionable per-unit discriminator for the orchestrator (not applied
-   here).** `pad` reaches 7/7 exact under plain `-O2` (no `-mcpu`) versus 3/7
-   under the committed `-mcpu=r2000` profile, because its TU matches retail's
+   here).** The GAME band reaches 7/7 exact under plain `-O2` (no `-mcpu`)
+   versus 3/7 under the committed `-mcpu=r2000` profile, and the OPEN PAD copy
+   reaches 6/6 with the same plain profile, because these TUs match retail's
    *unscheduled* frame/load order. This is a legitimate recorded discriminator
    (exact and explained), the mirror image of the units that need `-mcpu=r2000`.
    It confirms `-mcpu` is a per-TU choice, not a global truth, and is worth a

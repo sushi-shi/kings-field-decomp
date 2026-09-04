@@ -573,3 +573,10 @@ unit = "open.debug"
 image = "OPEN.EXE"
 source = "src/open/debug.c"
 profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.pad"
+image = "OPEN.EXE"
+source = "src/vendor/open_libetc_pad.c"
+profile = "probe-gcc257-o2-plain"
+scope = "vendored"

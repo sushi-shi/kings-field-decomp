@@ -37,8 +37,6 @@ extern s32 DAT_80057e68;
 extern s32 DAT_80057e70;
 extern u8 DAT_80058010[8];
 extern void *DAT_80058018; /* saved handler */
-extern u32 DAT_80058020;
-extern u32 DAT_80058028;
 extern POLY_FT4 DAT_80058228[2];
 extern POLY_FT4 DAT_80058278[2];
 extern POLY_F4 DAT_800582c8[2][6];

@@ -164,8 +164,16 @@ class Datum:
 
     @property
     def alignment(self) -> int:
-        # The retail address is the compiler's own alignment evidence.
-        for candidate in (4, 2):
+        # The retail address is the compiler's own alignment evidence. The
+        # pinned GCC/maspsx path gives file-static tentative BSS definitions
+        # an eight-byte object offset even when the object itself is one word;
+        # load data and externally linked BSS words retain four-byte packing.
+        candidates = (
+            (8, 4, 2)
+            if self.storage == "bss" and self.scope == "static"
+            else (4, 2)
+        )
+        for candidate in candidates:
             if self.va % candidate == 0:
                 return candidate
         return 1

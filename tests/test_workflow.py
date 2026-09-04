@@ -70,7 +70,10 @@ class ManifestTests(unittest.TestCase):
             for unit in manifest.units
             if unit.scope == "vendored"
         }
-        self.assertEqual(set(vendor_units), {"game.intr_tail", "game.pad"})
+        self.assertEqual(
+            set(vendor_units),
+            {"game.intr_tail", "game.pad", "open.pad"},
+        )
         self.assertTrue(all(
             function.scope == "vendored"
             for unit in vendor_units.values()

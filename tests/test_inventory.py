@@ -907,18 +907,24 @@ class InventoryTests(unittest.TestCase):
             {"reviewed"},
         )
 
-    def test_pad_vendor_unit_owns_its_private_identifier_and_literals(self) -> None:
-        evidence_path = CONFIG / "evidence/game_vendor_pad.tsv"
-        _, rows = read_tsv(evidence_path)
-        self.assertEqual(len(rows), 6)
-        spans = [
-            (parse_int(row["va"]), parse_int(row["extent"]))
-            for row in rows
-        ]
-        self.assertEqual(spans[0][0], 0x800500B8)
-        self.assertEqual(spans[-1][0] + spans[-1][1], 0x8005023C)
-        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
-            self.assertEqual(va + extent, next_va)
+    def test_pad_vendor_units_own_private_state_and_literals(self) -> None:
+        campaigns = (
+            ("GAME.EXE", "game_vendor_pad.tsv", 0x800500B8, 0x8005023C),
+            ("OPEN.EXE", "open_vendor_pad.tsv", 0x8002FE8C, 0x80030010),
+        )
+        campaign_addresses = {}
+        for image, filename, start, end in campaigns:
+            _, rows = read_tsv(CONFIG / f"evidence/{filename}")
+            self.assertEqual(len(rows), 6)
+            spans = [
+                (parse_int(row["va"]), parse_int(row["extent"]))
+                for row in rows
+            ]
+            self.assertEqual(spans[0][0], start)
+            self.assertEqual(spans[-1][0] + spans[-1][1], end)
+            for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+                self.assertEqual(va + extent, next_va)
+            campaign_addresses[image] = tuple(va for va, _extent in spans)
 
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         _, vendored_rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")
@@ -927,7 +933,6 @@ class InventoryTests(unittest.TestCase):
             for row in vendored_rows
         }
         expected_names = (
-            "critical_section_set",
             "PadInit",
             "PadRead",
             "PadStop",
@@ -935,23 +940,7 @@ class InventoryTests(unittest.TestCase):
             "pad_read_bad_identifier",
             "pad_stop_bad_identifier",
         )
-        game_addresses = (
-            0x8005005C,
-            *(parse_int(row["va"]) for row in rows),
-        )
-        open_addresses = (
-            0x8002FE30,
-            0x8002FE8C,
-            0x8002FF00,
-            0x8002FF44,
-            0x8002FF80,
-            0x8002FFB0,
-            0x8002FFE0,
-        )
-        for image, addresses in (
-            ("GAME.EXE", game_addresses),
-            ("OPEN.EXE", open_addresses),
-        ):
+        for image, addresses in campaign_addresses.items():
             for va, name in zip(addresses, expected_names):
                 self.assertNotIn((image, va), identities)
                 vendor = vendored[(image, va)]
@@ -965,53 +954,66 @@ class InventoryTests(unittest.TestCase):
                     ),
                 )
 
-        pad_identifier = load_data_identities(RETAIL_CONFIG)[
-            ("GAME.EXE", 0x8006BD88)
-        ]
-        self.assertEqual(
-            (
-                pad_identifier.name,
-                pad_identifier.scope,
-                pad_identifier.storage,
-                pad_identifier.datatype,
-                pad_identifier.owner,
-                pad_identifier.confidence,
-            ),
-            ("pad_identifier", "static", "bss", "s32", "pad", "supported"),
-        )
-
+        data_identities = load_data_identities(RETAIL_CONFIG)
+        expected_state = {
+            ("GAME.EXE", 0x80058020): ("pad_buf", "bss", "u32"),
+            ("GAME.EXE", 0x80058028): ("pad_status", "bss", "u32"),
+            ("GAME.EXE", 0x8006BD88): ("PadIdentifier", "bss", "s32"),
+            ("OPEN.EXE", 0x80037760): ("pad_buf", "load", "u32"),
+            ("OPEN.EXE", 0x80037768): ("pad_status", "load", "u32"),
+            ("OPEN.EXE", 0x80049528): ("PadIdentifier", "bss", "s32"),
+        }
+        expected_references = {
+            "pad_buf": 4,
+            "pad_status": 1,
+            "PadIdentifier": 6,
+        }
         _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
-        identifier_references = [
-            row
-            for row in relocations
-            if row["image"] == "GAME.EXE"
-            and row["target_va"] == "0x8006bd88"
-        ]
-        self.assertEqual(len(identifier_references), 6)
-        self.assertEqual(
-            {row["target_name"] for row in identifier_references},
-            {"pad_identifier"},
-        )
-        self.assertEqual(
-            {row["status"] for row in identifier_references},
-            {"reviewed"},
-        )
+        for identity, (name, storage, datatype) in expected_state.items():
+            datum = data_identities[identity]
+            self.assertEqual(
+                (
+                    datum.name,
+                    datum.scope,
+                    datum.storage,
+                    datum.datatype,
+                    datum.owner,
+                    datum.confidence,
+                ),
+                (name, "static", storage, datatype, "pad", "supported"),
+            )
+            references = [
+                row
+                for row in relocations
+                if row["image"] == identity[0]
+                and row["target_va"] == f"0x{identity[1]:08x}"
+            ]
+            self.assertEqual(len(references), expected_references[name])
+            self.assertEqual({row["target_name"] for row in references}, {name})
+            self.assertEqual({row["status"] for row in references}, {"reviewed"})
 
-        source = (REPO / "src/vendor/game_libetc_pad.c").read_text()
+        sources = (
+            (REPO / "src/vendor/game_libetc_pad.c").read_text(),
+            (REPO / "src/vendor/open_libetc_pad.c").read_text(),
+        )
         game_state = (REPO / "include/kf/game_state.h").read_text()
         vendor_header = (REPO / "include/kf/psyq_pad.h").read_text()
-        self.assertIn("DATA(0x8006bd88, 0x4)\nstatic s32 pad_identifier;", source)
-        self.assertNotIn("DAT_8006bd88", source)
-        self.assertNotIn("DAT_8006bd88", game_state)
+        for source in sources:
+            self.assertIn("static u32 pad_buf", source)
+            self.assertIn("static u32 pad_status", source)
+            self.assertIn("static s32 PadIdentifier;", source)
+            self.assertNotIn("DAT_", source)
+            for literal in (
+                "PAD_init: Bad PadIdentifier %d\\n",
+                "PAD_dr  : Bad PadIdentifier %d\\n",
+                "StopPAD : Bad PadIdentifier %d\\n",
+            ):
+                self.assertIn(literal, source)
+        self.assertNotIn("DAT_80058020", game_state)
+        self.assertNotIn("DAT_80058028", game_state)
         self.assertIn("extern u32 PadInit(s32 identifier);", vendor_header)
         self.assertIn("extern u32 PadRead();", vendor_header)
         self.assertFalse((REPO / "include/kf/game_pad.h").exists())
-        for literal in (
-            "PAD_init: Bad PadIdentifier %d\\n",
-            "PAD_dr  : Bad PadIdentifier %d\\n",
-            "StopPAD : Bad PadIdentifier %d\\n",
-        ):
-            self.assertIn(literal, source)
 
     def test_menu_presentation_tu_and_interfaces_are_curated(self) -> None:
         evidence_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"
