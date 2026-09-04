@@ -325,6 +325,16 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, effect_header)
             self.assertNotIn(declaration, semantic_types)
 
+    def test_equipment_layouts_live_in_the_equipment_owner_header(self) -> None:
+        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
+        equipment_header = (
+            REPO / "include/kf/game_equipment.h"
+        ).read_text()
+        for structure in ("KfWeaponRecord", "KfArmorRecord"):
+            declaration = f"typedef struct {structure}"
+            self.assertIn(declaration, equipment_header)
+            self.assertNotIn(declaration, semantic_types)
+
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"
         _, rows = read_tsv(evidence_path)
@@ -565,7 +575,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x8001A7A8]["target_name"], "collision_target")
         self.assertEqual(
             by_site[0x8001B2A4]["target_name"],
-            "player_weapon_load_records_and_mirror_angles",
+            "weapon_records_load_and_mirror_angles",
         )
         self.assertEqual(
             by_site[0x8002E9D4]["target_name"],
@@ -699,6 +709,40 @@ class InventoryTests(unittest.TestCase):
         units = (CONFIG / "units.toml").read_text()
         self.assertEqual(units.count('source = "src/game/render_map_cells.c"'), 1)
         self.assertNotIn('source = "src/game/render_map_cell.c"', units)
+
+    def test_equipment_tu_is_gapless_and_supported(self) -> None:
+        evidence_path = CONFIG / "evidence/game_tu_equipment.tsv"
+        _, rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(rows), 3)
+
+        spans = [
+            (parse_int(row["va"]), parse_int(row["extent"]))
+            for row in rows
+        ]
+        self.assertEqual(
+            spans,
+            [
+                (0x800150A8, 0x54),
+                (0x800150FC, 0x2C),
+                (0x80015128, 0x3C),
+            ],
+        )
+        for (va, extent), (next_va, _next_extent) in zip(spans, spans[1:]):
+            self.assertEqual(va + extent, next_va)
+
+        for row in rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+
+        units = (CONFIG / "units.toml").read_text()
+        self.assertEqual(units.count('source = "src/game/equipment.c"'), 1)
+        self.assertNotIn('source = "src/game/player_weapon.c"', units)
+        self.assertNotIn('source = "src/game/asset_aux_block.c"', units)
 
     def test_menu_runtime_tu_is_gapless_and_uses_one_unit(self) -> None:
         presentation_path = CONFIG / "evidence/game_tu_menu_presentation.tsv"

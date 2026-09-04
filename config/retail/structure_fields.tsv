@@ -82,16 +82,16 @@ KfActorState	0x2b3c	0x04	current	KfActor *	supported	game_actor.h;asm;xrefs	acto
 KfActorState	0x2b40	0x02	current_index	u16	supported	game_actor.h;asm;xrefs	index of the actor being updated
 KfActorState	0x2b42	0x02	current_definition_id	u16	supported	game_actor.h;asm;xrefs	definition id of the actor being updated
 KfActorState	0x2b44	0x04	player_target	KfActor *	supported	game_actor.h;asm;xrefs	actor targeted by the player
-KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	asm;player_recalculate_combat_stats	meaning unresolved
-KfArmorRecord	0x02	0x02	defense_component0	u16	supported	asm;player_recalculate_combat_stats	added twice to damage_defense_component0
-KfArmorRecord	0x04	0x02	defense_component1	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component1
-KfArmorRecord	0x06	0x02	defense_component2	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component2
-KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	asm;player_recalculate_combat_stats	added to status_effect2_resistance
-KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component3
-KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	asm;player_recalculate_combat_stats	added to damage_defense_component4
-KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
-KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	asm;player_recalculate_combat_stats	meaning unresolved
+KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
+KfArmorRecord	0x02	0x02	defense_component0	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added twice to damage_defense_component0
+KfArmorRecord	0x04	0x02	defense_component1	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component1
+KfArmorRecord	0x06	0x02	defense_component2	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component2
+KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to status_effect2_resistance
+KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component3
+KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component4
+KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
+KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
 KfAssetHeader	0x00	0x04	byte_size	u32	supported	semantic_types.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
 KfAssetHeader	0x04	0x04	animation_data	s32	candidate	semantic_types.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
 KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	semantic_types.h;asm;asset_registry_select	byte offset from header to TMD payload
@@ -623,16 +623,16 @@ KfVec3s	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y coordinate
 KfVec3s	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
 KfVecXZs	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
 KfVecXZs	0x02	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
-KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
-KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	semantic_types.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
-KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	asm;player_update	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x10	0x02	unknown_10	u8[2]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
-KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	semantic_types.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
-KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	semantic_types.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
+KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	game_equipment.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
+KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x10	0x02	unknown_10	u8[2]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
+KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	game_equipment.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
+KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
 SoundRef	0x00	0x01	program	u8	supported	audio.h;Psy-Q-LIBSND	program number
 SoundRef	0x01	0x01	tone	u8	supported	audio.h;Psy-Q-LIBSND	tone number
 SoundRef	0x02	0x01	note	u8	supported	audio.h;Psy-Q-LIBSND	note number

@@ -1695,7 +1695,7 @@ GAME.EXE	0x80015044	0x3844		mips26	reachable-code	0x80015058	load		j		control-fl
 GAME.EXE	0x80015090	0x3890		mips26	reachable-code	0x8004c6bc	load	SquareRoot0	jal		control-flow-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x800150a8	0x38a8	0x800150ac	mips_hi16_lo16	reachable-code	0x8009ff10	bss	weapon_records	lui+addiu	v1	paired-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x800150d0	0x38d0	0x800150d4	mips_hi16_lo16	reachable-code	0x8009ff36	bss	weapon_records	lui+addiu	a0	paired-reviewed	reviewed	manual-match:game_match_campaign_30
-GAME.EXE	0x800150fc	0x38fc	0x80015100	mips_hi16_lo16	reachable-code	0x800a0248	bss	DAT_800a0248	lui+addiu	a1	paired-reviewed	reviewed	manual-match:game_match_campaign_30
+GAME.EXE	0x800150fc	0x38fc	0x80015100	mips_hi16_lo16	reachable-code	0x800a0248	bss	armor_records	lui+addiu	a1	paired-reviewed	reviewed	manual:game_tu_equipment
 GAME.EXE	0x80015170	0x3970	0x80015174	mips_hi16_lo16	reachable-code	0x800a0822	bss	player_state	lui+sb	v0	paired-reviewed	reviewed	manual:game_semantic_player_death
 GAME.EXE	0x80015178	0x3978	0x8001517c	mips_hi16_lo16	reachable-code	0x800a0858	bss	player_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_player_death
 GAME.EXE	0x80015180	0x3980	0x80015184	mips_hi16_lo16	reachable-code	0x800a085a	bss	player_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_player_death
@@ -2906,8 +2906,8 @@ GAME.EXE	0x8001b1b8	0x99b8		mips26	reachable-code	0x8001acf0	load		jal		control-
 GAME.EXE	0x8001b1c8	0x99c8		mips26	reachable-code	0x8002055c	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:resources;carved-body-reviewed
 GAME.EXE	0x8001b1dc	0x99dc	0x8001b1e0	mips_hi16_lo16	reachable-code	0x80065be8	bss	render_cell_windows	lui+addiu	a3	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:resources;carved-body-reviewed
 GAME.EXE	0x8001b254	0x9a54		mips26	reachable-code	0x8001b288	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:resources;carved-body-reviewed
-GAME.EXE	0x8001b2a4	0x9aa4		mips26	reachable-code	0x800150a8	load	player_weapon_load_records_and_mirror_angles	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x8001b2c8	0x9ac8		mips26	reachable-code	0x800150fc	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:resources;carved-body-reviewed
+GAME.EXE	0x8001b2a4	0x9aa4		mips26	reachable-code	0x800150a8	load	weapon_records_load_and_mirror_angles	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x8001b2c8	0x9ac8		mips26	reachable-code	0x800150fc	load	armor_records_load	jal		control-flow-reviewed	reviewed	manual:game_tu_equipment
 GAME.EXE	0x8001b2ec	0x9aec		mips26	reachable-code	0x8003a274	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:resources;carved-body-reviewed
 GAME.EXE	0x8001b310	0x9b10		mips26	reachable-code	0x80030fdc	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:resources;carved-body-reviewed
 GAME.EXE	0x8001b324	0x9b24	0x8001b328	mips_hi16_lo16	reachable-code	0x800650b0	bss	DAT_800650b0	lui+addiu	a3	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:resources;carved-body-reviewed

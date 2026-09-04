@@ -17,7 +17,6 @@ extern void func_8002718c(void);
 extern void func_800292f8(s32 object);
 extern void func_800365f8(void);
 extern void func_80036d3c(KfActor *actor);
-extern void asset_aux_block_load(const u32 *source);
 extern void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive);
 extern void asset_registry_select(u16 index);
 extern void asset_registry_set(u16 index, void *asset);

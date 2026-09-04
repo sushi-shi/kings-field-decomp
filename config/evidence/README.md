@@ -5,6 +5,9 @@ the curated retail inventories; it does not contain Sony binaries.
 
 `game_match_campaign_30.tsv` records the pre-edit MIPS evidence and final
 matching verdicts for the first GAME reconstruction campaign.
+`game_tu_equipment.tsv` records the shared resource-loader, table-extent,
+caller, and compiler-profile evidence for consolidating the contiguous weapon,
+armor, and player-charge helper run into one WIP equipment module.
 `game_semantic_math_lifecycle.tsv` records the assembly, CFG, xref, SDK-header,
 and vendored-negative-control evidence behind the first lifecycle/frame-pacer
 and fixed-point helper names. These campaign tables support identities in

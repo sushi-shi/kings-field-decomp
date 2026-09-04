@@ -8,7 +8,7 @@ other compilers.
 | --- | --- | --- |
 | `addiu c,c,-1; move ...; sll/sra 16; bne c,-1` | `s16 count = 8; do { ... } while (--count != -1);` | `matrix_interpolate` `0x800202fc` |
 | `addiu c,c,-1; bnez c` | `s32 count = N; do { ... } while (--count != 0);` | `actor_definitions_load` `0x80030a6c` |
-| `move v1,a1; ...; addiu a1,-1; bnez v1` | `while (count-- != 0)` with `s32 count` | `player_weapon_load_records_and_mirror_angles` `0x800150a8` (2.6.0 only) |
+| `move v1,a1; ...; addiu a1,-1; bnez v1` | `while (count-- != 0)` with an `s32` count | `weapon_records_load_and_mirror_angles` `0x800150a8` |
 | `lhu v1,field; addu v1,v1,a0` (load lands in the result register) | `s32 value = field;` then `value += delta;` as two statements | `player_adjust_mp` `0x800156bc` |
 | `lhu v0,field; addu v1,v0,a0` | single expression `field + delta` | rejected form of the same unit |
 | `beqz a2,<second test>` | two sequential `if` blocks, not nested | `audio_set_listener_transform` `0x8003303c` |

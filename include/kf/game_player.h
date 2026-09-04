@@ -11,6 +11,7 @@
  */
 
 #include <kf/semantic_types.h>
+#include <kf/game_equipment.h>
 
 extern KfMagicRecord magic_records[24];
 
@@ -44,8 +45,6 @@ extern void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rota
 extern void player_update_vertical_motion(void);
 extern void player_update_view_bob(void);
 extern void player_update_weapon_attack(void);
-extern void player_weapon_load_records_and_mirror_angles(
-    const KfWeaponRecord *source);
 extern void player_warp_change_floor(s32 floor, u8 variant);
 extern void player_warp_shimmer(s32 mode, VECTOR *position);
 extern void player_warp_shimmer_at_player(u32 mode);

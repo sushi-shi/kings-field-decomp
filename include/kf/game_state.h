@@ -81,7 +81,6 @@ extern u8 DAT_8009f844;
 extern u8 DAT_8009f845;
 extern u8 DAT_8009f846;
 extern u32 DAT_800a0768;
-extern KfArmorRecord armor_records[42];
 extern KfCollisionTarget collision_target;
 extern MATRIX color_matrix_table[7];
 extern KfAssetHeader *asset_registry_entries[];
@@ -122,6 +121,5 @@ extern KfRenderState render_state;
 extern char talk_image_path_template[];
 extern KfTmdState tmd_state;
 extern char weapon_image_path_template[15];
-extern KfWeaponRecord weapon_records[16];
 
 #endif

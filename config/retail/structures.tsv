@@ -6,7 +6,7 @@ KfActorActionProfile	0x0a	supported	game_actor.h;game_semantic_actor_ai.tsv;asm;
 KfActorDefinition	0x98	supported	game_actor.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
 KfActorPlacement	0x10	supported	game_actor.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
 KfActorState	0x2b48	supported	game_actor.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
-KfArmorRecord	0x1c	supported	asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
+KfArmorRecord	0x1c	supported	game_equipment.h;asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
 KfAssetHeader	0x14	supported	semantic_types.h;asm;asset_registry;render_bind_animated_instance	model asset header shared by static and animated registry entries
 KfAudioState	0x90	supported	audio.h;game_semantic_audio_control.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate; audio_initialize addresses the voice-id slots relative to the sequence-buffer field
 KfAudioVoiceSlots	0x64	supported	audio.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
@@ -70,5 +70,5 @@ KfTmdStateOpen	0xc	supported	semantic_types.h;asm;base-register;tmd_register	OPE
 KfVec3i	0x0c	supported	game_math.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	game_math.h;asm;xrefs	three signed halfword coordinates
 KfVecXZs	0x04	supported	game_math.h;asm;xrefs	two signed horizontal halfword coordinates
-KfWeaponRecord	0x2c	supported	semantic_types.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
+KfWeaponRecord	0x2c	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
 SoundRef	0x03	supported	audio.h;game_semantic_audio_spatial.tsv;asm;xrefs	packed LIBSND program/tone/note reference
