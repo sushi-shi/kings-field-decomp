@@ -125,6 +125,13 @@ causes GCC to emit the `__main` hook. It preserves the retail raw BSS and heap
 address constants while curating only the seven proven control-flow
 relocations. Both functions match retail exactly.
 
+`open_semantic_opening_render.tsv` records the OPEN view/render/present wrapper
+and its adjacent Gouraud-quad builder. It proves the forwarded view-vector
+interface, the complete 36-byte `POLY_G4` field population, the fixed ordering
+table slot, two display-state referents, and the GPU provider boundary. Both
+functions match retail exactly; the following textured-quad helper remains a
+separate WIP unit because adjacency alone does not prove its original owner.
+
 `open_semantic_resources.tsv` records the first three functions in the OPEN
 resource-loading run: the TIM upload wrapper shared with GAME, a counted
 word-stream copier, and the scene-zero MIXA0/MIXB0 loader. It types the five

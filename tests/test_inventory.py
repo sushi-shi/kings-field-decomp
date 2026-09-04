@@ -50,7 +50,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["functions"], 499)
         self.assertEqual(counts["signatures_started"], 499)
         self.assertEqual(counts["typed_returns"], 499)
-        self.assertEqual(counts["parameterized"], 317)
+        self.assertEqual(counts["parameterized"], 318)
         self.assertEqual(counts["data"], 3101)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
@@ -787,6 +787,40 @@ class InventoryTests(unittest.TestCase):
                 for row in relocation_rows
                 if row["image"] == "OPEN.EXE"
             },
+        )
+
+    def test_open_opening_render_campaign_matches_curated_evidence(self) -> None:
+        evidence_path = CONFIG / "evidence/open_semantic_opening_render.tsv"
+        _, evidence_rows = read_tsv(evidence_path)
+        identities = load_function_identities(RETAIL_CONFIG, required=True)
+        self.assertEqual(len(evidence_rows), 2)
+        for row in evidence_rows:
+            identity = identities[(row["image"], parse_int(row["va"]))]
+            parameters = ", ".join(identity.parameters.split(";")) or "void"
+            signature = f"{identity.return_type} {identity.name}({parameters})"
+            self.assertEqual(row["final_name"], identity.name)
+            self.assertEqual(row["final_signature"], signature)
+            self.assertIn(evidence_path.name, identity.evidence)
+            self.assertEqual(row["current_match"], "100.000000000% exact")
+
+        _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        campaign_rows = [
+            row
+            for row in relocation_rows
+            if "manual:open_semantic_opening_render"
+            in row["provenance"].split(";")
+        ]
+        self.assertEqual(len(campaign_rows), 18)
+        self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
+        self.assertNotIn("", {row["target_name"] for row in campaign_rows})
+        body_data = [
+            row
+            for row in campaign_rows
+            if row["kind"] == "mips_hi16_lo16"
+        ]
+        self.assertEqual(
+            {(row["target_name"], parse_int(row["target_va"])) for row in body_data},
+            {("display_state", 0x80049A68), ("ordering_table", 0x80069A6C)},
         )
 
     def test_open_resources_campaign_matches_curated_identities(self) -> None:
