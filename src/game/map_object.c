@@ -200,7 +200,7 @@ void map_object_pool_trigger_link(u8 link_id)
     } while (count-- != 0);
 }
 
-/* Drops LINK_ID from every behaviour-type-8 object that carries it. */
+/* Drops LINK_ID from every behaviour-type-0..8 object that carries it. */
 ADDRESS(0x80031c44, 0x84)
 void map_object_pool_clear_link(u8 link_id)
 {
@@ -209,8 +209,8 @@ void map_object_pool_clear_link(u8 link_id)
     KfMapObjectDefinition *definitions = map_object_state.definitions;
 
     do {
-        if (definitions[object->object_id].behavior_type >= 8
-            && definitions[object->object_id].behavior_type == 8
+        if ((definitions[object->object_id].behavior_type < 8
+             || definitions[object->object_id].behavior_type == 8)
             && object->link.link_id == link_id) {
             object->link.link_id = MAP_OBJECT_NONE;
         }

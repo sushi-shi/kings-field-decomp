@@ -32,12 +32,23 @@ class NotificationSpriteInventoryTests(unittest.TestCase):
         }
         self.assertEqual(fields, {
             "message_payloads": (0x00, 0x10, "u16[8]"),
-            "queue_tail": (0x10, 1, "u8"),
-            "queue_head": (0x11, 1, "u8"),
-            "effect_phase": (0x12, 1, "u8"),
-            "hold_frames": (0x13, 1, "u8"),
-            "effect_angle_x": (0x14, 2, "u16"),
+            "control": (0x10, 6, "KfNotificationControl"),
         })
+        control = {
+            row.name: (row.offset, row.size, row.datatype)
+            for row in load_structure_field_identities(RETAIL_CONFIG)
+            if row.structure == "KfNotificationControl"
+        }
+        self.assertEqual(control, {
+            "queue_tail": (0x00, 1, "u8"),
+            "queue_head": (0x01, 1, "u8"),
+            "effect_phase": (0x02, 1, "u8"),
+            "hold_frames": (0x03, 1, "u8"),
+            "effect_angle_x": (0x04, 2, "u16"),
+        })
+        structures = load_structure_identities(RETAIL_CONFIG)
+        self.assertEqual(structures["KfNotificationState"].size, 0x16)
+        self.assertEqual(structures["KfNotificationControl"].size, 6)
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         references = [
             row for row in rows

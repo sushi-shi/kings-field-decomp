@@ -55,9 +55,7 @@ void lighting_set_light_matrix(
 ADDRESS(0x800203bc, 0x44)
 void fog_interpolate_near(s32 start, s32 end, s32 ratio)
 {
-    s32 distance = start;
-
-    distance += ((end - distance) * ratio) >> 12;
+    s32 distance = (((end - start) * ratio) >> 12) + start;
 
     render_state.fog_near_distance = distance;
     SetFogNear(distance, 200);

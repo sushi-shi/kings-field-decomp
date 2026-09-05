@@ -62,6 +62,21 @@ promotes a probe to a proven historical toolchain.
 - [notification-state.md](notification-state.md): retail payload/control
   base relationships, the variadic enqueue signature, and the distinction
   between the recovered notification fields and the wider graphics object.
+- [game-notification-dequeue.md](game-notification-dequeue.md): typed dequeue
+  control subobject and late pointer binding recover retail base/offset forms;
+  the initial tail-load address materialization remains non-exact.
+- [game-warp-shimmer-traversal.md](game-warp-shimmer-traversal.md): forward
+  effect cursors, descending allocation/release counts and one active-effect
+  pointer close the 568-byte warp-shimmer animator.
+- [game-warp-trigger-results.md](game-warp-trigger-results.md): a missing
+  completion result and explicit shared warp-call/destination paths close
+  the 588-byte floor-trigger dispatcher.
+- [game-warp-position-buffers.md](game-warp-position-buffers.md): complete
+  VECTOR objects across all shimmer callers and full-word variant handoffs
+  close the remaining change-floor and same-floor warp helpers.
+- [game-projectile-helpers.md](game-projectile-helpers.md): byte lifetime,
+  signed shared rotation fields and landing-store order close the 3D helper;
+  the 2D helper's extra retail frame space remains unexplained.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
@@ -85,6 +100,64 @@ promotes a probe to a proven historical toolchain.
   original CCPSX command defaults and the unchanged OPEN G0/G8 comparison.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
+- [game-projection-countdown.md](game-projection-countdown.md): direct incoming
+  count countdowns closing both GAME perspective projection helpers.
+- [game-view-transform.md](game-view-transform.md): the copy-only nullable
+  rotation branch and unconditional matrix updates closing the GAME view helper.
+- [game-actor-free-countdown.md](game-actor-free-countdown.md): predecrement
+  countdown and one result join closing the GAME actor free-slot search.
+- [game-event-cone-search.md](game-event-cone-search.md): short angle locals
+  closing the event selector without widening its existing facing parameter.
+- [game-event-progress-image.md](game-event-progress-image.md): shared dirty
+  tail and limit-first comparison close the event-image progression helper.
+- [game-actor-cone-search.md](game-actor-cone-search.md): short angle locals
+  and the six-caller short-facing contract closing the actor selector.
+- [game-actor-action-selection.md](game-actor-action-selection.md): missing
+  floor-grid relocation, shared rejection exit and typed indexing close
+  ground selection; far-first profile selection improves its partial match.
+- [game-animation-phase.md](game-animation-phase.md): eleven-caller audit and
+  unchanged explicit phase-cache control; predicate remains non-exact.
+- [game-effect-state.md](game-effect-state.md): complete startup-cleared effect
+  owner and member-relative addressing closing the current-record selector.
+- [game-magic-cast-source.md](game-magic-cast-source.md): case-local objects,
+  distinct distance outputs, projectile-speed lifetime and height-branch order
+  improve magic casting; remaining stack/angle differences stay unattributed.
+- [game-map-object-clearing.md](game-map-object-clearing.md): corrected
+  type-0..8 link predicate and the rejected pool-reset memset control.
+- [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
+  block and result join; partial reconstruction improved, not exact.
+- [game-map-collision-edge.md](game-map-collision-edge.md): chained
+  opposite-row assignments recover the shared grid base and close the marker.
+- [game-volume-distance.md](game-volume-distance.md): shared rejection
+  tail closes player distance; direct actor-center expression improves its
+  partial match with a remaining register-role exchange.
+- [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
+  and rejected arithmetic-association controls; scatter remains partial.
+- [game-menu-list-format.md](game-menu-list-format.md): typed menu-row
+  access closes list initialization; index-driven termination and a word-sized
+  padding temporary close decimal glyph formatting.
+- [game-menu-glyph-render.md](game-menu-glyph-render.md): index-derived
+  fixed pitch closes number rendering and removes the string-render preheader
+  difference; four decoration immediates remain non-exact.
+- [game-menu-window-rows.md](game-menu-window-rows.md): signed title-test load
+  correction and rejected direct-row-address control in the window renderer.
+- [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
+  and the rejected SDK rectangle-macro control; inset instructions remain
+  non-exact without changing shared or SDK types.
+- [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
+  DRAWENV address pairs and unconditional per-frame RGB stores close the
+  screen-image/input helper.
+- [game-image-path-components.md](game-image-path-components.md): directory
+  digit cursors recover TALK/map path referents and improve both formatters;
+  register roles and the map floor-load schedule remain non-exact.
+- [game-option-menu-reset.md](game-option-menu-reset.md): clearing the pending
+  selection before the exit guard closes the option-menu dispatch loop.
+- [game-menu-root-results.md](game-menu-root-results.md): removing three
+  unsupported result resets improves the main-menu loop; an equivalent
+  cancellation-condition control leaves the remaining comparison unchanged.
+- [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
+  shared save-summary records removes duplicate advancing pointers and closes
+  the dialog-frame renderer.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
@@ -109,6 +182,12 @@ promotes a probe to a proven historical toolchain.
   argument/write traces and remaining address-base differences.
 - [open-fog-interpolation.md](open-fog-interpolation.md): scaled-difference
   expression recovering the exact OPEN fog interpolation and its preserved start.
+- [game-fog-interpolation.md](game-fog-interpolation.md): the independently
+  checked GAME counterpart, its three callers and exact five-function matrix unit.
+- [game-angle-tolerance.md](game-angle-tolerance.md): corrected GAME circular
+  tolerance logic, twelve call sites and the exact sixteen-function math unit.
+- [game-ft4-selectors.md](game-ft4-selectors.md): promoted GAME texture selector
+  arguments, preserved SDK packet widths and exact transition caller.
 - [open-item-cursor.md](open-item-cursor.md): saved stream start, postincrement
   scan and direct count-member accesses closing the OPEN placement loader.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining

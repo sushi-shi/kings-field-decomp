@@ -200,9 +200,9 @@ void menu_option_root(void)
             menu_spell_select();
             break;
         }
+        selection = -1;
         if (result != -99)
             return;
-        selection = -1;
         menu_frame_begin();
         confirm = 0;
         prev = input;

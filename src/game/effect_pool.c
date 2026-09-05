@@ -2,6 +2,18 @@
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
+typedef char effect_state_size[sizeof(KfEffectState) == 0xd28 ? 1 : -1];
+typedef char effect_state_alignment[__alignof__(KfEffectState) == 4 ? 1 : -1];
+typedef char effect_state_records_offset[
+    (u32)&((KfEffectState *)0)->records == 0x1e0 ? 1 : -1];
+typedef char effect_state_current_magic_offset[
+    (u32)&((KfEffectState *)0)->current_magic == 0xd20 ? 1 : -1];
+typedef char effect_state_current_record_offset[
+    (u32)&((KfEffectState *)0)->current_record == 0xd24 ? 1 : -1];
+
+DATA(0x8009ce60, 0xd28)
+KfEffectState effect_state;
+
 /*
  * Effect-pool spawn band 0x80036f44..0x8003784f (GAME.EXE).
  *
@@ -20,14 +32,8 @@
  * effect_pool_set_current publishes the "current" effect record and its magic_records row
  * through current_effect/current_effect_magic_record.
  *
- * effect_pool_spawn_typed is exact. effect_pool_construct carries the GCC 2.5.7 switch
- * cross-jumping / K&R stack-vararg codegen residue (a large jump table with
- * tail-merged cases and one fewer callee-saved register than retail).
- * effect_pool_set_current carries the shared-high-halfword data residue: the retail unit
- * reaches magic_records by offset from current_effect's base register because the
- * two globals are consecutive in the original translation unit, which a
- * reconstruction referencing magic_records as its own extern cannot reproduce.
- * See docs/patterns/source-shapes-gcc257.md.
+ * The whole shared state is cleared at startup. The selector reaches the magic
+ * rows by a member-relative offset from the current-record pointer slot.
  */
 
 /* effect_pool_construct kind-dispatch jump table (kinds 0x04..0x30). */

@@ -184,7 +184,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                                  image.require(site, 8))
                 if site in new:
                     self.assertEqual(target - va, new[site])
-                    self.assertEqual(row['provenance'], 'manual:game_display_environment_data')
+                    self.assertIn('manual:game_display_environment_data', row['provenance'].split(';'))
                     with self.assertRaisesRegex(ValueError, '^decoded-target-mismatch$'):
                         validate_relocation(original, function, dict(row, target_va=hex(target + 1)),
                                             catalog, 'safe')

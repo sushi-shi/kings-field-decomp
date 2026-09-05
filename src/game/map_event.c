@@ -12,17 +12,17 @@ void map_event_set_current(KfMapEvent *event)
 ADDRESS(0x800337ac, 0x74)
 void map_event_refresh_image_for_progress(KfMapEvent *event)
 {
-    if (event->image_index < event->image_limit) {
+    if (event->image_limit > event->image_index) {
         if (player_state.progress_state.highest_floor < event->image_limit) {
             if (event->image_index != player_state.progress_state.highest_floor) {
                 event->image_index = player_state.progress_state.highest_floor;
+            mark_image_dirty:
                 event->image_dirty = 1;
                 event->image_delay = 0;
             }
         } else if (event->image_index != event->image_limit) {
             event->image_index = event->image_limit;
-            event->image_dirty = 1;
-            event->image_delay = 0;
+            goto mark_image_dirty;
         }
     }
 }
@@ -120,35 +120,39 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s32 angle_tolerance,
     s32 *distance_out)
 {
-    KfMapEvent *event = map_event_pool;
     KfMapEvent *found = 0;
     s16 best_angle = 30000;
     s32 found_distance = 0;
+    KfMapEvent *event = map_event_pool;
     u16 count = 7;
     s32 distance;
-    s32 angle;
-    s16 delta;
+    s16 angle;
+    s16 folded;
 
     do {
-        if (event->state == 1) {
-            distance = map_event_distance_to_point(event, origin->x, origin->z, max_distance);
-            if (distance != -1) {
-                angle = vector_xz_to_angle(
-                    event->reference_x - origin->x, origin->z - event->reference_z);
-                angle = (angle - facing) & 0xfff;
-                if (angle >= 2049) {
-                    angle = 4096 - angle;
-                }
-                delta = angle;
-                if (delta <= angle_tolerance && delta < best_angle) {
-                    best_angle = angle;
-                    found = event;
-                    found_distance = distance;
-                }
-            }
+        if (event->state != 1) {
+            continue;
         }
-        event++;
-    } while (count-- != 0);
+        distance = map_event_distance_to_point(event, origin->x, origin->z, max_distance);
+        if (distance == -1) {
+            continue;
+        }
+        angle = vector_xz_to_angle(
+            event->reference_x - origin->x, origin->z - event->reference_z) - facing;
+        angle &= 0xfff;
+        folded = angle;
+        if (angle >= 2049) {
+            folded = 4096 - angle;
+        }
+        if (angle_tolerance < folded) {
+            continue;
+        }
+        if (folded < best_angle) {
+            best_angle = folded;
+            found = event;
+            found_distance = distance;
+        }
+    } while (event++, count-- != 0);
     *distance_out = found_distance;
     return found;
 }

@@ -35,21 +35,20 @@ RODATA(0x80012dc0, 0x14)
 ADDRESS(0x8003a2a0, 0x4c0)
 void magic_cast(void)
 {
-    struct KfVec3s direction;
-    SVECTOR offset;
-    struct KfEulerAngles angles;
-    VECTOR world_pos;
-    MATRIX matrix;
-    s32 distance;
-    SVECTOR rotation;
-    KfActor *target;
-    s32 scale;
-
     switch (player_state.selected_magic_id) {
     case 4:
     case 5:
     case 7:
-    case 8:
+    case 8: {
+        struct KfVec3s direction;
+        SVECTOR offset;
+        struct KfEulerAngles angles;
+        VECTOR world_pos;
+        MATRIX matrix;
+        s32 distance;
+        KfActor *target;
+        s32 scale;
+
         offset.vx = -200;
         offset.vy = 200;
         offset.vz = 400;
@@ -66,30 +65,29 @@ void magic_cast(void)
             player_state.camera_rotation.vy, 0x4e20, 0x155, &distance);
         actor_state.player_target = target;
         if (target == 0) {
+            scale = 600;
             if (player_state.selected_magic_id == 4) {
                 scale = 800;
                 angles.x = -128;
                 distance = 20;
             } else {
-                scale = 600;
                 angles.x = player_state.camera_rotation.vx;
             }
         } else {
+            scale = 600;
             if (player_state.selected_magic_id == 4) {
-                scale = 600;
                 if (map_cell_attribute_height_table[
                         map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]
-                        < -4999) {
-                    angles.x = vector_xz_to_angle(
-                        world_pos.vy + 5000 - target->position.vy, -distance);
-                } else {
+                        >= -4999) {
                     angles.x = vector_xz_to_angle(
                         world_pos.vy + 3000 - target->position.vy, -distance);
+                } else {
+                    angles.x = vector_xz_to_angle(
+                        world_pos.vy + 5000 - target->position.vy, -distance);
                 }
-                distance = distance / 800;
                 scale = 800;
+                distance = distance / scale;
             } else {
-                scale = 600;
                 angles.x = player_state.camera_rotation.vx;
             }
         }
@@ -101,6 +99,8 @@ void magic_cast(void)
         pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
         vector3s_scale_shift12(scale, &direction);
         if (player_state.selected_magic_id == 8) {
+            SVECTOR rotation;
+
             rotation.vx = player_state.camera_rotation.vx;
             rotation.vy = player_state.camera_rotation.vy;
             rotation.vz = player_state.camera_rotation.vz;
@@ -111,10 +111,14 @@ void magic_cast(void)
                           (SVECTOR *)&direction, distance, 1);
         }
         break;
-    case 6:
+    }
+    case 6: {
+        s32 distance;
+        KfActor *target;
+
         target = actor_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
-            player_state.camera_rotation.vy, 0x4e20, 0x155, (s32 *)&distance);
+            player_state.camera_rotation.vy, 0x4e20, 0x155, &distance);
         if (target != 0) {
             effect_pool_construct(0xa, 0x13, player_state.selected_magic_id,
                           &target->position,
@@ -135,6 +139,7 @@ void magic_cast(void)
                           (SVECTOR *)&player_state.camera_rotation, 0);
         }
         break;
+    }
     }
 }
 

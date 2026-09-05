@@ -7,12 +7,15 @@ both converted ELF sides now preserve that constraint. Eighty-eight independent
 original-linker controls check symbols and complete linked CPE bytes. Unknown
 versions/tags are rejected instead of extrapolated.
 
-All 612 local tests pass. Source data remains 6/60, independent SDK data 4/4,
-and target relinking 110/116; 620 reached config ranges still lack comparisons.
-All 112 source objects, their 112 target objects and 484 function-score rows
-are unchanged, preserving 360/471 exact game functions. The full strict build
-remains red. No game-object alignment, compiler directive, source extent or
-comparison check is relaxed by this SDK-only conversion fix.
+Integration into master preserves all 484 pre-merge function-score rows and
+382/471 exact game functions (GAME 284/362, OPEN 97/108, PSX 1/1). Source data
+remains 5/60, independent SDK data 4/4, and target relinking 110/116; 616 reached
+config ranges still lack comparisons. Ruff, all 612 local tests and the flake
+checks pass. The full strict build remains red on existing data ownership and
+placement failures, with no artifact failures or banked-function regressions.
+Unfinished warp-trigger source and notes remain outside the merge. No game-object
+alignment, compiler directive, source extent or comparison check is relaxed by
+this SDK-only conversion fix.
 
 ## Objective and completion boundary
 
@@ -914,6 +917,37 @@ reached config ranges remain open. This removes a false-positive mechanism; it
 does not claim full data closure. See the
 [reproduction, query isolation and full-corpus evidence](patterns/compiler-owned-data-sizes.md).
 
+## Integration through independent source sizes
+
+At the user's request, the seven completed data-branch commits through
+`66b4756` are merged with master at `c240f2b`. The branch worktree's newer
+uncommitted OPEN/delinker work is left untouched and is not represented as
+completed integration. Master's removal of `semantic_types.h` remains intact;
+the only remaining references are tests guarding against its reintroduction.
+
+The menu merge keeps master's exact indexed `menu_list_init`, shared types
+and newer formatting/glyph implementations, while adopting the complete
+`menu_assets` owner and both campaigns' relocation evidence. Inventory count
+expectations reflect the validated combined inventories, not either parent.
+No comparison gate or exact-match baseline is relaxed.
+
+All 112 reconstruction units are rebuilt. All **378/471 exact functions**
+remain exact: GAME 280/362, OPEN 97/108, PSX 1/1; the thirteen vendored
+controls also remain exact. Of 484 native function rows, 480 retain their
+sizes and strict percentages. The four changes are the data campaign's
+already documented partial menu consumers: status panel 78.468090%, item
+name frame 94.522270%, window backdrop 99.971760%, and window renderer
+86.908040%. The latter's honest drop from 88.172420% follows the recovered
+aggregate references and remains explicitly partial. No new function is
+banked by the merge.
+
+Ruff, all **591 local tests**, diff checks and `nix flake check -L` pass.
+The full build still rejects unresolved data/ownership/placement mismatches:
+strict source data **7/60**, SDK contributions **4/4**, target relinking
+**110/116**, and 619 reached config ranges without independent comparisons.
+The six target section-base conflicts remain visible. This integration does
+not claim complete data closure or linked-executable equality.
+
 ## Correct the OPEN sound boundary and carve initialized packing
 
 The independently measured three-byte SoundRef now has a three-byte DATA claim
@@ -972,6 +1006,40 @@ passing floor-literal unit joins a still-non-exact switch-table unit, while the
 new effect-helper unit fails placement. SDK data stays4/4 and target relinking
 110/116. Full build still rejects strict data/ownership/placement failures;
 neither fewer names nor equal payload slices establishes complete matching.
+
+## Integration through map-script ownership
+
+At the user's request, completed commits `21f786e`, `30448fb` and `bf051cf`
+are integrated with master at `4026c0f`. All other branch tips were already
+ancestors of master. Uncommitted edits in older worktrees remain untouched;
+this integration does not classify them as completed work. Nothing is pushed.
+The deleted `semantic_types.h` stays absent, with no source includes.
+
+Merge resolutions retain master's `effect_state` ownership and the new
+`item_stock` owner together, including the save-oracle and relocation rows.
+The consolidated `game.map_scripts` keeps the recently verified directory
+cursor in `map_show_screen_image`, using the now-owned `map_screen_image_path`.
+Both campaigns' evidence notes and the combined validated inventory counts
+are preserved. No baseline, evidence tier or comparison gate is relaxed.
+
+All **112 source units** are rebuilt. Of **484 native function rows**, only
+the floor helper changes: **84.921740% to 86.704346%**. All **381/471 exact
+game functions** remain exact (GAME 283/362, OPEN 97/108, PSX 1/1), along with
+the thirteen vendored controls. TALK remains 98.780490% and the map image
+helper 88.888885%; neither is banked. Focused raw comparisons retain their
+documented partial residues and the floor helper's corrected progress update.
+
+Ruff, all **609 local tests without skips**, diff checks and `nix flake check
+-L` pass; the sandbox suite has 112 expected local-tool/artifact skips.
+The full build remains red on strict data/ownership/placement gates, with
+zero artifact failures. Whole-source-data matches change **7/60 to 5/60**:
+the complete item-stock owner exposes its real BSS alignment conflict in
+`game.player_death`, and the former floor-literal unit joins the still-partial
+map switch-table owner. SDK contributions remain **4/4**, target relinking
+**110/116**, with the same six target section-base conflicts. Unmatched reached
+config ranges fall **619 to 616**. None of these figures establishes complete
+reachable-byte or linked-executable equality. Generated verification logs use
+`build/integration-bf051cf-*` and are not committed.
 
 ## Sibling evidence consulted
 

@@ -45,9 +45,9 @@ typedef struct KfEffectRecord {
     u16 unknown_08;      /* 0x08 */
     u16 unknown_0a;      /* 0x0a */
     VECTOR position;     /* 0x0c */
-    u16 rotation_x;      /* 0x1c */
-    u16 rotation_y;      /* 0x1e */
-    u16 rotation_z;      /* 0x20 */
+    s16 rotation_x;      /* 0x1c */
+    s16 rotation_y;      /* 0x1e */
+    s16 rotation_z;      /* 0x20 */
     u16 unknown_22;      /* 0x22 */
     u16 scale_x;         /* 0x24 */
     u16 scale_y;         /* 0x26 */
@@ -61,6 +61,24 @@ typedef struct KfEffectRecord {
     u16 unknown_38;      /* 0x38 */
     u16 unknown_3a;      /* 0x3a */
 } KfEffectRecord;
+
+typedef char check_effect_record_size[sizeof(KfEffectRecord) == 0x3c ? 1 : -1];
+#define KF_EFFECT_ROTATION_OFFSET_CHECK(member, offset) \
+    typedef char check_effect_##member[ \
+        ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
+KF_EFFECT_ROTATION_OFFSET_CHECK(rotation_x, 0x1c);
+KF_EFFECT_ROTATION_OFFSET_CHECK(rotation_y, 0x1e);
+KF_EFFECT_ROTATION_OFFSET_CHECK(rotation_z, 0x20);
+#undef KF_EFFECT_ROTATION_OFFSET_CHECK
+
+/* Startup clears this whole object; selection derives the magic array from
+ * the current-record slot by a fixed member offset. */
+typedef struct KfEffectState {
+    KfMagicRecord magic[24];
+    KfEffectRecord records[48];
+    KfMagicRecord *current_magic;
+    KfEffectRecord *current_record;
+} KfEffectState;
 
 /* Rendering view of the same 60-byte effect-pool record. The renderer reads
  * the low halfwords of the VECTOR position and interprets kind-specific header
@@ -89,9 +107,12 @@ typedef struct KfEffectRenderView {
 } KfEffectRenderView;
 
 extern SVECTOR effect_projectile_velocities[2];
-extern KfEffectRecord effect_pool_records[48];
-extern KfMagicRecord *current_effect_magic_record;
-extern KfEffectRecord *current_effect;
+extern KfEffectState effect_state;
+/* Consumer spellings are members, not separately owned globals. */
+#define magic_records (effect_state.magic)
+#define effect_pool_records (effect_state.records)
+#define current_effect_magic_record (effect_state.current_magic)
+#define current_effect (effect_state.current_record)
 
 extern KfEffectRecord *effect_pool_find_free(void);
 extern KfEffectRecord *effect_pool_construct(
@@ -104,6 +125,8 @@ extern void effect_pool_set_current(KfEffectRecord *record);
 extern void effect_pool_reset(void);
 extern void effect_pool_sweep(void);
 extern void effect_update_dispatch(void);
+extern void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit);
+extern void effect_projectile_update_2d(s32 speed, s32 frame_limit);
 extern u32 effect_map_collision(VECTOR *position, s32 radius);
 
 #endif

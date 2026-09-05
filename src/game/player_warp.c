@@ -24,7 +24,7 @@ static MATRIX actor_transform_color_matrix = {
  * map variant and its assets, move to an explicit cell, and shimmer back in.
  *
  * player_warp_trigger_update runs every frame from game_main_loop: it dispatches on the
- * current floor (jump table at 0x80012c14) and, when the player's previous map
+ * current floor (jump table at 0x80012c14) and, when the player's current map
  * cell matches a scripted trigger, performs the corresponding warp.
  *
  * actor_transform_definition5_to6 is the colour-fade transition called for
@@ -35,12 +35,6 @@ static MATRIX actor_transform_color_matrix = {
  * The KfEffectRecord layout is modelled in kf/game_effect.h; the shimmer
  * reuses the record's rotation_y halfword as its rotation phase and scale_y as
  * its fade intensity.
- *
- * actor_transform_definition5_to6 is exact.
- * player_warp_change_floor/player_warp_same_floor carry a one-instruction
- * prologue argument-save scheduling residue; player_warp_shimmer hits the
- * loop-optimiser count-loop/giv-base residue and player_warp_trigger_update
- * the switch cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
  */
 
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
@@ -50,6 +44,8 @@ ADDRESS(0x80036618, 0x238)
 void player_warp_shimmer(s32 mode, VECTOR *position)
 {
     KfEffectRecord *effects[4];
+    KfEffectRecord **cursor;
+    KfEffectRecord *effect;
     struct {
         VECTOR position;
         SVECTOR direction;
@@ -76,10 +72,11 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     scratch.position.vz = position->vz;
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
-    for (i = 0; i < 4; i++) {
-        KfEffectRecord *effect = effect_pool_construct(0xa, 0x11, 0x15, position, &scratch.direction);
+    cursor = effects;
+    for (i = 3; i != -1; i--) {
+        effect = effect_pool_construct(0xa, 0x11, 0x15, position, &scratch.direction);
         EFFECT_INTENSITY(effect) = intensity;
-        effects[i] = effect;
+        *cursor++ = effect;
     }
 
     display_flip_buffer_index();
@@ -88,38 +85,45 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
     for (frame = 0; frame < 48; frame++) {
+        cursor = effects;
         if (frame == 8) {
             sound_ref_play(&gameplay_sound_ref_6, 0x7f);
         }
         for (i = 0; i < 4; i++) {
+            effect = *cursor++;
+
             if (i * 8 < frame) {
-                if (EFFECT_INTENSITY(effects[i]) < 8193) {
-                    EFFECT_INTENSITY(effects[i]) += intensity_delta;
+                u16 current_intensity = EFFECT_INTENSITY(effect);
+
+                if (current_intensity < 8193) {
+                    EFFECT_INTENSITY(effect) = intensity_delta + current_intensity;
                 }
             }
-            EFFECT_ROTATION_PHASE(effects[i]) =
-                (EFFECT_ROTATION_PHASE(effects[i]) + 512) & 0xfff;
+            EFFECT_ROTATION_PHASE(effect) =
+                (EFFECT_ROTATION_PHASE(effect) + 512) & 0xfff;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
         frame_pacer_wait();
     }
 
     if (mode_value != 2) {
-        for (i = 0; i < 4; i++) {
-            effects[i]->type = 0xff;
+        cursor = effects;
+        for (i = 3; i != -1; i--) {
+            effect = *cursor++;
+            effect->type = 0xff;
         }
     }
 }
 
 ADDRESS(0x80036850, 0x15c)
-void player_warp_change_floor(s32 floor, u8 variant)
+void player_warp_change_floor(s32 floor, u32 variant)
 {
-    s32 position[3];
+    VECTOR position;
 
-    position[0] = player_state.camera_position.vx;
-    position[2] = player_state.camera_position.vz;
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(0, (VECTOR *)position);
+    position.vx = player_state.camera_position.vx;
+    position.vz = player_state.camera_position.vz;
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(0, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
     player_state.map_variant = variant;
@@ -129,25 +133,25 @@ void player_warp_change_floor(s32 floor, u8 variant)
     map_load_floor();
     player_state.camera_position.vx =
         player_state.camera_position.vx / 2000 * 2000 + 1000;
-    position[0] = player_state.camera_position.vx;
+    position.vx = player_state.camera_position.vx;
     player_state.camera_position.vz =
         player_state.camera_position.vz / 2000 * 2000 + 1000;
-    position[2] = player_state.camera_position.vz;
+    position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(1, (VECTOR *)position);
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(1, &position);
 }
 
 ADDRESS(0x800369ac, 0x144)
-void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
+void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
 {
-    s32 position[3];
+    VECTOR position;
     u8 previous_variant;
 
-    position[0] = player_state.camera_position.vx;
-    position[2] = player_state.camera_position.vz;
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(0, (VECTOR *)position);
+    position.vx = player_state.camera_position.vx;
+    position.vz = player_state.camera_position.vz;
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(0, &position);
     collision_adjust_cell_occupancy(player_state.map_cell.x,
                                     player_state.map_cell.z, -1);
     pool_release_all();
@@ -160,12 +164,12 @@ void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
         }
     }
     player_state.camera_position.vx = cell_x * 2000 + 1000;
-    position[0] = player_state.camera_position.vx;
+    position.vx = player_state.camera_position.vx;
     player_state.camera_position.vz = cell_z * 2000 + 1000;
-    position[2] = player_state.camera_position.vz;
+    position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(1, (VECTOR *)position);
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(1, &position);
 }
 
 /* player_warp_trigger_update scripted-trigger jump table (current floor 1..5). */
@@ -175,16 +179,22 @@ ADDRESS(0x80036af0, 0x24c)
 u32 player_warp_trigger_update(void)
 {
     u32 cell;
+    s32 destination_floor;
+    u8 destination_variant = 0;
 
+    /* The aligned word spans pitch_step and map_cell; mask out pitch_step. */
     switch (player_state.progress_state.current_floor) {
     case 1:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x1d380000) {
-            player_warp_change_floor(2, 0);
+            destination_floor = 2;
+change_floor:
+            player_warp_change_floor(destination_floor, destination_variant);
         } else if (cell == 0x190b0000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         } else if (cell == 0x27230000) {
-            player_warp_change_floor(4, 0);
+            goto change_to_floor4;
         } else if (cell == 0x0f020000) {
             if (boss_defeat_complete) {
                 return 1;
@@ -192,39 +202,50 @@ u32 player_warp_trigger_update(void)
         }
         break;
     case 2:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x1d380000) {
-            player_warp_change_floor(1, 0);
+            destination_floor = 1;
+            goto change_floor;
         } else if (cell == 0x1c120000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         }
         break;
     case 3:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x190b0000) {
-            player_warp_change_floor(1, 0);
+            destination_floor = 1;
+            goto change_floor;
         } else if (cell == 0x1c120000) {
-            player_warp_change_floor(2, 0);
+            destination_floor = 2;
+            goto change_floor;
         } else if (cell == 0x07160000 || cell == 0x2b5c0000) {
-            player_warp_change_floor(4, 0);
+change_to_floor4:
+            destination_floor = 4;
+            goto change_floor;
         }
         break;
     case 4:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x27230000) {
-            player_warp_change_floor(1, 0);
+            destination_floor = 1;
+            goto change_floor;
         } else if (cell == 0x07160000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         } else if (cell == 0x27450000) {
-            player_warp_change_floor(5, 1);
+            destination_floor = 5;
+            destination_variant = 1;
+            goto change_floor;
         } else if (cell == 0x2b5c0000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         }
         break;
     case 5:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x27450000) {
-            player_warp_change_floor(4, 0);
+            goto change_to_floor4;
         } else if (cell == 0x463d0000) {
             player_warp_same_floor(2, 0x12, 0x25);
         } else if (cell == 0x12250000) {
@@ -234,6 +255,8 @@ u32 player_warp_trigger_update(void)
         } else if (cell == 0x272f0000) {
             if (!boss_defeat_complete) {
                 player_warp_same_floor(2, 5, 0x19);
+            } else {
+                return 1;
             }
         } else if (cell == 0x05250000) {
             player_warp_same_floor(1, 0xe, 0x4f);

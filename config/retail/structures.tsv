@@ -21,6 +21,7 @@ KfDisplayStateOpen	0x20024	supported	open_render.h;asm;base-register;display_beg
 KfEffectRecord	0x3c	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;map_object_pool_update	60-byte record in effect_pool_records; constructors fix the header, VECTOR position and rotation/scale/direction triples
 KfEffectRenderView	0x3c	supported	game_effect.h;asm;render_actor_sprite;render_entities	60-byte rendering view of an effect_pool_records entry; reads low position halfwords and the sprite-specific header selectors
 KfEffectSprite	0x1c	supported	game_render.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
+KfEffectState	0xd28	supported	game_effect.h;asm;game_main_loop:whole-clear;magic_load_records;effect_pool_sweep;effect_pool_set_current:derived-base	complete magic/effect owner: 24 magic rows, 48 effects, selected magic and effect pointers; no internal gaps
 KfEulerAngles	0x06	supported	game_math.h;asm;xrefs	three signed halfword angles
 KfFloorDeformSegment	0x07	supported	game_effect.h;effect_floor_deform_line;7-byte-stride;unsigned-byte-loads	one scripted floor-height line; coordinates and steps wrap modulo 256
 KfFloorEntryCell	0x2	supported	game_player.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
@@ -43,6 +44,7 @@ KfMapObjectState	0x25a8	supported	game_map.h;asm;base-register;map_object_pool_c
 KfMapRuntimeState	0x2360	supported	game_map.h;game_main_loop:0x2360-clear;world-state-pool-relative-addresses;spinner-current-minus-544	eight map events, two pointers, two halfword timers and the complete saved world region
 KfMenuAssets	0x390	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuList	0x28	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
+KfNotificationControl	0x06	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	queue cursors and presentation controls; dequeue addresses tail at zero and phase at plus two; historical nesting remains WIP
 KfNotificationSprite	0x0e	supported	notify.h;game_semantic_notification_sprites.tsv;asm;retail-initializers;14-byte-stride	on-screen notification record with an active byte and complete screen-sprite descriptor
 KfNotificationState	0x16	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	notification payload table and animation state; members reached through shared queue-head and phase bases
 KfOpeningEntity	0x28	supported	open_resources.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	OPEN runtime entity record initialized by the exact placement loader and refined by the transition helper's full VECTOR copy

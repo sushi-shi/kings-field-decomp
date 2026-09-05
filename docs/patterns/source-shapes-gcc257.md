@@ -22,9 +22,11 @@ other compilers.
 
 Open residues recorded during the same campaign (not steered):
 
-- `actor_pool_find_free` `0x8002ca78`: retail joins the found and not-found
-  paths at one `jr $ra` with `move v0,v1` in the compare's delay slot; every
-  tried return shape emits a `j` to the epilogue instead.
+- `actor_pool_find_free` `0x8002ca78` is now **100%** with the
+  [predecrement countdown and shared result join](game-actor-free-countdown.md).
+  The historical postdecrement loop differed before the return symptom;
+  the two source corrections together reproduce the single `jr $ra` and
+  `move v0,v1` in the found-branch delay slot.
 - `matrix_set_rotation_yxz` `0x80014ccc`: retail keeps `move s1,a1` before
   the first `lh a0,4(s0)`; the probe schedules the load first.
 - `save_workspace_allocate` `0x8002c27c`: retail sets `a1` to zero before
@@ -131,8 +133,11 @@ Open residues recorded during the same campaign (not steered):
 - `player_death_update`: retail has an 8-byte larger frame with no stack
   traffic and loads `camera_rotation.x` with `lhu` before subtracting, so the
   original field is unsigned or accessed through a different type.
-- `angle_within_tolerance`: retail materialises the result through a branch
-  (`li v1,1` on the true path); every expression form tried folds to `xori`.
+- `angle_within_tolerance`: the old result-materialization assessment was
+  superseded by a [CFG correction](game-angle-tolerance.md). The GAME source
+  rejected `delta <= range`, although retail branches to the true block.
+  Restoring `delta <= range || 0x1000 - range <= delta` matches all 60 bytes;
+  the former `xori` difference was not evidence of a compiler limitation.
 ## player
 
 | Retail signature | Source shape | Witness |
@@ -176,9 +181,10 @@ Open residues recorded in the player campaign (not steered):
   anchor for any source-level loop containing two related constant
   addresses (`build/probe/hoist.c`), and a goto-formed loop loses the
   retail `s0`/`s1` player anchors, so the shape is unexplained.
-- `player_distance_to_point` `0x80017108`: the last range check keeps an
-  inline `j` to the epilogue instead of the shared `bnez` form, and the
-  final distance lands in `a0` instead of `v1`.
+- `player_distance_to_point` `0x80017108`: subsequently closed at **100%**
+  with a [shared rejection exit](game-volume-distance.md). The extra jump
+  was in the final vertical rejection; one `out_of_range` return recovers
+  that branch and the final distance register without changing arithmetic.
 - `player_distance_to_point_in_cone` `0x80017040`: the early-return branch
   slot holds `nop` instead of `move v0,s1`.
 ## actor
@@ -204,15 +210,22 @@ Open residues (not steered):
   `actor_play_sound_at_phase`: retail hoists argument-register copies
   (`move a1,s3`, `move s2,a0`) above independent loads; the 2.5.7 probe keeps
   them adjacent to their call or use.
-- `actor_try_select_*`, `actor_pool_find_target_in_cone`: retail keeps every
+- `actor_try_select_*`: retail keeps every
   prologue register save together and loads the current actor into `s1`
   afterwards; the probe schedules that load right after the `s1` save.
 - `actor_initialize_slot`: the `lifecycle = 1` store stays between the first
   load and the multiply chain in retail; the probe sinks it below the chain.
 - `actor_animation_crossed_phase`: register choice only (`v1`/`a2` swapped).
-- `actor_pool_find_free`: the found path joins the not-found path at one
-  `jr $ra` with `move v0,v1` in the compare's delay slot; every tried return
-  shape emits a `j` to the epilogue.
+  The current probe's [explicit phase-cache control](game-animation-phase.md)
+  leaves that residue unchanged; its independently audited field types and
+  eleven call sites do not justify register-forcing source.
+- `actor_pool_find_free`: subsequently closed at **100%** by the
+  [countdown/result-join correction](game-actor-free-countdown.md), not by
+  changing the compiler profile or forcing register assignments.
+- `actor_pool_find_target_in_cone`: subsequently closed at **100%** with
+  [short angle locals and the audited facing contract](game-actor-cone-search.md)
+  under the current 2.6.0 probe; the older scheduling observation was not a
+  proved source-independent limit.
 
 ## leaf frames
 
@@ -242,14 +255,13 @@ two generate identical code) explain several of the rows.
 
 Residues left in the same module (not steered):
 
-- `render_set_view_transform` `0x8001c184`: retail copies the rotation
-  through `a1` (a block-move scratch holding the constant address) and
-  re-materialises `a0 = &render_state.view_rotation` for `RotMatrix`; every
-  copy spelling and every flag sweep ties the copy address to the argument
-  register instead. In the 2.5.8 sources `update_equiv_regs` replaces a
-  constant-equivalent pseudo used exactly once in another basic block, so the
-  original probably placed the copy and the call in different blocks in a way
-  not yet found.
+- `render_set_view_transform` `0x8001c184` is now **100%** after the
+  [GAME nullable-view correction](game-view-transform.md). Retail's null
+  branch skips only the rotation copy, not `RotMatrix` and the two stack
+  zero stores. Correcting that source scope reproduces both the `a1` copy
+  address and the rematerialized `a0` call argument. The former register
+  symptom did not establish a compiler limitation; the earlier branch
+  target was already different.
 - `tmd_prepare_primitive_indices`: in OPEN `0x80017030`, computing the outer
   decrement and object pointer before the zero-count guard reproduces retail's
   second `tmd_state.current_asset` load. The unused 8-byte frame and the entry
@@ -472,9 +484,11 @@ Residues left in the module:
 - `map_object_spawn_effect`: retail keeps the sequence pointer in `s0` and the
   acquired object in `s1` with the return copy scheduled before the counter
   store; every tried spelling reuses `s0` for the object.
-- `map_object_pool_clear_link`: retail's `kind < 8` branch targets the
-  following `kind != 8` test with an empty delay slot; ours jumps to the loop
-  tail and fills the slot with the pointer increment.
+- `map_object_pool_clear_link`: subsequently closed at **100%** by
+  [correcting the behavior predicate](game-map-object-clearing.md). Retail's
+  `kind < 8` branch goes directly to the link comparison, skipping the
+  `kind != 8` test. The prior type-8-only source was behaviorally wrong;
+  its different cursor scheduling was not a source-independent limit.
 
 ## actor AI
 
@@ -783,13 +797,12 @@ dispatcher, and the consumable-item panel). This band sits directly after
 
 Residues recorded in the module (not steered):
 
-- `func_80022348` `0x80022348` (96.6%): retail promotes the loop-invariant
-  constant `-1` to a callee-saved register (`s6`, adding an eighth save slot so
-  `ra` lands at 44) and compares `selection`/`result`/the case-1 result against
-  it; the probe re-materialises `li v0,-1` (or reuses the `result` pseudo) at
-  each site. The extra save shifts every branch offset and cascades into the
-  case tails' delay-slot fills. Referents, relocations, call set and CFG match.
-  Same callee-saved-constant class as `actor_update_awareness`.
+- `menu_root` `0x80022348`: the later raw audit found three unsupported
+  result resets after void panel calls. Removing them restores those nop call
+  slots and improves strict objdiff to 96.863640%. Retail retains `-1` in s6
+  and saves ra at 44; the probe rematerializes `-1` and saves ra at 40, with
+  exchanged cursor/result registers. These are observed symptoms, not a
+  proved compiler mechanism. See [the result-lifetime audit](game-menu-root-results.md).
 - `func_80022608` `0x80022608` (92.8%): the consumable panel reconstructs with
   correct referents, calls, constants and control flow, but the caller-saved
   allocation permutes against retail — the two name givs land in `t2` where
@@ -914,27 +927,29 @@ value in a callee-saved register and grows the frame.
 
 Residue recorded (not steered):
 
-- `func_80036850` / `func_800369ac` (99.0% / 99.1%): referents, relocations,
-  call set, CFG, types and constants all match; the only divergence is the
-  prologue schedule of one argument-save move. Retail saves every incoming
-  argument to its callee-saved register before the first body instruction
-  (`move s1,a0; move s0,a1; move a0,zero`); the probe interleaves the first
-  call-argument setup between two of the saves (`move s1,a0; move a0,zero;
-  move s0,a1`). Same register assignment, same count, one instruction reordered.
-- `func_80036618` (~64%): the warp-shimmer animator. Structurally faithful
-  (four-effect spawn, 48-frame animation with the `frame==8` sound, mode-2 pool
-  retention) but hits the same loop-optimiser residues documented for
-  `func_80035e44`: retail strength-reduces the `effects[]` walks to moving
-  pointers with a `s6=-1` down-counter idiom (`do {} while (--i != -1)`) and
-  carries `mode` in an extra callee-saved `s7`, where the probe indexes
-  `effects[i]` per iteration with an up-counter and one fewer saved register.
-- `func_80036af0` (~62%): the per-frame scripted-trigger dispatcher. The switch
-  on the current floor (jump table `0x80012c14`) and the per-floor cell-key
-  comparisons match, but GCC's cross-jumping merges the many
-  `func_80036850(n, 0)` / `func_800369ac(...)` call tails into shared sites in a
-  different basic-block order than retail, and the probe hoists the current-floor
-  load above the frame allocation where retail allocates first. Cross-jump /
-  block-ordering residue; not steered.
+- `player_warp_change_floor` / `player_warp_same_floor` (`80036850` /
+  `800369ac`) are now **100%**. Their variant arguments arrive and survive
+  calls as full words, with narrowing only at the player-state byte store.
+  Replacing the u8/char boundary types with word inputs recovers all entry-save
+  instructions; the old assertion that source types already agreed was too
+  strong. All shimmer callers also need full sixteen-byte VECTOR objects:
+  the downstream effect constructor copies the fourth word. See
+  [the complete-object and ABI evidence](game-warp-position-buffers.md).
+- `player_warp_shimmer` (`80036618`) is now **100%**: reconstructing the
+  forward pointer cursor, descending allocation/release counts, pre-sound
+  cursor reset and one active-effect pointer recovers the 104-byte frame and
+  all 142 instructions. Reuse the single loaded unsigned intensity for its
+  guard/update. The earlier optimizer-limit attribution was unsupported;
+  ordinary C traversal corrections close it. See
+  [the complete evidence and focused sequence](game-warp-shimmer-traversal.md).
+- `player_warp_trigger_update` (`80036af0`) is now **100%**. The old body
+  omitted a real floor-five return-one path: its retail `bnez` owns `li v0,1`
+  in the delay slot. Correct that result, express the one shared change-floor
+  call with its destination arguments, and share the floor-four destination
+  block across three arms. These CFG corrections recover the entry schedule,
+  all 147 instructions and all 36 ordered relocations without changing the
+  switch owner or claiming an optimizer limit. See
+  [the evidence and focused sequence](game-warp-trigger-results.md).
 
 Residues recorded in `game.menu_select` (`func_800238d8`, `func_80023e9c`):
 
@@ -979,22 +994,14 @@ needed the `0x800377a4` `mips26` reloc promoted to reviewed.
 
 Residue recorded (not steered):
 
-- `func_8003781c` (~63%): publishes the current effect record and its
-  `magic_records` row through `current_effect` (0x8009db84) and
-  `current_effect_magic_record` (0x8009db80). The retail unit reaches
-  `magic_records` by `addiu a1,a1,-3364` off the `current_effect` base
-  register: `magic_records`, `effect_pool_records`,
-  `current_effect_magic_record`, and `current_effect` are one consecutive
-  block (0x8009ce60..0x8009db88) in the
-  original translation unit, so the linker-resolved delta is an assemble-time
-  constant and one `lui`/`%hi` load serves two globals. A reconstruction that
-  references `magic_records` as its own extern emits a separate `lui`+HI16 pair
-  and cannot share the base register. Reproducing it would require owning that
-  whole bss block (and thus migrating `magic_records`, used by many player/menu
-  units) into this TU; keeping the honest `&magic_records[kind]` reference and
-  the two real HI16/LO16 relocs (`current_effect`,
-  `current_effect_magic_record`) instead leaves
-  the shared-high-halfword divergence as a documented data-layout residue.
+- `effect_pool_set_current` (`8003781c`) formerly had a split-global
+  addressing difference: retail derives the magic table from the current
+  effect slot with `addiu a1,a1,-3364`. It is now **100%** with the
+  [complete effect-state owner](game-effect-state.md), independently supported
+  by the `0xd28`-byte startup clear and that member-relative calculation.
+  The helper's two assignments are unchanged. This corrects the earlier
+  ownership hypothesis; it does not prove an original TU boundary or a
+  particular compiler mechanism.
 - `func_80036f44` (~46%): the general constructor and its ~45-case kind switch
   (jump table `0x80012c28`). Structurally faithful — the common record init,
   the `magic_records[kind]`-indexed spatial sounds, and every case's field

@@ -131,7 +131,7 @@ extern void render_set_view_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);
-extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut, u8 *color, u16 ot_index);
+extern void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut, u8 *color, u16 ot_index);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
 

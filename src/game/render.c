@@ -224,9 +224,9 @@ void render_initialize(void)
     DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
     DAT_8009506c = 0x1c;
-    notification_state.effect_phase = 0;
-    notification_state.queue_tail = 0;
-    notification_state.queue_head = 0;
+    notification_state.control.effect_phase = 0;
+    notification_state.control.queue_tail = 0;
+    notification_state.control.queue_head = 0;
     flag = notification_message_ids;
     count = 7;
     do {
@@ -446,11 +446,10 @@ void tmd_project_vertices(s32 count)
     long gte_flags;
     long depth;
     long unused_depth;
-    s32 remaining;
 
     projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
-    for (remaining = count - 1; remaining != -1; remaining--) {
+    for (count--; count != -1; count--) {
         RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << 1;
         ReadSZ2(&depth, &unused_depth);
@@ -469,11 +468,10 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     long gte_flags;
     long depth;
     long unused_depth;
-    s32 remaining;
 
     projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
-    for (remaining = count - 1; remaining != -1; remaining--) {
+    for (count--; count != -1; count--) {
         RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << 1;
         ReadSZ2(&depth, &unused_depth);

@@ -33,7 +33,7 @@ void game_main_loop(void)
     memset(&display_state.buffer_index, 0, 0x249cc);
     memset(actor_state.definitions, 0, 0x2b48);
     memset(map_object_state.definitions, 0, 0x25b8);
-    memset(magic_records, 0, 0xd28);
+    memset(&effect_state, 0, sizeof(KfEffectState));
     memset(map_event_pool, 0, 0x2360);
     memset(&player_state, 0, sizeof(KfPlayerState));
     memory_card_initialize();

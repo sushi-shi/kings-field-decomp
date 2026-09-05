@@ -432,7 +432,6 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/notify.h",
         REPO / "include/kf/open_render.h",
         REPO / "include/kf/open_resources.h",
-        REPO / "include/kf/semantic_types.h",
         REPO / "include/kf/game_save.h",
         REPO / "include/kf/game_menu.h",
         REPO / "include/kf/game_cd.h",

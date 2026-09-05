@@ -151,7 +151,7 @@ extern void actor_pool_apply_radial_damage(
     u16 component4, u16 scale, u16 hit_flags);
 extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern KfActor *actor_pool_find_target_in_cone(
-    const struct KfVec3i *origin, s32 facing, u32 max_distance,
+    const struct KfVec3i *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
 extern void actor_pool_load_placements(const KfActorPlacement *placements);
@@ -169,7 +169,7 @@ extern void actor_set_player_transform( const VECTOR *position, const SVECTOR *r
 extern u8 actor_try_select_action_distance_facing( u8 action, s32 distance, u16 chance, u16 distance_scale);
 extern u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance);
 extern u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance);
-extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u16 chance);
+extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance);
 extern void actor_try_attack_player(
     u16 minimum_distance, u16 maximum_distance,
     s16 angle_offset, s16 angle_tolerance);

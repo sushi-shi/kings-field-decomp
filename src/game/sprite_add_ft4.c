@@ -2,7 +2,7 @@
 #include <kf/game_render.h>
 
 ADDRESS(0x80014314, 0x1c0)
-void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
+void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
                    u8 *color, u16 ot_index)
 {
     POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;

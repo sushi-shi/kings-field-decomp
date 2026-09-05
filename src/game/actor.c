@@ -59,15 +59,19 @@ ADDRESS(0x8002ca78, 0x3c)
 KfActor *actor_pool_find_free(void)
 {
     KfActor *actor = actor_state.actors;
+    KfActor *found;
     s32 count = 127;
 
     do {
         if (actor->slot_state == 0xff) {
-            return actor;
+            found = actor;
+            goto done;
         }
         actor++;
-    } while (count-- != 0);
-    return 0;
+    } while (--count != -1);
+    found = 0;
+done:
+    return found;
 }
 
 /* Caller-less wrapper that discards the free slot; its intent is unresolved. */
@@ -469,7 +473,7 @@ void actor_try_attack_player(
 ADDRESS(0x8002d7f8, 0x184)
 KfActor *actor_pool_find_target_in_cone(
     const struct KfVec3i *origin,
-    s32 facing,
+    s16 facing,
     u32 max_distance,
     s32 angle_tolerance,
     s32 *distance_out)
@@ -480,9 +484,8 @@ KfActor *actor_pool_find_target_in_cone(
     KfActor *actor = actor_state.actors;
     u16 count = 127;
     s32 distance;
-    s32 delta;
-    s32 folded;
-    s16 difference;
+    s16 delta;
+    s16 folded;
 
     do {
         if (actor->lifecycle != 1) {
@@ -506,11 +509,10 @@ KfActor *actor_pool_find_target_in_cone(
         if (delta > 2048) {
             folded = 0x1000 - delta;
         }
-        difference = folded;
-        if (angle_tolerance < difference) {
+        if (angle_tolerance < folded) {
             continue;
         }
-        if (difference < best_difference) {
+        if (folded < best_difference) {
             best_difference = folded;
             best = actor;
             best_distance = distance;
@@ -533,7 +535,6 @@ s32 actor_distance_to_point(
     s32 delta_x = actor->position.vx - point_x;
     s32 delta_z;
     s32 delta_y;
-    s32 top;
     s32 distance;
 
     if (delta_x < -max_distance || max_distance < delta_x) {
@@ -547,9 +548,8 @@ s32 actor_distance_to_point(
     if (point_y != 0xffff) {
         actor_height >>= 1;
         point_height >>= 1;
-        top = point_y - point_height;
+        delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
         point_height += actor_height;
-        delta_y = (actor->position.vy - actor_height) - top;
         if (delta_y < -point_height) {
             goto out_of_range;
         }
@@ -720,17 +720,13 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
 {
     KfActor *actor = actor_state.current;
     u16 odds = chance;
-    s32 cell;
-    const u8 *row;
 
     if (actor->action == action && actor->action_timer != 0xff) {
         return actor->action;
     }
-    cell = actor->cell_z;
-    row = map_floor_height_grid[cell];
-    cell = actor->cell_x;
-    if (-(row[cell] * 100) != actor->position.vy) {
-        return 0xff;
+    if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * 100)
+        != actor->position.vy) {
+        goto rejected;
     }
     if (actor_state.player_target == actor) {
         actor_state.player_target = 0;
@@ -740,12 +736,12 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
         odds >>= 1;
     } else {
         if (distance < 4001) {
-            return 0xff;
+            goto rejected;
         }
         odds <<= 3;
     }
     if (!((rand() >> 4) < odds)) {
-        return 0xff;
+        goto rejected;
     }
     if (rand() < 1638) {
         return action;
@@ -758,6 +754,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
             0x18e)) {
         return action;
     }
+rejected:
     return 0xff;
 }
 
@@ -793,12 +790,11 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
-u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u16 chance)
+u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance)
 {
     u16 profile = profile_index & 0x1f;
     KfActorActionProfile *weights = &actor_action_profiles[profile];
     KfActor *actor = actor_state.current;
-    s32 weight;
     s32 odds;
     KfActor *candidate;
     const KfEffectRecord *record;
@@ -808,15 +804,15 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u
     if (actor->action == action && actor->action_timer != 0xff) {
         return actor->action;
     }
-    weight = weights->near_weight;
-    if (distance < weights->far_distance) {
-        if (distance >= weights->near_distance) {
-            weight = weights->middle_weight;
-        }
+    odds = weights->near_weight;
+    if (distance >= weights->far_distance) {
+        odds = weights->far_weight;
     } else {
-        weight = weights->far_weight;
+        if (distance >= weights->near_distance) {
+            odds = weights->middle_weight;
+        }
     }
-    odds = (chance * weight) >> 8;
+    odds = (chance * odds) >> 8;
     if (!((rand() >> 4) < odds)) {
         return 0xff;
     }

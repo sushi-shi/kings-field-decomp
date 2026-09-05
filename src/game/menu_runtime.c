@@ -2,6 +2,11 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+typedef char menu_glyph_string_size[sizeof(MenuGlyphString) == 0x18 ? 1 : -1];
+typedef char menu_window_layout_size[sizeof(MenuWindowLayout) == 0x108 ? 1 : -1];
+typedef char menu_window_row_codes_offset[
+    (u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];
+
 /*
  * Contiguous GAME.EXE menu presentation/runtime run
  * 0x800291ec..0x8002b078. The original source boundary is WIP.
@@ -270,10 +275,10 @@ void menu_draw_string(
     s32 i;
     s32 x_offset;
 
-    for (i = 0, x_offset = 0; string->codes[i] != -1;
-         i++, x_offset += 14) {
+    for (i = 0; string->codes[i] != -1; i++) {
         s32 glyph;
 
+        x_offset = i * 14;
         primitive_buffer_begin_poly_ft4();
         current_poly_ft4->tpage = font->tpage;
         current_poly_ft4->clut = font->clut;
@@ -358,7 +363,8 @@ void menu_draw_number(
     s32 i;
     s32 xoff;
 
-    for (i = 0, xoff = 0; label->codes[i] != -1; i++, xoff += 7) {
+    for (i = 0; label->codes[i] != -1; i++) {
+        xoff = i * 7;
         primitive_buffer_begin_poly_ft4();
         current_poly_ft4->tpage = font->tpage;
         current_poly_ft4->clut = font->clut;
@@ -548,14 +554,12 @@ void primitive_buffer_commit_poly_ft4(s32 depth)
 ADDRESS(0x8002ad6c, 0x8c)
 void menu_list_init(KfMenuList *list, s32 row, s32 column)
 {
-    const s16 *src;
     s32 i;
 
     list->title_x = 12;
     list->title_y = 19;
-    src = menu_window_layouts[row].rows[column].codes;
     for (i = 0; i < 10; i++) {
-        list->title_glyphs[i] = src[i];
+        list->title_glyphs[i] = menu_window_layouts[row].rows[column].codes[i];
     }
     list->list_x = 0x16;
     list->list_y = 0x26;
@@ -571,11 +575,11 @@ void menu_list_init(KfMenuList *list, s32 row, s32 column)
 ADDRESS(0x8002adf8, 0xac)
 void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
 {
-    s16 blank;
-    s32 i;
+    s32 i = 0;
+    s32 blank;
 
     blank = (pad_zero == 0) ? 10 : 0;
-    for (i = 0; i < count; i++) {
+    for (; i < count; i++) {
         out[i] = blank;
     }
     out[count] = -1;
@@ -583,7 +587,7 @@ void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
         out[i] = value % 10;
         value /= 10;
         if (value == 0) {
-            break;
+            i = -1;
         }
     }
 }

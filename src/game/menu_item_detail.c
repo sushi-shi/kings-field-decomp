@@ -137,7 +137,6 @@ ADDRESS(0x80027ee4, 0x49c)
 void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
 {
     MenuGlyphString gs;
-    const KfSaveSlotSummary *row;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
@@ -173,10 +172,9 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
         return;
     }
 
-    row = rows;
     for (i = 0; i < 3; i++) {
         gs.y = i * 65 + 30;
-        if ((s32)row->fields[2] > 0) {
+        if ((s32)rows[i].fields[2] > 0) {
             gs.x = 181;
             gs.codes[0] = 0x82;
             gs.codes[1] = 0x83;
@@ -185,7 +183,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 251;
-            menu_format_number(row->fields[0], 6, 0, gs.codes);
+            menu_format_number(rows[i].fields[0], 6, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
@@ -196,7 +194,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 286;
-            menu_format_number(row->fields[1], 1, 0, gs.codes);
+            menu_format_number(rows[i].fields[1], 1, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
@@ -207,7 +205,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 230;
-            menu_format_number(row->fields[2], 4, 0, gs.codes);
+            menu_format_number(rows[i].fields[2], 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = 11;
@@ -216,7 +214,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x += 7;
-            menu_format_number(row->fields[3], 4, 0, gs.codes);
+            menu_format_number(rows[i].fields[3], 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
@@ -227,7 +225,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 230;
-            menu_format_number(row->fields[4], 4, 0, gs.codes);
+            menu_format_number(rows[i].fields[4], 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = 11;
@@ -236,9 +234,8 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x += 7;
-            menu_format_number(row->fields[5], 4, 0, gs.codes);
+            menu_format_number(rows[i].fields[5], 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
         }
-        row++;
     }
 }

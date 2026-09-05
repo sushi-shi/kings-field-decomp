@@ -410,8 +410,10 @@ void map_event_interact(KfMapEvent *event)
 ADDRESS(0x80034d54, 0x90)
 void map_show_screen_image(s32 group, s32 index)
 {
+    char *directory_floor = &map_screen_image_path[5];
+
     map_screen_image_path[8] = group + '0';
-    map_screen_image_path[5] = player_state.progress_state.current_floor + '0';
+    *directory_floor = player_state.progress_state.current_floor + '0';
     map_screen_image_path[9] = index / 10 + '0';
     map_screen_image_path[10] = index % 10 + '0';
     screen_show_image_until_input(map_screen_image_path);
@@ -457,7 +459,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * 1000 >> 12);
     sound_z = position->vz + (rcos(rotation->vy) * 1000 >> 12);
-    if (notification_state.effect_phase == 0) {
+    if (notification_state.control.effect_phase == 0) {
         index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
         if (index != -1) {
             event = &map_event_pool[index];
@@ -672,7 +674,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case 13:
-            if (notification_state.effect_phase != 0) {
+            if (notification_state.control.effect_phase != 0) {
                 break;
             }
             if (object->object_id == 0x82) {
