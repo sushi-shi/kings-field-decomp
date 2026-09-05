@@ -60,3 +60,5 @@ promotes a probe to a proven historical toolchain.
   inline support, six parser helper experiments and the retained typed vertex copy.
 - [game-world-state-layout.md](game-world-state-layout.md): the complete map
   runtime owner, preserved interior referents and newly exact spinner consumer.
+- [tmd-packet-header.md](tmd-packet-header.md): bounded packet-header inline
+  experiments, their stack traffic and the item-count reset negative control.
