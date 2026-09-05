@@ -130,7 +130,7 @@ extern void display_begin_frame(void);
 extern void display_present_frame(void);
 extern void sprite_add_f4(
     const u16 *position, const u8 *color, u16 ot_index);
-extern void sprite_add_ft4(u16 *position, u8 *texcoords, u16 tpage, u16 clut,
+extern void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
                            u8 *color, u16 ot_index);
 extern void opening_fade_in(void);
 extern void render_set_view_transform(
