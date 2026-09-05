@@ -1,14 +1,17 @@
-"""Tests for reloc-masked data-section matching (scripts.kf.data_match)."""
+"""Tests for strict data-section matching (scripts.kf.data_match)."""
 
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from scripts.kf.data_match import Elf, _diff_bss, _diff_init_section, diff_image, run
-from scripts.kf.delink import Function
+from scripts.kf.data_match import (
+    Elf, _diff_bss, _diff_init_section, _subtract, _union, coverage, diff_image, run,
+)
+from scripts.kf.delink import Datum, Function
 from scripts.kf.manifest import Manifest, Unit
 from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
 
@@ -86,14 +89,58 @@ class InitSectionDiffTest(unittest.TestCase):
             rc = _obj(Path(td) / "rc.o", rodata=b"\x01\x02\x03\x04")
             self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "extra")
 
-    def test_reloc_masking_hides_pointer_value(self) -> None:
-        # different masked pointer *values* under matching referents => match.
+    def test_pointer_addend_divergence(self) -> None:
+        # These are ELF REL addends, not linked addresses that may be masked.
         with TemporaryDirectory() as td:
-            rt = _obj(Path(td) / "rt.o", rodata=b"\x11\x22\x33\x44",
+            rt = _obj(Path(td) / "rt.o", rodata=b"\x04\0\0\0",
                       rodata_relocs=(MipsRelocation(0, "R_MIPS_32", "target"),))
-            rc = _obj(Path(td) / "rc.o", rodata=b"\xaa\xbb\xcc\xdd",
+            rc = _obj(Path(td) / "rc.o", rodata=b"\x08\0\0\0",
                       rodata_relocs=(MipsRelocation(0, "R_MIPS_32", "target"),))
-            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "match")
+            diff = _diff_init_section(".rodata", rt, rc)
+            self.assertEqual(diff.status, "addend")
+            self.assertIn("target", diff.detail)
+            self.assertIn("0x4", diff.detail)
+            self.assertIn("0x8", diff.detail)
+
+    def test_same_pointer_and_addend_match(self) -> None:
+        with TemporaryDirectory() as td:
+            kwargs = dict(data=b"\xfc\xff\xff\xff", data_relocs=(
+                MipsRelocation(0, "R_MIPS_32", "target"),
+            ))
+            rt = _obj(Path(td) / "rt.o", **kwargs)
+            rc = _obj(Path(td) / "rc.o", **kwargs)
+            self.assertEqual(_diff_init_section(".data", rt, rc).status, "match")
+
+    def test_jump_table_destination_divergence(self) -> None:
+        with TemporaryDirectory() as td:
+            relocs = (MipsRelocation(0, "R_MIPS_32", ".text"),)
+            rt = _obj(Path(td) / "rt.o", rodata=b"\x10\0\0\0", rodata_relocs=relocs)
+            rc = _obj(Path(td) / "rc.o", rodata=b"\x14\0\0\0", rodata_relocs=relocs)
+            diff = _diff_init_section(".rodata", rt, rc)
+            self.assertEqual(diff.status, "addend")
+            self.assertIn(".text", diff.detail)
+
+    def test_relocated_instruction_opcode_is_not_masked(self) -> None:
+        with TemporaryDirectory() as td:
+            relocs = (MipsRelocation(0, "R_MIPS_26", "target"),)
+            rt = _obj(Path(td) / "rt.o", rodata=b"\0\0\0\x08", rodata_relocs=relocs)
+            rc = _obj(Path(td) / "rc.o", rodata=b"\0\0\0\x0c", rodata_relocs=relocs)
+            self.assertEqual(_diff_init_section(".rodata", rt, rc).status, "bytes")
+
+    def test_duplicate_relocation_is_not_collapsed(self) -> None:
+        with TemporaryDirectory() as td:
+            reloc = MipsRelocation(0, "R_MIPS_32", "target")
+            rt = _obj(Path(td) / "rt.o", data=b"\0" * 4, data_relocs=(reloc,))
+            rc = _obj(Path(td) / "rc.o", data=b"\0" * 4, data_relocs=(reloc, reloc))
+            self.assertEqual(_diff_init_section(".data", rt, rc).status, "referent")
+
+    def test_relocation_order_is_not_collapsed(self) -> None:
+        with TemporaryDirectory() as td:
+            a = MipsRelocation(0, "R_MIPS_32", "a")
+            b = MipsRelocation(0, "R_MIPS_32", "b")
+            rt = _obj(Path(td) / "rt.o", data=b"\0" * 4, data_relocs=(a, b))
+            rc = _obj(Path(td) / "rc.o", data=b"\0" * 4, data_relocs=(b, a))
+            self.assertEqual(_diff_init_section(".data", rt, rc).status, "referent")
 
     def test_referent_divergence(self) -> None:
         with TemporaryDirectory() as td:
@@ -180,6 +227,72 @@ class StrictGateTest(unittest.TestCase):
                     ),
                     1,
                 )
+
+    def test_pointer_addend_mismatch_fails_default_gate(self) -> None:
+        with TemporaryDirectory() as td:
+            root = Path(td)
+            manifest = self._manifest()
+            unit = manifest.units[0]
+            target = root / "delink/game/modules" / unit.object_name
+            base = root / "objdiff/game/base" / unit.object_name
+            target.parent.mkdir(parents=True)
+            base.parent.mkdir(parents=True)
+            reloc = (MipsRelocation(0, "R_MIPS_32", "target"),)
+            _obj(target, data=b"\0\0\0\0", data_relocs=reloc)
+            _obj(base, data=b"\x04\0\0\0", data_relocs=reloc)
+            with patch("scripts.kf.data_match.load_manifest", return_value=manifest):
+                self.assertEqual(run(
+                    ("GAME.EXE",), show_detail=True, show_coverage=False,
+                    delink_dir=root / "delink", objdiff_dir=root / "objdiff",
+                ), 1)
+
+
+class CoverageTest(unittest.TestCase):
+    def test_union_and_subtraction(self) -> None:
+        self.assertEqual(_union([(5, 8), (0, 4), (3, 7), (8, 10)]), [(0, 10)])
+        self.assertEqual(_subtract(0, 20, [(4, 8), (10, 12)]), [(0, 4), (8, 10), (12, 20)])
+        self.assertEqual(_subtract(4, 8, [(0, 20)]), [])
+
+    def test_partial_and_complete_claims_image_isolation_and_bss(self) -> None:
+        unit = StrictGateTest._manifest().units[0]
+        unit = replace(unit, data=(
+            Datum(0x1004, 4, "partial", "load"),
+            Datum(0x1020, 8, "complete", "load"),
+            Datum(0x1040, 8, "runtime", "bss"),
+        ), rodata=(0x1060, 4))
+        other = replace(unit, image="OPEN.EXE", data=(
+            Datum(0x1000, 0x80, "other_image", "load"),
+        ))
+        manifest = Manifest({}, (unit, other))
+        rows = [
+            {"image": "GAME.EXE", "va": "0x1000", "size": "0x10", "name": "split"},
+            {"image": "GAME.EXE", "va": "0x1020", "size": "8", "name": "owned"},
+            {"image": "GAME.EXE", "va": "0x1040", "size": "8", "name": "bss"},
+            {"image": "GAME.EXE", "va": "0x1060", "size": "8", "name": "literal"},
+            {"image": "OPEN.EXE", "va": "0x9000", "size": "4096", "name": "other"},
+        ]
+        with patch("scripts.kf.data_match.read_tsv", return_value=((), rows)):
+            owned, total, fragments = coverage("GAME.EXE", manifest)
+        self.assertEqual((owned, total), (16, 40))
+        self.assertEqual(fragments, [
+            (0x1008, 8, "split"), (0x1040, 8, "bss"),
+            (0x1000, 4, "split"), (0x1064, 4, "literal"),
+        ])
+
+    def test_census_and_claim_overlaps_do_not_inflate_byte_counts(self) -> None:
+        unit = replace(StrictGateTest._manifest().units[0], data=(
+            Datum(0x1000, 8, "a", "load"),
+            Datum(0x1004, 8, "b", "load"),
+            Datum(0x2000, 4096, "outside_census", "load"),
+        ), rodata=(0x1004, 8))
+        rows = [
+            {"image": "GAME.EXE", "va": "0x1000", "size": "12"},
+            {"image": "GAME.EXE", "va": "0x1008", "size": "8"},
+        ]
+        with patch("scripts.kf.data_match.read_tsv", return_value=((), rows)):
+            owned, total, fragments = coverage("GAME.EXE", Manifest({}, (unit,)))
+        self.assertEqual((owned, total), (12, 16))
+        self.assertEqual(fragments, [(0x100c, 4, "")])
 
 if __name__ == "__main__":
     unittest.main()

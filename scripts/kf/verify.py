@@ -10,8 +10,8 @@ PS-X ELF / objdiff flow:
 crutches in ``src/`` + ``include/`` and the curated identity TSVs against
 committed floors (``down = good``); ``data`` compares each reconstructed unit's
 owned ``.data``/``.rodata``/``.bss`` against the retail-delinked target,
-reloc-masked, and exits nonzero on any mismatch or missing artifact. See the
-module docstrings for the full contract.
+including implicit relocation addends, and exits nonzero on any mismatch or
+missing artifact. See the module docstrings for the full contract.
 """
 
 from __future__ import annotations

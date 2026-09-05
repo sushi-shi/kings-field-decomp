@@ -1,5 +1,10 @@
 # Delinking and objdiff matching
 
+The active [data matching campaign](data-matching-campaign.md) distinguishes
+strict claimed-object comparison from complete reachable-data ownership and
+linked-image closure. The historical first-pass results below do not establish
+that closure.
+
 King's Field needs the same broad loop as Vostok/Gruntz—split retail bytes into
 target objects, compile reconstruction objects, compare, and ratchet—but not
 Vostok's actual delinker. Vostok consumes PE/COFF sections and a PDB. A PS-X EXE

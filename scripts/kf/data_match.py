@@ -5,22 +5,22 @@ it also reports a per-section ``.data``/``.rodata`` percentage, but not WHERE a
 data section diverges, nor the ``None``-scored case where the reconstruction
 emits no section at all. This module supplies that: for every manifested unit
 that owns data it compares the reconstruction object's initialized data
-sections against the retail-delinked target object, reloc-masked (like the code
-objdiff), and reports the first divergence and any referent mismatch. ``.bss``
+sections against the retail-delinked target object, including implicit REL
+addends, and reports the first divergence and any referent mismatch. ``.bss``
 is compared by size/ownership only - uninitialized storage has no bytes to
 match.
 
     kf verify data                 # strict gate + per-image summary
     kf verify data --image game    # one image
-    kf verify data --coverage      # add the owned-vs-total data coverage gap
+    kf verify data --coverage      # claimed ranges vs the loaded data census
     kf verify data --detail        # per-diverging-unit byte/referent detail
 
-Any byte, extent, relocation type/referent, or BSS ownership divergence exits
+Any byte, extent, relocation type/referent/addend, or BSS extent divergence exits
 nonzero. Missing comparison objects are also fatal rather than silently
 skipped.
 
-Retail ground truth is the delinked object under ``build/delink/<img>/modules``
-whose ``.data``/``.rodata`` bytes are copied from the retail image; the
+The target is the delinked object under ``build/delink/<img>/modules`` whose
+``.data``/``.rodata`` bytes are carved under the curated ownership model; the
 reconstruction is ``build/objdiff/<img>/base/<obj>``. Both are built by
 ``kf build``; this reads them, so run a build first.
 """
@@ -30,10 +30,12 @@ from __future__ import annotations
 import argparse
 import struct
 from dataclasses import dataclass, field
+from itertools import zip_longest
 from pathlib import Path
 
 from scripts.kf.delink import image_key
 from scripts.kf.manifest import Manifest, load as load_manifest
+from scripts.kf.mips_elf import R_MIPS_32
 from scripts.kf.paths import BUILD, RETAIL_CONFIG
 from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv
 
@@ -132,16 +134,6 @@ class Elf:
         return self._relocs.get(section, [])
 
 
-def _masked(section: Section, relocs: list[Reloc]) -> bytes:
-    """Section bytes with every 4-byte relocation field blanked."""
-    out = bytearray(section.data)
-    for reloc in relocs:
-        for k in range(4):
-            if reloc.offset + k < len(out):
-                out[reloc.offset + k] = 0
-    return bytes(out)
-
-
 # --------------------------------------------------------------------------- #
 # Per-unit data diff
 # --------------------------------------------------------------------------- #
@@ -150,7 +142,7 @@ class SectionDiff:
     name: str
     retail_size: int
     recon_size: int
-    status: str            # match | missing | extra | size | bytes | referent
+    status: str            # match | missing | extra | size | bytes | referent | addend
     detail: str = ""
 
 
@@ -207,30 +199,39 @@ def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None
             "size",
             f"section extent differs ({rt_size} B retail vs {rc_size} B reconstruction)",
         )
-    rt_bytes = _masked(rt, rt_rel)
-    rc_bytes = _masked(rc, rc_rel)
-    first = next((i for i in range(rt_size) if rt_bytes[i] != rc_bytes[i]), None)
-    if first is not None:
-        return SectionDiff(name, rt_size, rc_size, "bytes",
-                           f"masked content diverges at +{first:#x} "
-                           f"(retail {rt_bytes[first]:#04x} vs "
-                           f"reconstruction {rc_bytes[first]:#04x})")
     rt_key = [(r.offset, r.type, r.symbol) for r in rt_rel]
     rc_key = [(r.offset, r.type, r.symbol) for r in rc_rel]
     if rt_key != rc_key:
-        rt_by_off = {offset: (typ, symbol) for offset, typ, symbol in rt_key}
-        rc_by_off = {offset: (typ, symbol) for offset, typ, symbol in rc_key}
-        same_referents = sorted(rt_by_off.values()) == sorted(rc_by_off.values())
-        if set(rt_by_off) != set(rc_by_off) and same_referents:
-            detail = (f"same {len(rt_key)} referent(s), shifted layout: "
-                      f"retail reloc offsets {sorted(rt_by_off)[:4]} vs "
-                      f"reconstruction {sorted(rc_by_off)[:4]}")
-        else:
-            pos = next((off for off in sorted(set(rt_by_off) | set(rc_by_off))
-                        if rt_by_off.get(off) != rc_by_off.get(off)), None)
-            detail = (f"reloc +{pos:#x} retail->{rt_by_off.get(pos, '(none)')} "
-                      f"vs reconstruction->{rc_by_off.get(pos, '(none)')}")
+        # Do not collapse rows into a site-keyed dict: duplicate relocations
+        # and their order affect the linker operation too.
+        index, (left, right) = next(
+            (i, pair) for i, pair in enumerate(zip_longest(rt_key, rc_key))
+            if pair[0] != pair[1]
+        )
+        detail = f"relocation row {index}: retail {left} vs reconstruction {right}"
         return SectionDiff(name, rt_size, rc_size, "referent", detail)
+    # Both inputs are relocatable ELF objects, not linked absolute pointers.
+    # The delinker has already replaced linked fields with implicit REL
+    # addends. Masking them would accept owner+4 for owner+8 and even accept a
+    # different case label in a .text-relative switch table.
+    first = next((i for i in range(rt_size) if rt.data[i] != rc.data[i]), None)
+    if first is not None:
+        relocation = next(
+            (r for r in rt_rel if r.offset <= first < r.offset + 4), None
+        )
+        if relocation is not None and relocation.type == R_MIPS_32:  # S + A
+            offset = relocation.offset
+            left = struct.unpack_from("<I", rt.data, offset)[0]
+            right = struct.unpack_from("<I", rc.data, offset)[0]
+            return SectionDiff(
+                name, rt_size, rc_size, "addend",
+                f"reloc +{offset:#x} {relocation.symbol}: "
+                f"retail addend {left:#x} vs reconstruction {right:#x}",
+            )
+        return SectionDiff(name, rt_size, rc_size, "bytes",
+                           f"content diverges at +{first:#x} "
+                           f"(retail {rt.data[first]:#04x} vs "
+                           f"reconstruction {rc.data[first]:#04x})")
     return SectionDiff(name, rt_size, rc_size, "match")
 
 
@@ -295,30 +296,75 @@ def diff_image(
 
 
 # --------------------------------------------------------------------------- #
-# Coverage: how much retail initialized data any unit owns
+# Coverage: source claims intersected with the loaded data census
 # --------------------------------------------------------------------------- #
-def coverage(image: str, delink_dir: Path) -> tuple[int, int, list[tuple[int, int, str]]]:
-    """(owned_init_bytes, total_init_bytes, largest unowned data.tsv extents)."""
-    _fields, data_rows = read_tsv(RETAIL_CONFIG / "data.tsv")
-    total = 0
-    extents: list[tuple[int, int, str]] = []
-    for row in data_rows:
-        if row["image"] != image:
+def _union(ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Union of half-open address intervals, without double-counting overlaps."""
+    result: list[tuple[int, int]] = []
+    for start, end in sorted(ranges):
+        if start >= end:
             continue
-        size = int(row["size"], 0)
-        total += size
-        extents.append((int(row["va"], 0), size, row.get("name") or row.get("kind", "")))
-    key = image_key(image)
-    objects = delink_dir / key / "objects.tsv"
-    owned = 0
-    if objects.is_file():
-        _f, rows = read_tsv(objects)
-        for row in rows:
-            if row.get("scope") != "module":
-                continue
-            owned += int(row["data_size"], 0) + int(row["rodata_size"], 0)
-    extents.sort(key=lambda item: item[1], reverse=True)
-    return owned, total, extents[:15]
+        if result and start <= result[-1][1]:
+            result[-1] = result[-1][0], max(end, result[-1][1])
+        else:
+            result.append((start, end))
+    return result
+
+
+def _subtract(start: int, end: int, owners: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    result = []
+    for low, high in owners:
+        if high <= start:
+            continue
+        if low >= end:
+            break
+        if low > start:
+            result.append((start, low))
+        start = max(start, high)
+    if start < end:
+        result.append((start, end))
+    return result
+
+
+def coverage(
+    image: str, manifest: Manifest, *, config_dir: Path = RETAIL_CONFIG,
+) -> tuple[int, int, list[tuple[int, int, str]]]:
+    """Claimed census bytes, total census bytes, and unclaimed interval fragments.
+
+    This is not reachable-data coverage. data.tsv also contains SDK objects,
+    unresolved gaps and loaded BSS footprints. Neither those rows nor mere
+    references prove complete source ownership. Count retail address ranges,
+    not packed object sizes or synthetic assembler alignment tails.
+    """
+    _fields, data_rows = read_tsv(config_dir / "data.tsv")
+    rows = [row for row in data_rows if row["image"] == image]
+    census = _union([
+        (int(row["va"], 0), int(row["va"], 0) + int(row["size"], 0))
+        for row in rows
+    ])
+    claims = []
+    for unit in manifest.units:
+        if unit.image != image:
+            continue
+        claims.extend((d.va, d.va + d.size) for d in unit.data if d.storage == "load")
+        if unit.rodata:
+            start, size = unit.rodata
+            claims.append((start, start + size))
+    owners = _union(claims)
+    total = sum(end - start for start, end in census)
+    unowned = sum(
+        high - low for start, end in census
+        for low, high in _subtract(start, end, owners)
+    )
+    extents = []
+    for row in rows:
+        start, size = int(row["va"], 0), int(row["size"], 0)
+        name = row.get("name") or row.get("kind", "")
+        extents.extend(
+            (low, high - low, name) for low, high in _subtract(start, start + size, owners)
+        )
+    extents.sort(key=lambda item: (-item[1], item[0], item[2]))
+    return total - unowned, total, extents[:15]
 
 
 # --------------------------------------------------------------------------- #
@@ -350,11 +396,11 @@ def run(images: tuple[str, ...], *, show_detail: bool, show_coverage: bool,
         for failure in artifact_failures:
             print(f"  INCOMPLETE {failure.unit:<39} {failure.detail}")
         if show_coverage:
-            owned, total, extents = coverage(image, delink_dir)
+            owned, total, extents = coverage(image, manifest)
             pct = (100.0 * owned / total) if total else 0.0
-            print(f"  coverage: units own {owned}/{total} B "
-                  f"({pct:.1f}%) of retail initialized data")
-            print("  largest unowned/curated data extents (extern-crutch backlog):")
+            print(f"  source claims: {owned}/{total} B ({pct:.1f}%) of loaded data census")
+            print("  not reachability coverage; census includes SDK data and unresolved gaps")
+            print("  largest census fragments without initialized DATA/RODATA claims:")
             for va, size, name in extents[:10]:
                 print(f"    {va:#010x}  {size:>6} B  {name}")
     print(f"\ndata-match: {total_match}/{total_units} data-owning unit(s) match retail"
@@ -372,7 +418,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--detail", action="store_true",
                         help="print per-section byte/referent detail for diverging units")
     parser.add_argument("--coverage", action="store_true",
-                        help="add the owned-vs-total initialized-data coverage gap")
+                        help="show source claims within the loaded data census, not reachability")
     parser.add_argument("--delink-dir", type=Path, default=BUILD / "delink")
     parser.add_argument("--objdiff-dir", type=Path, default=BUILD / "objdiff")
     args = parser.parse_args(argv)
