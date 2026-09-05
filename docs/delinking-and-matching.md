@@ -223,8 +223,9 @@ kf-delink \
   --exe-dir /path/to/retail \
   --image GAME.EXE \
   --va 0x80014268
-kf-objdiff-project --image GAME.EXE
 ```
+
+Use `kf build` to refresh the shared project after focused delinking.
 
 The generated objdiff project pairs every target object with:
 
@@ -243,13 +244,15 @@ build object is absent is separately recorded as `manifest-missing-base`.
 Regenerate the project after adding a base object, then run:
 
 ```sh
-kf-objdiff-report --project-dir build/objdiff/game
-objdiff -p build/objdiff/game
+kf-objdiff-report --project-dir build/objdiff
+objdiff
 ```
 
-There is one report and GUI project per linked program. Combining them would
-make equal overlay addresses collide and would produce a misleading global
-score.
+One report and GUI project groups units under `psx/`, `game/`, and `open/`.
+Each unit still compares its own image-local base and target objects, so
+equal addresses or symbol names in different overlays do not collide.
+`kf status` and the data gates select image-qualified units from the shared
+report; progress continues to exclude vendored functions.
 
 ## Reconstructed-source route
 

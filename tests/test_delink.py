@@ -575,7 +575,7 @@ class ObjdiffProjectTests(unittest.TestCase):
                 root / "delink", output, ("GAME.EXE",)
             )
             self.assertEqual(results["GAME.EXE"][1:], (0, 1, 1))
-            project = json.loads((output / "game/objdiff.json").read_text())
+            project = json.loads((output / "objdiff.json").read_text())
             self.assertEqual(project["units"], [])
             self.assertNotIn("library_test", json.dumps(project))
             pairings = (output / "game/pairings.tsv").read_text()
@@ -589,11 +589,11 @@ class ObjdiffProjectTests(unittest.TestCase):
                 root / "delink", output, ("GAME.EXE",)
             )
             self.assertEqual(results["GAME.EXE"][1:], (1, 1, 1))
-            project = json.loads((output / "game/objdiff.json").read_text())
-            self.assertEqual(project["units"][0]["name"], "game.unit")
-            self.assertEqual(project["units"][0]["base_path"], f"./base/{module_name}")
+            project = json.loads((output / "objdiff.json").read_text())
+            self.assertEqual(project["units"][0]["name"], "game/unit")
+            self.assertEqual(project["units"][0]["base_path"], f"./game/base/{module_name}")
             self.assertEqual(
-                project["units"][0]["target_path"], f"../../delink/game/modules/{module_name}"
+                project["units"][0]["target_path"], f"../delink/game/modules/{module_name}"
             )
 
 

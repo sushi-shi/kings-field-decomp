@@ -13,6 +13,7 @@ from typing import Iterable
 from scripts.kf.delink import image_key, load_catalog
 from scripts.kf.graph import IncludeScanner, toolchain_identity
 from scripts.kf.manifest import Manifest, Unit, load as load_manifest
+from scripts.kf.objdiff import project_unit_name
 from scripts.kf.paths import BASELINE, BUILD, REPO, RETAIL_CONFIG
 from scripts.kf.retail import IMAGE_LAYOUTS, format_hex, parse_int, read_tsv, write_tsv
 
@@ -79,7 +80,7 @@ def input_hash(unit: Unit, manifest: Manifest, scanner: IncludeScanner | None = 
 
 
 def _load_report(image: str) -> tuple[dict | None, str | None]:
-    path = BUILD / "objdiff" / image_key(image) / "report.json"
+    path = BUILD / "objdiff" / "report.json"
     if not path.is_file():
         return None, None
     try:
@@ -88,7 +89,10 @@ def _load_report(image: str) -> tuple[dict | None, str | None]:
         return None, f"{path.relative_to(REPO)} is not a readable report: {error}"
     if not isinstance(document, dict) or not isinstance(document.get("units"), list):
         return None, f"{path.relative_to(REPO)} is not an objdiff report"
-    return document, None
+    prefix = image_key(image) + "/"
+    return {"units": [
+        unit for unit in document["units"] if str(unit.get("name", "")).startswith(prefix)
+    ]}, None
 
 
 def _percent(row: dict) -> float:
@@ -105,7 +109,7 @@ def _report_scores(document: dict | None) -> tuple[dict[str, float], list[str]]:
     scores: dict[str, float] = {}
     failures: list[str] = []
     for unit in document.get("units", []):
-        name = str(unit.get("name", "")).split("/")[-1]
+        name = str(unit.get("name", ""))
         measures = unit.get("measures", {})
         totals = [int(measures.get(key) or 0) for key in (
             "total_code", "total_functions", "total_data"
@@ -132,7 +136,7 @@ def _report_function_scores(document: dict | None) -> dict[str, dict[str, float]
         return {}
     scores: dict[str, dict[str, float]] = {}
     for unit in document.get("units", []):
-        name = str(unit.get("name", "")).split("/")[-1]
+        name = str(unit.get("name", ""))
         scores[name] = {
             str(function.get("name", "")): _percent(function)
             for function in unit.get("functions", [])
@@ -144,11 +148,11 @@ def _report_is_stale(image: str, manifest: Manifest) -> bool:
     from scripts.kf.config_data import load as load_contributions
 
     key = image_key(image)
-    report = BUILD / "objdiff" / key / "report.json"
+    report = BUILD / "objdiff" / "report.json"
     if not report.is_file():
         return False
     inputs = [
-        BUILD / "objdiff" / key / "objdiff.json",
+        BUILD / "objdiff" / "objdiff.json",
         BUILD / "delink" / key / ".delink.stamp",
         *[_base_path(unit) for unit in manifest.units if unit.image == image],
         *[c.base_path() for c in load_contributions(modules=manifest.modules()) if c.image == image],
@@ -191,7 +195,7 @@ def current_state(
             continue
         base = _base_path(unit)
         digest = input_hash(unit, manifest, scanner)
-        unit_scores = report_scores.get(unit.image, {}).get(unit.unit)
+        unit_scores = report_scores.get(unit.image, {}).get(project_unit_name(unit.image, unit.unit))
         if unit.scope == "vendored" and unit_scores is None:
             failures.append(
                 f"{unit.image}: vendored source-verification unit "

@@ -381,7 +381,7 @@ def audit(images, *, config_dir=RETAIL_CONFIG, delink_dir=BUILD / 'delink', objd
             image = RetailImage.load(contribution.image)
             target, base = contribution.target_path(delink_dir), contribution.base_path(objdiff_dir)
             result = compare(contribution, image, target, base, scratch)
-            report_path = objdiff_dir / contribution.image_key / 'report.json'
+            report_path = objdiff_dir / 'report.json'
             report = json.loads(report_path.read_text())
             result.issues.extend(report_failures(report, (contribution,)))
             if max(path.stat().st_mtime_ns for path in (target, base)) > report_path.stat().st_mtime_ns:
@@ -411,10 +411,13 @@ def run(images, *, delink_dir=BUILD / 'delink', objdiff_dir=BUILD / 'objdiff') -
 
 def report_failures(document: dict | None, contributions) -> list[str]:
     """Require real data-only units in the shared native CLI/GUI report."""
+    from scripts.kf.objdiff import project_unit_name
+
     failures = []
     for contribution in contributions:
         valid = isinstance(document, dict) and isinstance(document.get('units'), list)
-        units = [u for u in document['units'] if isinstance(u, dict) and u.get("name") == contribution.unit] if valid else []
+        name = project_unit_name(contribution.image, contribution.unit)
+        units = [u for u in document['units'] if isinstance(u, dict) and u.get("name") == name] if valid else []
         if len(units) != 1:
             failures.append(f"config-data report unit {contribution.unit!r} is missing or duplicated")
             continue

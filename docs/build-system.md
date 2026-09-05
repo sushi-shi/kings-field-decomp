@@ -112,10 +112,13 @@ A profile may set `compiler` to any listed native probe and may pass extra
 
 ## Incremental graph
 
-`kf configure` writes `build/build.ninja`. Each image has independent
-`base-IMAGE`, `target-IMAGE`, `compare-IMAGE`, `verify-IMAGE`, and `all-IMAGE`
-aliases; the unsuffixed aliases join the three graphs only as build targets.
-Addresses and objdiff reports never cross image boundaries.
+`kf configure` writes `build/build.ninja`. Each image has `base-IMAGE`,
+`target-IMAGE`, `compare-IMAGE`, `verify-IMAGE`, and `all-IMAGE` aliases.
+Compilation and delinking keep separate image outputs. Comparison synchronizes
+all three images into `build/objdiff/objdiff.json` and one native `report.json`;
+`--image` scopes verification and status to the selected image. Objdiff groups
+units under `psx/`, `game/`, and `open/`, while inventories, relocations, and
+progress identities remain keyed by image.
 
 The graph tracks retail executables, curated TSVs, source files, transitive
 repo-local headers, manifest profiles, analysis scripts, and a generated

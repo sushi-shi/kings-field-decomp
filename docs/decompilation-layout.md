@@ -14,9 +14,10 @@ are not sections of one executable. The same virtual address can name unrelated
 functions or data depending on which program is loaded. `PSX.EXE` is a third
 linked program, not a header attached to either overlay.
 
-Consequently, every authoritative address is keyed by `(image, va)`, and the
-matching pipeline produces three objdiff projects. A symbol, relocation, or
-function must never be joined across images by address alone.
+Every authoritative address is keyed by `(image, va)`. One objdiff project
+groups the independent object pairs under `psx/`, `game/`, and `open/`;
+equal overlay addresses do not collide between object pairs. A symbol,
+relocation, or function must never be joined across images by address alone.
 
 The repository still shares everything that should be shared:
 

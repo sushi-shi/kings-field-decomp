@@ -207,13 +207,13 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         "  restat = 1",
         "",
         "rule project",
-        "  command = $py -m scripts.kf.graph edge-project --image $image",
-        "  description = objdiff project $image",
+        "  command = $py -m scripts.kf.graph edge-project",
+        "  description = objdiff project",
         "  restat = 1",
         "",
         "rule report",
-        "  command = $py -m scripts.kf.graph edge-report --image $image --out $out",
-        "  description = objdiff report $image",
+        "  command = $py -m scripts.kf.graph edge-report --out $out",
+        "  description = objdiff report",
         "  restat = 1",
         "",
         "rule check",
@@ -242,8 +242,9 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         for path in sorted(RETAIL_CONFIG.glob("*.tsv"))
     ]
     scripts = _script_inputs()
-    image_reports: list[str] = []
-    image_verify: list[str] = []
+    project = "build/objdiff/objdiff.json"
+    report = "build/objdiff/report.json"
+    project_inputs: list[str] = []
     for image in IMAGE_LAYOUTS:
         key = image_key(image)
         units = [unit for unit in manifest.units if unit.image == image]
@@ -251,8 +252,6 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         data_contributions = [c for c in contributions if c.image == image]
         bases += [str(c.base_path().relative_to(REPO)) for c in data_contributions]
         delink_stamp = f"build/delink/{key}/.delink.stamp"
-        project = f"build/objdiff/{key}/objdiff.json"
-        report = f"build/objdiff/{key}/report.json"
         verify_stamp = f"build/objdiff/{key}/.verify.stamp"
         executable = str((retail / image))
         lines += _build_line(
@@ -294,22 +293,7 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
                     "profile": profile.name,
                 },
             )
-        lines += _build_line(
-            project,
-            "project",
-            inputs=[delink_stamp, *bases],
-            implicit=[str(UNITS_MANIFEST.relative_to(REPO)), *scripts],
-            variables={"image": image},
-        )
-        lines += _build_line(
-            report,
-            "report",
-            inputs=[project, delink_stamp, *bases],
-            # Recompiled objects may restat unchanged when only objdiff changes.
-            # Its identity must invalidate the report directly, not via objects.
-            implicit=[str(TOOLCHAIN_ID.relative_to(REPO)), *scripts],
-            variables={"image": image},
-        )
+        project_inputs.extend([delink_stamp, *bases])
         lines += _build_line(
             verify_stamp,
             "check",
@@ -327,8 +311,21 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         lines += _build_line(f"verify-{key}", "phony", inputs=[verify_stamp])
         lines += _build_line(f"all-{key}", "phony", inputs=[report, verify_stamp])
         lines.append("")
-        image_reports.append(report)
-        image_verify.append(verify_stamp)
+
+    lines += _build_line(
+        project,
+        "project",
+        inputs=project_inputs,
+        implicit=[str(UNITS_MANIFEST.relative_to(REPO)), *scripts],
+    )
+    lines += _build_line(
+        report,
+        "report",
+        inputs=[project, *project_inputs],
+        # Recompiled objects may restat unchanged when only objdiff changes.
+        # Its identity must invalidate the report directly, not via objects.
+        implicit=[str(TOOLCHAIN_ID.relative_to(REPO)), *scripts],
+    )
 
     for phase in PHASES:
         inputs = [f"{phase}-{image_key(image)}" for image in IMAGE_LAYOUTS]
@@ -415,18 +412,17 @@ def edge_sdkdata(unit_name: str, output: Path) -> int:
     return 0
 
 
-def edge_project(image: str) -> int:
+def edge_project() -> int:
     generate_projects(
         BUILD / "delink",
         BUILD / "objdiff",
-        (image,),
-        load_manifest(),
+        manifest=load_manifest(),
     )
     return 0
 
 
-def edge_report(image: str, output: Path) -> int:
-    return_code = generate_report(BUILD / "objdiff" / image_key(image), output)
+def edge_report(output: Path) -> int:
+    return_code = generate_report(BUILD / "objdiff", output)
     print(return_code)
     return 0
 
@@ -436,7 +432,7 @@ def edge_check(image: str, stamp: Path) -> int:
 
     result = check((image,))
     if result == 0:
-        report = BUILD / "objdiff" / image_key(image) / "report.json"
+        report = BUILD / "objdiff" / "report.json"
         payload = hashlib.sha256(report.read_bytes() + BASELINE.read_bytes()).hexdigest()
         _write_if_changed(stamp, payload + "\n")
     return result
@@ -445,14 +441,15 @@ def edge_check(image: str, stamp: Path) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="command", required=True)
-    for command in ("edge-delink", "edge-project", "edge-report", "edge-check"):
+    subs.add_parser("edge-project")
+    report_parser = subs.add_parser("edge-report")
+    report_parser.add_argument("--out", required=True, type=Path)
+    for command in ("edge-delink", "edge-check"):
         sub = subs.add_parser(command)
         sub.add_argument("--image", required=True, choices=tuple(IMAGE_LAYOUTS))
         if command == "edge-delink":
             sub.add_argument("--retail-dir", required=True, type=Path)
             sub.add_argument("--stamp", required=True, type=Path)
-        if command == "edge-report":
-            sub.add_argument("--out", required=True, type=Path)
         if command == "edge-check":
             sub.add_argument("--stamp", required=True, type=Path)
     compile_parser = subs.add_parser("edge-compile")
@@ -470,9 +467,9 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "edge-sdkdata":
             return edge_sdkdata(args.unit, args.out)
         if args.command == "edge-project":
-            return edge_project(args.image)
+            return edge_project()
         if args.command == "edge-report":
-            return edge_report(args.image, args.out)
+            return edge_report(args.out)
         return edge_check(args.image, args.stamp)
     except (OSError, RuntimeError, ValueError) as error:
         print(f"[{args.command}] {error}", file=sys.stderr)

@@ -43,13 +43,18 @@ graph. `kf status` is read-only; `kf bank` is the only command that updates the
 committed high-water ledger. Use `--image psx|game|open` to focus one linked
 program and `kf status --json` for machine-readable output.
 
+Inside `nix develop`, `objdiff` automatically opens `build/objdiff`, including
+from subdirectories. This single project groups units under `psx/`, `game/`,
+and `open/`. Run `kf build` first to generate it; an explicit `objdiff -p PATH`
+still opens another project.
+
 ## Project
 
 This is three decomps in one repository: the bootstrap `PSX.EXE`, main-game
-`GAME.EXE`, and opening `OPEN.EXE`. Each has its own address space, build graph,
-and objdiff report. Reconstruction units live in `config/units.toml`; curated
-retail functions, data, relocations, and library attribution live under
-`config/retail/`.
+`GAME.EXE`, and opening `OPEN.EXE`. Each has its own address space and object
+outputs; they share one objdiff project and report. Reconstruction units live
+in `config/units.toml`; curated retail functions, data, relocations, and library
+attribution live under `config/retail/`.
 
 ## Documentation
 

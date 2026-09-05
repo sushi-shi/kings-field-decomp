@@ -20,7 +20,7 @@ from scripts.kf.data_reachability import DataExtent, audit as reachability
 from scripts.kf.delink import Module, OBJECT_FIELDS
 from scripts.kf.manifest import load as load_manifest
 from scripts.kf.mips_elf import DefinedSymbol, MipsRelocation, STB_LOCAL, STT_OBJECT, write_mips_elf
-from scripts.kf.objdiff import generate_projects, generate_report
+from scripts.kf.objdiff import generate_projects, generate_report, project_unit_name
 from scripts.kf.paths import RETAIL_CONFIG
 from scripts.kf.progress import _report_scores
 from scripts.kf.retail import read_tsv, validate_config, write_tsv
@@ -45,7 +45,7 @@ def target_blob(payload=PAYLOAD, **kwargs):
 
 
 def exact_report():
-    return {"units": [{"name": GAME.unit,
+    return {"units": [{"name": project_unit_name(GAME.image, GAME.unit),
                        "measures": {"total_data": "2048", "matched_data": "2048"},
                        "sections": [{"name": ".data", "size": "2048", "fuzzy_match_percent": 100.0}]}]}
 
@@ -197,7 +197,8 @@ class ConfigDataTests(unittest.TestCase):
         document = exact_report()
         self.assertEqual(config_data.report_failures(document, (GAME,)), [])
         scores, errors = _report_scores(document)
-        self.assertEqual((scores[GAME.unit], errors), (0.0, []))  # positive data extent, no code score fallback
+        self.assertEqual((scores[project_unit_name(GAME.image, GAME.unit)], errors),
+                         (0.0, []))  # positive data extent, no code score fallback
         for changes in ({"matched_data": "2047"}, {"total_data": "2047"},
                         {"total_code": "4"}, {"total_functions": 1}):
             mutated = exact_report()
@@ -229,7 +230,7 @@ class ConfigDataTests(unittest.TestCase):
             self.assertIn('data_identities.tsv', line)
             self.assertIn('toolchain.id', line)
         for contribution in CONTRIBUTIONS:
-            report = next(line for line in lines if f'build/objdiff/{contribution.image_key}/report.json: report' in line)
+            report = next(line for line in lines if 'build/objdiff/report.json: report' in line)
             self.assertIn(contribution.object_name, report)
 
 
@@ -299,7 +300,7 @@ class ConfigDataIntegrationTests(unittest.TestCase):
                 return config_data.audit((GAME.image,), delink_dir=target_dir,
                                          objdiff_dir=objdiff_dir, scratch=root)[0]
             self.assertFalse(audit().matched)
-            report_path = objdiff_dir / GAME.image_key / 'report.json'
+            report_path = objdiff_dir / 'report.json'
             report_path.write_text(json.dumps(exact_report()))
             self.assertTrue(audit().matched)
             wrong = exact_report()
@@ -368,7 +369,7 @@ class ConfigDataIntegrationTests(unittest.TestCase):
                        object=f'data/{GAME.object_name}')
             write_tsv(target_dir / GAME.image_key / 'objects.tsv', OBJECT_FIELDS, [row], ())
             generate_projects(target_dir, objdiff_dir, (GAME.image,))
-            report = json.loads(generate_report(objdiff_dir / GAME.image_key).read_text())
+            report = json.loads(generate_report(objdiff_dir).read_text())
             self.assertEqual(config_data.report_failures(report, (GAME,)), [])
             unit = report['units'][0]
             self.assertEqual((unit['measures']['total_data'], unit['measures']['matched_data']), ('2048', '2048'))

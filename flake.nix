@@ -208,6 +208,21 @@
       objdiff-cli = objdiffBuild;
       objdiff = objdiffBuild;
 
+      # A PATH wrapper also works in shells launched with nix develop --command.
+      # The shared project groups objects under psx/, game/, and open/.
+      objdiffShim = pkgs.writeShellApplication {
+        name = "objdiff";
+        text = ''
+          for arg in "$@"; do
+            case "$arg" in
+              -p|--project-dir|--project-dir=*) exec ${objdiff}/bin/objdiff "$@" ;;
+            esac
+          done
+          exec ${objdiff}/bin/objdiff \
+            --project-dir "$KINGS_FIELD_DIR/build/objdiff" "$@"
+        '';
+      };
+
       crossBinutils = pkgs.pkgsCross.mipsel-linux-gnu.buildPackages.binutils;
       mipsBinutilsAliases = pkgs.runCommand "mipsel-linux-gnu-binutils-aliases" { } ''
         mkdir -p "$out/bin"
@@ -481,6 +496,7 @@
           export JAVA_HOME="${pkgs.jdk21}/lib/openjdk"
           export UV_PROJECT_ENVIRONMENT="$KINGS_FIELD_DIR/build/python-env"
           export UV_PYTHON="${pkgs.python311}/bin/python3.11"
+          export PATH="${objdiffShim}/bin:$PATH"
 
           echo "[kings-field] Psy-Q candidates: $PSYQ_DIR" >&2
           echo "[kings-field] compiler probes : GCC 2.4.1; two distinct GCC 2.6.0 builds" >&2
@@ -490,6 +506,7 @@
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
           echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-fid-census; kf-vendored-seed" >&2
           echo "[kings-field] matching        : kf init/build/match/status/check/bank; objdiff GUI" >&2
+          echo "[kings-field] objdiff project : $KINGS_FIELD_DIR/build/objdiff (psx/game/open; override with -p)" >&2
         '';
       };
 

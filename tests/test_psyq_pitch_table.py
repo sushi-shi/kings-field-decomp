@@ -171,7 +171,7 @@ class PsyqPitchTableTests(unittest.TestCase):
                               object=f'data/{contribution.object_name}')
                 write_tsv(target_dir / contribution.image_key / 'objects.tsv', OBJECT_FIELDS, [record], ())
                 generate_projects(target_dir, objdiff_dir, (contribution.image,))
-                report = json.loads(generate_report(objdiff_dir / contribution.image_key).read_text())
+                report = json.loads(generate_report(objdiff_dir).read_text())
                 self.assertEqual(config_data.report_failures(report, (contribution,)), [])
                 result = config_data.compare(contribution, retail, target, base, root)
                 self.assertTrue(result.matched, result.issues)

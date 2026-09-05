@@ -1,4 +1,4 @@
-"""Generate and score one objdiff project for each King's Field program."""
+"""Generate and score one objdiff project grouped by King's Field program."""
 
 from __future__ import annotations
 
@@ -45,6 +45,11 @@ def _relative(path: Path, directory: Path) -> str:
     return value
 
 
+def project_unit_name(image: str, unit: str) -> str:
+    key = image_key(image)
+    return f"{key}/{unit.removeprefix(key + '.')}"
+
+
 def generate_projects(
     delink_dir: Path,
     output_dir: Path,
@@ -52,6 +57,8 @@ def generate_projects(
     manifest: Manifest | None = None,
 ) -> dict[str, tuple[Path, int, int, int]]:
     results: dict[str, tuple[Path, int, int, int]] = {}
+    project_path = output_dir / "objdiff.json"
+    project_units = []
     for image in images:
         key = image_key(image)
         target_dir = delink_dir / key
@@ -175,27 +182,18 @@ def generate_projects(
                         "base_status": "present" if base.is_file() else "manifest-missing-base",
                     })
 
-        project = {
-            "$schema": SCHEMA,
-            "build_base": False,
-            "build_target": False,
-            "options": {"functionRelocDiffs": "all"},
-            "watch_patterns": ["**/*.o"],
-            "units": units,
-        }
-        project_path = project_dir / "objdiff.json"
-        project_content = json.dumps(project, indent=2) + "\n"
-        if (
-            not project_path.is_file()
-            or project_path.read_text(encoding="utf-8") != project_content
-        ):
-            project_path.write_text(project_content, encoding="utf-8")
+        for unit in units:
+            project_units.append({
+                "name": project_unit_name(image, unit["name"]),
+                "base_path": _relative(project_dir / unit["base_path"], output_dir),
+                "target_path": _relative(project_dir / unit["target_path"], output_dir),
+            })
         write_tsv(
             project_dir / "pairings.tsv",
             PAIRING_FIELDS,
             pairing_rows,
             (
-                "GENERATED - one objdiff project per independently linked program.",
+                "GENERATED - image-local pairings in the shared objdiff project.",
                 "Manifested units pair their module object under modules/ with base/<same name>;",
                 "claimed data rows (kind data-load/data-bss) share their unit's objects.",
                 "Supported config-data contributions pair with independent provider objects under data/.",
@@ -220,6 +218,27 @@ def generate_projects(
             ),
         )
         results[image] = project_path, paired, len(module_rows) + len(data_rows), len(excluded)
+    project = {
+        "$schema": SCHEMA,
+        "build_base": False,
+        "build_target": False,
+        "options": {"functionRelocDiffs": "all"},
+        "watch_patterns": ["**/*.o"],
+        "units": project_units,
+    }
+    names = [unit["name"] for unit in project_units]
+    if len(set(names)) != len(names):
+        raise ValueError("duplicate image-qualified objdiff unit names")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    project_content = json.dumps(project, indent=2) + "\n"
+    if not project_path.is_file() or project_path.read_text(encoding="utf-8") != project_content:
+        temporary = project_path.with_name(f".objdiff.{os.getpid()}.json")
+        temporary.write_text(project_content, encoding="utf-8")
+        temporary.replace(project_path)
+    # Retire the generated per-image projects/reports after migration.
+    for image in IMAGE_LAYOUTS:
+        for filename in ("objdiff.json", "report.json"):
+            (output_dir / image_key(image) / filename).unlink(missing_ok=True)
     return results
 
 

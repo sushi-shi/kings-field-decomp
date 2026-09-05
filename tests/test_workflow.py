@@ -307,9 +307,9 @@ class GraphTests(unittest.TestCase):
         ):
             graph.emit()
         lines = write.call_args.args[1].splitlines()
-        for rule in ("report", "check"):
+        for rule, count in (("report", 1), ("check", 3)):
             edges = [line for line in lines if f": {rule} " in line]
-            self.assertEqual(len(edges), 3)
+            self.assertEqual(len(edges), count)
             for edge in edges:
                 self.assertIn("build/gen/toolchain.id", edge.split(" | ")[1].split())
 
