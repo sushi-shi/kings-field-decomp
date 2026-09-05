@@ -1,5 +1,29 @@
 # OPEN map rendering: ownership and setup residues
 
+## Function Match Plan: orientation fall-through (`eaf83a3`)
+
+OPEN `80018bbc` remains 464 retail/472 probe bytes, strict 87.922420%,
+with 81 unequal aligned words. The six semantic views, full CFG, exact
+320-byte traversal caller, preceding sprite, vertex selector, shared layouts,
+GAME source homolog, history and SDK boundary evidence were refreshed.
+Nine calls, nine address pairs, one internal jump, no strings/candidates,
+the 80-byte frame and the widths/constants below retain their contract.
+
+At `80018cdc..80018cec`, orientation 2 adjusts X and falls into the Z
+adjustment shared with orientation 1; orientation 3 adjusts only X. Test
+expressing that common tail as a switch with case 2 falling through to case 1
+and a separate case 3. Preserve all coordinate calculations, stores, SDK
+calls and the caller; this is a control-flow hypothesis, not a case-order
+or register permutation search.
+
+The switch grows the body to 516 bytes. It compares orientation 2 first,
+introduces a signed less-than split and extra jumps, and reloads position Z
+from the stack before adjustment. Retail has none of these operations.
+All nine calls and numeric data targets agree, and the traversal remains
+raw exact, but the CFG contradicts the proposed switch. The canonical
+if/else body is left unchanged; do not build further trials on this rejected
+control shape. There is no new exact result or bank entry.
+
 ## Function Match Plan: relative-coordinate values (`6434803`)
 
 OPEN `80018bbc` remains 464 retail/472 probe bytes, strict 87.922420%.

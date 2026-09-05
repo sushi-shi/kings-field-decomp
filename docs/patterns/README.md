@@ -54,6 +54,8 @@ promotes a probe to a proven historical toolchain.
   graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
+- [open-emitter-source-controls.md](open-emitter-source-controls.md): negative
+  combined-unit, packet-header and vertex-address spelling controls; no new exacts.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
