@@ -1,5 +1,58 @@
 # OPEN ending-scroll controller and data owners
 
+## Function Match Plan: initial entity-position assignment (`a229537`)
+
+OPEN `80014e28`/1944 bytes starts at strict 97.129630% under
+`probe-gcc257-o2-g0`. The six semantic queries, complete retail
+CFG including the detached epilogue, full sole caller, adjacent scene/fade,
+entity-finder and camera-start interfaces, resource loaders, source history,
+data owners and current focused diff were inspected. The contract remains
+40 direct calls, eight validated internal jumps, 31 validated address pairs,
+no strings/candidate references, a 264-byte frame and ten-register epilogue.
+The SDK header declarations and PRIM/REG/GEO/SCSMVOL provider evidence still
+exclude library ownership of this game-specific controller.
+
+At setup, retail reloads entity 26 from sp+168 twice: before the position-Y
+read at `800150ec`, then again before its store at `80015104`. The current
+compound `-=` assignment retains one pointer across both accesses and omits
+the second reload. Test an ordinary explicit `entity->position.vy =
+entity->position.vy - 1500` assignment, which expresses separate source and
+destination evaluations without adding a pointer carrier, volatile access,
+padding, call or semantic operation. Keep all other updates, state-machine
+branches, objects, types and compiler options fixed. Inspect the earliest
+camera-argument ordering difference as well as the two pointer evaluations;
+reject this spelling if it does not explain the decoded reload.
+
+The explicit assignment emits exactly the same candidate as `-=`: 1944
+bytes, 167 unequal aligned words, the same forty numeric calls and 31 ordered
+data targets. It does not recover the omitted reload or earlier camera-path
+argument setup, so it is reverted.
+
+All five adjacent state initializations assign zero to actual signed-short
+selectors/blends. Retail clears them in the existing source order (lighting,
+background, sequence, scrolling, scroll phase), but the camera argument
+precedes that group rather than following it. Test a single chained zero
+assignment, retaining that right-to-left write order and the same five
+objects. This distinguishes a shared initialization value from five separate
+assignments without changing declaration order or adding carriers. It is a
+bounded source-dependency test, not a permutation of independent states;
+retain it only if actual instruction differences are recovered.
+
+The shared zero assignment also emits the original 1944-byte candidate,
+including all 167 unequal words, numeric calls and address targets. It is
+reverted. Neither setup spelling explains the first camera-argument/order
+divergence, omitted pointer reload or the existing lighting-store join.
+The original source is retained at strict 97.129630%; no exact or banking
+claim is made. Further setup syntax trials need new evidence rather than
+another equivalent assignment spelling.
+
+The restored unit was recompiled and the strict result rechecked. Full
+`kf build` preserves 95/108 OPEN exact functions and all 13 SDK source
+controls, with the same OPEN TMD switch-addend and GAME switch/historical-best
+failures. Ruff and `git diff --check` pass. The 401-test run takes 19.969
+seconds: 400 pass and the existing 883-versus-882 pointer-cast floor fails.
+No source, inventory, test, compiler-profile or bank change is retained.
+
 `opening_ending_scroll_run`, OPEN `80014e28`, is complete reconstructed C at
 **97.129630% strict objdiff**, not an exact or banked match. The sole caller,
 `opening_run` at OPEN `800156bc`, remains **100%** after the identity change.
