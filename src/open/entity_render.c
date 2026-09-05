@@ -138,8 +138,8 @@ ADDRESS(0x80019240, 0x298)
 void opening_render_entities_and_items(void)
 {
     const KfCellWindow *window = open_graphics_runtime.active_cell_window;
-    s32 origin_z = (u16)open_graphics_runtime.render_state.view_cell.z - window->origin_z;
-    s32 origin_x = (u16)open_graphics_runtime.render_state.view_cell.x - window->origin_x;
+    u16 origin_z = (u16)open_graphics_runtime.render_state.view_cell.z - window->origin_z;
+    u16 origin_x = (u16)open_graphics_runtime.render_state.view_cell.x - window->origin_x;
     KfOpeningEntity *entity;
     KfFloorItem *item;
     s16 remaining;
