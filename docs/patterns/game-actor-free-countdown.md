@@ -83,6 +83,8 @@ differences and the change-floor/same-floor warp helpers' argument-save order
 differences. No further experiments on those already recorded forms were made.
 The map-event image refresher has the same predicates/referents but different
 load and shared-store ordering; it was not edited. The map-event cone search
-is a separate follow-up candidate: its retail keeps the incoming facing word,
-whereas the current `s16` parameter adds sign-extension instructions. Its full
-caller/signature audit remains necessary before any change.
+was a separate follow-up candidate: retail keeps the incoming facing word,
+whereas the then-current source added sign-extension instructions. The
+subsequent [event-cone campaign](game-event-cone-search.md) closes it at 100%
+by recovering short angle locals while preserving the `s16` interface; the
+missing extension did not uniquely prove a wider parameter.
