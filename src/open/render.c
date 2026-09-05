@@ -120,9 +120,9 @@ void tmd_prepare_primitive_indices(void)
     do {
         primitive_count = (u16)object->primitive_count;
         packet = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + 12);
+        primitives_left = primitive_count;
+        primitives_left--;
         if (primitive_count != 0) {
-            primitives_left = primitive_count;
-            primitives_left--;
             do {
                 body = TMD_PACKET_BODY(packet);
                 word = *(u32 *)packet;

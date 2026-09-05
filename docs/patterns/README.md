@@ -31,6 +31,12 @@ promotes a probe to a proven historical toolchain.
 - [open-sprite-render.md](open-sprite-render.md): typed sprite material,
   SDK packet ownership, and the depth/texture source forms behind the exact
   OPEN projected-sprite renderer.
+- [open-ft4-descriptor.md](open-ft4-descriptor.md): the byte-identical SDK
+  rectangle trial and why texture byte loads do not establish source field width.
+- [open-camera-step.md](open-camera-step.md): direct lane publication trial
+  and the preserved fixed-point camera-step residue.
+- [open-tmd-countdown.md](open-tmd-countdown.md): unconditional primitive
+  countdown initialization leaves only two frame instructions unmatched.
 - [open-entity-traversal-residue.md](open-entity-traversal-residue.md): visible
   entity/item traversal, the wider floor-item state owner, and the remaining
   entry/material-base instruction differences.

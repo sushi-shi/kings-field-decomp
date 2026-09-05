@@ -1,13 +1,13 @@
 # OPEN general TMD polygon emission
 
 Current result: **99.044580% strict objdiff**, 3324 compiled bytes versus
-3320 retail under `probe-gcc260-o2-g0`. The function and its switch are not
+3320 retail under `probe-gcc257-o2-g0`. The function and its switch are not
 exact and are not banked. The exact entity-render caller remains unchanged.
 
 ## Function Match Plan: nonempty-path projected base (`7e3bb27`)
 
 This pass starts OPEN `0x8001764c` at strict 98.598790%, 3324 compiled bytes
-versus 3320 retail, using `probe-gcc260-o2-g0`. The complete graphics owner
+versus 3320 retail, using `probe-gcc257-o2-g0`. The complete graphics owner
 now recovers current-asset/projected-base sharing, superseding the historical
 separate-owner discussion below. All six semantic views, complete retail
 CFG, both caller sequences, adjacent projection/unlit bodies, accessor and
@@ -88,7 +88,7 @@ bank entry is claimed; all existing exact functions are preserved.
 ## Historical first reconstruction
 
 The first reconstruction of OPEN `render_enqueue_tmd` at `8001764c` reached
-98.802410% strict objdiff under the then-named `probe-gcc257-o2-g0`. Retail is
+98.802410% strict objdiff under the `probe-gcc257-o2-g0`. Retail is
 3320 bytes (`0xcf8`); that probe emitted 3324 bytes (`0xcfc`), including the
 return delay slot. It was not exact or banked. Its exact caller,
 `opening_entity_render` at `80018ecc`, remained 100% after the identity rename.

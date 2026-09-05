@@ -1,14 +1,14 @@
 # OPEN map polygon emission
 
 Current result: **99.663864% strict objdiff**, 952 compiled/retail bytes under
-`probe-gcc260-o2-g0`. Twenty aligned words remain different; this function is
+`probe-gcc257-o2-g0`. Twenty aligned words remain different; this function is
 not exact and is not banked. The current caller is 87.922420% and unchanged by
 this pass. The lifetime corrections below supersede the original results.
 
 ## Function Match Plan: loop-local projected base (master `7e3bb27`)
 
 OPEN `0x800185e8`, 952 retail bytes, starts this pass at strict 97.890755%
-with a 956-byte candidate under `probe-gcc260-o2-g0`. The complete graphics
+with a 956-byte candidate under `probe-gcc257-o2-g0`. The complete graphics
 owner already recovers current-asset/projected-array address sharing. The six
 semantic views, full retail CFG, sole caller `render_map_cell`, neighboring
 unlit/sprite bodies, accessor/allocator boundaries, SDK declarations and source
@@ -84,7 +84,7 @@ exact. GAME source, shared headers and retail ownership/relocations are unchange
 ## Historical first reconstruction
 
 The initial reconstruction of OPEN `render_enqueue_map` at `0x800185e8`
-reached 97.449580000% strict objdiff under the then-named
+reached 97.449580000% strict objdiff under the
 `probe-gcc257-o2-g0`, emitting 960 bytes against 952 retail bytes. It was not
 banked. Its sole caller, `render_map_cell`, then stood at 84.094826000%.
 Per-function evidence is in `open_semantic_map_enqueue.tsv`.

@@ -1,5 +1,34 @@
 # OPEN floor-item rendering: facing-byte mask
 
+## Function Match Plan: byte read followed by nibble masking (`8ac47fe`)
+
+OPEN `0x800190f4`, 332 retail bytes, starts at strict 98.795180% with a
+328-byte candidate under `probe-gcc257-o2-g0`. The six semantic views,
+complete retail CFG, sole traversal caller, neighboring entity/traversal
+source, placement loader and shared item fields, sprite helper, matrix-Y
+callee, SDK declarations/provider ledger and source history retain the
+contract below. There are nine direct calls, six validated address pairs,
+one validated internal jump and no strings or candidate outgoing references.
+The typed item/sprite and SDK matrix interfaces are unchanged. The frame is
+80 bytes and the return delay slot restores it; branch displacements account
+for the absent `andi v0,v0,0xff` at `0x80019184`.
+
+The packed-control byte is read with `lbu`; its low nibble later limits the
+byte animation counter and its high nibble selects the facing branch/angle.
+Test reading the full packed byte into the existing `u8 facing` and then
+applying `facing &= 0xf0`, rather than assigning a masked promoted expression
+directly. This distinguishes a byte read/update from the previous bit-clear
+constant trial without adding a carrier, changing signedness, altering an
+owner or editing GAME. Compare raw instructions and ordered referents after
+a real focused build, and preserve the exact neighboring entity function.
+
+The separate byte read/mask produces the same missing-`andi` diff: 328 bytes,
+the same nine numeric calls and six numeric address targets. The preceding
+552-byte entity renderer remains raw-exact, and the traversal's size/raw
+differences are unchanged. Remove the trial; the byte-update spelling does
+not explain the narrowing instruction under this probe. No source edit is
+retained for this function.
+
 ## Retail and source contract
 
 `OPEN.EXE:0x800190f4` is the 0x14c-byte `render_floor_item` body. Its sole

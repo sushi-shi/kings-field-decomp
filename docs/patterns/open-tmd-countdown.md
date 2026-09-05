@@ -1,0 +1,67 @@
+# OPEN TMD preparation countdown
+
+## Function Match Plan (`8ac47fe`)
+
+OPEN `tmd_prepare_primitive_indices`, `0x80017030`, owns 768 bytes and is
+strict 98.333336% under `probe-gcc257-o2-g0`. The six semantic queries,
+complete eight-mode CFG, sole caller `tmd_register`, preceding view-transform
+body, source history, shared format widths, prior packet-header experiments
+and vendor negative controls were inspected. The separately attributed Sony
+TMD reader/provider is not this custom in-place conversion of indices to
+eight-byte offsets. No direct calls or strings occur. Three address pairs
+load the current asset; the fourth addresses the 29-row switch. Seven
+validated internal jumps are distinct from its indirect dispatch and the
+candidate table-pointer rows.
+
+The no-argument caller stores the selected asset in its call delay slot.
+Both on-disk word counts are explicitly narrowed to unsigned halfwords.
+Packet length is loaded as a byte independently of the whole header word;
+mode extraction shifts 24 and masks `0xfd`. Vertex and normal halfwords
+shift by three and store with wrapping truncation. Every case body and
+resolved referent agrees with current C. The first difference is retail's
+unused eight-byte frame, which this experiment does not try to manufacture.
+
+At `80017070`, the primitive zero guard owns `addu a1,a0,t1` in its delay
+slot, with `t1=0xffff`: the countdown is computed on both outcomes. Current
+C initializes and decrements it only inside the nonempty branch; the probe
+puts packet-address addition in the branch slot and computes the countdown
+afterward. Move the actual unsigned countdown initialization/decrement before
+the zero guard, retaining the packet calculation and all loop/body code.
+This follows the observed unconditional operation without fabricated locals,
+frame padding, helper calls or compiler changes. Preserve all thirteen exact
+siblings in `open.render`; change no GAME source or shared type.
+
+## Retained result
+
+Moving only the real countdown preparation before the guard recovers the
+retail zero-test position and its countdown-add delay slot. Strict objdiff
+rises to **99.375000%**, with both bodies 768 bytes. After resolving numeric
+relocations, exactly two aligned instruction words differ:
+
+| Offset | Retail | Probe |
+| --- | --- | --- |
+| `+0x8` | `addiu sp,sp,-8` | `nop` |
+| `+0x2fc` | `addiu sp,sp,8` (return delay slot) | `nop` |
+
+Every other instruction, all four address pairs, seven internal jump targets,
+and the switch-table comparison agree. The thirteen sibling functions remain
+strict 100%. The unaccessed frame has no independently established source
+owner; no local or storage is added to create it. This result remains partial
+and is not banked.
+
+## Verification
+
+The canonical focused match really rebuilt `open.render` and all OPEN units
+touched by the reverted header trial. Camera step, FT4 and floor-item strict
+scores are unchanged; no source edit from those trials remains. OPEN stays
+95/108 exact, all 108 started, with size-weighted fuzzy progress 99.113%.
+All 358 existing exact functions and 13 vendor-source controls are preserved.
+
+The subsequent full `kf build` still fails only the known OPEN TMD-emitter
+default-row addends (`+0xca0` versus `+0xc9c`), thirteen pre-existing GAME
+RODATA comparisons, and four GAME historical-best deficits. OPEN preparation's
+own switch/data comparison passes. Ruff, the existing 401 repository tests
+(17.279 seconds), and `git diff --check` pass; no new test work was introduced.
+Generated logs and objects are not committed. The accompanying emitter-note
+correction records the actual configured `probe-gcc257-o2-g0` name; no profile
+or build option was changed.
