@@ -5065,7 +5065,8 @@ OPEN.EXE	0x800354f4	0x23cf4	0x1dc	data	reviewed	opening_scene0_camera_path	KfCam
 OPEN.EXE	0x800356d0	0x23ed0	0x54	data	reviewed	opening_scene3_camera_path	KfCameraPathPoint[3]	manual:open_semantic_opening_scene3	three-point scene-3 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x80035724	0x23f24	0xfc	data	reviewed	opening_ending_camera_path	KfCameraPathPoint[9]	manual:open_semantic_opening_ending_scene	nine-point ending camera path ending in the x=-1 sentinel
 OPEN.EXE	0x80035820	0x24020	0x54	data	reviewed	opening_ending_scroll_camera_path	KfCameraPathPoint[3]	manual:open_semantic_ending_scroll	two camera points and complete sentinel; begin/step record extent
-OPEN.EXE	0x80035874	0x24074	0x4	data	reviewed	opening_scene0_sound	SoundRef	manual:open_semantic_opening_scene0	packed program 9, tone 0, note 0x43 sound reference plus alignment byte
+OPEN.EXE	0x80035874	0x24074	0x3	data	reviewed	opening_scene0_sound	SoundRef	manual:open_semantic_opening_scene0;manual:open_sound_data_extent	complete three-byte program 9, tone 0, note 0x43 sound selector
+OPEN.EXE	0x80035877	0x24077	0x1	unclassified	coverage-gap			manual:open_sound_data_extent	retained zero byte between the three-byte SoundRef and overlay rectangles; represented as packing in the module, not as a fourth SoundRef field
 OPEN.EXE	0x80035878	0x24078	0x10	data	reviewed	opening_scene3_overlay_rects	u16[2][4]	manual:open_semantic_opening_scene3	two mutable overlay rectangles with initial y positions 256 and 512
 OPEN.EXE	0x80035888	0x24088	0x48	data	reviewed	opening_ending_scroll_panels	u16[9][4]	manual:open_semantic_ending_scroll	nine mutable eight-byte panel rectangles; signed y read at final row+2 and unsigned visibility window
 OPEN.EXE	0x800358d0	0x240d0	0x10	unclassified	coverage-gap			payload-complement	bytes following the nine ending-scroll panels and preceding the floor-item sprite table; ownership unresolved

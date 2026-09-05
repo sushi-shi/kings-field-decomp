@@ -15,7 +15,7 @@ import struct
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Callable, Iterable
 
 from scripts.kf.mips_elf import (
     RODATA_SECTION_SYMBOL,
@@ -647,6 +647,7 @@ def _module_rodata(
 def _module_data(
     module: Module,
     data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]],
+    load_padding: Callable[[int, int], bytes] | None = None,
 ) -> tuple[bytes, list[DefinedSymbol], list[MipsRelocation], int, list[DefinedSymbol]]:
     """Lay out a module's claimed data (.data bytes) and bss (sizes only)."""
     data = bytearray()
@@ -654,11 +655,26 @@ def _module_data(
     data_relocations: list[MipsRelocation] = []
     bss_size = 0
     bss_symbols: list[DefinedSymbol] = []
+    previous_load_end: int | None = None
     for datum in module.data:
         if datum.storage == "load":
             blob, relocations = data_blobs[datum.va]
+            if len(blob) != datum.size:
+                raise ValueError(f"module {module.unit}: truncated data for {datum.symbol}")
             offset = (len(data) + datum.alignment - 1) & -datum.alignment
-            data.extend(b"\0" * (offset - len(data)))
+            padding_size = offset - len(data)
+            if padding_size:
+                padding_va = datum.va - padding_size
+                if previous_load_end != padding_va:
+                    raise ValueError(
+                        f"module {module.unit}: packing before {datum.symbol} does not "
+                        "describe the physical gap after the previous load datum")
+                if load_padding is None:
+                    raise ValueError(f"module {module.unit}: retail padding reader required")
+                padding = load_padding(padding_va, padding_size)
+                if len(padding) != padding_size:
+                    raise ValueError(f"module {module.unit}: truncated initialized padding")
+                data.extend(padding)
             data_relocations.extend(
                 MipsRelocation(item.offset + offset, item.kind, item.symbol)
                 for item in relocations
@@ -667,6 +683,7 @@ def _module_data(
                 DefinedSymbol(datum.symbol, offset, datum.size, STT_OBJECT, datum.binding)
             )
             data.extend(blob)
+            previous_load_end = datum.end
         else:
             offset = (bss_size + datum.alignment - 1) & -datum.alignment
             bss_symbols.append(
@@ -682,6 +699,8 @@ def _module_object(
     carved: dict[int, tuple[bytes, list[MipsRelocation]]],
     data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]] | None = None,
     rodata_blob: bytes | None = None,
+    *,
+    load_padding: Callable[[int, int], bytes] | None = None,
 ) -> ModuleImage:
     """Concatenate a module's carved functions into one .text section.
 
@@ -717,7 +736,7 @@ def _module_object(
         body_total += function.body_size
     first = symbols[0]
     data, data_symbols, data_relocations, bss_size, bss_symbols = _module_data(
-        module, data_blobs or {}
+        module, data_blobs or {}, load_padding
     )
     rodata, rodata_relocations = b"", []
     if module.rodata is not None:
@@ -975,7 +994,9 @@ def delink(
                 if len(rodata_blob) != module.rodata[1]:
                     raise ValueError(f"{exe_path}: truncated RODATA range for {module.unit}")
             built = _module_object(
-                module, catalog.function_starts[image], module_carved, data_blobs, rodata_blob
+                module, catalog.function_starts[image], module_carved, data_blobs, rodata_blob,
+                load_padding=lambda va, size: executable[
+                    expected.file_offset(va):expected.file_offset(va) + size],
             )
             _write_bytes_if_changed(module_output / module.object_name, built.data)
             live_modules.add(module.object_name)

@@ -897,6 +897,34 @@ reached config ranges remain open. This removes a false-positive mechanism; it
 does not claim full data closure. See the
 [reproduction, query isolation and full-corpus evidence](patterns/compiler-owned-data-sizes.md).
 
+## Correct the OPEN sound boundary and carve initialized packing
+
+The independently measured three-byte SoundRef now has a three-byte DATA claim
+and identity. Its following zero byte at OPEN 80035877 remains in a separate
+census gap and in the complete delinked module section. Nothing is discarded,
+and no artificial fourth field or interior global is introduced. All 100
+source DATA sizes now agree with the compiler's independent measurements.
+
+The delinker also stops assuming initialized alignment bytes are zero. It
+requires complete retail reads for the exact physical gap between the adjacent
+load objects. Six current ranges total twelve bytes, including the new sound
+gap; all happen to be zero in retail. Nonzero controls ensure their values are
+preserved, while missing/truncated reads and incompatible physical intervals
+are rejected. Existing BSS allocation and alignment rules stay unchanged.
+
+All 112 source objects and all 484 function scores are unchanged. The only
+target-object change is the corrected sound symbol size; runtime bytes, section
+extents/alignments and ordered relocations are preserved. The 360/471 exact game
+functions and thirteen vendor controls remain exact, without new banking.
+
+Strict source data remains **8/60**, SDK data **4/4**, target relinking
+**110/116**, and unmatched reached config ranges **623**. The new sound-size
+failure is resolved, but the opening module's separate placement conflict and
+the full-build failures remain. See the
+[per-function and complete-byte evidence](../config/evidence/open_sound_data_extent.md).
+All 596 local tests pass without skips; Ruff, diff and flake checks pass
+(101 expected local-tool/artifact skips in the sandbox suite).
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

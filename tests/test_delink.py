@@ -15,6 +15,7 @@ from scripts.kf.delink import (
     Module,
     _apply_relocation,
     _competes_for_site,
+    _module_data,
     _module_object,
     decode_hi_lo_target,
     decode_mips26_target,
@@ -728,7 +729,7 @@ class ModuleObjectTests(unittest.TestCase):
             "GAME.EXE", "game.unit", "unit", (0x80010000,),
             (
                 Datum(0x80050000, 4, "counter", "load", "static"),
-                Datum(0x80050005, 1, "flag", "load", ""),
+                Datum(0x80050004, 1, "flag", "load", ""),
                 Datum(0x80050008, 4, "word", "load", ""),
                 Datum(0x800A0000, 0x10, "buffer", "bss", ""),
                 Datum(0x800A0011, 1, "byte", "bss", "static"),
@@ -737,10 +738,15 @@ class ModuleObjectTests(unittest.TestCase):
         )
         blobs = {
             0x80050000: (b"\x01\x02\x03\x04", [MipsRelocation(0, "R_MIPS_32", "callee")]),
-            0x80050005: (b"\x05", []),
+            0x80050004: (b"\x05", []),
             0x80050008: (b"\x09\x0a\x0b\x0c", []),
         }
-        built = _module_object(module, {function.va: function}, carved, blobs)
+        def read_padding(va, size):
+            self.assertEqual((va, size), (0x80050005, 3))
+            return b'\xf1\x2a\x80'
+
+        built = _module_object(module, {function.va: function}, carved, blobs,
+                               load_padding=read_padding)
         # Claims pack in order with their retail alignment: the byte follows the
         # word directly, the next word waits for a 4-byte boundary.
         self.assertEqual(built.data_size, 12)
@@ -749,7 +755,7 @@ class ModuleObjectTests(unittest.TestCase):
         sections = elf_sections(built.data)
         data_header = sections[".data"]
         self.assertEqual(built.data[data_header[4]:data_header[4] + data_header[5]],
-                         b"\x01\x02\x03\x04\x05\0\0\0\x09\x0a\x0b\x0c")
+                         b"\x01\x02\x03\x04\x05\xf1\x2a\x80\x09\x0a\x0b\x0c")
         self.assertEqual(sections[".bss"][1], 8)  # SHT_NOBITS
         self.assertEqual(sections[".bss"][5], 0x18)
         rel_data = sections[".rel.data"]
@@ -770,6 +776,54 @@ class ModuleObjectTests(unittest.TestCase):
         self.assertEqual(names["buffer"][5], section_names.index(".bss") + 1)
         self.assertEqual(names["only"][5], section_names.index(".text") + 1)
         self.assertEqual(names["callee"][5], 0)  # undefined
+
+    def test_initialized_packing_preserves_nonzero_bytes_and_following_relocations(self) -> None:
+        module = Module('GAME.EXE', 'game.gap', 'gap', (0x80010000,), (
+            Datum(0x80050000, 3, 'bytes', 'load', 'global'),
+            Datum(0x80050004, 4, 'pointer', 'load', 'global'),
+        ))
+        blobs = {0x80050000: (b'ABC', []), 0x80050004: (
+            b'\x04\0\0\0', [MipsRelocation(0, 'R_MIPS_32', 'external')])}
+        for byte in (0, 0x7F, 0xFF):
+            with self.subTest(byte=byte):
+                reads = []
+
+                def read_padding(va, size):
+                    reads.append((va, size))
+                    return bytes([byte])
+
+                data, symbols, relocs, bss_size, _bss_symbols = _module_data(
+                    module, blobs, read_padding)
+                self.assertEqual(reads, [(0x80050003, 1)])
+                self.assertEqual(data, b'ABC' + bytes([byte]) + b'\x04\0\0\0')
+                self.assertEqual([(s.name, s.value, s.size) for s in symbols],
+                                 [('bytes', 0, 3), ('pointer', 4, 4)])
+                self.assertEqual(relocs, [MipsRelocation(4, 'R_MIPS_32', 'external')])
+                self.assertEqual(bss_size, 0)
+
+    def test_initialized_packing_requires_complete_retail_bytes(self) -> None:
+        module = Module('GAME.EXE', 'game.gap', 'gap', (0x80010000,), (
+            Datum(0x80050000, 3, 'bytes', 'load', 'global'),
+            Datum(0x80050004, 4, 'word', 'load', 'global'),
+        ))
+        blobs = {0x80050000: (b'ABC', []), 0x80050004: (bytes(4), [])}
+        with self.assertRaisesRegex(ValueError, 'retail padding reader required'):
+            _module_data(module, blobs)
+        for payload in (b'', b'12'):
+            with self.assertRaisesRegex(ValueError, 'truncated initialized padding'):
+                _module_data(module, blobs, lambda va, size: payload)
+        blobs[0x80050000] = (b'AB', [])
+        with self.assertRaisesRegex(ValueError, 'truncated data'):
+            _module_data(module, blobs, lambda va, size: b'\0')
+
+    def test_initialized_packing_cannot_bridge_a_different_physical_gap(self) -> None:
+        module = Module('GAME.EXE', 'game.gap', 'gap', (0x80010000,), (
+            Datum(0x80050000, 3, 'bytes', 'load', 'global'),
+            Datum(0x80050008, 4, 'word', 'load', 'global'),
+        ))
+        blobs = {0x80050000: (b'ABC', []), 0x80050008: (bytes(4), [])}
+        with self.assertRaisesRegex(ValueError, 'does not describe the physical gap'):
+            _module_data(module, blobs, lambda va, size: self.fail('must reject before reading'))
 
     def test_module_preserves_static_bss_eight_byte_alignment(self) -> None:
         function = Function("GAME.EXE", 0x80010000, 8, 8, 1, "only", "test", "test")

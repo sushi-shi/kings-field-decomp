@@ -1960,7 +1960,7 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             (sound.name, sound.storage, sound.datatype, sound.size),
-            ("opening_scene0_sound", "load", "SoundRef", 0x4),
+            ("opening_scene0_sound", "load", "SoundRef", 0x3),
         )
 
         _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

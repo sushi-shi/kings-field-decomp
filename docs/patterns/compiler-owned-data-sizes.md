@@ -112,3 +112,6 @@ relaxed.
 with 100 expected local-tool/artifact skips; the separate compiler check runs
 all four new native size tests without skips, alongside both existing compiler
 and objdiff smoke controls.
+
+Follow-up: [the OPEN sound-extent campaign](../../config/evidence/open_sound_data_extent.md)
+corrects the three-byte claim while separately retaining its following byte.
