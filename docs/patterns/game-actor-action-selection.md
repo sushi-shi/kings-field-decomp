@@ -157,3 +157,77 @@ still exits nonzero on the existing data/ownership/placement gaps: source
 data matches 11/59 units, both independent SDK data controls pass, and
 target relinks verify 108/114 units. Those gates are not weakened. Only
 GAME `0x8002deb4` is eligible for the new bank entry.
+
+## Profile follow-up Function Match Plan
+
+At `10bfa8a`, GAME `0x8002e0f0` remains 504 retail bytes and strict
+94.555560%. The six semantic views, three call setups, source history and
+the preceding campaign evidence were rechecked. Calls, table fields,
+constants, far-first CFG and signed countdowns are unchanged. The byte
+profile parameter remains an inferred contract: each caller uses `lbu`, but
+O32 passes its zero-extended value in a complete register, and the callee
+only consumes five profile bits. Retail retains that value in a halfword
+local for the later `andi ...,0xffff` comparison with 9.
+
+First test a `u16 profile_index` parameter, consistently in the definition,
+shared header and curated signature, while retaining the existing local and
+all body expressions. This is a conservative alternative to the unsupported
+assumption that the caller's byte field determines the parameter width; all
+three actual call values and all low-five-bit results are preserved. It
+does not prove a unique original width or meaningful upper argument bits.
+The exact caller must remain exact. Reject a control that merely moves the
+redundant mask elsewhere without explaining retail.
+
+Then test the independently observed weight lifetime if needed: retail loads
+the signed profile weight into `s0` and writes the scaled chance back into
+that same live value across `rand`. One evolving signed odds local can
+represent both stages without a fake carrier or changed arithmetic. Do not
+combine that test with the parameter-width experiment.
+
+The member-base reuse remains a separate address-form question within the
+already complete actor owner; do not replace it with an unrelated global,
+out-of-bounds pointer or numeric address. Require focused rebuilding, raw
+words and ordered referents, the exact caller and all-image regression
+comparison, full build, lint and existing tests before committing or banking.
+
+The halfword parameter removes the extra mask without adding another; the
+three-site caller remains exact in its focused rebuild. Updating one signed
+`odds` value from the selected weight through multiplication and scaling
+then reproduces the whole weight-selection/calculation block, including
+`mflo v0`, the two following nops and `sra s0,v0,8` in the `rand` delay slot.
+Together these corrections reach strict 96.333336%. The first remaining
+symptom is a profile/action saved-register exchange; the first independent
+address-form discrepancy is the player-position base at +0xc4.
+
+Next test an explicit authentic `const VECTOR *` view of
+`actor_state.player_position`, assigned only after the first random gate and
+used for both x/z differences. Retail explicitly forms and retains that
+member address across the two angle calls, so this is a bounded source
+pointer-lifetime control. The actor array still uses its normal typed member
+access. Do not subtract across unrelated pointers or force the later -9216
+instruction in source.
+
+The explicit player pointer leaves the focused instruction/relocation stream
+unchanged and is reverted. The kept source uses the halfword profile
+parameter and one evolving signed `odds` value. The campaign's signature
+record in `config/evidence/game_semantic_actor_ai.tsv` is synchronized with
+the header and identity table; its old signed-byte action description is
+also corrected to the already established unsigned-byte/255 contract.
+
+Follow-up raw verdict: 126 words in both objects, strict **96.333336%**, not
+exact and not banked. The first difference at +0x18 is `s3` versus retail
+`s2` for the five-bit profile; the requested action uses the opposite saved
+register. At +0xc4 retail retains the player-position member address in
+`s0`, then derives the actor-array pointer from it. Reconstruction still
+loads that member directly and later forms `actor_state+0x720` separately,
+adding one HI16/LO16 pair (17 ordered relocations versus retail's 15).
+All target identities and logical call paths agree, but this is not an
+exact relocation/instruction stream. No compiler-mechanism attribution or
+register-forcing source is claimed.
+
+Follow-up verification: the exact caller stays at 100%, and all previously
+exact functions are preserved. Ruff, all 551 existing tests and diff checks
+pass. Full `kf build` regenerates the comparisons but still rejects the
+pre-existing data/ownership/placement gaps (11/59 source-data units, 2/2 SDK
+data controls, 108/114 target relinks). The simultaneous screen-image
+closure is documented separately; this selector remains unbanked.

@@ -790,12 +790,11 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
-u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u16 chance)
+u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance)
 {
     u16 profile = profile_index & 0x1f;
     KfActorActionProfile *weights = &actor_action_profiles[profile];
     KfActor *actor = actor_state.current;
-    s32 weight;
     s32 odds;
     KfActor *candidate;
     const KfEffectRecord *record;
@@ -805,15 +804,15 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u
     if (actor->action == action && actor->action_timer != 0xff) {
         return actor->action;
     }
-    weight = weights->near_weight;
+    odds = weights->near_weight;
     if (distance >= weights->far_distance) {
-        weight = weights->far_weight;
+        odds = weights->far_weight;
     } else {
         if (distance >= weights->near_distance) {
-            weight = weights->middle_weight;
+            odds = weights->middle_weight;
         }
     }
-    odds = (chance * weight) >> 8;
+    odds = (chance * odds) >> 8;
     if (!((rand() >> 4) < odds)) {
         return 0xff;
     }

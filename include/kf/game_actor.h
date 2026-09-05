@@ -169,7 +169,7 @@ extern void actor_set_player_transform( const VECTOR *position, const SVECTOR *r
 extern u8 actor_try_select_action_distance_facing( u8 action, s32 distance, u16 chance, u16 distance_scale);
 extern u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance);
 extern u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance);
-extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u16 chance);
+extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance);
 extern void actor_try_attack_player(
     u16 minimum_distance, u16 maximum_distance,
     s16 angle_offset, s16 angle_tolerance);
