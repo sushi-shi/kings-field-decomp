@@ -72,3 +72,32 @@ Removing its same-type cast leaves the compiled `open.render` object
 byte-identical in a controlled old/new rebuild (SHA-256
 `6d27d812e3cb0092db5de752109708ac8d07ecc60f1a4337954c1cbbc1b48fd3`).
 The decoder stays at 98.333336%; its existing frame/order residue is unchanged.
+
+## Master follow-up: clearing the frame-count nibble
+
+Pre-edit OPEN `800190f4`/`0x14c` at `2560194`: 98.795180% strict, 328 probe
+bytes versus 332 retail. The refreshed six image-qualified queries, complete
+disassembly/CFG, caller at `80019488`, adjacent entity/traversal code, shared
+item fields and loader, source history, GAME source homolog and pinned SDK
+MTX/SMP headers and provider symbols retain the existing contract. Nine
+direct calls, six address pairs, one internal jump, all frame/delay slots,
+sprite table ownership and numeric referents agree; there are no strings or
+candidate references. The item policy is game-owned, not an SDK body.
+
+The packed byte's low nibble is the frame count, independently consumed by
+`andi ...,0xf` at `80019214`; the high nibble controls facing. Test clearing
+the low nibble (`value & ~0x0f`) before assignment to the existing `u8 facing`,
+rather than selecting it with the already byte-sized `0xf0` constant. This
+is the same operation over every possible byte and preserves the subsequent
+angle, branch and frame-wrap behavior. The hypothesis is that the promoted
+bit-clear expression followed by byte assignment may explain the two retail
+masks; it is not a proved original spelling. No width, field, owner, compiler
+profile, extra statement or GAME source is changed. Compare the complete
+instruction/relocation stream and both neighboring functions after rebuilding.
+
+The bit-clear expression produced the same instructions and relocations as
+the original high-nibble mask. The extra retail `andi 0xff` is still omitted;
+strict scores remain 98.795180% for this function, 100% for the preceding
+entity renderer and 92.867470% for the following traversal. The experiment
+was reverted. It rules out this source spelling under the pinned probe, not
+other independently supported source facts or a historical compiler variant.

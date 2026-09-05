@@ -82,3 +82,40 @@ unchanged scores are recorded in `render_typed_matrix_cast_cleanup.tsv`.
 That comparison left 881 pointer casts, below the existing limit of 882,
 without changing the gate or hiding casts in helper macros. The controls are
 not new GAME matching progress.
+
+## Master follow-up: loop-invariant signed bias
+
+Pre-edit at `2560194`: OPEN `80018344`/`0x2a4` remains 93.455620% strict,
+692 probe bytes versus 676 retail, with a 64-byte frame in both. All six
+OPEN queries, the complete body/CFG, sole call at `80019094`, neighboring
+general/map/sprite emitters, accessor, allocator, projection routine, source
+history, shared types and pinned LIBGPU PRIM/LIBGTE SMP provider symbols and
+declarations were rechecked. The eight direct calls, one internal jump, one
+retail HI16/LO16 pair, no strings, word count/header, halfword indices, mode
+constants and game-owned policy above remain the evidence snapshot.
+
+The related map emitter (`800185e8`/`0x3b8`, 97.449580%) was also inspected
+through all six queries, its full body, caller `80018d6c`, source/history and
+SDK interfaces. Its 18 calls, two pairs, one internal jump, 80-byte frame,
+signed depth rules and current-asset reload remain unchanged. Unlike the
+general TMD trial, both current emitters already implement the retail
+in-place packet cursor without redundant cursor spills. Do not transfer
+that trial merely because the packet formats agree.
+
+The focused unlit hypothesis is instead the real signed bias value used by
+every accepted triangle: retail sign-extends it at `800183a8..800183ac`
+before the first header load, then adds it at `80018578` without another
+conversion. The current object saves the narrow argument at sp+16, reloads
+it and sign-extends it in the loop's depth tail. Test an explicit `s32`
+loop-invariant bias while preserving the `s16` ABI. This does not change
+the bias range or introduce a dummy value; the widened value directly feeds
+every biased depth. Compare from the first divergence, with the separate
+graphics owners and all calls, guards and packet operations unchanged.
+
+The widened-bias trial scored 92.266270% after a real object rebuild. It
+recovered the initial `move s0,a1`, but emitted the sign extension before
+the zero-count test and stored the widened value at sp+16. The loop still
+reloaded that slot. Total code stayed 692 bytes; the extra independent
+graphics bases and their different referent expressions were not resolved.
+This did not recover retail's saved, loop-invariant bias. The trial was
+reverted; no source or baseline change is retained from it.
