@@ -100,6 +100,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-glyph-render.md](game-menu-glyph-render.md): index-derived
   fixed pitch closes number rendering and removes the string-render preheader
   difference; four decoration immediates remain non-exact.
+- [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
+  and the rejected SDK rectangle-macro control; inset instructions remain
+  non-exact without changing shared or SDK types.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
