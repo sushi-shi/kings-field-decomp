@@ -90,6 +90,9 @@ promotes a probe to a proven historical toolchain.
   unchanged explicit phase-cache control; predicate remains non-exact.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect
   owner and member-relative addressing closing the current-record selector.
+- [game-magic-cast-source.md](game-magic-cast-source.md): case-local objects,
+  distinct distance outputs, projectile-speed lifetime and height-branch order
+  improve magic casting; remaining stack/angle differences stay unattributed.
 - [game-map-object-clearing.md](game-map-object-clearing.md): corrected
   type-0..8 link predicate and the rejected pool-reset memset control.
 - [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
