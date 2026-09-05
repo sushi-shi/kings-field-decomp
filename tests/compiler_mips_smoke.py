@@ -39,6 +39,103 @@ u32 table[4] = {1, 2, 3, 4};
 void tick(void) { counter += table[1]; }
 """
 
+TENTATIVE_SOURCE = """\
+#define DATA(va, size)
+DATA(0x80060000, 0x4)
+static int counter;
+DATA(0x80060008, 0x4)
+int public_word;
+int tick(int value) { counter += value; public_word = counter; return counter; }
+"""
+
+
+def symbol_rows(path: Path) -> list[list[str]]:
+    output = subprocess.run(
+        ["mipsel-linux-gnu-readelf", "-sW", str(path)],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    return [parts for line in output.splitlines()
+            if len(parts := line.split()) >= 8 and parts[0].endswith(":")
+            and parts[0][:-1].isdigit()]
+
+
+def tentative_controls(root: Path) -> None:
+    for version in ("257", "260"):
+        outputs = []
+        for unit in ("a", "b"):
+            source = root / f"allocation-{version}-{unit}.c"
+            output = source.with_suffix(".o")
+            source.write_text(TENTATIVE_SOURCE.replace("public_word", f"public_{unit}")
+                              .replace("tick", f"tick_{unit}"), encoding="utf-8")
+            compile_source(source, "GAME.EXE", output, root / "delink",
+                           optimization="O2", compiler=f"gcc{version}-native")
+            objects = object_symbols(output)
+            if objects.get("counter", ("", 0, ""))[:2] != ("LOCAL", 4):
+                raise RuntimeError(f"GCC {version} private tentative datum exported: {objects}")
+            if objects.get(f"public_{unit}", ("", 0, ""))[:2] != ("GLOBAL", 4):
+                raise RuntimeError(f"GCC {version} public tentative datum hidden: {objects}")
+            if objects["counter"][2] != objects[f"public_{unit}"][2]:
+                raise RuntimeError("G0 tentative allocations no longer share .bss")
+            offsets = {row[7]: int(row[1], 16) for row in symbol_rows(output)}
+            # Raw probes emit .lcomm/.comm sizes 8 (2.5.7) versus 4 (2.6.0).
+            allocation = 8 if version == "257" else 4
+            if offsets["counter"] != 0 or offsets[f"public_{unit}"] != allocation:
+                raise RuntimeError(f"GCC {version} tentative allocation offsets changed: {offsets}")
+            outputs.append(output)
+
+        # A third TU must resolve the exported object, but cannot see either
+        # private counter. Two same-named statics must coexist without merging.
+        consumer = root / f"consumer-{version}.o"
+        subprocess.run([
+            "mipsel-linux-gnu-as", "-march=r3000", "-mabi=32", "-G0",
+            "-o", str(consumer),
+        ], input=".data\n.word counter\n.word public_a\n", text=True, check=True)
+        linked = root / f"linked-{version}.o"
+        subprocess.run(["mipsel-linux-gnu-ld", "-r", "-o", str(linked),
+                        *(str(path) for path in outputs), str(consumer)],
+                       capture_output=True, text=True, check=True)
+        rows = symbol_rows(linked)
+        private = [row for row in rows if row[7] == "counter" and row[4] == "LOCAL"]
+        if len(private) != 2 or private[0][1] == private[1][1]:
+            raise RuntimeError(f"linker merged or lost private allocations: {private}")
+        undefined = {row[7] for row in rows if row[6] == "UND"}
+        if undefined != {"counter"}:
+            raise RuntimeError(f"private/exported cross-TU resolution is wrong: {undefined}")
+
+
+def assembler_binding_controls(root: Path) -> None:
+    # Exercise both allocation classes and the adapter's opt-in COMMON paths.
+    # G8 here tests the adapter, not the project's G0 compiler/profile choice.
+    source = ".comm exported,8\n.lcomm private,8\n"
+    source += ".type exported,@object\n.type private,@object\n"
+    for limit in (0, 8):
+        for mode, flags in enumerate(((), ("--use-comm-section",),
+                                     ("--use-comm-section", "--use-comm-for-lcomm"))):
+            output = root / f"binding-{limit}-{mode}.o"
+            subprocess.run([
+                "maspsx", "--aspsx-version=1.07", *flags,
+                "--run-assembler", "--force-stdin", "-march=r3000", "-mabi=32",
+                f"-G{limit}", "-o", str(output),
+            ], input=source, capture_output=True, text=True, check=True)
+            objects = object_symbols(output)
+            if objects.get("private", ("", 0, ""))[0] != "LOCAL":
+                raise RuntimeError(f"G{limit} {flags}: .lcomm exported: {objects}")
+            if objects.get("exported", ("", 0, ""))[0] != "GLOBAL":
+                raise RuntimeError(f"G{limit} {flags}: .comm hidden: {objects}")
+            if (objects["exported"][2] == "COM") != bool(flags):
+                raise RuntimeError(f"COMMON option changed allocation class: {objects}")
+            if objects["private"][2] in {"COM", "UND"}:
+                raise RuntimeError(f"private datum is not locally allocated: {objects}")
+            if not flags:
+                table = subprocess.run(["mipsel-linux-gnu-objdump", "-t", str(output)],
+                                       capture_output=True, text=True, check=True).stdout
+                rows = {parts[-1]: parts for line in table.splitlines()
+                        if len(parts := line.split()) == 6}
+                section = ".sbss" if limit else ".bss"
+                for name, offset in (("exported", 0), ("private", 8)):
+                    if rows[name][3] != section or int(rows[name][0], 16) != offset:
+                        raise RuntimeError(f"G{limit} allocation layout changed: {rows[name]}")
+
 
 def text_words(path: Path) -> list[int]:
     data = subprocess.run(
@@ -90,6 +187,9 @@ def main() -> int:
         "maspsx",
         "mipsel-linux-gnu-as",
         "mipsel-linux-gnu-nm",
+        "mipsel-linux-gnu-readelf",
+        "mipsel-linux-gnu-objdump",
+        "mipsel-linux-gnu-ld",
     ):
         if shutil.which(tool) is None:
             raise RuntimeError(f"{tool} is missing; run inside nix develop")
@@ -132,6 +232,8 @@ def main() -> int:
                 "provenance": "test",
             } for index, name in enumerate((
                 "simple.o", "order-o0.o", "order-o2.o", "probe257.o", "claims.o",
+                "allocation-257-a.o", "allocation-257-b.o",
+                "allocation-260-a.o", "allocation-260-b.o",
             ))),
             (),
         )
@@ -242,11 +344,14 @@ def main() -> int:
             raise RuntimeError(f"claimed initialized table is not a sized global: {objects}")
         if objects["table"][2] != objects["counter"][2]:
             raise RuntimeError("claimed data did not land in one .data section")
+        tentative_controls(root)
+        assembler_binding_controls(root)
     print(
         "GCC 2.6.0 PSX C calibration: MIPS ELF, source-order emission at O0/O2, "
         "O2 inlined-static omission, and downstream offset shifts; "
         "GCC 2.5.7 probe: delay-slot $sp restore, checked div expansion, "
-        "sized DATA() claim symbols"
+        "sized DATA() claim symbols; both compilers: private tentative storage "
+        "and cross-TU linkage; six BSS/small-BSS/COMMON adapter binding controls"
     )
     return 0
 

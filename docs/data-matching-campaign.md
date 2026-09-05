@@ -441,6 +441,23 @@ All 471 local tests, Ruff and flake checks pass. The full build remains red
 on the data mismatches, eight remaining target placement conflicts and the
 unresolved reachable-data ownership paths. No whole-image equality is claimed.
 
+## Preserve private tentative-data linkage
+
+The pinned assembler adapter previously exported every `.bss` object, losing
+the compiler's `.lcomm` private linkage. A shared adapter patch now preserves
+private/public identity in both BSS allocation classes and its opt-in COMMON
+paths. No game source or target allocation is adjusted to fit the adapter.
+The [linkage evidence](patterns/maspsx-private-bss.md) includes a reproduced
+failure, both compiler probes and three-TU GNU linker controls.
+
+All 117 source units rebuilt. Six objects change eleven private bindings and
+their equivalent section-relative relocation forms; allocated section layouts
+and named symbol offsets/sizes remain unchanged. The other 111 objects and all
+484 function score rows remain identical, preserving 354 exact game functions.
+Strict source data remains 15/63; target relinking remains 109/117. All 471 local
+tests, Ruff and flake checks pass. The full build remains red on the existing
+data, placement and reachability gaps, including 665 config-only data ranges.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

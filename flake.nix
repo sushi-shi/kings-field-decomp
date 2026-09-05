@@ -107,11 +107,17 @@
         doCheck = false;
       };
 
+      maspsxPatched = pkgs.applyPatches {
+        name = "maspsx-private-bss-source";
+        src = maspsx-src;
+        patches = [ ./patches/maspsx-private-bss.patch ];
+      };
+
       maspsx = pkgs.writeShellApplication {
         name = "maspsx";
         runtimeInputs = [ pkgs.python3 ];
         text = ''
-          exec python3 ${maspsx-src}/maspsx.py "$@"
+          exec python3 ${maspsxPatched}/maspsx.py "$@"
         '';
       };
 

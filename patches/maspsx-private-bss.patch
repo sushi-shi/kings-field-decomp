@@ -1,0 +1,25 @@
+diff --git a/maspsx/__init__.py b/maspsx/__init__.py
+--- a/maspsx/__init__.py
++++ b/maspsx/__init__.py
+@@ -619,6 +619,10 @@ class MaspsxProcessor:
+                     symbol in self.comm_symbols or self.use_comm_for_lcomm
+                 ):
+                     # implicit alignment for COMMON
++                    # GNU .comm otherwise exports compiler-private .lcomm data.
++                    # .local retains private allocation under the opt-in path.
++                    if symbol not in self.comm_symbols:
++                        res.append(f"\t.local {symbol}")
+                     res.append(f"\t.comm {symbol},{size}")
+                     continue
+ 
+@@ -630,8 +634,8 @@ class MaspsxProcessor:
+                     elif size >= 2:
+                         res.append("\t.align 1")
+ 
+-                # only mark bss symbols as global
+-                if section == "bss":
++                # Linkage follows .comm/.lcomm, not the allocation section.
++                if symbol in self.comm_symbols:
+                     res.append(
+                         f"\t.globl {symbol}",
+                     )
