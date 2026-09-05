@@ -574,7 +574,11 @@
         export HOME="$TMPDIR/home"
         export XDG_CONFIG_HOME="$TMPDIR/config"
         mkdir -p "$HOME" "$XDG_CONFIG_HOME"
-        python3 ${./tests/psylink_order_smoke.py}
+        mkdir project
+        cp ${./tests/psylink_order_smoke.py} project/psylink_order_smoke.py
+        cp ${./tests/psylink_alignment_smoke.py} project/psylink_alignment_smoke.py
+        python3 project/psylink_order_smoke.py
+        python3 project/psylink_alignment_smoke.py
         touch "$out"
       '';
 

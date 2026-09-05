@@ -61,7 +61,8 @@ class PsyqPitchTableTests(unittest.TestCase):
     def test_sdk_whole_anonymous_section_and_actual_consumer_patches(self):
         digest, listing, section = sdk_vmanager()
         self.assertEqual(digest, OBJECT_HASH)
-        self.assertEqual((len(section.data), section.alignment, section.exports), (386, 8, ()))
+        self.assertEqual((len(section.data), section.alignment, section.exports), (386, 4, ()))
+        self.assertEqual(section.lnk_alignment, 8)
         self.assertEqual(hashlib.sha256(section.data).hexdigest(), PAYLOAD_HASH)
         values = struct.unpack('<193H', section.data)
         self.assertEqual((values[0], values[-1]), (0x1000, 0x2000))
@@ -177,7 +178,7 @@ class PsyqPitchTableTests(unittest.TestCase):
                 for side in (result.target_relink, result.base_relink):
                     self.assertEqual(side['initialized_bytes_compared'], 386)
                 # Changing only linkage must fail, even with the same full payload.
-                wrong = write_mips_elf(b'', None, 0, data=retail.require(contribution.va, 386), data_alignment=8,
+                wrong = write_mips_elf(b'', None, 0, data=retail.require(contribution.va, 386), data_alignment=4,
                                        data_symbols=(DefinedSymbol(NAME, 0, 386, STT_OBJECT),))
                 with self.assertRaisesRegex(ValueError, 'linkage'):
                     config_data.validate_object(wrong, contribution)

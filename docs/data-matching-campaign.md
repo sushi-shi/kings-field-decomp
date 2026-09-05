@@ -1,5 +1,22 @@
 # Data matching and linked-image preparation
 
+Latest format correction: [PSYLINK alignment calibration](patterns/psyq-section-alignment.md)
+distinguishes raw SDK LNK tags from byte alignment. All four current SDK
+contributions use tag 8, which PSYLINK 1.17 interprets as four-byte alignment;
+both converted ELF sides now preserve that constraint. Eighty-eight independent
+original-linker controls check symbols and complete linked CPE bytes. Unknown
+versions/tags are rejected instead of extrapolated.
+
+Integration into master preserves all 484 pre-merge function-score rows and
+382/471 exact game functions (GAME 284/362, OPEN 97/108, PSX 1/1). Source data
+remains 5/60, independent SDK data 4/4, and target relinking 110/116; 616 reached
+config ranges still lack comparisons. Ruff, all 612 local tests and the flake
+checks pass. The full strict build remains red on existing data ownership and
+placement failures, with no artifact failures or banked-function regressions.
+Unfinished warp-trigger source and notes remain outside the merge. No game-object
+alignment, compiler directive, source extent or comparison check is relaxed by
+this SDK-only conversion fix.
+
 ## Objective and completion boundary
 
 Account for every byte reachable from game functions in each independently
@@ -785,7 +802,8 @@ The source compiler pipeline now passes GNU `as`'s documented
 `-no-pad-sections` option, recorded in object metadata. Controlled assembly and
 both native compilers distinguish automatic section tails from explicit zeros,
 interior alignment directives, delay-slot instructions and compiler-rounded
-COMMON allocations. A complete SDK record has 386 bytes with alignment eight:
+COMMON allocations. A complete SDK record has 386 bytes with raw alignment
+tag eight (later calibrated as four-byte alignment under PSYLINK 1.17):
 section alignment is not permission to invent payload bytes.
 
 All 112 source units were rebuilt. Ninety-two objects change; every retained
@@ -816,7 +834,9 @@ local-artifact skips; the new native compiler and SDK record controls run there.
 GAME `80056858` and OPEN `80035fd0` now own the complete 386-byte private
 `svm_pitch_table`, typed `u16[193]`, with the actual LIBSND/VMANAGER provider.
 The whole SDK section is anonymous and non-relocating; the importer preserves
-it with local linkage, original eight-byte alignment and no rounded tail.
+it with local linkage and no rounded tail. The original raw alignment tag eight
+was initially copied as eight-byte ELF alignment; the later PSYLINK calibration
+corrects that conversion to four bytes.
 Global sections still require their exact original offset-zero exports, and
 private sections reject any export or unsupported allocation/patch record.
 

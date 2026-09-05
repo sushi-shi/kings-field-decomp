@@ -38,9 +38,12 @@ overlap.
 
 The pinned member hash is
 `7e62d2e92b7a30001549db9b60abaed0811db7db2ed213e3eca2e62d8a7db36e`.
-The SDK section has alignment 8, exports global `rsin_tbl` at offset zero,
+The SDK section has raw LNK alignment tag 8, exports global `rsin_tbl` at offset zero,
 contains exactly 2048 bytes and has no data relocations. The importer checks
 the original object hash, the entire section, the export list and its offset.
+The raw tag is not a byte count: later
+[PSYLINK calibration](../../docs/patterns/psyq-section-alignment.md) establishes
+four-byte alignment and corrects both converted ELF objects accordingly.
 It refuses partial extents, extra exports, unknown allocation records, patches
 and reservations instead of discarding unsupported content.
 

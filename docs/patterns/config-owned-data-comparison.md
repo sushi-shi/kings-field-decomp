@@ -14,8 +14,12 @@ The current implementation uses the following chain:
    entire original section and its metadata, then converts it with GAS/objcopy.
    Neither path reads the other's payload or uses an arbitrary matching slice.
    A byte-aligned temporary PROGBITS section avoids GAS's ordinary `.data`
-   tail rounding; objcopy restores the original SDK name/alignment, not its
-   payload or extent. Byte/halfword and non-16-byte relink controls cover this.
+   tail rounding; objcopy restores the original SDK name and its calibrated
+   byte alignment, not its payload or extent. The LNK v2 raw alignment tag is
+   not a byte count: PSYLINK 1.17 tags `2/4/8/16` mean `1/2/4/16` bytes.
+   [Original-linker controls](psyq-section-alignment.md) establish this mapping;
+   unsupported versions/tags fail. Byte/halfword and non-16-byte relink
+   controls cover the ELF conversion.
 3. The shared native objdiff project/report requires the full data section at
    100%, with the expected byte totals and no invented functions or code.
 4. The strict gate checks every runtime section and the named allocation's
@@ -30,7 +34,7 @@ The current implementation uses the following chain:
    restore the unpaired-config diagnostic; they are not omissions from scoring.
 
 The SDK importer currently supports non-relocating `.data` contributions with
-one complete exported object. Unsupported patch/reservation/local-symbol or
+one complete exported object, or a whole anonymous private section. Unsupported patch/reservation/local-symbol or
 allocation records fail. This is an explicit unsupported case, not permission
 to erase relocations. Alignment comes from the original SDK section: objcopy
 may set that ELF constraint, but may not change section bytes, size or symbols.

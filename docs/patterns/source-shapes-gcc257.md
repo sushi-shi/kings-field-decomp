@@ -892,9 +892,11 @@ Residues recorded in the module (not steered):
 - Jump-table `.align 3` (toolchain, `func_800236ac`, blocks exact): `cc1psx-257`
   emits `.align 3` before the switch jump table, so with the `"MAP\M00."` string
   (9 bytes) leading the unit's one `.rodata` claim the table lands at offset 16.
-  The retail object placed the table at offset 12 (its `.rodata` starts at the
-  4-mod-8 address `0x800122e4`, so `.align 3` and `.align 2` coincide there, but
-  its section alignment of 4 proves the original used `.align 2`). Referents,
+  Under the current ownership claim, retail places the table at offset 12.
+  The claimed `.rodata` starts at the 4-mod-8 address `0x800122e4`, making the
+  table's linked address eight-byte aligned. The target ELF's alignment 4 is
+  supplied by the delinker; the PS-X EXE has no section headers, so it does
+  not prove an original `.align 2` directive or TU boundary. Referents,
   calls, CFG and register allocation otherwise match; the switch load's addend
   (`+16` vs `+12`) and the four `.rodata` padding bytes are the only residue.
   Unattributed — the same open compiler-build question as the register

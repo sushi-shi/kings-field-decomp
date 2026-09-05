@@ -14,7 +14,9 @@ both sides. No score waiver, guessed tail or symbol-bounded crop is permitted.
 ## Independent extent and ownership
 
 The pinned Release 2.5 `LIBSND.LIB/VMANAGER.OBJ` (LNK v2) declares section
-`51b0`, `.data`, alignment eight, and emits exactly one 386-byte Code record.
+`51b0`, `.data`, raw LNK alignment tag eight, and emits exactly one 386-byte
+Code record. [Original-linker calibration](../../docs/patterns/psyq-section-alignment.md)
+establishes that this tag requires **four-byte** alignment under PSYLINK 1.17.
 There are no `.data` exports, local symbol records, reservations or patches.
 Its two local text routines reference `(sectbase(51b0)+$0)`. Thus the complete
 section can receive a curated **local** identity, `svm_pitch_table`; this is a
@@ -32,7 +34,7 @@ semantic name, not a recovered SDK symbol spelling. The `lhu` consumers support
 | OPEN | `80035fd0..80036152` | `247d0` | `80035cdc+2f4`, `80036152+6a` |
 
 The whole payload occurs exactly once in each hash-validated executable and
-equals all 386 SDK bytes. Its size is not rounded to its eight-byte alignment.
+equals all 386 SDK bytes. Its size is not rounded to its four-byte alignment.
 The old gaps contain other references: each prefix is still reached by SDK
 functions, and OPEN's suffix has additional candidates. They are retained,
 not silently incorporated in this table or called matching data.
@@ -100,7 +102,7 @@ a pitch-table xref merely because of address coincidence.
 named offset-zero export, and private sections only when **no** SDK exports
 exist. The parser still rejects extra local symbols, data patches, reservations
 and unknown records. Both generated ELF objects must own exactly one whole
-386-byte `.data`, aligned eight, with one local STT_OBJECT and no code/relocs.
+386-byte `.data`, aligned four, with one local STT_OBJECT and no code/relocs.
 The provider conversion never reads retail bytes; target carving never reads
 the SDK. Both sides independently relink to the image-qualified retail address.
 Native objdiff must report all 386 bytes matched, with no fake function score.
