@@ -7,7 +7,7 @@ import unittest
 
 from elftools.elf.elffile import ELFFile
 
-from scripts.kf.data_match import diff_unit
+from scripts.kf.data_match import Elf, _diff_bss, diff_unit
 from scripts.kf.delink import _apply_relocation, load_catalog
 from scripts.kf.inventory import load_data_identities, load_structure_field_identities
 from scripts.kf.manifest import load as load_manifest
@@ -26,6 +26,9 @@ ASSETS = 0x800580E8
 ASSET_SIZE = 912
 BANKS = ((ASSETS, 912), (0x80058478, 2376), (0x80058DC0, 1600),
          (0x80059400, 180), (0x800594B8, 320), (0x800595F8, 320))
+BANK_NAMES = ('menu_assets', 'menu_window_layouts', 'item_name_rows',
+              'magic_name_rows', 'item_buy_prices', 'item_sell_prices')
+BANK_SPAN = 5712
 WINDOW_PAIRS = ((0x8002897C, 0x33C), (0x8002898C, 0x30C),
                 (0x800289B8, 0x33C), (0x800289D0, 0x348),
                 (0x800289F8, 0x384), (0x80028A08, 0x30C))
@@ -68,7 +71,7 @@ class GameMenuAssetsTests(unittest.TestCase):
                   if f.structure == 'MenuTileSprite' and f.meaning_confidence == 'opaque']
         self.assertEqual([(f.offset, f.size) for f in opaque], [(5, 1), (7, 1)])
 
-    def test_complete_source_and_target_bss_allocations_match(self):
+    def test_complete_bank_layout_matches_but_source_alignment_still_prevents_placement(self):
         source = self.object('game.item')
         target = BUILD / 'delink/game/modules' / source.name
         if not target.is_file():
@@ -76,18 +79,70 @@ class GameMenuAssetsTests(unittest.TestCase):
         for path in (source, target):
             with path.open('rb') as stream:
                 elf = ELFFile(stream)
-                symbols = elf.get_section_by_name('.symtab').get_symbol_by_name('menu_assets')
-                self.assertEqual(len(symbols or ()), 1)
-                symbol = symbols[0]
-                self.assertEqual((symbol['st_value'], symbol['st_size'], symbol['st_info']['bind']),
-                                 (0, ASSET_SIZE, 'STB_GLOBAL'))
-                section = elf.get_section(symbol['st_shndx'])
+                section = elf.get_section_by_name('.bss')
+                for name, (va, size) in zip(BANK_NAMES, BANKS, strict=True):
+                    symbols = elf.get_section_by_name('.symtab').get_symbol_by_name(name)
+                    self.assertEqual(len(symbols or ()), 1)
+                    symbol = symbols[0]
+                    self.assertEqual((symbol['st_value'], symbol['st_size'], symbol['st_info']['bind']),
+                                     (va - ASSETS, size, 'STB_GLOBAL'))
+                    self.assertEqual(elf.get_section(symbol['st_shndx']).name, '.bss')
                 self.assertEqual((section.name, section['sh_type'], section['sh_size']),
-                                 ('.bss', 'SHT_NOBITS', ASSET_SIZE))
-        comparison = diff_unit('GAME.EXE', source.name, BUILD / 'delink', BUILD / 'objdiff')
+                                 ('.bss', 'SHT_NOBITS', BANK_SPAN))
+        self.assertEqual(_diff_bss(Elf(target), Elf(source)).status, 'match')
+        comparison = diff_unit(load_manifest().by_name()['game.item'],
+                               BUILD / 'delink', BUILD / 'objdiff')
         self.assertIsNotNone(comparison)
         self.assertEqual([(d.name, d.status) for d in comparison.diffs],
-                         [('.rodata', 'match'), ('.bss', 'match')])
+                         [('.rodata', 'match'), ('.bss', 'placement')])
+        self.assertIn('reconstruction:', comparison.diffs[1].detail)
+        self.assertIn('invalid-section-placement', comparison.diffs[1].detail)
+        self.assertIn('"alignment": 16', comparison.diffs[1].detail)
+        self.assertNotIn('target:', comparison.diffs[1].detail)
+
+    def test_all_stat_banks_have_one_typed_source_owner_without_invented_gap_data(self):
+        units, identities = load_manifest().units, load_data_identities(RETAIL_CONFIG)
+        for name, (va, size) in zip(BANK_NAMES, BANKS, strict=True):
+            claims = [(u.unit, d.symbol, d.size, d.storage, d.scope) for u in units
+                      if u.image == 'GAME.EXE' for d in u.data if d.va == va]
+            self.assertEqual(claims, [('game.item', name, size, 'bss', 'global')])
+            identity = identities['GAME.EXE', va]
+            self.assertEqual((identity.size, identity.scope, identity.owner),
+                             (size, 'global', 'item'))
+        self.assertNotIn(('GAME.EXE', 0x800594B4), identities)
+        self.assertNotIn(('GAME.EXE', 0x80058494), identities)
+        self.assertEqual(sum(size for _, size in BANKS), 5708)
+        self.assertEqual(BANKS[-1][0] + BANKS[-1][1] - ASSETS, BANK_SPAN)
+
+    def test_label_initializer_uses_real_window_rows_and_preserves_pointer_fields(self):
+        image, symbols = self.retail(), GameSymbols.load()
+        function = 'menu_list_init'
+        path = self.object('game.menu_runtime')
+        programs = (RetailProgram.link(symbols, [function]),
+                    CandidateProgram.link(symbols, [CandidateFunction(function, path)]))
+        window_bank = bytearray(2376)
+        for window in range(9):
+            for row in range(10):
+                codes = [(0x8000 + window * 120 + row * 10 + n) & 0xFFFF for n in range(10)]
+                struct.pack_into('<10H', window_bank, window * 264 + row * 24 + 28, *codes)
+        target = MemoryRange('list', 0x800F8000, 40)
+        for window in range(9):
+            for row in range(10):
+                source = window * 264 + row * 24 + 28
+                expected = (struct.pack('<2H', 12, 19) + window_bank[source:source + 20]
+                            + bytes((22, 38, 0, 11, 0, 0, 0, 8)) + b'POINTERS')
+                for program in programs:
+                    with self.subTest(window=window, row=row, program=program.label):
+                        result = ParserMachine(image, program).call(
+                            function, [target.address, window, row],
+                            memory=[MemoryInput(0x80058478, bytes(window_bank)),
+                                    MemoryInput(target.address, bytes(32) + b'POINTERS')],
+                            capture=[target], allowed_writes=[MemoryRange('prefix', target.address, 32)],
+                            instruction_limit=200)
+                        self.assertEqual(result.memory_by_name()['list'], expected)
+                        self.assertEqual([(call.name, call.kind, call.args[:3])
+                                          for call in result.trace],
+                                         [(function, program.label, (target.address, window, row))])
 
     def test_all_380_reviewed_interior_references_round_trip(self):
         image = self.retail()
@@ -120,6 +175,35 @@ class GameMenuAssetsTests(unittest.TestCase):
                 self.assertEqual(decode_hi_lo_target(high, low), target - ASSETS)
                 restored = encode_hi_lo_addend(high, low, target)
                 self.assertEqual(restored, (image.u32(site), image.u32(low_site)))
+
+    def test_all_110_reviewed_bank_references_preserve_owner_and_retail_addend(self):
+        image = self.retail()
+        ctx, catalog = Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)
+        rows = [r for r in read_tsv(RETAIL_CONFIG / 'relocs.tsv')[1] if r['image'] == 'GAME.EXE']
+        for name, (va, size), count in zip(BANK_NAMES[1:], BANKS[1:], (7, 83, 13, 4, 3), strict=True):
+            references = [r for r in rows if r['target_va']
+                          and va <= int(r['target_va'], 0) < va + size]
+            self.assertEqual(len(references), count)
+            incoming = {r.site: r for r in ctx.refs.incoming(ctx.idx.datum(va), confirmed_only=True)}
+            for row in references:
+                site, low_site, target = (int(row[key], 0)
+                                          for key in ('site_va', 'paired_site_va', 'target_va'))
+                with self.subTest(owner=name, site=hex(site)):
+                    self.assertEqual((row['kind'], row['status'], row['target_name']),
+                                     ('mips_hi16_lo16', 'reviewed', name))
+                    reference = incoming[site]
+                    self.assertEqual((reference.destination, reference.referent.name), (va, name))
+                    owner = ctx.idx.function_owner(site)
+                    body = bytearray(image.require(owner.va, owner.body_size))
+                    relocations, used = _apply_relocation(
+                        body, catalog.function_starts['GAME.EXE'][owner.va], row, catalog, 'safe')
+                    self.assertEqual([r.symbol for r in relocations], [name, name])
+                    self.assertEqual(int(used['addend'], 0), target - va)
+                    high = struct.unpack_from('<I', body, site - owner.va)[0]
+                    low = struct.unpack_from('<I', body, low_site - owner.va)[0]
+                    self.assertEqual(decode_hi_lo_target(high, low), target - va)
+                    self.assertEqual(encode_hi_lo_addend(high, low, target),
+                                     (image.u32(site), image.u32(low_site)))
 
     def test_loader_copies_all_six_banks_and_preserves_the_alignment_gap(self):
         image, symbols = self.retail(), GameSymbols.load()

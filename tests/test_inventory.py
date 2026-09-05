@@ -63,8 +63,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2982)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 88)
-        self.assertEqual(counts["structure_fields"], 742)
+        self.assertEqual(counts["structures"], 87)
+        self.assertEqual(counts["structure_fields"], 741)
         self.assertEqual(counts["structure_fields_named"], 615)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:

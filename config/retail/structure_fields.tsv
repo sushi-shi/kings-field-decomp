@@ -721,7 +721,6 @@ MenuGlyphRow	0x0	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;as
 MenuGlyphString	0x0	0x2	x	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
 MenuGlyphString	0x2	0x2	y	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
 MenuGlyphString	0x4	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
-MenuLabelCell	0x0	0x8	halfwords	u16[4]	opaque	game_menu.h;game_menu_assets.md;asm;STAT.DAT	meaning unresolved; extent retained
 MenuPoint	0x0	0x2	x	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	sprite blitters read two screen-coordinate halfwords
 MenuPoint	0x2	0x2	y	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	sprite blitters read two screen-coordinate halfwords
 MenuSpriteDef	0x0	0x2	tpage	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters

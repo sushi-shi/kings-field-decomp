@@ -167,11 +167,13 @@ class Datum:
     def alignment(self) -> int:
         # Working packing constraint bounded by the retail address, not proof
         # of the original section alignment or allocation class. The pinned
-        # GCC/maspsx path gives file-static tentative BSS an eight-byte stride
-        # even for one-word objects; other claims currently pack up to four.
+        # GCC 2.5.7/maspsx path gives both local and exported tentative BSS
+        # eight-byte allocation strides. Retail's menu-bank gap independently
+        # confirms this for globals (game_menu_banks.md). Unknown linkage and
+        # initialized data retain the narrower working constraint.
         candidates = (
             (8, 4, 2)
-            if self.storage == "bss" and self.scope == "static"
+            if self.storage == "bss" and self.scope in {"static", "global"}
             else (4, 2)
         )
         for candidate in candidates:

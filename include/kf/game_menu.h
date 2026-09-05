@@ -90,11 +90,6 @@ typedef enum MenuListTileIndex {
     MENU_LIST_TILE_SELECTED,
 } MenuListTileIndex;
 
-/* Eight-byte cell in the runtime-loaded menu label bank. */
-typedef struct MenuLabelCell {
-    u16 halfwords[4];
-} MenuLabelCell;
-
 /*
  * Scrollable menu-list state. The first 24 bytes are a positioned title,
  * followed by list geometry/cursor bytes and the row-glyph and optional
@@ -117,7 +112,6 @@ typedef struct KfMenuList {
 } KfMenuList;
 
 extern KfMenuAssets menu_assets;
-extern MenuLabelCell DAT_80058494[];
 extern MenuWindowLayout menu_window_layouts[9];
 extern MenuGlyphRow item_name_rows[80];
 extern MenuGlyphRow magic_name_rows[9];

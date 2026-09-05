@@ -710,6 +710,45 @@ and placement failures: source DATA **11/59**, SDK data **2/2**, target relink
 executable data matching. Remaining config-only ranges and unresolved reference
 paths still prevent exhaustive byte coverage.
 
+## STAT.DAT banks and a source-placement false positive
+
+The five remaining STAT.DAT banks now have typed BSS definitions alongside
+menu_assets in item.c. Their 4796 bytes retain the existing array types and
+extents; the combined six-bank RAM span is 5712 bytes including the independently
+proved four-byte allocation gap before prices. The delinker now preserves that
+gap for explicitly global BSS without inventing a gap datum. The stale
+DAT_80058494 extern and eight-byte cell view are replaced by the actual window
+row's glyph field. All 110 reviewed bank references retain their raw retail
+targets, and bounded retail/source controls cover every window/row pair and
+all bytes of all six loader copies at four source alignments.
+
+The resulting source and target BSS have identical named layouts, but the
+source ELF requires sixteen-byte alignment at retail base 800580e8. The prior
+data gate falsely accepted this pair. It now reuses the independent relink
+verifier's placement rules for both data objects, rejecting incompatible
+alignment, conflicting bases and unclaimed sections. It does not mask data,
+rewrite alignment flags or count unplaceable allocations as closed.
+
+This removes five previous data-only matches: GAME item, save_system and
+lighting, and OPEN render_map_cells and opening_entity_pool. Strict source
+DATA drops **11/59 to 6/59**; SDK data remains 2/2. Target relinking remains
+108/114 with the same six conflicts. All **360/471 exact game functions** and
+13 vendor controls are preserved. The initializer's honest score is 80.714290%
+after recovering its actual field; the other 483 function-score rows are
+unchanged, and no function is banked.
+
+Reached GAME source owners rise 74 to 79 and unpaired reached config ranges
+fall **629 to 624** (GAME 357, OPEN 267). Source/header DAT_ occurrences fall
+179 to 177. The full build remains red on explicit data, reachability and
+placement failures; complete reachable-byte coverage and linked-executable
+equality remain unproven. See
+[the per-function and placement evidence](../config/evidence/game_menu_banks.md).
+
+All 564 local tests pass without skips; Ruff, diff checks and the full flake
+checks pass (83 optional local-artifact skips inside the flake sandbox). Focused
+compiles and the full comparison graph were rebuilt. No failure gate, function
+baseline, compiler profile or original address was relaxed.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

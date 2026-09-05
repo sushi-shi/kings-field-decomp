@@ -5577,7 +5577,7 @@ GAME.EXE	0x8002ad38	0x19538		mips26	reachable-code	0x80054290	load		jal		control
 GAME.EXE	0x8002ad40	0x19540	0x8002ad44	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002ad48	0x19548	0x8002ad4c	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v1	paired-reviewed	reviewed	manual-match:game_match_campaign_30
 GAME.EXE	0x8002ad54	0x19554	0x8002ad58	mips_hi16_lo16	reachable-code	0x80057e88	load		lui+sw	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8002ad98	0x19598	0x8002ad9c	mips_hi16_lo16	reachable-code	0x80058494	bss	DAT_80058494	lui+addiu	v1	paired-reviewed	reviewed	manual-match:game_menu_hub_util
+GAME.EXE	0x8002ad98	0x19598	0x8002ad9c	mips_hi16_lo16	reachable-code	0x80058494	bss	menu_window_layouts	lui+addiu	v1	paired-reviewed	reviewed	manual-match:game_menu_hub_util;manual:game_menu_banks
 GAME.EXE	0x8002aeb0	0x196b0		mips26	reachable-code	0x8002af0c	load	menu_release_item_model	jal		control-flow-reviewed	reviewed	manual-match:game_menu_hub_util
 GAME.EXE	0x8002aec8	0x196c8		mips26	reachable-code	0x8001ae60	load	cd_file_load_table_entry	jal		control-flow-reviewed	reviewed	manual-match:game_menu_hub_util
 GAME.EXE	0x8002aedc	0x196dc		mips26	reachable-code	0x8001c5b0	load	tmd_register	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd

@@ -27,7 +27,8 @@ promotes a probe to a proven historical toolchain.
   between linkage correction and unresolved allocation topology.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
-  inclusion of custom allocated NOBITS sections.
+  inclusion of custom allocated NOBITS sections; matching data must also admit
+  a retail base satisfying both objects' actual section alignment.
 - [open-map-render-residue.md](open-map-render-residue.md): RTBL window
   ownership, conflicting light-matrix base forms in map rendering and
   initialization, and the visibility-traversal setup residue.

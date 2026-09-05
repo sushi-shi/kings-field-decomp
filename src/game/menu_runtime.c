@@ -548,12 +548,12 @@ void primitive_buffer_commit_poly_ft4(s32 depth)
 ADDRESS(0x8002ad6c, 0x8c)
 void menu_list_init(KfMenuList *list, s32 row, s32 column)
 {
-    u16 *src;
+    const s16 *src;
     s32 i;
 
     list->title_x = 12;
     list->title_y = 19;
-    src = DAT_80058494[row * 33 + column * 3].halfwords;
+    src = menu_window_layouts[row].rows[column].codes;
     for (i = 0; i < 10; i++) {
         list->title_glyphs[i] = src[i];
     }
