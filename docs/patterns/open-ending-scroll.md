@@ -1,5 +1,59 @@
 # OPEN ending-scroll controller and data owners
 
+## Function Match Plan: interpolation-path case exits (`4647acc`)
+
+OPEN `80014e28` remains 1944 bytes, strict 97.129630%, with 167 unequal
+aligned words. Retail hashes, six semantic views, complete CFG/detached
+epilogue, sole dispatcher caller, adjacent ending/fade controllers, shared
+camera/entity/matrix interfaces, resources, SDK signatures/providers and
+source history were refreshed. The 264-byte frame, forty calls, eight retail
+internal jumps, 31 validated address pairs, no strings/candidates, short
+selectors/blends, nine panel descriptors and numeric targets are unchanged.
+The game-owned state machine remains separate from its SDK services.
+
+The first divergence is still camera-argument setup at +0x298. The concrete
+CFG discrepancy is the extra phase-1 store/jump block: retail's successful
+interpolation paths both jump directly out of the lighting switch, while
+their completed paths share the literal phase store and blend reset. Test
+case-local early `break` after each successful interpolation, leaving each
+literal phase assignment/reset as the remaining case body. Preserve dispatch
+order, both signed tests, calls, 64/3 increments and 1/2 phase constants.
+Unlike the earlier increment/common-reset-label/if-dispatch trials, this
+retains the switch and introduces no shared carrier, label, incremented phase
+or reversed condition. Compare the full raw stream, not the subgraph alone.
+No scene-3 frame padding is justified by its independently refreshed evidence.
+
+The early case exits emit the identical 1944-byte candidate and ordered
+relocations, including all 167 unequal aligned words. Restore the original
+conditional bodies; the exact 532-byte dispatcher and scene-3's fourteen
+frame-only differences are unchanged.
+
+### Lighting-selector signedness
+
+The refreshed retail dispatch loads the phase with `lhu` at `800151b8`,
+stores it with `sh`, and tests only equality with 0/1; it assigns only 0/1/2.
+Unlike the blend and scrolling flag, this selector has no signed comparison
+or arithmetic consumer. Its halfword width is established, but signedness
+is not. With the original control flow restored, test `u16 lighting_phase`
+as an unsigned state selector, leaving all other state/blend types unchanged.
+This tests the decoded load/compare contract, not a temporary introduced to
+force literal values into a register. Compare dispatch, phase-store join,
+stack accesses and the entire body; reject additional narrowing instructions.
+
+The unsigned selector removes retail's post-load value copy and still leaves
+two separate phase-store paths. It emits 1940 bytes with 262 unequal aligned
+words, while all forty calls and 31 ordered numeric targets remain unchanged.
+Restore the signed-short model: the unsigned hypothesis does not explain the
+observed dispatch/store sequence. Both trials are removed; no new exact
+function or source change is retained from this follow-up.
+
+The restored source's real rebuild and strict match confirm 97.129630%.
+Full `kf build` preserves 97/108 OPEN exact functions and all 13 SDK source
+controls, with only the existing OPEN switch-table mismatch and GAME data/
+four historical-best failures. Ruff, all 401 tests and `git diff --check`
+pass. Only these evidence notes change; source, types, profiles, data owners,
+baseline rows and GAME remain untouched.
+
 ## Function Match Plan: initial entity-position assignment (`a229537`)
 
 OPEN `80014e28`/1944 bytes starts at strict 97.129630% under
