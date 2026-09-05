@@ -2709,9 +2709,15 @@ GAME.EXE	0x800561a9	0x449a9	0x3	data	direct-references	gameplay_sound_ref_11	Sou
 GAME.EXE	0x800561ac	0x449ac	0x3	data	direct-references	gameplay_sound_ref_12	SoundRef[13]	game_semantic_map_runtime.tsv;game_semantic_audio_spatial.tsv	one SoundRef; retail forms each address independently, so the entries are separate objects
 GAME.EXE	0x800561af	0x449af	0x1	unclassified	coverage-gap			payload-complement	padding before map_copy_regions
 GAME.EXE	0x800561b0	0x449b0	0x18	data	direct-references	map_copy_regions	KfMapCopyRegion[4]	game_semantic_map_objects.tsv	four six-byte source/destination rectangle descriptors; former short strings were false byte patterns inside the table
-GAME.EXE	0x800561c8	0x449c8	0x70	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80056238	0x44a38	0xf	string	byte-pattern		ascii	investigation:string-census	escaped text: KAN\\B0\\K000.TIM
-GAME.EXE	0x80056247	0x44a47	0xc5	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x800561c8	0x449c8	0x8	unclassified	coverage-gap			payload-complement	uninterpreted bytes before the floor-5 camera path
+GAME.EXE	0x800561d0	0x449d0	0x38	data	reviewed	map_floor5_camera_path	KfCameraPathPoint[2]	manual:game_map_script_data	one camera point and its complete terminating record
+GAME.EXE	0x80056208	0x44a08	0x10	data	reviewed	map_floor1_sound_position	VECTOR	manual:game_map_script_data	complete SDK vector passed to spatial sound in floor-1 script
+GAME.EXE	0x80056218	0x44a18	0x20	data	reviewed	map_reveal_light_matrix	MATRIX	manual:game_map_script_data	complete SDK light matrix used by the reveal fade
+GAME.EXE	0x80056238	0x44a38	0x10	data	reviewed	map_screen_image_path	char[16]	manual:game_map_script_data	mutable KAN path including terminating NUL at 0x80056247
+GAME.EXE	0x80056248	0x44a48	0x20	data	reviewed	actor_transform_color_matrix	MATRIX	manual:game_map_script_data	complete SDK color matrix for actor definition 5-to-6 transition
+GAME.EXE	0x80056268	0x44a68	0x23	data	reviewed	floor_deform_segments	KfFloorDeformSegment[5]	manual:game_map_script_data	five seven-byte floor lines selected by item-62 constructor ranges (0,4) and (4,1)
+GAME.EXE	0x8005628b	0x44a8b	0x1	unclassified	coverage-gap			payload-complement	uninterpreted packing byte (retail 0x64); not part of floor_deform_segments
+GAME.EXE	0x8005628c	0x44a8c	0x80	unclassified	coverage-gap			payload-complement	library-adjacent data candidate; reference at GAME 0x8003adf8 remains candidate
 GAME.EXE	0x8005630c	0x44b0c	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80056310	0x44b10	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80056314	0x44b14	0x4	pointer	ghidra-defined		undefined *	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum

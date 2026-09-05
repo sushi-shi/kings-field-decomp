@@ -925,6 +925,37 @@ the full-build failures remain. See the
 All 596 local tests pass without skips; Ruff, diff and flake checks pass
 (101 expected local-tool/artifact skips in the sandbox suite).
 
+## GAME map-script constants and truthful effect ownership
+
+Six private initialized objects replace two coverage gaps and a truncated
+filename claim: a two-record camera path, sound VECTOR, light/color MATRIXes,
+the complete 16-byte mutable path and five seven-byte floor-deformation records.
+All 187 source/target payload bytes agree with retail. The map family's entire
+120-byte `.data` also passes strict placement; the actor/floor owners still fail
+the source assembler's real 16-byte alignment and are not called data matches.
+
+The two map-script units consolidate using proven script/dispatcher calls,
+interleaved private data and adjacent RODATA evidence. Conversely, the existing
+effect helper/dispatcher grouping cannot put constants more than 6 KB apart into
+one `.data`. The original eight-helper boundary is restored and the dispatcher
+gets its own data/RODATA owner. Both boundaries remain WIP; no missing bytes,
+alignment overrides or fabricated padding are used to force either hypothesis.
+
+The floor helper now advances progress on every cell, as retail's branch delay
+slot requires. Its score improves 84.921740 ->86.704346%; every other function
+score is unchanged, preserving all360 exact game functions. All107 source DATA
+sizes agree with independent compiler measurements. Seven new tests include
+340 bounded retail calls, complete section/neighbor bytes and twelve reviewed
+HI/LO round-trips. See the
+[per-function ownership and verification dossier](../config/evidence/game_map_script_data.md).
+
+Source/header `DAT_` hits fall100 ->84; unmatched reached config ranges fall
+622 ->620. Whole-source-data matches change7/60 ->6/60 because the previously
+passing floor-literal unit joins a still-non-exact switch-table unit, while the
+new effect-helper unit fails placement. SDK data stays4/4 and target relinking
+110/116. Full build still rejects strict data/ownership/placement failures;
+neither fewer names nor equal payload slices establishes complete matching.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

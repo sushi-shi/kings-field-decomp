@@ -3,6 +3,11 @@
 #include <kf/game_collision.h>
 #include <kf/game.h>
 
+DATA(0x80056248, 0x20)
+static MATRIX actor_transform_color_matrix = {
+    {{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}, {0, 0, 0}
+};
+
 /*
  * Player warp / floor-transition band 0x80036618..0x80036d3c (GAME.EXE).
  *
@@ -250,7 +255,7 @@ void actor_transform_definition5_to6(KfActor *actor)
     map_event_pool[2].state = 3;
     ReadColorMatrix(&saved);
     for (blend = 0; blend < 4097; blend += 64) {
-        lighting_set_color_matrix(&saved, &DAT_80056248, blend);
+        lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += 40;
         actor->rotation.y += 64;
         render_frame(0, 0);
@@ -258,7 +263,7 @@ void actor_transform_definition5_to6(KfActor *actor)
     }
     actor->definition_id = 6;
     for (blend = 4096; blend >= 0; blend -= 64) {
-        lighting_set_color_matrix(&saved, &DAT_80056248, blend);
+        lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= 40;
         actor->rotation.y -= 64;
         render_frame(0, 0);

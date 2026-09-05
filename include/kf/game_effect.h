@@ -13,6 +13,17 @@
 
 struct KfPoolRecord;
 
+/* Coordinates wrap modulo 256; the retail loads both steps as unsigned bytes. */
+typedef struct KfFloorDeformSegment {
+    u8 column;
+    u8 row;
+    u8 column_step;
+    u8 row_step;
+    u8 cell_count;
+    u8 start_height;
+    u8 end_height;
+} KfFloorDeformSegment;
+
 /*
  * Effect pool record (60-byte stride, pool in effect_pool_records). The pool
  * constructors establish the field layout: byte 0 is the type tag (0xff marks

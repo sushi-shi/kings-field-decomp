@@ -1386,6 +1386,12 @@ GAME.EXE	0x800561a6	0x3	gameplay_sound_ref_10	unknown	load	SoundRef	audio	suppor
 GAME.EXE	0x800561a9	0x3	gameplay_sound_ref_11	unknown	load	SoundRef	audio	supported	data.tsv:direct-references;game_semantic_map_runtime.tsv;asm;packed-3-byte-records	one SoundRef; retail forms each address independently, so the entries are separate objects
 GAME.EXE	0x800561ac	0x3	gameplay_sound_ref_12	unknown	load	SoundRef	audio	supported	data.tsv:direct-references;game_semantic_map_runtime.tsv;asm;packed-3-byte-records	one SoundRef; retail forms each address independently, so the entries are separate objects
 GAME.EXE	0x800561b0	0x18	map_copy_regions	unknown	load	KfMapCopyRegion[4]	map	supported	data.tsv:direct-references;game_semantic_map_objects.tsv;asm;4x6-byte-records	four rectangular source/destination map-copy descriptors; source linkage remains unresolved
+GAME.EXE	0x800561d0	0x38	map_floor5_camera_path	static	load	KfCameraPathPoint[2]	map	supported	asm;xrefs;config/evidence/game_map_script_data.md	one camera point and its complete terminating record
+GAME.EXE	0x80056208	0x10	map_floor1_sound_position	static	load	VECTOR	map	supported	asm;xrefs;config/evidence/game_map_script_data.md	complete SDK vector passed to spatial sound in floor-1 script
+GAME.EXE	0x80056218	0x20	map_reveal_light_matrix	static	load	MATRIX	map	supported	asm;xrefs;config/evidence/game_map_script_data.md	complete SDK light matrix used by the reveal fade
+GAME.EXE	0x80056238	0x10	map_screen_image_path	static	load	char[16]	map	supported	asm;xrefs;config/evidence/game_map_script_data.md	mutable KAN path including terminating NUL at 0x80056247
+GAME.EXE	0x80056248	0x20	actor_transform_color_matrix	static	load	MATRIX	actor	supported	asm;xrefs;config/evidence/game_map_script_data.md	complete SDK color matrix for actor definition 5-to-6 transition
+GAME.EXE	0x80056268	0x23	floor_deform_segments	static	load	KfFloorDeformSegment[5]	effect	supported	asm;xrefs;config/evidence/game_map_script_data.md	five seven-byte floor lines selected by item-62 constructor ranges (0,4) and (4,1)
 GAME.EXE	0x8005630c	0x4	DAT_8005630c	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056310	0x4	DAT_80056310	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056314	0x4	DAT_80056314	unknown	load	undefined *		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

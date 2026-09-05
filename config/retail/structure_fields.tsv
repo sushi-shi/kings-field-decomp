@@ -218,6 +218,13 @@ KfEffectSprite	0x18	0x04	animation_cache	KfPoolRecord *	supported	game_render.h;
 KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle
+KfFloorDeformSegment	0x00	0x01	column	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu0	starting grid column
+KfFloorDeformSegment	0x01	0x01	row	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu1	starting grid row
+KfFloorDeformSegment	0x02	0x01	column_step	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu2	column advance modulo 256
+KfFloorDeformSegment	0x03	0x01	row_step	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu3	row advance modulo 256; 255 encodes a backwards step
+KfFloorDeformSegment	0x04	0x01	cell_count	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu4	line length; count-minus-one loop stops at -1
+KfFloorDeformSegment	0x05	0x01	start_height	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu5	grid height at progress zero
+KfFloorDeformSegment	0x06	0x01	end_height	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu6	grid height at progress 4096; also determines sound Y times -100
 KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
 KfFloorItem	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id copied from the placement record

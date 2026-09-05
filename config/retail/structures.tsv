@@ -22,6 +22,7 @@ KfEffectRecord	0x3c	supported	game_effect.h;asm;effect_pool_constructor;effect_p
 KfEffectRenderView	0x3c	supported	game_effect.h;asm;render_actor_sprite;render_entities	60-byte rendering view of an effect_pool_records entry; reads low position halfwords and the sprite-specific header selectors
 KfEffectSprite	0x1c	supported	game_render.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
 KfEulerAngles	0x06	supported	game_math.h;asm;xrefs	three signed halfword angles
+KfFloorDeformSegment	0x07	supported	game_effect.h;effect_floor_deform_line;7-byte-stride;unsigned-byte-loads	one scripted floor-height line; coordinates and steps wrap modulo 256
 KfFloorEntryCell	0x2	supported	game_player.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	item.h;asm;func_80020b4c	runtime floor-item table entry
 KfFloorItemPlacement	0x0c	supported	item.h;asm;func_80020b4c	serialized floor-item placement record
