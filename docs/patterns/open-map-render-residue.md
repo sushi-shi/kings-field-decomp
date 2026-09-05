@@ -66,3 +66,37 @@ This setup is an unattributed codegen residue. No volatile pointer,
 redundant operation or forced call was added. Both functions remain
 unbanked; their individual verdicts are in
 `config/evidence/open_semantic_map_render.tsv`.
+
+## Coordinate construction follow-up plan
+
+At `811213b`, the six image-qualified queries were refreshed for both
+functions, with their sole callers, adjacent boundaries, current C/history,
+shared `KfCellWindow` definition and GAME sibling checked. Scores remain
+84.094826% (cell) and 84.062500% (traversal). The cell body has a frame of
+80 bytes, nine direct calls, nine reviewed address pairs, one internal jump,
+no strings and no candidate references. Its col/row arguments are full-width;
+the visibility and wrapped object selector are bytes, and the constructed
+SDK SVECTOR uses low-halfword camera coordinates. Grid policy and the
+separately identified matrix services remain the vendor negative control.
+
+The GAME traversal's selected-pointer reload follows a real pitch-dependent
+branch which OPEN lacks. Adding such a branch would not recover OPEN source.
+No traversal edit is planned. The unresolved matrix-owner conflict above is
+also left explicit rather than altered to improve one consumer.
+
+The focused cell hypothesis is staged world-coordinate construction: retail
+finishes both multiplications by 2000 at `80018c68/6c`, then reads the X/Z
+camera halfwords at `80018c70..7c`. The current C combines each multiplication
+with its camera subtraction. Test two real s32 world-coordinate values before
+the existing SVECTOR assignments, retaining row/col for the height-grid
+lookup. This introduces no extra storage requirement or fake carrier: both
+values feed their actual coordinate differences. Compare the first divergence,
+coordinate instructions, nine calls and ordered numeric targets after a real
+focused compile; reject the hypothesis if it supplies no explanatory change.
+
+The staged s32 coordinate values emitted the same instruction and relocation
+stream as the original expressions, including the camera-load ordering and
+matrix-base differences. Strict scores stayed 84.094826% and 84.062500%.
+The trial is removed; no source, type, owner or baseline change is retained.
+This rules out that staging hypothesis under the current probe, not the
+possibility of another evidenced source correction.
