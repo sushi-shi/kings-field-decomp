@@ -8,7 +8,6 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     u32 remaining = object->primitive_count;
     u8 *payload = open_graphics_runtime.tmd_state.current_asset;
     u8 *packet = payload + (object->primitive_offset + 12);
-    u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
@@ -17,6 +16,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     s32 depth;
 
     while (remaining-- != 0) {
+        u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
+        s32 bias = depth_bias;
+
         header = *(u32 *)packet;
         packet += 4;
         switch (header >> 24) {
@@ -74,7 +76,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             goto next_packet;
         }
         depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2;
-        depth += depth_bias;
+        depth += bias;
         if (depth >= 5) {
             AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], primitive);
         }

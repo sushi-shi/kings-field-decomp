@@ -1,10 +1,13 @@
 # OPEN unlit triangle emission
 
 OPEN `render_enqueue_unlit_triangles` at `0x80018344` has a complete C body
-under `probe-gcc257-o2-g0`, matching **93.455620000%** in strict objdiff.
-The probe emits 692 bytes against 676 retail bytes. This is neither banked
+under `probe-gcc257-o2-g0`, matching **98.769230000%** in strict objdiff.
+The probe emits 680 bytes against 676 retail bytes. This is neither banked
 exact code nor a proven compiler wall. The per-function evidence and exact
 caller control are in `config/evidence/open_semantic_unlit_triangles.tsv`.
+
+The sections below retain the initial evidence and subsequent source experiments;
+the final lifetime correction supersedes the earlier separate-base result.
 
 ## Supported behavior
 
@@ -119,3 +122,79 @@ reloaded that slot. Total code stayed 692 bytes; the extra independent
 graphics bases and their different referent expressions were not resolved.
 This did not recover retail's saved, loop-invariant bias. The trial was
 reverted; no source or baseline change is retained from it.
+
+## Complete-owner ordering-table follow-up plan
+
+At `4be4995`, OPEN `80018344` is 93.071010% strict, 688 compiled versus
+676 retail bytes. The six queries, full CFG, sole entity caller, adjacent
+map emitter and preceding TMD tail, accessor/allocator bodies, source history,
+shared owner and SDK headers/provider evidence were refreshed. The unsigned
+halfword object index, signed halfword bias, word primitive count/header,
+eight calls, one internal jump, one retail address pair and no strings or
+candidate outgoing references retain the contract above. Both frames are
+64 bytes. NormalClip and LIBGPU PRIM helpers remain separately vendored.
+
+The complete owner now recovers current-asset/projected/material address
+relationships, but the compiled AddPrim tail still adds an absolute pair for
+the ordering-table field. Retail loads the pointer at `80018590` from
+projected-base minus 276. Test a real `u32 **ordering_table_slot` pointing at
+the named owner field, initialized alongside the projected-vertex pointer
+and dereferenced at each accepted triangle. This retains the observed table
+reload across SDK calls, unlike caching its value, and does not use a
+cross-object cast. The exact scene-1 fade routine already uses this typed
+slot form. Keep all packet operations and the signed bias unchanged; compare
+raw instructions and ordered referents before considering any wider use.
+
+The slot expression emits exactly the existing 688-byte candidate and its
+relocations. The extra OT pair, material-address register and narrow-bias
+spill remain. The trial is removed rather than propagated to other emitters.
+
+## Projected-array reference lifetime
+
+The independently inspected loader now reaches raw exact by using direct
+count-member accesses, allowing its reset and loop addresses to follow their
+retail lifetimes. The renderer has a related concrete discrepancy:
+`800183a4` initializes the projected-array address only after the nonempty
+count test. Its current C initializes an explicit byte pointer before that
+test; the probe likewise computes that address early and retains a separate
+material address inside the loop.
+
+Test direct references to the complete owner's projected array at each
+vertex-index use, removing the eager local pointer. Prepared halfword indices
+remain byte offsets and all six effective addresses are unchanged. This
+defers the references to the observed nonempty path without adding guards,
+casts across owner boundaries, or a cached ordering-table value. All packet
+operations, material reads, bias and SDK calls remain unchanged.
+
+Direct array references recover the projected-address initialization after
+the nonempty test and the material's +16044..16046 offsets from that same
+base. They eliminate the bias stack spill as a consequence; the body is now
+676 bytes, but its frame is 56 rather than retail's 64, the bias is still
+sign-extended in the loop tail, and the OT pair remains. Keep this as an
+exploratory base supported by the recovered address lifetime, not by score.
+
+Retail sign-extends the bias once on the nonempty path at `800183a8/ac`,
+then uses the full word at the common depth tail. Test an `s32 bias` value
+inside the loop scope, derived from the unchanged `s16` parameter and used
+by the actual depth addition. Unlike the earlier pre-owner trial, this
+starts after recovering the shared projected/material address and expresses
+the conversion on the observed nonempty path rather than at function entry.
+
+The scoped signed value recovers the saved incoming bias and its once-per-
+nonempty-path conversion, leaving 56 differing aligned words and 680 bytes.
+Before retaining six repeated byte-array casts, check an equivalent scoped
+projected-array pointer initialized at the top of that same loop block,
+before the bias conversion, matching retail's nonempty-path order. This
+keeps the lifetime correction while using one shared byte-offset view.
+
+### Kept result
+
+The loop-scoped projected pointer preserves the shared material offsets and
+restores retail's projected-address-before-bias-conversion order without
+extra casts. Together with the real widened bias, this reaches **98.769230%**
+strict, up from 93.071010%, with 680 bytes and 53 differing aligned words.
+All eight calls and numeric referents are preserved. The exact entity caller
+stays 100%. The remaining first divergence is the 56-byte versus 64-byte
+frame; the body also retains the extra OT address pair, a commutative packet
+address operand difference and two vertex-pointer register roles. No frame
+padding, register permutation or source alias is introduced. Not banked.

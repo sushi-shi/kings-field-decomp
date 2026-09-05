@@ -73,6 +73,8 @@ promotes a probe to a proven historical toolchain.
   argument/write traces and remaining address-base differences.
 - [open-fog-interpolation.md](open-fog-interpolation.md): scaled-difference
   expression recovering the exact OPEN fog interpolation and its preserved start.
+- [open-item-cursor.md](open-item-cursor.md): saved stream start, postincrement
+  scan and direct count-member accesses closing the OPEN placement loader.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
   parser match attempts, retained source improvements and instruction-level residues.
 - [game-parser-inline-helpers.md](game-parser-inline-helpers.md): pinned-compiler
