@@ -42,6 +42,17 @@ typedef struct KfMorphObject {
 DATA(0x800910c0, 0xf0)
 KfPoolRecord pool_records[12];
 
+static inline void copy_vertices(SVECTOR *output, const SVECTOR *input, u16 count)
+{
+    const u32 *source = (const u32 *)input;
+    u32 *destination = (u32 *)output;
+
+    do {
+        *destination++ = *source++;
+        *destination++ = *source++;
+    } while (--count != 0);
+}
+
 ADDRESS(0x800205d4, 0x3a4)
 u16 *render_bind_animated_instance(
     KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
@@ -54,9 +65,6 @@ u16 *render_bind_animated_instance(
     KfMorphObject *morph_object;
     u32 *clip_table;
     u32 *object_table;
-    u32 *source_words;
-    u32 *destination_words;
-    u16 vertices_left;
     u16 morphs_left;
     u16 phase_end;
     u16 phase_start;
@@ -138,13 +146,7 @@ update_vertex_cache:
     asset_registry_select(asset_index);
     tmd_select_object_vertices(0);
 
-    source_words = (u32 *)current_tmd_vertices;
-    destination_words = (u32 *)record->cached_vertices;
-    vertices_left = vertex_count;
-    do {
-        *destination_words++ = *source_words++;
-        *destination_words++ = *source_words++;
-    } while (--vertices_left != 0);
+    copy_vertices(record->cached_vertices, current_tmd_vertices, vertex_count);
 
     morphs_left = keyframe->morph_count;
     {
@@ -166,13 +168,7 @@ blend_scratch:
     record->keyframe_index = keyframe_index;
     record->clip_index = clip_index;
 
-    source_words = (u32 *)record->cached_vertices;
-    destination_words = (u32 *)&tmd_morph_scratch[1];
-    vertices_left = vertex_count;
-    do {
-        *destination_words++ = *source_words++;
-        *destination_words++ = *source_words++;
-    } while (--vertices_left != 0);
+    copy_vertices(&tmd_morph_scratch[1], record->cached_vertices, vertex_count);
 
     morph_object = record->rest_morph;
     {

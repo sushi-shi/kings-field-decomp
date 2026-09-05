@@ -56,3 +56,5 @@ promotes a probe to a proven historical toolchain.
   controls, VAB partial state and cleanup quirks, and seven-function match review.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
   parser match attempts, retained source improvements and instruction-level residues.
+- [game-parser-inline-helpers.md](game-parser-inline-helpers.md): pinned-compiler
+  inline support, six parser helper experiments and the retained typed vertex copy.

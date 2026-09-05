@@ -18,12 +18,13 @@ the census below now has a Rust implementation and passing comparison coverage
 at its stated boundary. `python -m scripts.kf.codec_oracle` runs all ten suites
 without case or event limits and rebuilds the candidates by default.
 
-The [latest exact-closure attempt](patterns/game-parser-exact-closure.md)
+The [latest inline-helper investigation](patterns/game-parser-inline-helpers.md)
 leaves **23 of the 29 explicit GAME functions strict-exact (79.31%)**.
-Size-weighted objdiff similarity is 99.470158%, up from 98.291691% after the
-[failure-path review](patterns/game-parser-verification.md), and distinct from
-the passing finite test corpus. Five of the six remaining functions improved,
-but none reached 100%; Sony providers are not included in these counts.
+Size-weighted objdiff similarity is 99.493564%, up from 99.470158% after the
+[preceding closure attempt](patterns/game-parser-exact-closure.md), and distinct
+from the passing finite test corpus. A typed animation vertex-copy helper
+improves one remaining function, but none reaches 100%; Sony providers are not
+included in these counts.
 
 ## Complete parser census
 
