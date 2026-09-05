@@ -17,7 +17,6 @@ extern s16 DAT_80055dac;
 extern s16 DAT_80055dae;
 extern s16 DAT_80055db4;
 extern s16 DAT_80055db6;
-extern u16 DAT_80055e9c; /* fixed fallback cell window */
 extern u8 DAT_800561c8[0x70];
 extern char DAT_80056238[16];
 extern u8 DAT_80056247[];

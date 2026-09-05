@@ -2,6 +2,29 @@
 #include <kf/game_render.h>
 #include <kf/game.h>
 
+DATA(0x80055e9c, 0xcc)
+static KfCellWindow render_fixed_cell_window = {
+    13, 13, 6, 6,
+    {
+        0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+        0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+        0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+    }
+};
+
+DATA(0x80095860, 0x4)
+const KfCellWindow *active_cell_window;
+
 /*
  * Contiguous visible-map-cell render path 0x8001e5ec..0x8001e9a4. The
  * dispatcher is the emitter's sole external caller, and both functions share
@@ -86,7 +109,7 @@ void render_map_cell(s32 col, s32 row, char cell)
 /*
  * Visible-cell dispatcher for the map geometry pass.  It selects the cell
  * window for the current view (a per-yaw window from render_cell_windows
- * when the pitch is near level, otherwise the fixed DAT_80055e9c window),
+ * when the pitch is near level, otherwise the fixed window),
  * publishes it through active_cell_window for render_entities' cull tests,
  * then walks the window's cell grid and hands every populated, in-range cell
  * to the per-cell emitter render_map_cell.
@@ -103,7 +126,7 @@ void render_map_cells(void)
     u8 cols;
 
     if ((u16)((u16)render_state.view_rotation.vx + 0x1ff) >= 0x3ff) {
-        active_cell_window = (const KfCellWindow *)&DAT_80055e9c;
+        active_cell_window = &render_fixed_cell_window;
     } else {
         active_cell_window =
             &render_cell_windows[15 - (render_state.view_rotation.vy >> 8)];

@@ -843,6 +843,37 @@ All 580 local tests pass without skips, and Ruff, diff and flake checks pass
 (91 optional local-artifact skips inside the flake sandbox). See the
 [per-function evidence and complete-data controls](../config/evidence/psyq_pitch_table.md).
 
+## GAME visibility-window source owners
+
+The GAME selector now owns its complete private 204-byte fixed window and
+four-byte selected-window pointer; resources owns the 3264-byte runtime window
+table. The existing shared GAME/OPEN record and game_render.h declarations are
+retained. COM.DAT independently supplies sixteen complete records identical to
+OPEN's RTBL. The fixed mask uses a 13-by-13 active grid within that shared
+capacity. Six interior aliases disappear, with no lost census bytes or invented
+executable initializer for runtime BSS. No TU is regrouped.
+
+All fourteen reviewed address pairs restore the original raw words. Forty-eight
+bounded retail selector controls verify pitch boundaries, every yaw, map edges,
+pointer publication and ordered mask dispatches. Both modified source objects
+and target modules retain identical text bytes; all 484 function scores remain
+unchanged, preserving 360/471 exact game functions and thirteen vendor controls.
+The loader and selector remain exact; the two non-exact renderers are untouched.
+
+The complete fixed payload equals retail, and the full runtime table's BSS
+layout agrees. Neither closes data matching: sixteen-byte source alignment
+cannot place them at their retail addresses, and the pointer's source BSS
+section occupies eight bytes against a four-byte claim. These failures remain
+visible. Strict source data changes **8/59 to 8/60**, SDK data stays **4/4**, and
+target relinking stays **110/116**, with the same six section-base conflicts.
+
+GAME reached source owners rise 79 to 82. Unmatched reached config ranges fall
+**626 to 623** across images, and source/header DAT_ occurrences fall **170 to
+167**. This is ownership progress, not full reachable-byte or linked-executable
+closure. The mandatory full build remains red. All **587 local tests** pass
+without skips; Ruff and diff checks pass. See the
+[per-function evidence and exact comparison boundary](../config/evidence/game_cell_window_data.md).
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

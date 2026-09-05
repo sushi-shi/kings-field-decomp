@@ -2682,15 +2682,7 @@ GAME.EXE	0x80055db4	0x445b4	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4
 GAME.EXE	0x80055db6	0x445b6	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80055db8	0x445b8	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055dbc	0x445bc	0xe0	defined	reviewed	color_matrix_table	MATRIX[7]	manual:game_semantic_player_death	seven 32-byte colour matrices indexed by base plus 32/128 from player_death fades
-GAME.EXE	0x80055e9c	0x4469c	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e9e	0x4469e	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055e9f	0x4469f	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055ea0	0x446a0	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055ea2	0x446a2	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055ea4	0x446a4	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055ea5	0x446a5	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055ea6	0x446a6	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80055ea7	0x446a7	0xc1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055e9c	0x4469c	0xcc	defined	reviewed	render_fixed_cell_window	KfCellWindow	manual:game_cell_window_data	13-by-13 mask in the common 196-cell-capacity window; four halfword header fields and zero remaining cells; no separate interior globals
 GAME.EXE	0x80055f68	0x44768	0xc0	data	direct-references	render_light_matrices	MATRIX[6]	asm;SetLightMatrix-references;32-byte-stride	six GTE light matrices fed to SetLightMatrix, one per render subsystem
 GAME.EXE	0x80056028	0x44828	0xc	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80056034	0x44834	0x19	string	byte-pattern	save_main_file_path	ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KF\x20\x20\x20\x20\x20\x20
