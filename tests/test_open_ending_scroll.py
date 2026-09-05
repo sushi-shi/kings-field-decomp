@@ -158,3 +158,71 @@ class OpenEndingScrollTests(unittest.TestCase):
         self.assertEqual(word(0x80015480) >> 26, 6)   # signed scrolling flag test
         self.assertEqual(word(0x800154F8) & 0xFFFF, 0xFFFF)
         self.assertEqual(word(0x800154FC) & 0xFFFF, 495)
+
+    def test_lighting_completion_values_and_shared_retail_join(self) -> None:
+        data = self.retail_bytes()
+        offset = IMAGE_LAYOUTS["OPEN.EXE"].file_offset(START)
+        retail = list(struct.unpack_from(f"<{(END - START) // 4}I", data, offset))
+        retail_calls = [(va - START) // 4 for va in (0x800151F8, 0x80015220)]
+
+        def completion(words: list[int], call: int, phase: int,
+                       matrix_target: int, increment: int,
+                       base: int = START) -> tuple[int, int]:
+            # This is a bounded instruction-pattern check, not an interpreter.
+            self.assertEqual(words[call - 6], 0x00023403)  # signed short -> a2
+            self.assertEqual(words[call - 5], 0x28C21001)  # blend < 4097
+            branch = words[call - 4]
+            self.assertEqual(branch >> 16, 0x1040)        # beqz v0
+            phase_constant = words[call - 3]
+            self.assertEqual(phase_constant >> 21, 0x1A0)  # ori rt,zero,phase
+            self.assertEqual(phase_constant & 0xFFFF, phase)
+            phase_register = phase_constant >> 16 & 31
+            self.assertEqual(decode_hi_lo_target(words[call - 2], words[call - 1]),
+                             matrix_target)
+            self.assertEqual(words[call + 1], 0x24850000 | (64 if phase == 1 else 32))
+            self.assertEqual(words[call + 2] >> 26, 2)    # jump after interpolation
+            self.assertEqual(words[call + 3], 0x26940000 | increment)
+
+            displacement = struct.unpack("<h", struct.pack("<H", branch & 0xFFFF))[0]
+            target = call - 3 + displacement
+            if words[target] >> 26 == 2:
+                # The non-exact probe has a phase-1 store in a jump delay slot.
+                store = target + 1
+                reset = ((words[target] & 0x03FFFFFF) * 4 - (base & 0x0FFFFFFF)) // 4
+            else:
+                store, reset = target, target + 1
+            self.assertEqual(words[store], 0xA7A000B0 | phase_register << 16)
+            self.assertEqual(words[reset], 0x0000A021)    # lighting_blend = 0
+            passing_target = ((words[call + 2] & 0x03FFFFFF) * 4
+                              - (base & 0x0FFFFFFF)) // 4
+            self.assertEqual(passing_target, reset + 1)  # interpolation skips reset
+            return store, reset
+
+        joins = [completion(retail, call, phase, matrix_target, increment)
+                 for call, phase, matrix_target, increment in zip(
+                     retail_calls, (1, 2), (0x80035964, 0x800359A4), (64, 3), strict=True)]
+        self.assertEqual(joins, [((0x80015230 - START) // 4,
+                                 (0x80015234 - START) // 4)] * 2)
+        wrong_phase = retail.copy()
+        wrong_phase[retail_calls[0] - 3] ^= 3
+        with self.assertRaises(AssertionError):
+            completion(wrong_phase, retail_calls[0], 1, 0x80035964, 64)
+        wrong_reset = retail.copy()
+        wrong_reset[joins[0][1]] ^= 0x800
+        with self.assertRaises(AssertionError):
+            completion(wrong_reset, retail_calls[0], 1, 0x80035964, 64)
+
+        path = BUILD / "objdiff/open/base/80014e28_opening_ending_scroll.o"
+        if not path.is_file():
+            self.skipTest("compiled ending-scroll object is required")
+        obj = _load_object(path)
+        compiled = list(struct.unpack(f"<{len(obj.sections['.text']) // 4}I",
+                                      obj.sections[".text"]))
+        calls = [reloc.offset // 4 for reloc in obj.relocations
+                 if reloc.section == ".text" and reloc.kind == 4
+                 and obj.symbol(reloc.symbol_index).name == "lighting_set_color_matrix"]
+        self.assertEqual(len(calls), 2)
+        for call, phase, matrix_offset, increment in zip(
+                calls, (1, 2), (32, 96), (64, 3), strict=True):
+            # Relocatable internal jumps encode .text offsets, not linked VAs.
+            completion(compiled, call, phase, matrix_offset, increment, base=0)

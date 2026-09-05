@@ -117,3 +117,64 @@ pre-existing GAME deficits documented in `open-format-display-sdk.md`; this
 campaign does not edit those functions or their baseline rows. Only the
 unchanged exact OPEN caller's baseline is refreshed; the ending scroll is not
 banked.
+
+## Lighting-join follow-up plan
+
+Pre-edit snapshot: OPEN `80014e28`, 1944 bytes, `void(void)`, remains
+97.129630% strict under `probe-gcc257-o2-g0`. The six semantic queries, sole
+caller, adjacent boundaries, source history and SDK declarations were checked
+again. The 264-byte frame, detached ten-register epilogue, 40 calls, eight
+retail internal jumps and 31 ordered address pairs remain the baseline;
+there are no candidate relocations, strings or indirect calls. The game-local
+resource/entity policy and external SDK interfaces still exclude SDK ownership.
+
+Retail's signed blend tests at `800151e4` and `8001520c` both compare against
+4097. Their failure edges converge at `80015230`: store the next short phase
+(1 or 2), then clear the blend at `80015234`. The passing paths call the
+existing matrix wrapper with matrix pairs 1/3 and 3/4 and increment the blend
+by 64 and 3 in their jump delay slots. The current source emits a separate
+phase-1 store/jump before the case-1 block. Its earliest divergence is still
+camera-argument setup at `800150c0`, not a relocation error.
+
+The focused hypothesis is a shared phase-advance/reset source path for the
+two completed interpolation phases. Test ordinary counter progression first;
+do not add a temporary solely to force both constants into one register.
+Preserve the call set, types, data owners and all other state-machine behavior.
+Compare the first divergence and the transition subgraph after each focused
+compile, then retain only a supported, humane source form. A score change does
+not establish historical compiler attribution or an exact match.
+
+The counter-progression probe did share the completion block, but changed
+the observed literal halfword stores to a saved-register increment and moved
+several stack slots (94.545265%). It was rejected on those instruction and
+storage facts. A literal-assignment form with an explicit common reset label
+still emitted two phase-store blocks and changed saved-register assignment
+(96.800415%); it was also rejected. Since the two-test retail dispatch has no
+table and does not prove a C `switch`, the final focused comparison uses an
+`if`/`else if` dispatch with the original literal assignments and reset bodies.
+
+The `if`/`else if` form inverted the first dispatch edge, moved the phase-1
+test after the phase-0 body, and still retained the extra phase-store block
+(95.802470%). It was rejected for the newly divergent dispatch topology.
+The original source is restored: **97.129630%, no exact-count movement**.
+None of these experiments supplies a source correction that explains both
+the observed constant-store join and the retail dispatch. This narrows the
+remaining residue without attributing it to a compiler mechanism. Further
+syntax variations without new evidence are not part of this follow-up.
+
+The added bounded instruction-pattern control verifies both signed blend
+tests, matrix arguments, phase constants, interpolation increments and their
+delay slots. It follows either the retail shared store/reset or the compiled
+extra jump with its store delay slot, and verifies that successful
+interpolation skips the reset. Wrong-phase and wrong-reset-register controls
+fail as intended. This is not an instruction interpreter, a full behavioral
+proof, or a relaxation of the exact-match criterion.
+
+After restoring and really rebuilding the source, all five focused tests,
+Ruff, all 383 repository tests (no local skips), full `kf build`, OPEN strict
+baseline checking and `git diff --check` pass. OPEN remains **91 exact / 108
+started / 108 eligible**; all images retain 353 exact functions, 13 exact
+vendor-source controls and 63 exact data-owning units. No C, retail model or
+banked baseline change is retained by this follow-up.
+Staged `nix flake check -L` also passes; its isolated 383-test run skips the
+43 controls that require local artifacts.
