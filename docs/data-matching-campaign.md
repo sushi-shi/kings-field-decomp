@@ -874,6 +874,29 @@ closure. The mandatory full build remains red. All **587 local tests** pass
 without skips; Ruff and diff checks pass. See the
 [per-function evidence and exact comparison boundary](../config/evidence/game_cell_window_data.md).
 
+## Independent source-object sizes
+
+A native control exposed a circular data comparison: the compiler wrapper
+copied retail DATA sizes into source-object symbols. With GCC 2.5.7's COMMON
+rounding, a C int falsely claimed as one byte passed even the full BSS layout
+and placement gate. The wrapper now queries each object's sizeof in a separate
+compilation of the same preprocessed C using the same pinned toolchain. No
+query bytes enter the real object, and no game source assertions are added.
+
+The full corpus has 100 measured DATA owners. Ninety-nine agree with their
+claims; OPEN opening_scene0_sound is three bytes, not its four-byte claim. Its
+source symbol now reports that mismatch, while the following retail/source
+zero byte remains accounted for. Only one source symbol size changes: all
+runtime bytes, section extents/alignments, relocation rows and 484 function
+scores are preserved. No retail claim or data gap is silently changed.
+
+All 591 local tests pass without skips, as do Ruff, diff checks and both native
+compiler smoke probes. Strict source data remains **8/60**, SDK data **4/4**, and
+target relinking **110/116**. The full build remains red and the 623 unmatched
+reached config ranges remain open. This removes a false-positive mechanism; it
+does not claim full data closure. See the
+[reproduction, query isolation and full-corpus evidence](patterns/compiler-owned-data-sizes.md).
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

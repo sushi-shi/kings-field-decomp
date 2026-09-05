@@ -10,6 +10,8 @@ import subprocess
 import struct
 from pathlib import Path
 
+from elftools.elf.elffile import ELFFile
+
 from scripts.kf.delink import image_key
 from scripts.kf.model import scan_data_claims
 from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv
@@ -92,6 +94,58 @@ def _target_names(delink_dir: Path, image: str) -> set[str]:
         for row in rows
         if row.get("scope", "decomp") in {"decomp", "module"}
     }
+
+
+def _source_data_sizes(
+    preprocessed: Path,
+    names: tuple[str, ...],
+    compiler_arguments: list[str],
+    assembler_arguments: list[str],
+    scratch: Path,
+) -> dict[str, int]:
+    """Ask the same target compiler for C object sizes, without retail sizes.
+
+    The auxiliary TU contains the identical preprocessed source plus a constant
+    sizeof table. Only that table is read; this object is never a reconstruction
+    input. The real object is assembled from the original, unaugmented TU.
+    In particular, COMMON reservation rounding is not sizeof(the C object).
+    """
+    content = preprocessed.read_bytes()
+    marker = '__kf_source_data_sizes'
+    while marker.encode() in content:
+        marker += '_'
+    probe_source = scratch / 'data-sizes.i'
+    probe_assembly = scratch / 'data-sizes.s'
+    probe_object = scratch / 'data-sizes.o'
+    expression = ', '.join(f'sizeof({name})' for name in names)
+    declaration = (f'\nconst unsigned long {marker}[] = '
+                   f'{{0x4b46535aUL, sizeof(unsigned long), {expression}}};\n')
+    probe_source.write_bytes(content + declaration.encode())
+    _run([*compiler_arguments, str(probe_source), '-o', str(probe_assembly)])
+    _run([*assembler_arguments, '-o', str(probe_object)],
+         input_data=probe_assembly.read_bytes())
+    _validate_mips_elf(probe_object.read_bytes(), probe_object)
+    with probe_object.open('rb') as stream:
+        elf = ELFFile(stream)
+        symbols = elf.get_section_by_name('.symtab').get_symbol_by_name(marker)
+        if len(symbols or ()) != 1 or not isinstance(symbols[0]['st_shndx'], int):
+            raise RuntimeError('source-size probe did not define its constant table')
+        symbol = symbols[0]
+        section_index = symbol['st_shndx']
+        section = elf.get_section(section_index)
+        start, size = symbol['st_value'], 4 * (len(names) + 2)
+        if section['sh_type'] != 'SHT_PROGBITS' or start + size > section['sh_size']:
+            raise RuntimeError('source-size probe table is incomplete or not initialized')
+        for relocations in elf.iter_sections():
+            if (relocations['sh_type'] in ('SHT_REL', 'SHT_RELA')
+                    and relocations['sh_info'] == section_index
+                    and any(start <= row['r_offset'] < start + size
+                            for row in relocations.iter_relocations())):
+                raise RuntimeError('source-size probe table is not constant')
+        values = struct.unpack_from(f'<{len(names) + 2}I', section.data(), start)
+        if values[:2] != (0x4B46535A, 4):
+            raise RuntimeError('source-size probe does not use target 32-bit words')
+    return dict(zip(names, values[2:], strict=True))
 
 
 def compile_source(
@@ -180,21 +234,7 @@ def compile_source(
             f"-{optimization}",
             f"-G{small_data}",
             *cc1_flags,
-            str(preprocessed),
-            "-o",
-            str(assembly),
         ]
-        _run(compiler_arguments)
-        data_claims = scan_data_claims(source)
-        if data_claims:
-            # GCC 2.5.7 prints no `.size` for data, so objdiff would infer the
-            # last claimed datum's extent from the remaining section bytes.
-            # The claim states the curated size; annotating the symbol with it
-            # only fixes the comparison extent and never changes code or bytes.
-            with assembly.open("a", encoding="utf-8") as stream:
-                for claim in data_claims:
-                    stream.write(f"\t.type\t{claim.name},@object\n")
-                    stream.write(f"\t.size\t{claim.name},{claim.size}\n")
         assembler_arguments = [
             maspsx,
             f"--aspsx-version={aspsx_version}",
@@ -204,10 +244,23 @@ def compile_source(
             "-march=r3000",
             "-mabi=32",
             *GNU_AS_SECTION_FLAGS,
-            "-o",
-            str(staged),
         ]
-        _run(assembler_arguments, input_data=assembly.read_bytes())
+        _run([*compiler_arguments, str(preprocessed), '-o', str(assembly)])
+        data_claims = scan_data_claims(source)
+        source_sizes: dict[str, int] = {}
+        if data_claims:
+            # GCC 2.5.7 prints no `.size` for data, so objdiff would infer the
+            # last datum's size from the remaining section. Retail DATA sizes
+            # must not be copied here: they are the expectation, not source
+            # evidence. Query sizeof with this compiler in a separate object.
+            source_sizes = _source_data_sizes(
+                preprocessed, tuple(claim.name for claim in data_claims),
+                compiler_arguments, assembler_arguments, intermediate)
+            with assembly.open("a", encoding="utf-8") as stream:
+                for claim in data_claims:
+                    stream.write(f"\t.type\t{claim.name},@object\n")
+                    stream.write(f"\t.size\t{claim.name},{source_sizes[claim.name]}\n")
+        _run([*assembler_arguments, '-o', str(staged)], input_data=assembly.read_bytes())
         metadata.update({
             "language": "c",
             "compiler": compiler_label,
@@ -220,6 +273,10 @@ def compile_source(
                 {"name": claim.name, "va": f"{claim.va:#x}", "size": claim.size}
                 for claim in data_claims
             ],
+            "data_symbol_sizes": {
+                "method": "pinned-compiler-sizeof-probe",
+                "sizes": source_sizes,
+            },
             "assembler_model": f"maspsx ASPSX {aspsx_version} -> GNU mipsel as",
             "attribution": "candidate probe; exact retail compiler/profile unproven",
         })

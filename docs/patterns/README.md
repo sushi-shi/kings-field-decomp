@@ -28,6 +28,9 @@ promotes a probe to a proven historical toolchain.
 - [assembler-section-extents.md](assembler-section-extents.md): distinguish
   automatic GNU-as section tails from explicit zeros, alignment directives and
   compiler COMMON allocations; retain actual ELF placement requirements.
+- [compiler-owned-data-sizes.md](compiler-owned-data-sizes.md): independently
+  measure C object sizes instead of copying retail DATA expectations into source
+  symbols; reject a reproduced false BSS match hidden by COMMON rounding.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
   inclusion of custom allocated NOBITS sections; matching data must also admit

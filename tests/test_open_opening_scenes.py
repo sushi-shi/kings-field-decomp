@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from scripts.kf.data_match import Elf
+from scripts.kf.data_match import Elf, diff_unit
 from scripts.kf.local_config import configured_retail_dir
 from scripts.kf.manifest import load
 from scripts.kf.paths import BUILD, RETAIL_CONFIG
@@ -68,7 +68,7 @@ class OpenOpeningScenesTests(unittest.TestCase):
         # These bytes belong to other objects; never manufacture a padding claim.
         self.assertEqual(DATA[7][0] - (DATA[6][0] + DATA[6][1]), 0x19B4)
 
-    def test_each_compiled_and_delinked_initializer_matches_its_retail_owner(self):
+    def test_initializer_payloads_preserve_the_independently_measured_sound_size(self):
         unit = load().by_name()["open.opening_scenes"]
         image = self.image()
         for directory in ("objdiff/open/base", "delink/open/modules"):
@@ -82,7 +82,12 @@ class OpenOpeningScenesTests(unittest.TestCase):
             for datum in unit.data:
                 with self.subTest(object=directory, datum=datum.symbol):
                     symbol = allocations[datum.symbol]
-                    self.assertEqual(symbol.size, datum.size)
+                    # The old wrapper copied the four-byte retail claim into
+                    # the source symbol. SoundRef is actually three bytes;
+                    # the following zero still exists, but is not its field.
+                    expected_size = (3 if directory == 'objdiff/open/base'
+                                     and datum.symbol == 'opening_scene0_sound' else datum.size)
+                    self.assertEqual(symbol.size, expected_size)
                     self.assertEqual(symbol.binding, 0 if datum.scope == "static" else 1)
                     self.assertEqual(symbol.visibility, 0)
                     payload = obj.sections[".data"].data
@@ -93,6 +98,11 @@ class OpenOpeningScenesTests(unittest.TestCase):
             self.assertEqual(bases, {0x800354F4, 0x80036EA8})
             self.assertFalse(obj.relocations(".data"))
             self.assertEqual(obj.sections[".rodata"].data, image.require(0x80012000, 32))
+        result = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
+        self.assertFalse(result.matches)
+        self.assertTrue(any('owned-symbol-layout' in diff.detail
+                            and 'opening_scene0_sound' in diff.detail
+                            and '"actual_size": 3' in diff.detail for diff in result.diffs))
 
 
 if __name__ == "__main__":

@@ -536,7 +536,7 @@
 
       objdiffMipsTests = pkgs.runCommand "kings-field-objdiff-mips-tests" {
         nativeBuildInputs = [
-          pkgs.python3
+          analysisPython
           crossBinutils
           mipsBinutilsAliases
           objdiff-cli
@@ -552,10 +552,12 @@
         cp ${./tests/objdiff_mips_smoke.py} project/objdiff_mips_smoke.py
         cp ${./tests/objdiff_data_smoke.py} project/objdiff_data_smoke.py
         cp ${./tests/compiler_mips_smoke.py} project/compiler_mips_smoke.py
+        cp ${./tests/test_compile_data_sizes.py} project/test_compile_data_sizes.py
         cd project
         python3 objdiff_mips_smoke.py
         python3 objdiff_data_smoke.py
         python3 compiler_mips_smoke.py
+        python3 -m unittest test_compile_data_sizes -v
         touch "$out"
       '';
 

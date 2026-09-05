@@ -419,7 +419,7 @@ def main() -> int:
         "GCC 2.6.0 PSX C calibration: MIPS ELF, source-order emission at O0/O2, "
         "O2 inlined-static omission, and downstream offset shifts; "
         "GCC 2.5.7 probe: delay-slot $sp restore, checked div expansion, "
-        "sized DATA() claim symbols; both compilers: private tentative storage "
+        "compiler-sized DATA() symbols; both compilers: private tentative storage "
         "and cross-TU linkage; six BSS/small-BSS/COMMON adapter binding controls; "
         "explicit section extents, zero tails, relocation addends and retained ELF alignments"
     )
