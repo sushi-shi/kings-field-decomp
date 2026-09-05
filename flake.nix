@@ -577,8 +577,10 @@
         mkdir project
         cp ${./tests/psylink_order_smoke.py} project/psylink_order_smoke.py
         cp ${./tests/psylink_alignment_smoke.py} project/psylink_alignment_smoke.py
+        cp ${./tests/psylink_bss_smoke.py} project/psylink_bss_smoke.py
         python3 project/psylink_order_smoke.py
         python3 project/psylink_alignment_smoke.py
+        python3 project/psylink_bss_smoke.py
         touch "$out"
       '';
 

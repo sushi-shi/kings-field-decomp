@@ -31,7 +31,9 @@ identifier:
 | Uninitialized data | `.sbss` | 16 bytes |
 | XBSS export `PadIdentifier` | `.bss` (50ea) | 8-byte allocation |
 
-Both section declarations have alignment eight. The code's pad-word fixups use
+Both section declarations have raw LNK v2 alignment tag 8, calibrated to
+four-byte input alignment in `docs/patterns/psyq-section-alignment.md`.
+The code's pad-word fixups use
 `.sbss` base plus 0/8; the identifier fixups name its external symbol. The
 archive's eight-byte allocation is not an eight-byte C integer: the supplied
 header says `int`, and the retail instructions access one 32-bit word. Keep the

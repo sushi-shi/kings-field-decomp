@@ -31,6 +31,9 @@ promotes a probe to a proven historical toolchain.
 - [psyq-section-alignment.md](psyq-section-alignment.md): original PSYLINK
   controls distinguish raw LNK v2 alignment tags from ELF byte alignment;
   SDK import correction without altering compiler-generated game objects.
+- [common-allocation-fidelity.md](common-allocation-fidelity.md): reject a
+  reproduced unclaimed-COMMON false pass; original PSYLINK controls distinguish
+  fixed reservations, exported coalescing, size rounding and name-sensitive order.
 - [compiler-owned-data-sizes.md](compiler-owned-data-sizes.md): independently
   measure C object sizes instead of copying retail DATA expectations into source
   symbols; reject a reproduced false BSS match hidden by COMMON rounding.

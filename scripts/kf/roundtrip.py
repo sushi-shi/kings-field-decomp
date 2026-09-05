@@ -88,6 +88,13 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
         return {}
     symbols: dict[str, list] = defaultdict(list)
     for symbol in symtab.iter_symbols():
+        # COMMON has no input section: SHF_ALLOC enumeration cannot see it,
+        # and the discard script below would silently drop an unreferenced
+        # reservation. A shared allocation/placement contract is still needed;
+        # equal COMMON symbols on both sides are not proof of retail storage.
+        if symbol['st_shndx'] == 'SHN_COMMON':
+            result.issue("unsupported-common-allocation", symbol=symbol.name,
+                         size=symbol['st_size'], alignment=symbol['st_value'])
         if symbol.name:
             symbols[symbol.name].append(symbol)
     # name, address, extent, expected section. Function sizes exclude linker
