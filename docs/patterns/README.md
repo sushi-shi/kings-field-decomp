@@ -103,6 +103,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
   and the rejected SDK rectangle-macro control; inset instructions remain
   non-exact without changing shared or SDK types.
+- [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
+  DRAWENV address pairs and unconditional per-frame RGB stores close the
+  screen-image/input helper.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
