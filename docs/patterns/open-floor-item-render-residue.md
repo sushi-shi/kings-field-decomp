@@ -1,5 +1,34 @@
 # OPEN floor-item rendering: facing-byte mask
 
+## Function Match Plan: packed-control value (`5784c14`)
+
+OPEN `800190f4` remains 332 retail/328 probe bytes, strict 98.795180%.
+Hashes, six semantic views, full CFG, sole traversal caller, neighboring
+entity/sprite bodies, placement loader, shared record, matrix-Y boundary,
+SDK declarations/provider evidence and history were refreshed. Nine calls,
+six validated address pairs, one internal jump, no strings/candidates, the
+80-byte frame and the established ABI retain the contract below.
+
+The unsigned byte at item+2 supplies facing through mask `f0`, and is read
+again after sprite emission for the frame-count mask `0f`. The loader copies
+the entire serialized byte; its random-frame initialization must continue
+reading that entire value. Test one complete byte-sized union view with raw
+storage and unsigned four-bit facing/frame-count fields. Preserve both reads:
+the high field shifted by four feeds the existing u8 facing; the low field
+replaces the later raw temporary and mask. Keep the record layout and all
+other expressions unchanged, with a one-byte pinned-compiler size assertion.
+No forced mask, helper, volatile, extra frame object or alternate record view
+is justified by the missing instruction.
+
+The packed-control value emits identical resolved words and ordered targets
+for all three unit functions. The floor renderer remains 328 bytes, the
+entity sibling remains 552-byte raw exact, and traversal remains 668 bytes.
+The trial is not adopted. A separate compile retaining the pre-assembler
+output confirms `andi $2,$2,0x00f0` directly precedes the zero branch;
+`andi ff` is already absent there. The assembler is not removing an emitted
+narrowing instruction. This locates the observed omission in the probe
+pipeline without identifying the historical compiler or an optimizer cause.
+
 ## Function Match Plan: branch assignment value (`819211b`)
 
 OPEN `800190f4` remains 332 retail/328 probe bytes, strict 98.795180%.

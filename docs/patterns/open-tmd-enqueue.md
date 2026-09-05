@@ -1,5 +1,41 @@
 # OPEN general TMD polygon emission
 
+## Function Match Plan: one-packet insertion consumer (`5784c14`)
+
+OPEN `8001764c` remains 3320 retail/3324 probe bytes, strict 99.171080%,
+with 125 unequal aligned words. The six semantic views, full CFG, exact
+entity caller, neighboring emitters, SDK packet layouts/provider evidence,
+history and prior insertion/pointer controls were refreshed. The u16 object,
+s16 bias, 57 proven calls, eleven validated address pairs and internal jumps,
+29 candidate incoming switch rows, no strings, and 96/88-byte frames retain
+the contract below.
+
+All twelve allocation paths use one output pointer and one insertion
+consumer in retail. The older insertion-only trial added a second packet
+carrier and an extra move; the later one-pointer/repeated-insertion control
+was byte-identical. Test these independently supported source facts together:
+one loop-local pointer to the existing eight GPU variants, each mode's actual
+allocation and authentic SDK member accesses, per-mode bias/depth rejection,
+and one AddPrim after the switch using that same pointer. Do not move the
+depth guard out of the cases, create an automatic union packet or add a
+second carrier. Rejected and unsupported packets still skip insertion.
+
+The combined form avoids the older carrier trial's extra move, but emits
+exactly the current 3324-byte candidate. All resolved words, 57 ordered calls
+and numeric data targets are identical; 125 unequal aligned words remain.
+It is not adopted. Retained compiler output also already expresses the OT
+load as `lw $2,open_graphics_runtime+131108`, not retail's projected-base
+relative access. These controls supply no new exact result, profile change,
+relocation correction or evidence for a compiler mechanism.
+
+Focused fresh baseline/trial comparisons also preserve the exact entity
+caller. The full build keeps all 97 OPEN exact functions and thirteen SDK
+controls, failing only the existing OPEN default-table addend, thirteen GAME
+data mismatches and four GAME historical-best deficits. Ruff, all 401 existing
+tests (17.696 seconds), and `git diff --check` pass. The accompanying packed
+floor-item control is also rejected; no C, header, profile, test, relocation,
+GAME input or banked baseline change is retained.
+
 ## Function Match Plan: initial asset dependencies (`8b1e86d`)
 
 OPEN `8001764c` starts at strict 99.146990%, 3320 retail/3324 probe bytes
