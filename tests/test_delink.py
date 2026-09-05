@@ -24,7 +24,8 @@ from scripts.kf.delink import (
 )
 from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
 from scripts.kf.objdiff import generate_projects
-from scripts.kf.retail import write_tsv
+from scripts.kf.paths import RETAIL_CONFIG
+from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv, write_tsv
 
 
 def elf_symbols(data: bytes) -> list[tuple[str, tuple[int, ...]]]:
@@ -223,6 +224,59 @@ class MipsElfTests(unittest.TestCase):
             ],
         )
         self.assertEqual(used["source_channel"], "instruction-word")
+
+    def test_curated_collision_grid_pairs_delink_at_the_lui_not_the_low(self) -> None:
+        # Retail GAME.EXE instruction windows, independently recorded in
+        # config/evidence/game_collision_grid_relocations.md. No retail file
+        # dependency: this also protects the curated rows in flake checks.
+        catalog = load_catalog(RETAIL_CONFIG)
+        function = catalog.function_starts["GAME.EXE"][0x8001A5AC]
+        _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
+        for site, low, index, load, target, symbol in (
+            (0x8001A67C, 0x24218018, 0x00220821, 0x90290000,
+             0x80098018, "map_collision_grid"),
+            (0x8001A6DC, 0x2421A748, 0x00310821, 0x90240000,
+             0x8009A748, "map_cell_attribute_grid"),
+        ):
+            with self.subTest(symbol=symbol):
+                matches = [row for row in rows if row["image"] == "GAME.EXE"
+                           and row["kind"] == "mips_hi16_lo16"
+                           and function.va <= int(row["site_va"], 0)
+                           < function.va + function.size
+                           and int(row["target_va"], 0) == target
+                           and row["status"] != "rejected"]
+                self.assertEqual(len(matches), 1)
+                row = matches[0]
+                self.assertEqual(int(row["site_va"], 0), site)
+                self.assertEqual(int(row["paired_site_va"], 0), site + 4)
+                self.assertEqual(int(row["site_file_offset"], 0),
+                                 IMAGE_LAYOUTS["GAME.EXE"].file_offset(site))
+                self.assertEqual(row["target_name"], symbol)
+                self.assertEqual(row["status"], "reviewed")
+                blob = bytearray(function.size)
+                offset = site - function.va
+                struct.pack_into("<4I", blob, offset, 0x3C01800A, low, index, load)
+
+                # The old sites were four bytes late: ADDIU/ADDU is not a
+                # HI16/LO16 pair, even if the row is marked reviewed.
+                late = dict(row, site_va=hex(site + 4), paired_site_va=hex(site + 8))
+                with self.assertRaisesRegex(ValueError, "instruction-pair-mismatch"):
+                    _apply_relocation(blob, function, late, catalog, "safe")
+
+                relocs, used = _apply_relocation(blob, function, row, catalog, "safe")
+                self.assertEqual(relocs, [
+                    MipsRelocation(offset, "R_MIPS_HI16", symbol),
+                    MipsRelocation(offset + 4, "R_MIPS_LO16", symbol),
+                ])
+                self.assertEqual(used["action"], "paired-symbol")
+                hi, lo, rewritten_index, rewritten_load = struct.unpack_from(
+                    "<4I", blob, offset,
+                )
+                self.assertEqual((hi, lo), (0x3C010000, 0x24210000))
+                self.assertEqual((rewritten_index, rewritten_load), (index, load))
+                linked_hi, linked_lo = encode_hi_lo_addend(hi, lo, target)
+                self.assertEqual((linked_hi, linked_lo), (0x3C01800A, low))
+                self.assertEqual(decode_hi_lo_target(linked_hi, linked_lo), target)
 
     def test_reviewed_raw_pointer_word_is_safe(self) -> None:
         function = Function(

@@ -2770,11 +2770,11 @@ GAME.EXE	0x8001a3b0	0x8bb0		mips26	reachable-code	0x8001a444	load		j		control-fl
 GAME.EXE	0x8001a3f8	0x8bf8		mips26	reachable-code	0x8001a444	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001a4d0	0x8cd0		mips26	reachable-code	0x8001a29c	load	map_floor_height_for_cell_position	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
 GAME.EXE	0x8001a520	0x8d20	0x8001a524	mips_hi16_lo16	reachable-code	0x800668e8	bss	map_collision_flag_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_collision_grid
-GAME.EXE	0x8001a680	0x8e80	0x8001a684	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_player_interactions.grid-pairs
+GAME.EXE	0x8001a67c	0x8e7c	0x8001a680	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	at	paired-reviewed	reviewed	manual:game_collision_grid_relocations
 GAME.EXE	0x8001a6a0	0x8ea0		mips26	reachable-code	0x8001aa84	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001a6bc	0x8ebc		mips26	reachable-code	0x8001a29c	load	map_floor_height_for_cell_position	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001a6d4	0x8ed4		mips26	reachable-code	0x8001aa84	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x8001a6e0	0x8ee0	0x8001a6e4	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_player_interactions.grid-pairs
+GAME.EXE	0x8001a6dc	0x8edc	0x8001a6e0	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	at	paired-reviewed	reviewed	manual:game_collision_grid_relocations
 GAME.EXE	0x8001a6f8	0x8ef8		mips26	reachable-code	0x8001aa84	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001a704	0x8f04	0x8001a708	mips_hi16_lo16	reachable-code	0x800558b8	load		lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001a730	0x8f30		mips26	reachable-code	0x8001aa84	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions

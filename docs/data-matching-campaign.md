@@ -177,6 +177,23 @@ the new known-reference gate on all three images, in addition to the existing
 14 GAME/OPEN strict data-addend failures. No source function, curated inventory
 or banked score was changed by this checkpoint.
 
+## Collision-grid reference correction
+
+The first inventory correction resolves both invalid live grid-reference rows
+in GAME.EXE `collision_query_world`. Their recorded HI/LO sites were four bytes
+late, naming ADDIU/ADDU instead of LUI/ADDIU. Retail bytes prove the corrected
+pairs at 0x8001a67c/0x8001a680 and 0x8001a6dc/0x8001a6e0; the grid identities,
+extents and C source remain unchanged. The evidence snapshot and raw-word
+round-trip control are documented in
+`config/evidence/game_collision_grid_relocations.md`.
+
+Both pairs now validate and delink to their existing external grid symbols.
+The function remains non-exact at 93.202490% (previously 93.190030%); all 117
+source objects and the other 483 scores are unchanged, including all 354
+historically exact game functions. All 420 local tests, Ruff and flake checks
+pass. The full build still rejects the remaining ownership gaps and the same
+14 data-addend mismatches; strict data remains 49/63. Nothing was banked.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and
