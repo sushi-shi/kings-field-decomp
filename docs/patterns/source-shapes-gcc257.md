@@ -932,13 +932,13 @@ Residue recorded (not steered):
   (`move s1,a0; move s0,a1; move a0,zero`); the probe interleaves the first
   call-argument setup between two of the saves (`move s1,a0; move a0,zero;
   move s0,a1`). Same register assignment, same count, one instruction reordered.
-- `func_80036618` (~64%): the warp-shimmer animator. Structurally faithful
-  (four-effect spawn, 48-frame animation with the `frame==8` sound, mode-2 pool
-  retention) but hits the same loop-optimiser residues documented for
-  `func_80035e44`: retail strength-reduces the `effects[]` walks to moving
-  pointers with a `s6=-1` down-counter idiom (`do {} while (--i != -1)`) and
-  carries `mode` in an extra callee-saved `s7`, where the probe indexes
-  `effects[i]` per iteration with an up-counter and one fewer saved register.
+- `player_warp_shimmer` (`80036618`) is now **100%**: reconstructing the
+  forward pointer cursor, descending allocation/release counts, pre-sound
+  cursor reset and one active-effect pointer recovers the 104-byte frame and
+  all 142 instructions. Reuse the single loaded unsigned intensity for its
+  guard/update. The earlier optimizer-limit attribution was unsupported;
+  ordinary C traversal corrections close it. See
+  [the complete evidence and focused sequence](game-warp-shimmer-traversal.md).
 - `func_80036af0` (~62%): the per-frame scripted-trigger dispatcher. The switch
   on the current floor (jump table `0x80012c14`) and the per-floor cell-key
   comparisons match, but GCC's cross-jumping merges the many

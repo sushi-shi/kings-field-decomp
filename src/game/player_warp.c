@@ -35,12 +35,6 @@ static MATRIX actor_transform_color_matrix = {
  * The KfEffectRecord layout is modelled in kf/game_effect.h; the shimmer
  * reuses the record's rotation_y halfword as its rotation phase and scale_y as
  * its fade intensity.
- *
- * actor_transform_definition5_to6 is exact.
- * player_warp_change_floor/player_warp_same_floor carry a one-instruction
- * prologue argument-save scheduling residue; player_warp_shimmer hits the
- * loop-optimiser count-loop/giv-base residue and player_warp_trigger_update
- * the switch cross-jumping residue. See docs/patterns/source-shapes-gcc257.md.
  */
 
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
@@ -50,6 +44,8 @@ ADDRESS(0x80036618, 0x238)
 void player_warp_shimmer(s32 mode, VECTOR *position)
 {
     KfEffectRecord *effects[4];
+    KfEffectRecord **cursor;
+    KfEffectRecord *effect;
     struct {
         VECTOR position;
         SVECTOR direction;
@@ -76,10 +72,11 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     scratch.position.vz = position->vz;
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
-    for (i = 0; i < 4; i++) {
-        KfEffectRecord *effect = effect_pool_construct(0xa, 0x11, 0x15, position, &scratch.direction);
+    cursor = effects;
+    for (i = 3; i != -1; i--) {
+        effect = effect_pool_construct(0xa, 0x11, 0x15, position, &scratch.direction);
         EFFECT_INTENSITY(effect) = intensity;
-        effects[i] = effect;
+        *cursor++ = effect;
     }
 
     display_flip_buffer_index();
@@ -88,25 +85,32 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
     for (frame = 0; frame < 48; frame++) {
+        cursor = effects;
         if (frame == 8) {
             sound_ref_play(&gameplay_sound_ref_6, 0x7f);
         }
         for (i = 0; i < 4; i++) {
+            effect = *cursor++;
+
             if (i * 8 < frame) {
-                if (EFFECT_INTENSITY(effects[i]) < 8193) {
-                    EFFECT_INTENSITY(effects[i]) += intensity_delta;
+                u16 current_intensity = EFFECT_INTENSITY(effect);
+
+                if (current_intensity < 8193) {
+                    EFFECT_INTENSITY(effect) = intensity_delta + current_intensity;
                 }
             }
-            EFFECT_ROTATION_PHASE(effects[i]) =
-                (EFFECT_ROTATION_PHASE(effects[i]) + 512) & 0xfff;
+            EFFECT_ROTATION_PHASE(effect) =
+                (EFFECT_ROTATION_PHASE(effect) + 512) & 0xfff;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
         frame_pacer_wait();
     }
 
     if (mode_value != 2) {
-        for (i = 0; i < 4; i++) {
-            effects[i]->type = 0xff;
+        cursor = effects;
+        for (i = 3; i != -1; i--) {
+            effect = *cursor++;
+            effect->type = 0xff;
         }
     }
 }

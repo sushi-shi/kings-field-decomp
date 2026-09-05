@@ -62,6 +62,9 @@ promotes a probe to a proven historical toolchain.
 - [game-notification-dequeue.md](game-notification-dequeue.md): typed dequeue
   control subobject and late pointer binding recover retail base/offset forms;
   the initial tail-load address materialization remains non-exact.
+- [game-warp-shimmer-traversal.md](game-warp-shimmer-traversal.md): forward
+  effect cursors, descending allocation/release counts and one active-effect
+  pointer close the 568-byte warp-shimmer animator.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
