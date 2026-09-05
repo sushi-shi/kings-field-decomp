@@ -483,9 +483,11 @@ Residues left in the module:
 - `map_object_spawn_effect`: retail keeps the sequence pointer in `s0` and the
   acquired object in `s1` with the return copy scheduled before the counter
   store; every tried spelling reuses `s0` for the object.
-- `map_object_pool_clear_link`: retail's `kind < 8` branch targets the
-  following `kind != 8` test with an empty delay slot; ours jumps to the loop
-  tail and fills the slot with the pointer increment.
+- `map_object_pool_clear_link`: subsequently closed at **100%** by
+  [correcting the behavior predicate](game-map-object-clearing.md). Retail's
+  `kind < 8` branch goes directly to the link comparison, skipping the
+  `kind != 8` test. The prior type-8-only source was behaviorally wrong;
+  its different cursor scheduling was not a source-independent limit.
 
 ## actor AI
 

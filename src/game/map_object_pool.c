@@ -126,27 +126,28 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
     s32 result;
 
     yaw &= 0xfff;
-    if (definition->behavior_type == 0) {
+    switch (definition->behavior_type) {
+    case 2:
+    probe:
+        result = collision_query_world(point_x, 0xffff, point_z, 3000, 0, 0x21);
+        break;
+    case 0:
         switch (yaw) {
         case 0x000:
             point_x += 2000;
-            break;
+            goto probe;
         case 0x400:
             point_z += 2000;
-            break;
+            goto probe;
         case 0x800:
             point_x -= 2000;
-            break;
+            goto probe;
         case 0xc00:
             point_z -= 2000;
-            break;
-        default:
-            return result;
+            goto probe;
         }
-    } else if (definition->behavior_type != 2) {
-        return result;
+        break;
     }
-    result = collision_query_world(point_x, 0xffff, point_z, 3000, 0, 0x21);
     return result;
 }
 

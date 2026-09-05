@@ -80,6 +80,10 @@ promotes a probe to a proven historical toolchain.
   unchanged explicit phase-cache control; predicate remains non-exact.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect
   owner and member-relative addressing closing the current-record selector.
+- [game-map-object-clearing.md](game-map-object-clearing.md): corrected
+  type-0..8 link predicate and the rejected pool-reset memset control.
+- [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
+  block and result join; partial reconstruction improved, not exact.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
