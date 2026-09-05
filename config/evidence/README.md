@@ -3,6 +3,15 @@
 This directory preserves the small, reviewable inputs behind
 the curated retail inventories; it does not contain Sony binaries.
 
+`open_semantic_format.tsv` records four exact OPEN custom formatting functions
+and their candidate minimum scratch span with a retained interior digit anchor.
+`open_semantic_display_adjust.tsv` records the complete controller-driven VRAM
+adjustment routine and its non-exact address-base/saved-register residue.
+`open_small_sdk_review.tsv` records twelve SDK provider attributions and two
+false starts folded into the complete SquareRoot12 body; three new checked
+groups in `overlay_lineage.tsv` support the cross-overlay evidence. Details and
+archive controls are in `docs/patterns/open-format-display-sdk.md`.
+
 `open_semantic_unlit_triangles.tsv` records the OPEN-only unlit triangle
 emitter and its exact entity-render caller control. The companion
 `render_typed_matrix_cast_cleanup.tsv` records byte-identical redundant-cast

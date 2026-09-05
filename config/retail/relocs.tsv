@@ -12256,40 +12256,46 @@ OPEN.EXE	0x8001a338	0x8b38		mips26	reachable-code	0x80025198	load	SsUtKeyOff	jal
 OPEN.EXE	0x8001a360	0x8b60	0x8001a364	mips_hi16_lo16	reachable-code	0x80037304	load	audio_voice_slot_index	lui+lw	v1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_play_voice
 OPEN.EXE	0x8001a3b4	0x8bb4		mips26	reachable-code	0x80024dcc	load	SsUtKeyOn	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_play_voice
 OPEN.EXE	0x8001a3bc	0x8bbc	0x8001a3c0	mips_hi16_lo16	reachable-code	0x80037304	load	audio_voice_slot_index	lui+lw	v1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_audio_play_voice
-OPEN.EXE	0x8001a630	0x8e30		mips26	instruction-word	0x8001a7d4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a680	0x8e80		mips26	instruction-word	0x8001a7cc	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a694	0x8e94		mips26	instruction-word	0x8001a7cc	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a6b8	0x8eb8		mips26	instruction-word	0x8001a7cc	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a6cc	0x8ecc		mips26	instruction-word	0x8001a7cc	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a6dc	0x8edc		mips26	instruction-word	0x8001a7d4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a6f0	0x8ef0		mips26	instruction-word	0x8001a7d4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a70c	0x8f0c		mips26	instruction-word	0x8001a3fc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a730	0x8f30		mips26	instruction-word	0x8001a568	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a738	0x8f38		mips26	instruction-word	0x8001a74c	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a740	0x8f40		mips26	instruction-word	0x8001a568	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a774	0x8f74		mips26	instruction-word	0x8001a7d4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a790	0x8f90		mips26	instruction-word	0x8001a4dc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a798	0x8f98		mips26	instruction-word	0x8001a718	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a7b4	0x8fb4		mips26	instruction-word	0x8001a74c	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a7c0	0x8fc0		mips26	instruction-word	0x8001a7cc	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a83c	0x903c	0x8001a840	mips_hi16_lo16	reachable-code	0x80069a88	bss	DAT_80069a88	lui+sb	zero	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a844	0x9044	0x8001a848	mips_hi16_lo16	reachable-code	0x80069ae4	bss	DAT_80069ae4	lui+sb	zero	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a84c	0x904c	0x8001a850	mips_hi16_lo16	reachable-code	0x80049a48	bss	display_state	lui+addiu	s0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a860	0x9060		mips26	instruction-word	0x80030578	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a868	0x9068		mips26	instruction-word	0x800352c4	load	VSync	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a888	0x9088		mips26	instruction-word	0x80030b4c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a8ac	0x90ac	0x8001a8b0	mips_hi16_lo16	reachable-code	0x80069a87	bss	DAT_80069a87	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001a8e0	0x90e0		mips26	instruction-word	0x80030a2c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a920	0x9120		mips26	instruction-word	0x8002ff00	load	PadRead	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a934	0x9134		mips26	instruction-word	0x8002ff00	load	PadRead	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a9d0	0x91d0		mips26	instruction-word	0x800352c4	load	VSync	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a9d8	0x91d8		mips26	instruction-word	0x80030b4c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a9e0	0x91e0		mips26	instruction-word	0x8001a934	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001a9e8	0x91e8		mips26	instruction-word	0x8002ff00	load	PadRead	jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001aa1c	0x921c	0x8001aa20	mips_hi16_lo16	reachable-code	0x80049a48	bss	display_state	lui+lbu	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001aa40	0x9240	0x8001aa44	mips_hi16_lo16	reachable-code	0x80069a87	bss	DAT_80069a87	lui+addiu	at	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001aa50	0x9250	0x8001aa54	mips_hi16_lo16	reachable-code	0x80069a88	bss	DAT_80069a88	lui+sb	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8001aa58	0x9258	0x8001aa5c	mips_hi16_lo16	reachable-code	0x80069ae4	bss	DAT_80069ae4	lui+sb	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
+OPEN.EXE	0x8001a404	0x8c04	0x8001a408	mips_hi16_lo16	reachable-code	0x80037978	bss	format_number_storage	lui+addiu	a2	paired-reviewed	reviewed	manual:open_semantic_format
+OPEN.EXE	0x8001a4cc	0x8ccc	0x8001a4d0	mips_hi16_lo16	reachable-code	0x80037978	bss	format_number_storage	lui+addiu	v0	paired-reviewed	reviewed	manual:open_semantic_format
+OPEN.EXE	0x8001a4e4	0x8ce4	0x8001a4e8	mips_hi16_lo16	reachable-code	0x80037978	bss	format_number_storage	lui+addiu	a1	paired-reviewed	reviewed	manual:open_semantic_format
+OPEN.EXE	0x8001a558	0x8d58	0x8001a55c	mips_hi16_lo16	reachable-code	0x80037978	bss	format_number_storage	lui+addiu	v0	paired-reviewed	reviewed	manual:open_semantic_format
+OPEN.EXE	0x8001a630	0x8e30		mips26	instruction-word	0x8001a7d4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a680	0x8e80		mips26	instruction-word	0x8001a7cc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a694	0x8e94		mips26	instruction-word	0x8001a7cc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a6b8	0x8eb8		mips26	instruction-word	0x8001a7cc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a6cc	0x8ecc		mips26	instruction-word	0x8001a7cc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a6dc	0x8edc		mips26	instruction-word	0x8001a7d4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a6f0	0x8ef0		mips26	instruction-word	0x8001a7d4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a70c	0x8f0c		mips26	instruction-word	0x8001a3fc	load	format_int_dec	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a730	0x8f30		mips26	instruction-word	0x8001a568	load	format_pad_left	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a738	0x8f38		mips26	instruction-word	0x8001a74c	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a740	0x8f40		mips26	instruction-word	0x8001a568	load	format_pad_left	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a774	0x8f74		mips26	instruction-word	0x8001a7d4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a790	0x8f90		mips26	instruction-word	0x8001a4dc	load	format_int_hex	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a798	0x8f98		mips26	instruction-word	0x8001a718	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a7b4	0x8fb4		mips26	instruction-word	0x8001a74c	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a7c0	0x8fc0		mips26	instruction-word	0x8001a7cc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_format
+OPEN.EXE	0x8001a83c	0x903c	0x8001a840	mips_hi16_lo16	reachable-code	0x80069a88	bss	display_draw_environments	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a844	0x9044	0x8001a848	mips_hi16_lo16	reachable-code	0x80069ae4	bss	display_draw_environments	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a84c	0x904c	0x8001a850	mips_hi16_lo16	reachable-code	0x80049a48	bss	display_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a860	0x9060		mips26	instruction-word	0x80030578	load	DrawSync	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a868	0x9068		mips26	instruction-word	0x800352c4	load	VSync	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a874	0x9074	0x8001a878	mips_hi16_lo16	reachable-code	0x80069b28	bss	display_disp_environments	lui+addiu	s1	paired-reviewed	reviewed	manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a888	0x9088		mips26	instruction-word	0x80030b4c	load	PutDispEnv	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a8ac	0x90ac	0x8001a8b0	mips_hi16_lo16	reachable-code	0x80069a87	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a8d8	0x90d8	0x8001a8dc	mips_hi16_lo16	reachable-code	0x80069a70	bss	display_draw_environments	lui+addiu	v0	paired-reviewed	reviewed	manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a8e0	0x90e0		mips26	instruction-word	0x80030a2c	load	PutDrawEnv	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a920	0x9120		mips26	instruction-word	0x8002ff00	load	PadRead	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a934	0x9134		mips26	instruction-word	0x8002ff00	load	PadRead	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a9d0	0x91d0		mips26	instruction-word	0x800352c4	load	VSync	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a9d8	0x91d8		mips26	instruction-word	0x80030b4c	load	PutDispEnv	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a9e0	0x91e0		mips26	instruction-word	0x8001a934	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001a9e8	0x91e8		mips26	instruction-word	0x8002ff00	load	PadRead	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001aa1c	0x921c	0x8001aa20	mips_hi16_lo16	reachable-code	0x80049a48	bss	display_state	lui+lbu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001aa40	0x9240	0x8001aa44	mips_hi16_lo16	reachable-code	0x80069a87	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001aa50	0x9250	0x8001aa54	mips_hi16_lo16	reachable-code	0x80069a88	bss	display_draw_environments	lui+sb	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
+OPEN.EXE	0x8001aa58	0x9258	0x8001aa5c	mips_hi16_lo16	reachable-code	0x80069ae4	bss	display_draw_environments	lui+sb	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_display_adjust
 OPEN.EXE	0x8001aa7c	0x927c	0x8001aa80	mips_hi16_lo16	reachable-code	0x80037284	load		lui+addiu	gp	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001aa84	0x9284		mips26	reachable-code	0x80013758	load	main	j		control-flow-reviewed	reviewed	manual:open_semantic_startup
 OPEN.EXE	0x8001aa94	0x9294		mips26	reachable-code	0x8001b71c	load		jal		control-flow	candidate	investigation:relocs.tsv

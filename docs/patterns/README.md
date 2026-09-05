@@ -54,3 +54,6 @@ promotes a probe to a proven historical toolchain.
   control-flow defects.
 - [game-parser-verification.md](game-parser-verification.md): parser failure
   controls, VAB partial state and cleanup quirks, and seven-function match review.
+- [open-format-display-sdk.md](open-format-display-sdk.md): four exact custom
+  formatters, the display-adjustment address-base residue, twelve SDK provider
+  attributions, and the corrected SquareRoot12 boundary.

@@ -56,11 +56,11 @@ class InventoryTests(unittest.TestCase):
 
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
         counts = validate(RETAIL_CONFIG)
-        self.assertEqual(counts["functions"], 485)
-        self.assertEqual(counts["signatures_started"], 485)
-        self.assertEqual(counts["typed_returns"], 485)
-        self.assertEqual(counts["parameterized"], 316)
-        self.assertEqual(counts["data"], 3054)
+        self.assertEqual(counts["functions"], 471)
+        self.assertEqual(counts["signatures_started"], 471)
+        self.assertEqual(counts["typed_returns"], 471)
+        self.assertEqual(counts["parameterized"], 306)
+        self.assertEqual(counts["data"], 3055)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 76)

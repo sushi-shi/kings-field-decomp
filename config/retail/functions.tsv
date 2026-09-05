@@ -1359,9 +1359,7 @@ OPEN.EXE	0x8002c528	0x1ad28	0x78	0x78	1	function	mips-return-carve			scripts/kf/
 OPEN.EXE	0x8002c5a0	0x1ada0	0xc8	0xc8	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002c668	0x1ae68	0xc8	0xc8	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x8002c730	0x1af30	0x84	0x7c	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002c7b4	0x1afb4	0x80	0x80	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002c834	0x1b034	0xc	0xc	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002c840	0x1b040	0x8	0x8	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
+OPEN.EXE	0x8002c7b4	0x1afb4	0x94	0x94	1	function	exact-sdk-boundary	SquareRoot12	+0x80=SquareRoot12_right_shift;+0x8c=SquareRoot12_zero	manual:open_small_sdk_review;LIBGTE.LIB-MSC.OBJ:0x4fc	one SDK function with two internal return tails formerly mis-carved as 0x8002c834 and 0x8002c840; complete 148-byte body matches the archive under its relocation mask
 OPEN.EXE	0x8002c848	0x1b048	0x8c	0x84	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002c8d4	0x1b0d4	0x80	0x80	1	function	ghidra-analysis	gteMIMefunc		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002c954	0x1b154	0x7c	0x7c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
