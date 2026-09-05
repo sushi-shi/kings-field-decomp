@@ -18,7 +18,7 @@ void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
 
     layout = &menu_window_layouts[kind];
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    if (layout->title.x != 0) {
+    if ((s16)layout->title.x != 0) {
         menu_blit_sprite_translucent(
             &menu_assets.row_background, (const MenuPoint *)&layout->title);
         menu_draw_string(&menu_assets.glyph_atlas, &layout->title);

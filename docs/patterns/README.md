@@ -84,6 +84,8 @@ promotes a probe to a proven historical toolchain.
   countdown and one result join closing the GAME actor free-slot search.
 - [game-event-cone-search.md](game-event-cone-search.md): short angle locals
   closing the event selector without widening its existing facing parameter.
+- [game-event-progress-image.md](game-event-progress-image.md): shared dirty
+  tail and limit-first comparison close the event-image progression helper.
 - [game-actor-cone-search.md](game-actor-cone-search.md): short angle locals
   and the six-caller short-facing contract closing the actor selector.
 - [game-actor-action-selection.md](game-actor-action-selection.md): missing
@@ -113,6 +115,8 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-glyph-render.md](game-menu-glyph-render.md): index-derived
   fixed pitch closes number rendering and removes the string-render preheader
   difference; four decoration immediates remain non-exact.
+- [game-menu-window-rows.md](game-menu-window-rows.md): signed title-test load
+  correction and rejected direct-row-address control in the window renderer.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
   and the rejected SDK rectangle-macro control; inset instructions remain
   non-exact without changing shared or SDK types.

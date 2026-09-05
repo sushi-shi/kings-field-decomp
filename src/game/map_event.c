@@ -12,17 +12,17 @@ void map_event_set_current(KfMapEvent *event)
 ADDRESS(0x800337ac, 0x74)
 void map_event_refresh_image_for_progress(KfMapEvent *event)
 {
-    if (event->image_index < event->image_limit) {
+    if (event->image_limit > event->image_index) {
         if (player_state.progress_state.highest_floor < event->image_limit) {
             if (event->image_index != player_state.progress_state.highest_floor) {
                 event->image_index = player_state.progress_state.highest_floor;
+            mark_image_dirty:
                 event->image_dirty = 1;
                 event->image_delay = 0;
             }
         } else if (event->image_index != event->image_limit) {
             event->image_index = event->image_limit;
-            event->image_dirty = 1;
-            event->image_delay = 0;
+            goto mark_image_dirty;
         }
     }
 }
