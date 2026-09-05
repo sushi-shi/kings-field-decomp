@@ -1,5 +1,32 @@
 # OPEN floor-item rendering: facing-byte mask
 
+## Function Match Plan: branch assignment value (`819211b`)
+
+OPEN `800190f4` remains 332 retail/328 probe bytes, strict 98.795180%.
+Retail hashes, all six semantic views, complete CFG, the sole 24-byte-stride
+caller, both neighboring functions, placement loader/shared record, matrix-Y
+and sprite consumers, SDK declarations/provider evidence and source history
+were refreshed. Nine calls, six address pairs, one internal jump, no strings
+or candidate references, the 80-byte frame and complete delay slots retain
+the supported contract below. The SDK services are separate vendored bodies;
+the placement/facing/animation policy is game code.
+
+The first difference is still the missing byte narrowing at `80019184`.
+Retail reads, masks and narrows the facing value directly into its zero test,
+then uses that same value in the angle expression. Test the ordinary C
+assignment-expression form of that branch: assign the masked byte to the
+existing `u8 facing` within the condition itself. Unlike the rejected
+byte-read/compound-mask trial, the branch consumes the assignment's narrowed
+value rather than a subsequent local read. Keep the mask, record, angle,
+signed depth biases, SDK calls and animation tail unchanged. This is a source
+hypothesis, not proof of the original spelling or a reason to add a synthetic
+mask. Compare the entire unit and keep its exact entity renderer unchanged.
+
+The assignment-expression branch emits the identical 328-byte candidate and
+ordered relocations, with the same omitted mask. All 552 bytes of the exact
+entity renderer and the traversal's existing 668-byte candidate are unchanged.
+Restore the separate assignment; no source or match change is kept here.
+
 ## Function Match Plan: byte read followed by nibble masking (`8ac47fe`)
 
 OPEN `0x800190f4`, 332 retail bytes, starts at strict 98.795180% with a
