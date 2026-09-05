@@ -1,0 +1,35 @@
+# Reviewed rejections, not admitted data: all original data.tsv fields are retained.
+# Each byte range is part of the instruction windows and code owners recorded here.
+# See data_census_instruction_overlaps.md for per-function evidence and scope.
+image	va	file_offset	size	kind	confidence	name	datatype	provenance	note	instruction_va	instruction_words	owner_vas
+GAME.EXE	0x8001482a	0x302a	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: R& b	0x80014828	2652a748 0c006220	0x800146b8
+GAME.EXE	0x80018107	0x6907	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: <H !$!	0x80018104	3c018001 24212048 00220821	0x80018054
+GAME.EXE	0x80018127	0x6927	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20	0x80018124	34130059 02202021	0x80018054
+GAME.EXE	0x8001815f	0x695f	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙c$!	0x8001815c	3c038007 2463ede0 00438021	0x80018054
+GAME.EXE	0x80018189	0x6989	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text:  !$!	0x80018188	242120d0 00220821	0x80018054
+GAME.EXE	0x8001824f	0x6a4f	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20	0x8001824c	341300ff 02202021	0x80018054
+GAME.EXE	0x80018287	0x6a87	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙c$!	0x80018284	3c038007 2463ede0 00438021	0x80018054
+GAME.EXE	0x800182c5	0x6ac5	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: R!$!	0x800182c4	242152a8 00230821	0x80018054
+GAME.EXE	0x8001831f	0x6b1f	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: $! @	0x8001831c	2482ffff 00402021	0x80018054
+GAME.EXE	0x800183e2	0x6be2	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: B$!a	0x800183e0	2442ffff 08006121	0x80018054
+GAME.EXE	0x8001e6aa	0xceaa	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: D&!逗	0x8001e6a8	264400ff 00809021	0x8001e5ec
+GAME.EXE	0x8001e73d	0xcf3d	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: YB$!	0x8001e73c	24425900 00e21021	0x8001e5ec
+GAME.EXE	0x8001e757	0xcf57	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <HWc如	0x8001e754	3c038009 94635748 00041040	0x8001e5ec
+GAME.EXE	0x8001e7e7	0xcfe7	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: &!(0	0x8001e7e4	2604ff40 02302821	0x8001e5ec
+GAME.EXE	0x8001e812	0xd012	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: P2Rp	0x8001e810	325000ff 0c007052	0x8001e5ec
+GAME.EXE	0x8003103f	0x1f83f	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙1&	0x8003103c	3c118007 2631ede0	0x80031008
+GAME.EXE	0x80031187	0x1f987	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <琲c$	0x80031184	3c038007 2463e8e0	0x80031008
+GAME.EXE	0x800311cf	0x1f9cf	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: <8'!$!	0x800311cc	3c018001 24212738 00220821	0x80031008
+GAME.EXE	0x80031243	0x1fa43	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20	0x80031240	34050051 02202021	0x80031008
+GAME.EXE	0x800313c6	0x1fbc6	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: R&!\x20\x20	0x800313c4	26520014 02202021	0x80031008
+GAME.EXE	0x800313d3	0x1fbd3	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20	0x800313d0	3405000a 02202021	0x80031008
+GAME.EXE	0x8003140a	0x1fc0a	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: 1&!@@	0x80031408	2631002c 00404021	0x80031008
+GAME.EXE	0x80042db3	0x315b3	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <垈ю<	0x80042db0	3c048006 9084b09a 2442003c	0x80042da0
+GAME.EXE	0x80042e1f	0x3161f	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: <Xh!$!	0x80042e1c	3c018005 24216858 00220821	0x80042da0
+GAME.EXE	0x80042e5a	0x3165a	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: b0!H	0x80042e58	3062ffff 00804821	0x80042da0;0x80042e5c
+GAME.EXE	0x80042e63	0x31663	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <伐c$	0x80042e60	3c038006 2463b094	0x80042e5c
+GAME.EXE	0x80042e7a	0x3167a	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: h$!P`	0x80042e78	2468fffb 00605021	0x80042e5c
+OPEN.EXE	0x80022c41	0x11441	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: _!$!	0x80022c40	24215fd0 00220821	0x80022bc0
+OPEN.EXE	0x80022c7a	0x1147a	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: b0!H	0x80022c78	3062ffff 00804821	0x80022bc0;0x80022c7c
+OPEN.EXE	0x80022c83	0x11483	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <d祖$	0x80022c80	3c038004 24639164	0x80022c7c
+OPEN.EXE	0x80022c9a	0x1149a	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: h$!P`	0x80022c98	2468fffb 00605021	0x80022c7c

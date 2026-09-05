@@ -162,6 +162,47 @@ class ReachabilityTest(unittest.TestCase):
         ])
         self.assertIn("ambiguous-target-owner", report["summary"]["issues"])
 
+    def test_unreferenced_census_overlap_is_not_hidden_by_reference_traversal(self):
+        scan = replace(datum(0x1002, 4, source="data.tsv"),
+                       confidence="byte-pattern", classification="string", note="R& b")
+        report = self.audit([function()], [scan])
+        self.assertEqual(report["summary"]["issues"], {"code-data-owner-overlap": 1})
+        overlap = report["issues"][0]["overlaps"][0]
+        self.assertEqual((overlap["overlap_va"], overlap["overlap_size"]), (0x1002, 4))
+        self.assertEqual((overlap["confidence"], overlap["note"]), ("byte-pattern", "R& b"))
+        self.assertEqual(report["summary"]["config_only_data_ranges"], 0)
+        self.assertEqual(report["references"], [])
+
+    def test_overlaps_keep_all_claims_and_clip_at_function_boundaries(self):
+        report = self.audit([function(), function(0x1020)], [
+            datum(0x101E, 4, source="data.tsv"), datum(0x1008, source="DATA"),
+            datum(0x1008, source="data_identities.tsv"),
+        ])
+        issues = report["issues"]
+        self.assertEqual(len(issues), 2)
+        self.assertEqual([len(i["overlaps"]) for i in issues], [3, 1])
+        boundary = [d for i in issues for d in i["overlaps"] if d["va"] == 0x101E]
+        self.assertEqual([(d["overlap_va"], d["overlap_size"]) for d in boundary],
+                         [(0x101E, 2), (0x1020, 2)])
+
+    def test_overlap_scope_excludes_other_images_unreached_vendors_and_body_tail(self):
+        root = replace(function(), size=0x40)
+        report = self.audit([root, function(0x1100, vendor=True)], [
+            datum(0x1020), datum(0x0FFC, 4), datum(0x1108),
+            datum(0x1004, image="OPEN.EXE"),
+        ])
+        self.assertEqual(report["issues"], [])
+        reached = self.audit([root, function(0x1100, vendor=True)], [datum(0x1108)], [
+            ref(0x1000, 0x1100, kind="call", tier="candidate"),
+        ])
+        self.assertEqual(reached["summary"]["issues"]["code-data-owner-overlap"], 1)
+        vendor = next(r for r in reached["ranges"] if r["va"] == 0x1100)
+        self.assertEqual(vendor["reachability"], "candidate")
+
+    def test_fragmented_extent_does_not_invent_an_overlap_inside_unknown_holes(self):
+        report = self.audit([function(fragments=2)], [datum(0x1008)])
+        self.assertEqual(report["summary"]["issues"], {"fragmented-function": 1})
+
     def test_unresolved_indirect_call_blocks_closure(self):
         report = self.audit([function()], refs=[
             ref(0x1000, None, kind="indirect-call", tier="proven"),

@@ -1611,7 +1611,6 @@ GAME.EXE	0x8001425c	0x2a5c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghi
 GAME.EXE	0x80014260	0x2a60	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80014264	0x2a64	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80014613	0x2e13	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: '!0@
-GAME.EXE	0x8001482a	0x302a	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: R& b
 GAME.EXE	0x80014aaa	0x32aa	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: B0! @
 GAME.EXE	0x80014afe	0x32fe	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: B0! @
 GAME.EXE	0x80014d7f	0x357f	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: '!(`
@@ -1660,15 +1659,6 @@ GAME.EXE	0x80017d43	0x6543	0x6	string	byte-pattern		ascii	investigation:string-c
 GAME.EXE	0x80017f5b	0x675b	0x4	string	byte-pattern		ascii	investigation:string-census	"escaped text: <?X"""
 GAME.EXE	0x80017f87	0x6787	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <@X#
 GAME.EXE	0x80018037	0x6837	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <QX#
-GAME.EXE	0x80018107	0x6907	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: <H !$!
-GAME.EXE	0x80018127	0x6927	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20
-GAME.EXE	0x8001815f	0x695f	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙c$!
-GAME.EXE	0x80018189	0x6989	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text:  !$!
-GAME.EXE	0x8001824f	0x6a4f	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20
-GAME.EXE	0x80018287	0x6a87	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙c$!
-GAME.EXE	0x800182c5	0x6ac5	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: R!$!
-GAME.EXE	0x8001831f	0x6b1f	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: $! @
-GAME.EXE	0x800183e2	0x6be2	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: B$!a
 GAME.EXE	0x8001852b	0x6d2b	0x4	string	byte-pattern		ascii	investigation:string-census	"escaped text: <dP"""
 GAME.EXE	0x80018743	0x6f43	0x4	string	byte-pattern		ascii	investigation:string-census	"escaped text: <dP"""
 GAME.EXE	0x800187cb	0x6fcb	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <@WB己
@@ -1780,11 +1770,6 @@ GAME.EXE	0x8001e537	0xcd37	0x4	string	byte-pattern		ascii	investigation:string-c
 GAME.EXE	0x8001e597	0xcd97	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <\\PB
 GAME.EXE	0x8001e5a7	0xcda7	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <]PB
 GAME.EXE	0x8001e5b7	0xcdb7	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <^PB
-GAME.EXE	0x8001e6aa	0xceaa	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: D&!逗
-GAME.EXE	0x8001e73d	0xcf3d	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: YB$!
-GAME.EXE	0x8001e757	0xcf57	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <HWc如
-GAME.EXE	0x8001e7e7	0xcfe7	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: &!(0
-GAME.EXE	0x8001e812	0xd012	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: P2Rp
 GAME.EXE	0x8001e83f	0xd03f	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <TWB頒
 GAME.EXE	0x8001e877	0xd077	0x7	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <弯B$-z
 GAME.EXE	0x8001e887	0xd087	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <WWB
@@ -2059,13 +2044,6 @@ GAME.EXE	0x80030b7f	0x1f37f	0x6	string	byte-pattern		shift_jis	investigation:str
 GAME.EXE	0x80030bd3	0x1f3d3	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: &!(V
 GAME.EXE	0x80030c93	0x1f493	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <琲!$!
 GAME.EXE	0x80030ecf	0x1f6cf	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <琲!$!
-GAME.EXE	0x8003103f	0x1f83f	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙1&
-GAME.EXE	0x80031187	0x1f987	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <琲c$
-GAME.EXE	0x800311cf	0x1f9cf	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: <8'!$!
-GAME.EXE	0x80031243	0x1fa43	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20
-GAME.EXE	0x800313c6	0x1fbc6	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: R&!\x20\x20
-GAME.EXE	0x800313d3	0x1fbd3	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 4!\x20\x20
-GAME.EXE	0x8003140a	0x1fc0a	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: 1&!@@
 GAME.EXE	0x80031543	0x1fd43	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <粨!$!
 GAME.EXE	0x8003155a	0x1fd5a	0x4	string	byte-pattern		ascii	investigation:string-census	"escaped text: ""&! "
 GAME.EXE	0x8003160f	0x1fe0f	0x8	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <瑙c$!逗
@@ -2251,11 +2229,6 @@ GAME.EXE	0x80042cd3	0x314d3	0x4	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x80042cdb	0x314db	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <xPc
 GAME.EXE	0x80042ce7	0x314e7	0x4	string	byte-pattern		ascii	investigation:string-census	"escaped text: <pP"""
 GAME.EXE	0x80042cf3	0x314f3	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <xP#
-GAME.EXE	0x80042db3	0x315b3	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <垈ю<
-GAME.EXE	0x80042e1f	0x3161f	0x6	string	byte-pattern		ascii	investigation:string-census	escaped text: <Xh!$!
-GAME.EXE	0x80042e5a	0x3165a	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: b0!H
-GAME.EXE	0x80042e63	0x31663	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <伐c$
-GAME.EXE	0x80042e7a	0x3167a	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: h$!P`
 GAME.EXE	0x8004319f	0x3199f	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <硫c征
 GAME.EXE	0x8004332b	0x31b2b	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <pPB
 GAME.EXE	0x80043333	0x31b33	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <xPc
@@ -4778,10 +4751,6 @@ OPEN.EXE	0x80022b13	0x11313	0x4	string	byte-pattern		ascii	investigation:string-
 OPEN.EXE	0x80022b73	0x11373	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <PYc
 OPEN.EXE	0x80022ba7	0x113a7	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <PY#
 OPEN.EXE	0x80022bb3	0x113b3	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <XY$
-OPEN.EXE	0x80022c41	0x11441	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: _!$!
-OPEN.EXE	0x80022c7a	0x1147a	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: b0!H
-OPEN.EXE	0x80022c83	0x11483	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <d祖$
-OPEN.EXE	0x80022c9a	0x1149a	0x5	string	byte-pattern		ascii	investigation:string-census	escaped text: h$!P`
 OPEN.EXE	0x80022d47	0x11547	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <r柁$
 OPEN.EXE	0x80022daf	0x115af	0x6	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <鑪c靴
 OPEN.EXE	0x80022dc7	0x115c7	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <htъ

@@ -227,6 +227,19 @@ def audit(
         }
         if isinstance(node, Binding):
             row.update({**node.as_dict(), "kind": "function", "function_kind": node.kind})
+            # A reached instruction range cannot silently coexist with a data
+            # claim merely because no reference targets the overlap. Preserve
+            # the conflicting metadata for review; do not reclassify either
+            # owner from a byte-pattern scan or an admitted extent alone.
+            if node.fragments == 1:
+                overlaps = [
+                    {**asdict(d), "data_owner": d.key,
+                     "overlap_va": max(node.va, d.va),
+                     "overlap_size": min(node.body_end, d.end) - max(node.va, d.va)}
+                    for d in extents if d.va < node.body_end and node.va < d.end
+                ]
+                if overlaps:
+                    issue("code-data-owner-overlap", key, overlaps=overlaps)
         else:
             row.update({"kind": "data", **asdict(node)})
             row["comparison"] = "source-owned" if node.claimed else "config-only"

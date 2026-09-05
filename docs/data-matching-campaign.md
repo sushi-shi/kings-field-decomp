@@ -194,6 +194,38 @@ historically exact game functions. All 420 local tests, Ruff and flake checks
 pass. The full build still rejects the remaining ownership gaps and the same
 14 data-addend mismatches; strict data remains 49/63. Nothing was banked.
 
+## Instruction/string-census ownership review
+
+The first code/data overlap review removes 31 byte-pattern string claims
+(147 bytes) inside four reviewed GAME bodies and the LIBSND `note2pitch` /
+`SpuVmSelectToneAndVag` pair in both overlays. These were slices of instructions,
+including return delay slots and called entries, not separate data allocations.
+Original rows, instruction windows and per-function evidence remain in
+`config/evidence/data_census_instruction_overlaps.{md,tsv}`. No executable
+bytes, source definitions or real string literals are removed.
+
+The known-reference audit now also checks the entire reached function body for
+overlapping data claims, even when no reference targets the overlap. Each
+`code-data-owner-overlap` issue retains all conflicting metadata and clipped
+intersections. It does not automatically reject a census hypothesis, infer
+fragment-hole ownership or promote candidate paths. The new check exposes
+1,441 distinct claims across 418 reached functions (GAME 773/240, OPEN 668/178).
+There are 1,860 remaining scan/code overlaps across all admitted functions;
+the difference is not a proof of dynamic unreachability.
+
+The correction resolves the previously reported 15 ambiguous target occurrences
+and one cross-owner relocation-site occurrence. Reached config-only ranges are
+now 666 (GAME 386, OPEN 280), down by seven phantom code-as-data nodes; this is
+not seven newly reconstructed allocations. All three complete loaded payloads
+remain accounted for by the code/data inventory union.
+
+All 117 reconstruction units were rebuilt. All 1,722 target object hashes,
+117 source object hashes and 484 function scores remain unchanged, including
+all 354 historically exact game functions. All 428 local tests, lint and flake
+checks pass. The full build still fails the explicit ownership/reference gaps
+and the same 14 data-addend mismatches; strict data remains 49/63. The larger
+reachable-data and linked-image objective is still incomplete.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and
