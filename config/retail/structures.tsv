@@ -37,6 +37,7 @@ KfMapObjectDefinition	0x08	supported	game_map.h;game_semantic_map_objects.tsv;as
 KfMapObjectLink	0x08	supported	game_map.h;asm;map_object_pool_load	eight-byte link block shared by map object placements (0x0c) and pool objects (0x20)
 KfMapObjectPlacement	0x14	supported	game_map.h;game_semantic_map_objects.tsv;runtime-stride	placement record extent; fields remain opaque
 KfMapObjectState	0x25a8	supported	game_map.h;asm;base-register;map_object_pool_clear_link	map object definitions followed by the object pool; map_object_pool_clear_link derives the definition table 1280 bytes below the pool base through one register, so both are one object
+KfMapRuntimeState	0x2360	supported	game_map.h;game_main_loop:0x2360-clear;world-state-pool-relative-addresses;spinner-current-minus-544	eight map events, two pointers, two halfword timers and the complete saved world region
 KfNotificationSprite	0x0e	supported	notify.h;game_semantic_notification_sprites.tsv;asm;retail-initializers;14-byte-stride	on-screen notification record with an active byte and complete screen-sprite descriptor
 KfNotificationState	0x16	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	notification payload table and animation state; members reached through shared queue-head and phase bases
 KfOpeningEntity	0x28	supported	open_resources.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	OPEN runtime entity record initialized by the exact placement loader and refined by the transition helper's full VECTOR copy

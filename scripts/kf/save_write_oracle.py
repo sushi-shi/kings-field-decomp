@@ -114,10 +114,12 @@ def compare_write_slots(retail: RetailImage, symbols: GameSymbols, rust: RustCod
         ("header-five-short", 1, bytes((1, 2, 3, 4)), [3, 5, 7], [PAYLOAD_SIZE] + [1] * 5, 14),
     ]
     icons = [(root / f"KF/TIM/ICO{index}.TIM").read_bytes() for index in range(1, 4)]
-    runtime = [(name, symbols.datum(name)[0], size) for name, size in (
-        ("player_state", 224), ("map_world_state_base", 8500),
-        ("DAT_800652a8", 240), ("magic_records", 480),
-    )]
+    runtime = [
+        ("player_state", symbols.datum("player_state")[0], 224),
+        ("world_state", symbols.datum("map_runtime_state")[0] + 0x22C, 8500),
+        ("DAT_800652a8", symbols.datum("DAT_800652a8")[0], 240),
+        ("magic_records", symbols.datum("magic_records")[0], 480),
+    ]
     sources = [pattern(size, 91 + i) for i, (_, _, size) in enumerate(runtime)]
     captures = [MemoryRange("header", HEADER_VA, HEADER_SIZE + 16),
                 MemoryRange("payload", PAYLOAD_VA, PAYLOAD_SIZE + 16)]

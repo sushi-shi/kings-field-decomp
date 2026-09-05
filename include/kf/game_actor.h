@@ -126,7 +126,6 @@ extern KfActorActionProfile actor_action_profiles[25];
 extern KfActorState actor_state;
 extern const SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[4];
-extern u8 boss_defeat_complete;
 
 extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);

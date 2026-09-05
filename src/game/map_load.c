@@ -15,8 +15,8 @@
  * effect-object pools (objects[160..169] and objects[170..189]). The common
  * tail dispatches a per-floor scripted setup on the current floor (1..5).
  *
- * map_event_pool and the per-floor records share one contiguous BSS aggregate
- * reached through map_world_state_base (the event pool is base - 556).
+ * map_runtime_state owns both the event pool and per-floor saved records;
+ * the pool starts 556 bytes before the saved block.
  *
  * map_refresh_event_images walks the eight-record map_event_pool and refreshes the image
  * of every active (state == 1) event. map_load_floor loads the current floor:
@@ -39,7 +39,7 @@ void map_restore_floor_state(void)
 
     in = base - 1690 + 1700 * player_state.progress_state.current_floor;
     if (*in++ == 1) {
-        event = (KfMapEvent *)(base - 556);
+        event = map_runtime_state.events;
         for (i = 0; i < 8; i++, event++) {
             event->state = *in++;
             event->image_limit = *in++;

@@ -15,13 +15,12 @@
  * and map-object state into the map_world_state_base world-state block per floor and is
  * invoked on death restart, floor teleport, and from map_unload_floor.
  *
- * map_event_pool, current_map_event, map_event_animation_gate/b2/b4 and the per-floor save
- * records are one contiguous BSS aggregate in the original; map_event_update_spinner and
- * map_world_state_persist reach the pool through a single map_world_state_base base register,
- * which separate globals cannot reproduce (documented residue).
+ * map_runtime_state owns the events, current-event pointer, timers and saved
+ * world block. The event pool starts 556 bytes before the saved block.
  */
 
-/* Per-floor ambient-event scripts dispatched by current_floor. */
+DATA(0x8009db88, 0x2360)
+KfMapRuntimeState map_runtime_state;
 
 /* map_event_pool_update current-floor dispatch jump table (cases 1..5). */
 RODATA(0x80012be4, 0x14)
@@ -176,7 +175,7 @@ void map_world_state_persist(void)
     out = base - 1690 + 1700 * player_state.progress_state.current_floor;
     *out++ = 1;
 
-    event = (KfMapEvent *)(base - 556);
+    event = map_runtime_state.events;
     for (i = 0; i < 8; i++, event++) {
         *out++ = event->state;
         *out++ = event->image_limit;
