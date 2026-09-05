@@ -5990,6 +5990,7 @@ GAME.EXE	0x8002de68	0x1c668	0x8002de6c	mips_hi16_lo16	reachable-code	0x8006e8c0	
 GAME.EXE	0x8002de78	0x1c678		mips26	reachable-code	0x80014fb8	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002de88	0x1c688		mips26	reachable-code	0x80014f6c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002dec8	0x1c6c8	0x8002decc	mips_hi16_lo16	reachable-code	0x8006e8d4	bss	actor_state	lui+lw	s0	paired-reviewed	reviewed	manual:game_semantic_actor_core
+GAME.EXE	0x8002def8	0x1c6f8	0x8002defc	mips_hi16_lo16	reachable-code	0x80095900	bss	map_floor_height_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:game_actor_action_selection;decoded-100-wide-grid-byte-load
 GAME.EXE	0x8002df4c	0x1c74c	0x8002df50	mips_hi16_lo16	reachable-code	0x8006e8dc	bss	actor_state	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_actor_core
 GAME.EXE	0x8002df68	0x1c768		mips26	reachable-code	0x8002e000	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002df7c	0x1c77c		mips26	reachable-code	0x8002df90	load		j		control-flow	candidate	investigation:relocs.tsv

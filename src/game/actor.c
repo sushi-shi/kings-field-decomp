@@ -720,17 +720,13 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
 {
     KfActor *actor = actor_state.current;
     u16 odds = chance;
-    s32 cell;
-    const u8 *row;
 
     if (actor->action == action && actor->action_timer != 0xff) {
         return actor->action;
     }
-    cell = actor->cell_z;
-    row = map_floor_height_grid[cell];
-    cell = actor->cell_x;
-    if (-(row[cell] * 100) != actor->position.vy) {
-        return 0xff;
+    if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * 100)
+        != actor->position.vy) {
+        goto rejected;
     }
     if (actor_state.player_target == actor) {
         actor_state.player_target = 0;
@@ -740,12 +736,12 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
         odds >>= 1;
     } else {
         if (distance < 4001) {
-            return 0xff;
+            goto rejected;
         }
         odds <<= 3;
     }
     if (!((rand() >> 4) < odds)) {
-        return 0xff;
+        goto rejected;
     }
     if (rand() < 1638) {
         return action;
@@ -758,6 +754,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
             0x18e)) {
         return action;
     }
+rejected:
     return 0xff;
 }
 
@@ -809,12 +806,12 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u8 profile_index, u
         return actor->action;
     }
     weight = weights->near_weight;
-    if (distance < weights->far_distance) {
+    if (distance >= weights->far_distance) {
+        weight = weights->far_weight;
+    } else {
         if (distance >= weights->near_distance) {
             weight = weights->middle_weight;
         }
-    } else {
-        weight = weights->far_weight;
     }
     odds = (chance * weight) >> 8;
     if (!((rand() >> 4) < odds)) {
