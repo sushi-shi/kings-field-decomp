@@ -1,5 +1,9 @@
 # GAME resource-parser coverage
 
+The [matching checkpoint](game-parser-matching-checkpoint.md) records the final
+29-function scores, unresolved differences, verification boundaries and how
+the isolated PS1 code ran on Linux. Matching is paused, not declared complete.
+
 This is the parser census for the Japanese retail `GAME.EXE`
 (`SLPS-00017`). It separates byte interpretation from disc I/O, allocation,
 GPU/SPU submission, and runtime consumption so that a format is not silently
