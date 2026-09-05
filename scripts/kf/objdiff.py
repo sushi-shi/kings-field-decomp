@@ -111,6 +111,20 @@ def generate_projects(
                     "target_path": _relative(target, project_dir),
                 })
         pairing_rows = []
+        data_rows = [row for row in all_objects if row.get("scope") == "config-data"]
+        for row in data_rows:
+            target = target_dir / row["object"]
+            base = project_dir / "data" / Path(row["object"]).name
+            if base.is_file():
+                units.append({"name": row["unit"], "base_path": _relative(base, project_dir),
+                              "target_path": _relative(target, project_dir)})
+                paired += 1
+            pairing_rows.append({
+                "image": image, "va": row["va"], "kind": "config-data-load",
+                "name": row["name"], "body_size": row["data_size"], "unit": row["unit"],
+                "base": _relative(base, project_dir), "target": _relative(target, project_dir),
+                "base_status": "present" if base.is_file() else "config-missing-base",
+            })
         for row in objects:
             identity = image, int(row["va"], 0)
             selected_unit = selected.get(identity)
@@ -184,7 +198,8 @@ def generate_projects(
                 "GENERATED - one objdiff project per independently linked program.",
                 "Manifested units pair their module object under modules/ with base/<same name>;",
                 "claimed data rows (kind data-load/data-bss) share their unit's objects.",
-                "Only manifested units with real base objects enter objdiff scoring.",
+                "Supported config-data contributions pair with independent provider objects under data/.",
+                "Only units with real base objects enter objdiff scoring; SDK data is not game-code progress.",
             ),
         )
         write_tsv(
@@ -204,7 +219,7 @@ def generate_projects(
                 "They remain target/reference objects but never count as decomp units.",
             ),
         )
-        results[image] = project_path, paired, len(module_rows), len(excluded)
+        results[image] = project_path, paired, len(module_rows) + len(data_rows), len(excluded)
     return results
 
 

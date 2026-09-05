@@ -531,6 +531,32 @@ red on the explicit data, placement and reachability failures. Complete SDK
 owners are not yet default-compared: a config-data delink/comparison lane is
 still required, and no whole-image equality is claimed.
 
+## Compare complete config-owned SDK contributions by default
+
+The two sine-table owners now have real data-only target/base objects in the
+normal build and objdiff projects. Bases come from the pinned SDK's complete
+section; targets come independently from retail. Current native reports,
+whole-object identity/storage checks and two-sided GNU relinking are required
+before reachability calls either range compared. The
+[campaign evidence](../config/evidence/config_data_contributions.md) records the
+provider hash, full ownership boundaries, rejection controls and one explicit
+false `jal` candidate made from two sine samples.
+
+This adds **4096 default-compared bytes**, with SDK config data 2/2 separately
+from source data 13/60. Target relinking is **108/114**, adding two passing
+data-only targets to the unchanged source-unit results; the same six placement
+conflicts remain. There are still 666 reached config-owned ranges, but two now
+carry complete comparison proofs, leaving **664 unpaired** (GAME 386, OPEN 278).
+
+All 112 compiled source objects, all 1717 pre-existing target objects and all
+484 function score rows remain identical, preserving 354 exact game functions.
+All 530 local tests, Ruff and flake checks pass. Small byte/halfword/alignment
+controls ensure the SDK converter preserves actual section sizes without
+inheriting GAS's ordinary-data padding or trimming bytes. The full default
+build remains red on source-data, placement and reachable-ownership failures.
+Unsupported SDK data forms and unresolved game/census owners remain explicit
+work; no whole-executable equality is claimed.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

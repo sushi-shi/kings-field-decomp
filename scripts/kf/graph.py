@@ -108,13 +108,13 @@ class IncludeScanner:
 def toolchain_identity() -> str:
     tools = (
         "cc1psx-260", "cpppsx-260", "cc1psx-257", "cpppsx-257", "maspsx",
-        "mipsel-linux-gnu-as", "mipsel-linux-gnu-ld", "objdiff-cli",
+        "mipsel-linux-gnu-as", "mipsel-linux-gnu-ld", "mipsel-linux-gnu-objcopy", "psyk", "objdiff-cli",
     )
     rows = []
     for tool in tools:
         resolved = shutil.which(tool)
         rows.append(f"{tool}={os.path.realpath(resolved) if resolved else '-'}")
-    for variable in ("PSYQ_DIR", "PSYQ_INCLUDE"):
+    for variable in ("PSYQ_DIR", "PSYQ_INCLUDE", "PSYQ_LIB"):
         rows.append(f"{variable}={os.environ.get(variable) or '-'}")
     return "\n".join(rows) + "\n"
 
@@ -168,7 +168,10 @@ def _prune_orphans(manifest: Manifest) -> int:
 
 
 def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
+    from scripts.kf.config_data import load as load_contributions
+
     manifest = load_manifest()
+    contributions = load_contributions(modules=manifest.modules())
     retail = configured_retail_dir(retail_dir)
     pruned = _prune_orphans(manifest)
     _write_if_changed(TOOLCHAIN_ID, toolchain_identity())
@@ -198,6 +201,11 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         "  description = compile $unit",
         "  restat = 1",
         "",
+        "rule sdkdata",
+        "  command = $py -m scripts.kf.graph edge-sdkdata --unit $unit --out $out",
+        "  description = import SDK data $unit",
+        "  restat = 1",
+        "",
         "rule project",
         "  command = $py -m scripts.kf.graph edge-project --image $image",
         "  description = objdiff project $image",
@@ -217,6 +225,8 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
 
     generator_inputs = [
         str(UNITS_MANIFEST.relative_to(REPO)),
+        str((RETAIL_CONFIG / "data_contributions.tsv").relative_to(REPO)),
+        str((RETAIL_CONFIG / "data_identities.tsv").relative_to(REPO)),
         *_script_inputs(),
         *scanner.scanned(),
     ]
@@ -238,6 +248,8 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         key = image_key(image)
         units = [unit for unit in manifest.units if unit.image == image]
         bases = [_base_path(unit) for unit in units]
+        data_contributions = [c for c in contributions if c.image == image]
+        bases += [str(c.base_path().relative_to(REPO)) for c in data_contributions]
         delink_stamp = f"build/delink/{key}/.delink.stamp"
         project = f"build/objdiff/{key}/objdiff.json"
         report = f"build/objdiff/{key}/report.json"
@@ -255,6 +267,15 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
             ],
             variables={"image": image},
         )
+        for contribution in data_contributions:
+            archive = Path(os.environ.get("PSYQ_LIB", "")) / contribution.library
+            if not archive.is_file():
+                raise ValueError(f"missing SDK archive {archive}; use nix develop")
+            lines += _build_line(
+                str(contribution.base_path().relative_to(REPO)), "sdkdata", inputs=[str(archive)],
+                implicit=[*config_inputs, *scripts, str(TOOLCHAIN_ID.relative_to(REPO))],
+                variables={"unit": contribution.unit},
+            )
         for unit in units:
             profile = manifest.profiles[unit.profile]
             lines += _build_line(
@@ -384,6 +405,16 @@ def edge_compile(unit_name: str, output: Path) -> int:
     return 0
 
 
+def edge_sdkdata(unit_name: str, output: Path) -> int:
+    from scripts.kf.config_data import build_base, load as load_contributions
+
+    units = {c.unit: c for c in load_contributions(modules=load_manifest().modules())}
+    if unit_name not in units:
+        raise ValueError(f"unknown config-data contribution {unit_name!r}")
+    build_base(units[unit_name], output)
+    return 0
+
+
 def edge_project(image: str) -> int:
     generate_projects(
         BUILD / "delink",
@@ -427,12 +458,17 @@ def main(argv: list[str] | None = None) -> int:
     compile_parser = subs.add_parser("edge-compile")
     compile_parser.add_argument("--unit", required=True)
     compile_parser.add_argument("--out", required=True, type=Path)
+    sdk_parser = subs.add_parser("edge-sdkdata")
+    sdk_parser.add_argument("--unit", required=True)
+    sdk_parser.add_argument("--out", required=True, type=Path)
     args = parser.parse_args(argv)
     try:
         if args.command == "edge-delink":
             return edge_delink(args.image, args.retail_dir, args.stamp)
         if args.command == "edge-compile":
             return edge_compile(args.unit, args.out)
+        if args.command == "edge-sdkdata":
+            return edge_sdkdata(args.unit, args.out)
         if args.command == "edge-project":
             return edge_project(args.image)
         if args.command == "edge-report":

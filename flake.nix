@@ -494,7 +494,7 @@
       };
 
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
-        nativeBuildInputs = [ analysisPython mipsBinutilsAliases psy-k ];
+        nativeBuildInputs = [ analysisPython mipsBinutilsAliases psy-k objdiff-cli ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
         PSYQ_LIB = "${psyqToolchain}/psyq/lib";
         PSYQ_INCLUDE = "${psyqToolchain}/psyq/include";
@@ -529,7 +529,7 @@
         cp -r ${./config} project/config
         cp -r ${./include} project/include
         cd project
-        python3 scripts/kf/retail.py config/retail
+        python3 -m scripts.kf.retail config/retail
         python3 -m scripts.kf.inventory check --config-dir config/retail
         touch "$out"
       '';

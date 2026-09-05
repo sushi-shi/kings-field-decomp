@@ -4,8 +4,9 @@ This is a conservative worklist over the shared semantic evidence, not a proof
 that the reference census is exhaustive. Candidate paths stay candidate; a TSV
 gap or referenced prefix never becomes a complete object just by being reached.
 The report separates source ownership, configuration-only extents, and missing
-models. Configuration-only bytes are accounted in the inventory but do not yet
-have a reconstruction comparison, so they remain a default-build diagnostic.
+models. Config-only bytes remain a default-build diagnostic unless a complete
+independent provider/object/native-report/relink comparison currently verifies
+the exact image-local owner. Inventory presence alone never supplies that proof.
 """
 
 from __future__ import annotations
@@ -123,6 +124,8 @@ def audit(
     extents: tuple[DataExtent, ...],
     references: tuple[Reference, ...],
     img: RetailImage,
+    *,
+    config_comparisons: tuple = (),
 ) -> dict:
     """Lossless reference worklist with weakest-edge reachability witnesses.
 
@@ -253,7 +256,13 @@ def audit(
                 and d.va < node.end and node.va < d.end
             ]
             if not node.claimed:
-                issue("config-only-data-not-compared", key)
+                verified = [c for c in config_comparisons if c.image == image and c.matched
+                            and c.va == node.va and c.size == node.size and c.identity == node.name]
+                if len(verified) == 1:
+                    row["comparison"] = "config-provider-matched"
+                    row["comparison_unit"] = verified[0].unit
+                else:
+                    issue("config-only-data-not-compared", key)
         range_rows.append(row)
 
     reference_rows = []
@@ -294,26 +303,35 @@ def audit(
             "config_only_data_ranges": sum(
                 isinstance(n, DataExtent) and not n.claimed for n in nodes.values()
             ),
+            "config_matched_data_ranges": sum(r.get("comparison") == "config-provider-matched"
+                                              for r in range_rows),
             "reference_occurrences": len(reference_rows),
             "issues": dict(sorted(Counter(r["code"] for r in issue_rows).items())),
         },
         "ranges": range_rows, "references": reference_rows, "issues": issue_rows,
+        "config_comparisons": [asdict(c) for c in config_comparisons if c.image == image],
     }
 
 
 def run(images: tuple[str, ...], *, output: Path | None = None) -> int:
+    from scripts.kf.config_data import audit as compare_config_data
+
     manifest = load_manifest()
     extents = data_extents(manifest)
+    comparisons = tuple(compare_config_data(images, modules=manifest.modules()))
     reports = []
     for image in images:
         ctx = Context(image)
-        report = audit(image, ctx.idx.functions, extents, ctx.refs.references, ctx.img)
+        report = audit(image, ctx.idx.functions, extents, ctx.refs.references, ctx.img,
+                       config_comparisons=comparisons)
         reports.append(report)
         summary = report["summary"]
         print(f"{image} known-reference closure: {summary['game_roots']} game roots, "
               f"{summary['reached_vendor_functions']} reached vendor functions, "
               f"{summary['source_owned_data_ranges']} source-owned / "
               f"{summary['config_only_data_ranges']} config-only data ranges")
+        if summary['config_matched_data_ranges']:
+            print(f"  independent provider/retail matches: {summary['config_matched_data_ranges']} config ranges")
         for code, count in summary["issues"].items():
             print(f"  {code}: {count}")
         print("  exhaustive reachable-byte coverage is not yet proven")

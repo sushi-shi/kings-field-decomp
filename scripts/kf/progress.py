@@ -141,6 +141,8 @@ def _report_function_scores(document: dict | None) -> dict[str, dict[str, float]
 
 
 def _report_is_stale(image: str, manifest: Manifest) -> bool:
+    from scripts.kf.config_data import load as load_contributions
+
     key = image_key(image)
     report = BUILD / "objdiff" / key / "report.json"
     if not report.is_file():
@@ -149,6 +151,7 @@ def _report_is_stale(image: str, manifest: Manifest) -> bool:
         BUILD / "objdiff" / key / "objdiff.json",
         BUILD / "delink" / key / ".delink.stamp",
         *[_base_path(unit) for unit in manifest.units if unit.image == image],
+        *[c.base_path() for c in load_contributions(modules=manifest.modules()) if c.image == image],
     ]
     newest = max((path.stat().st_mtime for path in inputs if path.exists()), default=0.0)
     return newest - report.stat().st_mtime > 1.0
@@ -159,6 +162,9 @@ def current_state(
 ) -> tuple[Manifest, dict[tuple[str, int], Target], list[Current], list[str]]:
     selected = tuple(images)
     manifest = load_manifest()
+    from scripts.kf.config_data import load as load_contributions, report_failures as config_report_failures
+
+    contributions = load_contributions(modules=manifest.modules())
     universe = _target_universe()
     scanner = IncludeScanner()
     report_scores: dict[str, dict[str, dict[str, float]]] = {}
@@ -170,6 +176,8 @@ def current_state(
         _scores, report_failures = _report_scores(report)
         report_scores[image] = _report_function_scores(report)
         failures.extend(f"{image}: {failure}" for failure in report_failures)
+        failures.extend(f"{image}: {failure}" for failure in config_report_failures(
+            report, [c for c in contributions if c.image == image]))
         image_units = [unit for unit in manifest.units if unit.image == image]
         if image_units and any(_base_path(unit).is_file() for unit in image_units):
             if report is None and error is None:

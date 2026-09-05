@@ -1,4 +1,4 @@
-"""Relink manifested target objects at their claimed retail section addresses.
+"""Relink source/config target objects at their claimed retail section addresses.
 
 This checks the delinker's bytes and placements with the independent GNU MIPS
 linker, not the delinker's inverse encoding helpers. It is not reconstruction
@@ -120,8 +120,9 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
         sizes[section_name] += size
         witnesses[section_name].append({"symbol": name, "va": va, "offset": offset, "size": size,
                                         "implied_base": va - offset})
-    text_extent = unit.functions[-1].end - unit.functions[0].va
-    sizes[".text"] = text_extent
+    text_extent = unit.functions[-1].end - unit.functions[0].va if unit.functions else 0
+    if unit.functions:
+        sizes[".text"] = text_extent
     if unit.rodata:
         bases[".rodata"].add(unit.rodata[0])
         sizes[".rodata"] = unit.rodata[1]
@@ -267,7 +268,8 @@ def verify_unit(unit: Unit, image: RetailImage, book: dict[str, set[int]],
                 for name, address in sorted(placed.items(), key=lambda item: item[1])
             ) + "\n  /DISCARD/ : { *(*) }\n}\n")
             linked = root / "linked.elf"
-            command = [linker, "-EL", "--entry", hex(unit.functions[0].va), "-T", str(script),
+            entry = unit.functions[0].va if unit.functions else min(placed.values())
+            command = [linker, "-EL", "--entry", hex(entry), "-T", str(script),
                        "-o", str(linked), str(object_path.resolve())]
             command += [f"--defsym={name}={address:#x}" for name, address in sorted(symbols.items())]
             process = subprocess.run(command, capture_output=True, text=True, timeout=30)
@@ -303,6 +305,7 @@ def audit(image: RetailImage, units: tuple[Unit, ...], book: dict[str, set[int]]
           delink_dir: Path, scratch: Path) -> dict:
     selected = tuple(unit for unit in units if unit.image == image.image)
     results = [verify_unit(unit, image, book,
+                           unit.target_path(delink_dir) if hasattr(unit, "target_path") else
                            delink_dir / unit.image_key / "modules" / unit.object_name, scratch)
                for unit in selected]
     find_overlaps(results)
@@ -310,7 +313,7 @@ def audit(image: RetailImage, units: tuple[Unit, ...], book: dict[str, set[int]]
     if not selected:
         counts['empty-selection'] += 1
     return {
-        "image": image.image, "scope": "manifested-target-objects",
+        "image": image.image, "scope": "source-and-config-target-objects",
         "linker": shutil.which(LINKER), "units": [asdict(result) for result in results],
         "verified_units": sum(not result.issues for result in results),
         "total_units": len(results), "issues": dict(sorted(counts.items())),
@@ -320,18 +323,22 @@ def audit(image: RetailImage, units: tuple[Unit, ...], book: dict[str, set[int]]
 
 
 def run(images=IMAGE_LAYOUTS, *, output: Path | None = None, unit: str | None = None) -> int:
+    from scripts.kf.config_data import load as load_contributions
+
     manifest = load_manifest()
+    all_units = (*manifest.units, *load_contributions(modules=manifest.modules()))
+    by_name = {u.unit: u for u in all_units}
     images = tuple(images)
-    if unit is not None and unit not in manifest.by_name():
+    if unit is not None and unit not in by_name:
         raise ValueError(f"unknown unit {unit!r}")
     if unit is not None:
-        image = manifest.by_name()[unit].image
+        image = by_name[unit].image
         if image not in images:
             raise ValueError(f"unit {unit!r} is not in the selected image(s)")
         images = (image,)
     if shutil.which(LINKER) is None:
         raise ValueError(f"{LINKER} is required; run in nix develop")
-    units = tuple(u for u in manifest.units if unit is None or u.unit == unit)
+    units = tuple(u for u in all_units if unit is None or u.unit == unit)
     reports = []
     scratch = BUILD / "roundtrip"
     scratch.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,5 @@
+# Independently supplied complete config-owned data sections; never game-function progress.
+# VA, size and linkage come from the named image-local data identity, not duplicated claims.
+image	unit	identity	provider	library	member	section	alignment	object_sha256	evidence
+GAME.EXE	game.sdk.libgte_geo.data	rsin_tbl	psyq	LIBGTE.LIB	GEO.OBJ	.data	8	7e62d2e92b7a30001549db9b60abaed0811db7db2ed213e3eca2e62d8a7db36e	config/evidence/psyq_rsin_table.md
+OPEN.EXE	open.sdk.libgte_geo.data	rsin_tbl	psyq	LIBGTE.LIB	GEO.OBJ	.data	8	7e62d2e92b7a30001549db9b60abaed0811db7db2ed213e3eca2e62d8a7db36e	config/evidence/psyq_rsin_table.md

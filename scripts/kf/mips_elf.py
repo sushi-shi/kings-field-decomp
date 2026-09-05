@@ -153,7 +153,7 @@ def _check_symbols(
 
 def write_mips_elf(
     text: bytes,
-    function_name: str,
+    function_name: str | None,
     function_size: int,
     relocations: Iterable[MipsRelocation] = (),
     defined_symbols: Iterable[DefinedSymbol] = (),
@@ -177,11 +177,16 @@ def write_mips_elf(
     their symbols describe the data a module claims; the sections are omitted
     when empty so single-function objects keep their historical shape.
     Data section alignments are placement constraints, not permission to round
-    their extents or add owned tail bytes.
+    their extents or add owned tail bytes. A data-only object passes None as
+    function_name and an empty text/zero function size; no fake function symbol
+    is emitted and no code enters the progress denominator.
     """
-    if not function_name:
+    if function_name is None:
+        if text or function_size:
+            raise ValueError("data-only objects cannot own code")
+    elif not function_name:
         raise ValueError("function name must not be empty")
-    if not 0 < function_size <= len(text):
+    elif not 0 < function_size <= len(text):
         raise ValueError("function size must lie within .text")
     if bss_size < 0:
         raise ValueError("bss size must be non-negative")
@@ -198,6 +203,8 @@ def write_mips_elf(
     has_data = bool(data) or bool(data_symbols) or bool(data_relocations)
     has_bss = bss_size > 0 or bool(bss_symbols)
     has_rodata = bool(rodata)
+    if function_name is None and (defined_symbols or relocations or not (has_data or has_bss or has_rodata)):
+        raise ValueError("data-only objects require data and cannot define text symbols/relocations")
 
     # Section order: .text, .rel.text, [.data, [.rel.data]], [.bss], .symtab,
     # .strtab, .shstrtab. Indices are assigned as the list is built.
@@ -242,7 +249,8 @@ def write_mips_elf(
     section_symbol_names = {name for name, _ in section_symbols}
 
     placed = [
-        (DefinedSymbol(function_name, 0, function_size, STT_FUNC), text_index),
+        *([(DefinedSymbol(function_name, 0, function_size, STT_FUNC), text_index)]
+          if function_name is not None else []),
         *((symbol, text_index) for symbol in defined_symbols if symbol.name != function_name),
         *((symbol, data_index) for symbol in data_symbols),
         *((symbol, bss_index) for symbol in bss_symbols),

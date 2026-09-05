@@ -762,8 +762,13 @@ def delink(
     policy: str = "safe",
     modules: Iterable[Module] = (),
 ) -> dict[str, dict[str, int]]:
+    from scripts.kf.config_data import delink_object, load as load_contributions
+    from scripts.kf.sema.image import RetailImage
+
     selected_images = tuple(dict.fromkeys(images))
     selected_vas = set(vas)
+    modules = tuple(modules)
+    contributions = load_contributions(config_dir, modules) if not selected_vas else ()
     modules_by_image: dict[str, list[Module]] = defaultdict(list)
     for module in modules:
         modules_by_image[module.image].append(module)
@@ -994,6 +999,31 @@ def delink(
         if not selected_vas:
             for old_object in module_output.glob("*.o"):
                 if old_object.name not in live_modules:
+                    old_object.unlink()
+
+        data_output = image_output / "data"
+        live_data = set()
+        for contribution in contributions:
+            if contribution.image != image:
+                continue
+            blob = delink_object(contribution, RetailImage(image, expected, executable, exe_path),
+                                 relocation_rows)
+            _write_bytes_if_changed(contribution.target_path(output_dir), blob)
+            live_data.add(contribution.object_name)
+            object_rows.append({
+                "image": image, "va": format_hex(contribution.va),
+                "size": format_size(contribution.size), "body_size": "0x0",
+                "name": contribution.identity, "unit": contribution.unit,
+                "scope": "config-data", "provider": contribution.provider,
+                "library": contribution.library,
+                "object": (Path("data") / contribution.object_name).as_posix(),
+                "relocations": 0, "data_size": format_size(contribution.size),
+                "bss_size": "0x0", "rodata_size": "0x0", "confidence": "supported",
+                "provenance": contribution.evidence,
+            })
+        if not selected_vas and data_output.is_dir():
+            for old_object in data_output.glob("*.o"):
+                if old_object.name not in live_data:
                     old_object.unlink()
 
         write_tsv(

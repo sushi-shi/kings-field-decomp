@@ -431,6 +431,10 @@ def validate_config(config_dir: Path, exe_dir: Path | None = None) -> dict[str, 
             if len(nonempty_names) != len(set(nonempty_names)):
                 raise ValueError(f"{vendored_path}: duplicate names in {row!r}")
         counts["vendored_functions"] = len(vendored)
+    if (config_dir / "data_contributions.tsv").is_file():
+        from scripts.kf.config_data import load as load_data_contributions
+
+        counts["data_contributions"] = len(load_data_contributions(config_dir))
     return counts
 
 

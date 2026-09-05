@@ -23,6 +23,10 @@ The target is the delinked object under ``build/delink/<img>/modules`` whose
 ``.data``/``.rodata`` bytes are carved under the curated ownership model; the
 reconstruction is ``build/objdiff/<img>/base/<obj>``. Both are built by
 ``kf build``; this reads them, so run a build first.
+
+Explicit config-owned SDK contributions are checked separately through
+``config_data``: whole provider/target objects, current native data-only reports,
+and independent relinking of both sides. They do not enter game progress.
 """
 
 from __future__ import annotations
@@ -439,7 +443,10 @@ def run(images: tuple[str, ...], *, show_detail: bool, show_coverage: bool,
     print(f"\ndata-match: {total_match}/{total_units} data-owning unit(s) match retail"
           f" ({total_diverge} diverge; "
           f"{total_artifact_failures} artifact failure(s))")
-    return 1 if total_diverge or total_artifact_failures else 0
+    from scripts.kf.config_data import run as check_config_data
+
+    config_bad = check_config_data(images, delink_dir=delink_dir, objdiff_dir=objdiff_dir)
+    return int(bool(total_diverge or total_artifact_failures or config_bad))
 
 
 def main(argv: list[str] | None = None) -> int:

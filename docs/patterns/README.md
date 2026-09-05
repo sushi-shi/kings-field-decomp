@@ -86,3 +86,6 @@ promotes a probe to a proven historical toolchain.
 - [mips-biased-data-referents.md](mips-biased-data-referents.md): original SDK
   negative address addends, allocation-relative traversal, RODATA ownership
   and bounds/relocation controls that preserve the decoded retail target.
+- [config-owned-data-comparison.md](config-owned-data-comparison.md): independent
+  SDK/retail data-only objects, native reports, whole-object ownership checks
+  and two-sided relinking before config ranges count as compared.

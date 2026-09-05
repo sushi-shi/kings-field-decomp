@@ -130,6 +130,10 @@ kf verify reachability --output build/rsin-reachability.json
 
 ## Remaining closure boundary
 
+This is the boundary at this campaign's checkpoint. The subsequent
+[config-data integration](config_data_contributions.md) supplies the default
+object/comparison lane described below for these two complete SDK owners.
+
 These are complete, independently identified SDK data owners, but config-only
 data do not yet have a default standalone delink/comparison lane. The default
 reachability gate must keep reporting them as config-only-not-compared. The

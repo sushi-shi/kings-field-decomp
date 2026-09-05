@@ -292,9 +292,8 @@ class StrictGateTest(unittest.TestCase):
     def test_missing_comparison_artifacts_fail_the_gate(self) -> None:
         with TemporaryDirectory() as td:
             root = Path(td)
-            with patch(
-                "scripts.kf.data_match.load_manifest", return_value=self._manifest()
-            ):
+            with (patch("scripts.kf.data_match.load_manifest", return_value=self._manifest()),
+                  patch("scripts.kf.config_data.run", return_value=0)):
                 self.assertEqual(
                     run(
                         ("GAME.EXE",),
@@ -318,7 +317,8 @@ class StrictGateTest(unittest.TestCase):
             reloc = (MipsRelocation(0, "R_MIPS_32", "target"),)
             _obj(target, data=b"\0\0\0\0", data_relocs=reloc)
             _obj(base, data=b"\x04\0\0\0", data_relocs=reloc)
-            with patch("scripts.kf.data_match.load_manifest", return_value=manifest):
+            with (patch("scripts.kf.data_match.load_manifest", return_value=manifest),
+                  patch("scripts.kf.config_data.run", return_value=0)):
                 self.assertEqual(run(
                     ("GAME.EXE",), show_detail=True, show_coverage=False,
                     delink_dir=root / "delink", objdiff_dir=root / "objdiff",
@@ -335,7 +335,8 @@ class StrictGateTest(unittest.TestCase):
             symbol = DefinedSymbol("word", 0, 4, STT_OBJECT)
             _obj(target, bss=16, bss_symbols=(symbol,))
             _obj(base, bss=16, bss_symbols=(replace(symbol, binding=STB_LOCAL),))
-            with patch("scripts.kf.data_match.load_manifest", return_value=manifest):
+            with (patch("scripts.kf.data_match.load_manifest", return_value=manifest),
+                  patch("scripts.kf.config_data.run", return_value=0)):
                 self.assertEqual(run(
                     ("GAME.EXE",), show_detail=True, show_coverage=False,
                     delink_dir=root / "delink", objdiff_dir=root / "objdiff",

@@ -10355,7 +10355,7 @@ GAME.EXE	0x80056390	0x44b90		mips32_candidate	raw-word	0x80057bf0	load		.word		r
 GAME.EXE	0x80056394	0x44b94		mips32_candidate	raw-word	0x80012ee4	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80056398	0x44b98		mips32_candidate	raw-word	0x80057be8	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x8005639c	0x44b9c		mips32_candidate	raw-word	0x80057be8	load		.word		range-only	candidate	investigation:relocs.tsv
-GAME.EXE	0x800574c0	0x45cc0		mips26	instruction-word	0x80042ff0	load		jal		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x800574c0	0x45cc0		mips26	instruction-word	0x80042ff0	load		jal		reviewed-non-pointer	rejected	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x80057948	0x46148		mips32_candidate	raw-word	0x80057910	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x8005794c	0x4614c		mips32_candidate	raw-word	0x80052314	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80057950	0x46150		mips32_candidate	raw-word	0x8005228c	load		.word		range-only	candidate	investigation:relocs.tsv
