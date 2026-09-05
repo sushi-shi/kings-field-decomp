@@ -105,7 +105,7 @@ def record_cases(root: Path, symbols: GameSymbols) -> list[RecordCase]:
             1176,
             False,
         ),
-        (4, "magic_load_records", "8003a244_magic.o", "records-magic", "magic_records", 480, False),
+        (4, "magic_load_records", "8003a244_magic.o", "records-magic", "effect_state", 480, False),
         (
             5,
             "map_object_definitions_load",
@@ -682,7 +682,7 @@ class PlacementServices:
         self.trace.extend(context.read(position_ptr, 12) + rotation + struct.pack("<i", index))
         # The caller only consumes the returned index. Scratch effect_output is
         # an opaque output argument and is intentionally not used by the loader.
-        return self.symbols.datum("effect_pool_records")[0] + index * 60
+        return self.symbols.datum("effect_state")[0] + 0x1E0 + index * 60
 
     def mark(self, context: HookContext) -> int:
         address, value, yaw = context.args[:3]

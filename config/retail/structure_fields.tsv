@@ -215,6 +215,10 @@ KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	game_render.h;asm;retail-initia
 KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	game_render.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
 KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before animation_cache
 KfEffectSprite	0x18	0x04	animation_cache	KfPoolRecord *	supported	game_render.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by the binder; both retail effect_sprites initializers contain null pointers
+KfEffectState	0x000	0x1e0	magic	KfMagicRecord[24]	supported	game_effect.h;asm;magic_load_records:120-words;game_main_loop:whole-clear	runtime-loaded magic rows; player selection and weapon-bound indices 5/8/18/20
+KfEffectState	0x1e0	0xb40	records	KfEffectRecord[48]	supported	game_effect.h;asm;effect_pool_sweep;effect_pool_reset	48 live effect records with 60-byte stride
+KfEffectState	0xd20	0x4	current_magic	KfMagicRecord *	supported	game_effect.h;asm;effect_pool_set_current;effect_update_dispatch	magic row selected from the current effect kind
+KfEffectState	0xd24	0x4	current_record	KfEffectRecord *	supported	game_effect.h;asm;effect_pool_set_current;effect_pool_sweep;effect_update_dispatch	active effect record; selector derives the magic base by subtracting 3364 from this slot address
 KfEulerAngles	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x angle
 KfEulerAngles	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y angle
 KfEulerAngles	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z angle

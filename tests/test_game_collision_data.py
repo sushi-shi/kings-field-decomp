@@ -47,7 +47,7 @@ FUNCTION = 'effect_map_collision'
 def collision_inputs(symbols, attr, orient, x, z, y, kind=0):
     inputs = [MemoryInput(0x800F0000, struct.pack('<4i', 20000 + x, y, 20000 + z, 0)),
               MemoryInput(0x800F0100, bytes([kind])),
-              MemoryInput(symbols.datum('current_effect')[0], struct.pack('<I', 0x800F0100))]
+              MemoryInput(symbols.datum('effect_state')[0] + 0xD24, struct.pack('<I', 0x800F0100))]
     for name, value in (('map_collision_grid', 0), ('map_floor_height_grid', 0),
                         ('map_cell_attribute_grid', attr), ('map_cell_orientation_grid', orient)):
         data = bytearray(10000)

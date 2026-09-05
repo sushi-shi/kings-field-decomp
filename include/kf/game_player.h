@@ -5,6 +5,7 @@
 
 #include <kf/audio.h>
 #include <kf/game_equipment.h>
+#include <kf/game_effect.h>
 #include <kf/game_map.h>
 #include <kf/magic.h>
 
@@ -158,7 +159,6 @@ typedef struct KfFloorEntryCell {
     u8 z;
 } KfFloorEntryCell;
 
-extern KfMagicRecord magic_records[24];
 extern SoundRef player_sound_refs[3];
 extern KfFloorEntryCell floor_entry_cells[5];
 extern MATRIX player_death_saved_color_matrix;

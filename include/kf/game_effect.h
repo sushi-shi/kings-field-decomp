@@ -51,6 +51,15 @@ typedef struct KfEffectRecord {
     u16 unknown_3a;      /* 0x3a */
 } KfEffectRecord;
 
+/* Startup clears this whole object; selection derives the magic array from
+ * the current-record slot by a fixed member offset. */
+typedef struct KfEffectState {
+    KfMagicRecord magic[24];
+    KfEffectRecord records[48];
+    KfMagicRecord *current_magic;
+    KfEffectRecord *current_record;
+} KfEffectState;
+
 /* Rendering view of the same 60-byte effect-pool record. The renderer reads
  * the low halfwords of the VECTOR position and interprets kind-specific header
  * bytes as sprite selectors. */
@@ -78,9 +87,12 @@ typedef struct KfEffectRenderView {
 } KfEffectRenderView;
 
 extern SVECTOR effect_projectile_velocities[2];
-extern KfEffectRecord effect_pool_records[48];
-extern KfMagicRecord *current_effect_magic_record;
-extern KfEffectRecord *current_effect;
+extern KfEffectState effect_state;
+/* Consumer spellings are members, not separately owned globals. */
+#define magic_records (effect_state.magic)
+#define effect_pool_records (effect_state.records)
+#define current_effect_magic_record (effect_state.current_magic)
+#define current_effect (effect_state.current_record)
 
 extern KfEffectRecord *effect_pool_find_free(void);
 extern KfEffectRecord *effect_pool_construct(

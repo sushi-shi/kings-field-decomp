@@ -215,6 +215,9 @@ Open residues (not steered):
 - `actor_initialize_slot`: the `lifecycle = 1` store stays between the first
   load and the multiply chain in retail; the probe sinks it below the chain.
 - `actor_animation_crossed_phase`: register choice only (`v1`/`a2` swapped).
+  The current probe's [explicit phase-cache control](game-animation-phase.md)
+  leaves that residue unchanged; its independently audited field types and
+  eleven call sites do not justify register-forcing source.
 - `actor_pool_find_free`: subsequently closed at **100%** by the
   [countdown/result-join correction](game-actor-free-countdown.md), not by
   changing the compiler profile or forcing register assignments.
@@ -985,22 +988,14 @@ needed the `0x800377a4` `mips26` reloc promoted to reviewed.
 
 Residue recorded (not steered):
 
-- `func_8003781c` (~63%): publishes the current effect record and its
-  `magic_records` row through `current_effect` (0x8009db84) and
-  `current_effect_magic_record` (0x8009db80). The retail unit reaches
-  `magic_records` by `addiu a1,a1,-3364` off the `current_effect` base
-  register: `magic_records`, `effect_pool_records`,
-  `current_effect_magic_record`, and `current_effect` are one consecutive
-  block (0x8009ce60..0x8009db88) in the
-  original translation unit, so the linker-resolved delta is an assemble-time
-  constant and one `lui`/`%hi` load serves two globals. A reconstruction that
-  references `magic_records` as its own extern emits a separate `lui`+HI16 pair
-  and cannot share the base register. Reproducing it would require owning that
-  whole bss block (and thus migrating `magic_records`, used by many player/menu
-  units) into this TU; keeping the honest `&magic_records[kind]` reference and
-  the two real HI16/LO16 relocs (`current_effect`,
-  `current_effect_magic_record`) instead leaves
-  the shared-high-halfword divergence as a documented data-layout residue.
+- `effect_pool_set_current` (`8003781c`) formerly had a split-global
+  addressing difference: retail derives the magic table from the current
+  effect slot with `addiu a1,a1,-3364`. It is now **100%** with the
+  [complete effect-state owner](game-effect-state.md), independently supported
+  by the `0xd28`-byte startup clear and that member-relative calculation.
+  The helper's two assignments are unchanged. This corrects the earlier
+  ownership hypothesis; it does not prove an original TU boundary or a
+  particular compiler mechanism.
 - `func_80036f44` (~46%): the general constructor and its ~45-case kind switch
   (jump table `0x80012c28`). Structurally faithful — the common record init,
   the `magic_records[kind]`-indexed spatial sounds, and every case's field
