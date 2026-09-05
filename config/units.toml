@@ -555,39 +555,9 @@ source = "src/open/camera_path.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "open.opening_scene0"
+unit = "open.opening_scenes"
 image = "OPEN.EXE"
-source = "src/open/opening_scene0.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.opening_scene1"
-image = "OPEN.EXE"
-source = "src/open/opening_scene1.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.opening_entity_transition"
-image = "OPEN.EXE"
-source = "src/open/opening_entity_transition.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.opening_scene3"
-image = "OPEN.EXE"
-source = "src/open/opening_scene3.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.opening_ending_scene"
-image = "OPEN.EXE"
-source = "src/open/opening_ending_scene.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.opening_ending_scroll"
-image = "OPEN.EXE"
-source = "src/open/opening_ending_scroll.c"
+source = "src/open/opening_scenes.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

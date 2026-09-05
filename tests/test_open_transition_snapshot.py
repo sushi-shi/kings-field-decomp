@@ -13,7 +13,7 @@ from scripts.kf.retail import IMAGE_LAYOUTS, parse_int, read_tsv
 
 START = 0x80014608
 SIZE = 0x1FC
-OBJECT = "80014608_opening_entity_transition.o"
+SYMBOL = "opening_entity_transition"
 
 
 class OpenTransitionSnapshotTests(unittest.TestCase):
@@ -24,9 +24,10 @@ class OpenTransitionSnapshotTests(unittest.TestCase):
             self.skipTest("configured retail images are required")
 
     def test_reviewed_boundary_calls_and_relocation_targets(self) -> None:
-        unit = load_manifest().by_name()["open.opening_entity_transition"]
+        unit = load_manifest().by_identity()["OPEN.EXE", START]
         self.assertEqual(unit.image, "OPEN.EXE")
-        self.assertEqual([(fn.va, fn.body_size) for fn in unit.functions], [(START, SIZE)])
+        function = next(fn for fn in unit.functions if fn.va == START)
+        self.assertEqual(function.body_size, SIZE)
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         body = [row for row in rows if row["image"] == "OPEN.EXE"
                 and START <= parse_int(row["site_va"]) < START + SIZE]
@@ -74,16 +75,18 @@ class OpenTransitionSnapshotTests(unittest.TestCase):
         self.assertEqual(words[-2:], (0x03E00008, 0x27BD0038))
 
     def test_compiled_body_has_only_the_documented_frame_residue(self) -> None:
-        target_path = BUILD / "delink/open/modules" / OBJECT
-        source_path = BUILD / "objdiff/open/base" / OBJECT
+        unit = load_manifest().by_identity()["OPEN.EXE", START]
+        target_path = BUILD / "delink/open/modules" / unit.object_name
+        source_path = BUILD / "objdiff/open/base" / unit.object_name
         if not target_path.is_file() or not source_path.is_file():
             self.skipTest("delinked and compiled OPEN transition objects are required")
         target, source = _load_object(target_path), _load_object(source_path)
-        self.assertEqual(len(target.sections[".text"]), SIZE)
-        self.assertEqual(source.named_symbol("opening_entity_transition").size, SIZE)
-        self.assertEqual(source.sections[".text"][SIZE:], bytes(4))  # section alignment only
-        retail = struct.unpack(f"<{SIZE // 4}I", target.sections[".text"])
-        compiled = struct.unpack_from(f"<{SIZE // 4}I", source.sections[".text"])
+        target_symbol, source_symbol = target.named_symbol(SYMBOL), source.named_symbol(SYMBOL)
+        self.assertEqual((target_symbol.size, source_symbol.size), (SIZE, SIZE))
+        retail = struct.unpack_from(f"<{SIZE // 4}I", target.sections[".text"],
+                                    target_symbol.value)
+        compiled = struct.unpack_from(f"<{SIZE // 4}I", source.sections[".text"],
+                                      source_symbol.value)
         differences = [(index * 4, left, right) for index, (left, right)
                        in enumerate(zip(retail, compiled)) if left != right]
         # This is a NON-EXACT residue assertion, never a matching/banking mask.
@@ -101,10 +104,12 @@ class OpenTransitionSnapshotTests(unittest.TestCase):
         ])
         relocations = []
         for obj in (target, source):
+            symbol = obj.named_symbol(SYMBOL)
             relocations.append([
-                (rel.offset, rel.kind, obj.symbol(rel.symbol_index).name,
+                (rel.offset - symbol.value, rel.kind, obj.symbol(rel.symbol_index).name,
                  obj.symbol(rel.symbol_index).section, obj.symbol(rel.symbol_index).value)
                 for rel in obj.relocations if rel.section == ".text"
+                and symbol.value <= rel.offset < symbol.value + SIZE
             ])
         self.assertEqual(len(relocations[0]), 11)
         self.assertEqual(relocations[0], relocations[1])

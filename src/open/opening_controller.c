@@ -3,13 +3,10 @@
 #include <kf/cd_file.h>
 #include <kf/memory.h>
 #include <kf/open_controller.h>
-#include <kf/open_ending_scene.h>
 #include <kf/open_opening_helpers.h>
+#include <kf/open_opening_scenes.h>
 #include <kf/open_render.h>
 #include <kf/open_resources.h>
-#include <kf/open_scene0.h>
-#include <kf/open_scene1.h>
-#include <kf/open_scene3.h>
 #include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/psyq_pad.h>

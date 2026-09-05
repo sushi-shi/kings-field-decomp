@@ -475,6 +475,35 @@ pass. The full build remains red with strict source data 15/63, target relink
 109/117 and 665 config-only reached ranges. This correction strengthens the
 comparison contract without changing source, claims or delinked bytes.
 
+## Consolidate the OPEN scene ownership pilot
+
+Six granular TUs now form one seven-function opening-scene module, with one
+shared scene header replacing four narrow headers. Shared dispatcher/helper
+calls and a gap-free 896-byte camera-path run support the consolidation;
+the original filename and exact TU boundary remain WIP. All bodies, data
+initializers, types and bindings are preserved. The
+[campaign plan and verdicts](../config/evidence/open_opening_scenes.md) record
+each function, the two real data runs and the remaining ownership limits.
+
+All 484 function scores remain unchanged, including 354 exact game functions.
+Raw pre/post instruction and ordered referent checks pass for every merged
+function. The dispatcher's only object change is a debug-line number; all
+other 110 compiled objects and 111 target objects remain byte-identical.
+All seventeen data objects individually match retail, but their two distant
+runs still contradict the current single-section placement model. The strict
+gate rejects that contradiction and the compiled section's extra eight bytes.
+
+TUs fall from 117 to **112**. Regrouping changes strict source data to **13/60**
+and target relinking to **106/112**, with six remaining placement conflicts.
+These are changed unit denominators, not newly closed bytes. Reachability
+remains at 665 config-only ranges. The audit also exposes a biased sine-table
+base mislabeled as camera data and a startup GP base mislabeled as UV data;
+neither is silently reclassified in this source-only campaign.
+
+All 485 local tests, Ruff and flake checks pass. The full default build remains
+red on the explicit data, placement and reachability failures. No new function
+is banked, and no linked-executable equality is claimed.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

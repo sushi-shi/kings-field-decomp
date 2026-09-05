@@ -31,9 +31,10 @@ class OpenEndingScrollTests(unittest.TestCase):
             self.skipTest("configured retail images are required")
 
     def test_complete_boundary_rodata_and_nonoverlapping_data_owners(self) -> None:
-        unit = load_manifest().by_name()["open.opening_ending_scroll"]
+        unit = load_manifest().by_identity()["OPEN.EXE", START]
         self.assertEqual(unit.image, "OPEN.EXE")
-        self.assertEqual([(fn.va, fn.body_size) for fn in unit.functions], [(START, 0x798)])
+        function = next(fn for fn in unit.functions if fn.va == START)
+        self.assertEqual(function.body_size, 0x798)
         self.assertEqual(unit.rodata, (0x80012000, 32))
         catalog = load_catalog(RETAIL_CONFIG)
         self.assertEqual(catalog.function_starts["OPEN.EXE"][START].body_size, 0x798)
@@ -42,7 +43,8 @@ class OpenEndingScrollTests(unittest.TestCase):
         identity = identities["OPEN.EXE", START]
         self.assertEqual((identity.name, identity.return_type, identity.parameters),
                          ("opening_ending_scroll_run", "void", ""))
-        self.assertEqual([(item.va, item.size) for item in unit.data], [
+        self.assertEqual([(item.va, item.size) for item in unit.data
+                          if item.symbol.startswith("opening_ending_scroll_")], [
             (0x80035820, 84), (0x80035888, 72), (0x80037290, 16),
             (0x800372A0, 4), (0x800372A4, 4), (0x800372A8, 4),
             (0x800372AC, 4), (0x800372B0, 4), (0x800372B4, 4), (0x800372B8, 8),
@@ -87,11 +89,12 @@ class OpenEndingScrollTests(unittest.TestCase):
         self.assertEqual(decode_mips26_target(0x80015890, word(0x80015890)), START)
 
     def test_static_section_referents_resolve_to_the_same_ordered_owners(self) -> None:
-        path = BUILD / "objdiff/open/base/80014e28_opening_ending_scroll.o"
+        unit = load_manifest().by_identity()["OPEN.EXE", START]
+        path = BUILD / "objdiff/open/base" / unit.object_name
         if not path.is_file():
             self.skipTest("compiled ending-scroll object is required")
-        unit = load_manifest().by_name()["open.opening_ending_scroll"]
         obj = _load_object(path)
+        function = obj.named_symbol("opening_ending_scroll_run")
         data = load_data_identities(RETAIL_CONFIG)
         external_data = {item.name: item.va for (image, _), item in data.items()
                          if image == "OPEN.EXE"}
@@ -103,7 +106,8 @@ class OpenEndingScrollTests(unittest.TestCase):
         pending = []
         actual = []
         for reloc in obj.relocations:
-            if reloc.section != ".text":
+            if (reloc.section != ".text" or not
+                    function.value <= reloc.offset < function.value + function.size):
                 continue
             if reloc.kind == 5:
                 pending.append(reloc)
@@ -212,14 +216,17 @@ class OpenEndingScrollTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             completion(wrong_reset, retail_calls[0], 1, 0x80035964, 64)
 
-        path = BUILD / "objdiff/open/base/80014e28_opening_ending_scroll.o"
+        unit = load_manifest().by_identity()["OPEN.EXE", START]
+        path = BUILD / "objdiff/open/base" / unit.object_name
         if not path.is_file():
             self.skipTest("compiled ending-scroll object is required")
         obj = _load_object(path)
+        function = obj.named_symbol("opening_ending_scroll_run")
         compiled = list(struct.unpack(f"<{len(obj.sections['.text']) // 4}I",
                                       obj.sections[".text"]))
         calls = [reloc.offset // 4 for reloc in obj.relocations
                  if reloc.section == ".text" and reloc.kind == 4
+                 and function.value <= reloc.offset < function.value + function.size
                  and obj.symbol(reloc.symbol_index).name == "lighting_set_color_matrix"]
         self.assertEqual(len(calls), 2)
         for call, phase, matrix_offset, increment in zip(
