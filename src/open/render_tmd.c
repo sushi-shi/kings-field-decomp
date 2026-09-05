@@ -15,7 +15,6 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     u8 *payload = open_graphics_runtime.tmd_state.current_asset;
     u8 *packet = payload + (object->primitive_offset + 12);
     u8 *normals = payload + (object->normal_offset + 12);
-    u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
@@ -25,6 +24,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     s32 depth;
 
     while (remaining-- != 0) {
+        u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
+
         header = *(u32 *)packet;
         body = (KfTmdPrimitive *)(packet + 4);
         switch (header >> 24) {

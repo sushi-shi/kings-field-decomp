@@ -10,7 +10,6 @@ void render_enqueue_map(u16 object_index)
     KfTmdObject *object = tmd_get_object(object_index);
     u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->normal_offset + 12);
     u8 *packet;
-    u8 *vertices;
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
@@ -18,19 +17,20 @@ void render_enqueue_map(u16 object_index)
     CVECTOR shade;
     u32 remaining;
     u32 header;
-    s32 depth;
 
     tmd_project_vertices(object->vertex_count);
     remaining = object->primitive_count;
     packet = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + 12);
-    vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
     while (remaining-- != 0) {
+        u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
+
         header = *(u32 *)packet;
         packet += 4;
         switch (header >> 24) {
         case 0x2c: {
             KfTmdFt4 *quad = (KfTmdFt4 *)packet;
             POLY_GT4 *prim;
+            s32 depth;
 
             vertex0 = (KfScreenVertex *)(vertices + quad->v0);
             vertex1 = (KfScreenVertex *)(vertices + quad->v1);
@@ -68,6 +68,7 @@ void render_enqueue_map(u16 object_index)
         case 0x24: {
             KfTmdFt3 *triangle = (KfTmdFt3 *)packet;
             POLY_GT3 *prim;
+            s32 depth;
 
             vertex0 = (KfScreenVertex *)(vertices + triangle->v0);
             vertex1 = (KfScreenVertex *)(vertices + triangle->v1);

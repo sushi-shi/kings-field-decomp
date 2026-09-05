@@ -1,9 +1,92 @@
 # OPEN map polygon emission
 
-OPEN `render_enqueue_map` at `0x800185e8` has a complete C reconstruction
-under `probe-gcc257-o2-g0`, with **97.449580000% strict objdiff**. It emits
-960 bytes against 952 retail bytes. It is not banked and is not a proven
-compiler wall. Its sole caller, `render_map_cell`, remains at 84.094826000%.
+Current result: **99.663864% strict objdiff**, 952 compiled/retail bytes under
+`probe-gcc260-o2-g0`. Twenty aligned words remain different; this function is
+not exact and is not banked. The current caller is 87.922420% and unchanged by
+this pass. The lifetime corrections below supersede the original results.
+
+## Function Match Plan: loop-local projected base (master `7e3bb27`)
+
+OPEN `0x800185e8`, 952 retail bytes, starts this pass at strict 97.890755%
+with a 956-byte candidate under `probe-gcc260-o2-g0`. The complete graphics
+owner already recovers current-asset/projected-array address sharing. The six
+semantic views, full retail CFG, sole caller `render_map_cell`, neighboring
+unlit/sprite bodies, accessor/allocator boundaries, SDK declarations and source
+history were inspected again. There are no string references or candidate
+outgoing relocations. All 18 calls, the two validated data address pairs and
+the validated internal jump have concrete referents. LIBGTE SMP and LIBGPU
+PRIM provider evidence excludes the SDK callees, not this game-owned emitter.
+
+The caller masks the selected object to eight bits; this function and the
+accessor preserve their `u16` boundary. The packet count/header are words;
+prepared indices are unsigned halfword byte offsets; depth/fog inputs are
+signed halfwords. Both mode branches, clipping/depth guards, checked signed
+division, postdecrement loop and 80-byte-frame return delay slot are modeled.
+The first raw divergence is the normal-pointer stack slot (32 retail versus
+24 candidate). The candidate then forms the projected base before loading
+the count, whereas retail forms it only after the nonempty guard at
+`0x80018664`. It also retains one extra ordering-table HI16/LO16 pair.
+
+First hypothesis: make the projected-array pointer local to the packet loop,
+its actual use scope, without changing packet expressions or other locals.
+Compare the first raw divergence and ordered numeric referents after a real
+focused compile, then obtain the strict report. Any unresolved frame/register
+or address-sharing symptoms remain unattributed; do not fabricate padding or
+permute declarations to imitate them.
+
+The loop-local projected base recovers the nonempty-path initialization,
+retail counter/base register roles and relative ordering-table load. The
+candidate is now 952 bytes with the same 18 numeric call targets and two
+numeric data targets; 23 aligned words differ. Remaining symptoms are the
+normal/header spill slots, quad depth result register and triangle packet
+register. Next inspect header lifetime: retail reads it afresh each iteration
+and uses it only through that iteration's advance, so test a loop-local
+initialized header instead of the function-wide temporary.
+
+That header-scope trial emits the same instructions and referents and is
+removed. The next independently bounded lifetime is depth: each mode defines
+and consumes its own depth before leaving the case, with no live depth at the
+shared packet-advance label. Test case-local depth variables, preserving the
+separate quad and triangle arithmetic and their existing per-mode guards.
+
+Case-local depth recovers all three quad-depth register differences, leaving
+20 aligned words. Keep that narrower live range. Retail has one insertion
+tail, entered after each mode's own depth guard and masked index, with both
+packet forms using the same packet register. Test spelling that shared tail
+explicitly: each case produces the accepted packet and ordering index, and
+one `AddPrim` consumes them after the switch. Unlike the rejected original
+post-switch-depth-check source, clipping and depth rejection stay in each
+mode, and rejected/unsupported packets still jump directly to advancement.
+
+The explicit shared-tail trial recovers the triangle packet register but
+reintroduces the extra ordering-table address pair, changes the guard delay
+slots and grows back to 956 bytes (49 aligned differences). It is removed.
+The retained changes are only loop-local vertices and case-local depth:
+952 bytes, 20 aligned differences, unchanged numeric calls/data referents.
+
+The strict report confirms 97.890755% -> 99.663864%. The retained normal/header
+spill-slot swap accounts for five differing words; the triangle packet's
+`s0` versus retail `s1` accounts for the other fifteen. All 18 calls, two
+HI16/LO16 address pairs and the internal jump resolve to the retail numeric
+targets. The frame, per-mode depth arithmetic, branch destinations and return
+delay slot agree. These last stack/register symptoms are unattributed, not
+proof of a compiler mechanism or an exact reconstruction.
+
+Verification for this map/TMD lifetime pass: affected objects were rebuilt
+and strict reports refreshed. OPEN remains 95/108 exact (13 partial), with
+no previously exact regression and overall fuzzy coverage 99.086%. No bank
+operation is appropriate. All 401 existing tests, Ruff and `git diff --check`
+pass; no test or tooling code is added. Full `kf build` still reports only the
+known OPEN TMD default-addend mismatch, thirteen GAME data-addend mismatches
+and four GAME historical-best deficits. All 13 vendor-source controls remain
+exact. GAME source, shared headers and retail ownership/relocations are unchanged.
+
+## Historical first reconstruction
+
+The initial reconstruction of OPEN `render_enqueue_map` at `0x800185e8`
+reached 97.449580000% strict objdiff under the then-named
+`probe-gcc257-o2-g0`, emitting 960 bytes against 952 retail bytes. It was not
+banked. Its sole caller, `render_map_cell`, then stood at 84.094826000%.
 Per-function evidence is in `open_semantic_map_enqueue.tsv`.
 
 ## Supported behavior and owners

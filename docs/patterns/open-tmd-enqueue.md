@@ -1,10 +1,97 @@
 # OPEN general TMD polygon emission
 
-OPEN `render_enqueue_tmd` at `8001764c` is complete reconstructed C at
-**98.802410% strict objdiff** under `probe-gcc257-o2-g0`. Retail is 3320 bytes
-(`0xcf8`); the probe emits 3324 bytes (`0xcfc`), including the return delay
-slot. The function is not exact and is not banked. Its exact caller,
-`opening_entity_render` at `80018ecc`, remains 100% after the identity rename.
+Current result: **99.044580% strict objdiff**, 3324 compiled bytes versus
+3320 retail under `probe-gcc260-o2-g0`. The function and its switch are not
+exact and are not banked. The exact entity-render caller remains unchanged.
+
+## Function Match Plan: nonempty-path projected base (`7e3bb27`)
+
+This pass starts OPEN `0x8001764c` at strict 98.598790%, 3324 compiled bytes
+versus 3320 retail, using `probe-gcc260-o2-g0`. The complete graphics owner
+now recovers current-asset/projected-base sharing, superseding the historical
+separate-owner discussion below. All six semantic views, complete retail
+CFG, both caller sequences, adjacent projection/unlit bodies, accessor and
+allocator, source history and authentic SDK interfaces were read. There are
+57 direct calls, eleven validated internal jumps, eleven validated address
+pairs, no strings and one decoded indirect jump through the 29-word switch;
+the navigator's 29 incoming table rows remain candidates, not promoted claims.
+The checked table value chain and twelve mode-specific call paths are separate
+evidence. SMP/PRIM archive controls still exclude the library callees.
+
+The `u16` object index, incoming `s16` bias, unsigned halfword prepared byte
+offsets, signed halfword depth/fog values, packed word XY/halfword UV, signed
+division traps, clipping and lower-depth guards agree with the reconstructed
+semantics. Retail uses a 96-byte frame versus 88 in the candidate; the count
+spill is 48 versus 32 and the header spill is 40 in both. The current-asset
+address precedes the count load in the candidate, and its projected base is
+initialized before the nonempty guard. Retail initializes that base at
+`0x800176c0`, immediately after the guard, followed by signed bias widening.
+The candidate's extra absolute ordering-table pair shifts all seventeen
+default switch addends by four bytes; all twelve case addends already agree.
+
+Test only a loop-local projected-array pointer first, preserving the typed
+body-derived next-packet expression and per-mode depth checks. This lifetime
+is independently visible here and already useful in the neighboring map and
+unlit emitters. Compare raw instructions/numeric referents and strict switch
+addends after a focused compile; preserve all banked consumers. Further bias
+or cursor experiments require their own observed divergence, not a frame or
+register permutation search.
+
+Loop-local vertices recovers the count-before-address order and guarded
+projected-base initialization, but leaves 3324 bytes, the extra ordering-table
+pair and 139 aligned differences. The remaining cursor discrepancy is still
+concrete: retail reads and advances `s1` in place, whereas the candidate reads
+the next header through `a1` and creates the body cursor in `s1`. Test one
+advancing byte cursor with its typed body view limited to the iteration. The
+earlier in-place trial kept the body view function-wide; this trial does not
+carry that view across iterations, and composes the now-supported complete
+owner and guarded projected-base lifetime. Reject any newly introduced cursor
+spill even if it happens to reproduce the frame size.
+
+The loop-local typed-view/in-place-cursor trial still spills the cursor and
+grows to 3368 bytes; remove it. The next source-scope check is independently
+visible in the depth tail: each case defines and consumes its own depth, yet
+the C shares one function-wide temporary. The candidate writes the shifted
+depth directly to `a0`; retail writes it to `v0` before adding bias into `a0`.
+Test case-local depth variables (as supported in the map emitter), retaining
+the existing arithmetic and per-mode checks, without combining lighting paths.
+
+Case-local depth emits the same diff and numeric referents as loop-local
+vertices alone; remove the twelve additional declarations. As a separate
+type/lifetime check, represent the signed word-sized bias that retail creates
+at `0x800176c4..0x800176c8` as a loop-local `s32` initialized from the `s16`
+parameter, consumed by all twelve mode-local depth computations. The emitted
+conversion already agrees; this trial tests whether spelling the evidenced
+widened value explicitly affects the remaining base sharing, not whether a
+different ABI or artificial carrier can imitate a register.
+
+Explicit loop-local bias also emits the same diff and numeric referents;
+remove it. Retain only the loop-local projected pointer if the strict report
+preserves the existing result. No cursor spill, mode-local depth or additional
+bias variable is kept from the unsuccessful trials.
+
+The focused strict report confirms 98.598790% -> 99.044580%, so the guarded
+projected pointer is retained. Its count-before-address order and nonempty
+initialization agree with retail. All 57 ordered numeric call targets and
+eleven retail data address targets agree, with one extra absolute OT pair.
+The first raw difference remains the 88-byte frame versus retail 96; 139
+aligned words differ, including count spill placement, normal/projected-base
+register roles, address operand ordering, split header/body cursors and depth
+result registers. All twelve case addends agree, but the seventeen default
+addends remain `.text+0xca0` versus retail `.text+0xc9c`. Those residues are
+unattributed; this is an improved partial, not an exact function or switch.
+
+The shared verification checkpoint is recorded in
+[OPEN map polygon emission](open-map-enqueue.md). No new exact function or
+bank entry is claimed; all existing exact functions are preserved.
+
+## Historical first reconstruction
+
+The first reconstruction of OPEN `render_enqueue_tmd` at `8001764c` reached
+98.802410% strict objdiff under the then-named `probe-gcc257-o2-g0`. Retail is
+3320 bytes (`0xcf8`); that probe emitted 3324 bytes (`0xcfc`), including the
+return delay slot. It was not exact or banked. Its exact caller,
+`opening_entity_render` at `80018ecc`, remained 100% after the identity rename.
 Per-function snapshots and verdicts are in `open_semantic_tmd_enqueue.tsv`.
 
 ## Function Match Plan and evidence
