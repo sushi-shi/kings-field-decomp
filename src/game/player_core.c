@@ -277,11 +277,11 @@ s32 player_distance_to_point(
 
     dx = player_state.camera_position.vx - point_x;
     if (dx < -max_distance || max_distance < dx) {
-        return -1;
+        goto out_of_range;
     }
     dz = player_state.camera_position.vz - point_z;
     if (dz < -max_distance || max_distance < dz) {
-        return -1;
+        goto out_of_range;
     }
     dx >>= 3;
     if (point_y != 0xffff) {
@@ -291,15 +291,17 @@ s32 player_distance_to_point(
         center += 850;
         dy = player_state.floor_height - center;
         if (dy < -point_height || point_height < dy) {
-            return -1;
+            goto out_of_range;
         }
     }
     dz >>= 3;
     distance = SquareRoot0(dx * dx + dz * dz) << 3;
     if (max_distance < distance) {
-        return -1;
+        goto out_of_range;
     }
     return distance;
+out_of_range:
+    return -1;
 }
 
 /*

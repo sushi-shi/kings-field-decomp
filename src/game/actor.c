@@ -535,7 +535,6 @@ s32 actor_distance_to_point(
     s32 delta_x = actor->position.vx - point_x;
     s32 delta_z;
     s32 delta_y;
-    s32 top;
     s32 distance;
 
     if (delta_x < -max_distance || max_distance < delta_x) {
@@ -549,9 +548,8 @@ s32 actor_distance_to_point(
     if (point_y != 0xffff) {
         actor_height >>= 1;
         point_height >>= 1;
-        top = point_y - point_height;
+        delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
         point_height += actor_height;
-        delta_y = (actor->position.vy - actor_height) - top;
         if (delta_y < -point_height) {
             goto out_of_range;
         }

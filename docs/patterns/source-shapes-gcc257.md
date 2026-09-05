@@ -181,9 +181,10 @@ Open residues recorded in the player campaign (not steered):
   anchor for any source-level loop containing two related constant
   addresses (`build/probe/hoist.c`), and a goto-formed loop loses the
   retail `s0`/`s1` player anchors, so the shape is unexplained.
-- `player_distance_to_point` `0x80017108`: the last range check keeps an
-  inline `j` to the epilogue instead of the shared `bnez` form, and the
-  final distance lands in `a0` instead of `v1`.
+- `player_distance_to_point` `0x80017108`: subsequently closed at **100%**
+  with a [shared rejection exit](game-volume-distance.md). The extra jump
+  was in the final vertical rejection; one `out_of_range` return recovers
+  that branch and the final distance register without changing arithmetic.
 - `player_distance_to_point_in_cone` `0x80017040`: the early-return branch
   slot holds `nop` instead of `move v0,s1`.
 ## actor
