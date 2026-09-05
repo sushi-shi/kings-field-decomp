@@ -72,6 +72,38 @@ All instructions and ordered numeric references remain identical: 3324 bytes,
 125 unequal aligned words. The notation is not retained. It supplies no
 evidence for further operand/declaration permutations or a compiler mechanism.
 
+## Refreshed source controls at `4cd8fae`
+
+The unlit and map snapshots above retain the same extents, strict scores,
+ABI, calls, address pairs and delay slots. Six semantic views, complete CFGs,
+callers, neighboring bodies, shared types, SDK providers and history were
+reviewed before these isolated edits. No source or profile change is kept.
+
+Unlit's three projected-vertex pointers travel together through clipping,
+packed XY copies and the common depth sum. Test one three-element pointer
+array in place of the three scalar locals, preserving every lane, assignment
+order and use. No fourth element, extra initialization or padding is added.
+The probe stores the tuple at sp+16/20/24 and reloads it, unlike retail's
+register-only values. It grows from 680 to 768 bytes with 158 unequal aligned
+words. Its frame happens to become 64 bytes, but fewer saved registers and
+unsupported local traffic make this a rejection, not a frame solution.
+Eight calls and both compiled address targets remain unchanged.
+
+Map's stream loads a word header, advances four bytes, then advances by the
+header's input-word count times four. Test a `u32 *packet` initialized from
+the unchanged asset-plus-byte-offset expression, using `*packet`, `packet++`
+and `packet += (header >> 8) & 0xff`. Keep the two typed polygon views and
+all their accesses unchanged. This actual format-unit hypothesis emits the
+identical 952 bytes, eighteen calls and two address targets. All five
+normal/header spill-slot operands still differ. The word cursor is not kept;
+it supplies no basis for declaration permutations to exchange those slots.
+
+The driver-default control is recorded [separately](open-driver-default-control.md).
+The final full build preserves 97/108 OPEN exact functions and thirteen SDK
+controls, reporting only the known OPEN TMD addend mismatch and existing GAME
+deficits. Ruff, the existing 401 tests (16.580 seconds) and `git diff --check`
+pass. Only evidence notes are retained; no new exact result is banked.
+
 ## Verification
 
 Focused probes actually recompile the candidates and their unchanged-source

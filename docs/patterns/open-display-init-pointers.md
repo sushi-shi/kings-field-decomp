@@ -1,5 +1,21 @@
 # OPEN display-initialization pointer lifetimes
 
+## Paired drawing-area flag control (`4cd8fae`)
+
+The refreshed six views, complete caller/CFG, neighboring controls, SDK
+definitions and history retain the 472-retail/484-probe-byte, 92.177960%
+snapshot below: eighteen calls, sixteen validated retail address pairs, two
+internal jumps, no strings/candidates, and the full-width mode boundary.
+Retail retains enabled value one in s1 through the dfe restoration and
+stores first-draw then second-draw for both clear and restore operations.
+Test `second_draw->dfe = first_draw->dfe = 0` and the corresponding value-one
+assignment, preserving those orders and all intervening PutDrawEnv calls.
+No constant carrier or new pointer is added. All resolved instructions and
+ordered targets are identical: 484 bytes, 117 unequal aligned words, twenty
+probe address pairs and a 40-byte frame. The 44/468/132-byte controls stay
+raw exact. Restore the separate assignments; no further assignment permutation
+is justified by this result.
+
 ## Function Match Plan: complete DRAWENV-use lifetime (`6434803`)
 
 OPEN `80016adc` starts at strict 92.177960%, 484 compiled versus 472 retail

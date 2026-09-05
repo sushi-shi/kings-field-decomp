@@ -56,6 +56,8 @@ promotes a probe to a proven historical toolchain.
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [open-emitter-source-controls.md](open-emitter-source-controls.md): negative
   combined-unit, packet-header and vertex-address spelling controls; no new exacts.
+- [open-driver-default-control.md](open-driver-default-control.md): observed
+  original CCPSX command defaults and the unchanged OPEN G0/G8 comparison.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
