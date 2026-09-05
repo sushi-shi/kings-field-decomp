@@ -1,5 +1,63 @@
 # OPEN unlit triangle emission
 
+## Function Match Plan: initial packet dependency (`6434803`)
+
+OPEN `80018344` remains 676 retail/680 compiled bytes, strict 98.769230%,
+with 53 unequal aligned words. The six semantic views, complete CFG, sole
+entity caller's narrowed object/bias arguments, neighboring emitters, object
+accessor and allocator, shared types, SDK declarations/provider evidence and
+source history were refreshed. Eight direct calls, one validated internal
+jump, one retail state-address pair, no strings/candidates, signed depth
+arithmetic and the postdecrement/return delay slots retain the contract below.
+The SDK packet/GTE helpers are vendored, not this game-owned traversal.
+
+After the frame discrepancy, the earliest body difference is packet address
+formation at `80018394`: retail adds the header-adjusted primitive offset to
+the asset value; the probe reverses those operands. The current `payload`
+local is initialized before that expression and has no other consumer. The
+related map emitter refers directly to the same asset owner when forming its
+packet stream and reproduces that operand order. Test removing the one-use
+asset temporary and forming the initial byte pointer directly from the
+canonical current-asset field, preserving `(primitive_offset + 12)`, count
+initialization, loop scope, every call and packet operation. No extra cache,
+shared-owner change, pointer permutation or compiler setting is introduced.
+Compare the complete body and ordered numeric targets, not merely its score.
+
+The direct owner expression restores exactly the packet-add instruction at
+`80018394` without changing any other raw word or relocation. The candidate
+remains 680 bytes with 52 unequal aligned words; all eight call targets and
+the extra OT pair are unchanged. Keep the simpler expression and this one
+observed dependency correction. The exact entity caller and all three
+render-initialization controls remain raw exact.
+
+### Shared packed-packet view follow-up
+
+The same refreshed snapshot applies. Both branches access packed XY words,
+and FT3 copies UV halfwords; the current C expresses these through field
+pointer casts. The shared `KfGpuF3`, `KfGpuFT3` and `KfTmdPrimitive` views
+already model these exact widths and offsets, with authentic SDK members
+at API boundaries and existing layout controls. Use those views here as in
+the related map/general emitters, preserving each load/store and call order.
+This tests the supported packet representation, not a register permutation.
+Compare against the retained direct-asset result; do not infer exactness
+from equivalent layouts alone.
+
+The shared views preserve every instruction and relocation of the direct-
+asset candidate while removing twelve packed-field pointer casts. Keep them
+as the supported representation, with genuine SDK pointers at SetPoly and
+AddPrim boundaries. Strict objdiff is now **98.828400%** (from 98.769230%);
+the only byte improvement is the independently corrected packet addition.
+Frame size, two vertex-register roles and the extra OT pair remain unresolved.
+The function is still partial and is not banked.
+
+The focused strict match and full build retain all 97 OPEN exact functions
+and all 13 SDK source controls. The full build still reports the existing
+OPEN general-emitter switch-table addend mismatch, 13 GAME data mismatches
+and four GAME historical-best deficits; this campaign changes none of them.
+Ruff, all 401 repository tests and `git diff --check` pass. The rejected
+display and map-cell trials are restored, with their controls recompiled.
+No GAME source, shared header, profile or banked baseline is changed.
+
 ## Function Match Plan: biased-depth expression (`3ee452a`)
 
 OPEN `80018344`, 676 retail/680 compiled bytes, starts at strict 98.769230%
@@ -31,7 +89,7 @@ emitter, this tail already has the retail arithmetic-register dependency.
 The unchanged frame/register/address-sharing residue is not an exact match.
 
 OPEN `render_enqueue_unlit_triangles` at `0x80018344` has a complete C body
-under `probe-gcc257-o2-g0`, matching **98.769230000%** in strict objdiff.
+under `probe-gcc257-o2-g0`, matching **98.828400000%** in strict objdiff.
 The probe emits 680 bytes against 676 retail bytes. This is neither banked
 exact code nor a proven compiler wall. The per-function evidence and exact
 caller control are in `config/evidence/open_semantic_unlit_triangles.tsv`.

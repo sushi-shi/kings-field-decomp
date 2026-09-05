@@ -48,7 +48,8 @@ promotes a probe to a proven historical toolchain.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
   narrowing in preparation, and the shared GAME/OPEN TMD interface.
 - [open-unlit-triangles.md](open-unlit-triangles.md): the unlit F3/FT3 path,
-  packed GPU accesses, and the unresolved graphics-wide shared-base relation.
+  shared packed packet views, initial packet dependency and remaining OT-base
+  and frame/register differences.
 - [open-graphics-runtime-owner.md](open-graphics-runtime-owner.md): complete
   graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,

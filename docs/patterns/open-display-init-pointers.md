@@ -1,5 +1,38 @@
 # OPEN display-initialization pointer lifetimes
 
+## Function Match Plan: complete DRAWENV-use lifetime (`6434803`)
+
+OPEN `80016adc` starts at strict 92.177960%, 484 compiled versus 472 retail
+bytes. Retail and all six semantic views, the full mode-forwarding caller,
+three exact unit controls, SDK types/signatures and provider ledger, shared
+graphics owner and source history were refreshed. The full-width `s32 mode`,
+18 calls, two internal jumps, 16 validated retail address pairs, no strings
+or candidate references, 320x240 dimensions, fog constants and byte flag/RGB
+stores retain the contract below. This is game-owned initialization around
+separately attributed SDK functions.
+
+The first difference is the missing fourth saved register and 40/48-byte
+frame. After the four SDK setup calls, retail retains the first `dtd` address
+through initial flag/RGB writes, the mode branch, both PutDrawEnv calls and
+the four `dfe` clear/restore writes. The source's typed whole-DRAWENV pointers
+start only after the initial flag/RGB writes; the candidate keeps the shared
+address in a caller-saved register and emits four extra absolute `dfe` pairs.
+Test initializing the existing two typed pointers immediately after the last
+setup call and using them for that complete field-write lifetime. Keep the
+observed chained `dtd` write order and all subsequent independent store/call
+order. Unlike earlier direct-member or field-pointer trials, this describes
+one whole SDK-object view from its first customization to its last use. Do
+not add carriers, cross-object byte offsets, new views or compiler flags.
+
+The trial remains 484 bytes but loses the retained `dtd` anchor: its first
+store becomes absolute and the branch setup introduces a new pair for the
+whole first DRAWENV, then derives the second at +92 and DISPENV at +184.
+All 18 calls and physical destinations remain, but there are now 21 data
+pairs rather than the starting 20, and 110 unequal aligned words. The frame
+and four extra `dfe` pairs are not recovered. Restore the original source;
+all three unit controls remain raw exact. This result rules out that earlier
+whole-object pointer lifetime, not the observed shared retail address.
+
 ## Function Match Plan and pre-edit snapshot
 
 OPEN `80016adc`, `display_initialize(s32 mode)`, is 472 bytes (`1d8`) at

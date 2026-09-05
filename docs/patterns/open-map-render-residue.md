@@ -1,5 +1,34 @@
 # OPEN map rendering: ownership and setup residues
 
+## Function Match Plan: relative-coordinate values (`6434803`)
+
+OPEN `80018bbc` remains 464 retail/472 probe bytes, strict 87.922420%.
+The six semantic views, full CFG, exact traversal caller, preceding sprite
+body, vertex selector, shared types, GAME homolog, source history and SDK
+matrix prototypes/provider evidence were refreshed. The 80-byte frame,
+nine calls, nine address pairs, internal orientation join, no strings or
+candidate references, argument widths and constants retain the contract below.
+The traversal bounds both full-width coordinates to 0..99; its visibility
+argument and this body's wrapped object selection are unsigned bytes.
+The surrounding grid/object policy is game-owned, not an SDK body.
+
+The first non-target-address difference remains the constant-one branch slot.
+In the coordinate body, retail retains the full relative X and Z subtraction
+results in `a2`/`a1`, stores their low halves, and later adds orientation
+offsets to those same full values (`80018cdc..80018cf8`). Current C instead
+expresses the later additions as reads of the narrowed SVECTOR members.
+Test explicit signed word-sized relative X/Z values feeding both the initial
+stores and orientation additions. This is distinct from the rejected world-
+product staging and in-place world-position trials: no extra world stores,
+fake carriers, SDK object, padding or changed declaration order is involved.
+Preserve the initial X/Z/Y store order and all orientation branches. Compare
+the complete raw body/referents and keep the 320-byte traversal exact.
+
+The explicit relative values emit the identical 472-byte candidate: 81
+unequal aligned words, nine ordered calls and nine address pairs. The
+320-byte traversal remains raw exact. Remove the extra locals; this trial
+does not explain the constant-one placement or coordinate instruction order.
+
 ## Function Match Plan: halfword coordinate construction (`d1d9562`)
 
 OPEN `render_map_cell`, `80018bbc`/464 bytes, is now strict 87.922420% under
