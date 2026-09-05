@@ -52,10 +52,10 @@ u16 *render_bind_animated_instance(
     KfAnimClip *clip;
     KfAnimKeyframe *keyframe;
     KfMorphObject *morph_object;
+    u32 *clip_table;
     u32 *object_table;
     u32 *source_words;
     u32 *destination_words;
-    SVECTOR *allocation;
     u16 vertices_left;
     u16 morphs_left;
     u16 phase_end;
@@ -85,13 +85,9 @@ u16 *render_bind_animated_instance(
 reinitialize_record:
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
-    do {
-        allocation = memory_malloc_checked(vertex_count << 3);
-        record->cached_vertices = allocation;
-        if (allocation == 0) {
-            pool_release_all();
-        }
-    } while (allocation == 0);
+    while ((record->cached_vertices = memory_malloc_checked(vertex_count << 3)) == 0) {
+        pool_release_all();
+    }
     *owner_slot = record;
     goto find_keyframe;
 
@@ -106,15 +102,13 @@ check_record:
 find_keyframe:
     phase_end = 0;
     phase_start = 0;
-    clip = (KfAnimClip *)((char *)asset_header
-        + ((u32 *)((char *)asset_header
-                  + asset_header->clip_table_offset))[clip_index]);
+    clip_table = (u32 *)((char *)asset_header + asset_header->clip_table_offset);
+    clip = (KfAnimClip *)((char *)asset_header + clip_table[clip_index]);
     keyframes_left = clip->keyframe_count;
-    if (keyframes_left != 0) {
+    {
         u32 *keyframe_offsets = clip->keyframes;
 
-        keyframes_left = keyframes_left - 1;
-        do {
+        while (keyframes_left-- != 0) {
             keyframe = (KfAnimKeyframe *)((char *)asset_header + *keyframe_offsets);
             keyframe_offsets++;
             phase_end += keyframe->duration;
@@ -122,13 +116,15 @@ find_keyframe:
                 u32 forward_fraction = ((u32)(u16)(phase - phase_start) << 12)
                     / keyframe->duration;
 
-                blend_fraction = keyframe->reverse == 0
-                    ? forward_fraction : 0x1000 - forward_fraction;
+                blend_fraction = forward_fraction;
+                if (keyframe->reverse != 0) {
+                    blend_fraction = 0x1000 - forward_fraction;
+                }
                 goto update_vertex_cache;
             }
             phase_start = phase_end;
             keyframe_index++;
-        } while (keyframes_left-- != 0);
+        }
     }
     keyframe_index--;
     blend_fraction = 0x1000;
@@ -151,17 +147,16 @@ update_vertex_cache:
     } while (--vertices_left != 0);
 
     morphs_left = keyframe->morph_count;
-    if (morphs_left != 0) {
+    {
         u16 *morph_indices = keyframe->morph_indices;
 
-        morphs_left = morphs_left - 1;
-        do {
+        while (morphs_left-- != 0) {
             morph_object = (KfMorphObject *)(
                 (char *)asset_header + object_table[*morph_indices]);
             morph_indices++;
             gteMIMefunc(&record->cached_vertices[morph_object->base_vertex],
                         morph_object->deltas, morph_object->vertex_count, 0x1000);
-        } while (morphs_left-- != 0);
+        }
     }
 
     record->rest_morph = (KfMorphObject *)(

@@ -18,11 +18,12 @@ the census below now has a Rust implementation and passing comparison coverage
 at its stated boundary. `python -m scripts.kf.codec_oracle` runs all ten suites
 without case or event limits and rebuilds the candidates by default.
 
-The [failure-path and match review](patterns/game-parser-verification.md)
-leaves **23 of the 29 explicit GAME functions strict-exact (79.31%)**, up from
-22. Size-weighted objdiff similarity is 98.291691%, distinct from the passing
-finite test corpus. Six functions remain non-exact; Sony providers are not
-included in these counts.
+The [latest exact-closure attempt](patterns/game-parser-exact-closure.md)
+leaves **23 of the 29 explicit GAME functions strict-exact (79.31%)**.
+Size-weighted objdiff similarity is 99.470158%, up from 98.291691% after the
+[failure-path review](patterns/game-parser-verification.md), and distinct from
+the passing finite test corpus. Five of the six remaining functions improved,
+but none reached 100%; Sony providers are not included in these counts.
 
 ## Complete parser census
 
@@ -161,10 +162,11 @@ The animation differential seeds retail and candidate `$s5` with the same
 explicit `0x4100` value, exercises every one of the 813 shipped keyframes as a
 cache miss and the first keyframe of every one of the 214 clips as a cache hit,
 and compares complete pool-record, cache, scratch and TMD-state bytes with Rust.
-Together with static assets and eight synthetic selection/lifecycle controls,
-all 1,134 cases pass. Lifecycle cases cover null-record allocation, exhausted
-pool, vertex-allocation retry, different-asset reinitialization and static
-release. Exact GAME TMD selectors are shared providers. Sony Release 2.5
+Together with static assets and ten synthetic selection/lifecycle controls,
+all 1,136 cases pass. Lifecycle cases cover null-record allocation, exhausted
+pool, vertex-allocation retries (including three consecutive failures),
+different-asset reinitialization with retries and static release. Exact GAME
+TMD selectors are shared providers. Sony Release 2.5
 `gteMIMefunc` at `0x8004c860` is an explicit shared service whose independent
 fixed-point model applies the GPF 12-bit shift, signed IR saturation, wrapping
 halfword addition, and preserved vector padding; retail and candidate call

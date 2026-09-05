@@ -169,6 +169,7 @@ void map_world_state_persist(void)
     KfMapEvent *event;
     KfActor *actor;
     KfMapObject *object;
+    KfMapObjectDefinition *definitions;
     s32 i;
     s32 active;
 
@@ -210,6 +211,7 @@ void map_world_state_persist(void)
     count_slot = out++;
     active = 0;
     object = &map_object_state.objects[0];
+    definitions = map_object_state.definitions;
     for (i = 0; i < 160; i++, object++) {
         u8 id = object->object_id;
         u8 behavior;
@@ -218,7 +220,7 @@ void map_world_state_persist(void)
             continue;
         }
 
-        behavior = map_object_state.definitions[id].behavior_type;
+        behavior = definitions[id].behavior_type;
         if ((behavior == 0xff || behavior == 0xd || behavior == 0x40
                 || behavior == 0xe || behavior == 0x41)
                 && object->action == 0xff) {

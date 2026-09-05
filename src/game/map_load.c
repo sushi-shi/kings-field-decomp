@@ -35,6 +35,7 @@ void map_restore_floor_state(void)
     KfMapEvent *event;
     KfMapObject *object;
     s32 i;
+    s32 index;
 
     in = base - 1690 + 1700 * player_state.progress_state.current_floor;
     if (*in++ == 1) {
@@ -50,9 +51,13 @@ void map_restore_floor_state(void)
         }
 
         i = *in++;
-        while (--i != -1) {
-            s32 actor_index = *in++;
-            actor_state.actors[actor_index].lifecycle = *in++;
+        if (--i != -1) {
+            KfActor *actors = actor_state.actors;
+
+            do {
+                index = *in++;
+                actors[index].lifecycle = *in++;
+            } while (--i != -1);
         }
 
         object = &map_object_state.objects[0];
@@ -65,7 +70,8 @@ void map_restore_floor_state(void)
             u8 *link;
             s32 k;
 
-            object = &map_object_state.objects[*in++];
+            index = *in++;
+            object = &map_object_state.objects[index];
             link = (u8 *)&object->link;
             k = 7;
             do {
@@ -108,10 +114,10 @@ void map_restore_floor_state(void)
                 object->rotation.x = 0;
             }
             object->rotation.z = 0;
+            object->rotation.y = *in++ << 4;
             *(u16 *)&object->link = 0;
             object->link.spawn_sequence = 0;
             object->link.vertical_velocity = 0;
-            object->rotation.y = *in++ << 4;
         }
     }
 
@@ -121,9 +127,9 @@ void map_restore_floor_state(void)
             map_apply_copy_region(1);
         }
         if (MAP_WORLD_STATE_BYTES[1] != 2) {
-            s32 actor_index = actor_pool_find_at_tile(7, 0x28);
-            if (actor_index != -1) {
-                actor_state.actors[actor_index].lifecycle = 3;
+            index = actor_pool_find_at_tile(7, 0x28);
+            if (index != -1) {
+                actor_state.actors[index].lifecycle = 3;
             }
         }
         if (DAT_8009f845 == 1) {

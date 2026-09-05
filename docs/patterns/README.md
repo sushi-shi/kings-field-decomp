@@ -54,3 +54,5 @@ promotes a probe to a proven historical toolchain.
   control-flow defects.
 - [game-parser-verification.md](game-parser-verification.md): parser failure
   controls, VAB partial state and cleanup quirks, and seven-function match review.
+- [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
+  parser match attempts, retained source improvements and instruction-level residues.
