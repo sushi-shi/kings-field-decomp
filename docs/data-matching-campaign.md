@@ -617,6 +617,38 @@ environment skips). The full compare graph completes; the default build remains
 red on strict data, reachability and placement. No bank or compiler-profile
 change, no original-TU claim, and no linked-executable equality claim.
 
+## GAME player-effect objects and fade control flow
+
+Three reached objects now have initialized typed owners: the shared nine-byte
+`SoundRef` table in the player death/stats module, and a private SDK `MATRIX`
+plus eight `SVECTOR` damage-camera offsets in the update module. All **105
+bytes** equal retail in source and target objects. Two unresolved DAT names
+and their catch-all declarations are replaced by supported private identities;
+all ten HI/LO referents retain their raw targets and element/lane addends.
+See [the Function Match Plan and final verdict](../config/evidence/game_player_effect_data.md).
+
+The matrix consumer revealed an actual fade-branch error. Correcting it in a
+separate focused build passed 2,516 paired bounded scenarios (5,032 isolated
+calls), covering both fade ends, the middle hold, cancellation, expiry, inactive
+fog restoration and every damage-state byte. `player_update` rises from
+96.515860% to **96.945540%**, still non-exact. All other 483 reported function
+rows and all **354 exact game functions** stay unchanged.
+
+The final ownership exposes an additional real placement conflict: the early
+matrix/table and distant previous-input word cannot occupy one flat `.data`
+section. Current candidate execution and independent target relinking reject
+that contradiction; neither uses a scatter/override workaround. Comparing the
+CFG-only and final objects proves ownership changes only the relevant data
+relocations/addends, not instructions or call topology. Per-datum byte matches
+are not whole-section or linked-image closure.
+
+Strict DATA remains **11/60**, SDK data 2/2, and target relink is **107/114**
+with seven placement conflicts. Unpaired reached config ranges fall **660 to
+657**. The 546 local tests, Ruff, diff checks and flake checks pass (66 expected
+clean-environment skips); the full default build remains red on data,
+reachability and placement. Work remains isolated on
+`codex/data-matching-20260905`; no new function is banked.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

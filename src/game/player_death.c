@@ -3,6 +3,12 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+DATA(0x80055810, 0x9)
+SoundRef player_sound_refs[3] = {
+    {7, 0, 80},
+    {7, 1, 89},
+    {13, 0, 67}
+};
 
 /*
  * Player death, vitals, and combat run, one contiguous band

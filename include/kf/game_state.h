@@ -12,8 +12,6 @@
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 
-extern MATRIX DAT_80055858;
-extern SVECTOR DAT_80055878[8];
 extern u8 DAT_80055afc[];
 extern s16 DAT_80055dac;
 extern s16 DAT_80055dae;

@@ -4,6 +4,24 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+DATA(0x80055858, 0x20)
+static MATRIX player_status_effect1_color_matrix = {
+    {{666, 233, 1333}, {666, 233, 1333}, {666, 233, 1333}},
+    {0, 0, 0}
+};
+
+DATA(0x80055878, 0x40)
+static SVECTOR player_damage_camera_offsets[8] = {
+    {0, 0, 0, 0},
+    {-32, 0, -32, 0},
+    {-64, 0, -64, 0},
+    {-48, 0, -32, 0},
+    {-32, 0, 0, 0},
+    {-16, 0, 32, 0},
+    {0, 0, 64, 0},
+    {-16, 0, 32, 0}
+};
+
 DATA(0x80057b30, 0x4)
 static u32 player_previous_input = 0;
 
@@ -400,27 +418,27 @@ void player_update(void)
             fade = player_state.status_effect1_timer - 968;
             if (fade < 0) {
                 fade = 32 - player_state.status_effect1_timer;
-                if (fade >= 0) {
-                    lighting_set_color_matrix(&DAT_80055858, color_matrix_table, fade << 7);
-                    fog_interpolate_near(5000, 11000, fade << 7);
-                } else {
-                    fog_set_near(11000);
-                }
+            }
+            if (fade >= 0) {
+                lighting_set_color_matrix(&player_status_effect1_color_matrix, color_matrix_table, fade << 7);
+                fog_interpolate_near(5000, 11000, fade << 7);
             } else {
-                SetColorMatrix(&DAT_80055858);
+                SetColorMatrix(&player_status_effect1_color_matrix);
                 fog_set_near(5000);
             }
         }
+    } else {
+        fog_set_near(11000);
     }
     if (player_state.update_state != 0 && player_state.update_state != 0xff) {
         if (player_state.update_state >= 8) {
             player_state.update_state = 0;
-            player_state.view_rotation_offset = DAT_80055878[0];
+            player_state.view_rotation_offset = player_damage_camera_offsets[0];
             if (player_state.vitals.current_hp == 0) {
                 player_death_begin();
             }
         } else {
-            player_state.view_rotation_offset = DAT_80055878[player_state.update_state];
+            player_state.view_rotation_offset = player_damage_camera_offsets[player_state.update_state];
             lighting_set_active_color_matrix(1);
             player_state.update_state++;
         }

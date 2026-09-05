@@ -159,7 +159,7 @@ typedef struct KfFloorEntryCell {
 } KfFloorEntryCell;
 
 extern KfMagicRecord magic_records[24];
-extern const SoundRef player_sound_refs[3];
+extern SoundRef player_sound_refs[3];
 extern KfFloorEntryCell floor_entry_cells[5];
 extern MATRIX player_death_saved_color_matrix;
 extern s32 player_death_saved_fog_near;
