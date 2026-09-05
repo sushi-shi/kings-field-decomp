@@ -2765,7 +2765,9 @@ GAME.EXE	0x80056530	0x44d30	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4
 GAME.EXE	0x80056532	0x44d32	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80056534	0x44d34	0x2c	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80056560	0x44d60	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80056564	0x44d64	0x478	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80056564	0x44d64	0x2f4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80056858	0x45058	0x182	array	reviewed	svm_pitch_table	u16[193]	manual:psyq_pitch_table	Sony LIBSND.LIB/VMANAGER.OBJ complete private .data; unsigned halfword pitch consumers; no exports or data patches
+GAME.EXE	0x800569da	0x451da	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x800569dc	0x451dc	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x800569e0	0x451e0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x800569e4	0x451e4	0x60	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -5125,7 +5127,9 @@ OPEN.EXE	0x80035ca8	0x244a8	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4
 OPEN.EXE	0x80035caa	0x244aa	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80035cac	0x244ac	0x2c	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80035cd8	0x244d8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80035cdc	0x244dc	0x4e0	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035cdc	0x244dc	0x2f4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035fd0	0x247d0	0x182	array	reviewed	svm_pitch_table	u16[193]	manual:psyq_pitch_table	Sony LIBSND.LIB/VMANAGER.OBJ complete private .data; unsigned halfword pitch consumers; no exports or data patches
+OPEN.EXE	0x80036152	0x24952	0x6a	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800361bc	0x249bc	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800361c0	0x249c0	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800361c4	0x249c4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum

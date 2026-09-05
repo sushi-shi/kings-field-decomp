@@ -30,7 +30,7 @@ from scripts.kf.sema.index import Binding
 
 
 CONTRIBUTIONS = config_data.load()
-GAME = CONTRIBUTIONS[0]
+GAME = next(c for c in CONTRIBUTIONS if (c.image, c.identity) == ('GAME.EXE', 'rsin_tbl'))
 PAYLOAD = bytes(range(256)) * 8
 PROVIDER = config_data.SdkSection(PAYLOAD, 8, ((GAME.identity, 0),))
 SDK_HEADER = "16 : Section symbol number 3 '.data' in group 0 alignment 8\n6 : Switch to section 3\n"
@@ -52,13 +52,15 @@ def exact_report():
 class ConfigDataTests(unittest.TestCase):
     def test_manifest_uses_existing_image_qualified_owners_not_duplicate_addresses(self):
         self.assertEqual([(c.image, c.identity, c.va, c.size) for c in CONTRIBUTIONS], [
+            ("GAME.EXE", "svm_pitch_table", 0x80056858, 386),
             ("GAME.EXE", "rsin_tbl", 0x80057070, 2048),
+            ("OPEN.EXE", "svm_pitch_table", 0x80035FD0, 386),
             ("OPEN.EXE", "rsin_tbl", 0x800367E8, 2048),
         ])
         self.assertEqual(config_data.load(modules=load_manifest().modules()), CONTRIBUTIONS)
         self.assertNotIn("va", config_data.FIELDS)
         self.assertNotIn("size", config_data.FIELDS)
-        self.assertEqual(validate_config(RETAIL_CONFIG)['data_contributions'], 2)
+        self.assertEqual(validate_config(RETAIL_CONFIG)['data_contributions'], 4)
 
     def test_config_contribution_cannot_duplicate_source_ownership(self):
         module = Module(GAME.image, "game.control", "control", (), GAME.data)
@@ -66,7 +68,8 @@ class ConfigDataTests(unittest.TestCase):
             config_data.load(modules=(module,))
 
     def test_manifest_rejects_unsupported_or_ambiguous_claims(self):
-        original = read_tsv(RETAIL_CONFIG / 'data_contributions.tsv')[1][0]
+        original = next(r for r in read_tsv(RETAIL_CONFIG / 'data_contributions.tsv')[1]
+                        if r['unit'] == GAME.unit)
         for changes in ({"unit": "../bad"}, {"unit": "open.sdk.bad"}, {"identity": "unknown"},
                         {"provider": "retail"}, {"section": ".bss"}, {"alignment": "3"},
                         {"alignment": "16"}, {"library": "../LIBGTE.LIB"}, {"evidence": ""},
@@ -199,9 +202,10 @@ class ConfigDataTests(unittest.TestCase):
             graph.emit()
         lines = generated.call_args.args[1].splitlines()
         sdk = [line for line in lines if ': sdkdata ' in line]
-        self.assertEqual(len(sdk), 2)
-        for line in sdk:
-            self.assertIn('LIBGTE.LIB', line)
+        self.assertEqual(len(sdk), len(CONTRIBUTIONS))
+        for contribution in CONTRIBUTIONS:
+            line = next(line for line in sdk if contribution.object_name in line)
+            self.assertIn(contribution.library, line)
             self.assertIn('data_contributions.tsv', line)
             self.assertIn('data_identities.tsv', line)
             self.assertIn('toolchain.id', line)
@@ -244,6 +248,7 @@ class ConfigDataIntegrationTests(unittest.TestCase):
         image = RetailImage.synthetic(GAME.image, GAME.va, PAYLOAD)
         with (tempfile.TemporaryDirectory() as directory,
               patch('scripts.kf.config_data.source_section', return_value=PROVIDER),
+              patch('scripts.kf.config_data.load', return_value=(GAME,)),
               patch.object(RetailImage, 'load', return_value=image)):
             root = Path(directory)
             target_dir, objdiff_dir = root / 'delink', root / 'objdiff'
@@ -339,7 +344,7 @@ class ConfigDataIntegrationTests(unittest.TestCase):
 
 
 class SdkProviderTests(unittest.TestCase):
-    def test_both_full_sdk_contributions_equal_retail_through_the_production_path(self):
+    def test_all_full_sdk_contributions_equal_retail_through_the_production_path(self):
         try:
             images = {c.image: RetailImage.load(c.image) for c in CONTRIBUTIONS}
         except (OSError, ValueError):
@@ -354,9 +359,25 @@ class SdkProviderTests(unittest.TestCase):
                 config_data.build_base(contribution, base)
                 result = config_data.compare(contribution, image, target, base, root)
                 self.assertTrue(result.matched, result.issues)
-                self.assertEqual(result.size, 2048)
-                self.assertEqual(result.evidence['sdk_payload_sha256'],
-                                 '74743e361fc4d78cbd41bd99b2acf5c75c9b5b0268ccd753ed282ec4394fb25a')
+                self.assertEqual(result.size, contribution.size)
+                digests = {'rsin_tbl': '74743e361fc4d78cbd41bd99b2acf5c75c9b5b0268ccd753ed282ec4394fb25a',
+                           'svm_pitch_table': '293278b74970e97b814ab68b63edf21d4dcdc6630bd5394fce250aec6cd955b2'}
+                self.assertEqual(result.evidence['sdk_payload_sha256'], digests[contribution.identity])
+
+    def test_private_whole_section_requires_no_sdk_exports_and_supported_linkage(self):
+        private = replace(GAME, scope='static', identity='private_values')
+        anonymous = replace(PROVIDER, exports=())
+        with patch('scripts.kf.config_data.sdk_section', return_value=anonymous):
+            self.assertEqual(config_data.source_section(private), anonymous)
+            for wrong in (GAME, replace(private, scope='global'), replace(private, scope='unknown'),
+                          replace(private, size=GAME.size - 1), replace(private, alignment=4)):
+                with self.subTest(wrong=wrong), self.assertRaisesRegex(ValueError, 'extent/export/alignment'):
+                    config_data.source_section(wrong)
+        for exports in (((private.identity, 0),), (('unrelated', 0),),
+                        ((private.identity, 4),), ((private.identity, 0), ('extra', 8))):
+            with patch('scripts.kf.config_data.sdk_section', return_value=replace(PROVIDER, exports=exports)):
+                with self.subTest(exports=exports), self.assertRaisesRegex(ValueError, 'extent/export/alignment'):
+                    config_data.source_section(private)
 
     def test_sdk_extent_exports_and_alignment_cannot_be_selected_to_fit_target(self):
         for section in (replace(PROVIDER, data=PAYLOAD[:1024]), replace(PROVIDER, alignment=4),

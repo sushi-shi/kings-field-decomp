@@ -811,6 +811,38 @@ All 573 local tests pass without skips, both compiler smoke probes pass, and
 Ruff, diff and flake checks pass. The flake suite retains 87 expected
 local-artifact skips; the new native compiler and SDK record controls run there.
 
+## Match the complete private VMANAGER pitch tables
+
+GAME `80056858` and OPEN `80035fd0` now own the complete 386-byte private
+`svm_pitch_table`, typed `u16[193]`, with the actual LIBSND/VMANAGER provider.
+The whole SDK section is anonymous and non-relocating; the importer preserves
+it with local linkage, original eight-byte alignment and no rounded tail.
+Global sections still require their exact original offset-zero exports, and
+private sections reject any export or unsupported allocation/patch record.
+
+The four reviewed note2pitch/note2pitch2 pairs use the complete owner with zero
+addends and restore the exact retail words. Coincident biased cosine bases
+retain `rsin_tbl-800`, not the pitch owner. Prefix and suffix census gaps keep
+all unrelated bytes and references. No SDK function is reconstructed as game
+progress and no game source/header spelling changes.
+
+Both image-local data-only contributions pass native objdiff and independent
+target/provider relinking: SDK data increases **2/2 to 4/4**, adding **772
+matched bytes**. All 112 source objects, all 112 module targets and all 484
+function scores stay unchanged. The 360/471 exact game functions and thirteen
+vendor controls are preserved; strict source-owned data remains **8/59**.
+Target relinking is now **110/116**, with the same six placement conflicts.
+
+Unpaired reached config ranges increase **625 to 626**, because OPEN's old
+coarse gap becomes a matched table plus two separately unresolved reached gaps.
+GAME remains 358 unmatched ranges; OPEN becomes 268. This is more accurate
+accounting, not a claim of full coverage. Source/header `DAT_` occurrences
+remain 170. The full build is still red on data, reachability and placement.
+
+All 580 local tests pass without skips, and Ruff, diff and flake checks pass
+(91 optional local-artifact skips inside the flake sandbox). See the
+[per-function evidence and complete-data controls](../config/evidence/psyq_pitch_table.md).
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

@@ -1434,6 +1434,7 @@ GAME.EXE	0x80056522	0x2	DAT_80056522	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80056530	0x2	DAT_80056530	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056532	0x2	DAT_80056532	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056560	0x4	DAT_80056560	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80056858	0x182	svm_pitch_table	static	load	u16[193]	psyq_vmanager	supported	config/evidence/psyq_pitch_table.md;SDK-section;exact-sdk-data	Complete private VMANAGER .data; semantic name, no original SDK export; not game-owned progress
 GAME.EXE	0x800569dc	0x4	DAT_800569dc	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x800569e0	0x4	DAT_800569e0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056a44	0x4	DAT_80056a44	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2651,6 +2652,7 @@ OPEN.EXE	0x80035c9a	0x2	DAT_80035c9a	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x80035ca8	0x2	DAT_80035ca8	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035caa	0x2	DAT_80035caa	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035cd8	0x4	DAT_80035cd8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80035fd0	0x182	svm_pitch_table	static	load	u16[193]	psyq_vmanager	supported	config/evidence/psyq_pitch_table.md;SDK-section;exact-sdk-data	Complete private VMANAGER .data; semantic name, no original SDK export; not game-owned progress
 OPEN.EXE	0x800361bc	0x4	DAT_800361bc	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800361c4	0x4	DAT_800361c4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800361c8	0x4	DAT_800361c8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

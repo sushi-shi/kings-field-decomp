@@ -209,8 +209,12 @@ def source_section(contribution: Contribution) -> SdkSection:
         raise ValueError("pinned Psy-Q archive tools are required; use nix develop")
     section = sdk_section(contribution.library, contribution.member, contribution.section,
                           contribution.object_sha256, directory, tool)
+    # A private anonymous section gets a curated local owner, not an invented
+    # SDK export. Named/offset exports still require exact global identity.
+    expected_exports = {"global": ((contribution.identity, 0),), "static": ()}
     if (section.alignment != contribution.alignment or len(section.data) != contribution.size
-            or section.exports != ((contribution.identity, 0),) or contribution.scope != "global"):
+            or contribution.scope not in expected_exports
+            or section.exports != expected_exports[contribution.scope]):
         raise ValueError(f"{contribution.unit}: SDK whole-section extent/export/alignment differs")
     return section
 
@@ -221,13 +225,14 @@ def build_base(contribution: Contribution, output: Path) -> None:
     if assembler is None or objcopy is None:
         raise ValueError("pinned MIPS assembler and objcopy are required")
     if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", contribution.identity):
-        raise ValueError("unsupported SDK export spelling")
+        raise ValueError("unsupported SDK data identity spelling")
     with tempfile.TemporaryDirectory(prefix="kf-sdk-data-base-") as temporary:
         root = Path(temporary)
         (root / "section.bin").write_bytes(section.data)
         name = contribution.identity
         # Mechanical SDK-object conversion, not reconstructed game assembly.
-        source = ('.section .kf_sdk_data,"aw",@progbits\n.balign 1\n' + f'.globl {name}\n'
+        linkage = '.globl' if contribution.scope == 'global' else '.local'
+        source = ('.section .kf_sdk_data,"aw",@progbits\n.balign 1\n' + f'{linkage} {name}\n'
                   + f'.type {name}, @object\n{name}:\n.incbin "section.bin"\n'
                   + f'.size {name}, .-{name}\n')
         (root / "section.s").write_text(source)
