@@ -152,3 +152,56 @@ function. The four pre-existing GAME historical-best deficits documented in
 Staged `nix flake check -L` also passes. Its isolated run passes the 376-test
 suite with 36 controls skipped because local retail, generated objects or
 tools are unavailable; the workspace run above exercises all of them.
+
+## Master follow-up: packet cursor and strict switch addends
+
+Pre-edit snapshot for OPEN `8001764c` (`0xcf8` bytes), after integration at
+`d6178e1`: 98.802410% strict; no exact-count change. All six semantic queries,
+the complete retail body/CFG, both caller argument sequences, adjacent
+projection/unlit code, allocator/accessor, SDK declarations, source history
+and the existing relocation/path controls were rechecked. The signature,
+57 ordered calls, eleven internal jumps, return/delay slot, mode constants
+and vendor-negative evidence above remain applicable. Semantic-navigation
+switch targets remain candidates; the raw table value-chain control is
+separate evidence, not a promotion of those rows.
+
+The first raw difference remains the frame size. A narrower source hypothesis
+is supported by the cursor instructions: retail loads the header from `s1`
+at `800176cc`, advances that same pointer by four in the load-delay slot at
+`800176d0`, and advances it by the masked body length at `800182f8`. The
+current probe instead loads from `a1`, derives the typed body in `s1`, then
+produces the next header pointer in `a1`. Test an in-place byte cursor for
+both advances, keeping the typed body view and all mode-local depth checks.
+Compare the first raw divergence, ordered referents, static mode call paths,
+and strict switch addends before deciding whether to retain the edit.
+
+The stricter data checker finalized on master supersedes the earlier
+63-of-63 statement: 49 of 63 data-owning units pass, including all but this
+OPEN unit; the other thirteen failures are in GAME and outside this campaign.
+In this unit all twelve case-target addends already agree, while all seventeen
+default entries point four bytes later in the probe (`.text+0xca0` versus
+retail `.text+0xc9c`). Retail's shared AddPrim tail loads the ordering-table
+pointer at `800182d8` using `lw v0,-276(s6)`; the probe uses an additional
+absolute HI16/LO16 pair. The cursor experiment does not assume it can resolve
+that separate, still-unproved wider-owner question. Do not patch the switch
+targets, mask the addends, or invent an overlapping aggregate to hide it.
+
+The in-place cursor trial scored 97.272285% strict after rebuilding the real
+reconstruction object and refreshing the report. All five focused controls,
+including twelve static mode call-path sets, passed against that rebuilt
+object. The frame became 96 bytes, but the cursor acquired a stack slot at
+sp+40 and the header moved to sp+48, with repeated loads/stores absent from
+retail. The first remaining divergence moved to the projected-vertex absolute
+base after the initial primitive-count load; the separate ordering-table
+pair and nonmatching switch addends remained. Matching the frame alone did
+not recover the source shape. The trial was reverted and the previous
+body-derived next-packet expression rebuilt at 98.802410%; no C, owner, relocation or
+baseline change is retained. This is a negative source-form control, not
+compiler attribution or a new exact function.
+
+Final follow-up verification: all five focused tests and all 396 repository
+tests pass without skips; Ruff and `git diff --check` pass. Full `kf build`
+still fails its strict data gates (one OPEN and thirteen GAME units) and the
+four previously recorded GAME historical-best deficits. OPEN remains 91/108
+exact with 17 partial functions. No new bank entry is made, and GAME source
+is unchanged.
