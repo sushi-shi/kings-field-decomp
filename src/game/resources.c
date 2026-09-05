@@ -4,12 +4,16 @@
 #include <kf/game_equipment.h>
 #include <kf/game_map.h>
 #include <kf/game_player.h>
+#include <kf/game_render.h>
 #include <kf/psyq.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 DATA(0x80057b48, 0x8)
 char map_mix_tim_filename[8] = "MIX.TIM";
+
+DATA(0x80065be8, 0xcc0)
+KfCellWindow render_cell_windows[16];
 
 RODATA(0x80012178, 0x3c)
 

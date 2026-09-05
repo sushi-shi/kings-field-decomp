@@ -9,11 +9,6 @@
  * (index `highlight`) takes the confirmed-selection background when `flag` is
  * 1 and always gets the selection-cursor sprite overlaid.  Rows advance one
  * MenuGlyphString per step starting at the record's first row.
- *
- * Retail retains the layout base and a byte row offset, then recomputes their
- * sum in call delay slots.  gcc257-o2 CSEs the typed row pointer and gives the
- * flag an additional saved-register role.  The structured row model is kept;
- * the remaining difference is an unattributed CSE/register-allocation residue.
  */
 ADDRESS(0x80028914, 0x15c)
 void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
@@ -25,23 +20,23 @@ void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     if (layout->title.x != 0) {
         menu_blit_sprite_translucent(
-            &DAT_80058424, (const MenuPoint *)&layout->title);
-        menu_draw_string(&DAT_800583f4, &layout->title);
+            &menu_assets.row_background, (const MenuPoint *)&layout->title);
+        menu_draw_string(&menu_assets.glyph_atlas, &layout->title);
     }
     if (count > 0) {
         row = 0;
         do {
             const MenuGlyphString *label = &layout->rows[row];
-            const MenuSpriteDef *box = &DAT_80058424;
+            const MenuSpriteDef *box = &menu_assets.row_background;
 
             if (row == highlight && flag == 1) {
-                box = &DAT_80058430;
+                box = &menu_assets.row_confirmed_background;
             }
             menu_blit_sprite_translucent(box, (const MenuPoint *)label);
             if (row == highlight) {
-                menu_blit_sprite(&DAT_8005846c, (const MenuPoint *)label);
+                menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)label);
             }
-            menu_draw_string(&DAT_800583f4, label);
+            menu_draw_string(&menu_assets.glyph_atlas, label);
             row++;
         } while (row < count);
     }

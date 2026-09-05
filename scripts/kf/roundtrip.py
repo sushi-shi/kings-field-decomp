@@ -160,7 +160,8 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
                              symbols=[left[2], right[2]])
         base = next(iter(candidates))
         if base < 0 or base + size > 0x100000000 or base % max(1, section['sh_addralign']):
-            result.issue("invalid-section-placement", section=name, address=base, size=size)
+            result.issue("invalid-section-placement", section=name, address=base, size=size,
+                         alignment=section['sh_addralign'])
             continue
         if sizes[name] > size or (name == ".text" and size != text_extent):
             result.issue("owned-section-extent", section=name, size=size, claimed=sizes[name])

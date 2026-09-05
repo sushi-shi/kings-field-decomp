@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 import struct
 import subprocess
@@ -137,6 +138,72 @@ def assembler_binding_controls(root: Path) -> None:
                         raise RuntimeError(f"G{limit} allocation layout changed: {rows[name]}")
 
 
+def elf_sections(path: Path) -> dict[str, tuple[int, int, bytes]]:
+    """Section size, alignment and payload from the controlled ELF32-LE output."""
+    blob = path.read_bytes()
+    offset = struct.unpack_from('<I', blob, 32)[0]
+    stride, count, names_index = struct.unpack_from('<HHH', blob, 46)
+    rows = [struct.unpack_from('<10I', blob, offset + i * stride) for i in range(count)]
+    names_row = rows[names_index]
+    names = blob[names_row[4]:names_row[4] + names_row[5]]
+    return {names[r[0]:names.index(b'\0', r[0])].decode():
+            (r[5], r[8], b'' if r[1] == 8 else blob[r[4]:r[4] + r[5]]) for r in rows}
+
+
+def section_extent_controls(root: Path) -> None:
+    source = root / 'section-native.c'
+    source.write_text('unsigned char payload[9] = {1, 0, 2, 0, 3, 0, 0, 0, 0};\n'
+                      'const unsigned char message[5] = {120, 121, 0, 0, 0};\n'
+                      'unsigned char tentative[9];\n'
+                      'int first(void) { return payload[0]; }\n')
+    for version in ('257', '260'):
+        output = root / f'section-{version}.o'
+        compile_source(source, 'GAME.EXE', output, root / 'delink',
+                       optimization='O2', compiler=f'gcc{version}-native')
+        sections = elf_sections(output)
+        for name, payload in (('.data', bytes((1, 0, 2, 0, 3, 0, 0, 0, 0))),
+                              ('.rodata', b'xy\0\0\0')):
+            if sections[name][0] != len(payload) or sections[name][2] != payload:
+                raise RuntimeError(f'GCC {version}: automatic tail or lost explicit zeros: '
+                                   f'{name}: {sections[name]}')
+        # Compiler-specified COMMON rounding is real input, not a GAS tail.
+        allocation = 16 if version == '257' else 9
+        if sections['.bss'][:2] != (allocation, 16):
+            raise RuntimeError(f'GCC {version}: tentative allocation/alignment changed: {sections}')
+        if sections['.data'][1] != 16:
+            raise RuntimeError('no-tail-padding must not rewrite the ELF data alignment')
+        metadata = json.loads(output.with_suffix('.o.json').read_text())
+        if metadata.get('gnu_as_section_flags') != ['-no-pad-sections']:
+            raise RuntimeError('object metadata does not identify its section-padding contract')
+
+    # Diagnostic assembly, not a game reconstruction: retain an explicit final
+    # NOP, .space bytes, interior alignment padding and a relocated addend.
+    assembly = root / 'section-asm.s'
+    assembly.write_text('.text\n.set noreorder\njr $31\nnop\nnop\n'
+                        '.data\n.byte 127\n.balign 8\n.word 0\n'
+                        '.bss\n.space 9\n'
+                        '.section .rodata\n.balign 8\n.word external+4\n.byte 0\n')
+    output = root / 'section-asm.o'
+    compile_source(assembly, 'GAME.EXE', output, root / 'delink')
+    sections = elf_sections(output)
+    expected = {'.text': (12, 16, struct.pack('<3I', 0x03E00008, 0, 0)),
+                '.data': (12, 16, b'\x7f' + bytes(11)),
+                '.bss': (9, 16, b''), '.rodata': (5, 8, struct.pack('<I', 4) + b'\0')}
+    for name, value in expected.items():
+        if sections[name] != value:
+            raise RuntimeError(f'explicit section contents/alignment changed: {name}: {sections[name]}')
+    if len(sections['.rel.rodata'][2]) != 8:
+        raise RuntimeError('no-tail-padding lost the R_MIPS_32 relocation')
+    offset, info = struct.unpack('<II', sections['.rel.rodata'][2])
+    if (offset, info & 0xFF) != (0, 2):
+        raise RuntimeError('no-tail-padding changed the data relocation offset/type')
+    symbol = sections['.symtab'][2][(info >> 8) * 16:((info >> 8) + 1) * 16]
+    name_offset = struct.unpack_from('<I', symbol)[0]
+    name = sections['.strtab'][2][name_offset:].split(b'\0', 1)[0]
+    if name != b'external' or struct.unpack_from('<H', symbol, 14)[0] != 0:
+        raise RuntimeError('no-tail-padding changed the unresolved data referent')
+
+
 def text_words(path: Path) -> list[int]:
     data = subprocess.run(
         ["mipsel-linux-gnu-objcopy", "-O", "binary", "--only-section=.text",
@@ -234,6 +301,7 @@ def main() -> int:
                 "simple.o", "order-o0.o", "order-o2.o", "probe257.o", "claims.o",
                 "allocation-257-a.o", "allocation-257-b.o",
                 "allocation-260-a.o", "allocation-260-b.o",
+                "section-257.o", "section-260.o", "section-asm.o",
             ))),
             (),
         )
@@ -346,12 +414,14 @@ def main() -> int:
             raise RuntimeError("claimed data did not land in one .data section")
         tentative_controls(root)
         assembler_binding_controls(root)
+        section_extent_controls(root)
     print(
         "GCC 2.6.0 PSX C calibration: MIPS ELF, source-order emission at O0/O2, "
         "O2 inlined-static omission, and downstream offset shifts; "
         "GCC 2.5.7 probe: delay-slot $sp restore, checked div expansion, "
-        "sized DATA() claim symbols; both compilers: private tentative storage "
-        "and cross-TU linkage; six BSS/small-BSS/COMMON adapter binding controls"
+        "compiler-sized DATA() symbols; both compilers: private tentative storage "
+        "and cross-TU linkage; six BSS/small-BSS/COMMON adapter binding controls; "
+        "explicit section extents, zero tails, relocation addends and retained ELF alignments"
     )
     return 0
 

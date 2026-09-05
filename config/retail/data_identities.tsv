@@ -1368,13 +1368,7 @@ GAME.EXE	0x80055dae	0x2	DAT_80055dae	unknown	load	s16		address-only	data.tsv:ghi
 GAME.EXE	0x80055db4	0x2	DAT_80055db4	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055db6	0x2	DAT_80055db6	unknown	load	s16		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80055dbc	0xe0	color_matrix_table	unknown	load	MATRIX[7]	lighting	supported	asm;xrefs;player_death_apply_visual_fade;player_death_update_reverse_fade;32-byte-stride	colour matrices for lighting fades; entries 0, 3 and 4 are the death fade endpoints
-GAME.EXE	0x80055e9c	0x2	DAT_80055e9c	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055e9e	0x1	DAT_80055e9e	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ea0	0x2	DAT_80055ea0	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ea2	0x2	DAT_80055ea2	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ea4	0x1	DAT_80055ea4	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ea5	0x1	DAT_80055ea5	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80055ea6	0x1	DAT_80055ea6	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80055e9c	0xcc	render_fixed_cell_window	static	load	KfCellWindow	render_map_cells	supported	config/evidence/game_cell_window_data.md;asm;retail-mask;shared-204-byte-record	fixed 13-by-13 steep-pitch window in the common 196-cell-capacity layout; private working scope, original linkage unresolved
 GAME.EXE	0x80055f68	0xc0	render_light_matrices	unknown	load	MATRIX[6]	render	supported	asm;SetLightMatrix-references;32-byte-stride	six GTE light matrices, one per render subsystem, each fed to SetLightMatrix before its emitter pass
 GAME.EXE	0x80056080	0xfa	actor_action_profiles	unknown	load	KfActorActionProfile[25]	actor	supported	data.tsv:direct-references;game_semantic_actor_ai.tsv;game_semantic_actor_actions.tsv;asm;25x0x0a-stride	twenty-five action-selection profiles; source linkage remains unresolved
 GAME.EXE	0x8005617c	0xc	boss_death_phase_sounds	unknown	load	SoundRef[4]	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;packed-3-byte-records	four phase sound references; entries one through three are directly addressed by the boss death handler
@@ -1434,6 +1428,7 @@ GAME.EXE	0x80056522	0x2	DAT_80056522	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80056530	0x2	DAT_80056530	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056532	0x2	DAT_80056532	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056560	0x4	DAT_80056560	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80056858	0x182	svm_pitch_table	static	load	u16[193]	psyq_vmanager	supported	config/evidence/psyq_pitch_table.md;SDK-section;exact-sdk-data	Complete private VMANAGER .data; semantic name, no original SDK export; not game-owned progress
 GAME.EXE	0x800569dc	0x4	DAT_800569dc	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x800569e0	0x4	DAT_800569e0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80056a44	0x4	DAT_80056a44	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1557,7 +1552,7 @@ GAME.EXE	0x80057cf4	0x2	DAT_80057cf4	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80057cf8	0x4	DAT_80057cf8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057cfc	0x2	DAT_80057cfc	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057cfe	0x2	DAT_80057cfe	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057d08	0x4	DAT_80057d08	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057d08	0x4	ss_tick_low_ram_pointer	unknown	load	u8 *	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	initialized pointer to low RAM 0x100; only the vendored sequence callback copies through it; source linkage unresolved
 GAME.EXE	0x80057d0c	0x4	DAT_80057d0c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d10	0x4	DAT_80057d10	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d14	0x4	DAT_80057d14	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1631,34 +1626,19 @@ GAME.EXE	0x80057ff0	0x2	DAT_80057ff0	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80057ff8	0x4	DAT_80057ff8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80058000	0x4	DAT_80058000	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80058008	0x4	DAT_80058008	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058018	0x4	DAT_80058018	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80058010	0x8	ss_tick_saved_low_ram	unknown	bss	u8[8]	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete eight-byte save/restore destination of the vendor callback; byte meaning within low RAM remains unresolved; not executable initialized data
+GAME.EXE	0x80058018	0x4	ss_tick_saved_sp	unknown	bss	u32	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	saved jmp_buf[JB_SP] restored before longjmp(...,2); a stack pointer, not an abort-handler code pointer
 GAME.EXE	0x80058020	0x4	pad_buf	static	bss	u32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_buf;asm;xrefs	private PAD word initialized to -1, passed to PAD_init2, complemented by PadRead, and referenced nowhere outside PAD.OBJ
 GAME.EXE	0x80058028	0x4	pad_status	static	bss	u32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_status;asm;xrefs	private PAD status word cleared by PadInit and referenced nowhere outside PAD.OBJ
 GAME.EXE	0x80058060	0x20	player_death_saved_color_matrix	unknown	bss	MATRIX	player_death	supported	game_semantic_player_death.tsv;asm;xrefs;ReadColorMatrix	full color-matrix snapshot written at death entry and consumed by the death fade; entry startup also clears its first word, source linkage unresolved
 GAME.EXE	0x80058080	0x18	cd_search_file	unknown	bss	CdlFILE	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	CdlFILE filled by CdSearchFile; its size is rounded up to whole sectors in place
 GAME.EXE	0x80058098	0x50	cd_path_buffer	unknown	bss	char[80]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	assembled CD path (prefix, name, ;1); extent bounded by the next referenced global
-GAME.EXE	0x800580e8	0x140	DAT_800580e8	unknown	bss	POLY_FT4[2][4]	menu	supported	game_tu_menu_presentation.tsv;asm;menu-config-panel;AddPrim-site	double-buffered map-viewer frame quads, four per buffer, linked at OT slot 3000 by func_80025da0
-GAME.EXE	0x80058228	0x50	DAT_80058228	unknown	bss	POLY_FT4[2]		address-only	asm;menu-ot-primitive;AddPrim-site	double-buffered shared menu POLY_FT4 linked at OT slot 500 by func_80027e58
-GAME.EXE	0x80058278	0x50	DAT_80058278	unknown	bss	POLY_FT4[2]		address-only	asm;menu-ot-primitive;AddPrim-site	double-buffered shared menu POLY_FT4 linked at OT slot 0 by func_80027ea0
-GAME.EXE	0x800582c8	0x120	DAT_800582c8	unknown	bss	POLY_F4[2][6]	menu	supported	asm;func_80027ee4;AddPrim-site;144-byte-stride;abuts-number-atlas	double-buffered composite dialog-frame flat quads, six per buffer (144-byte stride), enqueued at OT slot 1000 by the frame builder func_80027ee4; the [2][6] extent ends exactly at the number atlas 0x800583e8, so the true base is 0x800582c8 (not the first referenced element 0x800582f8)
-GAME.EXE	0x800583e8	0xc	DAT_800583e8	unknown	bss	MenuSpriteDef	menu	supported	game_tu_menu_presentation.tsv;asm;menu_draw_number-arg	menu number-atlas descriptor; retail reads tpage, CLUT, texel origin, width, and height through the shared MenuSpriteDef layout
-GAME.EXE	0x800583f4	0xc	DAT_800583f4	unknown	bss	MenuSpriteDef	menu	supported	game_tu_menu_presentation.tsv;asm;menu_draw_string-arg	menu glyph-atlas descriptor; retail reads tpage, CLUT, texel origin, width, and height through the shared MenuSpriteDef layout
-GAME.EXE	0x80058400	0x2	DAT_80058400	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058402	0x2	DAT_80058402	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058404	0x1	DAT_80058404	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058406	0x1	DAT_80058406	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058408	0x2	DAT_80058408	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005840a	0x2	DAT_8005840a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005840c	0xc	DAT_8005840c	unknown	bss	MenuSpriteDef		address-only	asm;menu-two-option-dispatch;func_80029ab0-arg	menu option-box sprite descriptor (normal)
-GAME.EXE	0x80058418	0xc	DAT_80058418	unknown	bss	MenuSpriteDef		address-only	asm;menu-two-option-dispatch;func_80029ab0-arg	menu option-box sprite descriptor (highlight)
-GAME.EXE	0x80058424	0xc	DAT_80058424	unknown	bss	MenuSpriteDef		address-only	asm;menu_draw_item_detail;menu_blit_sprite_translucent-arg	item-icon sprite descriptor blitted by the item-detail panel
-GAME.EXE	0x8005843c	0x30	menu_list_tiles	global	bss	MenuTileSprite[4]	menu	supported	game_semantic_menu_list_tiles.tsv;item_load_database;menu_list_render;asm;0x0c-stride	four menu-list tile descriptors in backdrop, row, end, and selected order
-GAME.EXE	0x8005846c	0xc	DAT_8005846c	unknown	bss	MenuSpriteDef		address-only	asm;menu-two-option-dispatch;func_80029c50-arg	menu window-frame sprite descriptor
-GAME.EXE	0x80058478	0x948	menu_window_layouts	global	bss	MenuWindowLayout[9]	menu	supported	game_semantic_menu_window_layouts.tsv;item_load_database;asm;0x108-stride;0x18-labels	nine menu-window layouts loaded from COM\\STAT.DAT; each contains one title and ten selectable MenuGlyphString rows
-GAME.EXE	0x80058dc0	0x640	item_name_rows	unknown	bss	MenuGlyphRow[80]	menu	supported	game_semantic_item_menu_data.tsv;item_load_database;menu-consumers	80 item-name rows loaded from COM\\STAT.DAT and indexed by item id
-GAME.EXE	0x80059400	0xb4	magic_name_rows	unknown	bss	MenuGlyphRow[9]	menu	supported	game_semantic_item_menu_data.tsv;item_load_database;menu-consumers	9 magic-name rows loaded from COM\\STAT.DAT and indexed by spell id
-GAME.EXE	0x800594b8	0x140	item_buy_prices	unknown	bss	u16[80][2]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;item_menu_buy;menu_draw_item_detail	80 two-column item buy prices loaded from COM\\STAT.DAT
-GAME.EXE	0x800595f8	0x140	item_sell_prices	unknown	bss	u16[80][2]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;item_menu_sell;menu_draw_item_detail	80 two-column item sell prices loaded from COM\\STAT.DAT
+GAME.EXE	0x800580e8	0x390	menu_assets	global	bss	KfMenuAssets	item	supported	game_menu_assets.md;item_load_database;menu_draw_item_name_frame;menu_draw_window_backdrop;STAT.DAT;LIBGPU.H	complete first 912-byte runtime-loaded menu block; backdrop-relative quad addressing independently supports one owner
+GAME.EXE	0x80058478	0x948	menu_window_layouts	global	bss	MenuWindowLayout[9]	item	supported	game_semantic_menu_window_layouts.tsv;item_load_database;asm;0x108-stride;0x18-labels;game_menu_banks.md	nine menu-window layouts loaded from COM\\STAT.DAT; each contains one title and ten selectable MenuGlyphString rows; source BSS owner in item.c
+GAME.EXE	0x80058dc0	0x640	item_name_rows	global	bss	MenuGlyphRow[80]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;menu-consumers;game_menu_banks.md	80 item-name rows loaded from COM\\STAT.DAT and indexed by item id; source BSS owner in item.c
+GAME.EXE	0x80059400	0xb4	magic_name_rows	global	bss	MenuGlyphRow[9]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;menu-consumers;game_menu_banks.md	9 magic-name rows loaded from COM\\STAT.DAT and indexed by spell id; source BSS owner in item.c
+GAME.EXE	0x800594b8	0x140	item_buy_prices	global	bss	u16[80][2]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;item_menu_buy;menu_draw_item_detail;game_menu_banks.md	80 two-column item buy prices loaded from COM\\STAT.DAT; source BSS owner in item.c
+GAME.EXE	0x800595f8	0x140	item_sell_prices	global	bss	u16[80][2]	item	supported	game_semantic_item_menu_data.tsv;item_load_database;item_menu_sell;menu_draw_item_detail;game_menu_banks.md	80 two-column item sell prices loaded from COM\\STAT.DAT; source BSS owner in item.c
 GAME.EXE	0x80059738	0x158	audio_sequence_table	unknown	bss	u8[SS_SEQ_TABSIZ * 2]	audio	supported	relocs.tsv:paired-reviewed;game_semantic_audio_control.tsv;asm;Psy-Q-2.5-LIBSND.H:SS_SEQ_TABSIZ;SsSetTableSize	344-byte workspace supplied to SsSetTableSize with sequence maximum two and track maximum one; source linkage remains unresolved
 GAME.EXE	0x800598a8	0x18	format_number_buffer	static	bss	char[24]	format	candidate	relocs.tsv:paired-reviewed;asm;format_int_dec;format_int_hex	shared scratch buffer for base-10 and base-16 conversion; anchored at the referenced address, field padding prepends below it inside the free BSS gap
 GAME.EXE	0x800598f0	0x1	DAT_800598f0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -1736,7 +1716,7 @@ GAME.EXE	0x8005b0a0	0x2	DAT_8005b0a0	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x8005b0a2	0x2	DAT_8005b0a2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8005b0a4	0x2	DAT_8005b0a4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8005b0ac	0x4	DAT_8005b0ac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005b274	0x4	DAT_8005b274	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8005b270	0x30	ss_tick_context	unknown	bss	jmp_buf	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete SETJMP.H twelve-word context; +4 is JB_SP inside this owner, not a separate global; original private/exported linkage unresolved
 GAME.EXE	0x800632a4	0x4	DAT_800632a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800642d0	0x4	DAT_800642d0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800642d4	0x4	DAT_800642d4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -1760,7 +1740,7 @@ GAME.EXE	0x800652a8	0xf0	DAT_800652a8	unknown	bss	u8[240]		address-only	asm;xref
 GAME.EXE	0x80065420	0x4	DAT_80065420	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065424	0x4	DAT_80065424	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80065464	0x4	DAT_80065464	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80065be8	0xcc0	render_cell_windows	unknown	bss	KfCellWindow[16]	resources	supported	game_semantic_render_cell_windows.tsv;asm;common_resources_load;render_map_cells	16 per-yaw visible-cell windows copied from COM\\COM.DAT and selected by view yaw with a 204-byte record stride
+GAME.EXE	0x80065be8	0xcc0	render_cell_windows	global	bss	KfCellWindow[16]	resources	supported	game_semantic_render_cell_windows.tsv;config/evidence/game_cell_window_data.md;COM-DAT-chunk;asm	16 per-yaw windows copied by common_resources_load; same complete payload as OPEN RTBL; shared global source ownership, original linkage unresolved
 GAME.EXE	0x800668d8	0x4	save_header_buffer	unknown	bss	KfSaveHeader *	save_workspace	supported	game_semantic_save_system.tsv;asm;xrefs;0x280	shared pointer rebound to either the base of a 0x2800 arena allocation or the caller's stack workspace; linkage scope is not yet proved
 GAME.EXE	0x800668e0	0x4	save_payload_buffer	unknown	bss	KfSavePayload *	save_workspace	supported	game_semantic_save_system.tsv;asm;xrefs;0x2580	shared pointer rebound to save_header_buffer plus 0x280 or the corresponding caller stack slice; linkage scope is not yet proved
 GAME.EXE	0x800668e8	0x2710	map_collision_flag_grid	unknown	bss	u8[100][100]	collision	supported	game_semantic_collision_grid.tsv;asm;xrefs;collision_query_world;same-cell-index-as-map_collision_grid	per-cell byte: low five bits are updated modulo 32 and tested for zero, bits 0xe0 are preserved, and the query also masks 0xf0 against its flags
@@ -1811,7 +1791,7 @@ GAME.EXE	0x80095698	0x4	DAT_80095698	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x8009569c	0x4	DAT_8009569c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800956a0	0x140	render_state	unknown	bss	KfRenderState	render	supported	game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register
 GAME.EXE	0x800957e0	0x80	light_quadrant_matrices	unknown	bss	MATRIX[4]	render	supported	asm;render_initialize;absolute-address	products of the light matrix with each yaw-quadrant matrix; render_initialize addresses them absolutely while it reaches the quadrant matrices from the light matrix base register, so they are a separate object
-GAME.EXE	0x80095860	0x4	active_cell_window	unknown	bss	const KfCellWindow *	render	supported	game_semantic_render_cell_windows.tsv;asm;render_map_cells;render_entities	per-frame visible-cell window selected by render_map_cells and read by all entity-culling passes
+GAME.EXE	0x80095860	0x4	active_cell_window	global	bss	const KfCellWindow *	render_map_cells	supported	game_semantic_render_cell_windows.tsv;config/evidence/game_cell_window_data.md;asm;render_entities	selected window published by render_map_cells and read by all culling passes; shared global source ownership, original linkage unresolved
 GAME.EXE	0x80095868	0x90	audio_state	unknown	bss	KfAudioState	audio	supported	game_semantic_audio_control.tsv;game_semantic_audio_spatial.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate: vab header, active VAB id, sequence buffer/id/active flag, listener position and rotation, voice slots; audio_initialize addresses the voice-id slots relative to the sequence-buffer field, which proves one object
 GAME.EXE	0x800958f8	0x4	game_exit_code	global	bss	u32	game	supported	game_semantic_math_lifecycle.tsv;asm;xrefs	main-loop exit flag/status copied by main into entry_args[1]
 GAME.EXE	0x80095900	0x2710	map_floor_height_grid	unknown	bss	u8[100][100]	map	supported	game_semantic_player_motion_attack.tsv;asm;xrefs;100-wide-indexing	map-cell height bytes converted to world floor height by multiplication by -100; source linkage remains unresolved
@@ -2663,6 +2643,7 @@ OPEN.EXE	0x80035c9a	0x2	DAT_80035c9a	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x80035ca8	0x2	DAT_80035ca8	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035caa	0x2	DAT_80035caa	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80035cd8	0x4	DAT_80035cd8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80035fd0	0x182	svm_pitch_table	static	load	u16[193]	psyq_vmanager	supported	config/evidence/psyq_pitch_table.md;SDK-section;exact-sdk-data	Complete private VMANAGER .data; semantic name, no original SDK export; not game-owned progress
 OPEN.EXE	0x800361bc	0x4	DAT_800361bc	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800361c4	0x4	DAT_800361c4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800361c8	0x4	DAT_800361c8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2784,7 +2765,7 @@ OPEN.EXE	0x80037464	0x2	DAT_80037464	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x80037468	0x4	DAT_80037468	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003746c	0x2	DAT_8003746c	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003746e	0x2	DAT_8003746e	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037478	0x4	DAT_80037478	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037478	0x4	ss_tick_low_ram_pointer	unknown	load	u8 *	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	initialized pointer to low RAM 0x100; only the vendored sequence callback copies through it; source linkage unresolved
 OPEN.EXE	0x8003747c	0x4	DAT_8003747c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037480	0x4	DAT_80037480	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037484	0x4	DAT_80037484	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2852,7 +2833,8 @@ OPEN.EXE	0x80037730	0x2	DAT_80037730	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x80037738	0x4	DAT_80037738	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037740	0x4	DAT_80037740	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037748	0x4	DAT_80037748	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037758	0x4	DAT_80037758	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037750	0x8	ss_tick_saved_low_ram	unknown	bss	u8[8]	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete eight-byte save/restore destination of the vendor callback; byte meaning within low RAM remains unresolved; not executable initialized data
+OPEN.EXE	0x80037758	0x4	ss_tick_saved_sp	unknown	bss	u32	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	saved jmp_buf[JB_SP] restored before longjmp(...,2); a stack pointer, not an abort-handler code pointer
 OPEN.EXE	0x80037760	0x4	pad_buf	static	bss	u32	pad	supported	pad_storage_and_linkage.md;open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-sbss-pad_buf;retail-CPE-tail;asm;xrefs	private uninitialized PAD word after the CPE residue at 0x800375d8; set to -1 before its address escapes or PadRead consumes it; archive .sbss allocation, not a load initializer
 OPEN.EXE	0x80037768	0x4	pad_status	static	bss	u32	pad	supported	pad_storage_and_linkage.md;open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-sbss-pad_status;retail-CPE-tail;asm;xrefs	private uninitialized PAD word after the CPE residue; cleared by PadInit; archive .sbss offset eight corroborates spacing, not an initialized zero or an eight-byte C type
 OPEN.EXE	0x80037770	0x4	DAT_80037770	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2935,7 +2917,7 @@ OPEN.EXE	0x80039170	0x2	DAT_80039170	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x80039172	0x2	DAT_80039172	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80039174	0x2	DAT_80039174	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8003917c	0x4	DAT_8003917c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80039344	0x4	DAT_80039344	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80039340	0x30	ss_tick_context	unknown	bss	jmp_buf	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete SETJMP.H twelve-word context; +4 is JB_SP inside this owner, not a separate global; original private/exported linkage unresolved
 OPEN.EXE	0x80041374	0x4	DAT_80041374	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800423a0	0x4	DAT_800423a0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800423a4	0x4	DAT_800423a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

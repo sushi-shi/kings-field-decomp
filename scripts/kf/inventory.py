@@ -399,6 +399,8 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         "DVECTOR": (4, 2),
         "DRAWENV": (0x5C, 4),
         "DISPENV": (0x14, 2),
+        "POLY_F4": (0x18, 4),
+        "POLY_FT4": (0x28, 4),
     }
     layouts: dict[str, HeaderStructureLayout] = {}
     definition_pattern = re.compile(
@@ -431,6 +433,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/open_render.h",
         REPO / "include/kf/open_resources.h",
         REPO / "include/kf/game_save.h",
+        REPO / "include/kf/game_menu.h",
         REPO / "include/kf/game_cd.h",
     )
     for path in checked_headers:

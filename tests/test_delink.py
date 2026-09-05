@@ -792,6 +792,21 @@ class ModuleObjectTests(unittest.TestCase):
         self.assertEqual(names["second"][1], 8)
         self.assertEqual(names["third"][1], 0x10)
 
+    def test_exported_bss_preserves_retail_bank_allocation_gap_without_an_extra_global(self):
+        function = Function('GAME.EXE', 0x80010000, 8, 8, 1, 'control', 'test', 'test')
+        module = Module('GAME.EXE', 'game.control', 'control', (function.va,), (
+            Datum(0x80059400, 180, 'names', 'bss', 'global'),
+            Datum(0x800594B8, 320, 'buy', 'bss', 'global'),
+            Datum(0x800595F8, 320, 'sell', 'bss', 'global'),
+        ))
+        built = _module_object(module, {function.va: function}, {function.va: (bytes(8), [])})
+        names = {name: record for name, record in elf_symbols(built.data)}
+        self.assertEqual([(names[name][1], names[name][2]) for name in ('names', 'buy', 'sell')],
+                         [(0, 180), (184, 320), (504, 320)])
+        self.assertEqual((built.bss_size, elf_sections(built.data)['.bss'][8]), (824, 8))
+        self.assertEqual(Datum(0x800594B4, 4, 'word', 'bss', 'global').alignment, 4)
+        self.assertEqual(Datum(0x800594B8, 4, 'word', 'load', 'global').alignment, 4)
+
     def test_module_section_alignment_follows_existing_claim_packing(self):
         function = Function('GAME.EXE', 0x80010000, 8, 8, 1, 'control', 'test', 'test')
         for alignment in (1, 2, 4, 8):

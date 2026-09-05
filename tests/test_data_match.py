@@ -23,12 +23,14 @@ _TEXT = b"\x00\x00\x00\x00"
 
 
 def _obj(path: Path, *, data=b"", rodata=b"", bss=0,
-         rodata_relocs=(), data_relocs=(), bss_symbols=()) -> Elf:
+         rodata_relocs=(), data_relocs=(), bss_symbols=(), bss_alignment=4,
+         data_symbols=(), data_alignment=4) -> Elf:
     blob = write_mips_elf(
         _TEXT, "fn", 4,
         data=data, rodata=rodata, bss_size=bss,
         rodata_relocations=rodata_relocs, data_relocations=data_relocs,
-        bss_symbols=bss_symbols,
+        bss_symbols=bss_symbols, bss_alignment=bss_alignment,
+        data_symbols=data_symbols, data_alignment=data_alignment,
     )
     path.write_bytes(blob)
     return Elf(path)
@@ -278,6 +280,97 @@ class StrictGateTest(unittest.TestCase):
             "game.sample", "GAME.EXE", "src/game/sample.c", "probe", (function,)
         )
         return Manifest({}, (unit,))
+
+    def test_identical_bss_layout_requires_compatible_retail_placement_on_both_sides(self) -> None:
+        # Different ELF alignments are legal when the actual base satisfies both;
+        # identical bytes/offsets are insufficient when either side cannot fit.
+        for va, offset, target_align, source_align, expected in (
+                (0x80060008, 0, 8, 16, 1),
+                (0x80060008, 0, 16, 8, 1),
+                (0x80060000, 0, 8, 16, 0),
+                (0x80060008, 8, 8, 16, 0)):
+            with self.subTest(va=hex(va), offset=offset, target=target_align, source=source_align):
+                with TemporaryDirectory() as td:
+                    root = Path(td)
+                    unit = replace(self._manifest().units[0],
+                                   data=(Datum(va, 4, "word", "bss", "global"),))
+                    manifest = Manifest({}, (unit,))
+                    target = root / "delink/game/modules" / unit.object_name
+                    source = root / "objdiff/game/base" / unit.object_name
+                    target.parent.mkdir(parents=True)
+                    source.parent.mkdir(parents=True)
+                    symbols = (DefinedSymbol("word", offset, 4, STT_OBJECT),)
+                    _obj(target, bss=16, bss_symbols=symbols, bss_alignment=target_align)
+                    _obj(source, bss=16, bss_symbols=symbols, bss_alignment=source_align)
+                    self.assertEqual(_diff_bss(Elf(target), Elf(source)).status, "match")
+                    with (patch("scripts.kf.data_match.load_manifest", return_value=manifest),
+                          patch("scripts.kf.config_data.run", return_value=0)):
+                        self.assertEqual(run(
+                            ("GAME.EXE",), show_detail=True, show_coverage=False,
+                            delink_dir=root / "delink", objdiff_dir=root / "objdiff"), expected)
+
+    def test_equal_sections_with_conflicting_data_claims_are_not_a_match(self) -> None:
+        for storage in ("load", "bss"):
+            with self.subTest(storage=storage), TemporaryDirectory() as td:
+                root = Path(td)
+                unit = replace(self._manifest().units[0], data=(
+                    Datum(0x80060000, 4, "first", storage, "global"),
+                    Datum(0x80060010, 4, "second", storage, "global"),
+                ))
+                target = root / "delink/game/modules" / unit.object_name
+                source = root / "objdiff/game/base" / unit.object_name
+                target.parent.mkdir(parents=True)
+                source.parent.mkdir(parents=True)
+                symbols = (DefinedSymbol("first", 0, 4, STT_OBJECT),
+                           DefinedSymbol("second", 4, 4, STT_OBJECT))
+                for path in (target, source):
+                    if storage == "load":
+                        _obj(path, data=bytes(8), data_symbols=symbols)
+                    else:
+                        _obj(path, bss=8, bss_symbols=symbols)
+                results, failures = diff_image(
+                    "GAME.EXE", Manifest({}, (unit,)), root / "delink", root / "objdiff")
+                self.assertEqual(failures, [])
+                self.assertFalse(results[0].matches)
+                self.assertEqual(results[0].divergent[0].status, "placement")
+                self.assertIn("conflicting-section-bases", results[0].divergent[0].detail)
+
+    def test_equal_initialized_bytes_cannot_hide_incompatible_source_alignment(self) -> None:
+        with TemporaryDirectory() as td:
+            root = Path(td)
+            unit = replace(self._manifest().units[0],
+                           data=(Datum(0x80060008, 16, "table", "load", "global"),))
+            target = root / "delink/game/modules" / unit.object_name
+            source = root / "objdiff/game/base" / unit.object_name
+            target.parent.mkdir(parents=True)
+            source.parent.mkdir(parents=True)
+            symbols = (DefinedSymbol("table", 0, 16, STT_OBJECT),)
+            for path, alignment in ((target, 8), (source, 16)):
+                _obj(path, data=bytes(range(16)), data_symbols=symbols, data_alignment=alignment)
+            self.assertEqual(_diff_init_section(".data", Elf(target), Elf(source)).status, "match")
+            results, failures = diff_image(
+                "GAME.EXE", Manifest({}, (unit,)), root / "delink", root / "objdiff")
+            self.assertEqual(failures, [])
+            self.assertEqual(results[0].divergent[0].status, "placement")
+            self.assertIn('"alignment": 16', results[0].divergent[0].detail)
+            self.assertNotIn("target:", results[0].divergent[0].detail)
+
+    def test_unclaimed_initialized_section_is_not_a_match_even_when_bytes_equal(self) -> None:
+        with TemporaryDirectory() as td:
+            root = Path(td)
+            manifest = self._manifest()
+            unit = manifest.units[0]
+            target = root / "delink/game/modules" / unit.object_name
+            source = root / "objdiff/game/base" / unit.object_name
+            target.parent.mkdir(parents=True)
+            source.parent.mkdir(parents=True)
+            for path in (target, source):
+                _obj(path, rodata=b"same")
+            results, failures = diff_image(
+                "GAME.EXE", manifest, root / "delink", root / "objdiff")
+            self.assertEqual(failures, [])
+            self.assertEqual(results[0].divergent[0].status, "placement")
+            self.assertIn("unclaimed-section", results[0].divergent[0].detail)
 
     def test_missing_comparison_artifacts_are_reported(self) -> None:
         with TemporaryDirectory() as td:

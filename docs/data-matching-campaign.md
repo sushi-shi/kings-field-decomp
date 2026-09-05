@@ -678,6 +678,256 @@ build still rejects explicit data, reachability and placement failures. The
 master update is a fast-forward to the verified merge, not a reset or rewrite
 of either parent's history.
 
+## Complete runtime-loaded menu asset owner
+
+The next source campaign replaces 17 fragmented menu data identities with one
+912-byte `KfMenuAssets menu_assets` BSS definition in the item loader's module.
+The first STAT.DAT copy proves the extent; two retail renderers independently
+derive the background quads from the later backdrop descriptor's base. The
+shared type contains authentic SDK packets, font atlases, menu descriptors and
+list tiles; two opaque bytes and the previously missing confirmed-row sprite
+are now accounted for. There are no overlapping interior globals or invented
+executable initializers. Types and the extern declaration live in game_menu.h.
+
+All 380 reviewed address pairs restore the original retail targets, and the
+complete 912-byte source/target BSS allocations match. Bounded retail/source
+controls verify the loader's four alignment paths, all six copied banks and
+the preserved inter-bank gap. The renderer controls also caught and now cover
+four missing background enqueue calls and incorrect texture mirroring. See
+[the menu asset evidence and per-function verdicts](../config/evidence/game_menu_assets.md).
+
+Source/header literal `DAT_` occurrences fall **564 to 179** (grep hit lines:
+509 to 172). GAME reached
+source owners rise 73 to 74; unpaired reached config ranges fall **646 to 629**
+(GAME 362, OPEN 267). All **360/471 exact game functions** and 13 vendor controls
+are preserved. The corrected backdrop reaches 99.97176%, not exact; its frame
+differs by 64 bytes. No function is newly banked and no score gate is relaxed.
+
+All 556 local tests pass without skips, as do Ruff, diff and flake checks. The
+mandatory full build still rejects the outstanding strict-data, reachability
+and placement failures: source DATA **11/59**, SDK data **2/2**, target relink
+**108/114**. A correct runtime-loaded BSS owner is not proof of complete loaded
+executable data matching. Remaining config-only ranges and unresolved reference
+paths still prevent exhaustive byte coverage.
+
+## STAT.DAT banks and a source-placement false positive
+
+The five remaining STAT.DAT banks now have typed BSS definitions alongside
+menu_assets in item.c. Their 4796 bytes retain the existing array types and
+extents; the combined six-bank RAM span is 5712 bytes including the independently
+proved four-byte allocation gap before prices. The delinker now preserves that
+gap for explicitly global BSS without inventing a gap datum. The stale
+DAT_80058494 extern and eight-byte cell view are replaced by the actual window
+row's glyph field. All 110 reviewed bank references retain their raw retail
+targets, and bounded retail/source controls cover every window/row pair and
+all bytes of all six loader copies at four source alignments.
+
+The resulting source and target BSS have identical named layouts, but the
+source ELF requires sixteen-byte alignment at retail base 800580e8. The prior
+data gate falsely accepted this pair. It now reuses the independent relink
+verifier's placement rules for both data objects, rejecting incompatible
+alignment, conflicting bases and unclaimed sections. It does not mask data,
+rewrite alignment flags or count unplaceable allocations as closed.
+
+This removes five previous data-only matches: GAME item, save_system and
+lighting, and OPEN render_map_cells and opening_entity_pool. Strict source
+DATA drops **11/59 to 6/59**; SDK data remains 2/2. Target relinking remains
+108/114 with the same six conflicts. All **360/471 exact game functions** and
+13 vendor controls are preserved. The initializer's honest score is 80.714290%
+after recovering its actual field; the other 483 function-score rows are
+unchanged, and no function is banked.
+
+Reached GAME source owners rise 74 to 79 and unpaired reached config ranges
+fall **629 to 624** (GAME 357, OPEN 267). Source/header DAT_ occurrences fall
+179 to 177. The full build remains red on explicit data, reachability and
+placement failures; complete reachable-byte coverage and linked-executable
+equality remain unproven. See
+[the per-function and placement evidence](../config/evidence/game_menu_banks.md).
+
+All 564 local tests pass without skips; Ruff, diff checks and the full flake
+checks pass (83 optional local-artifact skips inside the flake sandbox). Focused
+compiles and the full comparison graph were rebuilt. No failure gate, function
+baseline, compiler profile or original address was relaxed.
+
+## Vendor sequence callback context and missing OPEN references
+
+The sequence callback now has four supported config-owned data objects in each
+overlay: an initialized pointer to low RAM, an eight-byte save area, a saved SP,
+and the authentic twelve-word `jmp_buf`. The old +4 identities were interior
+stack-pointer fields, not separate abort-handler globals. Seven unused vendor
+declarations are removed from the game header. Source/header DAT_ occurrences
+fall 177 to 170; no SDK body is reconstructed or counted as game progress.
+
+Twenty reviewed HI16/LO16 pairs round-trip to the original retail instructions
+and referents. OPEN gains two missing pairs, including an alternate-stack target
+whose allocation bounds remain unproved. The GAME unmodelled-target count falls
+four to one; OPEN rises zero to one because the same previously invisible gap is
+now exposed. Eight OPEN candidate paths become validated. Config ranges without
+matching counterparts increase 624 to 625 (GAME 358, OPEN 267); a newly modelled
+owner is not silently treated as a successful comparison.
+
+The Release 2.5 SSCALL member is explicitly a revision negative control: its
+export and dispatch family support vendor lineage, but it lacks the retail
+setjmp wrapper and cannot supply these data allocations. No provider object or
+arbitrary stack extent is fabricated. See the
+[per-image context and relocation evidence](../config/evidence/sony_sequence_tick_context.md).
+
+All 112 source objects and 484 function-score rows are unchanged. The 360/471
+exact game functions and 13 vendor controls are preserved. All 572 local tests
+pass without skips; Ruff and diff checks pass. The mandatory full build remains
+red with source data 6/59, SDK data 2/2 and target relinking 108/114. This campaign
+improves reachable-data identity and exposes missing evidence; it does not close
+data matching or linked-executable equality.
+
+## Remove automatic source-section tails at assembly time
+
+The source compiler pipeline now passes GNU `as`'s documented
+`-no-pad-sections` option, recorded in object metadata. Controlled assembly and
+both native compilers distinguish automatic section tails from explicit zeros,
+interior alignment directives, delay-slot instructions and compiler-rounded
+COMMON allocations. A complete SDK record has 386 bytes with alignment eight:
+section alignment is not permission to invent payload bytes.
+
+All 112 source units were rebuilt. Ninety-two objects change; every retained
+runtime byte, named symbol, ordered relocation row and section alignment stays
+unchanged. All 484 function scores remain unchanged, preserving 360/471 exact
+game functions and thirteen exact vendor controls. The compiler profiles, C
+sources, retail claims, data identities and target objects are untouched.
+
+Strict source data rises 6/59 to 8/59: GAME player_death, actor and
+map_object_pool, plus OPEN opening_fade, now pass. GAME menu_map_viewer and OPEN
+render expose string-section extents previously hidden by coincident automatic
+zero tails. GAME item's 40-byte literal claim similarly exceeds its 37 emitted
+bytes; its BSS placement failure is retained. No target is padded or cropped,
+no ELF alignment is lowered, and no comparison failure is waived.
+
+The full build remains red. SDK data stays 2/2, target relinking 108/114 and
+unpaired reached config ranges 625. See
+[the mechanism, negative control and corpus comparison](patterns/assembler-section-extents.md).
+This improves faithful object generation, not the outstanding complete-data
+ownership or whole-program equality claims.
+
+All 573 local tests pass without skips, both compiler smoke probes pass, and
+Ruff, diff and flake checks pass. The flake suite retains 87 expected
+local-artifact skips; the new native compiler and SDK record controls run there.
+
+## Match the complete private VMANAGER pitch tables
+
+GAME `80056858` and OPEN `80035fd0` now own the complete 386-byte private
+`svm_pitch_table`, typed `u16[193]`, with the actual LIBSND/VMANAGER provider.
+The whole SDK section is anonymous and non-relocating; the importer preserves
+it with local linkage, original eight-byte alignment and no rounded tail.
+Global sections still require their exact original offset-zero exports, and
+private sections reject any export or unsupported allocation/patch record.
+
+The four reviewed note2pitch/note2pitch2 pairs use the complete owner with zero
+addends and restore the exact retail words. Coincident biased cosine bases
+retain `rsin_tbl-800`, not the pitch owner. Prefix and suffix census gaps keep
+all unrelated bytes and references. No SDK function is reconstructed as game
+progress and no game source/header spelling changes.
+
+Both image-local data-only contributions pass native objdiff and independent
+target/provider relinking: SDK data increases **2/2 to 4/4**, adding **772
+matched bytes**. All 112 source objects, all 112 module targets and all 484
+function scores stay unchanged. The 360/471 exact game functions and thirteen
+vendor controls are preserved; strict source-owned data remains **8/59**.
+Target relinking is now **110/116**, with the same six placement conflicts.
+
+Unpaired reached config ranges increase **625 to 626**, because OPEN's old
+coarse gap becomes a matched table plus two separately unresolved reached gaps.
+GAME remains 358 unmatched ranges; OPEN becomes 268. This is more accurate
+accounting, not a claim of full coverage. Source/header `DAT_` occurrences
+remain 170. The full build is still red on data, reachability and placement.
+
+All 580 local tests pass without skips, and Ruff, diff and flake checks pass
+(91 optional local-artifact skips inside the flake sandbox). See the
+[per-function evidence and complete-data controls](../config/evidence/psyq_pitch_table.md).
+
+## GAME visibility-window source owners
+
+The GAME selector now owns its complete private 204-byte fixed window and
+four-byte selected-window pointer; resources owns the 3264-byte runtime window
+table. The existing shared GAME/OPEN record and game_render.h declarations are
+retained. COM.DAT independently supplies sixteen complete records identical to
+OPEN's RTBL. The fixed mask uses a 13-by-13 active grid within that shared
+capacity. Six interior aliases disappear, with no lost census bytes or invented
+executable initializer for runtime BSS. No TU is regrouped.
+
+All fourteen reviewed address pairs restore the original raw words. Forty-eight
+bounded retail selector controls verify pitch boundaries, every yaw, map edges,
+pointer publication and ordered mask dispatches. Both modified source objects
+and target modules retain identical text bytes; all 484 function scores remain
+unchanged, preserving 360/471 exact game functions and thirteen vendor controls.
+The loader and selector remain exact; the two non-exact renderers are untouched.
+
+The complete fixed payload equals retail, and the full runtime table's BSS
+layout agrees. Neither closes data matching: sixteen-byte source alignment
+cannot place them at their retail addresses, and the pointer's source BSS
+section occupies eight bytes against a four-byte claim. These failures remain
+visible. Strict source data changes **8/59 to 8/60**, SDK data stays **4/4**, and
+target relinking stays **110/116**, with the same six section-base conflicts.
+
+GAME reached source owners rise 79 to 82. Unmatched reached config ranges fall
+**626 to 623** across images, and source/header DAT_ occurrences fall **170 to
+167**. This is ownership progress, not full reachable-byte or linked-executable
+closure. The mandatory full build remains red. All **587 local tests** pass
+without skips; Ruff and diff checks pass. See the
+[per-function evidence and exact comparison boundary](../config/evidence/game_cell_window_data.md).
+
+## Independent source-object sizes
+
+A native control exposed a circular data comparison: the compiler wrapper
+copied retail DATA sizes into source-object symbols. With GCC 2.5.7's COMMON
+rounding, a C int falsely claimed as one byte passed even the full BSS layout
+and placement gate. The wrapper now queries each object's sizeof in a separate
+compilation of the same preprocessed C using the same pinned toolchain. No
+query bytes enter the real object, and no game source assertions are added.
+
+The full corpus has 100 measured DATA owners. Ninety-nine agree with their
+claims; OPEN opening_scene0_sound is three bytes, not its four-byte claim. Its
+source symbol now reports that mismatch, while the following retail/source
+zero byte remains accounted for. Only one source symbol size changes: all
+runtime bytes, section extents/alignments, relocation rows and 484 function
+scores are preserved. No retail claim or data gap is silently changed.
+
+All 591 local tests pass without skips, as do Ruff, diff checks and both native
+compiler smoke probes. Strict source data remains **8/60**, SDK data **4/4**, and
+target relinking **110/116**. The full build remains red and the 623 unmatched
+reached config ranges remain open. This removes a false-positive mechanism; it
+does not claim full data closure. See the
+[reproduction, query isolation and full-corpus evidence](patterns/compiler-owned-data-sizes.md).
+
+## Integration through independent source sizes
+
+At the user's request, the seven completed data-branch commits through
+`66b4756` are merged with master at `c240f2b`. The branch worktree's newer
+uncommitted OPEN/delinker work is left untouched and is not represented as
+completed integration. Master's removal of `semantic_types.h` remains intact;
+the only remaining references are tests guarding against its reintroduction.
+
+The menu merge keeps master's exact indexed `menu_list_init`, shared types
+and newer formatting/glyph implementations, while adopting the complete
+`menu_assets` owner and both campaigns' relocation evidence. Inventory count
+expectations reflect the validated combined inventories, not either parent.
+No comparison gate or exact-match baseline is relaxed.
+
+All 112 reconstruction units are rebuilt. All **378/471 exact functions**
+remain exact: GAME 280/362, OPEN 97/108, PSX 1/1; the thirteen vendored
+controls also remain exact. Of 484 native function rows, 480 retain their
+sizes and strict percentages. The four changes are the data campaign's
+already documented partial menu consumers: status panel 78.468090%, item
+name frame 94.522270%, window backdrop 99.971760%, and window renderer
+86.908040%. The latter's honest drop from 88.172420% follows the recovered
+aggregate references and remains explicitly partial. No new function is
+banked by the merge.
+
+Ruff, all **591 local tests**, diff checks and `nix flake check -L` pass.
+The full build still rejects unresolved data/ownership/placement mismatches:
+strict source data **7/60**, SDK contributions **4/4**, target relinking
+**110/116**, and 619 reached config ranges without independent comparisons.
+The six target section-base conflicts remain visible. This integration does
+not claim complete data closure or linked-executable equality.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

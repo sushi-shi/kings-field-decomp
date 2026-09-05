@@ -30,30 +30,30 @@ void menu_draw_two_option(
 {
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     if (selected == 0) {
-        menu_blit_sprite(&DAT_8005846c, (const MenuPoint *)option0);
+        menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)option0);
     } else {
-        menu_blit_sprite(&DAT_8005846c, (const MenuPoint *)option1);
+        menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)option1);
     }
     if (highlight == 1) {
         if (selected == 0) {
             menu_blit_sprite_translucent(
-                &DAT_80058418, (const MenuPoint *)option0);
+                &menu_assets.option_highlight, (const MenuPoint *)option0);
             menu_blit_sprite_translucent(
-                &DAT_8005840c, (const MenuPoint *)option1);
+                &menu_assets.option_background, (const MenuPoint *)option1);
         } else {
             menu_blit_sprite_translucent(
-                &DAT_8005840c, (const MenuPoint *)option0);
+                &menu_assets.option_background, (const MenuPoint *)option0);
             menu_blit_sprite_translucent(
-                &DAT_80058418, (const MenuPoint *)option1);
+                &menu_assets.option_highlight, (const MenuPoint *)option1);
         }
     } else {
         menu_blit_sprite_translucent(
-            &DAT_8005840c, (const MenuPoint *)option0);
+            &menu_assets.option_background, (const MenuPoint *)option0);
         menu_blit_sprite_translucent(
-            &DAT_8005840c, (const MenuPoint *)option1);
+            &menu_assets.option_background, (const MenuPoint *)option1);
     }
-    menu_draw_string(&DAT_800583f4, option0);
-    menu_draw_string(&DAT_800583f4, option1);
+    menu_draw_string(&menu_assets.glyph_atlas, option0);
+    menu_draw_string(&menu_assets.glyph_atlas, option1);
 }
 
 /*
@@ -98,95 +98,108 @@ void menu_draw_item_name_frame(s32 item_id)
     for (i = 0; i < 10; i++) {
         string.codes[i] = name[i];
     }
-    menu_draw_string(&DAT_800583f4, &string);
+    menu_draw_string(&menu_assets.glyph_atlas, &string);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 0x76;
     current_poly_ft4->y0 = 0x10;
     current_poly_ft4->y1 = 0x10;
     current_poly_ft4->x2 = 0x76;
-    current_poly_ft4->x1 = DAT_80058408 + 0x76;
-    current_poly_ft4->y2 = DAT_8005840a + 0x10;
-    current_poly_ft4->x3 = DAT_80058408 + 0x76;
-    current_poly_ft4->y3 = DAT_8005840a + 0x10;
-    current_poly_ft4->u0 = DAT_80058404;
-    current_poly_ft4->v0 = DAT_80058406;
-    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v1 = DAT_80058406;
-    current_poly_ft4->u2 = DAT_80058404;
-    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0x76;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x10;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0x76;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x10;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     primitive_buffer_commit_poly_ft4(0xb54);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 0xbd;
     current_poly_ft4->y0 = 0x10;
     current_poly_ft4->y1 = 0x10;
     current_poly_ft4->x2 = 0xbd;
-    current_poly_ft4->x1 = DAT_80058408 + 0xbd;
-    current_poly_ft4->y2 = DAT_8005840a + 0x10;
-    current_poly_ft4->x3 = DAT_80058408 + 0xbd;
-    current_poly_ft4->y3 = DAT_8005840a + 0x10;
-    current_poly_ft4->u0 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v0 = DAT_80058406;
-    current_poly_ft4->u1 = DAT_80058404;
-    current_poly_ft4->v1 = DAT_80058406;
-    current_poly_ft4->u2 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u3 = DAT_80058404;
-    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0xbd;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x10;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0xbd;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x10;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     primitive_buffer_commit_poly_ft4(0xb54);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 0x76;
     current_poly_ft4->y0 = 0x78;
     current_poly_ft4->y1 = 0x78;
     current_poly_ft4->x2 = 0x76;
-    current_poly_ft4->x1 = DAT_80058408 + 0x76;
-    current_poly_ft4->y2 = DAT_8005840a + 0x78;
-    current_poly_ft4->x3 = DAT_80058408 + 0x76;
-    current_poly_ft4->y3 = DAT_8005840a + 0x78;
-    current_poly_ft4->u0 = DAT_80058404;
-    current_poly_ft4->v0 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v1 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u2 = DAT_80058404;
-    current_poly_ft4->v2 = DAT_80058406;
-    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v3 = DAT_80058406;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0x76;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x78;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0x76;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x78;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v;
     primitive_buffer_commit_poly_ft4(0xb54);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 0xbd;
     current_poly_ft4->y0 = 0x78;
     current_poly_ft4->y1 = 0x78;
     current_poly_ft4->x2 = 0xbd;
-    current_poly_ft4->x1 = DAT_80058408 + 0xbd;
-    current_poly_ft4->y2 = DAT_8005840a + 0x78;
-    current_poly_ft4->x3 = DAT_80058408 + 0xbd;
-    current_poly_ft4->y3 = DAT_8005840a + 0x78;
-    current_poly_ft4->u0 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v0 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u1 = DAT_80058404;
-    current_poly_ft4->v1 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u2 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v2 = DAT_80058406;
-    current_poly_ft4->u3 = DAT_80058404;
-    current_poly_ft4->v3 = DAT_80058406;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0xbd;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x78;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0xbd;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x78;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v;
     primitive_buffer_commit_poly_ft4(0xb54);
+
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &menu_assets.background_quads[display_state.buffer_index][3]);
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &menu_assets.background_quads[display_state.buffer_index][2]);
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &menu_assets.background_quads[display_state.buffer_index][1]);
+    AddPrim(
+        display_state.ordering_table + 3000,
+        &menu_assets.background_quads[display_state.buffer_index][0]);
 }
 
 /*
@@ -388,104 +401,104 @@ void menu_draw_window_backdrop(void)
 {
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 166;
     current_poly_ft4->y0 = 16;
-    current_poly_ft4->x1 = DAT_80058408 + 166;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 166;
     current_poly_ft4->y1 = 16;
     current_poly_ft4->x2 = 166;
-    current_poly_ft4->y2 = DAT_8005840a + 16;
-    current_poly_ft4->x3 = DAT_80058408 + 166;
-    current_poly_ft4->y3 = DAT_8005840a + 16;
-    current_poly_ft4->u0 = DAT_80058404;
-    current_poly_ft4->v0 = DAT_80058406;
-    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v1 = DAT_80058406;
-    current_poly_ft4->u2 = DAT_80058404;
-    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 16;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 166;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 16;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     primitive_buffer_commit_poly_ft4(2900);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 237;
     current_poly_ft4->y0 = 16;
-    current_poly_ft4->x1 = DAT_80058408 + 237;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 237;
     current_poly_ft4->y1 = 16;
     current_poly_ft4->x2 = 237;
-    current_poly_ft4->y2 = DAT_8005840a + 16;
-    current_poly_ft4->x3 = DAT_80058408 + 237;
-    current_poly_ft4->y3 = DAT_8005840a + 16;
-    current_poly_ft4->u0 = DAT_80058404;
-    current_poly_ft4->v0 = DAT_80058406;
-    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v1 = DAT_80058406;
-    current_poly_ft4->u2 = DAT_80058404;
-    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 16;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 237;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 16;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     primitive_buffer_commit_poly_ft4(2900);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 166;
     current_poly_ft4->y0 = 120;
-    current_poly_ft4->x1 = DAT_80058408 + 166;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 166;
     current_poly_ft4->y1 = 120;
     current_poly_ft4->x2 = 166;
-    current_poly_ft4->y2 = DAT_8005840a + 120;
-    current_poly_ft4->x3 = DAT_80058408 + 166;
-    current_poly_ft4->y3 = DAT_8005840a + 120;
-    current_poly_ft4->u0 = DAT_80058404;
-    current_poly_ft4->v0 = DAT_80058406;
-    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v1 = DAT_80058406;
-    current_poly_ft4->u2 = DAT_80058404;
-    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 120;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 166;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 120;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v;
     primitive_buffer_commit_poly_ft4(2900);
 
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
-    current_poly_ft4->tpage = DAT_80058400;
-    current_poly_ft4->clut = DAT_80058402;
+    current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
+    current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = 237;
     current_poly_ft4->y0 = 120;
-    current_poly_ft4->x1 = DAT_80058408 + 237;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 237;
     current_poly_ft4->y1 = 120;
     current_poly_ft4->x2 = 237;
-    current_poly_ft4->y2 = DAT_8005840a + 120;
-    current_poly_ft4->x3 = DAT_80058408 + 237;
-    current_poly_ft4->y3 = DAT_8005840a + 120;
-    current_poly_ft4->u0 = DAT_80058404;
-    current_poly_ft4->v0 = DAT_80058406;
-    current_poly_ft4->u1 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v1 = DAT_80058406;
-    current_poly_ft4->u2 = DAT_80058404;
-    current_poly_ft4->v2 = DAT_80058406 + DAT_8005840a;
-    current_poly_ft4->u3 = DAT_80058404 + DAT_80058408;
-    current_poly_ft4->v3 = DAT_80058406 + DAT_8005840a;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 120;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 237;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 120;
+    current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u1 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v1 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    current_poly_ft4->u2 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
+    current_poly_ft4->v2 = menu_assets.window_backdrop.v;
+    current_poly_ft4->u3 = menu_assets.window_backdrop.u;
+    current_poly_ft4->v3 = menu_assets.window_backdrop.v;
     primitive_buffer_commit_poly_ft4(2900);
 
     AddPrim(
         display_state.ordering_table + 3000,
-        &DAT_800580e8[display_state.buffer_index][3]);
+        &menu_assets.background_quads[display_state.buffer_index][3]);
     AddPrim(
         display_state.ordering_table + 3000,
-        &DAT_800580e8[display_state.buffer_index][2]);
+        &menu_assets.background_quads[display_state.buffer_index][2]);
     AddPrim(
         display_state.ordering_table + 3000,
-        &DAT_800580e8[display_state.buffer_index][1]);
+        &menu_assets.background_quads[display_state.buffer_index][1]);
     AddPrim(
         display_state.ordering_table + 3000,
-        &DAT_800580e8[display_state.buffer_index][0]);
+        &menu_assets.background_quads[display_state.buffer_index][0]);
 }
 
 /*

@@ -66,6 +66,23 @@ typedef struct MenuTileSprite {
     u16 height;
 } MenuTileSprite;
 
+/* Complete first block loaded from COM\\STAT.DAT; GPU packets are mutable. */
+typedef struct KfMenuAssets {
+    POLY_FT4 background_quads[2][4];
+    POLY_FT4 mid_depth_quads[2];
+    POLY_FT4 foreground_quads[2];
+    POLY_F4 dialog_quads[2][6];
+    MenuSpriteDef number_atlas;
+    MenuSpriteDef glyph_atlas;
+    MenuTileSprite window_backdrop;
+    MenuSpriteDef option_background;
+    MenuSpriteDef option_highlight;
+    MenuSpriteDef row_background;
+    MenuSpriteDef row_confirmed_background;
+    MenuTileSprite list_tiles[4];
+    MenuSpriteDef selection_cursor;
+} KfMenuAssets;
+
 typedef enum MenuListTileIndex {
     MENU_LIST_TILE_BACKDROP,
     MENU_LIST_TILE_ROW,
@@ -94,15 +111,7 @@ typedef struct KfMenuList {
     u8 *quantities;
 } KfMenuList;
 
-extern POLY_FT4 DAT_800580e8[2][4];
-extern MenuSpriteDef DAT_800583e8;
-extern MenuSpriteDef DAT_800583f4;
-extern MenuSpriteDef DAT_8005840c;
-extern MenuSpriteDef DAT_80058418;
-extern MenuSpriteDef DAT_80058424;
-extern MenuSpriteDef DAT_80058430;
-extern MenuSpriteDef DAT_8005846c;
-extern MenuTileSprite menu_list_tiles[4];
+extern KfMenuAssets menu_assets;
 extern MenuWindowLayout menu_window_layouts[9];
 extern MenuGlyphRow item_name_rows[80];
 extern MenuGlyphRow magic_name_rows[9];

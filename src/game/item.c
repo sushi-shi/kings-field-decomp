@@ -10,6 +10,24 @@
 void item_menu_buy(s32 arg);
 void item_menu_sell(s32 arg);
 
+DATA(0x800580e8, 0x390)
+KfMenuAssets menu_assets;
+
+DATA(0x80058478, 0x948)
+MenuWindowLayout menu_window_layouts[9];
+
+DATA(0x80058dc0, 0x640)
+MenuGlyphRow item_name_rows[80];
+
+DATA(0x80059400, 0xb4)
+MenuGlyphRow magic_name_rows[9];
+
+DATA(0x800594b8, 0x140)
+u16 item_buy_prices[80][2];
+
+DATA(0x800595f8, 0x140)
+u16 item_sell_prices[80][2];
+
 /*
  * Expands the map resource stream's floor-item placement chunk into the runtime
  * floor-item table.  The first pass counts the placements up to the 0xffff
@@ -53,7 +71,7 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
 RODATA(0x800122a0, 0x28)
 
 /*
- * Loads the item database: COM\STAT.DAT is read into the six contiguous stat
+ * Loads the item database: COM\STAT.DAT is read into the six stat
  * banks, then all 80 item TMD models (\KF\ITEMx\Innn.TMD) are streamed into the
  * shared CD file table, whose read sizes are rounded up to whole sectors.
  */
@@ -69,8 +87,8 @@ void item_load_database(void)
         exit(1);
 
     src = stat_data;
-    memcpy(DAT_800580e8, src, 912);
-    src += 912;
+    memcpy(&menu_assets, src, sizeof menu_assets);
+    src += sizeof menu_assets;
     memcpy(menu_window_layouts, src, sizeof menu_window_layouts);
     src += sizeof menu_window_layouts;
     memcpy(item_name_rows, src, sizeof(item_name_rows));

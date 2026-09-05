@@ -51,17 +51,17 @@ void menu_item_model_preview(s32 item_id)
         for (i = 0; i < 10; i++) {
             gs.codes[i] = name[i];
         }
-        menu_draw_string(&DAT_800583f4, &gs);
+        menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
         gs.x = 0xe6;
         gs.codes[0] = 0xca;
         gs.codes[1] = 0xcb;
         gs.codes[2] = -1;
         gs.y += 18;
-        menu_draw_string(&DAT_800583f4, &gs);
+        menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
         gs.x = 0x117;
         menu_format_number(DAT_800652a8[item_id], 2, 0, gs.codes);
-        menu_draw_number(&DAT_800583e8, &gs);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
     }
 }

@@ -25,9 +25,16 @@ promotes a probe to a proven historical toolchain.
 - [maspsx-private-bss.md](maspsx-private-bss.md): preserving compiler-private
   tentative storage in ELF, cross-TU linker controls, and the distinction
   between linkage correction and unresolved allocation topology.
+- [assembler-section-extents.md](assembler-section-extents.md): distinguish
+  automatic GNU-as section tails from explicit zeros, alignment directives and
+  compiler COMMON allocations; retain actual ELF placement requirements.
+- [compiler-owned-data-sizes.md](compiler-owned-data-sizes.md): independently
+  measure C object sizes instead of copying retail DATA expectations into source
+  symbols; reject a reproduced false BSS match hidden by COMMON rounding.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
-  inclusion of custom allocated NOBITS sections.
+  inclusion of custom allocated NOBITS sections; matching data must also admit
+  a retail base satisfying both objects' actual section alignment.
 - [open-map-render-residue.md](open-map-render-residue.md): RTBL window
   ownership, conflicting light-matrix base forms in map rendering and
   initialization, and the visibility-traversal setup residue.

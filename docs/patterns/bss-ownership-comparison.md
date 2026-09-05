@@ -66,3 +66,32 @@ The target/source allocation model still needs original small-BSS versus
 external-BSS/COMMON ownership and extent evidence. Equal current BSS claims
 only establish equality of those compared claims; they do not account for an
 unmodeled allocation or infer the size of a surrounding object.
+
+## Matching layout must still permit retail placement
+
+The subsequent GAME STAT.DAT ownership campaign exposed another false positive:
+both bank objects contain the same 5712-byte NOBITS extent and six identical
+named offsets, but the source section requires 16-byte alignment at a retail
+base of 800580e8. The target requires eight-byte alignment and can be placed;
+the source cannot. BSS equality alone previously accepted this pair.
+
+The default data gate now applies `roundtrip.plan` to both objects with their
+DATA/RODATA claims. Non-exact code is excluded from this data-only placement
+check; no data claim or section is excluded. Conflicting bases, unclaimed data,
+missing/ambiguous owned symbols and invalid alignment are failures even when
+all section bytes and allocation identities agree. The normal target relink
+gate remains separate and still checks instructions and relocated payloads.
+
+Compare placement, not merely the two sh_addralign numbers. A section with
+alignment 8 and one with alignment 16 may share base 80060000; they cannot both
+start at 80060008. A named object's retail address minus its actual section
+offset establishes the base. No per-symbol relocation overrides or alignment
+rewrites are admitted. Initialized data and RODATA obey the same rule.
+
+Synthetic controls exercise both rejection directions, a nonzero symbol offset,
+compatible unequal alignments, equal initialized bytes with an incompatible
+base, conflicting BSS/load-data claims, and unclaimed identical RODATA. The real
+menu-bank control separately asserts matching allocation layout and rejection
+by the strengthened placement gate. See
+[the bank evidence](../../config/evidence/game_menu_banks.md) for raw retail
+references, compiler-allocation controls and full-corpus results.

@@ -15,10 +15,6 @@
  * price for the active shop column/table, the held quantity, and the player's
  * gold.  `object` is the item id (0xff = empty slot), `col` the price column,
  * and `mode` selects the buy (0) or sell (non-zero) price table.
- *
- * Residue: the local matrix setup and the glyph-workspace stores schedule
- * their GTE/store instructions differently under gcc257-o2; the register-
- * scheduling class documented in docs/patterns/source-shapes-gcc257.md.
  */
 ADDRESS(0x80027b7c, 0x2dc)
 void menu_draw_item_detail(s32 object, s32 col, s32 mode)
@@ -66,13 +62,13 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     for (i = 0; i < 10; i++) {
         gs.codes[i] = name[i];
     }
-    menu_draw_string(&DAT_800583f4, &gs);
+    menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0xc8;
     gs.y += 18;
     prices = (mode != 0) ? item_sell_prices : item_buy_prices;
     menu_format_number(prices[object][col - 1], 6, 0, gs.codes);
-    menu_draw_number(&DAT_800583e8, &gs);
+    menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xf2;
     gs.codes[0] = 0x1009;
@@ -80,28 +76,28 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     gs.codes[2] = 0x2a;
     gs.codes[3] = 0x1013;
     gs.codes[4] = -1;
-    menu_draw_string(&DAT_800583f4, &gs);
+    menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0xf2;
     gs.codes[0] = 0xca;
     gs.codes[1] = 0xcb;
     gs.codes[2] = -1;
     gs.y += 18;
-    menu_draw_string(&DAT_800583f4, &gs);
+    menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0x11c;
     menu_format_number(DAT_800652a8[object], 2, 0, gs.codes);
-    menu_draw_number(&DAT_800583e8, &gs);
+    menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(
-        &DAT_80058424,
+        &menu_assets.row_background,
         (const MenuPoint *)&menu_window_layouts[7].rows[3]);
-    menu_draw_string(&DAT_800583f4, &menu_window_layouts[7].rows[3]);
+    menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[7].rows[3]);
 
     gs.x = menu_window_layouts[7].rows[3].x + 28;
     gs.y = menu_window_layouts[7].rows[3].y;
     menu_format_number(player_state.gold, 6, 0, gs.codes);
-    menu_draw_number(&DAT_800583e8, &gs);
+    menu_draw_number(&menu_assets.number_atlas, &gs);
 }
 
 /*
@@ -117,7 +113,7 @@ ADDRESS(0x80027e58, 0x48)
 void menu_add_marker_quad(void)
 {
     AddPrim(display_state.ordering_table + 500,
-            &DAT_80058228[display_state.buffer_index]);
+            &menu_assets.mid_depth_quads[display_state.buffer_index]);
 }
 
 /* Link the shared front menu quad at ordering-table slot 0. */
@@ -125,7 +121,7 @@ ADDRESS(0x80027ea0, 0x44)
 void menu_add_frame_quad(void)
 {
     AddPrim(display_state.ordering_table,
-            &DAT_80058278[display_state.buffer_index]);
+            &menu_assets.foreground_quads[display_state.buffer_index]);
 }
 
 /*
@@ -136,10 +132,6 @@ void menu_add_frame_quad(void)
  * positive; every row prints an icon label plus its numeric fields through the
  * shared glyph-string workspace.  Used by the save/load panels, the save
  * confirmation, and the two-option confirm dialog.
- *
- * Residue: gcc257-o2 reaches consecutive frame quads and reuses the glyph
- * workspace through shared base registers where retail's schedule differs; the
- * base-sharing / list-widget class in docs/patterns/source-shapes-gcc257.md.
  */
 ADDRESS(0x80027ee4, 0x49c)
 void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
@@ -152,29 +144,29 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
 
     if (kind == 0) {
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][3]);
+                &menu_assets.dialog_quads[display_state.buffer_index][3]);
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][4]);
+                &menu_assets.dialog_quads[display_state.buffer_index][4]);
     }
     if (kind == 1) {
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][2]);
+                &menu_assets.dialog_quads[display_state.buffer_index][2]);
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][4]);
+                &menu_assets.dialog_quads[display_state.buffer_index][4]);
     }
     if (kind == 2) {
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][2]);
+                &menu_assets.dialog_quads[display_state.buffer_index][2]);
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][3]);
+                &menu_assets.dialog_quads[display_state.buffer_index][3]);
     }
     if (kind >= 3) {
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][2]);
+                &menu_assets.dialog_quads[display_state.buffer_index][2]);
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][3]);
+                &menu_assets.dialog_quads[display_state.buffer_index][3]);
         AddPrim(display_state.ordering_table + 1000,
-                &DAT_800582c8[display_state.buffer_index][4]);
+                &menu_assets.dialog_quads[display_state.buffer_index][4]);
     }
 
     if (rows == 0) {
@@ -190,62 +182,62 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             gs.codes[1] = 0x83;
             gs.codes[2] = 0x84;
             gs.codes[3] = -1;
-            menu_draw_string(&DAT_800583f4, &gs);
+            menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 251;
             menu_format_number(row->fields[0], 6, 0, gs.codes);
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
             gs.codes[0] = 0xcc;
             gs.codes[1] = 0xcd;
             gs.codes[2] = -1;
             gs.y += 14;
-            menu_draw_string(&DAT_800583f4, &gs);
+            menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 286;
             menu_format_number(row->fields[1], 1, 0, gs.codes);
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
             gs.codes[0] = 0xf0;
             gs.codes[1] = 242;
             gs.codes[2] = -1;
             gs.y += 14;
-            menu_draw_string(&DAT_800583f4, &gs);
+            menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 230;
             menu_format_number(row->fields[2], 4, 0, gs.codes);
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = 11;
             gs.codes[1] = -1;
             gs.x += 28;
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x += 7;
             menu_format_number(row->fields[3], 4, 0, gs.codes);
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
             gs.codes[0] = 0xf1;
             gs.codes[1] = 242;
             gs.codes[2] = -1;
             gs.y += 14;
-            menu_draw_string(&DAT_800583f4, &gs);
+            menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 230;
             menu_format_number(row->fields[4], 4, 0, gs.codes);
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = 11;
             gs.codes[1] = -1;
             gs.x += 28;
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x += 7;
             menu_format_number(row->fields[5], 4, 0, gs.codes);
-            menu_draw_number(&DAT_800583e8, &gs);
+            menu_draw_number(&menu_assets.number_atlas, &gs);
         }
         row++;
     }

@@ -8,7 +8,9 @@ that owns data it compares the reconstruction object's initialized data
 sections against the retail-delinked target object, including implicit REL
 addends, and reports the first divergence and any referent mismatch. Each BSS
 section is compared by allocation class, extent, and named-object layout and
-linkage; uninitialized storage has no payload bytes to match.
+linkage; uninitialized storage has no payload bytes to match. Both objects'
+data claims must also admit a single retail base per section satisfying the
+actual ELF alignment, using the same placement rules as the relink verifier.
 
     kf verify data                 # strict gate + per-image summary
     kf verify data --image game    # one image
@@ -32,13 +34,16 @@ and independent relinking of both sides. They do not enter game progress.
 from __future__ import annotations
 
 import argparse
+import json
 import struct
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from itertools import zip_longest
 from pathlib import Path
 
+from elftools.elf.elffile import ELFFile
+
 from scripts.kf.delink import image_key
-from scripts.kf.manifest import Manifest, load as load_manifest
+from scripts.kf.manifest import Manifest, Unit, load as load_manifest
 from scripts.kf.mips_elf import R_MIPS_32
 from scripts.kf.paths import BUILD, RETAIL_CONFIG
 from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv
@@ -161,7 +166,7 @@ class SectionDiff:
     name: str
     retail_size: int
     recon_size: int
-    status: str  # match | missing | extra | size | bytes | referent | addend | storage | layout
+    status: str  # match | missing | extra | size | bytes | referent | addend | storage | layout | placement
     detail: str = ""
 
 
@@ -279,9 +284,21 @@ def _diff_bss(retail: Elf, recon: Elf, name: str = ".bss") -> SectionDiff | None
     return SectionDiff(name, rt_size, rc_size, "match")
 
 
-def diff_unit(image: str, object_name: str,
-              delink_dir: Path, objdiff_dir: Path) -> UnitDataDiff | None:
-    key = image_key(image)
+def _data_placement_issues(path: Path, unit: Unit) -> list[tuple[str, dict]]:
+    from scripts.kf.roundtrip import UnitResult, plan
+
+    result = UnitResult(unit.image, unit.unit, str(path))
+    # This is a data gate: non-exact function sizes must not masquerade as
+    # data-placement failures. All DATA/RODATA claims and ELF sections remain.
+    with path.open("rb") as stream:
+        plan(ELFFile(stream), replace(unit, functions=()), result)
+    owned = {d.symbol: ".data" if d.storage == "load" else ".bss" for d in unit.data}
+    return [(issue.get("section", owned.get(issue.get("symbol"), "object")), issue)
+            for issue in result.issues if issue.get("section") != ".text"]
+
+
+def diff_unit(unit: Unit, delink_dir: Path, objdiff_dir: Path) -> UnitDataDiff | None:
+    key, object_name = image_key(unit.image), unit.object_name
     target = delink_dir / key / "modules" / object_name
     base = objdiff_dir / key / "base" / object_name
     missing = [str(path) for path in (target, base) if not path.is_file()]
@@ -289,7 +306,7 @@ def diff_unit(image: str, object_name: str,
         raise FileNotFoundError("missing " + ", ".join(missing))
     retail = Elf(target)
     recon = Elf(base)
-    result = UnitDataDiff(image, object_name)
+    result = UnitDataDiff(unit.image, unit.unit)
     for name in INIT_SECTIONS:
         diff = _diff_init_section(name, retail, recon)
         if diff is not None:
@@ -302,6 +319,19 @@ def diff_unit(image: str, object_name: str,
         bss = _diff_bss(retail, recon, name)
         if bss is not None:
             result.diffs.append(bss)
+    by_section = {diff.name: diff for diff in result.diffs}
+    for label, path in (("target", target), ("reconstruction", base)):
+        for name, issue in _data_placement_issues(path, unit):
+            diff = by_section.get(name)
+            if diff is None:
+                rt, rc = retail.sections.get(name), recon.sections.get(name)
+                diff = SectionDiff(name, rt.size if rt else 0, rc.size if rc else 0, "placement")
+                result.diffs.append(diff)
+                by_section[name] = diff
+            elif diff.status == "match":
+                diff.status = "placement"
+            detail = f"{label}: {json.dumps(issue, sort_keys=True)}"
+            diff.detail = f"{diff.detail}; {detail}" if diff.detail else detail
     return result if result.diffs else None
 
 
@@ -325,9 +355,8 @@ def diff_image(
                 image, unit.unit, "missing " + ", ".join(missing)
             ))
             continue
-        diff = diff_unit(image, unit.object_name, delink_dir, objdiff_dir)
+        diff = diff_unit(unit, delink_dir, objdiff_dir)
         if diff is not None:
-            diff.unit = unit.unit
             results.append(diff)
     return results, failures
 
