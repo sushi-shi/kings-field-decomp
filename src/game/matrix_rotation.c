@@ -213,7 +213,7 @@ int angle_within_tolerance(int lhs, int rhs, s16 range)
 {
     int delta = (lhs - rhs) & 0xfff;
 
-    return range < delta && 0x1000 - range <= delta;
+    return delta <= range || 0x1000 - range <= delta;
 }
 
 ADDRESS(0x80014fa8, 0x10)

@@ -92,6 +92,8 @@ promotes a probe to a proven historical toolchain.
   expression recovering the exact OPEN fog interpolation and its preserved start.
 - [game-fog-interpolation.md](game-fog-interpolation.md): the independently
   checked GAME counterpart, its three callers and exact five-function matrix unit.
+- [game-angle-tolerance.md](game-angle-tolerance.md): corrected GAME circular
+  tolerance logic, twelve call sites and the exact sixteen-function math unit.
 - [open-item-cursor.md](open-item-cursor.md): saved stream start, postincrement
   scan and direct count-member accesses closing the OPEN placement loader.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining

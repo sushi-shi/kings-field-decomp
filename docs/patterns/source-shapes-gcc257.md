@@ -131,8 +131,11 @@ Open residues recorded during the same campaign (not steered):
 - `player_death_update`: retail has an 8-byte larger frame with no stack
   traffic and loads `camera_rotation.x` with `lhu` before subtracting, so the
   original field is unsigned or accessed through a different type.
-- `angle_within_tolerance`: retail materialises the result through a branch
-  (`li v1,1` on the true path); every expression form tried folds to `xori`.
+- `angle_within_tolerance`: the old result-materialization assessment was
+  superseded by a [CFG correction](game-angle-tolerance.md). The GAME source
+  rejected `delta <= range`, although retail branches to the true block.
+  Restoring `delta <= range || 0x1000 - range <= delta` matches all 60 bytes;
+  the former `xori` difference was not evidence of a compiler limitation.
 ## player
 
 | Retail signature | Source shape | Witness |
