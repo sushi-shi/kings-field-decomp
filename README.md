@@ -3,6 +3,14 @@
 Binary-matching decompilation of the original Japanese King's Field
 (`SLPS-00017`).
 
+Original project contributions are dedicated to the public domain under
+[CC0 1.0 Universal](LICENSE), to the extent of the contributors' rights.
+This does not grant rights to FromSoftware's game or Sony/Psy-Q material,
+including the reconstructed library routines under `src/vendor/`.
+Retail game files must be supplied locally; they are not included in this
+repository. The Nix environment downloads the historical SDK separately; see
+[the toolchain documentation](docs/toolchain.md).
+
 <!-- match-score:start -->
 ## Match status
 
