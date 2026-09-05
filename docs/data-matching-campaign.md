@@ -678,6 +678,38 @@ build still rejects explicit data, reachability and placement failures. The
 master update is a fast-forward to the verified merge, not a reset or rewrite
 of either parent's history.
 
+## Complete runtime-loaded menu asset owner
+
+The next source campaign replaces 17 fragmented menu data identities with one
+912-byte `KfMenuAssets menu_assets` BSS definition in the item loader's module.
+The first STAT.DAT copy proves the extent; two retail renderers independently
+derive the background quads from the later backdrop descriptor's base. The
+shared type contains authentic SDK packets, font atlases, menu descriptors and
+list tiles; two opaque bytes and the previously missing confirmed-row sprite
+are now accounted for. There are no overlapping interior globals or invented
+executable initializers. Types and the extern declaration live in game_menu.h.
+
+All 380 reviewed address pairs restore the original retail targets, and the
+complete 912-byte source/target BSS allocations match. Bounded retail/source
+controls verify the loader's four alignment paths, all six copied banks and
+the preserved inter-bank gap. The renderer controls also caught and now cover
+four missing background enqueue calls and incorrect texture mirroring. See
+[the menu asset evidence and per-function verdicts](../config/evidence/game_menu_assets.md).
+
+Source/header literal `DAT_` occurrences fall **564 to 179** (grep hit lines:
+509 to 172). GAME reached
+source owners rise 73 to 74; unpaired reached config ranges fall **646 to 629**
+(GAME 362, OPEN 267). All **360/471 exact game functions** and 13 vendor controls
+are preserved. The corrected backdrop reaches 99.97176%, not exact; its frame
+differs by 64 bytes. No function is newly banked and no score gate is relaxed.
+
+All 556 local tests pass without skips, as do Ruff, diff and flake checks. The
+mandatory full build still rejects the outstanding strict-data, reachability
+and placement failures: source DATA **11/59**, SDK data **2/2**, target relink
+**108/114**. A correct runtime-loaded BSS owner is not proof of complete loaded
+executable data matching. Remaining config-only ranges and unresolved reference
+paths still prevent exhaustive byte coverage.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

@@ -83,13 +83,13 @@ void menu_map_viewer(s32 item_code)
         AddPrim(display_state.ordering_table + 1000,
                 &poly_bg[display_state.buffer_index]);
         AddPrim(display_state.ordering_table + 3000,
-                &DAT_800580e8[display_state.buffer_index][3]);
+                &menu_assets.background_quads[display_state.buffer_index][3]);
         AddPrim(display_state.ordering_table + 3000,
-                &DAT_800580e8[display_state.buffer_index][2]);
+                &menu_assets.background_quads[display_state.buffer_index][2]);
         AddPrim(display_state.ordering_table + 3000,
-                &DAT_800580e8[display_state.buffer_index][1]);
+                &menu_assets.background_quads[display_state.buffer_index][1]);
         AddPrim(display_state.ordering_table + 3000,
-                &DAT_800580e8[display_state.buffer_index][0]);
+                &menu_assets.background_quads[display_state.buffer_index][0]);
         menu_present_frame();
         if (frame < 2) {
             frame++;

@@ -151,29 +151,29 @@ void menu_config_panel_draw(ConfigPanelParams params)
     states = params.states;
     for (i = 0; i < 4; i++) {
         if (*states == 1) {
-            menu_blit_sprite_translucent(&DAT_80058418, &params.pt_a);
-            box_b = &DAT_8005840c;
+            menu_blit_sprite_translucent(&menu_assets.option_highlight, &params.pt_a);
+            box_b = &menu_assets.option_background;
         } else {
-            menu_blit_sprite_translucent(&DAT_8005840c, &params.pt_a);
-            box_b = &DAT_80058418;
+            menu_blit_sprite_translucent(&menu_assets.option_background, &params.pt_a);
+            box_b = &menu_assets.option_highlight;
         }
         menu_blit_sprite_translucent(box_b, &params.pt_b);
         menu_draw_string(
-            &DAT_800583f4,
+            &menu_assets.glyph_atlas,
             (const MenuGlyphString *)&params.pt_a);
         menu_draw_string(
-            &DAT_800583f4,
+            &menu_assets.glyph_atlas,
             (const MenuGlyphString *)&params.pt_b);
         states++;
         params.pt_a.y += 22;
         params.pt_b.y += 22;
     }
     AddPrim(&display_state.ordering_table[3000],
-            &DAT_800580e8[display_state.buffer_index][3]);
+            &menu_assets.background_quads[display_state.buffer_index][3]);
     AddPrim(&display_state.ordering_table[3000],
-            &DAT_800580e8[display_state.buffer_index][2]);
+            &menu_assets.background_quads[display_state.buffer_index][2]);
     AddPrim(&display_state.ordering_table[3000],
-            &DAT_800580e8[display_state.buffer_index][1]);
+            &menu_assets.background_quads[display_state.buffer_index][1]);
     AddPrim(&display_state.ordering_table[3000],
-            &DAT_800580e8[display_state.buffer_index][0]);
+            &menu_assets.background_quads[display_state.buffer_index][0]);
 }

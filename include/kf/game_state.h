@@ -27,15 +27,6 @@ extern void *DAT_80057d08;
 extern u32 DAT_80057d24;
 extern u8 DAT_80058010[8];
 extern void *DAT_80058018; /* saved handler */
-extern POLY_FT4 DAT_80058228[2];
-extern POLY_FT4 DAT_80058278[2];
-extern POLY_F4 DAT_800582c8[2][6];
-extern u16 DAT_80058400; /* tpage */
-extern u16 DAT_80058402; /* clut */
-extern u8 DAT_80058404; /* u */
-extern u8 DAT_80058406; /* v */
-extern u16 DAT_80058408; /* tile width  */
-extern u16 DAT_8005840a; /* tile height */
 extern int DAT_8005b270[]; /* jmp_buf */
 extern void *DAT_8005b274; /* live abort handler slot (jmp_buf + 4) */
 extern int DAT_80063278; /* installed abort handler */

@@ -35,9 +35,9 @@ void menu_list_render(const KfMenuList *list)
 
     if (list->title_x != 0) {
         menu_blit_sprite_translucent(
-            &DAT_80058424, (const MenuPoint *)list);
+            &menu_assets.row_background, (const MenuPoint *)list);
         menu_draw_string(
-            &DAT_800583f4, (const MenuGlyphString *)list);
+            &menu_assets.glyph_atlas, (const MenuGlyphString *)list);
     }
 
     counts = counts + list->scroll_offset;
@@ -53,7 +53,7 @@ void menu_list_render(const KfMenuList *list)
             }
             src += list->glyphs_per_entry;
             menu_draw_string(
-                &DAT_800583f4, (const MenuGlyphString *)&gs);
+                &menu_assets.glyph_atlas, (const MenuGlyphString *)&gs);
             if (list->quantities != 0) {
                 tens = *counts / 10;
                 gs.codes[1] = *counts % 10;
@@ -65,7 +65,7 @@ void menu_list_render(const KfMenuList *list)
                 }
                 gs.codes[2] = -1;
                 menu_draw_number(
-                    &DAT_800583e8, (const MenuGlyphString *)&gs);
+                    &menu_assets.number_atlas, (const MenuGlyphString *)&gs);
                 counts++;
             }
             row++;
@@ -73,7 +73,7 @@ void menu_list_render(const KfMenuList *list)
         } while (row < list->visible_rows && row < list->entry_count);
     }
 
-    tile = &menu_list_tiles[MENU_LIST_TILE_BACKDROP];
+    tile = &menu_assets.list_tiles[MENU_LIST_TILE_BACKDROP];
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = tile->tpage;
     current_poly_ft4->clut = tile->clut;
@@ -100,9 +100,9 @@ void menu_list_render(const KfMenuList *list)
         slot = 0;
         yoff = 0;
         do {
-            tile = &menu_list_tiles[MENU_LIST_TILE_ROW];
+            tile = &menu_assets.list_tiles[MENU_LIST_TILE_ROW];
             if (slot == list->cursor_row) {
-                tile = &menu_list_tiles[MENU_LIST_TILE_SELECTED];
+                tile = &menu_assets.list_tiles[MENU_LIST_TILE_SELECTED];
             }
             slot++;
             primitive_buffer_begin_poly_ft4();
@@ -130,7 +130,7 @@ void menu_list_render(const KfMenuList *list)
         } while ((s32)slot < list->visible_rows);
     }
 
-    tile = &menu_list_tiles[MENU_LIST_TILE_END];
+    tile = &menu_assets.list_tiles[MENU_LIST_TILE_END];
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = tile->tpage;
     current_poly_ft4->clut = tile->clut;

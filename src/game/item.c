@@ -10,6 +10,9 @@
 void item_menu_buy(s32 arg);
 void item_menu_sell(s32 arg);
 
+DATA(0x800580e8, 0x390)
+KfMenuAssets menu_assets;
+
 /*
  * Expands the map resource stream's floor-item placement chunk into the runtime
  * floor-item table.  The first pass counts the placements up to the 0xffff
@@ -69,8 +72,8 @@ void item_load_database(void)
         exit(1);
 
     src = stat_data;
-    memcpy(DAT_800580e8, src, 912);
-    src += 912;
+    memcpy(&menu_assets, src, sizeof menu_assets);
+    src += sizeof menu_assets;
     memcpy(menu_window_layouts, src, sizeof menu_window_layouts);
     src += sizeof menu_window_layouts;
     memcpy(item_name_rows, src, sizeof(item_name_rows));
