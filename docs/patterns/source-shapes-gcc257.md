@@ -927,13 +927,14 @@ value in a callee-saved register and grows the frame.
 
 Residue recorded (not steered):
 
-- `func_80036850` / `func_800369ac` (99.0% / 99.1%): referents, relocations,
-  call set, CFG, types and constants all match; the only divergence is the
-  prologue schedule of one argument-save move. Retail saves every incoming
-  argument to its callee-saved register before the first body instruction
-  (`move s1,a0; move s0,a1; move a0,zero`); the probe interleaves the first
-  call-argument setup between two of the saves (`move s1,a0; move a0,zero;
-  move s0,a1`). Same register assignment, same count, one instruction reordered.
+- `player_warp_change_floor` / `player_warp_same_floor` (`80036850` /
+  `800369ac`) are now **100%**. Their variant arguments arrive and survive
+  calls as full words, with narrowing only at the player-state byte store.
+  Replacing the u8/char boundary types with word inputs recovers all entry-save
+  instructions; the old assertion that source types already agreed was too
+  strong. All shimmer callers also need full sixteen-byte VECTOR objects:
+  the downstream effect constructor copies the fourth word. See
+  [the complete-object and ABI evidence](game-warp-position-buffers.md).
 - `player_warp_shimmer` (`80036618`) is now **100%**: reconstructing the
   forward pointer cursor, descending allocation/release counts, pre-sound
   cursor reset and one active-effect pointer recovers the 104-byte frame and

@@ -116,14 +116,14 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
 }
 
 ADDRESS(0x80036850, 0x15c)
-void player_warp_change_floor(s32 floor, u8 variant)
+void player_warp_change_floor(s32 floor, u32 variant)
 {
-    s32 position[3];
+    VECTOR position;
 
-    position[0] = player_state.camera_position.vx;
-    position[2] = player_state.camera_position.vz;
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(0, (VECTOR *)position);
+    position.vx = player_state.camera_position.vx;
+    position.vz = player_state.camera_position.vz;
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(0, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
     player_state.map_variant = variant;
@@ -133,25 +133,25 @@ void player_warp_change_floor(s32 floor, u8 variant)
     map_load_floor();
     player_state.camera_position.vx =
         player_state.camera_position.vx / 2000 * 2000 + 1000;
-    position[0] = player_state.camera_position.vx;
+    position.vx = player_state.camera_position.vx;
     player_state.camera_position.vz =
         player_state.camera_position.vz / 2000 * 2000 + 1000;
-    position[2] = player_state.camera_position.vz;
+    position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(1, (VECTOR *)position);
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(1, &position);
 }
 
 ADDRESS(0x800369ac, 0x144)
-void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
+void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
 {
-    s32 position[3];
+    VECTOR position;
     u8 previous_variant;
 
-    position[0] = player_state.camera_position.vx;
-    position[2] = player_state.camera_position.vz;
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(0, (VECTOR *)position);
+    position.vx = player_state.camera_position.vx;
+    position.vz = player_state.camera_position.vz;
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(0, &position);
     collision_adjust_cell_occupancy(player_state.map_cell.x,
                                     player_state.map_cell.z, -1);
     pool_release_all();
@@ -164,12 +164,12 @@ void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z)
         }
     }
     player_state.camera_position.vx = cell_x * 2000 + 1000;
-    position[0] = player_state.camera_position.vx;
+    position.vx = player_state.camera_position.vx;
     player_state.camera_position.vz = cell_z * 2000 + 1000;
-    position[2] = player_state.camera_position.vz;
+    position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position[1] = player_state.floor_height;
-    player_warp_shimmer(1, (VECTOR *)position);
+    position.vy = player_state.floor_height;
+    player_warp_shimmer(1, &position);
 }
 
 /* player_warp_trigger_update scripted-trigger jump table (current floor 1..5). */

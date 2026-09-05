@@ -208,10 +208,11 @@ extern void player_update_transform_snapshot(
 extern void player_update_vertical_motion(void);
 extern void player_update_view_bob(void);
 extern void player_update_weapon_attack(void);
-extern void player_warp_change_floor(s32 floor, u8 variant);
+/* Warp variant inputs remain full words until the player-state byte store. */
+extern void player_warp_change_floor(s32 floor, u32 variant);
 extern void player_warp_shimmer(s32 mode, VECTOR *position);
 extern void player_warp_shimmer_at_player(u32 mode);
-extern void player_warp_same_floor(char variant, s32 cell_x, s32 cell_z);
+extern void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
 extern u32 player_warp_trigger_update(void);
 

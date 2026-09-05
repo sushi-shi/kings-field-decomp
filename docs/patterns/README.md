@@ -71,6 +71,9 @@ promotes a probe to a proven historical toolchain.
 - [game-warp-trigger-results.md](game-warp-trigger-results.md): a missing
   completion result and explicit shared warp-call/destination paths close
   the 588-byte floor-trigger dispatcher.
+- [game-warp-position-buffers.md](game-warp-position-buffers.md): complete
+  VECTOR objects across all shimmer callers and full-word variant handoffs
+  close the remaining change-floor and same-floor warp helpers.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
