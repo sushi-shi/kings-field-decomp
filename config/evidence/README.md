@@ -12,6 +12,12 @@ false starts folded into the complete SquareRoot12 body; three new checked
 groups in `overlay_lineage.tsv` support the cross-overlay evidence. Details and
 archive controls are in `docs/patterns/open-format-display-sdk.md`.
 
+`open_semantic_ending_scroll.tsv` records the ending-scroll controller and its
+unchanged exact caller. It supports the 48-byte epilogue extent correction,
+one local MATRIX initializer, ten initialized data owners, and the remaining
+non-exact instruction-order/temporary and branch-join differences. Details and
+ordered referent controls are in `docs/patterns/open-ending-scroll.md`.
+
 `open_semantic_unlit_triangles.tsv` records the OPEN-only unlit triangle
 emitter and its exact entity-render caller control. The companion
 `render_typed_matrix_cast_cleanup.tsv` records byte-identical redundant-cast

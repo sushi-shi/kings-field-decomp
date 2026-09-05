@@ -11438,85 +11438,85 @@ OPEN.EXE	0x80014dbc	0x35bc	0x80014dc0	mips_hi16_lo16	reachable-code	0x80035944	l
 OPEN.EXE	0x80014dcc	0x35cc		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014dd4	0x35d4	0x80014dd8	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014ddc	0x35dc		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render;manual:open_semantic_opening_ending_scene
-OPEN.EXE	0x80014e54	0x3654	0x80014e58	mips_hi16_lo16	reachable-code	0x80012000	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014e9c	0x369c	0x80014ea0	mips_hi16_lo16	reachable-code	0x8006e088	bss	render_state	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80014ee4	0x36e4		mips26	reachable-code	0x800167e8	load	opening_resources_load_ending_entities	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x80014ef8	0x36f8		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f0c	0x370c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f28	0x3728		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f3c	0x373c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f58	0x3758		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f6c	0x376c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f88	0x3788		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014f9c	0x379c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014fb8	0x37b8		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014fcc	0x37cc		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014fe8	0x37e8		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80014ffc	0x37fc		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015018	0x3818		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001502c	0x382c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015048	0x3848		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001505c	0x385c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015078	0x3878		mips26	reachable-code	0x80033dc0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001508c	0x388c		mips26	reachable-code	0x80033e54	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001509c	0x389c	0x800150a0	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800150a4	0x38a4		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x800150ac	0x38ac	0x800150b0	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800150b8	0x38b8		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x800150c0	0x38c0	0x800150c4	mips_hi16_lo16	reachable-code	0x80035820	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015108	0x3908		mips26	reachable-code	0x80014004	load	opening_camera_path_begin	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
-OPEN.EXE	0x80015114	0x3914		mips26	reachable-code	0x8002f288	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015124	0x3924		mips26	reachable-code	0x8002c090	load	SetBackColor	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015134	0x3934		mips26	reachable-code	0x8002c0b0	load	SetFarColor	jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015140	0x3940	0x80015144	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+sh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015148	0x3948	0x8001514c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015150	0x3950	0x80015154	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015160	0x3960	0x80015164	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
-OPEN.EXE	0x80015168	0x3968	0x8001516c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
-OPEN.EXE	0x80015170	0x3970	0x80015174	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
-OPEN.EXE	0x80015180	0x3980	0x80015184	mips_hi16_lo16	reachable-code	0x800372a0	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001519c	0x399c	0x800151a0	mips_hi16_lo16	reachable-code	0x800372a4	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800151d4	0x39d4		mips26	reachable-code	0x80015240	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800151f0	0x39f0	0x800151f4	mips_hi16_lo16	reachable-code	0x80035964	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800151f8	0x39f8		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3
-OPEN.EXE	0x80015200	0x3a00		mips26	reachable-code	0x80015238	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015218	0x3a18	0x8001521c	mips_hi16_lo16	reachable-code	0x800359a4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015220	0x3a20		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3
-OPEN.EXE	0x80015228	0x3a28		mips26	reachable-code	0x80015238	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015250	0x3a50		mips26	reachable-code	0x800152dc	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015278	0x3a78		mips26	reachable-code	0x800152dc	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800152bc	0x3abc		mips26	reachable-code	0x80026654	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800152d4	0x3ad4		mips26	reachable-code	0x80016840	load	opening_resources_load_ending_sequence	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x800152dc	0x3adc	0x800152e0	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800152f0	0x3af0		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path
-OPEN.EXE	0x80015314	0x3b14		mips26	reachable-code	0x8001534c	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001534c	0x3b4c	0x80015350	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x80015354	0x3b54		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x8001535c	0x3b5c		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80015364	0x3b64		mips26	reachable-code	0x8002c15c	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001536c	0x3b6c		mips26	reachable-code	0x80019520	load	opening_render_entities	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_render_entities
-OPEN.EXE	0x80015394	0x3b94	0x80015398	mips_hi16_lo16	reachable-code	0x800372a0	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001539c	0x3b9c	0x800153a0	mips_hi16_lo16	reachable-code	0x800372a8	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153b0	0x3bb0		mips26	reachable-code	0x800196c4	load	color_lerp_cvector	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_color_lerp
-OPEN.EXE	0x800153b8	0x3bb8	0x800153bc	mips_hi16_lo16	reachable-code	0x800372a4	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153c0	0x3bc0	0x800153c4	mips_hi16_lo16	reachable-code	0x800372ac	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153cc	0x3bcc		mips26	reachable-code	0x800196c4	load	color_lerp_cvector	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_color_lerp
-OPEN.EXE	0x800153e4	0x3be4	0x800153e8	mips_hi16_lo16	reachable-code	0x80037290	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153ec	0x3bec		mips26	reachable-code	0x80013804	load	sprite_add_g4	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render
-OPEN.EXE	0x800153f4	0x3bf4	0x800153f8	mips_hi16_lo16	reachable-code	0x80037298	load		lui+addiu	a0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800153fc	0x3bfc	0x80015400	mips_hi16_lo16	reachable-code	0x800372b4	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015404	0x3c04		mips26	reachable-code	0x80013b5c	load	sprite_add_f4	jal		control-flow-reviewed	reviewed	manual:open_semantic_sprite_f4
-OPEN.EXE	0x80015438	0x3c38	0x8001543c	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
-OPEN.EXE	0x80015464	0x3c64	0x80015468	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
-OPEN.EXE	0x8001546c	0x3c6c	0x80015470	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal
-OPEN.EXE	0x80015488	0x3c88	0x8001548c	mips_hi16_lo16	reachable-code	0x80035888	load		lui+addiu	s1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800154ac	0x3cac	0x800154b0	mips_hi16_lo16	reachable-code	0x800358ca	load		lui+lh	v0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800154d0	0x3cd0		mips26	reachable-code	0x800154ec	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015508	0x3d08	0x8001550c	mips_hi16_lo16	reachable-code	0x800372b0	load		lui+addiu	v0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015534	0x3d34	0x80015538	mips_hi16_lo16	reachable-code	0x800372b8	load		lui+addiu	a1	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001553c	0x3d3c		mips26	reachable-code	0x8001399c	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80015580	0x3d80		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80015588	0x3d88		mips26	reachable-code	0x800151b8	load		j		control-flow	candidate	investigation:relocs.tsv
+OPEN.EXE	0x80014e54	0x3654	0x80014e58	mips_hi16_lo16	reachable-code	0x80012000	load		lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014e9c	0x369c	0x80014ea0	mips_hi16_lo16	reachable-code	0x8006e088	bss	render_state	lui+addiu	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014ee4	0x36e4		mips26	reachable-code	0x800167e8	load	opening_resources_load_ending_entities	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014ef8	0x36f8		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f0c	0x370c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f28	0x3728		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f3c	0x373c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f58	0x3758		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f6c	0x376c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f88	0x3788		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014f9c	0x379c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014fb8	0x37b8		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014fcc	0x37cc		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014fe8	0x37e8		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80014ffc	0x37fc		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015018	0x3818		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001502c	0x382c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015048	0x3848		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001505c	0x385c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015078	0x3878		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001508c	0x388c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001509c	0x389c	0x800150a0	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800150a4	0x38a4		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800150ac	0x38ac	0x800150b0	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800150b8	0x38b8		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800150c0	0x38c0	0x800150c4	mips_hi16_lo16	reachable-code	0x80035820	load	opening_ending_scroll_camera_path	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015108	0x3908		mips26	reachable-code	0x80014004	load	opening_camera_path_begin	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015114	0x3914		mips26	reachable-code	0x8002f288	load	SetFogNear	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015124	0x3924		mips26	reachable-code	0x8002c090	load	SetBackColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015134	0x3934		mips26	reachable-code	0x8002c0b0	load	SetFarColor	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015140	0x3940	0x80015144	mips_hi16_lo16	reachable-code	0x8006e1cc	bss	tmd_projection_shift	lui+sh	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015148	0x3948	0x8001514c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015150	0x3950	0x80015154	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015160	0x3960	0x80015164	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015168	0x3968	0x8001516c	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015170	0x3970	0x80015174	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	zero	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015180	0x3980	0x80015184	mips_hi16_lo16	reachable-code	0x800372a0	load	opening_ending_scroll_top_start	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001519c	0x399c	0x800151a0	mips_hi16_lo16	reachable-code	0x800372a4	load	opening_ending_scroll_bottom_start	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800151d4	0x39d4		mips26	reachable-code	0x80015240	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800151f0	0x39f0	0x800151f4	mips_hi16_lo16	reachable-code	0x80035964	load	color_matrix_table	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800151f8	0x39f8		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015200	0x3a00		mips26	reachable-code	0x80015238	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015218	0x3a18	0x8001521c	mips_hi16_lo16	reachable-code	0x800359a4	load	color_matrix_table	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015220	0x3a20		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015228	0x3a28		mips26	reachable-code	0x80015238	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015250	0x3a50		mips26	reachable-code	0x800152dc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015278	0x3a78		mips26	reachable-code	0x800152dc	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800152bc	0x3abc		mips26	reachable-code	0x80026654	load	SsSetMVol	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800152d4	0x3ad4		mips26	reachable-code	0x80016840	load	opening_resources_load_ending_sequence	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800152dc	0x3adc	0x800152e0	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800152f0	0x3af0		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015314	0x3b14		mips26	reachable-code	0x8001534c	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001534c	0x3b4c	0x80015350	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015354	0x3b54		mips26	reachable-code	0x80016f04	load	render_set_view_transform	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001535c	0x3b5c		mips26	reachable-code	0x80016d38	load	display_begin_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015364	0x3b64		mips26	reachable-code	0x8002c15c	load	SetGeomScreen	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001536c	0x3b6c		mips26	reachable-code	0x80019520	load	opening_render_entities	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_render_entities;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015394	0x3b94	0x80015398	mips_hi16_lo16	reachable-code	0x800372a0	load	opening_ending_scroll_top_start	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001539c	0x3b9c	0x800153a0	mips_hi16_lo16	reachable-code	0x800372a8	load	opening_ending_scroll_top_end	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153b0	0x3bb0		mips26	reachable-code	0x800196c4	load	color_lerp_cvector	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_color_lerp;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153b8	0x3bb8	0x800153bc	mips_hi16_lo16	reachable-code	0x800372a4	load	opening_ending_scroll_bottom_start	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153c0	0x3bc0	0x800153c4	mips_hi16_lo16	reachable-code	0x800372ac	load	opening_ending_scroll_bottom_end	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153cc	0x3bcc		mips26	reachable-code	0x800196c4	load	color_lerp_cvector	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_color_lerp;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153e4	0x3be4	0x800153e8	mips_hi16_lo16	reachable-code	0x80037290	load	opening_ending_scroll_backgrounds	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153ec	0x3bec		mips26	reachable-code	0x80013804	load	sprite_add_g4	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153f4	0x3bf4	0x800153f8	mips_hi16_lo16	reachable-code	0x80037298	load	opening_ending_scroll_backgrounds	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800153fc	0x3bfc	0x80015400	mips_hi16_lo16	reachable-code	0x800372b4	load	opening_ending_scroll_background_color	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015404	0x3c04		mips26	reachable-code	0x80013b5c	load	sprite_add_f4	jal		control-flow-reviewed	reviewed	manual:open_semantic_sprite_f4;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015438	0x3c38	0x8001543c	mips_hi16_lo16	reachable-code	0x8006da2c	bss	floor_item_state	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015464	0x3c64	0x80015468	mips_hi16_lo16	reachable-code	0x8006da2e	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001546c	0x3c6c	0x80015470	mips_hi16_lo16	reachable-code	0x8006da2d	bss	floor_item_state	lui+sb	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_sprite_render;manual:open_semantic_entity_traversal;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015488	0x3c88	0x8001548c	mips_hi16_lo16	reachable-code	0x80035888	load	opening_ending_scroll_panels	lui+addiu	s1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800154ac	0x3cac	0x800154b0	mips_hi16_lo16	reachable-code	0x800358ca	load	opening_ending_scroll_panels	lui+lh	v0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x800154d0	0x3cd0		mips26	reachable-code	0x800154ec	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015508	0x3d08	0x8001550c	mips_hi16_lo16	reachable-code	0x800372b0	load	opening_ending_scroll_panel_color	lui+addiu	v0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015534	0x3d34	0x80015538	mips_hi16_lo16	reachable-code	0x800372b8	load	opening_ending_scroll_uv	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x8001553c	0x3d3c		mips26	reachable-code	0x8001399c	load	sprite_add_ft4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015580	0x3d80		mips26	reachable-code	0x80016dd0	load	display_present_frame	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_ending_scroll
+OPEN.EXE	0x80015588	0x3d88		mips26	reachable-code	0x800151b8	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_ending_scroll
 OPEN.EXE	0x800155d4	0x3dd4	0x800155d8	mips_hi16_lo16	reachable-code	0x800372d0	load	opening_fade_color	lui+addiu	a1	paired-reviewed	reviewed	manual:open_semantic_opening_fade
 OPEN.EXE	0x800155fc	0x3dfc		mips26	reachable-code	0x80033dc0	load	GetTPage	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_fade
 OPEN.EXE	0x8001560c	0x3e0c		mips26	reachable-code	0x80033e54	load	GetClut	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_fade
@@ -11569,7 +11569,7 @@ OPEN.EXE	0x80015870	0x4070		mips26	reachable-code	0x80014804	load	opening_scene3
 OPEN.EXE	0x80015878	0x4078		mips26	reachable-code	0x80019e24	load	audio_stop_sequence	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller
 OPEN.EXE	0x80015880	0x4080		mips26	reachable-code	0x80015898	load	opening_run+0x1dc	j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller
 OPEN.EXE	0x80015888	0x4088		mips26	reachable-code	0x80014b34	load	opening_ending_scene_run	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_ending_scene;manual:open_semantic_opening_controller
-OPEN.EXE	0x80015890	0x4090		mips26	reachable-code	0x80014e28	load	func_80014e28	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller
+OPEN.EXE	0x80015890	0x4090		mips26	reachable-code	0x80014e28	load	opening_ending_scroll_run	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller;manual:open_semantic_ending_scroll
 OPEN.EXE	0x80015898	0x4098		mips26	reachable-code	0x800155c0	load	opening_fade_in	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller
 OPEN.EXE	0x800158a0	0x40a0		mips26	reachable-code	0x80019ec0	load	audio_shutdown	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller
 OPEN.EXE	0x800158a8	0x40a8		mips26	reachable-code	0x80030228	load	ResetGraph	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_controller

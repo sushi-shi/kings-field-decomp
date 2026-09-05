@@ -965,7 +965,7 @@ OPEN.EXE	0x8001455c	0x2d5c	0xac	0xac	1	function	ghidra-analysis			Ghidra-12.0.4/
 OPEN.EXE	0x80014608	0x2e08	0x1fc	0x1fc	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80014804	0x3004	0x330	0x330	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80014b34	0x3334	0x2f4	0x2f4	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x80014e28	0x3628	0x768	0x768	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+OPEN.EXE	0x80014e28	0x3628	0x798	0x798	1	function	reviewed-frame-epilogue			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08;manual:open_semantic_ending_scroll	complete body includes the unreachable 48-byte epilogue at +0x768; all ten saved registers and the 264-byte frame restore exactly; infinite loop has no return edge
 OPEN.EXE	0x800155c0	0x3dc0	0xfc	0xfc	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x800156bc	0x3ebc	0x214	0x214	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x800158d0	0x40d0	0x70	0x70	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary

@@ -57,3 +57,6 @@ promotes a probe to a proven historical toolchain.
 - [open-format-display-sdk.md](open-format-display-sdk.md): four exact custom
   formatters, the display-adjustment address-base residue, twelve SDK provider
   attributions, and the corrected SquareRoot12 boundary.
+- [open-ending-scroll.md](open-ending-scroll.md): complete ending-scroll C,
+  initialized panel/camera/color owners, the unreachable epilogue correction,
+  and the remaining short-state and branch-join comparison.

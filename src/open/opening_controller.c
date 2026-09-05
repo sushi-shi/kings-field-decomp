@@ -119,7 +119,7 @@ opening_complete:
 
     case 0xfe:
         opening_ending_scene_run();
-        func_80014e28();
+        opening_ending_scroll_run();
         break;
     }
 
