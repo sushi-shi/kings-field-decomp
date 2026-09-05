@@ -23,15 +23,17 @@ class OpenEntityTraversalTests(unittest.TestCase):
                          [0x80018ECC, 0x800190F4, 0x80019240])
         self.assertEqual(entity.functions[-1].body_size, 0x298)
         item = units["open.item"]
-        self.assertEqual([(datum.va, datum.size, datum.symbol) for datum in item.data],
-                         [(0x8006DA28, 0x618, "floor_item_state")])
+        self.assertEqual(item.data, ())
+        owner = units["open.render_init"]
+        self.assertIn((0x80049A48, 0x24788, "open_graphics_runtime"),
+                      [(datum.va, datum.size, datum.symbol) for datum in owner.data])
         data = load_data_identities(RETAIL_CONFIG)
-        state = data[("OPEN.EXE", 0x8006DA28)]
+        state = data[("OPEN.EXE", 0x80049A48)]
         self.assertEqual((state.name, state.datatype, state.size, state.storage),
-                         ("floor_item_state", "KfFloorItemStateOpen", 0x618, "bss"))
-        self.assertFalse(any(image == "OPEN.EXE" and 0x8006DA28 < va < 0x8006E040
+                         ("open_graphics_runtime", "KfGraphicsRuntimeOpen", 0x24788, "bss"))
+        self.assertFalse(any(image == "OPEN.EXE" and 0x80049A48 < va < 0x8006E1D0
                              for image, va in data))
-        self.assertIn(("OPEN.EXE", 0x8006E040), data)
+        self.assertIn(("OPEN.EXE", 0x8006E1D0), data)
         self.assertEqual(load_structure_identities(RETAIL_CONFIG)["KfFloorItemStateOpen"].size,
                          0x618)
         fields = {field.name: (field.offset, field.size, field.datatype)
@@ -58,7 +60,7 @@ class OpenEntityTraversalTests(unittest.TestCase):
         state_rows = [row for row in rows if row["image"] == "OPEN.EXE"
                       and 0x8006DA28 <= parse_int(row["target_va"]) < 0x8006E040]
         self.assertEqual(len(state_rows), 22)
-        self.assertEqual({row["target_name"] for row in state_rows}, {"floor_item_state"})
+        self.assertEqual({row["target_name"] for row in state_rows}, {"open_graphics_runtime"})
         self.assertEqual({row["status"] for row in state_rows}, {"reviewed"})
         for row in body + state_rows:
             self.assertIn("manual:open_semantic_entity_traversal", row["provenance"].split(";"))

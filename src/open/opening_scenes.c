@@ -195,10 +195,10 @@ void opening_scene1_draw_fade(u8 shade)
     u32 **ordering_table_slot;
 
     display_begin_frame();
-    left = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    right = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
+    left = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
+    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
+    right = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
+    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
 
     SetPolyFT4(left);
     SetPolyFT4(right);
@@ -248,7 +248,7 @@ void opening_scene1_draw_fade(u8 shade)
     right->g0 = shade;
     right->b0 = shade;
 
-    ordering_table_slot = &ordering_table;
+    ordering_table_slot = &open_graphics_runtime.ordering_table;
     AddPrim(*ordering_table_slot, left);
     AddPrim(*ordering_table_slot, right);
     display_present_frame();
@@ -538,12 +538,12 @@ void opening_ending_scene_run(void)
                 SetBackColor(brightness, brightness, brightness);
                 SetFarColor(brightness, brightness, brightness);
                 setRGB0(
-                    &display_draw_environments[0],
+                    &open_graphics_runtime.display_draw_environments[0],
                     brightness,
                     brightness,
                     brightness);
                 setRGB0(
-                    &display_draw_environments[1],
+                    &open_graphics_runtime.display_draw_environments[1],
                     brightness,
                     brightness,
                     brightness);
@@ -575,9 +575,9 @@ void opening_ending_scene_run(void)
         SetBackColor(brightness, brightness, brightness);
         SetFarColor(brightness, brightness, brightness);
         setRGB0(
-            &display_draw_environments[0], brightness, brightness, brightness);
+            &open_graphics_runtime.display_draw_environments[0], brightness, brightness, brightness);
         setRGB0(
-            &display_draw_environments[1], brightness, brightness, brightness);
+            &open_graphics_runtime.display_draw_environments[1], brightness, brightness, brightness);
         lighting_set_color_matrix(
             &color_matrix_table[0], &color_matrix_table[1], blend);
         opening_render_frame(
@@ -612,7 +612,7 @@ void opening_ending_scroll_run(void)
     s16 panel_index;
     u16 *panel;
 
-    render_state.light_matrix = light_matrix;
+    open_graphics_runtime.render_state.light_matrix = light_matrix;
     lighting_blend = 0;
     opening_resources_load_ending_entities();
     texture_pages[0] = GetTPage(0, 0, 0x1c0, 0x100);
@@ -647,14 +647,14 @@ void opening_ending_scroll_run(void)
     SetFogNear(11000, 200);
     SetBackColor(0, 0, 0);
     SetFarColor(0, 0, 0);
-    tmd_projection_shift = 2;
+    open_graphics_runtime.tmd_projection_shift = 2;
     /* Retail retains this otherwise unconsumed stack-owned position snapshot. */
     transition_position.vy = -10000;
     transition_position.vx = opening_camera_path_state.position.vx;
     transition_position.vz = opening_camera_path_state.position.vz;
-    floor_item_state.material.color.r = 0;
-    floor_item_state.material.color.g = 0;
-    floor_item_state.material.color.b = 0;
+    open_graphics_runtime.floor_item_state.material.color.r = 0;
+    open_graphics_runtime.floor_item_state.material.color.g = 0;
+    open_graphics_runtime.floor_item_state.material.color.b = 0;
     top_color = opening_ending_scroll_top_start;
     bottom_color = opening_ending_scroll_bottom_start;
 
@@ -728,10 +728,10 @@ void opening_ending_scroll_run(void)
 
         if (scroll_phase == 0) {
             entity_27->rotation.z = (entity_27->rotation.z - 1) & 0xfff;
-            if (entity_27->object_id != 0xff && floor_item_state.material.color.r < 255) {
-                ++floor_item_state.material.color.r;
-                floor_item_state.material.color.b = floor_item_state.material.color.r;
-                floor_item_state.material.color.g = floor_item_state.material.color.r;
+            if (entity_27->object_id != 0xff && open_graphics_runtime.floor_item_state.material.color.r < 255) {
+                ++open_graphics_runtime.floor_item_state.material.color.r;
+                open_graphics_runtime.floor_item_state.material.color.b = open_graphics_runtime.floor_item_state.material.color.r;
+                open_graphics_runtime.floor_item_state.material.color.g = open_graphics_runtime.floor_item_state.material.color.r;
             }
         }
         if (scrolling > 0) {

@@ -61,11 +61,11 @@ class OpenEntityRenderTests(unittest.TestCase):
         self.assertEqual(len(body), 34)
         self.assertEqual({row["status"] for row in body.values()}, {"reviewed"})
         expected = {
-            0x80018EE4: (0x8006E048, "render_state"),
-            0x80018EF4: (0x8006E048, "render_state"),
-            0x80018F04: (0x8006E0AC, "render_state"),
-            0x80018F24: (0x8006E0B0, "render_state"),
-            0x80018F3C: (0x8006E0B4, "render_state"),
+            0x80018EE4: (0x8006E048, "open_graphics_runtime"),
+            0x80018EF4: (0x8006E048, "open_graphics_runtime"),
+            0x80018F04: (0x8006E0AC, "open_graphics_runtime"),
+            0x80018F24: (0x8006E0B0, "open_graphics_runtime"),
+            0x80018F3C: (0x8006E0B4, "open_graphics_runtime"),
             0x80018FE4: (0x80012238, ""),
             0x80019044: (0x80017458, "tmd_project_vertices_perspective_right"),
             0x80019050: (0x8001764C, "render_enqueue_tmd"),

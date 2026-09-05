@@ -1,1 +1,1 @@
-/home/sheep/Projects/kings-field/AGENTS.md
+AGENTS.md

@@ -1,5 +1,92 @@
 # OPEN map rendering: ownership and setup residues
 
+## Function Match Plan: orientation fall-through (`eaf83a3`)
+
+OPEN `80018bbc` remains 464 retail/472 probe bytes, strict 87.922420%,
+with 81 unequal aligned words. The six semantic views, full CFG, exact
+320-byte traversal caller, preceding sprite, vertex selector, shared layouts,
+GAME source homolog, history and SDK boundary evidence were refreshed.
+Nine calls, nine address pairs, one internal jump, no strings/candidates,
+the 80-byte frame and the widths/constants below retain their contract.
+
+At `80018cdc..80018cec`, orientation 2 adjusts X and falls into the Z
+adjustment shared with orientation 1; orientation 3 adjusts only X. Test
+expressing that common tail as a switch with case 2 falling through to case 1
+and a separate case 3. Preserve all coordinate calculations, stores, SDK
+calls and the caller; this is a control-flow hypothesis, not a case-order
+or register permutation search.
+
+The switch grows the body to 516 bytes. It compares orientation 2 first,
+introduces a signed less-than split and extra jumps, and reloads position Z
+from the stack before adjustment. Retail has none of these operations.
+All nine calls and numeric data targets agree, and the traversal remains
+raw exact, but the CFG contradicts the proposed switch. The canonical
+if/else body is left unchanged; do not build further trials on this rejected
+control shape. There is no new exact result or bank entry.
+
+## Function Match Plan: relative-coordinate values (`6434803`)
+
+OPEN `80018bbc` remains 464 retail/472 probe bytes, strict 87.922420%.
+The six semantic views, full CFG, exact traversal caller, preceding sprite
+body, vertex selector, shared types, GAME homolog, source history and SDK
+matrix prototypes/provider evidence were refreshed. The 80-byte frame,
+nine calls, nine address pairs, internal orientation join, no strings or
+candidate references, argument widths and constants retain the contract below.
+The traversal bounds both full-width coordinates to 0..99; its visibility
+argument and this body's wrapped object selection are unsigned bytes.
+The surrounding grid/object policy is game-owned, not an SDK body.
+
+The first non-target-address difference remains the constant-one branch slot.
+In the coordinate body, retail retains the full relative X and Z subtraction
+results in `a2`/`a1`, stores their low halves, and later adds orientation
+offsets to those same full values (`80018cdc..80018cf8`). Current C instead
+expresses the later additions as reads of the narrowed SVECTOR members.
+Test explicit signed word-sized relative X/Z values feeding both the initial
+stores and orientation additions. This is distinct from the rejected world-
+product staging and in-place world-position trials: no extra world stores,
+fake carriers, SDK object, padding or changed declaration order is involved.
+Preserve the initial X/Z/Y store order and all orientation branches. Compare
+the complete raw body/referents and keep the 320-byte traversal exact.
+
+The explicit relative values emit the identical 472-byte candidate: 81
+unequal aligned words, nine ordered calls and nine address pairs. The
+320-byte traversal remains raw exact. Remove the extra locals; this trial
+does not explain the constant-one placement or coordinate instruction order.
+
+## Function Match Plan: halfword coordinate construction (`d1d9562`)
+
+OPEN `render_map_cell`, `80018bbc`/464 bytes, is now strict 87.922420% under
+`probe-gcc257-o2-g0`, with 472 probe bytes. The complete graphics owner has
+already recovered the quadrant-to-light-matrix base; the older separate-owner
+discussion below is historical. All six semantic queries, full body/CFG, sole
+exact traversal caller, adjacent sprite boundary, SDK signatures and provider
+ledger, source history, shared grid types and GAME homolog were inspected.
+Nine direct calls, nine address pairs and one internal jump have validated or
+proven referents; no strings or candidate outgoing references occur. The
+80-byte frame and SDK local objects remain correct. Retail's first difference
+is the hoisted constant one in the object-bounds branch slot; later coordinate
+loads/arithmetic have a different dependency schedule.
+
+The caller bounds row/col to 0..99 and supplies an unsigned visibility byte.
+Attribute selection wraps in a byte before checking 99, orientation is a
+word, height-grid loads are unsigned bytes, and the local SDK position is
+three signed halfwords. Retail computes both X/Z products before loading
+their camera halfwords. A previous experiment with separate full-width world
+locals emitted identical code. Test constructing world coordinates in the
+existing SVECTOR and then subtracting the unsigned camera low halfwords in
+place. This checks the actual halfword object update, not new full-width
+carriers; no padding lane is initialized and no extra object is introduced.
+Keep the orientation CFG, data owners, SDK calls and exact traversal unchanged.
+Do not change GAME, declarations or compiler flags to compensate for results.
+
+The in-place halfword construction keeps three preliminary world-coordinate
+stack stores that retail never makes, then stores all three relative results
+again. The candidate grows to 484 bytes and changes argument retention from
++0x14; all nine numeric call targets and address destinations remain correct,
+but data-reference order changes. The 320-byte traversal remains raw exact.
+The trial is removed: the earlier combined expressions remain the supported
+source, and no new exact result is claimed from this experiment.
+
 Witnesses: OPEN `render_map_cell`, `0x80018bbc`/`0x1d0` bytes, and
 `opening_render_map_cells`, `0x80018d8c`/`0x140`, under the existing
 `probe-gcc257-o2-g0` profile. These observations do not identify the

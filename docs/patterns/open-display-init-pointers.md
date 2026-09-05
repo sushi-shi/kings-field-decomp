@@ -1,5 +1,54 @@
 # OPEN display-initialization pointer lifetimes
 
+## Paired drawing-area flag control (`4cd8fae`)
+
+The refreshed six views, complete caller/CFG, neighboring controls, SDK
+definitions and history retain the 472-retail/484-probe-byte, 92.177960%
+snapshot below: eighteen calls, sixteen validated retail address pairs, two
+internal jumps, no strings/candidates, and the full-width mode boundary.
+Retail retains enabled value one in s1 through the dfe restoration and
+stores first-draw then second-draw for both clear and restore operations.
+Test `second_draw->dfe = first_draw->dfe = 0` and the corresponding value-one
+assignment, preserving those orders and all intervening PutDrawEnv calls.
+No constant carrier or new pointer is added. All resolved instructions and
+ordered targets are identical: 484 bytes, 117 unequal aligned words, twenty
+probe address pairs and a 40-byte frame. The 44/468/132-byte controls stay
+raw exact. Restore the separate assignments; no further assignment permutation
+is justified by this result.
+
+## Function Match Plan: complete DRAWENV-use lifetime (`6434803`)
+
+OPEN `80016adc` starts at strict 92.177960%, 484 compiled versus 472 retail
+bytes. Retail and all six semantic views, the full mode-forwarding caller,
+three exact unit controls, SDK types/signatures and provider ledger, shared
+graphics owner and source history were refreshed. The full-width `s32 mode`,
+18 calls, two internal jumps, 16 validated retail address pairs, no strings
+or candidate references, 320x240 dimensions, fog constants and byte flag/RGB
+stores retain the contract below. This is game-owned initialization around
+separately attributed SDK functions.
+
+The first difference is the missing fourth saved register and 40/48-byte
+frame. After the four SDK setup calls, retail retains the first `dtd` address
+through initial flag/RGB writes, the mode branch, both PutDrawEnv calls and
+the four `dfe` clear/restore writes. The source's typed whole-DRAWENV pointers
+start only after the initial flag/RGB writes; the candidate keeps the shared
+address in a caller-saved register and emits four extra absolute `dfe` pairs.
+Test initializing the existing two typed pointers immediately after the last
+setup call and using them for that complete field-write lifetime. Keep the
+observed chained `dtd` write order and all subsequent independent store/call
+order. Unlike earlier direct-member or field-pointer trials, this describes
+one whole SDK-object view from its first customization to its last use. Do
+not add carriers, cross-object byte offsets, new views or compiler flags.
+
+The trial remains 484 bytes but loses the retained `dtd` anchor: its first
+store becomes absolute and the branch setup introduces a new pair for the
+whole first DRAWENV, then derives the second at +92 and DISPENV at +184.
+All 18 calls and physical destinations remain, but there are now 21 data
+pairs rather than the starting 20, and 110 unequal aligned words. The frame
+and four extra `dfe` pairs are not recovered. Restore the original source;
+all three unit controls remain raw exact. This result rules out that earlier
+whole-object pointer lifetime, not the observed shared retail address.
+
 ## Function Match Plan and pre-edit snapshot
 
 OPEN `80016adc`, `display_initialize(s32 mode)`, is 472 bytes (`1d8`) at
@@ -102,3 +151,34 @@ display initializer's baseline is unchanged. The four pre-existing GAME
 historical-best deficits listed in `open-format-display-sdk.md` remain the
 only all-image strict-check failures. OPEN remains 91 exact / 108 eligible,
 with 17 partials and zero unstarted functions.
+
+## Complete-owner follow-up plan
+
+At `0d62ce8`, the canonical complete graphics owner has recovered the
+cross-field DISPENV address. OPEN `80016adc` remains 472 retail bytes versus
+484 compiled, at strict 92.177960%. The six semantic queries, complete sole
+caller, three neighboring/control bodies, earlier pointer experiment, and
+LIBGPU provider evidence were rechecked. The signature, 18 calls, two internal
+jumps, 16 retail address pairs, constants and SDK field widths are unchanged;
+there are no strings or candidate outgoing references. The three neighboring
+functions remain strict 100%.
+
+The four remaining extra absolute pairs are the two `dfe` flags before and
+after PutDrawEnv. Retail retains the common address rooted at the first
+`dtd` member and accesses these flags at +1 and +93. The source currently
+expresses these stores through the two call-argument pointers. Test those
+four accesses as direct members of the canonical graphics owner, keeping
+the existing typed pointers for the two calls. This checks whether consistent
+complete-owner field expressions recover the observed shared address; it
+does not introduce a byte pointer spanning SDK objects or alter DRAWENV.
+
+Direct member accesses compile identically to the kept source: 484 bytes and
+the same four extra pairs. A second bounded hypothesis uses pointers to the
+two actual `u_char dfe` members, retained across their clear/submit/restore
+sequence. Retail's address lifetime spans both PutDrawEnv calls; each pointer
+stays within its named SDK member and neither introduces an offset cast.
+
+Both variants emit identical instructions and relocations to the starting
+source; neither recovers a new match. Both are reverted. The three controls
+remain raw exact. Display initialization stays at 92.177960%, with its four
+extra flag-address pairs and 40-byte versus 48-byte frame unattributed.

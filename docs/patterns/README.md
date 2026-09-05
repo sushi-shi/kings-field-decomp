@@ -37,6 +37,12 @@ promotes a probe to a proven historical toolchain.
 - [open-sprite-render.md](open-sprite-render.md): typed sprite material,
   SDK packet ownership, and the depth/texture source forms behind the exact
   OPEN projected-sprite renderer.
+- [open-ft4-descriptor.md](open-ft4-descriptor.md): the byte-identical SDK
+  rectangle trial and why texture byte loads do not establish source field width.
+- [open-camera-step.md](open-camera-step.md): grouped position/rotation
+  publication closes the fixed-point camera step and its three-function unit.
+- [open-tmd-countdown.md](open-tmd-countdown.md): unconditional primitive
+  countdown initialization leaves only two frame instructions unmatched.
 - [open-entity-traversal-residue.md](open-entity-traversal-residue.md): visible
   entity/item traversal, the wider floor-item state owner, and the remaining
   entry/material-base instruction differences.
@@ -48,9 +54,16 @@ promotes a probe to a proven historical toolchain.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword
   narrowing in preparation, and the shared GAME/OPEN TMD interface.
 - [open-unlit-triangles.md](open-unlit-triangles.md): the unlit F3/FT3 path,
-  packed GPU accesses, and the unresolved graphics-wide shared-base relation.
+  shared packed packet views, initial packet dependency and remaining OT-base
+  and frame/register differences.
+- [open-graphics-runtime-owner.md](open-graphics-runtime-owner.md): complete
+  graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
+- [open-emitter-source-controls.md](open-emitter-source-controls.md): negative
+  combined-unit, packet-header and vertex-address spelling controls; no new exacts.
+- [open-driver-default-control.md](open-driver-default-control.md): observed
+  original CCPSX command defaults and the unchanged OPEN G0/G8 comparison.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
@@ -75,6 +88,10 @@ promotes a probe to a proven historical toolchain.
 - [open-display-init-pointers.md](open-display-init-pointers.md): observed
   DRAWENV pointer lifetimes and height initialization, with bounded retail/C
   argument/write traces and remaining address-base differences.
+- [open-fog-interpolation.md](open-fog-interpolation.md): scaled-difference
+  expression recovering the exact OPEN fog interpolation and its preserved start.
+- [open-item-cursor.md](open-item-cursor.md): saved stream start, postincrement
+  scan and direct count-member accesses closing the OPEN placement loader.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
   parser match attempts, retained source improvements and instruction-level residues.
 - [game-parser-inline-helpers.md](game-parser-inline-helpers.md): pinned-compiler

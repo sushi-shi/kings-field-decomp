@@ -1,5 +1,172 @@
 # OPEN visible entity/item traversal
 
+## Function Match Plan: item-count initialization order (`819211b`)
+
+OPEN `80019240` is strict 96.759030%, 664 retail/668 probe bytes, with 67
+unequal aligned words. The six semantic views and complete CFG, sole scene-0
+caller, both renderer callees/neighbors, selector, loader, shared layouts,
+GAME source homolog, history and SDK provider/header evidence were refreshed.
+The 48-byte frame, four calls, fifteen validated pairs, no strings/candidates,
+word positions, halfword origins/countdown and checked divisions retain the
+contract below. Custom pool/visibility policy remains separate from LIBGTE.
+
+The first difference is still the material-R address at +0x130. Retail reads
+the signed loop's count at `80019380/84`, after the BGR stores but before
+loading and writing the two texture selectors. Current source assigns the
+count after those stores and the initial item pointer. Test moving only the
+existing count assignment between RGB initialization and selector copying,
+following the observed load lifetime. Preserve the chained BGR order, both
+selector expressions, pointer initialization, countdown and item-row body;
+do not introduce a pointer carrier or alter the owner/widths. The exact
+552-byte entity sibling and floor-item renderer are unchanged controls.
+
+The earlier count assignment emits the identical 668-byte candidate, including
+the material anchor, 67 unequal aligned words and all ordered references.
+Restore its original placement; both sibling bodies remain raw unchanged.
+
+### Signed item-coordinate intermediate
+
+The same refreshed snapshot applies. Retail's item divisions and following
+origin subtractions are full signed words; the halfword masks occur at the
+visibility comparisons and feed the row-major index. Test retaining these
+row/column intermediates as `s32`, with explicit `u16` conversion at both
+comparison/index boundaries. The entity coordinates and saved origins stay
+unchanged. This is not the earlier narrowed-quotient/compound-subtract trial:
+the signed division result and subtraction now share their full-word type
+until the observed unsigned boundary. No extra local, mask operation, owner
+change or compiler setting is added. Reject extra emitted conversions or any
+changed numeric referent/loop behavior, regardless of a higher fuzzy score.
+
+The word intermediates add two explicit origin masks absent from retail and
+change the row dividend/result register, growing the body to 672 bytes with
+71 unequal aligned words. All four calls/fifteen targets remain, but this
+does not preserve the observed narrowing boundary. Restore the `u16` locals;
+the existing wrapped coordinate model remains the better-supported source.
+
+### Independent ordered material writes
+
+With the initial source restored, retail still makes three independent BGR
+byte stores at `80019360..80019374`, before materializing the tpage address.
+The source instead chains the assignments through the outer R lvalue; the
+candidate retains that R address as its material/item base. Test three
+separate assignments in the exact observed B, G, R order, keeping the value
+180 and every following statement unchanged. This does not permute the
+stores or invent an address carrier: it removes the nested lvalue expression
+whose lifetime currently extends into the pool setup. The original pre-owner
+reconstruction used chaining, but the complete graphics owner and halfword
+origins now supply a different, independently verified comparison base.
+
+The independent stores choose material B (`8006da2e`) as the retained address
+instead, starting the difference earlier at +0x11c. Size remains 668 bytes
+with 72 unequal aligned words; all physical targets and both siblings remain
+unchanged. Restore chaining. Neither spelling recovers the actual tpage base.
+
+### Window reference between quotient and subtraction
+
+Retail loads the current window at `800193f8/fc`, after the item-Z quotient
+and before subtracting the saved origin at `80019400`. The original source
+performs the entire row expression before declaring that window reference.
+Test a quotient assignment to the existing `u16 row`, then the window load,
+then `row -= origin_z`, matching that observed dependency order. Unlike the
+previous compound-row trial, the window reference is now between the two
+coordinate operations. Keep the column expression, window/row widths,
+material setup and loop unchanged. Any extra quotient/origin narrowing or
+different data target rejects this hypothesis.
+
+This placement also emits the identical 668-byte candidate and all ordered
+relocations, with the same 67 unequal aligned words. Restore the combined
+row expression. No source change from these four traversal trials is kept;
+the remaining material address and item-row instruction differences are
+still unattributed, and neither partial function is banked.
+
+Final real compilation and strict matching restore the starting unit exactly:
+100% entity renderer, 98.795180% floor-item renderer and 96.759030% traversal.
+Full `kf build` preserves 97/108 OPEN exact functions and all 13 SDK source
+controls; only the known OPEN switch-table addends and GAME data/four
+historical-best failures remain. Ruff, all 401 tests and `git diff --check`
+pass. This follow-up commits evidence only, with no source, baseline, header,
+compiler-profile or GAME changes.
+
+## Function Match Plan: wrapped cell origins (`ca9f3d4`)
+
+OPEN `80019240`/664 bytes starts at strict 92.867470%, with 660 compiled
+bytes under `probe-gcc257-o2-g0`. The complete graphics owner supersedes the
+historical separate-owner wording below. All six semantic queries, full CFG,
+sole scene-0 caller, both renderer callees/neighbors, slot selector, placement
+loaders, shared layouts, SDK declaration/provider ledger, history and GAME
+homolog were inspected. Four direct calls, fifteen validated address pairs,
+no candidate references/strings, the 48-byte frame, signed countdown loops,
+two checked signed divisions and all return/delay slots retain the contract.
+This remains game-owned visibility and material policy; SetLightMatrix is
+separately attributed to LIBGTE/MTX with archive/header evidence.
+
+The first raw difference is the entity/coordinate pointer register pair;
+entry origin calculations then use direct saved-register results rather than
+retail's temporary results and moves. All source coordinates and window
+origins are read as unsigned halfwords. Each later subtraction is narrowed
+to an unsigned halfword before the visibility bounds checks; the saved
+origins have no full-width consumer. Test `u16` origins as a candidate wrapped
+coordinate model, preserving both expressions and every use. Their initial
+upper bits are unobserved, so this is not proof of an original local type.
+Reject extra narrowing instructions or new reference/CFG differences. Do not
+change record fields, shared owners, declaration order, compiler flags or
+GAME, and preserve the exact preceding entity renderer.
+
+The halfword origins recover the entire entry and entity loop, including
+retail's temporary-to-saved moves, load order and entity/coordinate pointer
+roles. No extra masks are emitted. Retain this independently supported width
+model pending strict verification; only material-base selection and item-row
+evaluation remain in the focused diff.
+
+The item row currently narrows one combined division/subtraction expression.
+Retail keeps the quotient in v0 and subtracts the origin into v1 before
+narrowing into a2; the probe subtracts in place and leaves a load-delay nop
+after the window-pointer load. Test converting world Z to the existing `u16`
+row first, then subtracting the wrapped origin with `row -= origin_z`; do the
+same for column X. The intermediate upper halfword is unobserved and the
+final wrapped coordinates are identical. This is a cell-coordinate update
+hypothesis, with unchanged signed division, grid loads, bounds and source
+objects; do not add a temporary merely to occupy a particular register.
+
+Strict verification of halfword origins confirms **96.759030%**, up from
+92.867470%, with 668 compiled bytes. The coordinate-update spelling emits
+the same 67 unequal aligned words and is removed. The original four numeric
+calls remain; the material-base choice still changes address-pair ordering.
+Both neighboring bodies are unchanged, including all 552 exact bytes of
+`opening_entity_render`.
+
+The remaining material setup and item walk operate on one supported
+`KfFloorItemStateOpen` subobject. Retail retains its tpage member address
+through the setup and derives the first item and coordinate pointers from it.
+Test one ordinary typed pointer to this actual state, initialized immediately
+after SetLightMatrix and used for the material, selectors, count and item
+array. This makes that object's observed lifetime explicit; it does not use
+a pointer outside a field, overlapping global, raw byte offset or alias macro.
+Keep the material store order and loop statements fixed, and remove the
+pointer if it merely reproduces the existing base selection.
+
+The typed state pointer changes the anchor to the subobject's CLUT at
+`8006da28`, not retail's tpage at `8006da2a`. It restores the three absolute
+color stores but moves the CLUT store into the count-guard delay slot and
+hoists the first-item address. The four call targets and physical field
+destinations are preserved; the body remains 668 bytes, with 59 unequal
+aligned words. This trades material-setup differences without recovering
+retail's actual base/lifetime, so remove the pointer. Retain only the two
+halfword origin types: all instructions through +0x12c agree, the first
+remaining raw difference is material R's address at +0x130, and 67 aligned
+words differ overall. This is an improved partial, not an exact function.
+
+The final affected-unit rebuild confirms strict 96.759030%; no partial is
+banked. Full `kf build` preserves all 95/108 OPEN exact functions and all
+13 SDK source controls. It still fails on the existing OPEN TMD switch
+addends and unchanged GAME switch/four historical-best deficits. Ruff and
+`git diff --check` pass. Of 401 repository tests, 400 pass in 23.395 seconds;
+the sole failure remains the previously recorded 883-versus-882 pointer-cast
+floor from the TMD campaign. This two-type correction adds no casts, tests,
+tooling changes or GAME edits.
+
+## Historical reconstruction
+
 `OPEN.EXE:0x80019240` is the 664-byte `opening_render_entities_and_items`.
 Its complete C reconstruction is 92.867470% under `probe-gcc257-o2-g0`.
 The original compiler and translation-unit boundaries remain unproved; this

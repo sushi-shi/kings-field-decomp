@@ -1,5 +1,90 @@
 # OPEN floor-item rendering: facing-byte mask
 
+## Function Match Plan: packed-control value (`5784c14`)
+
+OPEN `800190f4` remains 332 retail/328 probe bytes, strict 98.795180%.
+Hashes, six semantic views, full CFG, sole traversal caller, neighboring
+entity/sprite bodies, placement loader, shared record, matrix-Y boundary,
+SDK declarations/provider evidence and history were refreshed. Nine calls,
+six validated address pairs, one internal jump, no strings/candidates, the
+80-byte frame and the established ABI retain the contract below.
+
+The unsigned byte at item+2 supplies facing through mask `f0`, and is read
+again after sprite emission for the frame-count mask `0f`. The loader copies
+the entire serialized byte; its random-frame initialization must continue
+reading that entire value. Test one complete byte-sized union view with raw
+storage and unsigned four-bit facing/frame-count fields. Preserve both reads:
+the high field shifted by four feeds the existing u8 facing; the low field
+replaces the later raw temporary and mask. Keep the record layout and all
+other expressions unchanged, with a one-byte pinned-compiler size assertion.
+No forced mask, helper, volatile, extra frame object or alternate record view
+is justified by the missing instruction.
+
+The packed-control value emits identical resolved words and ordered targets
+for all three unit functions. The floor renderer remains 328 bytes, the
+entity sibling remains 552-byte raw exact, and traversal remains 668 bytes.
+The trial is not adopted. A separate compile retaining the pre-assembler
+output confirms `andi $2,$2,0x00f0` directly precedes the zero branch;
+`andi ff` is already absent there. The assembler is not removing an emitted
+narrowing instruction. This locates the observed omission in the probe
+pipeline without identifying the historical compiler or an optimizer cause.
+
+## Function Match Plan: branch assignment value (`819211b`)
+
+OPEN `800190f4` remains 332 retail/328 probe bytes, strict 98.795180%.
+Retail hashes, all six semantic views, complete CFG, the sole 24-byte-stride
+caller, both neighboring functions, placement loader/shared record, matrix-Y
+and sprite consumers, SDK declarations/provider evidence and source history
+were refreshed. Nine calls, six address pairs, one internal jump, no strings
+or candidate references, the 80-byte frame and complete delay slots retain
+the supported contract below. The SDK services are separate vendored bodies;
+the placement/facing/animation policy is game code.
+
+The first difference is still the missing byte narrowing at `80019184`.
+Retail reads, masks and narrows the facing value directly into its zero test,
+then uses that same value in the angle expression. Test the ordinary C
+assignment-expression form of that branch: assign the masked byte to the
+existing `u8 facing` within the condition itself. Unlike the rejected
+byte-read/compound-mask trial, the branch consumes the assignment's narrowed
+value rather than a subsequent local read. Keep the mask, record, angle,
+signed depth biases, SDK calls and animation tail unchanged. This is a source
+hypothesis, not proof of the original spelling or a reason to add a synthetic
+mask. Compare the entire unit and keep its exact entity renderer unchanged.
+
+The assignment-expression branch emits the identical 328-byte candidate and
+ordered relocations, with the same omitted mask. All 552 bytes of the exact
+entity renderer and the traversal's existing 668-byte candidate are unchanged.
+Restore the separate assignment; no source or match change is kept here.
+
+## Function Match Plan: byte read followed by nibble masking (`8ac47fe`)
+
+OPEN `0x800190f4`, 332 retail bytes, starts at strict 98.795180% with a
+328-byte candidate under `probe-gcc257-o2-g0`. The six semantic views,
+complete retail CFG, sole traversal caller, neighboring entity/traversal
+source, placement loader and shared item fields, sprite helper, matrix-Y
+callee, SDK declarations/provider ledger and source history retain the
+contract below. There are nine direct calls, six validated address pairs,
+one validated internal jump and no strings or candidate outgoing references.
+The typed item/sprite and SDK matrix interfaces are unchanged. The frame is
+80 bytes and the return delay slot restores it; branch displacements account
+for the absent `andi v0,v0,0xff` at `0x80019184`.
+
+The packed-control byte is read with `lbu`; its low nibble later limits the
+byte animation counter and its high nibble selects the facing branch/angle.
+Test reading the full packed byte into the existing `u8 facing` and then
+applying `facing &= 0xf0`, rather than assigning a masked promoted expression
+directly. This distinguishes a byte read/update from the previous bit-clear
+constant trial without adding a carrier, changing signedness, altering an
+owner or editing GAME. Compare raw instructions and ordered referents after
+a real focused build, and preserve the exact neighboring entity function.
+
+The separate byte read/mask produces the same missing-`andi` diff: 328 bytes,
+the same nine numeric calls and six numeric address targets. The preceding
+552-byte entity renderer remains raw-exact, and the traversal's size/raw
+differences are unchanged. Remove the trial; the byte-update spelling does
+not explain the narrowing instruction under this probe. No source edit is
+retained for this function.
+
 ## Retail and source contract
 
 `OPEN.EXE:0x800190f4` is the 0x14c-byte `render_floor_item` body. Its sole
@@ -72,3 +157,32 @@ Removing its same-type cast leaves the compiled `open.render` object
 byte-identical in a controlled old/new rebuild (SHA-256
 `6d27d812e3cb0092db5de752109708ac8d07ecc60f1a4337954c1cbbc1b48fd3`).
 The decoder stays at 98.333336%; its existing frame/order residue is unchanged.
+
+## Master follow-up: clearing the frame-count nibble
+
+Pre-edit OPEN `800190f4`/`0x14c` at `2560194`: 98.795180% strict, 328 probe
+bytes versus 332 retail. The refreshed six image-qualified queries, complete
+disassembly/CFG, caller at `80019488`, adjacent entity/traversal code, shared
+item fields and loader, source history, GAME source homolog and pinned SDK
+MTX/SMP headers and provider symbols retain the existing contract. Nine
+direct calls, six address pairs, one internal jump, all frame/delay slots,
+sprite table ownership and numeric referents agree; there are no strings or
+candidate references. The item policy is game-owned, not an SDK body.
+
+The packed byte's low nibble is the frame count, independently consumed by
+`andi ...,0xf` at `80019214`; the high nibble controls facing. Test clearing
+the low nibble (`value & ~0x0f`) before assignment to the existing `u8 facing`,
+rather than selecting it with the already byte-sized `0xf0` constant. This
+is the same operation over every possible byte and preserves the subsequent
+angle, branch and frame-wrap behavior. The hypothesis is that the promoted
+bit-clear expression followed by byte assignment may explain the two retail
+masks; it is not a proved original spelling. No width, field, owner, compiler
+profile, extra statement or GAME source is changed. Compare the complete
+instruction/relocation stream and both neighboring functions after rebuilding.
+
+The bit-clear expression produced the same instructions and relocations as
+the original high-nibble mask. The extra retail `andi 0xff` is still omitted;
+strict scores remain 98.795180% for this function, 100% for the preceding
+entity renderer and 92.867470% for the following traversal. The experiment
+was reverted. It rules out this source spelling under the pinned probe, not
+other independently supported source facts or a historical compiler variant.

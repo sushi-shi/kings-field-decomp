@@ -34,11 +34,11 @@ void opening_entity_render(KfOpeningEntity *entity)
     u16 object_id;
     s16 depth;
 
-    SetRotMatrix(&render_state.view_matrix);
-    SetTransMatrix(&render_state.view_matrix);
-    screen.vx = (u16)entity->position.vx - (u16)render_state.view_position.vx;
-    screen.vy = (u16)entity->position.vy - (u16)render_state.view_position.vy;
-    screen.vz = (u16)entity->position.vz - (u16)render_state.view_position.vz;
+    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)entity->position.vx - (u16)open_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)entity->position.vy - (u16)open_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)entity->position.vz - (u16)open_graphics_runtime.render_state.view_position.vz;
     /* RotTrans writes the three translation words, not a VECTOR pad word. */
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&entity->rotation, &model);
@@ -46,8 +46,8 @@ void opening_entity_render(KfOpeningEntity *entity)
     scale.vy = entity->scale.vy;
     scale.vz = entity->scale.vz;
     ScaleMatrix(&model, &scale);
-    MulMatrix0(&render_state.light_matrix, &model, &light);
-    MulMatrix2(&render_state.view_matrix, &model);
+    MulMatrix0(&open_graphics_runtime.render_state.light_matrix, &model, &light);
+    MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
     SetLightMatrix(&light);
@@ -107,20 +107,20 @@ void render_floor_item(KfFloorItem *item)
     u32 frame_count;
     s16 depth_bias;
 
-    SetRotMatrix(&render_state.view_matrix);
-    SetTransMatrix(&render_state.view_matrix);
-    screen.vx = (u16)item->position_x - (u16)render_state.view_position.vx;
-    screen.vy = (u16)item->position_y - (u16)render_state.view_position.vy;
-    screen.vz = (u16)item->position_z - (u16)render_state.view_position.vz;
+    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)item->position_x - (u16)open_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)item->position_y - (u16)open_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)item->position_z - (u16)open_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = item->facing_and_frame_count & 0xf0;
     if (facing != 0) {
         matrix_set_rotation_y((facing - 16) << 6, &model);
-        MulMatrix2(&render_state.view_matrix, &model);
+        MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
         depth_bias = 150;
     } else {
-        SetRotMatrix(&render_state.pitch_matrix);
+        SetRotMatrix(&open_graphics_runtime.render_state.pitch_matrix);
         depth_bias = 200;
     }
     SetTransMatrix(&model);
@@ -137,9 +137,9 @@ void render_floor_item(KfFloorItem *item)
 ADDRESS(0x80019240, 0x298)
 void opening_render_entities_and_items(void)
 {
-    const KfCellWindow *window = active_cell_window;
-    s32 origin_z = (u16)render_state.view_cell.z - window->origin_z;
-    s32 origin_x = (u16)render_state.view_cell.x - window->origin_x;
+    const KfCellWindow *window = open_graphics_runtime.active_cell_window;
+    u16 origin_z = (u16)open_graphics_runtime.render_state.view_cell.z - window->origin_z;
+    u16 origin_x = (u16)open_graphics_runtime.render_state.view_cell.x - window->origin_x;
     KfOpeningEntity *entity;
     KfFloorItem *item;
     s16 remaining;
@@ -149,7 +149,7 @@ void opening_render_entities_and_items(void)
     for (remaining = 31; remaining != -1; remaining--) {
         if (entity->object_id < 32) {
             u16 row = entity->cell_z - origin_z;
-            const KfCellWindow *grid = active_cell_window;
+            const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
 
             if (row < grid->height) {
                 u16 col = entity->cell_x - origin_x;
@@ -163,15 +163,15 @@ void opening_render_entities_and_items(void)
     }
 
     SetLightMatrix(&floor_item_light_matrix);
-    floor_item_state.material.color.r = floor_item_state.material.color.g =
-        floor_item_state.material.color.b = 180;
-    floor_item_state.material.tpage = floor_item_state.texture_tpage;
-    floor_item_state.material.clut = floor_item_state.texture_clut;
-    item = floor_item_state.items;
-    remaining = floor_item_state.count;
+    open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
+        open_graphics_runtime.floor_item_state.material.color.b = 180;
+    open_graphics_runtime.floor_item_state.material.tpage = open_graphics_runtime.floor_item_state.texture_tpage;
+    open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
+    item = open_graphics_runtime.floor_item_state.items;
+    remaining = open_graphics_runtime.floor_item_state.count;
     while (--remaining != -1) {
         u16 row = item->position_z / 2000 - origin_z;
-        const KfCellWindow *grid = active_cell_window;
+        const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
 
         if (row < grid->height) {
             u16 col = item->position_x / 2000 - origin_x;

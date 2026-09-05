@@ -12,7 +12,6 @@
 #include <kf/psyq_pad.h>
 #include <kf/resources.h>
 
-#define OPEN_RUNTIME_CLEAR_SIZE 0x24788
 
 /*
  * Cursor-relative retail accesses prove this allocator prefix layout. Its
@@ -48,7 +47,7 @@ void opening_run(s32 display_mode)
 
     PadInit(0);
     /* Retail clears the display state and the contiguous opening runtime BSS. */
-    memset(&display_state, 0, OPEN_RUNTIME_CLEAR_SIZE);
+    memset(&open_graphics_runtime, 0, sizeof open_graphics_runtime);
     memset(&opening_entity_state, 0, sizeof opening_entity_state);
     memory_set_allocation_mode(0);
     audio_initialize();
@@ -62,12 +61,12 @@ void opening_run(s32 display_mode)
     case 1:
         SetDispMask(1);
         if (cd_file_load_into(
-                display_state.asset_load_buffer,
+                open_graphics_runtime.display_state.asset_load_buffer,
                 opening_initial_tim_path) != 0) {
             return;
         }
         scene3_action = 1;
-        tim_upload_images(display_state.asset_load_buffer);
+        tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer);
         skip_action = 2;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");

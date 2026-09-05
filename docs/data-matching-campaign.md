@@ -649,6 +649,35 @@ clean-environment skips); the full default build remains red on data,
 reachability and placement. Work remains isolated on
 `codex/data-matching-20260905`; no new function is banked.
 
+## Master integration checkpoint
+
+The user requested integration of the complete data-matching branch after
+`d2f7a20`. The merge was resolved and verified in its isolated worktree against
+`master` at `57f0a13`, preserving all sixteen branch commits and twenty-two
+concurrent master commits. Master's publication/license changes and OPEN
+graphics-runtime owner remain intact. Its updates to three now-consolidated
+opening files are carried into `opening_scenes.c`; the corresponding linked-
+instruction controls now select the same functions in that module. Inventory
+count expectations are derived from the combined inventories, not either
+parent's totals. No function is dropped or new matching technique introduced.
+
+The merged result preserves **360/471 exact game functions** (PSX 1, GAME 262,
+OPEN 97), including all six newer OPEN exact results from master. All 114 OPEN
+function-report rows, including six vendor controls, equal master's current
+report; GAME and PSX rows equal the verified data-branch checkpoint. Strict
+DATA remains enabled by default and reports **11/59** source owners; the two
+complete SDK data contributions still match. Master's aggregate removes the
+separate active-window BSS placement conflict: target relink is **108/114**,
+with six unresolved placement conflicts. Unpaired reached config ranges are
+now **646** (GAME 379, OPEN 267). These are accounting improvements, not proof
+of exhaustive reachable-byte coverage or linked-executable equality.
+
+All **551 local tests** pass without skips, as do Ruff and diff checks. The
+full compare graph rebuilds all affected units successfully; the default full
+build still rejects explicit data, reachability and placement failures. The
+master update is a fast-forward to the verified merge, not a reset or rewrite
+of either parent's history.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and
