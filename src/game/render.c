@@ -291,10 +291,10 @@ void render_set_view_transform(
     }
     if (rotation != 0) {
         render_state.view_rotation = *rotation;
-        RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
-        angles.vz = 0;
-        angles.vy = 0;
     }
+    RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
+    angles.vz = 0;
+    angles.vy = 0;
     angles.vx = render_state.view_rotation.vx;
     RotMatrix(&angles, &render_state.pitch_matrix);
 }

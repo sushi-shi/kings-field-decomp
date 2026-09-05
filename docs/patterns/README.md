@@ -68,6 +68,8 @@ promotes a probe to a proven historical toolchain.
   the observed ReadSZ2 call contract, and unattributed register differences.
 - [game-projection-countdown.md](game-projection-countdown.md): direct incoming
   count countdowns closing both GAME perspective projection helpers.
+- [game-view-transform.md](game-view-transform.md): the copy-only nullable
+  rotation branch and unconditional matrix updates closing the GAME view helper.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated

@@ -245,14 +245,13 @@ two generate identical code) explain several of the rows.
 
 Residues left in the same module (not steered):
 
-- `render_set_view_transform` `0x8001c184`: retail copies the rotation
-  through `a1` (a block-move scratch holding the constant address) and
-  re-materialises `a0 = &render_state.view_rotation` for `RotMatrix`; every
-  copy spelling and every flag sweep ties the copy address to the argument
-  register instead. In the 2.5.8 sources `update_equiv_regs` replaces a
-  constant-equivalent pseudo used exactly once in another basic block, so the
-  original probably placed the copy and the call in different blocks in a way
-  not yet found.
+- `render_set_view_transform` `0x8001c184` is now **100%** after the
+  [GAME nullable-view correction](game-view-transform.md). Retail's null
+  branch skips only the rotation copy, not `RotMatrix` and the two stack
+  zero stores. Correcting that source scope reproduces both the `a1` copy
+  address and the rematerialized `a0` call argument. The former register
+  symptom did not establish a compiler limitation; the earlier branch
+  target was already different.
 - `tmd_prepare_primitive_indices`: in OPEN `0x80017030`, computing the outer
   decrement and object pointer before the zero-count guard reproduces retail's
   second `tmd_state.current_asset` load. The unused 8-byte frame and the entry
