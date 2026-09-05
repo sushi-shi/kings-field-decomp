@@ -74,6 +74,8 @@ promotes a probe to a proven historical toolchain.
   countdown and one result join closing the GAME actor free-slot search.
 - [game-event-cone-search.md](game-event-cone-search.md): short angle locals
   closing the event selector without widening its existing facing parameter.
+- [game-actor-cone-search.md](game-actor-cone-search.md): short angle locals
+  and the six-caller short-facing contract closing the actor selector.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated

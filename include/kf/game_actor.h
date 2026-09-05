@@ -151,7 +151,7 @@ extern void actor_pool_apply_radial_damage(
     u16 component4, u16 scale, u16 hit_flags);
 extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern KfActor *actor_pool_find_target_in_cone(
-    const struct KfVec3i *origin, s32 facing, u32 max_distance,
+    const struct KfVec3i *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
 extern void actor_pool_load_placements(const KfActorPlacement *placements);

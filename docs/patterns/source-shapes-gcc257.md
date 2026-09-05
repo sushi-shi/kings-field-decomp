@@ -209,7 +209,7 @@ Open residues (not steered):
   `actor_play_sound_at_phase`: retail hoists argument-register copies
   (`move a1,s3`, `move s2,a0`) above independent loads; the 2.5.7 probe keeps
   them adjacent to their call or use.
-- `actor_try_select_*`, `actor_pool_find_target_in_cone`: retail keeps every
+- `actor_try_select_*`: retail keeps every
   prologue register save together and loads the current actor into `s1`
   afterwards; the probe schedules that load right after the `s1` save.
 - `actor_initialize_slot`: the `lifecycle = 1` store stays between the first
@@ -218,6 +218,10 @@ Open residues (not steered):
 - `actor_pool_find_free`: subsequently closed at **100%** by the
   [countdown/result-join correction](game-actor-free-countdown.md), not by
   changing the compiler profile or forcing register assignments.
+- `actor_pool_find_target_in_cone`: subsequently closed at **100%** with
+  [short angle locals and the audited facing contract](game-actor-cone-search.md)
+  under the current 2.6.0 probe; the older scheduling observation was not a
+  proved source-independent limit.
 
 ## leaf frames
 

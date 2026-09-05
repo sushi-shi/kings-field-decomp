@@ -473,7 +473,7 @@ void actor_try_attack_player(
 ADDRESS(0x8002d7f8, 0x184)
 KfActor *actor_pool_find_target_in_cone(
     const struct KfVec3i *origin,
-    s32 facing,
+    s16 facing,
     u32 max_distance,
     s32 angle_tolerance,
     s32 *distance_out)
@@ -484,9 +484,8 @@ KfActor *actor_pool_find_target_in_cone(
     KfActor *actor = actor_state.actors;
     u16 count = 127;
     s32 distance;
-    s32 delta;
-    s32 folded;
-    s16 difference;
+    s16 delta;
+    s16 folded;
 
     do {
         if (actor->lifecycle != 1) {
@@ -510,11 +509,10 @@ KfActor *actor_pool_find_target_in_cone(
         if (delta > 2048) {
             folded = 0x1000 - delta;
         }
-        difference = folded;
-        if (angle_tolerance < difference) {
+        if (angle_tolerance < folded) {
             continue;
         }
-        if (difference < best_difference) {
+        if (folded < best_difference) {
             best_difference = folded;
             best = actor;
             best_distance = distance;
