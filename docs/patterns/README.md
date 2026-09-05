@@ -89,6 +89,8 @@ promotes a probe to a proven historical toolchain.
 - [game-volume-distance.md](game-volume-distance.md): shared rejection
   tail closes player distance; direct actor-center expression improves its
   partial match with a remaining register-role exchange.
+- [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
+  and rejected arithmetic-association controls; scatter remains partial.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
