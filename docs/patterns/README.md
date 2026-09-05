@@ -74,6 +74,9 @@ promotes a probe to a proven historical toolchain.
 - [game-warp-position-buffers.md](game-warp-position-buffers.md): complete
   VECTOR objects across all shimmer callers and full-word variant handoffs
   close the remaining change-floor and same-floor warp helpers.
+- [game-projectile-helpers.md](game-projectile-helpers.md): byte lifetime,
+  signed shared rotation fields and landing-store order close the 3D helper;
+  the 2D helper's extra retail frame space remains unexplained.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword

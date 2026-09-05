@@ -30,7 +30,7 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
-    int life = record->unknown_07;
+    u8 life = record->unknown_07;
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     VECTOR world;
@@ -38,10 +38,10 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
     s16 pitch;
     s16 next_pitch;
 
-    if ((life & 0xff) < 2u) {
+    if (life < 2u) {
         RotMatrix((SVECTOR *)&record->rotation_x, &rotation_matrix);
-        matrix_set_rotation_x((s16)record->rotation_x, &rotation_matrix);
-        matrix_set_rotation_y((s16)record->rotation_y, &yaw_matrix);
+        matrix_set_rotation_x(record->rotation_x, &rotation_matrix);
+        matrix_set_rotation_y(record->rotation_y, &yaw_matrix);
         MulMatrix2(&yaw_matrix, &rotation_matrix);
         ApplyMatrix(&rotation_matrix, velocity, &world);
         world.vx += record->position.vx;
@@ -67,30 +67,30 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
                     0xbb8, 0x36b0);
             }
         }
-        if ((s16)record->rotation_x >= 512) {
+        if (record->rotation_x >= 512) {
             record->rotation_x = 512;
             record->direction_x = 0;
-        } else if ((s16)record->rotation_y < -511) {
+        } else if (record->rotation_y < -511) {
             record->rotation_x = -512;
             record->direction_x = 0;
         }
-        if ((s16)record->rotation_x > 0) {
+        if (record->rotation_x > 0) {
             record->direction_x -= 10;
         } else {
             record->direction_x += 10;
         }
-        pitch = (s16)record->rotation_x;
+        pitch = record->rotation_x;
         next_pitch = (s16)(record->rotation_x + record->direction_x);
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
-            if ((life & 0xff) == 1) {
-                record->unknown_07 = 10;
+            if (life == 1) {
                 next_pitch = 0;
+                record->unknown_07 = 10;
             } else {
                 record->unknown_05 = 0;
             }
         }
         record->rotation_x = next_pitch;
-    } else if ((life & 0xff) >= 10u && (s16)frame_limit >= (life & 0xff)) {
+    } else if (life >= 10u && (s16)frame_limit >= life) {
         record->position.vy -= 60;
         record->unknown_07++;
     }
