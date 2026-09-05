@@ -2784,9 +2784,8 @@ GAME.EXE	0x8005701f	0x4581f	0x2	unclassified	coverage-gap			payload-complement	m
 GAME.EXE	0x80057021	0x45821	0x27	string	byte-pattern		ascii	investigation:string-census	escaped text: Error: Can't pop matrix,stack is empty!
 GAME.EXE	0x80057048	0x45848	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x8005704a	0x4584a	0x21	string	byte-pattern		ascii	investigation:string-census	escaped text: This function is not implemented.
-GAME.EXE	0x8005706b	0x4586b	0x31c	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057387	0x45b87	0x27	string	byte-pattern		ascii	investigation:string-census	"escaped text: \t""\t'\t,\t1\t7\t<\tA\tF\tK\tP\tU\tZ\t_\te\tj\to\tt\ty\t~\t"
-GAME.EXE	0x800573ae	0x45bae	0x4c2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x8005706b	0x4586b	0x5	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80057070	0x45870	0x800	array	reviewed	rsin_tbl	s16[1024]	manual:psyq_rsin_table	Sony LIBGTE.LIB/GEO.OBJ .data+0; complete 1024-entry quarter-wave table; SDK XDEF and exact payload; signed halfword consumers
 GAME.EXE	0x80057870	0x46070	0x6b	string	byte-pattern		ascii	investigation:string-census	escaped text: $Id: intr.c,v 1.29 1994/10/14 01:04:07 suzu Exp $ : \tCopyright (C) by 1994 Sony Computer Entertainment Inc.
 GAME.EXE	0x800578db	0x460db	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x800578dc	0x460dc	0x30	string	byte-pattern		ascii	investigation:string-census	escaped text: $Id: pad.c,v 1.17 1994/10/14 01:04:10 suzu Exp $
@@ -5142,9 +5141,8 @@ OPEN.EXE	0x80036797	0x24f97	0x2	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x80036799	0x24f99	0x27	string	byte-pattern		ascii	investigation:string-census	escaped text: Error: Can't pop matrix,stack is empty!
 OPEN.EXE	0x800367c0	0x24fc0	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800367c2	0x24fc2	0x21	string	byte-pattern		ascii	investigation:string-census	escaped text: This function is not implemented.
-OPEN.EXE	0x800367e3	0x24fe3	0x31c	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80036aff	0x252ff	0x27	string	byte-pattern		ascii	investigation:string-census	"escaped text: \t""\t'\t,\t1\t7\t<\tA\tF\tK\tP\tU\tZ\t_\te\tj\to\tt\ty\t~\t"
-OPEN.EXE	0x80036b26	0x25326	0x4c2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800367e3	0x24fe3	0x5	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x800367e8	0x24fe8	0x800	array	reviewed	rsin_tbl	s16[1024]	manual:psyq_rsin_table	Sony LIBGTE.LIB/GEO.OBJ .data+0; complete 1024-entry quarter-wave table; SDK XDEF and exact payload; signed halfword consumers
 OPEN.EXE	0x80036fe8	0x257e8	0x6b	string	byte-pattern		ascii	investigation:string-census	escaped text: $Id: intr.c,v 1.29 1994/10/14 01:04:07 suzu Exp $ : \tCopyright (C) by 1994 Sony Computer Entertainment Inc.
 OPEN.EXE	0x80037053	0x25853	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037054	0x25854	0x30	string	byte-pattern		ascii	investigation:string-census	escaped text: $Id: pad.c,v 1.17 1994/10/14 01:04:10 suzu Exp $

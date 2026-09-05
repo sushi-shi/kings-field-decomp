@@ -504,6 +504,33 @@ All 485 local tests, Ruff and flake checks pass. The full default build remains
 red on the explicit data, placement and reachability failures. No new function
 is banked, and no linked-executable equality is claimed.
 
+## Recover SDK sine-table owners and signed referents
+
+The pinned `LIBGTE.LIB/GEO.OBJ` proves both complete 2048-byte `rsin_tbl`
+allocations and the negative relocation addends that previously pointed the
+semantic graph into camera data, a path string and even `sprintf`. Six SDK
+bodies and both table payloads equal retail after applying the original SDK
+patches. The [campaign evidence](../config/evidence/psyq_rsin_table.md) records
+all sixteen corrected pairs and each vendor function's verdict.
+
+The shared referent model now preserves decoded `S+A` separately from its
+reviewed allocation `S`. Delinking, xrefs and reachability agree on that owner,
+including biased and one-past address expressions; real load/store accesses
+still retain bounds diagnostics. Ambiguous/candidate/rejected identities are
+not silently promoted. Unit-owned RODATA retains its actual section identity.
+
+All 112 compiled objects, all 112 module targets and all 484 function score
+rows remain unchanged, preserving 354 exact game functions. Only four
+individual vendor target objects acquire the corrected table references.
+Strict source data remains 13/60 and target relinking 106/112. The improved
+graph also reaches the existing `floor_entry_cells` owner through its reviewed
+negative offset, raising config-only ranges to **666** (GAME 387, OPEN 279).
+
+All 502 local tests, Ruff and flake checks pass. The full default build remains
+red on the explicit data, placement and reachability failures. Complete SDK
+owners are not yet default-compared: a config-data delink/comparison lane is
+still required, and no whole-image equality is claimed.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

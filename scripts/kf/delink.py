@@ -33,6 +33,7 @@ from scripts.kf.relocations import (
     decode_mips26_target,
     encode_hi_lo_addend,
     encode_mips26_addend,
+    named_data_referent,
     validate_relocation,
 )
 from scripts.kf.retail import (
@@ -405,7 +406,19 @@ def _resolve_symbol(
     target: int,
     target_name: str,
     rodata: tuple[int, int] | None = None,
+    *,
+    data_reference: bool = False,
 ) -> tuple[str, int]:
+    named = named_data_referent(
+        catalog, function.image, sanitize_symbol(target_name, "")
+    ) if target_name else None
+    if data_reference and named is not None:
+        # A biased data base can coincide with unrelated code or RODATA. Use
+        # the reviewed allocation, then express unit-owned literals/tables
+        # through their actual read-only section contribution.
+        if rodata is not None and rodata[0] <= named.va < rodata[0] + rodata[1]:
+            return RODATA_SECTION_SYMBOL, target - rodata[0]
+        return named.name, target - named.va
     if function.contains(target):
         return SECTION_SYMBOL, target - function.va
     if rodata is not None and rodata[0] <= target < rodata[0] + rodata[1]:
@@ -423,20 +436,12 @@ def _resolve_symbol(
             # symbol: a curated identity at that address wins so the target
             # carries the same name reconstructed source uses.
             owner_va = int(address_name.group(1), 16)
-            owner = next(
-                (item for item in catalog.data[function.image] if item.va == owner_va),
-                None,
-            )
-            if owner is not None:
-                return owner.symbol, target - owner_va
+            if named is not None:
+                return named.name, target - owner_va
             return symbol, target - owner_va
         # A reviewed row may name the owning datum even when the address lies
         # outside its extent: `&table[index - 1]` folds to `table - stride`.
         # The addend is measured from that owner, wherever the target lies.
-        named = next(
-            (item for item in catalog.data[function.image] if item.symbol == symbol),
-            None,
-        )
         if named is not None:
             return symbol, target - named.va
         return symbol, 0
@@ -482,7 +487,11 @@ def _apply_relocation(
     validation = validate_relocation(blob, function, row, catalog, policy)
     target = validation.target
     offset = validation.offset
-    symbol, addend = _resolve_symbol(catalog, function, target, row["target_name"], rodata)
+    symbol, addend = _resolve_symbol(
+        catalog, function, target, row["target_name"], rodata,
+        data_reference=(row["status"] == "reviewed"
+                        and row["kind"] in {"mips_hi16_lo16", "mips32_candidate"}),
+    )
 
     if row["kind"] == "mips26":
         local_target = function.contains(target)

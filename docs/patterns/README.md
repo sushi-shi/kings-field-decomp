@@ -83,3 +83,6 @@ promotes a probe to a proven historical toolchain.
   runtime owner, preserved interior referents and newly exact spinner consumer.
 - [tmd-packet-header.md](tmd-packet-header.md): bounded packet-header inline
   experiments, their stack traffic and the item-count reset negative control.
+- [mips-biased-data-referents.md](mips-biased-data-referents.md): original SDK
+  negative address addends, allocation-relative traversal, RODATA ownership
+  and bounds/relocation controls that preserve the decoded retail target.

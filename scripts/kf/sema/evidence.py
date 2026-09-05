@@ -6,10 +6,12 @@ from collections import Counter
 from dataclasses import dataclass, replace
 from functools import lru_cache
 
-from scripts.kf.delink import load_catalog
+from scripts.kf.delink import load_catalog, sanitize_symbol
 from scripts.kf.relocations import (
+    DataReferent,
     decode_hi_lo_target,
     decode_mips26_target,
+    named_data_referent,
     validate_relocation,
 )
 from scripts.kf.retail import parse_int, read_tsv
@@ -51,6 +53,21 @@ class Reference:
     paired_site: int | None = None
     tier: str = "candidate"
     origins: tuple[Origin, ...] = ()
+    referent: DataReferent | None = None
+
+    @property
+    def destination(self) -> int | None:
+        """Object to traverse; target separately retains the decoded S+A."""
+        return self.referent.va if self.referent is not None else self.target
+
+    def target_label(self, idx: Index) -> str | None:
+        if self.target is None:
+            return None
+        if self.referent is None:
+            return idx.label(self.target)
+        addend = self.target - self.referent.va
+        suffix = f"{'+' if addend > 0 else '-'}0x{abs(addend):x}" if addend else ""
+        return self.referent.name + suffix
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -58,6 +75,10 @@ class Reference:
             "site": self.site,
             "paired_site": self.paired_site,
             "target": self.target,
+            "referent": ({"name": self.referent.name, "va": self.referent.va}
+                         if self.referent is not None else None),
+            "addend": (self.target - self.referent.va
+                       if self.referent is not None and self.target is not None else None),
             "kind": self.kind,
             "owner": self.owner,
             "tier": self.tier,
@@ -202,6 +223,16 @@ class Evidence:
             else:
                 reason = "function-is-fragmented"
 
+            referent = None
+            if (tier != "rejected" and row["status"] == "reviewed"
+                    and row["kind"] in {"mips_hi16_lo16", "mips32_candidate"}
+                    and row.get("target_name")):
+                try:
+                    referent = named_data_referent(
+                        self.catalog, self.image, sanitize_symbol(row["target_name"], ""))
+                except ValueError as error:
+                    tier, reason = "candidate", str(error)
+
             origin = Origin(
                 tier,
                 row["channel"],
@@ -219,6 +250,7 @@ class Evidence:
                 paired,
                 tier,
                 (origin,),
+                referent,
             ))
         return out
 
@@ -269,12 +301,12 @@ class Evidence:
     @property
     def references(self) -> tuple[Reference, ...]:
         if self._references is None:
-            merged: dict[tuple[int, int | None, str], Reference] = {}
+            merged: dict[tuple[int, int | None, str, DataReferent | None], Reference] = {}
             for reference in [
                 *self._relocation_references(),
                 *self._control_references(),
             ]:
-                key = (reference.site, reference.target, reference.kind)
+                key = (reference.site, reference.target, reference.kind, reference.referent)
                 previous = merged.get(key)
                 if previous is None:
                     merged[key] = reference
@@ -312,8 +344,8 @@ class Evidence:
         return tuple(
             row for row in self.references
             if self.visible(row, confirmed_only=confirmed_only)
-            and row.target is not None
-            and lo <= row.target < hi
+            and row.destination is not None
+            and lo <= row.destination < hi
         )
 
     def outgoing(

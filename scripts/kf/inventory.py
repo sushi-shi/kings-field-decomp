@@ -958,7 +958,7 @@ def propose(config_dir: Path = RETAIL_CONFIG, output: Path | None = None) -> Pat
                 if target_function is not None and reference.kind in {"call", "tail"}:
                     callees.append(target_function.name)
                     continue
-                datum = idx.data_owner(reference.target)
+                datum = idx.data_owner(reference.destination)
                 if datum is None:
                     continue
                 if datum.kind == "string":

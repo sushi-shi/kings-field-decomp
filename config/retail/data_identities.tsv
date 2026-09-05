@@ -1438,6 +1438,7 @@ GAME.EXE	0x80056a50	0x4	DAT_80056a50	unknown	load	undefined4		address-only	data.
 GAME.EXE	0x80056d60	0x4	libgte_mtx_saved_ra	static	load	u32	libgte_mtx	supported	data.tsv:cross-overlay-sdk-lineage;config/evidence/overlay_lineage.tsv	private SDK error-path scratch word
 GAME.EXE	0x80056d6c	0x4	libgte_mtx_stack_offset	static	load	s32	libgte_mtx	supported	data.tsv:cross-overlay-sdk-lineage;config/evidence/overlay_lineage.tsv	byte offset advanced and reduced by 0x20
 GAME.EXE	0x80056d70	0x280	libgte_mtx_stack	static	load	MATRIX[20]	libgte_mtx	supported	data.tsv:cross-overlay-sdk-lineage;config/evidence/overlay_lineage.tsv	20 x 0x20-byte saved GTE matrix/register states
+GAME.EXE	0x80057070	0x800	rsin_tbl	global	load	s16[1024]	libgte_geo	supported	config/evidence/psyq_rsin_table.md;SDK-XDEF;exact-sdk-data	Original SDK table identity and full section extent; not game-owned progress; three quadrant bases use negative byte addends
 GAME.EXE	0x80057948	0x4	DAT_80057948	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x8005794c	0x4	DAT_8005794c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057950	0x4	DAT_80057950	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2667,6 +2668,7 @@ OPEN.EXE	0x800361c8	0x4	DAT_800361c8	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x800364d8	0x4	libgte_mtx_saved_ra	static	load	u32	libgte_mtx	supported	data.tsv:cross-overlay-sdk-lineage;config/evidence/overlay_lineage.tsv	private SDK error-path scratch word
 OPEN.EXE	0x800364e4	0x4	libgte_mtx_stack_offset	static	load	s32	libgte_mtx	supported	data.tsv:cross-overlay-sdk-lineage;config/evidence/overlay_lineage.tsv	byte offset advanced and reduced by 0x20
 OPEN.EXE	0x800364e8	0x280	libgte_mtx_stack	static	load	MATRIX[20]	libgte_mtx	supported	data.tsv:cross-overlay-sdk-lineage;config/evidence/overlay_lineage.tsv	20 x 0x20-byte saved GTE matrix/register states
+OPEN.EXE	0x800367e8	0x800	rsin_tbl	global	load	s16[1024]	libgte_geo	supported	config/evidence/psyq_rsin_table.md;SDK-XDEF;exact-sdk-data	Original SDK table identity and full section extent; not game-owned progress; three quadrant bases use negative byte addends
 OPEN.EXE	0x800370c0	0x4	DAT_800370c0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800370c4	0x4	DAT_800370c4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800370c8	0x4	DAT_800370c8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

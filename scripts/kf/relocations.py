@@ -7,6 +7,7 @@ byte-validated relocation candidate from weaker investigation evidence.
 
 from __future__ import annotations
 
+import re
 import struct
 from dataclasses import dataclass
 
@@ -25,6 +26,32 @@ SIGNED_LOW_OPCODES = {
     0x29,  # sh
     0x2B,  # sw
 }
+
+
+@dataclass(frozen=True)
+class DataReferent:
+    """A named allocation base, distinct from a decoded S+A address."""
+
+    name: str
+    va: int
+
+
+def named_data_referent(catalog, image: str, name: str) -> DataReferent | None:
+    """Resolve an explicit image-local owner without assuming S+A is inside it.
+
+    Address-derived owner spellings select a datum's start, not whichever
+    allocation happens to contain the decoded address. Unknown names remain
+    unresolved; ambiguous names must not pick the first inventory row.
+    """
+    if not name:
+        return None
+    address_name = re.fullmatch(r"DAT_([0-9a-fA-F]{8})", name)
+    address = int(address_name.group(1), 16) if address_name else None
+    matches = [item for item in catalog.data.get(image, ())
+               if (item.va == address if address is not None else item.symbol == name)]
+    if len(matches) > 1:
+        raise ValueError(f"ambiguous-data-referent:{image}:{name}")
+    return DataReferent(matches[0].symbol, matches[0].va) if matches else None
 
 
 @dataclass(frozen=True)

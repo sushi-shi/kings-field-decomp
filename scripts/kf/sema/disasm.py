@@ -127,7 +127,7 @@ def _notes(
     for reference in ctx.refs.at_site(row.va, confirmed_only=confirmed_only):
         if reference.target is None:
             continue
-        label = ctx.idx.label(reference.target)
+        label = reference.target_label(ctx.idx)
         text = f"{reference.tier} {reference.kind}: {label}"
         if text not in notes:
             notes.append(text)

@@ -156,7 +156,7 @@ def main(ctx: Context, argv: list[str]) -> int:
             die(f"{args.target!r} has no admitted binding")
         if binding.space == "text":
             referenced = {
-                reference.target
+                reference.destination
                 for reference in ctx.refs.outgoing(
                     binding,
                     confirmed_only=args.confirmed_only,

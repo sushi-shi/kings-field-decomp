@@ -99,6 +99,11 @@ def access_span(reference: Reference, img: RetailImage) -> tuple[int, int]:
     assert reference.target is not None
     target = reference.target
     word = img.u32(reference.paired_site) if reference.paired_site is not None else None
+    if reference.referent is not None and (word is None or word >> 26 in {8, 9}):
+        # Taking an address (including a biased base or one-past pointer) does
+        # not read S+A. Follow the named allocation; memory-op lows below still
+        # check their real access against its extent.
+        return reference.referent.va, 1
     if word is None:
         return target, 1
     opcode = word >> 26
@@ -199,7 +204,7 @@ def audit(
                 issue("unresolved-indirect-control", key, number)
                 continue
             path_rank = min(rank, TIER_RANK[reference.tier])
-            found = owners(reference.target)
+            found = owners(reference.destination)
             if not found:
                 issue("unmodeled-target", key, number, target=reference.target)
                 destinations[number] = []

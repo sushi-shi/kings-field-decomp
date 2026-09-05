@@ -14,7 +14,9 @@ TRAVERSABLE_TIERS = {"proven", "validated"}
 
 
 def _endpoint(ctx: Context, reference: Reference, *, outgoing: bool) -> Binding | None:
-    va = reference.target if outgoing else reference.owner
+    if outgoing and reference.referent is not None:
+        return ctx.idx.datum(reference.referent.va)
+    va = reference.destination if outgoing else reference.owner
     if va is None:
         return None
     return ctx.idx.function(va) or ctx.idx.function_owner(va) or ctx.idx.data_owner(va)
@@ -25,10 +27,7 @@ def _row(ctx: Context, reference: Reference, *, outgoing: bool, raw: bool) -> di
     result = {
         **reference.as_dict(),
         "site_label": ctx.idx.label(reference.site),
-        "target_label": (
-            ctx.idx.label(reference.target)
-            if reference.target is not None else None
-        ),
+        "target_label": reference.target_label(ctx.idx),
         "endpoint": endpoint.as_dict() if endpoint else None,
     }
     if not raw:

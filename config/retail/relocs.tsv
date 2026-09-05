@@ -9697,20 +9697,20 @@ GAME.EXE	0x8004f0f8	0x3d8f8		mips26	instruction-word	0x8004f27c	load		jal		range
 GAME.EXE	0x8004f2a4	0x3daa4		mips26	reachable-code	0x8004f2cc	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004f2ac	0x3daac		mips26	reachable-code	0x8004f2bc	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004f2b4	0x3dab4		mips26	reachable-code	0x8004f2cc	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f2d8	0x3dad8	0x8004f2dc	mips_hi16_lo16	reachable-code	0x80057070	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f2d8	0x3dad8	0x8004f2dc	mips_hi16_lo16	reachable-code	0x80057070	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f2e8	0x3dae8		mips26	reachable-code	0x8004f37c	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f308	0x3db08	0x8004f30c	mips_hi16_lo16	reachable-code	0x80057070	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f308	0x3db08	0x8004f30c	mips_hi16_lo16	reachable-code	0x80057070	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f318	0x3db18		mips26	reachable-code	0x8004f37c	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f330	0x3db30	0x8004f334	mips_hi16_lo16	reachable-code	0x80056070	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f330	0x3db30	0x8004f334	mips_hi16_lo16	reachable-code	0x80056070	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f340	0x3db40		mips26	reachable-code	0x8004f37c	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f364	0x3db64	0x8004f368	mips_hi16_lo16	reachable-code	0x80057070	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f3bc	0x3dbbc	0x8004f3c0	mips_hi16_lo16	reachable-code	0x80057070	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f364	0x3db64	0x8004f368	mips_hi16_lo16	reachable-code	0x80057070	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
+GAME.EXE	0x8004f3bc	0x3dbbc	0x8004f3c0	mips_hi16_lo16	reachable-code	0x80057070	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f3cc	0x3dbcc		mips26	reachable-code	0x8004f450	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f3e4	0x3dbe4	0x8004f3e8	mips_hi16_lo16	reachable-code	0x80056870	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f3e4	0x3dbe4	0x8004f3e8	mips_hi16_lo16	reachable-code	0x80056870	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f3f4	0x3dbf4		mips26	reachable-code	0x8004f450	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f414	0x3dc14	0x8004f418	mips_hi16_lo16	reachable-code	0x80057070	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f414	0x3dc14	0x8004f418	mips_hi16_lo16	reachable-code	0x80057070	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f424	0x3dc24		mips26	reachable-code	0x8004f450	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8004f440	0x3dc40	0x8004f444	mips_hi16_lo16	reachable-code	0x80055870	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8004f440	0x3dc40	0x8004f444	mips_hi16_lo16	reachable-code	0x80055870	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 GAME.EXE	0x8004f494	0x3dc94		mips26	instruction-word	0x8004cb14	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004f49c	0x3dc9c		mips26	instruction-word	0x8004cb20	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8004f4f8	0x3dcf8		mips26	reachable-code	0x8004cb14	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -14508,20 +14508,20 @@ OPEN.EXE	0x8002eecc	0x1d6cc		mips26	instruction-word	0x8002f050	load		jal		range
 OPEN.EXE	0x8002f078	0x1d878		mips26	reachable-code	0x8002f0a0	load		jal		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002f080	0x1d880		mips26	reachable-code	0x8002f090	load		j		control-flow	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002f088	0x1d888		mips26	reachable-code	0x8002f0a0	load		jal		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f0ac	0x1d8ac	0x8002f0b0	mips_hi16_lo16	reachable-code	0x800367e8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f0ac	0x1d8ac	0x8002f0b0	mips_hi16_lo16	reachable-code	0x800367e8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f0bc	0x1d8bc		mips26	reachable-code	0x8002f150	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f0dc	0x1d8dc	0x8002f0e0	mips_hi16_lo16	reachable-code	0x800367e8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f0dc	0x1d8dc	0x8002f0e0	mips_hi16_lo16	reachable-code	0x800367e8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f0ec	0x1d8ec		mips26	reachable-code	0x8002f150	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f104	0x1d904	0x8002f108	mips_hi16_lo16	reachable-code	0x800357e8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f104	0x1d904	0x8002f108	mips_hi16_lo16	reachable-code	0x800357e8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f114	0x1d914		mips26	reachable-code	0x8002f150	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f138	0x1d938	0x8002f13c	mips_hi16_lo16	reachable-code	0x800367e8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f190	0x1d990	0x8002f194	mips_hi16_lo16	reachable-code	0x800367e8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f138	0x1d938	0x8002f13c	mips_hi16_lo16	reachable-code	0x800367e8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
+OPEN.EXE	0x8002f190	0x1d990	0x8002f194	mips_hi16_lo16	reachable-code	0x800367e8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f1a0	0x1d9a0		mips26	reachable-code	0x8002f224	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f1b8	0x1d9b8	0x8002f1bc	mips_hi16_lo16	reachable-code	0x80035fe8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f1b8	0x1d9b8	0x8002f1bc	mips_hi16_lo16	reachable-code	0x80035fe8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f1c8	0x1d9c8		mips26	reachable-code	0x8002f224	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f1e8	0x1d9e8	0x8002f1ec	mips_hi16_lo16	reachable-code	0x800367e8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f1e8	0x1d9e8	0x8002f1ec	mips_hi16_lo16	reachable-code	0x800367e8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f1f8	0x1d9f8		mips26	reachable-code	0x8002f224	load		j		control-flow	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002f214	0x1da14	0x8002f218	mips_hi16_lo16	reachable-code	0x80034fe8	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002f214	0x1da14	0x8002f218	mips_hi16_lo16	reachable-code	0x80034fe8	load	rsin_tbl	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:psyq_rsin_table
 OPEN.EXE	0x8002f268	0x1da68		mips26	instruction-word	0x8002c168	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002f270	0x1da70		mips26	instruction-word	0x8002c174	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002f2cc	0x1dacc		mips26	reachable-code	0x8002c168	load		jal		control-flow	candidate	investigation:relocs.tsv
