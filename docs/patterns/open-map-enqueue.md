@@ -1,5 +1,48 @@
 # OPEN map polygon emission
 
+## Function Match Plan: mode-discriminated output pointer (`6a25ae8`)
+
+OPEN `800185e8` remains 952 bytes, strict 99.663864%, with five normal/header
+spill operands and fifteen triangle output-pointer operands unequal. All six
+semantic views, the complete CFG, sole map-cell caller, accessor/allocator,
+adjacent unlit/sprite bodies, shared layouts, source history and SDK provider
+declarations were refreshed. The unsigned-halfword boundary, prepared byte
+offsets, signed depth/fog values, 18 calls, two validated address pairs, one
+internal jump, 80-byte frame and no strings/candidate references are unchanged.
+The PRIM/SMP library callees remain separately attributed SDK controls.
+
+Retail assigns both allocation results to one output-packet pointer, uses
+the selected GT3/GT4 layout, and merges at the same AddPrim. The previous
+explicit common-tail trial recovered that pointer but changed the control
+and OT-address shape. Test only a single mode-discriminated output pointer
+within the existing loop, using a union of the already-supported KfGpuGT3/
+KfGpuGT4 views. Keep each mode's allocation size, actual SDK member type,
+field accesses, depth check and insertion statement unchanged. This models
+the two alternative complete packet formats without an extra pointer carrier,
+stack object, invented field, vertex permutation or new compiler setting.
+The union is a source hypothesis, not proof of an original type. Compare all
+words and numeric referents, especially the shared OT load, before retention.
+
+The shared typed pointer removes all fifteen triangle-pointer differences
+without changing any other raw word or relocation. The candidate remains
+952 bytes, with the same 18 calls, two address pairs, internal jump, depth
+guards and base-relative OT load. Keep the one real output-packet pointer
+and its existing typed variants. The remaining five differences only swap
+the normal pointer at sp+24/32 with the header at sp+32/24; their object
+widths and uses agree. No declaration reordering or padding is justified by
+that residue. The exact entity caller and the unlit baseline remain unchanged.
+
+Strict objdiff confirms **99.663864% -> 99.978990%**. This is still partial;
+five stack-slot operands prevent exactness, so no bank operation is warranted.
+
+The focused match and full build preserve all 97 OPEN exact functions and
+all 13 SDK controls. After rerunning a transient cross-image report-generation
+race, the full check reports only the existing OPEN TMD default-table addend,
+13 GAME data mismatches and four GAME historical-best deficits. Ruff, all
+401 existing tests (18.875 seconds) and `git diff --check` pass. Both unlit
+trials are restored and actually recompiled. No GAME source, shared header,
+test, toolchain setting, relocation or banked baseline is changed.
+
 ## Function Match Plan: outer object-index width (`3ee452a`)
 
 OPEN `800185e8` is 952 bytes and strict 99.663864%, with 20 unequal raw
@@ -104,10 +147,10 @@ same 20 unequal words. Both scope trials are removed. The retained source,
 strict 99.663864% result and numeric referents are unchanged; this follow-up
 does not supply a new exact match or justify further declaration permutations.
 
-Current result: **99.663864% strict objdiff**, 952 compiled/retail bytes under
-`probe-gcc257-o2-g0`. Twenty aligned words remain different; this function is
-not exact and is not banked. The current caller is 87.922420% and unchanged by
-this pass. The lifetime corrections below supersede the original results.
+Current result: **99.978990% strict objdiff**, 952 compiled/retail bytes under
+`probe-gcc257-o2-g0`. Five stack-slot operands remain different after the
+shared output-pointer correction above; this function is not exact and is
+not banked. The current caller is 87.922420% and unchanged by this pass.
 
 ## Function Match Plan: loop-local projected base (master `7e3bb27`)
 

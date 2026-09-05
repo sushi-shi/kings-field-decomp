@@ -1,5 +1,53 @@
 # OPEN unlit triangle emission
 
+## Function Match Plan: accepted-packet table reload (`6a25ae8`)
+
+OPEN `80018344` is 676 retail/680 probe bytes, strict 98.828400%, with
+52 unequal aligned words. The six semantic views, complete CFG, sole
+552-byte exact entity caller, accessor/allocator, adjacent emitter and
+shared packet/runtime types were refreshed. Eight calls, one internal jump,
+one retail HI/LO pair, no strings/candidate references, the `u16` object/
+`s16` bias ABI, signed depth sum/divide/shift, mode constants and packet
+advancement remain as documented below. LIBGPU PRIM and LIBGTE NormalClip
+are separately attributed SDK controls, not this game-owned packet policy.
+
+After the frame-size difference, the remaining body discrepancies are two
+vertex-register roles and the extra absolute OT pair. Retail `80018590`
+reloads the active table only on the accepted-depth path, after all packet
+initialization calls, using projected-base minus 276. Test spelling that
+actual reload as a block-local `u32 *ordering_table`, then indexing it for
+AddPrim. Do not cache the pointer before the loop or across any SDK call,
+invent a relative alias, alter vertex lifetimes, or change the profile.
+This differs from the previous pre-loop pointer-to-slot trial: it expresses
+the observed accepted-packet value dependency at its point of use. Compare
+raw words and ordered numeric targets against a freshly rebuilt baseline.
+
+The local reload still emits the extra absolute pair and 680 bytes. It moves
+the load ahead of the depth mask and reverses the AddPrim address-add operands,
+leaving 53 unequal aligned words rather than 52. Calls and numeric targets
+are unchanged; the exact entity caller remains raw exact and the adjacent
+map emitter retains its existing 20 unequal words. Revert the local: it does
+not explain retail's shared-base access or its evaluation order.
+
+### Shared output-packet follow-up
+
+The adjacent map emitter now recovers one output-pointer dependency using
+a mode-discriminated pointer to its existing packet views. Unlit has the
+same concrete single-buffer dataflow: both allocation results enter `s0`,
+each mode writes its selected layout, and the common AddPrim consumes that
+same pointer. Its C currently carries a second `void *primitive` solely to
+join two case-local typed pointers. With the restored 680-byte/52-difference
+baseline and unchanged evidence above, test one typed pointer to the existing
+F3/FT3 alternatives through initialization and the shared tail. Preserve all
+allocation sizes, SDK argument types, operations, vertex lifetimes and CFG.
+Do not infer that the map result must transfer; compare every raw word and
+ordered numeric target before retaining or rejecting the source model.
+
+The single typed pointer emits the identical 680-byte candidate and ordered
+relocations, retaining all 52 raw differences. This emitter already shared
+the packet pointer through its explicit common tail. Restore its existing
+source: the map improvement supplies no new byte evidence for this change.
+
 ## Function Match Plan: initial packet dependency (`6434803`)
 
 OPEN `80018344` remains 676 retail/680 compiled bytes, strict 98.769230%,
