@@ -97,16 +97,16 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     case 0:
         switch (yaw) {
         case 0x000:
-            map_collision_grid[cell_z - 1][cell_x + 1] = value;
-            map_collision_grid[cell_z][cell_x + 1] = value;
+            map_collision_grid[cell_z][cell_x + 1] =
+                map_collision_grid[cell_z - 1][cell_x + 1] = value;
             break;
         case 0x400:
             map_collision_grid[cell_z + 1][cell_x] = value;
             map_collision_grid[cell_z + 1][cell_x + 1] = value;
             break;
         case 0x800:
-            map_collision_grid[cell_z + 1][cell_x - 1] = value;
-            map_collision_grid[cell_z][cell_x - 1] = value;
+            map_collision_grid[cell_z][cell_x - 1] =
+                map_collision_grid[cell_z + 1][cell_x - 1] = value;
             break;
         case 0xc00:
             map_collision_grid[cell_z - 1][cell_x] = value;

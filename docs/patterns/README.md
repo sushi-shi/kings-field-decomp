@@ -84,6 +84,8 @@ promotes a probe to a proven historical toolchain.
   type-0..8 link predicate and the rejected pool-reset memset control.
 - [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
   block and result join; partial reconstruction improved, not exact.
+- [game-map-collision-edge.md](game-map-collision-edge.md): chained
+  opposite-row assignments recover the shared grid base and close the marker.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
