@@ -25,6 +25,9 @@ promotes a probe to a proven historical toolchain.
 - [maspsx-private-bss.md](maspsx-private-bss.md): preserving compiler-private
   tentative storage in ELF, cross-TU linker controls, and the distinction
   between linkage correction and unresolved allocation topology.
+- [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
+  ownership checks, swapped-identity and linkage false-positive controls, and
+  inclusion of custom allocated NOBITS sections.
 - [open-map-render-residue.md](open-map-render-residue.md): RTBL window
   ownership, conflicting light-matrix base forms in map rendering and
   initialization, and the visibility-traversal setup residue.

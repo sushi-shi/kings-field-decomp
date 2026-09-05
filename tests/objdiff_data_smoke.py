@@ -29,6 +29,15 @@ def obj(**kwargs: object) -> bytes:
     return write_mips_elf(TEXT, "control", len(TEXT), **kwargs)
 
 
+def rename_bss(blob: bytes, name: str) -> bytes:
+    with tempfile.TemporaryDirectory() as directory:
+        path = Path(directory) / "control.o"
+        path.write_bytes(blob)
+        subprocess.run(["mipsel-linux-gnu-objcopy", "--rename-section", f".bss={name}",
+                        str(path)], check=True, capture_output=True)
+        return path.read_bytes()
+
+
 class NativeDataTest(unittest.TestCase):
     def compare(self, target: bytes, base: bytes, section: str, exact: bool) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -191,6 +200,49 @@ class NativeDataTest(unittest.TestCase):
         self.compare(obj(bss_size=16, bss_symbols=(DefinedSymbol("word", 0, 4, STT_OBJECT),)),
                      obj(bss_size=16, bss_symbols=(DefinedSymbol("word", 4, 4, STT_OBJECT),)),
                      ".bss", False)
+
+    def test_bss_renamed_allocation(self) -> None:
+        self.compare(obj(bss_size=16, bss_symbols=(DefinedSymbol("first", 0, 4, STT_OBJECT),)),
+                     obj(bss_size=16, bss_symbols=(DefinedSymbol("second", 0, 4, STT_OBJECT),)),
+                     ".bss", False)
+
+    def test_bss_swapped_named_allocations(self) -> None:
+        self.compare(obj(bss_size=16, bss_symbols=(
+            DefinedSymbol("first", 0, 4, STT_OBJECT),
+            DefinedSymbol("second", 4, 4, STT_OBJECT),
+        )), obj(bss_size=16, bss_symbols=(
+            DefinedSymbol("second", 0, 4, STT_OBJECT),
+            DefinedSymbol("first", 4, 4, STT_OBJECT),
+        )), ".bss", False)
+
+    def test_bss_private_allocation_exported(self) -> None:
+        self.compare(obj(bss_size=16, bss_symbols=(
+            DefinedSymbol("word", 0, 4, STT_OBJECT, STB_LOCAL),
+        )), obj(bss_size=16, bss_symbols=(
+            DefinedSymbol("word", 0, 4, STT_OBJECT),
+        )), ".bss", False)
+
+    def test_bss_identical_private_allocation(self) -> None:
+        blob = obj(bss_size=16, bss_symbols=(DefinedSymbol("word", 4, 4, STT_OBJECT, STB_LOCAL),))
+        self.compare(blob, blob, ".bss", True)
+
+    def test_bss_missing_named_allocation(self) -> None:
+        self.compare(obj(bss_size=16, bss_symbols=(DefinedSymbol("word", 0, 4, STT_OBJECT),)),
+                     obj(bss_size=16), ".bss", False)
+
+    def test_bss_unsized_allocation_is_not_proved_sized(self) -> None:
+        self.compare(obj(bss_size=16, bss_symbols=(DefinedSymbol("word", 0, 0, STT_OBJECT),)),
+                     obj(bss_size=16, bss_symbols=(DefinedSymbol("word", 0, 16, STT_OBJECT),)),
+                     ".bss", False)
+
+    def test_bss_different_storage_classes(self) -> None:
+        blob = obj(bss_size=16)
+        self.compare(blob, rename_bss(blob, ".sbss"), ".bss", False)
+
+    def test_bss_custom_nobits_storage(self) -> None:
+        blob = rename_bss(obj(bss_size=16), ".private_bss")
+        self.compare(blob, blob, ".private_bss", True)
+        self.compare(blob, obj(), ".private_bss", False)
 
 
 if __name__ == "__main__":

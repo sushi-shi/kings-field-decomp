@@ -6,16 +6,16 @@ data section diverges, nor the ``None``-scored case where the reconstruction
 emits no section at all. This module supplies that: for every manifested unit
 that owns data it compares the reconstruction object's initialized data
 sections against the retail-delinked target object, including implicit REL
-addends, and reports the first divergence and any referent mismatch. ``.bss``
-is compared by size/ownership only - uninitialized storage has no bytes to
-match.
+addends, and reports the first divergence and any referent mismatch. Each BSS
+section is compared by allocation class, extent, and named-object layout and
+linkage; uninitialized storage has no payload bytes to match.
 
     kf verify data                 # strict gate + per-image summary
     kf verify data --image game    # one image
     kf verify data --coverage      # claimed ranges vs the loaded data census
     kf verify data --detail        # per-diverging-unit byte/referent detail
 
-Any byte, extent, relocation type/referent/addend, or BSS extent divergence exits
+Any byte, extent, relocation type/referent/addend, or BSS ownership divergence exits
 nonzero. Missing comparison objects are also fatal rather than silently
 skipped.
 
@@ -60,6 +60,16 @@ class Section:
     type: int
     size: int
     data: bytes
+    flags: int = 0
+
+
+@dataclass(frozen=True, order=True)
+class Allocation:
+    name: str
+    offset: int
+    size: int
+    binding: int
+    visibility: int
 
 
 class Elf:
@@ -76,9 +86,9 @@ class Elf:
         raw = []
         for i in range(e_shnum):
             base = e_shoff + i * e_shentsize
-            (name, typ, _flags, _addr, offset, size, link, info,
+            (name, typ, flags, _addr, offset, size, link, info,
              _align, entsize) = struct.unpack_from("<10I", blob, base)
-            raw.append((name, typ, offset, size, link, info, entsize))
+            raw.append((name, typ, offset, size, link, info, entsize, flags))
         shstr = raw[e_shstrndx][2]
 
         def name_at(table_off: int, rel: int) -> str:
@@ -88,22 +98,23 @@ class Elf:
         self.sections: dict[str, Section] = {}
         self._sec_by_index: dict[int, str] = {}
         symtab_idx = None
-        for idx, (name, typ, offset, size, _link, _info, _ent) in enumerate(raw):
+        for idx, (name, typ, offset, size, _link, _info, _ent, flags) in enumerate(raw):
             sname = name_at(shstr, name)
             self._sec_by_index[idx] = sname
             body = b"" if typ == 8 else blob[offset:offset + size]  # SHT_NOBITS=8
-            self.sections[sname] = Section(sname, typ, size, body)
+            self.sections[sname] = Section(sname, typ, size, body, flags)
             if typ == 2:  # SHT_SYMTAB
                 symtab_idx = idx
 
         self._symbols: list[str] = []
+        self.allocations: dict[str, list[Allocation]] = {}
         if symtab_idx is not None:
-            _, _, sym_off, sym_size, link, _info, entsize = raw[symtab_idx]
+            _, _, sym_off, sym_size, link, _info, entsize, _flags = raw[symtab_idx]
             str_off = raw[link][2]
             entsize = entsize or 16
             for pos in range(sym_off, sym_off + sym_size, entsize):
-                st_name = struct.unpack_from("<I", blob, pos)[0]
-                st_shndx = struct.unpack_from("<H", blob, pos + 14)[0]
+                st_name, value, size, info, other, st_shndx = struct.unpack_from(
+                    "<IIIBBH", blob, pos)
                 if st_name:
                     self._symbols.append(name_at(str_off, st_name))
                 else:
@@ -111,9 +122,13 @@ class Elf:
                     # points at so a jump-table reloc compares as `.text`/`.rodata`
                     # rather than an indistinguishable empty string.
                     self._symbols.append(self._sec_by_index.get(st_shndx, ""))
+                section = self._sec_by_index.get(st_shndx)
+                if st_name and section and info & 15 not in (3, 4):
+                    self.allocations.setdefault(section, []).append(Allocation(
+                        self._symbols[-1], value, size, info >> 4, other & 3))
 
         self._relocs: dict[str, list[Reloc]] = {}
-        for idx, (_name, typ, offset, size, _link, info, entsize) in enumerate(raw):
+        for idx, (_name, typ, offset, size, _link, info, entsize, _flags) in enumerate(raw):
             if typ != 9:  # SHT_REL
                 continue
             target = self._sec_by_index.get(info)
@@ -142,7 +157,7 @@ class SectionDiff:
     name: str
     retail_size: int
     recon_size: int
-    status: str            # match | missing | extra | size | bytes | referent | addend
+    status: str  # match | missing | extra | size | bytes | referent | addend | storage | layout
     detail: str = ""
 
 
@@ -235,16 +250,29 @@ def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None
     return SectionDiff(name, rt_size, rc_size, "match")
 
 
-def _diff_bss(retail: Elf, recon: Elf) -> SectionDiff | None:
-    rt = sum(retail.sections[s].size for s in BSS_SECTIONS if s in retail.sections)
-    rc = sum(recon.sections[s].size for s in BSS_SECTIONS if s in recon.sections)
-    if rt == 0 and rc == 0:
+def _diff_bss(retail: Elf, recon: Elf, name: str = ".bss") -> SectionDiff | None:
+    rt, rc = retail.sections.get(name), recon.sections.get(name)
+    rt_size, rc_size = rt.size if rt else 0, rc.size if rc else 0
+    left = sorted(retail.allocations.get(name, ()))
+    right = sorted(recon.allocations.get(name, ()))
+    if not (rt_size or rc_size or left or right):
         return None
-    # `.bss` has no bytes to compare, so strict ownership is exact section size.
-    if rc != rt:
-        return SectionDiff(".bss", rt, rc, "size",
-                           f"reconstruction owns {rc} B, retail {rt} B")
-    return SectionDiff(".bss", rt, rc, "match")
+    if rt is None or rc is None:
+        return SectionDiff(name, rt_size, rc_size, "missing" if rc is None else "extra",
+                           "allocation section is absent on one side")
+    if rt.type != 8 or rc.type != 8 or rt.flags != rc.flags:
+        return SectionDiff(name, rt_size, rc_size, "storage",
+                           f"NOBITS type/flags differ: retail {rt.type}/{rt.flags:#x}, "
+                           f"reconstruction {rc.type}/{rc.flags:#x}")
+    if rc_size != rt_size:
+        return SectionDiff(name, rt_size, rc_size, "size",
+                           f"reconstruction owns {rc_size} B, retail {rt_size} B")
+    if left != right:
+        first = next(pair for pair in zip_longest(left, right) if pair[0] != pair[1])
+        return SectionDiff(name, rt_size, rc_size, "layout",
+                           f"named allocation differs: retail {first[0]}, "
+                           f"reconstruction {first[1]}")
+    return SectionDiff(name, rt_size, rc_size, "match")
 
 
 def diff_unit(image: str, object_name: str,
@@ -262,9 +290,14 @@ def diff_unit(image: str, object_name: str,
         diff = _diff_init_section(name, retail, recon)
         if diff is not None:
             result.diffs.append(diff)
-    bss = _diff_bss(retail, recon)
-    if bss is not None:
-        result.diffs.append(bss)
+    bss_names = set(BSS_SECTIONS) | {
+        section.name for elf in (retail, recon) for section in elf.sections.values()
+        if section.type == 8 and section.flags & 2  # allocated NOBITS, including custom names
+    }
+    for name in sorted(bss_names):
+        bss = _diff_bss(retail, recon, name)
+        if bss is not None:
+            result.diffs.append(bss)
     return result if result.diffs else None
 
 

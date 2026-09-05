@@ -1,0 +1,40 @@
+BSS ownership comparison after objdiff-strict-data.patch.
+
+Preserve data identities, allocation offsets/sizes and linkage in the shared
+CLI/GUI section score. Function instruction comparison is unchanged.
+
+--- a/objdiff-core/src/diff/data.rs
++++ b/objdiff-core/src/diff/data.rs
+@@ -543,8 +543,24 @@
+-    let left_section = &left_obj.sections[left_section_idx];
+-    let left_sizes = symbols_matching_section(&left_obj.symbols, left_section_idx)
+-        .filter_map(|(_, s)| s.address.checked_sub(left_section.address).map(|a| (a, s.size)))
+-        .collect::<Vec<_>>();
+-    let right_section = &right_obj.sections[right_section_idx];
+-    let right_sizes = symbols_matching_section(&right_obj.symbols, right_section_idx)
+-        .filter_map(|(_, s)| s.address.checked_sub(right_section.address).map(|a| (a, s.size)))
+-        .collect::<Vec<_>>();
++    let left_section = &left_obj.sections[left_section_idx];
++    let right_section = &right_obj.sections[right_section_idx];
++    // Equal anonymous extents do not prove named allocations have the same
++    // addresses or linkage. Sort the census, not its incidental ELF row order.
++    let allocations = |obj: &Object, section_idx: usize| {
++        let mut rows = obj.symbols.iter().filter(|s| {
++            s.section == Some(section_idx) && s.kind != SymbolKind::Section
++                && !s.flags.contains(SymbolFlag::Ignored)
++        }).map(|s| (
++            s.name.clone(),
++            s.address.wrapping_sub(obj.sections[section_idx].address),
++            s.size,
++            s.flags.contains(SymbolFlag::Global),
++            s.flags.contains(SymbolFlag::Local),
++            s.flags.contains(SymbolFlag::Weak),
++            s.flags.contains(SymbolFlag::Common),
++            s.flags.contains(SymbolFlag::Hidden),
++            s.flags.contains(SymbolFlag::SizeInferred),
++        )).collect::<Vec<_>>();
++        rows.sort_unstable();
++        rows
++    };
++    let left_sizes = allocations(left_obj, left_section_idx);
++    let right_sizes = allocations(right_obj, right_section_idx);

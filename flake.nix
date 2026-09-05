@@ -193,7 +193,7 @@
         pname = "objdiff-kf";
         version = objdiffVersion;
         src = objdiff-src;
-        patches = [ ./patches/objdiff-strict-data.patch ];
+        patches = [ ./patches/objdiff-strict-data.patch ./patches/objdiff-bss-ownership.patch ];
         cargoHash = "sha256-Z9vyUj35nrHuUoOYM54RLCn7CzcQ6k3A6FsDYKCVqVM=";
         cargoBuildFlags = [ "-p" "objdiff-cli" "-p" "objdiff-gui" ];
         cargoInstallFlags = [ "-p" "objdiff-cli" "-p" "objdiff-gui" ];

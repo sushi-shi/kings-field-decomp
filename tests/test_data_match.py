@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import unittest
+import shutil
+import subprocess
 from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -13,17 +15,20 @@ from scripts.kf.data_match import (
 )
 from scripts.kf.delink import Datum, Function
 from scripts.kf.manifest import Manifest, Unit
-from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
+from scripts.kf.mips_elf import (
+    STB_LOCAL, STT_OBJECT, DefinedSymbol, MipsRelocation, write_mips_elf,
+)
 
 _TEXT = b"\x00\x00\x00\x00"
 
 
 def _obj(path: Path, *, data=b"", rodata=b"", bss=0,
-         rodata_relocs=(), data_relocs=()) -> Elf:
+         rodata_relocs=(), data_relocs=(), bss_symbols=()) -> Elf:
     blob = write_mips_elf(
         _TEXT, "fn", 4,
         data=data, rodata=rodata, bss_size=bss,
         rodata_relocations=rodata_relocs, data_relocations=data_relocs,
+        bss_symbols=bss_symbols,
     )
     path.write_bytes(blob)
     return Elf(path)
@@ -171,6 +176,79 @@ class InitSectionDiffTest(unittest.TestCase):
 
 
 class BssDiffTest(unittest.TestCase):
+    def test_equal_named_private_storage_matches(self) -> None:
+        with TemporaryDirectory() as td:
+            symbols = (DefinedSymbol("word", 4, 4, STT_OBJECT, STB_LOCAL),)
+            rt = _obj(Path(td) / "rt.o", bss=16, bss_symbols=symbols)
+            rc = _obj(Path(td) / "rc.o", bss=16, bss_symbols=symbols)
+            self.assertEqual(_diff_bss(rt, rc).status, "match")
+
+    def test_anonymous_storage_matches(self) -> None:
+        with TemporaryDirectory() as td:
+            rt = _obj(Path(td) / "rt.o", bss=16)
+            rc = _obj(Path(td) / "rc.o", bss=16)
+            self.assertEqual(_diff_bss(rt, rc).status, "match")
+
+    def test_each_named_allocation_property_is_compared(self) -> None:
+        with TemporaryDirectory() as td:
+            symbol = DefinedSymbol("word", 4, 4, STT_OBJECT)
+            rt = _obj(Path(td) / "rt.o", bss=16, bss_symbols=(symbol,))
+            for changed in (replace(symbol, name="renamed"), replace(symbol, value=8),
+                            replace(symbol, size=8), replace(symbol, size=0)):
+                with self.subTest(changed=changed):
+                    rc = _obj(Path(td) / "rc.o", bss=16, bss_symbols=(changed,))
+                    self.assertEqual(_diff_bss(rt, rc).status, "layout")
+
+    def test_missing_identity_is_not_anonymous_storage(self) -> None:
+        with TemporaryDirectory() as td:
+            rt = _obj(Path(td) / "rt.o", bss=16, bss_symbols=(
+                DefinedSymbol("word", 0, 4, STT_OBJECT),))
+            rc = _obj(Path(td) / "rc.o", bss=16)
+            self.assertEqual(_diff_bss(rt, rc).status, "layout")
+
+    def test_incidental_symbol_table_order_is_ignored(self) -> None:
+        with TemporaryDirectory() as td:
+            symbols = (DefinedSymbol("first", 0, 4, STT_OBJECT),
+                       DefinedSymbol("second", 4, 4, STT_OBJECT))
+            rt = _obj(Path(td) / "rt.o", bss=16, bss_symbols=symbols)
+            rc = _obj(Path(td) / "rc.o", bss=16, bss_symbols=symbols)
+            rc.allocations[".bss"].reverse()
+            self.assertEqual(_diff_bss(rt, rc).status, "match")
+
+    def test_initialized_or_nonwritable_bss_is_not_same_storage(self) -> None:
+        with TemporaryDirectory() as td:
+            rt = _obj(Path(td) / "rt.o", bss=16)
+            rc = _obj(Path(td) / "rc.o", bss=16)
+            for section in (replace(rc.sections[".bss"], type=1),
+                            replace(rc.sections[".bss"], flags=2)):
+                with self.subTest(section=section):
+                    rc.sections[".bss"] = section
+                    self.assertEqual(_diff_bss(rt, rc).status, "storage")
+
+    def test_swapped_named_allocations_diverge(self) -> None:
+        with TemporaryDirectory() as td:
+            symbols = (DefinedSymbol("first", 0, 4, STT_OBJECT),
+                       DefinedSymbol("second", 4, 4, STT_OBJECT))
+            rt = _obj(Path(td) / "rt.o", bss=16, bss_symbols=symbols)
+            rc = _obj(Path(td) / "rc.o", bss=16, bss_symbols=(
+                replace(symbols[0], value=4), replace(symbols[1], value=0)))
+            self.assertNotEqual(_diff_bss(rt, rc).status, "match")
+
+    def test_private_allocation_export_diverges(self) -> None:
+        with TemporaryDirectory() as td:
+            symbol = DefinedSymbol("word", 0, 4, STT_OBJECT)
+            rt = _obj(Path(td) / "rt.o", bss=16, bss_symbols=(symbol,))
+            rc = _obj(Path(td) / "rc.o", bss=16, bss_symbols=(
+                replace(symbol, binding=STB_LOCAL),))
+            self.assertNotEqual(_diff_bss(rt, rc).status, "match")
+
+    def test_equal_total_different_storage_class_diverges(self) -> None:
+        with TemporaryDirectory() as td:
+            rt = _obj(Path(td) / "rt.o", bss=16)
+            rc = _obj(Path(td) / "rc.o", bss=16)
+            rc.sections[".sbss"] = replace(rc.sections.pop(".bss"), name=".sbss")
+            self.assertNotEqual(_diff_bss(rt, rc).status, "match")
+
     def test_alignment_padding_diverges(self) -> None:
         with TemporaryDirectory() as td:
             rt = _obj(Path(td) / "rt.o", bss=24)
@@ -245,6 +323,44 @@ class StrictGateTest(unittest.TestCase):
                     ("GAME.EXE",), show_detail=True, show_coverage=False,
                     delink_dir=root / "delink", objdiff_dir=root / "objdiff",
                 ), 1)
+
+    def test_bss_linkage_mismatch_fails_default_gate(self) -> None:
+        with TemporaryDirectory() as td:
+            root = Path(td)
+            manifest = self._manifest()
+            target = root / "delink/game/modules" / manifest.units[0].object_name
+            base = root / "objdiff/game/base" / manifest.units[0].object_name
+            target.parent.mkdir(parents=True)
+            base.parent.mkdir(parents=True)
+            symbol = DefinedSymbol("word", 0, 4, STT_OBJECT)
+            _obj(target, bss=16, bss_symbols=(symbol,))
+            _obj(base, bss=16, bss_symbols=(replace(symbol, binding=STB_LOCAL),))
+            with patch("scripts.kf.data_match.load_manifest", return_value=manifest):
+                self.assertEqual(run(
+                    ("GAME.EXE",), show_detail=True, show_coverage=False,
+                    delink_dir=root / "delink", objdiff_dir=root / "objdiff",
+                ), 1)
+
+    @unittest.skipUnless(shutil.which("mipsel-linux-gnu-objcopy"), "pinned binutils required")
+    def test_named_and_custom_nobits_sections_are_not_omitted(self) -> None:
+        with TemporaryDirectory() as td:
+            root = Path(td)
+            manifest = self._manifest()
+            target = root / "delink/game/modules" / manifest.units[0].object_name
+            base = root / "objdiff/game/base" / manifest.units[0].object_name
+            target.parent.mkdir(parents=True)
+            base.parent.mkdir(parents=True)
+            for name in (".sbss", ".private_bss"):
+                with self.subTest(section=name):
+                    _obj(target, bss=16)
+                    _obj(base, bss=16)
+                    subprocess.run(["mipsel-linux-gnu-objcopy", "--rename-section",
+                                    f".bss={name}", str(base)], check=True, capture_output=True)
+                    results, failures = diff_image(
+                        "GAME.EXE", manifest, root / "delink", root / "objdiff")
+                    self.assertEqual(failures, [])
+                    self.assertEqual({d.name: d.status for d in results[0].divergent},
+                                     {".bss": "missing", name: "extra"})
 
 
 class CoverageTest(unittest.TestCase):

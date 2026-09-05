@@ -458,6 +458,23 @@ Strict source data remains 15/63; target relinking remains 109/117. All 471 loca
 tests, Ruff and flake checks pass. The full build remains red on the existing
 data, placement and reachability gaps, including 665 config-only data ranges.
 
+## Reject equal-size but different BSS ownership
+
+The data gate no longer sums `.bss` and `.sbss` into one anonymous extent.
+It compares every BSS section, including allocated custom NOBITS sections,
+and each named object's offset, size and linkage. The shared objdiff CLI/GUI
+core also retains names and binding when comparing BSS layouts. Previously,
+swapping two equal-sized globals or exporting private storage could still
+report 100%; the [ownership controls](patterns/bss-ownership-comparison.md)
+reproduce those false positives and verify their rejection.
+
+All source units were recompiled and all targets redelinked. Every object and
+all 484 function score rows remain identical, preserving 354 exact game
+functions. All 482 local tests, 33 native data controls, Ruff and flake checks
+pass. The full build remains red with strict source data 15/63, target relink
+109/117 and 665 config-only reached ranges. This correction strengthens the
+comparison contract without changing source, claims or delinked bytes.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and
