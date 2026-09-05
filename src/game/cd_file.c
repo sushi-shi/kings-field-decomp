@@ -10,7 +10,7 @@ char cd_path_prefix[5] = "\\KF\\";
 DATA(0x80057b44, 0x3)
 char cd_version_suffix[3] = ";1";
 DATA(0x80057e80, 0x4)
-CdlLOC cd_read_location = {0, 0, 0, 0};
+CdlLOC cd_read_location;
 
 /* Sector size on the CD; sizes are rounded up to whole sectors before reading. */
 #define CD_SECTOR_SIZE 0x800

@@ -22,11 +22,14 @@ char cd_version_suffix[3] = ";1";
 DATA(0x800372e8, 0x8)
 char opening_ending_sequence_path[8] = "B0\\END.";
 
+DATA(0x800375d8, 0x4)
+static CdlLOC cd_read_location;
+
 DATA(0x800375e0, 0x4)
-u8 *opening_scene1_arena_cursor = 0;
+static u8 *opening_scene1_arena_cursor;
 
 DATA(0x800375e8, 0x4)
-u8 *opening_ending_arena_cursor = 0;
+static u8 *opening_ending_arena_cursor;
 
 RODATA(0x8001205c, 0xb4)
 

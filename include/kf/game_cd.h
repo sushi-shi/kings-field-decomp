@@ -4,6 +4,9 @@
 /* GAME.EXE additions to the shared CD-file interface. */
 #include <kf/cd_file.h>
 
+/* Shared by the normal CD loaders and GAME's fatal-error screen loader. */
+extern CdlLOC cd_read_location;
+
 /*
  * GAME's file table uses the older 20-byte CdlFILE layout with a 12-byte
  * name, rather than the 24-byte type in the supplied Release 2.5 header.

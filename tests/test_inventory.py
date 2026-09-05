@@ -1418,7 +1418,7 @@ class InventoryTests(unittest.TestCase):
         expected = {
             0x800372DC: ("cd_path_prefix", "load", "char[5]", 0x05),
             0x800372E4: ("cd_version_suffix", "load", "char[3]", 0x03),
-            0x800375D8: ("cd_read_location", "load", "CdlLOC", 0x04),
+            0x800375D8: ("cd_read_location", "bss", "CdlLOC", 0x04),
             0x800377A0: ("cd_search_file", "bss", "CdlFILE", 0x18),
             0x800377B8: ("cd_path_buffer", "bss", "char[80]", 0x50),
         }

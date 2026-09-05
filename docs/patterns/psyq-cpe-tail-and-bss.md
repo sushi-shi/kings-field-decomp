@@ -41,3 +41,14 @@ The [PAD review](../../config/evidence/pad_storage_and_linkage.md) corrects the
 earlier zero-initializer and private-identifier assumptions. It does not promote
 every zero in the page to a known allocation or silently flatten the two BSS
 classes into a placeable section.
+
+The [CD/resource storage review](../../config/evidence/cd_resource_bss.md)
+provides another boundary control: OPEN's CdlLOC at `0x800375d8` overlaps the
+four-byte CPE magic itself, but both CD helpers overwrite its three command
+bytes before use. Retail cd_setloc copies only those three bytes, and CD_cw's
+command-count table independently limits CdlSetloc to three. GAME's homolog
+at `0x80057e80` has the same write-before-use behavior, including its separate
+error-screen consumer. The real four-byte SDK type is retained, without an
+explicit initializer. OPEN's nearby arena pointers are saved before their
+scene/ending consumers restore them. This proves only the reviewed objects;
+it does not classify every zero or gap following the CPE prefix.

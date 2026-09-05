@@ -3031,7 +3031,7 @@ GAME.EXE	0x80057e70	0x46670	0x4	bss	reviewed	player_turn_step_limit	s32	manual:g
 GAME.EXE	0x80057e74	0x46674	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e78	0x46678	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057e7c	0x4667c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e80	0x46680	0x4	defined	ghidra-defined		CdlLOC	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	cd_read_location; CdlLOC handed to CdControl(CdlSetloc)
+GAME.EXE	0x80057e80	0x46680	0x4	bss	reviewed	cd_read_location	CdlLOC	manual:cd_resource_bss	CPE-tail storage shared by CD and error-screen loaders; all three CdlSetloc bytes written before use
 GAME.EXE	0x80057e84	0x46684	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e88	0x46688	0x4	defined	reviewed	current_poly_ft4	POLY_FT4 *	manual:game_semantic_menu_frame	zero-initialized current menu textured-quad allocation cursor
 GAME.EXE	0x80057e8c	0x4668c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
@@ -5378,11 +5378,11 @@ OPEN.EXE	0x800375c8	0x25dc8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/gh
 OPEN.EXE	0x800375cc	0x25dcc	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800375d0	0x25dd0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800375d4	0x25dd4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800375d8	0x25dd8	0x4	defined	manual:open_cd_file		CdlLOC	manual:open_cd_file	four-byte Psy-Q CD location copied fieldwise before CdlSetloc
+OPEN.EXE	0x800375d8	0x25dd8	0x4	bss	reviewed	cd_read_location	CdlLOC	manual:open_cd_file;manual:cd_resource_bss	Private CD location overwritten before CdlSetloc; loaded CPE header bytes are not a source initializer
 OPEN.EXE	0x800375dc	0x25ddc	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800375e0	0x25de0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x800375e0	0x25de0	0x4	bss	reviewed	opening_scene1_arena_cursor	u8 *	manual:cd_resource_bss	Private post-VAB arena pointer saved by scene one before scene three restores it; CPE-tail bytes are not an initializer
 OPEN.EXE	0x800375e4	0x25de4	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800375e8	0x25de8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x800375e8	0x25de8	0x4	bss	reviewed	opening_ending_arena_cursor	u8 *	manual:cd_resource_bss	Private ending arena pointer saved before the ending-sequence continuation restores it; CPE-tail bytes are not an initializer
 OPEN.EXE	0x800375ec	0x25dec	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800375f0	0x25df0	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800375f1	0x25df1	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum

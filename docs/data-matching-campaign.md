@@ -416,6 +416,31 @@ All 465 local tests, Ruff and flake checks pass. The full retail build continues
 to reject the unresolved data, placement and reachability gaps. This is target
 fidelity progress, not reconstructed linked-executable equality or byte closure.
 
+## CD and opening-resource BSS recovery
+
+The retail CD consumers overwrite minute/second/sector before CdlSetloc; the
+authentic SDK type retains its fourth track byte, which this command does not
+read. Both location objects are now BSS. GAME retains its shared declaration
+in the GAME CD header for the error-screen consumer; OPEN gains a private
+source definition. OPEN's scene-one and ending arena cursors also become
+private tentative storage, with reviewed save-before-restore paths. All four
+census ranges retain their addresses and extents; CPE residue/page zeros are
+not modeled as source initializers. The
+[campaign evidence](../config/evidence/cd_resource_bss.md) records each consumer,
+raw instruction/table witnesses, provider boundaries and final verdicts.
+
+Target relinking improves to **109/117**, while OPEN's config-only data backlog
+falls by one (279, or 665 across both overlays). All 484 function scores remain
+unchanged, preserving 354 exact game functions. Only two source objects and
+two module targets change. Strict source data drops to **15/63** because the
+corrected GAME storage exposes allocation/section extents that previously
+appeared exact under the false initialized model. The stronger gate retains
+those mismatches; it does not round targets to fit the source.
+
+All 471 local tests, Ruff and flake checks pass. The full build remains red
+on the data mismatches, eight remaining target placement conflicts and the
+unresolved reachable-data ownership paths. No whole-image equality is claimed.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and
