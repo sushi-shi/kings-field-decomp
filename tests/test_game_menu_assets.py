@@ -94,7 +94,11 @@ class GameMenuAssetsTests(unittest.TestCase):
                                BUILD / 'delink', BUILD / 'objdiff')
         self.assertIsNotNone(comparison)
         self.assertEqual([(d.name, d.status) for d in comparison.diffs],
-                         [('.rodata', 'match'), ('.bss', 'placement')])
+                         [('.rodata', 'size'), ('.bss', 'placement')])
+        # No automatic GNU-as tail: the compiler's 37 literal bytes do not
+        # explain the complete 40-byte RODATA claim. Keep that mismatch visible.
+        self.assertEqual((comparison.diffs[0].retail_size, comparison.diffs[0].recon_size),
+                         (40, 37))
         self.assertIn('reconstruction:', comparison.diffs[1].detail)
         self.assertIn('invalid-section-placement', comparison.diffs[1].detail)
         self.assertIn('"alignment": 16', comparison.diffs[1].detail)

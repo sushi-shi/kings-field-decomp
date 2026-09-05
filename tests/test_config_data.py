@@ -372,6 +372,19 @@ class SdkProviderTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'hash differs'):
             config_data.source_section(replace(GAME, object_sha256='0' * 64))
 
+    def test_sdk_section_alignment_does_not_imply_rounded_payload_extent(self):
+        tool, directory = shutil.which('psyk'), os.environ.get('PSYQ_LIB')
+        if tool is None or directory is None:
+            self.skipTest('pinned SDK tools required')
+        section = config_data.sdk_section(
+            'LIBSPU.LIB', 'S_N2P.OBJ', '.data',
+            'e1b18023a561e14ae4871a7a27eb867455d5424d0a498ba42abc0cabbcf222df',
+            directory, tool)
+        self.assertEqual((len(section.data), section.alignment, section.exports), (386, 8, ()))
+        self.assertEqual(section.data[-2:], b'\x00\x20')
+        # Full object records, not a trimmed symbol or a desired retail extent.
+        self.assertNotEqual(len(section.data) % section.alignment, 0)
+
     def test_false_game_jal_candidate_is_two_sdk_sine_samples_without_a_patch(self):
         provider = config_data.source_section(GAME)
         self.assertEqual(struct.unpack_from('<2h', provider.data, 0x450), (3068, 3073))

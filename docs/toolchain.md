@@ -37,6 +37,13 @@ execution, but ASPSX is key-protected. maspsx and GNU MIPS binutils provide the
 practical, scriptable assembly route while we compare their output against the
 retail programs and the original tools.
 
+The practical assembler path uses `-no-pad-sections` to retain explicit assembly
+extents without GNU-as automatic end padding. Explicit zero bytes, alignment
+directives, COMMON allocations and ELF alignment requirements are preserved.
+This contract is recorded in object metadata and tested against both native
+compilers; it is not historical ASPSX attribution. See
+[the section-extent controls](patterns/assembler-section-extents.md).
+
 `tests/psylink_order_smoke.py` runs the original pinned PSYLINK 1.17 under
 headless DOSBox against preserved Release 2.5 objects. It verifies direct input
 ordering separately from lazy archive extraction and is part of

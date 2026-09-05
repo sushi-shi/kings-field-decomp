@@ -31,6 +31,11 @@ C_COMPILERS = {
     ),
 }
 
+# Emit the assembly's complete explicit extents, not GNU-as end-of-section
+# padding. This does not lower alignment requirements or remove explicit zeros,
+# alignment directives, COMMON allocation rounding, or MIPS delay slots.
+GNU_AS_SECTION_FLAGS = ("-no-pad-sections",)
+
 
 def _tool(name: str) -> str:
     path = shutil.which(name)
@@ -120,6 +125,7 @@ def compile_source(
         "image": image,
         "source": os.path.relpath(source, Path.cwd()),
         "output": os.path.relpath(output, Path.cwd()),
+        "gnu_as_section_flags": list(GNU_AS_SECTION_FLAGS),
     }
 
     if suffix in {".s", ".asm"}:
@@ -129,6 +135,7 @@ def compile_source(
             "-march=r3000",
             "-mabi=32",
             "-G0",
+            *GNU_AS_SECTION_FLAGS,
             "-o",
             str(staged),
             str(source),
@@ -181,7 +188,7 @@ def compile_source(
         data_claims = scan_data_claims(source)
         if data_claims:
             # GCC 2.5.7 prints no `.size` for data, so objdiff would infer the
-            # last claimed datum's extent from the assembler's section padding.
+            # last claimed datum's extent from the remaining section bytes.
             # The claim states the curated size; annotating the symbol with it
             # only fixes the comparison extent and never changes code or bytes.
             with assembly.open("a", encoding="utf-8") as stream:
@@ -196,6 +203,7 @@ def compile_source(
             "--force-stdin",
             "-march=r3000",
             "-mabi=32",
+            *GNU_AS_SECTION_FLAGS,
             "-o",
             str(staged),
         ]

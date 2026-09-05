@@ -779,6 +779,38 @@ red with source data 6/59, SDK data 2/2 and target relinking 108/114. This campa
 improves reachable-data identity and exposes missing evidence; it does not close
 data matching or linked-executable equality.
 
+## Remove automatic source-section tails at assembly time
+
+The source compiler pipeline now passes GNU `as`'s documented
+`-no-pad-sections` option, recorded in object metadata. Controlled assembly and
+both native compilers distinguish automatic section tails from explicit zeros,
+interior alignment directives, delay-slot instructions and compiler-rounded
+COMMON allocations. A complete SDK record has 386 bytes with alignment eight:
+section alignment is not permission to invent payload bytes.
+
+All 112 source units were rebuilt. Ninety-two objects change; every retained
+runtime byte, named symbol, ordered relocation row and section alignment stays
+unchanged. All 484 function scores remain unchanged, preserving 360/471 exact
+game functions and thirteen exact vendor controls. The compiler profiles, C
+sources, retail claims, data identities and target objects are untouched.
+
+Strict source data rises 6/59 to 8/59: GAME player_death, actor and
+map_object_pool, plus OPEN opening_fade, now pass. GAME menu_map_viewer and OPEN
+render expose string-section extents previously hidden by coincident automatic
+zero tails. GAME item's 40-byte literal claim similarly exceeds its 37 emitted
+bytes; its BSS placement failure is retained. No target is padded or cropped,
+no ELF alignment is lowered, and no comparison failure is waived.
+
+The full build remains red. SDK data stays 2/2, target relinking 108/114 and
+unpaired reached config ranges 625. See
+[the mechanism, negative control and corpus comparison](patterns/assembler-section-extents.md).
+This improves faithful object generation, not the outstanding complete-data
+ownership or whole-program equality claims.
+
+All 573 local tests pass without skips, both compiler smoke probes pass, and
+Ruff, diff and flake checks pass. The flake suite retains 87 expected
+local-artifact skips; the new native compiler and SDK record controls run there.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

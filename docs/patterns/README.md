@@ -25,6 +25,9 @@ promotes a probe to a proven historical toolchain.
 - [maspsx-private-bss.md](maspsx-private-bss.md): preserving compiler-private
   tentative storage in ELF, cross-TU linker controls, and the distinction
   between linkage correction and unresolved allocation topology.
+- [assembler-section-extents.md](assembler-section-extents.md): distinguish
+  automatic GNU-as section tails from explicit zeros, alignment directives and
+  compiler COMMON allocations; retain actual ELF placement requirements.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
   inclusion of custom allocated NOBITS sections; matching data must also admit
