@@ -94,6 +94,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-list-format.md](game-menu-list-format.md): typed menu-row
   access closes list initialization; index-driven termination and a word-sized
   padding temporary close decimal glyph formatting.
+- [game-menu-glyph-render.md](game-menu-glyph-render.md): index-derived
+  fixed pitch closes number rendering and removes the string-render preheader
+  difference; four decoration immediates remain non-exact.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated

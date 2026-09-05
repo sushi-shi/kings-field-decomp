@@ -262,10 +262,10 @@ void menu_draw_string(
     s32 i;
     s32 x_offset;
 
-    for (i = 0, x_offset = 0; string->codes[i] != -1;
-         i++, x_offset += 14) {
+    for (i = 0; string->codes[i] != -1; i++) {
         s32 glyph;
 
+        x_offset = i * 14;
         primitive_buffer_begin_poly_ft4();
         current_poly_ft4->tpage = font->tpage;
         current_poly_ft4->clut = font->clut;
@@ -350,7 +350,8 @@ void menu_draw_number(
     s32 i;
     s32 xoff;
 
-    for (i = 0, xoff = 0; label->codes[i] != -1; i++, xoff += 7) {
+    for (i = 0; label->codes[i] != -1; i++) {
+        xoff = i * 7;
         primitive_buffer_begin_poly_ft4();
         current_poly_ft4->tpage = font->tpage;
         current_poly_ft4->clut = font->clut;
