@@ -18,7 +18,9 @@ establish the allocation read after the index is added.
 ## Independent SDK and retail evidence
 
 The pinned Release 2.5 `LIBGTE.LIB` member `GEO.OBJ` exports global `rsin_tbl`
-at `.data+0`; the section has alignment 8 and a single 2048-byte contribution.
+at `.data+0`; the section has raw LNK alignment tag 8 and a single 2048-byte
+contribution. [PSYLINK calibration](../../docs/patterns/psyq-section-alignment.md)
+establishes that this tag means four-byte alignment, not eight-byte alignment.
 It is a 1024-entry quarter-wave table, read with signed halfword loads.
 `LIBGTE.H` declares `int rsin(int a)` and `int rcos(int a)`. The existing vendor
 inventory already attributes both and their internal `sin_1` helper to GEO.

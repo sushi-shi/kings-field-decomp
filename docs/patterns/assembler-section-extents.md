@@ -25,12 +25,14 @@ and 4. **All three still require sixteen-byte ELF alignment.** Existing bytes
 and instruction encodings are unchanged; extent and alignment are independent.
 
 The complete Release 2.5 `LIBSPU.LIB/S_N2P.OBJ` data record contains 386 bytes
-with section alignment eight, ending in the halfword `0x2000`. Its SHA-256 is
+with raw LNK alignment tag eight, ending in the halfword `0x2000`. Its SHA-256 is
 `e1b18023a561e14ae4871a7a27eb867455d5424d0a498ba42abc0cabbcf222df`.
 The whole-section parser checks every record and rejects unsupported patches or
-reservations; this is not a selected symbol slice. A 386-byte section aligned
-to eight directly disproves mandatory rounding of the payload to its alignment.
-`S_SRMP.OBJ` independently has 760 data bytes aligned to eight, not sixteen;
+reservations; this is not a selected symbol slice. Later
+[PSYLINK calibration](psyq-section-alignment.md) establishes that raw tag eight
+means **four-byte** alignment, not eight-byte alignment. The 386-byte payload
+still disproves mandatory rounding to its alignment. `S_SRMP.OBJ` independently
+has 760 data bytes and raw tag eight, not sixteen-byte ELF alignment;
 its SHA-256 is `809188e34e6447ec50aeb16a0dde8cf2d3bcf998d29e481fb129e49ce3bdf9a5`.
 Neither object is claimed as newly matched game data by this campaign.
 

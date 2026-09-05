@@ -28,6 +28,9 @@ promotes a probe to a proven historical toolchain.
 - [assembler-section-extents.md](assembler-section-extents.md): distinguish
   automatic GNU-as section tails from explicit zeros, alignment directives and
   compiler COMMON allocations; retain actual ELF placement requirements.
+- [psyq-section-alignment.md](psyq-section-alignment.md): original PSYLINK
+  controls distinguish raw LNK v2 alignment tags from ELF byte alignment;
+  SDK import correction without altering compiler-generated game objects.
 - [compiler-owned-data-sizes.md](compiler-owned-data-sizes.md): independently
   measure C object sizes instead of copying retail DATA expectations into source
   symbols; reject a reproduced false BSS match hidden by COMMON rounding.

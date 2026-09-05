@@ -32,13 +32,14 @@ from scripts.kf.sema.index import Binding
 CONTRIBUTIONS = config_data.load()
 GAME = next(c for c in CONTRIBUTIONS if (c.image, c.identity) == ('GAME.EXE', 'rsin_tbl'))
 PAYLOAD = bytes(range(256)) * 8
-PROVIDER = config_data.SdkSection(PAYLOAD, 8, ((GAME.identity, 0),))
-SDK_HEADER = "16 : Section symbol number 3 '.data' in group 0 alignment 8\n6 : Switch to section 3\n"
+PROVIDER = config_data.SdkSection(PAYLOAD, 4, ((GAME.identity, 0),), 8)
+SDK_HEADER = ("Header : LNK version 2\n"
+              "16 : Section symbol number 3 '.data' in group 0 alignment 8\n6 : Switch to section 3\n")
 SDK_EXPORT = "12 : XDEF symbol number 4 'values' at offset 0 in section 3\n"
 
 
 def target_blob(payload=PAYLOAD, **kwargs):
-    args = {"data": payload, "data_alignment": 8,
+    args = {"data": payload, "data_alignment": 4,
             "data_symbols": (DefinedSymbol(GAME.identity, 0, len(payload), STT_OBJECT),)}
     return write_mips_elf(b"", None, 0, **{**args, **kwargs})
 
@@ -87,7 +88,25 @@ class ConfigDataTests(unittest.TestCase):
     def test_sdk_parser_accumulates_whole_section_and_preserves_export(self):
         listing = SDK_HEADER + "2 : Code 2 bytes\n\n0000: 01 02\n2 : Code 2 bytes\n0000: 03 04\n" + SDK_EXPORT
         self.assertEqual(config_data.parse_sdk_section(listing, '.data'),
-                         config_data.SdkSection(bytes((1, 2, 3, 4)), 8, (("values", 0),)))
+                         config_data.SdkSection(bytes((1, 2, 3, 4)), 4, (("values", 0),), 8))
+
+    def test_sdk_alignment_tags_are_not_byte_counts_or_arbitrary_halves(self):
+        listing = SDK_HEADER + "2 : Code 3 bytes\n0000: 01 02 03\n" + SDK_EXPORT
+        for tag, alignment in ((2, 1), (4, 2), (8, 4), (16, 16)):
+            with self.subTest(tag=tag):
+                section = config_data.parse_sdk_section(listing.replace('alignment 8', f'alignment {tag}'), '.data')
+                self.assertEqual((section.alignment, section.lnk_alignment), (alignment, tag))
+                self.assertEqual(section.data, b'\x01\x02\x03')
+        for tag in (0, 1, 3, 6, 12, 24, 32, 64, 128, 256):
+            with self.subTest(tag=tag), self.assertRaisesRegex(ValueError, 'alignment tag'):
+                config_data.parse_sdk_section(listing.replace('alignment 8', f'alignment {tag}'), '.data')
+
+    def test_sdk_alignment_interpretation_requires_one_known_lnk_version(self):
+        listing = SDK_HEADER + "2 : Code 3 bytes\n0000: 01 02 03\n" + SDK_EXPORT
+        for header in ('', 'Header : LNK version 1\n', 'Header : LNK version 3\n',
+                       'Header : LNK version 2\nHeader : LNK version 2\n'):
+            with self.subTest(header=header), self.assertRaisesRegex(ValueError, 'single LNK v2'):
+                config_data.parse_sdk_section(listing.replace('Header : LNK version 2\n', header), '.data')
 
     def test_sdk_parser_never_discards_patches_reservations_or_unknown_records(self):
         for record in ("10 : Patch type 2 at offset 0 with $0", "8 : Uninitialized 4 bytes",
@@ -120,7 +139,7 @@ class ConfigDataTests(unittest.TestCase):
             write_mips_elf(b"", None, 0)
 
     def test_object_checks_complete_extent_linkage_alignment_and_extra_storage(self):
-        variants = (target_blob(PAYLOAD[:-1]), target_blob(PAYLOAD + b'\0'), target_blob(data_alignment=4),
+        variants = (target_blob(PAYLOAD[:-1]), target_blob(PAYLOAD + b'\0'), target_blob(data_alignment=8),
                     target_blob(bss_size=4), target_blob(rodata=bytes(4)),
                     target_blob(data_symbols=(DefinedSymbol(GAME.identity, 0, 2048, STT_OBJECT, STB_LOCAL),)),
                     target_blob(data_symbols=(DefinedSymbol("wrong", 0, 2048, STT_OBJECT),)),
@@ -217,6 +236,26 @@ class ConfigDataTests(unittest.TestCase):
 @unittest.skipUnless(shutil.which('mipsel-linux-gnu-as') and shutil.which('mipsel-linux-gnu-ld'),
                      'pinned MIPS tools are required')
 class ConfigDataIntegrationTests(unittest.TestCase):
+    def test_raw_tag_eight_places_at_four_mod_eight_without_a_retail_override(self):
+        listing = (SDK_HEADER + "2 : Code 9 bytes\n0000: 01 02 03 04 05 06 07 08 09\n"
+                   + SDK_EXPORT.replace('values', GAME.identity))
+        section = config_data.parse_sdk_section(listing, '.data')
+        contribution = replace(GAME, va=GAME.va + 4, size=9)
+        self.assertEqual(contribution.va % 8, 4)
+        with (tempfile.TemporaryDirectory() as directory,
+              patch('scripts.kf.config_data.sdk_section', return_value=section)):
+            root = Path(directory)
+            image = RetailImage.synthetic(GAME.image, contribution.va, section.data)
+            target, base = root / 'target.o', root / 'base.o'
+            target.write_bytes(config_data.delink_object(contribution, image, []))
+            config_data.build_base(contribution, base)
+            result = config_data.compare(contribution, image, target, base, root)
+            self.assertTrue(result.matched, result.issues)
+            self.assertEqual(result.evidence['sdk_alignment'], 4)
+            self.assertEqual(result.evidence['sdk_lnk_alignment_tag'], 8)
+            for record in (result.base_relink, result.target_relink):
+                self.assertEqual(record['initialized_bytes_compared'], 9)
+
     def test_sdk_converter_preserves_small_extents_without_rounding_or_trimming(self):
         for size, alignment in ((1, 1), (3, 1), (6, 2), (12, 4), (3, 8), (24, 8), (48, 16)):
             contribution = replace(GAME, size=size, alignment=alignment)
@@ -370,7 +409,7 @@ class SdkProviderTests(unittest.TestCase):
         with patch('scripts.kf.config_data.sdk_section', return_value=anonymous):
             self.assertEqual(config_data.source_section(private), anonymous)
             for wrong in (GAME, replace(private, scope='global'), replace(private, scope='unknown'),
-                          replace(private, size=GAME.size - 1), replace(private, alignment=4)):
+                          replace(private, size=GAME.size - 1), replace(private, alignment=8)):
                 with self.subTest(wrong=wrong), self.assertRaisesRegex(ValueError, 'extent/export/alignment'):
                     config_data.source_section(wrong)
         for exports in (((private.identity, 0),), (('unrelated', 0),),
@@ -380,7 +419,7 @@ class SdkProviderTests(unittest.TestCase):
                     config_data.source_section(private)
 
     def test_sdk_extent_exports_and_alignment_cannot_be_selected_to_fit_target(self):
-        for section in (replace(PROVIDER, data=PAYLOAD[:1024]), replace(PROVIDER, alignment=4),
+        for section in (replace(PROVIDER, data=PAYLOAD[:1024]), replace(PROVIDER, alignment=8),
                         replace(PROVIDER, exports=((GAME.identity, 4),)),
                         replace(PROVIDER, exports=((GAME.identity, 0), ('extra', 8)))):
             with patch('scripts.kf.config_data.sdk_section', return_value=section):
@@ -401,7 +440,8 @@ class SdkProviderTests(unittest.TestCase):
             'LIBSPU.LIB', 'S_N2P.OBJ', '.data',
             'e1b18023a561e14ae4871a7a27eb867455d5424d0a498ba42abc0cabbcf222df',
             directory, tool)
-        self.assertEqual((len(section.data), section.alignment, section.exports), (386, 8, ()))
+        self.assertEqual((len(section.data), section.alignment, section.exports), (386, 4, ()))
+        self.assertEqual(section.lnk_alignment, 8)
         self.assertEqual(section.data[-2:], b'\x00\x20')
         # Full object records, not a trimmed symbol or a desired retail extent.
         self.assertNotEqual(len(section.data) % section.alignment, 0)

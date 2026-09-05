@@ -142,15 +142,24 @@ class SdkSection:
     data: bytes
     alignment: int
     exports: tuple[tuple[str, int], ...]
+    lnk_alignment: int | None = None
 
 
 def parse_sdk_section(listing: str, name: str) -> SdkSection:
     """Import a whole non-relocating contribution; no ranges or patch masking."""
+    if re.findall(r"^Header : LNK version (\d+)$", listing, re.M) != ["2"]:
+        raise ValueError("SDK alignment requires a single LNK v2 object")
     declarations = re.findall(r"Section symbol number ([0-9a-f]+) '([^']+)' in group \d+ alignment (\d+)", listing)
     selected = [(number, int(alignment)) for number, section, alignment in declarations if section == name]
     if len(selected) != 1:
         raise ValueError(f"missing or ambiguous SDK section {name}")
-    number, alignment = selected[0]
+    number, lnk_alignment = selected[0]
+    # The listing exposes the raw LNK tag, not a byte count. Calibrated on
+    # PSYLINK 1.17 with synthetic objects, symbols and complete CPE payloads.
+    # Reject other bits: e.g. 32 does NOT impose sixteen-byte alignment.
+    alignment = {2: 1, 4: 2, 8: 4, 16: 16}.get(lnk_alignment)
+    if alignment is None:
+        raise ValueError(f"unsupported SDK LNK alignment tag {lnk_alignment}")
     active, pending, chunk, data = None, 0, bytearray(), bytearray()
     exports = []
     for line in listing.splitlines():
@@ -188,7 +197,7 @@ def parse_sdk_section(listing: str, name: str) -> SdkSection:
             raise ValueError("unsupported SDK data record")
     if pending or not data:
         raise ValueError("missing or truncated SDK data payload")
-    return SdkSection(bytes(data), alignment, tuple(exports))
+    return SdkSection(bytes(data), alignment, tuple(exports), lnk_alignment)
 
 
 @lru_cache(maxsize=16)
@@ -336,6 +345,7 @@ def compare(contribution: Contribution, image: RetailImage, target: Path, base: 
         result.evidence = {"provider": contribution.provider, "library": contribution.library,
                            "member": contribution.member, "sdk_object_sha256": contribution.object_sha256,
                            "sdk_section": contribution.section, "sdk_alignment": contribution.alignment,
+                           "sdk_lnk_alignment_tag": provider.lnk_alignment,
                            "sdk_payload_sha256": hashlib.sha256(provider.data).hexdigest()}
         for path in (target, base):
             validate_object(path.read_bytes(), contribution)
