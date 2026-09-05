@@ -356,7 +356,6 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
 
     def test_save_layouts_live_in_the_save_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         save_header = (REPO / "include/kf/game_save.h").read_text()
         for structure in (
             "KfSaveSlotSummary",
@@ -366,17 +365,13 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, save_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_game_cd_layout_lives_in_the_game_cd_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         game_cd = (REPO / "include/kf/game_cd.h").read_text()
         declaration = "typedef struct KfCdFileEntry"
         self.assertIn(declaration, game_cd)
-        self.assertNotIn(declaration, semantic_types)
 
     def test_tmd_layouts_live_in_the_shared_tmd_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         tmd_header = (REPO / "include/kf/tmd.h").read_text()
         for structure in (
             "KfTmdHeader",
@@ -393,7 +388,6 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, tmd_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_common_tmd_api_has_one_owner_header(self) -> None:
         expected = {
@@ -430,7 +424,6 @@ class InventoryTests(unittest.TestCase):
                     self.assertNotIn(f"{name}(", header)
 
     def test_audio_layouts_live_in_the_audio_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         audio_header = (REPO / "include/kf/audio.h").read_text()
         for structure in (
             "SoundRef",
@@ -439,10 +432,8 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, audio_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_math_layouts_live_in_the_game_math_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         math_header = (REPO / "include/kf/game_math.h").read_text()
         for structure in (
             "KfVecXZs",
@@ -453,10 +444,8 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"struct {structure} {{"
             self.assertIn(declaration, math_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_actor_layouts_live_in_the_actor_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         actor_header = (REPO / "include/kf/game_actor.h").read_text()
         for structure in (
             "KfActorDefinition",
@@ -467,10 +456,8 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, actor_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_map_layouts_live_in_the_map_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         map_header = (REPO / "include/kf/game_map.h").read_text()
         for structure in (
             "KfMapCell",
@@ -488,43 +475,33 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, map_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_floor_item_layouts_live_in_the_item_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         item_header = (REPO / "include/kf/item.h").read_text()
         for structure in ("KfFloorItemPlacement", "KfFloorItem"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, item_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_magic_layout_lives_in_the_magic_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         magic_header = (REPO / "include/kf/magic.h").read_text()
         declaration = "typedef struct KfMagicRecord"
         self.assertIn(declaration, magic_header)
-        self.assertNotIn(declaration, semantic_types)
 
     def test_effect_layouts_live_in_the_effect_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         effect_header = (REPO / "include/kf/game_effect.h").read_text()
         for structure in ("KfEffectRecord", "KfEffectRenderView"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, effect_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_equipment_layouts_live_in_the_equipment_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         equipment_header = (
             REPO / "include/kf/game_equipment.h"
         ).read_text()
         for structure in ("KfWeaponRecord", "KfArmorRecord"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, equipment_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_player_layouts_live_in_the_player_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         player_header = (REPO / "include/kf/game_player.h").read_text()
         self.assertNotIn("#include <kf/semantic_types.h>", player_header)
         for structure in (
@@ -538,20 +515,16 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, player_header)
-            self.assertNotIn(declaration, semantic_types)
 
     def test_collision_layout_lives_in_the_collision_owner_header(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         collision_header = (
             REPO / "include/kf/game_collision.h"
         ).read_text()
         declaration = "typedef struct KfCollisionTarget"
         self.assertIn(declaration, collision_header)
-        self.assertNotIn(declaration, semantic_types)
         self.assertIn("extern KfCollisionTarget collision_target;", collision_header)
 
     def test_render_layouts_live_in_their_owner_headers(self) -> None:
-        semantic_types = (REPO / "include/kf/semantic_types.h").read_text()
         owners = {
             "render_types.h": (
                 "KfPrimitiveBuffer", "KfOrderingTable", "KfCellWindow", "KfSpriteQuad",
@@ -576,13 +549,12 @@ class InventoryTests(unittest.TestCase):
             for structure in structures:
                 declaration = f"typedef struct {structure}"
                 self.assertIn(declaration, owner_header)
-                self.assertNotIn(declaration, semantic_types)
 
     def test_sources_include_semantic_owner_headers_directly(self) -> None:
-        for source in (REPO / "src").rglob("*.c"):
-            self.assertNotIn(
-                "#include <kf/semantic_types.h>", source.read_text()
-            )
+        self.assertFalse((REPO / "include/kf/semantic_types.h").exists())
+        for directory, pattern in (("src", "*.c"), ("include", "*.h")):
+            for source in (REPO / directory).rglob(pattern):
+                self.assertNotIn("kf/semantic_types.h", source.read_text())
 
     def test_screen_talk_campaign_matches_curated_identities(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_screen_talk.tsv"

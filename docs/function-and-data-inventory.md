@@ -221,8 +221,8 @@ Shared primitive-buffer and ordering-table layouts live in
 render-state aggregates live in `include/kf/game_render.h` and
 `include/kf/open_render.h`. Asset-registry and notification records live with
 their interfaces in `include/kf/game_asset.h` and `include/kf/notify.h`.
-`include/kf/semantic_types.h` remains only as a compatibility umbrella and
-defines no checked layouts. All owner-header layouts are checked against
+Reconstruction units include their owner headers directly. All owner-header
+layouts are checked against
 `config/retail/structures.tsv` by `kf inventory check`;
 inventory-only vectors such as `KfVec4s` and `KfVec4i` do not acquire C
 declarations until a reconstructed interface needs them, and established
