@@ -90,14 +90,17 @@ void render_initialize(void)
 ADDRESS(0x80016adc, 0x1d8)
 void display_initialize(s32 mode)
 {
-    s32 framebuffer_height = 240;
+    s32 framebuffer_height;
     s32 lower_buffer_y = 240;
+    DRAWENV *first_draw;
+    DRAWENV *second_draw;
 
     if (mode == 0xfe) {
         ResetGraph(3);
     } else {
         ResetGraph(0);
     }
+    framebuffer_height = 240;
     InitGeom();
     SetGeomOffset(160, 120);
     SetDefDrawEnv(
@@ -125,16 +128,18 @@ void display_initialize(s32 mode)
     display_draw_environments[1].r0 = 0;
     display_draw_environments[1].g0 = 0;
     display_draw_environments[1].b0 = 0;
+    first_draw = &display_draw_environments[0];
+    second_draw = &display_draw_environments[1];
     if (mode == 0xfe) {
         PutDispEnv(&display_disp_environments[0]);
         SetDispMask(1);
     } else {
-        display_draw_environments[0].dfe = 0;
-        display_draw_environments[1].dfe = 0;
-        PutDrawEnv(&display_draw_environments[0]);
-        PutDrawEnv(&display_draw_environments[1]);
-        display_draw_environments[0].dfe = 1;
-        display_draw_environments[1].dfe = 1;
+        first_draw->dfe = 0;
+        second_draw->dfe = 0;
+        PutDrawEnv(first_draw);
+        PutDrawEnv(second_draw);
+        first_draw->dfe = 1;
+        second_draw->dfe = 1;
         SetDispMask(0);
     }
     SetBackColor(0, 0, 0);

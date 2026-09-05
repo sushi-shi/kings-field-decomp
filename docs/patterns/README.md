@@ -66,3 +66,6 @@ promotes a probe to a proven historical toolchain.
 - [open-transition-snapshot.md](open-transition-snapshot.md): the directly
   observed transition-position stack copy and the remaining eight-byte frame
   discrepancy, with an exact list of non-exact object differences.
+- [open-display-init-pointers.md](open-display-init-pointers.md): observed
+  DRAWENV pointer lifetimes and height initialization, with bounded retail/C
+  argument/write traces and remaining address-base differences.
