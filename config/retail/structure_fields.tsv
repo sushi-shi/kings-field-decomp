@@ -341,6 +341,12 @@ KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	game_map.h;asm;map_object_p
 KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied into the pool object
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records
+KfMapRuntimeState	0x220	0x004	current_event	KfMapEvent *	supported	game_map.h;asm;map_event_set_current;spinner-current-minus-544	selected event pointer
+KfMapRuntimeState	0x224	0x004	variant_asset_buffer	u8 *	supported	game_map.h;asm;map_variant_assets_load	persistent CHR variant allocation
+KfMapRuntimeState	0x228	0x002	animation_gate	u16	supported	game_map.h;asm;map_event_timers_reset;map_event_pool_update	three-of-four-frame animation gate
+KfMapRuntimeState	0x22a	0x002	ambient_script_countdown	u16	supported	game_map.h;asm;map_event_timers_reset;map_event_pool_update	per-floor ambient-script countdown
+KfMapRuntimeState	0x22c	0x2134	world_state	u32[2125]	supported	game_map.h;save-read-write:0x2134-copy;game_state_initialize:0x2134-clear	word-aligned saved region; byte streams begin ten bytes into five 1700-byte slots
 KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v

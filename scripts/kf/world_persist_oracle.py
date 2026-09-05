@@ -119,10 +119,10 @@ def compare_world_persist(
     symbols: GameSymbols,
     rust: RustCodec,
 ) -> int:
-    event_address = symbols.datum("map_event_pool")[0]
+    event_address = symbols.datum("map_runtime_state")[0]
     actor_address = symbols.datum("actor_state")[0] + ACTOR_DEFINITION_BYTES
     object_state_address = symbols.datum("map_object_state")[0]
-    world_address = symbols.datum("map_world_state_base")[0]
+    world_address = event_address + 0x22C
     player_address = symbols.datum("player_state")[0]
     world_range = MemoryRange("world", world_address, WORLD_SIZE)
 

@@ -69,3 +69,11 @@ promotes a probe to a proven historical toolchain.
 - [open-display-init-pointers.md](open-display-init-pointers.md): observed
   DRAWENV pointer lifetimes and height initialization, with bounded retail/C
   argument/write traces and remaining address-base differences.
+- [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
+  parser match attempts, retained source improvements and instruction-level residues.
+- [game-parser-inline-helpers.md](game-parser-inline-helpers.md): pinned-compiler
+  inline support, six parser helper experiments and the retained typed vertex copy.
+- [game-world-state-layout.md](game-world-state-layout.md): the complete map
+  runtime owner, preserved interior referents and newly exact spinner consumer.
+- [tmd-packet-header.md](tmd-packet-header.md): bounded packet-header inline
+  experiments, their stack traffic and the item-count reset negative control.

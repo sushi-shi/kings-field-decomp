@@ -293,7 +293,8 @@ def compare_floor(
     use_external_variant = floor == 5
     path_address, path_size = symbols.datum("map_resource_path")
     cursor_address, cursor_size = symbols.datum("memory_arena_cursor")
-    variant_address, variant_size = symbols.datum("map_variant_asset_buffer")
+    variant_address = symbols.datum("map_runtime_state")[0] + 0x224
+    variant_size = 4
     grid_names = (
         "map_cell_attribute_grid",
         "map_floor_height_grid",

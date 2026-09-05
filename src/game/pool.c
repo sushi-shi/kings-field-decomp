@@ -42,6 +42,17 @@ typedef struct KfMorphObject {
 DATA(0x800910c0, 0xf0)
 KfPoolRecord pool_records[12];
 
+static inline void copy_vertices(SVECTOR *output, const SVECTOR *input, u16 count)
+{
+    const u32 *source = (const u32 *)input;
+    u32 *destination = (u32 *)output;
+
+    do {
+        *destination++ = *source++;
+        *destination++ = *source++;
+    } while (--count != 0);
+}
+
 ADDRESS(0x800205d4, 0x3a4)
 u16 *render_bind_animated_instance(
     KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
@@ -52,11 +63,8 @@ u16 *render_bind_animated_instance(
     KfAnimClip *clip;
     KfAnimKeyframe *keyframe;
     KfMorphObject *morph_object;
+    u32 *clip_table;
     u32 *object_table;
-    u32 *source_words;
-    u32 *destination_words;
-    SVECTOR *allocation;
-    u16 vertices_left;
     u16 morphs_left;
     u16 phase_end;
     u16 phase_start;
@@ -85,13 +93,9 @@ u16 *render_bind_animated_instance(
 reinitialize_record:
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
-    do {
-        allocation = memory_malloc_checked(vertex_count << 3);
-        record->cached_vertices = allocation;
-        if (allocation == 0) {
-            pool_release_all();
-        }
-    } while (allocation == 0);
+    while ((record->cached_vertices = memory_malloc_checked(vertex_count << 3)) == 0) {
+        pool_release_all();
+    }
     *owner_slot = record;
     goto find_keyframe;
 
@@ -106,15 +110,13 @@ check_record:
 find_keyframe:
     phase_end = 0;
     phase_start = 0;
-    clip = (KfAnimClip *)((char *)asset_header
-        + ((u32 *)((char *)asset_header
-                  + asset_header->clip_table_offset))[clip_index]);
+    clip_table = (u32 *)((char *)asset_header + asset_header->clip_table_offset);
+    clip = (KfAnimClip *)((char *)asset_header + clip_table[clip_index]);
     keyframes_left = clip->keyframe_count;
-    if (keyframes_left != 0) {
+    {
         u32 *keyframe_offsets = clip->keyframes;
 
-        keyframes_left = keyframes_left - 1;
-        do {
+        while (keyframes_left-- != 0) {
             keyframe = (KfAnimKeyframe *)((char *)asset_header + *keyframe_offsets);
             keyframe_offsets++;
             phase_end += keyframe->duration;
@@ -122,13 +124,15 @@ find_keyframe:
                 u32 forward_fraction = ((u32)(u16)(phase - phase_start) << 12)
                     / keyframe->duration;
 
-                blend_fraction = keyframe->reverse == 0
-                    ? forward_fraction : 0x1000 - forward_fraction;
+                blend_fraction = forward_fraction;
+                if (keyframe->reverse != 0) {
+                    blend_fraction = 0x1000 - forward_fraction;
+                }
                 goto update_vertex_cache;
             }
             phase_start = phase_end;
             keyframe_index++;
-        } while (keyframes_left-- != 0);
+        }
     }
     keyframe_index--;
     blend_fraction = 0x1000;
@@ -142,26 +146,19 @@ update_vertex_cache:
     asset_registry_select(asset_index);
     tmd_select_object_vertices(0);
 
-    source_words = (u32 *)current_tmd_vertices;
-    destination_words = (u32 *)record->cached_vertices;
-    vertices_left = vertex_count;
-    do {
-        *destination_words++ = *source_words++;
-        *destination_words++ = *source_words++;
-    } while (--vertices_left != 0);
+    copy_vertices(record->cached_vertices, current_tmd_vertices, vertex_count);
 
     morphs_left = keyframe->morph_count;
-    if (morphs_left != 0) {
+    {
         u16 *morph_indices = keyframe->morph_indices;
 
-        morphs_left = morphs_left - 1;
-        do {
+        while (morphs_left-- != 0) {
             morph_object = (KfMorphObject *)(
                 (char *)asset_header + object_table[*morph_indices]);
             morph_indices++;
             gteMIMefunc(&record->cached_vertices[morph_object->base_vertex],
                         morph_object->deltas, morph_object->vertex_count, 0x1000);
-        } while (morphs_left-- != 0);
+        }
     }
 
     record->rest_morph = (KfMorphObject *)(
@@ -171,13 +168,7 @@ blend_scratch:
     record->keyframe_index = keyframe_index;
     record->clip_index = clip_index;
 
-    source_words = (u32 *)record->cached_vertices;
-    destination_words = (u32 *)&tmd_morph_scratch[1];
-    vertices_left = vertex_count;
-    do {
-        *destination_words++ = *source_words++;
-        *destination_words++ = *source_words++;
-    } while (--vertices_left != 0);
+    copy_vertices(&tmd_morph_scratch[1], record->cached_vertices, vertex_count);
 
     morph_object = record->rest_morph;
     {

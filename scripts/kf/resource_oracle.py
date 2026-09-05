@@ -844,7 +844,7 @@ def compare_placements(
             "events",
             "map_event_pool_load",
             "8003379c_map_event.o",
-            symbols.datum("map_event_pool")[0],
+            symbols.datum("map_runtime_state")[0],
             8 * 68,
         ),
     )

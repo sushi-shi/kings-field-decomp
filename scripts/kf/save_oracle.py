@@ -203,7 +203,7 @@ def compare_read_slots(retail: RetailImage, symbols: GameSymbols, rust: RustCode
         ("missing-slot", 9, True, [], False, 7),
     ]
     player_address = symbols.datum("player_state")[0]
-    world_address = symbols.datum("map_world_state_base")[0]
+    world_address = symbols.datum("map_runtime_state")[0] + 0x22C
     auxiliary_address = symbols.datum("DAT_800652a8")[0]
     magic_address = symbols.datum("magic_records")[0]
     ranges = [

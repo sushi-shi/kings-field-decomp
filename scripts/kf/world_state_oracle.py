@@ -163,12 +163,12 @@ def _cases() -> list[tuple[str, bytes, Conditions]]:
 
 
 def compare_world_state(retail: RetailImage, symbols: GameSymbols, rust: RustCodec) -> int:
-    event_address = symbols.datum("map_event_pool")[0]
+    event_address = symbols.datum("map_runtime_state")[0]
     actor_state_address = symbols.datum("actor_state")[0]
     actor_address = actor_state_address + 1824
     object_state_address = symbols.datum("map_object_state")[0]
     object_address = object_state_address + 1280
-    world_address = symbols.datum("map_world_state_base")[0]
+    world_address = event_address + 0x22C
     player_address = symbols.datum("player_state")[0]
     height_address = symbols.datum("map_floor_height_grid")[0]
     ranges = [
@@ -193,12 +193,11 @@ def compare_world_state(retail: RetailImage, symbols: GameSymbols, rust: RustCod
             MemoryInput(player_address, bytes(player)),
             MemoryInput(height_address, heights),
             MemoryInput(object_state_address, pattern(1280, 112)),
-            MemoryInput(symbols.datum("DAT_8009eafc")[0], bytes((conditions.flag_8009eafc,))),
-            MemoryInput(symbols.datum("DAT_8009f844")[0], bytes((conditions.flag_8009f844,))),
-            MemoryInput(symbols.datum("DAT_8009f845")[0], bytes((conditions.flag_8009f845,))),
-            MemoryInput(symbols.datum("DAT_8009f846")[0], bytes((conditions.flag_8009f846,))),
-            MemoryInput(symbols.datum("boss_defeat_complete")[0],
-                        bytes((conditions.boss_defeat_complete,))),
+            MemoryInput(world_address + 3400, bytes((conditions.flag_8009eafc,))),
+            MemoryInput(world_address + 6800, bytes((conditions.flag_8009f844,))),
+            MemoryInput(world_address + 6801, bytes((conditions.flag_8009f845,))),
+            MemoryInput(world_address + 6802, bytes((conditions.flag_8009f846,))),
+            MemoryInput(world_address + 6803, bytes((conditions.boss_defeat_complete,))),
             MemoryInput(symbols.datum("DAT_800652a8")[0],
                         bytes(10) + bytes((conditions.inventory_0a, conditions.inventory_0b))),
         ]

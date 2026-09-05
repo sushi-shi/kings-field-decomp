@@ -1,5 +1,9 @@
 # GAME resource-parser coverage
 
+The [matching checkpoint](game-parser-matching-checkpoint.md) records the final
+29-function scores, unresolved differences, verification boundaries and how
+the isolated PS1 code ran on Linux. Matching is paused, not declared complete.
+
 This is the parser census for the Japanese retail `GAME.EXE`
 (`SLPS-00017`). It separates byte interpretation from disc I/O, allocation,
 GPU/SPU submission, and runtime consumption so that a format is not silently
@@ -18,11 +22,15 @@ the census below now has a Rust implementation and passing comparison coverage
 at its stated boundary. `python -m scripts.kf.codec_oracle` runs all ten suites
 without case or event limits and rebuilds the candidates by default.
 
-The [failure-path and match review](patterns/game-parser-verification.md)
-leaves **23 of the 29 explicit GAME functions strict-exact (79.31%)**, up from
-22. Size-weighted objdiff similarity is 98.291691%, distinct from the passing
-finite test corpus. Six functions remain non-exact; Sony providers are not
-included in these counts.
+The [world-state ownership investigation](patterns/game-world-state-layout.md)
+leaves **23 of the 29 explicit GAME functions strict-exact (79.31%)**.
+Size-weighted objdiff similarity is 99.493564%, up from 99.470158% after the
+[preceding closure attempt](patterns/game-parser-exact-closure.md), and distinct
+from the passing finite test corpus. The preceding
+[typed animation vertex-copy helper](patterns/game-parser-inline-helpers.md)
+improves one remaining function. The shared map runtime owner makes the
+auxiliary spinner consumer exact, but no additional parser reaches 100%;
+neither that consumer nor Sony providers enter these counts.
 
 ## Complete parser census
 
@@ -161,10 +169,11 @@ The animation differential seeds retail and candidate `$s5` with the same
 explicit `0x4100` value, exercises every one of the 813 shipped keyframes as a
 cache miss and the first keyframe of every one of the 214 clips as a cache hit,
 and compares complete pool-record, cache, scratch and TMD-state bytes with Rust.
-Together with static assets and eight synthetic selection/lifecycle controls,
-all 1,134 cases pass. Lifecycle cases cover null-record allocation, exhausted
-pool, vertex-allocation retry, different-asset reinitialization and static
-release. Exact GAME TMD selectors are shared providers. Sony Release 2.5
+Together with static assets and ten synthetic selection/lifecycle controls,
+all 1,136 cases pass. Lifecycle cases cover null-record allocation, exhausted
+pool, vertex-allocation retries (including three consecutive failures),
+different-asset reinitialization with retries and static release. Exact GAME
+TMD selectors are shared providers. Sony Release 2.5
 `gteMIMefunc` at `0x8004c860` is an explicit shared service whose independent
 fixed-point model applies the GPF 12-bit shift, signed IR saturation, wrapping
 halfword addition, and preserved vector padding; retail and candidate call

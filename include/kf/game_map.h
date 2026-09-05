@@ -158,19 +158,36 @@ typedef struct KfMapObjectState {
     KfMapObject objects[190];
 } KfMapObjectState;
 
+/* Cleared as 0x2360 bytes; the final 0x2134 bytes are copied by save I/O. */
+typedef struct KfMapRuntimeState {
+    KfMapEvent events[8];
+    KfMapEvent *current_event;
+    u8 *variant_asset_buffer;
+    u16 animation_gate;
+    u16 ambient_script_countdown;
+    u32 world_state[2125];
+} KfMapRuntimeState;
+
 extern KfMapCopyRegion map_copy_regions[4];
-extern KfMapEvent map_event_pool[8];
-extern KfMapEvent *current_map_event;
-extern u16 map_event_animation_gate;
-extern u16 map_ambient_script_countdown;
+extern KfMapRuntimeState map_runtime_state;
+/* Member spellings used by consumers, not independently owned globals. */
+#define map_event_pool (map_runtime_state.events)
+#define current_map_event (map_runtime_state.current_event)
+#define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
+#define map_event_animation_gate (map_runtime_state.animation_gate)
+#define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
+#define map_world_state_base (map_runtime_state.world_state[0])
+#define MAP_WORLD_STATE_BYTES ((u8 *)map_runtime_state.world_state)
+#define DAT_8009eafc (MAP_WORLD_STATE_BYTES[3400])
+#define DAT_8009f844 (MAP_WORLD_STATE_BYTES[6800])
+#define DAT_8009f845 (MAP_WORLD_STATE_BYTES[6801])
+#define DAT_8009f846 (MAP_WORLD_STATE_BYTES[6802])
+#define boss_defeat_complete (MAP_WORLD_STATE_BYTES[6803])
 extern KfMapObjectState map_object_state;
 extern u16 map_object_effect_sequence_160;
 extern u16 map_object_effect_sequence_170;
 extern u16 map_object_effect_sequence_180;
 extern char map_resource_path[12];
-extern u8 *map_variant_asset_buffer;
-extern u32 map_world_state_base;
-#define MAP_WORLD_STATE_BYTES ((u8 *)&map_world_state_base)
 
 extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);
 extern void camera_path_compute_segment(KfCameraPathState *path);
