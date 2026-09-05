@@ -151,6 +151,68 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
                         corrupted, _, _ = linked_words(obj, unit, claim, wrong_owner, functions)
                         self.assertNotEqual(corrupted, expected)
 
+    def test_map_traversal_and_shared_matrix_base(self):
+        self.tools()
+        try:
+            retail = (configured_retail_dir() / "OPEN.EXE").read_bytes()
+        except (ValueError, FileNotFoundError):
+            self.skipTest("configured retail OPEN image is required")
+        manifest = load_manifest()
+        unit = manifest.by_name()["open.render_map_cells"]
+        if not (BUILD / "delink/open/modules" / unit.object_name).is_file():
+            self.skipTest("delinked OPEN map target is required")
+        profile = manifest.profiles[unit.profile]
+        original = unit.source_path.read_text()
+        definition = "DATA(0x8006e1c8, 0x4)\nconst KfCellWindow *active_cell_window;\n\n"
+        self.assertEqual(original.count(definition), 1)
+        pattern = re.compile(r"\b(" + "|".join(FIELDS) + r")\b")
+        source = '#include "open_runtime_owner_probe.h"\n' + pattern.sub(
+            lambda match: "open_graphics_runtime." + match[0], original.replace(definition, ""))
+        data = {item.name: item.va for (image, _), item in
+                load_data_identities(RETAIL_CONFIG).items() if image == "OPEN.EXE"}
+        data["open_graphics_runtime"] = 0x80049A48
+        functions = {item.symbol: item.va for item in
+                     load_catalog(RETAIL_CONFIG).functions["OPEN.EXE"]}
+        with TemporaryDirectory(prefix="kf-open-runtime-map-") as directory:
+            root = Path(directory)
+            candidate = root / "render_map_cells.c"
+            candidate.write_text(source)
+            output = root / unit.object_name
+            compile_source(
+                candidate, unit.image, output, BUILD / "delink", profile.optimization,
+                profile.small_data, profile.aspsx_version,
+                (REPO / "include", FIXTURES, Path(os.environ["PSYQ_INCLUDE"])),
+                profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines,
+            )
+            obj = _load_object(output)
+            self.assertEqual({claim.symbol for claim in unit.functions},
+                             {"render_map_cell", "opening_render_map_cells"})
+            for claim in unit.functions:
+                with self.subTest(function=claim.symbol):
+                    actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
+                    offset = IMAGE_LAYOUTS[unit.image].file_offset(claim.va)
+                    expected = list(struct.unpack_from(
+                        f"<{claim.body_size // 4}I", retail, offset))
+                    if claim.symbol == "opening_render_map_cells":
+                        self.assertEqual(actual, expected)
+                        self.assertEqual(calls, [0x80016E68, 0x80018BBC])
+                        wrong_owner = dict(data, open_graphics_runtime=0x80049A4C)
+                        corrupted, _, _ = linked_words(obj, unit, claim, wrong_owner, functions)
+                        self.assertNotEqual(corrupted, expected)
+                    else:
+                        # Only the matrix-base sequence and epilogue are exact.
+                        self.assertNotEqual(actual, expected)
+                        self.assertEqual(actual[-24:], expected[-24:])
+                        self.assertEqual(addresses, [
+                            0x800730A0, 0x80046DF8, 0x8006E0AC, 0x8006E0B4,
+                            0x8006E260, 0x8006E0B0, 0x8006E048, 0x8006E048,
+                            0x8006E0C8,
+                        ])
+                        self.assertEqual(calls, [
+                            0x8002D558, 0x8002D5E8, 0x8002D8B0, 0x8002CBA8,
+                            0x8002D558, 0x8002D5E8, 0x8002D588, 0x80016EC8, 0x800185E8,
+                        ])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -103,3 +103,71 @@ pass without skips, as do Ruff and `git diff --check`. The staged
 in isolation). Full `kf build` still fails the existing strict data gates for
 one OPEN and thirteen GAME units, plus the four GAME historical-best deficits.
 OPEN remains 91/108 exact; no GAME reconstruction or baseline is changed.
+
+## Map-owner extension: Function Match Plan
+
+At `0794850`, the six semantic queries, full disassembly/CFG, callers,
+adjacent boundaries, source history and shared declarations were inspected
+again for both map functions. `opening_scene0_render_frame` calls traversal
+without arguments; traversal supplies signed column/row and a byte cell to
+the renderer. The supplied LIBGTE archive independently attributes matrix
+operations to `MTX` and `RotTrans` to `SMP`; their authentic header signatures
+remain unchanged. Grid selection and traversal are OPEN policy, not those
+library bodies. Neither function references strings or unresolved candidate
+relocations.
+
+| OPEN function | Retail size; strict baseline | Pre-edit evidence and hypothesis |
+| --- | --- | --- |
+| `80018bbc render_map_cell` | `0x1d0`; 84.094826% | Nine calls, nine reviewed address pairs, one internal jump, 80-byte frame. Byte attribute wraps before the unsigned 99 check; orientation selects 32-byte matrices; positions use 2000, -100 and unsigned low halfwords of view coordinates. At `80018d2c..80018d5c`, the quadrant base `8006e0c8` supplies view at -128 and light matrices at +128. Test whether the complete owner recovers that cross-field chain without changing coordinate expressions or call delay-slot semantics. |
+| `80018d8c opening_render_map_cells` | `0x140`; 84.062500% | Two calls, nine reviewed address pairs, one internal jump, 48-byte frame. Signed high yaw byte selects one of sixteen 204-byte windows. Retail reloads the stored active pointer at `80018dec/80018df0`; canonical code omits it. Row/column counters narrow to bytes, skipped rows advance by full halfword width, and unsigned bounds are 100. Test the same owner declaration, including its active-window field, without manufacturing a reload. |
+
+Create only an alternate map-unit source with real owner-field expressions.
+Remove its separate active-window definition from that temporary source;
+the window table at `800439d8` remains independently owned. Rebuild and audit
+numeric relocation targets, call order, first raw divergence and the exact
+initializer controls. A positive map result must precede the wider banked-
+consumer audit; no inventory migration or exact claim follows from a fuzzy
+score or a raw-only candidate comparison.
+
+### Map extension result
+
+The same complete declaration makes `opening_render_map_cells` equal all
+320 linked retail bytes. Both calls, all nine absolute data targets, the
+active-pointer reload, branch targets and delay slots agree without changing
+its C statements. The old 312-byte code hoisted the view-cell reads and
+omitted that reload. This is a full numeric-relocation comparison, not a
+banked strict objdiff result for the unadopted root identity.
+
+`render_map_cell` recovers the quadrant/view/light chain and the exact saved
+register set. Its last 96 bytes, starting with the quadrant-base load through
+the return delay slot, equal retail after relocation. All nine calls retain
+their ordered targets and the extra independent light-array pair disappears.
+It is still 472 bytes versus retail 464 (canonical 468). Ignoring early branch
+displacement changes caused by that size difference, the first divergence is
+the empty delay slot at `80018c1c`: retail loads constant one there, whereas
+the candidate loads it later into `a2`. Coordinate arithmetic and view-load
+interleaving also differ. No new source-order or register-steering experiment
+is justified by that symptom alone.
+
+The initializer, allocator and color-matrix controls still preserve every
+linked instruction. The regression test now also checks the complete map
+traversal, the renderer's exact suffix and its literal ordered calls/data
+targets; an incorrect root address fails the traversal comparison. The two
+map verdicts are **raw-exact candidate traversal** and **partial renderer with
+recovered shared base**, respectively. Canonical sources remain untouched.
+
+The next required step is the broader banked-consumer audit, starting with
+the display/TMD/projection unit. There are seventeen OPEN source files with
+references to candidate members; they must share this declaration if the
+ownership migration is adopted. Do not migrate only the newly raw-exact
+traversal while retaining incompatible separate globals elsewhere.
+
+### Map checkpoint verification
+
+The canonical map unit was freshly compiled with its pinned manifest profile;
+its strict scores remain 84.094826% and 84.062500%. All 399 workspace tests
+pass without skips, Ruff and `git diff --check` pass, and `nix flake check -L`
+passes (399 tests, 49 optional controls skipped in isolation). Full `kf build`
+still fails only the recorded strict gates: one OPEN and thirteen GAME data
+units, plus four GAME historical-best deficits. OPEN remains 91/108 banked
+exact, with no production source, inventory or baseline changed by this pilot.
