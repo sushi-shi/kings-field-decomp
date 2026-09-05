@@ -1,5 +1,90 @@
 # OPEN general TMD polygon emission
 
+## Function Match Plan: initial asset dependencies (`8b1e86d`)
+
+OPEN `8001764c` starts at strict 99.146990%, 3320 retail/3324 probe bytes
+and 126 unequal aligned words. All six semantic views, full CFG, both
+signed-bias calls in the exact 552-byte entity caller, adjacent projection/
+unlit boundaries, accessor/allocator, source history and shared SDK packet
+layouts were refreshed. The 57 direct calls, eleven validated internal jumps,
+eleven retail address pairs, no strings, 29 candidate table rows, halfword
+object/bias ABI and signed depth/fog operations retain the contract below.
+LIBGPU PRIM and LIBGTE SMP providers are SDK controls, not this game-owned
+traversal. Retail frame size remains 96 versus the probe's 88.
+
+Unlike the map emitter, every current TMD output packet already uses the
+retail `s0` register. Do not assume its newly shared packet type addresses
+this function's first divergence. After the stack operands, initial packet
+addition at `800176a0` reverses its operands; the normal addition in the
+nonempty-test delay slot also differs. Both derive from a local `payload`
+whose only uses are these two addresses. The neighboring map and unlit
+emitters use the canonical current-asset member directly and reproduce
+retail's offset-plus-asset dependence. Test those two direct expressions
+here while preserving their order, `(offset + 12)`, count setup and all loop
+operations. There is no intervening call or write to the owner, and no
+cached value crosses a call. Compare every word and ordered numeric target;
+do not change the output packet model, frames, declarations or profile.
+
+The direct expressions recover the packet-add word and the normal-add
+operand order without changing any other instruction or relocation. The
+normal destination register still differs. Keep this simpler owner use:
+3324 bytes and 125 unequal aligned words, with all 57 calls and numeric
+targets unchanged. The exact entity caller and neighboring map/unlit controls
+retain their prior bytes.
+
+### Mode-discriminated output-pointer control
+
+From that retained base, separately test the common output-object model
+supported by all twelve retail allocation paths: one pointer names the
+currently selected SDK packet until the shared AddPrim. The existing source
+uses twelve separate case-local variables over eight real formats. Use one
+loop-local pointer to a union of the existing packed/SDK variants, preserving
+every per-mode constructor, field, allocation size, shading/depth expression,
+guard and insertion statement. No larger packet is allocated and no automatic
+union object or extra pointer carrier is introduced. Current packet-register
+operands already agree, so the map result is not evidence of a likely match;
+retain this control only if it supplies additional raw evidence for the
+shared source model without changing the observed call/CFG topology.
+
+The union-pointer control is byte- and relocation-identical to the retained
+direct-asset source: 3324 bytes and 125 unequal aligned words. Remove it;
+this body already shares the output pointer without that additional type.
+
+### Complete graphics-owner pointer control
+
+The remaining extra OT pair addresses a real field of the same proved
+graphics runtime as the current asset and projected vertices. Retail derives
+all three from one address chain, whereas the probe rematerializes the OT
+field at the insertion tail. Test one typed pointer to the existing complete
+runtime owner, initialized alongside the first actual field references and
+used for current-asset, projected-array and OT accesses. Keep every reload
+at its current semantic point, especially the OT value after SDK calls.
+This introduces no cross-object alias, fabricated extent, cached OT value,
+new field or changed lifetime of the packet/normal/vertex values. Compare
+against the retained direct-asset source; do not propagate an unhelpful form.
+
+The explicit owner pointer grows the candidate to 3340 bytes. It materializes
+different owner anchors (`80069a48` and `80049a48`), replaces the observed
+current-asset/projected-base chain with extra address construction and moves
+the header spill. Although the frame becomes 96 bytes and all 57 calls remain,
+the OT pair is still absolute and 811 aligned words differ after the shifts.
+Reject this form and rebuild the direct-member source; the frame size alone
+does not justify its extra instructions or changed referent expressions.
+
+The restored direct-member source is byte-identical to its focused trial.
+Strict objdiff records **99.146990% -> 99.171080%**, still 3324 bytes with
+125 unequal aligned words. Its seventeen default switch addends remain
+`.text+0xca0` versus retail `.text+0xc9c`; all twelve case addends agree.
+Only the two initial address expressions are retained, not either pointer
+control. This is partial progress and is not banked.
+
+Focused recompilation, strict matching and full `kf build` preserve all
+97 OPEN exact functions and all 13 SDK controls. The full check still reports
+the existing OPEN default-table addend, thirteen GAME data mismatches and
+four GAME historical-best deficits. Ruff, all 401 existing tests (17.550
+seconds) and `git diff --check` pass. No GAME source, shared header, test,
+toolchain profile, relocation or banked baseline changes are retained.
+
 ## Function Match Plan: shared acceptance path (`d1d9562`)
 
 OPEN `8001764c`, 3320 retail bytes, starts at strict 99.044580% with a
@@ -86,7 +171,7 @@ words. There are now 126 unequal aligned words, still 3324 bytes, with all
 pair. Keep this source dependency correction; the frame, normal/projected
 register roles, address operand order and extra OT pair remain unattributed.
 
-Current result: **99.146990% strict objdiff**, 3324 compiled bytes versus
+Current result: **99.171080% strict objdiff**, 3324 compiled bytes versus
 3320 retail under `probe-gcc257-o2-g0`. The function and its switch are not
 exact and are not banked. The exact entity-render caller remains unchanged.
 

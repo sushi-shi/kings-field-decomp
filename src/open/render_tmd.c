@@ -12,9 +12,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object = tmd_get_object(object_index);
     u32 remaining = object->primitive_count;
-    u8 *payload = open_graphics_runtime.tmd_state.current_asset;
-    u8 *packet = payload + (object->primitive_offset + 12);
-    u8 *normals = payload + (object->normal_offset + 12);
+    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+        (object->primitive_offset + 12);
+    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+        (object->normal_offset + 12);
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
