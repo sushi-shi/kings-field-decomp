@@ -68,6 +68,9 @@ promotes a probe to a proven historical toolchain.
 - [game-warp-shimmer-traversal.md](game-warp-shimmer-traversal.md): forward
   effect cursors, descending allocation/release counts and one active-effect
   pointer close the 568-byte warp-shimmer animator.
+- [game-warp-trigger-results.md](game-warp-trigger-results.md): a missing
+  completion result and explicit shared warp-call/destination paths close
+  the 588-byte floor-trigger dispatcher.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword

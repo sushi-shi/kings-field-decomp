@@ -941,13 +941,14 @@ Residue recorded (not steered):
   guard/update. The earlier optimizer-limit attribution was unsupported;
   ordinary C traversal corrections close it. See
   [the complete evidence and focused sequence](game-warp-shimmer-traversal.md).
-- `func_80036af0` (~62%): the per-frame scripted-trigger dispatcher. The switch
-  on the current floor (jump table `0x80012c14`) and the per-floor cell-key
-  comparisons match, but GCC's cross-jumping merges the many
-  `func_80036850(n, 0)` / `func_800369ac(...)` call tails into shared sites in a
-  different basic-block order than retail, and the probe hoists the current-floor
-  load above the frame allocation where retail allocates first. Cross-jump /
-  block-ordering residue; not steered.
+- `player_warp_trigger_update` (`80036af0`) is now **100%**. The old body
+  omitted a real floor-five return-one path: its retail `bnez` owns `li v0,1`
+  in the delay slot. Correct that result, express the one shared change-floor
+  call with its destination arguments, and share the floor-four destination
+  block across three arms. These CFG corrections recover the entry schedule,
+  all 147 instructions and all 36 ordered relocations without changing the
+  switch owner or claiming an optimizer limit. See
+  [the evidence and focused sequence](game-warp-trigger-results.md).
 
 Residues recorded in `game.menu_select` (`func_800238d8`, `func_80023e9c`):
 

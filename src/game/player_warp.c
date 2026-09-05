@@ -24,7 +24,7 @@ static MATRIX actor_transform_color_matrix = {
  * map variant and its assets, move to an explicit cell, and shimmer back in.
  *
  * player_warp_trigger_update runs every frame from game_main_loop: it dispatches on the
- * current floor (jump table at 0x80012c14) and, when the player's previous map
+ * current floor (jump table at 0x80012c14) and, when the player's current map
  * cell matches a scripted trigger, performs the corresponding warp.
  *
  * actor_transform_definition5_to6 is the colour-fade transition called for
@@ -179,16 +179,22 @@ ADDRESS(0x80036af0, 0x24c)
 u32 player_warp_trigger_update(void)
 {
     u32 cell;
+    s32 destination_floor;
+    u8 destination_variant = 0;
 
+    /* The aligned word spans pitch_step and map_cell; mask out pitch_step. */
     switch (player_state.progress_state.current_floor) {
     case 1:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x1d380000) {
-            player_warp_change_floor(2, 0);
+            destination_floor = 2;
+change_floor:
+            player_warp_change_floor(destination_floor, destination_variant);
         } else if (cell == 0x190b0000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         } else if (cell == 0x27230000) {
-            player_warp_change_floor(4, 0);
+            goto change_to_floor4;
         } else if (cell == 0x0f020000) {
             if (boss_defeat_complete) {
                 return 1;
@@ -196,39 +202,50 @@ u32 player_warp_trigger_update(void)
         }
         break;
     case 2:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x1d380000) {
-            player_warp_change_floor(1, 0);
+            destination_floor = 1;
+            goto change_floor;
         } else if (cell == 0x1c120000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         }
         break;
     case 3:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x190b0000) {
-            player_warp_change_floor(1, 0);
+            destination_floor = 1;
+            goto change_floor;
         } else if (cell == 0x1c120000) {
-            player_warp_change_floor(2, 0);
+            destination_floor = 2;
+            goto change_floor;
         } else if (cell == 0x07160000 || cell == 0x2b5c0000) {
-            player_warp_change_floor(4, 0);
+change_to_floor4:
+            destination_floor = 4;
+            goto change_floor;
         }
         break;
     case 4:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x27230000) {
-            player_warp_change_floor(1, 0);
+            destination_floor = 1;
+            goto change_floor;
         } else if (cell == 0x07160000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         } else if (cell == 0x27450000) {
-            player_warp_change_floor(5, 1);
+            destination_floor = 5;
+            destination_variant = 1;
+            goto change_floor;
         } else if (cell == 0x2b5c0000) {
-            player_warp_change_floor(3, 0);
+            destination_floor = 3;
+            goto change_floor;
         }
         break;
     case 5:
-        cell = *(u32 *)((char *)&player_state.map_cell - 2) & 0xffff0000;
+        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
         if (cell == 0x27450000) {
-            player_warp_change_floor(4, 0);
+            goto change_to_floor4;
         } else if (cell == 0x463d0000) {
             player_warp_same_floor(2, 0x12, 0x25);
         } else if (cell == 0x12250000) {
@@ -238,6 +255,8 @@ u32 player_warp_trigger_update(void)
         } else if (cell == 0x272f0000) {
             if (!boss_defeat_complete) {
                 player_warp_same_floor(2, 5, 0x19);
+            } else {
+                return 1;
             }
         } else if (cell == 0x05250000) {
             player_warp_same_floor(1, 0xe, 0x4f);
