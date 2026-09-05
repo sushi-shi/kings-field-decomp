@@ -177,8 +177,10 @@ void map_event_interact(KfMapEvent *event)
 ADDRESS(0x80034d54, 0x90)
 void map_show_screen_image(s32 group, s32 index)
 {
+    char *directory_floor = &DAT_80056238[5];
+
     DAT_80056238[8] = group + '0';
-    DAT_80056238[5] = player_state.progress_state.current_floor + '0';
+    *directory_floor = player_state.progress_state.current_floor + '0';
     DAT_80056238[9] = index / 10 + '0';
     DAT_80056238[10] = index % 10 + '0';
     screen_show_image_until_input(DAT_80056238);

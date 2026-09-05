@@ -123,6 +123,9 @@ promotes a probe to a proven historical toolchain.
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.
+- [game-image-path-components.md](game-image-path-components.md): directory
+  digit cursors recover TALK/map path referents and improve both formatters;
+  register roles and the map floor-load schedule remain non-exact.
 - [game-option-menu-reset.md](game-option-menu-reset.md): clearing the pending
   selection before the exit guard closes the option-menu dispatch loop.
 - [game-menu-root-results.md](game-menu-root-results.md): removing three
