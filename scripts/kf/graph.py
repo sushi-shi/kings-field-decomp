@@ -284,14 +284,20 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
             report,
             "report",
             inputs=[project, delink_stamp, *bases],
-            implicit=scripts,
+            # Recompiled objects may restat unchanged when only objdiff changes.
+            # Its identity must invalidate the report directly, not via objects.
+            implicit=[str(TOOLCHAIN_ID.relative_to(REPO)), *scripts],
             variables={"image": image},
         )
         lines += _build_line(
             verify_stamp,
             "check",
             inputs=[report],
-            implicit=[str(BASELINE.relative_to(REPO)), *scripts],
+            implicit=[
+                str(BASELINE.relative_to(REPO)),
+                str(TOOLCHAIN_ID.relative_to(REPO)),
+                *scripts,
+            ],
             variables={"image": image},
         )
         lines += _build_line(f"base-{key}", "phony", inputs=bases)

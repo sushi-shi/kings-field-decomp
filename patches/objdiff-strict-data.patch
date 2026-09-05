@@ -1,0 +1,362 @@
+King's Field strict data comparison for objdiff 3.7.3.
+
+Compare complete initialized sections and BSS extents, preserve ordered
+relocation multiplicity and named referents, and include base-only storage
+in native reports. Preserve actual MIPS data section referents instead of
+resolving them to incidental debug labels. The shared core is built into
+both CLI and GUI. Function instruction scoring is unchanged.
+
+--- a/objdiff-core/src/diff/data.rs
++++ b/objdiff-core/src/diff/data.rs
+@@ -6,7 +6,7 @@
+ 
+ use super::{
+     DataDiff, DataDiffKind, DataDiffRow, DataRelocationDiff, ObjectDiff, SectionDiff, SymbolDiff,
+-    code::{address_eq, section_name_eq},
++    code::section_name_eq,
+ };
+ use crate::obj::{Object, Relocation, ResolvedRelocation, Symbol, SymbolFlag, SymbolKind};
+ 
+@@ -59,9 +59,8 @@
+         && left.relocation.addend == right.relocation.addend;
+     match (left.symbol.section, right.symbol.section) {
+         (Some(sl), Some(sr)) => {
+-            // Match if section and name+addend or address match
+-            section_name_eq(left_obj, right_obj, sl, sr)
+-                && (symbol_name_addend_matches || address_eq(left, right))
++            // Coincident object-relative addresses do not establish data identity.
++            section_name_eq(left_obj, right_obj, sl, sr) && symbol_name_addend_matches
+         }
+         (Some(_), None) | (None, Some(_)) | (None, None) => symbol_name_addend_matches,
+     }
+@@ -158,47 +157,44 @@
+     let left_section = &left_obj.sections[left_section_idx];
+     let right_section = &right_obj.sections[right_section_idx];
+     let mut diffs = Vec::new();
+-    for left_reloc in left_section.relocations.iter() {
+-        if !left_range.contains(&(left_reloc.address as usize)) {
+-            continue;
+-        }
+-        let left_offset = left_reloc.address as usize - left_range.start;
+-        let left_reloc = resolve_relocation(&left_obj.symbols, left_reloc);
+-        let Some(right_reloc) = right_section.relocations.iter().find(|r| {
+-            if !right_range.contains(&(r.address as usize)) {
+-                return false;
+-            }
+-            let right_offset = r.address as usize - right_range.start;
+-            right_offset == left_offset
+-        }) else {
+-            diffs.push((DataDiffKind::Delete, Some(left_reloc), None));
+-            continue;
++    // The reader stably orders relocations by address. Consume each row once,
++    // preserving multiplicity and original order at a shared offset.
++    let mut left = left_section
++        .relocations
++        .iter()
++        .filter(|r| left_range.contains(&(r.address as usize)))
++        .peekable();
++    let mut right = right_section
++        .relocations
++        .iter()
++        .filter(|r| right_range.contains(&(r.address as usize)))
++        .peekable();
++    loop {
++        let ordering = match (left.peek(), right.peek()) {
++            (Some(l), Some(r)) => (l.address as usize - left_range.start)
++                .cmp(&(r.address as usize - right_range.start)),
++            (Some(_), None) => Ordering::Less,
++            (None, Some(_)) => Ordering::Greater,
++            (None, None) => break,
+         };
+-        let right_reloc = resolve_relocation(&right_obj.symbols, right_reloc);
+-        if reloc_eq(left_obj, right_obj, left_reloc, right_reloc) {
+-            diffs.push((DataDiffKind::None, Some(left_reloc), Some(right_reloc)));
++        let left_reloc = if ordering != Ordering::Greater {
++            left.next().map(|r| resolve_relocation(&left_obj.symbols, r))
+         } else {
+-            diffs.push((DataDiffKind::Replace, Some(left_reloc), Some(right_reloc)));
+-        }
+-    }
+-    for right_reloc in right_section.relocations.iter() {
+-        if !right_range.contains(&(right_reloc.address as usize)) {
+-            continue;
+-        }
+-        let right_offset = right_reloc.address as usize - right_range.start;
+-        let right_reloc = resolve_relocation(&right_obj.symbols, right_reloc);
+-        let Some(_) = left_section.relocations.iter().find(|r| {
+-            if !left_range.contains(&(r.address as usize)) {
+-                return false;
+-            }
+-            let left_offset = r.address as usize - left_range.start;
+-            left_offset == right_offset
+-        }) else {
+-            diffs.push((DataDiffKind::Insert, None, Some(right_reloc)));
+-            continue;
++            None
+         };
+-        // No need to check the cases for relocations being deleted or matching again.
+-        // They were already handled in the loop over the left relocs.
++        let right_reloc = if ordering != Ordering::Less {
++            right.next().map(|r| resolve_relocation(&right_obj.symbols, r))
++        } else {
++            None
++        };
++        let kind = match (left_reloc, right_reloc) {
++            (Some(l), Some(r)) if reloc_eq(left_obj, right_obj, l, r) => DataDiffKind::None,
++            (Some(_), Some(_)) => DataDiffKind::Replace,
++            (Some(_), None) => DataDiffKind::Delete,
++            (None, Some(_)) => DataDiffKind::Insert,
++            (None, None) => unreachable!(),
++        };
++        diffs.push((kind, left_reloc, right_reloc));
+     }
+     diffs
+ }
+@@ -230,30 +226,21 @@
+ pub fn diff_data_section(
+     left_obj: &Object,
+     right_obj: &Object,
+-    left_diff: &ObjectDiff,
+-    right_diff: &ObjectDiff,
++    _left_diff: &ObjectDiff,
++    _right_diff: &ObjectDiff,
+     left_section_idx: usize,
+     right_section_idx: usize,
+ ) -> Result<(SectionDiff, SectionDiff)> {
+     let left_section = &left_obj.sections[left_section_idx];
+     let right_section = &right_obj.sections[right_section_idx];
+-    let left_max = symbols_matching_section(&left_obj.symbols, left_section_idx)
+-        .filter_map(|(_, s)| s.address.checked_sub(left_section.address).map(|a| a + s.size))
+-        .max()
+-        .unwrap_or(0)
+-        .min(left_section.size);
+-    let right_max = symbols_matching_section(&right_obj.symbols, right_section_idx)
+-        .filter_map(|(_, s)| s.address.checked_sub(right_section.address).map(|a| a + s.size))
+-        .max()
+-        .unwrap_or(0)
+-        .min(right_section.size);
+-    let left_data = &left_section.data[..left_max as usize];
+-    let right_data = &right_section.data[..right_max as usize];
++    // Anonymous literals, jump tables, and padding belong to the section too.
++    let left_data = &left_section.data[..];
++    let right_data = &right_section.data[..];
+ 
+     let (bytes_match_ratio, left_data_diff, right_data_diff) =
+         diff_data_range(left_data, right_data);
+-    let match_percent = bytes_match_ratio * 100.0;
+-
++    let mut total_reloc_bytes = 0;
++    let mut matching_reloc_bytes = 0;
+     let mut left_reloc_diffs = Vec::new();
+     let mut right_reloc_diffs = Vec::new();
+     for (diff_kind, left_reloc, right_reloc) in diff_data_relocs_for_range(
+@@ -261,9 +248,16 @@
+         right_obj,
+         left_section_idx,
+         right_section_idx,
+-        0..left_max as usize,
+-        0..right_max as usize,
++        0..left_section.size as usize,
++        0..right_section.size as usize,
+     ) {
++        let len = left_reloc
++            .map_or(0, |r| left_obj.arch.data_reloc_size(r.relocation.flags))
++            .max(right_reloc.map_or(0, |r| right_obj.arch.data_reloc_size(r.relocation.flags)));
++        total_reloc_bytes += len;
++        if diff_kind == DataDiffKind::None {
++            matching_reloc_bytes += len;
++        }
+         if let Some(left_reloc) = left_reloc {
+             let len = left_obj.arch.data_reloc_size(left_reloc.relocation.flags);
+             let range = left_reloc.relocation.address..left_reloc.relocation.address + len as u64;
+@@ -284,29 +278,31 @@
+         }
+     }
+ 
+-    let (mut left_section_diff, mut right_section_diff) = diff_generic_section(
+-        left_obj,
+-        right_obj,
+-        left_diff,
+-        right_diff,
+-        left_section_idx,
+-        right_section_idx,
+-    )?;
+-    let all_left_relocs_match = left_reloc_diffs.iter().all(|d| d.kind == DataDiffKind::None);
+-    left_section_diff.data_diff = left_data_diff;
+-    right_section_diff.data_diff = right_data_diff;
+-    left_section_diff.reloc_diff = left_reloc_diffs;
+-    right_section_diff.reloc_diff = right_reloc_diffs;
+-    if all_left_relocs_match {
+-        // Use the highest match percent between two options:
+-        // - Left symbols matching right symbols by name
+-        // - Diff of the data itself
+-        // We only do this when all relocations on the left side match.
+-        if left_section_diff.match_percent.unwrap_or(-1.0) < match_percent {
+-            left_section_diff.match_percent = Some(match_percent);
+-        }
+-    }
+-    Ok((left_section_diff, right_section_diff))
++    let byte_weight = left_data.len().max(right_data.len());
++    let total = byte_weight + total_reloc_bytes;
++    let exact = left_data == right_data && matching_reloc_bytes == total_reloc_bytes;
++    let match_percent = if exact {
++        100.0
++    } else {
++        // Like symbol scoring, retain raw ELF REL addends as well as referents.
++        let percent = 100.0
++            * (bytes_match_ratio * byte_weight as f32 + matching_reloc_bytes as f32)
++            / total as f32;
++        // A rounded fuzzy ratio must not become an exact claim.
++        percent.min(f32::from_bits(100.0f32.to_bits() - 1))
++    };
++    Ok((
++        SectionDiff {
++            match_percent: Some(match_percent),
++            data_diff: left_data_diff,
++            reloc_diff: left_reloc_diffs,
++        },
++        SectionDiff {
++            match_percent: Some(match_percent),
++            data_diff: right_data_diff,
++            reloc_diff: right_reloc_diffs,
++        },
++    ))
+ }
+ 
+ pub fn no_diff_data_symbol(obj: &Object, symbol_index: usize) -> Result<SymbolDiff> {
+@@ -538,8 +534,8 @@
+ pub fn diff_bss_section(
+     left_obj: &Object,
+     right_obj: &Object,
+-    left_diff: &ObjectDiff,
+-    right_diff: &ObjectDiff,
++    _left_diff: &ObjectDiff,
++    _right_diff: &ObjectDiff,
+     left_section_idx: usize,
+     right_section_idx: usize,
+ ) -> Result<(SectionDiff, SectionDiff)> {
+@@ -554,24 +550,17 @@
+     let ops = capture_diff_slices(Algorithm::Patience, &left_sizes, &right_sizes);
+     let mut match_percent = diff_ratio(&ops, left_sizes.len(), right_sizes.len()) * 100.0;
+ 
+-    // Use the highest match percent between two options:
+-    // - Left symbols matching right symbols by name
+-    // - Diff of the addresses and sizes of each symbol
+-    let (generic_diff, _) = diff_generic_section(
+-        left_obj,
+-        right_obj,
+-        left_diff,
+-        right_diff,
+-        left_section_idx,
+-        right_section_idx,
+-    )?;
+-    if generic_diff.match_percent.unwrap_or(-1.0) > match_percent {
+-        match_percent = generic_diff.match_percent.unwrap();
++    // Allocation extent is independent of the visible symbol census.
++    if left_section.size != right_section.size {
++        let extent_percent = 100.0 * left_section.size.min(right_section.size) as f32
++            / left_section.size.max(right_section.size) as f32;
++        match_percent =
++            match_percent.min(extent_percent).min(f32::from_bits(100.0f32.to_bits() - 1));
+     }
+ 
+     Ok((
+         SectionDiff { match_percent: Some(match_percent), data_diff: vec![], reloc_diff: vec![] },
+-        SectionDiff { match_percent: None, data_diff: vec![], reloc_diff: vec![] },
++        SectionDiff { match_percent: Some(match_percent), data_diff: vec![], reloc_diff: vec![] },
+     ))
+ }
+ 
+--- a/objdiff-core/src/obj/read.rs
++++ b/objdiff-core/src/obj/read.rs
+@@ -519,7 +519,15 @@
+                         section_symbol.section_index().context("Section symbol without section")?;
+                     let target_address =
+                         section_symbol.address().wrapping_add_signed(target_reloc.addend);
+-                    if let Some((new_idx, addr)) = ordered_symbols
++                    if obj_file.architecture() == object::Architecture::Mips
++                        && map_section_kind(obj_section) == SectionKind::Data
++                    {
++                        // Keep the actual MIPS data referent and REL addend.
++                        // Replacing .text+N with an incidental LM/debug label
++                        // invents a different identity on otherwise equal objects.
++                        // Code relocations still use the normal display resolution.
++                        (symbol_index, target_reloc.addend)
++                    } else if let Some((new_idx, addr)) = ordered_symbols
+                         .get(section_index.0)
+                         .and_then(|symbols| best_symbol(symbols, target_address))
+                     {
+--- a/objdiff-cli/src/cmd/report.rs
++++ b/objdiff-cli/src/cmd/report.rs
+@@ -248,6 +248,7 @@
+     let mut measures = Measures { total_units: 1, ..Default::default() };
+     let mut sections = vec![];
+     let mut functions = vec![];
++    let mut paired_base_data_sections = HashSet::new();
+ 
+     let obj = target.as_ref().or(base.as_ref()).unwrap();
+     let obj_diff = result.left.as_ref().or(result.right.as_ref()).unwrap();
+@@ -262,10 +263,24 @@
+             // assume complete means 100% match
+             if object.complete.unwrap_or(false) { 100.0 } else { 0.0 }
+         });
++        let mut section_size = section.size;
++        if matches!(section.kind, SectionKind::Data | SectionKind::Bss)
++            && target.is_some()
++            && let Some(base) = &base
++            && let Some((index, base_section)) = base.sections.iter().enumerate().find(|(i, s)| {
++                s.name == section.name
++                    && s.kind == section.kind
++                    && !paired_base_data_sections.contains(i)
++            })
++        {
++            paired_base_data_sections.insert(index);
++            // Account for an extra base tail even when the target section is empty.
++            section_size = section_size.max(base_section.size);
++        }
+         sections.push(ReportItem {
+             name: section.name.clone(),
+             fuzzy_match_percent: section_match_percent,
+-            size: section.size,
++            size: section_size,
+             metadata: Some(ReportItemMetadata {
+                 demangled_name: None,
+                 virtual_address: section.virtual_address,
+@@ -275,9 +290,9 @@
+ 
+         match section.kind {
+             SectionKind::Data | SectionKind::Bss => {
+-                measures.total_data += section.size;
++                measures.total_data += section_size;
+                 if section_match_percent == 100.0 {
+-                    measures.matched_data += section.size;
++                    measures.matched_data += section_size;
+                 }
+                 continue;
+             }
+@@ -326,6 +341,25 @@
+             measures.total_functions += 1;
+         }
+     }
++    if target.is_some()
++        && let Some(base) = &base
++    {
++        for (index, section) in base.sections.iter().enumerate() {
++            if !matches!(section.kind, SectionKind::Data | SectionKind::Bss)
++                || paired_base_data_sections.contains(&index)
++            {
++                continue;
++            }
++            // A base-only allocation is a mismatch, not absent from the report.
++            measures.total_data += section.size;
++            sections.push(ReportItem {
++                name: section.name.clone(),
++                size: section.size,
++                fuzzy_match_percent: 0.0,
++                ..Default::default()
++            });
++        }
++    }
+     sections.sort_by(|a, b| a.name.cmp(&b.name));
+     let reverse_fn_order = object.metadata.reverse_fn_order.unwrap_or(false);
+     functions.sort_by(|a, b| {

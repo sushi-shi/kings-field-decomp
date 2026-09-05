@@ -52,6 +52,23 @@
         "type": "github"
       }
     },
+    "objdiff-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783665201,
+        "narHash": "sha256-2Rzoj8JXv9MOGRHWiIodaBbP8ID+8RFJFuB3hzrodh8=",
+        "owner": "encounter",
+        "repo": "objdiff",
+        "rev": "6bcac60df8bb0b4de5b1cb98b033bdedb9ac6aa4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "encounter",
+        "repo": "objdiff",
+        "rev": "6bcac60df8bb0b4de5b1cb98b033bdedb9ac6aa4",
+        "type": "github"
+      }
+    },
     "psy-k-src": {
       "flake": false,
       "locked": {
@@ -74,6 +91,7 @@
         "ghidra-psx-loader-src": "ghidra-psx-loader-src",
         "maspsx-src": "maspsx-src",
         "nixpkgs": "nixpkgs",
+        "objdiff-src": "objdiff-src",
         "psy-k-src": "psy-k-src"
       }
     }

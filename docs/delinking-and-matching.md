@@ -344,6 +344,15 @@ are in [`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md).
 
 ## Validation
 
+Both objdiff front ends are built from the same pinned 3.7.3 source with
+`patches/objdiff-strict-data.patch`. Native section scores include anonymous
+bytes, padding, ordered relocation rows and BSS extents; report data totals
+also account for extra base storage. `tests/objdiff_data_smoke.py` verifies
+positive and negative MIPS controls in both directions through `diff` and
+`report generate`. See the [data campaign](data-matching-campaign.md) for the
+remaining ownership and linked-image boundary; a native data score is not
+complete reachable-byte coverage.
+
 `tests/objdiff_mips_smoke.py` uses only synthetic functions. One checks ordinary
 instruction matching; a second 100% calibration covers an external JAL, a
 local `.text` J relocation, and an external HI16/LO16 pair with a nonzero

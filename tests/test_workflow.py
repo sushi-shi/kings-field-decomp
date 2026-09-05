@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from scripts.kf import progress
+from scripts.kf import graph, progress
 from scripts.kf.cli import _bank_functions
 from scripts.kf.delink import Function
 from scripts.kf.graph import _build_line, _script_inputs, _write_generator
@@ -281,6 +281,21 @@ class ProgressTests(unittest.TestCase):
 
 
 class GraphTests(unittest.TestCase):
+    def test_reports_and_checks_depend_directly_on_toolchain_identity(self) -> None:
+        with (
+            mock.patch.object(graph, "configured_retail_dir", return_value=Path("/retail")),
+            mock.patch.object(graph, "_prune_orphans", return_value=0),
+            mock.patch.object(graph, "_write_if_changed"),
+            mock.patch.object(graph, "_write_generator") as write,
+        ):
+            graph.emit()
+        lines = write.call_args.args[1].splitlines()
+        for rule in ("report", "check"):
+            edges = [line for line in lines if f": {rule} " in line]
+            self.assertEqual(len(edges), 3)
+            for edge in edges:
+                self.assertIn("build/gen/toolchain.id", edge.split(" | ")[1].split())
+
     def test_nested_semantic_evidence_is_a_build_dependency(self) -> None:
         self.assertIn("scripts/kf/sema/evidence.py", _script_inputs())
         self.assertIn("scripts/kf/data_reachability.py", _script_inputs())

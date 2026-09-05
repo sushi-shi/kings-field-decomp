@@ -226,6 +226,87 @@ checks pass. The full build still fails the explicit ownership/reference gaps
 and the same 14 data-addend mismatches; strict data remains 49/63. The larger
 reachable-data and linked-image objective is still incomplete.
 
+## Native objdiff section-scoring campaign
+
+The campaign plan is tooling-only: reproduce complete-section and MIPS REL
+negative controls, patch the shared comparator, build both front ends from the
+same pinned source, then recompare all retail/source objects without editing C
+or curating new relocation rows. The pinned upstream is objdiff 3.7.3, commit
+`6bcac60df8bb0b4de5b1cb98b033bdedb9ac6aa4`; the patch is
+`patches/objdiff-strict-data.patch`.
+
+The upstream comparator stopped at the last visible symbol and could take the
+higher of byte and symbol scores. An anonymous `.rodata` section therefore
+scored 100% despite changed bytes or relocations. A named four-byte prefix also
+hid a changed unlabelled tail. Symbol-less BSS extents could differ and still
+score 100%. Relocations at a shared offset reused the first opposing row,
+losing multiplicity and order. These are comparator defects, not game codegen
+residues. The MIPS reader already decodes implicit `R_MIPS_32` addends; importing
+an x86-only addend hook would not fix these paths.
+
+The patch compares every initialized byte, including padding and REL addends,
+and consumes relocation rows one-to-one in stable offset order. Named data
+referents must agree; coincident object-relative addresses do not prove identity.
+It checks BSS allocation extents and symbol layout without a higher-score escape.
+Both compared sides receive the same section percentage. An inexact initialized
+section cannot round up to 100%. Function instruction scoring is unchanged.
+
+MIPS data relocations retain the input section referent and implicit addend.
+Upstream's best-symbol display resolution otherwise rewrote the same `.text+N`
+into a game function on the target side and an incidental `LM1` debug label on
+the source side. GAME `player_core` demonstrated this with byte-identical
+24-byte jump tables. Equal raw section references remain equal even when only
+one object has debug labels; changing their offset or an actual named referent
+still fails. Instruction-relocation display resolution is untouched.
+
+Native report data totals use the larger paired section extent and include
+base-only allocations as unmatched. Thus extra storage cannot disappear from
+the denominator. These are compared-object storage totals, **not** a count of
+reachable retail bytes or proof that the inventory is complete. The independent
+strict data and known-reference ownership gates remain mandatory.
+
+Retail verification also exposed a stale-report dependency: changing objdiff
+recompiled the C objects, but their unchanged hashes triggered Ninja `restat`
+and left old reports in place. Reports and verification stamps now depend
+directly on the resolved toolchain identity. Re-entering the pinned environment
+therefore cannot retain the old data score merely because source bytes agree.
+
+`tests/objdiff_data_smoke.py` exercises actual CLI `diff` and `report generate`
+outputs in both target/base directions, including anonymous bytes, a named
+prefix with an unlabelled tail, zero padding, missing sections, external and
+`.text`-relative pointer addends, missing/extra/duplicate/ordered/retargeted
+relocations, and BSS extents. Positive controls retain identical bytes and
+ordered duplicate-site rows. Every case also checks its synthetic function is
+still exact. The flake's `objdiff-mips` check runs these controls alongside the
+existing MIPS instruction/compiler controls.
+
+### Verified native checkpoint
+
+The rebuilt native reports now expose exactly the existing 14 strict data
+failures (13 GAME and one OPEN). Their compared-object data totals are:
+
+| Image | Matched section bytes / compared bytes | Native matched-data percentage |
+| --- | ---: | ---: |
+| PSX.EXE | 56 / 56 | 100% |
+| GAME.EXE | 12,548 / 14,748 | 85.08272% |
+| OPEN.EXE | 16,988 / 17,108 | 99.29857% |
+
+Previously all three native reports said 100%. These totals count an entire
+section as matched only at 100%; they are not fuzzy matched-byte counts or
+reachable-image coverage. The independent data-owning-unit result stays 49/63.
+Both front ends build from one patched core; its upstream tests, 25 native
+MIPS data controls, all 429 local repository tests, Ruff, whitespace checks and
+`nix flake check -L` pass. GUI binary construction and its version entry point
+were checked; no interactive display session is claimed.
+
+All 117 source units were rebuilt, and all three reports were regenerated after
+the comparator identity changed. All 1,722 target objects, 117 source objects
+and 484 function scores remain identical, preserving all 354 banked exact game
+functions. No C source, curated input or banked score changes in this campaign.
+The full build still rejects the 14 real addend mismatches and the unresolved
+ownership/reference work, including 666 config-only ranges. Whole reachable-byte
+coverage and linked-executable comparison remain incomplete.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

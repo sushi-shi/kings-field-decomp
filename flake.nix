@@ -14,6 +14,12 @@
       flake = false;
     };
 
+    objdiff-src = {
+      # v3.7.3: both front ends use our tested shared data comparator.
+      url = "github:encounter/objdiff/6bcac60df8bb0b4de5b1cb98b033bdedb9ac6aa4";
+      flake = false;
+    };
+
     ghidra-psx-loader-src = {
       # Tag 2026.07.08; upstream CI explicitly covers Ghidra 12.0.4.
       url = "git+https://github.com/lab313ru/ghidra_psx_ldr.git?rev=85d9efaf5693418979152c2298f776734824035b&submodules=1";
@@ -21,7 +27,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, psy-k-src, maspsx-src, ghidra-psx-loader-src }:
+  outputs = { self, nixpkgs, psy-k-src, maspsx-src, objdiff-src, ghidra-psx-loader-src }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -173,40 +179,28 @@
       ghidraWithPlugins = pkgs.ghidra.withExtensions (_: [ ghidraPsxLoader ]);
 
       objdiffVersion = "3.7.3";
-      objdiffUrl = name:
-        "https://github.com/encounter/objdiff/releases/download/v${objdiffVersion}/${name}";
-      objdiff-cli = pkgs.stdenv.mkDerivation {
-        pname = "objdiff-cli";
-        version = objdiffVersion;
-        src = pkgs.fetchurl {
-          url = objdiffUrl "objdiff-cli-linux-x86_64";
-          hash = "sha256-HIp1ZJcOhrVI8JIZCNNuW1Rkb+cvhuXIK4wOumQCDOo=";
-        };
-        dontUnpack = true;
-        nativeBuildInputs = [ pkgs.autoPatchelfHook ];
-        buildInputs = [ pkgs.stdenv.cc.cc.lib ];
-        installPhase = "install -Dm755 $src $out/bin/objdiff-cli";
-      };
       objdiffGuiLibs = with pkgs; [
         libGL libxkbcommon wayland fontconfig freetype
         libx11 libxcursor libxi libxrandr libxcb
       ];
-      objdiff = pkgs.stdenv.mkDerivation {
-        pname = "objdiff";
+      objdiffBuild = pkgs.rustPlatform.buildRustPackage {
+        pname = "objdiff-kf";
         version = objdiffVersion;
-        src = pkgs.fetchurl {
-          url = objdiffUrl "objdiff-linux-x86_64";
-          hash = "sha256-1pzhzJUl/BJQP2XS333KIfkx1YYi8ZyRdPMv5MnJGyA=";
-        };
-        dontUnpack = true;
-        nativeBuildInputs = [ pkgs.autoPatchelfHook pkgs.makeWrapper ];
-        buildInputs = [ pkgs.stdenv.cc.cc.lib ] ++ objdiffGuiLibs;
-        installPhase = ''
-          install -Dm755 $src $out/bin/objdiff
+        src = objdiff-src;
+        patches = [ ./patches/objdiff-strict-data.patch ];
+        cargoHash = "sha256-Z9vyUj35nrHuUoOYM54RLCn7CzcQ6k3A6FsDYKCVqVM=";
+        cargoBuildFlags = [ "-p" "objdiff-cli" "-p" "objdiff-gui" ];
+        cargoInstallFlags = [ "-p" "objdiff-cli" "-p" "objdiff-gui" ];
+        cargoTestFlags = [ "-p" "objdiff-core" "-p" "objdiff-cli" "-p" "objdiff-gui" ];
+        nativeBuildInputs = [ pkgs.pkg-config pkgs.protobuf pkgs.makeWrapper ];
+        buildInputs = objdiffGuiLibs;
+        postInstall = ''
           wrapProgram $out/bin/objdiff \
             --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath objdiffGuiLibs}"
         '';
       };
+      objdiff-cli = objdiffBuild;
+      objdiff = objdiffBuild;
 
       crossBinutils = pkgs.pkgsCross.mipsel-linux-gnu.buildPackages.binutils;
       mipsBinutilsAliases = pkgs.runCommand "mipsel-linux-gnu-binutils-aliases" { } ''
@@ -548,9 +542,11 @@
         mkdir project
         cp -r ${./scripts} project/scripts
         cp ${./tests/objdiff_mips_smoke.py} project/objdiff_mips_smoke.py
+        cp ${./tests/objdiff_data_smoke.py} project/objdiff_data_smoke.py
         cp ${./tests/compiler_mips_smoke.py} project/compiler_mips_smoke.py
         cd project
         python3 objdiff_mips_smoke.py
+        python3 objdiff_data_smoke.py
         python3 compiler_mips_smoke.py
         touch "$out"
       '';
