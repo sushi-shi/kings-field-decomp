@@ -108,7 +108,7 @@ class IncludeScanner:
 def toolchain_identity() -> str:
     tools = (
         "cc1psx-260", "cpppsx-260", "cc1psx-257", "cpppsx-257", "maspsx",
-        "mipsel-linux-gnu-as", "objdiff-cli",
+        "mipsel-linux-gnu-as", "mipsel-linux-gnu-ld", "objdiff-cli",
     )
     rows = []
     for tool in tools:

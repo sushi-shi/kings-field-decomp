@@ -488,7 +488,7 @@
       };
 
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
-        nativeBuildInputs = [ analysisPython ];
+        nativeBuildInputs = [ analysisPython mipsBinutilsAliases ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
       } ''
         mkdir project

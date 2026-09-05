@@ -206,7 +206,8 @@ incremental Ninja graph. The normal commands are:
 | `kf try --unit ID [--source FILE]` | compile one unit into a scratch object and diff it per function against its module target without touching the build tree |
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
-| `kf check [--strict]` | fail on data mismatches/incomplete comparisons, non-exact vendored source verification, unchanged-input regressions, lost banked rows, or invalid/stale reports |
+| `kf check [--strict]` | fail on data mismatches/incomplete comparisons, known-reference ownership gaps, unfaithful target relink/placement, non-exact vendored source verification, unchanged-input regressions, lost banked rows, or invalid/stale reports |
+| `kf verify roundtrip [--image I] [--unit ID] [--output PATH]` | relink manifested target ELF sections at claim-derived addresses with pinned GNU ld and compare all initialized bytes with verified retail |
 | `kf bank [--unit ID] [--dirty]` | manually update all fresh scores, or only selected units when every selected function is exactly 100% |
 
 Status separates eligible, manifested, compiled, scored, and exact functions.
@@ -343,6 +344,16 @@ functions with semantic names; the source shapes that decided the matches
 are in [`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md).
 
 ## Validation
+
+The default build also checks target-object roundtrips through the independent
+GNU MIPS linker. A packed section must admit one retail base for all its owned
+symbols; the linker may not scatter it or override defined symbols to hide a
+layout conflict. Relinked initialized bytes are compared in full, and BSS is
+checked as uninitialized storage. Synthetic tails imitating the probe assembler
+are not appended to retail claims: source alignment/extent differences remain
+real comparison failures. See the [placement evidence](../config/evidence/target_roundtrip_layout.md)
+for known conflicts. This is not yet a linked reconstruction or a check of all
+config-only reachable storage.
 
 Both objdiff front ends are built from the same pinned 3.7.3 source with
 `patches/objdiff-strict-data.patch`. Native section scores include anonymous

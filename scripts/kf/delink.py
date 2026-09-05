@@ -675,9 +675,9 @@ def _module_object(
     """Concatenate a module's carved functions into one .text section.
 
     Claimed data follows in ``.data``/``.bss`` so the object compares the whole
-    translation-unit hypothesis, not only its code. The probe assembler gives
-    writable sections 16-byte extents; materialize that deterministic tail in
-    the comparison object while retaining the claimed sizes in ``ModuleImage``.
+    translation-unit hypothesis, not only its code. Do not append the probe
+    assembler's alignment tails: bytes outside the retail claims can belong to
+    another object, and synthesized zeros are not recovered retail storage.
     """
     text = bytearray()
     relocations: list[MipsRelocation] = []
@@ -708,18 +708,11 @@ def _module_object(
     data, data_symbols, data_relocations, bss_size, bss_symbols = _module_data(
         module, data_blobs or {}
     )
-    data_extent = (len(data) + 15) & ~15 if data else 0
-    bss_extent = (bss_size + 15) & ~15 if bss_size else 0
-    padded_data = data + b"\0" * (data_extent - len(data))
     rodata, rodata_relocations = b"", []
     if module.rodata is not None:
         if rodata_blob is None:
             raise ValueError(f"module {module.unit}: RODATA range was not carved")
         rodata, rodata_relocations = _module_rodata(module, rodata_blob, len(text))
-    # maspsx emits switch/jump tables in an eight-byte-aligned read-only
-    # section. A literal-only .rodata section has no such tail.
-    rodata_extent = (len(rodata) + 7) & ~7 if rodata_relocations else len(rodata)
-    padded_rodata = rodata + b"\0" * (rodata_extent - len(rodata))
     return ModuleImage(
         write_mips_elf(
             bytes(text),
@@ -727,12 +720,12 @@ def _module_object(
             first.size,
             relocations,
             symbols[1:],
-            data=padded_data,
+            data=data,
             data_symbols=data_symbols,
             data_relocations=data_relocations,
-            bss_size=bss_extent,
+            bss_size=bss_size,
             bss_symbols=bss_symbols,
-            rodata=padded_rodata,
+            rodata=rodata,
             rodata_relocations=rodata_relocations,
         ),
         [*relocations, *data_relocations, *rodata_relocations],

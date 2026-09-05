@@ -1,11 +1,12 @@
-"""kf verify - cleanliness, data-section matching and reference ownership.
+"""kf verify - cleanliness, data matching, ownership and target relink checks.
 
-Two ported gates from the sibling gruntz decomp, adapted to King's Field's
-PS-X ELF / objdiff flow:
+The board/data gates adapt the sibling gruntz workflow; ownership and target
+relink checks extend it for King's Field's PS-X ELF / objdiff flow:
 
     kf verify board [--gate|--update|--externs]        source cleanliness ratchet
     kf verify data  [--image I][--detail][--coverage]  strict data gate vs retail
     kf verify reachability [--image I][--output P]   known-reference ownership audit
+    kf verify roundtrip [--image I][--output P]      target relink/placement gate
 
 ``board`` counts the address-derived spellings and ``extern``/cast/view
 crutches in ``src/`` + ``include/`` and the curated identity TSVs against
@@ -16,6 +17,9 @@ missing artifact. See the module docstrings for the full contract.
 ``reachability`` follows the shared reference census from every game function,
 including vendor calls and pointer tables. Candidate, config-only, unmodeled and
 unresolved paths remain diagnostics; this is not yet exhaustive byte closure.
+``roundtrip`` independently links manifested target objects at claim-derived
+section bases and compares initialized bytes with verified retail. It rejects
+unplaceable ownership; it does not prove reconstructed whole-image equality.
 """
 
 from __future__ import annotations
@@ -41,7 +45,11 @@ def main(argv: list[str] | None = None) -> int:
         from scripts.kf.data_reachability import main as reachability_main
 
         return reachability_main(rest)
-    print(f"kf verify: unknown subcommand {sub!r} (choose board, data or reachability)",
+    if sub == "roundtrip":
+        from scripts.kf.roundtrip import main as roundtrip_main
+
+        return roundtrip_main(rest)
+    print(f"kf verify: unknown subcommand {sub!r} (choose board, data, reachability or roundtrip)",
           file=sys.stderr)
     return 2
 

@@ -307,6 +307,61 @@ The full build still rejects the 14 real addend mismatches and the unresolved
 ownership/reference work, including 666 config-only ranges. Whole reachable-byte
 coverage and linked-executable comparison remain incomplete.
 
+## Independent target relink and placement gate
+
+The next tooling campaign uses the pinned GNU MIPS linker to check actual
+target-object placement and REL fixups against retail. `kf check` and the
+default build now include it. The standalone report is:
+
+```sh
+kf verify roundtrip --output build/roundtrip/all.json
+kf verify roundtrip --image game --unit game.cd_file
+```
+
+Every symbol in a packed section must imply the same base (`retail VA` minus
+actual ELF symbol offset). Sections must satisfy their alignment and may not
+overlap. Undefined identities are bound from image-local curated inputs, never
+from the delinker's relocation-output log. GNU ld applies the fixups; every
+initialized output byte is compared with the verified retail image. BSS stays
+uninitialized. Unknown placements, externals, section types or unsupported
+relocations fail. GNU ld is an independent relocation oracle, not historical
+toolchain attribution or proof of reconstructed executable equality.
+
+This found a target-model error: `_module_object` appended zero tails to match
+the probe assembler's 16-byte writable-section and eight-byte switch-table
+extents. Twenty-four initialized sections then contained bytes different from
+retail, sometimes replacing the next module's string or jump table. The tails
+are removed, not copied into source or masked in comparison. The
+[layout evidence](../config/evidence/target_roundtrip_layout.md) records all
+observed byte contradictions and the remaining unplaceable symbol pairs.
+
+After rebuilding, target relink improves from 76/117 to **105/117** verified
+units (PSX 1/1, GAME 72/75, OPEN 32/41), with no remaining byte-mismatch or
+cross-unit section-overlap diagnostics. Ten packed DATA/BSS sections still
+imply conflicting bases, and two BSS sections have alignment conflicts. These
+are unresolved ownership/section-model facts, not linker options to suppress.
+Config-only and standalone vendor objects are outside this gate's present
+scope; exhaustive reachable-byte closure remains explicitly false.
+
+The stricter source-data result drops from 49/63 to **16/63** data-owning units
+(PSX 0/1, GAME 10/39, OPEN 6/23). Compiler-emitted extra bytes now diverge from
+the actual retail claims. The earlier 14 jump-table addend differences remain;
+many now encounter an extent failure first. No source bytes or function scores
+were changed to recover the old data percentage. Native compared-object totals
+now report PSX 40/56 (71.42857%), GAME 10,932/14,748 (74.125305%) and OPEN
+10,644/17,108 (62.216507%) matched section bytes, not reachable-image coverage.
+
+All 117 source units were rebuilt and remain byte-identical, as do all 484
+reported function scores and all 354 historically exact game functions.
+Forty-four of 1,722 target objects change, all module objects with removed
+alignment tails; per-function targets remain identical. All 454 local tests
+and Ruff pass, including 24 new placement/linker controls and the default-gate
+control. `nix flake check -L` also passes: the sandbox suite retains its 48
+expected local-retail/oracle skips, while the new GNU-linker controls run there.
+The full build correctly rejects the 47 source-data failures, twelve
+target-placement failures and outstanding ownership/reference gaps. The 666
+config-only ranges remain unresolved. No function is banked.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

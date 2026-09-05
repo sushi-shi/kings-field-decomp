@@ -452,7 +452,10 @@ def check(
     from scripts.kf.data_reachability import run as check_reachability
 
     reachability_bad = check_reachability(selected) != 0
-    bad = bad or data_bad or reachability_bad
+    from scripts.kf.roundtrip import run as check_roundtrip
+
+    roundtrip_bad = check_roundtrip(selected) != 0
+    bad = bad or data_bad or reachability_bad or roundtrip_bad
     from scripts.kf.readme import refresh as refresh_readme
 
     if refresh_readme():
@@ -474,9 +477,11 @@ def check(
             reasons.append("data-section mismatch or incomplete comparison")
         if reachability_bad:
             reasons.append("known-reference data ownership is incomplete")
+        if roundtrip_bad:
+            reasons.append("target relink or section placement is not faithful to retail")
         print("check FAILED: " + ", ".join(reasons), file=sys.stderr)
         return 1
-    print("check OK: exact claimed data, no known-reference ownership gaps, "
+    print("check OK: exact claimed data, verified target relink, no known-reference ownership gaps, "
           "and no unchanged-input regressions or lost banked functions")
     return 0
 

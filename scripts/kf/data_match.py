@@ -189,8 +189,8 @@ def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None
     rt_rel = retail.relocations(name)
     rc_rel = recon.relocations(name)
     # Strict means the complete object-section extent is part of the comparison.
-    # The delinker materializes deterministic assembler-owned writable-section
-    # tails in its target object; no mismatch is forgiven here.
+    # Probe assembler padding outside the retail claims is an actual extent
+    # mismatch, not storage to synthesize in the target or forgive here.
     if rt_size != rc_size:
         return SectionDiff(
             name,
