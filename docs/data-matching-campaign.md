@@ -396,6 +396,26 @@ the pinned SDK headers/archive tools and checks the real PAD section records;
 sandbox. The full build correctly fails the unresolved data, placement and
 reachability gates. No game function or score is banked.
 
+## Data section alignment correction
+
+The target writer now preserves the alignment constraints already used to pack
+each section's member claims. A fixed four-byte ELF default had contradicted
+the byte/halfword layouts in GAME notifications and OPEN's formatter scratch.
+No C source, address, extent, packed symbol offset or relocation changes; the
+formatter's complete original allocation remains explicitly unresolved.
+
+Both current target models now relink without linker overrides, improving
+verified targets from 105/117 to **107/117**. The ten conflicting section-base
+failures remain. Six target objects change alignment metadata, while all 117
+source objects and 484 function score rows remain identical, preserving 354
+exact game functions. Strict source-data matching remains **16/63**. Details
+and raw reference witnesses are in the
+[target layout evidence](../config/evidence/target_roundtrip_layout.md#carry-packing-constraints-into-elf-section-alignment).
+
+All 465 local tests, Ruff and flake checks pass. The full retail build continues
+to reject the unresolved data, placement and reachability gaps. This is target
+fidelity progress, not reconstructed linked-executable equality or byte closure.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

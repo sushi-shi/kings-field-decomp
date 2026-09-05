@@ -161,8 +161,10 @@ def write_mips_elf(
     data: bytes = b"",
     data_symbols: Iterable[DefinedSymbol] = (),
     data_relocations: Iterable[MipsRelocation] = (),
+    data_alignment: int = 4,
     bss_size: int = 0,
     bss_symbols: Iterable[DefinedSymbol] = (),
+    bss_alignment: int = 4,
     rodata: bytes = b"",
     rodata_relocations: Iterable[MipsRelocation] = (),
 ) -> bytes:
@@ -174,6 +176,8 @@ def write_mips_elf(
     extent contains linker padding after the body. ``data``/``bss_size`` and
     their symbols describe the data a module claims; the sections are omitted
     when empty so single-function objects keep their historical shape.
+    Data section alignments are placement constraints, not permission to round
+    their extents or add owned tail bytes.
     """
     if not function_name:
         raise ValueError("function name must not be empty")
@@ -181,6 +185,9 @@ def write_mips_elf(
         raise ValueError("function size must lie within .text")
     if bss_size < 0:
         raise ValueError("bss size must be non-negative")
+    for name, alignment in ((".data", data_alignment), (".bss", bss_alignment)):
+        if not 0 < alignment <= 0x80000000 or alignment & (alignment - 1):
+            raise ValueError(f"{name} alignment must be a positive ELF32 power of two")
 
     relocations = _check_relocations(relocations, len(text), ".text")
     defined_symbols = _check_symbols(defined_symbols, len(text), ".text")
@@ -202,14 +209,16 @@ def write_mips_elf(
     data_index = 0
     bss_index = 0
     if has_data:
-        sections.append(_Section(".data", SHT_PROGBITS, SHF_ALLOC | SHF_WRITE, data, alignment=4))
+        sections.append(_Section(".data", SHT_PROGBITS, SHF_ALLOC | SHF_WRITE, data,
+                                 alignment=data_alignment))
         data_index = len(sections)
         if data_relocations:
             sections.append(
                 _Section(".rel.data", SHT_REL, 0, b"", alignment=4, entry_size=REL_SIZE)
             )
     if has_bss:
-        sections.append(_Section(".bss", SHT_NOBITS, SHF_ALLOC | SHF_WRITE, b"", alignment=4))
+        sections.append(_Section(".bss", SHT_NOBITS, SHF_ALLOC | SHF_WRITE, b"",
+                                 alignment=bss_alignment))
         bss_index = len(sections)
     rodata_index = 0
     if has_rodata:

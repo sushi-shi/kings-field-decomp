@@ -118,3 +118,59 @@ After correction: PSX 1/1, GAME 72/75 and OPEN 32/41 target units verify
 (105/117 total), compared with 0/1, 51/75 and 25/41 initially. The twelve
 remaining placement failures are a default-build gate. No linked-executable
 equality is claimed.
+
+## Carry packing constraints into ELF section alignment
+
+The next tooling pass leaves every source claim, object extent, packed symbol
+offset, instruction and relocation unchanged. Previously `_module_data` packed
+members with `Datum.alignment`, but `write_mips_elf` independently gave `.data`
+and `.bss` four-byte `sh_addralign`. That extra constraint contradicted two
+otherwise consistent current claim layouts:
+
+| Unit | Current BSS claims | Packed offsets | Section alignment |
+| --- | --- | --- | --- |
+| game.notify_queue | notification_message_ids at 0x8009506e, 8 bytes; notification_state at 0x80095076, 22 bytes | 0, 8 | 2 |
+| open.format | format_number_storage at 0x80037971, 19 bytes | 0 | 1 |
+
+The GAME reference pair at `0x8001fa70/0x8001fa74` decodes to `0x8009506e`;
+`notify_enqueue` reads/writes message IDs with `lbu`/`sb`. Its state pointer at
+`0x8001fa60/0x8001fa64` is `0x80095087`, and the branch delay-slot subtraction
+at `0x8001fab0` recovers the payload base `0x80095076`; the indexed payload
+store at `0x8001fac4` is `sh`. These agree with the existing byte queue and
+halfword state model, without a four-byte alignment requirement.
+
+OPEN's `format_int_dec` refers to `0x80037978` through the HI/LO pair at
+`0x8001a404/0x8001a408` and writes characters with `sb`, including its final
+return delay slot. The existing claim starts seven bytes earlier to model
+left padding. Its nineteen-byte span is explicitly a minimum accessed span,
+**not a proven original allocation boundary**. Making this current target
+placeable does not resolve the original extent or compiler allocation class.
+
+The writer now accepts explicit positive power-of-two data/BSS alignments;
+the module builder uses the maximum of the existing member constraints in
+each storage class. It does not weaken stronger later-member constraints,
+scatter symbols, override GNU ld alignment, or round section tails. `Datum`
+packing itself remains WIP, and its constraints are not historical assembler
+attribution. Static-BSS sections already packed at eight-byte offsets now
+carry that constraint as well.
+
+GNU ld verifies both complete target objects: `game.notify_queue` compares
+1,012 initialized bytes through 90 relocation rows, and `open.format` compares
+1,048 initialized bytes through 24 rows. Their 30/19-byte BSS extents remain
+NOBITS. All ten conflicting-base failures remain: PSX 1/1, GAME 73/75 and
+OPEN 33/41 targets now verify, or **107/117** overall.
+
+Six module targets change alignment metadata (and physical ELF file layout
+where necessary): GAME player_update, notify_queue, debug_text, pad; OPEN
+format, pad. The other 1,716 target objects remain byte-identical. All 117
+source objects and 484 function score rows remain unchanged. Strict source
+data remains 16/63; in particular the source notification BSS is 32 versus
+30 target bytes, and the formatter BSS is 32 versus 19. These mismatches are
+not hidden by successful target relinking.
+
+Six new tests cover writer alignment/extent independence, invalid ELF alignment,
+module packing propagation, stronger later-member constraints, and actual
+GNU-ld byte/halfword-BSS and odd-address initialized-data controls. All 465
+local tests, Ruff, and `nix flake check -L` pass (49 local-retail/oracle skips
+only in the flake sandbox). The full retail build remains red on the strict
+data, ten placement conflicts, and unresolved ownership/reference gates.

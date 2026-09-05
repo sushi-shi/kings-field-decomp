@@ -63,6 +63,23 @@ def elf_sections(data: bytes) -> dict[str, tuple[int, ...]]:
 
 
 class MipsElfTests(unittest.TestCase):
+    def test_data_section_alignment_is_explicit_not_tail_padding(self):
+        for alignment in (1, 2, 4, 8, 16):
+            with self.subTest(alignment=alignment):
+                blob = write_mips_elf(bytes(8), 'control', 8, data=b'abc', bss_size=3,
+                                      data_alignment=alignment, bss_alignment=alignment)
+                sections = elf_sections(blob)
+                for name in ('.data', '.bss'):
+                    self.assertEqual(sections[name][8], alignment)
+                    self.assertEqual(sections[name][5], 3)
+                    self.assertEqual(sections[name][4] % alignment, 0)
+
+    def test_data_section_alignment_rejects_invalid_elf_values(self):
+        for name in ('data_alignment', 'bss_alignment'):
+            for alignment in (-1, 0, 3, 6, 0x100000000):
+                with self.subTest(name=name, alignment=alignment), self.assertRaises(ValueError):
+                    write_mips_elf(bytes(8), 'control', 8, **{name: alignment})
+
     def test_unreviewed_bss_candidate_does_not_compete_in_safe_policy(self) -> None:
         candidate = {"status": "candidate", "target_region": "bss"}
         reviewed = {"status": "reviewed", "target_region": "bss"}
@@ -769,10 +786,40 @@ class ModuleObjectTests(unittest.TestCase):
         self.assertEqual(built.bss_size, 0x14)
         sections = elf_sections(built.data)
         self.assertEqual(sections[".bss"][5], 0x14)
+        self.assertEqual(sections[".bss"][8], 8)
         names = {name: symbol for name, symbol in elf_symbols(built.data)}
         self.assertEqual(names["first"][1], 0)
         self.assertEqual(names["second"][1], 8)
         self.assertEqual(names["third"][1], 0x10)
+
+    def test_module_section_alignment_follows_existing_claim_packing(self):
+        function = Function('GAME.EXE', 0x80010000, 8, 8, 1, 'control', 'test', 'test')
+        for alignment in (1, 2, 4, 8):
+            with self.subTest(alignment=alignment):
+                data_va, bss_va = 0x80050000 + alignment, 0x800A0000 + alignment
+                module = Module('GAME.EXE', 'game.control', 'control', (function.va,), (
+                    Datum(data_va, 3, 'initialized', 'load'),
+                    Datum(bss_va, 3, 'tentative', 'bss', 'static'),
+                ))
+                built = _module_object(module, {function.va: function},
+                                       {function.va: (bytes(8), [])}, {data_va: (b'abc', [])})
+                sections = elf_sections(built.data)
+                self.assertEqual(sections['.data'][8], min(alignment, 4))
+                self.assertEqual(sections['.bss'][8], alignment)
+                self.assertEqual((built.data_size, built.bss_size), (3, 3))
+
+    def test_section_alignment_keeps_the_strongest_member_constraint(self):
+        function = Function('GAME.EXE', 0x80010000, 8, 8, 1, 'control', 'test', 'test')
+        module = Module('GAME.EXE', 'game.control', 'control', (function.va,), (
+            Datum(0x800A0001, 1, 'byte', 'bss'),
+            Datum(0x800A0004, 4, 'word', 'bss'),
+        ))
+        built = _module_object(module, {function.va: function}, {function.va: (bytes(8), [])})
+        self.assertEqual(elf_sections(built.data)['.bss'][8], 4)
+        # This contradictory owner remains unplaceable; an odd first claim
+        # does not authorize weakening a later member's packing constraint.
+        self.assertEqual({name: record[1] for name, record in elf_symbols(built.data)
+                          if name in {'byte', 'word'}}, {'byte': 0, 'word': 4})
 
 
 class ModuleRodataTests(unittest.TestCase):

@@ -141,3 +141,16 @@ all per-function targets remain identical. The full build retains 354 exact
 game functions and fails the known data/placement/reachability gaps. All 459
 local tests, Ruff and `nix flake check -L` pass. The flake suite has 49 expected
 local-retail/oracle skips; the new SDK header and archive controls run there.
+
+## Native assembler calibration boundary
+
+A direct DOSBox invocation of the supplied `ASPSX.EXE` cannot calibrate its
+allocation flags: no arguments, default assembly, `-G0`, and `-G8` all report
+`Software Data Key, or Network Manager not found or present.` and produce no
+object. The executable's SHA-256 is
+`06abb0eb4a1483c30a28c0ef89d8dd52585229963875d4b9cb19c1cb202e955b`.
+This confirms the existing toolchain attribution warning, not a version or
+allocation rule. No key check is patched or bypassed. The profile's ASPSX
+version setting remains a maspsx probe setting, not a successfully calibrated
+native assembler attribution. Do not enable a small-data flag merely to mimic
+the archive's `.sbss`: that also changes instruction selection in maspsx.

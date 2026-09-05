@@ -161,6 +161,27 @@ class LinkerTests(unittest.TestCase):
         self.assertEqual(result.initialized_bytes_compared, 32 + 12 + 8)
         self.assertEqual(next(s for s in result.sections if s.name == '.bss').address, BASE + 0x500)
 
+    def test_byte_and_halfword_bss_relink_without_alignment_overrides(self):
+        for alignment in (1, 2):
+            with self.subTest(alignment=alignment):
+                sample = replace(unit(), data=(unit().data[0],
+                                 Datum(BASE + 0x500 + alignment, 4, 'state', 'bss')))
+                result = self.verify(obj(bss_alignment=alignment), sample=sample)
+                self.assertEqual(result.issues, [])
+                self.assertTrue(result.linker_ran)
+                section = next(s for s in result.sections if s.name == '.bss')
+                self.assertEqual(section.address, BASE + 0x500 + alignment)
+                self.assertEqual(section.size, 4)
+
+    def test_byte_data_relinks_complete_section_at_an_odd_address(self):
+        sample = replace(unit(), data=(Datum(BASE + 0x101, 3, 'values', 'load'), unit().data[1]))
+        image = retail()
+        blob = obj(data=image.require(BASE + 0x101, 3), data_relocations=(),
+                   data_symbols=(DefinedSymbol('values', 0, 3, STT_OBJECT),), data_alignment=1)
+        result = self.verify(blob, sample=sample)
+        self.assertEqual(result.issues, [])
+        self.assertEqual(result.initialized_bytes_compared, len(TEXT) + 3 + 8)
+
     def test_wrong_external_binding_changes_retail_bytes(self):
         result = self.verify(book=BOOK | {'external_data': {0x80028008}})
         self.assertIn('retail-byte-mismatch', kinds(result))

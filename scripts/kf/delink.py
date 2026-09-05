@@ -164,10 +164,10 @@ class Datum:
 
     @property
     def alignment(self) -> int:
-        # The retail address is the compiler's own alignment evidence. The
-        # pinned GCC/maspsx path gives file-static tentative BSS definitions
-        # an eight-byte object offset even when the object itself is one word;
-        # load data and externally linked BSS words retain four-byte packing.
+        # Working packing constraint bounded by the retail address, not proof
+        # of the original section alignment or allocation class. The pinned
+        # GCC/maspsx path gives file-static tentative BSS an eight-byte stride
+        # even for one-word objects; other claims currently pack up to four.
         candidates = (
             (8, 4, 2)
             if self.storage == "bss" and self.scope == "static"
@@ -713,6 +713,9 @@ def _module_object(
         if rodata_blob is None:
             raise ValueError(f"module {module.unit}: RODATA range was not carved")
         rodata, rodata_relocations = _module_rodata(module, rodata_blob, len(text))
+    # The section must carry the strongest constraint used to pack its members,
+    # not an unrelated four-byte default. Relink validation still requires one
+    # consistent base for every member; changing ELF alignment cannot fix gaps.
     return ModuleImage(
         write_mips_elf(
             bytes(text),
@@ -723,8 +726,12 @@ def _module_object(
             data=data,
             data_symbols=data_symbols,
             data_relocations=data_relocations,
+            data_alignment=max((d.alignment for d in module.data if d.storage == "load"),
+                               default=1),
             bss_size=bss_size,
             bss_symbols=bss_symbols,
+            bss_alignment=max((d.alignment for d in module.data if d.storage == "bss"),
+                              default=1),
             rodata=rodata,
             rodata_relocations=rodata_relocations,
         ),
