@@ -12,6 +12,7 @@ ADDRESS(0x80014608, 0x1fc)
 void opening_entity_transition(s16 mode, const VECTOR *position)
 {
     KfOpeningEntity *entity;
+    VECTOR position_snapshot;
     s16 entity_index;
     s16 frame;
     s16 initial_scale_y;
@@ -33,6 +34,10 @@ void opening_entity_transition(s16 mode, const VECTOR *position)
 
     entity = &opening_entity_state.entities[24];
     entity_index = 3;
+    /* Retail retains these stack coordinates without a subsequent consumer. */
+    position_snapshot.vx = position->vx;
+    position_snapshot.vz = position->vz;
+    position_snapshot.vy = position->vy;
     do {
         entity->object_id = 0x13;
         entity->position = *position;

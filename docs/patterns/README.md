@@ -63,3 +63,6 @@ promotes a probe to a proven historical toolchain.
 - [open-tmd-enqueue.md](open-tmd-enqueue.md): all twelve general TMD polygon
   modes, SDK-preserving packed views, static compiled/retail call-path controls,
   and the remaining shared graphics-base and instruction differences.
+- [open-transition-snapshot.md](open-transition-snapshot.md): the directly
+  observed transition-position stack copy and the remaining eight-byte frame
+  discrepancy, with an exact list of non-exact object differences.

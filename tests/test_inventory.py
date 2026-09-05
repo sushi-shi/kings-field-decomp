@@ -1744,7 +1744,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(row["final_name"], identity.name)
         self.assertEqual(row["final_signature"], signature)
         self.assertIn(evidence_path.name, identity.evidence)
-        self.assertEqual(row["current_match"], "94.685036000% complete C")
+        self.assertEqual(row["current_match"], "99.921260000% complete C")
 
         _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         campaign_rows = [
