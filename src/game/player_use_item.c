@@ -112,7 +112,7 @@ void player_use_item(u8 item_id)
                 if (object->link.link_id == 0xff) {
                     notify_enqueue(0x12);
                 } else {
-                    DAT_800652a8[object->object_id] = 0;
+                    item_stock[0][object->object_id] = 0;
                     used = 1;
                     map_object_pool_trigger_link(object->link.link_id);
                     object->link.link_id = 0xff;
@@ -153,8 +153,8 @@ void player_use_item(u8 item_id)
         return;
     case 57:
         player_state.light_effect_timer = 1000;
-        if (DAT_800652a8[57] != 0) {
-            DAT_800652a8[57]--;
+        if (item_stock[0][57] != 0) {
+            item_stock[0][57]--;
         }
         return;
     case 59:

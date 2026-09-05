@@ -86,7 +86,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0x11c;
-    menu_format_number(DAT_800652a8[object], 2, 0, gs.codes);
+    menu_format_number(item_stock[0][object], 2, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(

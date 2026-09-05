@@ -23,6 +23,7 @@ KfEffectRenderView	0x3c	supported	game_effect.h;asm;render_actor_sprite;render_e
 KfEffectSprite	0x1c	supported	game_render.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
 KfEffectState	0xd28	supported	game_effect.h;asm;game_main_loop:whole-clear;magic_load_records;effect_pool_sweep;effect_pool_set_current:derived-base	complete magic/effect owner: 24 magic rows, 48 effects, selected magic and effect pointers; no internal gaps
 KfEulerAngles	0x06	supported	game_math.h;asm;xrefs	three signed halfword angles
+KfFloorDeformSegment	0x07	supported	game_effect.h;effect_floor_deform_line;7-byte-stride;unsigned-byte-loads	one scripted floor-height line; coordinates and steps wrap modulo 256
 KfFloorEntryCell	0x2	supported	game_player.h;game_semantic_player_interactions.tsv;asm;xrefs	per-floor entry cell; x stored before z
 KfFloorItem	0x18	supported	item.h;asm;func_80020b4c	runtime floor-item table entry
 KfFloorItemPlacement	0x0c	supported	item.h;asm;func_80020b4c	serialized floor-item placement record

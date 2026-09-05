@@ -63,7 +63,7 @@ static KfCameraPathPoint opening_ending_scroll_camera_path[3] = {
     {{-1, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
-DATA(0x80035874, 0x4)
+DATA(0x80035874, 0x3)
 SoundRef opening_scene0_sound = {9, 0, 0x43};
 
 DATA(0x80035878, 0x10)

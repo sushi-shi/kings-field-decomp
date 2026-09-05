@@ -31,20 +31,22 @@ class ExternClassificationTest(unittest.TestCase):
         self.assertEqual(cleanliness._extern_symbol("POLY_FT4 *(*hook)(int)"), "hook")
 
     def test_game_vs_sdk_extern(self) -> None:
-        game = {"player_state", "menu_present_frame"}
+        game = {"player_state", "menu_present_frame", "item_stock"}
         self.assertTrue(cleanliness._is_game_extern("player_state", game))
-        self.assertTrue(cleanliness._is_game_extern("DAT_800652a8", game))
+        self.assertTrue(cleanliness._is_game_extern("item_stock", game))
+        self.assertTrue(cleanliness._is_game_extern("DAT_80012345", game))
         self.assertTrue(cleanliness._is_game_extern("func_8001fdc8", game))
         self.assertFalse(cleanliness._is_game_extern("memset", game))
         self.assertFalse(cleanliness._is_game_extern("rand", game))
 
     def test_count_game_externs_ignores_sdk(self) -> None:
-        game = {"player_state"}
+        game = {"player_state", "item_stock"}
         code = ("extern KfPlayerState player_state;\n"
                 "extern s32 rand(void);\n"
-                "extern u8 DAT_800652a8[240];\n"
+                "extern u8 item_stock[3][80];\n"
+                "extern u8 DAT_80012345[];\n"
                 "extern void memset();\n")
-        self.assertEqual(cleanliness._count_game_externs(code, game), 2)
+        self.assertEqual(cleanliness._count_game_externs(code, game), 3)
 
 
 class MetricRegexTest(unittest.TestCase):

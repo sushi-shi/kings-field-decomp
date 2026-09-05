@@ -47,7 +47,7 @@ void menu_drop_item(void)
     /* The seven equipment ids: [0] worn weapon, [0x2c..0x31] shield, head,
      * body, arm and leg armour, and accessory. */
     equip = &player_state.equipped_weapon_id;
-    inv = DAT_800652a8;
+    inv = item_stock[0];
     name = item_name_rows[0].codes;
     for (code = 0; code < 80; code++, name += 10) {
         if (inv[code] != 0) {

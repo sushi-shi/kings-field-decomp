@@ -43,7 +43,10 @@ class CdResourceBssTests(unittest.TestCase):
                 self.assertEqual((datum.size, int(row['size'], 0), row['kind']), (4, 4, 'bss'))
                 self.assertEqual(row['confidence'], 'reviewed')
             blobs = {d.va: (bytes(d.size), []) for d in module.data if d.storage == 'load'}
-            data, symbols, _relocs, bss_size, bss_symbols = _module_data(module, blobs)
+            # This storage-only fixture supplies explicit synthetic payloads,
+            # including gaps. Actual initialized bytes are checked separately.
+            data, symbols, _relocs, bss_size, bss_symbols = _module_data(
+                module, blobs, lambda va, size: bytes(size))
             self.assertFalse({d.symbol for d in claims} & {s.name for s in symbols})
             if module.unit == 'open.resources':
                 self.assertEqual((len(data), bss_size), (20, 20))

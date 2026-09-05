@@ -31,6 +31,9 @@ promotes a probe to a proven historical toolchain.
 - [compiler-owned-data-sizes.md](compiler-owned-data-sizes.md): independently
   measure C object sizes instead of copying retail DATA expectations into source
   symbols; reject a reproduced false BSS match hidden by COMMON rounding.
+- [retail initialized packing](../../config/evidence/open_sound_data_extent.md):
+  carve actual inter-object bytes, including nonzero controls, and separate
+  OPEN's three-byte SoundRef from its following census byte.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
   inclusion of custom allocated NOBITS sections; matching data must also admit

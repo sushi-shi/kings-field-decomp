@@ -17,13 +17,8 @@ extern s16 DAT_80055dac;
 extern s16 DAT_80055dae;
 extern s16 DAT_80055db4;
 extern s16 DAT_80055db6;
-extern u8 DAT_800561c8[0x70];
-extern char DAT_80056238[16];
-extern u8 DAT_80056247[];
-extern MATRIX DAT_80056248;
 extern u16 DAT_80057b72;
 extern u32 DAT_80057d24;
-extern u8 DAT_800652a8[240]; /* inventory and progress flag block */
 extern u16 DAT_80095060;
 extern u16 DAT_80095062;
 extern u8 DAT_80095064;

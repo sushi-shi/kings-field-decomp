@@ -928,6 +928,99 @@ strict source data **7/60**, SDK contributions **4/4**, target relinking
 The six target section-base conflicts remain visible. This integration does
 not claim complete data closure or linked-executable equality.
 
+## Correct the OPEN sound boundary and carve initialized packing
+
+The independently measured three-byte SoundRef now has a three-byte DATA claim
+and identity. Its following zero byte at OPEN 80035877 remains in a separate
+census gap and in the complete delinked module section. Nothing is discarded,
+and no artificial fourth field or interior global is introduced. All 100
+source DATA sizes now agree with the compiler's independent measurements.
+
+The delinker also stops assuming initialized alignment bytes are zero. It
+requires complete retail reads for the exact physical gap between the adjacent
+load objects. Six current ranges total twelve bytes, including the new sound
+gap; all happen to be zero in retail. Nonzero controls ensure their values are
+preserved, while missing/truncated reads and incompatible physical intervals
+are rejected. Existing BSS allocation and alignment rules stay unchanged.
+
+All 112 source objects and all 484 function scores are unchanged. The only
+target-object change is the corrected sound symbol size; runtime bytes, section
+extents/alignments and ordered relocations are preserved. The 360/471 exact game
+functions and thirteen vendor controls remain exact, without new banking.
+
+Strict source data remains **8/60**, SDK data **4/4**, target relinking
+**110/116**, and unmatched reached config ranges **623**. The new sound-size
+failure is resolved, but the opening module's separate placement conflict and
+the full-build failures remain. See the
+[per-function and complete-byte evidence](../config/evidence/open_sound_data_extent.md).
+All 596 local tests pass without skips; Ruff, diff and flake checks pass
+(101 expected local-tool/artifact skips in the sandbox suite).
+
+## GAME map-script constants and truthful effect ownership
+
+Six private initialized objects replace two coverage gaps and a truncated
+filename claim: a two-record camera path, sound VECTOR, light/color MATRIXes,
+the complete 16-byte mutable path and five seven-byte floor-deformation records.
+All 187 source/target payload bytes agree with retail. The map family's entire
+120-byte `.data` also passes strict placement; the actor/floor owners still fail
+the source assembler's real 16-byte alignment and are not called data matches.
+
+The two map-script units consolidate using proven script/dispatcher calls,
+interleaved private data and adjacent RODATA evidence. Conversely, the existing
+effect helper/dispatcher grouping cannot put constants more than 6 KB apart into
+one `.data`. The original eight-helper boundary is restored and the dispatcher
+gets its own data/RODATA owner. Both boundaries remain WIP; no missing bytes,
+alignment overrides or fabricated padding are used to force either hypothesis.
+
+The floor helper now advances progress on every cell, as retail's branch delay
+slot requires. Its score improves 84.921740 ->86.704346%; every other function
+score is unchanged, preserving all360 exact game functions. All107 source DATA
+sizes agree with independent compiler measurements. Seven new tests include
+340 bounded retail calls, complete section/neighbor bytes and twelve reviewed
+HI/LO round-trips. See the
+[per-function ownership and verification dossier](../config/evidence/game_map_script_data.md).
+
+Source/header `DAT_` hits fall100 ->84; unmatched reached config ranges fall
+622 ->620. Whole-source-data matches change7/60 ->6/60 because the previously
+passing floor-literal unit joins a still-non-exact switch-table unit, while the
+new effect-helper unit fails placement. SDK data stays4/4 and target relinking
+110/116. Full build still rejects strict data/ownership/placement failures;
+neither fewer names nor equal payload slices establishes complete matching.
+
+## Integration through map-script ownership
+
+At the user's request, completed commits `21f786e`, `30448fb` and `bf051cf`
+are integrated with master at `4026c0f`. All other branch tips were already
+ancestors of master. Uncommitted edits in older worktrees remain untouched;
+this integration does not classify them as completed work. Nothing is pushed.
+The deleted `semantic_types.h` stays absent, with no source includes.
+
+Merge resolutions retain master's `effect_state` ownership and the new
+`item_stock` owner together, including the save-oracle and relocation rows.
+The consolidated `game.map_scripts` keeps the recently verified directory
+cursor in `map_show_screen_image`, using the now-owned `map_screen_image_path`.
+Both campaigns' evidence notes and the combined validated inventory counts
+are preserved. No baseline, evidence tier or comparison gate is relaxed.
+
+All **112 source units** are rebuilt. Of **484 native function rows**, only
+the floor helper changes: **84.921740% to 86.704346%**. All **381/471 exact
+game functions** remain exact (GAME 283/362, OPEN 97/108, PSX 1/1), along with
+the thirteen vendored controls. TALK remains 98.780490% and the map image
+helper 88.888885%; neither is banked. Focused raw comparisons retain their
+documented partial residues and the floor helper's corrected progress update.
+
+Ruff, all **609 local tests without skips**, diff checks and `nix flake check
+-L` pass; the sandbox suite has 112 expected local-tool/artifact skips.
+The full build remains red on strict data/ownership/placement gates, with
+zero artifact failures. Whole-source-data matches change **7/60 to 5/60**:
+the complete item-stock owner exposes its real BSS alignment conflict in
+`game.player_death`, and the former floor-literal unit joins the still-partial
+map switch-table owner. SDK contributions remain **4/4**, target relinking
+**110/116**, with the same six target section-base conflicts. Unmatched reached
+config ranges fall **619 to 616**. None of these figures establishes complete
+reachable-byte or linked-executable equality. Generated verification logs use
+`build/integration-bf051cf-*` and are not committed.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

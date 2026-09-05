@@ -137,3 +137,9 @@ state. The restored full build retains only its pre-existing data/ownership/
 placement gaps: source data 7/60, SDK complete contributions 4/4, target relink
 110/116, six conflicting-base units and zero artifact failures. Diff check
 passes. No tooling change, new test campaign or baseline update is required.
+
+Subsequent data-branch integration moves the map helper into `game.map_scripts`
+and names its complete private array `map_screen_image_path`. The directory
+cursor and instruction sequence are preserved after normalizing the owning
+`.data` addends; the strict result remains 88.888885%. DATA ownership evidence
+is in `config/evidence/game_map_script_data.md`.

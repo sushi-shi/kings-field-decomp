@@ -10,6 +10,9 @@ SoundRef player_sound_refs[3] = {
     {13, 0, 67}
 };
 
+DATA(0x800652a8, 0xf0)
+u8 item_stock[3][80];
+
 /*
  * Player death, vitals, and combat run, one contiguous band
  * 0x80015164..0x80016848 (GAME.EXE): death sequence and restart, HP/MP
@@ -30,8 +33,8 @@ void player_death_begin(void)
 
 /*
  * The two byte loops clear whole BSS runs that start at the named objects
- * (0x2134 bytes of map-event state, 0xf0 bytes of progress flags) before the
- * flags that start set are raised again.
+ * (0x2134 bytes of map-event state, 0xf0 bytes of item stock) before seeding
+ * the initial player quantities and shop availability.
  */
 ADDRESS(0x800151cc, 0x2e4)
 void game_state_initialize(void)
@@ -84,44 +87,44 @@ void game_state_initialize(void)
     do {
         *cursor++ = 0;
     } while (--count != -1);
-    cursor = DAT_800652a8;
+    cursor = (u8 *)&item_stock;
     count = 0xef;
     do {
         *cursor++ = 0;
     } while (--count != -1);
-    DAT_800652a8[0x00] = 1;
-    DAT_800652a8[0x2b] = 1;
-    DAT_800652a8[0x50] = 1;
-    DAT_800652a8[0x51] = 1;
-    DAT_800652a8[0x52] = 1;
-    DAT_800652a8[0x5d] = 1;
-    DAT_800652a8[0x5e] = 1;
-    DAT_800652a8[0x64] = 1;
-    DAT_800652a8[0x6a] = 1;
-    DAT_800652a8[0x6b] = 1;
-    DAT_800652a8[0x70] = 1;
-    DAT_800652a8[0x73] = 1;
-    DAT_800652a8[0x7b] = 1;
-    DAT_800652a8[0x7c] = 1;
-    DAT_800652a8[0x7d] = 1;
-    DAT_800652a8[0x7f] = 1;
-    DAT_800652a8[0xa2] = 1;
-    DAT_800652a8[0xa3] = 1;
-    DAT_800652a8[0xa6] = 1;
-    DAT_800652a8[0xae] = 1;
-    DAT_800652a8[0xaf] = 1;
-    DAT_800652a8[0xb3] = 1;
-    DAT_800652a8[0xb5] = 1;
-    DAT_800652a8[0xb6] = 1;
-    DAT_800652a8[0xbc] = 1;
-    DAT_800652a8[0xc5] = 1;
-    DAT_800652a8[0xcb] = 1;
-    DAT_800652a8[0xcc] = 1;
-    DAT_800652a8[0xcd] = 1;
-    DAT_800652a8[0xce] = 1;
-    DAT_800652a8[0xcf] = 1;
-    DAT_800652a8[0xd0] = 1;
-    DAT_800652a8[0xd4] = 1;
+    item_stock[0][0x00] = 1;
+    item_stock[0][0x2b] = 1;
+    item_stock[1][0x00] = 1;
+    item_stock[1][0x01] = 1;
+    item_stock[1][0x02] = 1;
+    item_stock[1][0x0d] = 1;
+    item_stock[1][0x0e] = 1;
+    item_stock[1][0x14] = 1;
+    item_stock[1][0x1a] = 1;
+    item_stock[1][0x1b] = 1;
+    item_stock[1][0x20] = 1;
+    item_stock[1][0x23] = 1;
+    item_stock[1][0x2b] = 1;
+    item_stock[1][0x2c] = 1;
+    item_stock[1][0x2d] = 1;
+    item_stock[1][0x2f] = 1;
+    item_stock[2][0x02] = 1;
+    item_stock[2][0x03] = 1;
+    item_stock[2][0x06] = 1;
+    item_stock[2][0x0e] = 1;
+    item_stock[2][0x0f] = 1;
+    item_stock[2][0x13] = 1;
+    item_stock[2][0x15] = 1;
+    item_stock[2][0x16] = 1;
+    item_stock[2][0x1c] = 1;
+    item_stock[2][0x25] = 1;
+    item_stock[2][0x2b] = 1;
+    item_stock[2][0x2c] = 1;
+    item_stock[2][0x2d] = 1;
+    item_stock[2][0x2e] = 1;
+    item_stock[2][0x2f] = 1;
+    item_stock[2][0x30] = 1;
+    item_stock[2][0x34] = 1;
 }
 
 ADDRESS(0x800154b0, 0x19c)
@@ -129,8 +132,8 @@ void player_death_restart(void)
 {
     s32 floor = player_state.progress_state.current_floor;
 
-    if (MAP_WORLD_STATE_BYTES[3] == 1 && DAT_800652a8[0x2f] != 0) {
-        DAT_800652a8[0x2f]--;
+    if (MAP_WORLD_STATE_BYTES[3] == 1 && item_stock[0][0x2f] != 0) {
+        item_stock[0][0x2f]--;
         map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
