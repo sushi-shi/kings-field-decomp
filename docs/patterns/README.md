@@ -33,8 +33,8 @@ promotes a probe to a proven historical toolchain.
   OPEN projected-sprite renderer.
 - [open-ft4-descriptor.md](open-ft4-descriptor.md): the byte-identical SDK
   rectangle trial and why texture byte loads do not establish source field width.
-- [open-camera-step.md](open-camera-step.md): direct lane publication trial
-  and the preserved fixed-point camera-step residue.
+- [open-camera-step.md](open-camera-step.md): grouped position/rotation
+  publication closes the fixed-point camera step and its three-function unit.
 - [open-tmd-countdown.md](open-tmd-countdown.md): unconditional primitive
   countdown initialization leaves only two frame instructions unmatched.
 - [open-entity-traversal-residue.md](open-entity-traversal-residue.md): visible

@@ -101,12 +101,12 @@ void opening_camera_path_step(s32 y_offset)
         opening_camera_path_state.position_fixed.vx >> 4;
     opening_camera_path_state.position.vy =
         (opening_camera_path_state.position_fixed.vy >> 4) + y_offset;
-    opening_camera_path_state.rotation.vy =
-        (opening_camera_path_state.rotation_fixed.vy >> 4) & 0xfff;
     opening_camera_path_state.position.vz =
         opening_camera_path_state.position_fixed.vz >> 4;
     opening_camera_path_state.rotation.vx =
         (opening_camera_path_state.rotation_fixed.vx >> 4) & 0xfff;
+    opening_camera_path_state.rotation.vy =
+        (opening_camera_path_state.rotation_fixed.vy >> 4) & 0xfff;
     opening_camera_path_state.rotation.vz =
         (opening_camera_path_state.rotation_fixed.vz >> 4) & 0xfff;
 }

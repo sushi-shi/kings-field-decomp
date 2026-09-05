@@ -1652,7 +1652,7 @@ class InventoryTests(unittest.TestCase):
         expected_scores = {
             0x80013CF4: "100.000000000% exact",
             0x80014004: "100.000000000% exact",
-            0x80014100: "97.777780000% complete C",
+            0x80014100: "100.000000000% exact",
         }
         for row in evidence_rows:
             va = parse_int(row["va"])

@@ -1,6 +1,50 @@
 # OPEN camera-step lane publication
 
-## Function Match Plan (`8ac47fe`)
+## Function Match Plan: grouped publication (`7963a51`)
+
+OPEN `80014100` remains 360 bytes and strict 97.777780%. The six semantic
+views, full CFG, exact segment/begin siblings, following scene-0 body, all
+four caller argument sequences, shared 100-byte state, original source
+history and GAME source homolog were rechecked. The one game-owned call,
+25 validated state-field pairs, no strings/candidate references, 32-byte
+frame, signed word Q4 lanes, signed height argument, halfword rotation
+outputs and all sentinel/return delay slots retain the contract below.
+There is no vendored body here; SDK sine calls occur only in two callers.
+
+The current two-stage source publishes position X/Y, rotation Y, position Z,
+rotation X/Z. Retail's output stores at `800141b0/c0/f4`, `80014204/3c/4c`
+instead publish position XYZ followed by rotation XYZ. Its arithmetic and
+ordered field references already agree; four working-register roles differ.
+Test the natural grouped publication order seen in those six stores while
+leaving all six accumulator updates in their current preceding stage. This
+is distinct from the rejected immediate-lane-publication trial, which moved
+each output ahead of later accumulator updates and lost retail preloads.
+No alternate lane orders, new locals, type changes or compiler flags are
+part of this trial. Compare from the first accumulator load at +0x50 and
+preserve both exact siblings before considering a kept result.
+
+The grouped order emits all 360 retail bytes exactly. The single segment
+call, all 25 ordered numeric state referents, every load/branch/return delay
+slot, and the 32-byte frame agree. The 784-byte segment-computation and
+252-byte initialization siblings remain raw exact. Retain only the move of
+rotation-Y publication after rotation X; the accumulator stage, shared types,
+signatures and compiler profile are unchanged. This closes the observed
+register differences with an evidenced source-order correction, without
+claiming a particular compiler allocation mechanism.
+
+Strict objdiff confirms 100% for all three camera functions. Only OPEN
+`80014100` is newly banked; OPEN moves 96 -> 97 exact out of 108, with eleven
+partials and 99.255% overall fuzzy coverage. The focused build recompiles the
+unit and regenerates the OPEN report. Full `kf build` retains only the known
+OPEN TMD default-table addend mismatch, thirteen GAME data-addend units and
+four GAME historical-best deficits; no banked exact function is lost and all
+13 vendor-source controls remain exact. Ruff, `git diff --check` and all 401
+existing tests pass (25.247 seconds). One inventory expectation was updated
+from the old partial score to the newly verified exact status; no tests were
+added or relaxed. GAME source, shared headers and toolchain settings are
+unchanged.
+
+## Historical Function Match Plan (`8ac47fe`)
 
 OPEN `opening_camera_path_step`, `0x80014100`, owns 360 bytes and is strict
 97.777780% under `probe-gcc257-o2-g0`. The six semantic queries, complete
@@ -30,7 +74,7 @@ dependency hypothesis, not an independent-lane permutation search. Preserve
 the exact 784-byte segment and 252-byte begin siblings, all calls/referents,
 widths and sentinel CFG. Do not alter GAME, shared types or compiler flags.
 
-## Result
+## Historical result
 
 Immediate publication retained 360 bytes, the one call and the same 25 numeric
 referents, but changed their order from the first position-Y loads at +0x60.
