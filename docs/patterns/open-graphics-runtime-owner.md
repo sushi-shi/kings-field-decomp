@@ -1,7 +1,7 @@
-# OPEN complete graphics-runtime owner pilot
+# OPEN complete graphics-runtime owner
 
 This is an ownership hypothesis, not an original-source or compiler claim.
-The committed declarations and inventories remain unchanged during the pilot.
+The pilot below led to canonical adoption; see the final migration verdict.
 
 ## Independent extent and access evidence
 
@@ -171,3 +171,184 @@ passes (399 tests, 49 optional controls skipped in isolation). Full `kf build`
 still fails only the recorded strict gates: one OPEN and thirteen GAME data
 units, plus four GAME historical-best deficits. OPEN remains 91/108 banked
 exact, with no production source, inventory or baseline changed by this pilot.
+
+## Display/TMD/projection regression plan
+
+At `1673dbe`, retail was hash-validated and all six semantic queries, full
+instructions/CFG, signature-constraining call sites, neighboring boundaries,
+source history and shared SDK/data types were inspected for `open.render`.
+The shared slot/vertex state and confirmed select/project/enqueue call chains
+justify this next consumer set; adjacency alone does not establish a source
+file boundary. The sole literal is the existing projection overflow message.
+The preparation dispatch has 29 candidate pointer rows, not 29 proven calls.
+
+| OPEN function | Size; strict baseline | Pre-edit constraints |
+| --- | --- | --- |
+| `80016d38 display_begin_frame` | `98`; 100% | No arguments; one call, seven address pairs, 24-byte frame. Byte buffer toggle, 12-byte allocator records, 0x4000-entry OT, three counter resets. |
+| `80016dd0 display_present_frame` | `98`; 100% | No arguments; five calls, four pairs, 24-byte frame. SDK draw/display environment strides 92/20; final OT index 0x3fff. |
+| `80016e68 tmd_select` | `2c`; 100% | Halfword slot mask, two pairs, eight-byte frame, no calls; selected pointer stored before return. Confirmed callers select zero or one. |
+| `80016e94 tmd_get_object` | `24`; 100% | Halfword index, 28-byte record stride plus 12-byte header, one pair; pointer addition in return delay slot. |
+| `80016eb8 tmd_set_current_vertices` | `10`; 100% | Pointer store, one pair, no frame/calls, return with nop; no confirmed caller. |
+| `80016ec8 tmd_select_object_vertices` | `3c`; 100% | Halfword index passed in call delay slot; one call, two pairs, 24-byte frame; word vertex offset relative to asset plus 12. |
+| `80016f04 render_set_view_transform` | `12c`; 100% | Nullable VECTOR/SVECTOR pointers; word position and halfword-aligned rotation copies; signed division by 2000; two calls, seven pairs, 32-byte frame. |
+| `80017030 tmd_prepare_primitive_indices` | `300`; 98.333336% | No direct calls, four pairs, seven internal jumps and one indirect dispatch; eight-byte retail frame. Word disk counts narrow to halfwords, mode mask 0xfd, eight packet types, halfword indices shifted three. |
+| `80017330 tmd_register` | `3c`; 100% | Halfword slot and asset pointer; one call, one pair, 24-byte frame; current-asset store in preparation-call delay slot. |
+| `8001736c tmd_release_last_allocation` | `20`; 100% | One allocator call, no pairs, 24-byte frame. No confirmed callers or reads of the tentative slot parameter; retain candidate signature status. |
+| `8001738c tmd_project_vertices` | `cc`; 100% | Signed count, 1000 limit, three calls, four pairs, one internal jump, 56-byte frame. Eight-byte cursors, signed global shift, SDK output pointers, low-halfword depth. |
+| `80017458 tmd_project_vertices_perspective_right` | `a4`; 100% | Word count from object; two calls, three pairs, 64-byte frame. Signed perspective shift right; count-to-minus-one loop and eight-byte cursors. |
+| `800174fc tmd_project_vertices_shift` | `ac`; 100% | Signed count/byte shift from body; no confirmed callers. Two calls, two pairs, 64-byte frame; low-halfword perspective doubled, full-word depth shifted arithmetically. |
+| `800175a8 tmd_transform_vertices` | `a4`; 100% | Signed count from body, no confirmed callers; one call, two pairs, 72-byte frame. Non-perspective output halfwords and duplicate low depth loads. |
+
+Sizes above are hexadecimal. The return delay slots and load delays are part
+of each control, including otherwise unused retail frames. SDK providers are
+independently identified: LIBGPU `SYS`/`VSYNC`, LIBGTE `REG`/`SMP`/`GEO`.
+The archive/header checks keep their actual APIs and the evidenced two-pointer
+`ReadSZ2` compatibility declaration; they do not turn these OPEN array loops
+or buffer policy into library work. LIBGPU `TMD` owns different OpenTMD/ReadTMD
+services, not this in-place index preparation.
+
+Apply only real field expressions from the existing complete candidate to
+one alternate copy of the whole unit. Remove the separate projected-array
+definition from that copy, retaining the genuine 1000-record owner field.
+Preserve every algorithm, signature, literal, branch and compiler option.
+Compare all thirteen banked exact functions after resolving the literal root
+and every REL addend; retain the partial preparation as a separate verdict.
+One exact-consumer regression blocks migration pending an independently
+evidenced explanation, even if the map traversal remains raw-exact.
+
+### Display/TMD/projection result
+
+All thirteen exact functions in the table retain every linked retail word,
+including ordered calls, all physical data targets and the eight-byte
+`tmd_select` frame. Their final verdict is **raw-exact preservation**.
+`tmd_prepare_primitive_indices` retains the canonical 768-byte candidate and
+the same four differing words: the entry/exit frame operations and the
+primitive-count branch/packet-add ordering at offsets `3c/40`. It remains
+partial; no slot-layout change explains that residue. The exact initializer,
+allocator, color-matrix and map-traversal controls still pass.
+
+The committed test constructs the complete alternate renderer unit with the
+same shared header and checks all thirteen exact claims against retail. A
+wrong-root control on frame setup fails, as does the existing initializer
+wrong-root control. This is not yet an inventory migration or a strict
+objdiff claim for the hypothetical root.
+
+## Remaining banked-consumer plan
+
+Continue the same field-only experiment in the remaining eight consumer
+units. The six-query snapshots, full retail bodies, source/history, SDK
+headers and archive ownership are refreshed before their temporary copies
+are made. Signature-constraining callers and adjacent boundaries are checked
+separately. No new algorithm, API, material layout or instruction steering
+is introduced. The controller's clear is spelled against the complete owner
+and `sizeof` that owner, using the independently proved `0x24788` extent.
+
+| OPEN function | Hex size; strict baseline | Pre-edit constraints |
+| --- | --- | --- |
+| `80013804 sprite_add_g4` | `198`; 100% | Rectangle and four byte-color pointers, fifth argument on O32 stack; two calls/two pairs, 48-byte frame; 36-byte SDK packet and OT index 0x3fef. |
+| `8001399c sprite_add_ft4` | `1c0`; 98.973210% | Rectangle/texture pointers, halfword page/CLUT, stack color/index; two calls/two pairs, 48-byte frame; 40-byte packet, byte UV fields at source offsets 0/2/4/6, 14-bit OT index. |
+| `80013b5c sprite_add_f4` | `114`; 100% | Rectangle/color pointers and halfword OT index; two calls/two pairs, 40-byte frame; 24-byte packet and 14-bit OT index. |
+| `800143dc opening_scene1_draw_fade` | `180`; 100% | Byte shade; eight calls/three pairs, 32-byte frame; two 40-byte packets, 192/128/320/240 coordinates, two OT-pointer reloads around AddPrim. |
+| `80014b34 opening_ending_scene_run` | `2f4`; 100% | No arguments; twenty calls, 23 pairs, two internal jumps, 72-byte frame; signed halfword brightness/blend and separate SDK draw-environment RGB stores. |
+| `800156bc opening_run` | `214`; 100% | Word display mode, values 1/0xfe; 31 calls, twelve pairs, four internal jumps, 40-byte frame; three resource strings and independent graphics/entity clears. |
+| `800189a0 render_enqueue_sprite` | `21c`; 100% | Typed 12-byte sprite, signed halfword depth bias, word flag; six calls/five pairs, 136-byte frame; packed screen words, SDK material, biased depth >=5. |
+| `80018ecc opening_entity_render` | `228`; 100% | Typed entity pointer; 22 direct calls, six pairs, six internal jumps and indirect dispatch, 136-byte frame; seventeen candidate table rows, IDs 11..27, rotation +/-64 and signed depth biases. |
+| `800190f4 render_floor_item` | `14c`; 98.795180% | Typed 24-byte item; nine calls/six pairs/one jump, 80-byte frame; facing nibble plus retail byte mask, 150/200 biases and wrapped animation byte. |
+| `80019240 opening_render_entities_and_items` | `298`; 92.867470% | No arguments; four calls/fifteen pairs, 48-byte frame; 32 entities, halfword-wrapped window bounds, signed /2000 item coordinates, RGB180, page-to-pool base chain. |
+| `80019658 fog_interpolate_near` | `44`; 92.941180% | Three signed words, no confirmed callers; one call/one pair, 24-byte frame; 12-bit fixed-point interpolation and SDK screen constant 200. |
+| `8001969c fog_set_near` | `28`; 100% | Word distance, no confirmed callers; one call/one pair, 24-byte frame; store distance and SDK screen constant 200. |
+
+The unchanged frame wrapper, scene-1 controller and five matrix/color helpers
+in these units receive byte-preservation checks too; their bodies do not
+reference the proposed owner and are not rewritten. LIBGPU `PRIM`, LIBGTE
+`SMP`/`CMB`/`MTX`/`GEO`, the API memset entry and PAD functions remain separate
+vendored services. The real SDK `setRGB0` macro is three byte stores, not an
+invented packed store. No canonical data definition changes during this audit.
+
+### Remaining banked-consumer result
+
+All eight already-exact owner consumers in the table retain every linked
+retail instruction, as do all seven unchanged helpers. In particular,
+`opening_run` clears the complete object with `sizeof` and still reproduces
+the literal destination, extent, calls and delay slots. Each of these fifteen
+functions has a **raw-exact preservation** verdict; the regression test covers
+every one with its own retail comparison.
+
+The four partial consumers retain their previous candidate instructions:
+`sprite_add_ft4` is 448 bytes with the same register differences starting at
+offset `28`; `render_floor_item` remains 328 versus 332 bytes, missing the
+byte mask at `90`; `opening_render_entities_and_items` remains 660 versus
+664 with the same early entity/window load ordering; and
+`fog_interpolate_near` remains 64 versus 68 with the missing initial move.
+Calls and physical referents remain unchanged. Their final verdict is
+**unchanged partial**, not a new instruction-selection hypothesis.
+
+Together with the display/TMD and initializer controls, all 31 banked-exact
+functions across ten consumer units survive the complete-owner declaration.
+The map traversal remains raw-exact too. The remaining nonbanked consumer
+units and canonical data ownership still require audit before adopting this
+single owner throughout OPEN and checking strict objdiff.
+
+## Canonical migration: Function Match Plan
+
+The final five consumers received the six-query/raw-CFG, caller, adjacent-
+boundary and source-history pass at `08018b2`. Their common hypothesis is
+only the already-reviewed complete graphics owner; algorithms and SDK types
+remain unchanged. LIBGPU PRIM/SYS and LIBGTE SMP provide the called graphics
+services; PAD, rand and audio services remain vendored, not new game bodies.
+
+| OPEN function | Hex size; strict baseline | Snapshot and first hypothesis |
+| --- | --- | --- |
+| `8001764c render_enqueue_tmd` | `cf8`; 98.802410% | 58 calls, eleven internal jumps, eleven address pairs, 96-byte frame, 29 candidate switch rows. Halfword object index and signed bias from entity callers; current asset +32 yields projected vertices and projected base -276 yields OT. Preserve packed header and every polygon case; test actual owner fields. |
+| `800185e8 render_enqueue_map` | `3b8`; 97.449580% | Eighteen calls, one jump, two pairs, 80-byte frame. Halfword object from cell renderer; cases 0x24/0x2c, depth +200 and <16384; same asset/projected/OT chain. Test owner only. |
+| `800197e4 item_load_floor_placements` | `1b0`; 97.731480% | One rand call, three pairs, 40-byte frame; resource caller passes payload pointer. 12-byte input/24-byte output, ffff sentinel, byte tile positions, signed local positions and 2000/100 scaling. Retain independent count/items address formation under the complete owner. |
+| `8001a82c display_adjust_vram_view` | `248`; 95.678085% | Nine calls, eleven pairs, one jump, 40-byte frame; no confirmed callers. Genuine SDK RECT copy and environment strides, byte flags, pad masks, four-pixel steps, 1024/512 wrap. Preserve all behavior under owner fields. |
+| `80014e28 opening_ending_scroll_run` | `798`; 97.129630% | Forty calls, eight jumps, 31 pairs, 264-byte frame, infinite frame loop with retained epilogue. No-argument controller call; signed phase/blend halfwords, nine pages/CLUTs, live shared RGB bytes and shift=2. Owner-only change; no phase or stack steering. |
+
+Compare these alternate units, then adopt one `KfGraphicsRuntimeOpen` in
+`open_render.h` throughout all seventeen OPEN consumers. Define its BSS
+storage in the render-initialization module, remove the three old interior
+DATA claims and fourteen interior global identities, and retain every raw
+relocation site and numerical destination. This is a supported WIP ownership
+model, not recovered original symbol names or a TU boundary. Move GAME-only
+projected-state declarations out of the common TMD interface without changing
+GAME definitions or instructions. Require strict 100% for traversal and all
+previously exact consumers before banking.
+
+### Canonical migration verdict
+
+Adopted the complete owner in all seventeen OPEN consumers and its real BSS
+definition in `render_init.c`. All 170 affected relocation rows retain their
+sites, instruction forms, numeric destinations and evidence status; only the
+owner name changes. Fourteen global identities become nineteen typed fields
+(including five opaque intervals), with no overlapping interior definitions.
+The common TMD header now leaves GAME's two globals in `game_render.h`;
+GAME source bodies and identities are unchanged. The inventory checker knows
+the authentic LIBGPU DRAWENV/DISPENV layouts and reads the shared vertex type
+before the enclosing OPEN type. The former alternate fixture is retired.
+
+| Function | Final strict result | Linked-instruction verdict |
+| --- | --- | --- |
+| `opening_render_map_cells` | **100%**, banked | All 320 bytes exact, including the active-window reload and both calls. |
+| `display_adjust_vram_view` | **100%**, banked | All 584 bytes exact; shared owner eliminates the extra saved register and restores the separate draw-environment reference. |
+| The 31 previously exact consumer functions listed above | **100% each** | Every linked instruction remains exact under the same canonical declaration. |
+| `display_initialize` | 92.177960% | 484 versus 472 bytes; recovered display-environment sharing, unchanged calls/writes, frame and DFE-address residue. |
+| `render_enqueue_tmd` | 98.598790% | 3324 versus 3320; current-asset/projected base sharing recovered, all 58 calls unchanged; frame, OT load and four-byte default-table-target residue remain. |
+| `render_enqueue_map` | 97.890755% | 956 versus 952; projected base recovered, all eighteen calls unchanged; first divergence is the normal-pointer stack slot at +58, followed by load ordering. |
+| `render_enqueue_unlit_triangles` | 93.071010% | 688 versus 676; asset/projected/material sharing recovered; narrow bias spill and separate OT load remain. |
+| `render_map_cell` | 87.922420% | 472 versus 464; exact matrix suffix and all nine calls; earlier coordinate/load-order residue remains. |
+| `item_load_floor_placements` | 97.731480% | Unchanged 424 versus 432 bytes and ordered targets; first register difference at +20. |
+| `opening_ending_scroll_run` | 97.129630% | Unchanged 1944 bytes, forty calls and numeric referents; first ordering difference at +298. |
+
+The remaining partial consumers retain the verdicts recorded above. The two
+slightly lower emitter percentages do not override the independently evidenced
+complete owner; neither was banked exact, and no exact function regresses.
+
+OPEN advances **91 -> 93 / 108 exact** (15 partial, none unstarted), with
+98.798% aggregate fuzzy similarity. Full `kf build` and the keep-going graph
+check retain the existing one OPEN / thirteen GAME strict data failures and
+four GAME historical-best deficits. The OPEN failure is still the TMD table's
+seventeen default addends, +ca0 versus retail +c9c; no gate is weakened.
+All 401 workspace tests pass without skips, Ruff and `git diff --check` pass,
+and `nix flake check -L` passes (58 optional controls skipped in isolation).
+Only the two newly strict-exact functions are banked.

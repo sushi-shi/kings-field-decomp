@@ -14,6 +14,9 @@ MATRIX color_matrix_table[5] = {
     {{{0, 0, 0}, {375, 375, 375}, {0, 0, 0}}, {0, 0, 0}},
 };
 
+DATA(0x80049a48, 0x24788)
+KfGraphicsRuntimeOpen open_graphics_runtime;
+
 /*
  * OPEN.EXE render initialisation. The colour-preset selector, display setup,
  * and primitive allocator share the same matrix/display state and direct
@@ -37,54 +40,54 @@ void render_initialize(void)
     SVECTOR angles;
     u8 *buffer;
 
-    display_state.buffer_index = 0xff;
+    open_graphics_runtime.display_state.buffer_index = 0xff;
     cd_file_load_into(render_cell_windows, "B0\\RTBL.");
     buffer = memory_allocate(0x4c2c0);
-    display_state.asset_load_buffer = buffer;
-    display_state.primitive_buffers[0].start = buffer;
+    open_graphics_runtime.display_state.asset_load_buffer = buffer;
+    open_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += 0x26160;
-    display_state.primitive_buffers[0].end = buffer;
-    display_state.primitive_buffers[1].start = buffer;
+    open_graphics_runtime.display_state.primitive_buffers[0].end = buffer;
+    open_graphics_runtime.display_state.primitive_buffers[1].start = buffer;
     buffer += 0x26160;
-    display_state.primitive_buffers[1].end = buffer;
-    floor_item_state.count = 0;
+    open_graphics_runtime.display_state.primitive_buffers[1].end = buffer;
+    open_graphics_runtime.floor_item_state.count = 0;
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;
-    RotMatrix(&angles, &render_state.quadrant_matrices[0]);
+    RotMatrix(&angles, &open_graphics_runtime.render_state.quadrant_matrices[0]);
     angles.vy = 0xc00;
-    RotMatrix(&angles, &render_state.quadrant_matrices[3]);
+    RotMatrix(&angles, &open_graphics_runtime.render_state.quadrant_matrices[3]);
     angles.vy = 0x800;
-    RotMatrix(&angles, &render_state.quadrant_matrices[2]);
+    RotMatrix(&angles, &open_graphics_runtime.render_state.quadrant_matrices[2]);
     angles.vy = 0x400;
-    RotMatrix(&angles, &render_state.quadrant_matrices[1]);
-    render_state.light_matrix.m[0][0] = 3800;
-    render_state.light_matrix.m[0][1] = -2800;
-    render_state.light_matrix.m[0][2] = 0;
-    render_state.light_matrix.m[1][0] = -3000;
-    render_state.light_matrix.m[1][1] = -3600;
-    render_state.light_matrix.m[1][2] = -3400;
-    render_state.light_matrix.m[2][0] = -1300;
-    render_state.light_matrix.m[2][1] = 2700;
-    render_state.light_matrix.m[2][2] = 800;
+    RotMatrix(&angles, &open_graphics_runtime.render_state.quadrant_matrices[1]);
+    open_graphics_runtime.render_state.light_matrix.m[0][0] = 3800;
+    open_graphics_runtime.render_state.light_matrix.m[0][1] = -2800;
+    open_graphics_runtime.render_state.light_matrix.m[0][2] = 0;
+    open_graphics_runtime.render_state.light_matrix.m[1][0] = -3000;
+    open_graphics_runtime.render_state.light_matrix.m[1][1] = -3600;
+    open_graphics_runtime.render_state.light_matrix.m[1][2] = -3400;
+    open_graphics_runtime.render_state.light_matrix.m[2][0] = -1300;
+    open_graphics_runtime.render_state.light_matrix.m[2][1] = 2700;
+    open_graphics_runtime.render_state.light_matrix.m[2][2] = 800;
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[0],
-        &light_quadrant_matrices[0]);
+        &open_graphics_runtime.render_state.light_matrix,
+        &open_graphics_runtime.render_state.quadrant_matrices[0],
+        &open_graphics_runtime.light_quadrant_matrices[0]);
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[1],
-        &light_quadrant_matrices[1]);
+        &open_graphics_runtime.render_state.light_matrix,
+        &open_graphics_runtime.render_state.quadrant_matrices[1],
+        &open_graphics_runtime.light_quadrant_matrices[1]);
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[2],
-        &light_quadrant_matrices[2]);
+        &open_graphics_runtime.render_state.light_matrix,
+        &open_graphics_runtime.render_state.quadrant_matrices[2],
+        &open_graphics_runtime.light_quadrant_matrices[2]);
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[3],
-        &light_quadrant_matrices[3]);
-    floor_item_state.texture_tpage = GetTPage(1, 0, 0x340, 0);
-    floor_item_state.texture_clut = 0x7a00;
+        &open_graphics_runtime.render_state.light_matrix,
+        &open_graphics_runtime.render_state.quadrant_matrices[3],
+        &open_graphics_runtime.light_quadrant_matrices[3]);
+    open_graphics_runtime.floor_item_state.texture_tpage = GetTPage(1, 0, 0x340, 0);
+    open_graphics_runtime.floor_item_state.texture_clut = 0x7a00;
 }
 
 ADDRESS(0x80016adc, 0x1d8)
@@ -104,34 +107,34 @@ void display_initialize(s32 mode)
     InitGeom();
     SetGeomOffset(160, 120);
     SetDefDrawEnv(
-        &display_draw_environments[0], 0, 0, 320, framebuffer_height);
+        &open_graphics_runtime.display_draw_environments[0], 0, 0, 320, framebuffer_height);
     SetDefDispEnv(
-        &display_disp_environments[0],
+        &open_graphics_runtime.display_disp_environments[0],
         0,
         lower_buffer_y,
         320,
         framebuffer_height);
     SetDefDrawEnv(
-        &display_draw_environments[1],
+        &open_graphics_runtime.display_draw_environments[1],
         0,
         lower_buffer_y,
         320,
         framebuffer_height);
     SetDefDispEnv(
-        &display_disp_environments[1], 0, 0, 320, framebuffer_height);
-    display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;
-    display_draw_environments[0].isbg = 1;
-    display_draw_environments[1].isbg = 1;
-    display_draw_environments[0].r0 = 0;
-    display_draw_environments[0].g0 = 0;
-    display_draw_environments[0].b0 = 0;
-    display_draw_environments[1].r0 = 0;
-    display_draw_environments[1].g0 = 0;
-    display_draw_environments[1].b0 = 0;
-    first_draw = &display_draw_environments[0];
-    second_draw = &display_draw_environments[1];
+        &open_graphics_runtime.display_disp_environments[1], 0, 0, 320, framebuffer_height);
+    open_graphics_runtime.display_draw_environments[0].dtd = open_graphics_runtime.display_draw_environments[1].dtd = 1;
+    open_graphics_runtime.display_draw_environments[0].isbg = 1;
+    open_graphics_runtime.display_draw_environments[1].isbg = 1;
+    open_graphics_runtime.display_draw_environments[0].r0 = 0;
+    open_graphics_runtime.display_draw_environments[0].g0 = 0;
+    open_graphics_runtime.display_draw_environments[0].b0 = 0;
+    open_graphics_runtime.display_draw_environments[1].r0 = 0;
+    open_graphics_runtime.display_draw_environments[1].g0 = 0;
+    open_graphics_runtime.display_draw_environments[1].b0 = 0;
+    first_draw = &open_graphics_runtime.display_draw_environments[0];
+    second_draw = &open_graphics_runtime.display_draw_environments[1];
     if (mode == 0xfe) {
-        PutDispEnv(&display_disp_environments[0]);
+        PutDispEnv(&open_graphics_runtime.display_disp_environments[0]);
         SetDispMask(1);
     } else {
         first_draw->dfe = 0;
@@ -145,20 +148,20 @@ void display_initialize(s32 mode)
     SetBackColor(0, 0, 0);
     lighting_set_active_color_matrix(0);
     SetFarColor(0, 0, 0);
-    render_state.fog_near_distance = 0x2af8;
+    open_graphics_runtime.render_state.fog_near_distance = 0x2af8;
     SetFogNear(0x2af8, 200);
-    tmd_projection_shift = 1;
+    open_graphics_runtime.tmd_projection_shift = 1;
     render_initialize();
 }
 
 ADDRESS(0x80016cb4, 0x84)
 void *primitive_buffer_allocate(u16 byte_count)
 {
-    u8 *allocation = display_state.primitive_buffer->cursor;
+    u8 *allocation = open_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    display_state.primitive_buffer->cursor += byte_count;
-    if (display_state.primitive_buffer->cursor >
-        display_state.primitive_buffer->end) {
+    open_graphics_runtime.display_state.primitive_buffer->cursor += byte_count;
+    if (open_graphics_runtime.display_state.primitive_buffer->cursor >
+        open_graphics_runtime.display_state.primitive_buffer->end) {
         for (;;) {
             printf("primitive over fllow!!!\n");
         }

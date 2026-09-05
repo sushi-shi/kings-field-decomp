@@ -6,9 +6,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object = tmd_get_object(object_index);
     u32 remaining = object->primitive_count;
-    u8 *payload = tmd_state.current_asset;
+    u8 *payload = open_graphics_runtime.tmd_state.current_asset;
     u8 *packet = payload + (object->primitive_offset + 12);
-    u8 *vertices = (u8 *)tmd_projected_vertices;
+    u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
@@ -43,9 +43,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             *(u16 *)&prim->u0 = *(u16 *)&triangle->tu0;
             *(u16 *)&prim->u1 = *(u16 *)&triangle->tu1;
             *(u16 *)&prim->u2 = *(u16 *)&triangle->tu2;
-            prim->r0 = floor_item_state.material.color.r;
-            prim->g0 = floor_item_state.material.color.g;
-            prim->b0 = floor_item_state.material.color.b;
+            prim->r0 = open_graphics_runtime.floor_item_state.material.color.r;
+            prim->g0 = open_graphics_runtime.floor_item_state.material.color.g;
+            prim->b0 = open_graphics_runtime.floor_item_state.material.color.b;
             break;
         }
         case 0x20: {
@@ -76,7 +76,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2;
         depth += depth_bias;
         if (depth >= 5) {
-            AddPrim(&ordering_table[depth & 0x3fff], primitive);
+            AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], primitive);
         }
 
     next_packet:

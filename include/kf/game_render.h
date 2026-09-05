@@ -81,6 +81,9 @@ extern MATRIX light_quadrant_matrices[4];
 extern MATRIX render_light_matrices[6];
 extern KfRenderState render_state;
 extern KfTmdState tmd_state;
+/* GAME's projected-array capacity remains unresolved. */
+extern SVECTOR *current_tmd_vertices;
+extern KfScreenVertex tmd_projected_vertices[];
 extern u16 active_render_clut;
 extern u16 active_render_tpage;
 /* Contiguous RGB/command bytes; the enclosing graphics object is unresolved. */

@@ -13,10 +13,10 @@ void opening_scene1_draw_fade(u8 shade)
     u32 **ordering_table_slot;
 
     display_begin_frame();
-    left = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    right = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
+    left = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
+    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
+    right = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
+    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
 
     SetPolyFT4(left);
     SetPolyFT4(right);
@@ -66,7 +66,7 @@ void opening_scene1_draw_fade(u8 shade)
     right->g0 = shade;
     right->b0 = shade;
 
-    ordering_table_slot = &ordering_table;
+    ordering_table_slot = &open_graphics_runtime.ordering_table;
     AddPrim(*ordering_table_slot, left);
     AddPrim(*ordering_table_slot, right);
     display_present_frame();

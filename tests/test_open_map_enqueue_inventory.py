@@ -90,7 +90,7 @@ class OpenMapEnqueueTests(unittest.TestCase):
         pairs = [row for row in body if row["kind"] == "mips_hi16_lo16"]
         self.assertEqual([(parse_int(row["target_va"]), row["target_name"])
                           for row in pairs], [
-            (0x80069B60, "tmd_state"),
+            (0x80069B60, "open_graphics_runtime"),
             (0x800372F8 + 3, "map_textured_primitive_color"),
         ])
         jump = next(row for row in body if row["opcode"] == "j")

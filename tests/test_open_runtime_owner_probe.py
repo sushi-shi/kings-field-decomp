@@ -1,8 +1,7 @@
-"""Static controls for a coherent, deliberately unadopted OPEN owner model."""
+"""Linked-instruction controls for the shared OPEN graphics owner."""
 from __future__ import annotations
 
 import os
-import re
 import shutil
 import struct
 import subprocess
@@ -22,13 +21,7 @@ from scripts.kf.retail import IMAGE_LAYOUTS
 
 
 FIXTURES = REPO / "tests/fixtures"
-HEADER = FIXTURES / "open_runtime_owner_probe.h"
-FIELDS = (
-    "display_state", "ordering_table", "display_draw_environments",
-    "display_disp_environments", "tmd_state", "current_tmd_vertices",
-    "tmd_projected_vertices", "floor_item_state", "DAT_8006e040", "DAT_8006e044",
-    "render_state", "light_quadrant_matrices", "active_cell_window", "tmd_projection_shift",
-)
+HEADER = REPO / "include/kf/open_render.h"
 
 
 def linked_words(obj, unit, claim, data, functions):
@@ -104,19 +97,49 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
                         self.assertIn("check_floor_item_state", result.stderr)
 
     def test_initializer_and_allocator_retain_every_linked_instruction(self):
+        self.check_exact_consumers("open.render_init", {
+            "lighting_set_active_color_matrix", "render_initialize", "primitive_buffer_allocate",
+        })
+
+    def test_display_tmd_and_projection_retain_every_linked_instruction(self):
+        self.check_exact_consumers("open.render", {
+            "display_begin_frame", "display_present_frame", "tmd_select", "tmd_get_object",
+            "tmd_set_current_vertices", "tmd_select_object_vertices", "render_set_view_transform",
+            "tmd_register", "tmd_release_last_allocation", "tmd_project_vertices",
+            "tmd_project_vertices_perspective_right", "tmd_project_vertices_shift",
+            "tmd_transform_vertices",
+        })
+
+    def test_remaining_banked_consumers_retain_every_linked_instruction(self):
+        controls = {
+            "open.opening_render": {"opening_render_frame", "sprite_add_g4"},
+            "open.sprite_add_ft4": {"sprite_add_f4"},
+            "open.opening_scene1": {"opening_scene1_draw_fade", "opening_scene1_run"},
+            "open.opening_ending_scene": {"opening_ending_scene_run"},
+            "open.opening_controller": {"opening_run"},
+            "open.render_sprite": {"render_enqueue_sprite"},
+            "open.entity_render": {"opening_entity_render"},
+            "open.matrix": {
+                "matrix_interpolate", "lighting_set_color_matrix", "lighting_set_light_matrix",
+                "fog_set_near", "color_lerp_cvector", "color_lerp_rgb555",
+            },
+        }
+        for unit_name, functions in controls.items():
+            with self.subTest(unit=unit_name):
+                self.check_exact_consumers(unit_name, functions)
+
+    def check_exact_consumers(self, unit_name, controls):
         self.tools()
         try:
             retail = (configured_retail_dir() / "OPEN.EXE").read_bytes()
         except (ValueError, FileNotFoundError):
             self.skipTest("configured retail OPEN image is required")
         manifest = load_manifest()
-        unit = manifest.by_name()["open.render_init"]
+        unit = manifest.by_name()[unit_name]
         if not (BUILD / "delink/open/modules" / unit.object_name).is_file():
-            self.skipTest("delinked OPEN initializer target is required")
+            self.skipTest(f"delinked {unit_name} target is required")
         profile = manifest.profiles[unit.profile]
-        pattern = re.compile(r"\b(" + "|".join(FIELDS) + r")\b")
-        source = '#include "open_runtime_owner_probe.h"\n' + pattern.sub(
-            lambda match: "open_graphics_runtime." + match[0], unit.source_path.read_text())
+        source = unit.source_path.read_text()
         data = {item.name: item.va for (image, _), item in
                 load_data_identities(RETAIL_CONFIG).items() if image == "OPEN.EXE"}
         data["open_graphics_runtime"] = 0x80049A48
@@ -124,7 +147,7 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
                      load_catalog(RETAIL_CONFIG).functions["OPEN.EXE"]}
         with TemporaryDirectory(prefix="kf-open-runtime-code-") as directory:
             root = Path(directory)
-            candidate = root / "render_init.c"
+            candidate = root / unit.source_path.name
             candidate.write_text(source)
             output = root / unit.object_name
             compile_source(
@@ -134,19 +157,17 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
                 profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines,
             )
             obj = _load_object(output)
-            controls = {"lighting_set_active_color_matrix", "render_initialize",
-                        "primitive_buffer_allocate"}
             self.assertTrue(controls <= {claim.symbol for claim in unit.functions})
             for claim in unit.functions:
                 if claim.symbol not in controls:
-                    continue  # No exact assertion is made for partial display setup.
+                    continue  # Partial bodies have separate evidence, not exact assertions.
                 with self.subTest(function=claim.symbol):
                     actual, _, _ = linked_words(obj, unit, claim, data, functions)
                     offset = IMAGE_LAYOUTS[unit.image].file_offset(claim.va)
                     expected = list(struct.unpack_from(
                         f"<{claim.body_size // 4}I", retail, offset))
                     self.assertEqual(actual, expected)
-                    if claim.symbol == "render_initialize":
+                    if claim.symbol in {"render_initialize", "display_begin_frame"}:
                         wrong_owner = dict(data, open_graphics_runtime=0x80049A4C)
                         corrupted, _, _ = linked_words(obj, unit, claim, wrong_owner, functions)
                         self.assertNotEqual(corrupted, expected)
@@ -162,12 +183,7 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
         if not (BUILD / "delink/open/modules" / unit.object_name).is_file():
             self.skipTest("delinked OPEN map target is required")
         profile = manifest.profiles[unit.profile]
-        original = unit.source_path.read_text()
-        definition = "DATA(0x8006e1c8, 0x4)\nconst KfCellWindow *active_cell_window;\n\n"
-        self.assertEqual(original.count(definition), 1)
-        pattern = re.compile(r"\b(" + "|".join(FIELDS) + r")\b")
-        source = '#include "open_runtime_owner_probe.h"\n' + pattern.sub(
-            lambda match: "open_graphics_runtime." + match[0], original.replace(definition, ""))
+        source = unit.source_path.read_text()
         data = {item.name: item.va for (image, _), item in
                 load_data_identities(RETAIL_CONFIG).items() if image == "OPEN.EXE"}
         data["open_graphics_runtime"] = 0x80049A48

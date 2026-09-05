@@ -8,7 +8,7 @@
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
-/* OPEN.EXE display state; ordering_table is a separate global. */
+/* OPEN.EXE display subobject; the active OT pointer follows this record. */
 typedef struct KfDisplayStateOpen {
     u8 buffer_index;
     u8 unknown_01[3];
@@ -54,25 +54,61 @@ typedef struct KfFloorItemStateOpen {
     KfFloorItem items[64];
 } KfFloorItemStateOpen;
 
-extern KfDisplayStateOpen display_state;
-extern KfRenderStateOpen render_state;
-extern KfTmdStateOpen tmd_state;
-extern DRAWENV display_draw_environments[2];
-extern DISPENV display_disp_environments[2];
-extern u32 *ordering_table;
-extern MATRIX light_quadrant_matrices[4];
+/* Cleared as one region by opening_run. Unclassified intervals stay opaque. */
+typedef struct KfGraphicsRuntimeOpen {
+    KfDisplayStateOpen display_state;
+    u32 *ordering_table;
+    DRAWENV display_draw_environments[2];
+    DISPENV display_disp_environments[2];
+    u8 unknown_20108[8];
+    KfTmdStateOpen tmd_state;
+    u8 unknown_2011c[4];
+    SVECTOR *current_tmd_vertices;
+    u8 unknown_20124[0x14];
+    KfScreenVertex tmd_projected_vertices[1000];
+    u8 unknown_22078[0x1f68];
+    KfFloorItemStateOpen floor_item_state;
+    u32 DAT_8006e040;
+    u32 DAT_8006e044;
+    KfRenderStateOpen render_state;
+    MATRIX light_quadrant_matrices[4];
+    const KfCellWindow *active_cell_window;
+    s16 tmd_projection_shift;
+    u8 unknown_24786[2];
+} KfGraphicsRuntimeOpen;
+extern KfGraphicsRuntimeOpen open_graphics_runtime;
+#define KF_OPEN_GRAPHICS_OFFSET_CHECK(member, offset) \
+    typedef char check_##member[ \
+        ((unsigned long)&((KfGraphicsRuntimeOpen *)0)->member == (offset)) ? 1 : -1]
+KF_OPEN_GRAPHICS_OFFSET_CHECK(display_state, 0x0);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(ordering_table, 0x20024);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(display_draw_environments, 0x20028);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(display_disp_environments, 0x200e0);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_20108, 0x20108);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_state, 0x20110);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_2011c, 0x2011c);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(current_tmd_vertices, 0x20120);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_20124, 0x20124);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_projected_vertices, 0x20138);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_22078, 0x22078);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(floor_item_state, 0x23fe0);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(DAT_8006e040, 0x245f8);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(DAT_8006e044, 0x245fc);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(render_state, 0x24600);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(light_quadrant_matrices, 0x24700);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(active_cell_window, 0x24780);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_projection_shift, 0x24784);
+KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_24786, 0x24786);
+#undef KF_OPEN_GRAPHICS_OFFSET_CHECK
+typedef char check_runtime_size[sizeof(KfGraphicsRuntimeOpen) == 0x24788 ? 1 : -1];
+
 extern MATRIX color_matrix_table[5];
 extern KfSpriteQuad floor_item_sprites[7];
 extern MATRIX floor_item_light_matrix;
 extern SVECTOR render_sprite_light_normal;
 extern CVECTOR map_textured_primitive_color;
-extern KfFloorItemStateOpen floor_item_state;
 
 extern KfCellWindow render_cell_windows[16];
-extern const KfCellWindow *active_cell_window;
-extern u32 DAT_8006e040;
-extern u32 DAT_8006e044;
-extern s16 tmd_projection_shift;
 extern u32 primitive_allocation_count;
 
 extern void display_initialize(s32 mode);

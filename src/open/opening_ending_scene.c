@@ -62,12 +62,12 @@ void opening_ending_scene_run(void)
                 SetBackColor(brightness, brightness, brightness);
                 SetFarColor(brightness, brightness, brightness);
                 setRGB0(
-                    &display_draw_environments[0],
+                    &open_graphics_runtime.display_draw_environments[0],
                     brightness,
                     brightness,
                     brightness);
                 setRGB0(
-                    &display_draw_environments[1],
+                    &open_graphics_runtime.display_draw_environments[1],
                     brightness,
                     brightness,
                     brightness);
@@ -99,9 +99,9 @@ void opening_ending_scene_run(void)
         SetBackColor(brightness, brightness, brightness);
         SetFarColor(brightness, brightness, brightness);
         setRGB0(
-            &display_draw_environments[0], brightness, brightness, brightness);
+            &open_graphics_runtime.display_draw_environments[0], brightness, brightness, brightness);
         setRGB0(
-            &display_draw_environments[1], brightness, brightness, brightness);
+            &open_graphics_runtime.display_draw_environments[1], brightness, brightness, brightness);
         lighting_set_color_matrix(
             &color_matrix_table[0], &color_matrix_table[1], blend);
         opening_render_frame(

@@ -390,13 +390,15 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         "u32": (4, 4),
         # Target O32/Psy-Q long, independent of the host Python ABI.
         "long": (4, 4),
-        # Psy-Q SDK fixed-layout types (declared in the real LIBGTE headers,
+        # Psy-Q SDK fixed-layout types (declared in real LIBGTE/LIBGPU headers,
         # not parsed here); registered so project structs can use them.
         "MATRIX": (0x20, 4),
         "VECTOR": (0x10, 4),
         "SVECTOR": (8, 2),
         "CVECTOR": (4, 1),
         "DVECTOR": (4, 2),
+        "DRAWENV": (0x5C, 4),
+        "DISPENV": (0x14, 2),
     }
     layouts: dict[str, HeaderStructureLayout] = {}
     definition_pattern = re.compile(
@@ -422,6 +424,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/game_equipment.h",
         REPO / "include/kf/game_player.h",
         REPO / "include/kf/render_types.h",
+        REPO / "include/kf/tmd.h",
         REPO / "include/kf/game_asset.h",
         REPO / "include/kf/game_render.h",
         REPO / "include/kf/notify.h",
@@ -430,7 +433,6 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/semantic_types.h",
         REPO / "include/kf/game_save.h",
         REPO / "include/kf/game_cd.h",
-        REPO / "include/kf/tmd.h",
     )
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)

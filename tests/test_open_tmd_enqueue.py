@@ -197,10 +197,10 @@ class OpenTmdEnqueueTests(unittest.TestCase):
                 actual_targets.append(base + addend)
         self.assertFalse(pending)
         self.assertEqual(list(candidate_calls.values()), list(retail_calls.values()))
-        # Two legitimate absolute references replace unresolved graphics-wide base reuse.
+        # The projected base is shared; the remaining separate OT load is not exact.
         self.assertEqual(Counter(actual_targets), Counter(
             [parse_int(row["target_va"]) for row in body if row["kind"] == "mips_hi16_lo16"]
-            + [0x80069B80, 0x80069A6C]))
+            + [0x80069A6C]))
         actual_without_separate_bases = [va for va in actual_targets
                                         if va not in (0x80069B80, 0x80069A6C)]
         self.assertEqual(actual_without_separate_bases,

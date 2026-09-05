@@ -44,7 +44,7 @@ promotes a probe to a proven historical toolchain.
 - [open-unlit-triangles.md](open-unlit-triangles.md): the unlit F3/FT3 path,
   packed GPU accesses, and the unresolved graphics-wide shared-base relation.
 - [open-graphics-runtime-owner.md](open-graphics-runtime-owner.md): complete
-  graphics-clear-region ownership pilot and the exact initializer control.
+  graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,

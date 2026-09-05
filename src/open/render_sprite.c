@@ -31,8 +31,8 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
 
     prim = primitive_buffer_allocate(sizeof(POLY_FT4));
     SetPolyFT4(prim);
-    prim->clut = floor_item_state.material.clut;
-    prim->tpage = floor_item_state.material.tpage;
+    prim->clut = open_graphics_runtime.floor_item_state.material.clut;
+    prim->tpage = open_graphics_runtime.floor_item_state.material.tpage;
     /* GTE screen coordinates are copied into the GPU packet as packed words. */
     *(long *)&prim->x0 = sxy0;
     *(long *)&prim->x1 = sxy1;
@@ -42,13 +42,13 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
     prim->u1 = prim->u3 = sprite->u + sprite->u_span;
     prim->v0 = prim->v1 = sprite->v;
     prim->v2 = prim->v3 = sprite->v + sprite->v_span;
-    floor_item_state.material.color.cd = prim->code;
+    open_graphics_runtime.floor_item_state.material.color.cd = prim->code;
     if (flag == 1) {
         p += p >> 1;
     }
-    NormalColorDpq(&render_sprite_light_normal, &floor_item_state.material.color,
+    NormalColorDpq(&render_sprite_light_normal, &open_graphics_runtime.floor_item_state.material.color,
                    p, (CVECTOR *)&prim->r0);
     if (otz + depth_bias >= 5) {
-        AddPrim(&ordering_table[(otz + depth_bias) & 0x3fff], prim);
+        AddPrim(&open_graphics_runtime.ordering_table[(otz + depth_bias) & 0x3fff], prim);
     }
 }

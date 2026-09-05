@@ -8,7 +8,7 @@ ADDRESS(0x800185e8, 0x3b8)
 void render_enqueue_map(u16 object_index)
 {
     KfTmdObject *object = tmd_get_object(object_index);
-    u8 *normals = (u8 *)tmd_state.current_asset + (object->normal_offset + 12);
+    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->normal_offset + 12);
     u8 *packet;
     u8 *vertices;
     KfScreenVertex *vertex0;
@@ -22,8 +22,8 @@ void render_enqueue_map(u16 object_index)
 
     tmd_project_vertices(object->vertex_count);
     remaining = object->primitive_count;
-    packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + 12);
-    vertices = (u8 *)tmd_projected_vertices;
+    packet = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + 12);
+    vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
     while (remaining-- != 0) {
         header = *(u32 *)packet;
         packet += 4;
@@ -61,7 +61,7 @@ void render_enqueue_map(u16 object_index)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4)
                 + 200;
             if (depth < 16384) {
-                AddPrim(&ordering_table[depth & 0x3fff], prim);
+                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], prim);
             }
             break;
         }
@@ -93,7 +93,7 @@ void render_enqueue_map(u16 object_index)
             DpqColor(&shade, vertex2->p2, (CVECTOR *)&prim->r2);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + 200;
             if (depth < 16384) {
-                AddPrim(&ordering_table[depth & 0x3fff], prim);
+                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], prim);
             }
             break;
         }

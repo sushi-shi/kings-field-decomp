@@ -16,9 +16,9 @@ ADDRESS(0x80013804, 0x198)
 void sprite_add_g4(const u16 *position, const u8 *color0, const u8 *color1,
                    const u8 *color2, const u8 *color3)
 {
-    POLY_G4 *prim = (POLY_G4 *)display_state.primitive_buffer->cursor;
+    POLY_G4 *prim = (POLY_G4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    display_state.primitive_buffer->cursor += sizeof(POLY_G4);
+    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
     SetPolyG4(prim);
     prim->x0 = position[0];
     prim->y0 = position[1];
@@ -40,5 +40,5 @@ void sprite_add_g4(const u16 *position, const u8 *color0, const u8 *color1,
     prim->r3 = color3[0];
     prim->g3 = color3[1];
     prim->b3 = color3[2];
-    AddPrim(&ordering_table[0x3fef], prim);
+    AddPrim(&open_graphics_runtime.ordering_table[0x3fef], prim);
 }

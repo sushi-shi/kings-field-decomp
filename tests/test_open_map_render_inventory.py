@@ -52,9 +52,9 @@ class OpenMapRenderTests(unittest.TestCase):
             0x80018BE4: (0x800730A0, "map_cell_attribute_grid"),
             0x80018C20: (0x80046DF8, "map_cell_orientation_grid"),
             0x80018C88: (0x8006E260, "map_floor_height_grid"),
-            0x80018D2C: (0x8006E0C8, "render_state"),
+            0x80018D2C: (0x8006E0C8, "open_graphics_runtime"),
             0x80018DD4: (0x800439D8, "render_cell_windows"),
-            0x80018DE0: (0x8006E1C8, "active_cell_window"),
+            0x80018DE0: (0x8006E1C8, "open_graphics_runtime"),
             0x80018E60: (0x80018BBC, "render_map_cell"),
         }
         for site, expected_target in expected_targets.items():
@@ -85,10 +85,13 @@ class OpenMapRenderTests(unittest.TestCase):
             (table.name, table.datatype, table.size, table.storage),
             ("render_cell_windows", "KfCellWindow[16]", 16 * 0xCC, "bss"),
         )
-        pointer = data[("OPEN.EXE", 0x8006E1C8)]
+        self.assertNotIn(("OPEN.EXE", 0x8006E1C8), data)
+        pointer = next(row for row in load_structure_field_identities(RETAIL_CONFIG)
+                       if row.structure == "KfGraphicsRuntimeOpen"
+                       and row.offset == 0x24780)
         self.assertEqual(
             (pointer.name, pointer.datatype, pointer.size),
-            ("active_cell_window", "const KfCellWindow *", 4),
+            ("active_cell_window", "KfCellWindow *", 4),
         )
         self.assertEqual(
             [va for image, va in data if image == "OPEN.EXE"

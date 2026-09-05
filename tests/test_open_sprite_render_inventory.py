@@ -70,7 +70,7 @@ class OpenSpriteRenderTests(unittest.TestCase):
         data = load_data_identities(RETAIL_CONFIG)
         for va, name, datatype, size, storage in (
             (0x800372FC, "render_sprite_light_normal", "SVECTOR", 8, "load"),
-            (0x8006DA28, "floor_item_state", "KfFloorItemStateOpen", 0x618, "bss"),
+            (0x80049A48, "open_graphics_runtime", "KfGraphicsRuntimeOpen", 0x24788, "bss"),
         ):
             datum = data[("OPEN.EXE", va)]
             self.assertEqual((datum.name, datum.datatype, datum.size, datum.storage),
@@ -97,18 +97,18 @@ class OpenSpriteRenderTests(unittest.TestCase):
             (0x80018A78, 0x8002DE88, "RotTransPers4"),
             (0x80018A80, 0x80016CB4, "primitive_buffer_allocate"),
             (0x80018A8C, 0x800340E0, "SetPolyFT4"),
-            (0x80018A94, 0x8006DA28, "floor_item_state"),
-            (0x80018AAC, 0x8006DA2A, "floor_item_state"),
-            (0x80018B34, 0x8006DA2F, "floor_item_state"),
+            (0x80018A94, 0x8006DA28, "open_graphics_runtime"),
+            (0x80018AAC, 0x8006DA2A, "open_graphics_runtime"),
+            (0x80018B34, 0x8006DA2F, "open_graphics_runtime"),
             (0x80018B58, 0x800372FC, "render_sprite_light_normal"),
             (0x80018B64, 0x8002DAE8, "NormalColorDpq"),
-            (0x80018B88, 0x80069A6C, "ordering_table"),
+            (0x80018B88, 0x80069A6C, "open_graphics_runtime"),
             (0x80018B94, 0x80033F74, "AddPrim"),
         ])
         material = [row for row in rows if row["image"] == "OPEN.EXE"
                     and 0x8006DA28 <= parse_int(row["target_va"]) < 0x8006DA30]
         self.assertEqual(len(material), 14)
-        self.assertEqual({row["target_name"] for row in material}, {"floor_item_state"})
+        self.assertEqual({row["target_name"] for row in material}, {"open_graphics_runtime"})
         for row in body + material:
             self.assertEqual(row["status"], "reviewed")
             self.assertIn("manual:open_semantic_sprite_render", row["provenance"].split(";"))

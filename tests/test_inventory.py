@@ -60,12 +60,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 3005)
+        self.assertEqual(counts["data"], 2992)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 77)
-        self.assertEqual(counts["structure_fields"], 670)
-        self.assertEqual(counts["structure_fields_named"], 553)
+        self.assertEqual(counts["structures"], 78)
+        self.assertEqual(counts["structure_fields"], 689)
+        self.assertEqual(counts["structure_fields_named"], 565)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -161,8 +161,10 @@ class InventoryTests(unittest.TestCase):
             # Referenced prefixes are not complete-object capacity claims.
             self.assertEqual(datum.unit, "")
             self.assertIn("not complete capacity", datum.note)
-        opening = index("OPEN.EXE").datum(0x80069B80)
+        opening = index("OPEN.EXE").data_owner(0x80069B80)
         self.assertEqual((opening.name, opening.datatype, opening.size),
+                         ("open_graphics_runtime", "KfGraphicsRuntimeOpen", 0x24788))
+        self.assertEqual(_structure_field("KfGraphicsRuntimeOpen", 0x20138),
                          ("tmd_projected_vertices", "KfScreenVertex[1000]", 0x1F40))
 
     def test_tmd_buffer_relocations_preserve_numeric_interior_targets(self) -> None:
@@ -1507,7 +1509,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             {(row["target_name"], parse_int(row["target_va"])) for row in body_data},
-            {("display_state", 0x80049A68), ("ordering_table", 0x80069A6C)},
+            {("open_graphics_runtime", 0x80049A68), ("open_graphics_runtime", 0x80069A6C)},
         )
 
     def test_open_opening_helpers_campaign_matches_curated_evidence(self) -> None:
@@ -1635,9 +1637,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(
             {reloc["target_name"] for reloc in campaign_rows},
             {
-                "display_state",
+                "open_graphics_runtime",
                 "SetPolyF4",
-                "ordering_table",
                 "AddPrim",
                 "sprite_add_f4",
             },
@@ -1868,7 +1869,7 @@ class InventoryTests(unittest.TestCase):
             {
                 "opening_ending_scene_run",
                 "opening_ending_camera_path",
-                "display_draw_environments",
+                "open_graphics_runtime",
             },
         )
 
@@ -1916,7 +1917,7 @@ class InventoryTests(unittest.TestCase):
             {
                 "opening_run",
                 "opening_initial_tim_path",
-                "display_state",
+                "open_graphics_runtime",
                 "memory_arena_cursor",
             },
         )
@@ -2119,7 +2120,7 @@ class InventoryTests(unittest.TestCase):
                 "matrix_interpolate",
                 "SetColorMatrix",
                 "SetLightMatrix",
-                "render_state",
+                "open_graphics_runtime",
                 "SetFogNear",
             },
         )
@@ -2343,26 +2344,12 @@ class InventoryTests(unittest.TestCase):
             (table.name, table.storage, table.datatype, table.size),
             ("color_matrix_table", "load", "MATRIX[5]", 0xA0),
         )
-        draw_environments = data[("OPEN.EXE", 0x80069A70)]
-        self.assertEqual(
-            (
-                draw_environments.name,
-                draw_environments.storage,
-                draw_environments.datatype,
-                draw_environments.size,
-            ),
-            ("display_draw_environments", "bss", "DRAWENV[2]", 0xB8),
-        )
-        display_environments = data[("OPEN.EXE", 0x80069B28)]
-        self.assertEqual(
-            (
-                display_environments.name,
-                display_environments.storage,
-                display_environments.datatype,
-                display_environments.size,
-            ),
-            ("display_disp_environments", "bss", "DISPENV[2]", 0x28),
-        )
+        self.assertNotIn(("OPEN.EXE", 0x80069A70), data)
+        self.assertNotIn(("OPEN.EXE", 0x80069B28), data)
+        self.assertEqual(_structure_field("KfGraphicsRuntimeOpen", 0x20028),
+                         ("display_draw_environments", "DRAWENV[2]", 0xB8))
+        self.assertEqual(_structure_field("KfGraphicsRuntimeOpen", 0x200E0),
+                         ("display_disp_environments", "DISPENV[2]", 0x28))
         allocation_count = data[("OPEN.EXE", 0x80075928)]
         self.assertEqual(
             (allocation_count.name, allocation_count.storage, allocation_count.datatype),
@@ -2419,18 +2406,14 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
 
         data = load_data_identities(RETAIL_CONFIG)
-        scratch = data[("OPEN.EXE", 0x80069B80)]
-        self.assertEqual(
-            (scratch.name, scratch.storage, scratch.datatype, scratch.size),
-            ("tmd_projected_vertices", "bss", "KfScreenVertex[1000]", 0x1F40),
-        )
+        self.assertNotIn(("OPEN.EXE", 0x80069B80), data)
+        self.assertEqual(_structure_field("KfGraphicsRuntimeOpen", 0x20138),
+                         ("tmd_projected_vertices", "KfScreenVertex[1000]", 0x1F40))
         self.assertNotIn(("OPEN.EXE", 0x80069B84), data)
         self.assertNotIn(("OPEN.EXE", 0x80069B86), data)
-        shift = data[("OPEN.EXE", 0x8006E1CC)]
-        self.assertEqual(
-            (shift.name, shift.storage, shift.datatype, shift.size),
-            ("tmd_projection_shift", "bss", "s16", 2),
-        )
+        self.assertNotIn(("OPEN.EXE", 0x8006E1CC), data)
+        self.assertEqual(_structure_field("KfGraphicsRuntimeOpen", 0x24784),
+                         ("tmd_projection_shift", "s16", 2))
 
         _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         campaign_rows = [
@@ -2441,13 +2424,13 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(campaign_rows), 24)
         self.assertEqual({item["status"] for item in campaign_rows}, {"reviewed"})
         by_site = {parse_int(item["site_va"]): item for item in campaign_rows}
-        self.assertEqual(by_site[0x800173C8]["target_name"], "tmd_projected_vertices")
-        self.assertEqual(by_site[0x80017408]["target_name"], "tmd_projection_shift")
+        self.assertEqual(by_site[0x800173C8]["target_name"], "open_graphics_runtime")
+        self.assertEqual(by_site[0x80017408]["target_name"], "open_graphics_runtime")
         self.assertEqual(by_site[0x8001741C]["target_name"], "ReadSZ2")
         for site in (0x80017470, 0x80017518, 0x800175C4):
-            self.assertEqual(by_site[site]["target_name"], "tmd_projected_vertices")
+            self.assertEqual(by_site[site]["target_name"], "open_graphics_runtime")
             self.assertEqual(parse_int(by_site[site]["target_va"]), 0x80069B80)
-        self.assertEqual(by_site[0x800174AC]["target_name"], "tmd_projection_shift")
+        self.assertEqual(by_site[0x800174AC]["target_name"], "open_graphics_runtime")
         self.assertEqual(by_site[0x80017544]["target_name"], "RotTransPers")
         self.assertEqual(by_site[0x80017564]["target_name"], "ReadSZ2")
         self.assertEqual(by_site[0x800175EC]["target_name"], "RotTrans")
