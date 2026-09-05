@@ -1,5 +1,11 @@
 # TMD projection ownership and SDK call contract
 
+The two projection differences recorded below were subsequently closed by
+the [parameter-countdown correction](game-projection-countdown.md): both
+perspective helpers now match strictly at 100%. The ownership and SDK
+contracts remain unchanged; the earlier scores below describe this original
+ownership campaign, not their current match status.
+
 The three GAME projection functions at `0x8001c60c..0x8001c7f8` now extend
 `game.render`, rather than forming a separate `game.tmd_project` unit.
 Their evidence pass is recorded in

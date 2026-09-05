@@ -66,6 +66,8 @@ promotes a probe to a proven historical toolchain.
   original CCPSX command defaults and the unchanged OPEN G0/G8 comparison.
 - [tmd-projection.md](tmd-projection.md): projection/accessor ownership,
   the observed ReadSZ2 call contract, and unattributed register differences.
+- [game-projection-countdown.md](game-projection-countdown.md): direct incoming
+  count countdowns closing both GAME perspective projection helpers.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated

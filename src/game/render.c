@@ -440,11 +440,10 @@ void tmd_project_vertices(s32 count)
     long gte_flags;
     long depth;
     long unused_depth;
-    s32 remaining;
 
     projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
-    for (remaining = count - 1; remaining != -1; remaining--) {
+    for (count--; count != -1; count--) {
         RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << 1;
         ReadSZ2(&depth, &unused_depth);
@@ -463,11 +462,10 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     long gte_flags;
     long depth;
     long unused_depth;
-    s32 remaining;
 
     projected = tmd_projected_vertices;
     vertex = current_tmd_vertices;
-    for (remaining = count - 1; remaining != -1; remaining--) {
+    for (count--; count != -1; count--) {
         RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << 1;
         ReadSZ2(&depth, &unused_depth);
