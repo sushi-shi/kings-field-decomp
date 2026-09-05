@@ -56,6 +56,9 @@ promotes a probe to a proven historical toolchain.
 - [notification-state.md](notification-state.md): retail payload/control
   base relationships, the variadic enqueue signature, and the distinction
   between the recovered notification fields and the wider graphics object.
+- [game-notification-dequeue.md](game-notification-dequeue.md): typed dequeue
+  control subobject and late pointer binding recover retail base/offset forms;
+  the initial tail-load address materialization remains non-exact.
 - [render-material.md](render-material.md): supported texture/colour identities,
   unresolved aggregate boundaries, and the retail effect-pool skip behavior.
 - [tmd-counts.md](tmd-counts.md): word-sized disk counts, explicit halfword

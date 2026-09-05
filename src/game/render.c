@@ -218,9 +218,9 @@ void render_initialize(void)
     DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
     DAT_8009506c = 0x1c;
-    notification_state.effect_phase = 0;
-    notification_state.queue_tail = 0;
-    notification_state.queue_head = 0;
+    notification_state.control.effect_phase = 0;
+    notification_state.control.queue_tail = 0;
+    notification_state.control.queue_head = 0;
     flag = notification_message_ids;
     count = 7;
     do {

@@ -106,7 +106,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     model.t[2] = 0xc8;
     spin.vz = 0;
     spin.vy = 0;
-    spin.vx = notification_state.effect_angle_x;
+    spin.vx = notification_state.control.effect_angle_x;
     RotMatrix(&spin, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);

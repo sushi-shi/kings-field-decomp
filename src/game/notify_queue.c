@@ -2,6 +2,21 @@
 #include <kf/notify.h>
 #include <kf/game_menu.h>
 
+typedef char notification_state_size[sizeof(KfNotificationState) == 0x16 ? 1 : -1];
+typedef char notification_control_size[sizeof(KfNotificationControl) == 6 ? 1 : -1];
+typedef char notification_control_offset[
+    (u32)&((KfNotificationState *)0)->control == 0x10 ? 1 : -1];
+typedef char notification_tail_offset[
+    (u32)&((KfNotificationControl *)0)->queue_tail == 0 ? 1 : -1];
+typedef char notification_head_offset[
+    (u32)&((KfNotificationControl *)0)->queue_head == 1 ? 1 : -1];
+typedef char notification_phase_offset[
+    (u32)&((KfNotificationControl *)0)->effect_phase == 2 ? 1 : -1];
+typedef char notification_hold_offset[
+    (u32)&((KfNotificationControl *)0)->hold_frames == 3 ? 1 : -1];
+typedef char notification_angle_offset[
+    (u32)&((KfNotificationControl *)0)->effect_angle_x == 4 ? 1 : -1];
+
 DATA(0x80055d20, 0x54)
 KfNotificationSprite notification_sprites[6] = {
     {0, 0, {0, 0, 0x7f, 0x0f, 0xffc0, 0xffa0, 0x7f, 0x0f}},
@@ -42,7 +57,7 @@ void notify_enqueue(s32 message_id, ...)
     if (message_id == 0xff) {
         return;
     }
-    head = &notification_state.queue_head;
+    head = &notification_state.control.queue_head;
     if (notification_message_ids[*head] == 0xff) {
         notification_message_ids[*head] = message_id;
         if (message_id == 0x13) {
@@ -83,18 +98,18 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)
 {
-    u8 *phase = &notification_state.effect_phase;
+    u8 *phase = &notification_state.control.effect_phase;
 
     switch (*phase) {
     case 0: {
-        u8 tail = notification_state.queue_tail;
+        u8 tail = notification_state.control.queue_tail;
         u8 id = notification_message_ids[tail];
         if (id == 0xff) {
             return;
         }
         *phase = 2;
-        notification_state.effect_angle_x = 0;
-        notification_state.hold_frames = 15;
+        notification_state.control.effect_angle_x = 0;
+        notification_state.control.hold_frames = 15;
         if (id == 0x13) {
             KfNotificationSprite *sprite_records = notification_sprites;
             KfNotificationDigitBuffer digits;
@@ -130,32 +145,33 @@ void notify_effect_update(void)
         break;
     }
     case 2: {
-        u8 counter = notification_state.hold_frames - 1;
-        notification_state.hold_frames = counter;
+        u8 counter = notification_state.control.hold_frames - 1;
+        notification_state.control.hold_frames = counter;
         if (counter == 0) {
             *phase = 3;
         }
         break;
     }
     case 3: {
-        s16 angle_x = notification_state.effect_angle_x + 128;
-        notification_state.effect_angle_x = angle_x;
+        s16 angle_x = notification_state.control.effect_angle_x + 128;
+        notification_state.control.effect_angle_x = angle_x;
         if (angle_x >= 512) {
-            u8 *tail = &notification_state.queue_tail;
+            KfNotificationControl *control;
             u8 id;
-            notification_state.effect_angle_x = 512;
+            notification_state.control.effect_angle_x = 512;
             notification_sprites[5].active = 0;
             notification_sprites[4].active = 0;
             notification_sprites[3].active = 0;
             notification_sprites[2].active = 0;
             notification_sprites[1].active = 0;
             notification_sprites[0].active = 0;
-            id = notification_message_ids[notification_state.queue_tail];
+            control = &notification_state.control;
+            id = notification_message_ids[notification_state.control.queue_tail];
             do {
-                notification_message_ids[*tail] = 0xff;
-                *tail = (*tail + 1) & 7;
-            } while (id == notification_message_ids[*tail] && id != 0x13);
-            notification_state.effect_phase = 0;
+                notification_message_ids[control->queue_tail] = 0xff;
+                control->queue_tail = (control->queue_tail + 1) & 7;
+            } while (id == notification_message_ids[control->queue_tail] && id != 0x13);
+            control->effect_phase = 0;
         }
         break;
     }

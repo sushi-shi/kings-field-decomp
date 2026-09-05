@@ -400,15 +400,16 @@ KfMenuList	0x1e	0x1	cursor_row	u8	supported	game_menu.h;game_menu_assets.md;asm;
 KfMenuList	0x1f	0x1	glyphs_per_entry	u8	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfMenuList	0x20	0x4	glyph_rows	s16 *	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfMenuList	0x24	0x4	quantities	u8 *	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
+KfNotificationControl	0x00	0x01	queue_tail	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	read cursor, advanced modulo eight after the effect finishes
+KfNotificationControl	0x01	0x01	queue_head	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_enqueue	write cursor, advanced modulo eight after an enqueue
+KfNotificationControl	0x02	0x01	effect_phase	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch	zero is idle, two holds, three rotates out
+KfNotificationControl	0x03	0x01	hold_frames	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	countdown seeded with fifteen frames
+KfNotificationControl	0x04	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
 KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfNotificationState	0x00	0x10	message_payloads	u16[8]	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	parallel numeric payloads used only by message 0x13
-KfNotificationState	0x10	0x01	queue_tail	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	read cursor, advanced modulo eight after the effect finishes
-KfNotificationState	0x11	0x01	queue_head	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_enqueue	write cursor, advanced modulo eight after an enqueue
-KfNotificationState	0x12	0x01	effect_phase	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch	zero is idle, two holds, three rotates out
-KfNotificationState	0x13	0x01	hold_frames	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	countdown seeded with fifteen frames
-KfNotificationState	0x14	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
+KfNotificationState	0x10	0x06	control	KfNotificationControl	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	shared dequeue and effect controls immediately after the eight numeric payloads
 KfOpeningEntity	0x00	0x01	object_id	u8	supported	open_resources.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
 KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
 KfOpeningEntity	0x02	0x02	cell_x	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record

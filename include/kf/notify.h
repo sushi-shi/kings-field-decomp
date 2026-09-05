@@ -21,14 +21,19 @@ typedef union KfNotificationDigitBuffer {
     u16 values[12];
 } KfNotificationDigitBuffer;
 
-/* Numeric payloads and the queue's presentation state share one retail base. */
-typedef struct KfNotificationState {
-    u16 message_payloads[8];
+/* The dequeue operation addresses tail and phase through this control base. */
+typedef struct KfNotificationControl {
     u8 queue_tail;
     u8 queue_head;
     u8 effect_phase;
     u8 hold_frames;
     u16 effect_angle_x;
+} KfNotificationControl;
+
+/* Numeric payloads and the queue's presentation state share one retail base. */
+typedef struct KfNotificationState {
+    u16 message_payloads[8];
+    KfNotificationControl control;
 } KfNotificationState;
 
 extern u8 notification_message_ids[8];
