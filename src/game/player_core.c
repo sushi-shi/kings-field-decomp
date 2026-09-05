@@ -15,6 +15,14 @@
 
 RODATA(0x80012030, 0x18)
 
+DATA(0x8005581c, 0x10)
+char weapon_image_path_template[16] = "WEPON\\WEP00.MIM";
+
+DATA(0x8005582c, 0xa)
+KfFloorEntryCell floor_entry_cells[5] = {
+    {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
+};
+
 /* Stores the item id into one of the six armor slots, re-resolves the five armor record pointers, and recalculates. */
 ADDRESS(0x80016848, 0x1e8)
 void player_set_equipment_slot(u8 item_id, u8 slot)

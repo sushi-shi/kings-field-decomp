@@ -557,6 +557,36 @@ build remains red on source-data, placement and reachable-ownership failures.
 Unsupported SDK data forms and unresolved game/census owners remain explicit
 work; no whole-executable equality is claimed.
 
+## GAME player DATA ownership checkpoint
+
+The player weapon path, floor-entry cell table and two item-interaction image
+paths now have complete initialized DATA definitions in their consuming
+modules. All three mutable path extents now include their retail NUL; their
+old catch-all extern declarations omitted it. The floor table retains the
+proven x-then-z byte fields and the exact -2 relocation addend. Its former
+extern const storage assumption is replaced by the initialized-data owner.
+See [per-function and data evidence](../config/evidence/game_player_data.md).
+
+Four reached ranges move from config-only to source ownership. All **55
+initializer bytes** agree with retail in both compiled and delinked objects;
+this is not a claim of whole-section equality. The strict gate now exposes
+core DATA 26 versus 32 bytes and item-use DATA 31 versus 32. Source-data
+matches therefore drop from 13/60 to **11/60**; SDK config comparisons remain
+2/2. The extra core tail overlaps the following image path in retail, so it
+is not silently included as padding. No compiler output is cropped.
+
+Only two bases and two module targets change. All function text, ordered text
+relocations, RODATA and 484 function score rows remain unchanged, preserving
+all 354 exact game functions. Both updated targets relink through GNU ld;
+all-image target relinking remains 108/114 with the same six conflicts.
+Unpaired config ranges fall from 664 to **660**. Reachable-byte closure and
+linked-executable equality remain unproven.
+
+All 535 local tests, Ruff, diff checks and clean flake checks pass (59
+local-retail/oracle skips in the clean sandbox). The full comparison graph
+completes; the default build remains red on explicit data, placement and
+reachability failures. No exact function is banked in this ownership campaign.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

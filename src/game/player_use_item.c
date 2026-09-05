@@ -4,6 +4,12 @@
 
 RODATA(0x80012048, 0x130)
 
+DATA(0x80055838, 0xe)
+char enemy_info_image_path_template[14] = "ENE0\\EI00.TIM";
+
+DATA(0x80055848, 0xf)
+char person_image_path_template[15] = "PRSN\\PER00.TIM";
+
 ADDRESS(0x80017edc, 0xc8)
 void actor_show_info_image(const KfActor *actor)
 {

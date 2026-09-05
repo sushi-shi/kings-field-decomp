@@ -55,7 +55,6 @@ extern u32 DAT_80095698;
 extern u32 DAT_8009569c;
 extern u32 DAT_8009a740;
 extern u32 DAT_800a0768;
-extern char enemy_info_image_path_template[13];
 extern u32 game_exit_code;
 extern const SoundRef gameplay_sound_ref_0;
 extern const SoundRef gameplay_sound_ref_1;
@@ -69,8 +68,6 @@ extern const SoundRef gameplay_sound_ref_5;
 extern SoundRef gameplay_sound_ref_6;
 extern const SoundRef gameplay_sound_ref_7;
 extern const SoundRef gameplay_sound_ref_8;
-extern char person_image_path_template[14];
 extern char talk_image_path_template[];
-extern char weapon_image_path_template[15];
 
 #endif

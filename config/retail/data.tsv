@@ -2648,14 +2648,13 @@ GAME.EXE	0x800557db	0x43fdb	0x4	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x8005580c	0x4400c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055810	0x44010	0x9	data	direct-bytes	player_sound_refs	SoundRef[3]	game_semantic_player_stats.tsv	packed weapon-attack, death, and level-up sound references
 GAME.EXE	0x80055819	0x44019	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x8005581c	0x4401c	0xf	string	byte-pattern	weapon_image_path_template	ascii	game_semantic_player_stats.tsv	escaped text: WEPON\\WEP00.MIM; the two decimal digits are rewritten for the equipped weapon
-GAME.EXE	0x8005582b	0x4402b	0x1	unclassified	coverage-gap			payload-complement	terminating NUL for the preceding mutable weapon-image path
-GAME.EXE	0x8005582c	0x4402c	0xa	data	direct-bytes	floor_entry_cells	KfMapCell[5]	game_semantic_player_interactions.tsv	one cell for floors one through five; player_warp_to_floor_entry deliberately indexes from address two bytes before this one-based table
+GAME.EXE	0x8005581c	0x4401c	0x10	string	reviewed	weapon_image_path_template	char[16]	game_player_data.md	escaped text: WEPON\\WEP00.MIM; complete mutable path including terminating NUL; decimal weapon digits at offsets 9 and 10
+GAME.EXE	0x8005582c	0x4402c	0xa	data	direct-bytes	floor_entry_cells	KfFloorEntryCell[5]	game_semantic_player_interactions.tsv;game_player_data.md	one x-then-z cell for floors one through five; player_warp_to_floor_entry deliberately indexes from address two bytes before this one-based table
 GAME.EXE	0x80055836	0x44036	0x2	unclassified	coverage-gap			payload-complement	alignment bytes between the floor-entry table and the next mutable path
-GAME.EXE	0x80055838	0x44038	0xd	string	direct-references	enemy_info_image_path_template	ascii	game_semantic_player_interactions.tsv	escaped text: ENE0\\EI00.TIM; floor and actor definition ID digits are rewritten before display
-GAME.EXE	0x80055845	0x44045	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055848	0x44048	0xe	string	direct-references	person_image_path_template	ascii	game_semantic_player_interactions.tsv	escaped text: PRSN\\PER00.TIM; map-event kind digits are rewritten before display
-GAME.EXE	0x80055856	0x44056	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055838	0x44038	0xe	string	reviewed	enemy_info_image_path_template	char[14]	game_player_data.md	escaped text: ENE0\\EI00.TIM; complete mutable path including terminating NUL; floor and actor definition ID digits are rewritten before display
+GAME.EXE	0x80055846	0x44046	0x2	unclassified	coverage-gap			payload-complement	zero bytes between the complete actor-info and person-info paths; allocation ownership unresolved
+GAME.EXE	0x80055848	0x44048	0xf	string	reviewed	person_image_path_template	char[15]	game_player_data.md	escaped text: PRSN\\PER00.TIM; complete mutable path including terminating NUL; map-event kind digits are rewritten before display
+GAME.EXE	0x80055857	0x44057	0x1	unclassified	coverage-gap			payload-complement	zero byte between the complete person-info path and the following matrix; allocation ownership unresolved
 GAME.EXE	0x80055858	0x44058	0x20	defined	reviewed	DAT_80055858	MATRIX	manual:game_semantic_player_update	color matrix blended toward color_matrix_table[0] while status effect 1 fades
 GAME.EXE	0x80055878	0x44078	0x40	defined	reviewed	DAT_80055878	SVECTOR[8]	manual:game_semantic_player_update	view_rotation_offset table indexed by player_state.update_state
 GAME.EXE	0x800558b8	0x440b8	0x238	defined	reviewed	map_cell_attribute_height_table	s16[284]	manual:game_semantic_player_interactions	per-attribute height offsets indexed by map_cell_attribute_grid values; extent is the remaining span and stays WIP
