@@ -5442,8 +5442,9 @@ OPEN.EXE	0x8003773c	0x25f3c	0x4	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x80037740	0x25f40	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80037744	0x25f44	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037748	0x25f48	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8003774c	0x25f4c	0xc	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80037758	0x25f58	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x8003774c	0x25f4c	0x4	unclassified	coverage-gap			payload-complement	unresolved four-byte gap before the separately proved sequence callback save area
+OPEN.EXE	0x80037750	0x25f50	0x8	bss	reviewed	ss_tick_saved_low_ram	u8[8]	sony_sequence_tick_context.md;cross-overlay-retail	vendor callback saves and restores eight low-RAM bytes; zero-filled padded executable tail is not a source initializer
+OPEN.EXE	0x80037758	0x25f58	0x4	bss	reviewed	ss_tick_saved_sp	u32	sony_sequence_tick_context.md;SETJMP.H;cross-overlay-retail	saved vendor callback stack pointer, not initialized game data; retain all padded load-image bytes in the census
 OPEN.EXE	0x8003775c	0x25f5c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037760	0x25f60	0x4	bss	reviewed	pad_buf	u32	manual:pad_storage_and_linkage	private PAD word after CPE conversion residue; archive .sbss and write-before-read establish uninitialized storage despite loaded page zeros
 OPEN.EXE	0x80037764	0x25f64	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

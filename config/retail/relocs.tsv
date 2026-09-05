@@ -9506,16 +9506,16 @@ GAME.EXE	0x8004a398	0x38b98	0x8004a39c	mips_hi16_lo16	reachable-code	0x800a06e0	
 GAME.EXE	0x8004a3ec	0x38bec		mips26	instruction-word	0x8004452c	load	SpuVmSeqKeyOff	jal		range-filtered	reviewed	manual:libsnd-sequence-control
 GAME.EXE	0x8004a408	0x38c08	0x8004a40c	mips_hi16_lo16	reachable-code	0x800a06e0	bss	_ss_score	lui+addiu	v0	paired-reviewed	reviewed	manual:libsnd-sequence-control
 GAME.EXE	0x8004a55c	0x38d5c	0x8004a560	mips_hi16_lo16	reachable-code	0x8009a740	outside-load	DAT_8009a740	lui+lw	v1	manual-paired-pattern	reviewed	manual:SsSeqCalledTbyT-boundary
-GAME.EXE	0x8004a588	0x38d88	0x8004a58c	mips_hi16_lo16	reachable-code	0x80057d08	load	DAT_80057d08	lui+lw	a1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a590	0x38d90	0x8004a594	mips_hi16_lo16	reachable-code	0x80058010	outside-load	DAT_80058010	lui+addiu	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a588	0x38d88	0x8004a58c	mips_hi16_lo16	reachable-code	0x80057d08	load	ss_tick_low_ram_pointer	lui+lw	a1	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
+GAME.EXE	0x8004a590	0x38d90	0x8004a594	mips_hi16_lo16	reachable-code	0x80058010	bss	ss_tick_saved_low_ram	lui+addiu	a0	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
 GAME.EXE	0x8004a598	0x38d98		mips26	reachable-code	0x8004a52c	load	func_8004a52c	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a5a0	0x38da0	0x8004a5a4	mips_hi16_lo16	reachable-code	0x8005b270	outside-load	DAT_8005b270	lui+addiu	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5a0	0x38da0	0x8004a5a4	mips_hi16_lo16	reachable-code	0x8005b270	bss	ss_tick_context	lui+addiu	a0	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
 GAME.EXE	0x8004a5a8	0x38da8		mips26	reachable-code	0x8005033c	load	setjmp	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a5d0	0x38dd0		mips26	reachable-code	0x8004a618	load		j		manual-control-flow	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a5e4	0x38de4		mips26	reachable-code	0x8004a618	load		j		manual-control-flow	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a5ec	0x38dec	0x8004a5f0	mips_hi16_lo16	reachable-code	0x8005b274	outside-load	DAT_8005b274	lui+addiu	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a5f8	0x38df8	0x8004a5fc	mips_hi16_lo16	reachable-code	0x80063278	outside-load	DAT_80063278	lui+addiu	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a608	0x38e08	0x8004a60c	mips_hi16_lo16	reachable-code	0x80058018	outside-load	DAT_80058018	lui+sw	at	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a5ec	0x38dec	0x8004a5f0	mips_hi16_lo16	reachable-code	0x8005b274	bss	ss_tick_context	lui+addiu	a0	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
+GAME.EXE	0x8004a5f8	0x38df8	0x8004a5fc	mips_hi16_lo16	reachable-code	0x80063278	outside-load	DAT_80063278	lui+addiu	v0	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
+GAME.EXE	0x8004a608	0x38e08	0x8004a60c	mips_hi16_lo16	reachable-code	0x80058018	bss	ss_tick_saved_sp	lui+sw	at	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
 GAME.EXE	0x8004a610	0x38e10		mips26	reachable-code	0x800503dc	load	longjmp	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a618	0x38e18		mips26	reachable-code	0x80043ee0	load	func_80043ee0	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a620	0x38e20	0x8004a624	mips_hi16_lo16	reachable-code	0x800a0770	bss	_snd_seq_s_max	lui+lh	v0	paired-reviewed	reviewed	manual:libsnd-sequence-tick-control
@@ -9533,11 +9533,11 @@ GAME.EXE	0x8004a7b0	0x38fb0		mips26	reachable-code	0x8004a3c8	load	Snd_stop	jal	
 GAME.EXE	0x8004a7b8	0x38fb8	0x8004a7bc	mips_hi16_lo16	reachable-code	0x800a0778	outside-load	_snd_seq_t_max	lui+lh	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a7d0	0x38fd0	0x8004a7d4	mips_hi16_lo16	reachable-code	0x800a0770	bss	_snd_seq_s_max	lui+lh	v0	paired-reviewed	reviewed	manual:libsnd-sequence-tick-control
 GAME.EXE	0x8004a7e8	0x38fe8	0x8004a7ec	mips_hi16_lo16	reachable-code	0x8009a740	outside-load	DAT_8009a740	lui+lw	v1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a7fc	0x38ffc	0x8004a800	mips_hi16_lo16	reachable-code	0x80057d08	load	DAT_80057d08	lui+lw	a0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a804	0x39004	0x8004a808	mips_hi16_lo16	reachable-code	0x80058010	outside-load	DAT_80058010	lui+addiu	a1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a7fc	0x38ffc	0x8004a800	mips_hi16_lo16	reachable-code	0x80057d08	load	ss_tick_low_ram_pointer	lui+lw	a0	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
+GAME.EXE	0x8004a804	0x39004	0x8004a808	mips_hi16_lo16	reachable-code	0x80058010	bss	ss_tick_saved_low_ram	lui+addiu	a1	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
 GAME.EXE	0x8004a80c	0x3900c		mips26	reachable-code	0x8004a52c	load	func_8004a52c	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a814	0x39014	0x8004a818	mips_hi16_lo16	reachable-code	0x8005b274	outside-load	DAT_8005b274	lui+addiu	v0	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
-GAME.EXE	0x8004a81c	0x3901c	0x8004a820	mips_hi16_lo16	reachable-code	0x80058018	outside-load	DAT_80058018	lui+lw	v1	manual-paired-pattern	reviewed	manual:func_8004a564-disassembly
+GAME.EXE	0x8004a814	0x39014	0x8004a818	mips_hi16_lo16	reachable-code	0x8005b274	bss	ss_tick_context	lui+addiu	v0	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
+GAME.EXE	0x8004a81c	0x3901c	0x8004a820	mips_hi16_lo16	reachable-code	0x80058018	bss	ss_tick_saved_sp	lui+lw	v1	paired-reviewed	reviewed	manual:func_8004a564-disassembly;manual:sony_sequence_tick_context
 GAME.EXE	0x8004a82c	0x3902c		mips26	reachable-code	0x800503dc	load	longjmp	jal		manual-control-flow	reviewed	manual:func_8004a564-disassembly
 GAME.EXE	0x8004a894	0x39094	0x8004a898	mips_hi16_lo16	reachable-code	0x800a06e0	bss	_ss_score	lui+addiu	a3	paired-reviewed	reviewed	manual:libsnd-sequence-tick-control
 GAME.EXE	0x8004a94c	0x3914c		mips26	instruction-word	0x800442b4	load		jal		range-filtered	reviewed	manual:libsnd-sequence-tick-control
@@ -14319,14 +14319,16 @@ OPEN.EXE	0x8002a16c	0x1896c	0x8002a170	mips_hi16_lo16	reachable-code	0x800758a0	
 OPEN.EXE	0x8002a1c0	0x189c0		mips26	instruction-word	0x8002434c	load	SpuVmSeqKeyOff	jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a1dc	0x189dc	0x8002a1e0	mips_hi16_lo16	reachable-code	0x800758a0	bss	_ss_score	lui+addiu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8002a330	0x18b30	0x8002a334	mips_hi16_lo16	reachable-code	0x80073098	outside-load	DAT_80073098	lui+lw	v1	manual-paired-pattern	reviewed	manual:SsSeqCalledTbyT-boundary
-OPEN.EXE	0x8002a35c	0x18b5c	0x8002a360	mips_hi16_lo16	instruction-word	0x80037478	load		lui+lw	a1	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002a364	0x18b64	0x8002a368	mips_hi16_lo16	instruction-word	0x80037750	load		lui+addiu	a0	paired-pattern	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002a35c	0x18b5c	0x8002a360	mips_hi16_lo16	reachable-code	0x80037478	load	ss_tick_low_ram_pointer	lui+lw	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:sony_sequence_tick_context
+OPEN.EXE	0x8002a364	0x18b64	0x8002a368	mips_hi16_lo16	reachable-code	0x80037750	bss	ss_tick_saved_low_ram	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:sony_sequence_tick_context
 OPEN.EXE	0x8002a36c	0x18b6c		mips26	instruction-word	0x8002a300	load		jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002a374	0x18b74	0x8002a378	mips_hi16_lo16	reachable-code	0x80039340	bss	ss_tick_context	lui+addiu	a0	paired-reviewed	reviewed	manual:sony_sequence_tick_context
 OPEN.EXE	0x8002a37c	0x18b7c		mips26	instruction-word	0x800300a0	load	setjmp	jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a3a4	0x18ba4		mips26	instruction-word	0x8002a3ec	load		j		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a3b8	0x18bb8		mips26	instruction-word	0x8002a3ec	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002a3c0	0x18bc0	0x8002a3c4	mips_hi16_lo16	reachable-code	0x80039344	bss	DAT_80039344	lui+addiu	a0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8002a3dc	0x18bdc	0x8002a3e0	mips_hi16_lo16	instruction-word	0x80037758	load		lui+sw	at	paired-pattern	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002a3c0	0x18bc0	0x8002a3c4	mips_hi16_lo16	reachable-code	0x80039344	bss	ss_tick_context	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:sony_sequence_tick_context
+OPEN.EXE	0x8002a3cc	0x18bcc	0x8002a3d0	mips_hi16_lo16	reachable-code	0x80041348	outside-load	DAT_80041348	lui+addiu	v0	paired-reviewed	reviewed	manual:sony_sequence_tick_context
+OPEN.EXE	0x8002a3dc	0x18bdc	0x8002a3e0	mips_hi16_lo16	reachable-code	0x80037758	bss	ss_tick_saved_sp	lui+sw	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:sony_sequence_tick_context
 OPEN.EXE	0x8002a3e4	0x18be4		mips26	instruction-word	0x80030120	load	longjmp	jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a3ec	0x18bec		mips26	instruction-word	0x80023d00	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a3f4	0x18bf4	0x8002a3f8	mips_hi16_lo16	reachable-code	0x80075930	bss	_snd_seq_s_max	lui+lh	v0	paired-reviewed	reviewed	manual:libsnd-sequence-tick-control
@@ -14344,11 +14346,11 @@ OPEN.EXE	0x8002a584	0x18d84		mips26	instruction-word	0x8002a19c	load	Snd_stop	ja
 OPEN.EXE	0x8002a58c	0x18d8c	0x8002a590	mips_hi16_lo16	reachable-code	0x80075938	bss	_snd_seq_t_max	lui+lh	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8002a5a4	0x18da4	0x8002a5a8	mips_hi16_lo16	reachable-code	0x80075930	bss	_snd_seq_s_max	lui+lh	v0	paired-reviewed	reviewed	manual:libsnd-sequence-tick-control
 OPEN.EXE	0x8002a5bc	0x18dbc	0x8002a5c0	mips_hi16_lo16	reachable-code	0x80073098	bss	DAT_80073098	lui+lw	v1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8002a5d0	0x18dd0	0x8002a5d4	mips_hi16_lo16	instruction-word	0x80037478	load		lui+lw	a0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002a5d8	0x18dd8	0x8002a5dc	mips_hi16_lo16	instruction-word	0x80037750	load		lui+addiu	a1	paired-pattern	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002a5d0	0x18dd0	0x8002a5d4	mips_hi16_lo16	reachable-code	0x80037478	load	ss_tick_low_ram_pointer	lui+lw	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:sony_sequence_tick_context
+OPEN.EXE	0x8002a5d8	0x18dd8	0x8002a5dc	mips_hi16_lo16	reachable-code	0x80037750	bss	ss_tick_saved_low_ram	lui+addiu	a1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:sony_sequence_tick_context
 OPEN.EXE	0x8002a5e0	0x18de0		mips26	instruction-word	0x8002a300	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8002a5e8	0x18de8	0x8002a5ec	mips_hi16_lo16	reachable-code	0x80039344	bss	DAT_80039344	lui+addiu	v0	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x8002a5f0	0x18df0	0x8002a5f4	mips_hi16_lo16	instruction-word	0x80037758	load		lui+lw	v1	paired-pattern	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8002a5e8	0x18de8	0x8002a5ec	mips_hi16_lo16	reachable-code	0x80039344	bss	ss_tick_context	lui+addiu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:sony_sequence_tick_context
+OPEN.EXE	0x8002a5f0	0x18df0	0x8002a5f4	mips_hi16_lo16	reachable-code	0x80037758	bss	ss_tick_saved_sp	lui+lw	v1	paired-reviewed	reviewed	investigation:relocs.tsv;manual:sony_sequence_tick_context
 OPEN.EXE	0x8002a600	0x18e00		mips26	instruction-word	0x80030120	load	longjmp	jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8002a668	0x18e68	0x8002a66c	mips_hi16_lo16	reachable-code	0x800758a0	bss	_ss_score	lui+addiu	a3	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
 OPEN.EXE	0x8002a720	0x18f20		mips26	instruction-word	0x800240d4	load		jal		range-filtered	candidate	investigation:relocs.tsv

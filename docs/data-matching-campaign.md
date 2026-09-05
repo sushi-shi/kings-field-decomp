@@ -749,6 +749,36 @@ checks pass (83 optional local-artifact skips inside the flake sandbox). Focused
 compiles and the full comparison graph were rebuilt. No failure gate, function
 baseline, compiler profile or original address was relaxed.
 
+## Vendor sequence callback context and missing OPEN references
+
+The sequence callback now has four supported config-owned data objects in each
+overlay: an initialized pointer to low RAM, an eight-byte save area, a saved SP,
+and the authentic twelve-word `jmp_buf`. The old +4 identities were interior
+stack-pointer fields, not separate abort-handler globals. Seven unused vendor
+declarations are removed from the game header. Source/header DAT_ occurrences
+fall 177 to 170; no SDK body is reconstructed or counted as game progress.
+
+Twenty reviewed HI16/LO16 pairs round-trip to the original retail instructions
+and referents. OPEN gains two missing pairs, including an alternate-stack target
+whose allocation bounds remain unproved. The GAME unmodelled-target count falls
+four to one; OPEN rises zero to one because the same previously invisible gap is
+now exposed. Eight OPEN candidate paths become validated. Config ranges without
+matching counterparts increase 624 to 625 (GAME 358, OPEN 267); a newly modelled
+owner is not silently treated as a successful comparison.
+
+The Release 2.5 SSCALL member is explicitly a revision negative control: its
+export and dispatch family support vendor lineage, but it lacks the retail
+setjmp wrapper and cannot supply these data allocations. No provider object or
+arbitrary stack extent is fabricated. See the
+[per-image context and relocation evidence](../config/evidence/sony_sequence_tick_context.md).
+
+All 112 source objects and 484 function-score rows are unchanged. The 360/471
+exact game functions and 13 vendor controls are preserved. All 572 local tests
+pass without skips; Ruff and diff checks pass. The mandatory full build remains
+red with source data 6/59, SDK data 2/2 and target relinking 108/114. This campaign
+improves reachable-data identity and exposes missing evidence; it does not close
+data matching or linked-executable equality.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

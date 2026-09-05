@@ -23,13 +23,7 @@ extern char DAT_80056238[16];
 extern u8 DAT_80056247[];
 extern MATRIX DAT_80056248;
 extern u16 DAT_80057b72;
-extern void *DAT_80057d08;
 extern u32 DAT_80057d24;
-extern u8 DAT_80058010[8];
-extern void *DAT_80058018; /* saved handler */
-extern int DAT_8005b270[]; /* jmp_buf */
-extern void *DAT_8005b274; /* live abort handler slot (jmp_buf + 4) */
-extern int DAT_80063278; /* installed abort handler */
 extern u8 DAT_800652a8[240]; /* inventory and progress flag block */
 extern u16 DAT_80095060;
 extern u16 DAT_80095062;
@@ -42,7 +36,6 @@ extern u16 DAT_8009508c;
 extern u16 DAT_8009508e;
 extern u32 DAT_80095698;
 extern u32 DAT_8009569c;
-extern u32 DAT_8009a740;
 extern u32 DAT_800a0768;
 extern u32 game_exit_code;
 extern const SoundRef gameplay_sound_ref_0;

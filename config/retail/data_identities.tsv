@@ -1557,7 +1557,7 @@ GAME.EXE	0x80057cf4	0x2	DAT_80057cf4	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80057cf8	0x4	DAT_80057cf8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057cfc	0x2	DAT_80057cfc	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057cfe	0x2	DAT_80057cfe	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-GAME.EXE	0x80057d08	0x4	DAT_80057d08	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+GAME.EXE	0x80057d08	0x4	ss_tick_low_ram_pointer	unknown	load	u8 *	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	initialized pointer to low RAM 0x100; only the vendored sequence callback copies through it; source linkage unresolved
 GAME.EXE	0x80057d0c	0x4	DAT_80057d0c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d10	0x4	DAT_80057d10	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057d14	0x4	DAT_80057d14	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1631,7 +1631,8 @@ GAME.EXE	0x80057ff0	0x2	DAT_80057ff0	unknown	load	undefined2		address-only	data.
 GAME.EXE	0x80057ff8	0x4	DAT_80057ff8	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80058000	0x4	DAT_80058000	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x80058008	0x4	DAT_80058008	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x80058018	0x4	DAT_80058018	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x80058010	0x8	ss_tick_saved_low_ram	unknown	bss	u8[8]	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete eight-byte save/restore destination of the vendor callback; byte meaning within low RAM remains unresolved; not executable initialized data
+GAME.EXE	0x80058018	0x4	ss_tick_saved_sp	unknown	bss	u32	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	saved jmp_buf[JB_SP] restored before longjmp(...,2); a stack pointer, not an abort-handler code pointer
 GAME.EXE	0x80058020	0x4	pad_buf	static	bss	u32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_buf;asm;xrefs	private PAD word initialized to -1, passed to PAD_init2, complemented by PadRead, and referenced nowhere outside PAD.OBJ
 GAME.EXE	0x80058028	0x4	pad_status	static	bss	u32	pad	supported	game_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-pad_status;asm;xrefs	private PAD status word cleared by PadInit and referenced nowhere outside PAD.OBJ
 GAME.EXE	0x80058060	0x20	player_death_saved_color_matrix	unknown	bss	MATRIX	player_death	supported	game_semantic_player_death.tsv;asm;xrefs;ReadColorMatrix	full color-matrix snapshot written at death entry and consumed by the death fade; entry startup also clears its first word, source linkage unresolved
@@ -1720,7 +1721,7 @@ GAME.EXE	0x8005b0a0	0x2	DAT_8005b0a0	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x8005b0a2	0x2	DAT_8005b0a2	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8005b0a4	0x2	DAT_8005b0a4	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8005b0ac	0x4	DAT_8005b0ac	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8005b274	0x4	DAT_8005b274	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+GAME.EXE	0x8005b270	0x30	ss_tick_context	unknown	bss	jmp_buf	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete SETJMP.H twelve-word context; +4 is JB_SP inside this owner, not a separate global; original private/exported linkage unresolved
 GAME.EXE	0x800632a4	0x4	DAT_800632a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800642d0	0x4	DAT_800642d0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800642d4	0x4	DAT_800642d4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
@@ -2771,7 +2772,7 @@ OPEN.EXE	0x80037464	0x2	DAT_80037464	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x80037468	0x4	DAT_80037468	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003746c	0x2	DAT_8003746c	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003746e	0x2	DAT_8003746e	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037478	0x4	DAT_80037478	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037478	0x4	ss_tick_low_ram_pointer	unknown	load	u8 *	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	initialized pointer to low RAM 0x100; only the vendored sequence callback copies through it; source linkage unresolved
 OPEN.EXE	0x8003747c	0x4	DAT_8003747c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037480	0x4	DAT_80037480	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037484	0x4	DAT_80037484	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2839,7 +2840,8 @@ OPEN.EXE	0x80037730	0x2	DAT_80037730	unknown	load	undefined2		address-only	data.
 OPEN.EXE	0x80037738	0x4	DAT_80037738	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037740	0x4	DAT_80037740	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037748	0x4	DAT_80037748	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80037758	0x4	DAT_80037758	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037750	0x8	ss_tick_saved_low_ram	unknown	bss	u8[8]	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete eight-byte save/restore destination of the vendor callback; byte meaning within low RAM remains unresolved; not executable initialized data
+OPEN.EXE	0x80037758	0x4	ss_tick_saved_sp	unknown	bss	u32	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	saved jmp_buf[JB_SP] restored before longjmp(...,2); a stack pointer, not an abort-handler code pointer
 OPEN.EXE	0x80037760	0x4	pad_buf	static	bss	u32	pad	supported	pad_storage_and_linkage.md;open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-sbss-pad_buf;retail-CPE-tail;asm;xrefs	private uninitialized PAD word after the CPE residue at 0x800375d8; set to -1 before its address escapes or PadRead consumes it; archive .sbss allocation, not a load initializer
 OPEN.EXE	0x80037768	0x4	pad_status	static	bss	u32	pad	supported	pad_storage_and_linkage.md;open_vendor_pad.tsv;overlay_lineage.tsv;LIBETC.LIB-PAD.OBJ-sbss-pad_status;retail-CPE-tail;asm;xrefs	private uninitialized PAD word after the CPE residue; cleared by PadInit; archive .sbss offset eight corroborates spacing, not an initialized zero or an eight-byte C type
 OPEN.EXE	0x80037770	0x4	DAT_80037770	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2922,7 +2924,7 @@ OPEN.EXE	0x80039170	0x2	DAT_80039170	unknown	bss	u16		address-only	ghidra-12.0.4
 OPEN.EXE	0x80039172	0x2	DAT_80039172	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x80039174	0x2	DAT_80039174	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x8003917c	0x4	DAT_8003917c	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80039344	0x4	DAT_80039344	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
+OPEN.EXE	0x80039340	0x30	ss_tick_context	unknown	bss	jmp_buf	psyq_sscall	supported	sony_sequence_tick_context.md;SsSeqCalledTbyT;SETJMP.H;cross-overlay-retail	complete SETJMP.H twelve-word context; +4 is JB_SP inside this owner, not a separate global; original private/exported linkage unresolved
 OPEN.EXE	0x80041374	0x4	DAT_80041374	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800423a0	0x4	DAT_800423a0	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800423a4	0x4	DAT_800423a4	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
