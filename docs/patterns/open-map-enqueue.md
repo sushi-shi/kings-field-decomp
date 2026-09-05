@@ -1,5 +1,41 @@
 # OPEN map polygon emission
 
+## Function Match Plan: case-local vertex lifetimes (`d1d9562`)
+
+OPEN `800185e8` starts this follow-up at strict 99.663864%, 952 bytes under
+`probe-gcc257-o2-g0`. The six semantic queries and full retail CFG, sole
+map-cell caller, adjacent unlit/sprite boundaries, accessor and allocator,
+shared layouts, SDK declarations/provider ledger and source history were
+rechecked. Eighteen direct calls, two validated address pairs, one internal
+jump, no strings/candidate references, the 80-byte frame and every delay slot
+retain the contract described below. The caller masks its object to eight
+bits before the supported unsigned-halfword API; prepared vertex indices are
+unsigned halfword byte offsets into the shared projected array. This remains
+game-owned packet traversal around separately attributed SDK operations.
+
+All vertex pointers die within the selected polygon case, before the shared
+packet-advance label. The fourth exists only for the quad path and is formed
+after clipping; the current C nevertheless declares all four function-wide.
+Test narrowing each pointer to its actual case scope, keeping the existing
+case-local depth and SDK packet pointers. This is a source-lifetime correction,
+not a declaration-order search. Do not change statements, call order, packet
+types, common-tail spelling, shared owners, compiler options or GAME. Compare
+the earliest normal-pointer spill difference and the triangle packet register
+after a real focused build; retain only a supported source improvement.
+
+Separating all vertex locals grows the body to 960 bytes: both clipping paths
+lose retail's paired index loads, adding a load-delay nop per case, and use
+different vertex registers. All 18 numeric calls and two address pairs remain,
+but this does not reproduce the retail dependency schedule. Restore the three
+shared clipping vertices. The fourth vertex is a distinct lifetime: quad-only,
+computed after the clipping call and consumed through the fourth fog/depth
+lane. Test only that narrower scope while retaining the shared first three.
+
+The fourth-only scope emits the original 952-byte candidate and exactly the
+same 20 unequal words. Both scope trials are removed. The retained source,
+strict 99.663864% result and numeric referents are unchanged; this follow-up
+does not supply a new exact match or justify further declaration permutations.
+
 Current result: **99.663864% strict objdiff**, 952 compiled/retail bytes under
 `probe-gcc257-o2-g0`. Twenty aligned words remain different; this function is
 not exact and is not banked. The current caller is 87.922420% and unchanged by

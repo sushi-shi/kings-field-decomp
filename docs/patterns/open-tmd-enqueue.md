@@ -1,8 +1,113 @@
 # OPEN general TMD polygon emission
 
-Current result: **99.044580% strict objdiff**, 3324 compiled bytes versus
+## Function Match Plan: shared acceptance path (`d1d9562`)
+
+OPEN `8001764c`, 3320 retail bytes, starts at strict 99.044580% with a
+3324-byte candidate under `probe-gcc257-o2-g0`. All six semantic queries,
+the full 991-line retail CFG/disassembly, both signed-bias caller sequences,
+adjacent projection/unlit boundaries, source history, complete C and shared
+SDK packet/header layouts were rechecked. The current evidence remains 57
+direct calls, eleven validated internal jumps and eleven retail address pairs;
+the table's 29 incoming pointer rows remain candidates. No strings occur.
+The eight-argument GTE color calls retain their real SDK stack arguments,
+and SMP/PRIM evidence excludes the helpers, not this game-owned emitter.
+
+Every successfully clipped supported mode reaches the same acceptance block
+at `800182c4`: add signed bias, compare against five, put the allocated packet
+in the AddPrim argument in the rejection branch's delay slot, mask the index
+and load the OT through projected-base minus 276. The current source repeats
+that whole policy in twelve cases; its compiled tail still independently
+materializes the OT and shifts seventeen default rows by four bytes. Its
+shifted depth also lands directly in a0 rather than retail v0. Frame space
+and header/body cursor differences remain separate unresolved observations.
+
+Test a single post-switch bias/acceptance/insertion path. Each case keeps its
+own depth formula and produces its actual allocated SDK packet pointer for
+the common AddPrim use. Rejected clips and unsupported modes still jump to
+packet advancement and never use that pointer. Preserve all twelve shading
+paths, allocation sizes, packed widths, mode order, loop, owners and compiler
+flags. Unlike the earlier map trial, this joins the directly observed common
+bias and lower-depth check, not two map-specific upper-depth checks. Compare
+raw calls/referents, every switch addend and the first divergence; no stack
+padding or forced shared-base alias is permitted.
+
+The common acceptance path collapses several distinct shading/depth tails:
+only 53 direct call sites remain versus retail's 57, the body shrinks to
+2860 bytes, and the bias is spilled to a halfword while a constant divisor
+occupies s8. Although the semantic paths are preserved, this does not explain
+the retail call-site topology; discard that join placement. Keep bias and
+depth rejection inside each mode and test only a common insertion path.
+Each accepted case passes its actual SDK packet and already-biased depth to
+AddPrim; rejection still skips insertion. This keeps the earlier per-mode
+acceptance boundary while checking the observed single insertion consumer.
+
+The insertion-only form preserves all 57 direct call sites but adds another
+packet-pointer move before AddPrim. The extra OT pair remains and the body
+grows to 3328 bytes; remove both common-tail trials and restore the original
+per-mode insertion source.
+
+The remaining header/body distinction is a separately decoded source-lifetime
+question. Earlier in-place trials retained both the advancing byte cursor and
+a typed `body` local, causing a cursor spill. Test one advancing byte cursor
+without that second local: case polygon pointers derive directly from the
+cursor, and the packed union fields are accessed through direct typed views.
+The cursor alone advances past the header and later past its payload length,
+as retail s1 does. No offsets, packed layouts or shaded-field identities
+change; remove this variant if it merely repeats the previous spill result.
+
+The single cursor does recover retail's in-place s1 header load/advance and
+end-of-packet update, without introducing a cursor spill. The candidate stays
+3324 bytes and preserves all 57 numeric calls and the same address pairs;
+aligned word differences fall from 139 to 134. Before retaining repeated
+union casts for packed fields, check an equivalent case-local union polygon
+view. Each case's existing polygon pointer will name the shared discriminated
+body union, using its matching mode member for indices and its packed texture
+or color member for SDK accesses. This is a typed readability control on the
+now-correct cursor lifetime, not another function-wide body pointer.
+
+The case-local union views emit the same 134-word residue. The real focused
+match confirms **99.098790%**, up from 99.044580%; keep the single cursor and
+coherent case-local views. This requires twelve actual byte-cursor-to-polygon
+casts instead of the previous single function-wide body cast; they are not
+hidden behind macros or compensated by unrelated cast edits.
+
+Next test the directly observed depth expression dependency. Retail shifts
+the unbiased depth in v0 and adds the signed bias into a0 at `800182c4`;
+current C first assigns depth then updates it in place, and the probe shifts
+directly into a0. Express each existing signed triangle/quad depth formula
+plus bias as one assignment. Keep all division/shift constants, per-mode
+guards, packet lifetimes and SDK calls unchanged. This is the same distinction
+between a scaled result and an in-place accumulator that has independent
+retail evidence in OPEN fog interpolation, not a register permutation.
+
+The combined depth expressions recover all eight differing shift/final-add
+words. There are now 126 unequal aligned words, still 3324 bytes, with all
+57 numeric calls and the same eleven retail data targets plus the extra OT
+pair. Keep this source dependency correction; the frame, normal/projected
+register roles, address operand order and extra OT pair remain unattributed.
+
+Current result: **99.146990% strict objdiff**, 3324 compiled bytes versus
 3320 retail under `probe-gcc257-o2-g0`. The function and its switch are not
 exact and are not banked. The exact entity-render caller remains unchanged.
+
+The final focused compile confirms the combined cursor/depth result: 126
+unequal aligned words, down from 139, with the original 57 ordered numeric
+call targets and twelve mode call-path sets preserved. The first difference
+is still the 88-byte frame versus retail 96. All twelve case addends agree;
+the seventeen default rows still point to `.text+0xca0` rather than retail
+`.text+0xc9c`. No table row, relocation contract or compiler flag was changed
+to compensate for this remaining four-byte body difference.
+
+Verification for this pass: Ruff passes; 400 of 401 repository tests pass in
+23.582 seconds. The sole failure is the live cleanliness floor: the supported
+case-local typed views put the repository pointer-cast count at 883 versus
+its 882 floor. That count is reported, not hidden through macros, unrelated
+cleanup, a relaxed test or a raised floor. Full `kf build` still reports the
+existing OPEN TMD switch-addend mismatch and unchanged GAME switch-addend/
+four historical-best failures. Existing exact functions and SDK controls
+remain exact; OPEN remains 95/108. The failed map vertex-scope and map-cell
+coordinate trials are documented in their respective pattern notes and are
+not retained in source.
 
 ## Function Match Plan: nonempty-path projected base (`7e3bb27`)
 
