@@ -585,6 +585,12 @@ source = "src/open/opening_ending_scene.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.opening_ending_scroll"
+image = "OPEN.EXE"
+source = "src/open/opening_ending_scroll.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.opening_fade"
 image = "OPEN.EXE"
 source = "src/open/opening_fade.c"
@@ -650,6 +656,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "open.render"
 image = "OPEN.EXE"
 source = "src/open/render.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.render_tmd"
+image = "OPEN.EXE"
+source = "src/open/render_tmd.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -737,9 +749,21 @@ source = "src/open/audio_play_voice.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "open.format"
+image = "OPEN.EXE"
+source = "src/open/format.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "open.debug"
 image = "OPEN.EXE"
 source = "src/open/debug.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.display_adjust"
+image = "OPEN.EXE"
+source = "src/open/display_adjust.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

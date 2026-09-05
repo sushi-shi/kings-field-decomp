@@ -68,11 +68,11 @@ class OpenEntityRenderTests(unittest.TestCase):
             0x80018F3C: (0x8006E0B4, "render_state"),
             0x80018FE4: (0x80012238, ""),
             0x80019044: (0x80017458, "tmd_project_vertices_perspective_right"),
-            0x80019050: (0x8001764C, "func_8001764c"),
+            0x80019050: (0x8001764C, "render_enqueue_tmd"),
             0x80019084: (0x8001738C, "tmd_project_vertices"),
             0x80019094: (0x80018344, "render_enqueue_unlit_triangles"),
             0x800190C0: (0x8001738C, "tmd_project_vertices"),
-            0x800190D0: (0x8001764C, "func_8001764c"),
+            0x800190D0: (0x8001764C, "render_enqueue_tmd"),
         }
         for site, target in expected.items():
             row = body[site]

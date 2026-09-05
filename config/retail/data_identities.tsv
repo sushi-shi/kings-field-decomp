@@ -1848,14 +1848,6 @@ GAME.EXE	0x800a0860	0x4	DAT_800a0860	unknown	bss	u32		address-only	ghidra-12.0.4
 GAME.EXE	0x800a0868	0x4	DAT_800a0868	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0870	0x2	DAT_800a0870	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x800a0878	0x2	DAT_800a0878	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-OPEN.EXE	0x80012000	0x4	DAT_80012000	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012004	0x4	DAT_80012004	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012008	0x4	DAT_80012008	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001200c	0x4	DAT_8001200c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012010	0x4	DAT_80012010	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012014	0x4	DAT_80012014	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012018	0x4	DAT_80012018	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001201c	0x4	DAT_8001201c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80012138	0x4	DAT_80012138	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8001213c	0x4	DAT_8001213c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80012140	0x4	DAT_80012140	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -1885,35 +1877,6 @@ OPEN.EXE	0x8001219c	0x4	DAT_8001219c	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x800121a0	0x4	DAT_800121a0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800121a4	0x4	DAT_800121a4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800121a8	0x4	DAT_800121a8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121c0	0x4	DAT_800121c0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121c4	0x4	DAT_800121c4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121c8	0x4	DAT_800121c8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121cc	0x4	DAT_800121cc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121d0	0x4	DAT_800121d0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121d4	0x4	DAT_800121d4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121d8	0x4	DAT_800121d8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121dc	0x4	DAT_800121dc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121e0	0x4	DAT_800121e0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121e4	0x4	DAT_800121e4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121e8	0x4	DAT_800121e8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121ec	0x4	DAT_800121ec	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121f0	0x4	DAT_800121f0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121f4	0x4	DAT_800121f4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121f8	0x4	DAT_800121f8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121fc	0x4	DAT_800121fc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012200	0x4	DAT_80012200	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012204	0x4	DAT_80012204	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012208	0x4	DAT_80012208	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001220c	0x4	DAT_8001220c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012210	0x4	DAT_80012210	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012214	0x4	DAT_80012214	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012218	0x4	DAT_80012218	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001221c	0x4	DAT_8001221c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012220	0x4	DAT_80012220	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012224	0x4	DAT_80012224	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012228	0x4	DAT_80012228	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001222c	0x4	DAT_8001222c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012230	0x4	DAT_80012230	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800123f0	0x4	DAT_800123f0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800123f4	0x4	DAT_800123f4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800123f8	0x4	DAT_800123f8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2649,11 +2612,10 @@ OPEN.EXE	0x80013730	0x4	DAT_80013730	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x800354f4	0x1dc	opening_scene0_camera_path	global	load	KfCameraPathPoint[17]	opening_scene0	supported	open_semantic_opening_scene0.tsv;asm;retail-bytes;opening_camera_path_begin	seventeen-point scene-0 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x800356d0	0x54	opening_scene3_camera_path	global	load	KfCameraPathPoint[3]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;opening_camera_path_begin	three-point scene-3 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x80035724	0xfc	opening_ending_camera_path	global	load	KfCameraPathPoint[9]	opening_ending_scene	supported	open_semantic_opening_ending_scene.tsv;asm;retail-bytes;opening_camera_path_begin	nine-point ending camera path ending in the x=-1 sentinel
+OPEN.EXE	0x80035820	0x54	opening_ending_scroll_camera_path	static	load	KfCameraPathPoint[3]	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	two camera points and complete sentinel; begin/step record extent
 OPEN.EXE	0x80035874	0x4	opening_scene0_sound	global	load	SoundRef	opening_scene0	supported	open_semantic_opening_scene0.tsv;asm;retail-bytes;sound_ref_play	packed program 9, tone 0, and note 0x43 played once during the scene-0 entity turn
 OPEN.EXE	0x80035878	0x10	opening_scene3_overlay_rects	global	load	u16[2][4]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	two mutable textured-overlay rectangles with initial y positions 256 and 512
-OPEN.EXE	0x8003588a	0x2	DAT_8003588a	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80035892	0x2	DAT_80035892	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800358ca	0x2	DAT_800358ca	unknown	load	undefined2		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80035888	0x48	opening_ending_scroll_panels	static	load	u16[9][4]	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	nine mutable eight-byte panel rectangles; signed y read at final row+2 and unsigned visibility window
 OPEN.EXE	0x800358e0	0x54	floor_item_sprites	global	load	KfSpriteQuad[7]	entity_render	supported	open_semantic_floor_item_render.tsv;retail-bytes;12-byte-index-stride;render_enqueue_sprite;B0-MIXA0	seven consistent sprite descriptors; scene-0 placements use the first four; the last three and original array extent remain a supported working model
 OPEN.EXE	0x80035944	0xa0	color_matrix_table	global	load	MATRIX[5]	lighting	supported	open_semantic_render_init.tsv;asm;xrefs;SetColorMatrix;32-byte-stride	five OPEN colour-matrix presets; the following MATRIX at 0x800359e4 is separately consumed by SetLightMatrix
 OPEN.EXE	0x800359e4	0x20	floor_item_light_matrix	global	load	MATRIX	entity_render	supported	open_semantic_entity_traversal.tsv;retail-bytes;SetLightMatrix;sole-matrix-reference	light preset installed before the visible floor-item pass; adjacent LIBCD storage begins at 0x80035a04 and is not included
@@ -2750,8 +2712,14 @@ OPEN.EXE	0x80037248	0x4	DAT_80037248	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x8003724c	0x4	DAT_8003724c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037284	0x8	opening_scene3_overlay_uv	global	load	u8[8]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	texture-coordinate rectangle stored in even bytes {u, v, width, height}
 OPEN.EXE	0x8003728c	0x4	opening_scene3_overlay_color	global	load	u8[4]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	RGB 200 modulation color plus one pad byte
-OPEN.EXE	0x800372a0	0x4	DAT_800372a0	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800372a4	0x4	DAT_800372a4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x80037290	0x10	opening_ending_scroll_backgrounds	static	load	u16[2][4]	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	two four-halfword background rectangles supplied to G4 and F4 builders
+OPEN.EXE	0x800372a0	0x4	opening_ending_scroll_top_start	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	initial top gradient color; complete four-byte SDK color copy
+OPEN.EXE	0x800372a4	0x4	opening_ending_scroll_bottom_start	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	initial bottom gradient color; complete four-byte SDK color copy
+OPEN.EXE	0x800372a8	0x4	opening_ending_scroll_top_end	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	target top gradient color
+OPEN.EXE	0x800372ac	0x4	opening_ending_scroll_bottom_end	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	target bottom gradient color
+OPEN.EXE	0x800372b0	0x4	opening_ending_scroll_panel_color	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	RGB color and preserved command byte supplied to FT4 panel builder
+OPEN.EXE	0x800372b4	0x4	opening_ending_scroll_background_color	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	black lower-background quad color
+OPEN.EXE	0x800372b8	0x8	opening_ending_scroll_uv	static	load	u8[8]	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	packed texture-coordinate bytes used by all nine panels
 OPEN.EXE	0x800372c0	0x8	opening_fade_rect	global	load	u16[4]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	full-screen fade rectangle {x, y, width, height}
 OPEN.EXE	0x800372c8	0x8	opening_fade_uv	global	load	u8[8]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	texture-coordinate rectangle with u, v, width, and height in its even bytes
 OPEN.EXE	0x800372d0	0x4	opening_fade_color	global	load	u8[4]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	base modulation color copied locally and ramped by six each frame
@@ -2759,7 +2727,7 @@ OPEN.EXE	0x800372d4	0x6	opening_initial_tim_path	unknown	load	char[6]	opening_co
 OPEN.EXE	0x800372dc	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	"\\KF\\": five bytes copied to the head of the OPEN CD path buffer before the file name
 OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	";1": ISO 9660 version suffix appended to every OPEN CD path
 OPEN.EXE	0x800372e8	0x8	opening_ending_sequence_path	unknown	load	char[8]	opening_resources	supported	open_semantic_resources.tsv;asm;direct-bytes;sole-xref	B0\\END. sequence path used by the ending resource loader
-OPEN.EXE	0x800372f3	0x1	DAT_800372f3	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800372f0	0x4	tmd_textured_primitive_color	global	load	CVECTOR	render_tmd	supported	open_semantic_tmd_enqueue.tsv;asm;retail-bytes;NormalColorDpq;Psy-Q-CVECTOR	neutral RGB 128 and code byte at +3; complete color owner replaces the former interior byte identity
 OPEN.EXE	0x800372f8	0x4	map_textured_primitive_color	global	load	CVECTOR	render_map	supported	open_semantic_map_enqueue.tsv;asm;NormalColorCol;Psy-Q-CVECTOR	initialized neutral RGB 128 with GPU command byte at +3; retail materializes the interior cd address and passes the full owner to NormalColorCol
 OPEN.EXE	0x800372fc	0x8	render_sprite_light_normal	global	load	SVECTOR	render_sprite	supported	open_semantic_sprite_render.tsv;retail-bytes;asm;NormalColorDpq	initialized positive-Z Q12 normal passed to the projected sprite shading call
 OPEN.EXE	0x80037304	0x4	audio_voice_slot_index	global	load	s32	audio	supported	open_semantic_audio_play_voice.tsv;asm;xrefs;retail-initial-value-9;GAME-overlay-homolog	managed sound-effect ring index advanced modulo ten before each voice
@@ -2888,6 +2856,7 @@ OPEN.EXE	0x80037770	0x4	DAT_80037770	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x800377a0	0x18	cd_search_file	unknown	bss	CdlFILE	cd_file	supported	open_semantic_cd_file.tsv;asm;CdSearchFile;GAME-overlay-layout	CdlFILE filled by CdSearchFile; exact adjacency to the path buffer and the zero-padded load tail support BSS ownership
 OPEN.EXE	0x800377b8	0x50	cd_path_buffer	unknown	bss	char[80]	cd_file	supported	open_semantic_cd_file.tsv;asm;GAME-overlay-layout	80-byte path buffer following the CdlFILE exactly as in GAME; its final eight bytes extend beyond the padded load image
 OPEN.EXE	0x80037808	0x158	audio_sequence_table	unknown	bss	u8[SS_SEQ_TABSIZ * 2]	audio	supported	open_semantic_resources.tsv;asm;SsSetTableSize;Psy-Q-2.5-LIBSND.H:SS_SEQ_TABSIZ;GAME-overlay-homolog	344-byte workspace supplied to SsSetTableSize for two sequences and one track
+OPEN.EXE	0x80037971	0x13	format_number_storage	static	bss	char[19]	format	candidate	open_semantic_format.tsv;asm;format_int_dec;format_int_hex;format_pad_left;format_vsprintf	minimum accessed scratch span: seven pad bytes before the 0x80037978 digit anchor and twelve number bytes including sign and NUL; original allocation outer bounds unresolved
 OPEN.EXE	0x800379c0	0x1	DAT_800379c0	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800379c1	0x1	DAT_800379c1	unknown	bss	u8		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 OPEN.EXE	0x800379c8	0x4	DAT_800379c8	unknown	bss	u32		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

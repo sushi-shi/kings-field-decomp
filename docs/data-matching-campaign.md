@@ -77,6 +77,23 @@ objects and all 477 reported function scores remain unchanged; the 350 banked
 exact functions remain exact. Focused controls, all 372 repository tests, lint,
 and `nix flake check -L` pass. The build is intentionally not reported as green.
 
+### OPEN integration checkpoint
+
+Integrating the completed OPEN campaign with `daf79f1` retains 354 exact
+functions (PSX 1, GAME 262, OPEN 91) out of 471 eligible. All 117 units were
+rebuilt and all 396 local tests pass, as does Ruff. The stronger data result
+is **49/63**: the same 13 GAME failures plus `open.render_tmd`. Its first
+difference is the `.rodata` relocation at +4, referring to `.text + 0xc9c`
+in retail versus `.text + 0xca0` in the compiled object. Both sections are
+120 bytes, so this is an addend difference, not missing storage. The OPEN
+renderer was already non-exact; its strict function score remains 98.802410%.
+
+The full build still fails the strict data gate; no mask or baseline exception
+is added. Earlier OPEN campaign notes reporting all data owners exact describe
+the previous masked check, not this stronger result. Continued reconstruction
+after integration is OPEN-only, directly on master; GAME failures remain an
+explicit backlog rather than being silently changed during that work.
+
 ## Remaining campaign work
 
 1. Build a confidence-preserving reachability/ownership audit over the shared

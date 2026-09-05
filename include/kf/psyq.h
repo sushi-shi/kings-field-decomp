@@ -18,6 +18,9 @@
 #include <LIBGPU.H>
 #include <LIBETC.H>
 
+/* Release 2.5's LIBGPU.H spells this SetPolyGT; PRIM.OBJ exports SetPolyGT3. */
+extern void SetPolyGT3(POLY_GT3 *primitive);
+
 /* REG.OBJ exports this helper, but Release 2.5's LIBGTE.H omits it.
  * Retail writes only *depth; GAME and OPEN pass an unused second pointer. */
 extern void ReadSZ2(long *depth, long *unused_depth);

@@ -54,6 +54,21 @@ promotes a probe to a proven historical toolchain.
   control-flow defects.
 - [game-parser-verification.md](game-parser-verification.md): parser failure
   controls, VAB partial state and cleanup quirks, and seven-function match review.
+- [open-format-display-sdk.md](open-format-display-sdk.md): four exact custom
+  formatters, the display-adjustment address-base residue, twelve SDK provider
+  attributions, and the corrected SquareRoot12 boundary.
+- [open-ending-scroll.md](open-ending-scroll.md): complete ending-scroll C,
+  initialized panel/camera/color owners, the unreachable epilogue correction,
+  and the remaining short-state and branch-join comparison.
+- [open-tmd-enqueue.md](open-tmd-enqueue.md): all twelve general TMD polygon
+  modes, SDK-preserving packed views, static compiled/retail call-path controls,
+  and the remaining shared graphics-base and instruction differences.
+- [open-transition-snapshot.md](open-transition-snapshot.md): the directly
+  observed transition-position stack copy and the remaining eight-byte frame
+  discrepancy, with an exact list of non-exact object differences.
+- [open-display-init-pointers.md](open-display-init-pointers.md): observed
+  DRAWENV pointer lifetimes and height initialization, with bounded retail/C
+  argument/write traces and remaining address-base differences.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
   parser match attempts, retained source improvements and instruction-level residues.
 - [game-parser-inline-helpers.md](game-parser-inline-helpers.md): pinned-compiler

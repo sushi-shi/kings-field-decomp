@@ -965,7 +965,7 @@ OPEN.EXE	0x8001455c	0x2d5c	0xac	0xac	1	function	ghidra-analysis			Ghidra-12.0.4/
 OPEN.EXE	0x80014608	0x2e08	0x1fc	0x1fc	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80014804	0x3004	0x330	0x330	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x80014b34	0x3334	0x2f4	0x2f4	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x80014e28	0x3628	0x768	0x768	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
+OPEN.EXE	0x80014e28	0x3628	0x798	0x798	1	function	reviewed-frame-epilogue			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08;manual:open_semantic_ending_scroll	complete body includes the unreachable 48-byte epilogue at +0x768; all ten saved registers and the 264-byte frame restore exactly; infinite loop has no return edge
 OPEN.EXE	0x800155c0	0x3dc0	0xfc	0xfc	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x800156bc	0x3ebc	0x214	0x214	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x800158d0	0x40d0	0x70	0x70	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
@@ -1359,9 +1359,7 @@ OPEN.EXE	0x8002c528	0x1ad28	0x78	0x78	1	function	mips-return-carve			scripts/kf/
 OPEN.EXE	0x8002c5a0	0x1ada0	0xc8	0xc8	1	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002c668	0x1ae68	0xc8	0xc8	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
 OPEN.EXE	0x8002c730	0x1af30	0x84	0x7c	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
-OPEN.EXE	0x8002c7b4	0x1afb4	0x80	0x80	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002c834	0x1b034	0xc	0xc	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
-OPEN.EXE	0x8002c840	0x1b040	0x8	0x8	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code
+OPEN.EXE	0x8002c7b4	0x1afb4	0x94	0x94	1	function	exact-sdk-boundary	SquareRoot12	+0x80=SquareRoot12_right_shift;+0x8c=SquareRoot12_zero	manual:open_small_sdk_review;LIBGTE.LIB-MSC.OBJ:0x4fc	one SDK function with two internal return tails formerly mis-carved as 0x8002c834 and 0x8002c840; complete 148-byte body matches the archive under its relocation mask
 OPEN.EXE	0x8002c848	0x1b048	0x8c	0x84	2	function	ghidra-analysis			Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002c8d4	0x1b0d4	0x80	0x80	1	function	ghidra-analysis	gteMIMefunc		Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP boundary
 OPEN.EXE	0x8002c954	0x1b154	0x7c	0x7c	1	function	mips-return-carve			scripts/kf/audit_functions.py	anonymous WIP start; previous-return+return-delimited-valid-code

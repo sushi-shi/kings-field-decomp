@@ -3126,14 +3126,7 @@ GAME.EXE	0x80057ff0	0x467f0	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4
 GAME.EXE	0x80057ff2	0x467f2	0x6	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057ff8	0x467f8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057ffc	0x467fc	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80012000	0x800	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012004	0x804	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012008	0x808	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8001200c	0x80c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012010	0x810	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012014	0x814	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012018	0x818	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8001201c	0x81c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x80012000	0x800	0x20	data	reviewed		MATRIX	manual:open_semantic_ending_scroll	compiler-owned local MATRIX initializer in opening_ending_scroll RODATA; no separate source identity
 OPEN.EXE	0x80012020	0x820	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\MIX0.
 OPEN.EXE	0x80012028	0x828	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x8001202c	0x82c	0x8	string	byte-pattern		ascii	investigation:string-census	escaped text: B0\\MIX3.
@@ -3207,35 +3200,7 @@ OPEN.EXE	0x800121a4	0x9a4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghid
 OPEN.EXE	0x800121a8	0x9a8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x800121ac	0x9ac	0x13	string	reviewed		ascii	manual:open_semantic_projection	escaped text including newline and terminating NUL: POINT OVER !!!!!!\n
 OPEN.EXE	0x800121bf	0x9bf	0x1	unclassified	coverage-gap			payload-complement	alignment padding after the projection-capacity diagnostic
-OPEN.EXE	0x800121c0	0x9c0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121c4	0x9c4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121c8	0x9c8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121cc	0x9cc	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121d0	0x9d0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121d4	0x9d4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121d8	0x9d8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121dc	0x9dc	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121e0	0x9e0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121e4	0x9e4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121e8	0x9e8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121ec	0x9ec	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121f0	0x9f0	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121f4	0x9f4	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121f8	0x9f8	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800121fc	0x9fc	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012200	0xa00	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012204	0xa04	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012208	0xa08	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8001220c	0xa0c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012210	0xa10	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012214	0xa14	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012218	0xa18	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8001221c	0xa1c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012220	0xa20	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012224	0xa24	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012228	0xa28	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8001222c	0xa2c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80012230	0xa30	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x800121c0	0x9c0	0x74	data	reviewed		pointer[29]	manual:open_semantic_tmd_enqueue	compiler-owned switch table for modes 0x20..0x3c; twelve cases plus packet-advance default; unit RODATA, no separate source identity
 OPEN.EXE	0x80012234	0xa34	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80012238	0xa38	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x8001223c	0xa3c	0x4	pointer	ghidra-defined		pointer	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -4250,7 +4215,6 @@ OPEN.EXE	0x800150af	0x38af	0x5	string	byte-pattern		shift_jis	investigation:stri
 OPEN.EXE	0x800152df	0x3adf	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: <8Xc
 OPEN.EXE	0x800154ce	0x3cce	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: B$;U
 OPEN.EXE	0x80015546	0x3d46	0x5	string	byte-pattern		shift_jis	investigation:string-census	escaped text: B&!拭
-OPEN.EXE	0x80015590	0x3d90	0x30	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x8001565b	0x3e5b	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: $!0@
 OPEN.EXE	0x800156df	0x3edf	0x7	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <H噪$!(
 OPEN.EXE	0x800156f7	0x3ef7	0x7	string	byte-pattern		shift_jis	investigation:string-census	escaped text: <8符$!(
@@ -5137,16 +5101,11 @@ OPEN.EXE	0x800354f0	0x23cf0	0x4	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x800354f4	0x23cf4	0x1dc	data	reviewed	opening_scene0_camera_path	KfCameraPathPoint[17]	manual:open_semantic_opening_scene0	seventeen-point scene-0 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x800356d0	0x23ed0	0x54	data	reviewed	opening_scene3_camera_path	KfCameraPathPoint[3]	manual:open_semantic_opening_scene3	three-point scene-3 camera path ending in the x=-1 sentinel
 OPEN.EXE	0x80035724	0x23f24	0xfc	data	reviewed	opening_ending_camera_path	KfCameraPathPoint[9]	manual:open_semantic_opening_ending_scene	nine-point ending camera path ending in the x=-1 sentinel
-OPEN.EXE	0x80035820	0x24020	0x54	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80035820	0x24020	0x54	data	reviewed	opening_ending_scroll_camera_path	KfCameraPathPoint[3]	manual:open_semantic_ending_scroll	two camera points and complete sentinel; begin/step record extent
 OPEN.EXE	0x80035874	0x24074	0x4	data	reviewed	opening_scene0_sound	SoundRef	manual:open_semantic_opening_scene0	packed program 9, tone 0, note 0x43 sound reference plus alignment byte
 OPEN.EXE	0x80035878	0x24078	0x10	data	reviewed	opening_scene3_overlay_rects	u16[2][4]	manual:open_semantic_opening_scene3	two mutable overlay rectangles with initial y positions 256 and 512
-OPEN.EXE	0x80035888	0x24088	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x8003588a	0x2408a	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x8003588c	0x2408c	0x6	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80035892	0x24092	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x80035894	0x24094	0x36	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800358ca	0x240ca	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800358cc	0x240cc	0x14	unclassified	coverage-gap			payload-complement	bytes preceding the floor-item sprite table; ownership unresolved
+OPEN.EXE	0x80035888	0x24088	0x48	data	reviewed	opening_ending_scroll_panels	u16[9][4]	manual:open_semantic_ending_scroll	nine mutable eight-byte panel rectangles; signed y read at final row+2 and unsigned visibility window
+OPEN.EXE	0x800358d0	0x240d0	0x10	unclassified	coverage-gap			payload-complement	bytes following the nine ending-scroll panels and preceding the floor-item sprite table; ownership unresolved
 OPEN.EXE	0x800358e0	0x240e0	0x54	defined	reviewed	floor_item_sprites	KfSpriteQuad[7]	manual:open_semantic_floor_item_render	seven 12-byte sprite descriptors; renderer indexes by item id plus animation frame
 OPEN.EXE	0x80035934	0x24134	0x10	unclassified	coverage-gap			payload-complement	non-sprite bytes following the seven-record working table extent; ownership unresolved
 OPEN.EXE	0x80035944	0x24144	0xa0	defined	reviewed	color_matrix_table	MATRIX[5]	manual:open_semantic_render_init	five 32-byte colour-matrix presets selected directly or through lighting_set_active_color_matrix
@@ -5279,10 +5238,14 @@ OPEN.EXE	0x80037250	0x25a50	0x32	string	byte-pattern		ascii	investigation:string
 OPEN.EXE	0x80037282	0x25a82	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037284	0x25a84	0x8	data	reviewed	opening_scene3_overlay_uv	u8[8]	manual:open_semantic_opening_scene3	shared overlay texture rectangle {u, v, width, height} in even bytes
 OPEN.EXE	0x8003728c	0x25a8c	0x4	data	reviewed	opening_scene3_overlay_color	u8[4]	manual:open_semantic_opening_scene3	RGB 200 modulation color with one pad byte
-OPEN.EXE	0x80037290	0x25a90	0x10	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800372a0	0x25aa0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800372a4	0x25aa4	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-OPEN.EXE	0x800372a8	0x25aa8	0x18	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+OPEN.EXE	0x80037290	0x25a90	0x10	data	reviewed	opening_ending_scroll_backgrounds	u16[2][4]	manual:open_semantic_ending_scroll	two four-halfword background rectangles supplied to G4 and F4 builders
+OPEN.EXE	0x800372a0	0x25aa0	0x4	data	reviewed	opening_ending_scroll_top_start	CVECTOR	manual:open_semantic_ending_scroll	initial top gradient color; complete four-byte SDK color copy
+OPEN.EXE	0x800372a4	0x25aa4	0x4	data	reviewed	opening_ending_scroll_bottom_start	CVECTOR	manual:open_semantic_ending_scroll	initial bottom gradient color; complete four-byte SDK color copy
+OPEN.EXE	0x800372a8	0x25aa8	0x4	data	reviewed	opening_ending_scroll_top_end	CVECTOR	manual:open_semantic_ending_scroll	target top gradient color
+OPEN.EXE	0x800372ac	0x25aac	0x4	data	reviewed	opening_ending_scroll_bottom_end	CVECTOR	manual:open_semantic_ending_scroll	target bottom gradient color
+OPEN.EXE	0x800372b0	0x25ab0	0x4	data	reviewed	opening_ending_scroll_panel_color	CVECTOR	manual:open_semantic_ending_scroll	RGB color and preserved command byte supplied to FT4 panel builder
+OPEN.EXE	0x800372b4	0x25ab4	0x4	data	reviewed	opening_ending_scroll_background_color	CVECTOR	manual:open_semantic_ending_scroll	black lower-background quad color
+OPEN.EXE	0x800372b8	0x25ab8	0x8	data	reviewed	opening_ending_scroll_uv	u8[8]	manual:open_semantic_ending_scroll	packed texture-coordinate bytes used by all nine panels
 OPEN.EXE	0x800372c0	0x25ac0	0x8	data	reviewed	opening_fade_rect	u16[4]	manual:open_semantic_opening_fade	full-screen fade rectangle {x, y, width, height}
 OPEN.EXE	0x800372c8	0x25ac8	0x8	data	reviewed	opening_fade_uv	u8[8]	manual:open_semantic_opening_fade	texture-coordinate rectangle stored in even bytes {u, v, width, height}
 OPEN.EXE	0x800372d0	0x25ad0	0x4	data	reviewed	opening_fade_color	u8[4]	manual:open_semantic_opening_fade	base modulation color copied locally and ramped during the fade
@@ -5293,8 +5256,7 @@ OPEN.EXE	0x800372e1	0x25ae1	0x3	unclassified	coverage-gap			payload-complement	m
 OPEN.EXE	0x800372e4	0x25ae4	0x3	string	byte-pattern		ascii	manual:open_cd_file	escaped text: ;1 including terminator
 OPEN.EXE	0x800372e7	0x25ae7	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372e8	0x25ae8	0x8	string	reviewed	opening_ending_sequence_path	char[8]	manual:open_semantic_resources	B0\\END. sequence path including its terminating NUL
-OPEN.EXE	0x800372f0	0x25af0	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x800372f3	0x25af3	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+OPEN.EXE	0x800372f0	0x25af0	0x4	data	reviewed	tmd_textured_primitive_color	CVECTOR	manual:open_semantic_tmd_enqueue	neutral RGB 128 and command byte at +3; full SDK color for textured TMD polygon lighting
 OPEN.EXE	0x800372f4	0x25af4	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x800372f8	0x25af8	0x4	defined	reviewed	map_textured_primitive_color	CVECTOR	manual:open_semantic_map_enqueue	neutral RGB 128 and cd at +3; complete SDK colour owner passed to NormalColorCol
 OPEN.EXE	0x800372fc	0x25afc	0x8	defined	reviewed	render_sprite_light_normal	SVECTOR	manual:open_semantic_sprite_render	initialized {0, 0, 0x1000, 0} normal passed to NormalColorDpq by render_enqueue_sprite
