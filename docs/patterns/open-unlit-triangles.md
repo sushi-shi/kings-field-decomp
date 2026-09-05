@@ -1,5 +1,35 @@
 # OPEN unlit triangle emission
 
+## Function Match Plan: biased-depth expression (`3ee452a`)
+
+OPEN `80018344`, 676 retail/680 compiled bytes, starts at strict 98.769230%
+with 53 unequal aligned words. The six semantic views, full CFG, sole exact
+caller `80018ecc`, adjacent map and general-emitter boundaries, accessor,
+allocator, shared layouts, source history and pinned SDK declarations/provider
+ledger were rechecked. The object argument is masked to 16 bits; the caller
+sign-extends biases 1000/10000 and the callee preserves the signed-halfword
+conversion. Word count/header, unsigned prepared offsets, signed depths,
+eight calls, one validated internal jump, one retail address pair and no
+strings/candidate references retain the supported contract. SDK helpers are
+vendored; the material/packet traversal is game-owned.
+
+The first difference is frame size (64 retail/56 probe). Later differences
+are packet-base operand order, two vertex registers and an extra absolute
+ordering-table address pair. The common depth tail at `8001852c..8001857c`
+forms one signed sum/divide/shift/bias chain before its first comparison;
+the intermediate unbiased depth has no independent consumer. Test combining
+the two current assignments into that one expression, preserving signed
+widths, checked division, lower-bound guard and mask. The general emitter's
+retained combined expression supplies a related source-shape control, not
+proof this body must respond identically. Compare raw words and referents
+after a real focused compile; do not add locals or alter frame layout.
+
+The combined expression emits the identical 680-byte candidate with the
+same 53 unequal raw words, eight call targets and extra OT pair. It is
+removed; the exact entity caller remains raw exact. Unlike the general
+emitter, this tail already has the retail arithmetic-register dependency.
+The unchanged frame/register/address-sharing residue is not an exact match.
+
 OPEN `render_enqueue_unlit_triangles` at `0x80018344` has a complete C body
 under `probe-gcc257-o2-g0`, matching **98.769230000%** in strict objdiff.
 The probe emits 680 bytes against 676 retail bytes. This is neither banked

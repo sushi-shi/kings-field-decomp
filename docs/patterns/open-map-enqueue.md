@@ -1,5 +1,73 @@
 # OPEN map polygon emission
 
+## Function Match Plan: outer object-index width (`3ee452a`)
+
+OPEN `800185e8` is 952 bytes and strict 99.663864%, with 20 unequal raw
+words: five normal/header spill operands and fifteen triangle GPU-pointer
+operands. The six semantic views, complete CFG and delay slots, sole caller,
+accessor, adjacent emitters, source history and SDK provider declarations
+were rechecked. The 18 calls, two validated data pairs, internal jump,
+80-byte frame and no string/candidate references are unchanged. SDK GTE and
+GPU callees are separately attributed; this traversal is game-owned.
+
+The caller masks its ID to eight bits before both object-selection and map
+emission. This emitter uses its parameter only as the accessor argument;
+the accessor requires `u16`, and both retail bodies mask that argument to
+16 bits. These observations do not prove the outer parameter was narrow.
+The recently exact FT4 selector boundary demonstrates why the consumer's
+width cannot alone establish a caller's signature. Test a word-sized outer
+index in this OPEN definition and declaration only, leaving the shared
+accessor API and all packet operations unchanged. Compare the raw emitter
+and caller before deciding whether this hypothesis has any code evidence.
+
+The word-width trial emits 948 bytes and removes the retail `andi a0,a0,ffff`
+in the accessor call's delay slot, moving the saved-register store there.
+The 18 calls and two data pairs remain, but this directly contradicts the
+entry instruction evidence; the original `u16` signature is restored. The
+map-cell caller remains 472 bytes and its exact traversal sibling stays raw
+exact. This is a negative boundary-width control, not a new exact match.
+
+### Shared packed-packet type follow-up
+
+The same body still accesses packed XY words, UV halfwords and colour records
+through casts of individual SDK fields. The general emitter already uses
+`KfGpuGT3`/`KfGpuGT4` and `KfTmdPrimitive` views for those exact layouts.
+Their existing target layout checks cover every consumed offset, size and
+alignment; the inspected retail stores and SDK signatures agree. Reuse those
+shared types here, keeping authentic `.sdk` pointers at library boundaries
+and the prepared body in one case-local mode-discriminated view. Do not
+change pointer lifetimes, expressions, order, header traversal or allocation
+sizes. Compare the earliest spill and triangle-packet differences and all
+numeric referents. This is a supported packed-field model, not a new union
+invented to influence register allocation.
+
+The shared views emit the same 952 bytes and 20 raw differences. Keep the
+supported typed accesses, which remove 28 field casts without changing any
+SDK type, layout, call or referent. The remaining stack slots are therefore
+not explained by those cast-based accesses.
+
+The shade record has a separate evidence-backed lifetime: NormalColorCol
+writes its complete four bytes and the DpqColor calls only read that record;
+neither helper retains its address. No shade crosses a packet iteration.
+Test placing that real output record inside the packet loop, without changing
+its address-taking operations or introducing a second record. Compare the
+existing spill differences; this does not authorize arbitrary stack padding
+or declaration-order trials.
+
+The scoped shade emits the identical candidate and is removed. The kept
+change is only shared packed packet typing; the normal/header slots and
+triangle packet register remain unattributed, and neither result is banked.
+
+Final strict results remain map 99.663864% and unlit 98.769230%; the map
+traversal and entity-render caller controls remain 100%. All OPEN consumers
+affected by the temporary header trial were actually rebuilt after restoring
+the header. OPEN stays 96/108 exact, all 108 started, with 99.228% fuzzy
+coverage and no lost banked functions. Full `kf build` retains the known
+OPEN TMD default-table addend difference, thirteen GAME data-addend units and
+four GAME historical-best deficits. All 13 vendor-source controls stay exact.
+Ruff, all 401 existing tests (20.967 seconds) and `git diff --check` pass.
+No test, toolchain, shared header, GAME source or banked baseline is changed.
+
 ## Function Match Plan: case-local vertex lifetimes (`d1d9562`)
 
 OPEN `800185e8` starts this follow-up at strict 99.663864%, 952 bytes under

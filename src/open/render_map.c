@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/gpu_packets.h>
 #include <kf/open_render.h>
 
 DATA(0x800372f8, 0x4)
@@ -28,73 +29,73 @@ void render_enqueue_map(u16 object_index)
         packet += 4;
         switch (header >> 24) {
         case 0x2c: {
-            KfTmdFt4 *quad = (KfTmdFt4 *)packet;
-            POLY_GT4 *prim;
+            KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
+            KfGpuGT4 *prim;
             s32 depth;
 
-            vertex0 = (KfScreenVertex *)(vertices + quad->v0);
-            vertex1 = (KfScreenVertex *)(vertices + quad->v1);
-            vertex2 = (KfScreenVertex *)(vertices + quad->v2);
+            vertex0 = (KfScreenVertex *)(vertices + polygon->ft4.v0);
+            vertex1 = (KfScreenVertex *)(vertices + polygon->ft4.v1);
+            vertex2 = (KfScreenVertex *)(vertices + polygon->ft4.v2);
             if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
                 goto next_packet;
             }
-            vertex3 = (KfScreenVertex *)(vertices + quad->v3);
+            vertex3 = (KfScreenVertex *)(vertices + polygon->ft4.v3);
             prim = primitive_buffer_allocate(sizeof(POLY_GT4));
-            SetPolyGT4(prim);
-            prim->clut = quad->cba;
-            prim->tpage = quad->tsb;
-            *(long *)&prim->x0 = vertex0->sxy;
-            *(long *)&prim->x1 = vertex1->sxy;
-            *(long *)&prim->x2 = vertex2->sxy;
-            *(long *)&prim->x3 = vertex3->sxy;
-            *(u16 *)&prim->u0 = *(u16 *)&quad->tu0;
-            *(u16 *)&prim->u1 = *(u16 *)&quad->tu1;
-            *(u16 *)&prim->u2 = *(u16 *)&quad->tu2;
-            *(u16 *)&prim->u3 = *(u16 *)&quad->tu3;
-            map_textured_primitive_color.cd = prim->code;
-            NormalColorCol((SVECTOR *)(normals + quad->n0),
+            SetPolyGT4(&prim->sdk);
+            prim->packed.clut = polygon->ft4.cba;
+            prim->packed.tpage = polygon->ft4.tsb;
+            prim->packed.xy0 = vertex0->sxy;
+            prim->packed.xy1 = vertex1->sxy;
+            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.uv0 = polygon->texture.uv0;
+            prim->packed.uv1 = polygon->texture.uv1;
+            prim->packed.uv2 = polygon->texture.uv2;
+            prim->packed.uv3 = polygon->texture.uv3;
+            map_textured_primitive_color.cd = prim->sdk.code;
+            NormalColorCol((SVECTOR *)(normals + polygon->ft4.n0),
                            &map_textured_primitive_color, &shade);
-            DpqColor(&shade, vertex0->p2, (CVECTOR *)&prim->r0);
-            DpqColor(&shade, vertex1->p2, (CVECTOR *)&prim->r1);
-            DpqColor(&shade, vertex2->p2, (CVECTOR *)&prim->r2);
-            DpqColor(&shade, vertex3->p2, (CVECTOR *)&prim->r3);
+            DpqColor(&shade, vertex0->p2, &prim->packed.color0);
+            DpqColor(&shade, vertex1->p2, &prim->packed.color1);
+            DpqColor(&shade, vertex2->p2, &prim->packed.color2);
+            DpqColor(&shade, vertex3->p2, &prim->packed.color3);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4)
                 + 200;
             if (depth < 16384) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], prim);
+                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
             }
             break;
         }
         case 0x24: {
-            KfTmdFt3 *triangle = (KfTmdFt3 *)packet;
-            POLY_GT3 *prim;
+            KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
+            KfGpuGT3 *prim;
             s32 depth;
 
-            vertex0 = (KfScreenVertex *)(vertices + triangle->v0);
-            vertex1 = (KfScreenVertex *)(vertices + triangle->v1);
-            vertex2 = (KfScreenVertex *)(vertices + triangle->v2);
+            vertex0 = (KfScreenVertex *)(vertices + polygon->ft3.v0);
+            vertex1 = (KfScreenVertex *)(vertices + polygon->ft3.v1);
+            vertex2 = (KfScreenVertex *)(vertices + polygon->ft3.v2);
             if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_GT3));
-            SetPolyGT3(prim);
-            prim->clut = triangle->cba;
-            prim->tpage = triangle->tsb;
-            *(long *)&prim->x0 = vertex0->sxy;
-            *(long *)&prim->x1 = vertex1->sxy;
-            *(long *)&prim->x2 = vertex2->sxy;
-            *(u16 *)&prim->u0 = *(u16 *)&triangle->tu0;
-            *(u16 *)&prim->u1 = *(u16 *)&triangle->tu1;
-            *(u16 *)&prim->u2 = *(u16 *)&triangle->tu2;
-            map_textured_primitive_color.cd = prim->code;
-            NormalColorCol((SVECTOR *)(normals + triangle->n0),
+            SetPolyGT3(&prim->sdk);
+            prim->packed.clut = polygon->ft3.cba;
+            prim->packed.tpage = polygon->ft3.tsb;
+            prim->packed.xy0 = vertex0->sxy;
+            prim->packed.xy1 = vertex1->sxy;
+            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.uv0 = polygon->texture.uv0;
+            prim->packed.uv1 = polygon->texture.uv1;
+            prim->packed.uv2 = polygon->texture.uv2;
+            map_textured_primitive_color.cd = prim->sdk.code;
+            NormalColorCol((SVECTOR *)(normals + polygon->ft3.n0),
                            &map_textured_primitive_color, &shade);
-            DpqColor(&shade, vertex0->p2, (CVECTOR *)&prim->r0);
-            DpqColor(&shade, vertex1->p2, (CVECTOR *)&prim->r1);
-            DpqColor(&shade, vertex2->p2, (CVECTOR *)&prim->r2);
+            DpqColor(&shade, vertex0->p2, &prim->packed.color0);
+            DpqColor(&shade, vertex1->p2, &prim->packed.color1);
+            DpqColor(&shade, vertex2->p2, &prim->packed.color2);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + 200;
             if (depth < 16384) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], prim);
+                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
             }
             break;
         }
