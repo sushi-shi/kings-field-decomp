@@ -71,6 +71,9 @@ promotes a probe to a proven historical toolchain.
   and frame/register differences.
 - [open-graphics-runtime-owner.md](open-graphics-runtime-owner.md): complete
   graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
+- [game-graphics-owner-pilot.md](game-graphics-owner-pilot.md): complete-clear
+  ownership pilot, preserved initializer/traversal controls, and the exact
+  unconditional view-matrix rebuild; GAME data migration remains unresolved.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [open-emitter-source-controls.md](open-emitter-source-controls.md): negative

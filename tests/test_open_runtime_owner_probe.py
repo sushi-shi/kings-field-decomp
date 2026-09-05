@@ -41,7 +41,13 @@ def linked_words(obj, unit, claim, data, functions):
             assert len(pending) == 1
             high, symbol_index = pending.pop()
             assert symbol_index == symbol.index
-            base = unit.rodata[0] if symbol.section == ".rodata" else data[symbol.name]
+            if symbol.name in functions:
+                base = functions[symbol.name]
+            elif symbol.kind == "STT_SECTION":
+                base = (unit.rodata[0] if symbol.section == ".rodata"
+                        else data[symbol.section]) + symbol.value
+            else:
+                base = data[symbol.name]
             target = (base + decode_hi_lo_target(words[high], words[index])) & 0xFFFFFFFF
             addresses.append(target)
             words[high], words[index] = encode_hi_lo_addend(words[high], words[index], target)
