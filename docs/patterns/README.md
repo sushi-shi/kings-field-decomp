@@ -70,6 +70,8 @@ promotes a probe to a proven historical toolchain.
   count countdowns closing both GAME perspective projection helpers.
 - [game-view-transform.md](game-view-transform.md): the copy-only nullable
   rotation branch and unconditional matrix updates closing the GAME view helper.
+- [game-actor-free-countdown.md](game-actor-free-countdown.md): predecrement
+  countdown and one result join closing the GAME actor free-slot search.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated

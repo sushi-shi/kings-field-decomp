@@ -22,9 +22,11 @@ other compilers.
 
 Open residues recorded during the same campaign (not steered):
 
-- `actor_pool_find_free` `0x8002ca78`: retail joins the found and not-found
-  paths at one `jr $ra` with `move v0,v1` in the compare's delay slot; every
-  tried return shape emits a `j` to the epilogue instead.
+- `actor_pool_find_free` `0x8002ca78` is now **100%** with the
+  [predecrement countdown and shared result join](game-actor-free-countdown.md).
+  The historical postdecrement loop differed before the return symptom;
+  the two source corrections together reproduce the single `jr $ra` and
+  `move v0,v1` in the found-branch delay slot.
 - `matrix_set_rotation_yxz` `0x80014ccc`: retail keeps `move s1,a1` before
   the first `lh a0,4(s0)`; the probe schedules the load first.
 - `save_workspace_allocate` `0x8002c27c`: retail sets `a1` to zero before
@@ -213,9 +215,9 @@ Open residues (not steered):
 - `actor_initialize_slot`: the `lifecycle = 1` store stays between the first
   load and the multiply chain in retail; the probe sinks it below the chain.
 - `actor_animation_crossed_phase`: register choice only (`v1`/`a2` swapped).
-- `actor_pool_find_free`: the found path joins the not-found path at one
-  `jr $ra` with `move v0,v1` in the compare's delay slot; every tried return
-  shape emits a `j` to the epilogue.
+- `actor_pool_find_free`: subsequently closed at **100%** by the
+  [countdown/result-join correction](game-actor-free-countdown.md), not by
+  changing the compiler profile or forcing register assignments.
 
 ## leaf frames
 

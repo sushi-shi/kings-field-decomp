@@ -59,15 +59,19 @@ ADDRESS(0x8002ca78, 0x3c)
 KfActor *actor_pool_find_free(void)
 {
     KfActor *actor = actor_state.actors;
+    KfActor *found;
     s32 count = 127;
 
     do {
         if (actor->slot_state == 0xff) {
-            return actor;
+            found = actor;
+            goto done;
         }
         actor++;
-    } while (count-- != 0);
-    return 0;
+    } while (--count != -1);
+    found = 0;
+done:
+    return found;
 }
 
 /* Caller-less wrapper that discards the free slot; its intent is unresolved. */
