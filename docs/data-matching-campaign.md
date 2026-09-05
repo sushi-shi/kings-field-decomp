@@ -114,6 +114,69 @@ explicit backlog rather than being silently changed during that work.
 5. Extend comparison to linked placements and executable bytes once the complete
    ownership, relocation and layout model is established.
 
+## Known-reference ownership gate
+
+The data campaign continues on `codex/data-matching-20260905` in its own worktree;
+the earlier OPEN checkpoint's master-only workflow does not apply to this work.
+
+`kf check` and the default build now run the known-reference ownership audit as
+well as the strict object-data comparison. The full evidence report is available
+without changing curated inventories:
+
+```sh
+kf verify reachability --output build/data-reachability/all.json
+kf verify reachability --image game --output build/data-reachability/game.json
+```
+
+Every admitted non-vendor function is a root, regardless of source manifestation
+or match score. The worklist follows referenced functions (including vendors),
+source-owned data and configuration extents. It scans whole admitted ranges
+conservatively, includes interior pointer-table sites, terminates cycles and
+retains an incoming-reference witness for each reached range. Image namespaces
+never share owners. Candidate edges and ambiguous owners weaken a path; later
+validated edges do not promote that path. An independent stronger path can update
+the witness, but the weaker reference remains visible in the report.
+
+The report distinguishes source-owned data from config-only extents. The latter
+are inventory accounting, not yet a reconstruction comparison: they may still
+be anonymous gaps or referenced prefixes. A config-only range therefore remains
+a default-build failure until its storage, full extent, owner and comparison
+path are resolved. This does not require every vendor datum to become C source;
+an explicit config-backed delinking/comparison path is still required for those
+bytes. Source claims take precedence over interior census rows, without creating
+duplicate private copies in consumers. Genuine overlapping owner models remain
+ambiguous instead of being resolved by a naming guess.
+
+Other diagnostics include invalid live relocation rows, missing targets,
+cross-owner access/relocation spans, fragmented functions and unresolved indirect
+control flow. Manually rejected candidates are retained but not followed. The
+shared semantic navigator now validates reviewed data pointer rows with the same
+`validate_relocation` rule the delinker uses; a matching raw word alone does not
+promote an unreviewed candidate. Nested semantic scripts are build dependencies
+so changes to that validation cannot leave a stale successful build stamp.
+
+The initial audit from all 471 game roots reaches 603 vendor functions and finds
+123 source-owned data ranges and 673 config-only ranges (GAME 392, OPEN 281).
+These are range counts, not exact bytes or evidence of complete allocation
+extents. Concrete diagnostics include GAME's prefix-only `tmd_morph_scratch`,
+two reviewed grid-reference rows whose HI sites are not LUI instructions, and
+data-census strings overlapping admitted instruction bytes. Those curated inputs
+are not automatically rewritten by the audit.
+
+The audit is explicitly scoped to the known reference census. Its JSON always
+records `complete_reachable_bytes_proven: false`: computed/GP-relative addresses,
+missing reference candidates, allocation capacities and unresolved indirect
+targets still require evidence work. A clean known-reference report alone will
+not establish full goal closure or linked-executable equality.
+
+Verification of this tooling checkpoint: all 117 source objects were rebuilt and
+remained byte-identical, all 484 reported function scores were unchanged, and all
+354 banked exact functions remained exact. All 419 local repository tests, Ruff,
+`git diff --check` and `nix flake check -L` passed. The full build correctly fails
+the new known-reference gate on all three images, in addition to the existing
+14 GAME/OPEN strict data-addend failures. No source function, curated inventory
+or banked score was changed by this checkpoint.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

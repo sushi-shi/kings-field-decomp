@@ -180,6 +180,23 @@ class Evidence:
                         reason = str(error)
                     else:
                         tier = "validated"
+            elif (
+                owner is None and site_owner is not None
+                and row["kind"] == "mips32_candidate"
+            ):
+                # A reviewed data pointer uses the same byte/policy validation
+                # as delinking a DATA initializer. It is not executable code,
+                # and validation does not prove the containing object's extent.
+                blob = self.img.read(site_owner.va, site_owner.size)
+                if blob is None:
+                    reason = "data-owner-outside-load-image"
+                else:
+                    try:
+                        validate_relocation(blob, site_owner, row, self.catalog, "safe")
+                    except ValueError as error:
+                        reason = str(error)
+                    else:
+                        tier = "validated"
             elif owner is None:
                 reason = "site-outside-function"
             else:

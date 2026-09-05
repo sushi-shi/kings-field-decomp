@@ -449,7 +449,10 @@ def check(
         delink_dir=BUILD / "delink",
         objdiff_dir=BUILD / "objdiff",
     ) != 0
-    bad = bad or data_bad
+    from scripts.kf.data_reachability import run as check_reachability
+
+    reachability_bad = check_reachability(selected) != 0
+    bad = bad or data_bad or reachability_bad
     from scripts.kf.readme import refresh as refresh_readme
 
     if refresh_readme():
@@ -463,15 +466,18 @@ def check(
             reasons.append(f"{len(buckets['REGRESS'])} unchanged-input regression(s)")
         if buckets["LOST"]:
             reasons.append(f"{len(buckets['LOST'])} lost banked function(s)")
-        if strict_changed:
+        if strict and strict_changed:
             reasons.append(
                 f"{len(strict_changed)} changed-input row(s) below historical best [--strict]"
             )
         if data_bad:
             reasons.append("data-section mismatch or incomplete comparison")
+        if reachability_bad:
+            reasons.append("known-reference data ownership is incomplete")
         print("check FAILED: " + ", ".join(reasons), file=sys.stderr)
         return 1
-    print("check OK: exact data and no unchanged-input regressions or lost banked functions")
+    print("check OK: exact claimed data, no known-reference ownership gaps, "
+          "and no unchanged-input regressions or lost banked functions")
     return 0
 
 

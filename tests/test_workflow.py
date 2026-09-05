@@ -10,7 +10,7 @@ from unittest import mock
 from scripts.kf import progress
 from scripts.kf.cli import _bank_functions
 from scripts.kf.delink import Function
-from scripts.kf.graph import _build_line, _write_generator
+from scripts.kf.graph import _build_line, _script_inputs, _write_generator
 from scripts.kf.manifest import Unit, load as load_manifest
 from scripts.kf.objdiff import generate_report
 from scripts.kf.progress import (
@@ -142,11 +142,26 @@ class ProgressTests(unittest.TestCase):
             mock.patch.object(progress, "print_status", return_value=0),
             mock.patch.object(progress, "_report_cleanliness"),
             mock.patch("scripts.kf.data_match.run", return_value=1) as data_gate,
+            mock.patch("scripts.kf.data_reachability.run", return_value=0),
             mock.patch("scripts.kf.readme.refresh", return_value=False),
             mock.patch("builtins.print"),
         ):
             self.assertEqual(progress.check(("GAME.EXE",)), 1)
         data_gate.assert_called_once()
+
+    def test_default_check_rejects_unowned_data_even_when_objects_match(self) -> None:
+        with (
+            mock.patch.object(progress, "current_state", return_value=(None, {}, [], [])),
+            mock.patch.object(progress, "load_baseline", return_value={}),
+            mock.patch.object(progress, "print_status", return_value=0),
+            mock.patch.object(progress, "_report_cleanliness"),
+            mock.patch("scripts.kf.data_match.run", return_value=0),
+            mock.patch("scripts.kf.data_reachability.run", return_value=1) as reachability,
+            mock.patch("scripts.kf.readme.refresh", return_value=False),
+            mock.patch("builtins.print"),
+        ):
+            self.assertEqual(progress.check(("GAME.EXE",)), 1)
+        reachability.assert_called_once_with(("GAME.EXE",))
 
     def test_missing_objdiff_fuzzy_field_means_zero(self) -> None:
         scores, failures = _report_scores({
@@ -266,6 +281,10 @@ class ProgressTests(unittest.TestCase):
 
 
 class GraphTests(unittest.TestCase):
+    def test_nested_semantic_evidence_is_a_build_dependency(self) -> None:
+        self.assertIn("scripts/kf/sema/evidence.py", _script_inputs())
+        self.assertIn("scripts/kf/data_reachability.py", _script_inputs())
+
     def test_ninja_paths_escape_spaces_and_colons(self) -> None:
         lines = _build_line("build/a b", "rule", inputs=["C:/retail/GAME.EXE"])
         self.assertEqual(lines, ["build build/a$ b: rule C$:/retail/GAME.EXE"])
