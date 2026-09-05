@@ -8,19 +8,19 @@ static void pad_read_bad_identifier(void);
 static void pad_stop_bad_identifier(void);
 
 DATA(0x80037760, 0x4)
-static u32 pad_buf = 0;
+static u32 pad_buf;
 
 DATA(0x80037768, 0x4)
-static u32 pad_status = 0;
+static u32 pad_status;
 
 DATA(0x80049528, 0x4)
-static s32 PadIdentifier;
+int PadIdentifier;
 
 RODATA(0x80013358, 0x60)
 
 /*
  * OPEN links the same version-skewed Sony LIBETC PAD.OBJ source shape as
- * GAME. Its private state and literals occupy overlay-specific addresses.
+ * GAME. Its state and private literals occupy overlay-specific addresses.
  * The init diagnostic keeps its K&R form because PadInit passes ignored
  * low-level call arguments and consumes the incidental printf result.
  */

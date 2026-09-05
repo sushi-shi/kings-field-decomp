@@ -14,7 +14,7 @@ DATA(0x80058028, 0x4)
 static u32 pad_status;
 
 DATA(0x8006bd88, 0x4)
-static s32 PadIdentifier;
+int PadIdentifier;
 
 RODATA(0x80013e8c, 0x60)
 

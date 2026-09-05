@@ -362,6 +362,40 @@ The full build correctly rejects the 47 source-data failures, twelve
 target-placement failures and outstanding ownership/reference gaps. The 666
 config-only ranges remain unresolved. No function is banked.
 
+## PAD storage and SDK linkage correction
+
+Reviewing the two PAD placement failures against the supplied Sony archive and
+header exposes the underlying source assumptions. `LIBETC.H` declares exported
+`int PadIdentifier`; the source's private `s32` declaration contradicted that
+contract. PAD.OBJ places its local pad words in `.sbss` and exports the
+identifier through XBSS in `.bss`. These are distinct allocation classes, not
+evidence that the PAD functions belong to different translation units.
+
+Both programs now use the authentic exported type/declaration. OPEN's private
+pad words also change from explicit loaded zeros to tentative BSS definitions:
+they lie after CPE residue at `0x800375d8`, and the archive plus the retail
+write-before-use sequence supports uninitialized storage. Their two census rows
+remain present at identical addresses and four-byte extents, classified as BSS.
+No load-page bytes are removed from the inventory union. The
+[PAD evidence and per-function verdicts](../config/evidence/pad_storage_and_linkage.md)
+retain raw record details, hashes, instruction witnesses and the version-skew
+boundary.
+
+Both six-function vendor units remain objdiff 100%; all 484 function scores
+remain unchanged, preserving the 354 exact game functions. Only the two PAD
+source objects and their two module targets change; the other 115 source
+objects and 1,720 target objects remain identical. Neither PAD unit is yet a
+faithful allocation match: explicit `.sbss`/external-BSS support remains needed
+in both the target and probe paths. The default gates retain the two placement
+failures, and the overall target result remains 105/117 with strict source data
+16/63. Config-only reachability and complete linked-image equality remain open.
+
+All 459 local tests, Ruff and flake checks pass. The flake suite now receives
+the pinned SDK headers/archive tools and checks the real PAD section records;
+49 tests needing local retail/oracle artifacts are skipped only in that
+sandbox. The full build correctly fails the unresolved data, placement and
+reachability gates. No game function or score is banked.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

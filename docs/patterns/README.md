@@ -20,7 +20,7 @@ promotes a probe to a proven historical toolchain.
   scheduling/regalloc residue, and `-mcpu=r2000` is a per-TU discriminator, not
   a global truth.
 - [psyq-cpe-tail-and-bss.md](psyq-cpe-tail-and-bss.md): the CPE v1 prefix
-  embedded at GAME's initialized-data tail, and why referenced storage inside
+  embedded at GAME's and OPEN's initialized-data tails, and why referenced storage inside
   the final page can still be original BSS rather than initialized source data.
 - [open-map-render-residue.md](open-map-render-residue.md): RTBL window
   ownership, conflicting light-matrix base forms in map rendering and

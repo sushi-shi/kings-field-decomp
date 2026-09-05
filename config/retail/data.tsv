@@ -5446,9 +5446,9 @@ OPEN.EXE	0x80037748	0x25f48	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 OPEN.EXE	0x8003774c	0x25f4c	0xc	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037758	0x25f58	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x8003775c	0x25f5c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80037760	0x25f60	0x4	defined	reviewed	pad_buf	u32	manual:open_vendor_pad	zero-initialized private PAD word; archive symbol and four PAD.OBJ-only references establish identity and ownership
+OPEN.EXE	0x80037760	0x25f60	0x4	bss	reviewed	pad_buf	u32	manual:pad_storage_and_linkage	private PAD word after CPE conversion residue; archive .sbss and write-before-read establish uninitialized storage despite loaded page zeros
 OPEN.EXE	0x80037764	0x25f64	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80037768	0x25f68	0x4	defined	reviewed	pad_status	u32	manual:open_vendor_pad	zero-initialized private PAD status; archive symbol and sole PadInit reference establish identity and ownership
+OPEN.EXE	0x80037768	0x25f68	0x4	bss	reviewed	pad_status	u32	manual:pad_storage_and_linkage	private PAD status after CPE conversion residue; archive .sbss and sole PadInit store establish uninitialized storage despite loaded page zeros
 OPEN.EXE	0x8003776c	0x25f6c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 OPEN.EXE	0x80037770	0x25f70	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80037774	0x25f74	0x8c	unclassified	coverage-gap			payload-complement	includes zero-filled file padding overlapping the inferred BSS start; may contain other unresolved state

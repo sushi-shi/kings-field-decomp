@@ -4,6 +4,7 @@
 /* Version-skewed LIBETC PAD.OBJ public interface recovered from retail. */
 
 #include <kf/game_types.h>
+#include <LIBETC.H>
 
 extern u32 PadInit(s32 identifier);
 /* Retail callers pass an ignored identifier to this K&R-style boundary. */

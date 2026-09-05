@@ -1183,10 +1183,10 @@ class InventoryTests(unittest.TestCase):
         expected_state = {
             ("GAME.EXE", 0x80058020): ("pad_buf", "bss", "u32"),
             ("GAME.EXE", 0x80058028): ("pad_status", "bss", "u32"),
-            ("GAME.EXE", 0x8006BD88): ("PadIdentifier", "bss", "s32"),
-            ("OPEN.EXE", 0x80037760): ("pad_buf", "load", "u32"),
-            ("OPEN.EXE", 0x80037768): ("pad_status", "load", "u32"),
-            ("OPEN.EXE", 0x80049528): ("PadIdentifier", "bss", "s32"),
+            ("GAME.EXE", 0x8006BD88): ("PadIdentifier", "bss", "int"),
+            ("OPEN.EXE", 0x80037760): ("pad_buf", "bss", "u32"),
+            ("OPEN.EXE", 0x80037768): ("pad_status", "bss", "u32"),
+            ("OPEN.EXE", 0x80049528): ("PadIdentifier", "bss", "int"),
         }
         expected_references = {
             "pad_buf": 4,
@@ -1205,7 +1205,8 @@ class InventoryTests(unittest.TestCase):
                     datum.owner,
                     datum.confidence,
                 ),
-                (name, "static", storage, datatype, "pad", "supported"),
+                (name, "global" if name == "PadIdentifier" else "static",
+                 storage, datatype, "pad", "supported"),
             )
             references = [
                 row
@@ -1226,7 +1227,10 @@ class InventoryTests(unittest.TestCase):
         for source in sources:
             self.assertIn("static u32 pad_buf", source)
             self.assertIn("static u32 pad_status", source)
-            self.assertIn("static s32 PadIdentifier;", source)
+            self.assertIn("\nint PadIdentifier;", source)
+            self.assertNotIn("static s32 PadIdentifier;", source)
+            self.assertNotIn("pad_buf = 0", source)
+            self.assertNotIn("static u32 pad_status =", source)
             self.assertNotIn("DAT_", source)
             for literal in (
                 "PAD_init: Bad PadIdentifier %d\\n",
@@ -1238,6 +1242,7 @@ class InventoryTests(unittest.TestCase):
         self.assertNotIn("DAT_80058028", game_state)
         self.assertIn("extern u32 PadInit(s32 identifier);", vendor_header)
         self.assertIn("extern u32 PadRead();", vendor_header)
+        self.assertIn("#include <LIBETC.H>", vendor_header)
         self.assertFalse((REPO / "include/kf/game_pad.h").exists())
 
     def test_menu_presentation_tu_and_interfaces_are_curated(self) -> None:
