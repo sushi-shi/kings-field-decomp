@@ -797,13 +797,12 @@ dispatcher, and the consumable-item panel). This band sits directly after
 
 Residues recorded in the module (not steered):
 
-- `func_80022348` `0x80022348` (96.6%): retail promotes the loop-invariant
-  constant `-1` to a callee-saved register (`s6`, adding an eighth save slot so
-  `ra` lands at 44) and compares `selection`/`result`/the case-1 result against
-  it; the probe re-materialises `li v0,-1` (or reuses the `result` pseudo) at
-  each site. The extra save shifts every branch offset and cascades into the
-  case tails' delay-slot fills. Referents, relocations, call set and CFG match.
-  Same callee-saved-constant class as `actor_update_awareness`.
+- `menu_root` `0x80022348`: the later raw audit found three unsupported
+  result resets after void panel calls. Removing them restores those nop call
+  slots and improves strict objdiff to 96.863640%. Retail retains `-1` in s6
+  and saves ra at 44; the probe rematerializes `-1` and saves ra at 40, with
+  exchanged cursor/result registers. These are observed symptoms, not a
+  proved compiler mechanism. See [the result-lifetime audit](game-menu-root-results.md).
 - `func_80022608` `0x80022608` (92.8%): the consumable panel reconstructs with
   correct referents, calls, constants and control flow, but the caller-saved
   allocation permutes against retail — the two name givs land in `t2` where

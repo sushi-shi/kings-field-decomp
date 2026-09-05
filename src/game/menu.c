@@ -83,15 +83,12 @@ s32 menu_root(void)
             break;
         case 2:
             menu_option_root();
-            result = -99;
             break;
         case 3:
             menu_status_panel();
-            result = -99;
             break;
         case 4:
             menu_drop_item();
-            result = -99;
             break;
         case 5:
             result = menu_save_load_hub();

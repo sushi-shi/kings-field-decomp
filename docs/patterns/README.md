@@ -115,6 +115,12 @@ promotes a probe to a proven historical toolchain.
   screen-image/input helper.
 - [game-option-menu-reset.md](game-option-menu-reset.md): clearing the pending
   selection before the exit guard closes the option-menu dispatch loop.
+- [game-menu-root-results.md](game-menu-root-results.md): removing three
+  unsupported result resets improves the main-menu loop; an equivalent
+  cancellation-condition control leaves the remaining comparison unchanged.
+- [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
+  shared save-summary records removes duplicate advancing pointers and closes
+  the dialog-frame renderer.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
