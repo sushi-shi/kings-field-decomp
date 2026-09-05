@@ -1895,35 +1895,6 @@ OPEN.EXE	0x8001219c	0x4	DAT_8001219c	unknown	load	pointer		address-only	data.tsv
 OPEN.EXE	0x800121a0	0x4	DAT_800121a0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800121a4	0x4	DAT_800121a4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800121a8	0x4	DAT_800121a8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121c0	0x4	DAT_800121c0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121c4	0x4	DAT_800121c4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121c8	0x4	DAT_800121c8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121cc	0x4	DAT_800121cc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121d0	0x4	DAT_800121d0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121d4	0x4	DAT_800121d4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121d8	0x4	DAT_800121d8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121dc	0x4	DAT_800121dc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121e0	0x4	DAT_800121e0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121e4	0x4	DAT_800121e4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121e8	0x4	DAT_800121e8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121ec	0x4	DAT_800121ec	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121f0	0x4	DAT_800121f0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121f4	0x4	DAT_800121f4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121f8	0x4	DAT_800121f8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x800121fc	0x4	DAT_800121fc	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012200	0x4	DAT_80012200	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012204	0x4	DAT_80012204	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012208	0x4	DAT_80012208	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001220c	0x4	DAT_8001220c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012210	0x4	DAT_80012210	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012214	0x4	DAT_80012214	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012218	0x4	DAT_80012218	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001221c	0x4	DAT_8001221c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012220	0x4	DAT_80012220	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012224	0x4	DAT_80012224	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012228	0x4	DAT_80012228	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x8001222c	0x4	DAT_8001222c	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
-OPEN.EXE	0x80012230	0x4	DAT_80012230	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800123f0	0x4	DAT_800123f0	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800123f4	0x4	DAT_800123f4	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x800123f8	0x4	DAT_800123f8	unknown	load	pointer		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
@@ -2774,7 +2745,7 @@ OPEN.EXE	0x800372d4	0x6	opening_initial_tim_path	unknown	load	char[6]	opening_co
 OPEN.EXE	0x800372dc	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	"\\KF\\": five bytes copied to the head of the OPEN CD path buffer before the file name
 OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	";1": ISO 9660 version suffix appended to every OPEN CD path
 OPEN.EXE	0x800372e8	0x8	opening_ending_sequence_path	unknown	load	char[8]	opening_resources	supported	open_semantic_resources.tsv;asm;direct-bytes;sole-xref	B0\\END. sequence path used by the ending resource loader
-OPEN.EXE	0x800372f3	0x1	DAT_800372f3	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
+OPEN.EXE	0x800372f0	0x4	tmd_textured_primitive_color	global	load	CVECTOR	render_tmd	supported	open_semantic_tmd_enqueue.tsv;asm;retail-bytes;NormalColorDpq;Psy-Q-CVECTOR	neutral RGB 128 and code byte at +3; complete color owner replaces the former interior byte identity
 OPEN.EXE	0x800372f8	0x4	map_textured_primitive_color	global	load	CVECTOR	render_map	supported	open_semantic_map_enqueue.tsv;asm;NormalColorCol;Psy-Q-CVECTOR	initialized neutral RGB 128 with GPU command byte at +3; retail materializes the interior cd address and passes the full owner to NormalColorCol
 OPEN.EXE	0x800372fc	0x8	render_sprite_light_normal	global	load	SVECTOR	render_sprite	supported	open_semantic_sprite_render.tsv;retail-bytes;asm;NormalColorDpq	initialized positive-Z Q12 normal passed to the projected sprite shading call
 OPEN.EXE	0x80037304	0x4	audio_voice_slot_index	global	load	s32	audio	supported	open_semantic_audio_play_voice.tsv;asm;xrefs;retail-initial-value-9;GAME-overlay-homolog	managed sound-effect ring index advanced modulo ten before each voice

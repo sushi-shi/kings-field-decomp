@@ -102,7 +102,7 @@ extern void render_set_view_transform(
 extern void tmd_project_vertices_perspective_right(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
-extern void func_8001764c(u16 object_index, s16 depth_bias);
+extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag);
 extern void render_floor_item(KfFloorItem *item);

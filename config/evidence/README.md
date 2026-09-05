@@ -18,6 +18,13 @@ one local MATRIX initializer, ten initialized data owners, and the remaining
 non-exact instruction-order/temporary and branch-join differences. Details and
 ordered referent controls are in `docs/patterns/open-ending-scroll.md`.
 
+`open_semantic_tmd_enqueue.tsv` records the last unstarted OPEN function: the
+twelve-mode general TMD polygon emitter and its exact entity-render caller.
+It supports a 29-row local switch, a complete initialized CVECTOR owner, shared
+packed SDK/TMD views, and compiled/retail static call-path and address controls.
+The 98.802410% result remains partial; details are in
+`docs/patterns/open-tmd-enqueue.md`.
+
 `open_semantic_unlit_triangles.tsv` records the OPEN-only unlit triangle
 emitter and its exact entity-render caller control. The companion
 `render_typed_matrix_cast_cleanup.tsv` records byte-identical redundant-cast

@@ -158,6 +158,31 @@ typedef struct KfTmdGt4 {
     u16 v3;
 } KfTmdGt4;
 
+/* Mode-discriminated prepared packet body. Texture modes share the packed
+ * UV/CLUT/page prefix; three-vertex modes do not access the fourth UV pair.
+ */
+typedef union KfTmdPrimitive {
+    KfTmdF3 f3;
+    KfTmdF4 f4;
+    KfTmdFt3 ft3;
+    KfTmdFt4 ft4;
+    KfTmdG3 g3;
+    KfTmdG4 g4;
+    KfTmdGt3 gt3;
+    KfTmdGt4 gt4;
+    CVECTOR color;
+    struct {
+        u16 uv0;
+        u16 clut;
+        u16 uv1;
+        u16 tpage;
+        u16 uv2;
+        u16 pad0;
+        u16 uv3;
+        u16 pad1;
+    } texture;
+} KfTmdPrimitive;
+
 /* One GTE-projected vertex consumed by the polygon enqueue paths. */
 typedef struct KfScreenVertex {
     long sxy; /* SDK packed screen X/Y word; non-perspective paths write its halves. */

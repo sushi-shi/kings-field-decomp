@@ -10427,35 +10427,35 @@ OPEN.EXE	0x8001219c	0x99c		mips32_candidate	raw-word	0x80017304	load		.word		ran
 OPEN.EXE	0x800121a0	0x9a0		mips32_candidate	raw-word	0x80017304	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800121a4	0x9a4		mips32_candidate	raw-word	0x80017304	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x800121a8	0x9a8		mips32_candidate	raw-word	0x800172a4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121c0	0x9c0		mips32_candidate	raw-word	0x80017ed8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121c4	0x9c4		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121c8	0x9c8		mips32_candidate	raw-word	0x800180d0	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121cc	0x9cc		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121d0	0x9d0		mips32_candidate	raw-word	0x8001770c	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121d4	0x9d4		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121d8	0x9d8		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121dc	0x9dc		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121e0	0x9e0		mips32_candidate	raw-word	0x80017864	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121e4	0x9e4		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121e8	0x9e8		mips32_candidate	raw-word	0x800181e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121ec	0x9ec		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121f0	0x9f0		mips32_candidate	raw-word	0x80017df8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121f4	0x9f4		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121f8	0x9f8		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800121fc	0x9fc		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012200	0xa00		mips32_candidate	raw-word	0x800178bc	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012204	0xa04		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012208	0xa08		mips32_candidate	raw-word	0x80017d00	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001220c	0xa0c		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012210	0xa10		mips32_candidate	raw-word	0x80017a8c	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012214	0xa14		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012218	0xa18		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001221c	0xa1c		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012220	0xa20		mips32_candidate	raw-word	0x800179b0	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012224	0xa24		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012228	0xa28		mips32_candidate	raw-word	0x80017fe4	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001222c	0xa2c		mips32_candidate	raw-word	0x800182e8	load		.word		range-only	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80012230	0xa30		mips32_candidate	raw-word	0x80017bc8	load		.word		range-only	candidate	investigation:relocs.tsv
+OPEN.EXE	0x800121c0	0x9c0		mips32_candidate	raw-word	0x80017ed8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121c4	0x9c4		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121c8	0x9c8		mips32_candidate	raw-word	0x800180d0	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121cc	0x9cc		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121d0	0x9d0		mips32_candidate	raw-word	0x8001770c	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121d4	0x9d4		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121d8	0x9d8		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121dc	0x9dc		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121e0	0x9e0		mips32_candidate	raw-word	0x80017864	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121e4	0x9e4		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121e8	0x9e8		mips32_candidate	raw-word	0x800181e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121ec	0x9ec		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121f0	0x9f0		mips32_candidate	raw-word	0x80017df8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121f4	0x9f4		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121f8	0x9f8		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800121fc	0x9fc		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012200	0xa00		mips32_candidate	raw-word	0x800178bc	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012204	0xa04		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012208	0xa08		mips32_candidate	raw-word	0x80017d00	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001220c	0xa0c		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012210	0xa10		mips32_candidate	raw-word	0x80017a8c	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012214	0xa14		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012218	0xa18		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001221c	0xa1c		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012220	0xa20		mips32_candidate	raw-word	0x800179b0	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012224	0xa24		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012228	0xa28		mips32_candidate	raw-word	0x80017fe4	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001222c	0xa2c		mips32_candidate	raw-word	0x800182e8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80012230	0xa30		mips32_candidate	raw-word	0x80017bc8	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
 OPEN.EXE	0x80012238	0xa38		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x8001223c	0xa3c		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x80012240	0xa40		mips32_candidate	raw-word	0x80019000	load		.word		pointer-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
@@ -11918,85 +11918,85 @@ OPEN.EXE	0x80017564	0x5d64		mips26	reachable-code	0x8002c1ac	load	ReadSZ2	jal		c
 OPEN.EXE	0x800175c4	0x5dc4	0x800175c8	mips_hi16_lo16	reachable-code	0x80069b80	bss	tmd_projected_vertices	lui+addiu	s2	paired-reviewed	reviewed	manual:open_semantic_projection
 OPEN.EXE	0x800175cc	0x5dcc	0x800175d0	mips_hi16_lo16	reachable-code	0x80069b68	bss	current_tmd_vertices	lui+lw	s3	paired-reviewed	reviewed	manual:open_semantic_projection
 OPEN.EXE	0x800175ec	0x5dec		mips26	reachable-code	0x8002d8b0	load	RotTrans	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection
-OPEN.EXE	0x8001767c	0x5e7c		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80017688	0x5e88	0x8001768c	mips_hi16_lo16	reachable-code	0x80069b60	bss	tmd_state	lui+addiu	a1	mips-hi-lo-data-pair	candidate	scripts/kf/inventory.py:bss-pair-scan
-OPEN.EXE	0x800176f0	0x5ef0	0x800176f4	mips_hi16_lo16	reachable-code	0x800121c0	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017730	0x5f30		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017740	0x5f40		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x8001774c	0x5f4c		mips26	instruction-word	0x80034090	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800177b4	0x5fb4	0x800177b8	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+sb	at	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017804	0x6004	0x80017808	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+addiu	t0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017810	0x6010		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001785c	0x605c		mips26	instruction-word	0x800182c4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017888	0x6088		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800178a0	0x60a0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x800178ac	0x60ac		mips26	instruction-word	0x800340cc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800178b4	0x60b4		mips26	instruction-word	0x80018244	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800178e0	0x60e0		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800178f0	0x60f0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x800178fc	0x60fc		mips26	instruction-word	0x800340a4	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001795c	0x615c		mips26	instruction-word	0x8002db14	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800179a8	0x61a8		mips26	instruction-word	0x800182c4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800179d4	0x61d4		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800179ec	0x61ec		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x800179f8	0x61f8		mips26	instruction-word	0x800340f4	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017a64	0x6264		mips26	instruction-word	0x8002db14	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017a7c	0x627c		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017a84	0x6284		mips26	instruction-word	0x800182a0	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017ab0	0x62b0		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017ac0	0x62c0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80017acc	0x62cc		mips26	instruction-word	0x800340b8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017b20	0x6320	0x80017b24	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+addiu	t0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017b38	0x6338	0x80017b3c	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+sb	at	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017b74	0x6374		mips26	instruction-word	0x8002db14	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017bc0	0x63c0		mips26	instruction-word	0x800182c4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017bec	0x63ec		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017c04	0x6404		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80017c10	0x6410		mips26	instruction-word	0x80034108	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017c7c	0x647c	0x80017c80	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+addiu	t0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017c94	0x6494	0x80017c98	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+sb	at	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017cd0	0x64d0		mips26	instruction-word	0x8002db14	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017cd8	0x64d8	0x80017cdc	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+addiu	t0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017cf0	0x64f0		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017cf8	0x64f8		mips26	instruction-word	0x800182a0	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017d24	0x6524		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017d34	0x6534		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80017d40	0x6540		mips26	instruction-word	0x800340a4	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017d4c	0x654c		mips26	instruction-word	0x8003402c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017da4	0x65a4		mips26	instruction-word	0x8002db84	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017df0	0x65f0		mips26	instruction-word	0x800182c4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017e1c	0x661c		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017e34	0x6634		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80017e40	0x6640		mips26	instruction-word	0x800340e0	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017ea0	0x66a0	0x80017ea4	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+addiu	t0	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017ec4	0x66c4	0x80017ec8	mips_hi16_lo16	instruction-word	0x800372f3	load		lui+sb	at	paired-pattern	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017ed0	0x66d0		mips26	instruction-word	0x80018278	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017efc	0x66fc		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017f0c	0x670c		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80017f18	0x6718		mips26	instruction-word	0x8003407c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017f90	0x6790		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80017fdc	0x67dc		mips26	instruction-word	0x800182c4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018008	0x6808		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018020	0x6820		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x8001802c	0x682c		mips26	instruction-word	0x800340f4	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018038	0x6838		mips26	instruction-word	0x8003402c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018078	0x6878		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018090	0x6890		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800180a8	0x68a8		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800180c0	0x68c0		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800180c8	0x68c8		mips26	instruction-word	0x800182a0	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800180f4	0x68f4		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018104	0x6904		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80018110	0x6910		mips26	instruction-word	0x8003407c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001811c	0x691c		mips26	instruction-word	0x8003402c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018194	0x6994		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800181e0	0x69e0		mips26	instruction-word	0x800182c4	load		j		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001820c	0x6a0c		mips26	instruction-word	0x8002dc20	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018224	0x6a24		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
-OPEN.EXE	0x80018230	0x6a30		mips26	instruction-word	0x800340cc	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001823c	0x6a3c		mips26	instruction-word	0x8003402c	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x80018298	0x6a98		mips26	instruction-word	0x8002dae8	load		jal		range-filtered	candidate	investigation:relocs.tsv
-OPEN.EXE	0x800182e0	0x6ae0		mips26	instruction-word	0x80033f74	load		jal		range-filtered	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001767c	0x5e7c		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017688	0x5e88	0x8001768c	mips_hi16_lo16	reachable-code	0x80069b60	bss	tmd_state	lui+addiu	a1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800176f0	0x5ef0	0x800176f4	mips_hi16_lo16	reachable-code	0x800121c0	load		lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017730	0x5f30		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017740	0x5f40		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001774c	0x5f4c		mips26	instruction-word	0x80034090	load	SetPolyFT3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800177b4	0x5fb4	0x800177b8	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+sb	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017804	0x6004	0x80017808	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+addiu	t0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017810	0x6010		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001785c	0x605c		mips26	instruction-word	0x800182c4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017888	0x6088		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800178a0	0x60a0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800178ac	0x60ac		mips26	instruction-word	0x800340cc	load	SetPolyF4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800178b4	0x60b4		mips26	instruction-word	0x80018244	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800178e0	0x60e0		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800178f0	0x60f0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800178fc	0x60fc		mips26	instruction-word	0x800340a4	load	SetPolyG3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001795c	0x615c		mips26	instruction-word	0x8002db14	load	NormalColorDpq3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800179a8	0x61a8		mips26	instruction-word	0x800182c4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800179d4	0x61d4		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800179ec	0x61ec		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800179f8	0x61f8		mips26	instruction-word	0x800340f4	load	SetPolyG4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017a64	0x6264		mips26	instruction-word	0x8002db14	load	NormalColorDpq3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017a7c	0x627c		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017a84	0x6284		mips26	instruction-word	0x800182a0	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017ab0	0x62b0		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017ac0	0x62c0		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017acc	0x62cc		mips26	instruction-word	0x800340b8	load	SetPolyGT3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017b20	0x6320	0x80017b24	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+addiu	t0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017b38	0x6338	0x80017b3c	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+sb	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017b74	0x6374		mips26	instruction-word	0x8002db14	load	NormalColorDpq3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017bc0	0x63c0		mips26	instruction-word	0x800182c4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017bec	0x63ec		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017c04	0x6404		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017c10	0x6410		mips26	instruction-word	0x80034108	load	SetPolyGT4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017c7c	0x647c	0x80017c80	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+addiu	t0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017c94	0x6494	0x80017c98	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+sb	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017cd0	0x64d0		mips26	instruction-word	0x8002db14	load	NormalColorDpq3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017cd8	0x64d8	0x80017cdc	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+addiu	t0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017cf0	0x64f0		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017cf8	0x64f8		mips26	instruction-word	0x800182a0	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017d24	0x6524		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017d34	0x6534		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017d40	0x6540		mips26	instruction-word	0x800340a4	load	SetPolyG3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017d4c	0x654c		mips26	instruction-word	0x8003402c	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017da4	0x65a4		mips26	instruction-word	0x8002db84	load	NormalColorCol3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017df0	0x65f0		mips26	instruction-word	0x800182c4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017e1c	0x661c		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017e34	0x6634		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017e40	0x6640		mips26	instruction-word	0x800340e0	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017ea0	0x66a0	0x80017ea4	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+addiu	t0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017ec4	0x66c4	0x80017ec8	mips_hi16_lo16	instruction-word	0x800372f3	load	tmd_textured_primitive_color	lui+sb	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017ed0	0x66d0		mips26	instruction-word	0x80018278	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017efc	0x66fc		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017f0c	0x670c		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017f18	0x6718		mips26	instruction-word	0x8003407c	load	SetPolyF3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017f90	0x6790		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80017fdc	0x67dc		mips26	instruction-word	0x800182c4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018008	0x6808		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018020	0x6820		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001802c	0x682c		mips26	instruction-word	0x800340f4	load	SetPolyG4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018038	0x6838		mips26	instruction-word	0x8003402c	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018078	0x6878		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018090	0x6890		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800180a8	0x68a8		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800180c0	0x68c0		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800180c8	0x68c8		mips26	instruction-word	0x800182a0	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800180f4	0x68f4		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018104	0x6904		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018110	0x6910		mips26	instruction-word	0x8003407c	load	SetPolyF3	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001811c	0x691c		mips26	instruction-word	0x8003402c	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018194	0x6994		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800181e0	0x69e0		mips26	instruction-word	0x800182c4	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001820c	0x6a0c		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018224	0x6a24		mips26	instruction-word	0x80016cb4	load	primitive_buffer_allocate	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018230	0x6a30		mips26	instruction-word	0x800340cc	load	SetPolyF4	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x8001823c	0x6a3c		mips26	instruction-word	0x8003402c	load	SetSemiTrans	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x80018298	0x6a98		mips26	instruction-word	0x8002dae8	load	NormalColorDpq	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
+OPEN.EXE	0x800182e0	0x6ae0		mips26	instruction-word	0x80033f74	load	AddPrim	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_tmd_enqueue
 OPEN.EXE	0x80018374	0x6b74		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_unlit_triangles
 OPEN.EXE	0x80018380	0x6b80	0x80018384	mips_hi16_lo16	reachable-code	0x80069b60	bss	tmd_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_unlit_triangles
 OPEN.EXE	0x800183f4	0x6bf4		mips26	instruction-word	0x8002dc20	load	NormalClip	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_unlit_triangles
@@ -12092,7 +12092,7 @@ OPEN.EXE	0x80019024	0x7824		mips26	instruction-word	0x800190a8	load		j		control-
 OPEN.EXE	0x80019030	0x7830		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x80019038	0x7838		mips26	instruction-word	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x80019044	0x7844		mips26	instruction-word	0x80017458	load	tmd_project_vertices_perspective_right	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection;manual:open_semantic_entity_render
-OPEN.EXE	0x80019050	0x7850		mips26	instruction-word	0x8001764c	load	func_8001764c	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x80019050	0x7850		mips26	instruction-word	0x8001764c	load	render_enqueue_tmd	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render;manual:open_semantic_tmd_enqueue
 OPEN.EXE	0x80019058	0x7858		mips26	instruction-word	0x800190d8	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x80019060	0x7860		mips26	instruction-word	0x8001906c	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
 OPEN.EXE	0x80019070	0x7870		mips26	instruction-word	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
@@ -12103,7 +12103,7 @@ OPEN.EXE	0x8001909c	0x789c		mips26	instruction-word	0x800190d8	load		j		control-
 OPEN.EXE	0x800190ac	0x78ac		mips26	reachable-code	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_render
 OPEN.EXE	0x800190b4	0x78b4		mips26	reachable-code	0x80016e94	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_entity_render
 OPEN.EXE	0x800190c0	0x78c0		mips26	reachable-code	0x8001738c	load	tmd_project_vertices	jal		control-flow-reviewed	reviewed	manual:open_semantic_projection;manual:open_semantic_entity_render
-OPEN.EXE	0x800190d0	0x78d0		mips26	reachable-code	0x8001764c	load	func_8001764c	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render
+OPEN.EXE	0x800190d0	0x78d0		mips26	reachable-code	0x8001764c	load	render_enqueue_tmd	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_entity_render;manual:open_semantic_tmd_enqueue
 OPEN.EXE	0x80019108	0x7908	0x8001910c	mips_hi16_lo16	reachable-code	0x8006e048	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_floor_item_render
 OPEN.EXE	0x80019110	0x7910		mips26	reachable-code	0x8002d558	load	SetRotMatrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_floor_item_render
 OPEN.EXE	0x80019118	0x7918	0x8001911c	mips_hi16_lo16	reachable-code	0x8006e048	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_floor_item_render

@@ -74,7 +74,7 @@ void opening_entity_render(KfOpeningEntity *entity)
         tmd_select_object_vertices(object_id);
         tmd_project_vertices_perspective_right(
             tmd_get_object(object_id)->vertex_count);
-        func_8001764c(object_id, 0);
+        render_enqueue_tmd(object_id, 0);
         return;
     case 26:
         depth = 1000;
@@ -93,7 +93,7 @@ void opening_entity_render(KfOpeningEntity *entity)
 
     tmd_select_object_vertices(object_id);
     tmd_project_vertices(tmd_get_object(object_id)->vertex_count);
-    func_8001764c(object_id, depth);
+    render_enqueue_tmd(object_id, depth);
 }
 
 ADDRESS(0x800190f4, 0x14c)
