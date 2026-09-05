@@ -5883,6 +5883,8 @@ GAME.EXE	0x8002c860	0x1b060		mips26	reachable-code	0x8001af9c	load		jal		control
 GAME.EXE	0x8002c874	0x1b074		mips26	reachable-code	0x8001b100	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002c87c	0x1b07c	0x8002c880	mips_hi16_lo16	reachable-code	0x80070e98	bss	display_state	lui+lbu	v0	paired-reviewed	reviewed	manual:game_semantic_save_system
 GAME.EXE	0x8002c8a0	0x1b0a0	0x8002c8a4	mips_hi16_lo16	reachable-code	0x80090ed8	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_save_system
+GAME.EXE	0x8002c8b0	0x1b0b0	0x8002c8b4	mips_hi16_lo16	reachable-code	0x80090ed7	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	manual:game_display_environment_data
+GAME.EXE	0x8002c8c0	0x1b0c0	0x8002c8c4	mips_hi16_lo16	reachable-code	0x80090ec0	bss	display_draw_environments	lui+addiu	v0	paired-reviewed	reviewed	manual:game_display_environment_data
 GAME.EXE	0x8002c8c8	0x1b0c8		mips26	reachable-code	0x80050d48	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002c8d0	0x1b0d0	0x8002c8d4	mips_hi16_lo16	reachable-code	0x80090ebc	bss	display_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_save_system
 GAME.EXE	0x8002c90c	0x1b10c		mips26	reachable-code	0x80050c44	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -5894,6 +5896,7 @@ GAME.EXE	0x8002c954	0x1b154		mips26	reachable-code	0x8002c8f0	load		j		control-f
 GAME.EXE	0x8002c95c	0x1b15c		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002c96c	0x1b16c		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002c990	0x1b190	0x8002c994	mips_hi16_lo16	reachable-code	0x80090ed8	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	manual:game_semantic_save_system
+GAME.EXE	0x8002c9a0	0x1b1a0	0x8002c9a4	mips_hi16_lo16	reachable-code	0x80090ed7	bss	display_draw_environments	lui+addiu	at	paired-reviewed	reviewed	manual:game_display_environment_data
 GAME.EXE	0x8002c9b0	0x1b1b0		mips26	reachable-code	0x80050894	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002ca14	0x1b214	0x8002ca18	mips_hi16_lo16	reachable-code	0x80056076	load		lui+sb	at	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x8002ca20	0x1b220	0x8002ca24	mips_hi16_lo16	reachable-code	0x80056077	load		lui+sb	at	paired-reachable	candidate	investigation:relocs.tsv

@@ -68,8 +68,8 @@ typedef struct KfRenderState {
 extern SVECTOR tmd_morph_scratch[];
 extern MATRIX color_matrix_table[7];
 extern POLY_FT4 *current_poly_ft4;
-extern DISPENV display_disp_environments[2];
 extern DRAWENV display_draw_environments[2];
+extern DISPENV display_disp_environments[2];
 extern KfDisplayState display_state;
 extern KfCellWindow render_cell_windows[16];
 extern const KfCellWindow *active_cell_window;

@@ -74,6 +74,9 @@ promotes a probe to a proven historical toolchain.
 - [game-graphics-owner-pilot.md](game-graphics-owner-pilot.md): complete-clear
   ownership pilot, preserved initializer/traversal controls, and the exact
   unconditional view-matrix rebuild; GAME data migration remains unresolved.
+- [game-display-environment-data.md](game-display-environment-data.md): complete
+  SDK-typed environment arrays, reviewed interior references and the screen
+  fade's unconditional RGB stores; larger graphics ownership stays provisional.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [open-emitter-source-controls.md](open-emitter-source-controls.md): negative

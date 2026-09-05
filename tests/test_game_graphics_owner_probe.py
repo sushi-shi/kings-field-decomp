@@ -222,6 +222,73 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                 else:
                     self.assertEqual(actual, expected)
 
+    def test_extended_display_tmd_pilot_preserves_exacts_but_does_not_close_owner(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        data['graphics_owner_probe'] = ORIGIN
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        selected = {
+            'game.render': {
+                'display_show_error_screen', 'lighting_set_active_color_matrix',
+                'effect5_texture_cache_prepare', 'display_initialize', 'display_begin_frame',
+                'display_present_frame', 'tmd_select', 'tmd_get_object', 'tmd_set_current_vertices',
+                'tmd_select_object_vertices', 'tmd_prepare_primitive_indices', 'tmd_register',
+                'tmd_release_last_allocation',
+            },
+            'game.display_play_transition': {'display_play_transition'},
+            'game.menu_runtime': {'menu_present_frame'},
+            'game.save_system': {'screen_show_image_until_input'},
+        }
+        # Size and first raw divergence are observed symptoms, not attributed
+        # compiler mechanisms. Neither the pilot nor a partial suffix is banked.
+        partial = {
+            'display_show_error_screen': (772, 0, 0x27BDFFB8, 0x27BDFFB0, [
+                0x80058098, 0x80057B50, 0x8005809A, 0x80058080, 0x80058084, 0x80058080,
+                0x80058081, 0x80058082, 0x80057E80, 0x80057E81, 0x80057E82, 0x80057E80,
+                0x80058084, 0x80070E9C, 0x80070E9C, 0x80070E98, 0x80090ED8, 0x80090ED7,
+                0x80090EC0, 0x80090EBC, 0x80090ED8, 0x80090ED7,
+            ]),
+            'display_initialize': (336, 0xA4, 0x3C048009, 0x3C108009, [
+                0x80090EC0, 0x80090F78, 0x80090F1C, 0x80090F8C, 0x80090F32, 0x80090ED6,
+                0x80090ED8, 0x80090F34, 0x80090ED9, 0x80090EDA, 0x80090EDB, 0x80090F35,
+                0x80090F36, 0x80090F37, 0x80095740,
+            ]),
+            'tmd_prepare_primitive_indices': (768, 8, 0, 0x27BDFFF8, [
+                0x80090FC8, 0x80090FC8, 0x80090FC8, 0x800121B4,
+            ]),
+        }
+        for name, names in selected.items():
+            unit = manifest.by_name()[name]
+            with self.subTest(unit=name), tempfile.TemporaryDirectory() as directory:
+                obj = self.compile(Path(directory), unit, candidate_source(unit, names))
+                for claim in unit.functions:
+                    if claim.symbol not in names:
+                        continue
+                    with self.subTest(function=claim.symbol):
+                        actual, calls, targets = linked_words(obj, unit, claim, data, functions)
+                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                     image.require(claim.va, claim.body_size)))
+                        expected_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
+                                          | ((word & 0x3FFFFFF) << 2)
+                                          for i, word in enumerate(expected) if word >> 26 == 3]
+                        self.assertEqual(calls, expected_calls)
+                        if claim.symbol in partial:
+                            size, first, left, right, addresses = partial[claim.symbol]
+                            self.assertNotEqual(actual, expected)
+                            self.assertEqual(len(actual) * 4, size)
+                            self.assertEqual(actual[:first // 4], expected[:first // 4])
+                            self.assertEqual((actual[first // 4], expected[first // 4]), (left, right))
+                            self.assertEqual(targets, addresses)
+                        else:
+                            self.assertEqual(actual, expected)
+                            if any(ORIGIN <= target < ORIGIN + EXTENT for target in targets):
+                                wrong, same_calls, _ = linked_words(
+                                    obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
+                                self.assertNotEqual(wrong, expected)
+                                self.assertEqual(same_calls, calls)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -777,10 +777,10 @@ void screen_show_image_until_input(const char *path)
     for (;;) {
         if (brightness < 127) {
             brightness++;
-            polygon.r0 = brightness;
-            polygon.g0 = brightness;
-            polygon.b0 = brightness;
         }
+        polygon.r0 = brightness;
+        polygon.g0 = brightness;
+        polygon.b0 = brightness;
         ClearOTagR(display_state.ordering_table, 0x4000);
         AddPrim(display_state.ordering_table, &polygon);
         DrawSync(0);

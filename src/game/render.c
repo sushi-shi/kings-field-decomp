@@ -32,6 +32,12 @@ RODATA(0x800121b4, 0x74)
 DATA(0x80057b50, 0x7)
 char error_screen_path[7] = "\\E0.;1";
 
+DATA(0x80090ec0, 0xb8)
+DRAWENV display_draw_environments[2];
+
+DATA(0x80090f78, 0x28)
+DISPENV display_disp_environments[2];
+
 /* Loads and shows the fatal-error message screen for STAGE as a semi-transparent
  * textured box, then blocks until a controller button is pressed and released.
  * Called by cd_file_load_into on disc failure and by game_main_loop on a save
