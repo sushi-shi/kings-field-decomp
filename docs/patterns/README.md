@@ -113,6 +113,8 @@ promotes a probe to a proven historical toolchain.
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.
+- [game-option-menu-reset.md](game-option-menu-reset.md): clearing the pending
+  selection before the exit guard closes the option-menu dispatch loop.
 - [animation-cache.md](animation-cache.md): animation-pool metadata, typed
   cache pointers, complete BSS extent and contiguous binder/lifecycle ownership.
 - [mips-parser-instrumentation.md](mips-parser-instrumentation.md): isolated
