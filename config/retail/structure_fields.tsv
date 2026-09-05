@@ -132,6 +132,10 @@ KfCdFileEntry	0x02	0x01	sector	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	
 KfCdFileEntry	0x03	0x01	track	u8	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CdlLOC track of the file
 KfCdFileEntry	0x04	0x04	size	u32	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file size in bytes; func_8001ae60 reads it as the CdRead sector count
 KfCdFileEntry	0x08	0x0c	name	u8[12]	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	file name; 12 bytes as in the older CdlFILE layout
+KfCellHeightRecord	0x00	0x02	x_min	s16	supported	game_collision.h;game_collision_attribute_data.md;GAME:80037a4c	inclusive lower oriented cell-coordinate bound
+KfCellHeightRecord	0x02	0x02	y_min	s16	supported	game_collision.h;game_collision_attribute_data.md;GAME:800379c4	inclusive lower floor-relative height bound
+KfCellHeightRecord	0x04	0x02	x_max	s16	supported	game_collision.h;game_collision_attribute_data.md;GAME:80037a60	inclusive upper oriented cell-coordinate bound
+KfCellHeightRecord	0x06	0x02	y_max	s16	supported	game_collision.h;game_collision_attribute_data.md;GAME:800379dc	inclusive upper floor-relative height bound
 KfCellWindow	0x00	0x02	width	u16	supported	render_types.h;asm;render_map_cells;render_entities	row width and inner-loop bound
 KfCellWindow	0x02	0x02	height	u16	supported	render_types.h;asm;render_map_cells;render_entities	row count and outer-loop bound
 KfCellWindow	0x04	0x02	origin_x	u16	supported	render_types.h;asm;render_map_cells;render_entities	map-cell x coordinate of the window origin

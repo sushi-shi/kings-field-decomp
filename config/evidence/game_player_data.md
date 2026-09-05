@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-Baseline: `199860e`, GAME.EXE only, pinned `probe-gcc260-o2-g0` probe.
+Baseline: `199860e`, GAME.EXE only, pinned `probe-gcc257-o2-g0` probe.
 The campaign adds four initialized DATA owners to two existing modules. It
 does not change function bodies, invent a TU boundary, merge unrelated data,
 reclassify any game function as SDK code, or change any relocation row.

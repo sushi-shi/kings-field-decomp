@@ -3,12 +3,11 @@
 #include <kf/game.h>
 
 /*
- * Signed height offset per map-cell attribute, added to the query height and
- * floor in collision_query_world and effect_map_collision. Indexed by
- * map_cell_attribute_grid values.
+ * Negative values are floor-relative heights; nonnegative values select
+ * map_cell_height_records in effect_map_collision. Attribute 0xff is excluded.
  */
-DATA(0x800558b8, 0x238)
-s16 map_cell_attribute_height_table[284] = {
+DATA(0x800558b8, 0x1fe)
+s16 map_cell_attribute_height_table[255] = {
     -25000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -5000, -5000, -5000, -5000, -2500,
@@ -40,11 +39,7 @@ s16 map_cell_attribute_height_table[284] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, -25000, 0,
-    500, -2000, 1500, -1250, 1000, -2500, 2000, -1000,
-    0, -2500, 2000, -1000, 0, -2500, 1000, -1000,
-    1000, -10000, 2000, -15000, 0, -10000, 2000, -15000,
-    0, -10000, 1000, -15000,
+    0, 0, 0, 0, 0, 0, -25000,
 };
 
 /*

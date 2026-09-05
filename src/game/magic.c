@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_collision.h>
 #include <kf/game_player.h>
 #include <kf/game.h>
 #include <kf/magic.h>
@@ -43,7 +44,6 @@ void magic_cast(void)
     SVECTOR rotation;
     KfActor *target;
     s32 scale;
-    s16 *threshold;
 
     switch (player_state.selected_magic_id) {
     case 4:
@@ -77,8 +77,8 @@ void magic_cast(void)
         } else {
             if (player_state.selected_magic_id == 4) {
                 scale = 600;
-                threshold = (s16 *)DAT_80055878 + 0x1f;
-                if (threshold[map_cell_attribute_grid[target->cell_z][target->cell_x]]
+                if (map_cell_attribute_height_table[
+                        map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]
                         < -4999) {
                     angles.x = vector_xz_to_angle(
                         world_pos.vy + 5000 - target->position.vy, -distance);

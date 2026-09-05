@@ -587,6 +587,36 @@ local-retail/oracle skips in the clean sandbox). The full comparison graph
 completes; the default build remains red on explicit data, placement and
 reachability failures. No exact function is banked in this ownership campaign.
 
+## GAME collision attribute DATA and referent checkpoint
+
+The old 284-halfword height allocation is now 255 consumed scalar entries plus
+seven typed four-halfword collision rectangles, owned by the effect collision
+module. The intervening zero halfword stays explicitly unclassified: unused
+array element versus alignment is not proved. The shared collision header owns
+the record type; no artificial extent or padding is added. Three relocation
+owners are corrected without changing their retail S+A: the rectangle table,
+collision-grid minus one row, and the magic height lookup at table minus two.
+See [the Function Match Plan and final verdict](../config/evidence/game_collision_attribute_data.md).
+
+Following those records also exposed a real source orientation-dispatch error.
+A separate switch correction agrees with retail in 2,355 bounded scenarios
+(4,710 isolated function calls), including all seven records, inclusive bounds,
+unsupported orientations and forwarded query flags. The effect function rises
+from 71.711580% to **74.821050%**, still non-exact. All other 483 function report
+rows stay unchanged, including every one of the **354 exact game functions**.
+
+The three updated targets independently relink every initialized byte to retail;
+all-image target relink stays 108/114 with the same six placement conflicts.
+Strict source DATA stays **11/60**, config SDK data 2/2, and unpaired reached
+config ranges 660. The scalar section is 510 target versus 512 compiled bytes;
+the record section is 56 versus 64, with its excess overlapping the next path.
+The effect jump-table addends still differ. None of this is masked or cropped.
+
+All 540 local tests, Ruff, diff checks and flake checks pass (62 expected clean
+environment skips). The full compare graph completes; the default build remains
+red on strict data, reachability and placement. No bank or compiler-profile
+change, no original-TU claim, and no linked-executable equality claim.
+
 ## Sibling evidence consulted
 
 The local HoMM2 project's `docs/coff-data-relocations.md` and

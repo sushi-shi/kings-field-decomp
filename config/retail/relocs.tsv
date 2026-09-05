@@ -7180,7 +7180,7 @@ GAME.EXE	0x80037918	0x26118	0x8003791c	mips_hi16_lo16	reachable-code	0x80095900	
 GAME.EXE	0x80037960	0x26160	0x80037964	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037980	0x26180	0x80037984	mips_hi16_lo16	reachable-code	0x800558b8	load		lui+addiu	at	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x800379ac	0x261ac		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x800379b8	0x261b8	0x800379bc	mips_hi16_lo16	reachable-code	0x80055ab8	load		lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision
+GAME.EXE	0x800379b8	0x261b8	0x800379bc	mips_hi16_lo16	reachable-code	0x80055ab8	load	map_cell_height_records	lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision;manual:game_collision_attribute_data
 GAME.EXE	0x800379f4	0x261f4	0x800379f8	mips_hi16_lo16	reachable-code	0x80069018	bss	map_cell_orientation_grid	lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037a24	0x26224		mips26	instruction-word	0x80037a90	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x80037a40	0x26240		mips26	instruction-word	0x80037a90	load		j		range-filtered	candidate	investigation:relocs.tsv
@@ -7190,7 +7190,7 @@ GAME.EXE	0x80037a84	0x26284		mips26	instruction-word	0x80037a48	load		j		range-f
 GAME.EXE	0x80037aa4	0x262a4	0x80037aa8	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037ad4	0x262d4	0x80037ad8	mips_hi16_lo16	reachable-code	0x80012ce0	load		lui+addiu	at	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037b08	0x26308	0x80037b0c	mips_hi16_lo16	reachable-code	0x8009807c	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
-GAME.EXE	0x80037b94	0x26394	0x80037b98	mips_hi16_lo16	reachable-code	0x80097fb4	bss	map_floor_height_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
+GAME.EXE	0x80037b94	0x26394	0x80037b98	mips_hi16_lo16	reachable-code	0x80097fb4	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision;manual:game_collision_attribute_data
 GAME.EXE	0x80037c20	0x26420	0x80037c24	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037cac	0x264ac	0x80037cb0	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037d24	0x26524		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
@@ -7428,7 +7428,7 @@ GAME.EXE	0x8003a3e0	0x28be0		mips26	reachable-code	0x8003a4dc	load		j		range-fil
 GAME.EXE	0x8003a3ec	0x28bec		mips26	reachable-code	0x8003a4d4	load		j		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a3f4	0x28bf4	0x8003a3f8	mips_hi16_lo16	reachable-code	0x800a07dc	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8003a40c	0x28c0c	0x8003a410	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:game_func_8003a2a0
-GAME.EXE	0x8003a440	0x28c40	0x8003a444	mips_hi16_lo16	reachable-code	0x800558b6	load	DAT_80055878	lui+addiu	at	paired-pattern	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8003a440	0x28c40	0x8003a444	mips_hi16_lo16	reachable-code	0x800558b6	load	map_cell_attribute_height_table	lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:game_collision_attribute_data
 GAME.EXE	0x8003a46c	0x28c6c		mips26	reachable-code	0x8003a484	load		j		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a488	0x28c88		mips26	reachable-code	0x80014fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8003a4c8	0x28cc8		mips26	reachable-code	0x8003a4dc	load		j		range-filtered	reviewed	investigation:relocs.tsv

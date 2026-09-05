@@ -3,13 +3,16 @@
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
-/* Per-attribute collision shape record in map_cell_attribute_height_table+0x200. */
-typedef struct KfCellHeightRecord {
-    s16 x_min;
-    s16 y_min;
-    s16 x_max;
-    s16 y_max;
-} KfCellHeightRecord;
+DATA(0x80055ab8, 0x38)
+KfCellHeightRecord map_cell_height_records[7] = {
+    {500, -2000, 1500, -1250},
+    {1000, -2500, 2000, -1000},
+    {0, -2500, 2000, -1000},
+    {0, -2500, 1000, -1000},
+    {1000, -10000, 2000, -15000},
+    {0, -10000, 2000, -15000},
+    {0, -10000, 1000, -15000},
+};
 
 /* Switch jump table for the diagonal-wall cell shapes. */
 RODATA(0x80012ce0, 0x18)
@@ -52,7 +55,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         return 0x10000;
     }
     attr = map_cell_attribute_grid[z][x];
-    records = (KfCellHeightRecord *)((u8 *)map_cell_attribute_height_table + 0x200);
+    records = map_cell_height_records;
     if (attr != 0xff) {
         height = map_cell_attribute_height_table[attr];
         if (height < 0) {
@@ -63,14 +66,20 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
             u8 orient = map_cell_orientation_grid[z][x];
 
             subx = (s16)(position->vx % 2000);
-            if (orient == 2) {
-                subx = 2000 - subx;
-            } else if (orient < 3) {
-                if (orient == 1) {
-                    subx = subz;
-                }
-            } else if (orient == 3) {
+            switch (orient) {
+            case 1:
+                subx = subz;
+                break;
+            case 2:
+                break;
+            case 3:
                 subx = 2000 - subz;
+                break;
+            case 4:
+                subx = 2000 - subx;
+                break;
+            default:
+                goto grid_shape;
             }
             if (records[height].x_min <= subx && subx <= records[height].x_max) {
                 goto collide;
@@ -78,6 +87,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         }
     }
 
+grid_shape:
     cg = &map_collision_grid[0][0];
     switch (cg[cell]) {
     case 0:

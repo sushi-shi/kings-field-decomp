@@ -2657,7 +2657,9 @@ GAME.EXE	0x80055848	0x44048	0xf	string	reviewed	person_image_path_template	char[
 GAME.EXE	0x80055857	0x44057	0x1	unclassified	coverage-gap			payload-complement	zero byte between the complete person-info path and the following matrix; allocation ownership unresolved
 GAME.EXE	0x80055858	0x44058	0x20	defined	reviewed	DAT_80055858	MATRIX	manual:game_semantic_player_update	color matrix blended toward color_matrix_table[0] while status effect 1 fades
 GAME.EXE	0x80055878	0x44078	0x40	defined	reviewed	DAT_80055878	SVECTOR[8]	manual:game_semantic_player_update	view_rotation_offset table indexed by player_state.update_state
-GAME.EXE	0x800558b8	0x440b8	0x238	defined	reviewed	map_cell_attribute_height_table	s16[284]	manual:game_semantic_player_interactions	per-attribute height offsets indexed by map_cell_attribute_grid values; extent is the remaining span and stays WIP
+GAME.EXE	0x800558b8	0x440b8	0x1fe	defined	reviewed	map_cell_attribute_height_table	s16[255]	manual:game_collision_attribute_data	consumed attribute entries 0..254; negative heights or rectangle selectors 0..6; original allocation may include the following unused halfword
+GAME.EXE	0x80055ab6	0x442b6	0x2	unclassified	reviewed			manual:game_collision_attribute_data	zero halfword between consumed height entries and rectangle records; unused element versus alignment remains unresolved
+GAME.EXE	0x80055ab8	0x442b8	0x38	defined	reviewed	map_cell_height_records	KfCellHeightRecord[7]	manual:game_collision_attribute_data	seven four-s16 rectangles selected by nonnegative height entries; complete 8-byte field family and selectors 0..6
 GAME.EXE	0x80055af0	0x442f0	0xc	defined	reviewed	map_resource_path	char[12]	manual:game_semantic_map_resources	mutable B0\\ path; floor digit is byte one and a filename of at most nine bytes including NUL begins at byte three
 GAME.EXE	0x80055afc	0x442fc	0x95	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80055b91	0x44391	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0//4
