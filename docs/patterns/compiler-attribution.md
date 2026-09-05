@@ -1,5 +1,11 @@
 # Compiler attribution probe: does GCC 2.4.1 (or any candidate) beat cc1psx-257?
 
+Later source correction: the GAME FT4 emitter in this historical batch now
+matches exactly after recovering its [promoted selector arguments](game-ft4-selectors.md).
+No compiler/profile change was needed. The old batch results below remain a
+record of the source tested then, not proof that its remaining differences
+could only be resolved by changing the compiler.
+
 Dedicated attribution pass over the `game-to-100` residue corpus. Question:
 the `game` campaign is capped by residues where the rebuilt `cc1psx-257`
 (Decompals old-gcc 0.17, GCC 2.5.7) **over-optimizes relative to retail** — it

@@ -94,6 +94,8 @@ promotes a probe to a proven historical toolchain.
   checked GAME counterpart, its three callers and exact five-function matrix unit.
 - [game-angle-tolerance.md](game-angle-tolerance.md): corrected GAME circular
   tolerance logic, twelve call sites and the exact sixteen-function math unit.
+- [game-ft4-selectors.md](game-ft4-selectors.md): promoted GAME texture selector
+  arguments, preserved SDK packet widths and exact transition caller.
 - [open-item-cursor.md](open-item-cursor.md): saved stream start, postincrement
   scan and direct count-member accesses closing the OPEN placement loader.
 - [game-parser-exact-closure.md](game-parser-exact-closure.md): six remaining
