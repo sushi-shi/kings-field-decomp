@@ -102,3 +102,34 @@ display initializer's baseline is unchanged. The four pre-existing GAME
 historical-best deficits listed in `open-format-display-sdk.md` remain the
 only all-image strict-check failures. OPEN remains 91 exact / 108 eligible,
 with 17 partials and zero unstarted functions.
+
+## Complete-owner follow-up plan
+
+At `0d62ce8`, the canonical complete graphics owner has recovered the
+cross-field DISPENV address. OPEN `80016adc` remains 472 retail bytes versus
+484 compiled, at strict 92.177960%. The six semantic queries, complete sole
+caller, three neighboring/control bodies, earlier pointer experiment, and
+LIBGPU provider evidence were rechecked. The signature, 18 calls, two internal
+jumps, 16 retail address pairs, constants and SDK field widths are unchanged;
+there are no strings or candidate outgoing references. The three neighboring
+functions remain strict 100%.
+
+The four remaining extra absolute pairs are the two `dfe` flags before and
+after PutDrawEnv. Retail retains the common address rooted at the first
+`dtd` member and accesses these flags at +1 and +93. The source currently
+expresses these stores through the two call-argument pointers. Test those
+four accesses as direct members of the canonical graphics owner, keeping
+the existing typed pointers for the two calls. This checks whether consistent
+complete-owner field expressions recover the observed shared address; it
+does not introduce a byte pointer spanning SDK objects or alter DRAWENV.
+
+Direct member accesses compile identically to the kept source: 484 bytes and
+the same four extra pairs. A second bounded hypothesis uses pointers to the
+two actual `u_char dfe` members, retained across their clear/submit/restore
+sequence. Retail's address lifetime spans both PutDrawEnv calls; each pointer
+stays within its named SDK member and neither introduces an offset cast.
+
+Both variants emit identical instructions and relocations to the starting
+source; neither recovers a new match. Both are reverted. The three controls
+remain raw exact. Display initialization stays at 92.177960%, with its four
+extra flag-address pairs and 40-byte versus 48-byte frame unattributed.

@@ -2083,7 +2083,7 @@ class InventoryTests(unittest.TestCase):
 
         self.assertEqual(
             {row["current_match"] for row in evidence_rows},
-            {"100.000000000% exact", "92.941180000% fuzzy"},
+            {"100.000000000% exact"},
         )
 
         self.assertEqual(
