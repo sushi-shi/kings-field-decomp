@@ -201,8 +201,8 @@ void item_menu_root(s32 arg)
 }
 
 /*
- * Buy panel: builds a display list of the affordable items held in inventory
- * page `arg`, then runs a windowed grid cursor.  Confirm on an entry the player
+ * Buy panel: lists available items from shop bank `arg` whose player stack
+ * is below 99, then runs a windowed grid cursor. Confirm on an entry the player
  * can afford deducts its price from gold and adds the item to inventory.
  */
 ADDRESS(0x80021538, 0x5c4)
@@ -225,10 +225,10 @@ void item_menu_buy(s32 arg)
         ;
     menu_list_init(&ctx, 7, 0);
 
-    inv = &DAT_800652a8[arg * 80];
+    inv = item_stock[arg];
     found = 0;
     for (slot = 42; slot < 80; slot++) {
-        if (inv[slot] != 0 && DAT_800652a8[slot] < 99) {
+        if (inv[slot] != 0 && item_stock[0][slot] < 99) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             category[found] = inv[slot];
@@ -237,7 +237,7 @@ void item_menu_buy(s32 arg)
         }
     }
     for (slot = 0; slot < 42; slot++) {
-        if (inv[slot] != 0 && DAT_800652a8[slot] < 99) {
+        if (inv[slot] != 0 && item_stock[0][slot] < 99) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             category[found] = inv[slot];
@@ -337,12 +337,12 @@ void item_menu_buy(s32 arg)
         if (selection == 0x34)
             inv[52]--;
         player_state.gold -= item_buy_prices[selection][arg - 1];
-        DAT_800652a8[selection]++;
+        item_stock[0][selection]++;
     }
 }
 
 /*
- * Sell panel: lists the items in inventory page `arg`, subtracting any copy that
+ * Sell panel: lists player quantities, subtracting any copy that
  * is currently equipped so it cannot be sold.  Confirm on an entry removes one
  * copy from inventory and credits its sell price to gold.
  */
@@ -366,7 +366,7 @@ void item_menu_sell(s32 arg)
         ;
     menu_list_init(&ctx, 7, 1);
 
-    inv = DAT_800652a8;
+    inv = item_stock[0];
     found = 0;
     for (slot = 0; slot < 52; slot++) {
         if (inv[slot] != 0) {
@@ -478,10 +478,8 @@ void item_menu_sell(s32 arg)
 }
 
 /*
- * Use-item confirmation dialog for inventory slot `arg`.  Presents a yes/no
- * prompt; choosing yes consumes one copy of a normal item (returns 0), leaves a
- * key item untouched (returns 2), and cancel/no returns 1.  Returns -99 when the
- * item cannot be used at all.
+ * Item-pickup confirmation for slot `arg`: yes adds one copy (returns 0),
+ * or leaves a full stack of 99 untouched (returns 2). Cancel/no returns 1.
  */
 ADDRESS(0x80021ffc, 0x2b8)
 s32 item_use_confirm(s32 arg)
@@ -495,7 +493,7 @@ s32 item_use_confirm(s32 arg)
     s32 item;
     s32 prev;
 
-    item = DAT_800652a8[arg];
+    item = item_stock[0][arg];
     if (menu_load_item_model(arg) != 0)
         return 1;
 
@@ -564,7 +562,7 @@ s32 item_use_confirm(s32 arg)
             } else {
                 result = 2;
                 if (item != 0x63) {
-                    DAT_800652a8[arg]++;
+                    item_stock[0][arg]++;
                     result = 0;
                 }
             }

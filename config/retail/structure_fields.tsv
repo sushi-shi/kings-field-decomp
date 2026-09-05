@@ -561,7 +561,7 @@ KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	game_save.h;asm;xref
 KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	game_save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
 KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	game_save.h;asm	not touched by the write/read pair
 KfSavePayload	0x30c	0x2134	world_state	u32[2125]	supported	game_save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the DAT_8009ddb4 block; word-aligned copy loop plus one word
-KfSavePayload	0x2440	0xf0	unknown_2440	u8[240]	supported	game_save.h;save_file_write_slot;save_file_read_slot;alignment-checked-copy	verbatim copy of the DAT_800652a8 block; runtime-alignment-checked copy loop
+KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game_save.h;game_state_initialize;item_menu_buy;save_file_write_slot;save_file_read_slot;alignment-checked-copy	complete copy of the three 80-byte item_stock banks; player quantities followed by two shop-stock/availability banks
 KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	game_save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game_save.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	game_save.h;asm;xrefs	individual summary meanings unresolved

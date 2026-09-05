@@ -35,6 +35,9 @@ typedef struct KfFloorItem {
     u8 unknown_15[3];
 } KfFloorItem;
 
+/* GAME: player quantities, followed by two shop-stock/availability banks. */
+extern u8 item_stock[3][80];
+
 /* GAME globals; OPEN places these fields in KfFloorItemStateOpen. */
 extern u16 floor_item_count;
 extern KfFloorItem floor_items[64];

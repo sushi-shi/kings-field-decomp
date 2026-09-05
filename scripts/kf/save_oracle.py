@@ -204,7 +204,7 @@ def compare_read_slots(retail: RetailImage, symbols: GameSymbols, rust: RustCode
     ]
     player_address = symbols.datum("player_state")[0]
     world_address = symbols.datum("map_runtime_state")[0] + 0x22C
-    auxiliary_address = symbols.datum("DAT_800652a8")[0]
+    auxiliary_address = symbols.datum("item_stock")[0]
     magic_address = symbols.datum("magic_records")[0]
     ranges = [
         MemoryRange("payload", PAYLOAD_VA, PAYLOAD_SIZE + 16),

@@ -154,7 +154,7 @@ void map_ambient_script_floor5(void)
 ADDRESS(0x800343e0, 0x58)
 void map_action_script_floor1(void)
 {
-    if (DAT_800652a8[0x38] != 0
+    if (item_stock[0][0x38] != 0
         && MAP_WORLD_STATE_BYTES[2] == 0) {
         MAP_WORLD_STATE_BYTES[2] = 1;
         map_apply_copy_region(1);
@@ -211,7 +211,7 @@ void map_action_script_floor2(void)
 ADDRESS(0x80034610, 0x90)
 void map_action_script_floor3(void)
 {
-    if (DAT_800652a8[0x32] != 0) {
+    if (item_stock[0][0x32] != 0) {
         if (magic_records[7].learned == 0) {
             magic_records[7].learned = 1;
             notify_enqueue(1);

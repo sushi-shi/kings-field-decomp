@@ -61,7 +61,7 @@ void menu_item_model_preview(s32 item_id)
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
         gs.x = 0x117;
-        menu_format_number(DAT_800652a8[item_id], 2, 0, gs.codes);
+        menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);
         menu_draw_number(&menu_assets.number_atlas, &gs);
     }
 }

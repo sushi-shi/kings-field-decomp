@@ -22,7 +22,7 @@ void map_floor5_transition_cutscene(void)
     if (player_state.equipped_weapon_id == 10) {
         player_equip_weapon(0xff);
     }
-    DAT_800652a8[0xa] = 0;
+    item_stock[0][0xa] = 0;
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
 
     camera_path_begin(&path, (const KfCameraPathPoint *)&DAT_800561c8[8]);
@@ -111,11 +111,11 @@ void map_event_interact(KfMapEvent *event)
 {
     switch (event->kind) {
     case 3:
-        if (DAT_800652a8[0x34] != 0 && map_event_pool[2].image_index == 1
+        if (item_stock[0][0x34] != 0 && map_event_pool[2].image_index == 1
             && map_event_pool[2].image_dirty < 3) {
-            DAT_800652a8[0x35] = 1;
+            item_stock[0][0x35] = 1;
             map_event_pool[2].tag.bytes[0] = 7;
-            DAT_800652a8[0x34]--;
+            item_stock[0][0x34]--;
             talk_show_indexed_image(player_state.progress_state.current_floor,
                                     event->image_index, event->kind, 3);
             map_event_pool[2].image_dirty = 4;
@@ -126,10 +126,10 @@ void map_event_interact(KfMapEvent *event)
         }
         break;
     case 8:
-        if (DAT_800652a8[0x3b] != 0 && map_event_pool[2].image_index == 2
+        if (item_stock[0][0x3b] != 0 && map_event_pool[2].image_index == 2
             && map_event_pool[2].image_dirty < 2) {
             *(u8 *)&magic_records[0] = 1;
-            DAT_800652a8[0x3b]--;
+            item_stock[0][0x3b]--;
             notify_enqueue(1);
             map_event_pool[2].tag.bytes[1] = 7;
             talk_show_indexed_image(player_state.progress_state.current_floor,
@@ -142,11 +142,11 @@ void map_event_interact(KfMapEvent *event)
         }
         break;
     case 7:
-        if (DAT_800652a8[0x2f] != 0 && map_event_pool[1].image_index == 2
+        if (item_stock[0][0x2f] != 0 && map_event_pool[1].image_index == 2
             && map_event_pool[1].image_dirty < 2) {
-            DAT_800652a8[0x3e] = 1;
+            item_stock[0][0x3e] = 1;
             map_event_pool[1].tag.bytes[1] = 5;
-            DAT_800652a8[0x2f]--;
+            item_stock[0][0x2f]--;
             talk_show_indexed_image(player_state.progress_state.current_floor,
                                     event->image_index, event->kind, 2);
             map_event_pool[1].image_dirty = 3;

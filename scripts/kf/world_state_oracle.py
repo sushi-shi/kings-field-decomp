@@ -198,7 +198,7 @@ def compare_world_state(retail: RetailImage, symbols: GameSymbols, rust: RustCod
             MemoryInput(world_address + 6801, bytes((conditions.flag_8009f845,))),
             MemoryInput(world_address + 6802, bytes((conditions.flag_8009f846,))),
             MemoryInput(world_address + 6803, bytes((conditions.boss_defeat_complete,))),
-            MemoryInput(symbols.datum("DAT_800652a8")[0],
+            MemoryInput(symbols.datum("item_stock")[0],
                         bytes(10) + bytes((conditions.inventory_0a, conditions.inventory_0b))),
         ]
         machine_memory.extend(

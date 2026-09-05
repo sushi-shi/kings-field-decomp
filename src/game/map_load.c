@@ -168,7 +168,7 @@ void map_restore_floor_state(void)
         } else {
             map_apply_copy_region(4);
         }
-        if (DAT_800652a8[0xa] != 0 || DAT_800652a8[0xb] != 0
+        if (item_stock[0][0xa] != 0 || item_stock[0][0xb] != 0
                 || DAT_8009f845 == 1) {
             map_object_pool_clear_link(0x34);
         }

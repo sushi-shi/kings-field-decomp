@@ -31,7 +31,7 @@ typedef struct KfSavePayload {
     u32 player_state[56];
     u8 unknown_0e0[556];
     u32 world_state[2125];
-    u8 unknown_2440[240];
+    u8 item_stock[3][80];
     u8 magic_flags[24];
     u8 unknown_2548[56];
 } KfSavePayload;

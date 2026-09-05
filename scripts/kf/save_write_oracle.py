@@ -117,7 +117,7 @@ def compare_write_slots(retail: RetailImage, symbols: GameSymbols, rust: RustCod
     runtime = [
         ("player_state", symbols.datum("player_state")[0], 224),
         ("world_state", symbols.datum("map_runtime_state")[0] + 0x22C, 8500),
-        ("DAT_800652a8", symbols.datum("DAT_800652a8")[0], 240),
+        ("item_stock", symbols.datum("item_stock")[0], 240),
         ("magic_records", symbols.datum("magic_records")[0], 480),
     ]
     sources = [pattern(size, 91 + i) for i, (_, _, size) in enumerate(runtime)]

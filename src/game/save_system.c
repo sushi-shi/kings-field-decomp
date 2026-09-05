@@ -337,8 +337,8 @@ s32 save_file_write_slot(s16 slot_id)
            sizeof(save_payload_buffer->player_state));
     memcpy(save_payload_buffer->world_state, &map_world_state_base,
            sizeof(save_payload_buffer->world_state));
-    memcpy(save_payload_buffer->unknown_2440, DAT_800652a8,
-           sizeof(save_payload_buffer->unknown_2440));
+    memcpy(save_payload_buffer->item_stock, item_stock,
+           sizeof(save_payload_buffer->item_stock));
     for (index = 0, record = 0; index < 24; index++) {
         save_payload_buffer->magic_flags[index] = magic_records[index].learned;
         record += 20;
@@ -589,8 +589,8 @@ s32 save_file_read_slot(s16 slot_id)
            sizeof(save_payload_buffer->player_state));
     memcpy(&map_world_state_base, save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
-    memcpy(DAT_800652a8, save_payload_buffer->unknown_2440,
-           sizeof(save_payload_buffer->unknown_2440));
+    memcpy(item_stock, save_payload_buffer->item_stock,
+           sizeof(save_payload_buffer->item_stock));
     for (index = 0, record = 0; index < 24; index++) {
         magic_records[index].learned = save_payload_buffer->magic_flags[index];
         record += 20;

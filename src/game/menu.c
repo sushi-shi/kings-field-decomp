@@ -171,7 +171,7 @@ s32 menu_use_item_panel(void)
         ;
     menu_list_init(&ctx, 0, 0);
 
-    inv = DAT_800652a8;
+    inv = item_stock[0];
     found = 0;
     if (inv[0x37] != 0) {
         for (j = 0; j < 10; j++)

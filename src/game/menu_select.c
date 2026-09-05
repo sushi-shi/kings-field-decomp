@@ -74,7 +74,7 @@ void menu_equip_select(s32 object)
     }
 
     k = 0;
-    owned = &DAT_800652a8[start];
+    owned = &item_stock[0][start];
     for (i = start; i < end; i++, owned++) {
         if (*owned != 0) {
             name = item_name_rows[i].codes;
