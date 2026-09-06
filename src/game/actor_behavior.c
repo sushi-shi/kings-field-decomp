@@ -434,9 +434,9 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
         case 8:
         case KF_EFFECT_KIND_ACTOR_SPAWNER:
         case KF_EFFECT_KIND_SCATTER_PROJECTILE:
-        case 11:
-        case 12:
-        case 13:
+        case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
+        case KF_EFFECT_KIND_CURSE_PROJECTILE:
+        case KF_EFFECT_KIND_EMERGING_PROJECTILE:
         case 22:
         case 23:
         case 24:

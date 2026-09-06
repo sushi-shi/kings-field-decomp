@@ -147,10 +147,11 @@ count without changing the four-byte copies. Constructor kind indexing still
 forms a magic pointer even for kinds above 23; no new bounds check or larger
 array is inferred.
 
-This batch covers the shared protocol. Other kind/resource IDs, visual scale
-and age thresholds, speeds, radii, sound ranges and random cutoffs still need
-their complete per-consumer literal audit. Their numeric values are preserved;
-the naming goal is not complete. Existing scatter, floor-deformation and map
+This batch covers the shared protocol. The subsequent
+[effect literal audit](game-effect-literals.md) covers the other kind/resource
+IDs, visual scale and age thresholds, speeds, radii, sound ranges and random
+cutoffs in these five modules. Their numeric values are preserved; the wider
+naming goal is not complete. Existing scatter, floor-deformation and map
 collision dossiers account for their previously reviewed tuning/table values.
 The explicit `20` type nibble, special `f0`, player radial scale 5000, storage
 extraction shifts/masks and ordinary zero/index/count arithmetic are retained

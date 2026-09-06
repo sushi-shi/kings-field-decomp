@@ -246,7 +246,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                                                    0xf,
+                                                    KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
                                                     &object->position_x,
                                                     effect_output,
                                                     &object->rotation)
@@ -257,7 +257,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                                                    0x10,
+                                                    KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
                                                     &object->position_x,
                                                     effect_output,
                                                     &object->rotation)

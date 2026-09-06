@@ -189,7 +189,7 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
-        case 0xb:
+        case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 8;
             record->render_id = 8;
@@ -199,7 +199,7 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
-        case 0xc:
+        case KF_EFFECT_KIND_CURSE_PROJECTILE:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 0xa;
             record->render_id = 0xa;
@@ -209,14 +209,14 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
-        case 0xd:
+        case KF_EFFECT_KIND_EMERGING_PROJECTILE:
             record->animation_clip = 0;
             record->base_render_id = 9;
             record->render_id = 9;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
-            record->phase = 0x64;
+            record->phase = KF_EFFECT_PROJECTILE_EMERGE_FIRST;
             record->scale_z = 0x5dc;
             record->scale_y = 0x5dc;
             record->scale_x = 0x5dc;
@@ -256,7 +256,7 @@ KfEffectRecord *effect_pool_construct(
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case 0xf:
+        case KF_EFFECT_KIND_SWINGING_HAZARD_SHORT:
             record->animation_clip = 0;
             record->base_render_id = 7;
             record->render_id = 7;
@@ -269,7 +269,7 @@ KfEffectRecord *effect_pool_construct(
             record->scale_y = 0xa28;
             record->scale_x = 0xa28;
             break;
-        case 0x10:
+        case KF_EFFECT_KIND_SWINGING_HAZARD_LONG:
             record->animation_clip = 0;
             record->base_render_id = 7;
             record->render_id = 7;

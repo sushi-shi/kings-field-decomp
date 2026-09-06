@@ -1,5 +1,10 @@
 # GAME projectile helper evidence
 
+The later [effect literal audit](game-effect-literals.md) corrects the 3D
+helper's former velocity/landing interpretation: its input is a rotated
+collision-probe offset, and release raises the object. The historical matching
+results below are unchanged; the current parameter is `probe_offset`.
+
 ## Function Match Plan
 
 Start on master `1a9e57f`, with hash-validated retail and the unchanged

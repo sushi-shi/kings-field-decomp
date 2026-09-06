@@ -28,7 +28,7 @@ int effect_magic_power(KfEffectRecord *effect)
 }
 
 ADDRESS(0x80037fe0, 0x2b8)
-void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
+void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
@@ -40,12 +40,12 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
     s16 pitch;
     s16 next_pitch;
 
-    if (life < 2u) {
+    if (life < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1u) {
         RotMatrix(&record->rotation, &rotation_matrix);
         matrix_set_rotation_x(record->rotation.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vy, &yaw_matrix);
         MulMatrix2(&yaw_matrix, &rotation_matrix);
-        ApplyMatrix(&rotation_matrix, velocity, &world);
+        ApplyMatrix(&rotation_matrix, probe_offset, &world);
         world.vx += record->position.vx;
         world.vy += record->position.vy;
         world.vz += record->position.vz;
@@ -84,15 +84,15 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
         pitch = record->rotation.vx;
         next_pitch = (s16)(record->rotation.vx + record->direction.words.x);
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
-            if (life == 1) {
+            if (life == KF_EFFECT_HAZARD_RELEASE_REQUEST) {
                 next_pitch = 0;
-                record->phase = 10;
+                record->phase = KF_EFFECT_HAZARD_RISE_FIRST;
             } else {
                 record->sound_played = 0;
             }
         }
         record->rotation.vx = next_pitch;
-    } else if (life >= 10u && (s16)frame_limit >= life) {
+    } else if (life >= (u32)KF_EFFECT_HAZARD_RISE_FIRST && (s16)frame_limit >= life) {
         record->position.vy -= 60;
         record->phase++;
     }
@@ -106,7 +106,7 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
     u32 life = record->phase;
     u32 collision;
 
-    if ((life & 0xff) < 2) {
+    if ((life & 0xff) < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1) {
         record->position.vx = ((s16)record->direction.words.x << 8)
             + (rsin((s16)record->control.orbit_angle) * speed >> KF_FIXED12_BITS);
         record->position.vz = ((s16)record->direction.words.z << 8)
@@ -140,7 +140,7 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
                 record->sound_played = 0;
             }
         }
-    } else if ((life & 0xff) != 0 && (s16)frame_limit >= (int)(life & 0xff)) {
+    } else if ((life & 0xff) != KF_EFFECT_HAZARD_RUNNING && (s16)frame_limit >= (int)(life & 0xff)) {
         record->position.vy -= 60;
         record->phase++;
     }

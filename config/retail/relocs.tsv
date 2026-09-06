@@ -7413,10 +7413,10 @@ GAME.EXE	0x80039fd0	0x287d0		mips26	instruction-word	0x8002ced4	load		jal		contr
 GAME.EXE	0x80039fe4	0x287e4		mips26	instruction-word	0x8003a020	load		j		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
 GAME.EXE	0x8003a014	0x28814		mips26	instruction-word	0x8003a020	load		j		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
 GAME.EXE	0x8003a04c	0x2884c		mips26	instruction-word	0x8003a214	load		j		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
-GAME.EXE	0x8003a054	0x28854	0x8003a058	mips_hi16_lo16	instruction-word	0x80057b88	load	effect_projectile_velocities	lui+addiu	a0	paired-pattern	reviewed	manual:effect_update_dispatch
+GAME.EXE	0x8003a054	0x28854	0x8003a058	mips_hi16_lo16	instruction-word	0x80057b88	load	effect_swing_probe_offsets	lui+addiu	a0	paired-pattern	reviewed	manual:effect_update_dispatch
 GAME.EXE	0x8003a05c	0x2885c		mips26	instruction-word	0x80037fe0	load		jal		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
 GAME.EXE	0x8003a064	0x28864		mips26	instruction-word	0x8003a214	load		j		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
-GAME.EXE	0x8003a06c	0x2886c	0x8003a070	mips_hi16_lo16	instruction-word	0x80057b90	load	effect_projectile_velocities	lui+addiu	a0	paired-pattern	reviewed	manual:effect_update_dispatch
+GAME.EXE	0x8003a06c	0x2886c	0x8003a070	mips_hi16_lo16	instruction-word	0x80057b90	load	effect_swing_probe_offsets	lui+addiu	a0	paired-pattern	reviewed	manual:effect_update_dispatch
 GAME.EXE	0x8003a074	0x28874		mips26	instruction-word	0x80037fe0	load		jal		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
 GAME.EXE	0x8003a07c	0x2887c		mips26	instruction-word	0x8003a214	load		j		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control
 GAME.EXE	0x8003a0a4	0x288a4		mips26	instruction-word	0x8003a214	load		j		control-flow-reviewed	reviewed	manual:game-effect-dispatch-control

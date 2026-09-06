@@ -63,7 +63,7 @@ void magic_cast(void)
         world_pos.vz += player_state.camera_position.vz;
         target = actor_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
-            player_state.camera_rotation.vy, 0x4e20, 0x155, &distance);
+            player_state.camera_rotation.vy, 0x4e20, KF_ACTOR_AIM_TOLERANCE, &distance);
         actor_state.player_target = target;
         if (target == 0) {
             scale = 600;
@@ -121,7 +121,7 @@ void magic_cast(void)
 
         target = actor_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
-            player_state.camera_rotation.vy, 0x4e20, 0x155, &distance);
+            player_state.camera_rotation.vy, 0x4e20, KF_ACTOR_AIM_TOLERANCE, &distance);
         if (target != 0) {
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,

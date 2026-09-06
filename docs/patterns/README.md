@@ -163,6 +163,9 @@ promotes a probe to a proven historical toolchain.
 - [game-effect-protocol.md](game-effect-protocol.md): behavioral effect kinds,
   collision/power bits, render and homing selectors, propagation roles and
   floor phases; distinguish actor damage unity from player Q12 damage scale.
+- [game-effect-literals.md](game-effect-literals.md): projectile and hazard
+  phases, corrected swing-probe offsets, and explanations for all 764 retained
+  literals in the five effect/magic modules.
 - [game-effect-constructor.md](game-effect-constructor.md): reviewed switch
   references, full SDK-vector copies and corrected kind-dependent byte stores.
 - [game-effect-map-collision.md](game-effect-map-collision.md): signed cell

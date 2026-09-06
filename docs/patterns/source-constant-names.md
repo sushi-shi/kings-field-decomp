@@ -20,8 +20,10 @@ The [effect protocol review](game-effect-protocol.md) names eight decoded
 behaviors across construction, dispatch and callers, plus collision targets,
 power/render/homing selectors, branch roles and floor phases. It distinguishes
 equal-valued constants with different consumers, including actor damage unity
-and player Q12 scaling. The remaining effect tuning/resource literal audit
-and the wider source audit are still open.
+and player Q12 scaling. The [effect literal audit](game-effect-literals.md)
+extends this to projectile/hazard phases and explains all 764 retained literals
+in the five effect/magic modules, including the corrected collision-probe
+offsets formerly called velocities. The wider source audit remains open.
 
 ## Function Match Plan
 

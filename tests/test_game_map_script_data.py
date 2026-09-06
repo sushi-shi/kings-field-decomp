@@ -158,7 +158,7 @@ class GameMapScriptDataTests(unittest.TestCase):
         rows = {(r['image'], int(r['site_va'], 0)): r
                 for r in read_tsv(RETAIL_CONFIG / 'relocs.tsv')[1]}
         names = {va: name for _, va, name, _ in OWNERS}
-        names[0x80057B88] = 'effect_projectile_velocities'
+        names[0x80057B88] = 'effect_swing_probe_offsets'
         pairs = PAIR_SITES + ((0x8003A054, 0x80057B88, 0), (0x8003A06C, 0x80057B88, 8))
         for site, va, addend in pairs:
             row, name = rows['GAME.EXE', site], names[va]

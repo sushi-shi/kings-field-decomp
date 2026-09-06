@@ -473,7 +473,7 @@ void map_object_pool_update(void)
         case 81:
         case 82:
             if (object->link.link_id == MAP_OBJECT_NONE && object->action_timer == 0) {
-                effect_pool_records[object->link.action_parameter].phase = 1;
+                effect_pool_records[object->link.action_parameter].phase = KF_EFFECT_HAZARD_RELEASE_REQUEST;
                 object->action_timer = 1;
             }
             break;

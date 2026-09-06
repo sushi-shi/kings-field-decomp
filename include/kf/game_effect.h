@@ -23,6 +23,11 @@ enum {
     KF_EFFECT_KIND_GROUND_BRANCH = 6,
     KF_EFFECT_KIND_ACTOR_SPAWNER = 9,
     KF_EFFECT_KIND_SCATTER_PROJECTILE = 10,
+    KF_EFFECT_KIND_DARKNESS_PROJECTILE = 11,
+    KF_EFFECT_KIND_CURSE_PROJECTILE = 12,
+    KF_EFFECT_KIND_EMERGING_PROJECTILE = 13,
+    KF_EFFECT_KIND_SWINGING_HAZARD_SHORT = 15,
+    KF_EFFECT_KIND_SWINGING_HAZARD_LONG = 16,
     KF_EFFECT_KIND_ORBITING_PROJECTILE = 17,
     KF_EFFECT_KIND_RADIAL_BLAST = 18,
     KF_EFFECT_KIND_GROUND_TRAIL = 19,
@@ -63,6 +68,35 @@ enum {
     KF_EFFECT_FLOOR_DEFORM_ADVANCE = 0,
     KF_EFFECT_FLOOR_DEFORM_HOLD = 1,
     KF_EFFECT_FLOOR_DEFORM_REVERSE = 2
+};
+
+/* Shared projectile dispatcher phases; the phase byte also counts updates. */
+enum {
+    KF_EFFECT_PROJECTILE_TRAVEL = 0,
+    KF_EFFECT_PROJECTILE_IMPACT_FIRST = 1,
+    KF_EFFECT_PROJECTILE_DISSIPATE_FIRST = 50,
+    KF_EFFECT_PROJECTILE_DISSIPATE_END = 60,
+    KF_EFFECT_PROJECTILE_EMERGE_FIRST = 100,
+    KF_EFFECT_PROJECTILE_EMERGE_LAST = 119,
+    KF_EFFECT_PROJECTILE_FALL = 120,
+    KF_EFFECT_PROJECTILE_SHRINK = 121,
+    KF_EFFECT_PROJECTILE_LAUNCH_WRAP = 0xff
+};
+
+enum {
+    KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT = 0,
+    KF_EFFECT_GROUND_TRAIL_SHRINK = 1
+};
+
+/* The orbit helper keeps running at RELEASE_REQUEST; only the 3D helper
+ * settles its pitch and enters the rise sequence on a zero crossing. */
+enum {
+    KF_EFFECT_HAZARD_RUNNING = 0,
+    KF_EFFECT_HAZARD_RELEASE_REQUEST = 1,
+    KF_EFFECT_HAZARD_RISE_FIRST = 10,
+    KF_EFFECT_SWING_PROBE_SHORT = 0,
+    KF_EFFECT_SWING_PROBE_LONG = 1,
+    KF_EFFECT_SWING_PROBE_COUNT = 2
 };
 
 typedef struct KfEffectDirectionWords {
@@ -201,7 +235,7 @@ typedef struct KfEffectRenderView {
     u8 unknown_38[4];
 } KfEffectRenderView;
 
-extern SVECTOR effect_projectile_velocities[2];
+extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
 extern KfEffectState effect_state;
 /* Consumer spellings are members, not separately owned globals. */
 #define magic_records (effect_state.magic)
@@ -220,7 +254,7 @@ extern void effect_pool_set_current(KfEffectRecord *record);
 extern void effect_pool_reset(void);
 extern void effect_pool_sweep(void);
 extern void effect_update_dispatch(void);
-extern void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit);
+extern void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit);
 extern void effect_projectile_update_2d(s32 speed, s32 frame_limit);
 extern u32 effect_map_collision(VECTOR *position, s32 radius);
 
