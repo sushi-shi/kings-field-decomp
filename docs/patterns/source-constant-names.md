@@ -859,3 +859,54 @@ pass (642 tests, 129 sandbox skips). All 112 non-debug object contents and
 484 strict scores match the 1839ef2 baseline; twelve objects differ only
 in debug-line records. The full build retains the existing data-placement
 and ownership failures, with no new artifact failure or naming regression.
+
+## Startup store destinations and initial heaps
+
+Function Match Plan: name the immediate destination, repeat count, initial
+heap base and heap byte budget in GAME and OPEN `main.c`. Review both entry
+points and their adjacent store helpers together; preserve the non-advancing
+store loop, every raw immediate, cast, call and delay-slot schedule. These
+four exact functions have complete disassembly/CFG, caller/callee, reference,
+string, history and match snapshots. The addresses remain integer macros,
+so naming cannot introduce symbol relocations. Require all non-debug object
+contents and all 484 strict scores to remain unchanged.
+
+GAME repeats its zero store at 80058060 (the first word of
+`player_death_saved_color_matrix`) 67fe8 times. OPEN repeats its zero store
+at 800377a0 (the first word of `cd_search_file`) 70218 times. Neither loop
+advances its destination; neither count is named a BSS byte size. Correct
+the contradictory OPEN dossier sentence which previously described clearing
+the BSS. The broader purpose of repeating these stores remains unresolved.
+
+The initial GAME heap is 157680 bytes at 800a0980; OPEN's is 177f00 bytes
+at 80080100. Both end at 801f8000, agreeing with the later system-heap reset.
+Keep each image's directly supplied size rather than replacing its immediate
+with an expression involving another module's heap-end constant.
+
+This completes the literal audit of both `main.c` files and OPEN
+`opening_controller.c`. The remaining startup zeros are the stored value,
+loop exhaustion boundary and required legacy PadInit selector. InitCARD2's
+one is the Boolean pad-sharing argument of the existing BIOS declaration.
+Sony's later reference documents [PadInit's zero argument](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/Libref.pdf#page=790)
+and [InitCARD's controller-sharing flag](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/Libref.pdf#page=175);
+these describe API contracts, not a claim of exact SDK-version attribution.
+The linked PadInit body independently routes zero to PAD_init2 and other
+identifiers to its diagnostic path.
+
+The OPEN controller's remaining literals need no additional selector names:
+
+| Site | Value | Reason |
+| --- | --- | --- |
+| `opening_initial_tim_path` extent | 6 | Exact claimed six-character storage; do not enlarge the array to include a terminator. |
+| Allocator container offset | 0 | Null-base field-offset expression, retaining the existing typed layout calculation. |
+| Runtime clear and allocation-stack depth | 0 | Zero-fill byte and empty stack count. |
+| PadInit | 0 | Required legacy API argument, as above. |
+| SetDispMask | 1 | Boolean display enable. |
+| CD load result | 0 | Success boundary of the existing loader contract. |
+| Both audio_stop_sequence calls | 1 | Boolean fade enable: the callee ramps volume down before stopping the sequence. It is not a sequence ID. |
+
+Validation: all 642 tests pass (nine skipped), lint and whitespace checks
+pass, and flake checks pass (642 tests, 129 sandbox skips). All 112 objects
+retain their non-debug contents and all 484 strict scores are unchanged
+from 1839ef2; twelve objects differ only in debug-line records. The full
+build still reports the pre-existing data-placement and ownership failures.
