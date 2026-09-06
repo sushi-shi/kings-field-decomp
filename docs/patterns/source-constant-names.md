@@ -1815,3 +1815,60 @@ initial resistance 5, the zero equipment sum, random scaling 100/shift 15,
 phase zero, one-HP loss, the UI's resistance weight /5 and authored poison
 glyph 0x88. It also records why composite cure masks must keep their exact
 upper-bit behavior. Other fields and status flags require their own evidence.
+
+## World collision and map-object reset reconciliation
+
+Function Match Plan: import committed master 11c81c4 into the 7804c83 naming
+worktree, including b19ed81. Preserve the named map dimensions, collision
+results/flags, pool capacity and shared semantic link fields. GAME 8001a5ac
+`collision_query_world` starts at 93.202490%; incoming 97.943924% recovers the
+early typed definition pointers, common candidate-hit value and separate
+rejection-mask computation. GAME 80030f7c `map_object_pool_clear` starts at
+78.25%; incoming 100% clears the existing complete link through the placement
+loader's aligned word view. Its byte/halfword field layout remains shared,
+including `linked_notification` and `default_notification`.
+
+The committed world-collision and pool-clearing dossiers supply full retail
+CFGs, call sites, neighbors, raw referents and independent source controls.
+Refresh both image-qualified six-view snapshots and source history before
+merging. Keep the incoming shared layout guards, the 255 signed height
+entries, all 24 map-copy bytes, ordered transform/radius publications and
+reset's upper-word-before-lower-word clear. The unit's 84 switch pointers
+must acquire the incoming exact offsets. These game object/grid operations
+are not vendored bodies; the failed memset experiment is not repeated.
+
+Require a separate compile of literal committed 11c81c4 source for each
+affected unit to agree with the reconciled named object in every non-debug
+section. The other 110 objects and 482 strict scores must remain unchanged
+from 7804c83. Verify all raw reset words and its five exact neighbors, all
+world-query target words, complete initialized bytes and ordered referents.
+Preserve the incoming reset bank row without banking additional results.
+The user's staged main-checkout work is outside this committed import.
+
+Final verdict: both reconciled units agree with independent compiles of the
+literal 11c81c4 source in every non-debug section; only debug line tables
+differ. Those control compiles use 11c81c4's map header for its older event
+rotation spelling, then restore the shared named header. The kept event
+field remains `rotation_x`, and both notification fields retain their names
+and byte widths. All other 110 objects retain every non-debug section from
+7804c83. Exactly two strict scores improve as planned, with the other 482
+scores and every prior exact unchanged.
+
+The world-query target restores all 321 retail words and both height-table
+payloads retain all 510 bytes. Source remains 319 words; the five calls,
+21 ordered data addresses and four complete transform/radius publication
+blocks agree. The pool reset restores all 24 words and four physical address
+pairs; its five exact neighbors retain all 521 words. Both pool objects also
+restore every one of the 84 switch destinations and the 24 map-copy bytes.
+The named capacity still yields the original 190 iterations. The two word
+indices 1/0 denote the upper/lower halves of the owned link; their zero stores
+clear it, and the following three zero stores reset the sequence counters.
+
+Ruff and diff checks pass, and all 651 repository tests pass in 86.437 seconds
+with nine skips. Full `kf build` still fails on remaining data ownership and
+placement findings, but source-data matching improves from 6/60 to 7/60
+(GAME 5/40, OPEN 2/19, PSX 0/1). Target relink remains PSX 1/1, GAME 75/77 and
+OPEN 34/38, with two GAME and four OPEN conflicting-section-base findings and
+zero artifact failures. Post-full-build control checks pass. The incoming
+single reset bank row is preserved; no additional result is banked and no
+tooling or flake file changed.

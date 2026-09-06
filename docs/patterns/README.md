@@ -153,11 +153,15 @@ promotes a probe to a proven historical toolchain.
 - [game-effect-map-collision.md](game-effect-map-collision.md): signed cell
   coordinates, direct neighbor indexing, selected rectangle and backward span
   join recover the collision helper; return/join differences remain non-exact.
+- [game-world-collision-source.md](game-world-collision-source.md): early
+  typed definition pointers, shared hit value and separate query mask recover
+  world-query instructions; entry differences remain non-exact.
 - [game-magic-cast-source.md](game-magic-cast-source.md): case-local objects,
   distinct distance outputs, projectile-speed lifetime and height-branch order
   improve magic casting; remaining stack/angle differences stay unattributed.
 - [game-map-object-clearing.md](game-map-object-clearing.md): corrected
-  type-0..8 link predicate and the rejected pool-reset memset control.
+  type-0..8 link predicate and aligned whole-link reset close both clearing
+  functions; the earlier memset control emitted an unsupported call.
 - [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
   block and result join; partial reconstruction improved, not exact.
 - [game-map-collision-edge.md](game-map-collision-edge.md): chained

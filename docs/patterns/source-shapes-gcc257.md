@@ -117,11 +117,14 @@ Open residues recorded during the same campaign (not steered):
   offsets of one symbol. The block is one aggregate in the original source
   (`KfPlayerState`); a direct-member view through `player_experience`
   reaches 91% and a byte-pointer view 95%, neither exact.
-- `collision_query_world`: retail reads `actor_definitions[id].collision_radius`
-  and `map_object_definitions[id].collision_radius` relative to the pool base
-  register (`lhu -1702(a0)`), so each definition table and its pool are one
-  aggregate too. The rest of the residue is callee-saved register assignment
-  (`x` in `s2`, `flags` in `s0` in retail).
+- `collision_query_world`: [later source recovery](game-world-collision-source.md)
+  supersedes the old register-only assessment. Shared owners alone did not
+  recover the early definition-ID reads: binding typed selected-definition
+  pointers before the transform copies restores the pool-relative radius
+  loads. A shared hit value and distinct query-mask intermediate recover
+  additional instructions, improving 93.202490% to 97.943924%. The remaining
+  flags-load/copy, saved-register and entry-schedule differences are
+  unattributed; this is not an exact closure or a proven optimizer mechanism.
 - Scheduling class, no probe reproduces it: retail keeps loads in source
   order instead of hoisting them across earlier stores or `mult`/`mflo`
   (`vector2s_scale_shift11`, `game_state_initialize` growth-table loads,
@@ -550,6 +553,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
+| `sb` object/action sentinels followed by `sw zero,4(link); sw zero,0(link)` | clear the owned eight-byte link through the same aligned `u32 *` bulk view used by the placement loader; keep byte/halfword field types for semantic accesses. Shared size/offset checks preserve the link's bounds and runtime alignment. [Pool reset closure](game-map-object-clearing.md) | `map_object_pool_clear` `0x80030f7c` |
 | `sh zero,40(sp)` before `move s7,a0` | `u16 ended = 0;` initialised before a local copy of the parameter (`placement = placements`); the parameter's own pseudo stays in `a0` and the copy lands after the flag store | `map_object_pool_load` `0x80031008` |
 | spill slots `remaining` 32, `ended` 40, `definition` 48 above the 8-byte output buffer at 24 | spilled locals take stack slots in declaration order (upward); declare `remaining`, then `ended`, then the definition pointer | same |
 | `beq id,0xff -> tail; ... tail: j fill; sh ended` and the fill block `li 0xff; j advance; sb` | `if (ended == 1) { fill: object_id = 0xff; } else if (id != 0xff) { body } else { ended = 1; goto fill; }`; `continue` jumps to the loop head instead and duplicating the store loses the earlier copy | same |

@@ -159,14 +159,13 @@ void map_object_pool_clear(void)
     u16 index = KF_MAP_OBJECT_CAPACITY - 1;
 
     do {
+        u32 *link_words = (u32 *)&object->link;
+
         object->object_id = 0xff;
         object->action = 0xff;
-        object->link.vertical_velocity = 0;
-        object->link.linked_notification = 0;
-        object->link.default_notification = 0;
-        object->link.link_id = 0;
-        object->link.action_parameter = 0;
-        object->link.spawn_sequence = 0;
+        /* Same aligned eight-byte block used by placement loading. */
+        link_words[1] = 0;
+        link_words[0] = 0;
         object++;
     } while (index-- != 0);
     map_object_effect_sequence_180 = 0;
