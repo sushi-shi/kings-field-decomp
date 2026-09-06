@@ -98,7 +98,8 @@ Revival requires both the floor-1 revival flag and a possessed fruit. It
 consumes one, persists world state and fills HP/MP before returning to the
 floor-1 revival position. Without those conditions the existing new-session
 initialization path runs. Separately, character 7's stage-2 dialogue consumes
-one fruit for item 62; the item name of that reward remains a later audit.
+one fruit for item 62, now identified as the harp in the
+[special-item audit](game-item-special-identities.md).
 
 Accessory selection remains `[LIGHT_RING, GOLD_CROSS)`, IDs 48..51. Combat
 recalculation still includes conditional Verdite and Gold Cross cases outside
@@ -118,7 +119,7 @@ bracelet's apparent theme.
 | Magic record 7 and cost shift 1 | Bracelet-specific spell selector and division by two with truncation; the resource spell name is not established by the bracelet name. |
 | Stock bank 0 and shop banks 1/2; stock seed 1 | Player quantity and two shop availability banks; new-game seeds grant one copy or enable availability. |
 | Status assignment 0 | Clears every flag, including beneficial flags; not an item ID or timer sentinel. |
-| Effect scan 47, effect kind 0x34, spawn arguments 0x2b/0x46 | Different domains inside `player_use_item`: last pool index, effect kind and spawn coordinates. They are not fruit, Gold Cross, herb or leaf IDs. |
+| Effect scan 47, effect kind 0x34, spawn arguments 0x2b/0x46 | Different domains inside `player_use_item`: last pool index, effect kind and floor-deformation sweep/hold counters (corrected by the [special-item audit](game-item-special-identities.md)). They are not fruit, Gold Cross, herb or leaf IDs. |
 | Armor record count 42; use-panel labels capacity 50; database endpoint 0x50 | Record/workspace counts and the exclusive 80-item endpoint. They are not Verdite or Wind Blade Bracelet IDs. |
 
 The ten item identities and explicit retained-bit masks remove 43 anonymous

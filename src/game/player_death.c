@@ -82,7 +82,7 @@ void game_state_initialize(void)
     player_set_equipment_slot(0, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
     player_select_magic(8);
     player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-    player_state.light_effect_timer = -1;
+    player_state.illusion_staff_timer = KF_ILLUSION_STAFF_INACTIVE;
     player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;

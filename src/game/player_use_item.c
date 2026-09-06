@@ -32,10 +32,10 @@ void map_event_show_person_image(const KfMapEvent *event)
 }
 
 /*
- * Uses the selected item: keys open the door in reach whose link matches,
- * crystals fire the matching lever, the flask scans the effect pool before
- * spawning its floor-specific effect, and the remaining ids warp, refill
- * the lamp, show the target's picture, or train magic.
+ * Keys clear matching door links; the dragon chalice and seal stones consume
+ * their matching object inventory and trigger its link. The harp permits only
+ * one floor deformation at a time. Staves warp or enable the illusion effect;
+ * the mirror shows the target's picture, and Verdite trains magic.
  */
 ADDRESS(0x80018054, 0x45c)
 void player_use_item(u8 item_id)
@@ -51,14 +51,14 @@ void player_use_item(u8 item_id)
     s16 slot;
     u8 used = 0;
 
-    reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * 1000) >> 12);
-    reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * 1000) >> 12);
+    reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * 1000) >> KF_FIXED12_BITS);
+    reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * 1000) >> KF_FIXED12_BITS);
     index = 0;
     switch (item_id) {
     case KF_ITEM_KEY_OF_THE_DEAD:
-    case 54:
-    case 60:
-    case 74:
+    case KF_ITEM_RAITO_FAMILY_KEY:
+    case KF_ITEM_DUNGEON_KEY:
+    case KF_ITEM_SORCERER_KEY:
         for (;;) {
             index = map_object_pool_find_interaction_from(index, reach_x, reach_z, 800);
             if (index == -1) {
@@ -76,17 +76,17 @@ void player_use_item(u8 item_id)
             case 120:
             case 121:
             case 122:
-                if (object->link.link_id == 0xff) {
+                if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(0x12);
                 } else if (object->object_id != 89
                            || angle_within_tolerance(
-                               player_state.camera_rotation.vy, 0x800 - object->rotation.y, 0x155)) {
+                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, KF_ANGLE_FULL_TURN / 12)) {
                     used = 1;
                     if (object->link.link_id == item_id) {
-                        object->link.link_id = 0xff;
+                        object->link.link_id = KF_MAP_LINK_NONE;
                         sound_ref_play(&gameplay_sound_ref_12, 0x6e);
                         if (object->object_id == 89) {
-                            sound_ref_play(&gameplay_sound_ref_7, 0x7f);
+                            sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
                         notify_enqueue(4);
@@ -97,11 +97,11 @@ void player_use_item(u8 item_id)
             index++;
         }
         /* fallthrough */
-    case 56:
-    case 63:
-    case 64:
-    case 68:
-    case 69:
+    case KF_ITEM_DRAGON_CHALICE:
+    case KF_ITEM_WATER_SEAL_STONE:
+    case KF_ITEM_EARTH_SEAL_STONE:
+    case KF_ITEM_FIRE_SEAL_STONE:
+    case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
             index = map_object_pool_find_interaction_from(index, reach_x, reach_z, 800);
             if (index == -1) {
@@ -109,25 +109,25 @@ void player_use_item(u8 item_id)
             }
             object = &map_object_state.objects[index];
             if (object->object_id == item_id) {
-                if (object->link.link_id == 0xff) {
+                if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(0x12);
                 } else {
                     item_stock[0][object->object_id] = 0;
                     used = 1;
                     map_object_pool_trigger_link(object->link.link_id);
-                    object->link.link_id = 0xff;
+                    object->link.link_id = KF_MAP_LINK_NONE;
                 }
             }
             index++;
         }
         break;
-    case 62:
+    case KF_ITEM_HARP:
         record = effect_pool_records;
-        for (slot = 47; slot != -1; slot--, record++) {
-            if (record->type == 0xff) {
+        for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
+            if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;
             }
-            if (record->kind == 0x34) {
+            if (record->kind == KF_EFFECT_KIND_FLOOR_DEFORMATION) {
                 goto done;
             }
         }
@@ -138,7 +138,7 @@ void player_use_item(u8 item_id)
         } else {
             break;
         }
-        sound_ref_play(&gameplay_sound_ref_8, 0x7f);
+        sound_ref_play(&gameplay_sound_ref_8, KF_AUDIO_MAX_VOLUME);
         used = 1;
         break;
     case KF_ITEM_MEDICINAL_HERB:
@@ -148,21 +148,21 @@ void player_use_item(u8 item_id)
     case KF_ITEM_DRAGON_KING_GRASS_FRUIT:
         used = 1;
         break;
-    case 58:
+    case KF_ITEM_GREEN_DRAGON_STAFF:
         player_warp_to_floor_entry();
         return;
-    case 57:
-        player_state.light_effect_timer = 1000;
-        if (item_stock[0][57] != 0) {
-            item_stock[0][57]--;
+    case KF_ITEM_ILLUSION_STAFF:
+        player_state.illusion_staff_timer = 1000;
+        if (item_stock[0][KF_ITEM_ILLUSION_STAFF] != 0) {
+            item_stock[0][KF_ITEM_ILLUSION_STAFF]--;
         }
         return;
-    case 59:
+    case KF_ITEM_MIRROR_OF_TRUTH:
         actor = actor_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
             player_state.camera_rotation.vy,
             6000,
-            0x155,
+            KF_ANGLE_FULL_TURN / 12,
             &distance);
         if (actor != 0) {
             actor_show_info_image(actor);
@@ -172,7 +172,7 @@ void player_use_item(u8 item_id)
             (struct KfVec3i *)&player_state.camera_position,
             player_state.camera_rotation.vy,
             6000,
-            0x155,
+            KF_ANGLE_FULL_TURN / 12,
             &distance);
         if (event == 0) {
             break;

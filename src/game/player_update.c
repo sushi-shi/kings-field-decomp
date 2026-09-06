@@ -601,8 +601,8 @@ void player_update(void)
     if (player_state.equipped_weapon_id == 9) {
         lighting_apply_weapon9_environment();
     }
-    if (player_state.light_effect_timer != -1) {
-        player_state.light_effect_timer--;
+    if (player_state.illusion_staff_timer != KF_ILLUSION_STAFF_INACTIVE) {
+        player_state.illusion_staff_timer--;
         lighting_apply_timed_player_effect();
     }
 }

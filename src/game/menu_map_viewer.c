@@ -17,7 +17,7 @@ void menu_map_viewer(s32 item_code)
     s32 map_number;
 
     map_number = 2;
-    if (item_code == 0x37)
+    if (item_code == KF_ITEM_WATCHMAN_MAP)
         map_number = 1;
     path[5] = map_number + '0';
     path[6] = player_state.progress_state.current_floor + '0';

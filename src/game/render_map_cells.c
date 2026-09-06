@@ -39,15 +39,15 @@ void render_map_cell(s32 col, s32 row, char cell)
     long flag;
     s32 orient;
     u8 object_index;
-    s16 light;
+    s16 staff_timer;
 
     object_index = map_cell_attribute_grid[row][col];
     if (object_index == KF_MAP_ATTRIBUTE_NONE) {
         return;
     }
-    light = player_state.light_effect_timer;
+    staff_timer = player_state.illusion_staff_timer;
     /* Two-on/two-off updates; -1 disables the authored mesh remapping. */
-    if (light != -1 && (light & 3) < 2) {
+    if (staff_timer != KF_ILLUSION_STAFF_INACTIVE && (staff_timer & 3) < 2) {
         switch (object_index) {
         case 0x44:
             object_index = 0x17;

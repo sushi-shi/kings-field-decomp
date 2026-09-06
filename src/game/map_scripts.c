@@ -184,7 +184,7 @@ void map_ambient_script_floor5(void)
 ADDRESS(0x800343e0, 0x58)
 void map_action_script_floor1(void)
 {
-    if (item_stock[0][0x38] != 0
+    if (item_stock[0][KF_ITEM_DRAGON_CHALICE] != 0
         && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
         map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(1);
@@ -387,10 +387,10 @@ void map_event_interact(KfMapEvent *event)
         }
         break;
     case 8:
-        if (item_stock[0][0x3b] != 0 && map_event_pool[2].dialogue_stage == 2
+        if (item_stock[0][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2
             && map_event_pool[2].dialogue_page < 2) {
             magic_records[0].learned = 1;
-            item_stock[0][0x3b]--;
+            item_stock[0][KF_ITEM_MIRROR_OF_TRUTH]--;
             notify_enqueue(1);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
@@ -405,7 +405,7 @@ void map_event_interact(KfMapEvent *event)
     case 7:
         if (item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0 && map_event_pool[1].dialogue_stage == 2
             && map_event_pool[1].dialogue_page < 2) {
-            item_stock[0][0x3e] = 1;
+            item_stock[0][KF_ITEM_HARP] = 1;
             map_event_pool[1].dialogue_pages.last_page[1] = 5;
             item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,

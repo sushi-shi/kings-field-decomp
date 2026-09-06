@@ -144,7 +144,7 @@ s32 menu_root(void)
  * Consumable-item panel: builds a scrollable list of the usable items the
  * player holds, runs the windowed cursor, and applies the selected item's
  * effect. Restorative herbs and medicine heal HP/MP and clear status flags
- * in place; special items (0x37, 0x49) are handled by menu_map_viewer.  Returns
+ * in place; the watchman's and sorcerer's maps are handled by menu_map_viewer.  Returns
  * the chosen item code, or -1 when the item cannot be used.
  */
 ADDRESS(0x80022608, 0x774)
@@ -170,23 +170,23 @@ s32 menu_use_item_panel(void)
 
     inv = item_stock[0];
     found = 0;
-    if (inv[0x37] != 0) {
+    if (inv[KF_ITEM_WATCHMAN_MAP] != 0) {
         for (j = 0; j < 10; j++)
-            labels[found][j] = item_name_rows[0x37].codes[j];
-        counts[found] = inv[0x37];
-        codes[found] = 0x37;
+            labels[found][j] = item_name_rows[KF_ITEM_WATCHMAN_MAP].codes[j];
+        counts[found] = inv[KF_ITEM_WATCHMAN_MAP];
+        codes[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
-    if (inv[0x49] != 0) {
+    if (inv[KF_ITEM_SORCERER_MAP] != 0) {
         for (j = 0; j < 10; j++)
-            labels[found][j] = item_name_rows[0x49].codes[j];
-        counts[found] = inv[0x49];
-        codes[found] = 0x49;
+            labels[found][j] = item_name_rows[KF_ITEM_SORCERER_MAP].codes[j];
+        counts[found] = inv[KF_ITEM_SORCERER_MAP];
+        codes[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
     name = item_name_rows[KF_ITEM_VERDITE].codes;
     for (code = KF_ITEM_VERDITE; code < KF_ITEM_LIGHT_RING; code++, name += 10) {
-        if (code != 0x37 && code != 0x49 && inv[code] != 0) {
+        if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
             for (j = 0; j < 10; j++)
                 labels[found][j] = name[j];
             counts[found] = inv[code];
@@ -196,7 +196,7 @@ s32 menu_use_item_panel(void)
     }
     name = item_name_rows[KF_ITEM_GOLD_CROSS].codes;
     for (code = KF_ITEM_GOLD_CROSS; code < 0x50; code++, name += 10) {
-        if (code != 0x37 && code != 0x49 && inv[code] != 0) {
+        if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
             for (j = 0; j < 10; j++)
                 labels[found][j] = name[j];
             counts[found] = inv[code];
@@ -270,7 +270,7 @@ s32 menu_use_item_panel(void)
                 return -1;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            if (codes[ctx.selected_index] == 0x37 || codes[ctx.selected_index] == 0x49) {
+            if (codes[ctx.selected_index] == KF_ITEM_WATCHMAN_MAP || codes[ctx.selected_index] == KF_ITEM_SORCERER_MAP) {
                 menu_release_item_model();
                 menu_map_viewer(codes[ctx.selected_index]);
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);

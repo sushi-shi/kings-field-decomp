@@ -401,10 +401,10 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(player_state_fields["camera_position"].offset, 0xA4)
         self.assertEqual(player_state_fields["motion_state"].offset, 0xC0)
         self.assertEqual(player_state_fields["fire_defense_timer"].offset, 0x50)
-        self.assertEqual(player_state_fields["light_effect_timer"].offset, 0x52)
+        self.assertEqual(player_state_fields["illusion_staff_timer"].offset, 0x52)
         self.assertEqual(player_state_fields["map_variant"].offset, 0x0C)
         self.assertEqual(
-            player_state_fields["light_effect_timer"].meaning_confidence,
+            player_state_fields["illusion_staff_timer"].meaning_confidence,
             "supported",
         )
         self.assertEqual(player_state_fields["unknown_ce"].meaning_confidence, "opaque")

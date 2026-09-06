@@ -393,23 +393,23 @@ KfEffectRecord *effect_pool_construct(
 
 ADDRESS(0x80037770, 0xac)
 KfEffectRecord *effect_pool_spawn_typed(
-    u16 rotation_x, u16 rotation_y, u16 rotation_z, u16 direction_y,
-    s32 position_x, s32 position_y)
+    u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
+    s32 sweep_updates, s32 hold_countdown)
 {
     KfEffectRecord *record = effect_pool_find_free();
     if (record != 0) {
-        record->rotation.vx = rotation_x;
-        record->rotation.vy = rotation_y;
-        record->rotation.vz = rotation_z;
-        record->position.vx = position_x;
-        record->position.vy = position_y;
-        record->direction.words.y = direction_y;
+        record->rotation.vx = first_segment;
+        record->rotation.vy = segment_count;
+        record->rotation.vz = progress_per_update;
+        record->position.vx = sweep_updates;
+        record->position.vy = hold_countdown;
+        record->direction.words.y = cell_stagger;
         record->base_render_id = KF_EFFECT_RENDER_NONE;
         record->render_id = KF_EFFECT_RENDER_NONE;
         record->kind = KF_EFFECT_KIND_FLOOR_DEFORMATION;
         record->type = 0xf0;
         record->phase = KF_EFFECT_FLOOR_DEFORM_ADVANCE;
-        record->direction.words.x = position_x;
+        record->direction.words.x = sweep_updates;
         record->direction.words.z = 0;
     }
     return record;

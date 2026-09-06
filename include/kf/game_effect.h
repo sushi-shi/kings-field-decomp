@@ -245,8 +245,8 @@ extern KfEffectRecord *effect_pool_construct(
     u8 id, u8 type, u8 kind, const VECTOR *position,
     const SVECTOR *direction, ...);
 extern KfEffectRecord *effect_pool_spawn_typed(
-    u16 rotation_x, u16 rotation_y, u16 rotation_z, u16 direction_y,
-    s32 position_x, s32 position_y);
+    u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
+    s32 sweep_updates, s32 hold_countdown);
 extern void effect_pool_set_current(KfEffectRecord *record);
 extern void effect_pool_reset(void);
 extern void effect_pool_sweep(void);

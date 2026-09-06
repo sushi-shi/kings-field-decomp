@@ -44,6 +44,10 @@ enum {
     KF_FIRE_DEFENSE_DURATION_UPDATES = 500
 };
 
+enum {
+    KF_ILLUSION_STAFF_INACTIVE = -1
+};
+
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;
@@ -132,7 +136,7 @@ typedef struct KfPlayerState {
     s16 poison_timer;
     s16 slowed_timer;
     s16 fire_defense_timer;
-    s16 light_effect_timer;
+    s16 illusion_staff_timer;
     u8 unknown_54[4];
     u32 equipment_effect_ticks;
     u8 selected_magic_id;

@@ -12,7 +12,7 @@ boundary, not evidence that the status leaf or `player_update` shared the TU.
 | Address | Identity | Effect | Confirmed caller |
 | --- | --- | --- | --- |
 | `0x800187a4` | `lighting_apply_weapon9_environment` | Blends the current color matrix toward `color_matrix_table[4]` by `0x9c4` and installs half the current fog-near distance. | `player_update`, guarded by equipped weapon ID 9 |
-| `0x800187f0` | `lighting_apply_timed_player_effect` | Blends toward `color_matrix_table[5]` by `0xc00`. | `player_update`, while `player_state.light_effect_timer` is active |
+| `0x800187f0` | `lighting_apply_timed_player_effect` | Blends toward `color_matrix_table[5]` by `0xc00`. | `player_update`, while `player_state.illusion_staff_timer` is active |
 | `0x80018824` | `lighting_apply_color_preset6` | Blends toward `color_matrix_table[6]` by `0xc00`. | None decoded |
 | `0x80018858` | `player_apply_fire_defense_boost` | Sets the fire-defense boost flag and installs its 500-update timer. | menu_magic_panel at `0x8002317c` |
 
@@ -39,7 +39,7 @@ The two recovered timers are fields of the checked `0xe0`-byte
 | Offset | Field | Type | Observed lifecycle |
 | ---: | --- | --- | --- |
 | `0x50` | `player_state.fire_defense_timer` | `s16` | Initialized to `-1`, set to 500 with status bit 4, decremented by `player_update`, and clears the bit at zero. |
-| `0x52` | `player_state.light_effect_timer` | `s16` | Initialized to `-1`, set to 1000 by item use, decremented by `player_update`, and sampled by effect-model rendering. |
+| `0x52` | `player_state.illusion_staff_timer` | `s16` | Initialized to `-1`, set to 1000 by Illusion Staff use, decremented by `player_update` with a green lighting blend, and sampled by map-cell mesh remapping. |
 
 The complete structure is declared in `include/kf/game_player.h`; every field
 extent is checked against `config/retail/structures.tsv` and

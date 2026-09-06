@@ -24,6 +24,9 @@ promotes a probe to a proven historical toolchain.
   clip counts, typed asset ownership/cache states and the pool/registry literal audit.
 - [game-item-pickup-outcomes.md](game-item-pickup-outcomes.md): corrected pickup
   identity, typed outcomes, positioned labels and retained pickup/modal literals.
+- [game-item-special-identities.md](game-item-special-identities.md): nineteen
+  retail special-item labels, illusion staff timer propagation, harp countdown
+  parameters and the complete retained item-use literal ledger.
 - [game-item-consumables-accessories.md](game-item-consumables-accessories.md):
   ten retail item names across healing, revival, accessory bonuses and shop stock;
   exact cure-mask policy and explanations of retained balance amounts.

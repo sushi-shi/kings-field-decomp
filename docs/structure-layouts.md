@@ -101,7 +101,7 @@ unresolved gaps remain explicit opaque arrays/scalars. Individual data rows
 are deliberately retained for relocation and source-linkage curation; the
 structure is the common layout that prevents incompatible per-function views.
 The player-update pass identifies its signed fields at `+0x50` and `+0x52` as
-`player_state.fire_defense_timer` and `player_light_effect_timer`; their complete
+`player_state.fire_defense_timer` and `player_state.illusion_staff_timer`; their complete
 set/use/countdown xrefs are documented in
 [`player-update-and-lighting.md`](player-update-and-lighting.md).
 The map-resource pass identifies byte `+0x0c` as `player_map_variant`: map
