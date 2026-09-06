@@ -186,12 +186,32 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
     }
 }
 
+/* Kind 10 perturbs world-units-per-update velocity by [-64, 63].
+ * The SDK RNG has 15 bits; discard eight and center the remaining range.
+ * Stores wrap to 16 bits. The original spread tuning is unresolved. */
+enum {
+    SCATTER_RANDOM_SHIFT = 8,
+    SCATTER_VELOCITY_BIAS = ((RAND_MAX >> SCATTER_RANDOM_SHIFT) + 1) / 2
+};
+
 ADDRESS(0x800386c4, 0x68)
 void effect_scatter_triple(u16 *values)
 {
-    values[0] = values[0] + (rand() >> 8) - 64;
-    values[1] = values[1] + (rand() >> 8) - 64;
-    values[2] = values[2] + (rand() >> 8) - 64;
+    int random;
+    int centered;
+
+    random = rand();
+    centered = values[0] - SCATTER_VELOCITY_BIAS;
+    centered += random >> SCATTER_RANDOM_SHIFT;
+    values[0] = centered;
+    random = rand();
+    centered = values[1] - SCATTER_VELOCITY_BIAS;
+    centered += random >> SCATTER_RANDOM_SHIFT;
+    values[1] = centered;
+    random = rand();
+    centered = values[2] - SCATTER_VELOCITY_BIAS;
+    centered += random >> SCATTER_RANDOM_SHIFT;
+    values[2] = centered;
 }
 
 ADDRESS(0x8003872c, 0x90)

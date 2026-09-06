@@ -1934,3 +1934,53 @@ preserves all numerical values. Its numeric-limits section distinguishes
 known tenths scaling and zero accumulation from unexplained defense seeds,
 bonus tuning and the repeated cutting-defense contribution. Naming a damage
 type does not recover why the designers selected a particular magnitude.
+
+## Scatter reconstruction and velocity range
+
+Function Match Plan: import committed master f3edc49 into the e2b384c naming
+worktree. GAME 800386c4 `effect_scatter_triple` starts at 76.923080%; the
+incoming signed RNG result and centered-value accumulation reach strict 100%.
+The fresh six-view snapshot agrees with the committed scatter dossier: 104
+bytes, one block, 24-byte frame, three proven rand calls, no data or strings,
+three unsigned halfword loads/stores, and preserved call/return delay slots.
+The two direct callers, shared kind-10 movement, constructor, both neighbors,
+SDK RNG header/trampoline and source history establish the relevant context.
+The helper is game effect policy; the vendored RNG remains an external call.
+
+Preserve the named floor dimensions and other semantic work in this unit.
+Name the private random shift and derive its velocity bias from the authentic
+RAND_MAX. The pinned header defines 32767; shifting by eight gives 0..127,
+so half the 128-value range is 64. Each component receives an increment in
+[-64,63], stored modulo 65536. Kind 10 adds the resulting signed halfwords
+directly to world position on each movement update: these are velocity
+components in world units per update. They are not angle or Q12 quantities.
+The original choice of this spread remains unexplained. The two caller draws
+perturb a child copy and the live parent separately; the helper makes three
+RNG calls and never touches the fourth halfword.
+
+Require an independent literal f3edc49 compile to agree with the reconciled
+named unit in every non-debug section. Only scatter's score may change;
+the other 111 objects and 483 scores must remain unchanged from e2b384c.
+Verify all seven exact unit bodies against raw retail, their ordered numeric
+references, the 35-byte floor initializer and a wrong-RNG-target control.
+The other inline helper literals 0/1/2 select x/y/z; the bias expression's
++1 counts the inclusive RNG range and /2 selects its midpoint. Rebuild,
+run repository checks and the full build, and preserve only the incoming
+scatter bank row. Do not alter a compiler profile or main-checkout edits.
+
+Final verdict: the named unit agrees with a separate literal f3edc49 compile
+in every non-debug section; only the debug line table differs. The other
+111 objects retain every non-debug section from e2b384c. Scatter improves
+76.923080 -> 100%, with all other 483 strict scores and prior exacts unchanged.
+Its 26 words and three ordered calls to 8005049c match retail; changing the
+RNG target by four bytes fails raw equality. The unit's seven exact bodies
+reproduce 519 words, and both floor initializers retain all 35 bytes. The
+2D projectile remains non-exact at 99.934210%. The private data-section
+reference resolves through the sole owned initializer at 80056268.
+
+Ruff and diff checks pass. All 651 tests pass in 81.623 seconds with nine
+skips. Full `kf build` retains the existing ownership/placement failures:
+7/60 source-data units exact, target relink PSX 1/1, GAME 75/77 and OPEN
+34/38, two GAME/four OPEN section-base conflicts, zero artifact failures.
+Post-full-build control comparisons pass. Only the incoming scatter bank
+row is preserved; no additional result is banked and no tooling/flake changed.
