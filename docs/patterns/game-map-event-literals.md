@@ -85,8 +85,10 @@ proper creature name or a type change for resource animation IDs.
 ## Literal coverage and verification
 
 The [per-occurrence ledger](game-map-event-literal-ledger.md) accounts for all
-157 ordinary numeric/character tokens retained in these three sources, down
-from 179. The 40 address/extent tokens in `ADDRESS`, `DATA` and `RODATA` remain
+145 ordinary numeric/character tokens currently retained in these three sources.
+The original campaign reduced 179 to 157; the subsequent
+[saved-script review](game-map-script-state.md) named twelve more occurrences.
+The 40 address/extent tokens in `ADDRESS`, `DATA` and `RODATA` remain
 literal ownership claims: their exact values are the build's retail evidence.
 The one source enum value, ambient countdown 10, is a named definition and is
 explained above. The three saved-format values live in the shared header and

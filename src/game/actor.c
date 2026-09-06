@@ -304,7 +304,7 @@ void actor_apply_damage(
     s32 remaining;
 
     if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7
-        && DAT_8009f846 == 0) {
+        && map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
         return;
     }
     if (actor->health == 0) {

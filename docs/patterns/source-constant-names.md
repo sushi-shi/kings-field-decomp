@@ -27,16 +27,22 @@ offsets formerly called velocities. The wider source audit remains open.
 
 The [map-object review](game-map-object-constants.md) separates definition
 behaviors from running actions, names switch phases and drop groups across
-their consumers, and explains all 267 retained literals in the two map-object
+their consumers, and explains all 259 retained literals in the two map-object
 modules. It preserves the paired door's missing action-1 handler and the
 switch's unsigned reverse-animation completion test.
 
 The [map-event literal review](game-map-event-literals.md) covers the event
 query/runtime and map-load modules. It recovers the floor-5 animation-slot
 reset, shares the saved-record format constants, and gives a specific reason
-for all 157 remaining literal occurrences in its linked ledger. Movement,
+for all 145 remaining literal occurrences in its linked ledger. Movement,
 random-turn and sound parameters retain their measured units without claiming
 an original tuning rationale.
+
+The [saved floor-script review](game-map-script-state.md) replaces four
+address-derived aliases and four raw prefix-byte accesses with typed fields.
+It names area-trigger stages, binary flags and the four-reveal completion
+count, and propagates the saved-world type through the memory-card payload.
+The two earlier literal censuses above are refreshed after these substitutions.
 
 ## Function Match Plan
 

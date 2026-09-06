@@ -56,25 +56,25 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 ADDRESS(0x80033f64, 0x288)
 void map_ambient_script_floor1(void)
 {
-    if (MAP_WORLD_STATE_BYTES[3] == 1) {
+    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET) {
         audio_play_spatial_default_range(
             &gameplay_sound_ref_5, &map_floor1_sound_position, 0x73);
     }
 
-    switch (MAP_WORLD_STATE_BYTES[1]) {
-    case 0:
+    switch (map_floor1_script.actor_activation_stage) {
+    case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (player_state.map_cell.x >= 7 && player_state.map_cell.z >= 31
             && player_state.map_cell.x < 12 && player_state.map_cell.z < 41) {
-            MAP_WORLD_STATE_BYTES[1] = 1;
+            map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
-    case 1:
+    case KF_MAP_TRIGGER_AWAIT_EXIT:
         if (player_state.map_cell.x < 2 || player_state.map_cell.z < 25
             || player_state.map_cell.x >= 14 || player_state.map_cell.z >= 46) {
             s32 actor_index;
             s32 object_index;
 
-            MAP_WORLD_STATE_BYTES[1] = 2;
+            map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
             actor_index = actor_pool_find_at_tile(7, 0x28);
             if (actor_index != -1) {
                 actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
@@ -88,19 +88,19 @@ void map_ambient_script_floor1(void)
         break;
     }
 
-    switch (MAP_WORLD_STATE_BYTES[0]) {
-    case 0:
+    switch (map_floor1_script.object_removal_stage) {
+    case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (player_state.map_cell.x >= 2 && player_state.map_cell.z >= 27
             && player_state.map_cell.x < 5 && player_state.map_cell.z < 30) {
-            MAP_WORLD_STATE_BYTES[0] = 1;
+            map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
-    case 1:
+    case KF_MAP_TRIGGER_AWAIT_EXIT:
         if (player_state.map_cell.x < 2 || player_state.map_cell.z < 11
             || player_state.map_cell.x >= 28 || player_state.map_cell.z >= 41) {
             s32 object_index;
 
-            MAP_WORLD_STATE_BYTES[0] = 2;
+            map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
             object_index = map_object_pool_find_near_point(0x2328, 0xdea8, 0xbb8);
             if (object_index != -1) {
                 map_object_state.objects[object_index].object_id = KF_MAP_OBJECT_FREE;
@@ -146,13 +146,13 @@ void map_ambient_script_floor4(void)
 ADDRESS(0x800342ec, 0xf4)
 void map_ambient_script_floor5(void)
 {
-    u8 *fired = &DAT_8009f846;
+    KfMapScriptFlag *encounter_started = &map_floor5_script.boss_encounter_started;
 
-    if (*fired == 0 && player_state.map_cell.x >= 38
+    if (*encounter_started == KF_MAP_SCRIPT_UNSET && player_state.map_cell.x >= 38
         && player_state.map_cell.x < 41 && player_state.map_cell.z == 7
         && (u16)player_state.camera_rotation.vy >= 1808
         && (u16)player_state.camera_rotation.vy < 2289) {
-        *fired = 1;
+        *encounter_started = KF_MAP_SCRIPT_SET;
         screen_show_image_until_input("TALK\\C17\\T55171.TIM");
         render_frame(0, 0);
         render_frame(0, 0);
@@ -171,8 +171,8 @@ ADDRESS(0x800343e0, 0x58)
 void map_action_script_floor1(void)
 {
     if (item_stock[0][0x38] != 0
-        && MAP_WORLD_STATE_BYTES[2] == 0) {
-        MAP_WORLD_STATE_BYTES[2] = 1;
+        && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
+        map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(1);
         sound_ref_play(&gameplay_sound_ref_7, 0x64);
     }
@@ -201,7 +201,7 @@ void map_reveal_fade(void)
     }
 
     map_event_pool[3].state = KF_MAP_EVENT_DISABLED;
-    DAT_8009f844 = 1;
+    map_floor5_script.character_arrived = KF_MAP_SCRIPT_SET;
 
     for (blend = 0x1000; blend >= 0; blend -= 256) {
         lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_DEFAULT], &color_matrix_table[KF_GAME_COLOR_WHITE], blend);
@@ -349,7 +349,7 @@ void map_action_script_floor5(void)
     if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(5)) {
         map_floor5_transition_cutscene();
-        DAT_8009f845 = 1;
+        map_floor5_script.weapon_transformed = KF_MAP_SCRIPT_SET;
     }
 }
 

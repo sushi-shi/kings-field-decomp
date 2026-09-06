@@ -4,6 +4,7 @@
 /* GAME.EXE memory-card file layouts, shared workspace, and public save API. */
 
 #include <kf/game_types.h>
+#include <kf/game_map.h>
 
 enum {
     KF_CARD_CHANNEL = 0,
@@ -66,7 +67,7 @@ typedef struct KfSaveHeader {
 typedef struct KfSavePayload {
     u32 player_state[56];
     u8 unknown_0e0[556];
-    u32 world_state[2125];
+    KfMapSavedWorld world_state;
     u8 item_stock[3][80];
     u8 magic_flags[24];
     u8 unknown_2548[56];

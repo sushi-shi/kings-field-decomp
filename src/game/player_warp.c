@@ -193,7 +193,7 @@ change_floor:
         } else if (cell == WARP_CELL_KEY(39, 35)) {
             goto change_to_floor4;
         } else if (cell == WARP_CELL_KEY(15, 2)) {
-            if (boss_defeat_complete) {
+            if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
                 return 1;
             }
         }
@@ -250,7 +250,7 @@ change_to_floor4:
         } else if (cell == WARP_CELL_KEY(5, 24)) {
             player_warp_same_floor(KF_FLOOR5_ALTERNATE_MUSIC_VARIANT, 39, 47);
         } else if (cell == WARP_CELL_KEY(39, 47)) {
-            if (!boss_defeat_complete) {
+            if (boss_defeat_complete == KF_MAP_SCRIPT_UNSET) {
                 player_warp_same_floor(2, 5, 25);
             } else {
                 return 1;

@@ -16,6 +16,8 @@ promotes a probe to a proven historical toolchain.
   stages/pages, animation phase, byte enum domains and corrected call evidence.
 - [game-map-event-literals.md](game-map-event-literals.md): map-event movement,
   queries, saved fields and the complete three-module retained-literal ledger.
+- [game-map-script-state.md](game-map-script-state.md): typed saved floor-script
+  fields, area-trigger stages, revival, map-piece reveals and boss progression.
 
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the

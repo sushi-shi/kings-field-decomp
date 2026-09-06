@@ -125,21 +125,21 @@ void map_restore_floor_state(void)
 
     switch (player_state.progress_state.current_floor) {
     case 1:
-        if (MAP_WORLD_STATE_BYTES[2] == 1) {
+        if (map_floor1_script.passage_opened == KF_MAP_SCRIPT_SET) {
             map_apply_copy_region(1);
         }
-        if (MAP_WORLD_STATE_BYTES[1] != 2) {
+        if (map_floor1_script.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
             index = actor_pool_find_at_tile(7, 0x28);
             if (index != -1) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
-        if (DAT_8009f845 == 1) {
+        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x33);
         }
         break;
     case 2:
-        if (DAT_8009f845 == 1) {
+        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x33);
         }
         if (player_state.progress_state.highest_floor >= 3) {
@@ -147,10 +147,10 @@ void map_restore_floor_state(void)
         }
         break;
     case 3:
-        if (DAT_8009f845 == 1) {
+        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x33);
         }
-        if (DAT_8009eafc == 4) {
+        if (map_floor3_script.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
             map_apply_copy_region(2);
             map_apply_copy_region(3);
         }
@@ -158,10 +158,10 @@ void map_restore_floor_state(void)
     case 4:
         break;
     case 5:
-        if (DAT_8009f844 == 1) {
+        if (map_floor5_script.character_arrived == KF_MAP_SCRIPT_SET) {
             map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;
         }
-        if (DAT_8009f846 == 0) {
+        if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ACTOR_ANIMATION_NONE;
             actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ACTOR_ANIMATION_NONE;
             actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ACTOR_ANIMATION_NONE;
@@ -171,10 +171,10 @@ void map_restore_floor_state(void)
             map_apply_copy_region(4);
         }
         if (item_stock[0][0xa] != 0 || item_stock[0][0xb] != 0
-                || DAT_8009f845 == 1) {
+                || map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x34);
         }
-        if (boss_defeat_complete != 0) {
+        if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
             map_object_pool_trigger_link(0xd);
             actor_pool_begin_death_by_definition(0);
             actor_pool_begin_death_by_definition(2);

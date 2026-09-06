@@ -436,7 +436,7 @@ void map_object_pool_update(void)
                 object->action_timer = (rand() >> 12) + 10;
                 break;
             case 115:
-                if (DAT_8009f846 == 0) {
+                if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
                     break;
                 }
                 direction.y = 0;
@@ -535,21 +535,21 @@ void map_object_pool_update(void)
                 if (player_state.progress_state.current_floor == 3) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_11, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
-                    counter = &DAT_8009eafc;
-                    if (*counter != 4) {
+                    counter = &map_floor3_script.revealed_piece_count;
+                    if (*counter != KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                         (*counter)++;
-                        if (*counter >= 4) {
+                        if (*counter >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                             map_apply_copy_region(2);
                             map_apply_copy_region(3);
                             sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
-                            *counter = 4;
+                            *counter = KF_MAP_FLOOR3_REQUIRED_REVEALS;
                         }
                     }
                 } else if (player_state.progress_state.current_floor == 1) {
-                    if (MAP_WORLD_STATE_BYTES[3] == 0) {
+                    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_UNSET) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_ref_5, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
-                        MAP_WORLD_STATE_BYTES[3] = 1;
+                        map_floor1_script.revival_enabled = KF_MAP_SCRIPT_SET;
                     }
                 }
                 object->action_timer++;

@@ -19,10 +19,62 @@ enum {
 
 /* Each saved floor slot starts with script bytes before its runtime records. */
 enum {
+    KF_MAP_SAVED_FLOOR_COUNT = 5,
     KF_MAP_SAVED_FLOOR_BYTES = 1700,
     KF_MAP_SAVED_RECORDS_OFFSET = 10,
-    KF_MAP_SAVED_YAW_SHIFT = 4
+    KF_MAP_SAVED_RECORD_BYTES = 1690,
+    KF_MAP_SAVED_WORLD_WORDS = 2125,
+    KF_MAP_SAVED_YAW_SHIFT = 4,
+    KF_MAP_FLOOR3_REQUIRED_REVEALS = 4
 };
+
+KF_ENUM_BEGIN(KfMapScriptFlag, u8)
+    KF_MAP_SCRIPT_UNSET = 0,
+    KF_MAP_SCRIPT_SET = 1
+KF_ENUM_END(KfMapScriptFlag)
+
+KF_ENUM_BEGIN(KfMapAreaTriggerStage, u8)
+    KF_MAP_TRIGGER_AWAIT_ENTRY = 0,
+    KF_MAP_TRIGGER_AWAIT_EXIT = 1,
+    KF_MAP_TRIGGER_COMPLETE = 2
+KF_ENUM_END(KfMapAreaTriggerStage)
+
+typedef struct KfMapFloor1Script {
+    KfMapAreaTriggerStage object_removal_stage;
+    KfMapAreaTriggerStage actor_activation_stage;
+    KfMapScriptFlag passage_opened;
+    KfMapScriptFlag revival_enabled;
+} KfMapFloor1Script;
+
+typedef struct KfMapFloor3Script {
+    u8 revealed_piece_count;
+} KfMapFloor3Script;
+
+typedef struct KfMapFloor5Script {
+    KfMapScriptFlag character_arrived;
+    KfMapScriptFlag weapon_transformed;
+    KfMapScriptFlag boss_encounter_started;
+    KfMapScriptFlag boss_defeat;
+} KfMapFloor5Script;
+
+/* The floor selects the prefix interpretation; other bytes stay serialized. */
+typedef union KfMapFloorScript {
+    u8 bytes[KF_MAP_SAVED_RECORDS_OFFSET];
+    KfMapFloor1Script floor1;
+    KfMapFloor3Script floor3;
+    KfMapFloor5Script floor5;
+} KfMapFloorScript;
+
+typedef struct KfMapSavedFloor {
+    KfMapFloorScript script;
+    u8 records[KF_MAP_SAVED_RECORD_BYTES];
+} KfMapSavedFloor;
+
+/* Save I/O copies aligned words; scripts address typed bytes within slots. */
+typedef union KfMapSavedWorld {
+    u32 words[KF_MAP_SAVED_WORLD_WORDS];
+    KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
+} KfMapSavedWorld;
 
 /* Definition behavior and running action are separate byte domains. */
 enum {
@@ -273,7 +325,7 @@ typedef struct KfMapRuntimeState {
     u8 *variant_asset_buffer;
     u16 dialogue_advance_gate;
     u16 ambient_script_countdown;
-    u32 world_state[2125];
+    KfMapSavedWorld world_state;
 } KfMapRuntimeState;
 
 extern KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT];
@@ -284,13 +336,12 @@ extern KfMapRuntimeState map_runtime_state;
 #define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
 #define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
 #define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
-#define map_world_state_base (map_runtime_state.world_state[0])
-#define MAP_WORLD_STATE_BYTES ((u8 *)map_runtime_state.world_state)
-#define DAT_8009eafc (MAP_WORLD_STATE_BYTES[3400])
-#define DAT_8009f844 (MAP_WORLD_STATE_BYTES[6800])
-#define DAT_8009f845 (MAP_WORLD_STATE_BYTES[6801])
-#define DAT_8009f846 (MAP_WORLD_STATE_BYTES[6802])
-#define boss_defeat_complete (MAP_WORLD_STATE_BYTES[6803])
+#define map_world_state_base (map_runtime_state.world_state.words[0])
+#define MAP_WORLD_STATE_BYTES ((u8 *)map_runtime_state.world_state.words)
+#define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
+#define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
+#define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
+#define boss_defeat_complete (map_floor5_script.boss_defeat)
 extern KfMapObjectState map_object_state;
 extern u16 map_object_effect_sequence_160;
 extern u16 map_object_effect_sequence_170;

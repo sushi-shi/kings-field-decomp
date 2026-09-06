@@ -137,7 +137,7 @@ void player_death_restart(void)
 {
     s32 floor = player_state.progress_state.current_floor;
 
-    if (MAP_WORLD_STATE_BYTES[3] == 1 && item_stock[0][0x2f] != 0) {
+    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[0][0x2f] != 0) {
         item_stock[0][0x2f]--;
         map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;

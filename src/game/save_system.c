@@ -380,7 +380,7 @@ s32 save_file_write_slot(s16 slot_id)
     }
     memcpy(save_payload_buffer->player_state, &player_state.experience,
            sizeof(save_payload_buffer->player_state));
-    memcpy(save_payload_buffer->world_state, &map_world_state_base,
+    memcpy(save_payload_buffer->world_state.words, &map_world_state_base,
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->item_stock, item_stock,
            sizeof(save_payload_buffer->item_stock));
@@ -631,7 +631,7 @@ s32 save_file_read_slot(s16 slot_id)
     saved_weapon_animation_cache = player_state.weapon_animation_cache;
     memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
-    memcpy(&map_world_state_base, save_payload_buffer->world_state,
+    memcpy(&map_world_state_base, save_payload_buffer->world_state.words,
            sizeof(save_payload_buffer->world_state));
     memcpy(item_stock, save_payload_buffer->item_stock,
            sizeof(save_payload_buffer->item_stock));

@@ -736,7 +736,7 @@ void actor_update_boss_death_sequence(void)
         actor->animation_phase = KF_ACTOR_ANIMATION_PHASE_MAX;
         actor->action_progress = KF_ACTOR_PROGRESS_INIT;
         actor->lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
-        boss_defeat_complete = 1;
+        boss_defeat_complete = KF_MAP_SCRIPT_SET;
         map_object_pool_trigger_link(13);
         actor_pool_begin_death_by_definition(0);
         actor_pool_begin_death_by_definition(2);

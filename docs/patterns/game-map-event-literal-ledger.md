@@ -1,14 +1,14 @@
 # Retained map-event literals
 
 Reviewed ledger for `map_event.c`, `map_events.c` and `map_load.c` after the
-[map-event literal campaign](game-map-event-literals.md). Source line numbers
+[saved-script-state update](game-map-script-state.md). Source line numbers
 locate this reviewed version; the function and expression identify the use.
 Repeated occurrences on different lines are grouped only when their complete
 expression and reason agree. Minus signs are C operators, so `-1` has one
 numeric token, recorded as `1` below. Ownership claims and named constant
 definitions are accounted for separately in the campaign note.
 
-All **157 retained occurrences** are mapped below; no fallback category is used.
+All **145 retained occurrences** are mapped below; no fallback category is used.
 
 | Source / function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -105,25 +105,19 @@ All **157 retained occurrences** are mapped below; no fallback category is used.
 | `map_load.c` / `map_restore_floor_state` | 115 | `48` | `} else if (object->object_id < 48) {` | Authored second model-ID boundary: IDs 43..47 receive zero pitch; higher IDs retain the prior pitch. |
 | `map_load.c` / `map_restore_floor_state` | 120 | `0` | `*(u16 *)&object->link = 0;` | Initialize both bytes of the transient drop's link prefix to zero, not the absent-link encoding 255. |
 | `map_load.c` / `map_restore_floor_state` | 127 | `1` | `case 1:` | Dungeon floor number directly selects that floor's script. |
-| `map_load.c` / `map_restore_floor_state` | 128 | `2, 1` | `if (MAP_WORLD_STATE_BYTES[2] == 1) {` | Floor-1 prefix byte 2 records the passage-copy trigger; one is its set state. |
 | `map_load.c` / `map_restore_floor_state` | 129 | `1` | `map_apply_copy_region(1);` | Authored copy-region index for that floor-1 passage. |
-| `map_load.c` / `map_restore_floor_state` | 131 | `1, 2` | `if (MAP_WORLD_STATE_BYTES[1] != 2) {` | Floor-1 prefix byte 1 must reach stage 2 before the actor at the fixed tile is retained; exact script stage is preserved. |
 | `map_load.c` / `map_restore_floor_state` | 132 | `7, 0x28` | `index = actor_pool_find_at_tile(7, 0x28);` | Authored tile X=7, Z=40 locates the actor controlled by that floor-1 script. |
 | `map_load.c` / `map_restore_floor_state` | 133 | `1` | `if (index != -1) {` | Do not index the actor pool when the tile query returns its negative miss sentinel. |
-| `map_load.c` / `map_restore_floor_state` | 137, 142, 150 | `1 × 3` | `if (DAT_8009f845 == 1) {` | Set persistent floor-5 transition flag controls the linked object on each of floors 1..3. |
 | `map_load.c` / `map_restore_floor_state` | 138, 143, 151 | `0x33 × 3` | `map_object_pool_clear_link(0x33);` | Authored link ID removed by that persistent transition; no proper object identity is inferred. |
 | `map_load.c` / `map_restore_floor_state` | 141 | `2` | `case 2:` | Dungeon floor number directly selects that floor's script. |
 | `map_load.c` / `map_restore_floor_state` | 145 | `3` | `if (player_state.progress_state.highest_floor >= 3) {` | Visiting floor 3 retires the first floor-2 event. |
 | `map_load.c` / `map_restore_floor_state` | 146 | `0` | `map_event_pool[0].state = KF_MAP_EVENT_DISABLED;` | First floor-2 event slot selected by that progression rule. |
 | `map_load.c` / `map_restore_floor_state` | 149 | `3` | `case 3:` | Dungeon floor number directly selects that floor's script. |
-| `map_load.c` / `map_restore_floor_state` | 153 | `4` | `if (DAT_8009eafc == 4) {` | Exact persisted floor-3 script stage that enables two map-copy regions; narrower story identity remains unsupported. |
-| `map_load.c` / `map_restore_floor_state` | 154 | `2` | `map_apply_copy_region(2);` | First authored region index enabled by floor-3 script stage 4. |
-| `map_load.c` / `map_restore_floor_state` | 155 | `3` | `map_apply_copy_region(3);` | Second authored region index enabled by floor-3 script stage 4. |
+| `map_load.c` / `map_restore_floor_state` | 154 | `2` | `map_apply_copy_region(2);` | First authored region index enabled by completion of four floor-3 map-piece reveals. |
+| `map_load.c` / `map_restore_floor_state` | 155 | `3` | `map_apply_copy_region(3);` | Second authored region index enabled by completion of four floor-3 map-piece reveals. |
 | `map_load.c` / `map_restore_floor_state` | 158 | `4` | `case 4:` | Dungeon floor number directly selects that floor's script. |
 | `map_load.c` / `map_restore_floor_state` | 160 | `5` | `case 5:` | Dungeon floor number directly selects that floor's script. |
-| `map_load.c` / `map_restore_floor_state` | 161 | `1` | `if (DAT_8009f844 == 1) {` | Set transfer flag enables the floor-5 event corresponding to the disabled floor-2 event. |
 | `map_load.c` / `map_restore_floor_state` | 162 | `1` | `map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;` | Second floor-5 slot is the transfer destination (character ID 11). |
-| `map_load.c` / `map_restore_floor_state` | 164 | `0` | `if (DAT_8009f846 == 0) {` | Before the floor-5 reveal flag is set, keep the five actor animation slots unavailable. |
 | `map_load.c` / `map_restore_floor_state` | 165 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_load.c` / `map_restore_floor_state` | 166 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_load.c` / `map_restore_floor_state` | 167 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
@@ -131,9 +125,7 @@ All **157 retained occurrences** are mapped below; no fallback category is used.
 | `map_load.c` / `map_restore_floor_state` | 169 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_load.c` / `map_restore_floor_state` | 171 | `4` | `map_apply_copy_region(4);` | Authored floor-5 map-copy region applied after the reveal flag is set. |
 | `map_load.c` / `map_restore_floor_state` | 173 | `0 × 4, 0xa, 0xb` | `if (item_stock[0][0xa] != 0 \|\| item_stock[0][0xb] != 0` | Stock row 0, item IDs 10/11 and nonzero possession checks; preserve these authored items without assigning unsupported proper names. |
-| `map_load.c` / `map_restore_floor_state` | 174 | `1` | `\|\| DAT_8009f845 == 1) {` | The set transition flag also clears the floor-5 linked object. |
 | `map_load.c` / `map_restore_floor_state` | 175 | `0x34` | `map_object_pool_clear_link(0x34);` | Authored link ID cleared by either item possession or the transition flag. |
-| `map_load.c` / `map_restore_floor_state` | 177 | `0` | `if (boss_defeat_complete != 0) {` | Nonzero persisted completion flag; this is a boolean test. |
 | `map_load.c` / `map_restore_floor_state` | 178 | `0xd` | `map_object_pool_trigger_link(0xd);` | Authored link ID triggered after completion. |
 | `map_load.c` / `map_restore_floor_state` | 179 | `0` | `actor_pool_begin_death_by_definition(0);` | Authored actor-definition selector in the completion cleanup set {0,2,3,4}; no proper creature identity is inferred. |
 | `map_load.c` / `map_restore_floor_state` | 180 | `2` | `actor_pool_begin_death_by_definition(2);` | Authored actor-definition selector in the completion cleanup set {0,2,3,4}; no proper creature identity is inferred. |

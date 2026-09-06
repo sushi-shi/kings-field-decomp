@@ -168,15 +168,16 @@ ready-only condition is invented.
 
 ## Remaining literal census
 
-The two complete source modules retain **267 numeric occurrences** outside
+After the [saved-script update](game-map-script-state.md), the two complete
+source modules retain **259 numeric occurrences** outside
 retail claims and constant definitions: 30 initialized map-copy bytes and
-237 function literals. The census excludes comments, strings and digits
+229 function literals. The census excludes comments, strings and digits
 inside identifiers. Other modules receive only the shared substitutions
 listed above; their unrelated literals remain in the wider audit.
 
 | Module / function | Remaining occurrences |
 | --- | ---: |
-| `map_object.c` total | 170 |
+| `map_object.c` total | 162 |
 | `map_object_pool_find_interaction_from` | 8 |
 | `map_object_start_action_if_idle` | 1 |
 | `map_object_effect_pool_acquire` | 5 |
@@ -184,7 +185,7 @@ listed above; their unrelated literals remain in the wider audit.
 | `map_object_spawn_actor_debris` | 8 |
 | `map_object_pool_trigger_link` | 2 |
 | `map_object_pool_clear_link` | 2 |
-| `map_object_pool_update` | 135 |
+| `map_object_pool_update` | 127 |
 | `map_object_pool.c` total | 97 |
 | Map-copy initializer | 30 |
 | `map_apply_copy_region` | 2 |
@@ -265,12 +266,12 @@ do not establish the original designer's reason for choosing each value.
 | Emitter object 137 | Effect `0xe` (14), zero Y direction and no position offset. Factors `175u >>10` applied to Q12 sine/negative-cosine give nominal horizontal speed 700 world units/update before quantization. The unsigned multiplication, logical shift and halfword store are preserved. |
 | Emitter object 124 | Effect 5, launch Y minus 1400. Factors `25u >>7` give nominal speed 800, with the same unsigned/narrowing contract. |
 | Emitter object 125 | Effect 7, launch Y plus 600, nominal speed 700 and optional sound flag 1. |
-| Emitter object 115 | Requires the existing world-state flag. Effect 7 travels at nominal speed 900 from `225u >>10`, at yaw plus a quarter turn. Y is minus 1000; yaw zero uses X/Z offsets +1100/+1000 and half-turn uses -1100/-1000. Other yaws leave the point's X/Z uninitialized, as in the original. A separate `rand()<4096` requests sound for 4096 SDK outcomes; it is not a Q12 phase test. |
+| Emitter object 115 | Requires the floor-5 boss-encounter flag. Effect 7 travels at nominal speed 900 from `225u >>10`, at yaw plus a quarter turn. Y is minus 1000; yaw zero uses X/Z offsets +1100/+1000 and half-turn uses -1100/-1000. Other yaws leave the point's X/Z uninitialized, as in the original. A separate `rand()<4096` requests sound for 4096 SDK outcomes; it is not a Q12 phase test. |
 | Release requests | Timer 0/1 records whether the single request has been sent. Both map actions write the already named effect release phase 1, then leave that timer at 1. The orbit/short/long distinction remains in the loader and enum identities. |
 | Effect switch | Step 128 is 1/32 of a complete 4096-unit animation. Forward and reverse timing, clamp 4095, and unsigned underflow are described above; these are interpolation units, not a 360-degree yaw. Sound 3 plays at each end's departure. |
 | Copy-region trigger | Timer 0/1 is an unprocessed/processed flag. A missing parameter skips the copy but still records completion. The parameter indexes the exact five-row table; no additional region bounds check is inferred. |
 | Reveal movement | Loader +10000, first update -10200, then timers 1..5 each +40 yield net zero displacement relative to the requested placement. Timer 6 performs completion work; the next increment prevents repeating it. The 40-unit step is the 200-unit overshoot divided across five settling updates. |
-| Reveal floor completion | Floor 3 increments the existing counter unless it already equals 4; after reaching at least 4 it applies region IDs 2 and 3, plays sound 7, and stores 4. Floor 1 uses world-state byte index 3 as a one-time flag and plays sound 5. The sounds, floor numbers, region IDs and state-byte index are authored bindings, not interchangeable constants. |
+| Reveal floor completion | Floor 3 increments `revealed_piece_count` unless it equals `KF_MAP_FLOOR3_REQUIRED_REVEALS` (four); completing four reveals applies region IDs 2 and 3, plays sound 7, and clamps the count. Floor 1 sets `revival_enabled` once and plays sound 5. Sounds, floor numbers and region IDs remain authored bindings; the named count and flags now carry their own meanings. |
 | Enabled restore point | Object `0x7b` (123) and yaw step 8 are its visible resource and continuous rotation: 0.703125 degrees/update, one turn per 512 updates. Original visual/resource tuning rationale is unknown. |
 
 Retail `ADDRESS`, `DATA` and `RODATA` addresses/extents remain explicit
