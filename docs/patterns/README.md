@@ -51,8 +51,13 @@ promotes a probe to a proven historical toolchain.
   inclusion of custom allocated NOBITS sections; matching data must also admit
   a retail base satisfying both objects' actual section alignment.
 - [open-map-render-residue.md](open-map-render-residue.md): RTBL window
-  ownership, conflicting light-matrix base forms in map rendering and
-  initialization, and the visibility-traversal setup residue.
+  ownership, historical matrix/setup controls and the exact map-cell closure.
+- [sdk-vector-publication.md](sdk-vector-publication.md): natural XYZ source
+  order closes OPEN map-cell and GAME camera-step despite their interleaved
+  retail store schedules; separate-statement controls rule out macro uniqueness.
+- [game-map-cell-source.md](game-map-cell-source.md): GAME's byte object-index
+  lifetime, three-case door remapping and natural XYZ coordinates; the shared
+  owner control narrows the remaining mismatch to eighteen stack operands.
 - [game-map-enqueue.md](game-map-enqueue.md): restore allocation-overflow
   returns and retail packet dispatch in the GAME map polygon emitter.
 - [game-model-enqueue.md](game-model-enqueue.md): four-mode model packet

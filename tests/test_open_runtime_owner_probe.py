@@ -216,16 +216,13 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
                     offset = IMAGE_LAYOUTS[unit.image].file_offset(claim.va)
                     expected = list(struct.unpack_from(
                         f"<{claim.body_size // 4}I", retail, offset))
+                    self.assertEqual(actual, expected)
                     if claim.symbol == "opening_render_map_cells":
-                        self.assertEqual(actual, expected)
                         self.assertEqual(calls, [0x80016E68, 0x80018BBC])
                         wrong_owner = dict(data, open_graphics_runtime=0x80049A4C)
                         corrupted, _, _ = linked_words(obj, unit, claim, wrong_owner, functions)
                         self.assertNotEqual(corrupted, expected)
                     else:
-                        # Only the matrix-base sequence and epilogue are exact.
-                        self.assertNotEqual(actual, expected)
-                        self.assertEqual(actual[-24:], expected[-24:])
                         self.assertEqual(addresses, [
                             0x800730A0, 0x80046DF8, 0x8006E0AC, 0x8006E0B4,
                             0x8006E260, 0x8006E0B0, 0x8006E048, 0x8006E048,

@@ -53,39 +53,40 @@ void render_map_cell(s32 col, s32 row, char cell)
     SVECTOR position;
     long flag;
     s32 orient;
-    s32 attr;
-    s32 tex;
+    u8 object_index;
     s16 light;
 
-    attr = map_cell_attribute_grid[row][col];
-    if (attr == 0xff) {
+    object_index = map_cell_attribute_grid[row][col];
+    if (object_index == 0xff) {
         return;
     }
     light = player_state.light_effect_timer;
     if (light != -1 && (light & 3) < 2) {
-        if (attr == 0x45) {
-            attr = 0x18;
-        } else if (attr < 0x46) {
-            if (attr == 0x44) {
-                attr = 0x17;
-            }
-        } else {
-            if (attr == 0x46) {
-                attr = 0x19;
-            }
+        switch (object_index) {
+        case 0x44:
+            object_index = 0x17;
+            break;
+        case 0x45:
+            object_index = 0x18;
+            break;
+        case 0x46:
+            object_index = 0x19;
+            break;
         }
     }
-    tex = attr - 1;
-    if ((u8)tex > 99) {
+    object_index--;
+    if (object_index > 99) {
         return;
     }
     orient = map_cell_orientation_grid[row][col] - 1;
     if (cell == 1) {
-        tex += 100;
+        object_index += 100;
     }
-    position.vx = col * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vx;
-    position.vz = row * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vz;
-    position.vy = map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP - (u16)render_state.view_position.vy;
+    setVector(&position,
+        col * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vx,
+        map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP
+            - (u16)render_state.view_position.vy,
+        row * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vz);
     if (orient == 1) {
         position.vz += KF_MAP_TILE_SIZE;
     } else if (orient == 2) {
@@ -103,8 +104,8 @@ void render_map_cell(s32 col, s32 row, char cell)
     SetRotMatrix(&cell_matrix);
     SetTransMatrix(&cell_matrix);
     SetLightMatrix(&light_quadrant_matrices[orient]);
-    tmd_select_object_vertices((u8)tex);
-    render_enqueue_map((u8)tex);
+    tmd_select_object_vertices(object_index);
+    render_enqueue_map(object_index);
 }
 
 /*

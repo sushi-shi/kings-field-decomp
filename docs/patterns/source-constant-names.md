@@ -1208,3 +1208,32 @@ from 3a2fd7d; only three debug-line sections differ. The full build retains the
 existing ownership and placement failures: GAME target relink 75/77, OPEN
 34/38, PSX 1/1, and five of 60 source data owners matching, with no artifact
 failures. The transformation remains strict 100%; no new result is banked.
+
+## Incoming camera and map-cell source improvements
+
+Integrate committed master `42ff64f`, including `4d59c88`, into the naming
+worktree. The incoming [SDK vector publication](sdk-vector-publication.md)
+and [GAME map-cell evidence](game-map-cell-source.md) establish natural XYZ
+publication, the unsigned-byte object index and the ordinary door-remapping
+switch. Resolve source conflicts by retaining those operations together with
+the reviewed map-unit, fixed-point and angle names. Preserve the incoming
+complete OPEN raw control and GAME's explicit eighteen stack-word differences.
+
+Verification plan: compile literal incoming source controls for GAME camera
+path, GAME map cells and OPEN map cells under the same current headers and
+profiles. Compare every non-debug section against the merged named objects.
+Require the other 109 objects and all unaffected strict scores to agree with
+3a2fd7d. Exactly three incoming scores may improve: GAME 80033680 and OPEN
+80018bbc to 100%, and GAME 8001e5ec to 96.743240%. Retain the incoming banking
+records; this merge does not add a new banked result. Run repository and flake
+checks and the full build before committing the reconciliation.
+
+The three independent incoming controls match every non-debug section of
+the merged named objects; OPEN's map-cell object is wholly identical. The
+other 109 objects retain every non-debug section from 3a2fd7d. Exactly the
+three expected strict scores improve, with the other 481 and every banked
+exact unchanged. All 644 repository tests pass (nine skips), all flake checks
+pass (644 tests, 131 sandbox skips), and lint/whitespace checks pass. The full
+build retains its existing ownership and placement failures: target relink
+PSX 1/1, GAME 75/77 and OPEN 34/38, five of 60 source data owners matching,
+and no artifact failures.

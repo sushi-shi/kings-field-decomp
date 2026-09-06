@@ -57,6 +57,11 @@ previously exact function loss was introduced.
 
 ## Follow-up comparison: camera step
 
+This historical conclusion is superseded by the
+[SDK vector publication control](sdk-vector-publication.md): natural grouped
+XYZ assignments do emit GAME's interleaved store order and close the function
+at strict 100%. The earlier inspection below did not test that source form.
+
 GAME `camera_path_step` (`0x80033680`, 284 bytes, strict 90.915490%) was
 inspected without edits through the six semantic views and a fresh focused
 comparison. The exact OPEN publication-order correction is not transferable:
