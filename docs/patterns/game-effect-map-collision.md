@@ -224,3 +224,30 @@ All 484 reported function rows were compared with the pre-campaign snapshot;
 only this function's score changes. Exact counts remain GAME 293/362,
 OPEN 98/108 and PSX 1/1 (392/471 eligible total); all 13 vendored verification
 functions remain exact. No banked match regresses and no baseline is changed.
+
+## Return-form continuation at `a0ffa9b`
+
+The previous campaign is verified progress, not an exact closure. The retail
+hashes and six image-qualified views were refreshed at strict 97.452630%.
+No source, claim, data, relocation or compiler change intervened. The 1900-byte
+body still has the same six direct callers, one game-query callee, no strings,
+twelve address pairs, fifteen reviewed internal jumps and shared 32-byte
+return frame described above. Caller/constructor source review supplies no
+reason to replace the API or manufacture a new result on an unknown path.
+
+First source hypothesis: represent the encoded return value as one real
+result local initialized to the geometry-rejection code. Each rejection
+exits through the shared result return, while effect-type cases assign their
+world-query result and type zero assigns 1. This tests return-value ownership
+and the decoded shared epilogue, preserving all defined values, call count,
+query arguments, divisors, inclusive thresholds and selected-coordinate
+semantics. Do not add an unused result carrier or drop the default. Compare
+the first bounds branch after a focused fresh compile; keep only source
+supported by the raw paths, with all previous exact functions preserved.
+
+The shared-result form gives 95.684210%, introduces a long-lived rejection
+value in t6, and branches directly to a trailing move into v0. It does not
+recover the retail local bounds return and changes the entry remainder and
+effect-pointer roles. Reject this hypothesis and restore the committed
+97.452630% source. The result-variable ownership does not explain the missing
+return block; no artificial liveness or undefined-default trial is justified.

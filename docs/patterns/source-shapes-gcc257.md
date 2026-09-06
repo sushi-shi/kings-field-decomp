@@ -117,11 +117,14 @@ Open residues recorded during the same campaign (not steered):
   offsets of one symbol. The block is one aggregate in the original source
   (`KfPlayerState`); a direct-member view through `player_experience`
   reaches 91% and a byte-pointer view 95%, neither exact.
-- `collision_query_world`: retail reads `actor_definitions[id].collision_radius`
-  and `map_object_definitions[id].collision_radius` relative to the pool base
-  register (`lhu -1702(a0)`), so each definition table and its pool are one
-  aggregate too. The rest of the residue is callee-saved register assignment
-  (`x` in `s2`, `flags` in `s0` in retail).
+- `collision_query_world`: [later source recovery](game-world-collision-source.md)
+  supersedes the old register-only assessment. Shared owners alone did not
+  recover the early definition-ID reads: binding typed selected-definition
+  pointers before the transform copies restores the pool-relative radius
+  loads. A shared hit value and distinct query-mask intermediate recover
+  additional instructions, improving 93.202490% to 97.943924%. The remaining
+  flags-load/copy, saved-register and entry-schedule differences are
+  unattributed; this is not an exact closure or a proven optimizer mechanism.
 - Scheduling class, no probe reproduces it: retail keeps loads in source
   order instead of hoisting them across earlier stores or `mult`/`mflo`
   (`vector2s_scale_shift11`, `game_state_initialize` growth-table loads,

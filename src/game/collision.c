@@ -48,10 +48,6 @@ s16 map_cell_attribute_height_table[255] = {
  * 0x1 skips the terrain tests, 0x80/0x10/0x20/0x40 skip the player, actor,
  * map-object and map-event pools, 0x800 requests the hit's transform in
  * collision_target, and 0xf000 selects flag-grid bits that reject at once.
- *
- * Retail reads the actor and map-object definition radii relative to the
- * pool base register, which the compiler emits only when the definitions
- * and the pool are one aggregate; the inventory keeps them separate.
  */
 ADDRESS(0x8001a5ac, 0x504)
 u32 collision_query_world(
@@ -62,13 +58,13 @@ u32 collision_query_world(
     s32 hit;
     u8 attribute;
     u8 cell_flags;
-    u32 rejected;
+    u32 rejection_mask;
 
     if ((flags & 1) == 0) {
-        u32 kind = map_collision_grid[0][(u16)cell];
+        hit = map_collision_grid[0][(u16)cell];
 
-        if (kind != 1 && kind != 6) {
-            return kind | 0x10000;
+        if (hit != 1 && hit != 6) {
+            return hit | 0x10000;
         }
         if (point_y != 0xffff) {
             floor_height = map_floor_height_for_cell_position(
@@ -87,9 +83,10 @@ u32 collision_query_world(
         }
     }
     cell_flags = map_collision_flag_grid[0][(u16)cell];
-    rejected = cell_flags & ((flags >> 8) & 0xf0);
-    if (rejected != 0) {
-        return rejected << 8;
+    rejection_mask = (flags >> 8) & 0xf0;
+    hit = cell_flags & rejection_mask;
+    if (hit != 0) {
+        return hit << 8;
     }
     if ((cell_flags & 0x1f) == 0) {
         return -1;
@@ -110,11 +107,11 @@ u32 collision_query_world(
         if (hit != -1) {
             if (flags & 0x800) {
                 KfActor *actor = &actor_state.actors[hit];
+                KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
 
                 collision_target.position = actor->position;
                 collision_target.rotation = *(SVECTOR *)&actor->rotation;
-                collision_target.radius =
-                    actor_state.definitions[actor->definition_id].collision_radius;
+                collision_target.radius = definition->collision_radius;
             }
             return hit | 0x100000;
         }
@@ -124,11 +121,11 @@ u32 collision_query_world(
         if (hit != -1) {
             if (flags & 0x800) {
                 KfMapObject *object = &map_object_state.objects[hit];
+                KfMapObjectDefinition *definition = &map_object_state.definitions[object->object_id];
 
                 collision_target.position = *(VECTOR *)&object->position_x;
                 collision_target.rotation = *(SVECTOR *)&object->rotation;
-                collision_target.radius =
-                    map_object_state.definitions[object->object_id].collision_radius;
+                collision_target.radius = definition->collision_radius;
             }
             return hit | 0x200000;
         }
