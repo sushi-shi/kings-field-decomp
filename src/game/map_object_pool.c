@@ -13,18 +13,17 @@
 RODATA(0x80012738, 0x150)
 
 /*
- * Four rectangular map-cell copy regions {source_x, source_z, destination_x,
+ * Rectangular map-cell copy regions {source_x, source_z, destination_x,
  * destination_z, width, height} applied by map_apply_copy_region.
  */
-DATA(0x800561b0, 0x18)
-KfMapCopyRegion map_copy_regions[4] = {
+DATA(0x800561b0, 0x1e)
+KfMapCopyRegion map_copy_regions[5] = {
     {55, 33, 50, 39, 3, 3},
     {47, 16, 30, 20, 3, 3},
     {58, 44, 15, 48, 3, 3},
     {64, 44, 37, 45, 3, 3},
+    {0, 0, 36, 4, 7, 1},
 };
-
-/* Two unnamed 100x100 map layers copied alongside the named grids. */
 
 ADDRESS(0x80030a98, 0x1e4)
 void map_apply_copy_region(u8 region_id)
@@ -57,8 +56,8 @@ void map_apply_copy_region(u8 region_id)
             map_collision_grid[destination_z][destination_x] =
                 map_collision_grid[source_z][source_x];
             map_collision_flag_grid[destination_z][destination_x] = map_collision_flag_grid[source_z][source_x];
-            destination_x++;
             source_x++;
+            destination_x++;
         }
         source_z++;
         destination_z++;

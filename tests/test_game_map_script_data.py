@@ -92,14 +92,21 @@ class GameMapScriptDataTests(unittest.TestCase):
 
     def test_census_split_preserves_every_neighbor_byte(self):
         rows = [r for r in read_tsv(RETAIL_CONFIG / 'data.tsv')[1]
-                if r['image'] == 'GAME.EXE' and 0x800561C8 <= int(r['va'], 0) < 0x8005630C]
-        expected = [(0x800561C8, 8)] + [(va, len(p)) for _, va, _, p in OWNERS]
+                if r['image'] == 'GAME.EXE' and 0x800561B0 <= int(r['va'], 0) < 0x8005630C]
+        expected = [(0x800561B0, 30), (0x800561CE, 2)]
+        expected += [(va, len(p)) for _, va, _, p in OWNERS]
         expected += [(0x8005628B, 1), (0x8005628C, 128)]
         self.assertEqual([(int(r['va'], 0), int(r['size'], 0)) for r in rows], expected)
-        self.assertEqual(sum(size for _, size in expected), 324)
+        self.assertEqual(sum(size for _, size in expected), 348)
         self.assertTrue(all(va + size == next_va for (va, size), (next_va, _)
                             in zip(expected, expected[1:])))
         image = self.retail()
+        self.assertEqual(image.require(0x800561C8, 6), bytes((0, 0, 36, 4, 7, 1)))
+        self.assertEqual(image.require(0x800561CE, 2), b'\x01\x01')
+        self.assertEqual(rows[1]['kind'], 'unclassified')
+        for site in (0x800343C8, 0x80036438):
+            self.assertEqual(struct.unpack('<2I', image.require(site, 8)),
+                             (0x0C00C2A6, 0x34040004))  # jal copy; li a0,4
         self.assertEqual(image.require(0x80056247, 1), b'\0')
         self.assertEqual(image.require(0x8005628B, 1), b'\x64')
         self.assertEqual(rows[-2]['kind'], 'unclassified')

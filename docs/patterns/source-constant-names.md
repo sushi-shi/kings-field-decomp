@@ -1872,3 +1872,56 @@ OPEN 34/38, with two GAME and four OPEN conflicting-section-base findings and
 zero artifact failures. Post-full-build control checks pass. The incoming
 single reset bank row is preserved; no additional result is banked and no
 tooling or flake file changed.
+
+## Map-copy descriptor reconciliation
+
+Function Match Plan: import committed master 3b1c834 into the ebf34e7 naming
+worktree. GAME 80030a98 `map_apply_copy_region` starts at 94.256195%; the
+incoming ordinary source-before-destination column advances reach 100%.
+The refreshed six semantic views agree with the committed
+[map-copy dossier](game-map-copy-region-source.md): 484-byte leaf, eight
+blocks, nine direct callers, no calls or strings, six unsigned descriptor
+fields, byte countdowns, promoted coordinates and eight validated address
+pairs. The game-specific five-grid policy is not a vendored copy routine.
+Both floor-5 callers supply index 4 in their delay slots. The fifth six-byte
+record is therefore owned data, while the following `01 01` remains
+unclassified before the independently owned camera path.
+
+Preserve the naming branch's grid identities and shared fields. Import the
+30-byte / five-record declaration and size guard without inventing padding,
+a sixth record or extra argument validation. Descriptor coordinates and
+extents remain literal authored map-cell data; zero loop tests are empty
+counts, and 255 is the existing no-copy sentinel. No tuning rationale is
+inferred from these values. All five assignments, unsigned widths and
+source/destination row advances retain their existing meaning.
+
+Require an independent compile of literal 3b1c834 source to agree with the
+named unit in every non-debug section. Compare all seven exact bodies,
+ordered calls/data targets, all 30 data bytes and 84 switch destinations
+against retail. Check both index-4 call slots and the unclassified neighbor.
+The other 111 objects and 483 function scores must remain unchanged from
+ebf34e7. Run the focused rebuild, repository checks and full build; preserve
+only the incoming map-copy bank row. Main-checkout uncommitted edits are
+outside this import.
+
+Final verdict: the reconciled unit agrees with an independent literal
+3b1c834 compile in every non-debug section; only its debug line table differs.
+All other 111 objects retain every non-debug section from ebf34e7. Exactly
+one strict score changes, map-copy 94.256195 -> 100%; the other 483 and every
+prior exact are unchanged. Seven unit functions reproduce all 666 retail
+words with their ordered calls and numeric data targets. In particular,
+map-copy retains 121 words, no calls and eight address pairs. Changing its
+descriptor target by one record fails the raw control.
+
+Both source and target retain all 30 descriptor bytes and 84 relocated switch
+destinations. Both immediate-index-4 callers and the unclassified `01 01`
+neighbor are independently verified. The forward probe remains non-exact
+at 93.755104%. The incoming single map-copy bank row is preserved, with no
+additional banking.
+
+Ruff and diff checks pass; all 651 tests pass in 83.303 seconds with nine
+skips. Full `kf build` still fails on the existing data ownership/placement
+findings: 7/60 source-data units match, target relink remains PSX 1/1,
+GAME 75/77 and OPEN 34/38, with two GAME and four OPEN section-base conflicts
+and zero artifact failures. Post-full-build object, score and raw controls
+pass. No tooling implementation or flake changed.

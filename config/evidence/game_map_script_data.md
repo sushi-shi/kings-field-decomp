@@ -121,6 +121,12 @@ Keep strict data failures and unrelated banked functions intact.
 
 ## Final verdict
 
+Later extent correction: the index-4 caller audit in
+`docs/patterns/game-map-copy-region-source.md` identifies `800561c8..800561ce`
+as the fifth six-byte map-copy descriptor. Only `800561ce..800561d0` remains
+unclassified. This supersedes the eight-byte gap in the historical plan above;
+none of the six map-script/effect owners moves.
+
 The map consolidation and effect helper/dispatcher split are retained as working
 ownership, with original boundaries still unproved. There remain 112 source TUs
 and four independent SDK data contributions. No function, vendor classification,

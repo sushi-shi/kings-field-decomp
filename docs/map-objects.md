@@ -11,19 +11,23 @@ FromSoftware spellings.
 | --- | ---: | --- | --- |
 | `0x80012888` | `0x18c` | `map_object_action_jump_table[99]` | compiler-emitted switch targets indexed by action values zero through 98 |
 | `0x80056188` | `0x27` | `gameplay_sound_refs[13]` | packed three-byte `SoundRef` records; eleven entries have direct users across map-object and other gameplay code |
-| `0x800561b0` | `0x18` | `map_copy_regions[4]` | four six-byte source/destination rectangle descriptors |
+| `0x800561b0` | `0x1e` | `map_copy_regions[5]` | five six-byte source/destination rectangle descriptors; two direct callers supply index 4 |
 | `0x8006e8e0` | `0x500` | `map_object_definitions[160]` | destination of one `0x140`-word resource copy; every runtime consumer indexes eight-byte records by object ID |
 | `0x8006ede0` | `0x20a8` | `map_object_pool[190]` | clear/load loops use 190 records at a `0x2c` stride |
 | `0x80070e92` | `0x02` | `map_object_effect_sequence_160` | wrapping allocation sequence for reserved slots 160..169 |
 | `0x80070e94` | `0x02` | `map_object_effect_sequence_170` | wrapping allocation sequence for reserved slots 170..179 |
 | `0x80070e96` | `0x02` | `map_object_effect_sequence_180` | wrapping allocation sequence for reserved slots 180..189 |
 
-The four `KfMapCopyRegion` records have byte fields for source x/z,
+The five `KfMapCopyRegion` records have byte fields for source x/z,
 destination x/z, width, and height. `map_apply_copy_region` copies the selected
 rectangle across five parallel map layers, each addressed with a 100-column
 stride. Region ID `0xff` disables the operation. Bytes inside this table had
-previously produced short false-positive strings; the exact table boundary and
-six-byte indexing supersede them.
+previously produced short false-positive strings. The fifth record at
+`0x800561c8` copies a 7-by-1 rectangle from (0,0) to (36,4). Direct index-4
+calls establish it; the following two nonzero bytes at `0x800561ce` remain
+unclassified before the independent camera path at `0x800561d0`. See the
+[copy-region evidence](patterns/game-map-copy-region-source.md). No safety
+for arbitrary non-255 indices is inferred.
 
 `include/kf/game_map.h` owns the copy-region, map-object, map-event, and
 camera-path layouts, their complete runtime aggregates, and the map-owned
