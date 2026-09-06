@@ -1196,15 +1196,11 @@ Source shapes that were load-bearing:
 Historical residue hypotheses, not established compiler limitations. The
 linked follow-ups supersede the original claims where source gaps were found:
 
-- `func_800249a8` (91.5%): a three-way callee-saved permutation --- retail
-  `selection=s1`, `codes`-base`=s2`, `input=s3`; cc1psx-257 rotates them to
-  `s1/s2/s3 = codes-base/input/selection`. The banked twin `func_800238d8`
-  lands `selection=s3`, so there is no fixed mapping; the extra build-loop
-  pressure (the `counts[]` scratch and `equip` base) moves the allocno order.
-  Also one loop delay-slot swap (retail advances the inventory temp `t0` in the
-  branch slot and the name pointer `t4` in the body; ours reverses it).
-  Declaration-order and induction-shape variants do not flip either; a `scan`
-  helper local is a forbidden fake and did not help.
+- `func_800249a8`: the [drop-panel follow-up](game-drop-item-flow.md)
+  recovers confirmation/input initialization order, counter setup and the
+  inventory-increment delay slot by moving the existing label advance before
+  the for-loop update. The remaining selection/codes-base/input register
+  roles differ; no allocation mechanism or compiler limitation is proved.
 - `func_80024e64`: **superseded** by
   [the save/load hub reconstruction](game-save-load-hub-flow.md). The old
   source omitted confirmation on the exit row and reset action only after

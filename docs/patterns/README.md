@@ -269,6 +269,9 @@ promotes a probe to a proven historical toolchain.
 - [game-save-load-panels-flow.md](game-save-load-panels-flow.md): confirmation
   resets, shared returns, empty-slot arm order and the explicit format-row
   guard recover both panels without register or constant carriers.
+- [game-drop-item-flow.md](game-drop-item-flow.md): observed initialization
+  and traversal order recover the inventory back-edge delay slot; the
+  remaining three register roles are an unattributed, non-exact residue.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.

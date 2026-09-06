@@ -16,10 +16,6 @@
  * one of the seven equipment slots so the equipped instance cannot be
  * discarded, runs the windowed cursor, and on confirm removes one of the
  * chosen item from the owned-item block.
- *
- * Structurally exact; open residue is the list-widget callee-saved-register
- * permutation plus one loop delay-slot swap (see docs/patterns/
- * source-shapes-gcc257.md, "item / inventory menu panels").
  */
 ADDRESS(0x800249a8, 0x4bc)
 void menu_drop_item(void)
@@ -34,9 +30,9 @@ void menu_drop_item(void)
     s32 found;
     s32 code;
     s32 j;
+    s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 confirm = 0;
     s32 selection = -99;
 
     while (PadRead(1) != 0)
@@ -44,12 +40,13 @@ void menu_drop_item(void)
     menu_list_init(&ctx, 0, 4);
 
     found = 0;
+    code = 0;
     /* The seven equipment ids: [0] worn weapon, [0x2c..0x31] shield, head,
      * body, arm and leg armour, and accessory. */
     equip = &player_state.equipped_weapon_id;
     inv = item_stock[0];
     name = item_name_rows[0].codes;
-    for (code = 0; code < 80; code++, name += 10) {
+    for (; code < 80; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
             if (code == equip[0x00] || code == equip[0x2c] ||
@@ -64,6 +61,7 @@ void menu_drop_item(void)
                 found++;
             }
         }
+        name += 10;
     }
 
     ctx.entry_count = found;
