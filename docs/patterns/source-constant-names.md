@@ -276,3 +276,72 @@ have debug-line changes relative to the post-merge baseline (seven already
 changed in the audio/camera batch). All 635 tests pass (nine prerequisites
 skipped), lint and `git diff --check` pass, and full `kf build` retains the
 existing data-placement/ownership failures. Exact-count movement is zero.
+
+## Allocator, formatter, and VRAM viewer plan
+
+Follow the shared allocator from GAME/OPEN startup through arena rebasing and
+the resource loaders' switch to heap allocation. Name the three modes, stack
+metadata position, allocation alignment, and observed RAM/heap bounds without
+changing unsigned address arithmetic or the image-specific arena budgets.
+The shared decimal/hex formatter's loop bounds, highest place values, absent
+width sentinel, and OPEN's evidenced padding prefix have separate meanings
+from the literal character grammar and arithmetic radix operations. The OPEN
+VRAM viewer's pan increment and coordinate wrapping are a small display-only
+contract. Preserve every API argument and all image-specific buffer extents.
+
+Use the existing image-specific dossiers for the allocator, its startup and
+resource callers, both formatter bands and OPEN 8001a82c. Compare rebuilt
+non-debug sections and every strict result with the post-merge baseline.
+This is a naming-only batch; no bounds checks, formatter repairs, storage
+ownership changes or altered SDK calling conventions are intended.
+
+The allocator modes now describe creating the initial arena (0), rebasing it
+at the current cursor (1), and using heap allocations (2). Both startup
+callers create then rebase the arena; resource loaders select heap allocation
+after assembling their persistent assets. The allocation stack retains its
+seventeen words: a named depth position followed by sixteen entries. No
+overflow/underflow handling is added. Four-byte alignment keeps the original
+signed expression, with the alignment-minus-one subexpression grouped before
+addition. The malloc address test still uses unsigned 32-bit wraparound when
+adding the cached RAM base. Initial arena end 801effff is inclusive; system
+heap end 801f8000 is exclusive. The rebased last-byte offsets remain fefff
+for GAME and 112fff for OPEN.
+
+The formatters traverse ten decimal places starting at 1000000000 or eight
+hex places starting at 10000000 hex; those bounds are distinct from the
+radix used to advance between places. Width ff means no padding width was
+specified. OPEN's seven-byte prefix names only the evidenced leading padding,
+not a recovered allocation boundary. The VRAM viewer moves by four storage
+coordinates and wraps X/Y within the 1024-by-512 VRAM rectangle.
+
+All 156 literals still inline in the complete memory, formatter, debug and
+VRAM-viewer sources have these reasons:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| GAME/OPEN number scratch arrays | 24/19 | Retain the existing claimed BSS extents; their complete original allocations remain unresolved, so they are not presented as general formatter capacities. |
+| Decimal/hex digit generation | 10, 4, `'0'`, `'A'`, `'-'` | Decimal radix, four bits per hex digit, and visible character encoding. The arithmetic directly states the conversion rule. |
+| Format grammar and padding characters | `'1'`..`'8'`, `'%'`, `'0'`, `'D'`/`'d'`, `'X'`/`'x'`, `'S'`/`'s'`, space, LF/CR | Literal characters make the accepted language and newline translation clearer than aliases for each character. Width recognition remains the exact inclusive character range. |
+| Formatter string scans and endings | 0, `'\0'` | C string termination, including the numeric zero comparisons. |
+| Formatter state and debug flag | 0/1 | Boolean initial values, state tests, setting and inversion. |
+| Formatter loop origins, counts, sign and zero-digit tests | 0 | Arithmetic zero, zero-based iteration and the signed value boundary. |
+| Formatter index/count adjustments | 1 | Last-index derivation, first-character advance, and inclusion of the final terminator in the returned count. |
+| Allocator null values and depth reset | 0 | Null pointer checks/assignments and an empty allocation stack. |
+| Allocator bound/alignment/depth adjustments | 1 | Inclusive last-byte calculation, exclusive next-byte calculation, alignment mask derivation and one-entry push/pop. |
+| VRAM viewer draw flags and buffer toggle | 0/1 | Boolean background clearing, drawing-to-display enable and double-buffer inversion. |
+| VRAM viewer environment subscripts | 0/1 | Explicit updates to the two physical display buffers. |
+| VRAM coordinate masks | 1 | Derive the last coordinate from each named extent. |
+| `DrawSync`/`VSync` arguments | 0 | Preserve the SDK's synchronization selector; the pinned interfaces expose no corresponding symbolic constant. |
+| `PadRead` arguments | 1 | Preserve the retail call-site value. The legacy unprototyped declaration permits it, while the linked routine reads the global pad identifier and does not consume this argument; naming it as a controller-port selector would be misleading. |
+
+Claim addresses/extents and enum/macro definitions retain their literal values
+for the same reasons as earlier batches. Startup/resource functions only
+change their allocator-mode arguments here; their other constants remain in
+the relevant startup/resource audits.
+
+Validation preserves all 112 objects' non-debug sections and all 484 strict
+scores. Eighteen objects have only debug-line changes relative to 893a3fa
+(four additional objects in this batch). All 635 tests pass with nine local
+prerequisites skipped; lint and whitespace checks pass. Full `kf build` ran
+and retains the existing data ownership/placement failures. No exact result
+or relocation changed.

@@ -5,10 +5,19 @@
 
 #include <kf/game_types.h>
 
+enum {
+    KF_MEMORY_CREATE_ARENA = 0,
+    KF_MEMORY_REBASE_ARENA = 1,
+    KF_MEMORY_USE_HEAP = 2,
+    KF_MEMORY_STACK_WORDS = 17,
+    KF_MEMORY_STACK_DEPTH_INDEX = 0,
+    KF_MEMORY_STACK_FIRST_ENTRY = 1
+};
+
 extern u8 *memory_arena_start;
 extern u8 *memory_arena_end;
 extern u8 *memory_arena_cursor;
-extern u32 memory_allocation_stack[17];
+extern u32 memory_allocation_stack[KF_MEMORY_STACK_WORDS];
 extern u8 *memory_system_heap_start;
 extern s32 memory_system_heap_size;
 

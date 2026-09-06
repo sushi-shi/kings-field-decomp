@@ -19,7 +19,7 @@
  */
 typedef struct {
     u8 *cursor;
-    u32 stack[17];
+    u32 stack[KF_MEMORY_STACK_WORDS];
 } OpeningAllocationState;
 
 typedef struct {
@@ -49,11 +49,11 @@ void opening_run(s32 display_mode)
     /* Retail clears the display state and the contiguous opening runtime BSS. */
     memset(&open_graphics_runtime, 0, sizeof open_graphics_runtime);
     memset(&opening_entity_state, 0, sizeof opening_entity_state);
-    memory_set_allocation_mode(0);
+    memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize(display_mode);
     opening_entity_pool_reset();
-    memory_set_allocation_mode(1);
+    memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
     memory_capture_system_heap_start();
     memory_reset_system_heap();
 
@@ -85,7 +85,7 @@ opening_scene0:
         }
 
 opening_reload:
-        allocation_state->stack[0] = 0;
+        allocation_state->stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
         allocation_state->cursor =
             OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
         cd_file_load_allocated(&tim_data, "B0\\MIX3.");

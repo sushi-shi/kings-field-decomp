@@ -37,7 +37,7 @@ void game_main_loop(void)
     memset(map_event_pool, 0, 0x2360);
     memset(&player_state, 0, sizeof(KfPlayerState));
     memory_card_initialize();
-    memory_set_allocation_mode(0);
+    memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize();
     item_load_database();
@@ -47,7 +47,7 @@ void game_main_loop(void)
     map_event_timers_reset();
     common_resources_load();
     game_initialize_session();
-    memory_set_allocation_mode(1);
+    memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
     memory_capture_system_heap_start();
     memory_reset_system_heap();
     func_800365f8();

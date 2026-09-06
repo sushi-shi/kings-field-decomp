@@ -193,5 +193,5 @@ void map_resources_load(s32 floor, s32 use_variant)
         map_variant_assets_load();
     }
     player_sync_position_to_map();
-    memory_set_allocation_mode(2);
+    memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }

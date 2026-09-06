@@ -183,7 +183,7 @@ void opening_resources_load_scene0(void)
     tmd_register(1, stream + 4);
     tmd_register(0, STREAM_NEXT(stream) + 4);
     STREAM_NEXT(stream);
-    memory_set_allocation_mode(2);
+    memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
 
 ADDRESS(0x80016510, 0xb4)
@@ -201,7 +201,7 @@ void opening_resources_load_scene1(void)
     memory_release_last();
     opening_scene1_arena_cursor = vab_chunk + 16;
     memory_arena_cursor = opening_scene1_arena_cursor;
-    memory_set_allocation_mode(2);
+    memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
     audio_play_sequence_file("B0\\OPEN1.");
 }
 
@@ -226,7 +226,7 @@ void opening_resources_load_scene3(void)
     tmd_register(1, stream + 4);
     STREAM_NEXT(stream);
     memory_release_last();
-    memory_set_allocation_mode(2);
+    memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
 
 ADDRESS(0x800166b4, 0x134)
@@ -253,7 +253,7 @@ void opening_resources_load_ending(void)
     tmd_register(1, stream + 4);
     STREAM_NEXT(stream);
     opening_ending_arena_cursor = *arena_cursor;
-    memory_set_allocation_mode(2);
+    memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
 
 ADDRESS(0x800167e8, 0x58)

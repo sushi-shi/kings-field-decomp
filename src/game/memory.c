@@ -4,11 +4,21 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-/* Bytes reserved past the arena cursor in allocation mode 1; OPEN.EXE budgets more. */
+enum {
+    MEMORY_INITIAL_ARENA_BYTES = 0x100000,
+    MEMORY_MAIN_RAM_BYTES = 0x200000,
+    MEMORY_ALLOCATION_ALIGNMENT = 4
+};
+
+#define MEMORY_CACHED_RAM_BASE 0x80000000u
+#define MEMORY_INITIAL_ARENA_LAST_ADDRESS 0x801effffu
+#define MEMORY_SYSTEM_HEAP_END_ADDRESS 0x801f8000u
+
+/* Inclusive last-byte offset from the rebased cursor; OPEN.EXE budgets more. */
 #ifdef KF_OPEN
-#define MEMORY_ARENA_LIMIT 0x112fff
+#define MEMORY_REBASED_ARENA_LAST_OFFSET 0x112fff
 #else
-#define MEMORY_ARENA_LIMIT 0xfefff
+#define MEMORY_REBASED_ARENA_LAST_OFFSET 0xfefff
 #endif
 
 /* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
@@ -19,7 +29,7 @@ void *memory_malloc_checked(s32 size)
 {
     u8 *block = malloc(size);
 
-    if ((u32)block + 0x80000000 > 0x1fffff) {
+    if ((u32)block + MEMORY_CACHED_RAM_BASE > MEMORY_MAIN_RAM_BYTES - 1) {
         return 0;
     }
     return block;
@@ -28,7 +38,7 @@ void *memory_malloc_checked(s32 size)
 ADDRESS(0x8001aae8, 0x20)
 void memory_allocation_reset(void)
 {
-    memory_allocation_stack[0] = 0;
+    memory_allocation_stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
     memory_arena_cursor = memory_arena_start;
 }
 
@@ -36,17 +46,17 @@ ADDRESS(0x8001ab08, 0xa8)
 void memory_set_allocation_mode(s32 mode)
 {
     switch (mode) {
-    case 0:
-        memory_arena_start = memory_malloc_checked(0x100000);
-        memory_arena_end = (u8 *)0x801effff;
+    case KF_MEMORY_CREATE_ARENA:
+        memory_arena_start = memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
+        memory_arena_end = (u8 *)MEMORY_INITIAL_ARENA_LAST_ADDRESS;
         memory_allocation_reset();
         break;
-    case 1:
+    case KF_MEMORY_REBASE_ARENA:
         memory_arena_start = memory_arena_cursor;
-        memory_arena_end = memory_arena_cursor + MEMORY_ARENA_LIMIT;
+        memory_arena_end = memory_arena_cursor + MEMORY_REBASED_ARENA_LAST_OFFSET;
         memory_allocation_reset();
         break;
-    case 2:
+    case KF_MEMORY_USE_HEAP:
         memory_arena_cursor = 0;
         break;
     }
@@ -61,13 +71,13 @@ void memory_capture_system_heap_start(void)
 ADDRESS(0x8001abd0, 0x3c)
 void memory_reset_system_heap(void)
 {
-    memory_system_heap_size = (u8 *)0x801f8000 - memory_system_heap_start;
+    memory_system_heap_size = (u8 *)MEMORY_SYSTEM_HEAP_END_ADDRESS - memory_system_heap_start;
     InitHeap(memory_system_heap_start, memory_system_heap_size);
 }
 
 /*
  * With an arena, an allocation bumps the cursor and records its rounded size;
- * without one (mode 2) it records the malloc block so release can free it.
+ * without one it records the malloc block so release can free it.
  */
 ADDRESS(0x8001ac0c, 0x80)
 void *memory_allocate(s32 size)
@@ -81,23 +91,24 @@ void *memory_allocate(s32 size)
         size = (s32)block;
     } else {
         block = *cursor;
-        size = (size + 3) & ~3;
+        size = (size + (MEMORY_ALLOCATION_ALIGNMENT - 1))
+            & ~(MEMORY_ALLOCATION_ALIGNMENT - 1);
         *cursor += size;
     }
-    depth = memory_allocation_stack[0];
-    memory_allocation_stack[0] = depth + 1;
-    memory_allocation_stack[1 + depth] = size;
+    depth = memory_allocation_stack[KF_MEMORY_STACK_DEPTH_INDEX];
+    memory_allocation_stack[KF_MEMORY_STACK_DEPTH_INDEX] = depth + 1;
+    memory_allocation_stack[KF_MEMORY_STACK_FIRST_ENTRY + depth] = size;
     return block;
 }
 
 ADDRESS(0x8001ac8c, 0x64)
 void memory_release_last(void)
 {
-    s32 depth = memory_allocation_stack[0] - 1;
+    s32 depth = memory_allocation_stack[KF_MEMORY_STACK_DEPTH_INDEX] - 1;
     u32 entry;
 
-    memory_allocation_stack[0] = depth;
-    entry = memory_allocation_stack[1 + depth];
+    memory_allocation_stack[KF_MEMORY_STACK_DEPTH_INDEX] = depth;
+    entry = memory_allocation_stack[KF_MEMORY_STACK_FIRST_ENTRY + depth];
     if (memory_arena_cursor == 0) {
         free((void *)entry);
     } else {

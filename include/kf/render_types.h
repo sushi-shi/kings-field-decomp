@@ -6,6 +6,8 @@
 #include <kf/game_types.h>
 
 enum {
+    KF_VRAM_WIDTH = 1024,
+    KF_VRAM_HEIGHT = 512,
     KF_DEFAULT_PROJECTION_DISTANCE = 200,
     KF_RGB555_CHANNEL_MASK = 0x1f,
     KF_RGB555_GREEN_SHIFT = 5,

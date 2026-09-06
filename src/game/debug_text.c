@@ -49,7 +49,7 @@ void debug_stop(void)
 ADDRESS(0x8003a81c, 0xe0)
 char *format_int_dec(s32 value)
 {
-    s32 divisor = 1000000000;
+    s32 divisor = KF_FORMAT_DECIMAL_HIGHEST_PLACE;
     char *out = format_number_buffer;
     u8 started = 0;
     u8 i;
@@ -58,10 +58,10 @@ char *format_int_dec(s32 value)
         *out++ = '-';
         value = -value;
     }
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < KF_FORMAT_DECIMAL_DIGITS; i++) {
         s32 digit = value / divisor;
         value = value % divisor;
-        if (digit != 0 || started != 0 || i == 9) {
+        if (digit != 0 || started != 0 || i == KF_FORMAT_DECIMAL_DIGITS - 1) {
             *out++ = digit + '0';
             started = 1;
         }
@@ -74,15 +74,15 @@ char *format_int_dec(s32 value)
 ADDRESS(0x8003a8fc, 0x8c)
 char *format_int_hex(u32 value)
 {
-    u32 divisor = 0x10000000;
+    u32 divisor = KF_FORMAT_HEX_HIGHEST_PLACE;
     u8 started = 0;
     char *out = format_number_buffer;
     u8 i;
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < KF_FORMAT_HEX_DIGITS; i++) {
         u32 digit = value / divisor;
         value = value % divisor;
-        if (digit != 0 || started != 0 || i == 7) {
+        if (digit != 0 || started != 0 || i == KF_FORMAT_HEX_DIGITS - 1) {
             if (digit < 10) {
                 *out++ = digit + '0';
             } else {
@@ -138,7 +138,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
         case '%':
             in_format = 1;
             zero_pad = 0;
-            width = 0xff;
+            width = KF_FORMAT_WIDTH_UNSPECIFIED;
             continue;
         case '0':
             if (in_format == 0) {
@@ -154,7 +154,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
             in_format = 0;
             s = format_int_dec(*args++);
         emit_padded:
-            if (width != 0xff) {
+            if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
                 if (zero_pad == 0) {
                     s = format_pad_left(s, ' ', width);
                 } else {
