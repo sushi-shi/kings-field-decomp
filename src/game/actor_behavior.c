@@ -37,19 +37,19 @@ void actor_select_next_action(s32 player_distance)
     }
     near_range = definition->pursuit_distance_scale << 8;
     awareness = definition->awareness_distance;
-    if (definition->action_animations[0x16 - 11] != ACTOR_ACTION_NONE
+    if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] != KF_ACTOR_ANIMATION_NONE
         && actor_try_select_facing_action(0x16, player_distance, 0x50) != ACTOR_ACTION_NONE) {
         chosen = 0x16;
-    } else if (definition->action_animations[0x10 - 11] != ACTOR_ACTION_NONE
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK] != KF_ACTOR_ANIMATION_NONE
                && actor_try_select_ground_action(0x10, player_distance, definition->special_attack_chance)
                    != ACTOR_ACTION_NONE) {
         chosen = 0x10;
-    } else if (definition->action_animations[0x11 - 11] != ACTOR_ACTION_NONE
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK] != KF_ACTOR_ANIMATION_NONE
                && actor_try_select_action_distance_facing(
                       0x11, player_distance, definition->special_attack_chance, definition->special_attack_range)
                    != ACTOR_ACTION_NONE) {
         chosen = 0x11;
-    } else if (definition->action_animations[0x13 - 11] != ACTOR_ACTION_NONE
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] != KF_ACTOR_ANIMATION_NONE
                && actor_try_select_profiled_action(
                       0x13,
                       player_distance,
@@ -57,7 +57,7 @@ void actor_select_next_action(s32 player_distance)
                       definition->action_parameters[3])
                    != ACTOR_ACTION_NONE) {
         chosen = 0x13;
-    } else if (definition->action_animations[0x14 - 11] != ACTOR_ACTION_NONE
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] != KF_ACTOR_ANIMATION_NONE
                && actor_try_select_profiled_action(
                       0x14,
                       player_distance,
@@ -65,7 +65,7 @@ void actor_select_next_action(s32 player_distance)
                       definition->action_parameters[4])
                    != ACTOR_ACTION_NONE) {
         chosen = 0x14;
-    } else if (definition->action_animations[0x15 - 11] != ACTOR_ACTION_NONE
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] != KF_ACTOR_ANIMATION_NONE
                && actor_try_select_profiled_action(
                       0x15,
                       player_distance,
@@ -73,17 +73,17 @@ void actor_select_next_action(s32 player_distance)
                       definition->action_parameters[5])
                    != ACTOR_ACTION_NONE) {
         chosen = 0x15;
-    } else if (definition->action_animations[KF_ACTOR_ACTION_INDEX(4)] != ACTOR_ACTION_NONE
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE] != KF_ACTOR_ANIMATION_NONE
                && actor_try_select_action_distance_facing(
                       4, player_distance, definition->melee_attack_chance, definition->awareness_distance)
                    != ACTOR_ACTION_NONE) {
         chosen = 4;
-    } else if (definition->action_animations[0x12 - 11] != ACTOR_ACTION_NONE) {
+    } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DRIFT] != KF_ACTOR_ANIMATION_NONE) {
         chosen = 0x12;
     } else {
         recently_active = action == 3 || action == 4 || action == 16 || action == 17
             || action == 19 || action == 20 || action == 21;
-        if (definition->action_animations[KF_ACTOR_ACTION_INDEX(3)] != ACTOR_ACTION_NONE) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ACTOR_ANIMATION_NONE) {
             if (recently_active || !(awareness < player_distance)) {
                 if (!(awareness * 2 < player_distance) && !(rand() < 5462)) {
                     chosen = 3;
@@ -91,7 +91,7 @@ void actor_select_next_action(s32 player_distance)
                 }
             }
         }
-        if (definition->action_animations[KF_ACTOR_ACTION_INDEX(3)] != ACTOR_ACTION_NONE) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ACTOR_ANIMATION_NONE) {
             if (recently_active || action == 5 || action == 2) {
                 near_range = near_range * 6;
             }
@@ -100,7 +100,7 @@ void actor_select_next_action(s32 player_distance)
                 goto choose;
             }
         }
-        if (definition->action_animations[KF_ACTOR_ACTION_INDEX(2)] != ACTOR_ACTION_NONE) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_IDLE] != KF_ACTOR_ANIMATION_NONE) {
             switch (action) {
             case 1:
                 if (rand() < 1092) {
@@ -115,11 +115,11 @@ void actor_select_next_action(s32 player_distance)
                 }
                 break;
             }
-            if (definition->action_animations[KF_ACTOR_ACTION_INDEX(3)] == ACTOR_ACTION_NONE) {
+            if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] == KF_ACTOR_ANIMATION_NONE) {
                 chosen = 0;
                 goto choose;
             }
-        } else if (definition->action_animations[KF_ACTOR_ACTION_INDEX(3)] == ACTOR_ACTION_NONE) {
+        } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] == KF_ACTOR_ANIMATION_NONE) {
             goto choose;
         }
         chosen = 1;
@@ -172,7 +172,7 @@ void actor_update_awareness(void)
                         0)
                     == -1) {
                     actor_initialize_current();
-                    if (definition->action_animations[KF_ACTOR_ACTION_INDEX(3)] != ACTOR_ACTION_NONE) {
+                    if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ACTOR_ANIMATION_NONE) {
                         actor_set_action(actor, 0x20);
                     } else {
                         actor_select_next_action(distance);
@@ -558,13 +558,13 @@ void actor_apply_horizontal_movement(void)
     actor->cell_z = actor->position.vz / KF_MAP_TILE_SIZE;
 }
 
-/* Runs effect action ACTION (0..7): starts its animation, spawns its effect once, then picks the next action. */
+/* ACTION indexes a configured effect; the dispatcher passes 0, 1 or 2. */
 ADDRESS(0x8002f468, 0xf0)
 void actor_update_effect_action(s32 action)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    s32 index = action + 8;
+    s32 index = action + KF_ACTOR_ANIM_SLOT_EFFECT0;
 
     if (actor->action_timer == 0) {
         actor->action_timer = 0xf0;
@@ -705,12 +705,12 @@ void actor_update_boss_death_sequence(void)
         actor_pool_begin_death_by_definition(3);
         actor_pool_begin_death_by_definition(4);
     }
-    if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ACTION_INDEX(6)] * 2) == 0) {
+    if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * 2) == 0) {
         position.x = actor->position.vx + (rand() & 0x1fff) - 4096;
         position.z = actor->position.vz + (rand() & 0x1fff) - 4096;
         position.y = actor->position.vy - (rand() & 0xfff);
         effect_pool_construct(0, 0x13, 0x2c, &position, effect_output, 0);
-        if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ACTION_INDEX(6)] * 4) == 0) {
+        if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * 4) == 0) {
             sound_ref_play(&boss_death_loop_sound, 100);
         }
     }
@@ -742,16 +742,16 @@ void actor_update_current_action(void)
     case 0:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            actor->animation_id = definition->action_animations[0];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_IDLE];
             actor->animation_phase = 0;
         }
-        actor_advance_animation_wrapped(actor, definition->action_animation_steps[0]);
+        actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_IDLE]);
         break;
     case 1:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            if (actor->animation_id != definition->action_animations[1]) {
-                actor->animation_id = definition->action_animations[1];
+            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = rand() >> 3;
@@ -759,14 +759,14 @@ void actor_update_current_action(void)
             actor->movement_yaw = rand() >> 3;
         }
         actor_move_along_heading(1, 0);
-        actor_advance_animation_wrapped(actor, definition->action_animation_steps[1]);
+        actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
         break;
     case 2:
         switch (actor->action_timer) {
         case 0:
             actor->action_timer = 1;
-            if (actor->animation_id != definition->action_animations[1]) {
-                actor->animation_id = definition->action_animations[1];
+            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = vector_xz_to_angle(
@@ -792,16 +792,16 @@ void actor_update_current_action(void)
             }
             break;
         }
-        actor_advance_animation_wrapped(actor, definition->action_animation_steps[1]);
+        actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
         break;
     case 5:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            actor->animation_id = definition->action_animations[3];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION];
             actor->animation_phase = 0;
         }
-        actor_advance_animation_clamped(actor, definition->action_animation_steps[3]);
-        actor_play_sound_at_phase(&definition->sounds[1], definition->action_animation_phases[3]);
+        actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_HIT_REACTION]);
+        actor_play_sound_at_phase(&definition->sounds[1], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_HIT_REACTION]);
         if (actor->animation_phase >= 4095) {
             actor->action_timer = 0xff;
             actor_select_next_action(actor_distance_to_point(
@@ -817,11 +817,11 @@ void actor_update_current_action(void)
     case 6:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            actor->animation_id = definition->action_animations[4];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH];
             actor->animation_phase = 0;
         }
-        actor_advance_animation_clamped(actor, definition->action_animation_steps[4]);
-        actor_play_sound_at_phase(&definition->sounds[2], definition->action_animation_phases[4]);
+        actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH]);
+        actor_play_sound_at_phase(&definition->sounds[2], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_DEATH]);
         if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
             actor_update_boss_death_sequence();
             return;
@@ -858,8 +858,8 @@ void actor_update_current_action(void)
     case 3:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            if (actor->animation_id != definition->action_animations[1]) {
-                actor->animation_id = definition->action_animations[1];
+            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = vector_xz_to_angle(
@@ -877,19 +877,19 @@ void actor_update_current_action(void)
                 0,
                 0));
         } else {
-            actor_advance_animation_wrapped(actor, definition->action_animation_steps[1]);
+            actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
         }
         break;
     case 4:
         if (actor->action_timer == 0) {
             actor->action_timer = 0xf0;
-            actor->animation_id = definition->action_animations[2];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];
             actor->animation_phase = 0;
         }
-        actor_advance_animation_clamped(actor, definition->action_animation_steps[2]);
-        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[2]);
+        actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MELEE]);
+        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_MELEE]);
         if (actor->animation_phase >= 2700
-            && actor->animation_phase < definition->action_animation_steps[2] + 2700) {
+            && actor->animation_phase < definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MELEE] + 2700) {
             actor_try_attack_player(0, definition->awareness_distance, 0, 0x155);
         }
         if (actor->animation_phase >= 4095) {
@@ -925,7 +925,7 @@ void actor_update_current_action(void)
     case 16:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            actor->animation_id = definition->action_animations[5];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK];
             actor->animation_phase = 0;
             attribute = map_cell_attribute_grid[actor->cell_z][actor->cell_x];
             if (map_cell_attribute_height_table[attribute - 1] > -5000) {
@@ -944,7 +944,7 @@ void actor_update_current_action(void)
         if (actor->animation_phase >= 4095) {
             actor->animation_phase = 0xfff;
         }
-        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[5]);
+        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK]);
         switch (actor->action_timer) {
         case 1:
             if (actor->vertical_velocity >= 0) {
@@ -989,13 +989,13 @@ void actor_update_current_action(void)
     case 17:
         if (actor->action_timer == 0) {
             actor->action_timer = 0xf0;
-            actor->animation_id = definition->action_animations[6];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK];
             actor->animation_phase = 0;
         }
-        actor_advance_animation_clamped(actor, definition->action_animation_steps[6]);
-        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[6]);
+        actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK]);
+        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK]);
         if (actor->animation_phase >= 3000
-            && actor->animation_phase < definition->action_animation_steps[6] + 3000) {
+            && actor->animation_phase < definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK] + 3000) {
             actor_try_attack_player(0, definition->special_attack_range, 0, 0x155);
         }
         if (actor->animation_phase >= 4095) {
@@ -1013,7 +1013,7 @@ void actor_update_current_action(void)
     case 32:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            actor->animation_id = definition->action_animations[1];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
             actor->animation_phase = 0;
         }
         result = collision_query_world(
@@ -1037,7 +1037,7 @@ void actor_update_current_action(void)
     case 18:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            actor->animation_id = definition->action_animations[7];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_DRIFT];
             actor->animation_phase = 0;
             actor->movement_y = 0;
             actor->movement_z = 0;
@@ -1059,7 +1059,7 @@ void actor_update_current_action(void)
             }
         }
         actor->rotation.y = (actor->rotation.y + actor->movement_yaw) & 0xfff;
-        actor_advance_animation_wrapped(actor, definition->action_animation_steps[7]);
+        actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DRIFT]);
         break;
     case 19:
         actor_update_effect_action(0);
@@ -1073,8 +1073,8 @@ void actor_update_current_action(void)
     case 33:
         if (actor->action_timer == 0) {
             actor->action_timer = 1;
-            if (actor->animation_id != definition->action_animations[1]) {
-                actor->animation_id = definition->action_animations[1];
+            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             /* Retail reads the home position before this branch assigns it. */
@@ -1088,16 +1088,16 @@ void actor_update_current_action(void)
                 actor->movement_yaw = actor->heading_quadrant << 10;
                 actor->rotation.y = angle_approach(
                     actor->rotation.y, actor->movement_yaw, definition->turn_rate);
-                if (actor->animation_id != definition->action_animations[2]) {
+                if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE]) {
                     break;
                 }
                 if (actor->movement_yaw == actor->rotation.y
                     && actor_animation_crossed_phase(actor, 0x4b0)) {
                     actor->animation_phase = 0;
-                    actor->animation_id = definition->action_animations[2];
+                    actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];
                     break;
                 }
-                actor_advance_animation_wrapped(actor, definition->action_animation_steps[1]);
+                actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
                 break;
             }
             if (rand() < 2048) {
@@ -1106,16 +1106,16 @@ void actor_update_current_action(void)
             }
         }
         actor_move_along_heading(1, 0);
-        actor_advance_animation_wrapped(actor, definition->action_animation_steps[1]);
+        actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
         break;
     case 22:
         if (actor->action_timer == 0) {
             actor->action_timer = 0xf0;
-            actor->animation_id = definition->action_animations[11];
+            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK];
             actor->animation_phase = 0;
         }
-        actor_advance_animation_clamped(actor, definition->action_animation_steps[11]);
-        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[11]);
+        actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]);
+        actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]);
         if (actor_animation_crossed_phase(actor, 0x8c0) || actor_animation_crossed_phase(actor, 0xa80)
             || actor_animation_crossed_phase(actor, 0xc80)
             || actor_animation_crossed_phase(actor, 0xe00)) {

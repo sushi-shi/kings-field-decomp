@@ -151,11 +151,11 @@ void map_ambient_script_floor5(void)
         render_frame(0, 0);
         render_frame(0, 0);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
-        actor_state.definitions[7].action_animations[2] = 2;
-        actor_state.definitions[7].action_animations[8] = 3;
-        actor_state.definitions[7].action_animations[9] = 3;
-        actor_state.definitions[7].action_animations[10] = 3;
-        actor_state.definitions[7].action_animations[11] = 1;
+        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = 2;
+        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = 3;
+        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = 3;
+        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = 3;
+        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;
         map_apply_copy_region(4);
     }
 }

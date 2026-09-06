@@ -147,6 +147,9 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-action-selection.md](game-actor-action-selection.md): missing
   floor-grid relocation, shared rejection exit and typed indexing close
   ground selection; far-first profile selection improves its partial match.
+- [game-actor-animation-slots.md](game-actor-animation-slots.md): separate
+  action codes, definition-table slots and resource animation IDs; preserve
+  the dispatcher mapping and remove the misleading action-minus-two macro.
 - [game-animation-phase.md](game-animation-phase.md): eleven-caller audit and
   unchanged explicit phase-cache control; predicate remains non-exact.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect

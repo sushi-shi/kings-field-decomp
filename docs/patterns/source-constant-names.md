@@ -1,5 +1,10 @@
 # Source constant naming
 
+The [actor animation-table slot review](game-actor-animation-slots.md) separates
+table indices, resource animation IDs and action codes. It replaces the false
+general action-minus-two mapping and documents the remaining inline resource
+IDs without assigning unsupported spell or creature identities.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

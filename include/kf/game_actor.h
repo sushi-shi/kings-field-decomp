@@ -16,14 +16,36 @@ enum {
     KF_ACTOR_SLOT_FREE = 0xff
 };
 
+/* Parallel definition-table indices, independent of action and resource IDs. */
+enum {
+    KF_ACTOR_ANIM_SLOT_IDLE = 0,
+    KF_ACTOR_ANIM_SLOT_MOVE = 1,
+    KF_ACTOR_ANIM_SLOT_MELEE = 2,
+    KF_ACTOR_ANIM_SLOT_HIT_REACTION = 3,
+    KF_ACTOR_ANIM_SLOT_DEATH = 4,
+    KF_ACTOR_ANIM_SLOT_JUMP_ATTACK = 5,
+    KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK = 6,
+    KF_ACTOR_ANIM_SLOT_DRIFT = 7,
+    KF_ACTOR_ANIM_SLOT_EFFECT0 = 8,
+    KF_ACTOR_ANIM_SLOT_EFFECT1 = 9,
+    KF_ACTOR_ANIM_SLOT_EFFECT2 = 10,
+    KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK = 11,
+    KF_ACTOR_ANIM_SLOT_COUNT = 16
+};
+
+enum {
+    KF_ACTOR_ANIMATION_NONE = 0xff
+};
+
 /*
  * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
  * pool of 128 0x48-byte live actors. Only reviewed fields are named; the
  * remaining bytes deliberately stay opaque.
  *
- * Per-action tables are indexed by KF_ACTOR_ACTION_INDEX(action): the hit
- * action (5) and death action (6) occupy entries 3 and 4, and the eight
- * effect actions occupy entries 8..15 (actor_update_effect_action).
+ * The three animation tables share KF_ACTOR_ANIM_SLOT indices. Their byte
+ * entries contain resource animation IDs, or KF_ACTOR_ANIMATION_NONE when
+ * unavailable. Actions 19..21 use effect slots 8..10; slots 12..15 have no
+ * decoded dispatcher use.
  */
 typedef struct KfActorDefinition {
     u8 pursuit_distance_scale; /* action 2 distance threshold, in units of 256 */
@@ -33,15 +55,15 @@ typedef struct KfActorDefinition {
     u8 status_effect_chance;
     u8 action_parameters[8];
     u8 move_speed;
-    u8 action_animations[16];
+    u8 action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[3];
     struct KfVec3s attachment_offsets[2];
     s16 special_attack_chance;
     s16 special_attack_range;
     u8 unknown_38[2];
-    u16 action_animation_steps[16];
-    u16 action_animation_phases[16];
+    u16 action_animation_steps[KF_ACTOR_ANIM_SLOT_COUNT];
+    u16 action_animation_phases[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 collision_radius;
     u16 collision_height;
     u16 awareness_distance;
@@ -52,8 +74,6 @@ typedef struct KfActorDefinition {
     u16 defenses[5];
     u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
-
-#define KF_ACTOR_ACTION_INDEX(action) ((action) - 2)
 
 typedef struct KfActorActionProfile {
     s16 far_distance;

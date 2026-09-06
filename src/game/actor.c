@@ -252,7 +252,8 @@ void actor_pool_begin_death_by_definition(u16 definition_id)
 
     do {
         if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->definition_id == definition_id) {
-            if (actor->lifecycle == 1 && definition->action_animations[KF_ACTOR_ACTION_INDEX(6)] != 0xff) {
+            if (actor->lifecycle == 1
+                && definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
                 actor_set_action(actor, 6);
             } else {
                 actor->lifecycle = 3;
@@ -342,7 +343,7 @@ void actor_apply_damage(
     health = actor->health;
     remaining = health - damage;
     if (remaining > 0) {
-        if (definition->action_animations[KF_ACTOR_ACTION_INDEX(5)] != 0xff) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION] != KF_ACTOR_ANIMATION_NONE) {
             actor_set_action(actor, 5);
         }
     } else {
@@ -350,7 +351,7 @@ void actor_apply_damage(
         if (health != 0 && hit_flags == 0x10) {
             player_add_experience(definition->experience_reward);
         }
-        if (definition->action_animations[KF_ACTOR_ACTION_INDEX(6)] != 0xff) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
             actor_set_action(actor, 6);
         }
     }

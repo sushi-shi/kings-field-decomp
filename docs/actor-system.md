@@ -90,9 +90,12 @@ components and status bytes to `func_80016324`; that callee calculates five
 player damage components and subtracts the result from player health. The
 callee remains address-named until the larger player-combat family is reviewed.
 
-The action and lifecycle numeric values remain unnamed. The current function
-names describe selection policy and state effects without inventing enum labels
-or original FromSoftware spellings. Per-function CFG, xref, signature, and
+The animation tables now use `KF_ACTOR_ANIM_SLOT_*` indices, independently
+of action codes and resource animation IDs. The dispatcher mapping and its
+exceptions are documented in
+[actor animation-table slots](patterns/game-actor-animation-slots.md).
+Action and lifecycle numeric values still need a separate state-machine review.
+Per-function CFG, xref, signature, and
 vendor-negative evidence for this block is in
 `config/evidence/game_semantic_actor_ai.tsv`.
 
