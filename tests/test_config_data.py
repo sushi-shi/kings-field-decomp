@@ -218,6 +218,7 @@ class ConfigDataTests(unittest.TestCase):
     def test_sdk_data_build_and_reports_are_incremental_inputs(self):
         with (patch.object(graph, 'configured_retail_dir', return_value=Path('/retail')),
               patch.object(graph, '_prune_orphans', return_value=0), patch.object(graph, '_write_if_changed'),
+              patch.object(graph, 'generate_clangd'),
               patch.object(graph, '_write_generator') as generated):
             graph.emit()
         lines = generated.call_args.args[1].splitlines()

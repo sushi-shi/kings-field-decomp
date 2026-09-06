@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from scripts.kf import compile as compiler
+from scripts.kf.clangd import generate as generate_clangd
 from scripts.kf.delink import delink, image_key
 from scripts.kf.local_config import configured_retail_dir
 from scripts.kf.manifest import Manifest, Unit, load as load_manifest
@@ -171,6 +172,7 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
     from scripts.kf.config_data import load as load_contributions
 
     manifest = load_manifest()
+    generate_clangd(manifest)
     contributions = load_contributions(modules=manifest.modules())
     retail = configured_retail_dir(retail_dir)
     pruned = _prune_orphans(manifest)
@@ -343,6 +345,10 @@ def configure_if_needed(force: bool = False, retail_dir: Path | None = None) -> 
         units, pruned = emit(NINJA, retail_dir)
         suffix = f", pruned {pruned} orphan(s)" if pruned else ""
         print(f"[configure] wrote {NINJA.relative_to(REPO)} ({units} units{suffix})")
+    else:
+        # Refresh environment paths and recreate a removed editor database even
+        # when the Ninja graph itself is current.
+        generate_clangd()
 
 
 def run_ninja(

@@ -303,6 +303,7 @@ class GraphTests(unittest.TestCase):
             mock.patch.object(graph, "configured_retail_dir", return_value=Path("/retail")),
             mock.patch.object(graph, "_prune_orphans", return_value=0),
             mock.patch.object(graph, "_write_if_changed"),
+            mock.patch.object(graph, "generate_clangd"),
             mock.patch.object(graph, "_write_generator") as write,
         ):
             graph.emit()

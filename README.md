@@ -48,6 +48,13 @@ from subdirectories. This single project groups units under `psx/`, `game/`,
 and `open/`. Run `kf build` first to generate it; an explicit `objdiff -p PATH`
 still opens another project.
 
+Neovim/CoC and other clangd clients discover the generated `compile_commands.json`
+at the repository root. `nix develop`, `kf configure`, and `kf build` refresh it
+with the pinned SDK includes and MIPS C settings. Use `kf clangd --image open`
+or `kf clangd --image game` to select the context for sources shared by both
+images; the choice persists under `build/clangd/`. Start Neovim inside the Nix
+shell so it uses the pinned clangd.
+
 ## Project
 
 This is three decomps in one repository: the bootstrap `PSX.EXE`, main-game

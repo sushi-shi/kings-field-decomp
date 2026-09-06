@@ -1,4 +1,6 @@
 /build/
+/compile_commands.json
+/.cache/clangd/
 /.direnv/
 /.venv/
 /.pytest_cache/

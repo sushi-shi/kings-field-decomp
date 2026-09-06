@@ -393,6 +393,7 @@
           maspsx
           mipsBinutilsAliases
           objdiff-cli
+          pkgs.llvmPackages.clang-unwrapped
           pkgs.git
           pkgs.ninja
         ];
@@ -497,6 +498,8 @@
           export UV_PROJECT_ENVIRONMENT="$KINGS_FIELD_DIR/build/python-env"
           export UV_PYTHON="${pkgs.python311}/bin/python3.11"
           export PATH="${objdiffShim}/bin:$PATH"
+
+          ${kfCli}/bin/kf clangd >&2 || echo "[kings-field] clangd setup failed; run kf clangd after fixing the reported error" >&2
 
           echo "[kings-field] Psy-Q candidates: $PSYQ_DIR" >&2
           echo "[kings-field] compiler probes : GCC 2.4.1; two distinct GCC 2.6.0 builds" >&2
