@@ -26,7 +26,6 @@ s32 menu_magic_panel(void)
     KfMenuList ctx;
     s16 labels[10][10];
     u8 codes[16];
-    s16 *name;
     s32 found;
     s32 code;
     s32 j;
@@ -40,11 +39,10 @@ s32 menu_magic_panel(void)
     menu_list_init(&ctx, 0, 1);
 
     found = 0;
-    name = magic_name_rows[KF_MAGIC_HEALING].codes;
-    for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++, name += 10) {
+    for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
         if (magic_records[code].learned == 1) {
             for (j = 0; j < 10; j++)
-                labels[found][j] = name[j];
+                labels[found][j] = magic_name_rows[code].codes[j];
             codes[found] = code;
             found++;
         }
@@ -65,10 +63,11 @@ s32 menu_magic_panel(void)
     for (;;) {
         menu_present_frame();
         if (confirm == 1) {
-            selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
                     KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
-                    != KF_MENU_CONFIRM_CANCELLED)
+                    == KF_MENU_CONFIRM_CANCELLED)
+                selection = -99;
+            else
                 selection = codes[ctx.selected_index];
         }
         if (selection != -99) {
@@ -90,17 +89,19 @@ s32 menu_magic_panel(void)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
-                if (ctx.cursor_row != 0)
-                    ctx.cursor_row--;
-                else
+                if (ctx.cursor_row == 0)
                     ctx.scroll_offset--;
-            } else if (ctx.entry_count < ctx.visible_rows) {
-                ctx.selected_index = ctx.entry_count - 1;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = ctx.entry_count - 1;
+                else
+                    ctx.cursor_row--;
             } else {
-                ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                ctx.cursor_row = ctx.visible_rows - 1;
+                ctx.selected_index = ctx.entry_count - 1;
+                if (ctx.entry_count < ctx.visible_rows) {
+                    ctx.scroll_offset = 0;
+                    ctx.cursor_row = ctx.entry_count - 1;
+                } else {
+                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
+                    ctx.cursor_row = ctx.visible_rows - 1;
+                }
             }
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return -1;
@@ -108,10 +109,10 @@ s32 menu_magic_panel(void)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
-                if (ctx.cursor_row != ctx.visible_rows - 1)
-                    ctx.cursor_row++;
-                else
+                if (ctx.cursor_row == ctx.visible_rows - 1)
                     ctx.scroll_offset++;
+                else
+                    ctx.cursor_row++;
             } else {
                 ctx.selected_index = 0;
                 ctx.scroll_offset = 0;
@@ -132,24 +133,24 @@ s32 menu_magic_panel(void)
         menu_list_render(&ctx);
     }
 
-    if (selection == -1)
-        return selection;
-    if (player_state.vitals.current_mp < magic_records[selection].mp_cost)
-        return selection;
-    player_state.vitals.current_mp -= magic_records[selection].mp_cost;
-    if (selection == KF_MAGIC_HEALING) {
-        player_state.vitals.current_hp += player_state.magic;
-    } else if (selection == KF_MAGIC_DISPOISON) {
-        player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE | KF_PLAYER_STATUS_DARKNESS;
-    } else if (selection == KF_MAGIC_RESIST_FIRE) {
-        player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
-        player_apply_fire_defense_boost();
-    } else if (selection == KF_MAGIC_BLESS) {
-        player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
-        player_state.vitals.current_hp += player_state.magic * 3;
+    if (selection != -1) {
+        if (player_state.vitals.current_mp < magic_records[selection].mp_cost)
+            return selection;
+        player_state.vitals.current_mp -= magic_records[selection].mp_cost;
+        if (selection == KF_MAGIC_HEALING) {
+            player_state.vitals.current_hp += player_state.magic;
+        } else if (selection == KF_MAGIC_DISPOISON) {
+            player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE | KF_PLAYER_STATUS_DARKNESS;
+        } else if (selection == KF_MAGIC_RESIST_FIRE) {
+            player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
+            player_apply_fire_defense_boost();
+        } else if (selection == KF_MAGIC_BLESS) {
+            player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
+            player_state.vitals.current_hp += player_state.magic * 3;
+        }
+        if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
+            player_state.vitals.current_hp = player_state.vitals.maximum_hp;
     }
-    if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
-        player_state.vitals.current_hp = player_state.vitals.maximum_hp;
     return selection;
 }
 

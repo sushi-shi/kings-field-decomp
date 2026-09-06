@@ -918,13 +918,13 @@ Residues recorded in the module (not steered):
 - `func_800236ac` also leaves `selection = -1` in the `jal func_8002abb4` delay
   slot where retail fills the preceding `bne result,-99` delay slot with it; the
   reorg heuristic differs when a call immediately follows the reset store.
-- `func_8002317c` `0x8002317c` (95.9%): the magic panel clones the `func_80022608`
-  consumable panel and inherits its classes — the `selection = -99` default
-  scheduled early instead of into the `func_80028380 != -1` test's delay slot,
-  the spell-list build's two givs (`name` pointer, `magic_records[code]` offset)
-  incremented in the opposite order, and the window-cursor `if (window != 0)`
-  test inverted with its arms swapped. Referents, calls, constants, the MP
-  affordability/deduction and the four spell effects all match.
+- `menu_magic_panel` `0x8002317c` is now strict 100%; the earlier compiler
+  explanation was not established. Direct spell-name indexing recovers the
+  loop preheader and back-edge order, cancellation-first handling recovers
+  the pending-sentinel delay slot, and corrected cursor arms plus a shared
+  normal return close the body. All 332 words, 69 transfers and their delay
+  slots agree. Its distinct texture-failure and insufficient-MP exits remain
+  intact; see the [magic-panel flow audit](game-magic-panel-flow.md).
 
 ## player warp / floor transition (0x80036618..0x80036e38)
 

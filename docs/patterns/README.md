@@ -287,6 +287,9 @@ promotes a probe to a proven historical toolchain.
 - [game-shop-panel-flow.md](game-shop-panel-flow.md): restores buy/sell
   confirmation reset and long-list upward wrap, with matching transfer
   destinations and ordered referents; 17/25 register-operand words remain.
+- [game-magic-panel-flow.md](game-magic-panel-flow.md): direct spell-name
+  indexing, cancellation-first handling, cursor branches and a shared normal
+  return close the magic panel while preserving its distinct failure exits.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.
