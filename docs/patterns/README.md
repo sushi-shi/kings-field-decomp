@@ -51,6 +51,8 @@ promotes a probe to a proven historical toolchain.
   returns and retail packet dispatch in the GAME map polygon emitter.
 - [game-model-enqueue.md](game-model-enqueue.md): four-mode model packet
   traversal, material publication and shared depth tails.
+- [game-tmd-enqueue.md](game-tmd-enqueue.md): twelve TMD mode entries,
+  reviewed switch/internal jumps and shared lighting/depth tails.
 - [open-floor-item-render-residue.md](open-floor-item-render-residue.md):
   typed floor-item sprite descriptors and the extra facing-byte mask shared
   by the GAME and OPEN retail renderers.
