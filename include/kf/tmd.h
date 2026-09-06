@@ -6,6 +6,12 @@
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 
+enum {
+    KF_TMD_SLOT_MAP = 0,
+    KF_TMD_SLOT_ENTITIES = 1,
+    KF_TMD_SLOT_MENU_ITEM = 4
+};
+
 /* On-disk counts are words; individual consumers may narrow them. */
 typedef struct KfTmdHeader {
     u32 id;

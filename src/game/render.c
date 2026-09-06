@@ -8,8 +8,9 @@
 #include <kf/game.h>
 #include <kf/tmd.h>
 
-#define CD_SECTOR_SIZE 0x800
-#define CD_SECTOR_SHIFT 11
+enum {
+    ERROR_SCREEN_READ_ATTEMPTS = 50
+};
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
 #define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + 12))
@@ -28,8 +29,7 @@
 /* tmd_register primitive-mode dispatch table. */
 RODATA(0x800121b4, 0x74)
 
-/* Disc file of the fatal-error message screen; the index-2 digit selects the
- * stage: 0 failed disc search, 1 failed disc read, 2 save-file error. */
+/* System-message TIM path; byte 2 selects an error or pause screen. */
 DATA(0x80057b50, 0x7)
 char error_screen_path[7] = "\\E0.;1";
 
@@ -39,7 +39,7 @@ DRAWENV display_draw_environments[2];
 DATA(0x80090f78, 0x28)
 DISPENV display_disp_environments[2];
 
-/* Loads and shows the fatal-error message screen for STAGE as a semi-transparent
+/* Loads and shows the system-message screen for STAGE as a semi-transparent
  * textured box, then blocks until a controller button is pressed and released.
  * Called by cd_file_load_into on disc failure and by game_main_loop on a save
  * error. */
@@ -77,23 +77,23 @@ void display_show_error_screen(s32 stage)
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == 0) {
         exit(1);
     }
-    if (cd_search_file.size & (CD_SECTOR_SIZE - 1)) {
+    if (cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) {
         cd_search_file.size =
-            ((cd_search_file.size >> CD_SECTOR_SHIFT) + 1) << CD_SECTOR_SHIFT;
+            ((cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
     }
     cd_read_location.minute = cd_search_file.pos.minute;
     cd_read_location.second = cd_search_file.pos.second;
     cd_read_location.sector = cd_search_file.pos.sector;
-    for (attempt = 0; attempt < 50; attempt++) {
+    for (attempt = 0; attempt < ERROR_SCREEN_READ_ATTEMPTS; attempt++) {
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
-        CdRead(cd_search_file.size >> CD_SECTOR_SHIFT,
+        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
                display_state.asset_load_buffer, CdlModeSpeed);
-        while ((result = CdReadSync(1, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
         if (result == 0) {
-            attempt = 100;
+            attempt = KF_CD_READ_STOP_ATTEMPT;
         }
     }
     tim_upload_images(display_state.asset_load_buffer);

@@ -36,7 +36,7 @@ void render_map_event(KfMapEvent *event)
     MulMatrix0((MATRIX *)&render_state.view_matrix, &model, &composed);
     SetRotMatrix(&composed);
     SetTransMatrix(&composed);
-    asset = event->variant + 10;
+    asset = event->variant + KF_ASSET_MAP_EVENT_FIRST;
     asset_registry_select(asset);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(

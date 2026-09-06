@@ -11,6 +11,13 @@
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
+enum {
+    KF_SYSTEM_SCREEN_CD_SEARCH_FAILED = 0,
+    KF_SYSTEM_SCREEN_CD_READ_FAILED = 1,
+    KF_SYSTEM_SCREEN_NO_MEMORY_CARD = 2,
+    KF_SYSTEM_SCREEN_PAUSE = 3
+};
+
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */
 typedef struct KfHudSprite {
     u8 state;
@@ -71,7 +78,7 @@ extern POLY_FT4 *current_poly_ft4;
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
 extern KfDisplayState display_state;
-extern KfCellWindow render_cell_windows[16];
+extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern const KfCellWindow *active_cell_window;
 extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];

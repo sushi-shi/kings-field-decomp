@@ -95,7 +95,7 @@ void player_equip_weapon(u8 weapon_id)
         if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_image_path_template) != 0) {
             exit(1);
         }
-        asset_registry_set(0x14, player_state.weapon_asset_buffer);
+        asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer);
     }
     player_state.weapon_attack_phase = -1;
     player_state.weapon_animation_cache = 0;

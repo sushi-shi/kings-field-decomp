@@ -107,7 +107,7 @@ void render_actor_sprite(KfEffectRenderView *sprite)
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        asset = sprite->sprite_id + 30;
+        asset = sprite->sprite_id + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
         object = tmd_get_object(0);
         if (render_bind_animated_instance(

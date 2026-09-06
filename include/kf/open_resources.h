@@ -7,7 +7,9 @@
 
 enum {
     KF_OPENING_ENTITY_CAPACITY = 32,
-    KF_OPENING_ENTITY_FREE = 0xff
+    KF_OPENING_ENTITY_FREE = 0xff,
+    KF_OPENING_ENTITY_MODEL_LIMIT = 32,
+    KF_OPENING_ENTITY_FLOOR_HEIGHT = 0
 };
 
 /* OPEN title-scene entity and its 32-slot runtime pool. */

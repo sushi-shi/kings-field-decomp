@@ -4,7 +4,7 @@
 #include <kf/open_scene0.h>
 
 DATA(0x800439d8, 0xcc0)
-KfCellWindow render_cell_windows[16];
+KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 
 ADDRESS(0x80018bbc, 0x1d0)
 void render_map_cell(s32 col, s32 row, u8 cell)
@@ -64,11 +64,13 @@ void opening_render_map_cells(void)
     u8 cols;
 
     open_graphics_runtime.active_cell_window =
-        &render_cell_windows[15 - (open_graphics_runtime.render_state.view_rotation.vy >> 8)];
+        &render_cell_windows[KF_CELL_WINDOW_YAW_COUNT - 1
+            - (open_graphics_runtime.render_state.view_rotation.vy
+                >> KF_CELL_WINDOW_YAW_SHIFT)];
     cell = open_graphics_runtime.active_cell_window->cells;
     row = (u16)open_graphics_runtime.render_state.view_cell.z - open_graphics_runtime.active_cell_window->origin_z;
     col_base = (u16)open_graphics_runtime.render_state.view_cell.x - open_graphics_runtime.active_cell_window->origin_x;
-    tmd_select(0);
+    tmd_select(KF_TMD_SLOT_MAP);
 
     rows = open_graphics_runtime.active_cell_window->height;
     do {

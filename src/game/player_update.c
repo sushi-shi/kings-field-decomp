@@ -69,7 +69,7 @@ void player_update(void)
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
     input = PadRead(1);
     if (input & 0x800) {
-        display_show_error_screen(3);
+        display_show_error_screen(KF_SYSTEM_SCREEN_PAUSE);
     }
     if (input & 0x100) {
         input = 0x40;

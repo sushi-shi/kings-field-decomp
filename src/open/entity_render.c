@@ -146,10 +146,10 @@ void opening_render_entities_and_items(void)
     KfFloorItem *item;
     s16 remaining;
 
-    tmd_select(1);
+    tmd_select(KF_TMD_SLOT_ENTITIES);
     entity = opening_entity_state.entities;
     for (remaining = KF_OPENING_ENTITY_CAPACITY - 1; remaining != -1; remaining--) {
-        if (entity->object_id < 32) {
+        if (entity->object_id < KF_OPENING_ENTITY_MODEL_LIMIT) {
             u16 row = entity->cell_z - origin_z;
             const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
 

@@ -96,7 +96,8 @@ class GameCellWindowDataTests(unittest.TestCase):
         self.assertEqual([(int(r['va'], 0), int(r['size'], 0)) for r in census],
                          [(0x80055E9C, 204)])
         header = (REPO / 'include/kf/game_render.h').read_text()
-        self.assertIn('extern KfCellWindow render_cell_windows[16];', header)
+        self.assertIn(
+            'extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];', header)
         self.assertIn('extern const KfCellWindow *active_cell_window;', header)
         headers = '\n'.join(p.read_text() for p in (REPO / 'include/kf').glob('*.h'))
         self.assertNotIn('render_fixed_cell_window', headers)
@@ -123,8 +124,8 @@ class GameCellWindowDataTests(unittest.TestCase):
                              (14, 14, *origin))
             self.assertLessEqual(set(payload[index * 204 + 8:(index + 1) * 204]), {0, 1, 2})
         source = load_manifest().by_name()['game.resources'].source_path.read_text()
-        self.assertIn('KfCellWindow render_cell_windows[16];', source)
-        self.assertNotRegex(source, r'render_cell_windows\[16\]\s*=')
+        self.assertIn('KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];', source)
+        self.assertNotRegex(source, r'render_cell_windows\[[^\]]+\]\s*=')
 
     def test_complete_compiled_and_delinked_allocations(self):
         image = self.retail()

@@ -130,13 +130,14 @@ void render_map_cells(void)
         active_cell_window = &render_fixed_cell_window;
     } else {
         active_cell_window =
-            &render_cell_windows[15 - (render_state.view_rotation.vy >> 8)];
+            &render_cell_windows[KF_CELL_WINDOW_YAW_COUNT - 1
+                - (render_state.view_rotation.vy >> KF_CELL_WINDOW_YAW_SHIFT)];
     }
 
     row = (u16)render_state.view_cell.z - active_cell_window->origin_z;
     col_base = (u16)render_state.view_cell.x - active_cell_window->origin_x;
     cell = active_cell_window->cells;
-    tmd_select(0);
+    tmd_select(KF_TMD_SLOT_MAP);
 
     rows = active_cell_window->height;
     do {

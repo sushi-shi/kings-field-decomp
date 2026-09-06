@@ -5,6 +5,15 @@
 
 #include <kf/game_types.h>
 
+enum {
+    KF_ASSET_ARCHIVE_HEADER_BYTES = 4,
+    KF_ASSET_ACTOR_FIRST = 0,
+    KF_ASSET_MAP_EVENT_FIRST = 10,
+    KF_ASSET_WEAPON = 20,
+    KF_ASSET_EFFECT_SPRITES = 21,
+    KF_ASSET_EFFECT_FIRST = 30
+};
+
 /* Header shared by static and animated model assets in the registry. */
 typedef struct KfAssetHeader {
     u32 byte_size;

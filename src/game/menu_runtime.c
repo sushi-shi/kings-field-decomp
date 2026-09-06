@@ -603,7 +603,7 @@ u32 menu_load_item_model(s32 id)
         if (cd_file_load_table_entry(&asset, id) != 0) {
             return 1;
         }
-        tmd_register(4, asset);
+        tmd_register(KF_TMD_SLOT_MENU_ITEM, asset);
         menu_item_model_allocation_pending = 1;
     }
     DAT_80057b72 = 0;
@@ -614,7 +614,7 @@ ADDRESS(0x8002af0c, 0x3c)
 void menu_release_item_model(void)
 {
     if (menu_item_model_allocation_pending == 1) {
-        tmd_release_last_allocation(4);
+        tmd_release_last_allocation(KF_TMD_SLOT_MENU_ITEM);
         menu_item_model_allocation_pending = 0;
     }
 }

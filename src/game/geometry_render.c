@@ -62,10 +62,11 @@ void render_weapon(void)
     RotMatrix((SVECTOR *)(fields + 36), &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
-    asset_registry_select(0x14);
+    asset_registry_select(KF_ASSET_WEAPON);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
-            &player_state.weapon_animation_cache, 0x14, 0, player_state.weapon_attack_phase,
+            &player_state.weapon_animation_cache, KF_ASSET_WEAPON, 0,
+            player_state.weapon_attack_phase,
             object->vertex_count) != 0) {
         tmd_project_vertices_shift(object->vertex_count, 3);
         depth_bias =
@@ -106,10 +107,11 @@ void render_effect_sprites(void)
         ScaleMatrix(&model, &scale);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        asset_registry_select(0x15);
+        asset_registry_select(KF_ASSET_EFFECT_SPRITES);
         object = tmd_get_object(0);
         if (render_bind_animated_instance(
-                &entry->animation_cache, 0x15, entry->visibility_tag, entry->asset_variant,
+                &entry->animation_cache, KF_ASSET_EFFECT_SPRITES,
+                entry->visibility_tag, entry->asset_variant,
                 object->vertex_count) != 0) {
             tmd_transform_vertices(object->vertex_count);
             render_enqueue_tmd(0, 0);

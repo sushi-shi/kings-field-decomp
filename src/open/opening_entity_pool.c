@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/map_data.h>
+#include <kf/game_math.h>
 #include <kf/open_resources.h>
 
 DATA(0x80049538, 0x510)
@@ -60,15 +61,15 @@ void opening_entity_pool_load_placements(
                 entity->cell_z = placement->tile_z;
                 entity->rotation.z = 0;
                 entity->rotation.x = 0;
-                entity->rotation.y = placement->yaw & 0xfff;
+                entity->rotation.y = placement->yaw & KF_ANGLE_WRAP_MASK;
                 entity->position.vx =
                     placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
                 entity->position.vz =
                     placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
-                entity->scale.vz = 0x1000;
-                entity->scale.vy = 0x1000;
-                entity->scale.vx = 0x1000;
-                if (base_y == 0) {
+                entity->scale.vz = KF_FIXED12_ONE;
+                entity->scale.vy = KF_FIXED12_ONE;
+                entity->scale.vx = KF_FIXED12_ONE;
+                if (base_y == KF_OPENING_ENTITY_FLOOR_HEIGHT) {
                     entity->position.vy = placement->local_y -
                         map_floor_height_grid[placement->tile_z]
                                              [placement->tile_x] *

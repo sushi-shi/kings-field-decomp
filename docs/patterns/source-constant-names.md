@@ -345,3 +345,115 @@ scores. Eighteen objects have only debug-line changes relative to 893a3fa
 prerequisites skipped; lint and whitespace checks pass. Full `kf build` ran
 and retains the existing data ownership/placement failures. No exact result
 or relocation changed.
+
+## CD and resource registration plan
+
+Trace ordinary CD reads and the error-screen read path separately: GAME's
+path and indexed reads, OPEN's reads, and the error-screen loader have four
+different retry limits. Name those limits and preserve the successful-read
+counter assignment, status handling and polling calls. Share the existing
+sector-size definition and name the error stages established by their callers.
+Trace resource chunk payloads and registration IDs through both model-slot
+consumers and GAME's separate animated-asset registry. The loader and renderer
+must use the same domain names; equal numbers in the two registries must not
+be conflated. Keep data-path strings, stream ordering, pointer arithmetic,
+source types and exact retail operations unchanged.
+
+The prior per-function snapshots cover CD loaders, GAME/OPEN resources,
+error-screen rendering, model slot selection/release, asset registration and
+the affected rendering consumers. Validate all objects and strict scores
+against the same baseline. Resource placement and behavior corrections remain
+outside this naming batch.
+
+The CD sector definition is shared by all three loader owners. GAME attempts
+three path reads or five indexed reads; OPEN attempts one hundred reads; the
+system-screen loader attempts fifty. A successful read still writes one
+hundred into the attempt counter before its increment. This exit assignment
+has its own name even where it equals OPEN's retry limit. The linked GAME
+`CdReadSync` wrapper calls `CD_readsync` (8003bc98): at 8003bd5c a nonzero
+mode bypasses the wait loop and returns the current remaining-sector count,
+establishing the polling argument. The API's null result buffer is retained.
+OPEN still returns zero after exhausted read attempts once search succeeded;
+no success claim or behavior repair is introduced.
+
+The system-screen IDs are checked against the retail TIMs E0..E3, decoded
+with the CLUT selected by GAME 8001b7b0: X=0, Y=501. E0/E1 both report
+unreadable data and request a reset; their callers distinguish failed search
+from failed read. E2 reports that saving is unavailable because no memory
+card is present. E3 contains “PAUSE!!”, consistent with the controller-triggered
+call in `player_update`. These are named message choices even though the
+existing function identity still says `display_show_error_screen`.
+
+| Retail asset | SHA-256 |
+| --- | --- |
+| E0. | `86bafc3ca8a85cfb8033fffdb27cde292ea68dbd31303f6e9ccb7200325bb809` |
+| E1. | `3f060303a13b763c2cde1620c2e308c3c0108cda62641e0cd97056e9bfb9c102` |
+| E2. | `26d1540163a9855b40925e4731e544b06893426c1af238a15a0b98560a94de82` |
+| E3. | `37d6a36d8c023bdb18e62dbbaa48e4f59e79c50faa783c188bb16e0fb7288d12` |
+
+Resource chunks have a four-byte length prefix. Their complete map-grid
+copy count now derives from the typed 100-by-100 byte grid and u32 word
+size, still 2500 words. The sixteen-byte arena-reuse prefix names the
+observed cursor advance after release; its original rationale is unresolved,
+so it is not called an allocator header or alignment requirement. The
+animated-asset archive has a distinct four-byte header containing the u16
+count; this is not the same format as a resource chunk.
+
+TMD slots 0, 1 and 4 serve map geometry, scene entities and menu item models.
+GAME's separate animated-asset registry uses actor base 0, map-event base 10,
+weapon ID 20, shared effect-sprite ID 21, and effect-model base 30. Loader
+registration and renderer selection now share those identities, without
+asserting archive capacities from the gaps between their bases. OPEN's
+model-ID limit 32 is distinct from its 32-entry entity pool. Placement base
+Y=0 selects map-floor height; the other scene loaders add -10000 to local Y.
+Q12 unity and yaw wrapping in that placement consumer reuse the math names.
+
+The variant model buffer remains 5a000 bytes. GAME's alternate map sequence
+is selected at progress 15 on floor 1, progress 25 on floor 2, or variant 3
+on floor 5. These names describe the observed selection rules without
+inventing a narrative event or treating the progress byte as player level.
+
+Visibility resources have sixteen yaw windows. GAME and OPEN select them in
+reverse order using the high four bits of the twelve-bit yaw (`15 - (yaw >>
+8)`). The count and shift now name that shared lookup contract, with the
+existing signed shift and subtraction preserved.
+
+The six complete loader/registry/OPEN-entity sources audited here retain
+102 inline literals for these reasons:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| CD prefix/suffix and resource filename arrays | 5/3/8 | Exact existing initialized string storage, including terminators and retained trailing zeros. |
+| CD search test | 0 | Null `CdlFILE` result from the SDK. |
+| Sector rounding | 1, zero remainder test | Last-byte mask and addition of one partial sector; zero tests divisibility. |
+| CD attempt origins and loaded flags | 0/1 | Zero-based iteration and Boolean success tracking. |
+| CD control/read-sync result pointers | 0 | Null optional result buffers. |
+| CD remaining-sector tests | 0 | Arithmetic boundary: positive means still reading, zero means no sectors remain. |
+| Loader returns | 0/1 | Existing Boolean search-failure convention: OPEN returns 1 for a missing file; other paths return 0 even when read attempts are exhausted. This limitation is preserved. |
+| TIM stream and upload checks | 0 | End-of-stream result or absent CLUT/pixel pointer. |
+| `DrawSync` | 0 | Existing SDK synchronization selector, as in the earlier display audit. |
+| Chunk/registry copy countdowns | 0 | No entries/words remain. |
+| Map path edits | Indices 1/3/6, `'0'` | Floor digit, filename start and variant digit in the actual template; character arithmetic makes the decimal encoding visible. |
+| Map sequence switch | Floors 1/2/5 | Direct numbered-floor identities; aliases that merely spell the floor number add no meaning. Progress/variant thresholds and sequence choices are named separately. |
+| Variant-loading condition | 0 | Boolean `use_variant` argument. |
+| OPEN pool countdowns | 1, zero termination | Last-index derivation and the exact post/pre-decrement endpoints. |
+| OPEN unresolved reset words | 0 | Evidenced reset value only; no consumer proves the three words' behavioral meanings. |
+| OPEN entity lookup failure | 0 | Null pointer return. |
+| OPEN placement exhaustion | 0/1 | Boolean state indicating that the placement terminator was reached. |
+| OPEN placement X/Z rotation | 0 | No rotation on those axes. |
+| OPEN `audio_stop_sequence` arguments | 0/1 | Boolean fade request: `audio_stop_sequence` fades only when the argument equals 1. |
+
+The rendering, startup and menu consumers outside these six complete sources
+only change the shared registration/screen/yaw names in this batch. Their
+remaining layout, lighting, input and state constants remain in their domain
+audits. Retail ownership claims and definition values remain literal.
+
+Validation preserves all 112 objects' non-debug sections, the complete strict
+report and all 484 function scores. Twenty-three objects have only changed
+debug-line metadata relative to 893a3fa. The existing visibility-owner tests
+now accept the named array declaration; their independent compiled allocation,
+payload hash and sixteen-record assertions are unchanged. All 635 repository
+tests pass (nine local prerequisites skipped), lint and whitespace checks
+pass, and `nix flake check -L` passes. Full `kf build` retains the existing
+data-placement failures: target relink still verifies GAME 75/77, OPEN 34/38
+and PSX 1/1 units, with the same conflicting section bases.

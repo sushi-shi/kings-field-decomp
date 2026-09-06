@@ -19,7 +19,7 @@ void render_entities(void)
     KfEffectRenderView *sprite;
     s16 i;
 
-    tmd_select(1);
+    tmd_select(KF_TMD_SLOT_ENTITIES);
 
     /* Map objects. */
     object = map_object_state.objects;

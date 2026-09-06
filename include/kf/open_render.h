@@ -108,7 +108,7 @@ extern MATRIX floor_item_light_matrix;
 extern SVECTOR render_sprite_light_normal;
 extern CVECTOR map_textured_primitive_color;
 
-extern KfCellWindow render_cell_windows[16];
+extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern u32 primitive_allocation_count;
 
 extern void display_initialize(s32 mode);

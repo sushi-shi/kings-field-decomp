@@ -4,6 +4,10 @@
 /* GAME.EXE additions to the shared CD-file interface. */
 #include <kf/cd_file.h>
 
+enum {
+    KF_CD_FILE_TABLE_ENTRIES = 80
+};
+
 /* Shared by the normal CD loaders and GAME's fatal-error screen loader. */
 extern CdlLOC cd_read_location;
 
@@ -26,7 +30,7 @@ typedef struct KfCdFileEntry {
  * callers cast only after selecting a table entry with the proven 20-byte
  * stride.
  */
-extern KfCdFileEntry cd_file_table[80];
+extern KfCdFileEntry cd_file_table[KF_CD_FILE_TABLE_ENTRIES];
 extern s32 cd_file_load_table_entry(void **destination, s32 index);
 
 #endif

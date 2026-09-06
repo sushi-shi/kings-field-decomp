@@ -12,7 +12,7 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 {
     u16 count = *(u16 *)archive;
 
-    archive += 4;
+    archive += KF_ASSET_ARCHIVE_HEADER_BYTES;
     while (count-- != 0) {
         asset_registry_entries[first_asset_id] = (KfAssetHeader *)archive;
         asset_registry_select(first_asset_id);

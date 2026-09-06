@@ -110,7 +110,7 @@ void menu_render_item_model(void)
 {
     lighting_set_active_color_matrix(0);
     SetGeomScreen(0xc8);
-    tmd_select(4);
+    tmd_select(KF_TMD_SLOT_MENU_ITEM);
     tmd_select_object_vertices(0);
     tmd_project_vertices(tmd_get_object(0)->vertex_count);
     render_enqueue_tmd(0, 0x3e8);

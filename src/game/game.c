@@ -56,7 +56,7 @@ void game_main_loop(void)
     EnableEvent(vsync_event);
     player_warp_shimmer_at_player(1);
     if (save_file_cleanup_temporary() == 2) {
-        display_show_error_screen(2);
+        display_show_error_screen(KF_SYSTEM_SCREEN_NO_MEMORY_CARD);
     }
     game_exit_code = 0;
     for (;;) {
