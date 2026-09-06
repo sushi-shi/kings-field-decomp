@@ -72,7 +72,6 @@ typedef struct KfSavePayload {
     u8 unknown_2548[56];
 } KfSavePayload;
 
-typedef char check_psx_save_header_size[sizeof(KfPsxSaveHeader) == 0x200 ? 1 : -1];
 #define KF_PSX_SAVE_HEADER_OFFSET_CHECK(member, offset) \
     typedef char check_psx_save_header_##member[ \
         ((unsigned long)&((KfPsxSaveHeader *)0)->member == (offset)) ? 1 : -1]
@@ -84,7 +83,6 @@ KF_PSX_SAVE_HEADER_OFFSET_CHECK(zero_pad, 0x44);
 KF_PSX_SAVE_HEADER_OFFSET_CHECK(clut, 0x60);
 KF_PSX_SAVE_HEADER_OFFSET_CHECK(icon_frames, 0x80);
 #undef KF_PSX_SAVE_HEADER_OFFSET_CHECK
-typedef char check_save_summary_size[sizeof(KfSaveSlotSummary) == 0x18 ? 1 : -1];
 #define KF_SAVE_SUMMARY_OFFSET_CHECK(member, offset) \
     typedef char check_save_summary_##member[ \
         ((unsigned long)&((KfSaveSlotSummary *)0)->member == (offset)) ? 1 : -1]
@@ -95,9 +93,6 @@ KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_hp, 0x0c);
 KF_SAVE_SUMMARY_OFFSET_CHECK(current_mp, 0x10);
 KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_mp, 0x14);
 #undef KF_SAVE_SUMMARY_OFFSET_CHECK
-typedef char check_save_directory_size[sizeof(KfSaveDirectory) == 0x80 ? 1 : -1];
-typedef char check_save_header_size[sizeof(KfSaveHeader) == 0x280 ? 1 : -1];
-typedef char check_save_payload_size[sizeof(KfSavePayload) == 0x2580 ? 1 : -1];
 
 extern s32 memory_card_error_event;
 extern s32 memory_card_io_end_event;

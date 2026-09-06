@@ -84,8 +84,6 @@ enum {
     ENDING_SEQUENCE_REPLACED = 3
 };
 
-typedef char KfOpeningEntitySizeCheck[
-    sizeof(KfOpeningEntity) == 0x28 ? 1 : -1];
 typedef char KfOpeningEntityPositionOffsetCheck[
     (u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];
 

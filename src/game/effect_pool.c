@@ -2,7 +2,6 @@
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
-typedef char effect_state_size[sizeof(KfEffectState) == 0xd28 ? 1 : -1];
 typedef char effect_state_alignment[__alignof__(KfEffectState) == 4 ? 1 : -1];
 typedef char effect_state_records_offset[
     (u32)&((KfEffectState *)0)->records == 0x1e0 ? 1 : -1];

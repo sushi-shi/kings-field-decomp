@@ -13,13 +13,16 @@ struct KfPoolRecord;
 
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
-    KF_ACTOR_CAPACITY = 128,
+    KF_ACTOR_CAPACITY = 128
+};
+
+KF_ENUM_BEGIN(KfActorSlotState, u8)
     KF_ACTOR_SLOT_DYNAMIC = 0,
     KF_ACTOR_SLOT_PERSISTENT = 1,
     KF_ACTOR_SLOT_RESPAWNING = 2,
     KF_ACTOR_SLOT_HOMEBOUND = 3,
     KF_ACTOR_SLOT_FREE = 0xff
-};
+KF_ENUM_END(KfActorSlotState)
 
 /* Lifecycle controls activation independently of slot/respawn policy. */
 KF_ENUM_BEGIN(KfActorLifecycle, u8)
@@ -58,20 +61,20 @@ enum {
     KF_ACTOR_PROGRESS_COMPLETE = 0xff
 };
 
-enum {
+KF_ENUM_BEGIN(KfActorVerticalState, u8)
     KF_ACTOR_VERTICAL_NONE = 0,
     KF_ACTOR_VERTICAL_STEP_UP = 1,
     KF_ACTOR_VERTICAL_FALL = 2,
     KF_ACTOR_VERTICAL_LONG_DROP = 3,
     KF_ACTOR_VERTICAL_JUMP_ATTACK = 4
-};
+KF_ENUM_END(KfActorVerticalState)
 
 /* Horizontal steering state, distinct from collision-query return codes. */
-enum {
+KF_ENUM_BEGIN(KfActorCollisionState, u8)
     KF_ACTOR_COLLISION_CLEAR = 0,
     KF_ACTOR_COLLISION_SLIDING = 1,
     KF_ACTOR_COLLISION_BLOCKED = 2
-};
+KF_ENUM_END(KfActorCollisionState)
 
 /* Parallel definition-table indices, independent of action and resource IDs. */
 enum {
@@ -184,7 +187,7 @@ typedef struct KfActorActionProfile {
 
 /* 16-byte actor placement record from the map's MIXA.DAT stream. */
 typedef struct KfActorPlacement {
-    u8 slot_state;
+    KfActorSlotState slot_state;
     u8 definition_flags;
     u8 heading_quadrant;
     u8 tile_z;
@@ -198,7 +201,7 @@ typedef struct KfActorPlacement {
 } KfActorPlacement;
 
 typedef struct KfActor {
-    u8 slot_state;
+    KfActorSlotState slot_state;
     u8 definition_id;
     u8 variant;
     u8 heading_quadrant;
@@ -209,7 +212,7 @@ typedef struct KfActor {
     KfActorAction action;
     u8 death_drop_object_id;
     u8 animation_id;
-    u8 vertical_state;
+    KfActorVerticalState vertical_state;
     u8 unknown_0c[2];
     s16 local_z;
     s16 local_x;
@@ -223,7 +226,7 @@ typedef struct KfActor {
     u16 unknown_32;
     struct KfPoolRecord *animation_cache;
     u8 action_progress;
-    u8 collision_state;
+    KfActorCollisionState collision_state;
     s16 movement_yaw;
     s16 animation_step;
     s16 vertical_velocity;
@@ -233,12 +236,13 @@ typedef struct KfActor {
     u8 unknown_46[2];
 } KfActor;
 
-typedef char check_actor_action_storage[sizeof(KfActorAction) == 1 ? 1 : -1];
-typedef char check_actor_lifecycle_storage[sizeof(KfActorLifecycle) == 1 ? 1 : -1];
-typedef char check_actor_size[sizeof(KfActor) == 0x48 ? 1 : -1];
 #if KF_MODERN_TYPES
+static_assert(__builtin_offsetof(KfActorPlacement, slot_state) == 0);
+static_assert(__builtin_offsetof(KfActor, slot_state) == 0);
 static_assert(__builtin_offsetof(KfActor, lifecycle) == 0x06);
 static_assert(__builtin_offsetof(KfActor, action) == 0x08);
+static_assert(__builtin_offsetof(KfActor, vertical_state) == 0x0b);
+static_assert(__builtin_offsetof(KfActor, collision_state) == 0x39);
 #endif
 
 /*

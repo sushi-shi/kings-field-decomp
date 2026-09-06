@@ -6,6 +6,8 @@
 #define KF_MODERN_TYPES 1
 #define KF_ENUM_BEGIN(name, storage) enum class name : storage {
 #define KF_ENUM_END(name) }; using enum name;
+/* Keep the domain when legacy C promotes the underlying integer value. */
+#define KF_ENUM_PROMOTED(name) name
 
 /* Explicit encoded-data boundaries. These conversions do not validate values. */
 template <typename Enum, typename Integer>
@@ -28,6 +30,7 @@ constexpr Integer kf_enum_encode(Enum value)
 #define KF_MODERN_TYPES 0
 #define KF_ENUM_BEGIN(name, storage) typedef storage name; enum {
 #define KF_ENUM_END(name) };
+#define KF_ENUM_PROMOTED(name) __typeof__(+((name)0))
 #define KF_ENUM_DECODE(type, value) ((type)(value))
 #define KF_ENUM_ENCODE(storage, value) ((storage)(value))
 #endif

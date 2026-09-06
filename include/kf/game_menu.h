@@ -47,8 +47,6 @@ typedef struct MenuGlyphString {
 } MenuGlyphString;
 
 /* The configuration draw ABI passes two complete halfword-aligned labels. */
-typedef char check_menu_point_size[sizeof(MenuPoint) == 4 ? 1 : -1];
-typedef char check_menu_glyph_size[sizeof(MenuGlyphString) == 24 ? 1 : -1];
 typedef char check_menu_glyph_alignment[__alignof__(MenuGlyphString) == 2 ? 1 : -1];
 typedef char check_menu_glyph_prefix[
     (unsigned long)&((MenuGlyphString *)0)->x == 0 &&

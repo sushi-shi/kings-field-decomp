@@ -1,7 +1,7 @@
 # MANUALLY MANAGED - exact target offsets/extents for every field in structures.tsv.
 # opaque means the byte range is modeled for layout but has no supported semantic meaning yet.
 structure	offset	size	name	datatype	meaning_confidence	evidence	note
-KfActor	0x00	0x01	slot_state	u8	supported	game_actor.h;asm;xrefs;game-actor-states.md	allocation/respawn policy: dynamic 0, persistent 1, respawning 2, homebound 3, free 255
+KfActor	0x00	0x01	slot_state	KfActorSlotState	supported	game_actor.h;asm;xrefs;game-actor-states.md	allocation/respawn policy: dynamic 0, persistent 1, respawning 2, homebound 3, free 255
 KfActor	0x01	0x01	definition_id	u8	supported	game_actor.h;asm;xrefs	index into actor definitions
 KfActor	0x02	0x01	variant	u8	supported	game_actor.h;asm;xrefs	actor variant selector
 KfActor	0x03	0x01	heading_quadrant	u8	supported	game_actor.h;asm;xrefs	coarse heading selector
@@ -12,7 +12,7 @@ KfActor	0x07	0x01	spawn_chance	u8	supported	game_actor.h;asm;xrefs;semantic-fiel
 KfActor	0x08	0x01	action	KfActorAction	supported	game_actor.h;asm;xrefs;game-actor-states.md	behavior action ID (KF_ACTOR_ACTION_*), distinct from animation-table slots and resource animation IDs
 KfActor	0x09	0x01	death_drop_object_id	u8	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
 KfActor	0x0a	0x01	animation_id	u8	supported	game_actor.h;asm;xrefs	animation selector
-KfActor	0x0b	0x01	vertical_state	u8	supported	game_actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
+KfActor	0x0b	0x01	vertical_state	KfActorVerticalState	supported	game_actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
 KfActor	0x0e	0x02	local_z	s16	supported	game_actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along z added to tile_z * 2000
 KfActor	0x10	0x02	local_x	s16	supported	game_actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along x added to tile_x * 2000
@@ -26,7 +26,7 @@ KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	game_actor.h;asm;xrefs	actor 
 KfActor	0x32	0x02	unknown_32	u16	opaque	game_actor.h;asm;xrefs	meaning unresolved
 KfActor	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_actor.h;asm;game_semantic_animation_slots.tsv	live animation record installed by the binder through the actor slot and cleared by actor_pool_clear or pool_record_release
 KfActor	0x38	0x01	action_progress	u8	supported	game_actor.h;asm;xrefs;game-actor-states.md	action progress: initialization 0, running 1, selection lock 240, completion 255; also jump phases and action-specific counters
-KfActor	0x39	0x01	collision_state	u8	supported	game_actor.h;asm;xrefs;game-actor-states.md	horizontal steering state: clear 0, axis slide 1, blocked/reversed heading 2; distinct from collision-query result codes
+KfActor	0x39	0x01	collision_state	KfActorCollisionState	supported	game_actor.h;asm;xrefs;game-actor-states.md	horizontal steering state: clear 0, axis slide 1, blocked/reversed heading 2; distinct from collision-query result codes
 KfActor	0x3a	0x02	movement_yaw	s16	supported	game_actor.h;asm;xrefs	movement heading
 KfActor	0x3c	0x02	animation_step	s16	supported	game_actor.h;asm;xrefs	animation increment
 KfActor	0x3e	0x02	vertical_velocity	s16	supported	game_actor.h;asm;xrefs	vertical velocity
@@ -64,7 +64,7 @@ KfActorDefinition	0x84	0x02	experience_reward	u16	supported	game_actor.h;asm;xre
 KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	game_actor.h;asm;xrefs	three attack components
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	game_actor.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	gold_drop_limit	u16	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	exclusive upper bound of randomized gold amount: rand * limit >> 15; object 39 behavior 0x41 credits player gold
-KfActorPlacement	0x00	0x01	slot_state	u8	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
+KfActorPlacement	0x00	0x01	slot_state	KfActorSlotState	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
 KfActorPlacement	0x01	0x01	definition_flags	u8	supported	game_actor.h;asm;actor_pool_load_placements	low five bits are the definition id, bit 5 the variant flag
 KfActorPlacement	0x02	0x01	heading_quadrant	u8	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.heading_quadrant
 KfActorPlacement	0x03	0x01	tile_z	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile z

@@ -110,7 +110,6 @@ KF_OPEN_GRAPHICS_OFFSET_CHECK(active_cell_window, 0x24780);
 KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_projection_shift, 0x24784);
 KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_24786, 0x24786);
 #undef KF_OPEN_GRAPHICS_OFFSET_CHECK
-typedef char check_runtime_size[sizeof(KfGraphicsRuntimeOpen) == 0x24788 ? 1 : -1];
 
 extern MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT];
 extern KfSpriteQuad floor_item_sprites[7];

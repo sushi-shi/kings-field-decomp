@@ -265,3 +265,104 @@ Full `kf build` still fails the existing data/ownership checks: source data
 and target relink remains PSX 1/1, GAME 75/77, OPEN 34/38. These failures and
 the 50 failing modern source/image variants are not claimed as resolved by
 this actor-domain checkpoint.
+
+## Function Match Plan: actor slot and movement states at `f4c7b23`
+
+Extend scoped byte storage to `KfActorSlotState`, `KfActorVerticalState` and
+`KfActorCollisionState`. The live actor and the 16-byte placement record share
+the slot domain; the loader copies +0 without translating it. Keep the
+placement terminator `ff` and the four policy values unchanged. Vertical
+states remain the five gravity/landing policies, and collision states remain
+the three horizontal steering outcomes documented in `game-actor-states.md`.
+The world-query result and the mover's boolean result are different domains.
+
+The byte load at GAME `8002e6dc` captures slot policy before the awareness
+distance call, then `8002e750` masks it to 255 for the dormant branch's
+comparisons with 2, 1 and 3. Propagate the enum through both existing locals;
+rename the untyped `kind` copy to `spawn_policy`. Its narrowed domain follows
+the decoded byte value, rather than erasing that value to `s32`. Compare the
+resulting instructions explicitly: the current function is 97.736840%, not
+exact, and the effect of the C local's width remains to be measured.
+
+Hash-identical GAME retail was revalidated. Eighteen consumer/control
+snapshots were refreshed with all six semantic views and source history,
+plus `map_resources_load` at `8001b558` as the placement-stream caller.
+The earlier actor-state dossier provides the per-function state semantics,
+adjacent functions and vendor-negative evidence. Additional exact controls
+are `actor_pool_find_free` (`8002ca78`, 60 bytes), `actor_pool_find_at_tile`
+(`80033ee4`, 128 bytes), `map_load_floor` (`80036554`, 164 bytes), and the
+resource caller (600 bytes). They expose the free-slot checks and load path,
+not new library ownership or reconstruction progress.
+
+Retain the live actor's offsets +0, +11 and +57, the placement's +0 slot byte,
+all aggregate extents, values, calls, CFG and ordered referents. Layout
+inventories and modern compilation check the types; no new per-field tests
+are needed. Force the affected units to compile, compare all existing objects
+and scores with the immutable `f4c7b23` baseline, independently resolve exact
+functions against retail words, then run existing tests, lint, whitespace
+checks and full `kf build`. Every reviewed function receives a final verdict.
+
+The first compilation of two byte locals adds a copy before the first mask
+and repeats the mask after `rand`, growing awareness by eight bytes. Only
+that partial score changes, from 97.736840% to 96.099420%; the other 483
+comparisons stay unchanged. Retail and the prior source instead retain one
+promoted policy value. Model this C integer promotion explicitly with
+`KF_ENUM_PROMOTED`: the legacy view uses the type of unary `+` on the enum's
+integer storage, while the modern view retains the same scoped enum domain.
+This preserves the existing word-valued local without an unchecked integer
+escape in Clang. No arithmetic, cast expression or extra local is added to
+the function body. Recompile to verify the promotion rather than accepting
+the narrowed-local instruction sequence.
+
+Per the user's subsequent direction, remove compile-time size assertions
+from game sources and headers. This includes the enum-size checks, which
+mostly repeat the declared byte storage, and the aggregate-size checks.
+Use the existing layout inventories and retail comparisons for those facts.
+Historical references above describe the checks used during their original
+campaigns; they are not instructions to reintroduce size assertions.
+
+## Slot and movement state result
+
+The three domains now propagate through both placement/live slot fields and
+the live vertical/collision fields. `spawn_policy` retains the promoted C
+integer value and the modern slot enum domain. All 112 objects retain their
+non-debug contents and all 484 strict comparisons remain unchanged. Only
+four `.debug_line` sections change after removing size assertions from C
+files. The source/header scan finds no remaining compile-time size assertion;
+27 were removed, including four added during this uncommitted campaign.
+
+All 19 reviewed functions retain their initial strict result. Fourteen exact
+functions additionally match 1,157 linked retail words and their ordered
+calls and data addresses. No exact count changes and no banking occurs.
+
+| GAME VA | Function | Strict % before / after | Verdict |
+|---|---|---:|---|
+| `8001b558` | `map_resources_load` | 100 | Unchanged exact |
+| `8002ca78` | `actor_pool_find_free` | 100 | Unchanged exact |
+| `8002cc64` | `actor_initialize` | 100 | Unchanged exact |
+| `8002ce88` | `actor_pool_clear` | 100 | Unchanged exact |
+| `8002ced4` | `actor_pool_spawn` | 100 | Unchanged exact |
+| `8002cf84` | `actor_pool_begin_death_by_definition` | 100 | Unchanged exact |
+| `8002d120` | `actor_apply_damage` | 89.986725 | Unchanged partial |
+| `8002dd94` | `actor_try_select_action_distance_facing` | 100 | Unchanged exact |
+| `8002e0f0` | `actor_try_select_profiled_action` | 96.333336 | Unchanged partial |
+| `8002e2e8` | `actor_select_next_action` | 100 | Unchanged exact |
+| `8002e6a8` | `actor_update_awareness` | 97.736840 | Unchanged partial |
+| `8002e954` | `actor_move_xz_with_collision` | 100 | Unchanged exact |
+| `8002ed00` | `actor_move_along_heading` | 100 | Unchanged exact |
+| `8002fa88` | `actor_update_current_action` | 98.938940 | Unchanged partial |
+| `80030818` | `actor_pool_update` | 100 | Unchanged exact |
+| `800308c0` | `actor_pool_load_placements` | 100 | Unchanged exact |
+| `80033ee4` | `actor_pool_find_at_tile` | 100 | Unchanged exact |
+| `80035b5c` | `map_world_state_persist` | 94.821840 | Unchanged partial |
+| `80036554` | `map_load_floor` | 100 | Unchanged exact |
+
+The full modern census remains 62/112 passing variants, including all seven
+actor consumers. The other 50 retain their existing diagnostics. Ruff and
+`git diff --check` pass. The existing local suite runs 656 tests in 83.694
+seconds: 655 pass and the untracked save/load-hub instruction comparison
+remains the only failure. No new tests were added.
+
+Full `kf build` retains the same data/ownership failures: source contributions
+7/60, config SDK contributions 4/4, target relink PSX 1/1, GAME 75/77, OPEN
+34/38. Removing assertions has not fixed or hidden those discrepancies.

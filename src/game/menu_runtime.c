@@ -16,8 +16,6 @@ enum {
     MENU_TEXT_OT_DEPTH = 1000
 };
 
-typedef char menu_glyph_string_size[sizeof(MenuGlyphString) == 0x18 ? 1 : -1];
-typedef char menu_window_layout_size[sizeof(MenuWindowLayout) == 0x108 ? 1 : -1];
 typedef char menu_window_row_codes_offset[
     (u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];
 

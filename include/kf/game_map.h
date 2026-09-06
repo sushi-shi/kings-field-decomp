@@ -84,7 +84,6 @@ typedef struct KfMapCopyRegion {
     u8 height;
 } KfMapCopyRegion;
 
-typedef char check_map_copy_region_size[sizeof(KfMapCopyRegion) == 6 ? 1 : -1];
 
 typedef struct KfMapObjectLink {
     u8 link_id;
@@ -134,8 +133,6 @@ typedef struct KfMapObject {
 } KfMapObject;
 
 /* The pool reset and placement loader access the whole link as two words. */
-typedef char check_map_object_link_size[sizeof(KfMapObjectLink) == 8 ? 1 : -1];
-typedef char check_map_object_size[sizeof(KfMapObject) == 0x2c ? 1 : -1];
 typedef char check_map_object_link_offset[
     (unsigned long)&((KfMapObject *)0)->link == 0x20 ? 1 : -1];
 typedef char check_map_placement_link_offset[

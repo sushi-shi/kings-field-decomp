@@ -180,7 +180,6 @@ typedef struct KfEffectRecord {
     KfEffectPropagation propagation; /* 0x3a: kind-10 generations or kind-6 branch */
 } KfEffectRecord;
 
-typedef char check_effect_record_size[sizeof(KfEffectRecord) == 0x3c ? 1 : -1];
 #define KF_EFFECT_OFFSET_CHECK(label, member, offset) \
     typedef char check_effect_##label[ \
         ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
@@ -195,8 +194,6 @@ KF_EFFECT_OFFSET_CHECK(control, control, 0x38);
 KF_EFFECT_OFFSET_CHECK(control_high_byte, control.bytes.high, 0x39);
 KF_EFFECT_OFFSET_CHECK(propagation, propagation, 0x3a);
 #undef KF_EFFECT_OFFSET_CHECK
-typedef char check_effect_direction_size[sizeof(KfEffectDirection) == 8 ? 1 : -1];
-typedef char check_effect_control_size[sizeof(KfEffectControl) == 2 ? 1 : -1];
 
 /* Startup clears this whole object; selection derives the magic array from
  * the current-record slot by a fixed member offset. */

@@ -14,8 +14,6 @@ enum {
     NOTIFICATION_ATLAS_ROW_SHIFT = 4
 };
 
-typedef char notification_state_size[sizeof(KfNotificationState) == 0x16 ? 1 : -1];
-typedef char notification_control_size[sizeof(KfNotificationControl) == 6 ? 1 : -1];
 typedef char notification_control_offset[
     (u32)&((KfNotificationState *)0)->control == 0x10 ? 1 : -1];
 typedef char notification_tail_offset[

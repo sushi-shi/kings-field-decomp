@@ -174,9 +174,9 @@ void actor_update_awareness(void)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    u8 slot_state = actor->slot_state;
+    KfActorSlotState slot_state = actor->slot_state;
     s32 distance;
-    s32 kind;
+    KF_ENUM_PROMOTED(KfActorSlotState) spawn_policy;
 
     switch (actor->lifecycle) {
     case KF_ACTOR_LIFECYCLE_DORMANT:
@@ -191,8 +191,8 @@ void actor_update_awareness(void)
         if (distance == -1) {
             return;
         }
-        kind = slot_state;
-        if (kind == KF_ACTOR_SLOT_RESPAWNING) {
+        spawn_policy = slot_state;
+        if (spawn_policy == KF_ACTOR_SLOT_RESPAWNING) {
             if ((actor->spawn_chance << 7) > rand()) {
                 if (actor_pool_find_overlap(
                         actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x,
@@ -215,7 +215,7 @@ void actor_update_awareness(void)
                 return;
             }
             if ((actor->spawn_chance << 7) > rand()
-                || kind == KF_ACTOR_SLOT_PERSISTENT || kind == KF_ACTOR_SLOT_HOMEBOUND) {
+                || spawn_policy == KF_ACTOR_SLOT_PERSISTENT || spawn_policy == KF_ACTOR_SLOT_HOMEBOUND) {
                 if (actor_pool_find_overlap(
                         actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x,
                         KF_COLLISION_IGNORE_HEIGHT,
