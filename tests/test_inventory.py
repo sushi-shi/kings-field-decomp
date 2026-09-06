@@ -2935,7 +2935,7 @@ class InventoryTests(unittest.TestCase):
                 map_copy_regions.datatype,
                 map_copy_regions.size,
             ),
-            ("map_copy_regions", "KfMapCopyRegion[4]", 0x18),
+            ("map_copy_regions", "KfMapCopyRegion[5]", 0x1E),
         )
         action_jump_table = game.datum(0x80012888)
         self.assertEqual(

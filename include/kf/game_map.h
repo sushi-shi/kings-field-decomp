@@ -23,6 +23,8 @@ typedef struct KfMapCopyRegion {
     u8 height;
 } KfMapCopyRegion;
 
+typedef char check_map_copy_region_size[sizeof(KfMapCopyRegion) == 6 ? 1 : -1];
+
 typedef struct KfMapObjectLink {
     u8 link_id;
     u8 action_parameter;
@@ -176,7 +178,7 @@ typedef struct KfMapRuntimeState {
     u32 world_state[2125];
 } KfMapRuntimeState;
 
-extern KfMapCopyRegion map_copy_regions[4];
+extern KfMapCopyRegion map_copy_regions[5];
 extern KfMapRuntimeState map_runtime_state;
 /* Member spellings used by consumers, not independently owned globals. */
 #define map_event_pool (map_runtime_state.events)

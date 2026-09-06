@@ -52,6 +52,9 @@ promotes a probe to a proven historical toolchain.
 - [game-map-cell-source.md](game-map-cell-source.md): GAME's byte object-index
   lifetime, three-case door remapping and natural XYZ coordinates; the shared
   owner control narrows the remaining mismatch to eighteen stack operands.
+- [game-map-copy-region-source.md](game-map-copy-region-source.md): direct
+  index-4 callers recover the fifth six-byte rectangle descriptor;
+  source-before-destination column advances recover the five-grid copy loop.
 - [game-map-enqueue.md](game-map-enqueue.md): restore allocation-overflow
   returns and retail packet dispatch in the GAME map polygon emitter.
 - [game-model-enqueue.md](game-model-enqueue.md): four-mode model packet
