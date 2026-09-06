@@ -7,6 +7,42 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+/* Internal file/UI statuses share 0..4 with the BIOS card-event results. */
+enum {
+    SAVE_STATUS_OK = 1,
+    SAVE_STATUS_FORMAT_REQUIRED = 3, /* Also KF_CARD_STATUS_NEW_DEVICE. */
+    SAVE_STATUS_NO_SPACE = 5,
+    SAVE_STATUS_FAILED = 6,
+    SAVE_STATUS_NO_DATA = 7,
+    SAVE_STATUS_FORMAT_CONFIRMATION = 8,
+    SAVE_STATUS_FORMAT_FAILED = 11,
+    SAVE_STATUS_STALE_CATALOG = 12,
+    SAVE_STATUS_READ_FAILED = 13,
+    SAVE_STATUS_WRITE_FAILED = 14
+};
+
+/* Direct TIM/Mddd. IDs; menu_load_item_texture instead uses an index plus one. */
+enum {
+    SAVE_MESSAGE_NO_CARD = 101,
+    SAVE_MESSAGE_NO_SPACE = 102,
+    SAVE_MESSAGE_KEEP_CARD_INSERTED = 103,
+    SAVE_MESSAGE_WRITE_FAILED = 107,
+    SAVE_MESSAGE_FORMAT_FAILED = 108,
+    SAVE_MESSAGE_FORMAT_REQUIRED = 109,
+    SAVE_MESSAGE_CARD_UNUSABLE = 110,
+    SAVE_MESSAGE_NO_DATA = 111,
+    SAVE_MESSAGE_READ_FAILED = 112,
+    SAVE_MESSAGE_SYSTEM_ERROR = 113,
+    SAVE_MESSAGE_FAILED = 114,
+    SAVE_MESSAGE_FORMAT_CONFIRMATION = 115,
+    MESSAGE_IMAGE_SKIP = 0xff
+};
+
+enum {
+    SAVE_FILE_IO_ATTEMPTS = 5,
+    CARD_FORMAT_ATTEMPTS = 5
+};
+
 enum {
     IMAGE_WAIT_INITIAL_BRIGHTNESS = 32,
     IMAGE_WAIT_MAX_BRIGHTNESS = 127
@@ -28,11 +64,8 @@ RODATA(0x8001235c, 0x178)
     "\201@\201@\201@\201@\201@\201@\201\203\201\203\201@\201@\202j\202h\202m\202f" \
     "\201f\202r\201@\202e\202h\202d\202k\202c\201@\201@\201\204\201\204"
 
-/*
- * Serialized game state. The 0xe0 bytes from player_state.experience onward, the
- * two unresolved blocks, and the first byte of each 20-byte magic record are
- * copied verbatim; the retail object boundaries inside them are still open.
- */
+/* The payload copies player/world/item-stock storage verbatim and samples
+ * each magic record's learned flag. Its unused byte ranges remain unresolved. */
 
 void memory_card_clear_events(void);
 s32 memory_card_wait_event(void);
@@ -185,7 +218,7 @@ s32 memory_card_check_or_format(s16 allow_format)
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
-    if (status == 3) {
+    if (status == KF_CARD_STATUS_NEW_DEVICE) {
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
@@ -193,31 +226,31 @@ s32 memory_card_check_or_format(s16 allow_format)
         _new_card();
         memory_card_begin_status_check();
         status = memory_card_format();
-    } else if (status == 1) {
+    } else if (status == KF_CARD_STATUS_IO_END) {
         if (allow_format == 0) {
-            status = 8;
+            status = SAVE_STATUS_FORMAT_CONFIRMATION;
         } else {
             status = memory_card_format();
         }
     }
-    if (status != 1) {
+    if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
     result = status;
     switch (result) {
-    case 0:
-    case 2:
-    case 3:
-    case 4:
+    case KF_CARD_STATUS_NOT_STARTED:
+    case KF_CARD_STATUS_TIMEOUT:
+    case KF_CARD_STATUS_NEW_DEVICE:
+    case KF_CARD_STATUS_ERROR:
     case 9:
     case 10:
-    case 11:
+    case SAVE_STATUS_FORMAT_FAILED:
         result = 0;
         break;
-    case 1:
+    case SAVE_STATUS_OK:
         result = 1;
         break;
-    case 8:
+    case SAVE_STATUS_FORMAT_CONFIRMATION:
         result = 2;
         break;
     }
@@ -239,9 +272,9 @@ s32 memory_card_format(void)
             break;
         }
         attempt++;
-    } while (attempt < 5);
+    } while (attempt < CARD_FORMAT_ATTEMPTS);
     if (formatted != 1) {
-        return 0xb;
+        return SAVE_STATUS_FORMAT_FAILED;
     }
     return status;
 }
@@ -254,36 +287,36 @@ s32 save_system_write_slot(s16 slot_id)
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
-    if (status == 3) {
+    if (status == KF_CARD_STATUS_NEW_DEVICE) {
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
-        status = 1;
+        status = KF_CARD_STATUS_IO_END;
     }
-    if (status == 1) {
+    if (status == KF_CARD_STATUS_IO_END) {
         status = save_file_write_slot(slot_id);
     }
-    if (status != 1) {
+    if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
     result = status;
     switch (result) {
-    case 0:
-    case 2:
-    case 4:
-    case 14:
+    case KF_CARD_STATUS_NOT_STARTED:
+    case KF_CARD_STATUS_TIMEOUT:
+    case KF_CARD_STATUS_ERROR:
+    case SAVE_STATUS_WRITE_FAILED:
         result = 0;
         break;
-    case 1:
+    case SAVE_STATUS_OK:
         result = 1;
         break;
-    case 3:
+    case SAVE_STATUS_FORMAT_REQUIRED:
         result = 2;
         break;
-    case 5:
+    case SAVE_STATUS_NO_SPACE:
         result = 3;
         break;
     }
@@ -299,7 +332,6 @@ s32 save_file_write_slot(s16 slot_id)
     s32 entry;
     s32 previous;
     s32 offset;
-    s32 record;
     s32 payload_size;
     s32 header_size;
 
@@ -317,9 +349,9 @@ s32 save_file_write_slot(s16 slot_id)
             close(file);
             erase(save_temporary_file_path);
             if (file == -1) {
-                return 3;
+                return SAVE_STATUS_FORMAT_REQUIRED;
             }
-            return 5;
+            return SAVE_STATUS_NO_SPACE;
         }
         save_file_initialize_buffers();
     }
@@ -351,30 +383,29 @@ s32 save_file_write_slot(s16 slot_id)
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->item_stock, item_stock,
            sizeof(save_payload_buffer->item_stock));
-    for (index = 0, record = 0; index < 24; index++) {
+    for (index = 0; index < (s32)sizeof(save_payload_buffer->magic_flags); index++) {
         save_payload_buffer->magic_flags[index] = magic_records[index].learned;
-        record += 20;
     }
     memory_card_clear_events();
     file = open(save_main_file_path, O_WRONLY);
     if (file == -1) {
-        return 0xe;
+        return SAVE_STATUS_WRITE_FAILED;
     }
     offset = payload_size * entry;
     index = 0;
     do {
         memory_card_clear_events();
-        lseek(file, header_size + offset, 0);
+        lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
         written = write(file, save_payload_buffer, payload_size);
         if (written == payload_size) {
             break;
         }
         index++;
-    } while (index < 5);
+    } while (index < SAVE_FILE_IO_ATTEMPTS);
     close(file);
     if (written != payload_size) {
-        return 0xe;
+        return SAVE_STATUS_WRITE_FAILED;
     }
     save_header_buffer->directory.slot_ids[entry] = slot_id;
     save_header_buffer->directory.slot_ids[previous] = KF_SAVE_SLOT_SPARE;
@@ -388,24 +419,24 @@ s32 save_file_write_slot(s16 slot_id)
     memory_card_clear_events();
     file = open(save_main_file_path, O_WRONLY);
     if (file == -1) {
-        return 0xe;
+        return SAVE_STATUS_WRITE_FAILED;
     }
     index = 0;
     do {
         memory_card_clear_events();
-        lseek(file, 0, 0);
+        lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
         written = write(file, save_header_buffer, header_size);
         if (written == header_size) {
             break;
         }
         index++;
-    } while (index < 5);
+    } while (index < SAVE_FILE_IO_ATTEMPTS);
     close(file);
     if (written != header_size) {
-        return 0xe;
+        return SAVE_STATUS_WRITE_FAILED;
     }
-    return 1;
+    return SAVE_STATUS_OK;
 }
 
 ADDRESS(0x8002bc30, 0xd8)
@@ -416,31 +447,31 @@ s32 save_system_read_header(void)
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
-    if (status == 3) {
+    if (status == KF_CARD_STATUS_NEW_DEVICE) {
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
-        status = 1;
+        status = KF_CARD_STATUS_IO_END;
     }
-    if (status == 1) {
+    if (status == KF_CARD_STATUS_IO_END) {
         status = save_file_read_header();
     }
-    if (status != 1) {
+    if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
     result = status;
     switch (result) {
-    case 0:
-    case 2:
-    case 4:
+    case KF_CARD_STATUS_NOT_STARTED:
+    case KF_CARD_STATUS_TIMEOUT:
+    case KF_CARD_STATUS_ERROR:
         result = 0;
         break;
-    case 1:
-    case 3:
-    case 7:
+    case SAVE_STATUS_OK:
+    case KF_CARD_STATUS_NEW_DEVICE:
+    case SAVE_STATUS_NO_DATA:
         result = 1;
         break;
     }
@@ -460,24 +491,24 @@ s32 save_file_read_header(void)
     memory_card_clear_events();
     file = open(save_main_file_path, O_RDONLY);
     if (file == -1) {
-        return 7;
+        return SAVE_STATUS_NO_DATA;
     }
     attempt = 0;
     do {
         memory_card_clear_events();
-        lseek(file, 0, 0);
+        lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
         count = read(file, save_header_buffer, length);
         if (count == length) {
             break;
         }
         attempt++;
-    } while (attempt < 5);
+    } while (attempt < SAVE_FILE_IO_ATTEMPTS);
     close(file);
     if (count != length) {
-        return 0xd;
+        return SAVE_STATUS_READ_FAILED;
     }
-    return 1;
+    return SAVE_STATUS_OK;
 }
 
 ADDRESS(0x8002bde4, 0xcc)
@@ -488,28 +519,28 @@ s32 save_system_read_slot(s16 slot_id)
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
-    if (status == 3) {
+    if (status == KF_CARD_STATUS_NEW_DEVICE) {
         save_system_read_header();
-        memory_card_show_status_message(0xc);
+        memory_card_show_status_message(SAVE_STATUS_STALE_CATALOG);
         return 0;
     }
-    if (status == 1) {
+    if (status == KF_CARD_STATUS_IO_END) {
         status = save_file_read_slot(slot_id);
     }
-    if (status != 1) {
+    if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
     result = status;
     switch (result) {
-    case 0:
-    case 2:
-    case 3:
-    case 4:
-    case 7:
-    case 12:
+    case KF_CARD_STATUS_NOT_STARTED:
+    case KF_CARD_STATUS_TIMEOUT:
+    case KF_CARD_STATUS_NEW_DEVICE:
+    case KF_CARD_STATUS_ERROR:
+    case SAVE_STATUS_NO_DATA:
+    case SAVE_STATUS_STALE_CATALOG:
         result = 0;
         break;
-    case 1:
+    case SAVE_STATUS_OK:
         result = 1;
         break;
     }
@@ -525,7 +556,6 @@ s32 save_file_read_slot(s16 slot_id)
     s32 count;
     s32 entry;
     s32 offset;
-    s32 record;
     s32 payload_size;
     s32 header_size;
     u8 *weapon_asset_buffer;
@@ -541,27 +571,27 @@ s32 save_file_read_slot(s16 slot_id)
         }
     }
     if (entry == -1) {
-        return 7;
+        return SAVE_STATUS_NO_DATA;
     }
     memory_card_clear_events();
     file = open(save_main_file_path, O_RDONLY);
     if (file == -1) {
-        return 7;
+        return SAVE_STATUS_NO_DATA;
     }
     index = 0;
     do {
         memory_card_clear_events();
-        lseek(file, 0, 0);
+        lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
         count = read(file, &header, header_size);
         if (count == header_size) {
             break;
         }
         index++;
-    } while (index < 5);
+    } while (index < SAVE_FILE_IO_ATTEMPTS);
     if (count != header_size) {
         close(file);
-        return 0xd;
+        return SAVE_STATUS_READ_FAILED;
     }
     for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
         if (save_header_buffer->directory.summaries[index].experience
@@ -577,24 +607,24 @@ s32 save_file_read_slot(s16 slot_id)
             || save_header_buffer->directory.summaries[index].maximum_mp
                 != header.directory.summaries[index].maximum_mp) {
             close(file);
-            return 0xc;
+            return SAVE_STATUS_STALE_CATALOG;
         }
     }
     offset = payload_size * entry;
     index = 0;
     do {
         memory_card_clear_events();
-        lseek(file, header_size + offset, 0);
+        lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
         count = read(file, save_payload_buffer, payload_size);
         if (count == payload_size) {
             break;
         }
         index++;
-    } while (index < 5);
+    } while (index < SAVE_FILE_IO_ATTEMPTS);
     close(file);
     if (count != payload_size) {
-        return 0xd;
+        return SAVE_STATUS_READ_FAILED;
     }
     weapon_asset_buffer = player_state.weapon_asset_buffer;
     saved_weapon_animation_cache = player_state.weapon_animation_cache;
@@ -604,13 +634,12 @@ s32 save_file_read_slot(s16 slot_id)
            sizeof(save_payload_buffer->world_state));
     memcpy(item_stock, save_payload_buffer->item_stock,
            sizeof(save_payload_buffer->item_stock));
-    for (index = 0, record = 0; index < 24; index++) {
+    for (index = 0; index < (s32)sizeof(save_payload_buffer->magic_flags); index++) {
         magic_records[index].learned = save_payload_buffer->magic_flags[index];
-        record += 20;
     }
     player_state.weapon_asset_buffer = weapon_asset_buffer;
     player_state.weapon_animation_cache = saved_weapon_animation_cache;
-    return 1;
+    return SAVE_STATUS_OK;
 }
 
 ADDRESS(0x8002c27c, 0x68)
@@ -664,46 +693,46 @@ s32 memory_card_show_status_message(s16 status)
     s32 result;
 
     switch (status) {
-    case 1:
-        message = -1;
+    case SAVE_STATUS_OK:
+        message = -1; /* Distinct from the image loader's 255 skip value. */
         break;
-    case 2:
-        message = 0x65;
+    case KF_CARD_STATUS_TIMEOUT:
+        message = SAVE_MESSAGE_NO_CARD;
         break;
-    case 3:
-        message = 0x6d;
+    case SAVE_STATUS_FORMAT_REQUIRED:
+        message = SAVE_MESSAGE_FORMAT_REQUIRED;
         break;
-    case 0:
-    case 4:
-        message = 0x71;
+    case KF_CARD_STATUS_NOT_STARTED:
+    case KF_CARD_STATUS_ERROR:
+        message = SAVE_MESSAGE_SYSTEM_ERROR;
         break;
-    case 5:
-        message = 0x66;
+    case SAVE_STATUS_NO_SPACE:
+        message = SAVE_MESSAGE_NO_SPACE;
         break;
-    case 6:
-        message = 0x72;
+    case SAVE_STATUS_FAILED:
+        message = SAVE_MESSAGE_FAILED;
         break;
-    case 7:
-        message = 0x6f;
+    case SAVE_STATUS_NO_DATA:
+        message = SAVE_MESSAGE_NO_DATA;
         break;
-    case 8:
-        message = 0x73;
+    case SAVE_STATUS_FORMAT_CONFIRMATION:
+        message = SAVE_MESSAGE_FORMAT_CONFIRMATION;
         break;
     case 9:
     case 10:
-        message = 0x6e;
+        message = SAVE_MESSAGE_CARD_UNUSABLE;
         break;
-    case 11:
-        message = 0x6c;
+    case SAVE_STATUS_FORMAT_FAILED:
+        message = SAVE_MESSAGE_FORMAT_FAILED;
         break;
-    case 12:
-        message = 0x67;
+    case SAVE_STATUS_STALE_CATALOG:
+        message = SAVE_MESSAGE_KEEP_CARD_INSERTED;
         break;
-    case 13:
-        message = 0x70;
+    case SAVE_STATUS_READ_FAILED:
+        message = SAVE_MESSAGE_READ_FAILED;
         break;
-    case 14:
-        message = 0x6b;
+    case SAVE_STATUS_WRITE_FAILED:
+        message = SAVE_MESSAGE_WRITE_FAILED;
         break;
     }
     result = menu_load_message_image(message);
@@ -720,7 +749,7 @@ s32 menu_load_message_image(s32 message_id)
     void *buffer;
     s32 remainder;
 
-    if (message_id != 0xff) {
+    if (message_id != MESSAGE_IMAGE_SKIP) {
         remainder = message_id % 100;
         path[5] = message_id / 100 + '0';
         path[6] = remainder / 10 + '0';

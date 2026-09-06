@@ -1447,3 +1447,75 @@ All 651 repository tests pass (nine skips), and lint/whitespace checks pass.
 The full build retains its existing ownership/placement failures: six of
 60 source-data owners match, target relink is PSX 1/1, GAME 75/77 and OPEN
 34/38, and there are no artifact failures. No tooling or flake files changed.
+
+## Save statuses, messages and I/O attempts
+
+Function Match Plan: name the internal save statuses and their direct message
+asset IDs in `game.save_system`, using the complete image-qualified dossiers,
+current producer/consumer paths and decoded retail TIM messages. Preserve
+the mixed BIOS-event, file-policy and menu-result contracts, all switch-arm
+orders, calls, delay slots and relocation referents. The game-specific file
+paths, summaries, retry policy and UI dispatch exclude these wrappers from
+vendored library ownership. Require every non-debug section of all 112
+objects and all 484 strict scores to remain unchanged from 93be2d6.
+
+| GAME function | Final strict result, unchanged | Evidence and change |
+| --- | --- | --- |
+| 8002b4d8 `memory_card_check_or_format` | 100% | BIOS event 3 refreshes the card; event 1 either formats or requests confirmation. Keep its menu-result mapping. |
+| 8002b5d0 `memory_card_format` | 100% | Five format attempts; failed format returns status 11, otherwise forwards the subsequent card event. |
+| 8002b648 `save_system_write_slot` | 100% | Refreshes a new card, invokes the file writer and maps internal statuses to menu results. |
+| 8002b73c `save_file_write_slot` | 100% | Create probes select format-required/no-space messages; file-open and exhausted short writes select write failure. |
+| 8002bc30 `save_system_read_header` | 100% | No-data and new-device cases retain the original catalog-ready result. |
+| 8002bd08 `save_file_read_header` | 100% | Missing/open failure differs from an exhausted short read. |
+| 8002bde4 `save_system_read_slot` | 100% | A newly reported card invalidates the cached catalog; preserve the message and early return. |
+| 8002beb0 `save_file_read_slot` | 100% | No slot/file, changed summaries and short reads have distinct status tags. |
+| 8002c510 `memory_card_show_status_message` | 97.980770% | The original 15-case dispatch selects verified `TIM/Mddd.` images; keep the existing residue and pass-through default. |
+| 8002c5e0 `menu_load_message_image` | 100% | Direct decimal asset ID, skip value 255 and zero-success/one-load-failure convention. |
+
+Use the pinned SDK's `SEEK_SET` for file-origin seeks. Name total attempts,
+including the first operation, rather than incorrectly calling five the
+number of retries. File I/O and formatting retain separate five-attempt
+limits; neither is derived from the file's five-block allocation.
+
+The learned-flag loops use the serialized `u8` array's extent as their count,
+cast to `s32` to preserve the retail signed comparisons. An unsigned `sizeof`
+bound changed exactly those two `slti` instructions to `sltiu`; keep the
+observed signed index/count contract.
+Remove their unused `record` counters and `+= 20` statements: neither counter
+has a read, and the indexed `KfMagicRecord` accesses independently supply the
+real 20-byte record stride. Retain all copied ranges, explicit summary-field
+comparisons, payload/header size locals and the unguarded previous-slot store.
+
+The [save-system protocol](../save-system.md#card-events-and-status-codes)
+records every named status producer, wrapper mapping and decoded message.
+The selected UI text supports policy names; it does not prove a filesystem
+root cause. The file and format attempt limits are separately five, with
+the choice of that count unresolved. Do not derive either from the unrelated
+five-block allocation.
+
+| Remaining literal in these ten functions | Reason |
+| --- | --- |
+| 0 in loop initializers, comparisons and file offsets | Index/attempt origin, Boolean false, or beginning of the file; the seek-origin argument now uses SDK `SEEK_SET`. |
+| 1 in increments and format API checks | One array element/attempt at a time, or the SDK's observed true/success result. |
+| Menu results 0, 1, 2 and 3 | Operation-specific mappings documented in `save-system.md`; these are not interchangeable with BIOS or internal save statuses. |
+| -1 in file and entry checks | SDK open failure or unsuccessful directory search. Keep the existing previous-entry store even when its index remains -1. |
+| 16 in create flags | BIOS file-open encoding places the memory-card block count in the upper halfword; it is not a size or alignment estimate. |
+| Cases 9 and 10 | Both select the unusable-card image; separate producers and meanings remain unresolved. |
+| -1 in status-message dispatch | The literal value assigned for status 1 differs from the loader's skip ID 255; the other -1 converts loader failure to the dispatcher's error result. |
+| 16 in the message path array | Observed local buffer capacity; the path text alone does not justify changing its extent. |
+| 5, 6 and 7 in path subscripts | Hundreds, tens and units positions in literal `TIM\\M000.`. |
+| 100, 10 and `'0'` in path construction | Decimal digit extraction and character encoding. |
+| 0 and 1 in the message loader/dispatcher | Loader success or skip returns zero, CD-load failure returns one, and the dispatcher converts that failure to -1. |
+
+Other functions in the save unit retain their earlier audit status; this
+batch does not claim their remaining literals have all been reviewed.
+
+Validation: every non-debug section of all 112 objects and all 484 strict
+scores are unchanged from 93be2d6; only the save unit's debug lines differ.
+Each function in the table retains its recorded result, including the
+status dispatcher's existing 97.980770% residue. The 651 repository tests
+pass with nine skips, and lint/whitespace checks pass. The full build still
+fails on the existing data-ownership and placement issues: six of 60 source
+data owners match, with target relink PSX 1/1, GAME 75/77 and OPEN 34/38,
+and zero artifact failures. No new result is banked. No tooling or flake
+files changed.
