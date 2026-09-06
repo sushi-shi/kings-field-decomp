@@ -52,18 +52,18 @@ s32 save_system_read_catalog(KfSaveSlotSummary *summaries)
     result = save_system_read_header();
     if (result == 1) {
         header = save_header_buffer;
-        for (index = 0; index < 4; index++) {
+        for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
             u8 slot = header->directory.slot_ids[index];
 
-            if (slot != 0 && slot != 4) {
+            if (slot != KF_SAVE_SLOT_EMPTY && slot != KF_SAVE_SLOT_SPARE) {
                 s32 entry = slot - 1;
 
-                summaries[entry].fields[0] = header->directory.summaries[index].fields[0];
-                summaries[entry].fields[1] = header->directory.summaries[index].fields[1];
-                summaries[entry].fields[2] = header->directory.summaries[index].fields[2];
-                summaries[entry].fields[3] = header->directory.summaries[index].fields[3];
-                summaries[entry].fields[4] = header->directory.summaries[index].fields[4];
-                summaries[entry].fields[5] = header->directory.summaries[index].fields[5];
+                summaries[entry].experience = header->directory.summaries[index].experience;
+                summaries[entry].current_floor = header->directory.summaries[index].current_floor;
+                summaries[entry].current_hp = header->directory.summaries[index].current_hp;
+                summaries[entry].maximum_hp = header->directory.summaries[index].maximum_hp;
+                summaries[entry].current_mp = header->directory.summaries[index].current_mp;
+                summaries[entry].maximum_mp = header->directory.summaries[index].maximum_mp;
             }
         }
     }
@@ -317,22 +317,22 @@ s32 save_file_write_slot(s16 slot_id)
         save_file_initialize_buffers();
     }
     entry = -1;
-    for (index = 0; index < 4; index++) {
-        if (save_header_buffer->directory.slot_ids[index] == 4) {
+    for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
+        if (save_header_buffer->directory.slot_ids[index] == KF_SAVE_SLOT_SPARE) {
             entry = index;
             break;
         }
     }
     if (entry == -1) {
-        for (index = 0; index < 4; index++) {
-            if (save_header_buffer->directory.slot_ids[index] == 0) {
+        for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
+            if (save_header_buffer->directory.slot_ids[index] == KF_SAVE_SLOT_EMPTY) {
                 entry = index;
                 break;
             }
         }
     }
     previous = -1;
-    for (index = 0; index < 4; index++) {
+    for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
         if (save_header_buffer->directory.slot_ids[index] == slot_id) {
             previous = index;
             break;
@@ -370,13 +370,14 @@ s32 save_file_write_slot(s16 slot_id)
         return 0xe;
     }
     save_header_buffer->directory.slot_ids[entry] = slot_id;
-    save_header_buffer->directory.slot_ids[previous] = 4;
-    save_header_buffer->directory.summaries[entry].fields[0] = player_state.experience;
-    save_header_buffer->directory.summaries[entry].fields[1] = player_state.progress_state.current_floor;
-    save_header_buffer->directory.summaries[entry].fields[2] = player_state.vitals.current_hp;
-    save_header_buffer->directory.summaries[entry].fields[3] = player_state.vitals.maximum_hp;
-    save_header_buffer->directory.summaries[entry].fields[4] = player_state.vitals.current_mp;
-    save_header_buffer->directory.summaries[entry].fields[5] = player_state.vitals.maximum_mp;
+    save_header_buffer->directory.slot_ids[previous] = KF_SAVE_SLOT_SPARE;
+    save_header_buffer->directory.summaries[entry].experience = player_state.experience;
+    save_header_buffer->directory.summaries[entry].current_floor =
+        player_state.progress_state.current_floor;
+    save_header_buffer->directory.summaries[entry].current_hp = player_state.vitals.current_hp;
+    save_header_buffer->directory.summaries[entry].maximum_hp = player_state.vitals.maximum_hp;
+    save_header_buffer->directory.summaries[entry].current_mp = player_state.vitals.current_mp;
+    save_header_buffer->directory.summaries[entry].maximum_mp = player_state.vitals.maximum_mp;
     memory_card_clear_events();
     file = open(save_main_file_path, O_WRONLY);
     if (file == -1) {
@@ -526,7 +527,7 @@ s32 save_file_read_slot(s16 slot_id)
     payload_size = sizeof(KfSavePayload);
     header_size = sizeof(KfSaveHeader);
     entry = -1;
-    for (index = 0; index < 4; index++) {
+    for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
         if (save_header_buffer->directory.slot_ids[index] == slot_id) {
             entry = index;
             break;
@@ -555,19 +556,19 @@ s32 save_file_read_slot(s16 slot_id)
         close(file);
         return 0xd;
     }
-    for (index = 0; index < 4; index++) {
-        if (save_header_buffer->directory.summaries[index].fields[0]
-                != header.directory.summaries[index].fields[0]
-            || save_header_buffer->directory.summaries[index].fields[1]
-                != header.directory.summaries[index].fields[1]
-            || save_header_buffer->directory.summaries[index].fields[2]
-                != header.directory.summaries[index].fields[2]
-            || save_header_buffer->directory.summaries[index].fields[3]
-                != header.directory.summaries[index].fields[3]
-            || save_header_buffer->directory.summaries[index].fields[4]
-                != header.directory.summaries[index].fields[4]
-            || save_header_buffer->directory.summaries[index].fields[5]
-                != header.directory.summaries[index].fields[5]) {
+    for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
+        if (save_header_buffer->directory.summaries[index].experience
+                != header.directory.summaries[index].experience
+            || save_header_buffer->directory.summaries[index].current_floor
+                != header.directory.summaries[index].current_floor
+            || save_header_buffer->directory.summaries[index].current_hp
+                != header.directory.summaries[index].current_hp
+            || save_header_buffer->directory.summaries[index].maximum_hp
+                != header.directory.summaries[index].maximum_hp
+            || save_header_buffer->directory.summaries[index].current_mp
+                != header.directory.summaries[index].current_mp
+            || save_header_buffer->directory.summaries[index].maximum_mp
+                != header.directory.summaries[index].maximum_mp) {
             close(file);
             return 0xc;
         }
@@ -608,7 +609,7 @@ s32 save_file_read_slot(s16 slot_id)
 ADDRESS(0x8002c27c, 0x68)
 s32 save_workspace_allocate(void)
 {
-    save_header_buffer = memory_allocate(0x2800);
+    save_header_buffer = memory_allocate(sizeof(KfSaveHeader) + sizeof(KfSavePayload));
     if (save_header_buffer == 0) {
         return -1;
     }

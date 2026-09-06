@@ -265,7 +265,7 @@ s32 menu_save_load_hub(void)
 ADDRESS(0x800250c4, 0x468)
 s32 menu_save_panel(void)
 {
-    KfSaveSlotSummary summaries[3];
+    KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
     s32 cursor = 0;
     s32 confirm = 0;
     s32 input = 0;
@@ -413,7 +413,7 @@ s32 menu_save_panel(void)
 ADDRESS(0x8002552c, 0x370)
 s32 menu_load_panel(void)
 {
-    KfSaveSlotSummary summaries[3];
+    KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
     s32 cursor = 0;
     s32 confirm = 0;
     s32 input = 0;
@@ -498,7 +498,7 @@ s32 menu_load_panel(void)
                 menu_play_input_sound(1);
                 confirm = 1;
                 result = -1;
-            } else if (summaries[cursor].fields[2] != 0) {
+            } else if (summaries[cursor].current_hp != 0) {
                 menu_play_input_sound(1);
                 confirm = 1;
             } else {

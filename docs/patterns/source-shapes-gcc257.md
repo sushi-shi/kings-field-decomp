@@ -1183,7 +1183,7 @@ Source shapes that were load-bearing:
 | --- | --- | --- |
 | a single callee-saved base (`s5`) holds `DAT_800652a8` for the whole body; the build loop strength-reduces `inv[code]` into an advancing temp | index a stable base pointer (`inv = DAT_800652a8; inv[code]`, `inv[selection]--`) rather than an advancing `inv++`, so the exit decrement keeps the base alive across the calls | `func_800249a8` (5.7% -> 91.5%) |
 | catalogue read filtered to the "no card" path via `beq result,1` sharing the fall-through into the menu | write `if (read_catalog(..) != 1) { nodata; return -1; }` (the negated test), not `if (== 1) { menu } else { nodata }` | `func_8002552c`, `func_800250c4` |
-| `KfSaveSlotSummary summaries[3]` at `sp+16`; the load panel's confirm reads `summaries[cursor].fields[2]` (offset 8) for slot occupancy | the 24-byte `u32 fields[6]` summary, three of them (`0x48` bytes, matching the save panel's `memset(.., 0, sizeof)`) | both save/load panels |
+| Three `KfSaveSlotSummary` rows at `sp+16`; the load panel's confirm reads `summaries[cursor].current_hp` (offset 8) for slot occupancy | the 24-byte summary with six `u32` fields, three of them (`0x48` bytes, matching the save panel's `memset(.., 0, sizeof)`) | both save/load panels |
 | the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | take `u8 *equip = &player_state.equipped_weapon_id;` and index `equip[0x2c]` etc., not the named `player_state.equipped_*` fields (which re-`lui` per field) | `func_800249a8` |
 
 Residues (structurally faithful, not steerable -- the list-widget compiler wall;

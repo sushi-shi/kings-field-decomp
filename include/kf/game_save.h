@@ -14,16 +14,28 @@ enum {
     KF_CARD_STATUS_ERROR = 4
 };
 
-/* Six on-card summary words; their individual meanings remain unresolved. */
+enum {
+    KF_SAVE_SLOT_COUNT = 3,
+    KF_SAVE_DIRECTORY_ENTRIES = 4,
+    KF_SAVE_SLOT_EMPTY = 0,
+    KF_SAVE_SLOT_SPARE = 4
+};
+
+/* On-card summaries widen the player's byte/halfword values to words. */
 typedef struct KfSaveSlotSummary {
-    u32 fields[6];
+    u32 experience;
+    u32 current_floor;
+    u32 current_hp;
+    u32 maximum_hp;
+    u32 current_mp;
+    u32 maximum_mp;
 } KfSaveSlotSummary;
 
 /* King's Field's 0x80-byte directory appended to the PlayStation header. */
 typedef struct KfSaveDirectory {
-    u8 slot_ids[4];
+    u8 slot_ids[KF_SAVE_DIRECTORY_ENTRIES];
     u8 reserved[0x1c];
-    KfSaveSlotSummary summaries[4];
+    KfSaveSlotSummary summaries[KF_SAVE_DIRECTORY_ENTRIES];
 } KfSaveDirectory;
 
 /* One standard 0x200-byte PlayStation save header plus the game directory. */
@@ -44,6 +56,21 @@ typedef struct KfSavePayload {
     u8 magic_flags[24];
     u8 unknown_2548[56];
 } KfSavePayload;
+
+typedef char check_save_summary_size[sizeof(KfSaveSlotSummary) == 0x18 ? 1 : -1];
+#define KF_SAVE_SUMMARY_OFFSET_CHECK(member, offset) \
+    typedef char check_save_summary_##member[ \
+        ((unsigned long)&((KfSaveSlotSummary *)0)->member == (offset)) ? 1 : -1]
+KF_SAVE_SUMMARY_OFFSET_CHECK(experience, 0x00);
+KF_SAVE_SUMMARY_OFFSET_CHECK(current_floor, 0x04);
+KF_SAVE_SUMMARY_OFFSET_CHECK(current_hp, 0x08);
+KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_hp, 0x0c);
+KF_SAVE_SUMMARY_OFFSET_CHECK(current_mp, 0x10);
+KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_mp, 0x14);
+#undef KF_SAVE_SUMMARY_OFFSET_CHECK
+typedef char check_save_directory_size[sizeof(KfSaveDirectory) == 0x80 ? 1 : -1];
+typedef char check_save_header_size[sizeof(KfSaveHeader) == 0x280 ? 1 : -1];
+typedef char check_save_payload_size[sizeof(KfSavePayload) == 0x2580 ? 1 : -1];
 
 extern s32 memory_card_error_event;
 extern s32 memory_card_io_end_event;

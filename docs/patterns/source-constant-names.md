@@ -1316,3 +1316,35 @@ changes. The OPEN emitter/traversal and GAME traversal remain strict 100%,
 and the GAME emitter remains 96.743240%. The full build retains the existing
 ownership and placement failures, with target relink PSX 1/1, GAME 75/77 and
 OPEN 34/38, five of 60 source data owners matching, and no artifact failures.
+
+## Save directory and workspace contracts
+
+Function Match Plan: follow the save-summary field recovery through catalog,
+slot read/write, workspace allocation and the two menu summary arrays. Name
+the three logical save slots, four physical directory entries, empty entry
+tag zero and spare entry tag four. Preserve the first-spare/first-empty
+search order, old-slot lookup, unguarded previous-entry store and all retry
+and status conventions. The menu passes `cursor + 1` for logical slots 1..3;
+the catalog ignores directory tags zero and four. These independent producer
+and consumer roles distinguish counts from encoded tags despite equal values.
+
+The workspace's 0x2800-byte allocation is exactly the 0x280-byte header plus
+one 0x2580-byte slot payload. Express that relationship with the existing
+complete types and assert their independently measured extents. The payload
+still starts at `save_header_buffer + 1`. The card file separately reserves
+five blocks for the header and four physical payload positions; this workspace
+allocation is not the file's capacity. The remaining save status, icon-format
+and menu constants continue to need their own detailed audit.
+
+The six summary indices are replaced with supported named members rather
+than index aliases. Layout-check literals are independent measured extents
+and offsets, with 1/-1 denoting valid/invalid compile-time array bounds.
+The catalog's 0x24-byte clear remains an explicitly documented retail span;
+zero is its fill byte, and `slot - 1` converts the one-based logical ID.
+The slot searches retain -1 for no entry found, including the existing
+unguarded previous-entry store. Workspace zero tests/returns and -1 failure
+retain their allocator/Boolean conventions; `header + 1` advances one complete
+header. Other unchanged literals in the save and menu bodies still await
+their subsequent batches. The full object/score comparison, 644 repository
+tests and flake checks pass as recorded in the save-summary field audit;
+the existing full-build ownership failures are unchanged.

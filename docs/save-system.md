@@ -1,7 +1,7 @@
 # GAME memory-card and save system
 
 This is the current semantic model of the contiguous GAME.EXE family at
-`0x8002b078..0x8002c794`. It is a curated work-in-progress, not a claim that
+`0x8002b078..0x8002ca78`. It is a curated work-in-progress, not a claim that
 the names or source-file boundaries are original. The supporting per-function
 snapshots are in `config/evidence/game_semantic_save_system.tsv`.
 
@@ -33,24 +33,34 @@ These file-layout types, the shared workspace declarations, and the public
 cross-TU save API are owned by `include/kf/game_save.h`. Internal card and file
 helpers remain declared inside `save_system.c`.
 
-Each summary is six 32-bit fields. Their individual gameplay meanings are not
-yet proved, so the type deliberately keeps them as `fields[6]`. The card header
-initializer writes `SC`, icon flag `0x13`, block count `5`, the Shift-JIS title,
-and three icon assets (`ICO1.TIM` through `ICO3.TIM`).
+Each summary contains six named 32-bit fields: experience, current floor,
+current HP, maximum HP, current MP and maximum MP. The writer independently
+identifies each source field; the dialog's display loads and positive-current-HP
+row predicate agree with those offsets. See the
+[field evidence](patterns/semantic-field-names.md#save-summary-field-recovery).
+The card header initializer writes `SC`, icon flag `0x13`, block count `5`,
+the Shift-JIS title, and three icon assets (`ICO1.TIM` through `ICO3.TIM`).
+
+There are three logical slots (IDs 1..3) and four physical directory entries.
+Tag zero denotes an empty entry, and tag four denotes the spare entry reused
+before searching for an empty one. A completed payload write retags its old
+entry as spare. The existing unguarded old-entry index is preserved even when
+the search leaves it at -1. The allocation size is expressed as one header
+plus one payload; their independent layout assertions still total 0x2800.
 
 The payload is a serialization container, not a distinct permanent global.
 The write/read pair proves these copied ranges and offsets:
 
 | Payload range | GAME source/destination | Size | Current meaning |
 | --- | --- | ---: | --- |
-| `+0x0000` | `0x800a0780` | `0x00e0` | unresolved state block |
-| `+0x030c` | `0x8009ddb4` | `0x2134` | unresolved state block |
-| `+0x2440` | `0x800652a8` | `0x00f0` | unresolved state block |
-| `+0x2530` | every `0x14` bytes from `0x8009ce60` | `0x18` sampled bytes | unresolved 24-entry field |
+| `+0x0000` | `0x800a0780` | `0x00e0` | complete `player_state` copy |
+| `+0x030c` | `0x8009ddb4` | `0x2134` | persisted map world state |
+| `+0x2440` | `0x800652a8` | `0x00f0` | three item-stock banks |
+| `+0x2530` | every `0x14` bytes from `0x8009ce60` | `0x18` sampled bytes | learned flag of each magic record |
 
-The global/static inventory names the workspace pointers but intentionally
-leaves these four gameplay-state owners address-derived until their wider
-xrefs establish real structures and field names.
+The copied state owners now have curated identities. The unused payload
+ranges at +0x0e0 and +0x2548 remain opaque; the read/write pair alone does
+not establish their intended contents.
 
 ## Function layers
 
@@ -111,8 +121,7 @@ remains a candidate pending a caller or translation-unit boundary.
 
 ## Remaining work
 
-- Recover semantic fields for the six-word slot summary and the serialized
-  gameplay-state ranges.
+- Recover the remaining opaque fields and unused serialized payload ranges.
 - Prove the translation-unit/object boundary and whether the shared workspace
   pointers and constant strings had external or file-local linkage.
 - Name and group the compiler-generated status jump tables without treating
@@ -124,12 +133,11 @@ remains a candidate pending a caller or translation-unit boundary.
 
 The band is reconstructed as the single module `src/game/save_system.c`
 (unit `game.save_system`, 24 claimed functions, `0x8002b078..0x8002ca78`).
-Twenty-one functions are strict 100%. The remaining three carry recorded
+Twenty-two functions are strict 100%. The remaining two carry recorded
 residues listed under "save" in
 [`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md):
-`memory_card_show_status_message`, `screen_show_image_until_input`, and
-`talk_show_indexed_image`. `KfSavePayload` names the four copied ranges by
-their copy-loop alignment. The two reverse ordering tables at `0x80070ebc` are
-addressed only relative to `asset_load_buffer`, so they still lack the
-relocation evidence the identity checker requires and remain declarations
-inside the module.
+`memory_card_show_status_message` (97.980770%) and `talk_show_indexed_image`
+(98.780490%). `KfSavePayload` names the four copied ranges by their established
+state owners while retaining the measured word-copy alignment. Graphics
+references use the shared display-state declarations. The summary-field
+and workspace naming changes preserve every instruction and relocation.

@@ -590,7 +590,12 @@ KfSavePayload	0x30c	0x2134	world_state	u32[2125]	supported	game_save.h;save_file
 KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game_save.h;game_state_initialize;item_menu_buy;save_file_write_slot;save_file_read_slot;alignment-checked-copy	complete copy of the three 80-byte item_stock banks; player quantities followed by two shop-stock/availability banks
 KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	game_save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game_save.h;asm	not touched by the write/read pair
-KfSaveSlotSummary	0x00	0x18	fields	u32[6]	opaque	game_save.h;asm;xrefs	individual summary meanings unresolved
+KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player experience word; stored and copied as a word
+KfSaveSlotSummary	0x04	0x04	current_floor	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-floor byte; stored and copied as a word
+KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-HP halfword; stored and copied as a word
+KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
+KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-MP halfword; stored and copied as a word
+KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
 KfScreenVertex	0x00	0x04	sxy	long	supported	tmd.h;game_semantic_projection_scratch.tsv;game_open_semantic_packed_projection.tsv;asm;RotTransPers;NormalClip	SDK packed signed screen x/y word written by RotTransPers and consumed by clipping and GPU packets; non-perspective writers use its two DVECTOR halfwords
 KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing

@@ -128,8 +128,8 @@ void menu_add_frame_quad(void)
  * Draw a bordered menu dialog frame plus optional save-slot summary rows.
  * `kind` selects which of the composite-frame quads (indices 2..4 of the
  * double-buffered flat-quad array) border the box.  When `rows` is non-null,
- * up to three slot summaries are drawn, each gated by its third word being
- * positive; every row prints an icon label plus its numeric fields through the
+ * up to three slot summaries are drawn, each gated by positive saved current
+ * HP; every row prints an icon label plus its numeric fields through the
  * shared glyph-string workspace.  Used by the save/load panels, the save
  * confirmation, and the two-option confirm dialog.
  */
@@ -172,9 +172,9 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
         return;
     }
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < KF_SAVE_SLOT_COUNT; i++) {
         gs.y = i * 65 + 30;
-        if ((s32)rows[i].fields[2] > 0) {
+        if ((s32)rows[i].current_hp > 0) {
             gs.x = 181;
             gs.codes[0] = 0x82;
             gs.codes[1] = 0x83;
@@ -183,7 +183,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 251;
-            menu_format_number(rows[i].fields[0], 6, 0, gs.codes);
+            menu_format_number(rows[i].experience, 6, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
@@ -194,7 +194,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 286;
-            menu_format_number(rows[i].fields[1], 1, 0, gs.codes);
+            menu_format_number(rows[i].current_floor, 1, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
@@ -205,7 +205,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 230;
-            menu_format_number(rows[i].fields[2], 4, 0, gs.codes);
+            menu_format_number(rows[i].current_hp, 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = 11;
@@ -214,7 +214,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x += 7;
-            menu_format_number(rows[i].fields[3], 4, 0, gs.codes);
+            menu_format_number(rows[i].maximum_hp, 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = 181;
@@ -225,7 +225,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 230;
-            menu_format_number(rows[i].fields[4], 4, 0, gs.codes);
+            menu_format_number(rows[i].current_mp, 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = 11;
@@ -234,7 +234,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x += 7;
-            menu_format_number(rows[i].fields[5], 4, 0, gs.codes);
+            menu_format_number(rows[i].maximum_mp, 4, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
         }
     }

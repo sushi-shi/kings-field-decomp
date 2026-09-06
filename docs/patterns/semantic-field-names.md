@@ -147,3 +147,41 @@ run and still fails existing data-placement/ownership gates, including GAME's
 37 divergent data-owning units. Identical compiled objects establish that this
 phase did not change those failures. This campaign does not claim completion
 of the remaining field identities or constant audit.
+
+## Save-summary field recovery
+
+Function Match Plan: replace the opaque six-word `KfSaveSlotSummary` array
+with six named `u32` members. The writer GAME 8002b73c, catalog copier
+8002b078, reader/consistency check 8002beb0, dialog renderer 80027ee4 and
+load panel 8002552c are covered by the complete image-qualified dossiers.
+Their current source, raw member accesses, callers, callees, string/data
+references, adjacent bodies and histories were reviewed. Preserve the six
+individual assignments/comparisons, signed display predicate, all widths,
+24-byte stride, partial catalog clear and relocation referents. Add measured
+layout assertions and reconcile the curated structure inventory. Require all
+112 non-debug objects and all 484 strict scores to agree with 1a2cbce.
+
+| Summary offset | Member | Writer evidence in GAME |
+| --- | --- | --- |
+| 00 | `experience` | 8002bb18 loads the player's experience word; 8002bb20 stores it at directory summary +00. |
+| 04 | `current_floor` | 8002bb28 loads the unsigned floor byte at player +0a; 8002bb30 stores the widened word. |
+| 08 | `current_hp` | 8002bb38 loads the unsigned halfword at player +12; 8002bb40 stores it. |
+| 0c | `maximum_hp` | 8002bb48 loads the unsigned halfword at player +10; 8002bb50 stores it. |
+| 10 | `current_mp` | 8002bb58 loads the unsigned halfword at player +16; 8002bb60 stores it. |
+| 14 | `maximum_mp` | 8002bb68 loads the unsigned halfword at player +14; 8002bb70 stores it in the call delay slot. |
+
+The dialog independently loads these six words at 80028170, 800281d0,
+80028228, 8002827c, 800282d4 and 80028328. Its signed positive-HP predicate
+at 80028120/28 gates a displayed row; the load panel also checks current HP
+before confirming a slot. Retain that signed display cast even though the
+serialized fields are `u32`. The catalog still clears only 0x24 bytes of
+three 0x18-byte summaries; naming does not repair that observed behavior.
+
+Verification: the measured size/offset assertions compile under the pinned
+toolchain. The inventory now has 772 fields, 680 named, reflecting six named
+members in place of one opaque array. All 112 non-debug objects and all 484
+strict scores remain identical to 1a2cbce. All 644 repository tests pass
+(nine skips), flake checks pass (644 tests, 131 sandbox skips), and lint and
+whitespace checks pass. The full build retains the existing ownership and
+placement failures, with five of 60 source data owners matching, target
+relink PSX 1/1, GAME 75/77 and OPEN 34/38, and no artifact failures.
