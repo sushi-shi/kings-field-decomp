@@ -380,7 +380,11 @@ def _align(value: int, alignment: int) -> int:
 
 
 def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
-    """Calculate target 32-bit C layouts from the ordered owner headers."""
+    """Calculate target 32-bit layouts of flat named structs and unions.
+
+    Inline anonymous aggregates remain outside this inventory; a containing
+    checked type must use a separately named, already parsed member type.
+    """
     primitive_layouts = {
         "s8": (1, 1),
         "u8": (1, 1),
@@ -404,7 +408,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     }
     layouts: dict[str, HeaderStructureLayout] = {}
     definition_pattern = re.compile(
-        r"(?:typedef\s+)?struct\s+([A-Za-z_]\w*)\s*\{(.*?)\}\s*"
+        r"(?:typedef\s+)?(struct|union)\s+([A-Za-z_]\w*)\s*\{([^{}]*)\}\s*"
         r"(?:[A-Za-z_]\w*)?\s*;",
         re.DOTALL,
     )
@@ -439,7 +443,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
         for match in definition_pattern.finditer(text):
-            name, body = match.groups()
+            kind, name, body = match.groups()
             if name in layouts:
                 raise ValueError(f"{path}: duplicate checked structure {name}")
             offset = 0
@@ -455,7 +459,8 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                         f"{path}: cannot parse {name} declaration {declaration!r}"
                     )
                 datatype, pointer, field_name, arrays = field_match.groups()
-                datatype = datatype.removeprefix("const ").removeprefix("struct ")
+                datatype = (datatype.removeprefix("const ")
+                            .removeprefix("struct ").removeprefix("union "))
                 if pointer:
                     base_size, base_alignment = 4, 4
                     display_type = f"{datatype} {'*' * len(pointer)}"
@@ -475,11 +480,11 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                 for dimension in dimensions:
                     count *= int(dimension, 0)
                 size = base_size * count
-                offset = _align(offset, base_alignment)
+                field_offset = 0 if kind == "union" else _align(offset, base_alignment)
                 if dimensions:
                     display_type += "".join(f"[{int(value, 0)}]" for value in dimensions)
-                fields.append(HeaderFieldLayout(offset, size, field_name, display_type))
-                offset += size
+                fields.append(HeaderFieldLayout(field_offset, size, field_name, display_type))
+                offset = max(offset, field_offset + size)
                 alignment = max(alignment, base_alignment)
             layouts[name] = HeaderStructureLayout(
                 size=_align(offset, alignment),

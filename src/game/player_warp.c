@@ -37,7 +37,7 @@ static MATRIX actor_transform_color_matrix = {
  * its fade intensity.
  */
 
-#define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
+#define EFFECT_ROTATION_PHASE(e) ((e)->rotation.vy)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)
 
 ADDRESS(0x80036618, 0x238)

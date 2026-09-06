@@ -13,6 +13,30 @@
 
 struct KfPoolRecord;
 
+typedef struct KfEffectDirectionWords {
+    u16 x;
+    u16 y;
+    u16 z;
+    u16 pad;
+} KfEffectDirectionWords;
+
+/* Effect kinds use these same eight bytes as a vector or unsigned state. */
+typedef union KfEffectDirection {
+    SVECTOR vector;
+    KfEffectDirectionWords words;
+} KfEffectDirection;
+
+typedef struct KfEffectHalfwordBytes {
+    u8 low;
+    u8 high;
+} KfEffectHalfwordBytes;
+
+/* Kind-dependent tail storage has both byte and halfword accesses. */
+typedef union KfEffectHalfword {
+    u16 value;
+    KfEffectHalfwordBytes bytes;
+} KfEffectHalfword;
+
 /* Coordinates wrap modulo 256; the retail loads both steps as unsigned bytes. */
 typedef struct KfFloorDeformSegment {
     u8 column;
@@ -45,31 +69,33 @@ typedef struct KfEffectRecord {
     u16 unknown_08;      /* 0x08 */
     u16 unknown_0a;      /* 0x0a */
     VECTOR position;     /* 0x0c */
-    s16 rotation_x;      /* 0x1c */
-    s16 rotation_y;      /* 0x1e */
-    s16 rotation_z;      /* 0x20 */
-    u16 unknown_22;      /* 0x22 */
+    SVECTOR rotation;    /* 0x1c */
     u16 scale_x;         /* 0x24 */
     u16 scale_y;         /* 0x26 */
     u16 scale_z;         /* 0x28 */
     u16 unknown_2a;      /* 0x2a */
-    u16 direction_x;     /* 0x2c */
-    u16 direction_y;     /* 0x2e */
-    u16 direction_z;     /* 0x30 */
-    u16 unknown_32;      /* 0x32 */
+    KfEffectDirection direction; /* 0x2c */
     struct KfPoolRecord *animation_cache; /* 0x34 */
-    u16 unknown_38;      /* 0x38 */
+    KfEffectHalfword unknown_38; /* 0x38 */
     u16 unknown_3a;      /* 0x3a */
 } KfEffectRecord;
 
 typedef char check_effect_record_size[sizeof(KfEffectRecord) == 0x3c ? 1 : -1];
-#define KF_EFFECT_ROTATION_OFFSET_CHECK(member, offset) \
-    typedef char check_effect_##member[ \
+#define KF_EFFECT_OFFSET_CHECK(label, member, offset) \
+    typedef char check_effect_##label[ \
         ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
-KF_EFFECT_ROTATION_OFFSET_CHECK(rotation_x, 0x1c);
-KF_EFFECT_ROTATION_OFFSET_CHECK(rotation_y, 0x1e);
-KF_EFFECT_ROTATION_OFFSET_CHECK(rotation_z, 0x20);
-#undef KF_EFFECT_ROTATION_OFFSET_CHECK
+KF_EFFECT_OFFSET_CHECK(rotation, rotation, 0x1c);
+KF_EFFECT_OFFSET_CHECK(rotation_y, rotation.vy, 0x1e);
+KF_EFFECT_OFFSET_CHECK(rotation_z, rotation.vz, 0x20);
+KF_EFFECT_OFFSET_CHECK(rotation_pad, rotation.pad, 0x22);
+KF_EFFECT_OFFSET_CHECK(direction, direction, 0x2c);
+KF_EFFECT_OFFSET_CHECK(direction_pad, direction.words.pad, 0x32);
+KF_EFFECT_OFFSET_CHECK(tail_word, unknown_38.value, 0x38);
+KF_EFFECT_OFFSET_CHECK(tail_high_byte, unknown_38.bytes.high, 0x39);
+KF_EFFECT_OFFSET_CHECK(tail_next_word, unknown_3a, 0x3a);
+#undef KF_EFFECT_OFFSET_CHECK
+typedef char check_effect_direction_size[sizeof(KfEffectDirection) == 8 ? 1 : -1];
+typedef char check_effect_halfword_size[sizeof(KfEffectHalfword) == 2 ? 1 : -1];
 
 /* Startup clears this whole object; selection derives the magic array from
  * the current-record slot by a fixed member offset. */
