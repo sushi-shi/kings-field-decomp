@@ -41,7 +41,7 @@ void magic_cast(void)
     case 5:
     case 7:
     case 8: {
-        struct KfVec3s direction;
+        SVECTOR direction;
         SVECTOR offset;
         struct KfEulerAngles angles;
         VECTOR world_pos;
@@ -107,11 +107,11 @@ void magic_cast(void)
             rotation.vz = player_state.camera_rotation.vz;
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, (SVECTOR *)&direction, &rotation, 1);
+                player_state.selected_magic_id, &world_pos, &direction, &rotation, 1);
         } else {
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, (SVECTOR *)&direction, distance, 1);
+                player_state.selected_magic_id, &world_pos, &direction, distance, 1);
         }
         break;
     }

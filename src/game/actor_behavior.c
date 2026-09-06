@@ -410,7 +410,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    struct KfVec3s direction;
+    SVECTOR direction;
     SVECTOR offset;
     struct KfEulerAngles angles;
     VECTOR position;
@@ -726,8 +726,8 @@ void actor_update_boss_death_sequence(void)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    u32 effect_output[2];
-    struct KfVec3i position;
+    SVECTOR direction;
+    VECTOR position;
 
     actor_play_sound_at_phase(&boss_death_phase_sounds[1], 500);
     actor_play_sound_at_phase(&boss_death_phase_sounds[2], 1000);
@@ -744,12 +744,13 @@ void actor_update_boss_death_sequence(void)
         actor_pool_begin_death_by_definition(4);
     }
     if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * 2) == 0) {
-        position.x = actor->position.vx + (rand() & 0x1fff) - 4096;
-        position.z = actor->position.vz + (rand() & 0x1fff) - 4096;
-        position.y = actor->position.vy - (rand() & 0xfff);
+        position.vx = actor->position.vx + (rand() & 0x1fff) - 4096;
+        position.vz = actor->position.vz + (rand() & 0x1fff) - 4096;
+        position.vy = actor->position.vy - (rand() & 0xfff);
+        /* Retail leaves this kind's direction and the position pad unwritten. */
         effect_pool_construct(
             0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x2c,
-            &position, effect_output, 0);
+            &position, &direction, 0);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * 4) == 0) {
             sound_ref_play(&boss_death_loop_sound, 100);
         }

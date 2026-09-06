@@ -67,12 +67,12 @@ extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_yxz(
     const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(
-    const struct KfPitchYaw *angles, struct KfVec3s *direction);
+    const struct KfPitchYaw *angles, SVECTOR *direction);
 extern void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector);
 extern void vector2s_scale_shift12(s16 scale, s16 *vector);
 extern void vector3i_add_xz(
     struct KfVec3i *vector, const struct KfVecXZs *delta);
-extern void vector3s_scale_shift12(s16 scale, struct KfVec3s *vector);
+extern void vector3s_scale_shift12(s16 scale, SVECTOR *vector);
 extern void vector3s_scale_shift12_alt(s16 scale, s16 *vector);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 

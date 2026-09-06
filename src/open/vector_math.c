@@ -2,15 +2,15 @@
 #include <kf/game_math.h>
 
 ADDRESS(0x80015be0, 0x5c)
-void vector3s_scale_shift12(s16 scale, struct KfVec3s *vector)
+void vector3s_scale_shift12(s16 scale, SVECTOR *vector)
 {
-    s32 x = vector->x * scale;
-    s32 y = vector->y * scale;
-    s32 z = vector->z * scale;
+    s32 x = vector->vx * scale;
+    s32 y = vector->vy * scale;
+    s32 z = vector->vz * scale;
 
-    vector->x = x >> KF_FIXED12_BITS;
-    vector->y = y >> KF_FIXED12_BITS;
-    vector->z = z >> KF_FIXED12_BITS;
+    vector->vx = x >> KF_FIXED12_BITS;
+    vector->vy = y >> KF_FIXED12_BITS;
+    vector->vz = z >> KF_FIXED12_BITS;
 }
 
 ADDRESS(0x80015c3c, 0x5c)

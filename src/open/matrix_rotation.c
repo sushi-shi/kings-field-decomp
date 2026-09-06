@@ -84,7 +84,7 @@ void debug_dump_matrix(const MATRIX *matrix)
 
 ADDRESS(0x80015b0c, 0xd4)
 void pitch_yaw_to_forward_vector(
-    const struct KfPitchYaw *angles, struct KfVec3s *direction)
+    const struct KfPitchYaw *angles, SVECTOR *direction)
 {
     MATRIX pitch_matrix;
     MATRIX yaw_matrix;
@@ -101,7 +101,7 @@ void pitch_yaw_to_forward_vector(
     source.vz = result.vz;
     matrix_set_rotation_y(angles->yaw, &yaw_matrix);
     ApplyMatrix(&yaw_matrix, &source, &result);
-    direction->x = result.vx;
-    direction->y = result.vy;
-    direction->z = result.vz;
+    direction->vx = result.vx;
+    direction->vy = result.vy;
+    direction->vz = result.vz;
 }

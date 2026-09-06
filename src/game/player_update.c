@@ -67,7 +67,7 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const struct KfVec3i *origin;
-    struct KfVec3s direction;
+    SVECTOR direction;
     SVECTOR scale;
     struct KfEulerAngles angles;
     VECTOR position;

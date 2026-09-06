@@ -133,7 +133,7 @@ void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix)
  * writes a VECTOR of longs; only their low halves are carried on.
  */
 ADDRESS(0x80014d34, 0xd4)
-void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s *direction)
+void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, SVECTOR *direction)
 {
     MATRIX pitch_matrix;
     MATRIX yaw_matrix;
@@ -150,9 +150,9 @@ void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s
     source.vz = result.vz;
     matrix_set_rotation_y(angles->yaw, &yaw_matrix);
     ApplyMatrix(&yaw_matrix, &source, &result);
-    direction->x = result.vx;
-    direction->y = result.vy;
-    direction->z = result.vz;
+    direction->vx = result.vx;
+    direction->vy = result.vy;
+    direction->vz = result.vz;
 }
 
 
@@ -167,15 +167,15 @@ void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector)
 }
 
 ADDRESS(0x80014e48, 0x5c)
-void vector3s_scale_shift12(s16 scale, struct KfVec3s *vector)
+void vector3s_scale_shift12(s16 scale, SVECTOR *vector)
 {
-    s32 x = vector->x * scale;
-    s32 y = vector->y * scale;
-    s32 z = vector->z * scale;
+    s32 x = vector->vx * scale;
+    s32 y = vector->vy * scale;
+    s32 z = vector->vz * scale;
 
-    vector->x = x >> KF_FIXED12_BITS;
-    vector->y = y >> KF_FIXED12_BITS;
-    vector->z = z >> KF_FIXED12_BITS;
+    vector->vx = x >> KF_FIXED12_BITS;
+    vector->vy = y >> KF_FIXED12_BITS;
+    vector->vz = z >> KF_FIXED12_BITS;
 }
 
 ADDRESS(0x80014ea4, 0x40)

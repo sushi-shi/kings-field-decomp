@@ -10,6 +10,8 @@ promotes a probe to a proven historical toolchain.
   and the remaining serialized-field questions.
 - [source-constant-names.md](source-constant-names.md): domain-specific constant
   names and the reasons for retaining individual classes of inline literals.
+- [modern-type-checking.md](modern-type-checking.md): modern compiler adoption,
+  enum storage requirements, and consumer-backed vector pointer corrections.
 
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the
