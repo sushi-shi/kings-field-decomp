@@ -1,5 +1,10 @@
 # GAME display environments and screen fade
 
+The later [render setup correction](game-render-setup.md) closes the error
+screen at strict 100% and improves TMD preparation to 99.375000%. The earlier
+source/owner-only results below remain historical; the complete graphics
+owner is still provisional.
+
 ## Function Match Plan
 
 Image: hash-checked Japanese `GAME.EXE`. Start: `6137a42`. Use the unit's

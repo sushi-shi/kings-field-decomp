@@ -63,6 +63,8 @@ promotes a probe to a proven historical toolchain.
   authentic SDK outputs and texture publication order.
 - [game-graphics-scratch.md](game-graphics-scratch.md): projection/morph owner
   controls and the animation allocation-retry target.
+- [game-render-setup.md](game-render-setup.md): exact error-screen brightness
+  lifetime and the unconditional TMD primitive countdown.
 - [open-floor-item-render-residue.md](open-floor-item-render-residue.md):
   typed floor-item sprite descriptors and the extra facing-byte mask shared
   by the GAME and OPEN retail renderers.

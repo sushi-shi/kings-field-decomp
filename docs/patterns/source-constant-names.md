@@ -1065,3 +1065,30 @@ pass. All 112 non-debug object contents and all 484 strict scores match
 7c1968e; the scene object differs only in debug-line records. The initialized
 data and relocation sections are unchanged. The full build retains its
 existing data-placement and ownership failures, with no new artifact failure.
+
+## Incoming error-screen and TMD setup improvements
+
+Integrate the user's `806f1ed` renderer campaign into the naming worktree.
+Its [committed evidence](game-render-setup.md) proves the error screen's
+early brightness lifetime and RGB store order, and the TMD primitive
+countdown's unconditional setup. Resolve the three source conflicts by
+retaining those operations together with the named path digit, brightness,
+ordering-table length and TMD header size. Do not restore the earlier
+chained RGB assignment or move the countdown back inside its guard.
+
+Verification plan: independently compile literal `806f1ed:src/game/render.c`
+under the current headers/profile and compare every non-debug section with
+the merged named object. Check the other 111 objects against 7c1968e and
+allow only the two incoming strict-score improvements: error screen to 100%
+and TMD preparation to 99.375%. Run the imported raw controls, repository
+tests, flake checks and full build before the merge commit.
+
+The independent literal and named render objects differ only in debug-line
+records. The other 111 objects retain every non-debug section from 7c1968e.
+Exactly the two expected scores change: GAME 8001b7b0 moves from 97.922680%
+to 100%, and GAME 8001c2b0 from 98.333336% to 99.375%. All other 482 scores
+and all banked exact functions are unchanged. All 644 tests pass (nine
+skipped), lint/whitespace checks pass, and flake checks pass (644 tests,
+131 sandbox skips). The full build retains the existing ownership and
+placement failures. The incoming exact banking record is preserved; the
+naming merge performs no additional banking.
