@@ -18,7 +18,7 @@ enum {
     SCENE0_FADE_OUT_START_POINT = 15,
     SCENE0_YAW_STEP = 40,
     SCENE0_SOUND_VOLUME = 100,
-    SCENE0_COLOR_FADE_STEP = 0x100,
+    OPENING_COLOR_FADE_STEP = 0x100,
     SCENE1_LEFT_TPAGE_X = 0x140,
     SCENE1_RIGHT_TPAGE_X = 0x1c0,
     SCENE1_PANEL_WIDTH = 192,
@@ -38,6 +38,50 @@ enum {
     TRANSITION_YAW_STEP = 0x200,
     TRANSITION_ENTITY_DELAY_SHIFT = 3,
     TRANSITION_FRAMES = 48
+};
+
+enum {
+    SCENE3_INCREASING_YAW_MODEL = 13,
+    SCENE3_DECREASING_YAW_MODEL = 14,
+    SCENE3_YAW_STEP = 0x10,
+    SCENE_CAMERA_WAVE_SHIFT = 7,
+    SCENE_CAMERA_WAVE_ANGLE_STEP = 100,
+    TRANSITION_BASE_Y = -10000,
+    PANEL_TPAGE_FIRST_X = 0x1c0,
+    PANEL_TPAGE_X_STRIDE = 0x40,
+    PANEL_CLUT_FIRST_Y = 0x1ed,
+    PANEL_CLIP_Y_BIAS = 255,
+    PANEL_CLIP_SPAN = PANEL_CLIP_Y_BIAS + KF_DISPLAY_HEIGHT,
+    PANEL_OT_DEPTH = 4,
+    ENDING_ROTATION_START_POINT = 4,
+    ENDING_MAX_BRIGHTNESS = 255,
+    ENDING_BRIGHTEN_STEP = 4,
+    ENDING_FADE_DARKEN_STEP = 0x10,
+    ENDING_PANEL_COUNT = 9,
+    ENDING_PANEL_STOP_Y = 50,
+    ENDING_BACKGROUND_OT_DEPTH = 0x2f65,
+    ENDING_SCROLL_PHASE_COUNT = 4,
+    ENDING_TMD_PROJECTION_SHIFT = 2,
+    ENDING_TRANSLATING_MODEL = 26,
+    ENDING_ROTATING_MODEL = 27,
+    ENDING_MODEL_START_Y_OFFSET = 1500,
+    ENDING_MODEL_FINAL_Y = -8000,
+    ENDING_MODEL_Y_STEP = 3,
+    ENDING_LIGHT_MIDPOINT_STEP = 0x40,
+    ENDING_LIGHT_GREEN_STEP = 3,
+    ENDING_BACKGROUND_BLEND_STEP = 3,
+    ENDING_SEQUENCE_DELAY_START = 20,
+    ENDING_SEQUENCE_VOLUME_DIVISOR = 3
+};
+
+enum {
+    ENDING_LIGHT_TO_MIDPOINT = 0,
+    ENDING_LIGHT_TO_GREEN = 1,
+    ENDING_LIGHT_FINISHED = 2,
+    ENDING_SEQUENCE_WAIT_SCROLL = 0,
+    ENDING_SEQUENCE_DELAY = 1,
+    ENDING_SEQUENCE_FADE = 2,
+    ENDING_SEQUENCE_REPLACED = 3
 };
 
 typedef char KfOpeningEntitySizeCheck[
@@ -63,14 +107,14 @@ KfCameraPathPoint opening_scene0_camera_path[17] = {
     {{163000, -11900, 187000, 0}, {100, -1536, -100, 0}, 300, 0},
     {{163000, -11900, 163000, 0}, {100, -512, -100, 0}, 200, 0},
     {{163000, -12100, 161000, 0}, {100, -256, -100, 0}, 100, 0},
-    {{-1, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
+    {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
 DATA(0x800356d0, 0x54)
 KfCameraPathPoint opening_scene3_camera_path[3] = {
     {{101000, -11500, 115200, 0}, {0, 0x800, 0, 0}, 0, 0},
     {{101000, -11500, 101000, 0}, {0, 0x800, 0, 0}, 0x10, 0},
-    {{-1, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
+    {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
 DATA(0x80035724, 0xfc)
@@ -83,27 +127,27 @@ KfCameraPathPoint opening_ending_camera_path[9] = {
     {{101000, -11500, 109400, 0}, {0, 0, 0, 0}, 30, 0},
     {{101000, -11500, 109800, 0}, {0, 0, 0, 0}, 60, 0},
     {{101000, -11500, 117000, 0}, {0, 0, 0, 0}, 100, 0},
-    {{-1, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
+    {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
 DATA(0x80035820, 0x54)
 static KfCameraPathPoint opening_ending_scroll_camera_path[3] = {
     {{101000, -8500, 89000, 0}, {0, 0, 0, 0}, 0, 0},
     {{101000, -12000, 89000, 0}, {0, 0, 0, 0}, 2, 0},
-    {{-1, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
+    {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
 DATA(0x80035874, 0x3)
 SoundRef opening_scene0_sound = {9, 0, 0x43};
 
 DATA(0x80035878, 0x10)
-u16 opening_scene3_overlay_rects[2][4] = {
+u16 opening_scene3_overlay_rects[KF_OPENING_SCENE3_OVERLAY_COUNT][4] = {
     {32, 256, 255, 254},
     {32, 512, 255, 254},
 };
 
 DATA(0x80035888, 0x48)
-static u16 opening_ending_scroll_panels[9][4] = {
+static u16 opening_ending_scroll_panels[ENDING_PANEL_COUNT][4] = {
     {32, 256, 255, 254},
     {32, 512, 255, 254},
     {32, 768, 255, 254},
@@ -123,7 +167,7 @@ u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};
 
 DATA(0x80037290, 0x10)
 static u16 opening_ending_scroll_backgrounds[2][4] = {
-    {0, 0, 320, 160}, {0, 160, 320, 160},
+    {0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},
 };
 
 DATA(0x800372a0, 0x4)
@@ -189,7 +233,7 @@ fade_out:
         if (blend < 0) {
             goto scene_complete;
         }
-        next_blend = blend - SCENE0_COLOR_FADE_STEP;
+        next_blend = blend - OPENING_COLOR_FADE_STEP;
         blend = next_blend;
         goto update_color;
 
@@ -197,7 +241,7 @@ fade_in:
         if (blend >= KF_FIXED12_ONE) {
             goto render_frame;
         }
-        next_blend = blend + SCENE0_COLOR_FADE_STEP;
+        next_blend = blend + OPENING_COLOR_FADE_STEP;
         blend = next_blend;
 
 update_color:
@@ -413,8 +457,8 @@ void opening_scene3_run(void)
     KfOpeningEntity *entity_13;
     KfOpeningEntity *entity_14;
     VECTOR transition_position;
-    u32 texture_pages[2];
-    u32 cluts[2];
+    u32 texture_pages[KF_OPENING_SCENE3_OVERLAY_COUNT];
+    u32 cluts[KF_OPENING_SCENE3_OVERLAY_COUNT];
     u16 *overlay_rect;
     s16 *overlay_y;
     s16 blend;
@@ -425,15 +469,17 @@ void opening_scene3_run(void)
     opening_resources_load_scene3();
     texture_pages[0] = (u16)GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x1c0, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[0] = (u16)GetClut(0, 0x1ed);
+        PANEL_TPAGE_FIRST_X, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[0] = (u16)GetClut(0, PANEL_CLUT_FIRST_Y);
     texture_pages[1] = (u16)GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x200, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[1] = (u16)GetClut(0, 0x1ee);
+        PANEL_TPAGE_FIRST_X + PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[1] = (u16)GetClut(0, PANEL_CLUT_FIRST_Y + 1);
 
-    entity_13 = opening_entity_find_by_object_id(opening_entity_state.entities, 13);
-    entity_14 = opening_entity_find_by_object_id(opening_entity_state.entities, 14);
+    entity_13 = opening_entity_find_by_object_id(
+        opening_entity_state.entities, SCENE3_INCREASING_YAW_MODEL);
+    entity_14 = opening_entity_find_by_object_id(
+        opening_entity_state.entities, SCENE3_DECREASING_YAW_MODEL);
     entity_14->rotation.y = 0;
     entity_13->rotation.y = 0;
     opening_camera_path_begin(opening_scene3_camera_path);
@@ -447,15 +493,15 @@ void opening_scene3_run(void)
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         opening_poll_input();
-        blend += 0x100;
-        if (blend >= 0x1001) {
+        blend += OPENING_COLOR_FADE_STEP;
+        if (blend >= KF_FIXED12_ONE + 1) {
             break;
         }
     }
 
-    while (entity_13->rotation.y < 0x400) {
-        entity_13->rotation.y += 0x10;
-        entity_14->rotation.y -= 0x10;
+    while (entity_13->rotation.y < KF_ANGLE_QUARTER_TURN) {
+        entity_13->rotation.y += SCENE3_YAW_STEP;
+        entity_14->rotation.y -= SCENE3_YAW_STEP;
         audio_set_listener_transform(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -469,41 +515,41 @@ void opening_scene3_run(void)
     }
 
     do {
-        opening_camera_path_step(rsin(wave_angle) >> 7);
-        if (opening_camera_path_state.frames_remaining == -1) {
+        opening_camera_path_step(rsin(wave_angle) >> SCENE_CAMERA_WAVE_SHIFT);
+        if (opening_camera_path_state.frames_remaining == KF_CAMERA_PATH_FINISHED) {
             break;
         }
-        wave_angle = (wave_angle + 100) & 0xfff;
+        wave_angle = (wave_angle + SCENE_CAMERA_WAVE_ANGLE_STEP) & KF_ANGLE_WRAP_MASK;
         render_set_view_transform(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         display_begin_frame();
-        SetGeomScreen(200);
+        SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
         opening_render_entities();
         overlay_index = 0;
         overlay_rect = opening_scene3_overlay_rects[0];
         overlay_y = (s16 *)&overlay_rect[1];
         do {
             /* Retain quads while their signed Y span can still cross the screen. */
-            if ((u16)(--*overlay_y + 0xff) < 0x1ef) {
+            if ((u16)(--*overlay_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
                     overlay_rect,
                     opening_scene3_overlay_uv,
                     texture_pages[overlay_index],
                     cluts[overlay_index],
                     opening_scene3_overlay_color,
-                    4);
+                    PANEL_OT_DEPTH);
             }
             overlay_index++;
             overlay_y += 4;
             overlay_rect += 4;
-        } while (overlay_index < 2);
+        } while (overlay_index < KF_OPENING_SCENE3_OVERLAY_COUNT);
         display_present_frame();
         opening_poll_input();
     } while (opening_input_action == KF_OPENING_INPUT_NONE);
 
     transition_position.vx = opening_camera_path_state.position.vx;
-    transition_position.vy = -10000;
+    transition_position.vy = TRANSITION_BASE_Y;
     transition_position.vz = opening_camera_path_state.position.vz;
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_entity_transition(TRANSITION_GROW, &transition_position);
@@ -517,8 +563,8 @@ void opening_scene3_run(void)
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
-        blend += 0x100;
-    } while (blend < 0x1001);
+        blend += OPENING_COLOR_FADE_STEP;
+    } while (blend < KF_FIXED12_ONE + 1);
 
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_entity_transition(TRANSITION_REMOVE, &transition_position);
@@ -537,13 +583,15 @@ void opening_ending_scene_run(void)
 
     wave_angle = 0;
     opening_resources_load_ending();
-    entity_13 = opening_entity_find_by_object_id(opening_entity_state.entities, 13);
-    entity_14 = opening_entity_find_by_object_id(opening_entity_state.entities, 14);
+    entity_13 = opening_entity_find_by_object_id(
+        opening_entity_state.entities, SCENE3_INCREASING_YAW_MODEL);
+    entity_14 = opening_entity_find_by_object_id(
+        opening_entity_state.entities, SCENE3_DECREASING_YAW_MODEL);
     entity_14->rotation.y = 0;
     entity_13->rotation.y = 0;
     opening_camera_path_begin(opening_ending_camera_path);
 
-    transition_position.vy = -10000;
+    transition_position.vy = TRANSITION_BASE_Y;
     transition_position.vx = opening_camera_path_state.position.vx;
     transition_position.vz = opening_camera_path_state.position.vz;
     SetDispMask(1);
@@ -557,21 +605,21 @@ void opening_ending_scene_run(void)
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
-        blend += 0x100;
-    } while (blend < 0x1001);
+        blend += OPENING_COLOR_FADE_STEP;
+    } while (blend < KF_FIXED12_ONE + 1);
 
     opening_entity_transition(TRANSITION_SHRINK, &transition_position);
     brightness = 0;
     blend = 0;
     for (;;) {
-        opening_camera_path_step(rsin(wave_angle) >> 7);
-        if (opening_camera_path_state.frames_remaining == -1) {
+        opening_camera_path_step(rsin(wave_angle) >> SCENE_CAMERA_WAVE_SHIFT);
+        if (opening_camera_path_state.frames_remaining == KF_CAMERA_PATH_FINISHED) {
             break;
         }
-        if (opening_camera_path_state.point_index >= 4) {
-            if (entity_13->rotation.y < 0x400) {
-                entity_13->rotation.y += 0x10;
-                entity_14->rotation.y -= 0x10;
+        if (opening_camera_path_state.point_index >= ENDING_ROTATION_START_POINT) {
+            if (entity_13->rotation.y < KF_ANGLE_QUARTER_TURN) {
+                entity_13->rotation.y += SCENE3_YAW_STEP;
+                entity_14->rotation.y -= SCENE3_YAW_STEP;
                 audio_set_listener_transform(
                     &opening_camera_path_state.position,
                     &opening_camera_path_state.rotation);
@@ -590,10 +638,10 @@ void opening_ending_scene_run(void)
                     brightness,
                     brightness,
                     brightness);
-                if (brightness >= 0xff) {
-                    brightness = 0xff;
+                if (brightness >= ENDING_MAX_BRIGHTNESS) {
+                    brightness = ENDING_MAX_BRIGHTNESS;
                 } else {
-                    brightness += 4;
+                    brightness += ENDING_BRIGHTEN_STEP;
                 }
                 if (blend < 0xfff) {
                     blend += 0x40;
@@ -602,14 +650,14 @@ void opening_ending_scene_run(void)
                 }
             }
         } else {
-            wave_angle = (wave_angle + 100) & 0xfff;
+            wave_angle = (wave_angle + SCENE_CAMERA_WAVE_ANGLE_STEP) & KF_ANGLE_WRAP_MASK;
         }
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
     }
 
-    brightness = 0xff;
+    brightness = ENDING_MAX_BRIGHTNESS;
     blend = 0;
     do {
         if (brightness < 0) {
@@ -618,18 +666,20 @@ void opening_ending_scene_run(void)
         SetBackColor(brightness, brightness, brightness);
         SetFarColor(brightness, brightness, brightness);
         setRGB0(
-            &open_graphics_runtime.display_draw_environments[0], brightness, brightness, brightness);
+            &open_graphics_runtime.display_draw_environments[0],
+            brightness, brightness, brightness);
         setRGB0(
-            &open_graphics_runtime.display_draw_environments[1], brightness, brightness, brightness);
+            &open_graphics_runtime.display_draw_environments[1],
+            brightness, brightness, brightness);
         lighting_set_color_matrix(
             &color_matrix_table[KF_OPEN_COLOR_DEFAULT],
             &color_matrix_table[KF_OPEN_COLOR_BLACK], blend);
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
-        blend += 0x100;
-        brightness -= 0x10;
-    } while (blend < 0x1001);
+        blend += OPENING_COLOR_FADE_STEP;
+        brightness -= ENDING_FADE_DARKEN_STEP;
+    } while (blend < KF_FIXED12_ONE + 1);
 }
 
 ADDRESS(0x80014e28, 0x798)
@@ -639,8 +689,8 @@ void opening_ending_scroll_run(void)
     MATRIX light_matrix = {
         {{0, 0, -4095}, {4095, 0, -2048}, {-4095, 0, -2048}}, {0, 0, 0}
     };
-    u32 texture_pages[9];
-    u32 cluts[9];
+    u32 texture_pages[ENDING_PANEL_COUNT];
+    u32 cluts[ENDING_PANEL_COUNT];
     CVECTOR top_color;
     CVECTOR bottom_color;
     KfOpeningEntity *entity_26;
@@ -661,57 +711,59 @@ void opening_ending_scroll_run(void)
     opening_resources_load_ending_entities();
     texture_pages[0] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x1c0, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[0] = GetClut(0, 0x1ed);
+        PANEL_TPAGE_FIRST_X, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[0] = GetClut(0, PANEL_CLUT_FIRST_Y);
     texture_pages[1] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x200, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[1] = GetClut(0, 0x1ee);
+        PANEL_TPAGE_FIRST_X + PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[1] = GetClut(0, PANEL_CLUT_FIRST_Y + 1);
     texture_pages[2] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x240, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[2] = GetClut(0, 0x1ef);
+        PANEL_TPAGE_FIRST_X + 2 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[2] = GetClut(0, PANEL_CLUT_FIRST_Y + 2);
     texture_pages[3] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x280, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[3] = GetClut(0, 0x1f0);
+        PANEL_TPAGE_FIRST_X + 3 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[3] = GetClut(0, PANEL_CLUT_FIRST_Y + 3);
     texture_pages[4] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x2c0, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[4] = GetClut(0, 0x1f1);
+        PANEL_TPAGE_FIRST_X + 4 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[4] = GetClut(0, PANEL_CLUT_FIRST_Y + 4);
     texture_pages[5] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x300, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[5] = GetClut(0, 0x1f2);
+        PANEL_TPAGE_FIRST_X + 5 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[5] = GetClut(0, PANEL_CLUT_FIRST_Y + 5);
     texture_pages[6] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x340, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[6] = GetClut(0, 0x1f3);
+        PANEL_TPAGE_FIRST_X + 6 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[6] = GetClut(0, PANEL_CLUT_FIRST_Y + 6);
     texture_pages[7] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x380, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[7] = GetClut(0, 0x1f4);
+        PANEL_TPAGE_FIRST_X + 7 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[7] = GetClut(0, PANEL_CLUT_FIRST_Y + 7);
     texture_pages[8] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        0x3c0, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[8] = GetClut(0, 0x1f5);
+        PANEL_TPAGE_FIRST_X + 8 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
+    cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);
 
-    entity_26 = opening_entity_find_by_object_id(opening_entity_state.entities, 26);
-    entity_27 = opening_entity_find_by_object_id(opening_entity_state.entities, 27);
-    lighting_phase = 0;
+    entity_26 = opening_entity_find_by_object_id(
+        opening_entity_state.entities, ENDING_TRANSLATING_MODEL);
+    entity_27 = opening_entity_find_by_object_id(
+        opening_entity_state.entities, ENDING_ROTATING_MODEL);
+    lighting_phase = ENDING_LIGHT_TO_MIDPOINT;
     background_blend = 0;
-    sequence_phase = 0;
+    sequence_phase = ENDING_SEQUENCE_WAIT_SCROLL;
     scrolling = 0;
     scroll_phase = 0;
-    entity_26->position.vy -= 1500;
-    entity_27->object_id = 0xff;
+    entity_26->position.vy -= ENDING_MODEL_START_Y_OFFSET;
+    entity_27->object_id = KF_OPENING_ENTITY_FREE;
     opening_camera_path_begin(opening_ending_scroll_camera_path);
-    SetFogNear(11000, 200);
+    SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
     SetBackColor(0, 0, 0);
     SetFarColor(0, 0, 0);
-    open_graphics_runtime.tmd_projection_shift = 2;
+    open_graphics_runtime.tmd_projection_shift = ENDING_TMD_PROJECTION_SHIFT;
     /* Retail retains this otherwise unconsumed stack-owned position snapshot. */
-    transition_position.vy = -10000;
+    transition_position.vy = TRANSITION_BASE_Y;
     transition_position.vx = opening_camera_path_state.position.vx;
     transition_position.vz = opening_camera_path_state.position.vz;
     open_graphics_runtime.floor_item_state.material.color.r = 0;
@@ -722,64 +774,65 @@ void opening_ending_scroll_run(void)
 
     for (;;) {
         switch (lighting_phase) {
-        case 0:
-            if (lighting_blend <= 0x1000) {
+        case ENDING_LIGHT_TO_MIDPOINT:
+            if (lighting_blend <= KF_FIXED12_ONE) {
                 lighting_set_color_matrix(
                     &color_matrix_table[KF_OPEN_COLOR_BLACK],
                     &color_matrix_table[KF_OPEN_COLOR_ENDING_MIDPOINT], lighting_blend);
-                lighting_blend += 0x40;
+                lighting_blend += ENDING_LIGHT_MIDPOINT_STEP;
             } else {
-                lighting_phase = 1;
+                lighting_phase = ENDING_LIGHT_TO_GREEN;
                 lighting_blend = 0;
             }
             break;
-        case 1:
-            if (lighting_blend <= 0x1000) {
+        case ENDING_LIGHT_TO_GREEN:
+            if (lighting_blend <= KF_FIXED12_ONE) {
                 lighting_set_color_matrix(
                     &color_matrix_table[KF_OPEN_COLOR_ENDING_MIDPOINT],
                     &color_matrix_table[KF_OPEN_COLOR_ENDING_GREEN], lighting_blend);
-                lighting_blend += 3;
+                lighting_blend += ENDING_LIGHT_GREEN_STEP;
             } else {
-                lighting_phase = 2;
+                lighting_phase = ENDING_LIGHT_FINISHED;
                 lighting_blend = 0;
             }
             break;
         }
         switch (sequence_phase) {
-        case 1:
+        case ENDING_SEQUENCE_DELAY:
             if (--sequence_delay == -1) {
-                sequence_phase = 2;
-                sequence_volume = 381;
+                sequence_phase = ENDING_SEQUENCE_FADE;
+                sequence_volume = KF_AUDIO_MAX_VOLUME * ENDING_SEQUENCE_VOLUME_DIVISOR;
             }
             break;
-        case 2:
+        case ENDING_SEQUENCE_FADE:
             --sequence_volume;
-            SsSetMVol(sequence_volume / 3, sequence_volume / 3);
+            SsSetMVol(sequence_volume / ENDING_SEQUENCE_VOLUME_DIVISOR,
+                      sequence_volume / ENDING_SEQUENCE_VOLUME_DIVISOR);
             if (sequence_volume == 0) {
-                sequence_phase = 3;
+                sequence_phase = ENDING_SEQUENCE_REPLACED;
                 opening_resources_load_ending_sequence();
             }
             break;
         }
-        if (opening_camera_path_state.frames_remaining != -1) {
+        if (opening_camera_path_state.frames_remaining != KF_CAMERA_PATH_FINISHED) {
             opening_camera_path_step(0);
         }
-        if (entity_26->position.vy < -8000) {
-            entity_26->position.vy += 3;
+        if (entity_26->position.vy < ENDING_MODEL_FINAL_Y) {
+            entity_26->position.vy += ENDING_MODEL_Y_STEP;
         } else if (scrolling == 0) {
-            entity_26->object_id = 0xff;
+            entity_26->object_id = KF_OPENING_ENTITY_FREE;
             scrolling = 1;
-            entity_27->object_id = 27;
+            entity_27->object_id = ENDING_ROTATING_MODEL;
         }
         render_set_view_transform(
             &opening_camera_path_state.position, &opening_camera_path_state.rotation);
         display_begin_frame();
-        SetGeomScreen(200);
+        SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
         opening_render_entities();
 
-        background_blend += 3;
-        if (background_blend > 0x1000) {
-            background_blend = 0x1000;
+        background_blend += ENDING_BACKGROUND_BLEND_STEP;
+        if (background_blend > KF_FIXED12_ONE) {
+            background_blend = KF_FIXED12_ONE;
         }
         color_lerp_cvector(&opening_ending_scroll_top_start,
                           &opening_ending_scroll_top_end, &top_color, background_blend);
@@ -788,14 +841,17 @@ void opening_ending_scroll_run(void)
         sprite_add_g4(opening_ending_scroll_backgrounds[0],
                       &top_color.r, &top_color.r, &bottom_color.r, &bottom_color.r);
         sprite_add_f4(opening_ending_scroll_backgrounds[1],
-                      &opening_ending_scroll_background_color.r, 0x2f65);
+                      &opening_ending_scroll_background_color.r, ENDING_BACKGROUND_OT_DEPTH);
 
         if (scroll_phase == 0) {
-            entity_27->rotation.z = (entity_27->rotation.z - 1) & 0xfff;
-            if (entity_27->object_id != 0xff && open_graphics_runtime.floor_item_state.material.color.r < 255) {
+            entity_27->rotation.z = (entity_27->rotation.z - 1) & KF_ANGLE_WRAP_MASK;
+            if (entity_27->object_id != KF_OPENING_ENTITY_FREE &&
+                open_graphics_runtime.floor_item_state.material.color.r < ENDING_MAX_BRIGHTNESS) {
                 ++open_graphics_runtime.floor_item_state.material.color.r;
-                open_graphics_runtime.floor_item_state.material.color.b = open_graphics_runtime.floor_item_state.material.color.r;
-                open_graphics_runtime.floor_item_state.material.color.g = open_graphics_runtime.floor_item_state.material.color.r;
+                open_graphics_runtime.floor_item_state.material.color.b =
+                    open_graphics_runtime.floor_item_state.material.color.r;
+                open_graphics_runtime.floor_item_state.material.color.g =
+                    open_graphics_runtime.floor_item_state.material.color.r;
             }
         }
         if (scrolling > 0) {
@@ -803,23 +859,24 @@ void opening_ending_scroll_run(void)
             panel = opening_ending_scroll_panels[0];
             do {
                 if (scroll_phase == 0 || scroll_phase == 2) {
-                    if ((s16)opening_ending_scroll_panels[8][1] > 50) {
+                    if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1][1] >
+                        ENDING_PANEL_STOP_Y) {
                         --panel[1];
-                    } else if (sequence_phase == 0) {
-                        sequence_phase = 1;
-                        sequence_delay = 20;
+                    } else if (sequence_phase == ENDING_SEQUENCE_WAIT_SCROLL) {
+                        sequence_phase = ENDING_SEQUENCE_DELAY;
+                        sequence_delay = ENDING_SEQUENCE_DELAY_START;
                     }
                 }
-                if ((u16)(panel[1] + 255) < 495) {
+                if ((u16)(panel[1] + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                     sprite_add_ft4(panel, opening_ending_scroll_uv,
                                    texture_pages[panel_index], cluts[panel_index],
-                                   &opening_ending_scroll_panel_color.r, 4);
+                                   &opening_ending_scroll_panel_color.r, PANEL_OT_DEPTH);
                 }
                 ++panel_index;
                 panel += 4;
-            } while (panel_index < 9);
+            } while (panel_index < ENDING_PANEL_COUNT);
             if (--scroll_phase == -1) {
-                scroll_phase = 3;
+                scroll_phase = ENDING_SCROLL_PHASE_COUNT - 1;
             }
         }
         display_present_frame();

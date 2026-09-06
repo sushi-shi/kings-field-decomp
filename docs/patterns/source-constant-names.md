@@ -991,3 +991,77 @@ contents and all 484 strict scores match 7c1968e; only OPEN's scene object
 has debug-line changes. All 644 tests pass (nine skipped), and lint and
 whitespace checks pass. The full build retains its existing ownership and
 data-placement failures. No function's match verdict changes.
+
+## Later opening scenes and ending sequence
+
+Function Match Plan: finish the literal audit of OPEN `opening_scenes.c`
+through `opening_scene3_run`, `opening_ending_scene_run`,
+`opening_ending_scroll_run` and their initialized data. Their complete
+disassembly/CFG, call/reference/string and match dossiers remain available;
+the phase dispatch, countdown, volume division, panel clipping, entity
+movement and brightness schedules were reviewed again before editing.
+Name the lighting/audio phases, panel counts and placement contract,
+camera/rotation rates, transition height and ending limits. Reuse established
+Q12, angle, camera-finished, entity-free and projection/fog constants.
+Keep the unrolled texture calls, serialized data, signed/unsigned accesses,
+load/store order, and every original comparison and increment. Require all
+112 non-debug objects and all 484 strict scores to agree with 7c1968e.
+
+Lighting runs black-to-midpoint, midpoint-to-green, then stops updating.
+The independent sequence phases wait for the scroll, count down, fade the
+current sequence, then load the ending sequence. The delay starts at 20
+and expires on -1 after 21 decrements. The volume accumulator starts at
+381 (three times the SDK maximum), is decremented before use, then divided
+by three for both master-volume channels; do not replace it with a
+one-step-per-frame byte ramp.
+
+The nine ending panels use consecutive 64-pixel texture-page X origins
+starting at 448 and consecutive CLUT rows starting at 493. Scene 3 uses
+the first two placements. Keep all original calls and their order while
+naming that common placement rule. Both cullers add 255 to the signed Y
+coordinate before narrowing to u16 and comparing with 495, corresponding
+to Y values -255 through 239. The panel data's height is still 254; this
+guard is not rewritten as a rectangle intersection.
+
+The ending scroll's phase counter cycles 0,3,2,1. Panels move at phases
+0 and 2; the final model's roll/color updates occur at phase 0. These are
+positions in a four-frame cycle, distinct from the named lighting and
+sequence states. Model 26 advances in Y until reaching -8000, then is
+hidden and model 27 becomes visible. Names describe their translation and
+rotation roles without assigning unsupported story identities.
+
+This completes the literal audit of all seven functions and initialized data
+in OPEN `opening_scenes.c`. The census leaves 598 inline literals, including
+the 39 already explained in the early-scene audit. The rest remain for these
+specific reasons:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Entity layout assertions | 28/08 hex, 0, 1/-1 | Independent measured structure size/position offset, null-base offset expression and compile-time valid/invalid array extents. |
+| Camera-path array extents | 17, 3, 9, 3 | Exact initialized record counts including each terminating row; not runtime capacities. |
+| Camera-path positions, rotations and segment speeds | All remaining row scalars | Authored trajectory data. Keep the individual numeric samples and zero fourth lanes/trailing fields instead of inventing per-point constant identities. |
+| Terminating camera rows after the named X marker | -1 and 0 | Serialized fill in fields skipped once the X sentinel is found; no distinct consumer-supported meaning. |
+| Scene-0 SoundRef | 9, 0, 43 hex | Numeric program/tone/note recipe in the typed sound record. No supported sound-asset identity justifies another alias. |
+| Overlay/panel rectangle and UV data | All remaining row scalars | Measured screen positions, nonuniform vertical spacing, cropped dimensions and UV origins/spans; preserve those explicit authored samples. |
+| Color data and ending light matrix | All remaining coefficients | Numeric RGB/command bytes and matrix coefficients, including zero translation; do not round, normalize or name each coefficient. |
+| Descriptor extents and cursor strides | 4/8; background count 2 | Four halfwords per rectangle, eight UV bytes, four color/command bytes and the two explicit background rectangles. |
+| Texture/CLUT/framebuffer/background subscripts and placement multiples | 0..8 | Positions in the fixed arrays and the corresponding index times the named page stride or CLUT-row increment. |
+| Rectangle Y subscripts | 1 | The Y coordinate in the four-halfword rectangle layout. |
+| SDK CLUT X and camera-step argument | 0 | VRAM origin or no additional vertical displacement. |
+| SetDispMask | 1 | Boolean display enable. |
+| Scroll enable and tests | 0/1 | Boolean motion enable. |
+| Angle/blend/brightness/counter origins, resets and zero tests | 0 | Mathematical or empty-state origins and black/mute endpoints. |
+| Scroll phase comparisons | 0/2 | Explicit positions in the named four-frame cycle, as described above. |
+| Roll step | 1 | One angular unit per selected update, analogous to the unit panel/color counter increments. |
+| Inclusive/exclusive and countdown adjustments | +1/-1 | One-past blend limits, last-element indexing, countdown exhaustion and cycle wrap; preserve the original pre-decrement schedule. |
+| Ending scene's intermediate `blend` counter | 40/fff hex | Its increment/guard/clamp have no value consumer before the counter is reset for the final fade. Preserve the measured operations while their original purpose is unresolved; do not label them an angle mask or claim they drive the visible brightness ramp. |
+
+The ending brightness calls still occur before the existing upper clamp,
+and the final darkening loop retains its original lower clamp. Naming the
+bounds does not remove their intermediate overshoot or change call order.
+
+Validation: all 644 tests pass (nine skipped), and lint and whitespace checks
+pass. All 112 non-debug object contents and all 484 strict scores match
+7c1968e; the scene object differs only in debug-line records. The initialized
+data and relocation sections are unchanged. The full build retains its
+existing data-placement and ownership failures, with no new artifact failure.
