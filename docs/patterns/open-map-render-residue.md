@@ -1,5 +1,14 @@
 # OPEN map rendering: ownership and setup residues
 
+## Exact closure after `806f1ed`
+
+`render_map_cell` is now strict **100%**, 464 bytes, using the supplied SDK
+`setVector` XYZ form. Separate XYZ assignments are also raw exact: retail's
+X/Z/Y store schedule did not prove that source order. The 320-byte traversal
+remains exact. See [the paired source-order controls](sdk-vector-publication.md)
+for the plan, full raw/relocation verification and independent GAME witness.
+The experiments below describe earlier states, not the current match result.
+
 ## Camera narrowing control at `4199d60`
 
 The six semantic views, fresh focused compile, exact traversal caller,

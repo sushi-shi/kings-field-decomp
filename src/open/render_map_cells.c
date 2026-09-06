@@ -27,10 +27,11 @@ void render_map_cell(s32 col, s32 row, u8 cell)
     if (cell == 1) {
         object_index += 100;
     }
-    position.vx = col * 2000 - (u16)open_graphics_runtime.render_state.view_position.vx;
-    position.vz = row * 2000 - (u16)open_graphics_runtime.render_state.view_position.vz;
-    position.vy = map_floor_height_grid[row][col] * -100 -
-        (u16)open_graphics_runtime.render_state.view_position.vy;
+    setVector(&position,
+        col * 2000 - (u16)open_graphics_runtime.render_state.view_position.vx,
+        map_floor_height_grid[row][col] * -100 -
+            (u16)open_graphics_runtime.render_state.view_position.vy,
+        row * 2000 - (u16)open_graphics_runtime.render_state.view_position.vz);
     if (orientation == 1) {
         position.vz += 2000;
     } else if (orientation == 2) {
