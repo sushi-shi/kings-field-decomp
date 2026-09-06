@@ -42,7 +42,8 @@ class ClangdTests(unittest.TestCase):
         self.assertEqual(arguments[arguments.index("-isystem") + 1], "/sdk with spaces")
         self.assertIn("--target=mipsel-none-elf", arguments)
         self.assertIn("-mabi=32", arguments)
-        self.assertIn("-std=gnu89", arguments)
+        self.assertIn("-std=gnu++20", arguments)
+        self.assertEqual(arguments[arguments.index("-x") + 1], "c++")
         self.assertNotIn("-mcpu=r2000", arguments)
         self.assertNotIn("-fno-schedule-insns", arguments)
 

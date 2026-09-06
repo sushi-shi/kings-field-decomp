@@ -32,8 +32,8 @@ void actor_select_next_action(s32 player_distance)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    u8 action = actor->action;
-    u8 chosen = KF_ACTOR_ACTION_NONE;
+    KfActorAction action = actor->action;
+    KfActorAction chosen = KF_ACTOR_ACTION_NONE;
     s32 recently_active;
     s32 awareness;
     s32 near_range;

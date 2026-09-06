@@ -212,7 +212,7 @@ void actor_pool_clear(void)
 }
 
 ADDRESS(0x8002cec8, 0xc)
-void actor_set_action(KfActor *actor, u8 action)
+void actor_set_action(KfActor *actor, KfActorAction action)
 {
     actor->action = action;
     actor->action_progress = KF_ACTOR_PROGRESS_INIT;
@@ -689,8 +689,8 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
 }
 
 ADDRESS(0x8002dd94, 0x120)
-u8 actor_try_select_action_distance_facing(
-    u8 action,
+KfActorAction actor_try_select_action_distance_facing(
+    KfActorAction action,
     s32 distance,
     u16 chance,
     u16 distance_scale)
@@ -732,7 +732,7 @@ u8 actor_try_select_action_distance_facing(
 }
 
 ADDRESS(0x8002deb4, 0x164)
-u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
+KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance, u16 chance)
 {
     KfActor *actor = actor_state.current;
     u16 odds = chance;
@@ -775,7 +775,7 @@ rejected:
 }
 
 ADDRESS(0x8002e018, 0xd8)
-u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
+KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance, u16 chance)
 {
     KfActor *actor = actor_state.current;
     u16 odds = chance;
@@ -806,7 +806,7 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
-u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance)
+KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, u16 profile_index, u16 chance)
 {
     u16 profile = profile_index & KF_ACTOR_EFFECT_KIND_MASK;
     KfActorActionProfile *weights = &actor_action_profiles[profile];

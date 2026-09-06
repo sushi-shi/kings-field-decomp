@@ -132,3 +132,136 @@ Full `kf build` retains the existing data/ownership failures: source data
 7/60 complete contributions match; the four config SDK contributions pass;
 target relink remains PSX 1/1, GAME 75/77, OPEN 34/38. No compiler profile,
 banked score, build tooling, SDK header or unrelated input is changed.
+
+## Function Match Plan: actor enum domains at `1d8a364`
+
+Adopt `KfActorAction` and `KfActorLifecycle` as scoped one-byte enum types in
+the modern view, with `u8` aliases and the same enumerators in legacy C.
+Propagate action through the field, both selection locals, the setter's
+parameter and all four eligibility helpers' parameters and returns. Keep
+lifecycle typed in every update, render and map-script consumer. The floor
+save stream is the only raw lifecycle boundary: explicitly encode its two
+written states and decode its input byte without adding runtime validation.
+
+The original C remains the retail build input. Add a C++20 checking command
+and modern clangd mode so domain erasure becomes a compiler error. The
+layout inventory must read each enum's declared storage and retain its
+semantic type name. Header assertions guard field sizes and offsets; modern
+compilation checks propagation through the real consumers. A small negative
+control verifies that the compatibility layer enables enum restrictions.
+The inventory must not silently assume that an unrecognized type
+occupies one byte. Action progress retains its current multi-purpose byte
+until its phases and counter uses can be represented faithfully.
+
+The GAME retail files were revalidated. All six semantic views and source
+history were refreshed for 27 functions: every action/lifecycle consumer
+listed in `game-actor-states.md` except the unrelated vertical-only/motion
+functions, plus the floor-5 cutscene, floor-item renderer and effect
+constructor controls. Each has an image-qualified snapshot and will retain
+its own final verdict. The actor-state dossier supplies the preceding
+adjacent-function and constant-domain evidence.
+
+Key ABI controls are `actor_set_action` at `8002cec8` (12 bytes), which
+stores +8 and clears +56 in its return delay slot; the action helpers at
+`8002dd94`, `8002deb4`, `8002e018`, `8002e0f0`, which load the action with
+`lbu` and mask arguments/results to 255; and the +6 lifecycle byte in the
+pool, dispatcher, renderer and saved-state streams. All action numbers,
+sentinels, branch conditions and effect-profile indices remain unchanged.
+The profiled helper's `profile_index` is not an actor action.
+
+Two existing errors prevent modern checking of the full consumer family.
+In the floor-5 cutscene (`800346a8`, 908 bytes, exact), the fifth constructor
+argument is an uninitialized eight-byte stack object at sp+160. Replace its
+`s32 aux[2]` declaration with `SVECTOR direction`, preserving all untouched
+bytes, its address and the constructor's eight-byte read. For
+`render_entities` (`8001f218`, 1408 bytes, 91.25%), add the missing shared
+declaration of `render_floor_item(KfFloorItem *)`; its body at `8001ed90`
+and sole caller establish that pointer and unused return. These repairs
+must not introduce permissive overloads or casts over the errors.
+
+Before committing, force the seven consuming units to rebuild, verify all
+112 objects and 484 comparisons against `1d8a364`, resolve exact functions
+to raw retail words and ordered references, run modern checks on every
+consumer, run the whole-tree modern census without suppressing failures,
+and complete repository tests, Ruff, full `kf build` and `nix flake check`.
+The remaining modern compilation errors are migration work, not a passing
+whole-tree check or an excuse to relax the enum constraints.
+
+## Actor enum result
+
+`KfActorAction` and `KfActorLifecycle` now retain their distinct domains in
+the modern view, including selector parameters/returns and the selection
+locals. Both still occupy one byte; `KfActor` remains 0x48 bytes with lifecycle
+at +6 and action at +8. Encoding and decoding are explicit at the saved-floor
+byte stream. The conversion helpers accept only integer/enum boundaries,
+not direct conversion between unrelated enums; they do not validate saved
+values at runtime. The shared `SVECTOR` cutscene argument and floor-item
+declaration repair the existing errors in the remaining consumers.
+
+Clangd now defaults to modern checking, with a persistent `--mode retail`
+option. `kf check-types` uses the same modern arguments but compiles every
+selected source/image variant, including both images of shared sources.
+All seven actor-consuming units pass. The full census passes 62 of 112
+variants and fails 50, reporting all diagnostics and a failing exit status.
+The remaining failures include implicit `void *` conversions, missing game
+and SDK declarations, and incompatible primitive/SDK pointer types. These
+remain work to resolve through actual types; no permissive shim was added.
+
+Forced compilation preserves all 112 object files byte for byte and all
+484 strict function comparisons. The 27 reviewed functions below all retain
+their previous result. The 18 exact functions additionally agree with 2,025
+complete linked retail words, including delay slots and ordered calls/data
+references. The nine partial functions have unchanged objects and retain
+their unattributed differences. No exact-count movement or banking.
+
+| GAME VA | Function | Strict % before / after | Final verdict |
+|---|---|---:|---|
+| `8001ed90` | `render_floor_item` | 98.795180 | Unchanged partial |
+| `8001f218` | `render_entities` | 91.250000 | Unchanged partial |
+| `8002cc64` | `actor_initialize` | 100 | Unchanged exact |
+| `8002cdcc` | `actor_initialize_slot` | 100 | Unchanged exact |
+| `8002ce88` | `actor_pool_clear` | 100 | Unchanged exact |
+| `8002cec8` | `actor_set_action` | 100 | Unchanged exact |
+| `8002ced4` | `actor_pool_spawn` | 100 | Unchanged exact |
+| `8002cf84` | `actor_pool_begin_death_by_definition` | 100 | Unchanged exact |
+| `8002d120` | `actor_apply_damage` | 89.986725 | Unchanged partial |
+| `8002d4a8` | `actor_pool_apply_radial_damage` | 86.103170 | Unchanged partial |
+| `8002d7f8` | `actor_pool_find_target_in_cone` | 100 | Unchanged exact |
+| `8002da6c` | `actor_pool_find_overlap` | 100 | Unchanged exact |
+| `8002dd94` | `actor_try_select_action_distance_facing` | 100 | Unchanged exact |
+| `8002deb4` | `actor_try_select_ground_action` | 100 | Unchanged exact |
+| `8002e018` | `actor_try_select_facing_action` | 100 | Unchanged exact |
+| `8002e0f0` | `actor_try_select_profiled_action` | 96.333336 | Unchanged partial |
+| `8002e2e8` | `actor_select_next_action` | 100 | Unchanged exact |
+| `8002e6a8` | `actor_update_awareness` | 97.736840 | Unchanged partial |
+| `8002f8cc` | `actor_update_boss_death_sequence` | 100 | Unchanged exact |
+| `8002fa88` | `actor_update_current_action` | 98.938940 | Unchanged partial |
+| `80030818` | `actor_pool_update` | 100 | Unchanged exact |
+| `800308c0` | `actor_pool_load_placements` | 100 | Unchanged exact |
+| `80033f64` | `map_ambient_script_floor1` | 100 | Unchanged exact |
+| `800346a8` | `map_floor5_transition_cutscene` | 100 | Unchanged exact |
+| `80035b5c` | `map_world_state_persist` | 94.821840 | Unchanged partial |
+| `80035e44` | `map_restore_floor_state` | 99.964540 | Unchanged partial |
+| `80036f44` | `effect_pool_construct` | 100 | Unchanged exact |
+
+The compiler checks real field, parameter, return and layout constraints;
+separate tests for each use would duplicate that check. Keep one negative
+integration control for the compatibility layer and two tests for the
+Python inventory's enum storage/alignment parser. Remove the old source-text
+rule forbidding `static_assert`: it conflicts with using the compiler to
+verify the reconstructed layout. Legacy acceptance is exercised by the
+normal retail compilation, rather than another per-field fixture.
+
+Final verification: Ruff and `git diff --check` pass. `nix flake check -L`
+passes, including the modern enum control; its isolated suite runs 655 tests
+with 137 expected skips for unavailable local retail/compiler artifacts.
+The local suite runs 656 tests in 80.857 seconds: 655 pass and the existing
+untracked save/load-hub word comparison remains the only failure. Its source
+object is unchanged. The first full run also exposed the obsolete assertion
+ban described above; removing that rule resolves the new failure.
+
+Full `kf build` still fails the existing data/ownership checks: source data
+7/60 complete contributions match, all four config SDK contributions pass,
+and target relink remains PSX 1/1, GAME 75/77, OPEN 34/38. These failures and
+the 50 failing modern source/image variants are not claimed as resolved by
+this actor-domain checkpoint.

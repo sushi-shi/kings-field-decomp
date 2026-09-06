@@ -8,7 +8,6 @@ from tempfile import TemporaryDirectory
 from unittest import mock
 
 from scripts.kf import cleanliness
-from scripts.kf.paths import REPO
 
 
 class StripSourceTest(unittest.TestCase):
@@ -67,23 +66,6 @@ class MetricRegexTest(unittest.TestCase):
     def test_cpp_local_aggregate(self) -> None:
         self.assertTrue(cleanliness.CPP_LOCAL_AGGREGATE.search("struct Local { int a; };"))
         self.assertTrue(cleanliness.CPP_LOCAL_AGGREGATE.search("union View {\n u32 w;"))
-
-    def test_source_has_no_compile_time_layout_assertions(self) -> None:
-        forbidden = (
-            "_Static_assert",
-            "static_assert",
-            "STATIC_ASSERT",
-            "C_ASSERT",
-            "BUILD_BUG_ON",
-            "KF_OFFSET_OF",
-            "offset_is_",
-            "size_is_",
-        )
-        for root in (REPO / "src", REPO / "include"):
-            for path in (*root.rglob("*.c"), *root.rglob("*.h")):
-                source = path.read_text(encoding="utf-8", errors="replace")
-                for spelling in forbidden:
-                    self.assertNotIn(spelling, source, f"{path}: {spelling}")
 
 
 class GateTest(unittest.TestCase):

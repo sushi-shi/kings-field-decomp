@@ -247,7 +247,7 @@ void map_floor5_transition_cutscene(void)
     MATRIX color_matrix;
     KfCameraPathState path;
     KfMapObject *effect;
-    s32 aux[2];
+    SVECTOR direction;
     VECTOR spawn;
     s32 grid_height;
     s32 spin;
@@ -306,7 +306,7 @@ void map_floor5_transition_cutscene(void)
                     spawn.vy -= 600;
                     effect_pool_construct(
                         0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                        KF_EFFECT_KIND_RADIAL_BLAST, &spawn, aux, 1);
+                        KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);
                     effect->object_id = 0xb;
                 }
             } else if (spin < 240) {

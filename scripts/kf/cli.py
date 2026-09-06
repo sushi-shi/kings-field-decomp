@@ -106,6 +106,12 @@ def parser() -> argparse.ArgumentParser:
 
     clangd = subs.add_parser("clangd", help="refresh editor commands and select shared-source context")
     clangd.add_argument("--image", choices=tuple(IMAGE_ALIASES))
+    clangd.add_argument("--mode", choices=("modern", "retail"))
+
+    types = subs.add_parser("check-types", help="check C sources with modern scoped enum types")
+    types.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
+    types.add_argument("--unit", action="append")
+    types.add_argument("-j", "--jobs", type=int, default=4)
 
     build = subs.add_parser("build", help="configure if needed and run the Ninja graph")
     build.add_argument("phase", nargs="?", choices=PHASES, default="all")
@@ -215,11 +221,17 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "configure":
             return _configure(args)
         if args.command == "clangd":
-            from scripts.kf.clangd import generate
+            from scripts.kf.clangd import generate, selected_mode
 
-            count, image = generate(image=args.image)
-            print(f"[clangd] compile_commands.json: {count} C sources; shared-source context: {image}")
+            count, image = generate(image=args.image, mode=args.mode)
+            print(f"[clangd] compile_commands.json: {count} C sources; "
+                  f"shared-source context: {image}; type mode: {selected_mode()}")
             return 0
+        if args.command == "check-types":
+            from scripts.kf.check_types import check as check_types
+
+            return check_types(images=_images(args.image), names=tuple(args.unit or ()),
+                               jobs=args.jobs)
         if args.command == "build":
             return _build(args)
         if args.command == "try":

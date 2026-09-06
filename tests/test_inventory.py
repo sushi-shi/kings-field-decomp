@@ -48,6 +48,41 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_stored_enum_fields_keep_domain_names_widths_and_alignment(self) -> None:
+        source = """
+            KF_ENUM_BEGIN(ByteState, u8)
+                BYTE_IDLE = 0, BYTE_COUNT = 3
+            KF_ENUM_END(ByteState)
+            KF_ENUM_BEGIN(HalfState, s16)
+                HALF_IDLE = 0
+            KF_ENUM_END(HalfState)
+            typedef struct EnumCarrier {
+                ByteState states[BYTE_COUNT];
+                HalfState state;
+                u8 tail;
+            } EnumCarrier;
+        """
+        with patch("pathlib.Path.read_text",
+                   lambda path: source if path.name == "game_types.h" else ""):
+            carrier = _header_structure_layouts()["EnumCarrier"]
+        self.assertEqual((carrier.size, carrier.alignment), (8, 2))
+        self.assertEqual([(f.name, f.datatype, f.offset, f.size) for f in carrier.fields], [
+            ("states", "ByteState[3]", 0, 3), ("state", "HalfState", 4, 2),
+            ("tail", "u8", 6, 1),
+        ])
+
+    def test_unknown_enum_storage_is_rejected_before_layout_can_be_trusted(self) -> None:
+        source = """
+            KF_ENUM_BEGIN(BadState, size_t)
+                BAD_IDLE = 0
+            KF_ENUM_END(BadState)
+            typedef struct BadCarrier { BadState state; } BadCarrier;
+        """
+        with patch("pathlib.Path.read_text",
+                   lambda path: source if path.name == "game_types.h" else ""):
+            with self.assertRaisesRegex(ValueError, "unsupported enum storage"):
+                _header_structure_layouts()
+
     def test_named_union_uses_maximum_extent_and_alignment(self) -> None:
         source = """
             typedef union LayoutUnion { u8 bytes[5]; u32 word; } LayoutUnion;

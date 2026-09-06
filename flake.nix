@@ -514,7 +514,10 @@
       };
 
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
-        nativeBuildInputs = [ analysisPython mipsBinutilsAliases psy-k objdiff-cli ];
+        nativeBuildInputs = [
+          analysisPython mipsBinutilsAliases psy-k objdiff-cli
+          pkgs.llvmPackages.clang-unwrapped
+        ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
         PSYQ_LIB = "${psyqToolchain}/psyq/lib";
         PSYQ_INCLUDE = "${psyqToolchain}/psyq/include";

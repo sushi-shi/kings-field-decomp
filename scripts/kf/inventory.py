@@ -418,6 +418,10 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     )
     array_pattern = re.compile(rf"\[\s*({array_bound})\s*\]")
     enum_pattern = re.compile(r"\benum(?:\s+[A-Za-z_]\w*)?\s*\{([^{}]*)\}", re.DOTALL)
+    stored_enum_pattern = re.compile(
+        r"\bKF_ENUM_BEGIN\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*\)"
+        r"(.*?)\bKF_ENUM_END\(\s*\1\s*\)", re.DOTALL,
+    )
     integer_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*(0x[0-9a-fA-F]+|\d+)")
     checked_headers = (
         REPO / "include/kf/game_types.h",
@@ -449,10 +453,19 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
         text = re.sub(r"//[^\n]*", "", text)
+        enum_bodies = [enum[1] for enum in enum_pattern.finditer(text)]
+        for enum in stored_enum_pattern.finditer(text):
+            name, storage, body = enum.groups()
+            if storage not in {"s8", "u8", "s16", "u16", "s32", "u32", "long"}:
+                raise ValueError(f"{path}: unsupported enum storage {storage!r} for {name}")
+            if name in primitive_layouts or name in definitions:
+                raise ValueError(f"{path}: duplicate checked type {name}")
+            primitive_layouts[name] = primitive_layouts[storage]
+            enum_bodies.append(body)
         # Resolve explicit integer enumerators only. Other C expressions are
         # rejected when used as bounds; never guess an inventory's byte extent.
-        for enum in enum_pattern.finditer(text):
-            for enumerator in enum[1].split(","):
+        for body in enum_bodies:
+            for enumerator in body.split(","):
                 constant = integer_enumerator.fullmatch(enumerator.strip())
                 if constant:
                     constant_name, value = constant.groups()
@@ -461,7 +474,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                     constants[constant_name] = int(value, 0)
         for match in definition_pattern.finditer(text):
             kind, name, body = match.groups()
-            if name in definitions:
+            if name in definitions or name in primitive_layouts:
                 raise ValueError(f"{path}: duplicate checked structure {name}")
             definitions[name] = (path, kind, body)
 

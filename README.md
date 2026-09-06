@@ -50,10 +50,21 @@ still opens another project.
 
 Neovim/CoC and other clangd clients discover the generated `compile_commands.json`
 at the repository root. `nix develop`, `kf configure`, and `kf build` refresh it
-with the pinned SDK includes and MIPS C settings. Use `kf clangd --image open`
+with the pinned SDK includes, MIPS layout, and modern C++20 type checking.
+The retail build still compiles the C sources with its pinned C compiler;
+modern scoped enums preserve their declared byte or halfword storage.
+Use `kf clangd --image open`
 or `kf clangd --image game` to select the context for sources shared by both
 images; the choice persists under `build/clangd/`. Start Neovim inside the Nix
-shell so it uses the pinned clangd.
+shell so it uses the pinned clangd. `kf clangd --mode retail` selects the C89
+editor view; `--mode modern` restores scoped-enum checks. The mode also persists.
+
+Run `kf check-types` to check every source/image variant, including both
+versions of shared sources. Use `--unit game.actor` or `--image game` to focus
+the check. Diagnostics are saved under `build/clangd/checks/`; any failed
+compilation makes the command fail. Modern compilation is being adopted
+incrementally, and the whole-tree check currently reports unresolved pointer
+and SDK declaration errors.
 
 ## Project
 

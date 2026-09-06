@@ -196,9 +196,9 @@ void map_world_state_persist(void)
             active++;
             *out++ = i;
             if (actor->lifecycle == KF_ACTOR_LIFECYCLE_DISABLED) {
-                *out++ = KF_ACTOR_LIFECYCLE_DISABLED;
+                *out++ = KF_ENUM_ENCODE(u8, KF_ACTOR_LIFECYCLE_DISABLED);
             } else {
-                *out++ = KF_ACTOR_LIFECYCLE_DORMANT;
+                *out++ = KF_ENUM_ENCODE(u8, KF_ACTOR_LIFECYCLE_DORMANT);
             }
         }
     }

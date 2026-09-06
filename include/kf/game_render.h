@@ -143,6 +143,7 @@ extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
 extern void render_actor_sprite(KfEffectRenderView *sprite);
 extern void render_effect_sprites(void);
+extern void render_floor_item(KfFloorItem *item);
 extern void render_enqueue_map(u16 object_index);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag);

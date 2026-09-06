@@ -4,6 +4,7 @@
 /* Actor and combatant layouts, state, and operations. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 #include <kf/psyq.h>
 #include <kf/audio.h>
 #include <kf/game_math.h>
@@ -21,14 +22,14 @@ enum {
 };
 
 /* Lifecycle controls activation independently of slot/respawn policy. */
-enum {
+KF_ENUM_BEGIN(KfActorLifecycle, u8)
     KF_ACTOR_LIFECYCLE_DORMANT = 0,
     KF_ACTOR_LIFECYCLE_ACTIVE = 1,
     KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT = 2,
     KF_ACTOR_LIFECYCLE_DISABLED = 3
-};
+KF_ENUM_END(KfActorLifecycle)
 
-enum {
+KF_ENUM_BEGIN(KfActorAction, u8)
     KF_ACTOR_ACTION_IDLE = 0,
     KF_ACTOR_ACTION_WANDER = 1,
     KF_ACTOR_ACTION_PURSUE = 2,
@@ -47,7 +48,7 @@ enum {
     KF_ACTOR_ACTION_RETURN_HOME = 33,
     KF_ACTOR_ACTION_POST_DEATH = 127,
     KF_ACTOR_ACTION_NONE = 0xff
-};
+KF_ENUM_END(KfActorAction)
 
 /* LOCKED suppresses automatic selection; damage can still change the action. */
 enum {
@@ -203,9 +204,9 @@ typedef struct KfActor {
     u8 heading_quadrant;
     u8 tile_z;
     u8 tile_x;
-    u8 lifecycle;
+    KfActorLifecycle lifecycle;
     u8 spawn_chance;
-    u8 action;
+    KfActorAction action;
     u8 death_drop_object_id;
     u8 animation_id;
     u8 vertical_state;
@@ -231,6 +232,14 @@ typedef struct KfActor {
     s16 movement_y;
     u8 unknown_46[2];
 } KfActor;
+
+typedef char check_actor_action_storage[sizeof(KfActorAction) == 1 ? 1 : -1];
+typedef char check_actor_lifecycle_storage[sizeof(KfActorLifecycle) == 1 ? 1 : -1];
+typedef char check_actor_size[sizeof(KfActor) == 0x48 ? 1 : -1];
+#if KF_MODERN_TYPES
+static_assert(__builtin_offsetof(KfActor, lifecycle) == 0x06);
+static_assert(__builtin_offsetof(KfActor, action) == 0x08);
+#endif
 
 /*
  * Actor routines derive the definition array and current context from the
@@ -290,12 +299,16 @@ extern s32 actor_distance_to_point(
     s32 max_distance, s32 actor_height, s32 point_height);
 extern void actor_prepare_charge_toward_player(void);
 extern void actor_select_next_action(s32 player_distance);
-extern void actor_set_action(KfActor *actor, u8 action);
+extern void actor_set_action(KfActor *actor, KfActorAction action);
 extern void actor_set_player_transform( const VECTOR *position, const SVECTOR *rotation);
-extern u8 actor_try_select_action_distance_facing( u8 action, s32 distance, u16 chance, u16 distance_scale);
-extern u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance);
-extern u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance);
-extern u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance);
+extern KfActorAction actor_try_select_action_distance_facing(
+    KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
+extern KfActorAction actor_try_select_facing_action(
+    KfActorAction action, s32 distance, u16 chance);
+extern KfActorAction actor_try_select_ground_action(
+    KfActorAction action, s32 distance, u16 chance);
+extern KfActorAction actor_try_select_profiled_action(
+    KfActorAction action, s32 distance, u16 profile_index, u16 chance);
 extern void actor_try_attack_player(
     u16 minimum_distance, u16 maximum_distance,
     s16 angle_offset, s16 angle_tolerance);

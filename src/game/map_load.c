@@ -57,7 +57,7 @@ void map_restore_floor_state(void)
 
             do {
                 index = *in++;
-                actors[index].lifecycle = *in++;
+                actors[index].lifecycle = KF_ENUM_DECODE(KfActorLifecycle, *in++);
             } while (--i != -1);
         }
 
