@@ -78,3 +78,75 @@ closes one related renderer, but does not remove this function's residue.
 The combined verification passes Ruff, all 591 existing tests and diff checks;
 the full build retains the existing data/ownership/placement failures recorded
 in [the dialog-summary audit](game-dialog-summary-loop.md). No gate was weakened.
+
+## Selection reset and final-return plan at `13e081a`
+
+Hash-identical retail, all six semantic views, the complete sole caller,
+adjacent boundaries, raw seven-row switch, current fresh compile, original
+history and the exact save/load hub source were refreshed. The baseline is
+96.863640%, 700 probe bytes versus 704 retail; save confirmation is exact
+and item use remains 99.482180%. The main-menu body is absent from the
+vendor/FID inventories; the PadRead provider and its revisioned old-style
+SDK declaration remain separate from this game-owned hub.
+
+The signature stays s32(void): menu_enter_mode retains v0 across its cleanup
+calls and forwards it. Keep all 28 direct calls, eleven internal jumps, the
+single switch-table pair, and all seven table destinations. Its bounded
+table dispatch is independently decoded; the viewer's unreachable flags
+after jr v0 are not evidence that the panel arms are dead. All cursor/input
+state is full-word, the frame is 48 bytes, and jr at 80022600 owns the stack
+restore at 80022604. No strings or outgoing candidate relocations occur.
+
+Retail's exit guard at 800224cc owns selection=-1 in its delay slot at
+800224d0: the reset occurs on both guard outcomes. The source duplicates
+that reset inside the returning arm and after the guard. First test one
+unconditional reset before the guard. Then separately test breaking the
+main loop after its existing input-release wait and returning the result
+after the loop; retail's exit jump reaches the common epilogue. The related
+exact save/load hub has this reset/guard/final-return structure. These are
+bounded source hypotheses, not proof of unique source spelling. Preserve
+the case-0/5 cancellation join, case-1 result policy, draw/input order and
+all other declarations and constants; add no constant carrier or padding.
+
+The reset-only trial moves that reset into several earlier panel call slots
+and moves confirmation clearing into the exit guard's slot. It does not
+recover the missing saved constant or the cursor/result register roles.
+Before judging the composed structure, test the separately evidenced
+post-loop return; the reset-only candidate is not an exact claim.
+
+Adding the post-loop return emits the same reset-only instruction diff; it
+does not repair those call slots. Reject the unconditional-reset experiment
+on those concrete ordering differences, not merely its fuzzy score. Isolate
+the final-return hypothesis against the original two reset sites next.
+
+The isolated post-loop return restores the original focused instruction
+diff, including the missing retained -1/save/restore and exchanged
+cursor/result roles. It does not recover a retail instruction. Restore the
+original source completely; neither source experiment is retained, and no
+compiler limitation or new exact result is inferred from these controls.
+The reset is already emitted in the correct guard delay slot by the original
+duplicated form. This result limits the transfer of the save/load hub's
+source correction: the same source shape is not automatically a correction
+for every related menu.
+
+A fresh restored compile matches every resolved instruction, direct call and
+ordered address pair of the pre-trial canonical object for all three unit
+functions. Save confirmation remains all 37 retail words exact; item use
+retains its seven-word fruit-healing residue. Main-menu retail SHA-256 is
+`655d2343f84b303d279e9dcdbe87a8c72a0abbf2ca66a9329367ccfb18e3658a`
+(704 bytes); the restored resolved candidate is
+`003389479a02f93d3db3978aebd471a0a36de3248cad94c4e7df2601b18c8f4e`
+(700 bytes). The 28 numeric calls and switch-table base still agree, while
+instruction positions, saved-register set and register operands remain
+non-exact. No source, shared header, retail inventory or baseline change is
+retained from this experiment.
+
+The restored focused match and full rebuild retain GAME 302/362, OPEN 98/108
+and PSX 1/1 exact functions. Ruff and whitespace checks pass. Repository-wide
+verification is not green: the final 657-test run encounters three errors
+for graphics fields renamed concurrently and one inventory-count failure
+(2952 versus 2954); the full build retains data/ownership failures and now
+reports GAME target relink 74/77 during those separate render/material edits.
+The preceding clean-campaign 657-test run passed before commit `13e081a`.
+Those concurrent source/config/test changes are preserved and excluded from
+this evidence-only follow-up; no global clean-build claim is made.
