@@ -293,7 +293,7 @@ KfGraphicsRuntimeOpen	0x24786	0x2	unknown_24786	u8[2]	opaque	open_render.h;asm;d
 KfHudSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game_render.h;retail-initializers	unread byte before the sprite descriptor
 KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game_render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
-KfMagicRecord	0x00	0x01	learned	u8	supported	magic.h;asm;player_recalculate_combat_stats;player_update	set to 1 at base_magic milestones; gates the weapon-8 spell
+KfMagicRecord	0x00	0x01	learned	KfMagicLearningState	supported	magic.h;asm;player_recalculate_combat_stats;player_update;game-magic-learning-state.md;save_file_write_slot;save_file_read_slot	byte learning state: unlearned0/learned1; menus require exactly1 while progression and Flame Sword preserve nonzero tests; saved verbatim for all24 records
 KfMagicRecord	0x01	0x01	charge_rate	u8	supported	magic.h;asm;player_update	fixed6_ratio_step span while charging magic
 KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
 KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	magic.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
@@ -617,7 +617,7 @@ KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	game_save.h;save_file_wri
 KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	game_save.h;asm	not touched by the write/read pair
 KfSavePayload	0x30c	0x2134	world_state	KfMapSavedWorld	supported	game_save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy;game-map-script-state.md	word-aligned saved world: five 1700-byte slots with typed floor-script prefixes
 KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game_save.h;game_state_initialize;item_menu_buy;save_file_write_slot;save_file_read_slot;alignment-checked-copy	complete copy of the three 80-byte item_stock banks; player quantities followed by two shop-stock/availability banks
-KfSavePayload	0x2530	0x18	magic_flags	u8[24]	supported	game_save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride	first byte of each of the 24 20-byte magic records at DAT_8009ce60
+KfSavePayload	0x2530	0x18	magic_flags	KfMagicLearningState[24]	supported	game_save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride;game-magic-learning-state.md	24 learning-state bytes copied directly from/to byte0 of each20-byte runtime magic record; enum storage preserves unnamed encoded values
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game_save.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player experience word; stored and copied as a word
 KfSaveSlotSummary	0x04	0x04	current_floor	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-floor byte; stored and copied as a word

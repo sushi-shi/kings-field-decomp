@@ -384,7 +384,7 @@ s32 save_file_write_slot(s16 slot_id)
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->item_stock, item_stock,
            sizeof(save_payload_buffer->item_stock));
-    for (index = 0; index < (s32)sizeof(save_payload_buffer->magic_flags); index++) {
+    for (index = 0; index < KF_MAGIC_RECORD_COUNT; index++) {
         save_payload_buffer->magic_flags[index] = magic_records[index].learned;
     }
     memory_card_clear_events();
@@ -635,7 +635,7 @@ s32 save_file_read_slot(s16 slot_id)
            sizeof(save_payload_buffer->world_state));
     memcpy(item_stock, save_payload_buffer->item_stock,
            sizeof(save_payload_buffer->item_stock));
-    for (index = 0; index < (s32)sizeof(save_payload_buffer->magic_flags); index++) {
+    for (index = 0; index < KF_MAGIC_RECORD_COUNT; index++) {
         magic_records[index].learned = save_payload_buffer->magic_flags[index];
     }
     player_state.weapon_asset_buffer = weapon_asset_buffer;

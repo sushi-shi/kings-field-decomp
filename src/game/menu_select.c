@@ -242,7 +242,7 @@ void menu_spell_select(void)
     k = 0;
     name = magic_name_rows[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].codes;
     for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++, name += 10) {
-        if (magic_records[code].learned == 1) {
+        if (magic_records[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < 10; j++)
                 labels[k][j] = name[j];
             codes[k] = KF_ENUM_DECODE(KfSelectedMagicId, code);

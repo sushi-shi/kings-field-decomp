@@ -5,6 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/game_map.h>
+#include <kf/magic.h>
 
 enum {
     KF_CARD_CHANNEL = 0,
@@ -69,7 +70,7 @@ typedef struct KfSavePayload {
     u8 unknown_0e0[556];
     KfMapSavedWorld world_state;
     u8 item_stock[3][80];
-    u8 magic_flags[24];
+    KfMagicLearningState magic_flags[KF_MAGIC_RECORD_COUNT];
     u8 unknown_2548[56];
 } KfSavePayload;
 

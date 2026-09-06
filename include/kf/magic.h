@@ -28,9 +28,15 @@ KF_ENUM_BEGIN(KfSelectedMagicId, u8)
     KF_MAGIC_NONE = 0xff
 KF_ENUM_END(KfSelectedMagicId)
 
+/* Keep exact learned checks distinct from the nonzero gameplay checks. */
+KF_ENUM_BEGIN(KfMagicLearningState, u8)
+    KF_MAGIC_UNLEARNED = 0,
+    KF_MAGIC_LEARNED = 1
+KF_ENUM_END(KfMagicLearningState)
+
 /* Runtime-loaded spell definition used by player and effect code. */
 typedef struct KfMagicRecord {
-    u8 learned;
+    KfMagicLearningState learned;
     u8 charge_rate;
     SoundRef sounds[2];
     u16 damage_components[4];

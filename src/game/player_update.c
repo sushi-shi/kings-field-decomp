@@ -333,7 +333,7 @@ void player_update(void)
                     player_state.weapon_magic_delay = 3;
                     break;
                 case KF_ITEM_FLAME_SWORD:
-                    if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == 0) {
+                    if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_FIRE_BALL;

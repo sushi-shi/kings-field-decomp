@@ -40,7 +40,7 @@ s32 menu_magic_panel(void)
 
     found = 0;
     for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
-        if (magic_records[code].learned == 1) {
+        if (magic_records[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < 10; j++)
                 labels[found][j] = magic_name_rows[code].codes[j];
             codes[found] = code;

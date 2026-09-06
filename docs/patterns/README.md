@@ -15,6 +15,9 @@ promotes a probe to a proven historical toolchain.
 - [game-selected-magic-types.md](game-selected-magic-types.md): selected-spell
   byte enum propagated through the player field, API, local and menu array;
   compiler rejection evidence and explicit resource/serialization boundaries.
+- [game-magic-learning-state.md](game-magic-learning-state.md): byte learning
+  enum propagated through runtime records and saves, exact-one versus nonzero
+  predicates, and the retail resource's initial learning state.
 - [game-map-dialogue-state.md](game-map-dialogue-state.md): GAME dialogue
   stages/pages, animation phase, byte enum domains and corrected call evidence.
 - [game-map-event-literals.md](game-map-event-literals.md): map-event movement,

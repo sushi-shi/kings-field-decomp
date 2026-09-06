@@ -1,12 +1,12 @@
 # Retained floor-script literals
 
 Complete per-occurrence review of `src/game/map_scripts.c` after the
-[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md) and [selected-spell types](game-selected-magic-types.md). Ownership claims and
+[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md) and [selected-spell types](game-selected-magic-types.md) and [learning-state typing](game-magic-learning-state.md). Ownership claims and
 named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
 
-All **296 retained occurrences** have an explicit reason; no fallback is used.
+All **287 retained occurrences** have an explicit reason; no fallback is used.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -38,9 +38,6 @@ All **296 retained occurrences** have an explicit reason; no fallback is used.
 | `map_ambient_script_floor2` | 134 | `1` | `&gameplay_sound_ref_8, (const VECTOR *)&map_event_pool[1].reference_x, KF_AUDIO_MAX_VOLUME);` | Use event slot 1 as the authored sound position. |
 | `map_ambient_script_floor3` | 142 | `15, 18` | `if (player_state.map_cell.x >= 15 && player_state.map_cell.x < 18` | Authored restoration/teaching region is tile X=15..17 and Z=64; no world-coordinate conversion here. |
 | `map_ambient_script_floor3` | 143 | `0x40` | `&& player_state.map_cell.z == 0x40) {` | Authored restoration/teaching region is tile X=15..17 and Z=64; no world-coordinate conversion here. |
-| `map_ambient_script_floor3` | 145 | `0 × 2` | `if (magic_records[KF_MAGIC_RESIST_FIRE].learned == 0 \|\| magic_records[KF_MAGIC_BLESS].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
-| `map_ambient_script_floor3` | 146 | `1` | `magic_records[KF_MAGIC_RESIST_FIRE].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
-| `map_ambient_script_floor3` | 147 | `1` | `magic_records[KF_MAGIC_BLESS].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
 | `map_ambient_script_floor3` | 148 | `1` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_ambient_script_floor5` | 165 | `38` | `if (*encounter_started == KF_MAP_SCRIPT_UNSET && player_state.map_cell.x >= 38` | Authored encounter entry: tile X=38..40, Z=7; unsigned yaw 1808..2288 inclusive is half-turn plus/minus 240 angle units. |
 | `map_ambient_script_floor5` | 166 | `41, 7` | `&& player_state.map_cell.x < 41 && player_state.map_cell.z == 7` | Authored encounter entry: tile X=38..40, Z=7; unsigned yaw 1808..2288 inclusive is half-turn plus/minus 240 angle units. |
@@ -68,13 +65,9 @@ All **296 retained occurrences** have an explicit reason; no fallback is used.
 | `map_action_script_floor2` | 235 | `2` | `== MAP_DIALOGUE_STARTED(2)` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_action_script_floor2` | 236 | `3` | `&& map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 245 | `0 × 2` | `if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
-| `map_action_script_floor3` | 246 | `0` | `if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
-| `map_action_script_floor3` | 247 | `1` | `magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
 | `map_action_script_floor3` | 248, 255 | `1 × 2` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_action_script_floor3` | 251 | `1` | `if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 252 | `3` | `== MAP_DIALOGUE_STARTED(3)) {` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
-| `map_action_script_floor3` | 253 | `0` | `if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
-| `map_action_script_floor3` | 254 | `1` | `magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
 | `map_floor5_transition_cutscene` | 282 | `0 × 2` | `item_stock[0][KF_ITEM_DRAGON_SWORD] = 0;` | Clear all player-owned copies of the Dragon Sword; stock bank zero is the player bank. |
 | `map_floor5_transition_cutscene` | 283 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
 | `map_floor5_transition_cutscene` | 287 | `0` | `camera_path_step(&path, 0);` | No extra vertical offset on this authored camera path. |
@@ -114,7 +107,6 @@ All **296 retained occurrences** have an explicit reason; no fallback is used.
 | `map_event_interact` | 389 | `8` | `case 8:` | Authored character ID selects the corresponding item exchange or link-clear action; no proper character name inferred. |
 | `map_event_interact` | 390 | `0 × 2, 2 × 2` | `if (item_stock[0][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2` | Authored exchange on player stock bank zero: character 3 consumes Gold Cross for Key of the Dead, character 8 consumes Mirror of Truth to learn Healing, character 7 consumes Dragon King Grass Fruit for the harp. Nonzero means possessed; assigning one grants a copy. |
 | `map_event_interact` | 391 | `2 × 2` | `&& map_event_pool[2].dialogue_page < 2) {` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
-| `map_event_interact` | 392 | `1` | `magic_records[KF_MAGIC_HEALING].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
 | `map_event_interact` | 393 | `0` | `item_stock[0][KF_ITEM_MIRROR_OF_TRUTH]--;` | Authored exchange on player stock bank zero: character 3 consumes Gold Cross for Key of the Dead, character 8 consumes Mirror of Truth to learn Healing, character 7 consumes Dragon King Grass Fruit for the harp. Nonzero means possessed; assigning one grants a copy. |
 | `map_event_interact` | 394 | `1` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_event_interact` | 395 | `2, 1, 7` | `map_event_pool[2].dialogue_pages.last_page[1] = 7;` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |

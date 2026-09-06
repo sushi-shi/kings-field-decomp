@@ -336,16 +336,16 @@ void player_recalculate_combat_stats(void)
     if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
-    if (player_state.base_magic >= 37 && magic_records[KF_MAGIC_HEALING].learned != 0 && magic_records[KF_MAGIC_DISPOISON].learned == 0) {
-        magic_records[KF_MAGIC_DISPOISON].learned = 1;
+    if (player_state.base_magic >= 37 && magic_records[KF_MAGIC_HEALING].learned != KF_MAGIC_UNLEARNED && magic_records[KF_MAGIC_DISPOISON].learned == KF_MAGIC_UNLEARNED) {
+        magic_records[KF_MAGIC_DISPOISON].learned = KF_MAGIC_LEARNED;
         notify_enqueue(1);
     }
-    if (player_state.base_magic >= 70 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == 0) {
-        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = 1;
+    if (player_state.base_magic >= 70 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
+        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(1);
     }
-    if (player_state.base_magic >= 75 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == 0) {
-        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = 1;
+    if (player_state.base_magic >= 75 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == KF_MAGIC_UNLEARNED) {
+        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(1);
     }
     if (player_state.physical_power >= 1000) {
