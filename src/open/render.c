@@ -31,7 +31,7 @@ void display_begin_frame(void)
     open_graphics_runtime.display_state.buffer_index = open_graphics_runtime.display_state.buffer_index == 0;
     open_graphics_runtime.display_state.primitive_buffer = &open_graphics_runtime.display_state.primitive_buffers[open_graphics_runtime.display_state.buffer_index];
     open_graphics_runtime.ordering_table = open_graphics_runtime.display_state.ordering_tables[open_graphics_runtime.display_state.buffer_index].entries;
-    ClearOTagR(open_graphics_runtime.ordering_table, 0x4000);
+    ClearOTagR(open_graphics_runtime.ordering_table, KF_ORDERING_TABLE_LENGTH);
     open_graphics_runtime.display_state.primitive_buffer->cursor = open_graphics_runtime.display_state.primitive_buffer->start;
     primitive_allocation_count = 0;
     open_graphics_runtime.DAT_8006e044 = 0;
@@ -45,7 +45,7 @@ void display_present_frame(void)
     VSync(0);
     PutDrawEnv(&open_graphics_runtime.display_draw_environments[open_graphics_runtime.display_state.buffer_index]);
     PutDispEnv(&open_graphics_runtime.display_disp_environments[open_graphics_runtime.display_state.buffer_index]);
-    DrawOTag(open_graphics_runtime.ordering_table + 0x3fff);
+    DrawOTag(open_graphics_runtime.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 
 ADDRESS(0x80016e68, 0x2c)
@@ -237,7 +237,7 @@ void tmd_project_vertices(s32 count)
     long depth;
     long unused_depth;
 
-    if (count >= 1000) {
+    if (count >= KF_OPEN_PROJECTED_VERTEX_CAPACITY) {
         debug_printf_sink("POINT OVER !!!!!!\n");
         return;
     }

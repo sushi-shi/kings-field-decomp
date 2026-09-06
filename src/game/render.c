@@ -9,7 +9,9 @@
 #include <kf/tmd.h>
 
 enum {
-    ERROR_SCREEN_READ_ATTEMPTS = 50
+    ERROR_SCREEN_READ_ATTEMPTS = 50,
+    PRIMITIVE_BUFFER_BYTES = 0x19640,
+    INITIAL_BACK_COLOR = 60
 };
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
@@ -34,10 +36,10 @@ DATA(0x80057b50, 0x7)
 char error_screen_path[7] = "\\E0.;1";
 
 DATA(0x80090ec0, 0xb8)
-DRAWENV display_draw_environments[2];
+DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
 
 DATA(0x80090f78, 0x28)
-DISPENV display_disp_environments[2];
+DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
 
 /* Loads and shows the system-message screen for STAGE as a semi-transparent
  * textured box, then blocks until a controller button is pressed and released.
@@ -104,10 +106,10 @@ void display_show_error_screen(s32 stage)
     PutDrawEnv(&display_draw_environments[back]);
     display_state.ordering_table = display_state.ordering_tables[back].entries;
     prim.r0 = prim.g0 = prim.b0 = 0x60;
-    ClearOTagR(display_state.ordering_table, 0x4000);
+    ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
     AddPrim(display_state.ordering_table, &prim);
     DrawSync(0);
-    DrawOTag(display_state.ordering_table + 0x3fff);
+    DrawOTag(display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
     while (PadRead(1) == 0) {
     }
     while (PadRead(1) != 0) {
@@ -141,11 +143,19 @@ void display_initialize(void)
 {
     ResetGraph(3);
     InitGeom();
-    SetGeomOffset(160, 120);
-    SetDefDrawEnv(&display_draw_environments[0], 0, 0, 320, 240);
-    SetDefDispEnv(&display_disp_environments[0], 0, 240, 320, 240);
-    SetDefDrawEnv(&display_draw_environments[1], 0, 240, 320, 240);
-    SetDefDispEnv(&display_disp_environments[1], 0, 0, 320, 240);
+    SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);
+    SetDefDrawEnv(
+        &display_draw_environments[0], 0, 0,
+        KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
+    SetDefDispEnv(
+        &display_disp_environments[0], 0, KF_DISPLAY_HEIGHT,
+        KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
+    SetDefDrawEnv(
+        &display_draw_environments[1], 0, KF_DISPLAY_HEIGHT,
+        KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
+    SetDefDispEnv(
+        &display_disp_environments[1], 0, 0,
+        KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
     display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;
     display_draw_environments[0].isbg = 1;
     display_draw_environments[1].isbg = 1;
@@ -156,11 +166,11 @@ void display_initialize(void)
     display_draw_environments[1].g0 = 0;
     display_draw_environments[1].b0 = 0;
     PutDispEnv(&display_disp_environments[0]);
-    SetBackColor(60, 60, 60);
+    SetBackColor(INITIAL_BACK_COLOR, INITIAL_BACK_COLOR, INITIAL_BACK_COLOR);
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     SetFarColor(0, 0, 0);
-    render_state.fog_near_distance = 0x2af8;
-    SetFogNear(0x2af8, 200);
+    render_state.fog_near_distance = KF_INITIAL_FOG_NEAR_DISTANCE;
+    SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
     render_initialize();
 }
 
@@ -172,25 +182,25 @@ void render_initialize(void)
     u8 count;
     u8 *buffer;
 
-    display_state.buffer_index = 0xff;
-    buffer = memory_allocate(0x32c80);
+    display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
+    buffer = memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
     display_state.asset_load_buffer = buffer;
     display_state.primitive_buffers[0].start = buffer;
-    buffer += 0x19640;
+    buffer += PRIMITIVE_BUFFER_BYTES;
     display_state.primitive_buffers[0].end = buffer;
     display_state.primitive_buffers[1].start = buffer;
-    buffer += 0x19640;
+    buffer += PRIMITIVE_BUFFER_BYTES;
     display_state.primitive_buffers[1].end = buffer;
     floor_item_count = 0;
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;
     RotMatrix(&angles, &render_state.quadrant_matrices[0]);
-    angles.vy = 0xc00;
+    angles.vy = KF_ANGLE_THREE_QUARTER_TURN;
     RotMatrix(&angles, &render_state.quadrant_matrices[3]);
-    angles.vy = 0x800;
+    angles.vy = KF_ANGLE_HALF_TURN;
     RotMatrix(&angles, &render_state.quadrant_matrices[2]);
-    angles.vy = 0x400;
+    angles.vy = KF_ANGLE_QUARTER_TURN;
     RotMatrix(&angles, &render_state.quadrant_matrices[1]);
     render_state.light_matrix.m[0][0] = 3800;
     render_state.light_matrix.m[0][1] = -2800;
@@ -225,13 +235,13 @@ void render_initialize(void)
     DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
     DAT_8009506c = 0x1c;
-    notification_state.control.effect_phase = 0;
+    notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     notification_state.control.queue_tail = 0;
     notification_state.control.queue_head = 0;
     flag = notification_message_ids;
-    count = 7;
+    count = KF_NOTIFICATION_CAPACITY - 1;
     do {
-        *flag++ = 0xff;
+        *flag++ = KF_NOTIFICATION_NONE;
     } while (count-- != 0);
     pool_reset();
 }
@@ -243,7 +253,7 @@ void display_begin_frame(void)
     display_state.primitive_buffer = &display_state.primitive_buffers[display_state.buffer_index];
     display_state.ordering_table =
         display_state.ordering_tables[display_state.buffer_index].entries;
-    ClearOTagR(display_state.ordering_table, 0x4000);
+    ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
     display_state.primitive_buffer->cursor = display_state.primitive_buffer->start;
     DAT_800a0768 = 0;
     DAT_8009569c = 0;
@@ -257,7 +267,7 @@ void display_present_frame(void)
     VSync(0);
     PutDrawEnv(&display_draw_environments[display_state.buffer_index]);
     PutDispEnv(&display_disp_environments[display_state.buffer_index]);
-    DrawOTag(display_state.ordering_table + 0x3fff);
+    DrawOTag(display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 
 ADDRESS(0x8001c0e8, 0x2c)

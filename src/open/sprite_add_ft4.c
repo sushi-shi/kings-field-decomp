@@ -30,7 +30,9 @@ void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
     prim->r0 = color[0];
     prim->g0 = color[1];
     prim->b0 = color[2];
-    AddPrim(&open_graphics_runtime.ordering_table[ot_index & 0x3fff], prim);
+    AddPrim(
+        &open_graphics_runtime.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
+        prim);
 }
 
 ADDRESS(0x80013b5c, 0x114)
@@ -52,5 +54,7 @@ void sprite_add_f4(
     prim->r0 = color[0];
     prim->g0 = color[1];
     prim->b0 = color[2];
-    AddPrim(&open_graphics_runtime.ordering_table[ot_index & 0x3fff], prim);
+    AddPrim(
+        &open_graphics_runtime.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
+        prim);
 }

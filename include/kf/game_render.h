@@ -57,9 +57,9 @@ typedef struct KfDisplayState {
     u8 buffer_index;
     u8 unknown_01[3];
     void *asset_load_buffer;
-    KfPrimitiveBuffer primitive_buffers[2];
+    KfPrimitiveBuffer primitive_buffers[KF_DISPLAY_BUFFER_COUNT];
     KfPrimitiveBuffer *primitive_buffer;
-    KfOrderingTable ordering_tables[2];
+    KfOrderingTable ordering_tables[KF_DISPLAY_BUFFER_COUNT];
     u32 *ordering_table;
 } KfDisplayState;
 
@@ -80,15 +80,15 @@ typedef struct KfRenderState {
     VECTOR view_position;
     SVECTOR view_rotation;
     struct KfVecXZs view_cell;
-    MATRIX quadrant_matrices[4];
+    MATRIX quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
 } KfRenderState;
 
 /* Copied vertices begin at element 1; the complete capacity is unresolved. */
 extern SVECTOR tmd_morph_scratch[];
 extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
 extern POLY_FT4 *current_poly_ft4;
-extern DRAWENV display_draw_environments[2];
-extern DISPENV display_disp_environments[2];
+extern DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
+extern DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
 extern KfDisplayState display_state;
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern const KfCellWindow *active_cell_window;
@@ -96,7 +96,7 @@ extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];
 extern KfEffectSprite effect_sprites[2];
 extern KfHudSprite hud_sprites[14];
-extern MATRIX light_quadrant_matrices[4];
+extern MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
 extern MATRIX render_light_matrices[6];
 extern KfRenderState render_state;
 extern KfTmdState tmd_state;

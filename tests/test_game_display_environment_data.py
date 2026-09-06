@@ -65,8 +65,8 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         self.assertEqual(identities['GAME.EXE', 0x80090FA8].name, 'tmd_state')
         source = manifest.by_name()['game.render'].source_path.read_text()
         header = (REPO / 'include/kf/game_render.h').read_text()
-        for declaration in ('DRAWENV display_draw_environments[2];',
-                            'DISPENV display_disp_environments[2];'):
+        for declaration in ('DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];',
+                            'DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];'):
             self.assertIn(declaration, source)
             self.assertIn('extern ' + declaration, header)
 

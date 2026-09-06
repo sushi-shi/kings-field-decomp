@@ -60,7 +60,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -92,7 +94,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -125,7 +129,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -161,7 +167,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vc->p2 + vb->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -188,7 +196,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -216,7 +226,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -249,7 +261,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -281,7 +295,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -313,7 +329,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->n3), (CVECTOR *)&p->r, va->p2, (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -352,7 +370,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
             break;
@@ -428,7 +448,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
         } else if (type < 0x35) {
@@ -459,7 +481,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                                    (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                     otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
                     if (otz + depth_bias > 4) {
-                        AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                        AddPrim(
+                            &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                            prim);
                     }
                 }
             } else if (type == 0x2c) {
@@ -492,7 +516,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                                    (va->p2 + vc->p2 + vb->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                     otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                     if (otz + depth_bias > 4) {
-                        AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                        AddPrim(
+                            &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                            prim);
                     }
                 }
             }
@@ -529,7 +555,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                                (CVECTOR *)&prim->r3);
                 otz = (va->sz + vc->sz + vb->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
-                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                    AddPrim(
+                        &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        prim);
                 }
             }
         }
@@ -616,8 +644,10 @@ void render_enqueue_map(u16 object_index)
                     DpqColor(&shade, vb->p2, (CVECTOR *)&gt3->r1);
                     DpqColor(&shade, vc->p2, (CVECTOR *)&gt3->r2);
                     otz = ((va->sz + vb->sz + vc->sz) / 3 >> 2) + 200;
-                    if (otz < 16384) {
-                        AddPrim(&display_state.ordering_table[otz & 0x3fff], gt3);
+                    if (otz < KF_ORDERING_TABLE_LENGTH) {
+                        AddPrim(
+                            &display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
+                            gt3);
                     }
                 }
             }
@@ -652,8 +682,10 @@ void render_enqueue_map(u16 object_index)
                     DpqColor(&shade, vc->p2, (CVECTOR *)&prim->r2);
                     DpqColor(&shade, vd->p2, (CVECTOR *)&prim->r3);
                     otz = ((va->sz + vb->sz + vc->sz + vd->sz) >> 4) + 200;
-                    if (otz < 16384) {
-                        AddPrim(&display_state.ordering_table[otz & 0x3fff], prim);
+                    if (otz < KF_ORDERING_TABLE_LENGTH) {
+                        AddPrim(
+                            &display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
+                            prim);
                     }
                 }
             }
@@ -721,6 +753,8 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
                    (CVECTOR *)&prim->r0);
     otz += screen_scale;
     if (otz >= 5) {
-        AddPrim(&display_state.ordering_table[otz & 0x3fff], prim);
+        AddPrim(
+            &display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
+            prim);
     }
 }

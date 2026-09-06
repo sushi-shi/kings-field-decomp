@@ -67,8 +67,10 @@ void render_enqueue_map(u16 object_index)
             DpqColor(&shade, vertex3->p2, &prim->quad.packed.color3);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4)
                 + 200;
-            if (depth < 16384) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->quad.sdk);
+            if (depth < KF_ORDERING_TABLE_LENGTH) {
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->quad.sdk);
             }
             break;
         }
@@ -99,8 +101,10 @@ void render_enqueue_map(u16 object_index)
             DpqColor(&shade, vertex1->p2, &prim->triangle.packed.color1);
             DpqColor(&shade, vertex2->p2, &prim->triangle.packed.color2);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + 200;
-            if (depth < 16384) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->triangle.sdk);
+            if (depth < KF_ORDERING_TABLE_LENGTH) {
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->triangle.sdk);
             }
             break;
         }

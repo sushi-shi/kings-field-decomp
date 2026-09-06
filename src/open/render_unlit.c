@@ -78,7 +78,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2;
         depth += bias;
         if (depth >= 5) {
-            AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], primitive);
+            AddPrim(
+                &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                primitive);
         }
 
     next_packet:

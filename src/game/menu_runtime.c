@@ -514,7 +514,7 @@ void menu_frame_begin(void)
         &display_state.primitive_buffers[display_state.buffer_index];
     display_state.ordering_table =
         display_state.ordering_tables[display_state.buffer_index].entries;
-    ClearOTagR(display_state.ordering_table, 0x4000);
+    ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
     display_state.primitive_buffer->cursor =
         display_state.primitive_buffer->start;
 }
@@ -527,7 +527,7 @@ void menu_present_frame(void)
     VSync(0);
     PutDrawEnv(&display_draw_environments[display_state.buffer_index]);
     PutDispEnv(&display_disp_environments[display_state.buffer_index]);
-    DrawOTag(display_state.ordering_table + 0x3fff);
+    DrawOTag(display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 
 ADDRESS(0x8002accc, 0x50)

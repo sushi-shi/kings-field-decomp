@@ -55,7 +55,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            &prim->packed.color0);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -81,7 +83,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            &prim->packed.color0);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -107,7 +111,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             &prim->packed.color1, &prim->packed.color2);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -137,7 +143,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            vertex0->p2, &prim->packed.color3);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -169,7 +177,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             &prim->packed.color1, &prim->packed.color2);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -206,7 +216,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            vertex0->p2, &prim->packed.color3);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -233,7 +245,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             &prim->packed.color1, &prim->packed.color2);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -266,7 +280,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            &prim->packed.color0);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -290,7 +306,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            &prim->packed.color0);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -322,7 +340,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            vertex0->p2, &prim->packed.color3);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -347,7 +367,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            &prim->packed.color0);
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -374,7 +396,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            &prim->packed.color0);
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
             if (depth >= 5) {
-                AddPrim(&open_graphics_runtime.ordering_table[depth & 0x3fff], &prim->sdk);
+                AddPrim(
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }

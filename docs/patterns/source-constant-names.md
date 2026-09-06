@@ -562,3 +562,51 @@ sources and retains the existing data-placement failures. A post-build
 comparison confirms unchanged non-debug sections in all 112 objects and
 unchanged strict results for all 484 scored entries. Twenty-six objects
 have only debug-line changes relative to 893a3fa; exact-count movement is zero.
+
+## Display dimensions and ordering-table bounds
+
+Function Match Plan: name the shared 320-by-240 framebuffer geometry,
+double-buffer count and initial selector, 16,384-entry ordering-table size
+and wrapping mask, initial fog distance, and each image's primitive-buffer
+budget. Apply the ordering-table names to all reconstructed enqueue, clear
+and submit consumers. Reuse the existing angle and notification constants
+in renderer initialization. Name OPEN's evidenced projected-vertex capacity
+without adding a GAME bound or changing OPEN's exclusive accepted limit.
+Keep the frame-toggle expression, signed depth comparisons, pointer
+arithmetic, allocation order, matrix coefficient assignments, and every SDK
+call intact. This is a constants-only extension of the display/TMD family,
+supported by `docs/display-and-tmd.md`, the existing per-function dossiers
+under `build/constant-names/`, and the raw initializer/submit/enqueue bodies.
+Every changed function must retain its non-debug bytes, ordered relocation
+targets, and strict score against the post-merge baseline.
+
+The two initializers allocate two adjacent primitive intervals: GAME uses
+0x19640 bytes each (0x32c80 total), OPEN 0x26160 (0x4c2c0 total). Their byte
+selector starts at ff, then `index == 0` selects buffer zero on first frame
+and alternates between zero and one. The draw and display rectangles occupy
+opposite 240-line halves of VRAM. The geometry origin is half the framebuffer
+width/height. Initial fog begins at 11000 with projection distance 200.
+
+Both cleared ordering tables contain 0x4000 words. Submission starts at
+element 0x3fff; enqueue paths mask their depth index with the same value.
+The map renderers' signed `< 16384` checks stay signed and do not acquire a
+new lower bound. OPEN's projected-vertex array has 1000 entries, but its
+normal projection routine rejects `count >= 1000`; this distinction is
+preserved. GAME's corresponding array extent remains unresolved.
+
+Remaining literals in these initialization paths include explicit first/
+second-buffer and matrix-coordinate indices, zero counters/null pointers,
+Boolean SDK fields, black channels, and measured light-matrix coefficients.
+They retain their positional, arithmetic, Boolean or numeric-data roles.
+Texture layout, system-message geometry, OPEN color-preset/mode selectors,
+and TMD packet-format constants remain separate pending audits; this batch
+does not claim that the complete rendering sources have been covered.
+
+Validation: all 635 repository tests pass (nine skipped), including the
+unchanged compiled SDK/layout/retail controls for both display arrays. The
+source-declaration assertion now accepts the named buffer count; the
+independent literal-size controls remain intact. Lint, whitespace checks,
+and `nix flake check -L` pass (635 tests, 123 skips in the flake sandbox).
+The full build runs and retains the existing data-placement/ownership
+failures. All 112 non-debug object contents and 484 strict scores remain
+unchanged; 30 objects differ only in debug-line records from 893a3fa.

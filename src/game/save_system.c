@@ -781,10 +781,10 @@ void screen_show_image_until_input(const char *path)
         polygon.r0 = brightness;
         polygon.g0 = brightness;
         polygon.b0 = brightness;
-        ClearOTagR(display_state.ordering_table, 0x4000);
+        ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
         AddPrim(display_state.ordering_table, &polygon);
         DrawSync(0);
-        DrawOTag(&display_state.ordering_table[0x3fff]);
+        DrawOTag(&display_state.ordering_table[KF_ORDERING_TABLE_LENGTH - 1]);
         if (pressed == 0) {
             if (PadRead(1) == 0) {
                 pressed = 1;

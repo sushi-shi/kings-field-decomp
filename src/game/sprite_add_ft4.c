@@ -30,5 +30,7 @@ void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
     prim->r0 = color[0];
     prim->g0 = color[1];
     prim->b0 = color[2];
-    AddPrim(&display_state.ordering_table[ot_index & 0x3fff], prim);
+    AddPrim(
+        &display_state.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
+        prim);
 }

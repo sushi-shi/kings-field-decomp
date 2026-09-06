@@ -8,14 +8,18 @@
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
+enum {
+    KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000
+};
+
 /* OPEN.EXE display subobject; the active OT pointer follows this record. */
 typedef struct KfDisplayStateOpen {
     u8 buffer_index;
     u8 unknown_01[3];
     void *asset_load_buffer;
-    KfPrimitiveBuffer primitive_buffers[2];
+    KfPrimitiveBuffer primitive_buffers[KF_DISPLAY_BUFFER_COUNT];
     KfPrimitiveBuffer *primitive_buffer;
-    KfOrderingTable ordering_tables[2];
+    KfOrderingTable ordering_tables[KF_DISPLAY_BUFFER_COUNT];
 } KfDisplayStateOpen;
 
 /* Two registered TMD slots and the selected asset. */
@@ -33,7 +37,7 @@ typedef struct KfRenderStateOpen {
     VECTOR view_position;
     SVECTOR view_rotation;
     struct KfVecXZs view_cell;
-    MATRIX quadrant_matrices[4];
+    MATRIX quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
 } KfRenderStateOpen;
 
 /* Texture selectors followed by the SDK color used for projected sprites. */
@@ -58,20 +62,20 @@ typedef struct KfFloorItemStateOpen {
 typedef struct KfGraphicsRuntimeOpen {
     KfDisplayStateOpen display_state;
     u32 *ordering_table;
-    DRAWENV display_draw_environments[2];
-    DISPENV display_disp_environments[2];
+    DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
+    DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
     u8 unknown_20108[8];
     KfTmdStateOpen tmd_state;
     u8 unknown_2011c[4];
     SVECTOR *current_tmd_vertices;
     u8 unknown_20124[0x14];
-    KfScreenVertex tmd_projected_vertices[1000];
+    KfScreenVertex tmd_projected_vertices[KF_OPEN_PROJECTED_VERTEX_CAPACITY];
     u8 unknown_22078[0x1f68];
     KfFloorItemStateOpen floor_item_state;
     u32 DAT_8006e040;
     u32 DAT_8006e044;
     KfRenderStateOpen render_state;
-    MATRIX light_quadrant_matrices[4];
+    MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
     const KfCellWindow *active_cell_window;
     s16 tmd_projection_shift;
     u8 unknown_24786[2];
