@@ -9,7 +9,13 @@
 #include <kf/tmd.h>
 
 enum {
-    KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000
+    KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000,
+    KF_OPEN_COLOR_PRESET_COUNT = 5,
+    KF_OPEN_COLOR_DEFAULT = 0,
+    KF_OPEN_COLOR_BLACK = 1,
+    KF_OPEN_COLOR_WHITE = 2,
+    KF_OPEN_COLOR_ENDING_MIDPOINT = 3,
+    KF_OPEN_COLOR_ENDING_GREEN = 4
 };
 
 /* OPEN.EXE display subobject; the active OT pointer follows this record. */
@@ -106,7 +112,7 @@ KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_24786, 0x24786);
 #undef KF_OPEN_GRAPHICS_OFFSET_CHECK
 typedef char check_runtime_size[sizeof(KfGraphicsRuntimeOpen) == 0x24788 ? 1 : -1];
 
-extern MATRIX color_matrix_table[5];
+extern MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT];
 extern KfSpriteQuad floor_item_sprites[7];
 extern MATRIX floor_item_light_matrix;
 extern SVECTOR render_sprite_light_normal;

@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/overlay.h>
 #include <kf/audio.h>
 #include <kf/cd_file.h>
 #include <kf/memory.h>
@@ -58,7 +59,7 @@ void opening_run(s32 display_mode)
     memory_reset_system_heap();
 
     switch (display_mode) {
-    case 1:
+    case KF_OPEN_MODE_INTRO:
         SetDispMask(1);
         if (cd_file_load_into(
                 open_graphics_runtime.display_state.asset_load_buffer,
@@ -113,7 +114,7 @@ opening_complete:
         audio_stop_sequence(1);
         break;
 
-    case 0xfe:
+    case KF_OPEN_MODE_ENDING:
         opening_ending_scene_run();
         opening_ending_scroll_run();
         break;

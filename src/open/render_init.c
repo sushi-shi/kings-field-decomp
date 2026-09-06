@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/overlay.h>
 #include <kf/cd_file.h>
 #include <kf/item.h>
 #include <kf/memory.h>
@@ -12,7 +13,7 @@ enum {
 };
 
 DATA(0x80035944, 0xa0)
-MATRIX color_matrix_table[5] = {
+MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT] = {
     {{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}, {0, 0, 0}},
     {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {0, 0, 0}},
     {{{4095, 4095, 4095}, {4095, 4095, 4095}, {4095, 4095, 4095}}, {0, 0, 0}},
@@ -106,7 +107,7 @@ void display_initialize(s32 mode)
     DRAWENV *first_draw;
     DRAWENV *second_draw;
 
-    if (mode == 0xfe) {
+    if (mode == KF_OPEN_MODE_ENDING) {
         ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     } else {
         ResetGraph(KF_GPU_RESET_FULL);
@@ -143,7 +144,7 @@ void display_initialize(s32 mode)
     open_graphics_runtime.display_draw_environments[1].b0 = 0;
     first_draw = &open_graphics_runtime.display_draw_environments[0];
     second_draw = &open_graphics_runtime.display_draw_environments[1];
-    if (mode == 0xfe) {
+    if (mode == KF_OPEN_MODE_ENDING) {
         PutDispEnv(&open_graphics_runtime.display_disp_environments[0]);
         SetDispMask(1);
     } else {
@@ -156,7 +157,7 @@ void display_initialize(s32 mode)
         SetDispMask(0);
     }
     SetBackColor(0, 0, 0);
-    lighting_set_active_color_matrix(0);
+    lighting_set_active_color_matrix(KF_OPEN_COLOR_DEFAULT);
     SetFarColor(0, 0, 0);
     open_graphics_runtime.render_state.fog_near_distance = KF_INITIAL_FOG_NEAR_DISTANCE;
     SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);

@@ -808,3 +808,54 @@ call targets and referent controls are unchanged. All 112 non-debug object
 contents and 484 strict scores match the 1839ef2 baseline; six objects
 differ only in debug-line records. The full build retains the existing
 data-placement/ownership failures.
+
+## Program-entry modes and OPEN color presets
+
+Function Match Plan: name the two-word loader argument block, its request
+and result positions, the fixed OPEN/GAME path indices and the opening/
+ending mode values across PSX, GAME and OPEN. Retain the loader's actual
+`Exec` argument count of one even though the writable block has two words.
+Keep the existing signatures, casts, launch order and every startup call.
+Name OPEN's five color-preset selectors by their measured contents and
+ending-transition use, keeping all sixty initializer scalars intact.
+The existing three entry-point dossiers, OPEN controller/reset/palette
+consumers and GAME exit-code producer bodies were reviewed before edits.
+Require unchanged non-debug sections and all 484 strict scores, including
+the exact PSX and OPEN entry points.
+
+PSX primes result word 1 to opening mode 1, then copies it to request word
+0 before each OPEN-then-GAME iteration. OPEN reads word 0; GAME writes its
+exit code to word 1. A menu return requests opening mode 1; the ending
+trigger requests fe. These values select OPEN content; they do not choose
+which EXE the loader runs next. Correct the earlier successor-selector
+wording without changing the curated confidence or unresolved loader ABI.
+GAME's internal zero exit code still means keep running.
+
+OPEN color entry 0 is its default preset, 1 is all-zero black, and 2 has
+equal 4095 coefficients in all color rows. The ending scroll blends from
+black to entry 3, then from entry 3 to the green-only entry 4. Name entry
+3 by its observed intermediate endpoint role without inventing a light
+source or story identity. These names remain distinct from GAME's seven
+different presets.
+
+This completes the constant audit of PSX `main.c` and OPEN `render_init.c`.
+PSX retains the two literal 20-byte padded filename extents, SDK Load's
+success result 1, and the zero stack-address/size fields passed to Exec.
+They express measured storage and ordinary SDK return/zero-parameter
+contracts, rather than another overlay mode. OPEN initialization retains
+the sixty color-table scalars and nine light-matrix coefficients as numeric
+data. Its explicit matrix/buffer indices are positional; zero origins,
+empty item count and black channels are mathematical/reset values; SDK
+dither, background, drawing/display flags remain Boolean 0/1. Halving the
+named framebuffer dimensions is ordinary centering arithmetic. The
+primitive allocator has no other numeric literal outside its address claim.
+
+The other entry points and controller/player/scene consumers receive the
+shared mode/argument names here. Their startup RAM constants, menu decisions
+and scene behavior still belong to subsequent audits.
+
+Validation: all 642 tests pass (nine skipped), lint passes, and flake checks
+pass (642 tests, 129 sandbox skips). All 112 non-debug object contents and
+484 strict scores match the 1839ef2 baseline; twelve objects differ only
+in debug-line records. The full build retains the existing data-placement
+and ownership failures, with no new artifact failure or naming regression.

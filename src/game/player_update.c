@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/overlay.h>
 #include <kf/game_player.h>
 #include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
@@ -88,7 +89,7 @@ void player_update(void)
             player_equip_weapon(player_state.equipped_weapon_id);
             player_select_magic(player_state.selected_magic_id);
         } else if (item == -2) {
-            game_exit_code = 1;
+            game_exit_code = KF_OPEN_MODE_INTRO;
             return;
         }
         player_previous_input = input;

@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/overlay.h>
 #include <kf/game_types.h>
 #include <kf/psyq_kernel.h>
 #include <kf/game.h>
@@ -27,5 +28,5 @@ void main(s32 entry_arg0, u32 *entry_args)
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();
-    entry_args[1] = game_exit_code;
+    entry_args[KF_OVERLAY_RESULT_WORD] = game_exit_code;
 }

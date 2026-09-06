@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/overlay.h>
 #include <kf/game_player.h>
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>
@@ -58,10 +59,10 @@ void game_main_loop(void)
     if (save_file_cleanup_temporary() == 2) {
         display_show_error_screen(KF_SYSTEM_SCREEN_NO_MEMORY_CARD);
     }
-    game_exit_code = 0;
+    game_exit_code = KF_GAME_EXIT_NONE;
     for (;;) {
         player_update();
-        if (game_exit_code != 0) {
+        if (game_exit_code != KF_GAME_EXIT_NONE) {
             break;
         }
         player_update_transform_snapshot(&player_position_snapshot, &player_rotation_snapshot);
@@ -79,7 +80,7 @@ void game_main_loop(void)
             if (*(u16 *)&player_state.previous_map_cell
                 != *(u16 *)&player_state.map_cell) {
                 if (player_warp_trigger_update() != 0) {
-                    game_exit_code = 0xfe;
+                    game_exit_code = KF_OPEN_MODE_ENDING;
                     player_warp_shimmer_at_player(2);
                     display_play_transition();
                     audio_stop_sequence_master_fade(0x80);

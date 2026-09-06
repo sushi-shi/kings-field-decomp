@@ -172,7 +172,8 @@ fade_in:
 
 update_color:
         lighting_set_color_matrix(
-            &color_matrix_table[1], &color_matrix_table[0], next_blend);
+            &color_matrix_table[KF_OPEN_COLOR_BLACK],
+            &color_matrix_table[KF_OPEN_COLOR_DEFAULT], next_blend);
 
 render_frame:
         audio_set_listener_transform(
@@ -409,7 +410,8 @@ void opening_scene3_run(void)
     blend = 0;
     for (;;) {
         lighting_set_color_matrix(
-            &color_matrix_table[1], &color_matrix_table[0], blend);
+            &color_matrix_table[KF_OPEN_COLOR_BLACK],
+            &color_matrix_table[KF_OPEN_COLOR_DEFAULT], blend);
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -479,7 +481,8 @@ void opening_scene3_run(void)
     blend = 0;
     do {
         lighting_set_color_matrix(
-            &color_matrix_table[0], &color_matrix_table[1], blend);
+            &color_matrix_table[KF_OPEN_COLOR_DEFAULT],
+            &color_matrix_table[KF_OPEN_COLOR_BLACK], blend);
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -518,7 +521,8 @@ void opening_ending_scene_run(void)
 
     do {
         lighting_set_color_matrix(
-            &color_matrix_table[1], &color_matrix_table[0], blend);
+            &color_matrix_table[KF_OPEN_COLOR_BLACK],
+            &color_matrix_table[KF_OPEN_COLOR_DEFAULT], blend);
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -587,7 +591,8 @@ void opening_ending_scene_run(void)
         setRGB0(
             &open_graphics_runtime.display_draw_environments[1], brightness, brightness, brightness);
         lighting_set_color_matrix(
-            &color_matrix_table[0], &color_matrix_table[1], blend);
+            &color_matrix_table[KF_OPEN_COLOR_DEFAULT],
+            &color_matrix_table[KF_OPEN_COLOR_BLACK], blend);
         opening_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -689,7 +694,8 @@ void opening_ending_scroll_run(void)
         case 0:
             if (lighting_blend <= 0x1000) {
                 lighting_set_color_matrix(
-                    &color_matrix_table[1], &color_matrix_table[3], lighting_blend);
+                    &color_matrix_table[KF_OPEN_COLOR_BLACK],
+                    &color_matrix_table[KF_OPEN_COLOR_ENDING_MIDPOINT], lighting_blend);
                 lighting_blend += 0x40;
             } else {
                 lighting_phase = 1;
@@ -699,7 +705,8 @@ void opening_ending_scroll_run(void)
         case 1:
             if (lighting_blend <= 0x1000) {
                 lighting_set_color_matrix(
-                    &color_matrix_table[3], &color_matrix_table[4], lighting_blend);
+                    &color_matrix_table[KF_OPEN_COLOR_ENDING_MIDPOINT],
+                    &color_matrix_table[KF_OPEN_COLOR_ENDING_GREEN], lighting_blend);
                 lighting_blend += 3;
             } else {
                 lighting_phase = 2;

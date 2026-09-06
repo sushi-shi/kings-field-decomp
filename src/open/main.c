@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/overlay.h>
 #include <kf/game_types.h>
 #include <kf/open_controller.h>
 #include <kf/psyq_kernel.h>
@@ -18,5 +19,5 @@ void main(s32 entry_arg0, u32 *entry_args)
     CdInit();
     InitHeap((void *)0x80080100, 0x177f00);
     ExitCriticalSection();
-    opening_run(entry_args[0]);
+    opening_run(entry_args[KF_OVERLAY_REQUEST_WORD]);
 }
