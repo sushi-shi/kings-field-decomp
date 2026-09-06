@@ -312,7 +312,14 @@ complete but remain below exact for two distinct walls.
 | `jal RotTransPers4; move s1,v0` (the anchor depth saved in the call's delay slot, one beat before the corner batch clobbers `$v0`) | `otz = RotTransPers(&anchor, ...); RotTransPers4(corners...);` -- the sprite sorts by the projected origin, not the corner batch; the anchor return lives in `$v0` across the `RotTransPers4` argument set-up | `func_8001e230` `0x8001e230` |
 | four `long sxy0..sxy3;` scalars packed above `p`/`flag`, not an array below them | declare the four screen-XY outputs as separate `long`s, addressed only at the `RotTransPers4` call, so their slots follow `p`/`flag` (whose addresses are taken at the earlier `RotTransPers`) | same |
 
-Residues, both blocked (not steerable from C under this probe):
+Historical residue descriptions below are not current compiler attribution.
+The [GAME map enqueue follow-up](game-map-enqueue.md) found two missing
+allocation-failure returns, reversed triangle/quad layout and several value-
+lifetime differences in this source. Correcting those facts raises its strict
+match from 17.954199% to 98.770996% with the same compiler profile. The earlier
+claims that its low score was not steerable from C are superseded.
+
+Historical observations:
 
 - `func_8001e230` `0x8001e230` (88%): the same post-reload-scheduler wall as
   its banked sibling `func_8001e480` (`render_sprite.c`). gcc-2.5.7 fills the
