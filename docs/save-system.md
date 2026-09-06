@@ -86,6 +86,10 @@ inserted card, display a numbered `TIM\\Mddd.` status image on failure, and
 translate internal statuses to the smaller result sets expected by the
 save/load menus.
 
+`menu_play_input_sound` consumes the shared menu cue IDs; its program/note
+recipes, bank-zero SDK argument packing, volume and wait behavior are
+documented in the [audio selector audit](audio-system.md#packed-key-onkey-off-selectors).
+
 `save_system_read_catalog` receives storage for three slot summaries. It scans
 four on-card directory entries and indexes the output by one-based slot ID.
 The retail function clears only the first `0x24` bytes before the scan even

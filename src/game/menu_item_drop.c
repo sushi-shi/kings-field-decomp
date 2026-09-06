@@ -98,11 +98,11 @@ void menu_drop_item(void)
         input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = -1;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
                 if (ctx.cursor_row == 0)
@@ -122,7 +122,7 @@ void menu_drop_item(void)
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
                 if (ctx.cursor_row == ctx.visible_rows - 1)
@@ -137,10 +137,10 @@ void menu_drop_item(void)
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = -1;
         }
 
@@ -219,19 +219,19 @@ s32 menu_save_load_hub(void)
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 2;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 2)
                 cursor++;
             else
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (cursor == 2) {
                 result = -1;
             } else {
@@ -239,7 +239,7 @@ s32 menu_save_load_hub(void)
                 action = cursor;
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = -1;
         }
 
@@ -276,7 +276,7 @@ s32 menu_save_panel(void)
 
     status = save_system_read_catalog(summaries);
     if (status != 1 && status != 3) {
-        menu_play_input_sound(0);
+        menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
             menu_frame_begin();
             menu_add_frame_quad();
@@ -284,7 +284,7 @@ s32 menu_save_panel(void)
             menu_draw_window(4, 5, cursor, confirm);
             menu_present_frame();
         }
-        menu_play_input_sound(2);
+        menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
         while (PadRead(1) != 0)
             ;
         return -1;
@@ -313,7 +313,7 @@ s32 menu_save_panel(void)
                         menu_present_frame();
                     }
                 }
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 while (PadRead(1) != 0)
                     ;
             }
@@ -353,7 +353,7 @@ s32 menu_save_panel(void)
                         menu_draw_window(4, 5, cursor, confirm);
                         menu_present_frame();
                     }
-                    menu_play_input_sound(2);
+                    menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                     while (PadRead(1) != 0)
                         ;
                     result = -99;
@@ -370,24 +370,24 @@ s32 menu_save_panel(void)
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 4;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 4)
                 cursor++;
             else
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
             if (cursor == 4)
                 result = -1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = -1;
         }
 
@@ -422,7 +422,7 @@ s32 menu_load_panel(void)
     s32 i;
 
     if (save_system_read_catalog(summaries) != 1) {
-        menu_play_input_sound(0);
+        menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
             menu_frame_begin();
             menu_add_frame_quad();
@@ -430,7 +430,7 @@ s32 menu_load_panel(void)
             menu_draw_window(5, 4, cursor, confirm);
             menu_present_frame();
         }
-        menu_play_input_sound(2);
+        menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
         while (PadRead(1) != 0)
             ;
         return -1;
@@ -467,7 +467,7 @@ s32 menu_load_panel(void)
                         menu_draw_window(5, 4, cursor, confirm);
                         menu_present_frame();
                     }
-                    menu_play_input_sound(2);
+                    menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                     while (PadRead(1) != 0)
                         ;
                     result = -99;
@@ -482,30 +482,30 @@ s32 menu_load_panel(void)
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 3;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 3)
                 cursor++;
             else
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (cursor == 3) {
-                menu_play_input_sound(1);
+                menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = 1;
                 result = -1;
             } else if (summaries[cursor].current_hp != 0) {
-                menu_play_input_sound(1);
+                menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = 1;
             } else {
-                menu_play_input_sound(2);
+                menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = -1;
         }
 

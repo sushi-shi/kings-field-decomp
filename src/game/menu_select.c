@@ -120,11 +120,11 @@ void menu_equip_select(s32 object)
         input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = -1;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
                 if (ctx.cursor_row == 0)
@@ -144,7 +144,7 @@ void menu_equip_select(s32 object)
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
                 if (ctx.cursor_row == ctx.visible_rows - 1)
@@ -159,10 +159,10 @@ void menu_equip_select(s32 object)
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = -1;
         }
 
@@ -289,11 +289,11 @@ void menu_spell_select(void)
         input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = -1;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
                 if (ctx.cursor_row == 0)
@@ -313,7 +313,7 @@ void menu_spell_select(void)
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
                 if (ctx.cursor_row == ctx.visible_rows - 1)
@@ -328,10 +328,10 @@ void menu_spell_select(void)
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = -1;
         }
 

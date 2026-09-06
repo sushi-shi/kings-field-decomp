@@ -117,16 +117,16 @@ opt0_done:
             ((pad & PADLdown) == 0 || (prev_pad & PADLdown) != 0)) {
             if ((pad & PADRright) == 0 || (prev_pad & PADRright) != 0) {
                 if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
-                    menu_play_input_sound(2);
+                    menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                     result = -1;
                 }
             } else {
-                menu_play_input_sound(1);
+                menu_play_input_sound(MENU_SOUND_CONFIRM);
                 highlight = 1;
                 result = -selected;
             }
         } else {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             selected = (selected == 0);
         }
         prev_pad = pad;

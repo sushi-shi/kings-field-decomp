@@ -86,9 +86,10 @@ u32 audio_play_spatial_range(
 }
 
 ADDRESS(0x8001a188, 0x28)
-void audio_key_off_mask(const u8 *voice_mask)
+void sound_ref_key_off_bank0(const SoundRef *sound)
 {
-    SsVoKeyOff(voice_mask[0], voice_mask[2] << 8);
+    /* Bank 0; note occupies the upper byte, with zero fine pitch. */
+    SsVoKeyOff(sound->program, sound->note << 8);
 }
 
 ADDRESS(0x8001a1b0, 0x70)

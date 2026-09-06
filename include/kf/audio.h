@@ -75,6 +75,7 @@ extern u32 audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);
+extern void sound_ref_key_off_bank0(const SoundRef *sound);
 extern void audio_set_listener_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void audio_stop_sequence_fade(void);

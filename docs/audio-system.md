@@ -65,6 +65,62 @@ those fields and checks every lane offset. The adjacent `game_exit_code` at
   its retained VAB/program/tone/note tuple, keys on the replacement, and stores
   the returned voice ID. `sound_ref_play` supplies the three packed
   program/tone/note bytes with equal left and right volume.
+- `sound_ref_key_off_bank0` keys off the selected program/note in VAB bank 0.
+  GAME 80033014 and OPEN 8001a188 both ignore the `SoundRef` tone byte and
+  discard the SDK result. They do not read `audio_state.active_vab_id`.
+
+## Packed key-on/key-off selectors
+
+The former `audio_key_off_mask` identity misinterpreted the SDK inputs.
+Both retail wrappers load unsigned bytes zero and two, then put the latter
+in bits 8..15 of the second argument. The exact-FID `SsVoKeyOff` providers
+decode the first argument into bank/program and the second into note/fine
+pitch. Sony's later
+[Run-Time Library Reference 4.7, pages 14-131/132](https://psx.arthus.net/sdk/Psy-Q/DOCS/LibRef47.pdf#page=978)
+corroborates those packed fields and documents MIDI note numbers in the
+upper byte, with fine pitch in the lower byte. This supports the interface
+interpretation, not an attribution of the retail program to that later SDK.
+
+The direct retail control-flow chains are:
+
+| Image | Game wrapper | `SsVoKeyOff` | `SpuVmSeKeyOff` | `SpuVmKeyOff` |
+| --- | --- | --- | --- | --- |
+| GAME | 80033014 | 8004b6a4 | 80044120 | 80043d8c |
+| OPEN | 8001a188 | 8002b478 | 80023f40 | 80023bac |
+
+The game supplies a zero upper byte for bank and a zero lower byte for fine
+pitch. Both retail `SpuVmSeKeyOff` bodies forward the bank, program and note,
+with internal sequence selector 0x20, and do not consume the fourth decoded
+fine-pitch argument. `SpuVmKeyOff` compares selectors against per-voice fields
+before keying off matching voices. It does not treat the input bytes as a
+voice bitmask. The GAME key-on path (8004688c → 80044030 → 80043988) uses
+the same selector packing and converts its two volume arguments to volume
+and pan; equal channel values select centered pan.
+
+The established three-byte `SoundRef` view gives semantic field names to
+the two bytes consumed by the wrappers. No caller or loaded pointer to these
+game wrappers is admitted, so their original use site and enclosing input
+object remain unresolved. The typed view makes no additional global extent
+or data-ownership claim, and the ignored middle byte remains the shared
+record's tone field rather than a new mask word.
+
+The menu cue provider at GAME 8002b150 uses the same bank-zero interface:
+
+| Cue | Program | MIDI note | Reviewed uses |
+| --- | ---: | ---: | --- |
+| `MENU_SOUND_CURSOR` (0) | 14 | 68 | Cursor changes, opening a dialog, empty-list feedback and config actions. |
+| `MENU_SOUND_CONFIRM` (1) | 13 | 60 | Confirmation button/accepted choice, including choosing a back row. |
+| `MENU_SOUND_CANCEL_OR_ERROR` (2) | 15 | 63 | Cancellation/dismissal, insufficient gold, an empty save slot and other rejected choices. |
+
+Every value other than 0 or 1 follows the third recipe, as before. All 89
+source calls retain their selected recipe; in particular, the config panel
+still uses cue 0 for all of its actions. Each recipe keys on with equal
+channel volume 64, waits once with `VSync(0)`, then keys off. The level is
+64/127 of the channel input range. The actual audible duration also depends
+on sample/envelope behavior; the code does not establish a fixed-duration
+beep. No designer rationale for these program/note choices or the exact
+volume has been recovered, and a sampled note number alone does not prove
+an audible frequency or instrument identity.
 
 ## SDK boundary
 
@@ -107,7 +163,8 @@ is in `config/evidence/overlay_lineage.tsv`.
   the vendored census. `VSync` and its private worker are admitted through
   cross-overlay `LIBGPU/VSYNC` lineage; their exact SDK revision remains
   unresolved.
-- Resolve the three-byte voice-mask layout and any indirect caller of
-  `audio_key_off_mask`; no pointer to the function appears in loaded GAME data.
+- Resolve the original input owner and any indirect caller of
+  `sound_ref_key_off_bank0`; no pointer to the function appears in loaded
+  GAME data. Its program/note field interpretation is established above.
 - Recover translation-unit boundaries before assigning global versus `static`
   linkage to the audio state.

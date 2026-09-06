@@ -142,7 +142,7 @@ void item_menu_root(s32 arg)
     menu_present_frame();
     menu_frame_begin();
     menu_draw_window(7, 3, 0, 0);
-    menu_play_input_sound(0);
+    menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
 
@@ -175,26 +175,26 @@ void item_menu_root(s32 arg)
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 2;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 2)
                 cursor++;
             else
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
             if (cursor < 2)
                 selection = cursor;
             else
                 done = -1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             done = -1;
         }
         menu_draw_window(7, 3, cursor, confirm);
@@ -278,11 +278,11 @@ void item_menu_buy(s32 arg)
         input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = -1;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
                 if (ctx.cursor_row != 0)
@@ -300,7 +300,7 @@ void item_menu_buy(s32 arg)
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
                 if (ctx.cursor_row != ctx.visible_rows - 1)
@@ -317,13 +317,13 @@ void item_menu_buy(s32 arg)
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (player_state.gold
                     < item_buy_prices[index[ctx.selected_index]][arg - 1]) {
-                menu_play_input_sound(2);
+                menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             } else {
-                menu_play_input_sound(1);
+                menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = 1;
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = -1;
         }
 
@@ -421,11 +421,11 @@ void item_menu_sell(s32 arg)
         input = PadRead(1);
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = -1;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
                 if (ctx.cursor_row != 0)
@@ -443,7 +443,7 @@ void item_menu_sell(s32 arg)
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
                 if (ctx.cursor_row != ctx.visible_rows - 1)
@@ -458,10 +458,10 @@ void item_menu_sell(s32 arg)
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = -1;
         }
 
@@ -527,7 +527,7 @@ s32 item_use_confirm(s32 arg)
     menu_draw_two_option(
         (const MenuGlyphString *)prompt,
         (const MenuGlyphString *)options, 0, 0);
-    menu_play_input_sound(0);
+    menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
 
@@ -550,13 +550,13 @@ s32 item_use_confirm(s32 arg)
         input = PadRead(1);
         if (((input & PADLup) != 0 && (prev & PADLup) == 0)
                 || ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             if (choice != 0)
                 choice = 0;
             else
                 choice = 1;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
-            menu_play_input_sound(1);
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
             if (choice != 0) {
                 result = 1;
@@ -568,7 +568,7 @@ s32 item_use_confirm(s32 arg)
                 }
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = 1;
         }
         menu_draw_item_name_frame(arg);

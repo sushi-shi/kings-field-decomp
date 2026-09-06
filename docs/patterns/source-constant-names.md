@@ -212,7 +212,7 @@ remain assigned to the controller audit.
 | Audio pan formulas | Shift 1 and multipliers 2 | Halve the folded angle and scale the narrowing coefficient by two; these are arithmetic factors, not independent tuning parameters. |
 | GAME tone test | `0x80`, comparison 1 | Retail masks the high bit then compares it to 1, so the branch is unreachable. A behavioral flag name would imply an unsupported meaning; both operands remain visible. |
 | GAME sequence filename | Extent 20, indices 6/1, `'0'` | Preserve the original stack array extent; indices select the sequence and floor digits in the literal template, and the character is the decimal digit origin. |
-| GAME/OPEN `audio_key_off_mask` | Indices 0/2, shift 8 | Preserve the actual byte selection passed to the SDK's two voice-mask arguments, including the unused middle byte. The shift positions the selected byte rather than defining a gameplay option. |
+| GAME/OPEN `sound_ref_key_off_bank0` | Shift 8 | Pack the MIDI note into the upper byte with zero fine pitch. The program's bank byte is zero. The later selector audit corrects the former voice-mask interpretation and replaces byte indices 0/2 with the shared program/note fields. |
 
 Retail claim addresses/extents remain literal ownership evidence as in the
 earlier batches. New enum initializer values define the documented constants
@@ -1519,3 +1519,123 @@ fails on the existing data-ownership and placement issues: six of 60 source
 data owners match, with target relink PSX 1/1, GAME 75/77 and OPEN 34/38,
 and zero artifact failures. No new result is banked. No tooling or flake
 files changed.
+
+## Sound selectors and menu cue IDs
+
+Function Match Plan at 6a22c63: correct the two GAME/OPEN wrappers currently
+called `audio_key_off_mask`, and name the three menu sound cues through their
+19 caller functions. The original complete dossiers, refreshed six-view
+snapshots for both wrappers and the cue provider, all 89 source call windows,
+adjacent audio helpers, source history and current object/score snapshot
+support this batch. Preserve each argument, call, branch, delay slot and
+ordered physical referent. Require identical executable/data/relocation
+sections and all 484 strict percentages; only the intended two symbol
+spellings and debug lines may change.
+
+The two wrappers each load unsigned bytes at offsets 0 and 2 and make one
+SDK call; no caller, data reference or string is admitted for either. Their
+24-byte frames and note-shift call delay slots match across images. The
+SDK's decoded byte selectors and the established `SoundRef` field family
+identify program and note. Use the shared typed view and the precise
+`sound_ref_key_off_bank0` identity: neither wrapper reads the active VAB
+state or the tone byte. The absent caller leaves the original enclosing
+object, use site and original symbol unresolved; this does not create a
+new data-owner claim. The game wrappers are not vendored SDK bodies.
+
+The cue provider keeps its 32-byte frame, three program/note recipes,
+`SsVoKeyOn`, one `VSync(0)` and `SsVoKeyOff`, including both note-shift delay
+slots. Cue 0 is the cursor/opening cue, also reused for empty-list and config
+actions; 1 confirms a choice; 2 cancels/dismisses or rejects an invalid choice.
+Use `MENU_SOUND_CURSOR`, `MENU_SOUND_CONFIRM`, and
+`MENU_SOUND_CANCEL_OR_ERROR`. Preserve the provider's catch-all third arm:
+values other than 0 or 1 still use the same recipe. These names identify
+feedback styles, not a rule that every caller uses the same button mapping.
+
+| Image/function | Starting strict result | Evidence and focused change |
+| --- | --- | --- |
+| GAME 80033014 `audio_key_off_mask` | 100% | Two byte loads; exact-FID `SsVoKeyOff` at 8004b6a4; rename and use program/note fields. |
+| OPEN 8001a188 `audio_key_off_mask` | 100% | Same ten-word wrapper; exact-FID `SsVoKeyOff` at 8002b478; same typed contract. |
+| GAME 8002b150 `menu_play_input_sound` | 100% | 33 retail words; cue compares 0/1, catch-all third recipe, equal channel volume 64 and one vertical-sync wait. |
+| GAME 800212d8 `item_menu_root` | 100% | Five cue calls: opening/navigation, confirmation and cancellation. |
+| GAME 80021538 `item_menu_buy` | 97.200540% | Six cue calls, including insufficient-gold rejection. |
+| GAME 80021afc `item_menu_sell` | 96.771870% | Five cue calls: empty-list exit, navigation, confirmation and cancellation. |
+| GAME 80021ffc `item_use_confirm` | 100% | Four cue calls: opening, choice toggle, confirmation and cancellation. |
+| GAME 800222b4 `menu_save_confirm` | 100% | One opening cue. |
+| GAME 80022348 `menu_root` | 96.863640% | Five opening/navigation/confirmation/cancellation calls. |
+| GAME 80022608 `menu_use_item_panel` | 92.821800% | Five calls, including the cue on return from the map viewer. |
+| GAME 8002317c `menu_magic_panel` | 95.897590% | Five empty-list/navigation/confirmation/cancellation calls. |
+| GAME 800236ac `menu_option_root` | 100% | Five calls, including equipment-dependent rejection. |
+| GAME 800238d8 `menu_equip_select` | 97.899730% | Five empty-list/navigation/confirmation/cancellation calls. |
+| GAME 80023e9c `menu_spell_select` | 98.063380% | Five empty-list/navigation/confirmation/cancellation calls. |
+| GAME 8002430c `menu_status_panel` | 78.468090% | One dismissal cue. |
+| GAME 800249a8 `menu_drop_item` | 98.854780% | Five empty-list/navigation/confirmation/cancellation calls. |
+| GAME 80024e64 `menu_save_load_hub` | 93.611840% | Four navigation/confirmation/cancellation calls. |
+| GAME 800250c4 `menu_save_panel` | 96.797874% | Eight calls, including status-image entry and dismissal. |
+| GAME 8002552c `menu_load_panel` | 92.613640% | Nine calls, including empty-slot rejection and status-image dismissal. |
+| GAME 8002589c `menu_config_panel` | 30.713396% | All five calls deliberately use cue 0, including toggling and exit. |
+| GAME 80028380 `menu_list_interact` | 87.079810% | Three choice-toggle/confirmation/cancellation calls. |
+| GAME 800286d4 `menu_two_option_prompt` | 100% | Three choice-toggle/confirmation/cancellation calls. |
+
+Program IDs 14/13/15 and MIDI note numbers 68/60/63 remain the observed
+sound recipes. Their exact selection has no recovered author rationale;
+do not invent instrument names or infer the audible frequency of sampled
+sounds. Volume 64 is 64/127 of the channel control range, with equal left
+and right inputs; its precise tuning is likewise unresolved. Shift 8 places
+the note in the SDK argument's upper byte and leaves fine pitch zero, rather
+than expressing a Q8 gameplay value. `VSync(0)` is the existing SDK wait mode.
+
+### Remaining save-unit literal audit
+
+The current census has 154 retained inline numeric/character occurrences
+in `src/game/save_system.c`, excluding claims, definitions and string contents.
+The save-status, icon-header and sound-selector sections explain their
+respective subsets. Reviewing the remaining card, workspace, image-wait and
+talk-path functions completes the literal accounting for this unit; it does
+not resolve every opaque serialized field or every original author decision.
+
+| Remaining site/value | Reason |
+| --- | --- |
+| `save_system_read_catalog`: clear length 0x24 | Observed partial clear of an output whose three summaries span 0x48 bytes. Its rationale is unresolved; do not silently expand it. |
+| Catalog result 1, index 0, slot - 1 | Operation-specific catalog-ready result, first index and one-based slot to zero-based row conversion. |
+| `memory_card_initialize`: 0x80-byte local and 0xff fill | Retail retains this initialized local, but the function never passes it to a card service or otherwise consumes its contents. Its purpose is unresolved; matching a card-sector size alone does not justify a sector-buffer identity. |
+| `OpenEvent`: callback 0 | Null callback for the selected non-interrupt event mode. |
+| `_card_auto(0)` | Retained SDK control argument; no additional project mode name or designer rationale is established by this call. |
+| `_card_info` comparisons with 0 and `TestEvent` comparisons with 1 | BIOS operation-start and event-ready results, distinct from the game status number space. |
+| `save_file_cleanup_temporary`: file != -1 | SDK open success Boolean on the cleanup path. Other paths still forward card-event statuses, so the whole helper is not normalized to a Boolean return. |
+| Workspace null/return 0 and -1 | Null allocation, zero-success and negative-failure conventions. |
+| `save_header_buffer + 1` | The payload begins after one complete typed header. |
+| Zero-fill values throughout catalog/header/payload initialization | Clear the measured byte ranges; numeric zero is the stored representation, not an invented field state. |
+| Header signature `'S'`, `'C'`; subscripts 0/1 | Required two-byte PlayStation save signature and its byte positions. |
+| Icon frame subscripts 0/1/2 in destinations and `sizeof` | The three ordered images and the extent of each corresponding frame. |
+| Image-wait `DrawSync(0)` and `SetSemiTrans(..., 1)` | Existing SDK wait mode and enabled semitransparency. |
+| Image-wait UV coordinates 0 and `GetClut` X 0 | Texture-coordinate origins and the measured palette column; the other dimensions/positions already have shared screen-layout constants. |
+| Image-wait CD result 0 | CD loader's success convention. |
+| `buffer_index == 0`; draw-environment flags 0/1 | Select the opposite buffer and clear/restore the background/display-area flags. Preserve both explicit flag assignments. |
+| Image-wait `ordering_table[length - 1]` | Last entry in the reverse-linked ordering table. |
+| Image-wait pressed flag 0/1, `PadRead(1)` and input comparisons with 0 | Wait for release, then a new press, then release again on controller 1. These values are flag states, SDK port selection and no-input checks. |
+| Talk-path divisors 10 and character `'0'` | Decimal tens/ones extraction and character encoding. |
+| Talk-path indices 6, 0xa..0xe and directory-group indices 0/1 | Existing directory digits and filename prefix/index/group/frame positions in the path template; both group copies use the same tens/ones. No gameplay ID is represented by these subscripts. |
+
+The image-wait brightness variables also describe measured tuning: the
+counter starts at 32, increments before drawing, and caps at 127. Therefore
+the first submitted RGB triplet is 33/33/33, and the 95th loop iteration
+reaches 127/127/127. No fixed frame duration is inferred from this loop,
+and the reason for choosing its initial level and exact ceiling is unresolved.
+
+Final verdict: all 22 functions in the sound/cue plan retain their starting
+strict percentages. The two `sound_ref_key_off_bank0` bodies retain all ten
+retail words each, and `menu_play_input_sound` retains all 33, with the exact
+ordered SDK calls and no data referents. Reversing the 89 cue substitutions
+reproduces every caller source byte from 6a22c63. All 112 compiled objects
+preserve executable bytes, data and relocations; the only other differences
+are debug lines and the two intended names in ELF symbols and decoded DWARF
+records. All 484 strict rows and the complete report agree after those name
+substitutions. The save unit retains 22 exact functions and its two previously
+documented residues. The banked source hashes and score floors are retained;
+only the two baseline display names follow their corrected identities.
+
+Lint and whitespace checks pass. All 651 repository tests pass with nine
+skips. The full build retains the existing ownership/placement failures:
+source-data matching is 6/60, target relink is PSX 1/1, GAME 75/77 and OPEN
+34/38, with two GAME and four OPEN conflicting-section-base findings and
+zero artifact failures. No tooling or flake files changed.

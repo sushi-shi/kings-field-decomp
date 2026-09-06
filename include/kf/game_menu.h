@@ -12,6 +12,13 @@
 #include <kf/game_save.h>
 #include <kf/psyq.h>
 
+/* Feedback styles; the cursor cue is also reused for opening/config actions. */
+enum {
+    MENU_SOUND_CURSOR = 0,
+    MENU_SOUND_CONFIRM = 1,
+    MENU_SOUND_CANCEL_OR_ERROR = 2
+};
+
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
     u16 x;

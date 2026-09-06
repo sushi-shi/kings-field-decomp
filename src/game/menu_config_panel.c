@@ -106,9 +106,9 @@ void menu_config_panel(void)
                         if ((pad & PADRdown) == 0 || (prev & PADRdown) != 0) {
                             goto no_input;
                         }
-                        menu_play_input_sound(0);
+                        menu_play_input_sound(MENU_SOUND_CURSOR);
                     } else {
-                        menu_play_input_sound(0);
+                        menu_play_input_sound(MENU_SOUND_CURSOR);
                         if (row != 4) {
                             goto toggle;
                         }
@@ -116,16 +116,16 @@ void menu_config_panel(void)
                     }
                     phase = -1;
                 } else if (row != 4) {
-                    menu_play_input_sound(0);
+                    menu_play_input_sound(MENU_SOUND_CURSOR);
                 toggle:
                     states[row] = (states[row] == 0);
                 }
             } else {
-                menu_play_input_sound(0);
+                menu_play_input_sound(MENU_SOUND_CURSOR);
                 row = (row == 4) ? 0 : row + 1;
             }
         } else {
-            menu_play_input_sound(0);
+            menu_play_input_sound(MENU_SOUND_CURSOR);
             row = (row == 0) ? 4 : row - 1;
         }
     no_input:

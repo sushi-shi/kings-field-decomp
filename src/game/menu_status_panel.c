@@ -126,7 +126,7 @@ void menu_status_panel(void)
         }
         input = PadRead(1);
         if (input != 0) {
-            menu_play_input_sound(2);
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             while (PadRead(1) != 0) {
             }
             return;

@@ -115,16 +115,17 @@ void menu_play_input_sound(s32 cue)
 {
     SoundRef sound;
 
-    if (cue == 0) {
+    if (cue == MENU_SOUND_CURSOR) {
         sound.program = 0xe;
         sound.note = 0x44;
-    } else if (cue == 1) {
+    } else if (cue == MENU_SOUND_CONFIRM) {
         sound.program = 0xd;
         sound.note = 0x3c;
     } else {
         sound.program = 0xf;
         sound.note = 0x3f;
     }
+    /* Bank 0, zero fine pitch; equal channels at 64/127 volume. */
     SsVoKeyOn(sound.program, sound.note << 8, 0x40, 0x40);
     VSync(0);
     SsVoKeyOff(sound.program, sound.note << 8);
