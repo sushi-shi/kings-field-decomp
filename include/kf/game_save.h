@@ -5,6 +5,15 @@
 
 #include <kf/game_types.h>
 
+enum {
+    KF_CARD_CHANNEL = 0,
+    KF_CARD_STATUS_NOT_STARTED = 0,
+    KF_CARD_STATUS_IO_END = 1,
+    KF_CARD_STATUS_TIMEOUT = 2,
+    KF_CARD_STATUS_NEW_DEVICE = 3,
+    KF_CARD_STATUS_ERROR = 4
+};
+
 /* Six on-card summary words; their individual meanings remain unresolved. */
 typedef struct KfSaveSlotSummary {
     u32 fields[6];

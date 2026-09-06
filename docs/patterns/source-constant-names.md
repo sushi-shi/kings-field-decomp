@@ -13,6 +13,13 @@ different domains need different names. Preserve types, expressions, operation
 order, initializer contents, claims, and all ordered relocation targets.
 Document literal expressions retained inline with their specific reason.
 
+A name must add a supported distinction or make a contract easier to use.
+Repeating the assignment's field name in an alias does not explain a tuning
+value. For animation and other rates, explain the units, fraction of a full
+range and resulting duration or displacement where the code supports them.
+Distinguish those measured consequences from the designer's rationale; leave
+an unexplained authored parameter explicit and document that uncertainty.
+
 The pre-edit snapshot covers all 477 source claims in the 112 compiled units:
 image/VA, raw disassembly and CFG, callers/callees, strings, references,
 adjacency, source history, and current strict objdiff results. Each focused
@@ -1092,3 +1099,112 @@ skipped), lint/whitespace checks pass, and flake checks pass (644 tests,
 131 sandbox skips). The full build retains the existing ownership and
 placement failures. The incoming exact banking record is preserved; the
 naming merge performs no additional banking.
+
+## GAME lifecycle, warp modes and card events
+
+Function Match Plan: audit GAME `game.c` and `player_warp.c` together with
+the shimmer-mode caller in `player_warp_to_floor_entry` and the card-status
+producer/cleanup path in `save_system.c`. Existing full image-qualified
+dossiers cover every selected body; the main-loop clear spans, event setup,
+frame-pacer arithmetic, shimmer traversal, packed-cell dispatch and card
+event returns were reviewed again. Name their control values and retain
+all widths, raw word loads, scratch copies, call order, countdowns, casts
+and relocation referents. Require all 112 non-debug objects and all 484
+strict scores to agree with the 3a2fd7d baseline.
+
+GAME shimmer modes are grow-and-remove (0), shrink-and-remove (1), and
+grow-and-keep (2). They are distinct from OPEN's transition protocol. The
+constructor arguments are owning ID 10, type 17 and kind 21; correct the
+old comment which confused type with kind. Four records animate for 48
+paced frames with eight-frame staggering, sound at frame 8, scale steps
+of 256 and yaw steps of 512. Preserve the original unsigned 8193 guard
+and its overshoot/wrap behavior. Both existing frame draws before the loop
+and the inherited scratch direction remain unchanged.
+
+`KfMapCell` stores Z then X. The dispatcher still reads the aligned word
+starting at `pitch_step`, masks off its low halfword, and compares keys
+with X in bits 24..31 and Z in bits 16..23. Spell those keys through one
+packing macro with explicit authored cell coordinates; do not substitute
+separate byte reads. Ordinal floor IDs and numeric variant/coordinate data
+remain visible instead of receiving unsupported place names.
+
+The startup event arguments match the pinned KERNEL.H macros `RCntCNT3`,
+`EvSpINT` and `EvMdINTR`. The frame-pacer comparison normally waits until
+three counter ticks have elapsed; its unsigned addition and separate
+counter-wrap branch must remain intact. The ending audio call supplies
+128 Q8 units, half a master-volume unit per paced audio update, rather than
+an unscaled 128-unit volume decrement. Reset-span names describe the
+observed byte runs without asserting new complete object boundaries.
+
+The card status helper reports I/O completion (1), timeout (2), new device
+(3) or error (4); a status check that cannot start returns zero. Temporary
+file cleanup also reports error 4 if its request fails, returns its existing
+Boolean file-open result after completion/new-device events, and otherwise
+forwards the card status. Startup interprets timeout as the no-card message.
+Keep these mixed return conventions; do not collapse them into a new Boolean
+API or rename timeout to a proved device-absence condition.
+
+Share the already established floor-5 alternate-music variant (3) between
+the resource selector and both warp paths, alongside floor-entry variant 1.
+The resource selector's other floor/progress rules remain unchanged. The
+actor transformation at the end of the warp unit names its result definition
+and target event state without assigning unsupported identities to event
+slots 1 and 2 or to the transformed actor.
+
+The actor's motion rates need a quantitative explanation, not aliases which
+merely repeat the destination fields. Retail GAME 80036d98/80036df0 adds
+and subtracts 40 from world Y; 80036da0/80036df8 adds and subtracts 64 from
+yaw. A full turn is 4096 angle units, so the yaw change is 1/64 turn
+(5.625 degrees) per update. The matrix blend advances by 64 in Q12, also
+1/64 of its full range. Spell these two ratios using their distinct angle
+and fixed-point units. Both endpoints execute: the 0..4096 inclusive loop
+has 65 updates, for 2600 world units of Y movement and 4160 angle units
+(365.625 degrees) before the reverse phase restores both values. These
+counts explain the observed behavior, not the designer's intent. There is
+no evidenced derivation of the 40-unit increment; retain it as an explicit
+animation parameter with that limitation. Do not derive it from an arbitrary
+fraction of the map-cell size or invent a physical unit such as centimeters.
+
+All 125 remaining inline literals in `game.c` and `player_warp.c` have these
+specific reasons. The source/header definitions retain their reviewed raw
+values, and the `ADDRESS`, `DATA` and `RODATA` claims retain their literal
+ownership evidence.
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Initial counter data, cleared spans and shimmer intensity | 0 | Counter origin, zero-filled storage and absent intensity. |
+| Display enable, near-actor-spawn reset and ending-request test/returns | 0/1 | Boolean values; the warp dispatcher reports whether the ending was requested. |
+| Pacer interval and shimmer guard | -1/+1 | Convert the interval to the original strict comparison and preserve an inclusive intensity bound, respectively. |
+| Shimmer loop origins/countdowns | 0 and -1 | First index/frame and descending-loop exhaustion; `count - 1` is the final element. |
+| Occupancy adjustment before same-floor teleport | -1 | Remove one contribution from the old cell neighborhood. |
+| Floor selector and destination floor IDs | 1..5 | Ordinal floor numbers in the authored route; no supported semantic location alias is needed. |
+| Packed warp keys and destination cells | Every X/Z pair | Authored map coordinates, now visible through the packing macro or typed call arguments. Preserve the distinct trigger at (5,24) and return destination at (5,25). |
+| Unnamed same-floor destination variant | 2 | Authored variant ID; neither an established location identity nor a special shared protocol meaning has been recovered. |
+| Transformation color matrix | 250/100/500 repeated across its rows; zero translation | Authored lighting coefficients. Preserve their numeric samples without claiming a named color or deriving them from unrelated world coordinates. |
+| Transformation event slots | 1/2 | Authored indices in this floor's event pool; this call site alone does not identify the events. |
+| Transformation blend origin/end condition | 0/+1 | Mathematical zero and the inclusive full-blend endpoint. |
+| Transformation range divisors | 64 | Divide the full blend range and full turn into 64 equal increments; inclusive endpoints produce 65 updates as detailed above. |
+| Transformation Y increments | 40 | World units per animation update; the reason for choosing this speed remains unresolved. |
+| Transformation render arguments | 0/0 | Null view arguments retain the renderer's current view. |
+
+In the three reviewed card bodies, `_card_info` comparisons with zero test
+request failure; `TestEvent == 1` tests its Boolean delivered result, and
+`file != -1` tests the SDK file-open failure sentinel. Those literals remain
+explicit. The updated floor-entry caller retains ordinal floor 5 and the
+`floor - 1` conversion to its zero-based entry table. The rest of
+`player_core.c` and `save_system.c` still needs its own literal audit; this
+batch does not claim coverage of their untouched bodies.
+
+The graphics-owner pilot rewrites the main-loop clear into its candidate
+aggregate. Update that source-pattern match for the named clear extent;
+keep the independent raw instruction check, literal extent and shifted-owner
+negative controls intact. The first repository run exposed this stale
+source-pattern expectation; it did not report a generated-code difference.
+
+Validation after the fixture update: all eight graphics-owner tests and all
+644 repository tests pass (nine repository skips). Lint and whitespace checks
+pass. All 112 objects retain every non-debug section and all 484 strict scores
+from 3a2fd7d; only three debug-line sections differ. The full build retains the
+existing ownership and placement failures: GAME target relink 75/77, OPEN
+34/38, PSX 1/1, and five of 60 source data owners matching, with no artifact
+failures. The transformation remains strict 100%; no new result is banked.

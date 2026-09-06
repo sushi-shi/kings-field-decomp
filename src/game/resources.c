@@ -14,8 +14,7 @@ enum {
     MAP_SEQUENCE_DEFAULT = 0,
     MAP_SEQUENCE_ALTERNATE = 1,
     MAP_FLOOR1_ALTERNATE_MUSIC_PROGRESS = 15,
-    MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS = 25,
-    MAP_ALTERNATE_MUSIC_VARIANT = 3
+    MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS = 25
 };
 
 DATA(0x80057b48, 0x8)
@@ -142,7 +141,7 @@ void audio_play_current_map_sequence(void)
         }
         break;
     case 5:
-        if (player_state.map_variant == MAP_ALTERNATE_MUSIC_VARIANT) {
+        if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             sequence_id = MAP_SEQUENCE_ALTERNATE;
         }
         break;

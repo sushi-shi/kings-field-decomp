@@ -1,41 +1,37 @@
 #include <kf/address.h>
 #include <kf/overlay.h>
 #include <kf/game_player.h>
+#include <kf/game_save.h>
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-/*
- * Both counters live in the retail load image four bytes apart as explicitly
- * initialized data. Retail references them through named HI16/LO16 relocations
- * (R_MIPS_HI16 frame_pacer_vsync_count, not a .data section offset), so they
- * had external linkage in the original: internal `static` linkage would fold
- * the references to section-relative relocs and never match.
- */
+enum {
+    INITIAL_GRAPHICS_CLEAR_BYTES = 0x249cc,
+    INITIAL_ACTOR_CLEAR_BYTES = 0x2b48,
+    INITIAL_MAP_OBJECT_CLEAR_BYTES = 0x25b8,
+    INITIAL_MAP_EVENT_CLEAR_BYTES = 0x2360,
+    FRAME_PACER_INTERVAL_TICKS = 3,
+    ENDING_MASTER_FADE_STEP_Q8 = 0x80
+};
+
+/* Keep the initialized counters' external symbols in the curated relocation model. */
 DATA(0x80057b0c, 0x4)
 u32 frame_pacer_vsync_count = 0;
 
 DATA(0x80057b10, 0x4)
 u32 frame_pacer_last_vsync = 0;
-/*
- * The player state block is one aggregate in the original source (see
- * KfPlayerState); the inventory still names its members separately, so it is
- * viewed through its first member until the aggregate identity exists.
- */
-
-/*
- * The six memset spans clear whole BSS runs that start at the named objects.
- */
+/* Clear the reviewed BSS spans without changing their starting referents. */
 ADDRESS(0x800146b8, 0x2e4)
 void game_main_loop(void)
 {
     s32 vsync_event;
 
-    memset(&display_state.buffer_index, 0, 0x249cc);
-    memset(actor_state.definitions, 0, 0x2b48);
-    memset(map_object_state.definitions, 0, 0x25b8);
+    memset(&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);
+    memset(actor_state.definitions, 0, INITIAL_ACTOR_CLEAR_BYTES);
+    memset(map_object_state.definitions, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
     memset(&effect_state, 0, sizeof(KfEffectState));
-    memset(map_event_pool, 0, 0x2360);
+    memset(map_event_pool, 0, INITIAL_MAP_EVENT_CLEAR_BYTES);
     memset(&player_state, 0, sizeof(KfPlayerState));
     memory_card_initialize();
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
@@ -53,10 +49,10 @@ void game_main_loop(void)
     memory_reset_system_heap();
     func_800365f8();
     SetDispMask(1);
-    vsync_event = OpenEvent(0xf2000003, 2, 0x1000, frame_pacer_vsync_callback);
+    vsync_event = OpenEvent(RCntCNT3, EvSpINT, EvMdINTR, frame_pacer_vsync_callback);
     EnableEvent(vsync_event);
-    player_warp_shimmer_at_player(1);
-    if (save_file_cleanup_temporary() == 2) {
+    player_warp_shimmer_at_player(KF_WARP_SHIMMER_SHRINK_REMOVE);
+    if (save_file_cleanup_temporary() == KF_CARD_STATUS_TIMEOUT) {
         display_show_error_screen(KF_SYSTEM_SCREEN_NO_MEMORY_CARD);
     }
     game_exit_code = KF_GAME_EXIT_NONE;
@@ -76,22 +72,22 @@ void game_main_loop(void)
         player_state.allow_near_actor_spawn = 0;
         frame_pacer_wait();
         if (map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
-            == 0x40) {
+            == KF_MAP_ATTRIBUTE_WARP) {
             if (*(u16 *)&player_state.previous_map_cell
                 != *(u16 *)&player_state.map_cell) {
                 if (player_warp_trigger_update() != 0) {
                     game_exit_code = KF_OPEN_MODE_ENDING;
-                    player_warp_shimmer_at_player(2);
+                    player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
                     display_play_transition();
-                    audio_stop_sequence_master_fade(0x80);
+                    audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8);
                     break;
                 }
                 player_state.previous_map_cell.x = player_state.map_cell.x;
                 player_state.previous_map_cell.z = player_state.map_cell.z;
             }
         } else {
-            player_state.previous_map_cell.z = 0xff;
-            player_state.previous_map_cell.x = 0xff;
+            player_state.previous_map_cell.z = KF_MAP_CELL_COORD_INVALID;
+            player_state.previous_map_cell.x = KF_MAP_CELL_COORD_INVALID;
         }
     }
     CloseEvent(vsync_event);
@@ -118,7 +114,8 @@ void frame_pacer_wait(void)
 {
     for (;;) {
         EnterCriticalSection();
-        if (frame_pacer_last_vsync + 2 < frame_pacer_vsync_count
+        if (frame_pacer_last_vsync + (FRAME_PACER_INTERVAL_TICKS - 1)
+                < frame_pacer_vsync_count
             || frame_pacer_vsync_count < frame_pacer_last_vsync) {
             frame_pacer_last_vsync = frame_pacer_vsync_count;
             ExitCriticalSection();

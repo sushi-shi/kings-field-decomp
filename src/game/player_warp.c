@@ -9,42 +9,36 @@ static MATRIX actor_transform_color_matrix = {
     {{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}, {0, 0, 0}
 };
 
-/*
- * Player warp / floor-transition band 0x80036618..0x80036d3c (GAME.EXE).
- *
- * player_warp_shimmer runs the warp shimmer: it spawns four type-0x15 effects at the
- * player position, animates their intensity/rotation over 48 frames (playing
- * gameplay_sound_ref_6 on frame 8), and, unless mode 2 keeps them, releases the
- * pool records afterwards. mode 0/2 fade the shimmer in (delta +0x100 from 0),
- * mode 1 fades it out (delta -0x100 from 0x2000).
- *
- * player_warp_change_floor is the change-floor warp: shimmer out, reload the world through
- * map_unload_floor/map_load_floor, record the new floor/variant, snap the camera to
- * the centre of its 2000-unit cell, and shimmer back in. player_warp_same_floor is the
- * same-floor teleport: shimmer out, drop the old broad-phase occupancy, swap the
- * map variant and its assets, move to an explicit cell, and shimmer back in.
- *
- * player_warp_trigger_update runs every frame from game_main_loop: it dispatches on the
- * current floor (jump table at 0x80012c14) and, when the player's current map
- * cell matches a scripted trigger, performs the corresponding warp.
- *
- * actor_transform_definition5_to6 is the colour-fade transition called for
- * floor 4 actor definition 5: it sets map events 1 and 2 to state 3, fades
- * the GTE colour matrix toward the global target while raising and spinning
- * the actor, changes its definition to 6, then reverses the fade and motion.
- *
- * The KfEffectRecord layout is modelled in kf/game_effect.h; the shimmer
- * reuses the record's rotation_y halfword as its rotation phase and scale_y as
- * its fade intensity.
- */
+enum {
+    WARP_SHIMMER_COUNT = 4,
+    WARP_SHIMMER_OWNER_ID = 10,
+    WARP_SHIMMER_TYPE = 0x11,
+    WARP_SHIMMER_KIND = 0x15,
+    WARP_SHIMMER_TALL_SCALE = 0x2000,
+    WARP_SHIMMER_SCALE_STEP = 0x100,
+    WARP_SHIMMER_YAW_STEP = 512,
+    WARP_SHIMMER_FRAMES = 48,
+    WARP_SHIMMER_SOUND_FRAME = 8,
+    WARP_SHIMMER_STAGGER_FRAMES = 8,
+    WARP_DEFAULT_VARIANT = 0,
+    WARP_CELL_X_SHIFT = 24,
+    WARP_CELL_Z_SHIFT = 16,
+    ACTOR_TRANSFORM_EVENT_STATE = 3,
+    ACTOR_TRANSFORM_RESULT_DEFINITION = 6
+};
 
+#define WARP_CELL_KEY_MASK 0xffff0000
+#define WARP_CELL_KEY(x, z) \
+    (((u32)(x) << WARP_CELL_X_SHIFT) | ((u32)(z) << WARP_CELL_Z_SHIFT))
+
+/* The shimmer reuses rotation_y as phase and scale_y as intensity. */
 #define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)
 
 ADDRESS(0x80036618, 0x238)
 void player_warp_shimmer(s32 mode, VECTOR *position)
 {
-    KfEffectRecord *effects[4];
+    KfEffectRecord *effects[WARP_SHIMMER_COUNT];
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
     struct {
@@ -58,14 +52,14 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     s16 mode_value = mode;
 
     switch (mode_value) {
-    case 0:
-    case 2:
+    case KF_WARP_SHIMMER_GROW_REMOVE:
+    case KF_WARP_SHIMMER_GROW_KEEP:
         intensity = 0;
-        intensity_delta = 0x100;
+        intensity_delta = WARP_SHIMMER_SCALE_STEP;
         break;
-    case 1:
-        intensity = 0x2000;
-        intensity_delta = -0x100;
+    case KF_WARP_SHIMMER_SHRINK_REMOVE:
+        intensity = WARP_SHIMMER_TALL_SCALE;
+        intensity_delta = -WARP_SHIMMER_SCALE_STEP;
         break;
     }
 
@@ -74,8 +68,9 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
     cursor = effects;
-    for (i = 3; i != -1; i--) {
-        effect = effect_pool_construct(0xa, 0x11, 0x15, position, &scratch.direction);
+    for (i = WARP_SHIMMER_COUNT - 1; i != -1; i--) {
+        effect = effect_pool_construct(WARP_SHIMMER_OWNER_ID, WARP_SHIMMER_TYPE,
+                                       WARP_SHIMMER_KIND, position, &scratch.direction);
         EFFECT_INTENSITY(effect) = intensity;
         *cursor++ = effect;
     }
@@ -85,33 +80,34 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     display_flip_buffer_index();
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
-    for (frame = 0; frame < 48; frame++) {
+    for (frame = 0; frame < WARP_SHIMMER_FRAMES; frame++) {
         cursor = effects;
-        if (frame == 8) {
-            sound_ref_play(&gameplay_sound_ref_6, 0x7f);
+        if (frame == WARP_SHIMMER_SOUND_FRAME) {
+            sound_ref_play(&gameplay_sound_ref_6, KF_AUDIO_MAX_VOLUME);
         }
-        for (i = 0; i < 4; i++) {
+        for (i = 0; i < WARP_SHIMMER_COUNT; i++) {
             effect = *cursor++;
 
-            if (i * 8 < frame) {
+            if (i * WARP_SHIMMER_STAGGER_FRAMES < frame) {
                 u16 current_intensity = EFFECT_INTENSITY(effect);
 
-                if (current_intensity < 8193) {
+                if (current_intensity < WARP_SHIMMER_TALL_SCALE + 1) {
                     EFFECT_INTENSITY(effect) = intensity_delta + current_intensity;
                 }
             }
             EFFECT_ROTATION_PHASE(effect) =
-                (EFFECT_ROTATION_PHASE(effect) + 512) & 0xfff;
+                (EFFECT_ROTATION_PHASE(effect) + WARP_SHIMMER_YAW_STEP)
+                & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
         frame_pacer_wait();
     }
 
-    if (mode_value != 2) {
+    if (mode_value != KF_WARP_SHIMMER_GROW_KEEP) {
         cursor = effects;
-        for (i = 3; i != -1; i--) {
+        for (i = WARP_SHIMMER_COUNT - 1; i != -1; i--) {
             effect = *cursor++;
-            effect->type = 0xff;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
     }
 }
@@ -124,7 +120,7 @@ void player_warp_change_floor(s32 floor, u32 variant)
     position.vx = player_state.camera_position.vx;
     position.vz = player_state.camera_position.vz;
     position.vy = player_state.floor_height;
-    player_warp_shimmer(0, &position);
+    player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
     player_state.map_variant = variant;
@@ -140,7 +136,7 @@ void player_warp_change_floor(s32 floor, u32 variant)
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
     position.vy = player_state.floor_height;
-    player_warp_shimmer(1, &position);
+    player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
 ADDRESS(0x800369ac, 0x144)
@@ -152,7 +148,7 @@ void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
     position.vx = player_state.camera_position.vx;
     position.vz = player_state.camera_position.vz;
     position.vy = player_state.floor_height;
-    player_warp_shimmer(0, &position);
+    player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     collision_adjust_cell_occupancy(player_state.map_cell.x,
                                     player_state.map_cell.z, -1);
     pool_release_all();
@@ -160,7 +156,8 @@ void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
     player_state.map_variant = variant;
     map_variant_assets_load();
     if (player_state.progress_state.current_floor == 5) {
-        if (player_state.map_variant == 3 || previous_variant == 3) {
+        if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT
+            || previous_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             audio_play_current_map_sequence();
         }
     }
@@ -170,7 +167,7 @@ void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
     position.vy = player_state.floor_height;
-    player_warp_shimmer(1, &position);
+    player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
 /* player_warp_trigger_update scripted-trigger jump table (current floor 1..5). */
@@ -181,88 +178,88 @@ u32 player_warp_trigger_update(void)
 {
     u32 cell;
     s32 destination_floor;
-    u8 destination_variant = 0;
+    u8 destination_variant = WARP_DEFAULT_VARIANT;
 
     /* The aligned word spans pitch_step and map_cell; mask out pitch_step. */
     switch (player_state.progress_state.current_floor) {
     case 1:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
-        if (cell == 0x1d380000) {
+        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        if (cell == WARP_CELL_KEY(29, 56)) {
             destination_floor = 2;
 change_floor:
             player_warp_change_floor(destination_floor, destination_variant);
-        } else if (cell == 0x190b0000) {
+        } else if (cell == WARP_CELL_KEY(25, 11)) {
             destination_floor = 3;
             goto change_floor;
-        } else if (cell == 0x27230000) {
+        } else if (cell == WARP_CELL_KEY(39, 35)) {
             goto change_to_floor4;
-        } else if (cell == 0x0f020000) {
+        } else if (cell == WARP_CELL_KEY(15, 2)) {
             if (boss_defeat_complete) {
                 return 1;
             }
         }
         break;
     case 2:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
-        if (cell == 0x1d380000) {
+        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        if (cell == WARP_CELL_KEY(29, 56)) {
             destination_floor = 1;
             goto change_floor;
-        } else if (cell == 0x1c120000) {
+        } else if (cell == WARP_CELL_KEY(28, 18)) {
             destination_floor = 3;
             goto change_floor;
         }
         break;
     case 3:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
-        if (cell == 0x190b0000) {
+        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        if (cell == WARP_CELL_KEY(25, 11)) {
             destination_floor = 1;
             goto change_floor;
-        } else if (cell == 0x1c120000) {
+        } else if (cell == WARP_CELL_KEY(28, 18)) {
             destination_floor = 2;
             goto change_floor;
-        } else if (cell == 0x07160000 || cell == 0x2b5c0000) {
+        } else if (cell == WARP_CELL_KEY(7, 22) || cell == WARP_CELL_KEY(43, 92)) {
 change_to_floor4:
             destination_floor = 4;
             goto change_floor;
         }
         break;
     case 4:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
-        if (cell == 0x27230000) {
+        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        if (cell == WARP_CELL_KEY(39, 35)) {
             destination_floor = 1;
             goto change_floor;
-        } else if (cell == 0x07160000) {
+        } else if (cell == WARP_CELL_KEY(7, 22)) {
             destination_floor = 3;
             goto change_floor;
-        } else if (cell == 0x27450000) {
+        } else if (cell == WARP_CELL_KEY(39, 69)) {
             destination_floor = 5;
-            destination_variant = 1;
+            destination_variant = KF_FLOOR5_ENTRY_VARIANT;
             goto change_floor;
-        } else if (cell == 0x2b5c0000) {
+        } else if (cell == WARP_CELL_KEY(43, 92)) {
             destination_floor = 3;
             goto change_floor;
         }
         break;
     case 5:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & 0xffff0000;
-        if (cell == 0x27450000) {
+        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        if (cell == WARP_CELL_KEY(39, 69)) {
             goto change_to_floor4;
-        } else if (cell == 0x463d0000) {
-            player_warp_same_floor(2, 0x12, 0x25);
-        } else if (cell == 0x12250000) {
-            player_warp_same_floor(1, 0x46, 0x3d);
-        } else if (cell == 0x05180000) {
-            player_warp_same_floor(3, 0x27, 0x2f);
-        } else if (cell == 0x272f0000) {
+        } else if (cell == WARP_CELL_KEY(70, 61)) {
+            player_warp_same_floor(2, 18, 37);
+        } else if (cell == WARP_CELL_KEY(18, 37)) {
+            player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, 70, 61);
+        } else if (cell == WARP_CELL_KEY(5, 24)) {
+            player_warp_same_floor(KF_FLOOR5_ALTERNATE_MUSIC_VARIANT, 39, 47);
+        } else if (cell == WARP_CELL_KEY(39, 47)) {
             if (!boss_defeat_complete) {
-                player_warp_same_floor(2, 5, 0x19);
+                player_warp_same_floor(2, 5, 25);
             } else {
                 return 1;
             }
-        } else if (cell == 0x05250000) {
-            player_warp_same_floor(1, 0xe, 0x4f);
-        } else if (cell == 0x0e4f0000) {
-            player_warp_same_floor(2, 5, 0x25);
+        } else if (cell == WARP_CELL_KEY(5, 37)) {
+            player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, 14, 79);
+        } else if (cell == WARP_CELL_KEY(14, 79)) {
+            player_warp_same_floor(2, 5, 37);
         }
         break;
     }
@@ -275,21 +272,24 @@ void actor_transform_definition5_to6(KfActor *actor)
     MATRIX saved;
     s32 blend;
 
-    map_event_pool[1].state = 3;
-    map_event_pool[2].state = 3;
+    map_event_pool[1].state = ACTOR_TRANSFORM_EVENT_STATE;
+    map_event_pool[2].state = ACTOR_TRANSFORM_EVENT_STATE;
     ReadColorMatrix(&saved);
-    for (blend = 0; blend < 4097; blend += 64) {
+    /* Both blend endpoints execute: 65 motion updates per phase.
+     * Y moves 40 world units per update; its design rationale is unresolved.
+     * Blend and yaw advance by 1/64 of their full ranges, then reverse. */
+    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / 64) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += 40;
-        actor->rotation.y += 64;
+        actor->rotation.y += KF_ANGLE_FULL_TURN / 64;
         render_frame(0, 0);
         frame_pacer_wait();
     }
-    actor->definition_id = 6;
-    for (blend = 4096; blend >= 0; blend -= 64) {
+    actor->definition_id = ACTOR_TRANSFORM_RESULT_DEFINITION;
+    for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / 64) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= 40;
-        actor->rotation.y -= 64;
+        actor->rotation.y -= KF_ANGLE_FULL_TURN / 64;
         render_frame(0, 0);
         frame_pacer_wait();
     }

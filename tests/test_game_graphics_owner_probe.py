@@ -66,7 +66,8 @@ def candidate_source(unit, selected):
     source = re.sub(r'^ADDRESS\((0x[0-9a-f]+),[^\n]+\n.*?(?=^ADDRESS\(|\Z)',
                     rewrite, unit.source_path.read_text(), flags=re.M | re.S)
     if 'game_main_loop' in selected:
-        old = 'memset(&graphics_owner_probe.display_state.buffer_index, 0, 0x249cc);'
+        old = ('memset(&graphics_owner_probe.display_state.buffer_index, 0, '
+               'INITIAL_GRAPHICS_CLEAR_BYTES);')
         assert source.count(old) == 1
         source = source.replace(old, 'memset(&graphics_owner_probe, 0, sizeof graphics_owner_probe);')
     return '#include "game_graphics_owner_probe.h"\n' + source

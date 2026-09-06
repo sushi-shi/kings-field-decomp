@@ -123,10 +123,10 @@ ADDRESS(0x8002b334, 0x38)
 s32 memory_card_begin_status_check(void)
 {
     memory_card_clear_events();
-    if (_card_info(0) != 0) {
+    if (_card_info(KF_CARD_CHANNEL) != 0) {
         return memory_card_wait_event();
     }
-    return 0;
+    return KF_CARD_STATUS_NOT_STARTED;
 }
 
 ADDRESS(0x8002b36c, 0x58)
@@ -144,19 +144,19 @@ s32 memory_card_wait_event(void)
     for (;;) {
         if (TestEvent(memory_card_io_end_event) == 1) {
             memory_card_undeliver_events();
-            return 1;
+            return KF_CARD_STATUS_IO_END;
         }
         if (TestEvent(memory_card_timeout_event) == 1) {
             memory_card_undeliver_events();
-            return 2;
+            return KF_CARD_STATUS_TIMEOUT;
         }
         if (TestEvent(memory_card_new_device_event) == 1) {
             memory_card_undeliver_events();
-            return 3;
+            return KF_CARD_STATUS_NEW_DEVICE;
         }
         if (TestEvent(memory_card_error_event) == 1) {
             memory_card_undeliver_events();
-            return 4;
+            return KF_CARD_STATUS_ERROR;
         }
     }
 }
@@ -728,11 +728,11 @@ s32 save_file_cleanup_temporary(void)
     s32 status;
     s32 file;
 
-    if (_card_info(0) == 0) {
-        return 4;
+    if (_card_info(KF_CARD_CHANNEL) == 0) {
+        return KF_CARD_STATUS_ERROR;
     }
     status = memory_card_wait_event();
-    if (status == 1 || status == 3) {
+    if (status == KF_CARD_STATUS_IO_END || status == KF_CARD_STATUS_NEW_DEVICE) {
         file = open(save_temporary_file_path, O_CREAT);
         close(file);
         erase(save_temporary_file_path);
