@@ -19,8 +19,8 @@
  * map_runtime_state owns both the event pool and per-floor saved records;
  * the pool starts 556 bytes before the saved block.
  *
- * map_refresh_event_images walks the eight-record map_event_pool and refreshes the image
- * of every active (state == 1) event. map_load_floor loads the current floor:
+ * map_refresh_dialogue_stages refreshes the stage of every active map event.
+ * map_load_floor loads the current floor:
  * map_resources_load, the world-state restore, the event refresh, effect5_texture_cache_prepare,
  * then copies colour_matrix_table[3] into the render lighting matrix.
  */
@@ -42,12 +42,12 @@ void map_restore_floor_state(void)
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
-            event->state = *in++;
-            event->image_limit = *in++;
-            event->image_index = *in++;
-            event->image_dirty = *in++;
-            event->tag.bytes[event->image_index - 1] = *in++;
-            event->image_delay = *in++;
+            event->state = KF_ENUM_DECODE(KfMapEventState, *in++);
+            event->dialogue_stage_limit = *in++;
+            event->dialogue_stage = *in++;
+            event->dialogue_page = *in++;
+            event->dialogue_pages.last_page[event->dialogue_stage - 1] = *in++;
+            event->dialogue_page_delay = *in++;
             event->unknown_0d = *in++;
         }
 
@@ -142,7 +142,7 @@ void map_restore_floor_state(void)
             map_object_pool_clear_link(0x33);
         }
         if (player_state.progress_state.highest_floor >= 3) {
-            map_event_pool[0].state = 3;
+            map_event_pool[0].state = KF_MAP_EVENT_DISABLED;
         }
         break;
     case 3:
@@ -158,7 +158,7 @@ void map_restore_floor_state(void)
         break;
     case 5:
         if (DAT_8009f844 == 1) {
-            map_event_pool[1].state = 1;
+            map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;
         }
         if (DAT_8009f846 == 0) {
             ((u8 *)&actor_state)[0x438] = 0xff;
@@ -187,14 +187,14 @@ void map_restore_floor_state(void)
 }
 
 ADDRESS(0x800364e0, 0x74)
-void map_refresh_event_images(void)
+void map_refresh_dialogue_stages(void)
 {
     KfMapEvent *event = map_event_pool;
-    u16 index = 7;
+    u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
-        if (event->state == 1) {
-            map_event_refresh_image_for_progress(event);
+        if (event->state == KF_MAP_EVENT_ACTIVE) {
+            map_event_refresh_dialogue_stage(event);
         }
         event++;
     } while (index-- != 0);
@@ -206,7 +206,7 @@ void map_load_floor(void)
     map_resources_load(player_state.progress_state.current_floor,
                        player_state.map_variant);
     map_restore_floor_state();
-    map_refresh_event_images();
+    map_refresh_dialogue_stages();
     effect5_texture_cache_prepare(player_state.progress_state.current_floor);
     render_state.effect_color_matrix = color_matrix_table[KF_GAME_COLOR_WHITE];
 }

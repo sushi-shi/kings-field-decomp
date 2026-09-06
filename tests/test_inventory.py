@@ -14,10 +14,13 @@ from scripts.kf.inventory import (
     load_structure_identities,
     validate,
 )
+from scripts.kf.local_config import configured_retail_dir
 from scripts.kf.manifest import load as load_manifest
 from scripts.kf.paths import CONFIG, REPO, RETAIL_CONFIG
 from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
+from scripts.kf.sema.image import RetailImage
+from scripts.kf.sema.mips import decode_control
 
 
 def _structure_field(structure: str, offset: int) -> tuple[str, str, int]:
@@ -205,7 +208,7 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 98)
         self.assertEqual(counts["structure_fields"], 784)
-        self.assertEqual(counts["structure_fields_named"], 689)
+        self.assertEqual(counts["structure_fields_named"], 692)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -609,7 +612,7 @@ class InventoryTests(unittest.TestCase):
             "KfMapObject",
             "KfCameraPathPoint",
             "KfCameraPathState",
-            "KfMapEventTag",
+            "KfDialoguePageLimits",
             "KfMapEventDefinition",
             "KfMapEvent",
             "KfMapObjectState",
@@ -2725,25 +2728,36 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["status"], "reviewed")
             self.assertEqual(row["provenance"], "manual:game_semantic_player_death")
 
-    def test_camera_event_false_calls_remain_rejected(self) -> None:
+    def test_map_animation_calls_agree_with_retail(self) -> None:
+        try:
+            retail_dir = configured_retail_dir(validate=False)
+        except ValueError:
+            self.skipTest("retail directory is not configured")
+        if not (retail_dir / "GAME.EXE").is_file():
+            self.skipTest("retail GAME.EXE is required")
+        retail = RetailImage.load("GAME.EXE")
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
-        rejected = {
+        by_site = {
             parse_int(row["site_va"]): row
             for row in rows
-            if row["image"] == "GAME.EXE" and row["status"] == "rejected"
+            if row["image"] == "GAME.EXE"
         }
-        for site in (
-            0x80035070,
-            0x800350A4,
-            0x800350D0,
-            0x800350F4,
-            0x80035110,
+        for site, step in (
+            (0x80035070, 200),
+            (0x800350A4, 200),
+            (0x800350D0, 400),
+            (0x800350F4, 200),
+            (0x80035110, 200),
         ):
-            self.assertEqual(rejected[site]["confidence"], "not-control-flow")
-            self.assertEqual(
-                rejected[site]["provenance"],
-                "manual:game_semantic_camera_events",
-            )
+            with self.subTest(site=hex(site)):
+                control = decode_control(site, retail.u32(site))
+                self.assertIsNotNone(control)
+                self.assertTrue(control.call)
+                self.assertEqual(control.target, 0x80033820)
+                self.assertEqual(retail.u32(site + 4), 0x34060000 | step)
+                self.assertEqual(parse_int(by_site[site]["target_va"]), control.target)
+                self.assertEqual(by_site[site]["confidence"], "control-flow-reviewed")
+                self.assertEqual(by_site[site]["status"], "reviewed")
 
     def test_vmanager_key_utilities_are_vendored_in_both_overlays(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")

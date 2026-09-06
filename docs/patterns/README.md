@@ -12,6 +12,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [modern-type-checking.md](modern-type-checking.md): modern compiler adoption,
   enum storage requirements, and consumer-backed vector pointer corrections.
+- [game-map-dialogue-state.md](game-map-dialogue-state.md): GAME dialogue
+  stages/pages, animation phase, byte enum domains and corrected call evidence.
 
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the

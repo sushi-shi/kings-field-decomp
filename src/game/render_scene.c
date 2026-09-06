@@ -116,7 +116,7 @@ void render_entities(void)
     SetLightMatrix(&render_state.light_matrix_copy);
     event = map_event_pool;
     for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {
-        if (event->state == 1) {
+        if (event->state == KF_MAP_EVENT_ACTIVE) {
             u16 row = event->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {

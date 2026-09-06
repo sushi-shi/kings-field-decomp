@@ -23,7 +23,6 @@ enum {
     WARP_DEFAULT_VARIANT = 0,
     WARP_CELL_X_SHIFT = 24,
     WARP_CELL_Z_SHIFT = 16,
-    ACTOR_TRANSFORM_EVENT_STATE = 3,
     ACTOR_TRANSFORM_RESULT_DEFINITION = 6
 };
 
@@ -272,8 +271,8 @@ void actor_transform_definition5_to6(KfActor *actor)
     MATRIX saved;
     s32 blend;
 
-    map_event_pool[1].state = ACTOR_TRANSFORM_EVENT_STATE;
-    map_event_pool[2].state = ACTOR_TRANSFORM_EVENT_STATE;
+    map_event_pool[1].state = KF_MAP_EVENT_DISABLED;
+    map_event_pool[2].state = KF_MAP_EVENT_DISABLED;
     ReadColorMatrix(&saved);
     /* Both blend endpoints execute: 65 motion updates per phase.
      * Y moves 40 world units per update; its design rationale is unresolved.

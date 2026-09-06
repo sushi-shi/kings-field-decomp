@@ -4,6 +4,7 @@
 /* Map, floor, map-object, event, and camera layouts and operations. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 #include <kf/psyq.h>
 #include <kf/game_math.h>
 
@@ -13,8 +14,7 @@ enum {
     KF_MAP_OBJECT_DEFINITION_COUNT = 160,
     KF_MAP_OBJECT_CAPACITY = 190,
     KF_MAP_OBJECT_EFFECT_FIRST = 160,
-    KF_MAP_EVENT_CAPACITY = 8,
-    KF_MAP_EVENT_FREE = 0xff
+    KF_MAP_EVENT_CAPACITY = 8
 };
 
 /* Definition behavior and running action are separate byte domains. */
@@ -168,22 +168,49 @@ typedef struct KfCameraPathState {
     s32 frames_remaining;
 } KfCameraPathState;
 
-/* Five opaque bytes copied as one block from a map-event definition. */
-typedef struct KfMapEventTag {
-    u8 bytes[5];
-} KfMapEventTag;
+KF_ENUM_BEGIN(KfMapEventState, u8)
+    KF_MAP_EVENT_INACTIVE = 0,
+    KF_MAP_EVENT_ACTIVE = 1,
+    KF_MAP_EVENT_DISABLED = 3,
+    KF_MAP_EVENT_FREE = 255
+KF_ENUM_END(KfMapEventState)
+
+KF_ENUM_BEGIN(KfMapEventBehavior, u8)
+    KF_MAP_EVENT_BEHAVIOR_SHOP = 0,
+    KF_MAP_EVENT_BEHAVIOR_WANDER = 1,
+    KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP = 2
+KF_ENUM_END(KfMapEventBehavior)
+
+enum {
+    KF_DIALOGUE_STAGE_COUNT = 5,
+    KF_DIALOGUE_FIRST_STAGE = 1,
+    KF_DIALOGUE_FIRST_PAGE = 1,
+    KF_DIALOGUE_GATE_RELOAD = 3,
+    KF_DIALOGUE_PAGE_DELAY_TICKS = 40,
+    KF_MAP_EVENT_ANIMATION_PHASE_MASK = 4095,
+    KF_MAP_EVENT_ANIMATION_TALK_POSE = 2048,
+    KF_MAP_EVENT_ANIMATION_WANDER_STEP = 110,
+    KF_MAP_EVENT_ANIMATION_LOOP_STEP = 200,
+    KF_MAP_EVENT_ANIMATION_TALK_STEP = 200,
+    KF_MAP_EVENT_ANIMATION_FINISH_STEP = 400
+};
+
+/* Last accessible page for each one-based dialogue stage; copied as a block. */
+typedef struct KfDialoguePageLimits {
+    u8 last_page[KF_DIALOGUE_STAGE_COUNT];
+} KfDialoguePageLimits;
 
 typedef struct KfMapEventDefinition {
-    u8 state;
-    u8 kind;
-    u8 variant;
+    KfMapEventState state;
+    u8 character_id;
+    u8 model_index;
     u8 cell_z;
     u8 cell_x;
-    KfMapEventTag tag;
-    u8 image_limit;
+    KfDialoguePageLimits dialogue_pages;
+    u8 dialogue_stage_limit;
     u8 unknown_0b;
     u8 unknown_0c;
-    u8 behavior;
+    KfMapEventBehavior behavior;
     s16 position_z_offset;
     s16 position_x_offset;
     u16 initial_rotation;
@@ -192,21 +219,21 @@ typedef struct KfMapEventDefinition {
 } KfMapEventDefinition;
 
 typedef struct KfMapEvent {
-    u8 state;
-    u8 kind;
-    u8 variant;
-    KfMapEventTag tag;
-    u8 image_limit;
-    u8 image_index;
-    u8 image_dirty;
-    u8 image_delay;
+    KfMapEventState state;
+    u8 character_id;
+    u8 model_index;
+    KfDialoguePageLimits dialogue_pages;
+    u8 dialogue_stage_limit;
+    u8 dialogue_stage;
+    u8 dialogue_page;
+    u8 dialogue_page_delay;
     u8 unknown_0c;
     u8 unknown_0d;
-    u8 behavior;
+    KfMapEventBehavior behavior;
     u8 animation_clip;
     u8 collision_turn_pending;
     u8 unknown_11;
-    u16 rotation_phase;
+    u16 animation_phase;
     s32 position_x;
     s32 position_z;
     u16 cell_x;
@@ -237,7 +264,7 @@ typedef struct KfMapRuntimeState {
     KfMapEvent events[KF_MAP_EVENT_CAPACITY];
     KfMapEvent *current_event;
     u8 *variant_asset_buffer;
-    u16 animation_gate;
+    u16 dialogue_advance_gate;
     u16 ambient_script_countdown;
     u32 world_state[2125];
 } KfMapRuntimeState;
@@ -248,7 +275,7 @@ extern KfMapRuntimeState map_runtime_state;
 #define map_event_pool (map_runtime_state.events)
 #define current_map_event (map_runtime_state.current_event)
 #define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
-#define map_event_animation_gate (map_runtime_state.animation_gate)
+#define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
 #define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
 #define map_world_state_base (map_runtime_state.world_state[0])
 #define MAP_WORLD_STATE_BYTES ((u8 *)map_runtime_state.world_state)
@@ -277,13 +304,13 @@ extern void map_action_script_floor2(void);
 extern void map_action_script_floor3(void);
 extern void map_action_script_floor4(void);
 extern void map_action_script_floor5(void);
-extern void map_event_advance_rotation_blocking(KfMapEvent *event, u16 target, s16 step);
+extern void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step);
 extern s32 map_event_distance_to_point( const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
 extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
 extern KfMapEvent *map_event_pool_find_target_in_cone( const struct KfVec3i *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
 extern void map_event_pool_load(const KfMapEventDefinition *definitions);
 extern void map_event_pool_update(void);
-extern void map_event_refresh_image_for_progress(KfMapEvent *event);
+extern void map_event_refresh_dialogue_stage(KfMapEvent *event);
 extern void map_event_set_current(KfMapEvent *event);
 extern void map_event_timers_reset(void);
 extern void map_interaction_dispatch(

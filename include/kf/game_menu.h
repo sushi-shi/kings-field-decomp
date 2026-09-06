@@ -198,6 +198,6 @@ extern void menu_status_panel(void);
 extern s32 menu_two_option_prompt(
     s32 kind, s32 count, s32 highlight,
     const KfSaveSlotSummary *summaries);
-extern void talk_show_indexed_image(u8 prefix_digit, u8 index_digit, s32 group_id, u8 frame_digit);
+extern void talk_show_dialogue_page(u8 floor, u8 stage, s32 character_id, u8 page);
 
 #endif

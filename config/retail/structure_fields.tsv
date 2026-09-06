@@ -147,6 +147,7 @@ KfCollisionTarget	0x00	0x10	position	VECTOR	supported	game_collision.h;game_sema
 KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
 KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
+KfDialoguePageLimits	0x00	0x05	last_page	u8[5]	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page per dialogue stage; zero disables dialogue at that stage
 KfDisplayState	0x00	0x01	buffer_index	u8	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
@@ -306,21 +307,21 @@ KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destin
 KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	game_map.h;asm;xrefs	destination z
 KfMapCopyRegion	0x04	0x01	width	u8	supported	game_map.h;asm;xrefs	region width
 KfMapCopyRegion	0x05	0x01	height	u8	supported	game_map.h;asm;xrefs	region height
-KfMapEvent	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	active state
-KfMapEvent	0x01	0x01	kind	u8	supported	game_map.h;asm;xrefs	event kind
-KfMapEvent	0x02	0x01	variant	u8	supported	game_map.h;asm;xrefs	event variant
-KfMapEvent	0x03	0x05	tag	KfMapEventTag	opaque	game_map.h;asm;xrefs	five opaque bytes copied from the definition tag
-KfMapEvent	0x08	0x01	image_limit	u8	supported	game_map.h;asm;xrefs	maximum image index
-KfMapEvent	0x09	0x01	image_index	u8	supported	game_map.h;asm;xrefs	current image index
-KfMapEvent	0x0a	0x01	image_dirty	u8	supported	game_map.h;asm;xrefs	image refresh flag
-KfMapEvent	0x0b	0x01	image_delay	u8	supported	game_map.h;asm;xrefs	image refresh delay
+KfMapEvent	0x00	0x01	state	KfMapEventState	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	0 authored inactive; 1 active; 3 runtime disabled; 255 free/end marker
+KfMapEvent	0x01	0x01	character_id	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
+KfMapEvent	0x02	0x01	model_index	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	model index relative to the map-event asset bank
+KfMapEvent	0x03	0x05	dialogue_pages	KfDialoguePageLimits	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page for each of five one-based dialogue stages
+KfMapEvent	0x08	0x01	dialogue_stage_limit	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	maximum dialogue stage allowed by this record
+KfMapEvent	0x09	0x01	dialogue_stage	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	one-based dialogue stage advanced with highest-floor progress
+KfMapEvent	0x0a	0x01	dialogue_page	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	one-based dialogue page; incremented and capped by the current stage limit
+KfMapEvent	0x0b	0x01	dialogue_page_delay	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	remaining gated ticks before advancing one dialogue page; one tick per four pool updates
 KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0e	0x01	behavior	u8	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	update and interaction behavior selector; 1 wanders and 2 spins
+KfMapEvent	0x0e	0x01	behavior	KfMapEventBehavior	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-map-dialogue-state.md	0 shop interaction; 1 wander; 2 looping animation with optional interaction clip
 KfMapEvent	0x0f	0x01	animation_clip	u8	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	clip index passed to render_bind_animated_instance
 KfMapEvent	0x10	0x01	collision_turn_pending	u8	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	collision selected a yaw; suppresses another random heading until the turn completes
 KfMapEvent	0x11	0x01	unknown_11	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x12	0x02	rotation_phase	u16	supported	game_map.h;asm;xrefs	animated rotation phase
+KfMapEvent	0x12	0x02	animation_phase	u16	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	u16 animation keyframe phase, modulo 4096 during continuous playback; separate from yaw
 KfMapEvent	0x14	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x
 KfMapEvent	0x18	0x04	position_z	s32	supported	game_map.h;asm;xrefs	world z
 KfMapEvent	0x1c	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
@@ -338,22 +339,21 @@ KfMapEvent	0x3a	0x02	unknown_3a	u8[2]	opaque	game_map.h;asm;game_semantic_animat
 KfMapEvent	0x3c	0x04	animation_cache	KfPoolRecord *	supported	game_map.h;asm;game_semantic_animation_slots.tsv	live animation record installed through the event+0x3c slot; follows the rotation view and precedes rotation_target without overlap
 KfMapEvent	0x40	0x02	rotation_target	s16	supported	game_map.h;asm;xrefs	target rotation
 KfMapEvent	0x42	0x02	unknown_42	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x00	0x01	state	u8	supported	game_map.h;asm;xrefs	initial state
-KfMapEventDefinition	0x01	0x01	kind	u8	supported	game_map.h;asm;xrefs	event kind
-KfMapEventDefinition	0x02	0x01	variant	u8	supported	game_map.h;asm;xrefs	event variant
+KfMapEventDefinition	0x00	0x01	state	KfMapEventState	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	0 authored inactive; 1 active; 3 runtime disabled; 255 free/end marker
+KfMapEventDefinition	0x01	0x01	character_id	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
+KfMapEventDefinition	0x02	0x01	model_index	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	model index relative to the map-event asset bank
 KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	game_map.h;asm;xrefs	map cell z
 KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	game_map.h;asm;xrefs	map cell x
-KfMapEventDefinition	0x05	0x05	tag	KfMapEventTag	opaque	game_map.h;asm;xrefs	five opaque bytes copied into the runtime slot
-KfMapEventDefinition	0x0a	0x01	image_limit	u8	supported	game_map.h;asm;xrefs	maximum image index
+KfMapEventDefinition	0x05	0x05	dialogue_pages	KfDialoguePageLimits	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page for each of five one-based dialogue stages
+KfMapEventDefinition	0x0a	0x01	dialogue_stage_limit	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	maximum dialogue stage allowed by this record
 KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0d	0x01	behavior	u8	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfMapEvent.behavior
+KfMapEventDefinition	0x0d	0x01	behavior	KfMapEventBehavior	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-map-dialogue-state.md	0 shop interaction; 1 wander; 2 looping animation with optional interaction clip
 KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	game_map.h;asm;xrefs	z position offset
 KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	game_map.h;asm;xrefs	x position offset
 KfMapEventDefinition	0x12	0x02	initial_rotation	u16	supported	game_map.h;asm;xrefs	initial rotation
 KfMapEventDefinition	0x14	0x02	radius	u16	supported	game_map.h;asm;xrefs	interaction radius
 KfMapEventDefinition	0x16	0x02	unknown_16	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEventTag	0x00	0x05	bytes	u8[5]	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x00	0x01	object_id	u8	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
@@ -394,7 +394,7 @@ KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;
 KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records
 KfMapRuntimeState	0x220	0x004	current_event	KfMapEvent *	supported	game_map.h;asm;map_event_set_current;spinner-current-minus-544	selected event pointer
 KfMapRuntimeState	0x224	0x004	variant_asset_buffer	u8 *	supported	game_map.h;asm;map_variant_assets_load	persistent CHR variant allocation
-KfMapRuntimeState	0x228	0x002	animation_gate	u16	supported	game_map.h;asm;map_event_timers_reset;map_event_pool_update	three-of-four-frame animation gate
+KfMapRuntimeState	0x228	0x002	dialogue_advance_gate	u16	supported	game_map.h;asm;map_event_timers_reset;map_event_pool_update	dialogue page delay tick gate: 3, 2, 1, 0, then reload 3
 KfMapRuntimeState	0x22a	0x002	ambient_script_countdown	u16	supported	game_map.h;asm;map_event_timers_reset;map_event_pool_update	per-floor ambient-script countdown
 KfMapRuntimeState	0x22c	0x2134	world_state	u32[2125]	supported	game_map.h;save-read-write:0x2134-copy;game_state_initialize:0x2134-clear	word-aligned saved region; byte streams begin ten bytes into five 1700-byte slots
 KfMenuAssets	0x0	0x140	background_quads	POLY_FT4[2][4]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block

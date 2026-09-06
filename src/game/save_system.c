@@ -850,17 +850,17 @@ void screen_show_image_until_input(const char *path)
 }
 
 ADDRESS(0x8002c9d4, 0xa4)
-void talk_show_indexed_image(u8 prefix_digit, u8 index_digit, s32 group_id, u8 frame_digit)
+void talk_show_dialogue_page(u8 floor, u8 stage, s32 character_id, u8 page)
 {
-    s32 tens = group_id / 10;
-    s32 ones = group_id % 10;
+    s32 tens = character_id / 10;
+    s32 ones = character_id % 10;
 
-    char *directory_group = &talk_image_path_template[6];
+    char *directory_character = &talk_image_path_template[6];
 
-    talk_image_path_template[0xa] = prefix_digit + '0';
-    talk_image_path_template[0xb] = index_digit + '0';
-    talk_image_path_template[0xe] = frame_digit + '0';
-    directory_group[0] = talk_image_path_template[0xc] = tens + '0';
-    directory_group[1] = talk_image_path_template[0xd] = ones + '0';
+    talk_image_path_template[0xa] = floor + '0';
+    talk_image_path_template[0xb] = stage + '0';
+    talk_image_path_template[0xe] = page + '0';
+    directory_character[0] = talk_image_path_template[0xc] = tens + '0';
+    directory_character[1] = talk_image_path_template[0xd] = ones + '0';
     screen_show_image_until_input(talk_image_path_template);
 }

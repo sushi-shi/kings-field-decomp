@@ -26,8 +26,8 @@ void map_event_show_person_image(const KfMapEvent *event)
 {
     render_frame(0, 0);
     render_frame(0, 0);
-    person_image_path_template[8] = '0' + event->kind / 10;
-    person_image_path_template[9] = '0' + event->kind % 10;
+    person_image_path_template[8] = '0' + event->character_id / 10;
+    person_image_path_template[9] = '0' + event->character_id % 10;
     screen_show_image_until_input(person_image_path_template);
 }
 

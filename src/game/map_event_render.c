@@ -8,7 +8,7 @@
  * (render_entities) for each of the seven live map events.  It carries the
  * event's world position into the view, orients the model from the event's
  * rotation vector composed onto the view matrix, and enqueues the asset that
- * follows the event's variant id.
+ * follows the event's model index.
  */
 
 /*
@@ -36,11 +36,11 @@ void render_map_event(KfMapEvent *event)
     MulMatrix0((MATRIX *)&render_state.view_matrix, &model, &composed);
     SetRotMatrix(&composed);
     SetTransMatrix(&composed);
-    asset = event->variant + KF_ASSET_MAP_EVENT_FIRST;
+    asset = event->model_index + KF_ASSET_MAP_EVENT_FIRST;
     asset_registry_select(asset);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
-            &event->animation_cache, asset, event->animation_clip, event->rotation_phase,
+            &event->animation_cache, asset, event->animation_clip, event->animation_phase,
             object->vertex_count) == 0) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);

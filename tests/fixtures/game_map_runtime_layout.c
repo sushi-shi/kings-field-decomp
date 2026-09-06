@@ -16,6 +16,6 @@ typedef char map_runtime_alignment[__alignof__(KfMapRuntimeState) == 4 ? 1 : -1]
 CHECK_OFFSET(KfMapRuntimeState, events, 0x000);
 CHECK_OFFSET(KfMapRuntimeState, current_event, 0x220);
 CHECK_OFFSET(KfMapRuntimeState, variant_asset_buffer, 0x224);
-CHECK_OFFSET(KfMapRuntimeState, animation_gate, 0x228);
+CHECK_OFFSET(KfMapRuntimeState, dialogue_advance_gate, 0x228);
 CHECK_OFFSET(KfMapRuntimeState, ambient_script_countdown, 0x22a);
 CHECK_OFFSET(KfMapRuntimeState, world_state, 0x22c);

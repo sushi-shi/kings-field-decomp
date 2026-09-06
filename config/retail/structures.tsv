@@ -16,6 +16,7 @@ KfCdFileEntry	0x14	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CD file record 
 KfCellHeightRecord	0x08	supported	game_collision.h;game_collision_attribute_data.md;asm;effect_map_collision	four signed-halfword bounds selected by height-table entries with an 8-byte stride
 KfCellWindow	0xcc	supported	render_types.h;game_semantic_render_cell_windows.tsv;open_semantic_map_render.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	visible-cell window: four-halfword header followed by a 196-byte row-major visibility grid shared by GAME and OPEN
 KfCollisionTarget	0x20	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
+KfDialoguePageLimits	0x05	supported	game_map.h;game_semantic_camera_events.tsv;asm	five dialogue-stage last-page limits copied as one block by map_event_pool_load
 KfDisplayState	0x20028	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	double-buffer display state: display_begin_frame derives the primitive buffer and ordering table of the frame from the buffer index through one base register
 KfDisplayStateOpen	0x20024	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer follows this subobject in KfGraphicsRuntimeOpen
 KfEffectControl	0x02	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md	overlapping halfword countdown/orbit and byte parent/target selectors; kind 36 byte pair remains unresolved
@@ -41,7 +42,6 @@ KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;x
 KfMapCopyRegion	0x06	supported	game_map.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
-KfMapEventTag	0x05	supported	game_map.h;game_semantic_camera_events.tsv;asm	five opaque bytes copied as one block by map_event_pool_load
 KfMapObject	0x2c	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
 KfMapObjectDefinition	0x08	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
 KfMapObjectLink	0x08	supported	game_map.h;asm;map_object_pool_load	eight-byte link block shared by map object placements (0x0c) and pool objects (0x20)

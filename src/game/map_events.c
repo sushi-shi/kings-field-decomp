@@ -11,9 +11,9 @@
  *
  * map_event_pool_update is the per-frame driver called by game_main_loop: it walks the
  * eight-record map_event_pool, dispatches each active event on its behavior
- * kind (1 -> map_event_update_wander wander, 2 -> map_event_update_spinner spinner), advances the
- * image-animation counters, then runs two global countdowns that fire the
- * per-floor ambient scripts. map_world_state_persist serialises the live event, actor,
+ * (wander or looping animation), advances dialogue page delays on a gated tick,
+ * then runs the per-floor ambient scripts on their own countdown.
+ * map_world_state_persist serialises the live event, actor,
  * and map-object state into the map_world_state_base world-state block per floor and is
  * invoked on death restart, floor teleport, and from map_unload_floor.
  *
@@ -27,11 +27,11 @@ KfMapRuntimeState map_runtime_state;
 /* map_event_pool_update current-floor dispatch jump table (cases 1..5). */
 RODATA(0x80012be4, 0x14)
 
-/* Reset the event-animation gate and ambient-script countdown at floor start. */
+/* Reset the dialogue tick gate and ambient-script countdown at floor start. */
 ADDRESS(0x800356e8, 0x20)
 void map_event_timers_reset(void)
 {
-    map_event_animation_gate = 3;
+    map_dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
     map_ambient_script_countdown = 10;
 }
 
@@ -69,20 +69,24 @@ void map_event_update_wander(void)
         }
     }
 
-    event->rotation_phase = (event->rotation_phase + 110) & 0xfff;
+    event->animation_phase =
+        (event->animation_phase + KF_MAP_EVENT_ANIMATION_WANDER_STEP)
+        & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
     collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
 }
 
 ADDRESS(0x800358e0, 0x8c)
-void map_event_update_spinner(void)
+void map_event_update_animation_loop(void)
 {
     KfMapEvent *event = current_map_event;
 
-    event->rotation_phase = (event->rotation_phase + 200) & 0xfff;
+    event->animation_phase =
+        (event->animation_phase + KF_MAP_EVENT_ANIMATION_LOOP_STEP)
+        & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
 
     if (player_state.progress_state.current_floor == 5
             && event == &map_event_pool[0]
-            && map_event_pool[0].rotation_phase < 200) {
+            && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_ref_10,
             (const VECTOR *)&map_event_pool[0].reference_x,
             0x7f, 0x4650, 0xc350);
@@ -93,34 +97,34 @@ ADDRESS(0x8003596c, 0x1f0)
 void map_event_pool_update(void)
 {
     KfMapEvent *event = map_event_pool;
-    u16 index = 7;
+    u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
-        s32 state = event->state;
+        KF_ENUM_PROMOTED(KfMapEventState) state = event->state;
 
-        if (state == 1) {
+        if (state == KF_MAP_EVENT_ACTIVE) {
             map_event_set_current(event);
 
-            if (event->behavior == state) {
+            if (event->behavior == KF_MAP_EVENT_BEHAVIOR_WANDER) {
                 goto call_wander;
             }
-            if (event->behavior == 2) {
-                goto call_spinner;
+            if (event->behavior == KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP) {
+                goto call_animation_loop;
             }
-            goto advance_image;
+            goto advance_dialogue;
         call_wander:
             map_event_update_wander();
-            goto advance_image;
-        call_spinner:
-            map_event_update_spinner();
-        advance_image:
-            if (map_event_animation_gate == 0 && event->image_delay != 0) {
-                event->image_delay--;
-                if (event->image_delay == 0) {
-                    s32 limit = event->tag.bytes[event->image_index - 1];
-                    event->image_dirty++;
-                    if (event->image_dirty >= limit) {
-                        event->image_dirty = limit;
+            goto advance_dialogue;
+        call_animation_loop:
+            map_event_update_animation_loop();
+        advance_dialogue:
+            if (map_dialogue_advance_gate == 0 && event->dialogue_page_delay != 0) {
+                event->dialogue_page_delay--;
+                if (event->dialogue_page_delay == 0) {
+                    s32 limit = event->dialogue_pages.last_page[event->dialogue_stage - 1];
+                    event->dialogue_page++;
+                    if (event->dialogue_page >= limit) {
+                        event->dialogue_page = limit;
                     }
                 }
             }
@@ -130,12 +134,12 @@ void map_event_pool_update(void)
     } while (index-- != 0);
 
     {
-        u16 *gate = &map_event_animation_gate;
+        u16 *gate = &map_dialogue_advance_gate;
         u16 current = *gate;
 
         *gate = current - 1;
         if (current == 0) {
-            *gate = 3;
+            *gate = KF_DIALOGUE_GATE_RELOAD;
         }
     }
 
@@ -179,12 +183,12 @@ void map_world_state_persist(void)
 
     event = map_runtime_state.events;
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
-        *out++ = event->state;
-        *out++ = event->image_limit;
-        *out++ = event->image_index;
-        *out++ = event->image_dirty;
-        *out++ = event->tag.bytes[event->image_index - 1];
-        *out++ = event->image_delay;
+        *out++ = KF_ENUM_ENCODE(u8, event->state);
+        *out++ = event->dialogue_stage_limit;
+        *out++ = event->dialogue_stage;
+        *out++ = event->dialogue_page;
+        *out++ = event->dialogue_pages.last_page[event->dialogue_stage - 1];
+        *out++ = event->dialogue_page_delay;
         *out++ = event->unknown_0d;
     }
 

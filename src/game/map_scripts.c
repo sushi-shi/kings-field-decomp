@@ -10,6 +10,12 @@
 /* Floor-specific ambient/action scripts and their shared interaction dispatch.
  * The original module boundary remains WIP. */
 
+/* Word at event+8: ignored stage cap, stage, page, gated delay (little endian). */
+#define MAP_DIALOGUE_TRIGGER_MASK 0xffffff00
+#define MAP_DIALOGUE_STARTED(stage) \
+    ((KF_DIALOGUE_PAGE_DELAY_TICKS << 24) | (KF_DIALOGUE_FIRST_PAGE << 16) \
+     | ((stage) << 8))
+
 DATA(0x800561d0, 0x38)
 static KfCameraPathPoint map_floor5_camera_path[2] = {
     {{173000, -11500, 85000, 0}, {0, 2048, 0, 0}, 100, 0},
@@ -108,7 +114,7 @@ void map_ambient_script_floor1(void)
 ADDRESS(0x800341ec, 0x70)
 void map_ambient_script_floor2(void)
 {
-    if (map_event_pool[1].image_index == 2 && map_event_pool[1].image_dirty < 3
+    if (map_event_pool[1].dialogue_stage == 2 && map_event_pool[1].dialogue_page < 3
         && rand() < 4000) {
         audio_play_spatial_default_range(
             &gameplay_sound_ref_8, (const VECTOR *)&map_event_pool[1].reference_x, 0x7f);
@@ -172,7 +178,7 @@ void map_action_script_floor1(void)
     }
 }
 
-/* Full-screen colour-matrix fade that reveals map event 3, then fades back. */
+/* Raise and rotate event 3 into a white fade, disable it, then fade back. */
 ADDRESS(0x80034438, 0x184)
 void map_reveal_fade(void)
 {
@@ -194,7 +200,7 @@ void map_reveal_fade(void)
         frame_pacer_wait();
     }
 
-    map_event_pool[3].state = 3;
+    map_event_pool[3].state = KF_MAP_EVENT_DISABLED;
     DAT_8009f844 = 1;
 
     for (blend = 0x1000; blend >= 0; blend -= 256) {
@@ -207,12 +213,13 @@ void map_reveal_fade(void)
     render_state.light_matrix_copy = saved;
 }
 
-/* Floor-2 action script: run the reveal fade when event 3 is fully open. */
+/* Floor-2 action script: fade after event 3's first stage-2 dialogue page. */
 ADDRESS(0x800345bc, 0x54)
 void map_action_script_floor2(void)
 {
-    if ((*(u32 *)&map_event_pool[3].image_limit & 0xffffff00) == 0x28010200
-        && map_event_pool[3].state == 1) {
+    if ((*(u32 *)&map_event_pool[3].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
+            == MAP_DIALOGUE_STARTED(2)
+        && map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {
         map_reveal_fade();
     }
 }
@@ -227,7 +234,8 @@ void map_action_script_floor3(void)
             notify_enqueue(1);
         }
     }
-    if ((*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010300) {
+    if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
+            == MAP_DIALOGUE_STARTED(3)) {
         if (magic_records[5].learned == 0) {
             magic_records[5].learned = 1;
             notify_enqueue(1);
@@ -338,7 +346,8 @@ done:
 ADDRESS(0x80034a34, 0x4c)
 void map_action_script_floor5(void)
 {
-    if ((*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500) {
+    if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
+            == MAP_DIALOGUE_STARTED(5)) {
         map_floor5_transition_cutscene();
         DAT_8009f845 = 1;
     }
@@ -347,50 +356,50 @@ void map_action_script_floor5(void)
 ADDRESS(0x80034a80, 0x2d4)
 void map_event_interact(KfMapEvent *event)
 {
-    switch (event->kind) {
+    switch (event->character_id) {
     case 3:
-        if (item_stock[0][0x34] != 0 && map_event_pool[2].image_index == 1
-            && map_event_pool[2].image_dirty < 3) {
+        if (item_stock[0][0x34] != 0 && map_event_pool[2].dialogue_stage == 1
+            && map_event_pool[2].dialogue_page < 3) {
             item_stock[0][0x35] = 1;
-            map_event_pool[2].tag.bytes[0] = 7;
+            map_event_pool[2].dialogue_pages.last_page[0] = 7;
             item_stock[0][0x34]--;
-            talk_show_indexed_image(player_state.progress_state.current_floor,
-                                    event->image_index, event->kind, 3);
-            map_event_pool[2].image_dirty = 4;
-            map_event_pool[2].image_delay = 0;
-            map_event_pool[2].image_limit = 5;
-            map_event_refresh_image_for_progress(&map_event_pool[2]);
+            talk_show_dialogue_page(player_state.progress_state.current_floor,
+                                    event->dialogue_stage, event->character_id, 3);
+            map_event_pool[2].dialogue_page = 4;
+            map_event_pool[2].dialogue_page_delay = 0;
+            map_event_pool[2].dialogue_stage_limit = 5;
+            map_event_refresh_dialogue_stage(&map_event_pool[2]);
             return;
         }
         break;
     case 8:
-        if (item_stock[0][0x3b] != 0 && map_event_pool[2].image_index == 2
-            && map_event_pool[2].image_dirty < 2) {
+        if (item_stock[0][0x3b] != 0 && map_event_pool[2].dialogue_stage == 2
+            && map_event_pool[2].dialogue_page < 2) {
             *(u8 *)&magic_records[0] = 1;
             item_stock[0][0x3b]--;
             notify_enqueue(1);
-            map_event_pool[2].tag.bytes[1] = 7;
-            talk_show_indexed_image(player_state.progress_state.current_floor,
-                                    event->image_index, event->kind, 2);
-            map_event_pool[2].image_dirty = 3;
-            map_event_pool[2].image_delay = 0;
-            map_event_pool[2].image_limit = 5;
-            map_event_refresh_image_for_progress(&map_event_pool[2]);
+            map_event_pool[2].dialogue_pages.last_page[1] = 7;
+            talk_show_dialogue_page(player_state.progress_state.current_floor,
+                                    event->dialogue_stage, event->character_id, 2);
+            map_event_pool[2].dialogue_page = 3;
+            map_event_pool[2].dialogue_page_delay = 0;
+            map_event_pool[2].dialogue_stage_limit = 5;
+            map_event_refresh_dialogue_stage(&map_event_pool[2]);
             return;
         }
         break;
     case 7:
-        if (item_stock[0][0x2f] != 0 && map_event_pool[1].image_index == 2
-            && map_event_pool[1].image_dirty < 2) {
+        if (item_stock[0][0x2f] != 0 && map_event_pool[1].dialogue_stage == 2
+            && map_event_pool[1].dialogue_page < 2) {
             item_stock[0][0x3e] = 1;
-            map_event_pool[1].tag.bytes[1] = 5;
+            map_event_pool[1].dialogue_pages.last_page[1] = 5;
             item_stock[0][0x2f]--;
-            talk_show_indexed_image(player_state.progress_state.current_floor,
-                                    event->image_index, event->kind, 2);
-            map_event_pool[1].image_dirty = 3;
-            map_event_pool[1].image_delay = 0;
-            map_event_pool[1].image_limit = 2;
-            map_event_refresh_image_for_progress(&map_event_pool[1]);
+            talk_show_dialogue_page(player_state.progress_state.current_floor,
+                                    event->dialogue_stage, event->character_id, 2);
+            map_event_pool[1].dialogue_page = 3;
+            map_event_pool[1].dialogue_page_delay = 0;
+            map_event_pool[1].dialogue_stage_limit = 2;
+            map_event_refresh_dialogue_stage(&map_event_pool[1]);
             return;
         }
         break;
@@ -401,12 +410,12 @@ void map_event_interact(KfMapEvent *event)
         break;
     }
 
-    if (event->image_limit != 0) {
-        if (event->tag.bytes[event->image_index - 1] != 0) {
-            talk_show_indexed_image(player_state.progress_state.current_floor,
-                                    event->image_index, event->kind, event->image_dirty);
-            if (event->image_delay == 0) {
-                event->image_delay = 0x28;
+    if (event->dialogue_stage_limit != 0) {
+        if (event->dialogue_pages.last_page[event->dialogue_stage - 1] != 0) {
+            talk_show_dialogue_page(player_state.progress_state.current_floor,
+                                    event->dialogue_stage, event->character_id, event->dialogue_page);
+            if (event->dialogue_page_delay == 0) {
+                event->dialogue_page_delay = KF_DIALOGUE_PAGE_DELAY_TICKS;
             }
         }
     }
@@ -469,37 +478,37 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         if (index != -1) {
             event = &map_event_pool[index];
             switch (event->behavior) {
-            case 0:
-                event->rotation_phase = 0;
+            case KF_MAP_EVENT_BEHAVIOR_SHOP:
+                event->animation_phase = 0;
                 event->animation_clip = 0;
-                map_event_advance_rotation_blocking(event, 0x800, 0xc8);
+                map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(2);
                 map_event_interact(event);
-                menu_enter_mode(2, event->kind);
+                menu_enter_mode(2, event->character_id);
                 audio_play_current_map_sequence();
-                map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
+                map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 event->animation_clip = 0;
-                event->rotation_phase = 0;
+                event->animation_phase = 0;
                 player_clear_motion();
                 break;
-            case 1:
+            case KF_MAP_EVENT_BEHAVIOR_WANDER:
                 map_event_interact(event);
                 player_clear_motion();
                 break;
-            case 2:
-                map_event_advance_rotation_blocking(event, 0xfff, 0x190);
-                result = asset_registry_entries[event->variant]->animation_data < 2;
+            case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
+                map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
+                result = asset_registry_entries[event->model_index]->animation_data < 2;
                 if (result == 0) {
-                    event->rotation_phase = 0;
+                    event->animation_phase = 0;
                     event->animation_clip = 1;
-                    map_event_advance_rotation_blocking(event, 0x800, 0xc8);
+                    map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 map_event_interact(event);
                 if (result == 0) {
-                    map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
+                    map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 event->animation_clip = 0;
-                event->rotation_phase = 0;
+                event->animation_phase = 0;
                 player_clear_motion();
                 break;
             default:

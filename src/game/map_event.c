@@ -11,32 +11,32 @@ void map_event_set_current(KfMapEvent *event)
 }
 
 ADDRESS(0x800337ac, 0x74)
-void map_event_refresh_image_for_progress(KfMapEvent *event)
+void map_event_refresh_dialogue_stage(KfMapEvent *event)
 {
-    if (event->image_limit > event->image_index) {
-        if (player_state.progress_state.highest_floor < event->image_limit) {
-            if (event->image_index != player_state.progress_state.highest_floor) {
-                event->image_index = player_state.progress_state.highest_floor;
-            mark_image_dirty:
-                event->image_dirty = 1;
-                event->image_delay = 0;
+    if (event->dialogue_stage_limit > event->dialogue_stage) {
+        if (player_state.progress_state.highest_floor < event->dialogue_stage_limit) {
+            if (event->dialogue_stage != player_state.progress_state.highest_floor) {
+                event->dialogue_stage = player_state.progress_state.highest_floor;
+            reset_dialogue_page:
+                event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
+                event->dialogue_page_delay = 0;
             }
-        } else if (event->image_index != event->image_limit) {
-            event->image_index = event->image_limit;
-            goto mark_image_dirty;
+        } else if (event->dialogue_stage != event->dialogue_stage_limit) {
+            event->dialogue_stage = event->dialogue_stage_limit;
+            goto reset_dialogue_page;
         }
     }
 }
 
 ADDRESS(0x80033820, 0x98)
-void map_event_advance_rotation_blocking(KfMapEvent *event, u16 target, s16 step)
+void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step)
 {
-    while (event->rotation_phase < target) {
-        event->rotation_phase += step;
+    while (event->animation_phase < target) {
+        event->animation_phase += step;
         render_frame(0, 0);
         frame_pacer_wait();
     }
-    event->rotation_phase = target;
+    event->animation_phase = target;
     render_frame(0, 0);
 }
 
@@ -54,10 +54,10 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
         } else {
             event->state = definitions->state;
             if (event->state != KF_MAP_EVENT_FREE) {
-                event->kind = definitions->kind;
-                event->variant = definitions->variant;
-                event->tag = definitions->tag;
-                event->image_limit = definitions->image_limit;
+                event->character_id = definitions->character_id;
+                event->model_index = definitions->model_index;
+                event->dialogue_pages = definitions->dialogue_pages;
+                event->dialogue_stage_limit = definitions->dialogue_stage_limit;
                 event->unknown_0c = definitions->unknown_0b;
                 event->unknown_0d = definitions->unknown_0c;
                 event->behavior = definitions->behavior;
@@ -74,11 +74,11 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 definitions++;
                 event->rotation_z = 0;
                 event->rotation_x = 0;
-                event->image_dirty = 1;
-                event->image_index = 1;
-                event->image_delay = 0;
+                event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
+                event->dialogue_stage = KF_DIALOGUE_FIRST_STAGE;
+                event->dialogue_page_delay = 0;
                 event->animation_clip = 0;
-                event->rotation_phase = 0;
+                event->animation_phase = 0;
                 event->rotation_target = 0;
                 event->collision_turn_pending = 0;
                 collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
@@ -131,7 +131,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s16 folded;
 
     do {
-        if (event->state != 1) {
+        if (event->state != KF_MAP_EVENT_ACTIVE) {
             continue;
         }
         distance = map_event_distance_to_point(event, origin->x, origin->z, max_distance);
@@ -165,13 +165,13 @@ s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
     s16 index = 0;
 
     do {
-        if (event->state == 1
+        if (event->state == KF_MAP_EVENT_ACTIVE
             && map_event_distance_to_point(
                    event, point_x, point_z, event->radius + radius_padding) != -1) {
             return index;
         }
         index++;
         event++;
-    } while (index < 8);
+    } while (index < KF_MAP_EVENT_CAPACITY);
     return -1;
 }
