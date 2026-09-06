@@ -5,6 +5,14 @@
 
 #include <kf/game_types.h>
 
+enum {
+    KF_DEFAULT_PROJECTION_DISTANCE = 200,
+    KF_RGB555_CHANNEL_MASK = 0x1f,
+    KF_RGB555_GREEN_SHIFT = 5,
+    KF_RGB555_BLUE_SHIFT = 10,
+    KF_RGB555_STP = 0x8000
+};
+
 /* Texture rectangle followed by its screen-space or projected rectangle. */
 typedef struct KfSpriteQuad {
     u8 u;

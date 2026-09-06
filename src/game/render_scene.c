@@ -96,7 +96,7 @@ void render_entities(void)
     SetLightMatrix(&render_light_matrices[2]);
     sprite = (KfEffectRenderView *)effect_pool_records;
     for (i = 47; i != -1; i--, sprite++) {
-        if (sprite->unknown_00[0] == 0xff || sprite->sprite_id == 0xff) {
+        if (sprite->type == 0xff || sprite->sprite_id == 0xff) {
             continue;
         }
         {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from unittest.mock import patch
 
 from scripts.kf.inventory import (
     _data_access,
@@ -47,6 +48,39 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_union_storage_overlaps_and_rounds_up_for_enclosing_struct(self) -> None:
+        declarations = """
+            typedef union ExamplePayload {
+                u8 bytes[5];
+                u32 word;
+                u16 pair[2];
+            } ExamplePayload;
+            typedef struct ExampleEnvelope {
+                u8 prefix;
+                union ExamplePayload payload;
+                u8 suffix;
+            } ExampleEnvelope;
+            typedef union UninventoriedView {
+                u8 bytes[5];
+                struct { u16 first; u16 second; } nested;
+            } UninventoriedView;
+        """
+
+        def read_header(path):
+            return declarations if path.name == "game_types.h" else ""
+
+        with patch("scripts.kf.inventory.Path.read_text", read_header):
+            layouts = _header_structure_layouts()
+        self.assertEqual(set(layouts), {"ExamplePayload", "ExampleEnvelope"})
+        payload = layouts["ExamplePayload"]
+        self.assertEqual((payload.size, payload.alignment), (8, 4))
+        self.assertEqual([(f.offset, f.size) for f in payload.fields],
+                         [(0, 5), (0, 4), (0, 4)])
+        envelope = layouts["ExampleEnvelope"]
+        self.assertEqual((envelope.size, envelope.alignment), (16, 4))
+        self.assertEqual([(f.offset, f.size) for f in envelope.fields],
+                         [(0, 1), (4, 8), (12, 1)])
+
     def test_packed_screen_word_uses_target_long_layout(self) -> None:
         layout = _header_structure_layouts()["KfScreenVertex"]
         self.assertEqual((layout.size, layout.alignment), (8, 4))
@@ -63,9 +97,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2983)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 90)
-        self.assertEqual(counts["structure_fields"], 753)
-        self.assertEqual(counts["structure_fields_named"], 627)
+        self.assertEqual(counts["structures"], 93)
+        self.assertEqual(counts["structure_fields"], 767)
+        self.assertEqual(counts["structure_fields_named"], 674)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -220,7 +254,7 @@ class InventoryTests(unittest.TestCase):
             (actor_fields["position"].size, actor_fields["position"].datatype),
             (0x10, "VECTOR"),
         )
-        self.assertEqual(actor_fields["unknown_07"].meaning_confidence, "opaque")
+        self.assertEqual(actor_fields["spawn_chance"].meaning_confidence, "supported")
         definition_fields = {
             row.name: row for row in fields if row.structure == "KfActorDefinition"
         }

@@ -8,7 +8,7 @@
  * Map-event runtime band 0x80035708..0x80035e14 (GAME.EXE).
  *
  * map_event_pool_update is the per-frame driver called by game_main_loop: it walks the
- * eight-record map_event_pool, dispatches each active event on its unknown_0e
+ * eight-record map_event_pool, dispatches each active event on its behavior
  * kind (1 -> map_event_update_wander wander, 2 -> map_event_update_spinner spinner), advances the
  * image-animation counters, then runs two global countdowns that fire the
  * per-floor ambient scripts. map_world_state_persist serialises the live event, actor,
@@ -56,14 +56,14 @@ void map_event_update_wander(void)
         event->reference_z = point.vz;
         event->cell_x = point.vx / 2000;
         event->cell_z = point.vz / 2000;
-        event->unknown_10 = 0;
+        event->collision_turn_pending = 0;
         if (event->rotation == event->rotation_target && rand() < 1584) {
             event->rotation_target = rand() >> 3;
         }
     } else {
-        if (event->unknown_10 == 0 || event->rotation == event->rotation_target) {
+        if (event->collision_turn_pending == 0 || event->rotation == event->rotation_target) {
             event->rotation_target = rand() >> 3;
-            event->unknown_10 = 1;
+            event->collision_turn_pending = 1;
         }
     }
 
@@ -99,10 +99,10 @@ void map_event_pool_update(void)
         if (state == 1) {
             map_event_set_current(event);
 
-            if (event->unknown_0e == state) {
+            if (event->behavior == state) {
                 goto call_wander;
             }
-            if (event->unknown_0e == 2) {
+            if (event->behavior == 2) {
                 goto call_spinner;
             }
             goto advance_image;

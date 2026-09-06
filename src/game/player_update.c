@@ -248,31 +248,31 @@ void player_update(void)
                     switch (player_state.equipped_weapon_id) {
                     case 8:
                         if (player_state.weapon_attack_phase >= 2400 && player_state.weapon_attack_phase <= 3900) {
-                            player_state.unknown_79 = 1;
-                            player_state.unknown_78 = (3900 - player_state.weapon_attack_phase) / 300 + 1;
+                            player_state.weapon_magic_delay = 1;
+                            player_state.weapon_magic_shots_remaining = (3900 - player_state.weapon_attack_phase) / 300 + 1;
                             goto magic_done;
                         }
                         break;
                     case 7:
                     case 11:
                         if (player_state.weapon_attack_phase >= 2400 && player_state.weapon_attack_phase <= 3900) {
-                            player_state.unknown_78 = 1;
-                            player_state.unknown_79 = 1;
+                            player_state.weapon_magic_shots_remaining = 1;
+                            player_state.weapon_magic_delay = 1;
                             goto magic_done;
                         }
                         break;
                     case 3:
                         if (player_state.weapon_attack_phase >= 900 && player_state.weapon_attack_phase <= 2400) {
-                            player_state.unknown_79 = 1;
-                            player_state.unknown_78 = ((3900 - player_state.weapon_attack_phase) / 300 + 1) * 2;
+                            player_state.weapon_magic_delay = 1;
+                            player_state.weapon_magic_shots_remaining = ((3900 - player_state.weapon_attack_phase) / 300 + 1) * 2;
                             goto magic_done;
                         }
                         break;
                     }
                 }
                 if (player_state.selected_magic_id != 0xff && player_state.magic_charge == 5000) {
-                    player_state.unknown_79 = 0;
-                    player_state.unknown_78 = 0;
+                    player_state.weapon_magic_delay = 0;
+                    player_state.weapon_magic_shots_remaining = 0;
                     if (player_state.equipped_accessory_id == 50 && player_state.selected_magic_id == 7) {
                         cost = player_state.selected_magic_record->mp_cost >> 1;
                     } else {
@@ -303,8 +303,8 @@ void player_update(void)
             }
         }
     magic_done:
-        if (player_state.unknown_79 == 1) {
-            if (player_state.unknown_78 != 0) {
+        if (player_state.weapon_magic_delay == 1) {
+            if (player_state.weapon_magic_shots_remaining != 0) {
                 switch (player_state.equipped_weapon_id) {
                 case 7:
                     if (player_state.physical_power < 80 || player_state.magic < 80) {
@@ -312,7 +312,7 @@ void player_update(void)
                     }
                     effect = 20;
                     record = &magic_records[20];
-                    player_state.unknown_79 = 3;
+                    player_state.weapon_magic_delay = 3;
                     break;
                 case 8:
                     if (magic_records[5].learned == 0) {
@@ -320,7 +320,7 @@ void player_update(void)
                     }
                     effect = 5;
                     record = &magic_records[5];
-                    player_state.unknown_79 = 2;
+                    player_state.weapon_magic_delay = 2;
                     break;
                 case 11:
                     if (player_state.physical_power < 80 || player_state.magic < 80) {
@@ -328,7 +328,7 @@ void player_update(void)
                     }
                     effect = 36;
                     record = &magic_records[18];
-                    player_state.unknown_79 = 3;
+                    player_state.weapon_magic_delay = 3;
                     break;
                 case 3:
                     if (player_state.physical_power < 60 || player_state.magic < 60) {
@@ -336,16 +336,16 @@ void player_update(void)
                     }
                     effect = 8;
                     record = &magic_records[8];
-                    player_state.unknown_79 = 1;
+                    player_state.weapon_magic_delay = 1;
                     break;
                 default:
                 cancel:
-                    player_state.unknown_78 = 0;
-                    player_state.unknown_79 = 2;
+                    player_state.weapon_magic_shots_remaining = 0;
+                    player_state.weapon_magic_delay = 2;
                     goto store_input;
                 }
                 if (player_state.vitals.current_mp >= record->mp_cost) {
-                    if (player_state.unknown_78 == 1) {
+                    if (player_state.weapon_magic_shots_remaining == 1) {
                         player_state.vitals.current_mp -= record->mp_cost;
                     }
                     scale.vx = 200;
@@ -363,12 +363,12 @@ void player_update(void)
                     angles.x = player_state.camera_rotation.vx;
                     angles.z = player_state.camera_rotation.vz;
                     origin = (const struct KfVec3i *)&player_state.camera_position;
-                    if ((effect == 5 || effect == 8) && player_state.unknown_78 != 1) {
+                    if ((effect == 5 || effect == 8) && player_state.weapon_magic_shots_remaining != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
                             origin, player_state.camera_rotation.vy, 20000, 0x155, &distance);
                         angles.x -= 4 - (rand() >> 9);
                         angles.y -= 4 - (rand() >> 9);
-                        attachment = player_state.unknown_78 & 1;
+                        attachment = player_state.weapon_magic_shots_remaining & 1;
                     } else {
                         target = actor_pool_find_target_in_cone(
                             (const struct KfVec3i *)&player_state.camera_position,
@@ -395,10 +395,10 @@ void player_update(void)
                         effect_pool_construct(10, 17, 20, &position, &direction, &angles, attachment, 0);
                     }
                 }
-                player_state.unknown_78--;
+                player_state.weapon_magic_shots_remaining--;
             }
-        } else if (player_state.unknown_79 != 0) {
-            player_state.unknown_79--;
+        } else if (player_state.weapon_magic_delay != 0) {
+            player_state.weapon_magic_delay--;
         }
     store_input:
         player_previous_input = input;
@@ -445,65 +445,65 @@ void player_update(void)
     }
     if (player_state.equipped_weapon_id != 0xff) {
         if (player_state.equipped_weapon_record->hp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_weapon_record->hp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_weapon_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
         }
         if (player_state.equipped_weapon_record->mp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_weapon_record->mp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_weapon_record->mp_regen_interval == 0) {
             player_adjust_mp(1);
         }
     }
     if (player_state.equipped_shield_id != 0xff) {
         if (player_state.equipped_shield_record->hp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_shield_record->hp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
         }
         if (player_state.equipped_shield_record->hp_drain_interval != 0
-            && player_state.unknown_58 % player_state.equipped_shield_record->hp_drain_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_drain_interval == 0) {
             player_adjust_hp(-1);
         }
     }
     if (player_state.equipped_head_armor_id != 0xff) {
         if (player_state.equipped_head_armor_record->hp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_head_armor_record->hp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
         }
         if (player_state.equipped_head_armor_record->hp_drain_interval != 0
-            && player_state.unknown_58 % player_state.equipped_head_armor_record->hp_drain_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_drain_interval == 0) {
             player_adjust_hp(-1);
         }
     }
     if (player_state.equipped_body_armor_id != 0xff) {
         if (player_state.equipped_body_armor_record->hp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_body_armor_record->hp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
         }
         if (player_state.equipped_body_armor_record->hp_drain_interval != 0
-            && player_state.unknown_58 % player_state.equipped_body_armor_record->hp_drain_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_drain_interval == 0) {
             player_adjust_hp(-1);
         }
     }
     if (player_state.equipped_arm_armor_id != 0xff) {
         if (player_state.equipped_arm_armor_record->hp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_arm_armor_record->hp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_arm_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
         }
         if (player_state.equipped_arm_armor_record->hp_drain_interval != 0
-            && player_state.unknown_58 % player_state.equipped_arm_armor_record->hp_drain_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_arm_armor_record->hp_drain_interval == 0) {
             player_adjust_hp(-1);
         }
     }
     if (player_state.equipped_leg_armor_id != 0xff) {
         if (player_state.equipped_leg_armor_record->hp_regen_interval != 0
-            && player_state.unknown_58 % player_state.equipped_leg_armor_record->hp_regen_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_leg_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
         }
         if (player_state.equipped_leg_armor_record->hp_drain_interval != 0
-            && player_state.unknown_58 % player_state.equipped_leg_armor_record->hp_drain_interval == 0) {
+            && player_state.equipment_effect_ticks % player_state.equipped_leg_armor_record->hp_drain_interval == 0) {
             player_adjust_hp(-1);
         }
     }
-    player_state.unknown_58++;
+    player_state.equipment_effect_ticks++;
     attribute = map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x];
     switch (attribute) {
     case 0x3a:

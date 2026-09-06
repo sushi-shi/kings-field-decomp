@@ -198,8 +198,8 @@ void game_initialize_session(void)
     player_state.update_state = 0;
     player_state.audio_effects_enabled = 1;
     player_state.audio_music_enabled = 1;
-    player_state.unknown_98[0] = 1;
-    player_state.unknown_98[1] = 1;
+    player_state.hud_gauges_enabled = 1;
+    player_state.compass_enabled = 1;
 }
 
 ADDRESS(0x80016eb8, 0x30)
@@ -221,11 +221,11 @@ void player_sync_position_to_map(void)
     s32 view_offset;
     s32 floor_height;
 
-    player_state.unknown_58 = 0;
+    player_state.equipment_effect_ticks = 0;
     player_state.map_cell.x = cell_x;
     player_state.map_cell.z = cell_z;
     floor = map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x];
-    player_state.unknown_0d = 1;
+    player_state.allow_near_actor_spawn = 1;
     floor_height = -(floor * 100);
     view_offset = player_state.view_bob_offset - 1500;
     player_state.floor_height = floor_height;

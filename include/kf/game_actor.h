@@ -20,7 +20,9 @@ struct KfPoolRecord;
  * effect actions occupy entries 8..15 (actor_update_effect_action).
  */
 typedef struct KfActorDefinition {
-    u8 unknown_00[0x03];
+    u8 pursuit_distance_scale; /* action 2 distance threshold, in units of 256 */
+    u8 model_and_texture;
+    u8 melee_attack_chance;
     u8 status_effect;
     u8 status_effect_chance;
     u8 action_parameters[8];
@@ -29,8 +31,8 @@ typedef struct KfActorDefinition {
     u8 turn_rate;
     SoundRef sounds[3];
     struct KfVec3s attachment_offsets[2];
-    s16 unknown_34;
-    s16 unknown_36;
+    s16 special_attack_chance;
+    s16 special_attack_range;
     u8 unknown_38[2];
     u16 action_animation_steps[16];
     u16 action_animation_phases[16];
@@ -38,11 +40,11 @@ typedef struct KfActorDefinition {
     u16 collision_height;
     u16 awareness_distance;
     u16 initial_health;
-    u16 unknown_82;
+    u16 effect_owner_id;
     u16 experience_reward;
     u16 attack_components[3];
     u16 defenses[5];
-    u16 unknown_96;
+    u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
 
 #define KF_ACTOR_ACTION_INDEX(action) ((action) - 2)
@@ -62,8 +64,8 @@ typedef struct KfActorPlacement {
     u8 heading_quadrant;
     u8 tile_z;
     u8 tile_x;
-    u8 unknown_05;
-    u8 unknown_06;
+    u8 spawn_chance;
+    u8 death_drop_object_id;
     u8 unknown_07[3];
     s16 local_z;
     s16 local_x;
@@ -78,9 +80,9 @@ typedef struct KfActor {
     u8 tile_z;
     u8 tile_x;
     u8 lifecycle;
-    u8 unknown_07;
+    u8 spawn_chance;
     u8 action;
-    u8 unknown_09;
+    u8 death_drop_object_id;
     u8 animation_id;
     u8 vertical_state;
     u8 unknown_0c[2];

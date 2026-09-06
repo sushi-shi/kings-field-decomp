@@ -142,7 +142,7 @@ u32 collision_query_world(
             KfMapEvent *event = &map_event_pool[hit];
 
             collision_target.position = *(VECTOR *)&event->reference_x;
-            collision_target.rotation = *(SVECTOR *)&event->unknown_34;
+            collision_target.rotation = *(SVECTOR *)&event->rotation_x;
             collision_target.radius = event->radius;
         }
         return hit | 0x400000;

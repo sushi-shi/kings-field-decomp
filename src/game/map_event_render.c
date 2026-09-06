@@ -32,7 +32,7 @@ void render_map_event(KfMapEvent *event)
     screen.vy = (u16)event->position_y - (u16)render_state.view_position.vy;
     screen.vz = (u16)event->reference_z - (u16)render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&composed.t, &flag);
-    RotMatrix((SVECTOR *)&event->unknown_34, &model);
+    RotMatrix((SVECTOR *)&event->rotation_x, &model);
     MulMatrix0((MATRIX *)&render_state.view_matrix, &model, &composed);
     SetRotMatrix(&composed);
     SetTransMatrix(&composed);
@@ -40,7 +40,7 @@ void render_map_event(KfMapEvent *event)
     asset_registry_select(asset);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
-            &event->animation_cache, asset, event->unknown_0f, event->rotation_phase,
+            &event->animation_cache, asset, event->animation_clip, event->rotation_phase,
             object->vertex_count) == 0) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);

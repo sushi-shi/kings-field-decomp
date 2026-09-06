@@ -64,8 +64,8 @@ void menu_config_panel(void)
     states[0] = player_state.audio_effects_enabled;
     music_orig = player_state.audio_music_enabled;
     states[1] = music_orig;
-    states[2] = player_state.unknown_98[0];
-    states[3] = player_state.unknown_98[1];
+    states[2] = player_state.hud_gauges_enabled;
+    states[3] = player_state.compass_enabled;
     params.states = states;
 
     menu_frame_begin();
@@ -83,8 +83,8 @@ void menu_config_panel(void)
         }
         if (phase != -99) {
             player_state.audio_music_enabled = states[1];
-            player_state.unknown_98[0] = states[2];
-            player_state.unknown_98[1] = states[3];
+            player_state.hud_gauges_enabled = states[2];
+            player_state.compass_enabled = states[3];
             player_state.audio_effects_enabled = states[0];
             if ((states[1] & 0xff) != (u32)music_orig) {
                 if ((states[1] & 0xff) == 0) {

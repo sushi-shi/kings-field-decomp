@@ -43,7 +43,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     hud_sprites[5].state = 0;
     hud_sprites[6].state = 0;
     hud_sprites[7].state = 0;
-    if (player_state.unknown_98[0] == 1) {
+    if (player_state.hud_gauges_enabled == 1) {
         u16 flags;
         hud_sprites[0].state = 1;
         hud_sprites[1].state = 1;
@@ -83,8 +83,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     }
 
     auxiliary_sprite = &hud_sprites[12];
-    auxiliary_sprite->state = player_state.unknown_98[1];
-    effect_sprites[0].state = player_state.unknown_98[1];
+    auxiliary_sprite->state = player_state.compass_enabled;
+    effect_sprites[0].state = player_state.compass_enabled;
     effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & 0xfff;
     render_effect_sprites();
 

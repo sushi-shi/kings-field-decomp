@@ -59,7 +59,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->image_limit = definitions->image_limit;
                 event->unknown_0c = definitions->unknown_0b;
                 event->unknown_0d = definitions->unknown_0c;
-                event->unknown_0e = definitions->unknown_0d;
+                event->behavior = definitions->behavior;
                 event->position_x = definitions->cell_x * 2000 + definitions->position_x_offset;
                 event->reference_x = event->position_x;
                 event->position_z = definitions->cell_z * 2000 + definitions->position_z_offset;
@@ -71,15 +71,15 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                     -(map_floor_height_grid[event->cell_z][event->cell_x] * 100);
                 event->rotation = definitions->initial_rotation;
                 definitions++;
-                event->unknown_38 = 0;
-                event->unknown_34 = 0;
+                event->rotation_z = 0;
+                event->rotation_x = 0;
                 event->image_dirty = 1;
                 event->image_index = 1;
                 event->image_delay = 0;
-                event->unknown_0f = 0;
+                event->animation_clip = 0;
                 event->rotation_phase = 0;
                 event->rotation_target = 0;
-                event->unknown_10 = 0;
+                event->collision_turn_pending = 0;
                 collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
             } else {
                 exhausted = 1;

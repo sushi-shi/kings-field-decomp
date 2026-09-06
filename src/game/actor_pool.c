@@ -61,8 +61,8 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->heading_quadrant = placements->heading_quadrant;
             actor->tile_z = placements->tile_z;
             actor->tile_x = placements->tile_x;
-            actor->unknown_07 = placements->unknown_05;
-            actor->unknown_09 = placements->unknown_06;
+            actor->spawn_chance = placements->spawn_chance;
+            actor->death_drop_object_id = placements->death_drop_object_id;
             actor->local_z = placements->local_z;
             actor->local_x = placements->local_x;
             actor->lifecycle = 0;

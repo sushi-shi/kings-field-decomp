@@ -474,7 +474,7 @@ void map_object_pool_update(void)
         case 81:
         case 82:
             if (object->link.link_id == MAP_OBJECT_NONE && object->action_timer == 0) {
-                effect_pool_records[object->link.action_parameter].unknown_07 = 1;
+                effect_pool_records[object->link.action_parameter].phase = 1;
                 object->action_timer = 1;
             }
             break;
@@ -483,19 +483,19 @@ void map_object_pool_update(void)
                 break;
             }
             if (object->link.link_id == MAP_OBJECT_NONE) {
-                effect_pool_records[object->link.action_parameter].unknown_08 = 0xfff;
+                effect_pool_records[object->link.action_parameter].visual.animation_phase = 0xfff;
                 object->action_timer = 2;
                 break;
             }
             if (object->action_timer == 1) {
                 record = &effect_pool_records[object->link.action_parameter];
-                if (record->unknown_08 == 0) {
+                if (record->visual.animation_phase == 0) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_3, (VECTOR *)&object->position_x, 0x7f);
                 }
-                record->unknown_08 += 128;
-                if (record->unknown_08 >= 4096) {
-                    record->unknown_08 = 0xfff;
+                record->visual.animation_phase += 128;
+                if (record->visual.animation_phase >= 4096) {
+                    record->visual.animation_phase = 0xfff;
                     map_object_pool_trigger_link(object->link.link_id);
                     if (object->link.link_id >= 128) {
                         object->action_timer = 3;
@@ -505,13 +505,13 @@ void map_object_pool_update(void)
                 }
             } else if (object->action_timer == 3) {
                 record = &effect_pool_records[object->link.action_parameter];
-                if (record->unknown_08 == 0xfff) {
+                if (record->visual.animation_phase == 0xfff) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_3, (VECTOR *)&object->position_x, 0x7f);
                 }
-                record->unknown_08 -= 128;
-                if (record->unknown_08 > 4096) {
-                    record->unknown_08 = 0;
+                record->visual.animation_phase -= 128;
+                if (record->visual.animation_phase > 4096) {
+                    record->visual.animation_phase = 0;
                     object->action_timer = 0;
                 }
             }

@@ -35,18 +35,18 @@ void actor_select_next_action(s32 player_distance)
             return;
         }
     }
-    near_range = definition->unknown_00[0] << 8;
+    near_range = definition->pursuit_distance_scale << 8;
     awareness = definition->awareness_distance;
     if (definition->action_animations[0x16 - 11] != ACTOR_ACTION_NONE
         && actor_try_select_facing_action(0x16, player_distance, 0x50) != ACTOR_ACTION_NONE) {
         chosen = 0x16;
     } else if (definition->action_animations[0x10 - 11] != ACTOR_ACTION_NONE
-               && actor_try_select_ground_action(0x10, player_distance, definition->unknown_34)
+               && actor_try_select_ground_action(0x10, player_distance, definition->special_attack_chance)
                    != ACTOR_ACTION_NONE) {
         chosen = 0x10;
     } else if (definition->action_animations[0x11 - 11] != ACTOR_ACTION_NONE
                && actor_try_select_action_distance_facing(
-                      0x11, player_distance, definition->unknown_34, definition->unknown_36)
+                      0x11, player_distance, definition->special_attack_chance, definition->special_attack_range)
                    != ACTOR_ACTION_NONE) {
         chosen = 0x11;
     } else if (definition->action_animations[0x13 - 11] != ACTOR_ACTION_NONE
@@ -75,7 +75,7 @@ void actor_select_next_action(s32 player_distance)
         chosen = 0x15;
     } else if (definition->action_animations[KF_ACTOR_ACTION_INDEX(4)] != ACTOR_ACTION_NONE
                && actor_try_select_action_distance_facing(
-                      4, player_distance, definition->unknown_00[2], definition->awareness_distance)
+                      4, player_distance, definition->melee_attack_chance, definition->awareness_distance)
                    != ACTOR_ACTION_NONE) {
         chosen = 4;
     } else if (definition->action_animations[0x12 - 11] != ACTOR_ACTION_NONE) {
@@ -163,7 +163,7 @@ void actor_update_awareness(void)
         }
         kind = slot_state;
         if (kind == 2) {
-            if ((actor->unknown_07 << 7) > rand()) {
+            if ((actor->spawn_chance << 7) > rand()) {
                 if (actor_pool_find_overlap(
                         actor->tile_x * MAP_TILE_SIZE + actor->local_x,
                         0xffff,
@@ -180,11 +180,11 @@ void actor_update_awareness(void)
                 }
             }
         } else {
-            if (distance < 26000 && player_state.unknown_0d == 0) {
+            if (distance < 26000 && player_state.allow_near_actor_spawn == 0) {
                 actor->lifecycle = 2;
                 return;
             }
-            if ((actor->unknown_07 << 7) > rand() || kind == 1 || kind == 3) {
+            if ((actor->spawn_chance << 7) > rand() || kind == 1 || kind == 3) {
                 if (actor_pool_find_overlap(
                         actor->tile_x * MAP_TILE_SIZE + actor->local_x,
                         0xffff,
@@ -481,19 +481,19 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
             vector3s_scale_shift12(scale, &direction);
             if (effect_code == 8 || effect_code == 22) {
                 effect_pool_construct(
-                    definition->unknown_82, 0x23, effect_code, &position, &direction, &angles, 1);
+                    definition->effect_owner_id, 0x23, effect_code, &position, &direction, &angles, 1);
             } else if (effect_code == 24) {
                 burst_angles.x = actor->rotation.x;
                 burst_angles.y = facing;
                 burst_angles.z = actor->rotation.z;
                 effect_pool_construct(
-                    definition->unknown_82, 0x23, 24, &position, &direction, &burst_angles, 0xfe, 1);
+                    definition->effect_owner_id, 0x23, 24, &position, &direction, &burst_angles, 0xfe, 1);
             } else if (effect_code == 10) {
                 effect_pool_construct(
-                    definition->unknown_82, 0x23, 10, &position, &direction, 3, distance, 0xbb8);
+                    definition->effect_owner_id, 0x23, 10, &position, &direction, 3, distance, 0xbb8);
             } else {
                 effect_pool_construct(
-                    definition->unknown_82, 0x23, effect_code, &position, &direction, distance, 1);
+                    definition->effect_owner_id, 0x23, effect_code, &position, &direction, distance, 1);
             }
             break;
         }
@@ -827,7 +827,7 @@ void actor_update_current_action(void)
             return;
         }
         if (actor_animation_crossed_phase(actor, 0x800)) {
-            debris = ((u32)rand() * definition->unknown_96) >> 15;
+            debris = ((u32)rand() * definition->gold_drop_limit) >> 15;
             if (debris != 0) {
                 map_object_spawn_actor_debris(
                     debris, (struct KfVec3i *)&actor->position, -(definition->collision_height >> 1));
@@ -841,10 +841,10 @@ void actor_update_current_action(void)
                         (struct KfVec3i *)&actor->position,
                         -(definition->collision_height >> 1));
                 }
-            } else if (actor->unknown_09 != 0x63) {
+            } else if (actor->death_drop_object_id != 0x63) {
                 map_object_spawn_effect(
                     0,
-                    actor->unknown_09,
+                    actor->death_drop_object_id,
                     (struct KfVec3i *)&actor->position,
                     -(definition->collision_height >> 1));
             }
@@ -954,7 +954,7 @@ void actor_update_current_action(void)
             break;
         case 2:
             if (actor_animation_crossed_phase(actor, 0xd48)) {
-                actor_try_attack_player(0, definition->unknown_36, 0, 0x155);
+                actor_try_attack_player(0, definition->special_attack_range, 0, 0x155);
                 actor->action_timer = 3;
             }
             break;
@@ -996,7 +996,7 @@ void actor_update_current_action(void)
         actor_play_sound_at_phase(&definition->sounds[0], definition->action_animation_phases[6]);
         if (actor->animation_phase >= 3000
             && actor->animation_phase < definition->action_animation_steps[6] + 3000) {
-            actor_try_attack_player(0, definition->unknown_36, 0, 0x155);
+            actor_try_attack_player(0, definition->special_attack_range, 0, 0x155);
         }
         if (actor->animation_phase >= 4095) {
             actor->action_timer = 0xff;

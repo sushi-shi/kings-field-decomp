@@ -56,7 +56,7 @@ typedef struct KfRenderState {
     MATRIX pitch_matrix;
     MATRIX light_matrix;
     MATRIX light_matrix_copy;
-    MATRIX unknown_80;
+    MATRIX effect_color_matrix;
     s32 fog_near_distance;
     VECTOR view_position;
     SVECTOR view_rotation;

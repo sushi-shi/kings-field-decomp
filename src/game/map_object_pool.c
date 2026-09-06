@@ -161,8 +161,8 @@ void map_object_pool_clear(void)
         object->object_id = 0xff;
         object->action = 0xff;
         object->link.vertical_velocity = 0;
-        object->link.unknown_06[0] = 0;
-        object->link.unknown_06[1] = 0;
+        object->link.linked_notification = 0;
+        object->link.default_notification = 0;
         object->link.link_id = 0;
         object->link.action_parameter = 0;
         object->link.spawn_sequence = 0;

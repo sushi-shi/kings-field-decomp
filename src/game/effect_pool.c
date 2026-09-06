@@ -74,22 +74,22 @@ KfEffectRecord *effect_pool_construct(
     record->direction_x = direction->vx;
     record->direction_y = direction->vy;
     record->direction_z = direction->vz;
-    record->unknown_32 = direction->pad;
-    record->unknown_07 = 0;
+    record->direction_pad = direction->pad;
+    record->phase = 0;
     record->id = id;
     record->scale_z = 0x1000;
     record->scale_y = 0x1000;
     record->scale_x = 0x1000;
-    record->unknown_08 = 0;
-    record->unknown_05 = 0;
+    record->visual.animation_phase = 0;
+    record->sound_played = 0;
 
     magic = &magic_records[kind];
 
     switch (kind) {
     case 5:
-        record->unknown_04 = 0xff;
-        record->unknown_02 = 0;
-        record->unknown_03 = 0;
+        record->animation_clip = 0xff;
+        record->base_render_id = 0;
+        record->render_id = 0;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
@@ -97,9 +97,9 @@ KfEffectRecord *effect_pool_construct(
                                          &record->position, 0x7f);
         break;
     case 7:
-        record->unknown_04 = 0xff;
-        record->unknown_02 = 5;
-        record->unknown_03 = 5;
+        record->animation_clip = 0xff;
+        record->base_render_id = 5;
+        record->render_id = 5;
         record->rotation_x = 0x352;
         record->rotation_y = 0;
         record->rotation_z = 0;
@@ -109,13 +109,13 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 4:
-        record->unknown_02 = 6;
-        record->unknown_03 = 6;
-        record->unknown_04 = 0xff;
+        record->base_render_id = 6;
+        record->render_id = 6;
+        record->animation_clip = 0xff;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
-        record->unknown_38 = *(u16 *)(va + 1);
+        record->control.frames_remaining = *(u16 *)(va + 1);
         if (va[2] != 0) {
             audio_play_spatial_range(
                 (const SoundRef *)((char *)&magic_records[4] + 2),
@@ -123,14 +123,14 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0x17:
-        record->unknown_02 = 0x11;
-        record->unknown_03 = 0x11;
+        record->base_render_id = 0x11;
+        record->render_id = 0x11;
         record->kind = 4;
-        record->unknown_04 = 0xff;
+        record->animation_clip = 0xff;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
-        record->unknown_38 = *(u16 *)(va + 1);
+        record->control.frames_remaining = *(u16 *)(va + 1);
         if (va[2] != 0) {
             audio_play_spatial_range(
                 (const SoundRef *)((char *)&magic_records[4] + 2),
@@ -138,10 +138,10 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0x29:
-        record->unknown_02 = 0x13;
-        record->unknown_03 = 0x13;
+        record->base_render_id = 0x13;
+        record->render_id = 0x13;
         record->kind = 0x20;
-        record->unknown_04 = 0xff;
+        record->animation_clip = 0xff;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
@@ -150,9 +150,9 @@ KfEffectRecord *effect_pool_construct(
             &record->position, 0x7f, 0x4e20, 0xea60);
         break;
     case 0x20:
-        record->unknown_02 = 0xb;
-        record->unknown_03 = 0xb;
-        record->unknown_04 = 0xff;
+        record->base_render_id = 0xb;
+        record->render_id = 0xb;
+        record->animation_clip = 0xff;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
@@ -161,69 +161,69 @@ KfEffectRecord *effect_pool_construct(
             &record->position, 0x7f, 0x4e20, 0xea60);
         break;
     case 0x2a:
-        record->unknown_02 = 0xf;
-        record->unknown_03 = 0xf;
+        record->base_render_id = 0xf;
+        record->render_id = 0xf;
         record->kind = 0x21;
-        record->unknown_04 = 0;
+        record->animation_clip = 0;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
         break;
     case 0x21:
-        record->unknown_02 = 0;
-        record->unknown_03 = 0;
-        record->unknown_04 = 0;
+        record->base_render_id = 0;
+        record->render_id = 0;
+        record->animation_clip = 0;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
         break;
     case 0x22:
-        record->unknown_04 = 0;
-        record->unknown_02 = 2;
-        record->unknown_03 = 2;
+        record->animation_clip = 0;
+        record->base_render_id = 2;
+        record->render_id = 2;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
         record->scale_y = 0;
         break;
     case 6:
-        record->unknown_04 = 0;
-        record->unknown_02 = 1;
-        record->unknown_03 = 1;
+        record->animation_clip = 0;
+        record->base_render_id = 1;
+        record->render_id = 1;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
         record->scale_y = 0;
-        record->unknown_38 = 6;
-        record->unknown_3a = *(u16 *)(va + 1);
-        if (record->unknown_3a != 0xff) {
+        record->control.frames_remaining = 6;
+        record->propagation.branch = *(u16 *)(va + 1);
+        if (record->propagation.branch != 0xff) {
             sound_ref_play((const SoundRef *)((char *)magic + 2), 0x78);
         }
         break;
     case 9:
-        record->unknown_04 = 0;
-        record->unknown_02 = 3;
-        record->unknown_03 = 3;
+        record->animation_clip = 0;
+        record->base_render_id = 3;
+        record->render_id = 3;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
         record->scale_z = 0;
         record->scale_y = 0;
         record->scale_x = 0;
-        record->unknown_38 = *(u16 *)(va + 1);
+        record->control.frames_remaining = *(u16 *)(va + 1);
         audio_play_spatial_default_range((const SoundRef *)((char *)magic + 2),
                                          &record->position, 0x7f);
         break;
     case 0xa:
-        record->unknown_04 = 0xff;
-        record->unknown_02 = 9;
-        record->unknown_03 = 9;
+        record->animation_clip = 0xff;
+        record->base_render_id = 9;
+        record->render_id = 9;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
-        record->unknown_3a = *(u16 *)(va + 1);
-        record->unknown_38 = *(u16 *)(va + 2);
-        record->unknown_08 = *(u16 *)(va + 3);
+        record->propagation.generations_remaining = *(u16 *)(va + 1);
+        record->control.frames_remaining = *(u16 *)(va + 2);
+        record->visual.pulse_base_scale = *(u16 *)(va + 3);
         record->scale_z = *(u16 *)(va + 3);
         record->scale_y = *(u16 *)(va + 3);
         record->scale_x = *(u16 *)(va + 3);
@@ -231,13 +231,13 @@ KfEffectRecord *effect_pool_construct(
                                          &record->position, 0x7f);
         break;
     case 8:
-        record->unknown_04 = 0;
-        record->unknown_02 = 6;
-        record->unknown_03 = 6;
+        record->animation_clip = 0;
+        record->base_render_id = 6;
+        record->render_id = 6;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         record->rotation_x = -record->rotation_x;
         if (va[2] != 0) {
             audio_play_spatial_default_range((const SoundRef *)((char *)magic + 2),
@@ -245,9 +245,9 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0xb:
-        record->unknown_04 = 0xff;
-        record->unknown_02 = 8;
-        record->unknown_03 = 8;
+        record->animation_clip = 0xff;
+        record->base_render_id = 8;
+        record->render_id = 8;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
@@ -255,9 +255,9 @@ KfEffectRecord *effect_pool_construct(
                                          &record->position, 0x7f);
         break;
     case 0xc:
-        record->unknown_04 = 0xff;
-        record->unknown_02 = 0xa;
-        record->unknown_03 = 0xa;
+        record->animation_clip = 0xff;
+        record->base_render_id = 0xa;
+        record->render_id = 0xa;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
@@ -265,44 +265,44 @@ KfEffectRecord *effect_pool_construct(
                                          &record->position, 0x7f);
         break;
     case 0xd:
-        record->unknown_04 = 0;
-        record->unknown_02 = 9;
-        record->unknown_03 = 9;
+        record->animation_clip = 0;
+        record->base_render_id = 9;
+        record->render_id = 9;
         record->rotation_x = 0;
         record->rotation_y = 0;
         record->rotation_z = 0;
-        record->unknown_07 = 0x64;
+        record->phase = 0x64;
         record->scale_z = 0x5dc;
         record->scale_y = 0x5dc;
         record->scale_x = 0x5dc;
         record->position.vy += 3500;
         break;
     case 0xe:
-        record->unknown_04 = 0;
-        record->unknown_02 = 4;
-        record->unknown_03 = 4;
+        record->animation_clip = 0;
+        record->base_render_id = 4;
+        record->render_id = 4;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         break;
     case 0x30:
-        record->unknown_04 = 0;
-        record->unknown_02 = 5;
-        record->unknown_03 = 5;
+        record->animation_clip = 0;
+        record->base_render_id = 5;
+        record->render_id = 5;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         break;
     case 0x16:
-        record->unknown_04 = 0;
-        record->unknown_02 = 0xe;
-        record->unknown_03 = 0xe;
+        record->animation_clip = 0;
+        record->base_render_id = 0xe;
+        record->render_id = 0xe;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         record->rotation_x = -record->rotation_x;
         if (va[2] != 0) {
             audio_play_spatial_default_range((const SoundRef *)((char *)magic + 2),
@@ -310,13 +310,13 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0xf:
-        record->unknown_04 = 0;
-        record->unknown_02 = 7;
-        record->unknown_03 = 7;
+        record->animation_clip = 0;
+        record->base_render_id = 7;
+        record->render_id = 7;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         record->rotation_x = 0x200;
         record->direction_z = 0;
         record->direction_y = 0;
@@ -326,26 +326,26 @@ KfEffectRecord *effect_pool_construct(
         record->scale_x = 0xa28;
         break;
     case 0x10:
-        record->unknown_04 = 0;
-        record->unknown_02 = 7;
-        record->unknown_03 = 7;
+        record->animation_clip = 0;
+        record->base_render_id = 7;
+        record->render_id = 7;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         record->rotation_x = 0x200;
         record->direction_z = 0;
         record->direction_y = 0;
         record->direction_x = 0;
         break;
     case 0x11:
-        record->unknown_04 = 0;
-        record->unknown_02 = 9;
-        record->unknown_03 = 9;
+        record->animation_clip = 0;
+        record->base_render_id = 9;
+        record->render_id = 9;
         record->rotation_z = 0;
         record->rotation_y = 0;
         record->rotation_x = 0;
-        record->unknown_38 = 0;
+        record->control.orbit_angle = 0;
         record->scale_z = 0xaf0;
         record->scale_y = 0xaf0;
         record->scale_x = 0xaf0;
@@ -354,34 +354,34 @@ KfEffectRecord *effect_pool_construct(
         record->direction_y = (u16)record->position.vy;
         break;
     case 0x24:
-        record->unknown_04 = 0;
-        record->unknown_02 = 0xa;
-        record->unknown_03 = 0xa;
+        record->animation_clip = 0;
+        record->base_render_id = 0xa;
+        record->render_id = 0xa;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
-        record->unknown_3a = 0xff;
-        record->unknown_38 = 0xff;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
+        record->propagation.branch = 0xff;
+        record->control.frames_remaining = 0xff;
         record->rotation_x = -record->rotation_x;
         audio_play_spatial_range(
             (const SoundRef *)((char *)&magic_records[18] + 5),
             &record->position, 0x7f, 0x4e20, 0xea60);
         break;
     case 0x13:
-        record->unknown_04 = 0xff;
-        record->unknown_02 = 0xe;
-        record->unknown_03 = 0xe;
+        record->animation_clip = 0xff;
+        record->base_render_id = 0xe;
+        record->render_id = 0xe;
         record->rotation_z = 0;
         record->rotation_y = 0;
         record->rotation_x = 0;
-        record->unknown_38 = *(u8 *)(va + 1);
+        record->control.parent_effect_index = *(u8 *)(va + 1);
         break;
     case 0x2c:
-        record->unknown_02 = 0x11;
-        record->unknown_03 = 0x11;
+        record->base_render_id = 0x11;
+        record->render_id = 0x11;
         record->kind = 0x12;
-        record->unknown_04 = 0;
+        record->animation_clip = 0;
         if (va[1] != 0) {
             audio_play_spatial_range(
                 (const SoundRef *)((char *)&magic_records[18] + 2),
@@ -389,9 +389,9 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0x12:
-        record->unknown_02 = 0xb;
-        record->unknown_03 = 0xb;
-        record->unknown_04 = 0;
+        record->base_render_id = 0xb;
+        record->render_id = 0xb;
+        record->animation_clip = 0;
         if (va[1] != 0) {
             audio_play_spatial_range(
                 (const SoundRef *)((char *)&magic_records[18] + 2),
@@ -399,20 +399,20 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0x18:
-        record->unknown_02 = 0x10;
-        record->unknown_03 = 0x10;
+        record->base_render_id = 0x10;
+        record->render_id = 0x10;
         record->kind = 0x14;
-        record->unknown_04 = 0;
+        record->animation_clip = 0;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         record->rotation_x = -record->rotation_x;
-        record->unknown_38 = *(u8 *)(va + 2);
+        record->control.target_mode = *(u8 *)(va + 2);
         record->direction_x = record->rotation_x;
         record->direction_y = record->rotation_y;
         record->direction_z = record->rotation_z;
-        record->unknown_32 = record->unknown_22;
+        record->direction_pad = record->rotation_pad;
         record->scale_y = 0x800;
         record->scale_x = 0x800;
         if (va[3] != 0) {
@@ -422,19 +422,19 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0x14:
-        record->unknown_02 = 0xc;
-        record->unknown_03 = 0xc;
-        record->unknown_04 = 0;
+        record->base_render_id = 0xc;
+        record->render_id = 0xc;
+        record->animation_clip = 0;
         record->rotation_x = ((SVECTOR *)va[1])->vx;
         record->rotation_y = ((SVECTOR *)va[1])->vy;
         record->rotation_z = ((SVECTOR *)va[1])->vz;
-        record->unknown_22 = ((SVECTOR *)va[1])->pad;
+        record->rotation_pad = ((SVECTOR *)va[1])->pad;
         record->rotation_x = -record->rotation_x;
-        record->unknown_38 = *(u8 *)(va + 2);
+        record->control.target_mode = *(u8 *)(va + 2);
         record->direction_x = record->rotation_x;
         record->direction_y = record->rotation_y;
         record->direction_z = record->rotation_z;
-        record->unknown_32 = record->unknown_22;
+        record->direction_pad = record->rotation_pad;
         record->scale_y = 0x800;
         record->scale_x = 0x800;
         if (va[3] != 0) {
@@ -444,9 +444,9 @@ KfEffectRecord *effect_pool_construct(
         }
         break;
     case 0x15:
-        record->unknown_04 = 0;
-        record->unknown_02 = 0xd;
-        record->unknown_03 = 0xd;
+        record->animation_clip = 0;
+        record->base_render_id = 0xd;
+        record->render_id = 0xd;
         record->scale_y = 0;
         record->scale_z = 0x1800;
         record->scale_x = 0x1800;
@@ -475,11 +475,11 @@ KfEffectRecord *effect_pool_spawn_typed(
         record->position.vx = position_x;
         record->position.vy = position_y;
         record->direction_y = direction_y;
-        record->unknown_02 = 0xff;
-        record->unknown_03 = 0xff;
+        record->base_render_id = 0xff;
+        record->render_id = 0xff;
         record->kind = 0x34;
         record->type = 0xf0;
-        record->unknown_07 = 0;
+        record->phase = 0;
         record->direction_x = position_x;
         record->direction_z = 0;
     }

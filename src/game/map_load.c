@@ -207,7 +207,7 @@ void map_load_floor(void)
     map_restore_floor_state();
     map_refresh_event_images();
     effect5_texture_cache_prepare(player_state.progress_state.current_floor);
-    render_state.unknown_80 = color_matrix_table[3];
+    render_state.effect_color_matrix = color_matrix_table[3];
 }
 
 ADDRESS(0x800365f8, 0x20)

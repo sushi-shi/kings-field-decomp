@@ -72,7 +72,7 @@ void game_main_loop(void)
         effect_pool_sweep();
         map_event_pool_update();
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
-        player_state.unknown_0d = 0;
+        player_state.allow_near_actor_spawn = 0;
         frame_pacer_wait();
         if (map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
             == 0x40) {

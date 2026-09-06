@@ -30,7 +30,7 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
-    u8 life = record->unknown_07;
+    u8 life = record->phase;
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     VECTOR world;
@@ -60,9 +60,9 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
             }
             record->direction_x = -record->direction_x;
         }
-        if (record->unknown_05 == 0) {
+        if (record->sound_played == 0) {
             if (rand() < 8192) {
-                record->unknown_05 = audio_play_spatial_range(
+                record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &world, 0x7f,
                     0xbb8, 0x36b0);
             }
@@ -84,15 +84,15 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
             if (life == 1) {
                 next_pitch = 0;
-                record->unknown_07 = 10;
+                record->phase = 10;
             } else {
-                record->unknown_05 = 0;
+                record->sound_played = 0;
             }
         }
         record->rotation_x = next_pitch;
     } else if (life >= 10u && (s16)frame_limit >= life) {
         record->position.vy -= 60;
-        record->unknown_07++;
+        record->phase++;
     }
 }
 
@@ -101,17 +101,17 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
-    u32 life = record->unknown_07;
+    u32 life = record->phase;
     u32 collision;
 
     if ((life & 0xff) < 2) {
         record->position.vx = ((s16)record->direction_x << 8)
-            + (rsin((s16)record->unknown_38) * speed >> 12);
+            + (rsin((s16)record->control.orbit_angle) * speed >> 12);
         record->position.vz = ((s16)record->direction_z << 8)
-            + (rcos((s16)record->unknown_38) * speed >> 12);
+            + (rcos((s16)record->control.orbit_angle) * speed >> 12);
         record->position.vy = (s16)record->direction_y
-            + (rsin((s16)record->unknown_38 << 1) >> 2);
-        record->unknown_38 = (record->unknown_38 + 64) & 0xfff;
+            + (rsin((s16)record->control.orbit_angle << 1) >> 2);
+        record->control.orbit_angle = (record->control.orbit_angle + 64) & 0xfff;
         collision = effect_map_collision(&record->position, 0x96);
         if (collision != 0xffffffff) {
             if ((collision >> 16) == 0x10) {
@@ -124,9 +124,9 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
                     0, 0, 0, 0x1000, record->id);
             }
         }
-        if (record->unknown_05 == 0) {
+        if (record->sound_played == 0) {
             if (rand() < 8192) {
-                record->unknown_05 = audio_play_spatial_range(
+                record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &record->position,
                     0x7f, 0x1388, 0x36b0);
             }
@@ -135,12 +135,12 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
             s32 dy = (record->position.vy - player_state.camera_position.vy) >> 3;
             s32 dz = (record->position.vz - player_state.camera_position.vz) >> 3;
             if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << 3) >= 0x1388) {
-                record->unknown_05 = 0;
+                record->sound_played = 0;
             }
         }
     } else if ((life & 0xff) != 0 && (s16)frame_limit >= (int)(life & 0xff)) {
         record->position.vy -= 60;
-        record->unknown_07++;
+        record->phase++;
     }
 }
 

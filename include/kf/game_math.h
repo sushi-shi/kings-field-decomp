@@ -6,6 +6,19 @@
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 
+enum {
+    KF_FIXED11_BITS = 11,
+    KF_FIXED12_BITS = 12,
+    KF_FIXED12_ONE = 0x1000,
+    KF_ANGLE_QUARTER_TURN = 0x400,
+    KF_ANGLE_HALF_TURN = 0x800,
+    KF_ANGLE_THREE_QUARTER_TURN = 0xc00,
+    KF_ANGLE_FULL_TURN = 0x1000,
+    KF_ANGLE_WRAP_MASK = 0xfff,
+    KF_MATRIX_ROTATION_ELEMENTS = 9,
+    KF_LENGTH_SQUARE_DOWNSHIFT = 3
+};
+
 struct KfVecXZs {
     s16 x;
     s16 z;

@@ -463,17 +463,17 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
         if (index != -1) {
             event = &map_event_pool[index];
-            switch (event->unknown_0e) {
+            switch (event->behavior) {
             case 0:
                 event->rotation_phase = 0;
-                event->unknown_0f = 0;
+                event->animation_clip = 0;
                 map_event_advance_rotation_blocking(event, 0x800, 0xc8);
                 audio_play_map_sequence(2);
                 map_event_interact(event);
                 menu_enter_mode(2, event->kind);
                 audio_play_current_map_sequence();
                 map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
-                event->unknown_0f = 0;
+                event->animation_clip = 0;
                 event->rotation_phase = 0;
                 player_clear_motion();
                 break;
@@ -486,14 +486,14 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 result = asset_registry_entries[event->variant]->animation_data < 2;
                 if (result == 0) {
                     event->rotation_phase = 0;
-                    event->unknown_0f = 1;
+                    event->animation_clip = 1;
                     map_event_advance_rotation_blocking(event, 0x800, 0xc8);
                 }
                 map_event_interact(event);
                 if (result == 0) {
                     map_event_advance_rotation_blocking(event, 0xfff, 0xc8);
                 }
-                event->unknown_0f = 0;
+                event->animation_clip = 0;
                 event->rotation_phase = 0;
                 player_clear_motion();
                 break;
@@ -514,7 +514,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         switch (definition->behavior_type) {
         case 8:
             if (object->link.link_id != 0xff) {
-                notify_enqueue(object->link.unknown_06[0]);
+                notify_enqueue(object->link.linked_notification);
                 continue;
             }
             if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x200)) {
@@ -696,7 +696,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
         default:
 notify_default:
-            notify_enqueue(object->link.unknown_06[1]);
+            notify_enqueue(object->link.default_notification);
             break;
         }
     }

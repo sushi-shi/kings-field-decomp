@@ -31,26 +31,26 @@ s16 angle_approach(s16 current, s16 target, s32 step)
         return target;
     }
     if (current < target) {
-        if (target - current <= 0x800) {
+        if (target - current <= KF_ANGLE_HALF_TURN) {
             result = current + step;
             if (target < result) {
                 return target;
             }
         } else {
-            result = (current - step) & 0xfff;
-            if (result >= 0x800 && result <= target) {
+            result = (current - step) & KF_ANGLE_WRAP_MASK;
+            if (result >= KF_ANGLE_HALF_TURN && result <= target) {
                 return target;
             }
         }
     } else {
-        if (current - target <= 0x800) {
+        if (current - target <= KF_ANGLE_HALF_TURN) {
             result = current - step;
             if (result < target) {
                 return target;
             }
         } else {
-            result = (current + step) & 0xfff;
-            if (result <= 0x800 && result >= target) {
+            result = (current + step) & KF_ANGLE_WRAP_MASK;
+            if (result <= KF_ANGLE_HALF_TURN && result >= target) {
                 return target;
             }
         }
@@ -71,7 +71,7 @@ void matrix_set_rotation_x(s16 angle, MATRIX *matrix)
     s32 sin = rsin(angle);
     s32 cos = rcos(angle);
 
-    matrix->m[0][0] = 0x1000;
+    matrix->m[0][0] = KF_FIXED12_ONE;
     matrix->m[0][1] = 0;
     matrix->m[0][2] = 0;
     matrix->m[1][0] = 0;
@@ -92,7 +92,7 @@ void matrix_set_rotation_y(s16 angle, MATRIX *matrix)
     matrix->m[0][1] = 0;
     matrix->m[0][2] = -sin;
     matrix->m[1][0] = 0;
-    matrix->m[1][1] = 0x1000;
+    matrix->m[1][1] = KF_FIXED12_ONE;
     matrix->m[1][2] = 0;
     matrix->m[2][0] = sin;
     matrix->m[2][1] = 0;
@@ -113,7 +113,7 @@ void matrix_set_rotation_z(s16 angle, MATRIX *matrix)
     matrix->m[1][2] = 0;
     matrix->m[2][0] = 0;
     matrix->m[2][1] = 0;
-    matrix->m[2][2] = 0x1000;
+    matrix->m[2][2] = KF_FIXED12_ONE;
 }
 
 ADDRESS(0x80014ccc, 0x68)
@@ -142,8 +142,8 @@ void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, struct KfVec3s
 
     source.vx = 0;
     source.vy = 0;
-    source.vz = 0x1000;
-    matrix_set_rotation_x(-angles->pitch & 0xfff, &pitch_matrix);
+    source.vz = KF_FIXED12_ONE;
+    matrix_set_rotation_x(-angles->pitch & KF_ANGLE_WRAP_MASK, &pitch_matrix);
     ApplyMatrix(&pitch_matrix, &source, &result);
     source.vx = result.vx;
     source.vy = result.vy;
@@ -162,8 +162,8 @@ void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector)
     s32 x = vector->x * scale;
     s32 z = vector->z * scale;
 
-    vector->x = x >> 11;
-    vector->z = z >> 11;
+    vector->x = x >> KF_FIXED11_BITS;
+    vector->z = z >> KF_FIXED11_BITS;
 }
 
 ADDRESS(0x80014e48, 0x5c)
@@ -173,9 +173,9 @@ void vector3s_scale_shift12(s16 scale, struct KfVec3s *vector)
     s32 y = vector->y * scale;
     s32 z = vector->z * scale;
 
-    vector->x = x >> 12;
-    vector->y = y >> 12;
-    vector->z = z >> 12;
+    vector->x = x >> KF_FIXED12_BITS;
+    vector->y = y >> KF_FIXED12_BITS;
+    vector->z = z >> KF_FIXED12_BITS;
 }
 
 ADDRESS(0x80014ea4, 0x40)
@@ -184,8 +184,8 @@ void vector2s_scale_shift12(s16 scale, s16 *vector)
     s32 x = vector[0] * scale;
     s32 y = vector[1] * scale;
 
-    vector[0] = x >> 12;
-    vector[1] = y >> 12;
+    vector[0] = x >> KF_FIXED12_BITS;
+    vector[1] = y >> KF_FIXED12_BITS;
 }
 
 ADDRESS(0x80014ee4, 0x5c)
@@ -195,9 +195,9 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
     s32 y = vector[1] * scale;
     s32 z = vector[2] * scale;
 
-    vector[0] = x >> 12;
-    vector[1] = y >> 12;
-    vector[2] = z >> 12;
+    vector[0] = x >> KF_FIXED12_BITS;
+    vector[1] = y >> KF_FIXED12_BITS;
+    vector[2] = z >> KF_FIXED12_BITS;
 }
 
 ADDRESS(0x80014f40, 0x2c)
@@ -211,15 +211,15 @@ void vector3i_add_xz(
 ADDRESS(0x80014f6c, 0x3c)
 int angle_within_tolerance(int lhs, int rhs, s16 range)
 {
-    int delta = (lhs - rhs) & 0xfff;
+    int delta = (lhs - rhs) & KF_ANGLE_WRAP_MASK;
 
-    return delta <= range || 0x1000 - range <= delta;
+    return delta <= range || KF_ANGLE_FULL_TURN - range <= delta;
 }
 
 ADDRESS(0x80014fa8, 0x10)
 int angle_mod_delta_le_half_turn(int lhs, int rhs)
 {
-    return ((lhs - rhs) & 0xfff) < 0x801;
+    return ((lhs - rhs) & KF_ANGLE_WRAP_MASK) < (KF_ANGLE_HALF_TURN + 1);
 }
 
 /* Psy-Q LIBGTE: catan(long) returns a 12-bit angle for a 12-bit fixed ratio. */
@@ -232,22 +232,22 @@ ADDRESS(0x80014fb8, 0xb0)
 s32 vector_xz_to_angle(s32 x, s32 z)
 {
     if (z > 0) {
-        return catan((x << 12) / z) + 0x800;
+        return catan((x << KF_FIXED12_BITS) / z) + KF_ANGLE_HALF_TURN;
     }
     if (z < 0) {
-        return catan((x << 12) / z) & 0xfff;
+        return catan((x << KF_FIXED12_BITS) / z) & KF_ANGLE_WRAP_MASK;
     }
     if (x > 0) {
-        return 0xc00;
+        return KF_ANGLE_THREE_QUARTER_TURN;
     }
-    return 0x400;
+    return KF_ANGLE_QUARTER_TURN;
 }
 
 
 ADDRESS(0x80015068, 0x40)
 s32 fixed_vector2_length(s32 x, s32 y)
 {
-    x >>= 3;
-    y >>= 3;
-    return SquareRoot0(x * x + y * y) << 3;
+    x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    y >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    return SquareRoot0(x * x + y * y) << KF_LENGTH_SQUARE_DOWNSHIFT;
 }

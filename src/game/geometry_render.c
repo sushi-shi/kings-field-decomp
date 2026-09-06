@@ -92,7 +92,7 @@ void render_effect_sprites(void)
     u16 scale_numerator;
 
     ReadColorMatrix(&saved_color_matrix);
-    SetColorMatrix(&render_state.unknown_80);
+    SetColorMatrix(&render_state.effect_color_matrix);
     scale.vz = 0x1000;
     entry = effect_sprites;
     while (entry->state == 1) {

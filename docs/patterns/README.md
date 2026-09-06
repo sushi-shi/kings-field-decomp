@@ -5,6 +5,12 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [semantic-field-names.md](semantic-field-names.md): consumer-backed actor,
+  player, map, render, and effect field identities, reused effect storage,
+  and the remaining serialized-field questions.
+- [source-constant-names.md](source-constant-names.md): domain-specific constant
+  names and the reasons for retaining individual classes of inline literals.
+
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the
   prologue/load scheduling that separate the GCC 2.5.7 probe from the 2.6.0

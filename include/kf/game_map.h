@@ -28,7 +28,8 @@ typedef struct KfMapObjectLink {
     u8 action_parameter;
     u16 spawn_sequence;
     s16 vertical_velocity;
-    u8 unknown_06[2];
+    u8 linked_notification;
+    u8 default_notification;
 } KfMapObjectLink;
 
 typedef struct KfMapObjectPlacement {
@@ -109,7 +110,7 @@ typedef struct KfMapEventDefinition {
     u8 image_limit;
     u8 unknown_0b;
     u8 unknown_0c;
-    u8 unknown_0d;
+    u8 behavior;
     s16 position_z_offset;
     s16 position_x_offset;
     u16 initial_rotation;
@@ -128,9 +129,9 @@ typedef struct KfMapEvent {
     u8 image_delay;
     u8 unknown_0c;
     u8 unknown_0d;
-    u8 unknown_0e;
-    u8 unknown_0f;
-    u8 unknown_10;
+    u8 behavior;
+    u8 animation_clip;
+    u8 collision_turn_pending;
     u8 unknown_11;
     u16 rotation_phase;
     s32 position_x;
@@ -143,9 +144,9 @@ typedef struct KfMapEvent {
     s32 position_y;
     s32 reference_z;
     u8 unknown_30[4];
-    u16 unknown_34;
+    u16 rotation_x;
     s16 rotation;
-    u16 unknown_38;
+    u16 rotation_z;
     u8 unknown_3a[2];
     struct KfPoolRecord *animation_cache;
     s16 rotation_target;

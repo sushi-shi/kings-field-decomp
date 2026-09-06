@@ -37,7 +37,7 @@ void render_actor(KfActor *actor)
     SetTransMatrix(&model);
     SetLightMatrix(&light);
 
-    descriptor = actor_state.definitions[actor->definition_id].unknown_00[1];
+    descriptor = actor_state.definitions[actor->definition_id].model_and_texture;
     asset = descriptor & 0xf;
     asset_registry_select(asset);
     object = tmd_get_object(0);

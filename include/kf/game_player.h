@@ -68,7 +68,7 @@ typedef struct KfPlayerState {
     s32 next_level_experience;
     KfPlayerProgressState progress_state;
     u8 map_variant;
-    u8 unknown_0d;
+    u8 allow_near_actor_spawn;
     u8 weapon_charge_delay;
     u8 unknown_0f;
     KfPlayerVitals vitals;
@@ -101,7 +101,7 @@ typedef struct KfPlayerState {
     s16 status_effect4_timer;
     s16 light_effect_timer;
     u8 unknown_54[4];
-    u32 unknown_58;
+    u32 equipment_effect_ticks;
     u8 selected_magic_id;
     u8 unknown_5d[3];
     KfMagicRecord *selected_magic_record;
@@ -112,8 +112,8 @@ typedef struct KfPlayerState {
     s16 weapon_attack_phase;
     u8 unknown_72[2];
     struct KfPoolRecord *weapon_animation_cache;
-    u8 unknown_78;
-    u8 unknown_79;
+    u8 weapon_magic_shots_remaining;
+    u8 weapon_magic_delay;
     u8 weapon_attack_fully_charged;
     u8 unknown_7b[1];
     KfArmorRecord *equipped_shield_record;
@@ -129,7 +129,8 @@ typedef struct KfPlayerState {
     u8 equipped_accessory_id;
     u8 audio_effects_enabled;
     u8 audio_music_enabled;
-    u8 unknown_98[2];
+    u8 hud_gauges_enabled;
+    u8 compass_enabled;
     SVECTOR view_rotation_offset;
     u8 update_state;
     u8 unknown_a3;

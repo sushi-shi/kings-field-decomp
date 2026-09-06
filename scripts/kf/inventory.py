@@ -404,7 +404,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     }
     layouts: dict[str, HeaderStructureLayout] = {}
     definition_pattern = re.compile(
-        r"(?:typedef\s+)?struct\s+([A-Za-z_]\w*)\s*\{(.*?)\}\s*"
+        r"(?:typedef\s+)?(struct|union)\s+([A-Za-z_]\w*)\s*\{([^{}]*)\}\s*"
         r"(?:[A-Za-z_]\w*)?\s*;",
         re.DOTALL,
     )
@@ -436,12 +436,20 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/game_menu.h",
         REPO / "include/kf/game_cd.h",
     )
+    # Only unions embedded in an inventoried struct become layout owners.
+    # Standalone packet/formatting views are outside this inventory, as before.
+    definitions = {}
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
         for match in definition_pattern.finditer(text):
-            name, body = match.groups()
-            if name in layouts:
+            kind, name, body = match.groups()
+            if name in definitions:
                 raise ValueError(f"{path}: duplicate checked structure {name}")
+            definitions[name] = (path, kind, body)
+
+    def layout_definition(name: str) -> HeaderStructureLayout:
+        if name not in layouts:
+            path, kind, body = definitions[name]
             offset = 0
             alignment = 1
             fields = []
@@ -455,15 +463,19 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                         f"{path}: cannot parse {name} declaration {declaration!r}"
                     )
                 datatype, pointer, field_name, arrays = field_match.groups()
-                datatype = datatype.removeprefix("const ").removeprefix("struct ")
+                datatype = (
+                    datatype.removeprefix("const ")
+                    .removeprefix("struct ")
+                    .removeprefix("union ")
+                )
                 if pointer:
                     base_size, base_alignment = 4, 4
                     display_type = f"{datatype} {'*' * len(pointer)}"
                 elif datatype in primitive_layouts:
                     base_size, base_alignment = primitive_layouts[datatype]
                     display_type = datatype
-                elif datatype in layouts:
-                    nested = layouts[datatype]
+                elif datatype in definitions:
+                    nested = layout_definition(datatype)
                     base_size, base_alignment = nested.size, nested.alignment
                     display_type = datatype
                 else:
@@ -475,17 +487,24 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                 for dimension in dimensions:
                     count *= int(dimension, 0)
                 size = base_size * count
-                offset = _align(offset, base_alignment)
+                field_offset = 0 if kind == "union" else _align(offset, base_alignment)
                 if dimensions:
                     display_type += "".join(f"[{int(value, 0)}]" for value in dimensions)
-                fields.append(HeaderFieldLayout(offset, size, field_name, display_type))
-                offset += size
+                fields.append(
+                    HeaderFieldLayout(field_offset, size, field_name, display_type)
+                )
+                offset = max(offset, field_offset + size)
                 alignment = max(alignment, base_alignment)
             layouts[name] = HeaderStructureLayout(
                 size=_align(offset, alignment),
                 alignment=alignment,
                 fields=tuple(fields),
             )
+        return layouts[name]
+
+    for name, (_, kind, _) in definitions.items():
+        if kind == "struct":
+            layout_definition(name)
     return layouts
 
 
