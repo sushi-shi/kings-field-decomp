@@ -1,5 +1,23 @@
 # OPEN map rendering: ownership and setup residues
 
+## Camera narrowing control at `4199d60`
+
+The six semantic views, fresh focused compile, exact traversal caller,
+adjacent sprite, SDK transform bodies/headers and source history were refreshed
+for OPEN `80018bbc`/464 bytes, strict 87.922420%. The complete owner already
+recovers the matrix-base chain; the candidate remains 472 bytes, with nine
+calls and nine address pairs. No signature, grid or orientation-CFG change
+is proposed.
+
+The three camera coordinates belong to a real SDK VECTOR, but the destination
+is SVECTOR. Test removing only the explicit `(u16)` casts, allowing the actual
+halfword assignments to narrow the differences. The focused disassembly and
+ordered relocation listing are identical, including all three `lhu` loads,
+the unmatched constant-one placement and coordinate schedule. Thus these
+loads alone do not establish explicit source casts. Restore the original
+wrapped-coordinate spelling and actually recompile it; the exact traversal
+is preserved. This control supplies no new exact function or bank entry.
+
 ## Function Match Plan: orientation fall-through (`eaf83a3`)
 
 OPEN `80018bbc` remains 464 retail/472 probe bytes, strict 87.922420%,

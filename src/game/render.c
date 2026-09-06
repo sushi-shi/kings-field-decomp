@@ -48,6 +48,7 @@ void display_show_error_screen(s32 stage)
     POLY_FT4 prim;
     s32 back;
     s32 attempt;
+    s32 brightness;
 
     DrawSync(0);
     SetPolyFT4(&prim);
@@ -73,6 +74,7 @@ void display_show_error_screen(s32 stage)
 
     memcpy(cd_path_buffer, error_screen_path, sizeof error_screen_path);
     cd_path_buffer[2] = stage + '0';
+    brightness = 0x60;
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == 0) {
         exit(1);
     }
@@ -102,7 +104,7 @@ void display_show_error_screen(s32 stage)
     display_draw_environments[back].dfe = 0;
     PutDrawEnv(&display_draw_environments[back]);
     display_state.ordering_table = display_state.ordering_tables[back].entries;
-    prim.r0 = prim.g0 = prim.b0 = 0x60;
+    setRGB0(&prim, brightness, brightness, brightness);
     ClearOTagR(display_state.ordering_table, 0x4000);
     AddPrim(display_state.ordering_table, &prim);
     DrawSync(0);
@@ -330,9 +332,9 @@ void tmd_prepare_primitive_indices(void)
     do {
         primitive_count = (u16)object->primitive_count;
         packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + 12);
+        primitives_left = primitive_count;
+        primitives_left--;
         if (primitive_count != 0) {
-            primitives_left = primitive_count;
-            primitives_left--;
             do {
                 body = TMD_PACKET_BODY(packet);
                 word = *(u32 *)packet;
