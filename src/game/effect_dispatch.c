@@ -300,15 +300,17 @@ effect_kind4_impact:
         break;
 
     case 19:
-        collision = effect_map_collision(&effect->position, radius);
-        if (collision != (u32)-1 && (collision >> 16) == 0x10) {
-            power = effect_magic_power(effect);
-            actor_apply_damage(
-                collision, power, 0, 0, 0,
-                magic->damage_components[0], magic->damage_components[1],
-                5000, effect->type);
-        }
         linked_effect = &effect_pool_records[(u8)effect->unknown_38];
+        collision = effect_map_collision(&effect->position, radius);
+        if (collision != (u32)-1) {
+            power = effect_magic_power(effect);
+            if ((collision >> 16) == 0x10) {
+                actor_apply_damage(
+                    collision, power, 0, 0, 0,
+                    magic->damage_components[0], magic->damage_components[1],
+                    5000, effect->type);
+            }
+        }
         effect->position.vx += (s16)effect->direction_x;
         effect->position.vy += (s16)effect->direction_y;
         effect->position.vz += (s16)effect->direction_z;
@@ -405,9 +407,9 @@ randomize_kind20:
         }
 
         effect->rotation_x = angle_approach(
-            effect->rotation_x, effect->direction_x, 0x40);
+            effect->rotation_x, (s16)effect->direction_x, 0x40);
         effect->rotation_y = angle_approach(
-            effect->rotation_y, effect->direction_y, 0x40);
+            effect->rotation_y, (s16)effect->direction_y, 0x40);
         local_motion.vx = 0;
         local_motion.vy = 0;
         local_motion.vz = 650;
@@ -627,15 +629,17 @@ randomize_kind20:
         effect_projectile_update_3d(&effect_projectile_velocities[1], 0x3c);
         break;
 
-    case 52:
+    case 52: {
+        s16 column;
+
         if (phase == 0) {
             prior = effect->direction_x;
             effect->direction_x = prior - 1;
             if ((s16)(prior - 1) != -1) {
                 effect->direction_z += effect->rotation_z;
-                for (count = 0; count < (s16)effect->rotation_y; count++) {
+                for (column = 0; column < effect->rotation_y; column++) {
                     effect_floor_deform_line(
-                        (s16)effect->rotation_x + count,
+                        effect->rotation_x + column,
                         (s16)effect->direction_z,
                         -(s16)effect->direction_y);
                 }
@@ -656,9 +660,9 @@ randomize_kind20:
             effect->direction_x = prior - 1;
             if ((s16)(prior - 1) != -1) {
                 effect->direction_z -= effect->rotation_z;
-                for (count = 0; count < (s16)effect->rotation_y; count++) {
+                for (column = 0; column < effect->rotation_y; column++) {
                     effect_floor_deform_line(
-                        (s16)effect->rotation_x + count,
+                        effect->rotation_x + column,
                         (s16)effect->direction_z,
                         (s16)effect->direction_y);
                 }
@@ -667,6 +671,7 @@ randomize_kind20:
             effect->type = 0xff;
         }
         break;
+    }
 
     case 17:
         effect_projectile_update_2d(0x1964, 0x28);

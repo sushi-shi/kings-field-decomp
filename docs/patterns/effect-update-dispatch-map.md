@@ -196,3 +196,69 @@ unfinished data/ownership/placement gates: source data 5/60,
 config-backed SDK data 4/4, target relink 110/116, six conflicting bases,
 and zero artifact failures. No new tooling or flake change is part of this
 campaign; concurrent clangd work is left out of its commit.
+
+## Conditional-path continuation plan (2026-09-06)
+
+The same GAME identity, extent, signature, owner, vendor controls and reviewed
+relocations above apply. Fresh hash validation and all six semantic views
+confirm the 75.934370% baseline at `c55cc48`: 1,490/1,539 source/retail words,
+69/69 calls, 131/135 conditional branches, 60/69 internal jumps, one switch
+`jr` and one `jr ra` each. Return counts do not establish matching exits.
+
+The first hypothesis is kind 19's guard at `800393e0..80039400`: only the
+`-1` collision sentinel bypasses `effect_magic_power`; classification against
+`0x10` happens after that call. Recover nested guards, preserving the existing
+damage arguments and the movement join at `80039438`. Then independently
+recover the linked-record snapshot at `800393b4..800393d4`, whose final address
+addition occupies the collision call's delay slot, before the callee runs.
+
+Next inspect the signed angle arguments at `80039824/28/38/3c` and the two
+signed-halfword induction variables at `8003a108..8003a144` and
+`8003a1c4..8003a1fc`. The existing shared angle signature already takes `s16`;
+do not change unrelated record-field views or banked consumers. Compare the
+focused compiled instructions after each source cause. Complete VECTOR inputs
+and case-local stack-object lifetimes remain a separate evidence-led step;
+frame padding and synthetic locals are not candidates.
+
+### Conditional-path results
+
+Each of four independently evidenced corrections received a focused build:
+
+| Correction | Strict objdiff |
+| --- | ---: |
+| Kind 19: calculate power before filtering collision class | 76.320984% |
+| Kind 19: snapshot the linked effect before collision | 77.594540% |
+| Kind 20: interpret target angles as signed halfwords | 77.873950% |
+| Kind 52: recover a case-local signed-halfword column counter | 78.656270% |
+
+The first two compiled paths now preserve the sentinel guard and pre-call
+linked-record address, including its computation in the call delay slot.
+The angle conversion changes exactly two instruction words, `lhu` to `lh`
+at the target-angle loads; the shared record layout and API are unchanged.
+Both kind-52 loop cores now match the retail words exactly: 16 words at
+`8003a108..8003a144` and 15 at `8003a1c4..8003a1fc`, with the same
+`effect_floor_deform_line` call referent and branch/call delay slots. Their
+surrounding phase-dispatch and exit layout still differ, so these local runs
+are not separately banked functions.
+
+**Still partial, not bankable.** The complete body is 6,004 bytes / 1,501
+words against 6,156 / 1,539. Its frame is 192 rather than retail's 168 bytes;
+source still saves `s0..s7`, retail `s0..s8`. Call multisets remain equal at
+69, while conditional branches remain 131/135, internal jumps 60/69 and
+text relocations 171/182. The shared sound-call placement and kind-33 address
+lifetime differences above remain. Only this dispatcher changes among all
+484 native function rows; every banked result is preserved and GAME stays
+288/362 exact.
+
+Next source evidence: kind 52's retail phase dispatch compares 1, then splits
+below/above 2 before testing 0/2 (`8003a084..8003a0bc`), suggesting a switch
+rather than the current linear if-chain. Audit that shape and kind 6's mode
+dispatch before any instruction-selection attribution. The complete VECTOR
+input and overlapping, case-local stack-object lifetimes remain unresolved.
+
+Verification: focused/raw comparisons, Ruff, 633 repository tests (78.171s,
+no skips) and `git diff --check` pass. The focused `kf match` and full
+`kf build -j4` still fail the existing data/ownership/placement gates: source
+data 5/60, config-backed SDK data 4/4, target relink 110/116, six conflicting
+bases and zero artifact failures. No tooling or flake change is included;
+concurrent clangd changes remain outside this checkpoint.
