@@ -299,3 +299,66 @@ volatile carrier, alias, dead statement or assembler bytes were introduced.
 Pinned layout tests verify every state field and reject an incorrect total
 size. Inventory and retail controls verify the base chain, item stride, signed
 division sites, independent light-matrix extent, and all body references.
+
+## Function Match Plan: post-color item-state lifetime (`f3edc49`)
+
+Resume on clean master with **395/471** eligible functions exact, GAME
+296/362 and OPEN 98/108. The target remains OPEN `80019240`, 664 retail
+bytes, strict **96.759030%**. Hash-identical retail, all six semantic views,
+the complete sole scene-0 caller, both renderer callees/neighbors, TMD slot
+selector, SDK SetLightMatrix body/prototype/provider, shared field layouts
+and original source history were refreshed before editing. A real focused
+compile reproduces the 668-byte candidate and its first difference at +130.
+The two neighboring bodies remain the 552-byte exact entity renderer and
+328-byte partial floor-item renderer. This is game-owned traversal; the
+LIBGTE/MTX provider remains independently attributed and is not edited.
+
+Preserve the 48-byte frame, four ordered calls, fifteen physical address
+pairs, sixteen conditional branches (six belonging to checked division),
+four traps and the common return/delay slot. No strings or candidate outgoing
+references occur. Entity count 32, word positions, halfword-wrapped origins,
+row/column bounds, signed countdown and division by 2000, RGB 180 and the
+unchanged texture selectors retain their prior evidence.
+
+Retail completes the three independent absolute B/G/R stores before forming
+the retained tpage address at `80019378/7c`; that address later supplies the
+item and position cursors at +22/+26. The prior typed-state trial began before
+the color writes and covered them too, choosing the CLUT anchor instead.
+Test a typed pointer to the same existing `KfFloorItemStateOpen`, introduced
+only after the color assignments and used for selector copies, count and
+initial item array. This separates the observed later state-use lifetime
+without changing the RGB expression, declaration order, shared owner, member
+types, physical writes or loop. No cross-field byte arithmetic, artificial
+carrier, profile change or relocation workaround is permitted. Compare all
+raw words and ordered numeric references, retaining the pointer only if it
+explains retail's independently observed base/lifetime.
+
+The later typed-state pointer emits the identical 668-byte baseline, including
+all 67 unequal aligned words and every ordered numeric reference. Both sibling
+bodies are unchanged. Restore the direct state expressions; limiting that
+pointer's source lifetime does not explain the retained address.
+
+Retail's item-Z path has a full signed quotient in v0 (`mflo`, +1b4) and a
+distinct wrapped window-relative row after subtraction into v1 (+1c0). Test
+an actual `s32 cell_z` quotient followed by the existing `u16 row` subtraction,
+keeping the column expression and window load unchanged. This differs from
+the prior narrowed-quotient trial and from retaining the entire relative row
+as a signed word: the quotient remains signed and only the relative coordinate
+narrows. No extra mask, dummy local, division, profile change or altered
+origin type is introduced. Keep this value separation only if the generated
+dependency or load-delay sequence moves toward the observed retail path.
+
+The separately typed quotient also emits the identical candidate. Both new
+controls are rejected and the original source is restored; no exact result
+or source change is claimed. These particular pointer and quotient lifetimes
+are not the missing source fact under the pinned probe. Do not repeat them
+or infer a compiler limitation from their failure.
+
+The restored unit was rebuilt and retains strict 100% / 98.795180% /
+96.759030% for its three functions. Independent raw comparisons confirm
+identical instruction, call, address and control streams for the baseline,
+both rejected controls and the restoration. The combined GAME configuration
+panel verification passes all 651 tests, Ruff and diff checks, with no OPEN
+score change across the full 484-row comparison. Existing full-build data
+and placement failures remain documented in
+[the panel audit](game-config-panel-abi.md); no OPEN source change is kept.

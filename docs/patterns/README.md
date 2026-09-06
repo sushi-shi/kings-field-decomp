@@ -211,6 +211,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-root-results.md](game-menu-root-results.md): removing three
   unsupported result resets improves the main-menu loop; an equivalent
   cancellation-condition control leaves the remaining comparison unchanged.
+- [game-config-panel-abi.md](game-config-panel-abi.md): two by-value labels,
+  input policy and first-frame/loop-tail draw structure recover the options
+  panel's CFG; its draw helper stays exact and nine register-role words remain.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.

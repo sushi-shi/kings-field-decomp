@@ -1577,7 +1577,7 @@ feedback styles, not a rule that every caller uses the same button mapping.
 | GAME 80024e64 `menu_save_load_hub` | 93.611840% | Four navigation/confirmation/cancellation calls. |
 | GAME 800250c4 `menu_save_panel` | 96.797874% | Eight calls, including status-image entry and dismissal. |
 | GAME 8002552c `menu_load_panel` | 92.613640% | Nine calls, including empty-slot rejection and status-image dismissal. |
-| GAME 8002589c `menu_config_panel` | 30.713396% | All five calls deliberately use cue 0, including toggling and exit. |
+| GAME 8002589c `menu_config_panel` | 30.713396% | The old reconstruction used five cue-0 calls. Retail uses 0/0/1/1/2; the configuration-panel reconciliation below corrects this earlier source-derived assertion. |
 | GAME 80028380 `menu_list_interact` | 87.079810% | Three choice-toggle/confirmation/cancellation calls. |
 | GAME 800286d4 `menu_two_option_prompt` | 100% | Three choice-toggle/confirmation/cancellation calls. |
 
@@ -1998,3 +1998,54 @@ fade/fog constants. Its numeric table explains the 32-step Q12 fade and
 one-fifth movement limit while retaining unexplained tuning as such. Poison
 now shares the player-status -1 timer sentinel; all distinct expiry and cure
 paths remain unchanged.
+
+
+## Configuration-panel reconstruction reconciliation
+
+### Function Match Plan
+
+Integrate committed master `8c1ad49` into the semantic-naming worktree. Its
+parent `6c1fcae` reconstructs GAME `8002589c / 0x504` and
+`80025da0 / 0x198` under `probe-gcc257-o2-g0`; the later OPEN commit only
+records traversal evidence. Starting strict scores here are 30.713396% and
+100%. Refresh all six semantic views, raw calls/delay slots, neighbors and
+source history before reconciliation. The game-specific menu/window/input
+chain is not a vendored body; SDK calls remain intact.
+
+Keep the two complete 24-byte by-value labels, their halfword alignment,
+the separate state pointer, corrected input/exit CFG and all seven reviewed
+internal jump targets. Preserve this worktree's `hud_gauges_enabled`,
+`compass_enabled`, `MENU_TEXT_END` and SDK button names when taking the new
+body. The five retail sound calls pass 0/0/1/1/2: navigation, navigation,
+confirmation, confirmation, cancellation. Apply the existing sound names
+to those actual arguments rather than retaining the old reconstruction's
+five zeros. The preceding audio table's assertion was based on that old
+source and is corrected above.
+
+The panel has 19 direct calls and nine ordered data addresses. Compare the
+reconciled source with an independent incoming-source compile allowing only
+the two established field-name substitutions for header compatibility.
+Require the helper's complete 102 words to remain retail-exact, and the
+panel's only retained differences to be the incoming nine register-role
+words. Compare all other objects and function scores, preserve the imported
+helper bank row, run full build, lint, tests and whitespace checks before
+committing. No new exact result or compiler mechanism is claimed.
+
+### Reconciliation verdict
+
+The named source compiles identically in every object section to the
+independent incoming-source control. The panel retains 321 words, 19 calls,
+nine ordered data addresses and precisely the incoming nine differing word
+offsets (`034/b0/12c/1c0/230/2c4/3b4/3e8/44c`). Its strict result improves
+from this branch's 30.713396% to the incoming 99.859810%. The helper retains
+all 102 exact retail words, nine calls and eleven data addresses. All other
+111 objects and 483 strict function scores are unchanged. Only the seven
+incoming relocation rows, two function identities and one exact-helper bank
+row change; the branch's other curated semantic names are preserved.
+
+Lint, whitespace checks and all 653 tests pass (85.337 seconds, nine skips).
+Full `kf build` retains the existing source-data 7/60, SDK/config-data 4/4,
+and target-relink PSX 1/1, GAME 75/77 and OPEN 34/38 results. The six section
+base conflicts remain, with no artifact failures. This reconciliation also
+removes the earlier inaccurate assertion that all five config-menu cues
+were deliberately zero; their reviewed argument sequence is 0/0/1/1/2.
