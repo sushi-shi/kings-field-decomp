@@ -732,3 +732,79 @@ The full build still reports the pre-existing data-placement/ownership
 failures. A separate `build/constant-names/post-renderer-merge/` baseline
 records all 112 objects, the complete strict report and 484 score rows for
 subsequent naming work. The original post-merge baseline is retained.
+
+## GPU setup, system screens and transition fades
+
+Function Match Plan: name the SDK texture-format/blend/reset selectors,
+the measured system-message rectangle and texture location, common
+transition-image/fade contract, and the renderer's floor-item, HUD and
+notification texture handles. Apply the SDK selectors at their existing
+GAME/OPEN calls and share system-screen names with the image-until-input
+routine. Keep both fade loops, byte stores, repeated calls, packet layout,
+palette coordinates and control conditions unchanged. Reuse the existing
+per-function evidence snapshots and current 1839ef2 object/strict baseline;
+require every non-debug section and score to remain unchanged.
+
+Sony's [Run-Time Library Reference, GetTPage](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/Libref.pdf#page=301)
+specifies texture selectors 0/1/2 for 4-bit indexed, 8-bit indexed and
+16-bit direct color, and blend selector 0 for equal background/foreground
+weights. Its [ResetGraph entry](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/Libref.pdf#page=324)
+distinguishes complete reset 0 from display-preserving reset 3. These
+documented 2.x APIs agree with the pinned LIBGPU declarations and encoding
+macro; the later manual does not attribute the retail SDK version.
+
+The system-message routines use the same rectangle: (32,112) through
+(288,240), with U span 255 and V span 128. The already decoded E0..E3 TIMs
+prove the texture page at (960,256) and selected CLUT row 501. The fixed
+error/pause presentation uses brightness 96; the image-until-input routine
+instead starts at 32 and increments to 127. These are distinct policies.
+
+GAME and OPEN transition fades use the same (32,0,255,240) destination,
+the existing even-byte UV descriptor, page (576,256), CLUT row 495, OT
+index four, eighteen frames and brightness increment six. Preserve the
+byte addition and its existing ff comparison; do not turn this into a
+saturating integer ramp or substitute the system-message rectangle.
+
+Renderer consumers identify the initialized handles: floor items use the
+GAME page at (896,0) and encoded CLUT 7a40; OPEN uses (832,0) and 7a00.
+The HUD uses (896,256), notification text/gold (832,256), and notification
+digits the directly stored page code 1c. The three effect texture-page
+entries are initialized only when the caller's current-floor value is five;
+their X coordinates remain distinct 320, 384 and 832 with CLUT row 491.
+Keep their existing curated function/data identity spellings in this batch.
+
+This completes the literal audit of GAME `render.c` and
+`display_play_transition.c` and OPEN `opening_fade.c`. Their remaining
+inline values have these specific roles:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Light-matrix assignments | 3800, -2800, 0, -3000, -3600, -3400, -1300, 2700, 800 | The nine measured matrix coefficients are numeric data, retained without rounding or per-coefficient aliases. |
+| Matrix, buffer, texture-table and channel subscripts | 0/1/2/3 | Explicit coordinates in the small fixed layouts and paired buffers. |
+| Geometry origin | Division by 2 | Centers the origin within each named framebuffer dimension. |
+| Fade descriptor extents | 4/8 | Four rectangle halfwords, eight UV bytes, four RGB/command bytes; these express the actual serialized/view shapes. |
+| Fade descriptor zeros | 0 | Top-edge/UV origins, unused high UV bytes, black initial RGB and the unused command byte. |
+| Path-array extents | 7 | Exact claimed storage, including the terminating byte of each six-character literal. |
+| Path digit conversion | `'0'` | Character-code origin for the selected decimal filename digit. |
+| CLUT X and upper texture-page Y | 0 | Literal VRAM coordinate origin in the relevant SDK call. |
+| Clear/background/dither/display fields and semitransparency | 0/1 | Boolean SDK fields and arguments; separate from the named GPU mode selectors. |
+| CD return/remaining-sector tests | 0 | Failure/success and completion boundaries in the existing SDK contracts. |
+| `exit` | 1 | Conventional nonzero unsuccessful termination status. |
+| CD callback/result pointers and optional view pointers | 0 | Null pointers in the existing API contracts. |
+| Controller read argument and empty-input tests | 1 and 0 | The pinned legacy PadRead argument is ignored; zero is the no-buttons mask. The press/release waits are unchanged. |
+| Synchronization arguments | 0 | Blocking DrawSync and next-frame VSync selectors, as in the earlier renderer audit. |
+| Sector rounding and last-element/loop endpoints | 1 and -1 | Arithmetic inclusive/exclusive adjustments; the original operator and narrowing are retained. |
+| Counters, queue indices, absent rotation components and black/far channels | 0 | Empty/reset state or the mathematical/color origin, already distinguished from named mode/state selectors. |
+
+OPEN `render_init.c`, the opening scene body, controller, game loop and save
+system receive only the relevant shared GPU/screen names here. Their broader
+mode, scene, palette and persistence audits remain in progress.
+
+Validation: all 642 tests pass (nine skipped), lint and whitespace checks
+pass, and flake checks pass (642 tests, 129 sandbox skips). The screen
+regression fixture now selects the named brightness bound in both its
+positive and deliberately incorrect variants; its literal retail words,
+call targets and referent controls are unchanged. All 112 non-debug object
+contents and 484 strict scores match the 1839ef2 baseline; six objects
+differ only in debug-line records. The full build retains the existing
+data-placement/ownership failures.

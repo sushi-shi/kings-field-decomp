@@ -103,7 +103,7 @@ void game_shutdown(void)
     memory_card_shutdown_events();
     audio_shutdown();
     PadStop();
-    ResetGraph(3);
+    ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
 }
 
 ADDRESS(0x800149d4, 0x20)

@@ -6,7 +6,9 @@
 #include <kf/open_resources.h>
 
 enum {
-    PRIMITIVE_BUFFER_BYTES = 0x26160
+    PRIMITIVE_BUFFER_BYTES = 0x26160,
+    FLOOR_ITEM_TPAGE_X = 832,
+    FLOOR_ITEM_CLUT = 0x7a00
 };
 
 DATA(0x80035944, 0xa0)
@@ -90,8 +92,10 @@ void render_initialize(void)
         &open_graphics_runtime.render_state.light_matrix,
         &open_graphics_runtime.render_state.quadrant_matrices[3],
         &open_graphics_runtime.light_quadrant_matrices[3]);
-    open_graphics_runtime.floor_item_state.texture_tpage = GetTPage(1, 0, 0x340, 0);
-    open_graphics_runtime.floor_item_state.texture_clut = 0x7a00;
+    open_graphics_runtime.floor_item_state.texture_tpage = GetTPage(
+        KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
+        FLOOR_ITEM_TPAGE_X, 0);
+    open_graphics_runtime.floor_item_state.texture_clut = FLOOR_ITEM_CLUT;
 }
 
 ADDRESS(0x80016adc, 0x1d8)
@@ -103,9 +107,9 @@ void display_initialize(s32 mode)
     DRAWENV *second_draw;
 
     if (mode == 0xfe) {
-        ResetGraph(3);
+        ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     } else {
-        ResetGraph(0);
+        ResetGraph(KF_GPU_RESET_FULL);
     }
     framebuffer_height = KF_DISPLAY_HEIGHT;
     InitGeom();

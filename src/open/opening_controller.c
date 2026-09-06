@@ -121,6 +121,6 @@ opening_complete:
 
     opening_fade_in();
     audio_shutdown();
-    ResetGraph(3);
+    ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     PadStop();
 }

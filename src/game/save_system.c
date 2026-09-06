@@ -6,6 +6,11 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+enum {
+    IMAGE_WAIT_INITIAL_BRIGHTNESS = 32,
+    IMAGE_WAIT_MAX_BRIGHTNESS = 127
+};
+
 /* Jump tables and string literals of this unit in the retail data region. */
 RODATA(0x8001235c, 0x178)
 
@@ -740,31 +745,33 @@ ADDRESS(0x8002c794, 0x240)
 void screen_show_image_until_input(const char *path)
 {
     POLY_FT4 polygon;
-    s32 brightness = 0x20;
+    s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
     u8 pressed = 0;
     s32 index;
 
     DrawSync(0);
     SetPolyFT4(&polygon);
     SetSemiTrans(&polygon, 1);
-    polygon.x0 = 0x20;
-    polygon.y0 = 0x70;
-    polygon.x1 = 0x120;
-    polygon.y1 = 0x70;
-    polygon.x2 = 0x20;
-    polygon.y2 = 0xf0;
-    polygon.x3 = 0x120;
-    polygon.y3 = 0xf0;
+    polygon.x0 = KF_SYSTEM_SCREEN_LEFT;
+    polygon.y0 = KF_SYSTEM_SCREEN_TOP;
+    polygon.x1 = KF_SYSTEM_SCREEN_RIGHT;
+    polygon.y1 = KF_SYSTEM_SCREEN_TOP;
+    polygon.x2 = KF_SYSTEM_SCREEN_LEFT;
+    polygon.y2 = KF_SYSTEM_SCREEN_BOTTOM;
+    polygon.x3 = KF_SYSTEM_SCREEN_RIGHT;
+    polygon.y3 = KF_SYSTEM_SCREEN_BOTTOM;
     polygon.u0 = 0;
     polygon.v0 = 0;
-    polygon.u1 = 0xff;
+    polygon.u1 = KF_SYSTEM_SCREEN_U_SPAN;
     polygon.v1 = 0;
     polygon.u2 = 0;
-    polygon.v2 = 0x80;
-    polygon.u3 = 0xff;
-    polygon.v3 = 0x80;
-    polygon.clut = GetClut(0, 0x1f5);
-    polygon.tpage = GetTPage(0, 0, 0x3c0, 0x100);
+    polygon.v2 = KF_SYSTEM_SCREEN_V_SPAN;
+    polygon.u3 = KF_SYSTEM_SCREEN_U_SPAN;
+    polygon.v3 = KF_SYSTEM_SCREEN_V_SPAN;
+    polygon.clut = GetClut(0, KF_SYSTEM_SCREEN_CLUT_Y);
+    polygon.tpage = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
     if (cd_file_load_into(display_state.asset_load_buffer, path) != 0) {
         return;
     }
@@ -775,7 +782,7 @@ void screen_show_image_until_input(const char *path)
     PutDrawEnv(&display_draw_environments[index]);
     display_state.ordering_table = display_state.ordering_tables[index].entries;
     for (;;) {
-        if (brightness < 127) {
+        if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
         polygon.r0 = brightness;

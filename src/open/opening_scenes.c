@@ -202,8 +202,12 @@ void opening_scene1_draw_fade(u8 shade)
 
     SetPolyFT4(left);
     SetPolyFT4(right);
-    left->tpage = GetTPage(2, 0, 0x140, 0x100);
-    right->tpage = GetTPage(2, 0, 0x1c0, 0x100);
+    left->tpage = GetTPage(
+        KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
+        0x140, KF_TEXTURE_LOWER_PAGE_Y);
+    right->tpage = GetTPage(
+        KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
+        0x1c0, KF_TEXTURE_LOWER_PAGE_Y);
 
     left->x0 = 0;
     left->y0 = 0;
@@ -387,9 +391,13 @@ void opening_scene3_run(void)
 
     wave_angle = 0;
     opening_resources_load_scene3();
-    texture_pages[0] = (u16)GetTPage(0, 0, 0x1c0, 0x100);
+    texture_pages[0] = (u16)GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x1c0, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[0] = (u16)GetClut(0, 0x1ed);
-    texture_pages[1] = (u16)GetTPage(0, 0, 0x200, 0x100);
+    texture_pages[1] = (u16)GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x200, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[1] = (u16)GetClut(0, 0x1ee);
 
     entity_13 = opening_entity_find_by_object_id(opening_entity_state.entities, 13);
@@ -615,23 +623,41 @@ void opening_ending_scroll_run(void)
     open_graphics_runtime.render_state.light_matrix = light_matrix;
     lighting_blend = 0;
     opening_resources_load_ending_entities();
-    texture_pages[0] = GetTPage(0, 0, 0x1c0, 0x100);
+    texture_pages[0] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x1c0, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[0] = GetClut(0, 0x1ed);
-    texture_pages[1] = GetTPage(0, 0, 0x200, 0x100);
+    texture_pages[1] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x200, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[1] = GetClut(0, 0x1ee);
-    texture_pages[2] = GetTPage(0, 0, 0x240, 0x100);
+    texture_pages[2] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x240, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[2] = GetClut(0, 0x1ef);
-    texture_pages[3] = GetTPage(0, 0, 0x280, 0x100);
+    texture_pages[3] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x280, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[3] = GetClut(0, 0x1f0);
-    texture_pages[4] = GetTPage(0, 0, 0x2c0, 0x100);
+    texture_pages[4] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x2c0, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[4] = GetClut(0, 0x1f1);
-    texture_pages[5] = GetTPage(0, 0, 0x300, 0x100);
+    texture_pages[5] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x300, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[5] = GetClut(0, 0x1f2);
-    texture_pages[6] = GetTPage(0, 0, 0x340, 0x100);
+    texture_pages[6] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x340, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[6] = GetClut(0, 0x1f3);
-    texture_pages[7] = GetTPage(0, 0, 0x380, 0x100);
+    texture_pages[7] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x380, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[7] = GetClut(0, 0x1f4);
-    texture_pages[8] = GetTPage(0, 0, 0x3c0, 0x100);
+    texture_pages[8] = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        0x3c0, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[8] = GetClut(0, 0x1f5);
 
     entity_26 = opening_entity_find_by_object_id(opening_entity_state.entities, 26);

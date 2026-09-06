@@ -29,6 +29,28 @@ enum {
     KF_RGB555_STP = 0x8000
 };
 
+enum {
+    KF_GPU_TEXTURE_4BIT = 0,
+    KF_GPU_TEXTURE_8BIT = 1,
+    KF_GPU_TEXTURE_16BIT = 2,
+    KF_GPU_BLEND_AVERAGE = 0,
+    KF_GPU_RESET_FULL = 0,
+    KF_GPU_RESET_KEEP_DISPLAY = 3,
+    KF_TEXTURE_LOWER_PAGE_Y = 256
+};
+
+enum {
+    KF_TRANSITION_RECT_X = 32,
+    KF_TRANSITION_RECT_WIDTH = 255,
+    KF_TRANSITION_RECT_HEIGHT = 240,
+    KF_TRANSITION_TPAGE_X = 576,
+    KF_TRANSITION_CLUT_Y = 495,
+    KF_TRANSITION_FADE_FRAMES = 18,
+    KF_TRANSITION_FADE_STEP = 6,
+    KF_TRANSITION_FADE_LIMIT = 255,
+    KF_TRANSITION_OT_DEPTH = 4
+};
+
 /* Texture rectangle followed by its screen-space or projected rectangle. */
 typedef struct KfSpriteQuad {
     u8 u;

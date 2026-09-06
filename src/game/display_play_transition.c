@@ -17,9 +17,13 @@ typedef struct {
 /* Position rect {x, y, w, h}, texture-coordinate rect (even bytes u, v, w, h),
  * and the fade modulation color that ramps up from black. */
 DATA(0x80057b14, 0x8)
-FadeRect fade_screen_rect = {{32, 0, 255, 240}};
+FadeRect fade_screen_rect = {{
+    KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
+}};
 DATA(0x80057b1c, 0x8)
-FadeUv fade_screen_uv = {{0, 0, 0, 0, 255, 0, 240, 0}};
+FadeUv fade_screen_uv = {{
+    0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
+}};
 DATA(0x80057b24, 0x4)
 FadeColor fade_screen_color = {{0, 0, 0, 0}};
 DATA(0x80057b28, 0x7)
@@ -47,19 +51,21 @@ void display_play_transition(void)
     }
     tim_upload_images(display_state.asset_load_buffer);
 
-    tpage = GetTPage(0, 0, 0x240, 0x100);
-    clut = GetClut(0, 0x1ef);
+    tpage = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        KF_TRANSITION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+    clut = GetClut(0, KF_TRANSITION_CLUT_Y);
 
-    for (i = 0; i < 18; i++) {
+    for (i = 0; i < KF_TRANSITION_FADE_FRAMES; i++) {
         display_begin_frame();
-        if (color.v[0] < 0xff) {
-            color.v[0] += 6;
+        if (color.v[0] < KF_TRANSITION_FADE_LIMIT) {
+            color.v[0] += KF_TRANSITION_FADE_STEP;
         } else {
-            color.v[0] = 0xff;
+            color.v[0] = KF_TRANSITION_FADE_LIMIT;
         }
         color.v[2] = color.v[0];
         color.v[1] = color.v[0];
-        sprite_add_ft4(rect.v, uv.v, tpage, clut, color.v, 4);
+        sprite_add_ft4(rect.v, uv.v, tpage, clut, color.v, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
     }
     DrawSync(0);

@@ -6,9 +6,13 @@ typedef struct {
 } OpeningFadeColor;
 
 DATA(0x800372c0, 0x8)
-u16 opening_fade_rect[4] = {32, 0, 255, 240};
+u16 opening_fade_rect[4] = {
+    KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
+};
 DATA(0x800372c8, 0x8)
-u8 opening_fade_uv[8] = {0, 0, 0, 0, 255, 0, 240, 0};
+u8 opening_fade_uv[8] = {
+    0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
+};
 DATA(0x800372d0, 0x4)
 OpeningFadeColor opening_fade_color = {{0, 0, 0, 0}};
 
@@ -20,22 +24,24 @@ void opening_fade_in(void)
     int clut;
     s32 frame;
 
-    tpage = GetTPage(0, 0, 0x240, 0x100);
-    clut = GetClut(0, 0x1ef);
+    tpage = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        KF_TRANSITION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+    clut = GetClut(0, KF_TRANSITION_CLUT_Y);
     frame = 0;
     do {
         display_begin_frame();
-        if (color.v[0] < 0xff) {
-            color.v[0] += 6;
+        if (color.v[0] < KF_TRANSITION_FADE_LIMIT) {
+            color.v[0] += KF_TRANSITION_FADE_STEP;
         } else {
-            color.v[0] = 0xff;
+            color.v[0] = KF_TRANSITION_FADE_LIMIT;
         }
         color.v[2] = color.v[0];
         color.v[1] = color.v[0];
         sprite_add_ft4(
-            opening_fade_rect, opening_fade_uv, tpage, clut, color.v, 4);
+            opening_fade_rect, opening_fade_uv, tpage, clut, color.v, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
         frame++;
-    } while (frame < 18);
+    } while (frame < KF_TRANSITION_FADE_FRAMES);
     DrawSync(0);
 }

@@ -11,7 +11,19 @@
 enum {
     ERROR_SCREEN_READ_ATTEMPTS = 50,
     PRIMITIVE_BUFFER_BYTES = 0x19640,
-    INITIAL_BACK_COLOR = 60
+    INITIAL_BACK_COLOR = 60,
+    SYSTEM_SCREEN_BRIGHTNESS = 96,
+    SYSTEM_SCREEN_PATH_DIGIT = 2,
+    EFFECT_TEXTURE_FLOOR = 5,
+    EFFECT_TEXTURE_FIRST_PAGE_X = 320,
+    EFFECT_TEXTURE_SECOND_PAGE_X = 384,
+    EFFECT_TEXTURE_THIRD_PAGE_X = 832,
+    EFFECT_TEXTURE_CLUT_Y = 491,
+    FLOOR_ITEM_TPAGE_X = 896,
+    FLOOR_ITEM_CLUT = 0x7a40,
+    HUD_TPAGE_X = 896,
+    NOTIFICATION_TPAGE_X = 832,
+    NOTIFICATION_DIGIT_TPAGE = 0x1c
 };
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
@@ -46,27 +58,29 @@ void display_show_error_screen(s32 stage)
     DrawSync(0);
     SetPolyFT4(&prim);
     SetSemiTrans(&prim, 1);
-    prim.x0 = 32;
-    prim.y0 = 112;
-    prim.x1 = 288;
-    prim.y1 = 112;
-    prim.x2 = 32;
-    prim.y2 = 240;
-    prim.x3 = 288;
-    prim.y3 = 240;
+    prim.x0 = KF_SYSTEM_SCREEN_LEFT;
+    prim.y0 = KF_SYSTEM_SCREEN_TOP;
+    prim.x1 = KF_SYSTEM_SCREEN_RIGHT;
+    prim.y1 = KF_SYSTEM_SCREEN_TOP;
+    prim.x2 = KF_SYSTEM_SCREEN_LEFT;
+    prim.y2 = KF_SYSTEM_SCREEN_BOTTOM;
+    prim.x3 = KF_SYSTEM_SCREEN_RIGHT;
+    prim.y3 = KF_SYSTEM_SCREEN_BOTTOM;
     prim.u0 = 0;
     prim.v0 = 0;
-    prim.u1 = 255;
+    prim.u1 = KF_SYSTEM_SCREEN_U_SPAN;
     prim.v1 = 0;
     prim.u2 = 0;
-    prim.v2 = 128;
-    prim.u3 = 255;
-    prim.v3 = 128;
-    prim.clut = GetClut(0, 0x1f5);
-    prim.tpage = GetTPage(0, 0, 0x3c0, 0x100);
+    prim.v2 = KF_SYSTEM_SCREEN_V_SPAN;
+    prim.u3 = KF_SYSTEM_SCREEN_U_SPAN;
+    prim.v3 = KF_SYSTEM_SCREEN_V_SPAN;
+    prim.clut = GetClut(0, KF_SYSTEM_SCREEN_CLUT_Y);
+    prim.tpage = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
     memcpy(cd_path_buffer, error_screen_path, sizeof error_screen_path);
-    cd_path_buffer[2] = stage + '0';
+    cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = stage + '0';
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == 0) {
         exit(1);
     }
@@ -96,7 +110,7 @@ void display_show_error_screen(s32 stage)
     display_draw_environments[back].dfe = 0;
     PutDrawEnv(&display_draw_environments[back]);
     display_state.ordering_table = display_state.ordering_tables[back].entries;
-    prim.r0 = prim.g0 = prim.b0 = 0x60;
+    prim.r0 = prim.g0 = prim.b0 = SYSTEM_SCREEN_BRIGHTNESS;
     ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
     AddPrim(display_state.ordering_table, &prim);
     DrawSync(0);
@@ -119,20 +133,26 @@ void lighting_set_active_color_matrix(s32 index)
 ADDRESS(0x8001bae4, 0xb0)
 void effect5_texture_cache_prepare(s32 mode)
 {
-    if (mode == 5) {
-        effect5_texture_pages[0] = GetTPage(1, 0, 0x140, 0x100);
-        effect5_texture_pages[1] = GetTPage(1, 0, 0x180, 0x100);
-        effect5_texture_pages[2] = GetTPage(1, 0, 0x340, 0x100);
-        effect5_texture_cluts[0] = GetClut(0, 0x1eb);
-        effect5_texture_cluts[1] = GetClut(0, 0x1eb);
-        effect5_texture_cluts[2] = GetClut(0, 0x1eb);
+    if (mode == EFFECT_TEXTURE_FLOOR) {
+        effect5_texture_pages[0] = GetTPage(
+            KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
+            EFFECT_TEXTURE_FIRST_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+        effect5_texture_pages[1] = GetTPage(
+            KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
+            EFFECT_TEXTURE_SECOND_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+        effect5_texture_pages[2] = GetTPage(
+            KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
+            EFFECT_TEXTURE_THIRD_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+        effect5_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        effect5_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        effect5_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
     }
 }
 
 ADDRESS(0x8001bb94, 0x14c)
 void display_initialize(void)
 {
-    ResetGraph(3);
+    ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     InitGeom();
     SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);
     SetDefDrawEnv(
@@ -219,13 +239,19 @@ void render_initialize(void)
         &render_state.light_matrix,
         &render_state.quadrant_matrices[3],
         &light_quadrant_matrices[3]);
-    DAT_8009508e = GetTPage(1, 0, 0x380, 0);
-    DAT_8009508c = 0x7a40;
-    DAT_80095062 = GetTPage(0, 0, 0x380, 0x100);
+    DAT_8009508e = GetTPage(
+        KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
+        FLOOR_ITEM_TPAGE_X, 0);
+    DAT_8009508c = FLOOR_ITEM_CLUT;
+    DAT_80095062 = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        HUD_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
     DAT_80095060 = GetClut(DAT_80055dac, DAT_80055dae);
-    DAT_80095068 = GetTPage(0, 0, 0x340, 0x100);
+    DAT_80095068 = GetTPage(
+        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
+        NOTIFICATION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
     DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
-    DAT_8009506c = 0x1c;
+    DAT_8009506c = NOTIFICATION_DIGIT_TPAGE;
     notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     notification_state.control.queue_tail = 0;
     notification_state.control.queue_head = 0;

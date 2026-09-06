@@ -199,13 +199,13 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         expected = list(struct.unpack('<144I', image.require(claim.va, claim.body_size)))
         self.assertEqual(expected[0x15C // 4:0x174 // 4],
                          [0x10400002, 0, 0x26310001, 0xA3B10014, 0xA3B10015, 0xA3B10016])
-        correct = '''        if (brightness < 127) {
+        correct = '''        if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
         polygon.r0 = brightness;
         polygon.g0 = brightness;
         polygon.b0 = brightness;'''
-        old = '''        if (brightness < 127) {
+        old = '''        if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
             polygon.r0 = brightness;
             polygon.g0 = brightness;
