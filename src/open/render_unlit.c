@@ -8,7 +8,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     KfTmdObject *object = tmd_get_object(object_index);
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
-        (object->primitive_offset + 12);
+        (object->primitive_offset + KF_TMD_HEADER_BYTES);
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
@@ -21,9 +21,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         s32 bias = depth_bias;
 
         header = *(u32 *)packet;
-        packet += 4;
-        switch (header >> 24) {
-        case 0x24: {
+        packet += KF_TMD_PACKET_HEADER_BYTES;
+        switch (header >> KF_TMD_MODE_SHIFT) {
+        case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *triangle = (KfTmdPrimitive *)packet;
             KfGpuFT3 *prim;
 
@@ -50,7 +50,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             prim->sdk.b0 = open_graphics_runtime.floor_item_state.material.color.b;
             break;
         }
-        case 0x20: {
+        case KF_TMD_MODE_F3: {
             KfTmdPrimitive *triangle = (KfTmdPrimitive *)packet;
             KfGpuF3 *prim;
 
@@ -75,15 +75,15 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         default:
             goto next_packet;
         }
-        depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2;
+        depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
         depth += bias;
-        if (depth >= 5) {
+        if (depth >= KF_SCENE_MIN_OT_DEPTH) {
             AddPrim(
                 &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                 primitive);
         }
 
     next_packet:
-        packet += (header >> 6) & 0x3fc;
+        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
     }
 }

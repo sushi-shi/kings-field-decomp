@@ -9,13 +9,17 @@ typedef union KfMapGpuPrimitive {
 } KfMapGpuPrimitive;
 
 DATA(0x800372f8, 0x4)
-CVECTOR map_textured_primitive_color = {0x80, 0x80, 0x80, 0};
+CVECTOR map_textured_primitive_color = {
+    KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,
+    KF_TEXTURE_BASE_BRIGHTNESS, 0
+};
 
 ADDRESS(0x800185e8, 0x3b8)
 void render_enqueue_map(u16 object_index)
 {
     KfTmdObject *object = tmd_get_object(object_index);
-    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->normal_offset + 12);
+    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+        (object->normal_offset + KF_TMD_HEADER_BYTES);
     u8 *packet;
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
@@ -27,15 +31,16 @@ void render_enqueue_map(u16 object_index)
 
     tmd_project_vertices(object->vertex_count);
     remaining = object->primitive_count;
-    packet = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + 12);
+    packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+        (object->primitive_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
         KfMapGpuPrimitive *prim;
 
         header = *(u32 *)packet;
-        packet += 4;
-        switch (header >> 24) {
-        case 0x2c: {
+        packet += KF_TMD_PACKET_HEADER_BYTES;
+        switch (header >> KF_TMD_MODE_SHIFT) {
+        case KF_TMD_MODE_FT4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             s32 depth;
 
@@ -65,8 +70,9 @@ void render_enqueue_map(u16 object_index)
             DpqColor(&shade, vertex1->p2, &prim->quad.packed.color1);
             DpqColor(&shade, vertex2->p2, &prim->quad.packed.color2);
             DpqColor(&shade, vertex3->p2, &prim->quad.packed.color3);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4)
-                + 200;
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2))
+                + KF_MAP_OT_DEPTH_BIAS;
             if (depth < KF_ORDERING_TABLE_LENGTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -74,7 +80,7 @@ void render_enqueue_map(u16 object_index)
             }
             break;
         }
-        case 0x24: {
+        case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             s32 depth;
 
@@ -100,7 +106,8 @@ void render_enqueue_map(u16 object_index)
             DpqColor(&shade, vertex0->p2, &prim->triangle.packed.color0);
             DpqColor(&shade, vertex1->p2, &prim->triangle.packed.color1);
             DpqColor(&shade, vertex2->p2, &prim->triangle.packed.color2);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + 200;
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + KF_MAP_OT_DEPTH_BIAS;
             if (depth < KF_ORDERING_TABLE_LENGTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -112,6 +119,6 @@ void render_enqueue_map(u16 object_index)
             goto next_packet;
         }
     next_packet:
-        packet += (header >> 6) & 0x3fc;
+        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
     }
 }

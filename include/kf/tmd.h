@@ -12,6 +12,28 @@ enum {
     KF_TMD_SLOT_MENU_ITEM = 4
 };
 
+enum {
+    KF_TMD_HEADER_BYTES = 12,
+    KF_TMD_PACKET_HEADER_BYTES = 4,
+    KF_TMD_WORD_BYTES = 4,
+    KF_TMD_ILEN_BYTE = 1,
+    KF_TMD_MODE_SHIFT = 24,
+    KF_TMD_MODE_MASK = 0xfd,
+    KF_TMD_MODE_SEMITRANS = 0x02,
+    KF_TMD_ILEN_TO_BYTES_SHIFT = 6,
+    KF_TMD_BODY_BYTES_MASK = 0x3fc,
+    KF_TMD_VECTOR_OFFSET_SHIFT = 3,
+    KF_TMD_DEFAULT_PERSPECTIVE_SHIFT = 1,
+    KF_TMD_MODE_F3 = 0x20,
+    KF_TMD_MODE_FT3 = 0x24,
+    KF_TMD_MODE_F4 = 0x28,
+    KF_TMD_MODE_FT4 = 0x2c,
+    KF_TMD_MODE_G3 = 0x30,
+    KF_TMD_MODE_GT3 = 0x34,
+    KF_TMD_MODE_G4 = 0x38,
+    KF_TMD_MODE_GT4 = 0x3c
+};
+
 /* On-disk counts are words; individual consumers may narrow them. */
 typedef struct KfTmdHeader {
     u32 id;

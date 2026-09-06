@@ -2,7 +2,7 @@
 #include <kf/open_render.h>
 
 DATA(0x800372fc, 0x8)
-SVECTOR render_sprite_light_normal = {0, 0, 0x1000, 0};
+SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};
 
 ADDRESS(0x800189a0, 0x21c)
 void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
@@ -48,7 +48,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
     }
     NormalColorDpq(&render_sprite_light_normal, &open_graphics_runtime.floor_item_state.material.color,
                    p, (CVECTOR *)&prim->r0);
-    if (otz + depth_bias >= 5) {
+    if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
             &open_graphics_runtime.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
             prim);

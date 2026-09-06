@@ -12,18 +12,9 @@
  */
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
-#define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + 12))
+#define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + KF_TMD_HEADER_BYTES))
 /* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
-#define TMD_PACKET_BODY(packet) ((packet) + 4)
-
-#define TMD_F3 0x20
-#define TMD_FT3 0x24
-#define TMD_F4 0x28
-#define TMD_FT4 0x2c
-#define TMD_G3 0x30
-#define TMD_GT3 0x34
-#define TMD_G4 0x38
-#define TMD_GT4 0x3c
+#define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
 
 ADDRESS(0x80016d38, 0x98)
 void display_begin_frame(void)
@@ -70,7 +61,8 @@ ADDRESS(0x80016ec8, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     open_graphics_runtime.current_tmd_vertices =
-        (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_asset + 12 + tmd_get_object(index)->vertex_offset);
+        (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_asset
+            + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
 }
 
 ADDRESS(0x80016f04, 0x12c)
@@ -120,91 +112,92 @@ void tmd_prepare_primitive_indices(void)
     }
     do {
         primitive_count = (u16)object->primitive_count;
-        packet = (u8 *)open_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + 12);
+        packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+            (object->primitive_offset + KF_TMD_HEADER_BYTES);
         primitives_left = primitive_count;
         primitives_left--;
         if (primitive_count != 0) {
             do {
                 body = TMD_PACKET_BODY(packet);
                 word = *(u32 *)packet;
-                packet = body + packet[1] * 4;
-            switch ((word >> 24) & 0xfd) {
-                case TMD_F3: {
+                packet = body + packet[KF_TMD_ILEN_BYTE] * KF_TMD_WORD_BYTES;
+                switch ((word >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK) {
+                case KF_TMD_MODE_F3: {
                     KfTmdF3 *p = (KfTmdF3 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->n0 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_G3: {
+                case KF_TMD_MODE_G3: {
                     KfTmdG3 *p = (KfTmdG3 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->n0 <<= 3;
-                    p->n1 <<= 3;
-                    p->n2 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_FT3: {
+                case KF_TMD_MODE_FT3: {
                     KfTmdFt3 *p = (KfTmdFt3 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->n0 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_GT3: {
+                case KF_TMD_MODE_GT3: {
                     KfTmdGt3 *p = (KfTmdGt3 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->n0 <<= 3;
-                    p->n1 <<= 3;
-                    p->n2 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_F4: {
+                case KF_TMD_MODE_F4: {
                     KfTmdF4 *p = (KfTmdF4 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->v3 <<= 3;
-                    p->n0 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_G4: {
+                case KF_TMD_MODE_G4: {
                     KfTmdG4 *p = (KfTmdG4 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->v3 <<= 3;
-                    p->n0 <<= 3;
-                    p->n1 <<= 3;
-                    p->n2 <<= 3;
-                    p->n3 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_FT4: {
+                case KF_TMD_MODE_FT4: {
                     KfTmdFt4 *p = (KfTmdFt4 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->v3 <<= 3;
-                    p->n0 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
-                case TMD_GT4: {
+                case KF_TMD_MODE_GT4: {
                     KfTmdGt4 *p = (KfTmdGt4 *)body;
-                    p->v0 <<= 3;
-                    p->v1 <<= 3;
-                    p->v2 <<= 3;
-                    p->v3 <<= 3;
-                    p->n0 <<= 3;
-                    p->n1 <<= 3;
-                    p->n2 <<= 3;
-                    p->n3 <<= 3;
+                    p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->v3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
+                    p->n3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
                 }
                 }
@@ -289,7 +282,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         RotTransPers(vertex, &out->sxy, &perspective, &flag);
-        out->p2 = (u16)perspective << 1;
+        out->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         out->sz = depth >> shift;
         out++;

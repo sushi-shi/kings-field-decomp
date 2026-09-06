@@ -156,7 +156,7 @@ void display_initialize(s32 mode)
     SetFarColor(0, 0, 0);
     open_graphics_runtime.render_state.fog_near_distance = KF_INITIAL_FOG_NEAR_DISTANCE;
     SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
-    open_graphics_runtime.tmd_projection_shift = 1;
+    open_graphics_runtime.tmd_projection_shift = KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
     render_initialize();
 }
 

@@ -3,7 +3,10 @@
 #include <kf/open_render.h>
 
 DATA(0x800372f0, 0x4)
-CVECTOR tmd_textured_primitive_color = {0x80, 0x80, 0x80, 0};
+CVECTOR tmd_textured_primitive_color = {
+    KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,
+    KF_TEXTURE_BASE_BRIGHTNESS, 0
+};
 
 RODATA(0x800121c0, 0x74)
 
@@ -13,9 +16,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     KfTmdObject *object = tmd_get_object(object_index);
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
-        (object->primitive_offset + 12);
+        (object->primitive_offset + KF_TMD_HEADER_BYTES);
     u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
-        (object->normal_offset + 12);
+        (object->normal_offset + KF_TMD_HEADER_BYTES);
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
@@ -27,9 +30,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
         u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
 
         header = *(u32 *)packet;
-        packet += 4;
-        switch (header >> 24) {
-        case 0x24: {
+        packet += KF_TMD_PACKET_HEADER_BYTES;
+        switch (header >> KF_TMD_MODE_SHIFT) {
+        case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuFT3 *prim;
 
@@ -53,15 +56,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             NormalColorDpq((SVECTOR *)(normals + polygon->ft3.n0), &tmd_textured_primitive_color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2) / 3,
                            &prim->packed.color0);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
-            if (depth >= 5) {
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x28: {
+        case KF_TMD_MODE_F4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF4 *prim;
 
@@ -81,15 +85,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             NormalColorDpq((SVECTOR *)(normals + polygon->f4.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2 + vertex3->p2) >> 2,
                            &prim->packed.color0);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
-            if (depth >= 5) {
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x30: {
+        case KF_TMD_MODE_G3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG3 *prim;
 
@@ -109,15 +114,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             (SVECTOR *)(normals + polygon->g3.n2), &polygon->color,
                             vertex0->p2, &prim->packed.color0,
                             &prim->packed.color1, &prim->packed.color2);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
-            if (depth >= 5) {
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x38: {
+        case KF_TMD_MODE_G4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG4 *prim;
 
@@ -141,15 +147,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             &prim->packed.color1, &prim->packed.color2);
             NormalColorDpq((SVECTOR *)(normals + polygon->g4.n3), &polygon->color,
                            vertex0->p2, &prim->packed.color3);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
-            if (depth >= 5) {
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x34: {
+        case KF_TMD_MODE_GT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuGT3 *prim;
 
@@ -175,15 +182,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             (SVECTOR *)(normals + polygon->gt3.n2), &tmd_textured_primitive_color,
                             vertex0->p2, &prim->packed.color0,
                             &prim->packed.color1, &prim->packed.color2);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
-            if (depth >= 5) {
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x3c: {
+        case KF_TMD_MODE_GT4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuGT4 *prim;
 
@@ -214,15 +222,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             &prim->packed.color1, &prim->packed.color2);
             NormalColorDpq((SVECTOR *)(normals + polygon->gt4.n3), &tmd_textured_primitive_color,
                            vertex0->p2, &prim->packed.color3);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
-            if (depth >= 5) {
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x32: {
+        case (KF_TMD_MODE_G3 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG3 *prim;
 
@@ -243,15 +252,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                             (SVECTOR *)(normals + polygon->g3.n2), &polygon->color,
                             &prim->packed.color0,
                             &prim->packed.color1, &prim->packed.color2);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
-            if (depth >= 5) {
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x2c: {
+        case KF_TMD_MODE_FT4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuFT4 *prim;
 
@@ -278,15 +288,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             NormalColorDpq((SVECTOR *)(normals + polygon->ft4.n0), &tmd_textured_primitive_color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2 + vertex3->p2) >> 2,
                            &prim->packed.color0);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
-            if (depth >= 5) {
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x20: {
+        case KF_TMD_MODE_F3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF3 *prim;
 
@@ -304,15 +315,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             NormalColorDpq((SVECTOR *)(normals + polygon->f3.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2) / 3,
                            &prim->packed.color0);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
-            if (depth >= 5) {
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x3a: {
+        case (KF_TMD_MODE_G4 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG4 *prim;
 
@@ -338,15 +350,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                            vertex0->p2, &prim->packed.color2);
             NormalColorDpq((SVECTOR *)(normals + polygon->g4.n3), &polygon->color,
                            vertex0->p2, &prim->packed.color3);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
-            if (depth >= 5) {
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x22: {
+        case (KF_TMD_MODE_F3 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF3 *prim;
 
@@ -365,15 +378,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             NormalColorDpq((SVECTOR *)(normals + polygon->f3.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2) / 3,
                            &prim->packed.color0);
-            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> 2) + depth_bias;
-            if (depth >= 5) {
+            depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
+                >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
         }
-        case 0x2a: {
+        case (KF_TMD_MODE_F4 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF4 *prim;
 
@@ -394,8 +408,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             NormalColorDpq((SVECTOR *)(normals + polygon->f4.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2 + vertex3->p2) >> 2,
                            &prim->packed.color0);
-            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz) >> 4) + depth_bias;
-            if (depth >= 5) {
+            depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
+                >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
+            if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
                     &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
@@ -407,6 +422,6 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
         }
 
     next_packet:
-        packet += (header >> 6) & 0x3fc;
+        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
     }
 }

@@ -610,3 +610,77 @@ and `nix flake check -L` pass (635 tests, 123 skips in the flake sandbox).
 The full build runs and retains the existing data-placement/ownership
 failures. All 112 non-debug object contents and 484 strict scores remain
 unchanged; 30 objects differ only in debug-line records from 893a3fa.
+
+## TMD packet and scene-depth constants
+
+Function Match Plan: share the TMD header/packet sizes, packet-field shifts
+and masks, eight polygon modes and semi-transparency bit, and vector-index
+stride across the GAME/OPEN preparation and enqueue paths. Name the scene
+depth rejection bound, map depth bias, depth-to-OT shift, default perspective
+shift and measured base texture brightness. Reuse Q12 unity for the sprite
+light normal. The existing display/TMD, packet-header and projection dossiers,
+the complete shipped TMD parser corpus, and each renderer's typed polygon
+fields provide the evidence. This batch covers GAME render/enqueuers and
+OPEN render/TMD/map/unlit/sprite functions, plus the OPEN shift initializer.
+
+Preserve the separate packet-length byte read and header-word load; do not
+replace them with a byte-only mode lookup or helper. Preserve the halfword
+countdowns, in-place halfword shifts, raw mode switches versus masked
+preparation switch, each mode's call set and argument order, signed depth
+comparisons, and the GAME model renderer's explicit comparison tree. Keep
+the original depth averaging and shifting grouped in the same order.
+Require identical non-debug sections, ordered referents and strict scores
+for every affected function; this does not attempt to close the existing
+packet-header or graphics-owner residues.
+
+TMD object offsets are relative to the end of the 12-byte file header. The
+packet's four bytes are `olen`, `ilen`, flags and mode. The independent
+length-byte path multiplies byte 1 by four; the word path uses
+`(header >> 6) & 0x3fc`, equivalent to extracting that length in bytes without
+changing its actual source shape. Mode is the top byte. Preparation clears
+only the semi-transparency bit with fd, while enqueue consumers distinguish
+their actual supported mode bytes. Vertex/normal halfwords become byte
+offsets through a three-bit shift for the eight-byte records.
+
+The ordinary scene enqueue paths accept depth from five onward. Map paths
+instead add bias 200 and enforce their existing upper bound only. Projected
+`sz` stores full depth; the ordering index divides it by four after vertex
+averaging. A quad's shift by four combines its four-way average with that
+conversion; the source still performs one shift. The projection `p2` shift
+is a separate factor-of-two convention, with OPEN keeping its mutable shift
+and separate right-shift path. Repeated texture base RGB values are 128,
+and the sprite normal is the Q12 positive-Z unit vector.
+
+The complete audits of GAME `render_enqueuers.c` and `sprite_add_ft4.c`, plus
+OPEN `render.c`, `render_tmd.c`, `render_map.c`, `render_unlit.c`,
+`render_sprite.c` and `sprite_add_ft4.c`, leave 252 inline literals:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Triangle depth/color averages | 3 | Three explicit vertex terms are being averaged; this is the formula's divisor, not a variable mesh capacity. |
+| Quad depth/color averages | 2 in a shift or combined shift | Divides four explicit vertex terms by four, retaining the original single-shift grouping for depth. |
+| Sprite corner array and accesses | Extent 4; indices 0/1/2/3 | The four named GPU corner positions, assigned and passed explicitly. |
+| 2D sprite rectangle accesses | 0/1/2/3 | Existing positional X/Y/width/height API view; preserve its exact halfword reads. |
+| 2D sprite texture accesses | 0/2/4/6 | Existing byte positions for U/V origin and U/V span; preserve the selected byte reads rather than introduce a wider load. |
+| Sprite RGB accesses | 0/1/2 | Explicit R/G/B channel coordinates. |
+| Clip tests | 0 | The signed triangle-area origin separates accepted winding from rejected or degenerate triangles. |
+| Sprite depth-cue option | `flag == 1`, `p >> 1` | Boolean selection and arithmetic half-term in the observed 1.5-times cue factor. |
+| SDK semi-transparency calls | 1 | Boolean enable argument, distinct from the packet's named mode bit. |
+| Frame synchronization calls | 0 | SDK blocking `DrawSync` and next-frame `VSync` selectors; no project-specific state is implied. |
+| Frame selector toggle | `index == 0` | Boolean inversion between the two actual buffer indices. |
+| Countdown/empty tests and resets | 0 and -1; `count - 1` | Arithmetic empty/terminal conditions, zero record counts and per-frame counters. The narrowing and update order are unchanged. |
+| Bound adjustments | `length - 1`, `minimum - 1`, `mode + 1` | Last element and equivalent exclusive endpoints, preserving each original comparison operator. |
+| Optional transform pointers | 0 | Null means retain the existing position or rotation. |
+| Rotation/sprite anchor components | 0 | Absent axis rotation or model-plane coordinate and origin. |
+| Initial CVECTOR command and SVECTOR pad | 0 | The command is filled from the allocated packet before lighting; the normal's pad remains the literal initialized storage byte/halfword. |
+| GAME sprite CVECTOR derivation | `&active_render_clut + 2` | Two halfwords reach the measured color address four bytes past CLUT. The complete graphics owner is unresolved; preserve this evidenced pointer derivation, as documented in `render-material.md`. |
+
+GAME `render.c` and OPEN `render_init.c` also receive shared format names,
+but their remaining system-screen, texture and scene-mode literals still
+belong to the pending setup audits. Retail claim values remain literal.
+
+Validation: all 635 tests pass with nine skips; lint and whitespace checks
+pass. The full build retains the existing data-placement/ownership failures.
+All 112 object files retain identical non-debug sections and all 484 strict
+scores are unchanged. Thirty-three objects have debug-line-only differences
+relative to 893a3fa. No function is newly banked.
