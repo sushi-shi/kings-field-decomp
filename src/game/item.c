@@ -217,9 +217,9 @@ void item_menu_buy(s32 shop_id)
     s32 slot;
     s32 found;
     s32 j;
+    s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 confirm = 0;
     s32 selection = -99;
 
     while (PadRead(1) != 0)
@@ -263,14 +263,15 @@ void item_menu_buy(s32 shop_id)
     for (;;) {
         menu_present_frame();
         if (confirm == 1) {
-            selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
                     KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY)
-                    != KF_MENU_CONFIRM_CANCELLED)
+                    == KF_MENU_CONFIRM_CANCELLED)
+                selection = -99;
+            else
                 selection = index[ctx.selected_index];
         }
+        confirm = 0;
         if (selection != -99) {
-            confirm = 0;
             while (PadRead(1) != 0)
                 ;
             break;
@@ -287,17 +288,19 @@ void item_menu_buy(s32 shop_id)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
-                if (ctx.cursor_row != 0)
-                    ctx.cursor_row--;
-                else
+                if (ctx.cursor_row == 0)
                     ctx.scroll_offset--;
-            } else if (ctx.entry_count < ctx.visible_rows) {
-                ctx.selected_index = ctx.entry_count - 1;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = ctx.entry_count - 1;
+                else
+                    ctx.cursor_row--;
             } else {
-                ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                ctx.cursor_row = ctx.visible_rows - 1;
+                ctx.selected_index = ctx.entry_count - 1;
+                if (ctx.entry_count < ctx.visible_rows) {
+                    ctx.scroll_offset = 0;
+                    ctx.cursor_row = ctx.entry_count - 1;
+                } else {
+                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
+                    ctx.cursor_row = ctx.visible_rows - 1;
+                }
             }
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
@@ -305,10 +308,10 @@ void item_menu_buy(s32 shop_id)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
-                if (ctx.cursor_row != ctx.visible_rows - 1)
-                    ctx.cursor_row++;
-                else
+                if (ctx.cursor_row == ctx.visible_rows - 1)
                     ctx.scroll_offset++;
+                else
+                    ctx.cursor_row++;
             } else {
                 ctx.selected_index = 0;
                 ctx.scroll_offset = 0;
@@ -360,9 +363,9 @@ void item_menu_sell(s32 shop_id)
     s32 slot;
     s32 found;
     s32 j;
+    s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 confirm = 0;
     s32 selection = -99;
 
     while (PadRead(1) != 0)
@@ -407,14 +410,15 @@ void item_menu_sell(s32 shop_id)
     for (;;) {
         menu_present_frame();
         if (confirm == 1) {
-            selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
                     KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL)
-                    != KF_MENU_CONFIRM_CANCELLED)
+                    == KF_MENU_CONFIRM_CANCELLED)
+                selection = -99;
+            else
                 selection = index[ctx.selected_index];
         }
+        confirm = 0;
         if (selection != -99) {
-            confirm = 0;
             while (PadRead(1) != 0)
                 ;
             break;
@@ -431,17 +435,19 @@ void item_menu_sell(s32 shop_id)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
-                if (ctx.cursor_row != 0)
-                    ctx.cursor_row--;
-                else
+                if (ctx.cursor_row == 0)
                     ctx.scroll_offset--;
-            } else if (ctx.entry_count < ctx.visible_rows) {
-                ctx.selected_index = ctx.entry_count - 1;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = ctx.entry_count - 1;
+                else
+                    ctx.cursor_row--;
             } else {
-                ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                ctx.cursor_row = ctx.visible_rows - 1;
+                ctx.selected_index = ctx.entry_count - 1;
+                if (ctx.entry_count < ctx.visible_rows) {
+                    ctx.scroll_offset = 0;
+                    ctx.cursor_row = ctx.entry_count - 1;
+                } else {
+                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
+                    ctx.cursor_row = ctx.visible_rows - 1;
+                }
             }
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
@@ -449,10 +455,10 @@ void item_menu_sell(s32 shop_id)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
-                if (ctx.cursor_row != ctx.visible_rows - 1)
-                    ctx.cursor_row++;
-                else
+                if (ctx.cursor_row == ctx.visible_rows - 1)
                     ctx.scroll_offset++;
+                else
+                    ctx.cursor_row++;
             } else {
                 ctx.selected_index = 0;
                 ctx.scroll_offset = 0;

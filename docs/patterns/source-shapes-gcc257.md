@@ -740,15 +740,15 @@ Residues recorded in the same module (not steered):
   quotient. Every division, dividend order and named-local variant tried keeps
   the same class assignment. Everything else (the `memcpy` stat-bank loader, the
   sector rounding) matches.
-- `func_80021538` `0x80021538` (62.3%) and `func_80021afc` `0x80021afc`
-  (67.5%): the buy/sell panels reconstruct with correct referents, call sets and
-  control flow, but two residues remain across the ~0x5c0 bodies. (1) The
-  callee-saved assignment of the menu variables permutes against retail
-  (`selection`/`confirm`/`inventory_base` land in different `sN` than retail's
-  `s1`/`s5`/`s6`). (2) `loop.c` relates the two item icon tables
-  (`DAT_80059108 == DAT_80058dc0 + 840`) into one base register that reaches the
-  second with a `-840` addend; the probe materialises each table symbol
-  separately. Both are allocation/loop-reduction classes, not structural errors.
+- `item_menu_buy` `0x80021538` and `item_menu_sell` `0x80021afc`: the earlier
+  assertion of correct control flow was wrong. The
+  [shop-panel flow audit](game-shop-panel-flow.md) restores unconditional
+  confirmation reset, long-list upward wrap, post-call cancellation handling,
+  initialization order and scroll-first branch arms. Strict objdiff improves
+  to 99.769646% and 99.609375%. Body lengths, transfer destinations, calls and
+  ordered numeric data referents now agree; 17/25 words still differ in GPR
+  operands, including three/seven delay slots. These are unattributed residues,
+  not demonstrated allocator or loop-optimizer limitations. Neither is exact.
 
 ## map events
 

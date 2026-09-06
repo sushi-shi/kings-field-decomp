@@ -281,6 +281,9 @@ promotes a probe to a proven historical toolchain.
 - [game-item-use-flow.md](game-item-use-flow.md): restores empty-list input,
   confirmation reset and long-list upward wrap; direct name-row indexing and
   loop shape recover all transfers, leaving one seven-word healing residue.
+- [game-shop-panel-flow.md](game-shop-panel-flow.md): restores buy/sell
+  confirmation reset and long-list upward wrap, with matching transfer
+  destinations and ordered referents; 17/25 register-operand words remain.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.
