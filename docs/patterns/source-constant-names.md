@@ -116,3 +116,14 @@ The initializer test accepts a named array bound while retaining its exact
 payload-size and SHA-256 checks. Lint, `nix flake check -L`, and all 634 tests
 pass (nine local prerequisites skipped); full `kf build` still reports the pre-existing data
 ownership/placement failures. Other constant domains remain under review.
+
+## Concurrent dispatcher updates
+
+Master commits `534a103` and `0674985` were brought into the naming worktree
+after the map batch. Conflict resolution starts with the incoming dispatcher
+and applies only field and map-unit spellings; reversing those substitutions
+reproduces the incoming source exactly. A focused control compiles that source
+with its original effect header, then compares the resolved unit: only
+`.debug_line` differs. The improved strict result, 96.93957%, is retained.
+This integration brings master into the worktree; the full naming campaign
+has not yet been integrated into master.
