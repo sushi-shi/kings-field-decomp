@@ -38,7 +38,8 @@ void map_restore_floor_state(void)
     s32 i;
     s32 index;
 
-    in = base - 1690 + 1700 * player_state.progress_state.current_floor;
+    in = base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET)
+        + KF_MAP_SAVED_FLOOR_BYTES * player_state.progress_state.current_floor;
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
@@ -74,7 +75,7 @@ void map_restore_floor_state(void)
             index = *in++;
             object = &map_object_state.objects[index];
             link = (u8 *)&object->link;
-            k = 7;
+            k = sizeof(object->link) - 1;
             do {
                 *link++ = *in++;
             } while (--k != -1);
@@ -110,12 +111,12 @@ void map_restore_floor_state(void)
             object->position_y =
                 -(map_floor_height_grid[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             if (object->object_id < 43) {
-                object->rotation.x = 0x400;
+                object->rotation.x = KF_ANGLE_QUARTER_TURN;
             } else if (object->object_id < 48) {
                 object->rotation.x = 0;
             }
             object->rotation.z = 0;
-            object->rotation.y = *in++ << 4;
+            object->rotation.y = *in++ << KF_MAP_SAVED_YAW_SHIFT;
             *(u16 *)&object->link = 0;
             object->link.spawn_sequence = 0;
             object->link.vertical_velocity = 0;
@@ -161,11 +162,11 @@ void map_restore_floor_state(void)
             map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;
         }
         if (DAT_8009f846 == 0) {
-            ((u8 *)&actor_state)[0x438] = 0xff;
-            ((u8 *)&actor_state)[0x43e] = 0xff;
-            ((u8 *)&actor_state)[0x43f] = 0xff;
-            ((u8 *)&actor_state)[0x440] = 0xff;
-            ((u8 *)&actor_state)[0x441] = 0xff;
+            actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ACTOR_ANIMATION_NONE;
+            actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ACTOR_ANIMATION_NONE;
+            actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ACTOR_ANIMATION_NONE;
+            actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ACTOR_ANIMATION_NONE;
+            actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ACTOR_ANIMATION_NONE;
         } else {
             map_apply_copy_region(4);
         }

@@ -102,9 +102,10 @@ s32 map_event_distance_to_point(
     if (delta_x >= -max_distance && delta_x <= max_distance) {
         delta_z = event->reference_z - point_z;
         if (delta_z >= -max_distance && delta_z <= max_distance) {
-            delta_x >>= 3;
-            delta_z >>= 3;
-            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << 3;
+            delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+            delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z)
+                << KF_LENGTH_SQUARE_DOWNSHIFT;
             if (distance <= max_distance) {
                 return distance;
             }
@@ -140,10 +141,10 @@ KfMapEvent *map_event_pool_find_target_in_cone(
         }
         angle = vector_xz_to_angle(
             event->reference_x - origin->x, origin->z - event->reference_z) - facing;
-        angle &= 0xfff;
+        angle &= KF_ANGLE_WRAP_MASK;
         folded = angle;
-        if (angle >= 2049) {
-            folded = 4096 - angle;
+        if (angle >= KF_ANGLE_HALF_TURN + 1) {
+            folded = KF_ANGLE_FULL_TURN - angle;
         }
         if (angle_tolerance < folded) {
             continue;

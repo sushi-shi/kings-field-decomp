@@ -31,6 +31,13 @@ their consumers, and explains all 267 retained literals in the two map-object
 modules. It preserves the paired door's missing action-1 handler and the
 switch's unsigned reverse-animation completion test.
 
+The [map-event literal review](game-map-event-literals.md) covers the event
+query/runtime and map-load modules. It recovers the floor-5 animation-slot
+reset, shares the saved-record format constants, and gives a specific reason
+for all 157 remaining literal occurrences in its linked ledger. Movement,
+random-turn and sound parameters retain their measured units without claiming
+an original tuning rationale.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

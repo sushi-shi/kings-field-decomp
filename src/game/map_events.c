@@ -6,6 +6,10 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+enum {
+    MAP_AMBIENT_COUNTDOWN_RELOAD = 10
+};
+
 /*
  * Map-event runtime band 0x80035708..0x80035e14 (GAME.EXE).
  *
@@ -32,7 +36,7 @@ ADDRESS(0x800356e8, 0x20)
 void map_event_timers_reset(void)
 {
     map_dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
-    map_ambient_script_countdown = 10;
+    map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
 }
 
 ADDRESS(0x80035708, 0x1d8)
@@ -45,15 +49,18 @@ void map_event_update_wander(void)
 
     collision_adjust_cell_occupancy(event->cell_x, event->cell_z, -1);
 
-    heading = angle_approach(event->rotation, event->rotation_target, 0x46);
+    heading = angle_approach(event->rotation, event->rotation_target, 70);
     event->rotation = heading;
     angle_to_forward_xz(heading, &forward);
-    vector2s_scale_shift11(0x14, &forward);
+    vector2s_scale_shift11(20, &forward);
 
     point.vx = forward.x + event->reference_x;
     point.vz = forward.z + event->reference_z;
 
-    if (collision_query_world(point.vx, 0xffff, point.vz, event->radius, 0, 0x8040) == (u32)-1) {
+    if (collision_query_world(
+            point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
+            KF_COLLISION_SKIP_MAP_EVENTS | (0x80 << KF_COLLISION_CELL_FLAG_SHIFT))
+            == (u32)KF_COLLISION_NONE) {
         event->reference_x = point.vx;
         event->reference_z = point.vz;
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
@@ -89,7 +96,7 @@ void map_event_update_animation_loop(void)
             && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_ref_10,
             (const VECTOR *)&map_event_pool[0].reference_x,
-            0x7f, 0x4650, 0xc350);
+            KF_AUDIO_MAX_VOLUME, 18000, 50000);
     }
 }
 
@@ -144,7 +151,7 @@ void map_event_pool_update(void)
     }
 
     if (map_ambient_script_countdown-- == 0) {
-        map_ambient_script_countdown = 10;
+        map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
         switch (player_state.progress_state.current_floor) {
         case 1:
             map_ambient_script_floor1();
@@ -178,7 +185,8 @@ void map_world_state_persist(void)
     s32 i;
     s32 active;
 
-    out = base - 1690 + 1700 * player_state.progress_state.current_floor;
+    out = base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET)
+        + KF_MAP_SAVED_FLOOR_BYTES * player_state.progress_state.current_floor;
     *out++ = 1;
 
     event = map_runtime_state.events;
@@ -239,7 +247,7 @@ void map_world_state_persist(void)
         *out++ = i;
         {
             u8 *link = (u8 *)&object->link;
-            s32 k = 7;
+            s32 k = sizeof(object->link) - 1;
 
             do {
                 *out++ = *link++;
@@ -260,7 +268,7 @@ void map_world_state_persist(void)
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;
-        *out++ = (u8)((u16)object->rotation.y >> 4);
+        *out++ = (u8)((u16)object->rotation.y >> KF_MAP_SAVED_YAW_SHIFT);
     }
 }
 

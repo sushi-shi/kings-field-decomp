@@ -17,6 +17,13 @@ enum {
     KF_MAP_EVENT_CAPACITY = 8
 };
 
+/* Each saved floor slot starts with script bytes before its runtime records. */
+enum {
+    KF_MAP_SAVED_FLOOR_BYTES = 1700,
+    KF_MAP_SAVED_RECORDS_OFFSET = 10,
+    KF_MAP_SAVED_YAW_SHIFT = 4
+};
+
 /* Definition behavior and running action are separate byte domains. */
 enum {
     KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR = 0,
