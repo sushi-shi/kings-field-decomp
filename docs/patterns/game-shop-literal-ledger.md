@@ -1,7 +1,7 @@
 # Retained shop-menu literals
 
-Complete root/buy/sell ledger after the [price-domain and item-identity audit](game-shop-price-domains.md).
-All **155 remaining occurrences**, down from 188, have specific reasons. Claims
+Complete root/buy/sell ledger after the [price-domain audit](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md).
+All **153 remaining occurrences**, down from 188, have specific reasons. Claims
 and named enum definitions are separate; signs do not count as numeric tokens.
 
 | Function | Lines | Tokens | Expression | Reason |
@@ -31,10 +31,10 @@ and named enum definitions are separate; signs do not count as numeric tokens.
 | `item_menu_buy` | 223 | `99` | `s32 selection = -99;` | Pending item selection, outside the 0..79 item IDs and cancellation -1. This is the outer list protocol, not the confirmation-widget result; original -99 choice unproven. |
 | `item_menu_buy` | 225, 274 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 230 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
-| `item_menu_buy` | 231 | `42, 80` | `for (slot = 42; slot < 80; slot++) {` | Authored buy ordering puts IDs 42..79 first, then 0..41; 80 is the database endpoint. Row 42 is Verdite. Do not invent a uniform item category for this mixed band. |
+| `item_menu_buy` | 231 | `80` | `for (slot = KF_ITEM_VERDITE; slot < 80; slot++) {` | Authored buy ordering puts IDs 42..79 first, then 0..41; 80 is the database endpoint. Row 42 is Verdite. Do not invent a uniform item category for this mixed band. |
 | `item_menu_buy` | 232, 241 | `0 × 4` | `if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
 | `item_menu_buy` | 233, 242 | `0 × 2, 10 × 2` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
-| `item_menu_buy` | 240 | `0, 42` | `for (slot = 0; slot < 42; slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
+| `item_menu_buy` | 240 | `0` | `for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
 | `item_menu_buy` | 250 | `9` | `ctx.visible_rows = 9;` | Authored shop viewport shows nine rows; this overrides the generic initializer’s eleven-row capacity. Original layout choice is unproven. |
 | `item_menu_buy` | 251 | `10` | `ctx.glyphs_per_entry = 10;` | Each item name is the full ten-halfword row copied from the database. |
 | `item_menu_buy` | 252 | `0 × 2` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |

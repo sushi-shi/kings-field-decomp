@@ -98,7 +98,7 @@ void game_state_initialize(void)
         *cursor++ = 0;
     } while (--count != -1);
     item_stock[0][0x00] = 1;
-    item_stock[0][0x2b] = 1;
+    item_stock[0][KF_ITEM_MEDICINAL_HERB] = 1;
     item_stock[1][0x00] = 1;
     item_stock[1][0x01] = 1;
     item_stock[1][0x02] = 1;
@@ -109,10 +109,10 @@ void game_state_initialize(void)
     item_stock[1][0x1b] = 1;
     item_stock[1][0x20] = 1;
     item_stock[1][0x23] = 1;
-    item_stock[1][0x2b] = 1;
-    item_stock[1][0x2c] = 1;
-    item_stock[1][0x2d] = 1;
-    item_stock[1][0x2f] = 1;
+    item_stock[1][KF_ITEM_MEDICINAL_HERB] = 1;
+    item_stock[1][KF_ITEM_ANTIDOTE_HERB] = 1;
+    item_stock[1][KF_ITEM_RECOVERY_MEDICINE] = 1;
+    item_stock[1][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
     item_stock[2][0x02] = 1;
     item_stock[2][0x03] = 1;
     item_stock[2][0x06] = 1;
@@ -123,12 +123,12 @@ void game_state_initialize(void)
     item_stock[2][0x16] = 1;
     item_stock[2][0x1c] = 1;
     item_stock[2][0x25] = 1;
-    item_stock[2][0x2b] = 1;
-    item_stock[2][0x2c] = 1;
-    item_stock[2][0x2d] = 1;
-    item_stock[2][0x2e] = 1;
-    item_stock[2][0x2f] = 1;
-    item_stock[2][0x30] = 1;
+    item_stock[2][KF_ITEM_MEDICINAL_HERB] = 1;
+    item_stock[2][KF_ITEM_ANTIDOTE_HERB] = 1;
+    item_stock[2][KF_ITEM_RECOVERY_MEDICINE] = 1;
+    item_stock[2][KF_ITEM_DRAGON_KING_GRASS_LEAF] = 1;
+    item_stock[2][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
+    item_stock[2][KF_ITEM_LIGHT_RING] = 1;
     item_stock[2][KF_ITEM_GOLD_CROSS] = 1;
 }
 
@@ -137,8 +137,8 @@ void player_death_restart(void)
 {
     s32 floor = player_state.progress_state.current_floor;
 
-    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[0][0x2f] != 0) {
-        item_stock[0][0x2f]--;
+    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0) {
+        item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
         map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
@@ -311,19 +311,19 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     switch (player_state.equipped_accessory_id) {
-    case 48:
+    case KF_ITEM_LIGHT_RING:
         player_state.holy_attack += 5;
         break;
-    case 49:
+    case KF_ITEM_MOON_AMULET:
         player_state.magic_defense += 7;
         break;
-    case 50:
+    case KF_ITEM_WIND_BLADE_BRACELET:
         player_state.fire_defense += 7;
         break;
-    case 51:
+    case KF_ITEM_TWO_HEADED_DRAGON_RING:
         player_state.magic += 8;
         break;
-    case 42:
+    case KF_ITEM_VERDITE:
         player_state.magic += 1;
         break;
     case KF_ITEM_GOLD_CROSS:
@@ -466,7 +466,7 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
 
 
 /*
- * Applies curse, darkness (blocked by accessory 0x31), resisted poison
+ * Applies curse, darkness (blocked by the moon amulet), resisted poison
  * and slowed movement, then combines the five defended damage
  * components in tenths, scales the sum, and subtracts it from the hit
  * points, flagging the update state on any damage.
@@ -491,7 +491,7 @@ void player_apply_damage(
         player_state.status_effect_flags |= KF_PLAYER_STATUS_CURSE;
     }
     if ((status_effect_flags & KF_PLAYER_STATUS_DARKNESS)
-        && player_state.equipped_accessory_id != 0x31) {
+        && player_state.equipped_accessory_id != KF_ITEM_MOON_AMULET) {
         if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
             if (player_state.darkness_timer < KF_DARKNESS_REAPPLY_TIMER) {
                 player_state.darkness_timer = KF_DARKNESS_REAPPLY_TIMER;

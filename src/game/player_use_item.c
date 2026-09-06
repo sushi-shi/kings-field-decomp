@@ -141,11 +141,11 @@ void player_use_item(u8 item_id)
         sound_ref_play(&gameplay_sound_ref_8, 0x7f);
         used = 1;
         break;
-    case 43:
-    case 44:
-    case 45:
-    case 46:
-    case 47:
+    case KF_ITEM_MEDICINAL_HERB:
+    case KF_ITEM_ANTIDOTE_HERB:
+    case KF_ITEM_RECOVERY_MEDICINE:
+    case KF_ITEM_DRAGON_KING_GRASS_LEAF:
+    case KF_ITEM_DRAGON_KING_GRASS_FRUIT:
         used = 1;
         break;
     case 58:
@@ -179,7 +179,7 @@ void player_use_item(u8 item_id)
         }
         map_event_show_person_image(event);
         return;
-    case 42:
+    case KF_ITEM_VERDITE:
         player_state.magic_training += 100;
         used = 1;
         player_increment_magic_training();

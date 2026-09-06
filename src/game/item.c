@@ -228,7 +228,7 @@ void item_menu_buy(s32 shop_id)
 
     inv = item_stock[shop_id];
     found = 0;
-    for (slot = 42; slot < 80; slot++) {
+    for (slot = KF_ITEM_VERDITE; slot < 80; slot++) {
         if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
@@ -237,7 +237,7 @@ void item_menu_buy(s32 shop_id)
             found++;
         }
     }
-    for (slot = 0; slot < 42; slot++) {
+    for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {
         if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];

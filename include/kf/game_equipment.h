@@ -5,6 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/enum.h>
+#include <kf/item.h>
 
 KF_ENUM_BEGIN(KfEquipmentSlot, u8)
     KF_EQUIPMENT_SLOT_SHIELD = 0,
@@ -32,8 +33,8 @@ enum {
     KF_ARM_ARMOR_ITEM_END = 35,
     KF_LEG_ARMOR_ITEM_FIRST = 35,
     KF_LEG_ARMOR_ITEM_END = 39,
-    KF_ACCESSORY_ITEM_FIRST = 48,
-    KF_ACCESSORY_ITEM_END = 52
+    KF_ACCESSORY_ITEM_FIRST = KF_ITEM_LIGHT_RING,
+    KF_ACCESSORY_ITEM_END = KF_ITEM_GOLD_CROSS
 };
 
 /* Armor and accessory record (item ids 13..54 index armor_records[id - 13]). */

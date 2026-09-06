@@ -291,7 +291,7 @@ void player_update(void)
                 if (player_state.selected_magic_id != KF_MAGIC_NONE && player_state.magic_charge == 5000) {
                     player_state.weapon_magic_delay = 0;
                     player_state.weapon_magic_shots_remaining = 0;
-                    if (player_state.equipped_accessory_id == 50 && player_state.selected_magic_id == 7) {
+                    if (player_state.equipped_accessory_id == KF_ITEM_WIND_BLADE_BRACELET && player_state.selected_magic_id == 7) {
                         cost = player_state.selected_magic_record->mp_cost >> 1;
                     } else {
                         cost = player_state.selected_magic_record->mp_cost;

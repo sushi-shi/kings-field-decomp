@@ -143,7 +143,7 @@ s32 menu_root(void)
 /*
  * Consumable-item panel: builds a scrollable list of the usable items the
  * player holds, runs the windowed cursor, and applies the selected item's
- * effect.  Restoratives (codes 0x2b..0x2f) heal HP/MP and clear status flags
+ * effect. Restorative herbs and medicine heal HP/MP and clear status flags
  * in place; special items (0x37, 0x49) are handled by menu_map_viewer.  Returns
  * the chosen item code, or -1 when the item cannot be used.
  */
@@ -184,8 +184,8 @@ s32 menu_use_item_panel(void)
         codes[found] = 0x49;
         found++;
     }
-    name = item_name_rows[0x2a].codes;
-    for (code = 0x2a; code < 0x30; code++, name += 10) {
+    name = item_name_rows[KF_ITEM_VERDITE].codes;
+    for (code = KF_ITEM_VERDITE; code < KF_ITEM_LIGHT_RING; code++, name += 10) {
         if (code != 0x37 && code != 0x49 && inv[code] != 0) {
             for (j = 0; j < 10; j++)
                 labels[found][j] = name[j];
@@ -291,20 +291,22 @@ s32 menu_use_item_panel(void)
     }
 
     menu_release_item_model();
-    if ((u32)(selection - 0x2a) < 6) {
+    if ((u32)(selection - KF_ITEM_VERDITE) < KF_ITEM_LIGHT_RING - KF_ITEM_VERDITE) {
         inv[selection]--;
-        if (selection == 0x2b) {
+        if (selection == KF_ITEM_MEDICINAL_HERB) {
             player_state.vitals.current_hp += 25;
-        } else if (selection == 0x2c) {
+        } else if (selection == KF_ITEM_ANTIDOTE_HERB) {
             player_state.vitals.current_hp += 10;
-            player_state.status_effect_flags &= 0xb;
-        } else if (selection == 0x2d) {
+            player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE
+                | KF_PLAYER_STATUS_DARKNESS | KF_PLAYER_STATUS_SLOWED;
+        } else if (selection == KF_ITEM_RECOVERY_MEDICINE) {
             player_state.vitals.current_hp += 80;
-            player_state.status_effect_flags &= 0x3;
-        } else if (selection == 0x2e) {
+            player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE
+                | KF_PLAYER_STATUS_DARKNESS;
+        } else if (selection == KF_ITEM_DRAGON_KING_GRASS_LEAF) {
             player_state.vitals.current_hp += 150;
             player_state.status_effect_flags = 0;
-        } else if (selection == 0x2f) {
+        } else if (selection == KF_ITEM_DRAGON_KING_GRASS_FRUIT) {
             player_state.status_effect_flags = 0;
             player_state.vitals.current_hp += 300;
             player_state.vitals.current_mp = player_state.vitals.maximum_mp;

@@ -242,7 +242,7 @@ void map_action_script_floor2(void)
 ADDRESS(0x80034610, 0x90)
 void map_action_script_floor3(void)
 {
-    if (item_stock[0][0x32] != 0) {
+    if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {
         if (magic_records[7].learned == 0) {
             magic_records[7].learned = 1;
             notify_enqueue(1);
@@ -403,11 +403,11 @@ void map_event_interact(KfMapEvent *event)
         }
         break;
     case 7:
-        if (item_stock[0][0x2f] != 0 && map_event_pool[1].dialogue_stage == 2
+        if (item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0 && map_event_pool[1].dialogue_stage == 2
             && map_event_pool[1].dialogue_page < 2) {
             item_stock[0][0x3e] = 1;
             map_event_pool[1].dialogue_pages.last_page[1] = 5;
-            item_stock[0][0x2f]--;
+            item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue_stage, event->character_id, 2);
             map_event_pool[1].dialogue_page = 3;
