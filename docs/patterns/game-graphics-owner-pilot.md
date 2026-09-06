@@ -5,6 +5,12 @@ original C declaration. The complete GAME graphics clear is larger than the
 current fragmented globals. The pilot tests one shared declaration against
 independent retail instructions before changing production ownership.
 
+The initial map-cell result below is superseded by
+[the byte-index/switch/XYZ source correction](game-map-cell-source.md).
+Production is now strict 96.743240%; the unchanged shared-owner declaration
+emits all 592 bytes with only eighteen stack operands different. Its ownership
+limitations still apply; neither form is a new exact claim.
+
 ## Independent bounds and access evidence
 
 At GAME `800146cc/800146d0`, `game_main_loop` materializes destination

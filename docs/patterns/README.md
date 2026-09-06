@@ -49,6 +49,9 @@ promotes a probe to a proven historical toolchain.
 - [sdk-vector-publication.md](sdk-vector-publication.md): natural XYZ source
   order closes OPEN map-cell and GAME camera-step despite their interleaved
   retail store schedules; separate-statement controls rule out macro uniqueness.
+- [game-map-cell-source.md](game-map-cell-source.md): GAME's byte object-index
+  lifetime, three-case door remapping and natural XYZ coordinates; the shared
+  owner control narrows the remaining mismatch to eighteen stack operands.
 - [game-map-enqueue.md](game-map-enqueue.md): restore allocation-overflow
   returns and retail packet dispatch in the GAME map polygon emitter.
 - [game-model-enqueue.md](game-model-enqueue.md): four-mode model packet

@@ -114,3 +114,7 @@ Full `kf build` still fails its pre-existing data/closure/placement gates:
 match, and target relinking verifies 110/116 units with six conflicting
 section bases. There are no artifact failures or new exact-function losses.
 Only GAME `80033680` and OPEN `80018bbc` are selected for banking.
+
+The subsequent [GAME map-cell campaign](game-map-cell-source.md) independently
+confirms this XYZ source form and corrects its byte-index/door-dispatch model.
+That function remains partial because of stack and graphics-owner differences.

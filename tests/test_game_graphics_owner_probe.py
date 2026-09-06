@@ -173,11 +173,22 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                             self.assertEqual(same_calls, calls)
                     else:
                         self.assertNotEqual(actual, expected)
-                        self.assertEqual(len(actual) * 4, 576)  # Retail is 592; not an exact claim.
+                        self.assertEqual(len(actual) * 4, 592)
                         self.assertEqual(actual[0], 0x27BDFFA8)  # 88-byte frame, retail 120.
-                        # The complete matrix-base/call sequence is exact; the
-                        # epilogue is not, so do not claim an exact suffix/body.
-                        self.assertEqual(actual[-24:-6], expected[-24:-6])
+                        # All remaining differences are explicit stack operands,
+                        # not normalized away or admitted as an exact match.
+                        stack_offsets = {
+                            0x0, 0x4, 0x8, 0xc, 0x10, 0x148, 0x164, 0x190,
+                            0x1a4, 0x1b0, 0x1bc, 0x1e0, 0x1ec, 0x238, 0x23c,
+                            0x240, 0x244, 0x24c,
+                        }
+                        self.assertEqual(
+                            {4 * i for i, (a, b) in enumerate(zip(actual, expected)) if a != b},
+                            stack_offsets,
+                        )
+                        for offset in stack_offsets:
+                            self.assertEqual(actual[offset // 4],
+                                             expected[offset // 4] + (32 if offset == 0 else -32))
                         self.assertEqual(targets, [
                             0x8009A748, 0x800A07D2, 0x80069018, 0x80095744, 0x8009574C,
                             0x80095900, 0x80095748, 0x800956A0, 0x800956A0, 0x80095760,
