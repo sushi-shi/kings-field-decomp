@@ -1,5 +1,6 @@
 #include <kf/address.h>
 #include <kf/audio.h>
+#include <kf/game_math.h>
 #include <kf/open_audio.h>
 #include <kf/open_camera_path.h>
 #include <kf/open_opening_helpers.h>
@@ -9,6 +10,35 @@
 #include <kf/open_resources.h>
 #include <kf/open_scene0.h>
 #include <kf/psyq_audio.h>
+
+enum {
+    SCENE0_DECREASING_YAW_MODEL = 11,
+    SCENE0_INCREASING_YAW_MODEL = 12,
+    SCENE0_ROTATION_START_POINT = 8,
+    SCENE0_FADE_OUT_START_POINT = 15,
+    SCENE0_YAW_STEP = 40,
+    SCENE0_SOUND_VOLUME = 100,
+    SCENE0_COLOR_FADE_STEP = 0x100,
+    SCENE1_LEFT_TPAGE_X = 0x140,
+    SCENE1_RIGHT_TPAGE_X = 0x1c0,
+    SCENE1_PANEL_WIDTH = 192,
+    SCENE1_RIGHT_PANEL_X = 128,
+    SCENE1_SHADE_STEP = 4,
+    SCENE1_SEQUENCE_STOP_FRAME = 600,
+    SCENE1_HOLD_FRAMES = 1000,
+    TRANSITION_GROW = 0,
+    TRANSITION_REMOVE = 1,
+    TRANSITION_SHRINK = 2,
+    TRANSITION_CREATE = 3,
+    TRANSITION_FIRST_ENTITY_SLOT = 24,
+    TRANSITION_ENTITY_COUNT = 4,
+    TRANSITION_MODEL_ID = 0x13,
+    TRANSITION_TALL_SCALE_Y = 0x2000,
+    TRANSITION_SCALE_STEP = 0x100,
+    TRANSITION_YAW_STEP = 0x200,
+    TRANSITION_ENTITY_DELAY_SHIFT = 3,
+    TRANSITION_FRAMES = 48
+};
 
 typedef char KfOpeningEntitySizeCheck[
     sizeof(KfOpeningEntity) == 0x28 ? 1 : -1];
@@ -130,25 +160,25 @@ void opening_scene0_run(void)
     blend = 0;
     opening_resources_load_scene0();
     entity_11 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, 11);
+        opening_entity_state.entities, SCENE0_DECREASING_YAW_MODEL);
     entity_12 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, 12);
-    entity_12->rotation.y = 0xc00;
-    entity_11->rotation.y = 0xc00;
+        opening_entity_state.entities, SCENE0_INCREASING_YAW_MODEL);
+    entity_12->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
+    entity_11->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
     opening_camera_path_begin(opening_scene0_camera_path);
 
     for (;;) {
         opening_poll_input();
         opening_camera_path_step(0);
-        if (opening_camera_path_state.point_index >= 8) {
-            if (entity_11->rotation.y == 0xc00) {
-                sound_ref_play(&opening_scene0_sound, 100);
+        if (opening_camera_path_state.point_index >= SCENE0_ROTATION_START_POINT) {
+            if (entity_11->rotation.y == KF_ANGLE_THREE_QUARTER_TURN) {
+                sound_ref_play(&opening_scene0_sound, SCENE0_SOUND_VOLUME);
             }
-            entity_11->rotation.y -= 40;
-            entity_12->rotation.y += 40;
+            entity_11->rotation.y -= SCENE0_YAW_STEP;
+            entity_12->rotation.y += SCENE0_YAW_STEP;
         }
 
-        if (opening_camera_path_state.point_index >= 15) {
+        if (opening_camera_path_state.point_index >= SCENE0_FADE_OUT_START_POINT) {
             goto fade_out;
         }
         if (opening_input_action == KF_OPENING_INPUT_NONE) {
@@ -159,15 +189,15 @@ fade_out:
         if (blend < 0) {
             goto scene_complete;
         }
-        next_blend = blend - 0x100;
+        next_blend = blend - SCENE0_COLOR_FADE_STEP;
         blend = next_blend;
         goto update_color;
 
 fade_in:
-        if (blend >= 0x1000) {
+        if (blend >= KF_FIXED12_ONE) {
             goto render_frame;
         }
-        next_blend = blend + 0x100;
+        next_blend = blend + SCENE0_COLOR_FADE_STEP;
         blend = next_blend;
 
 update_color:
@@ -205,46 +235,46 @@ void opening_scene1_draw_fade(u8 shade)
     SetPolyFT4(right);
     left->tpage = GetTPage(
         KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
-        0x140, KF_TEXTURE_LOWER_PAGE_Y);
+        SCENE1_LEFT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
     right->tpage = GetTPage(
         KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
-        0x1c0, KF_TEXTURE_LOWER_PAGE_Y);
+        SCENE1_RIGHT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
     left->x0 = 0;
     left->y0 = 0;
-    left->x1 = 192;
+    left->x1 = SCENE1_PANEL_WIDTH;
     left->y1 = 0;
     left->x2 = 0;
-    left->y2 = 240;
-    left->x3 = 192;
-    left->y3 = 240;
+    left->y2 = KF_DISPLAY_HEIGHT;
+    left->x3 = SCENE1_PANEL_WIDTH;
+    left->y3 = KF_DISPLAY_HEIGHT;
 
-    right->x0 = 128;
+    right->x0 = SCENE1_RIGHT_PANEL_X;
     right->y0 = 0;
-    right->x1 = 320;
+    right->x1 = KF_DISPLAY_WIDTH;
     right->y1 = 0;
-    right->x2 = 128;
-    right->y2 = 240;
-    right->x3 = 320;
-    right->y3 = 240;
+    right->x2 = SCENE1_RIGHT_PANEL_X;
+    right->y2 = KF_DISPLAY_HEIGHT;
+    right->x3 = KF_DISPLAY_WIDTH;
+    right->y3 = KF_DISPLAY_HEIGHT;
 
     left->u0 = 0;
     left->v0 = 0;
-    left->u1 = 192;
+    left->u1 = SCENE1_PANEL_WIDTH;
     left->v1 = 0;
     left->u2 = 0;
-    left->v2 = 240;
-    left->u3 = 192;
-    left->v3 = 240;
+    left->v2 = KF_DISPLAY_HEIGHT;
+    left->u3 = SCENE1_PANEL_WIDTH;
+    left->v3 = KF_DISPLAY_HEIGHT;
 
     right->u0 = 0;
     right->v0 = 0;
-    right->u1 = 192;
+    right->u1 = SCENE1_PANEL_WIDTH;
     right->v1 = 0;
     right->u2 = 0;
-    right->v2 = 240;
-    right->u3 = 192;
-    right->v3 = 240;
+    right->v2 = KF_DISPLAY_HEIGHT;
+    right->u3 = SCENE1_PANEL_WIDTH;
+    right->v3 = KF_DISPLAY_HEIGHT;
 
     left->r0 = shade;
     left->g0 = shade;
@@ -270,12 +300,12 @@ void opening_scene1_run(void)
     do {
         opening_scene1_draw_fade((u8)shade);
         opening_poll_input();
-        shade += 4;
-    } while (shade < 129);
+        shade += SCENE1_SHADE_STEP;
+    } while (shade < KF_TEXTURE_BASE_BRIGHTNESS + 1);
 
     frame = 0;
     do {
-        if (frame == 600) {
+        if (frame == SCENE1_SEQUENCE_STOP_FRAME) {
             audio_stop_sequence(0);
         }
         VSync(0);
@@ -284,13 +314,13 @@ void opening_scene1_run(void)
             break;
         }
         frame++;
-    } while (frame < 1000);
+    } while (frame < SCENE1_HOLD_FRAMES);
 
     audio_stop_sequence(1);
-    shade = 128;
+    shade = KF_TEXTURE_BASE_BRIGHTNESS;
     do {
         opening_scene1_draw_fade((u8)shade);
-        shade -= 4;
+        shade -= SCENE1_SHADE_STEP;
     } while (shade >= 0);
 }
 
@@ -305,72 +335,73 @@ void opening_entity_transition(s16 mode, const VECTOR *position)
     s16 scale_step;
 
     switch (mode) {
-    case 0:
+    case TRANSITION_GROW:
         initial_scale_y = 0;
-        scale_step = 0x100;
+        scale_step = TRANSITION_SCALE_STEP;
         break;
-    case 1:
+    case TRANSITION_REMOVE:
         goto deactivate;
-    case 2:
-    case 3:
-        initial_scale_y = 0x2000;
-        scale_step = -0x100;
+    case TRANSITION_SHRINK:
+    case TRANSITION_CREATE:
+        initial_scale_y = TRANSITION_TALL_SCALE_Y;
+        scale_step = -TRANSITION_SCALE_STEP;
         break;
     }
 
-    entity = &opening_entity_state.entities[24];
-    entity_index = 3;
+    entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
+    entity_index = TRANSITION_ENTITY_COUNT - 1;
     /* Retail retains these stack coordinates without a subsequent consumer. */
     position_snapshot.vx = position->vx;
     position_snapshot.vz = position->vz;
     position_snapshot.vy = position->vy;
     do {
-        entity->object_id = 0x13;
+        entity->object_id = TRANSITION_MODEL_ID;
         entity->position = *position;
         entity->rotation.z = 0;
         entity->rotation.y = 0;
         entity->rotation.x = 0;
-        entity->scale.vz = 0x1000;
-        entity->scale.vx = 0x1000;
+        entity->scale.vz = KF_FIXED12_ONE;
+        entity->scale.vx = KF_FIXED12_ONE;
         entity->scale.vy = initial_scale_y;
         entity++;
         entity_index--;
     } while (entity_index != -1);
 
-    if (mode == 3) {
+    if (mode == TRANSITION_CREATE) {
         return;
     }
 
     frame = 0;
     do {
-        entity = &opening_entity_state.entities[24];
+        entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
         entity_index = 0;
         do {
-            if ((entity_index << 3) < frame) {
+            if ((entity_index << TRANSITION_ENTITY_DELAY_SHIFT) < frame) {
                 u16 scale_y = entity->scale.vy;
 
-                if (scale_y < 0x2001) {
+                if (scale_y < TRANSITION_TALL_SCALE_Y + 1) {
                     entity->scale.vy = scale_step + scale_y;
                 }
             }
             entity_index++;
-            entity->rotation.y = (entity->rotation.y + 0x200) & 0xfff;
+            entity->rotation.y =
+                (entity->rotation.y + TRANSITION_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             entity++;
-        } while (entity_index < 4);
+        } while (entity_index < TRANSITION_ENTITY_COUNT);
         opening_render_frame(0, 0);
         VSync(0);
         frame++;
-    } while (frame < 48);
+    } while (frame < TRANSITION_FRAMES);
 
-    if (mode == 0) {
+    if (mode == TRANSITION_GROW) {
         return;
     }
 
 deactivate:
-    entity = &opening_entity_state.entities[24];
-    entity_index = 3;
+    entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
+    entity_index = TRANSITION_ENTITY_COUNT - 1;
     do {
-        entity->object_id = 0xff;
+        entity->object_id = KF_OPENING_ENTITY_FREE;
         entity++;
         entity_index--;
     } while (entity_index != -1);
@@ -475,7 +506,7 @@ void opening_scene3_run(void)
     transition_position.vy = -10000;
     transition_position.vz = opening_camera_path_state.position.vz;
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
-        opening_entity_transition(0, &transition_position);
+        opening_entity_transition(TRANSITION_GROW, &transition_position);
     }
 
     blend = 0;
@@ -490,7 +521,7 @@ void opening_scene3_run(void)
     } while (blend < 0x1001);
 
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
-        opening_entity_transition(1, &transition_position);
+        opening_entity_transition(TRANSITION_REMOVE, &transition_position);
     }
 }
 
@@ -517,7 +548,7 @@ void opening_ending_scene_run(void)
     transition_position.vz = opening_camera_path_state.position.vz;
     SetDispMask(1);
     blend = 0;
-    opening_entity_transition(3, &transition_position);
+    opening_entity_transition(TRANSITION_CREATE, &transition_position);
 
     do {
         lighting_set_color_matrix(
@@ -529,7 +560,7 @@ void opening_ending_scene_run(void)
         blend += 0x100;
     } while (blend < 0x1001);
 
-    opening_entity_transition(2, &transition_position);
+    opening_entity_transition(TRANSITION_SHRINK, &transition_position);
     brightness = 0;
     blend = 0;
     for (;;) {

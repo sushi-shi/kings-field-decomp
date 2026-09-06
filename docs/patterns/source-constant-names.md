@@ -937,3 +937,57 @@ canonical/owner raw-word controls; lint and whitespace checks pass. Flake
 checks pass (644 tests, 131 sandbox skips). The full build retains the same
 ownership/placement failures, six section-base conflicts and zero artifact
 failures. No new banking operation belongs to this merge.
+
+## Opening scene timing and entity transitions
+
+Function Match Plan: audit OPEN `opening_scene0_run`,
+`opening_scene1_draw_fade`, `opening_scene1_run` and
+`opening_entity_transition`, using their existing complete image-qualified
+dossiers and refreshed raw timing/scale comparisons. Name camera milestones,
+rotation/audio choices, image-panel geometry, fade/hold durations and the
+four transition modes. Propagate mode names to the reviewed scene-3 and
+ending callers. Keep every comparison, signedness, counter adjustment,
+call, load/store order and scratch position copy. Compare all non-debug
+objects and all 484 strict scores with the new 7c1968e baseline.
+
+Scene 0 rotates object 11 toward decreasing yaw and object 12 toward
+increasing yaw after camera point 8; point 15 starts its fade-out. Those
+operational roles justify selector names without assigning story identities
+to the models. Scene 1 draws two overlapping 192-pixel panels, with the
+right panel starting at X=128; these are not equal halves of the screen.
+The shade reaches 128 in steps of four, then holds for at most 1000 frames
+with an immediate sequence stop at frame 600 before the final fade-out.
+
+Transition mode 0 creates four model-19 entities in slots 24..27 and grows
+their Y scale from zero. Mode 1 removes them immediately. Mode 2 creates
+them at Y scale 8192, shrinks them and removes them. Mode 3 only creates
+them at that tall scale. All variants retain unit X/Z scale; the animated
+variants rotate yaw by 512 and stagger Y-scale updates by eight frames over
+48 frames. Keep the unsigned Y-scale guard and its one-past limit intact.
+That guard permits one step above 8192 during growth and a wrapped negative
+halfword during shrinkage; neither path is rewritten as a saturating ramp.
+
+The four audited bodies now retain only these inline numbers:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Blend, shade, frame and entity-index origins and exhaustion tests | 0 | Mathematical zero, zero-based iteration or black/no-scale endpoint. |
+| Camera-path step argument | 0 | No additional vertical displacement. |
+| XY and UV origins in the two image panels | 0 | Actual top/left texture or screen coordinate origin. |
+| Sequence stop arguments | 0/1 | Boolean immediate-stop versus fade-before-stop choice. |
+| VSync | 0 | Next-frame synchronization argument of the SDK. |
+| Transition rotation reset | 0 | Zero angle on each axis. |
+| Transition frame-render arguments | 0/0 | Null view pointers selecting the current view. |
+| Shade and scale comparison endpoints | +1 | One-past bounds derived from the named inclusive values; original comparisons retained. |
+| Reverse-count initial/end adjustment | -1 | Count-minus-one and countdown exhaustion, not another transition mode. |
+
+The three later scene bodies and the camera, panel, color and sound data
+initializers still require their remaining audits. Their transition calls
+receive only the shared mode names in this batch.
+
+Validation: the literal census confirms 39 remaining inline numbers in
+the four audited bodies, all covered above. All 112 non-debug object
+contents and all 484 strict scores match 7c1968e; only OPEN's scene object
+has debug-line changes. All 644 tests pass (nine skipped), and lint and
+whitespace checks pass. The full build retains its existing ownership and
+data-placement failures. No function's match verdict changes.
