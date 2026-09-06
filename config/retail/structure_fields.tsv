@@ -95,7 +95,7 @@ KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;pla
 KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
 KfAssetHeader	0x00	0x04	byte_size	u32	supported	game_asset.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
-KfAssetHeader	0x04	0x04	animation_data	s32	candidate	game_asset.h;asm;render_bind_animated_instance;map_interaction_dispatch	nonzero animation metadata word; exact format remains unresolved
+KfAssetHeader	0x04	0x04	animation_clip_count	s32	supported	game_asset.h;asm;game-asset-animation-layout.md	clip-table entry count agrees with independent table extents in all 70 animated assets; zero in 99 static assets; retail retains a signed comparison below two
 KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	game_asset.h;asm;asset_registry_select	byte offset from header to TMD payload
 KfAssetHeader	0x0c	0x04	object_table_offset	u32	supported	game_asset.h;asm;render_bind_animated_instance	byte offset from header to animation object-offset table
 KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	game_asset.h;asm;render_bind_animated_instance	byte offset from header to animation clip-offset table
@@ -529,7 +529,7 @@ KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	game_pla
 KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x6c	0x04	weapon_asset_buffer	u8 *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x6c	0x04	weapon_asset_buffer	KfAssetHeader *	supported	game_player.h;data_identities.tsv;game-asset-animation-layout.md	49152-byte weapon asset allocation; loaded header passed to asset_registry_set and pointer preserved across save restoration
 KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x74	0x04	weapon_animation_cache	KfPoolRecord *	supported	game_player.h;asm;game_semantic_animation_slots.tsv	equipped weapon animation record; cleared on equip, passed by address to the binder, and preserved across save-file player-state copies
@@ -573,7 +573,7 @@ KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	maximu
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game_player.h;asm;xrefs	current HP
 KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	maximum MP
 KfPlayerVitals	0x06	0x02	current_mp	u16	supported	game_player.h;asm;xrefs	current MP
-KfPoolRecord	0x00	0x02	state	s16	supported	pool.h;game_semantic_animation_pool.tsv;asm	0 free; 1 stale; 2 live after the binder refreshes scratch vertices
+KfPoolRecord	0x00	0x02	state	KfAnimationCacheState	supported	pool.h;game_semantic_animation_pool.tsv;asm;game-asset-animation-layout.md	s16 stored enum: 0 free; 1 stale; 2 live after the binder refreshes scratch vertices
 KfPoolRecord	0x02	0x02	asset_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020684;GAME:0x800206b8	registry index used to detect an instance asset change
 KfPoolRecord	0x04	0x02	clip_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207ac;GAME:0x800208c0	cached clip index; allocator and asset reinitialization invalidate it with 0xff
 KfPoolRecord	0x06	0x02	keyframe_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207c0;GAME:0x800208ac	cached keyframe index compared with the binder selection

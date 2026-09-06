@@ -6,21 +6,25 @@
  */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 #include <kf/psyq.h>
 
 struct KfMorphObject;
 
-enum {
-    KF_ANIMATION_CACHE_CAPACITY = 12,
+KF_ENUM_BEGIN(KfAnimationCacheState, s16)
     KF_ANIMATION_CACHE_FREE = 0,
     KF_ANIMATION_CACHE_STALE = 1,
-    KF_ANIMATION_CACHE_LIVE = 2,
+    KF_ANIMATION_CACHE_LIVE = 2
+KF_ENUM_END(KfAnimationCacheState)
+
+enum {
+    KF_ANIMATION_CACHE_CAPACITY = 12,
     KF_ANIMATION_CACHE_CLIP_INVALID = 0xff,
     KF_ANIMATION_BIND_STATIC = 1
 };
 
 typedef struct KfPoolRecord {
-    s16 state;
+    KfAnimationCacheState state;
     u16 asset_index;
     u16 clip_index;
     u16 keyframe_index;

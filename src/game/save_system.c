@@ -559,7 +559,7 @@ s32 save_file_read_slot(s16 slot_id)
     s32 offset;
     s32 payload_size;
     s32 header_size;
-    u8 *weapon_asset_buffer;
+    KfAssetHeader *weapon_asset_buffer;
     struct KfPoolRecord *saved_weapon_animation_cache;
 
     payload_size = sizeof(KfSavePayload);

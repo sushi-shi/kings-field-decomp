@@ -20,6 +20,8 @@ promotes a probe to a proven historical toolchain.
   fields, area-trigger stages, revival, map-piece reveals and boss progression.
 - [game-map-script-literals.md](game-map-script-literals.md): floor-script
   literal ledger, cutscene units and phases, interaction bounds and menu modes.
+- [game-asset-animation-layout.md](game-asset-animation-layout.md): resource-backed
+  clip counts, typed asset ownership/cache states and the pool/registry literal audit.
 
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the

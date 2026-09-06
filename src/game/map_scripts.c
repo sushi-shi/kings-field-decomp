@@ -511,7 +511,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 break;
             case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
-                result = asset_registry_entries[event->model_index]->animation_data < 2;
+                result = asset_registry_entries[event->model_index]->animation_clip_count < 2;
                 if (result == 0) {
                     event->animation_phase = 0;
                     event->animation_clip = 1;

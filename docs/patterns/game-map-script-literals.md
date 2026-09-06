@@ -123,11 +123,12 @@ No new tests or size assertions were added.
 
 Full `kf build` retains its existing data/ownership closure gaps: source
 data 7/60, SDK data 4/4, and target relink PSX 1/1, GAME 75/77, OPEN 34/38.
-The wider naming goal remains open. In particular, the equipment sentinel,
-pickup outcome API and the asset header's `animation_data` interpretation
-deserve shared consumer audits; the ledger records their observed roles
-without presenting those domains as finished. Ten unresolved `unknown_`
-source lines still require more evidence.
+The wider naming goal remains open. In particular, the equipment sentinel
+and pickup outcome API deserve shared consumer audits; the ledger records
+their observed roles without presenting those domains as finished. The
+[asset-header follow-up](game-asset-animation-layout.md) resolves the signed
+animation-clip count. Ten unresolved `unknown_` source lines still require
+more evidence.
 
 ## Function snapshots and final verdicts
 

@@ -253,7 +253,7 @@ class InventoryTests(unittest.TestCase):
 
     def test_animation_pool_record_fields_and_complete_owner(self) -> None:
         fields = (
-            (0x00, "state", "s16", 2),
+            (0x00, "state", "KfAnimationCacheState", 2),
             (0x02, "asset_index", "u16", 2),
             (0x04, "clip_index", "u16", 2),
             (0x06, "keyframe_index", "u16", 2),

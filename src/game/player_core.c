@@ -194,7 +194,7 @@ void game_initialize_session(void)
     player_state.camera_position.vx = 0x7918;
     player_state.camera_position.vy = 0;
     player_state.camera_position.vz = 0xfa0;
-    player_state.weapon_asset_buffer = memory_allocate(0xc000);
+    player_state.weapon_asset_buffer = (KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = 1;

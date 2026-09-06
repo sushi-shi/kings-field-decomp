@@ -74,7 +74,7 @@ u16 *render_bind_animated_instance(
     u16 blend_fraction;
     u16 keyframes_left;
 
-    if (asset_header->animation_data == 0) {
+    if (asset_header->animation_clip_count == 0) {
         if (record != 0) {
             pool_record_release(record);
         }
@@ -95,7 +95,7 @@ reinitialize_record:
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
 retry_allocation:
-    record->cached_vertices = memory_malloc_checked(vertex_count << 3);
+    record->cached_vertices = (SVECTOR *)memory_malloc_checked(vertex_count * sizeof(SVECTOR));
     if (record->cached_vertices == 0) {
         pool_release_all();
         goto retry_allocation;

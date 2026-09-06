@@ -10,6 +10,7 @@
 #include <kf/magic.h>
 
 struct KfPoolRecord;
+struct KfAssetHeader;
 
 enum {
     KF_WARP_SHIMMER_GROW_REMOVE = 0,
@@ -140,7 +141,7 @@ typedef struct KfPlayerState {
     u8 equipped_weapon_id;
     u8 unknown_65[3];
     const KfWeaponRecord *equipped_weapon_record;
-    u8 *weapon_asset_buffer;
+    struct KfAssetHeader *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
     struct KfPoolRecord *weapon_animation_cache;

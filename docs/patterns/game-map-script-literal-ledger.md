@@ -160,7 +160,7 @@ All **326 retained occurrences** have an explicit reason; no fallback is used.
 | `map_interaction_dispatch` | 496, 505, 516, 525 | `0 × 4` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 497, 504, 524 | `0 × 3` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 499 | `2` | `audio_play_map_sequence(2);` | Authored music sequence 2 during the shop interaction; original track name unknown. |
-| `map_interaction_dispatch` | 514 | `2` | `result = asset_registry_entries[event->model_index]->animation_data < 2;` | Existing signed header-field test for availability of a second animation clip; preserve the lookup and threshold, without claiming a completed asset-header interpretation. |
+| `map_interaction_dispatch` | 514 | `2` | `result = asset_registry_entries[event->model_index]->animation_clip_count < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The existing registry-index expression is preserved. |
 | `map_interaction_dispatch` | 515, 521 | `0 × 2` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
 | `map_interaction_dispatch` | 517 | `1` | `event->animation_clip = 1;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 535 | `0` | `for (slot = 0;; slot++) {` | Start the interaction search at zero-based pool index zero. |

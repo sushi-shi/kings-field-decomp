@@ -50,6 +50,12 @@ phases and menu modes have stored enum types; interaction padding, facing
 tolerances and container limits have named domains. Authored movement rates,
 fade durations, resource IDs and path digits have per-occurrence reasons.
 
+The [asset and animation-cache review](game-asset-animation-layout.md) types
+the free/stale/live state, recovers the header's animation-clip count from
+shipped table extents, and propagates asset-header pointers. It explains all
+36 retained literals in `pool.c` and `asset_registry.c`; vertex allocation
+uses the SDK element size and the weapon buffer has a named byte capacity.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

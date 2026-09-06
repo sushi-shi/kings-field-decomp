@@ -23,7 +23,7 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 }
 
 ADDRESS(0x8002055c, 0x40)
-void asset_registry_set(u16 index, void *asset)
+void asset_registry_set(u16 index, KfAssetHeader *asset)
 {
     asset_registry_entries[index] = asset;
     asset_registry_select(index);
