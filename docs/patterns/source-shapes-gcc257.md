@@ -1024,11 +1024,14 @@ Residue recorded (not steered):
   arithmetic, referents, call set and per-kind semantics all match; the residue
   is codegen shape, not source facts, and is not steered.
 
-`effect_map_collision` (the 0x76c routine at `0x80037850`) was subsequently
-reconstructed after the cell-attribute owners were reviewed. It is a
-divide-by-2000 cell walker with its own six-case jump table (`0x80012ce0`) and
-currently scores `71.711580%`; the remaining collision-math/cross-jump residue
-is documented rather than treated as an unstarted function.
+`effect_map_collision` (GAME `0x80037850`, 0x76c bytes) was subsequently
+reconstructed after the cell-attribute owners were reviewed. Its earlier
+collision-math/cross-jump attribution is superseded by the
+[source and CFG recovery](game-effect-map-collision.md): signed cell
+coordinates, direct grid indexing, selected rectangle ownership, a backward
+span-check join and case-local world queries raise it to 97.452630%.
+Remaining return/join and selected-coordinate differences are not a proved
+compiler limit.
 
 ## pad
 

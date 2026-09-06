@@ -23,78 +23,84 @@ RODATA(0x80012ce0, 0x18)
  * below the cell floor, then tests the cell's attribute-driven height/step
  * shape and its collision-grid shape (flat, four diagonal half-cells, or the
  * neighbour-aware corner cell 0).  A surviving hit is forwarded to
- * collision_query_world with the flags selected from the active effect record;
- * 0x10000 means "no collision".
+ * collision_query_world with the flags selected from the active effect record.
+ * Geometry rejection returns 0x10000; callers recognize -1 as no collision.
  */
 ADDRESS(0x80037850, 0x76c)
 u32 effect_map_collision(VECTOR *position, s32 radius)
 {
-    KfCellHeightRecord *records;
-    u8 *cg;
-    s32 x;
-    s32 z;
+    KfCellHeightRecord *record;
+    KfEffectRecord *effect;
+    s16 x;
+    s16 z;
     s32 subx;
     s32 subz;
     s32 y;
     s32 floor;
-    s32 cell;
     s32 height;
     u8 attr;
-    u32 flags;
 
     x = position->vx / 2000;
     z = position->vz / 2000;
-    subz = (s16)(position->vz % 2000);
-    if ((x & 0xffff) > 99 || (z & 0xffff) > 99) {
+    subz = position->vz % 2000;
+    effect = current_effect;
+    if (x < 0 || x >= 100 || z < 0 || z >= 100) {
         return 0x10000;
     }
-    cell = z * 100 + x;
     y = position->vy;
     floor = (u8)map_floor_height_grid[z][x] * -100;
     if (floor < y) {
         return 0x10000;
     }
     attr = map_cell_attribute_grid[z][x];
-    records = map_cell_height_records;
     if (attr != 0xff) {
         height = map_cell_attribute_height_table[attr];
         if (height < 0) {
-            if (y < height + floor) {
+            height += floor;
+            if (y < height) {
                 return 0x10000;
             }
-        } else if (floor + records[height].y_min <= y && y <= floor + records[height].y_max) {
-            u8 orient = map_cell_orientation_grid[z][x];
+        } else {
+            record = &map_cell_height_records[height];
+            if (floor + record->y_min <= y && y <= floor + record->y_max) {
+                u8 orient = map_cell_orientation_grid[z][x];
+                s16 coordinate;
 
-            subx = (s16)(position->vx % 2000);
-            switch (orient) {
-            case 1:
-                subx = subz;
-                break;
-            case 2:
-                break;
-            case 3:
-                subx = 2000 - subz;
-                break;
-            case 4:
-                subx = 2000 - subx;
-                break;
-            default:
-                goto grid_shape;
-            }
-            if (records[height].x_min <= subx && subx <= records[height].x_max) {
-                goto collide;
+                subx = position->vx % 2000;
+                switch (orient) {
+                case 1:
+                    coordinate = subz;
+rectangle_span:
+                    if (record->x_min <= coordinate && coordinate <= record->x_max) {
+                        goto collide;
+                    }
+                    break;
+                case 2:
+                    coordinate = subx;
+                    goto rectangle_span;
+                case 3:
+                    coordinate = 2000 - subz;
+                    goto rectangle_span;
+                case 4:
+                    coordinate = 2000 - subx;
+                    goto rectangle_span;
+                default:
+                    goto grid_shape;
+                }
             }
         }
     }
 
 grid_shape:
-    cg = &map_collision_grid[0][0];
-    switch (cg[cell]) {
+    switch (map_collision_grid[z][x]) {
     case 0:
-        if (((cg[cell + 100] != 1 && cg[cell + 100] != 6) || position->vz % 2000 < 1000) &&
-            ((cg[cell - 100] != 1 && cg[cell - 100] != 6) || 1000 < position->vz % 2000) &&
-            ((cg[cell + 1] != 1 && cg[cell + 1] != 6) || position->vx % 2000 < 1000)) {
-            if (cg[cell - 1] != 1 && cg[cell - 1] != 6) {
+        if (((map_collision_grid[z + 1][x] != 1 && map_collision_grid[z + 1][x] != 6)
+                || position->vz % 2000 < 1000) &&
+            ((map_collision_grid[z - 1][x] != 1 && map_collision_grid[z - 1][x] != 6)
+                || 1000 < position->vz % 2000) &&
+            ((map_collision_grid[z][x + 1] != 1 && map_collision_grid[z][x + 1] != 6)
+                || position->vx % 2000 < 1000)) {
+            if (map_collision_grid[z][x - 1] != 1 && map_collision_grid[z][x - 1] != 6) {
                 return 0x10000;
             }
             if (1000 < position->vx % 2000) {
@@ -113,7 +119,7 @@ grid_shape:
         }
         break;
     case 4:
-        if (position->vz % 2000 + 1000 < position->vx % 2000) {
+        if (position->vx % 2000 > position->vz % 2000 + 1000) {
             return 0x10000;
         }
         break;
@@ -125,22 +131,14 @@ grid_shape:
     }
 
 collide:
-    {
-        u8 kind = current_effect->type & 3;
-
-        if (kind == 2) {
-            flags = 0x71;
-        } else if (kind < 3) {
-            if (kind != 1) {
-                return 1;
-            }
-            flags = 0xe1;
-        } else {
-            if (kind != 3) {
-                return 3;
-            }
-            flags = 0x61;
-        }
+    switch (effect->type & 3) {
+    case 1:
+        return collision_query_world(position->vx, position->vy, position->vz, radius, 0, 0xe1);
+    case 2:
+        return collision_query_world(position->vx, position->vy, position->vz, radius, 0, 0x71);
+    case 3:
+        return collision_query_world(position->vx, position->vy, position->vz, radius, 0, 0x61);
+    default:
+        return 1;
     }
-    return collision_query_world(position->vx, position->vy, position->vz, radius, 0, flags);
 }

@@ -144,6 +144,9 @@ promotes a probe to a proven historical toolchain.
   owner and member-relative addressing closing the current-record selector.
 - [game-effect-constructor.md](game-effect-constructor.md): reviewed switch
   references, full SDK-vector copies and corrected kind-dependent byte stores.
+- [game-effect-map-collision.md](game-effect-map-collision.md): signed cell
+  coordinates, direct neighbor indexing, selected rectangle and backward span
+  join recover the collision helper; return/join differences remain non-exact.
 - [game-magic-cast-source.md](game-magic-cast-source.md): case-local objects,
   distinct distance outputs, projectile-speed lifetime and height-branch order
   improve magic casting; remaining stack/angle differences stay unattributed.

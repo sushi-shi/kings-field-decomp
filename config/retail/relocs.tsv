@@ -7190,32 +7190,32 @@ GAME.EXE	0x800377a4	0x25fa4		mips26	reachable-code	0x80036f00	load	effect_pool_f
 GAME.EXE	0x8003781c	0x2601c	0x80037820	mips_hi16_lo16	reachable-code	0x8009db84	bss	effect_state	lui+addiu	a1	paired-reviewed	reviewed	manual:game_effect_pool_constructors
 GAME.EXE	0x80037840	0x26040	0x80037844	mips_hi16_lo16	reachable-code	0x8009db80	bss	effect_state	lui+sw	v0	paired-reviewed	reviewed	manual:game_effect_pool_constructors
 GAME.EXE	0x800378d0	0x260d0	0x800378d4	mips_hi16_lo16	reachable-code	0x8009db84	bss	effect_state	lui+lw	t8	paired-reviewed	reviewed	manual:effect_map_collision
-GAME.EXE	0x800378fc	0x260fc		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x800378fc	0x260fc		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
 GAME.EXE	0x80037918	0x26118	0x8003791c	mips_hi16_lo16	reachable-code	0x80095900	bss	map_floor_height_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037960	0x26160	0x80037964	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037980	0x26180	0x80037984	mips_hi16_lo16	reachable-code	0x800558b8	load		lui+addiu	at	paired-reviewed	reviewed	manual:effect_map_collision
-GAME.EXE	0x800379ac	0x261ac		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x800379ac	0x261ac		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
 GAME.EXE	0x800379b8	0x261b8	0x800379bc	mips_hi16_lo16	reachable-code	0x80055ab8	load	map_cell_height_records	lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision;manual:game_collision_attribute_data
 GAME.EXE	0x800379f4	0x261f4	0x800379f8	mips_hi16_lo16	reachable-code	0x80069018	bss	map_cell_orientation_grid	lui+addiu	v0	paired-reviewed	reviewed	manual:effect_map_collision
-GAME.EXE	0x80037a24	0x26224		mips26	instruction-word	0x80037a90	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037a40	0x26240		mips26	instruction-word	0x80037a90	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037a74	0x26274		mips26	instruction-word	0x80037a90	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037a7c	0x2627c		mips26	instruction-word	0x80037a48	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037a84	0x26284		mips26	instruction-word	0x80037a48	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80037a24	0x26224		mips26	instruction-word	0x80037a90	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037a40	0x26240		mips26	instruction-word	0x80037a90	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037a74	0x26274		mips26	instruction-word	0x80037a90	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037a7c	0x2627c		mips26	instruction-word	0x80037a48	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037a84	0x26284		mips26	instruction-word	0x80037a48	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
 GAME.EXE	0x80037aa4	0x262a4	0x80037aa8	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037ad4	0x262d4	0x80037ad8	mips_hi16_lo16	reachable-code	0x80012ce0	load		lui+addiu	at	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037b08	0x26308	0x80037b0c	mips_hi16_lo16	reachable-code	0x8009807c	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037b94	0x26394	0x80037b98	mips_hi16_lo16	reachable-code	0x80097fb4	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision;manual:game_collision_attribute_data
 GAME.EXE	0x80037c20	0x26420	0x80037c24	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
 GAME.EXE	0x80037cac	0x264ac	0x80037cb0	mips_hi16_lo16	reachable-code	0x80098018	bss	map_collision_grid	lui+addiu	v1	paired-reviewed	reviewed	manual:effect_map_collision
-GAME.EXE	0x80037d24	0x26524		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037da4	0x265a4		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037e28	0x26628		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037eac	0x266ac		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037f58	0x26758		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037f6c	0x2676c		mips26	instruction-word	0x80037fac	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037f78	0x26778		mips26	instruction-word	0x80037f94	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80037f84	0x26784		mips26	instruction-word	0x80037f94	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80037d24	0x26524		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037da4	0x265a4		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037e28	0x26628		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037eac	0x266ac		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037f58	0x26758		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037f6c	0x2676c		mips26	instruction-word	0x80037fac	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037f78	0x26778		mips26	instruction-word	0x80037f94	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
+GAME.EXE	0x80037f84	0x26784		mips26	instruction-word	0x80037f94	load		j		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:game_effect_map_collision
 GAME.EXE	0x80037fa4	0x267a4		mips26	instruction-word	0x8001a5ac	load	collision_query_world	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80037fd0	0x267d0	0x80037fd4	mips_hi16_lo16	reachable-code	0x800a07a8	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80037ffc	0x267fc	0x80038000	mips_hi16_lo16	reachable-code	0x8009db84	bss	effect_state	lui+lw	s1	paired-reviewed	reviewed	manual:game_effect_update
