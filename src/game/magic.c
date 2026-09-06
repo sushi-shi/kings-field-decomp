@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_collision.h>
 #include <kf/game_player.h>
 #include <kf/game.h>
@@ -132,9 +133,9 @@ void magic_cast(void)
                        - (rsin(player_state.camera_rotation.vy) * 6000 >> 12);
             spawn.vz = player_state.camera_position.vz
                        + (rcos(player_state.camera_rotation.vy) * 6000 >> 12);
-            cell_z = spawn.vz / 2000;
-            cell_x = spawn.vx / 2000;
-            spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * 100);
+            cell_z = spawn.vz / KF_MAP_TILE_SIZE;
+            cell_x = spawn.vx / KF_MAP_TILE_SIZE;
+            spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
             effect_pool_construct(0xa, 0x13, player_state.selected_magic_id, &spawn,
                           (SVECTOR *)&player_state.camera_rotation, 0);
         }

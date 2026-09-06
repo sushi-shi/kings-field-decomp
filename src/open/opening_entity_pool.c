@@ -62,9 +62,9 @@ void opening_entity_pool_load_placements(
                 entity->rotation.x = 0;
                 entity->rotation.y = placement->yaw & 0xfff;
                 entity->position.vx =
-                    placement->tile_x * 2000 + placement->local_x;
+                    placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
                 entity->position.vz =
-                    placement->tile_z * 2000 + placement->local_z;
+                    placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
                 entity->scale.vz = 0x1000;
                 entity->scale.vy = 0x1000;
                 entity->scale.vx = 0x1000;
@@ -72,7 +72,7 @@ void opening_entity_pool_load_placements(
                     entity->position.vy = placement->local_y -
                         map_floor_height_grid[placement->tile_z]
                                              [placement->tile_x] *
-                            100;
+                            KF_MAP_HEIGHT_STEP;
                 } else {
                     entity->position.vy = base_y + placement->local_y;
                 }

@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_render.h>
 #include <kf/game_state.h>
 
@@ -80,10 +81,10 @@ void render_entities(void)
     {
         KfFloorItem *items = floor_items;
         for (i = floor_item_count - 1; i != -1; i--) {
-            u16 row = (items->position_z / 2000) - window_origin_z;
+            u16 row = (items->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
-                u16 col = (items->position_x / 2000) - window_origin_x;
+                u16 col = (items->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_floor_item(items);
                 }
@@ -100,10 +101,10 @@ void render_entities(void)
             continue;
         }
         {
-            u16 row = (*(s32 *)&sprite->position_z / 2000) - window_origin_z;
+            u16 row = (*(s32 *)&sprite->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
-                u16 col = (*(s32 *)&sprite->position_x / 2000) - window_origin_x;
+                u16 col = (*(s32 *)&sprite->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != 0) {
                     render_actor_sprite(sprite);
                 }

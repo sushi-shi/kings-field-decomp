@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_render.h>
 #include <kf/game.h>
 
@@ -82,16 +83,16 @@ void render_map_cell(s32 col, s32 row, char cell)
     if (cell == 1) {
         tex += 100;
     }
-    position.vx = col * 2000 - (u16)render_state.view_position.vx;
-    position.vz = row * 2000 - (u16)render_state.view_position.vz;
-    position.vy = map_floor_height_grid[row][col] * -100 - (u16)render_state.view_position.vy;
+    position.vx = col * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vx;
+    position.vz = row * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vz;
+    position.vy = map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP - (u16)render_state.view_position.vy;
     if (orient == 1) {
-        position.vz += 2000;
+        position.vz += KF_MAP_TILE_SIZE;
     } else if (orient == 2) {
-        position.vx += 2000;
-        position.vz += 2000;
+        position.vx += KF_MAP_TILE_SIZE;
+        position.vz += KF_MAP_TILE_SIZE;
     } else if (orient == 3) {
-        position.vx += 2000;
+        position.vx += KF_MAP_TILE_SIZE;
     }
 
     SetRotMatrix((MATRIX *)&render_state.view_matrix);
@@ -139,11 +140,11 @@ void render_map_cells(void)
 
     rows = active_cell_window->height;
     do {
-        if ((u32)row < 100) {
+        if ((u32)row < KF_MAP_ROWS) {
             col = col_base;
             cols = active_cell_window->width;
             do {
-                if ((u32)col < 100 && *cell != 0) {
+                if ((u32)col < KF_MAP_COLUMNS && *cell != 0) {
                     render_map_cell(col, row, *cell);
                 }
                 cell++;

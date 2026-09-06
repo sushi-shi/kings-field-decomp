@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
 #include <kf/notify.h>
@@ -269,8 +270,8 @@ void map_floor5_transition_cutscene(void)
 
     player_state.camera_position = path.position;
     player_state.camera_rotation = path.rotation;
-    player_state.map_cell.x = player_state.camera_position.vx / 2000;
-    player_state.map_cell.z = player_state.camera_position.vz / 2000;
+    player_state.map_cell.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
+    player_state.map_cell.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
 
     ReadColorMatrix(&color_matrix);
@@ -278,14 +279,14 @@ void map_floor5_transition_cutscene(void)
     effect->object_id = 10;
     effect->cell_x = 85;
     effect->cell_z = 40;
-    effect->position_x = effect->cell_x * 2000 + 1000;
-    effect->position_z = effect->cell_z * 2000 + 1000;
+    effect->position_x = effect->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
+    effect->position_z = effect->cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     grid_height = map_floor_height_grid[effect->cell_z][effect->cell_x];
     effect->rotation.z = 0;
     effect->rotation.x = 0;
     effect->rotation.y = 0x800;
     effect->action = 0xff;
-    effect->position_y = -(grid_height * 100) - 1300;
+    effect->position_y = -(grid_height * KF_MAP_HEIGHT_STEP) - 1300;
 
     spin = 0;
     hold = 0;
@@ -440,7 +441,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * 1500 >> 12);
     sound_z = position->vz + (rcos(rotation->vy) * 1500 >> 12);
-    switch (map_cell_attribute_grid[sound_z / 2000][sound_x / 2000]) {
+    switch (map_cell_attribute_grid[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
     case 0x3a:
         notify_enqueue(0xc);
         break;

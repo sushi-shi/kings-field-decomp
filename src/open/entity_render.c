@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/open_opening_render.h>
 #include <kf/open_render.h>
 #include <kf/open_scene0.h>
@@ -170,11 +171,11 @@ void opening_render_entities_and_items(void)
     item = open_graphics_runtime.floor_item_state.items;
     remaining = open_graphics_runtime.floor_item_state.count;
     while (--remaining != -1) {
-        u16 row = item->position_z / 2000 - origin_z;
+        u16 row = item->position_z / KF_MAP_TILE_SIZE - origin_z;
         const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
 
         if (row < grid->height) {
-            u16 col = item->position_x / 2000 - origin_x;
+            u16 col = item->position_x / KF_MAP_TILE_SIZE - origin_x;
 
             if (col < grid->width && grid->cells[row * grid->width + col] != 0) {
                 render_floor_item(item);

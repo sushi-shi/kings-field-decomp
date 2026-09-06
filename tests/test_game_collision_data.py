@@ -102,7 +102,8 @@ class GameCollisionDataTests(unittest.TestCase):
                           (4, 2, 'x_max', 's16'), (6, 2, 'y_max', 's16')])
         for unit, _va, name, size, digest in OWNERS:
             source = load_manifest().by_name()[unit].source_path.read_text()
-            definition = re.search(name + r'\[\d+\] = \{(.*?)\};', source, re.S)
+            definition = re.search(name + r'\[[^\]]+\] = \{(.*?)\};', source, re.S)
+            self.assertIsNotNone(definition)
             values = [int(v) for v in re.findall(r'-?\d+', definition[1])]
             payload = struct.pack('<' + 'h' * len(values), *values)
             self.assertEqual((len(payload), hashlib.sha256(payload).hexdigest()), (size, digest))

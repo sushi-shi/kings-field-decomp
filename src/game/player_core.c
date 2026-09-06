@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_player.h>
 #include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
@@ -215,8 +216,8 @@ void player_clear_motion(void)
 ADDRESS(0x80016ee8, 0x158)
 void player_sync_position_to_map(void)
 {
-    s32 cell_x = player_state.camera_position.vx / 2000;
-    s32 cell_z = player_state.camera_position.vz / 2000;
+    s32 cell_x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
+    s32 cell_z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
     s32 floor;
     s32 view_offset;
     s32 floor_height;
@@ -226,7 +227,7 @@ void player_sync_position_to_map(void)
     player_state.map_cell.z = cell_z;
     floor = map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x];
     player_state.allow_near_actor_spawn = 1;
-    floor_height = -(floor * 100);
+    floor_height = -(floor * KF_MAP_HEIGHT_STEP);
     view_offset = player_state.view_bob_offset - 1500;
     player_state.floor_height = floor_height;
     player_state.camera_position.vy = view_offset + floor_height;
@@ -359,16 +360,16 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             return 1;
         }
     }
-    cell_z = new_z / 2000;
-    if (cell_z < 100 && map_collision_grid[cell_z][player_state.map_cell.x] != 0
-        && -(map_floor_height_grid[cell_z][player_state.map_cell.x] * 100) - player_state.floor_height
+    cell_z = new_z / KF_MAP_TILE_SIZE;
+    if (cell_z < KF_MAP_ROWS && map_collision_grid[cell_z][player_state.map_cell.x] != 0
+        && -(map_floor_height_grid[cell_z][player_state.map_cell.x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
                >= -699) {
         player_state.camera_position.vz = new_z;
         player_state.map_cell.z = cell_z;
     }
-    cell_x = new_x / 2000;
-    if (cell_x < 100 && map_collision_grid[player_state.map_cell.z][cell_x] != 0
-        && -(map_floor_height_grid[player_state.map_cell.z][cell_x] * 100) - player_state.floor_height
+    cell_x = new_x / KF_MAP_TILE_SIZE;
+    if (cell_x < KF_MAP_COLUMNS && map_collision_grid[player_state.map_cell.z][cell_x] != 0
+        && -(map_floor_height_grid[player_state.map_cell.z][cell_x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
                >= -699) {
         player_state.camera_position.vx = new_x;
         player_state.map_cell.x = cell_x;
@@ -376,8 +377,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     type = map_collision_grid[cell_z0][cell_x0];
     if (type >= 2 && type <= 5) {
         if (player_state.map_cell.x == cell_x0 && player_state.map_cell.z == cell_z0) {
-            remainder_z = player_state.camera_position.vz % 2000;
-            remainder_x = player_state.camera_position.vx % 2000;
+            remainder_z = player_state.camera_position.vz % KF_MAP_TILE_SIZE;
+            remainder_x = player_state.camera_position.vx % KF_MAP_TILE_SIZE;
             if (type == 2) {
                 if (remainder_x < remainder_z) {
                     half = (remainder_z - remainder_x) / 2;
@@ -385,8 +386,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                     player_state.camera_position.vx += half;
                 }
             } else if (type == 3) {
-                if (remainder_z + remainder_x >= 2001) {
-                    half = (remainder_z + remainder_x - 2000) / 2;
+                if (remainder_z + remainder_x >= KF_MAP_TILE_SIZE + 1) {
+                    half = (remainder_z + remainder_x - KF_MAP_TILE_SIZE) / 2;
                     player_state.camera_position.vz -= half;
                     player_state.camera_position.vx -= half;
                 }
@@ -397,14 +398,14 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                     player_state.camera_position.vx -= half;
                 }
             } else if (type == 5) {
-                if (remainder_z + remainder_x < 2000) {
-                    half = (2000 - (remainder_z + remainder_x)) / 2;
+                if (remainder_z + remainder_x < KF_MAP_TILE_SIZE) {
+                    half = (KF_MAP_TILE_SIZE - (remainder_z + remainder_x)) / 2;
                     player_state.camera_position.vz += half;
                     player_state.camera_position.vx += half;
                 }
             }
-            player_state.map_cell.z = player_state.camera_position.vz / 2000;
-            player_state.map_cell.x = player_state.camera_position.vx / 2000;
+            player_state.map_cell.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
+            player_state.map_cell.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
         }
         if (map_collision_grid[cell_z][cell_x] == 0) {
             if (dz < 0) {
@@ -448,10 +449,10 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                 }
             }
             new_z = dz + player_state.camera_position.vz;
-            cell_z = new_z / 2000;
+            cell_z = new_z / KF_MAP_TILE_SIZE;
             new_x = dx + player_state.camera_position.vx;
-            cell_x = new_x / 2000;
-            if (cell_z < 100 && cell_x < 100 && map_collision_grid[cell_z][cell_x] != 0) {
+            cell_x = new_x / KF_MAP_TILE_SIZE;
+            if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS && map_collision_grid[cell_z][cell_x] != 0) {
                 player_state.camera_position.vz = new_z;
                 player_state.camera_position.vx = new_x;
                 player_state.map_cell.z = cell_z;
@@ -483,7 +484,7 @@ void player_update_vertical_motion(void)
     s32 target;
     s32 view_offset;
 
-    target = -(map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x] * 100);
+    target = -(map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x] * KF_MAP_HEIGHT_STEP);
     if (player_state.update_state != 0xff) {
         if (player_state.floor_height - target < -3000) {
             if (player_state.equipped_leg_armor_id == 0x26
@@ -555,9 +556,9 @@ void player_warp_to_floor_entry(void)
     entry = &floor_entry_cells[floor - 1];
     player_state.previous_map_cell.x = entry->x;
     player_state.previous_map_cell.z = entry->z;
-    player_state.camera_position.vx = player_state.previous_map_cell.x * 2000 + 1000;
+    player_state.camera_position.vx = player_state.previous_map_cell.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vx = player_state.camera_position.vx;
-    player_state.camera_position.vz = player_state.previous_map_cell.z * 2000 + 1000;
+    player_state.camera_position.vz = player_state.previous_map_cell.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     if (floor == 5 && player_state.map_variant != 1) {
         if (player_state.map_variant == 3) {

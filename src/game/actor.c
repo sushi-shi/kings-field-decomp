@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_actor.h>
 #include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
@@ -97,8 +98,8 @@ void actor_set_player_transform(
 ADDRESS(0x8002cb44, 0x74)
 void actor_update_cell_from_position(KfActor *actor)
 {
-    actor->cell_x = actor->position.vx / 2000;
-    actor->cell_z = actor->position.vz / 2000;
+    actor->cell_x = actor->position.vx / KF_MAP_TILE_SIZE;
+    actor->cell_z = actor->position.vz / KF_MAP_TILE_SIZE;
 }
 
 ADDRESS(0x8002cbb8, 0x9c)
@@ -107,8 +108,8 @@ void actor_set_position(KfActor *actor, const struct KfVec3i *position)
     actor->position.vx = position->x;
     actor->position.vz = position->z;
     actor->position.vy = position->y;
-    actor->cell_x = position->x / 2000;
-    actor->cell_z = position->z / 2000;
+    actor->cell_x = position->x / KF_MAP_TILE_SIZE;
+    actor->cell_z = position->z / KF_MAP_TILE_SIZE;
 }
 
 ADDRESS(0x8002cc54, 0x10)
@@ -157,11 +158,11 @@ void actor_initialize_current(void)
     s32 world;
 
     coordinate = actor->tile_x;
-    world = coordinate * 2000;
+    world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_x;
     position.x = world + coordinate;
     coordinate = actor->tile_z;
-    world = coordinate * 2000;
+    world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_z;
     position.z = world + coordinate;
     position.y = map_floor_height_at_position((const VECTOR *)&position);
@@ -180,11 +181,11 @@ void actor_initialize_slot(u16 actor_index)
 
     actor->lifecycle = 1;
     coordinate = actor->tile_x;
-    world = coordinate * 2000;
+    world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_x;
     position.x = world + coordinate;
     coordinate = actor->tile_z;
-    world = coordinate * 2000;
+    world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_z;
     position.z = world + coordinate;
     position.y = map_floor_height_at_position((const VECTOR *)&position);
@@ -724,7 +725,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
     if (actor->action == action && actor->action_timer != 0xff) {
         return actor->action;
     }
-    if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * 100)
+    if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
         != actor->position.vy) {
         goto rejected;
     }

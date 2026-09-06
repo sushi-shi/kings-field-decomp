@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_cd.h>
 #include <kf/game_render.h>
 #include <kf/notify.h>
@@ -292,8 +293,8 @@ void render_set_view_transform(
 
     if (position != 0) {
         render_state.view_position = *position;
-        render_state.view_cell.x = render_state.view_position.vx / 2000;
-        render_state.view_cell.z = render_state.view_position.vz / 2000;
+        render_state.view_cell.x = render_state.view_position.vx / KF_MAP_TILE_SIZE;
+        render_state.view_cell.z = render_state.view_position.vz / KF_MAP_TILE_SIZE;
     }
     if (rotation != 0) {
         render_state.view_rotation = *rotation;

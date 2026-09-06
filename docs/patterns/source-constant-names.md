@@ -59,3 +59,60 @@ to the original baseline. Compiling saved source controls for the other three
 relocations, symbols, and all other sections are identical.
 
 The remaining source batches are still in progress.
+
+## Map units batch
+
+The related campaign is the shared map-grid consumer family in GAME and OPEN:
+placement loaders, world/cell conversion, map geometry rendering, collision,
+floor lookup, and restoration. The resource loader copies 100-by-100 byte
+grids. World X/Z use 2000 units per cell; floor-height bytes use 100 world units
+per step with their existing sign conversion. Tile centers are at offset 1000.
+These facts are independently repeated in the placement loader multiply/add
+chains, renderer offsets, and collision quotient/remainder operations.
+
+Use shared constants for these conversions and dimensions. Do not conflate
+them with the same-valued lighting coefficients, menu ordering-table depth,
+actor attack distances, texture-bank size, or table initializer data. Those
+sites remain assigned to their own domain review. The neighboring-cell and
+diagonal-half-cell tests retain their original signedness, inequalities,
+operation order and constants after substitution.
+
+The query at GAME 8001a5ac defines the exclusion flags, target-capture flag,
+height-ignore sentinel, player collision radius, and result tags. Its actor
+and player distance callees independently check the same height sentinel.
+`effect_update_dispatch` treats every result other than -1 as an impact, then
+uses the high halfword to distinguish the actor and player. Therefore the
+effect-map helper's 0x10000 return denotes terrain contact; its old comment
+calling that value "no collision" was wrong.
+
+Grid shape 1 is ordinary traversable floor; shape 6 is also traversable and
+adds a 300-unit half-cell step in the floor-height helper. The occupancy update
+at GAME 8001a4e8 visits a 5-by-5 neighborhood centered two cells before the
+input, maintains the low five bits, and preserves the high three. The query's
+rejection mask is separately 0xf0, which overlaps the high occupancy bit; the
+names retain this actual behavior rather than normalizing the masks.
+
+The four diagonal cell IDs are named for their traversable local X/Z
+half-planes. `player_move_horizontal` (GAME 800171fc) projects invalid positions
+back onto `x = z` or `x + z = cell size`, with the corresponding inequality
+for each ID. Serialized orientations 1..4 select the zero, quarter-, half-,
+and three-quarter-turn matrices built by both renderer initializers.
+
+The height lookup initializer in `collision.c` remains literal data: negative
+entries are measured floor-relative heights, nonnegative entries index the
+seven adjacent rectangle records, and zero-filled tail entries preserve the
+retail table. Inventing asset names for these rows is not justified by the
+current identities. The table's 255-element extent covers all attribute bytes
+except the 0xff sentinel. Numeric zero in flat grid accesses denotes the base
+row used for flattened indexing; zero comparisons test empty masks, arithmetic
+signs, or absence of vertical extent. Unit increments and the `cell size + 1`
+inclusive boundary remain inline arithmetic.
+
+The compiled-control comparison covers all 112 objects. Only `.debug_line`
+differs in 20 objects; every other section, including relocations and the
+complete initialized collision tables, is identical. Individual verdicts for
+all 477 source claims retain their prior strict percentages (392 exact).
+The initializer test accepts a named array bound while retaining its exact
+payload-size and SHA-256 checks. Lint, `nix flake check -L`, and all 634 tests
+pass (nine local prerequisites skipped); full `kf build` still reports the pre-existing data
+ownership/placement failures. Other constant domains remain under review.

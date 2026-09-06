@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
@@ -134,16 +135,16 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
     case 0:
         switch (yaw) {
         case 0x000:
-            point_x += 2000;
+            point_x += KF_MAP_TILE_SIZE;
             goto probe;
         case 0x400:
-            point_z += 2000;
+            point_z += KF_MAP_TILE_SIZE;
             goto probe;
         case 0x800:
-            point_x -= 2000;
+            point_x -= KF_MAP_TILE_SIZE;
             goto probe;
         case 0xc00:
-            point_z -= 2000;
+            point_z -= KF_MAP_TILE_SIZE;
             goto probe;
         }
         break;
@@ -215,10 +216,10 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             object->rotation.z = 0;
             object->rotation.x = 0;
             object->rotation.y = placement->yaw & 0xfff;
-            object->position_x = placement->tile_x * 2000 + placement->local_x;
-            object->position_z = placement->tile_z * 2000 + placement->local_z;
+            object->position_x = placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
+            object->position_z = placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
             object->position_y = placement->local_y
-                - map_floor_height_grid[placement->tile_z][placement->tile_x] * 100;
+                - map_floor_height_grid[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object->action = 0xff;
             /* The link block moves as two aligned words. */
             memcpy((u32 *)&object->link, (const u32 *)&placement->link, sizeof object->link);

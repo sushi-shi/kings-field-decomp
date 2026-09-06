@@ -83,6 +83,17 @@ The shipped-resource audit provides constraints, not semantic names:
 - OPEN's three trailing control words are zeroed individually and by the
   complete state clear. The validated direct-reference census has no reads.
 
+The OPEN controls now have a specific cross-image candidate: GAME's three
+map-object effect allocation sequences. GAME clears 0x25b8 bytes from
+8006e8e0, while its definitions and live records occupy 0x25a8; its sequence
+words at 80070e92/94/96 therefore lie 10, 12, and 14 bytes after the records.
+OPEN clears 0x510 bytes from 80049538, has 0x500 bytes of live records, and
+clears words at 80049a42/44/46 at the same relative tail offsets. Both pool
+reset routines clear the three words in descending address order. This is
+evidence of a shared or copied pool tail, but assigning GAME's allocation
+semantics to OPEN remains a candidate: OPEN has no corresponding allocator
+consumer. The field spellings are retained until that distinction is resolved.
+
 The resource census uses the existing length-prefixed chunk and animation
 oracles. It covers 169 shipped assets, including 70 animated assets. The
 actor-definition loader copies 12 records per floor; trailing chunk bytes are

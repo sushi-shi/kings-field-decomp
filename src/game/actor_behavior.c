@@ -1,11 +1,11 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_actor.h>
 #include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
 #define ACTOR_ACTION_NONE 0xff
-#define MAP_TILE_SIZE 2000
 
 /* actor behavior/AI run (0x8002e2e8..0x80030817); shared jump-table rodata. */
 RODATA(0x800124d4, 0x264)
@@ -165,9 +165,9 @@ void actor_update_awareness(void)
         if (kind == 2) {
             if ((actor->spawn_chance << 7) > rand()) {
                 if (actor_pool_find_overlap(
-                        actor->tile_x * MAP_TILE_SIZE + actor->local_x,
+                        actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x,
                         0xffff,
-                        actor->tile_z * MAP_TILE_SIZE + actor->local_z,
+                        actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z,
                         definition->collision_radius,
                         0)
                     == -1) {
@@ -186,9 +186,9 @@ void actor_update_awareness(void)
             }
             if ((actor->spawn_chance << 7) > rand() || kind == 1 || kind == 3) {
                 if (actor_pool_find_overlap(
-                        actor->tile_x * MAP_TILE_SIZE + actor->local_x,
+                        actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x,
                         0xffff,
-                        actor->tile_z * MAP_TILE_SIZE + actor->local_z,
+                        actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z,
                         definition->collision_radius,
                         0)
                     != -1) {
@@ -275,7 +275,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
                         actor->movement_yaw = 0;
                     }
                     actor->position.vz = target.vz;
-                    actor->cell_z = target.vz / MAP_TILE_SIZE;
+                    actor->cell_z = target.vz / KF_MAP_TILE_SIZE;
                     actor->collision_state = 1;
                 } else if (collision_query_world(
                                target.vx,
@@ -291,7 +291,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
                         actor->movement_yaw = 0xc00;
                     }
                     actor->position.vx = target.vx;
-                    actor->cell_x = target.vx / MAP_TILE_SIZE;
+                    actor->cell_x = target.vx / KF_MAP_TILE_SIZE;
                     actor->collision_state = 1;
                 } else {
                     actor->movement_yaw = (actor->movement_yaw + 0x800) & 0xfff;
@@ -338,8 +338,8 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
     actor->collision_state = 0;
     actor->position.vx = target.vx;
     actor->position.vz = target.vz;
-    actor->cell_x = target.vx / MAP_TILE_SIZE;
-    actor->cell_z = target.vz / MAP_TILE_SIZE;
+    actor->cell_x = target.vx / KF_MAP_TILE_SIZE;
+    actor->cell_z = target.vz / KF_MAP_TILE_SIZE;
     return 0;
 }
 
@@ -554,8 +554,8 @@ void actor_apply_horizontal_movement(void)
         actor->position.vx = target.x;
         actor->position.vz = target.z;
     }
-    actor->cell_x = actor->position.vx / 2000;
-    actor->cell_z = actor->position.vz / 2000;
+    actor->cell_x = actor->position.vx / KF_MAP_TILE_SIZE;
+    actor->cell_z = actor->position.vz / KF_MAP_TILE_SIZE;
 }
 
 /* Runs effect action ACTION (0..7): starts its animation, spawns its effect once, then picks the next action. */
@@ -678,8 +678,8 @@ void actor_apply_random_movement(s16 step, s16 limit)
             actor->movement_z = -actor->movement_z;
         }
     }
-    actor->cell_x = actor->position.vx / 2000;
-    actor->cell_z = actor->position.vz / 2000;
+    actor->cell_x = actor->position.vx / KF_MAP_TILE_SIZE;
+    actor->cell_z = actor->position.vz / KF_MAP_TILE_SIZE;
 }
 
 
@@ -1081,8 +1081,8 @@ void actor_update_current_action(void)
             actor->movement_yaw =
                 vector_xz_to_angle(home_x - actor->position.vx, home_z - actor->position.vz);
         } else if (actor->collision_state == 0) {
-            home_x = actor->tile_x * 2000 + actor->local_x;
-            home_z = actor->tile_z * 2000 + actor->local_z;
+            home_x = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
+            home_z = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
             if (actor->position.vx - home_x > -200 && actor->position.vx - home_x < 200
                 && actor->position.vz - home_z > -200 && actor->position.vz - home_z < 200) {
                 actor->movement_yaw = actor->heading_quadrant << 10;

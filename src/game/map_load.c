@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
@@ -84,11 +85,11 @@ void map_restore_floor_state(void)
             object->cell_x = *in++;
             object->cell_z = *in++;
             object->position_x =
-                object->cell_x * 2000 + ((rand() * 2000) >> 15);
+                object->cell_x * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> 15);
             object->position_z =
-                object->cell_z * 2000 + ((rand() * 2000) >> 15);
+                object->cell_z * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> 15);
             object->position_y =
-                -(map_floor_height_grid[object->cell_z][object->cell_x] * 100);
+                -(map_floor_height_grid[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             object->rotation.z = 0;
             object->rotation.y = 0;
             object->rotation.x = 0;
@@ -103,11 +104,11 @@ void map_restore_floor_state(void)
             object->cell_x = *in++;
             object->cell_z = *in++;
             object->position_x =
-                object->cell_x * 2000 + ((rand() * 2000) >> 15);
+                object->cell_x * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> 15);
             object->position_z =
-                object->cell_z * 2000 + ((rand() * 2000) >> 15);
+                object->cell_z * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> 15);
             object->position_y =
-                -(map_floor_height_grid[object->cell_z][object->cell_x] * 100);
+                -(map_floor_height_grid[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             if (object->object_id < 43) {
                 object->rotation.x = 0x400;
             } else if (object->object_id < 48) {

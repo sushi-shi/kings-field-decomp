@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
 #include <kf/game.h>
@@ -60,15 +61,15 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->unknown_0c = definitions->unknown_0b;
                 event->unknown_0d = definitions->unknown_0c;
                 event->behavior = definitions->behavior;
-                event->position_x = definitions->cell_x * 2000 + definitions->position_x_offset;
+                event->position_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
                 event->reference_x = event->position_x;
-                event->position_z = definitions->cell_z * 2000 + definitions->position_z_offset;
+                event->position_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
                 event->reference_z = event->position_z;
                 event->cell_x = definitions->cell_x;
                 event->cell_z = definitions->cell_z;
                 event->radius = definitions->radius;
                 event->position_y =
-                    -(map_floor_height_grid[event->cell_z][event->cell_x] * 100);
+                    -(map_floor_height_grid[event->cell_z][event->cell_x] * KF_MAP_HEIGHT_STEP);
                 event->rotation = definitions->initial_rotation;
                 definitions++;
                 event->rotation_z = 0;

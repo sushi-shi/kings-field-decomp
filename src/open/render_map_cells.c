@@ -27,17 +27,17 @@ void render_map_cell(s32 col, s32 row, u8 cell)
     if (cell == 1) {
         object_index += 100;
     }
-    position.vx = col * 2000 - (u16)open_graphics_runtime.render_state.view_position.vx;
-    position.vz = row * 2000 - (u16)open_graphics_runtime.render_state.view_position.vz;
-    position.vy = map_floor_height_grid[row][col] * -100 -
+    position.vx = col * KF_MAP_TILE_SIZE - (u16)open_graphics_runtime.render_state.view_position.vx;
+    position.vz = row * KF_MAP_TILE_SIZE - (u16)open_graphics_runtime.render_state.view_position.vz;
+    position.vy = map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP -
         (u16)open_graphics_runtime.render_state.view_position.vy;
     if (orientation == 1) {
-        position.vz += 2000;
+        position.vz += KF_MAP_TILE_SIZE;
     } else if (orientation == 2) {
-        position.vx += 2000;
-        position.vz += 2000;
+        position.vx += KF_MAP_TILE_SIZE;
+        position.vz += KF_MAP_TILE_SIZE;
     } else if (orientation == 3) {
-        position.vx += 2000;
+        position.vx += KF_MAP_TILE_SIZE;
     }
 
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
@@ -72,11 +72,11 @@ void opening_render_map_cells(void)
 
     rows = open_graphics_runtime.active_cell_window->height;
     do {
-        if ((u32)row < 100) {
+        if ((u32)row < KF_MAP_ROWS) {
             col = col_base;
             cols = open_graphics_runtime.active_cell_window->width;
             do {
-                if ((u32)col < 100 && *cell != 0) {
+                if ((u32)col < KF_MAP_COLUMNS && *cell != 0) {
                     render_map_cell(col, row, *cell);
                 }
                 cell++;

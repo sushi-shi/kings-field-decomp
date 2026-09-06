@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
@@ -7,7 +8,6 @@ RODATA(0x80012888, 0x18c)
 
 #define MAP_OBJECT_COUNT 190
 #define MAP_OBJECT_NONE 0xff
-#define MAP_TILE_SIZE 2000
 
 /*
  * Finds the first object from START_INDEX whose interaction radius (plus
@@ -30,7 +30,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
         }
         definition = &map_object_state.definitions[object->object_id];
         if (definition->behavior_type == 0) {
-            offset.vx = -MAP_TILE_SIZE;
+            offset.vx = -KF_MAP_TILE_SIZE;
             offset.vy = 0;
             offset.vz = 0x226;
             matrix_set_rotation_y(object->rotation.y, &matrix);
@@ -43,7 +43,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
                 return index;
             }
         } else if (definition->behavior_type == 1) {
-            offset.vx = MAP_TILE_SIZE;
+            offset.vx = KF_MAP_TILE_SIZE;
             offset.vy = 0;
             offset.vz = 0x226;
             matrix_set_rotation_y(object->rotation.y, &matrix);
@@ -122,8 +122,8 @@ void map_object_spawn_effect(u8 kind, u8 object_id, const struct KfVec3i *positi
     object->position_x = position->x;
     object->position_y = y_offset + position->y;
     object->position_z = position->z;
-    object->cell_x = object->position_x / MAP_TILE_SIZE;
-    object->cell_z = object->position_z / MAP_TILE_SIZE;
+    object->cell_x = object->position_x / KF_MAP_TILE_SIZE;
+    object->cell_z = object->position_z / KF_MAP_TILE_SIZE;
     object->rotation.z = 0;
     object->rotation.x = 0;
     object->rotation.y = rand() >> 3;
@@ -158,8 +158,8 @@ void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s
     object->position_x = ((rsin(angle) * 600) >> 12) + position->x;
     object->position_y = y_offset + position->y;
     object->position_z = ((rcos(angle) * 600) >> 12) + position->z;
-    object->cell_x = object->position_x / MAP_TILE_SIZE;
-    object->cell_z = object->position_z / MAP_TILE_SIZE;
+    object->cell_x = object->position_x / KF_MAP_TILE_SIZE;
+    object->cell_z = object->position_z / KF_MAP_TILE_SIZE;
     object->rotation.z = 0;
     object->rotation.x = 0;
     object->rotation.y = rand() >> 3;
@@ -329,10 +329,10 @@ void map_object_pool_update(void)
 
                 object->position_y += object->link.vertical_velocity;
                 object->link.vertical_velocity += 20;
-                if (object->position_y < -(attribute * 100)) {
+                if (object->position_y < -(attribute * KF_MAP_HEIGHT_STEP)) {
                     break;
                 }
-                object->position_y = -(attribute * 100);
+                object->position_y = -(attribute * KF_MAP_HEIGHT_STEP);
                 object->link.vertical_velocity = 16;
                 object->action_timer = 1;
             } else {
@@ -350,10 +350,10 @@ void map_object_pool_update(void)
 
             object->position_y += 20;
             object->rotation.y = (object->rotation.y + 256) & 0xfff;
-            if (object->position_y < -(attribute * 100)) {
+            if (object->position_y < -(attribute * KF_MAP_HEIGHT_STEP)) {
                 break;
             }
-            object->position_y = -(attribute * 100);
+            object->position_y = -(attribute * KF_MAP_HEIGHT_STEP);
             object->action_timer = 1;
             goto finish;
         }
@@ -361,7 +361,7 @@ void map_object_pool_update(void)
             s32 attribute = map_floor_height_grid[object->cell_z][object->cell_x];
 
             object->position_y += object->link.vertical_velocity;
-            floor = -(attribute * 100);
+            floor = -(attribute * KF_MAP_HEIGHT_STEP);
             tilt = object->rotation.x;
             if (object->action_timer == 0) {
                 object->rotation.x = (tilt + 160) & 0xfff;

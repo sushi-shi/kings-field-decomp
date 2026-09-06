@@ -1,9 +1,9 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_actor.h>
 #include <kf/game.h>
 
 #define ACTOR_SLOT_FREE 0xff
-#define MAP_TILE_SIZE 2000
 
 /* Runs awareness and the current action for every occupied actor slot. */
 ADDRESS(0x80030818, 0xa8)
@@ -66,8 +66,8 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->local_z = placements->local_z;
             actor->local_x = placements->local_x;
             actor->lifecycle = 0;
-            actor->position.vz = actor->tile_z * MAP_TILE_SIZE + actor->local_z;
-            actor->position.vx = actor->tile_x * MAP_TILE_SIZE + actor->local_x;
+            actor->position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
+            actor->position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
             actor->position.vy = map_floor_height_at_position(&actor->position);
             actor->cell_x = actor->tile_x;
             actor->cell_z = actor->tile_z;

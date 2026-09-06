@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_collision.h>
 #include <kf/game.h>
 
@@ -6,28 +7,28 @@ ADDRESS(0x8001a29c, 0x1b0)
 s32 map_floor_height_for_cell_position(
     u16 cell_index, s32 point_x, s32 point_z)
 {
-    s32 floor_height = -(map_floor_height_grid[0][cell_index] * 100);
+    s32 floor_height = -(map_floor_height_grid[0][cell_index] * KF_MAP_HEIGHT_STEP);
 
-    if (map_collision_grid[0][cell_index] == 6) {
+    if (map_collision_grid[0][cell_index] == KF_MAP_CELL_STEP) {
         switch (map_cell_orientation_grid[0][cell_index]) {
-        case 1:
-            if (point_x % 2000 > 1000) {
-                floor_height += 300;
+        case KF_MAP_ORIENT_UNROTATED:
+            if (point_x % KF_MAP_TILE_SIZE > KF_MAP_TILE_CENTER) {
+                floor_height += KF_MAP_HALF_CELL_STEP_HEIGHT;
             }
             break;
-        case 2:
-            if (point_z % 2000 < 1000) {
-                floor_height += 300;
+        case KF_MAP_ORIENT_QUARTER_TURN:
+            if (point_z % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) {
+                floor_height += KF_MAP_HALF_CELL_STEP_HEIGHT;
             }
             break;
-        case 3:
-            if (point_x % 2000 < 1000) {
-                floor_height += 300;
+        case KF_MAP_ORIENT_HALF_TURN:
+            if (point_x % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) {
+                floor_height += KF_MAP_HALF_CELL_STEP_HEIGHT;
             }
             break;
-        case 4:
-            if (point_z % 2000 > 1000) {
-                floor_height += 300;
+        case KF_MAP_ORIENT_THREE_QUARTER_TURN:
+            if (point_z % KF_MAP_TILE_SIZE > KF_MAP_TILE_CENTER) {
+                floor_height += KF_MAP_HALF_CELL_STEP_HEIGHT;
             }
             break;
         }
@@ -42,7 +43,7 @@ s32 map_floor_height_at_position(const VECTOR *position)
     s32 point_x = position->vx;
 
     return map_floor_height_for_cell_position(
-        (point_z / 2000) * 100 + point_x / 2000,
+        (point_z / KF_MAP_TILE_SIZE) * KF_MAP_COLUMNS + point_x / KF_MAP_TILE_SIZE,
         point_x,
         point_z);
 }
@@ -54,24 +55,24 @@ void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta)
     s16 rows;
     u8 *next_row;
 
-    cell_x -= 2;
+    cell_x -= KF_OCCUPANCY_CELL_RADIUS;
     first_x = cell_x;
-    cell_z -= 2;
+    cell_z -= KF_OCCUPANCY_CELL_RADIUS;
     next_row = &map_collision_flag_grid[(s16)cell_z][(s16)cell_x];
-    rows = 5;
+    rows = KF_OCCUPANCY_CELL_SPAN;
 
     do {
         u8 *cell = next_row;
 
-        next_row = cell + 100;
+        next_row = cell + KF_MAP_COLUMNS;
 
-        if (cell_z < 100) {
+        if (cell_z < KF_MAP_ROWS) {
             u16 x = first_x;
-            s16 columns = 5;
+            s16 columns = KF_OCCUPANCY_CELL_SPAN;
 
             do {
-                if (x < 100) {
-                    *cell = (*cell & 0xe0) | ((*cell + delta) & 0x1f);
+                if (x < KF_MAP_COLUMNS) {
+                    *cell = (*cell & KF_CELL_PRESERVED_FLAGS_MASK) | ((*cell + delta) & KF_CELL_OCCUPANT_COUNT_MASK);
                 }
                 x++;
                 cell++;

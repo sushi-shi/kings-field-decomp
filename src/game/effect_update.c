@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_collision.h>
 #include <kf/game_effect.h>
 #include <kf/psyq_libc.h>
@@ -155,7 +156,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
     int count;
     int height_delta;
 
-    sound_position.vy = -(segment->end_height * 100);
+    sound_position.vy = -(segment->end_height * KF_MAP_HEIGHT_STEP);
     col = segment->column;
     row = segment->row;
     count = segment->cell_count - 1;
@@ -168,8 +169,8 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         } else if (progress >= 4097) {
             progress = 4096;
         } else if (progress >= 3900 && progress < range + 3900) {
-            sound_position.vx = 2000 * (col & 0xff) + 1000;
-            sound_position.vz = 2000 * (row & 0xff) + 1000;
+            sound_position.vx = KF_MAP_TILE_SIZE * (col & 0xff) + KF_MAP_TILE_CENTER;
+            sound_position.vz = KF_MAP_TILE_SIZE * (row & 0xff) + KF_MAP_TILE_CENTER;
             audio_play_spatial_default_range(&gameplay_sound_ref_4,
                 &sound_position, 0x7f);
         }
@@ -230,9 +231,9 @@ void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, 
 
     position.vx = record->position.vx + (1500 * rsin(angle) >> 12);
     position.vz = record->position.vz + (1500 * rcos(angle) >> 12);
-    cell_z = position.vz / 2000;
-    cell_x = position.vx / 2000;
-    position.vy = -(map_floor_height_grid[cell_z][cell_x] * 100);
+    cell_z = position.vz / KF_MAP_TILE_SIZE;
+    cell_x = position.vx / KF_MAP_TILE_SIZE;
+    position.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, record->type, 6, &position,
         (SVECTOR *)&record->direction_x, arg6);
 }

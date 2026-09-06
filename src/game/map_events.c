@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
 #include <kf/psyq_libc.h>
@@ -54,8 +55,8 @@ void map_event_update_wander(void)
     if (collision_query_world(point.vx, 0xffff, point.vz, event->radius, 0, 0x8040) == (u32)-1) {
         event->reference_x = point.vx;
         event->reference_z = point.vz;
-        event->cell_x = point.vx / 2000;
-        event->cell_z = point.vz / 2000;
+        event->cell_x = point.vx / KF_MAP_TILE_SIZE;
+        event->cell_z = point.vz / KF_MAP_TILE_SIZE;
         event->collision_turn_pending = 0;
         if (event->rotation == event->rotation_target && rand() < 1584) {
             event->rotation_target = rand() >> 3;

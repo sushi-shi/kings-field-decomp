@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_player.h>
 #include <kf/game_collision.h>
 #include <kf/game.h>
@@ -132,10 +133,10 @@ void player_warp_change_floor(s32 floor, u32 variant)
     }
     map_load_floor();
     player_state.camera_position.vx =
-        player_state.camera_position.vx / 2000 * 2000 + 1000;
+        player_state.camera_position.vx / KF_MAP_TILE_SIZE * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vx = player_state.camera_position.vx;
     player_state.camera_position.vz =
-        player_state.camera_position.vz / 2000 * 2000 + 1000;
+        player_state.camera_position.vz / KF_MAP_TILE_SIZE * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
     position.vy = player_state.floor_height;
@@ -163,9 +164,9 @@ void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
             audio_play_current_map_sequence();
         }
     }
-    player_state.camera_position.vx = cell_x * 2000 + 1000;
+    player_state.camera_position.vx = cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vx = player_state.camera_position.vx;
-    player_state.camera_position.vz = cell_z * 2000 + 1000;
+    player_state.camera_position.vz = cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
     position.vy = player_state.floor_height;

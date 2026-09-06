@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_collision.h>
 #include <kf/game_effect.h>
 #include <kf/psyq_libc.h>
@@ -149,8 +150,8 @@ effect_kind4_impact:
                 impact_position.vx = effect->position.vx;
                 impact_position.vz = effect->position.vz;
                 impact_position.vy =
-                    -(map_floor_height_grid[effect->position.vz / 2000]
-                                           [effect->position.vx / 2000] * 100);
+                    -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
+                                           [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
                 effect_pool_construct(
                     effect->id, effect->type,
                     effect->base_render_id == 6 ? 0x20 : 0x29,
@@ -234,8 +235,8 @@ play_phase_sound:
             effect->direction_y += 20;
             effect->position.vy += (s16)effect->direction_y;
             if (effect->position.vy
-                > -(map_floor_height_grid[effect->position.vz / 2000]
-                                        [effect->position.vx / 2000] * 100)
+                > -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
+                                        [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP)
                     + 3000) {
                 effect->type = 0xff;
             }
@@ -311,8 +312,8 @@ play_phase_sound:
         effect->position.vy += (s16)effect->direction_y;
         effect->position.vz += (s16)effect->direction_z;
         effect->position.vy =
-            -(map_floor_height_grid[effect->position.vz / 2000]
-                                   [effect->position.vx / 2000] * 100);
+            -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
+                                   [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
         switch (phase) {
         case 0:
             if (linked_effect->phase > 19) {

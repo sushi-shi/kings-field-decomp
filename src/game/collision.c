@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/map_data.h>
 #include <kf/game_collision.h>
 #include <kf/game.h>
 
@@ -7,7 +8,7 @@
  * map_cell_height_records in effect_map_collision. Attribute 0xff is excluded.
  */
 DATA(0x800558b8, 0x1fe)
-s16 map_cell_attribute_height_table[255] = {
+s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT] = {
     -25000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -5000, -5000, -5000, -5000, -2500,
@@ -57,58 +58,61 @@ ADDRESS(0x8001a5ac, 0x504)
 u32 collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags)
 {
-    s32 cell = point_x / 2000 + (s16)(point_z / 2000) * 100;
+    s32 cell = point_x / KF_MAP_TILE_SIZE
+        + (s16)(point_z / KF_MAP_TILE_SIZE) * KF_MAP_COLUMNS;
     s32 floor_height;
     s32 hit;
     u8 attribute;
     u8 cell_flags;
     u32 rejected;
 
-    if ((flags & 1) == 0) {
+    if ((flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
         u32 kind = map_collision_grid[0][(u16)cell];
 
-        if (kind != 1 && kind != 6) {
-            return kind | 0x10000;
+        if (kind != KF_MAP_CELL_FLOOR && kind != KF_MAP_CELL_STEP) {
+            return kind | KF_COLLISION_TERRAIN;
         }
-        if (point_y != 0xffff) {
+        if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
             floor_height = map_floor_height_for_cell_position(
                 (u16)cell, point_x, point_z);
             if (floor_height < point_y) {
-                return 0x1fff0;
+                return KF_COLLISION_BELOW_FLOOR;
             }
             attribute = map_cell_attribute_grid[0][(u16)cell];
-            if (attribute == 0xff) {
-                return 0x1fff2;
+            if (attribute == KF_MAP_ATTRIBUTE_NONE) {
+                return KF_COLLISION_MISSING_ATTRIBUTE;
             }
             if (map_cell_attribute_height_table[attribute] + height < 0
                 && point_y < map_cell_attribute_height_table[attribute] + height + floor_height) {
-                return 0x1fff1;
+                return KF_COLLISION_CEILING;
             }
         }
     }
     cell_flags = map_collision_flag_grid[0][(u16)cell];
-    rejected = cell_flags & ((flags >> 8) & 0xf0);
+    rejected = cell_flags
+        & ((flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK);
     if (rejected != 0) {
-        return rejected << 8;
+        return rejected << KF_COLLISION_CELL_FLAG_SHIFT;
     }
-    if ((cell_flags & 0x1f) == 0) {
-        return -1;
+    if ((cell_flags & KF_CELL_OCCUPANT_COUNT_MASK) == 0) {
+        return KF_COLLISION_NONE;
     }
-    if ((flags & 0x80) == 0) {
-        hit = player_distance_to_point(point_x, point_y, point_z, radius + 800, height);
-        if (hit != -1) {
-            if (flags & 0x800) {
+    if ((flags & KF_COLLISION_SKIP_PLAYER) == 0) {
+        hit = player_distance_to_point(
+            point_x, point_y, point_z, radius + KF_COLLISION_PLAYER_RADIUS, height);
+        if (hit != KF_COLLISION_NONE) {
+            if (flags & KF_COLLISION_CAPTURE_TARGET) {
                 collision_target.position = player_state.camera_position;
                 collision_target.rotation = player_state.camera_rotation;
-                collision_target.radius = 800;
+                collision_target.radius = KF_COLLISION_PLAYER_RADIUS;
             }
-            return 0x800000;
+            return KF_COLLISION_PLAYER;
         }
     }
-    if ((flags & 0x10) == 0) {
+    if ((flags & KF_COLLISION_SKIP_ACTORS) == 0) {
         hit = actor_pool_find_overlap(point_x, point_y, point_z, radius, height);
-        if (hit != -1) {
-            if (flags & 0x800) {
+        if (hit != KF_COLLISION_NONE) {
+            if (flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfActor *actor = &actor_state.actors[hit];
 
                 collision_target.position = actor->position;
@@ -116,13 +120,13 @@ u32 collision_query_world(
                 collision_target.radius =
                     actor_state.definitions[actor->definition_id].collision_radius;
             }
-            return hit | 0x100000;
+            return hit | KF_COLLISION_ACTOR;
         }
     }
-    if ((flags & 0x20) == 0) {
+    if ((flags & KF_COLLISION_SKIP_MAP_OBJECTS) == 0) {
         hit = map_object_pool_find_near_point(point_x, point_z, radius);
-        if (hit != -1) {
-            if (flags & 0x800) {
+        if (hit != KF_COLLISION_NONE) {
+            if (flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfMapObject *object = &map_object_state.objects[hit];
 
                 collision_target.position = *(VECTOR *)&object->position_x;
@@ -130,22 +134,22 @@ u32 collision_query_world(
                 collision_target.radius =
                     map_object_state.definitions[object->object_id].collision_radius;
             }
-            return hit | 0x200000;
+            return hit | KF_COLLISION_MAP_OBJECT;
         }
     }
-    if (flags & 0x40) {
-        return -1;
+    if (flags & KF_COLLISION_SKIP_MAP_EVENTS) {
+        return KF_COLLISION_NONE;
     }
     hit = map_event_pool_find_overlap(point_x, point_z, radius);
-    if (hit != -1) {
-        if (flags & 0x800) {
+    if (hit != KF_COLLISION_NONE) {
+        if (flags & KF_COLLISION_CAPTURE_TARGET) {
             KfMapEvent *event = &map_event_pool[hit];
 
             collision_target.position = *(VECTOR *)&event->reference_x;
             collision_target.rotation = *(SVECTOR *)&event->rotation_x;
             collision_target.radius = event->radius;
         }
-        return hit | 0x400000;
+        return hit | KF_COLLISION_MAP_EVENT;
     }
-    return -1;
+    return KF_COLLISION_NONE;
 }
