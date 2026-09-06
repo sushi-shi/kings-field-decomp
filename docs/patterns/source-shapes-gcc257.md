@@ -814,16 +814,19 @@ Residues recorded in the module (not steered):
   and saves ra at 44; the probe rematerializes `-1` and saves ra at 40, with
   exchanged cursor/result registers. These are observed symptoms, not a
   proved compiler mechanism. See [the result-lifetime audit](game-menu-root-results.md).
-- `func_80022608` `0x80022608` (92.8%): the consumable panel reconstructs with
-  correct referents, calls, constants and control flow, but the caller-saved
-  allocation permutes against retail — the two name givs land in `t2` where
-  retail uses `t1`, the `-99` selection sentinel in `v0` where retail keeps it
-  in `s2`, and `s3`/`s4` initialise in the other order. Retail also keeps a
-  `player_state` base register live across the effect switch and the full-heal
-  case (`&current_hp` reused for the `+= 300` load/store), while the probe
-  re-forms `lui/addiu` per access. Both are the allocation / registered-base
-  classes shared with `func_80021afc` and the documented `player_state`
-  residues, not structural errors.
+- `menu_use_item_panel` `0x80022608`: the later
+  [raw control-flow audit](game-item-use-flow.md) disproves the original
+  92.8% description of complete calls/CFG and an allocation limitation. The
+  source omitted empty-list input handling, confirmation reset on continuing
+  paths and selected-index update on long-list upward wrap. Restoring these,
+  scroll-first navigation, cancellation-first result handling and separate
+  initial/post-input presentation recovers the full transfer stream. Direct
+  indexing of the recovered `item_name_rows` owner removes the explicit name
+  cursor and its preheader/register differences. Strict objdiff is now
+  99.482180%; only seven words in the fruit's HP/MP update differ. The
+  candidate uses a separate HP-store address pair where retail retains
+  `&current_hp` within that arm. This is an unattributed codegen residue,
+  not evidence for a compiler mechanism or a base live across the switch.
 
 ## map load and per-floor world-state restore
 

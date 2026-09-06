@@ -144,8 +144,8 @@ s32 menu_root(void)
  * Consumable-item panel: builds a scrollable list of the usable items the
  * player holds, runs the windowed cursor, and applies the selected item's
  * effect. Restorative herbs and medicine heal HP/MP and clear status flags
- * in place; the watchman's and sorcerer's maps are handled by menu_map_viewer.  Returns
- * the chosen item code, or -1 when the item cannot be used.
+ * in place; the watchman's and sorcerer's maps are handled by menu_map_viewer.
+ * Returns the chosen item code, or -1 on cancellation or model-load failure.
  */
 ADDRESS(0x80022608, 0x774)
 s32 menu_use_item_panel(void)
@@ -155,13 +155,12 @@ s32 menu_use_item_panel(void)
     u8 counts[56];
     u8 codes[56];
     u8 *inv;
-    s16 *name;
     s32 found;
     s32 code;
     s32 j;
+    s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 confirm = 0;
     s32 selection = -99;
 
     while (PadRead(1) != 0)
@@ -184,21 +183,19 @@ s32 menu_use_item_panel(void)
         codes[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
-    name = item_name_rows[KF_ITEM_VERDITE].codes;
-    for (code = KF_ITEM_VERDITE; code < KF_ITEM_LIGHT_RING; code++, name += 10) {
+    for (code = KF_ITEM_VERDITE; code < KF_ITEM_LIGHT_RING; code++) {
         if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
             for (j = 0; j < 10; j++)
-                labels[found][j] = name[j];
+                labels[found][j] = item_name_rows[code].codes[j];
             counts[found] = inv[code];
             codes[found] = code;
             found++;
         }
     }
-    name = item_name_rows[KF_ITEM_GOLD_CROSS].codes;
-    for (code = KF_ITEM_GOLD_CROSS; code < 0x50; code++, name += 10) {
+    for (code = KF_ITEM_GOLD_CROSS; code < 0x50; code++) {
         if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
             for (j = 0; j < 10; j++)
-                labels[found][j] = name[j];
+                labels[found][j] = item_name_rows[code].codes[j];
             counts[found] = inv[code];
             codes[found] = code;
             found++;
@@ -216,18 +213,19 @@ s32 menu_use_item_panel(void)
         menu_item_model_preview(codes[ctx.selected_index]);
     }
     menu_list_render(&ctx);
+    menu_present_frame();
 
     for (;;) {
-        menu_present_frame();
         if (confirm == 1) {
-            selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
                     KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
-                    != KF_MENU_CONFIRM_CANCELLED)
+                    == KF_MENU_CONFIRM_CANCELLED)
+                selection = -99;
+            else
                 selection = codes[ctx.selected_index];
         }
+        confirm = 0;
         if (selection != -99) {
-            confirm = 0;
             while (PadRead(1) != 0)
                 ;
             break;
@@ -235,21 +233,28 @@ s32 menu_use_item_panel(void)
 
         prev = input;
         input = PadRead(1);
-        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        if (ctx.entry_count == 0) {
+            if (input != 0) {
+                menu_play_input_sound(MENU_SOUND_CURSOR);
+                selection = -1;
+            }
+        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
-                if (ctx.cursor_row != 0)
-                    ctx.cursor_row--;
-                else
+                if (ctx.cursor_row == 0)
                     ctx.scroll_offset--;
-            } else if (ctx.entry_count < ctx.visible_rows) {
-                ctx.selected_index = ctx.entry_count - 1;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = ctx.entry_count - 1;
+                else
+                    ctx.cursor_row--;
             } else {
-                ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                ctx.cursor_row = ctx.visible_rows - 1;
+                ctx.selected_index = ctx.entry_count - 1;
+                if (ctx.entry_count < ctx.visible_rows) {
+                    ctx.scroll_offset = 0;
+                    ctx.cursor_row = ctx.entry_count - 1;
+                } else {
+                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
+                    ctx.cursor_row = ctx.visible_rows - 1;
+                }
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return -1;
@@ -257,10 +262,10 @@ s32 menu_use_item_panel(void)
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
-                if (ctx.cursor_row != ctx.visible_rows - 1)
-                    ctx.cursor_row++;
-                else
+                if (ctx.cursor_row == ctx.visible_rows - 1)
                     ctx.scroll_offset++;
+                else
+                    ctx.cursor_row++;
             } else {
                 ctx.selected_index = 0;
                 ctx.scroll_offset = 0;
@@ -288,6 +293,7 @@ s32 menu_use_item_panel(void)
         if (ctx.entry_count != 0)
             menu_item_model_preview(codes[ctx.selected_index]);
         menu_list_render(&ctx);
+        menu_present_frame();
     }
 
     menu_release_item_model();

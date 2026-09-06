@@ -278,6 +278,9 @@ promotes a probe to a proven historical toolchain.
 - [game-list-confirmation-flow.md](game-list-confirmation-flow.md): current-pad
   lifetime, positive edge order, explicit toggle and first-frame/post-input
   redraw entries close the shared list-confirmation loop.
+- [game-item-use-flow.md](game-item-use-flow.md): restores empty-list input,
+  confirmation reset and long-list upward wrap; direct name-row indexing and
+  loop shape recover all transfers, leaving one seven-word healing residue.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.
