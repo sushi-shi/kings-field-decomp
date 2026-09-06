@@ -478,7 +478,7 @@ randomize_kind20:
                     &effect->position, &effect->rotation);
             }
             if (phase == 3) {
-                phase_sound = &magic_records[KF_MAGIC_LIGHTNING_BOLT].sounds[1];
+                phase_sound = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1];
                 goto play_phase_sound;
             }
         }
@@ -505,12 +505,12 @@ randomize_kind20:
             power = effect_magic_power(effect);
             actor_pool_apply_radial_damage(
                 &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[0],
-                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[0],
+                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             player_apply_radial_damage(
                 &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[0],
-                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[1], 5000, effect->id);
+                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[0],
+                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[1], 5000, effect->id);
         }
         goto advance_effect_phase;
     }

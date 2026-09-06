@@ -523,7 +523,7 @@ KfPlayerState	0x50	0x02	fire_defense_timer	s16	supported	game_player.h;data_iden
 KfPlayerState	0x52	0x02	illusion_staff_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv;COM/STAT.DAT-item57;game-item-special-identities.md	signed Illusion Staff timer: item57 sets1000; player update decrements through zero and applies green lighting; map-cell renderer alternates mesh substitutions
 KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x58	0x04	equipment_effect_ticks	u32	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	frame counter modulo equipment HP/MP regeneration and drain intervals; reset by position sync
-KfPlayerState	0x5c	0x01	selected_magic_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x5c	0x01	selected_magic_id	KfSelectedMagicId	supported	game_player.h;data_identities.tsv;game-selected-magic-types.md;player_select_magic;menu_spell_select	byte selected-ranged-spell domain: Lightning Bolt through Light Needle (4..8), or none255; raw save-prefix copies preserve storage
 KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate

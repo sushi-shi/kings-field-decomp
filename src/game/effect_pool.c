@@ -96,7 +96,7 @@ KfEffectRecord *effect_pool_construct(
             record->control.frames_remaining = *(u16 *)(va + 1);
             if (va[2] != 0) {
                 audio_play_spatial_range(
-                    &magic_records[KF_MAGIC_LIGHTNING_BOLT].sounds[0],
+                    &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             }
             break;
@@ -114,7 +114,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_range(
-                &magic_records[KF_MAGIC_LIGHTNING_BOLT].sounds[1],
+                &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             break;
         case 0x2a:

@@ -1,7 +1,7 @@
 # Retained floor-script literals
 
 Complete per-occurrence review of `src/game/map_scripts.c` after the
-[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md). Ownership claims and
+[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md) and [selected-spell types](game-selected-magic-types.md). Ownership claims and
 named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
@@ -68,13 +68,13 @@ All **296 retained occurrences** have an explicit reason; no fallback is used.
 | `map_action_script_floor2` | 235 | `2` | `== MAP_DIALOGUE_STARTED(2)` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_action_script_floor2` | 236 | `3` | `&& map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 245 | `0 × 2` | `if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
-| `map_action_script_floor3` | 246 | `0` | `if (magic_records[KF_MAGIC_WIND_CUTTER].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
-| `map_action_script_floor3` | 247 | `1` | `magic_records[KF_MAGIC_WIND_CUTTER].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
+| `map_action_script_floor3` | 246 | `0` | `if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
+| `map_action_script_floor3` | 247 | `1` | `magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
 | `map_action_script_floor3` | 248, 255 | `1 × 2` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_action_script_floor3` | 251 | `1` | `if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 252 | `3` | `== MAP_DIALOGUE_STARTED(3)) {` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
-| `map_action_script_floor3` | 253 | `0` | `if (magic_records[KF_MAGIC_FIRE_BALL].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
-| `map_action_script_floor3` | 254 | `1` | `magic_records[KF_MAGIC_FIRE_BALL].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
+| `map_action_script_floor3` | 253 | `0` | `if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == 0) {` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
+| `map_action_script_floor3` | 254 | `1` | `magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = 1;` | Zero tests unlearned and one grants learning for the named spell; these are learned-state bytes, separate from spell IDs. |
 | `map_floor5_transition_cutscene` | 282 | `0 × 2` | `item_stock[0][KF_ITEM_DRAGON_SWORD] = 0;` | Clear all player-owned copies of the Dragon Sword; stock bank zero is the player bank. |
 | `map_floor5_transition_cutscene` | 283 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
 | `map_floor5_transition_cutscene` | 287 | `0` | `camera_path_step(&path, 0);` | No extra vertical offset on this authored camera path. |

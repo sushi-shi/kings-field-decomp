@@ -107,11 +107,11 @@ void magic_cast(void)
             rotation.vz = player_state.camera_rotation.vz;
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, &direction, &rotation, 1);
+                KF_ENUM_ENCODE(u8, player_state.selected_magic_id), &world_pos, &direction, &rotation, 1);
         } else {
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, &direction, distance, 1);
+                KF_ENUM_ENCODE(u8, player_state.selected_magic_id), &world_pos, &direction, distance, 1);
         }
         break;
     }
@@ -125,7 +125,7 @@ void magic_cast(void)
         if (target != 0) {
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                player_state.selected_magic_id, &target->position,
+                KF_ENUM_ENCODE(u8, player_state.selected_magic_id), &target->position,
                 (SVECTOR *)&player_state.camera_rotation, KF_EFFECT_GROUND_BRANCH_ROOT);
         } else {
             VECTOR spawn;
@@ -141,7 +141,7 @@ void magic_cast(void)
             spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
             effect_pool_construct(
                 0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                player_state.selected_magic_id, &spawn, (SVECTOR *)&player_state.camera_rotation,
+                KF_ENUM_ENCODE(u8, player_state.selected_magic_id), &spawn, (SVECTOR *)&player_state.camera_rotation,
                 KF_EFFECT_GROUND_BRANCH_ROOT);
         }
         break;

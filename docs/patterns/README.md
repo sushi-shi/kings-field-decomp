@@ -12,6 +12,9 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [modern-type-checking.md](modern-type-checking.md): modern compiler adoption,
   enum storage requirements, and consumer-backed vector pointer corrections.
+- [game-selected-magic-types.md](game-selected-magic-types.md): selected-spell
+  byte enum propagated through the player field, API, local and menu array;
+  compiler rejection evidence and explicit resource/serialization boundaries.
 - [game-map-dialogue-state.md](game-map-dialogue-state.md): GAME dialogue
   stages/pages, animation phase, byte enum domains and corrected call evidence.
 - [game-map-event-literals.md](game-map-event-literals.md): map-event movement,

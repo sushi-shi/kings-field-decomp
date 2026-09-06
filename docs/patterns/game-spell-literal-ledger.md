@@ -1,7 +1,7 @@
 # Retained spell and equipment-root menu literals
 
 Complete per-occurrence ledger for `src/game/magic.c` and `src/game/menu_panels.c`
-after the [spell identity audit](game-spell-identities.md). Claim addresses and
+after the [spell identity audit](game-spell-identities.md) and [selected-spell types](game-selected-magic-types.md). Claim addresses and
 extents are excluded; named constants are counted separately. Negative signs
 are operators. The function/expression identifies each use; lines locate this
 source version. Positional resource indices, representation arithmetic and
@@ -27,8 +27,8 @@ All **127 retained occurrences** in **92 expression groups** have explicit reaso
 | `magic_cast` | 84 | `3000` | `world_pos.vy + 3000 - target->position.vy, -distance);` | Lightning Bolt aim uses a 3000-world-unit Y adjustment on the selected attribute-height path; preserve signed vertical difference and negative horizontal distance. |
 | `magic_cast` | 87 | `5000` | `world_pos.vy + 5000 - target->position.vy, -distance);` | Other attribute-height path uses a 5000-world-unit Y adjustment; original authored aim rationale unknown. |
 | `magic_cast` | 109, 113 | `0xa × 2` | `0xa, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS,` | Forwarded effect ID10 also supplies unity when consumed as the player-damage tenths multiplier. Keep this multipurpose byte separate from spell kinds and actor indices. |
-| `magic_cast` | 110 | `1` | `player_state.selected_magic_id, &world_pos, &direction, &rotation, 1);` | True optional sound request after the Light Needle rotation-pointer argument. |
-| `magic_cast` | 114 | `1` | `player_state.selected_magic_id, &world_pos, &direction, distance, 1);` | True optional sound request; the preceding slot is the Lightning Bolt countdown and is ignored by Fire Ball/Wind Cutter. |
+| `magic_cast` | 110 | `1` | `KF_ENUM_ENCODE(u8, player_state.selected_magic_id), &world_pos, &direction, &rotation, 1);` | True optional sound request after the Light Needle rotation-pointer argument. |
+| `magic_cast` | 114 | `1` | `KF_ENUM_ENCODE(u8, player_state.selected_magic_id), &world_pos, &direction, distance, 1);` | True optional sound request; the preceding slot is the Lightning Bolt countdown and is ignored by Fire Ball/Wind Cutter. |
 | `magic_cast` | 125 | `0` | `if (target != 0) {` | A nonnull target supplies the Fire Wall spawn position. |
 | `magic_cast` | 127, 143 | `0xa × 2` | `0xa, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect ID10 supplies unity to the downstream player-damage tenths multiplier on Fire Wall paths; it is separate from the collision-target flags. |
 | `magic_cast` | 136 | `6000` | `- (rsin(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);` | Untargeted Fire Wall X offset projects 6000 world units, three tiles, through the Q12 direction; integer rounding remains. Original range rationale unknown. |
@@ -43,14 +43,14 @@ All **127 retained occurrences** in **92 expression groups** have explicit reaso
 | `menu_magic_panel` | 38, 75 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_magic_panel` | 40 | `0, 1` | `menu_list_init(&ctx, 0, 1);` | Authored window layout0, title row1 selects the magic panel heading; positional resource indices, distinct from spell IDs. |
 | `menu_magic_panel` | 42 | `0` | `found = 0;` | Start appending learned spell rows at the first workspace entry. |
-| `menu_magic_panel` | 44 | `10` | `for (code = KF_MAGIC_HEALING; code < KF_MAGIC_LIGHTNING_BOLT; code++, name += 10) {` | Advance one ten-halfword name row per instant spell in the named interval. |
+| `menu_magic_panel` | 44 | `10` | `for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++, name += 10) {` | Advance one ten-halfword name row per instant spell in the named interval. |
 | `menu_magic_panel` | 45 | `1` | `if (magic_records[code].learned == 1) {` | Only the exact learned byte1 enters the menu; do not broaden to arbitrary nonzero values. |
 | `menu_magic_panel` | 46 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
 | `menu_magic_panel` | 53 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
 | `menu_magic_panel` | 54 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_magic_panel` | 55 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_magic_panel` | 58 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
-| `menu_magic_panel` | 59, 105, 120 | `1 × 3` | `if (menu_load_item_texture(codes[ctx.selected_index]) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
+| `menu_magic_panel` | 59, 105, 120 | `1 × 3` | `if (menu_load_item_texture(codes[ctx.selected_index]) == 1)` | Numbered-texture loader returns exactly1 on failure; preserve the existing equality check. |
 | `menu_magic_panel` | 60, 106, 121 | `1 × 3` | `return -1;` | Panel cancellation/load-failure result outside the valid spell IDs. |
 | `menu_magic_panel` | 67 | `1` | `if (confirm == 1) {` | A set confirmation flag enters the second-stage confirmation widget. |
 | `menu_magic_panel` | 68 | `99` | `selection = -99;` | Return to pending selection after the confirmation widget is cancelled; distinct from exiting the outer panel. |

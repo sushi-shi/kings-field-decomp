@@ -26,7 +26,7 @@ void menu_draw_name_list(void)
     gs.y += 0x14;
     if (player_state.selected_magic_id != KF_MAGIC_NONE) {
         *(MenuGlyphRow *)gs.codes =
-            magic_name_rows[player_state.selected_magic_id];
+            magic_name_rows[KF_ENUM_ENCODE(u8, player_state.selected_magic_id)];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;

@@ -71,7 +71,7 @@ opt0_done:
     } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
         menu_draw_item_detail(item_id, shop_id, price_mode);
     } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-            && item_id != KF_MAGIC_NONE) {
+            && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
         menu_add_marker_quad();
     }
     menu_list_render(list);
@@ -85,7 +85,7 @@ opt0_done:
             } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
                 menu_draw_item_detail(item_id, shop_id, price_mode);
             } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-                    && item_id != KF_MAGIC_NONE) {
+                    && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
                 menu_add_marker_quad();
             }
             menu_list_render(list);
@@ -121,7 +121,7 @@ opt0_done:
         } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
             menu_draw_item_detail(item_id, shop_id, price_mode);
         } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-                && item_id != KF_MAGIC_NONE) {
+                && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
             menu_add_marker_quad();
         }
         menu_list_render(list);

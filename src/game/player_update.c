@@ -74,7 +74,7 @@ void player_update(void)
     MATRIX matrix;
     s32 distance;
     u8 attribute;
-    u8 magic_id;
+    KfSelectedMagicId magic_id;
 
     if (player_state.update_state == KF_PLAYER_UPDATE_DYING) {
         player_death_update();
@@ -333,11 +333,11 @@ void player_update(void)
                     player_state.weapon_magic_delay = 3;
                     break;
                 case KF_ITEM_FLAME_SWORD:
-                    if (magic_records[KF_MAGIC_FIRE_BALL].learned == 0) {
+                    if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == 0) {
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_FIRE_BALL;
-                    record = &magic_records[KF_MAGIC_FIRE_BALL];
+                    record = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)];
                     player_state.weapon_magic_delay = 2;
                     break;
                 case KF_ITEM_MOONLIGHT_SWORD:
@@ -353,7 +353,7 @@ void player_update(void)
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_LIGHT_NEEDLE;
-                    record = &magic_records[KF_MAGIC_LIGHT_NEEDLE];
+                    record = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHT_NEEDLE)];
                     player_state.weapon_magic_delay = 1;
                     break;
                 default:

@@ -340,12 +340,12 @@ void player_recalculate_combat_stats(void)
         magic_records[KF_MAGIC_DISPOISON].learned = 1;
         notify_enqueue(1);
     }
-    if (player_state.base_magic >= 70 && magic_records[KF_MAGIC_FIRE_WALL].learned == 0) {
-        magic_records[KF_MAGIC_FIRE_WALL].learned = 1;
+    if (player_state.base_magic >= 70 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == 0) {
+        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = 1;
         notify_enqueue(1);
     }
-    if (player_state.base_magic >= 75 && magic_records[KF_MAGIC_LIGHTNING_BOLT].learned == 0) {
-        magic_records[KF_MAGIC_LIGHTNING_BOLT].learned = 1;
+    if (player_state.base_magic >= 75 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == 0) {
+        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = 1;
         notify_enqueue(1);
     }
     if (player_state.physical_power >= 1000) {
@@ -575,7 +575,7 @@ void player_apply_radial_damage(
 
 
 ADDRESS(0x800167e4, 0x64)
-void player_select_magic(u8 magic_id)
+void player_select_magic(KfSelectedMagicId magic_id)
 {
     player_state.magic_charge = 0;
     player_state.selected_magic_id = magic_id;
@@ -583,6 +583,6 @@ void player_select_magic(u8 magic_id)
         player_state.selected_magic_record = 0;
     } else {
         player_state.selected_magic_record =
-            &magic_records[player_state.selected_magic_id];
+            &magic_records[KF_ENUM_ENCODE(u8, player_state.selected_magic_id)];
     }
 }

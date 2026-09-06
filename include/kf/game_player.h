@@ -139,7 +139,7 @@ typedef struct KfPlayerState {
     s16 illusion_staff_timer;
     u8 unknown_54[4];
     u32 equipment_effect_ticks;
-    u8 selected_magic_id;
+    KfSelectedMagicId selected_magic_id;
     u8 unknown_5d[3];
     KfMagicRecord *selected_magic_record;
     u8 equipped_weapon_id;
@@ -235,7 +235,7 @@ extern void player_increment_physical_power_training(void);
 extern s32 player_move_horizontal(s32 heading, s32 distance);
 extern void player_recalculate_combat_stats(void);
 extern void player_restore_vitals_with_color_cycle(void);
-extern void player_select_magic(u8 magic_id);
+extern void player_select_magic(KfSelectedMagicId magic_id);
 extern void player_set_equipment_slot(u8 item_id, KfEquipmentSlot slot);
 extern void player_apply_fire_defense_boost(void);
 extern void player_sync_position_to_map(void);

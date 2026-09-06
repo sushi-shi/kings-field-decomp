@@ -243,15 +243,15 @@ ADDRESS(0x80034610, 0x90)
 void map_action_script_floor3(void)
 {
     if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {
-        if (magic_records[KF_MAGIC_WIND_CUTTER].learned == 0) {
-            magic_records[KF_MAGIC_WIND_CUTTER].learned = 1;
+        if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == 0) {
+            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = 1;
             notify_enqueue(1);
         }
     }
     if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(3)) {
-        if (magic_records[KF_MAGIC_FIRE_BALL].learned == 0) {
-            magic_records[KF_MAGIC_FIRE_BALL].learned = 1;
+        if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == 0) {
+            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = 1;
             notify_enqueue(1);
         }
     }
