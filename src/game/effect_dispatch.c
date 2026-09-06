@@ -37,10 +37,7 @@ void effect_update_dispatch(void)
     u16 distance;
     u16 power;
     u16 next;
-    s16 prior;
     s16 desired_pitch;
-    s32 cell_x;
-    s32 cell_z;
     s32 count;
     s32 value;
 
@@ -162,35 +159,35 @@ effect_kind4_impact:
             }
             if (kind == 10) {
                 SVECTOR scatter;
+                s32 pulse_angle;
 
-                prior = effect->unknown_38;
-                effect->unknown_38 = prior - 1;
-                if ((s16)(prior - 1) == 0) {
-                    if ((s16)effect->unknown_3a == 0) {
-                        effect->type = 0xff;
-                    } else {
-                        next = (effect->scale_x * 3) >> 2;
+                if (--effect->unknown_38 == 0) {
+                    if (effect->unknown_3a != 0) {
+                        next = ((s16)effect->scale_x * 3) >> 2;
                         effect->unknown_08 = next;
-                        effect->scale_x = next;
-                        effect->scale_y = next;
                         effect->scale_z = next;
+                        effect->scale_y = next;
+                        effect->scale_x = next;
                         effect->unknown_3a--;
                         scatter = *(const SVECTOR *)&effect->direction_x;
                         effect_scatter_triple((u16 *)&scatter);
                         effect->unknown_38 = effect->unknown_3a == 0 ? 15 : 5;
                         effect_pool_construct(
-                            effect->id, effect->type, 10, &effect->position,
+                            effect->id, effect->type, kind, &effect->position,
                             &scatter, effect->unknown_3a, effect->unknown_38,
                             (s16)effect->scale_x);
                         effect_scatter_triple(&effect->direction_x);
+                    } else {
+                        effect->type = 0xff;
                     }
                 }
-                value = rsin(effect->unknown_38 << 9);
+                pulse_angle = effect->unknown_38 << 9;
+                value = rsin(pulse_angle);
                 next = effect->unknown_08
                     + ((effect->unknown_08 * value) >> 13);
-                effect->scale_x = next;
                 effect->scale_z = next;
-                value = rcos(effect->unknown_38 << 9);
+                effect->scale_x = next;
+                value = rcos(pulse_angle);
                 effect->scale_y = effect->unknown_08
                     + ((effect->unknown_08 * value) >> 13);
                 return;
@@ -236,10 +233,10 @@ play_phase_sound:
         } else if (phase == 120) {
             effect->direction_y += 20;
             effect->position.vy += (s16)effect->direction_y;
-            cell_x = effect->position.vx / 2000;
-            cell_z = effect->position.vz / 2000;
             if (effect->position.vy
-                > -(map_floor_height_grid[cell_z][cell_x] * 100) + 3000) {
+                > -(map_floor_height_grid[effect->position.vz / 2000]
+                                        [effect->position.vx / 2000] * 100)
+                    + 3000) {
                 effect->type = 0xff;
             }
             return;
@@ -313,21 +310,26 @@ play_phase_sound:
         effect->position.vx += (s16)effect->direction_x;
         effect->position.vy += (s16)effect->direction_y;
         effect->position.vz += (s16)effect->direction_z;
-        cell_x = effect->position.vx / 2000;
-        cell_z = effect->position.vz / 2000;
-        effect->position.vy = -(map_floor_height_grid[cell_z][cell_x] * 100);
-        if (phase == 0) {
+        effect->position.vy =
+            -(map_floor_height_grid[effect->position.vz / 2000]
+                                   [effect->position.vx / 2000] * 100);
+        switch (phase) {
+        case 0:
             if (linked_effect->unknown_07 > 19) {
                 effect->unknown_07 = 1;
             }
-        } else if (phase == 1) {
-            next = effect->scale_x - 400;
-            effect->scale_x = next;
-            effect->scale_y = next;
-            effect->scale_z = next;
-            if ((s16)next <= 0) {
+            break;
+        case 1: {
+            s32 scale = effect->scale_x - 400;
+
+            effect->scale_x = scale;
+            effect->scale_z = scale;
+            effect->scale_y = scale;
+            if ((s16)scale <= 0) {
                 effect->type = 0xff;
             }
+            break;
+        }
         }
         effect->unknown_03++;
         if (effect->unknown_03 >= effect->unknown_02 + 3) {
@@ -340,8 +342,8 @@ play_phase_sound:
         if (effect->unknown_07 < 13) {
             next = effect->scale_x + 0x400;
             effect->scale_x = next;
-            effect->scale_y = next;
             effect->scale_z = next;
+            effect->scale_y = next;
             radius = phase * 0x14d;
             power = effect_magic_power(effect);
             if (effect->unknown_07 & 1) {
@@ -472,8 +474,8 @@ randomize_kind20:
         }
         next = effect->scale_x + 0xdff;
         effect->scale_x = next;
-        effect->scale_y = next;
         effect->scale_z = next;
+        effect->scale_y = next;
         effect->rotation_y = (effect->rotation_y + 0x514) & 0xfff;
         if (phase & 1) {
             position.x = effect->position.vx;
@@ -539,9 +541,9 @@ randomize_kind20:
                 distance = ((u32)rand() * 0x145) >> 13;
                 spawn_position.vx = effect->position.vx
                     + ((rsin(angle) * distance) >> 12);
-                spawn_position.vy = effect->position.vy;
                 spawn_position.vz = effect->position.vz
                     + ((rcos(angle) * distance) >> 12);
+                spawn_position.vy = effect->position.vy;
                 effect_pool_construct(
                     effect->id, effect->type, 0x22,
                     &spawn_position, &effect->rotation_x);
@@ -579,13 +581,12 @@ randomize_kind20:
         effect->unknown_07++;
         break;
 
-    case 9:
+    case 9: {
+        s32 scale;
+
         if (phase < 17) {
-            next = effect->scale_x + 220;
-            effect->scale_x = next;
-            effect->scale_y = next;
-            effect->scale_z = next;
-            effect->unknown_07++;
+            scale = effect->scale_x + 220;
+            goto publish_kind9_scale;
         } else if (phase < 41) {
             struct KfVec3i position;
 
@@ -613,10 +614,10 @@ randomize_kind20:
                 position.y = effect->position.vy + 800;
                 position.z = effect->position.vz;
                 actor_rotation.x = 0;
+                actor_rotation.z = 0;
                 actor_rotation.y = vector_xz_to_angle(
                     player_state.camera_position.vx - position.x,
                     player_state.camera_position.vz - position.z);
-                actor_rotation.z = 0;
                 value = rand();
                 if (value < 3000) {
                     count = 2;
@@ -629,18 +630,20 @@ randomize_kind20:
             }
             effect->unknown_07++;
         } else if (phase < 165) {
-            next = effect->scale_x - 220;
-            effect->scale_x = next;
-            effect->scale_y = next;
-            effect->scale_z = next;
+            scale = effect->scale_x - 220;
+publish_kind9_scale:
+            effect->scale_x = scale;
+            effect->scale_z = scale;
+            effect->scale_y = scale;
             effect->unknown_07++;
         } else {
             effect->type = 0xff;
         }
-        effect->rotation_x = (effect->rotation_x + 0x578) & 0xfff;
         effect->rotation_y = (effect->rotation_y + 0x6a4) & 0xfff;
+        effect->rotation_x = (effect->rotation_x + 0x578) & 0xfff;
         effect->rotation_z = (effect->rotation_z + 0x76c) & 0xfff;
         break;
+    }
 
     case 15:
         effect_projectile_update_3d(&effect_projectile_velocities[0], 0x28);
@@ -652,12 +655,13 @@ randomize_kind20:
 
     case 52: {
         s16 column;
+        s32 remaining;
 
         switch (phase) {
         case 0:
-            prior = effect->direction_x;
-            effect->direction_x = prior - 1;
-            if ((s16)(prior - 1) == -1) {
+            remaining = effect->direction_x - 1;
+            effect->direction_x = remaining;
+            if ((s16)remaining == -1) {
                 effect->unknown_07 = 1;
                 return;
             }
@@ -670,9 +674,7 @@ randomize_kind20:
             }
             break;
         case 1:
-            value = effect->position.vy;
-            effect->position.vy = value - 1;
-            if (value - 1 != -1) {
+            if (--effect->position.vy != -1) {
                 return;
             }
             effect->unknown_07 = 2;
@@ -680,9 +682,9 @@ randomize_kind20:
             effect->direction_x = effect->position.vx;
             break;
         case 2:
-            prior = effect->direction_x;
-            effect->direction_x = prior - 1;
-            if ((s16)(prior - 1) == -1) {
+            remaining = effect->direction_x - 1;
+            effect->direction_x = remaining;
+            if ((s16)remaining == -1) {
                 effect->type = 0xff;
                 return;
             }

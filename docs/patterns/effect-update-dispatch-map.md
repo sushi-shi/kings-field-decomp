@@ -415,3 +415,173 @@ and full `kf build -j4` still fail the existing data/ownership/placement
 gates: source data 5/60, config-backed SDK data 4/4, target relink 110/116,
 six conflicting bases and no artifact failures. No new tool or flake change
 belongs to this campaign; concurrent clangd work is preserved separately.
+
+## Countdown and store-order continuation plan (2026-09-06)
+
+Continue GAME `80038a38` / `0x180c` from `0f96448` at 85.690056%.
+The same no-argument signature, single proven sweep caller, adjacent-function
+and vendor controls, complete SDK objects and reviewed relocation model apply.
+Fresh hash validation and all six semantic views confirm unchanged retail.
+Source/retail: 1,530/1,539 words, 134/135 conditional branches, 66/69 internal
+jumps, 177/182 text relocations, matching 168-byte frames/save sets, 69 calls
+with identical ordered referents and one return each. The first raw difference
+is the current-effect register at +0x30, not the prologue. The branch-count
+delta already has a proved equivalent 0/4 selection; do not invent an exit.
+
+First recover kind 10's direct unsigned-halfword pre-decrement and zero test
+at `80038eb8..80038ed0`, followed by the unsigned second-counter test at
+`80038ed4..80038ee0`. The current signed old-value local instead generates
+an old-value comparison with 1. Then independently recover the signed scale
+load at `80038ee4`, retaining the existing halfword destination, and the
+observed scale-store order at `80038efc..80038f08`.
+
+Kind 52 likewise decrements the field before interpreting the halfword result
+as signed (`8003a0c0..8003a0dc`, `8003a180..8003a19c`); its middle phase
+decrements the full Y word (`8003a150..8003a160`). Preserve all early exits.
+After these focused builds, review kind 19's grid-expression reads/store
+order and kind 33's remaining absolute magic reload. Keep one evidenced
+source cause per experiment; do not use fake locals, padding or forced loads.
+
+The kind-52 direct unsigned field pre-decrement probe emits `+65535` followed
+by a separate `-1` comparison constant, unlike retail's signed subtraction.
+Refine the value model to a signed-halfword remaining count computed as
+`field - 1`, used both for publication and the terminal test. This is the
+decoded countdown result (two real consumers), not a retained old-value
+carrier. Keep the shared storage field unsigned for its other effect kinds.
+
+The halfword-result form compiles identically to the direct pre-decrement,
+so it does not explain retail's `addiu -1`. Retail retains the arithmetic
+word through the `sh` and narrows only for the signed terminal comparison.
+Test that fuller value model: a signed-word remaining count, halfword store,
+then a signed-halfword interpretation at the comparison. This is bounded
+width recovery from the same def/use chain, not a register assignment claim.
+
+Kind 19's phase selector has two explicit case targets at
+`80039518/80039524` and a default jump at `8003952c`. Recover a two-case
+switch while keeping the animation increment outside it. The phase-1 scale
+stores are X, Z, Y (`8003955c/80039564/80039570`), with Y in the signed
+comparison's delay slot; audit that order separately from the selector.
+
+The phase-1 scale value similarly remains an arithmetic word until its
+halfword stores and signed-halfword comparison (`80039558..80039570`).
+Recover a case-local signed-word scale value; the shared `u16 next` currently
+converts subtraction to `+0xfe70` and introduces an additional register move.
+Other effects' halfword scale intermediates remain unchanged.
+
+### Resumed argument and delay-slot plan
+
+The arithmetic-word kind-19 scale build reaches 87.911630%, with the retail
+`addiu -400` now present; store scheduling still differs. Fresh retail hash
+validation and the six semantic views preserve the same body and referents.
+Continue the existing function plan with these independently decoded facts:
+
+- Kind 10's child constructor receives the entry kind snapshot in `a2`
+  (`80038f74: move a2,s6`), not a new literal 10. Pass the existing `kind`.
+- Its zero remaining-count arm is after child construction: the guard at
+  `80038edc` skips to invalidation at `80038f9c`; nonzero falls through the
+  constructor and jumps to the trigonometric continuation. Recover that
+  guarded-work/else layout without adding or removing an exit.
+- Kind 9 initializes both X/Z rotation halfwords before `vector_xz_to_angle`
+  (`80039f84/80039f88`), then publishes Y in the following `rand` delay slot
+  (`80039f9c`). Move Z initialization before the angle call.
+- Kind 6 publishes spawn X in the `rcos` delay slot (`80039cfc`), then Z,
+  then Y. Keep the complete VECTOR and its untouched pad while restoring
+  the evidenced coordinate-store order.
+- Common phase 120 divides Z first, then X (`8003913c..800391a0`), before
+  publishing the Y update and comparing the indexed floor height. Audit the
+  direct Z/X grid expression already supported by kinds 4 and 19 here too.
+
+Build and compare each source cause separately. Unknown switch reachability
+in the retail-only CFG remains an analysis limitation, not evidence that its
+case bodies are dead. No new CFG tooling is part of this continuation.
+
+Kind 10 also snapshots its complete trigonometric input once at
+`80038fa0..80038fa8` and uses it for both `rsin` and `rcos`
+(`80038fb0/80038fc8`). The current source rereads and shifts the counter
+after `rsin`. Recover a case-local signed-word pulse angle with these two
+real consumers; do not narrow it to the unrelated halfword random angle.
+After `rsin`, retail publishes Z at `80038fd8`, then X in the `rcos` delay
+slot (`80038fe0`). Recover that store order independently of the angle
+snapshot; the source currently publishes X first.
+
+The scale-store family also publishes X/Z/Y for kind 18
+(`800395ec..800395f4`) and kind 33 (`80039a4c..80039a54`). Restore this
+same independently decoded order at those two sites as one family correction.
+
+Kind 9 has a proved shared scale-publication tail: its growing arm jumps
+from `80039e74` to `8003a004`, with `+220` in the delay slot. Its shrinking
+arm falls through `addiu -220` at `8003a000` to the same X/Z/Y stores,
+phase increment and rotation continuation. Recover this join with a
+case-local arithmetic-word scale result; neither a duplicated store body
+nor a prematurely narrowed `u16` arithmetic result explains that sequence.
+Keep the movement and spawn arms, final invalidation, and rotation tail
+unchanged. This is decoded CFG sharing, not a guess about compiler passes.
+The following kind-9 rotation tail publishes Y before X and then Z
+(`8003a030/8003a040/8003a050`); recover that order as a separate edit.
+
+### Countdown and store-order results
+
+Each row is a focused compiled/retail comparison; scores are strict objdiff,
+not `kf try`'s textual similarity:
+
+| Source fact / experiment | Strict objdiff |
+| --- | ---: |
+| Kind-10 unsigned pre-decrement | 85.982450% |
+| Kind-10 unsigned remaining-count load | 86.188430% |
+| Kind-10 signed scale input | 86.219620% |
+| Kind-10 child scale-store order | 86.220924% |
+| Kind-52 halfword pre-decrement probe | 86.018845% |
+| Kind-52 full-word Y pre-decrement | 86.041590% |
+| Kind-52 signed-halfword result probe (identical object) | 86.041590% |
+| Kind-19 direct Z/X grid expression | 87.058480% |
+| Kind-52 arithmetic-word result, signed-halfword test | 87.260560% |
+| Kind-19 phase switch | 87.774530% |
+| Kind-19 X/Z/Y stores | 87.775826% |
+| Kind-19 arithmetic-word scale | 87.911630% |
+| Kind-10 entry-kind constructor argument (identical object) | 87.911630% |
+| Kind-10 guarded-work/else layout | 88.232620% |
+| Kind-9 pre-call X/Z rotation initialization | 88.387920% |
+| Kind-6 X/Z/Y spawn publication | 89.213776% |
+| Common phase-120 direct Z/X grid expression | 89.335280% |
+| Kind-10 shared full-word pulse angle | 89.246910% |
+| Kind-10 pulse Z/X publication | 89.248215% |
+| Kind-18/33 X/Z/Y scale publication | 89.250160% |
+| Kind-9 shared arithmetic-word scale tail | 89.121506% |
+| Kind-9 Y/X/Z rotation publication | 89.125404% |
+
+The final **89.125404% remains partial and is not banked**. Relative to
+the prior committed 85.690056% checkpoint, only this function changes among
+all 484 native rows. GAME remains 288/362 exact, OPEN 97/108 and PSX 1/1;
+native provider rows are not added to the game-function denominator.
+
+Final source/retail: 6,112/6,156 bytes (1,528/1,539 words), 134/135
+conditional branches, 67/69 internal jumps, 178/182 text relocations, one
+return each, and 69 direct calls with identical ordered referents. The
+168-byte frame and saved-register locations remain identical. The first
+raw difference is still the current-effect register at +0x30. The remaining
+relocation-count difference is two internal jumps and kind 33's additional
+`effect_state` HI/LO pair in retail; no target relocation was changed here.
+
+The pulse-angle snapshot is retained through its small score dip because
+the compiled object now preserves one full-width input across both trig
+calls as retail does. Likewise the kind-9 shared scale tail is retained:
+growth now jumps to the same publication block as shrinkage, and subtraction
+uses `addiu -220`; register and phase-load placement still differ. The kind
+argument source correction is also kept, though the probe folds it to a
+literal 10 and emits identical bytes. None of these observations establishes
+an optimizer mechanism or historical compiler attribution.
+
+Next inspect shared invalidation/increment targets in common phases and
+kinds 32/33, plus the remaining kind-33 absolute-address lifetime. Retail
+uses `80039b40` for invalidation and `80039b44` for the shared increment;
+the source still has duplicated guard exits there. Continue from raw paths,
+not by forcing registers or adding redundant references.
+
+Verification: Ruff, all 633 tests (75.864s, no skips), focused builds/raw
+comparisons and `git diff --check` pass. The focused final `kf match` and
+full `kf build -j4` exit 1 only on the existing data/ownership/placement
+gates: source data 5/60, config-backed SDK data 4/4, target relink 110/116,
+six conflicting bases, and no artifact failures. No partial result is
+banked. The concurrent clangd changes were committed separately as
+`2cb8944`; this checkpoint owns only the dispatcher, this evidence and the
+generated README score update.
