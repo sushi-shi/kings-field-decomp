@@ -185,3 +185,54 @@ strict scores remain identical to 1a2cbce. All 644 repository tests pass
 whitespace checks pass. The full build retains the existing ownership and
 placement failures, with five of 60 source data owners matching, target
 relink PSX 1/1, GAME 75/77 and OPEN 34/38, and no artifact failures.
+
+## PlayStation save-icon header
+
+Function Match Plan: refine GAME `save_file_initialize_buffers` (8002c304,
+0x20c bytes, currently strict 100%) from byte offsets into the supported
+PlayStation card-header layout. Its complete dossier covers the raw CFG,
+sole caller `save_file_write_slot`, SDK boundaries, strings, data references,
+relocations, adjacent functions and history. The King's Field title and icon
+paths establish game ownership; the routine is not a vendored library body.
+Preserve all four byte stores, the 53-byte title copy, first-frame palette
+selection, three 128-byte image copies, calls and delay-slot operations.
+Add measured layout checks and update the curated inventory. Require every
+non-debug section of all 112 objects and all 484 strict scores to agree with
+the immutable 1a2cbce baseline before committing.
+
+Sony's [Run-Time Library Overview, tables 5-6 and 5-7](https://gamingdoc.org/wp-content/uploads/2020/07/Run-Time-Library-Ovewview-LIBOVR46.pdf#page=63)
+documents the `SC` signature, icon-type byte, block count, 64-byte Shift-JIS
+title, 28 zero bytes, sixteen 16-bit CLUT entries and three 128-byte frames
+for type 0x13. This later documentation supports the file format, not an
+attribution of the game's compiler or SDK release. The supplied Release 2.5
+headers provide no corresponding card-header C type. `KfPsxSaveHeader`
+models the three-frame variant used here, with the game directory following
+at +0x200.
+
+| Header offset | Member | GAME initializer evidence |
+| --- | --- | --- |
+| 00 | `magic[2]` | 8002c334 and 8002c344 store `S` and `C` as bytes. |
+| 02 | `icon_type` | 8002c354 stores 0x13, selecting three animation frames. |
+| 03 | `block_count` | 8002c364 stores five, also used in the file-create request. |
+| 04 | `title[64]` | 8002c374 selects the destination; the loop and tail copy 53 bytes including the terminator. |
+| 44 | `zero_pad[28]` | The initial 0x280-byte clear supplies the format's required zeros; later writes skip this span. |
+| 60 | `clut[16]` | 8002c3d0..8002c40c copy 32 bytes from ICO1's palette. |
+| 80 | `icon_frames[3][128]` | Destination calculations at 8002c41c, 8002c46c and 8002c4bc select successive frames. |
+
+The three shipped `TIM/ICO1.TIM`..`ICO3.TIM` files each have 192 bytes:
+4-bit TIM data, a 16-by-1 palette at byte 20 and 16-by-16 pixels at byte 64.
+Thus each image contributes 16 * 16 / 2 = 128 packed pixel bytes. The local
+2048-byte buffer serves a sector-rounded CD read; it does not describe an
+icon's encoded length. Source offset names refer specifically to these three
+assets, since general TIM pixel offsets depend on the palette block size.
+Retail-derived decoded images and measurements remain ignored build outputs.
+
+Verification: the seven offset checks and 0x200-byte extent compile under the
+pinned toolchain. The inventory now has 94 structures and 779 fields, 687
+named. All 112 objects retain every non-debug section and all 484 strict
+scores from 1a2cbce; the initializer remains strict 100%. All 644 repository
+tests pass (nine skips), flake checks pass (644 tests, 131 sandbox skips),
+and lint/whitespace checks pass. The full build retains the existing
+ownership and placement failures: five of 60 source data owners match,
+target relink is PSX 1/1, GAME 75/77 and OPEN 34/38, and there are no artifact
+failures. No new function is banked by this field recovery.

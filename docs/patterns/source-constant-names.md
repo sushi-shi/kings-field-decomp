@@ -1348,3 +1348,37 @@ header. Other unchanged literals in the save and menu bodies still await
 their subsequent batches. The full object/score comparison, 644 repository
 tests and flake checks pass as recorded in the save-summary field audit;
 the existing full-build ownership failures are unchanged.
+
+## Save icon format constants
+
+Function Match Plan: the [save-icon header field recovery](semantic-field-names.md#playstation-save-icon-header)
+covers GAME 8002c304, its complete dossier and the three shipped TIM assets.
+The three-frame type 0x13 is a format tag, distinct from the number three.
+The initializer uses the shared CD-sector byte count for its rounded read
+buffer and copies each destination field's `sizeof` bytes. The fixed TIM
+source offsets identify the palette and pixel payload in ICO1..ICO3 only.
+
+The remaining initializer and newly introduced layout literals have these
+reasons; the rest of the save unit's pending status, path and menu audit is
+not claimed by this batch.
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Initial clears | 0 | Zero-filled header/payload storage; also supplies the format-required pad and unused title bytes. |
+| Signature byte indices and characters | 0/1, `S`/`C` | The two bytes of the literal file signature, in their serialized order. |
+| Icon frame indices | 0/1/2 | First, second and third asset, in animation order. |
+| Header array extents | 2, 64, 28, 16, 3, 128 | Two signature bytes, 64 Shift-JIS title bytes, 28 required zero bytes, sixteen palette entries, three frames, and 16 * 16 / 2 packed bytes per frame. These measured format dimensions do not need another layer of aliases. |
+| Layout assertions | 0x200; 00/02/03/04/44/60/80 hex; 1/-1 | Independent serialized size and member offsets; valid/invalid compile-time array bounds. |
+| Title and asset strings | All encoded characters and frame digits | Authored card title and literal file paths. Preserve the title's 53-byte copy including its terminator; the 64-byte field capacity is not the copy length. |
+
+The five-block allocation accommodates the 640-byte header and four
+9600-byte physical payload positions: 39040 bytes fit in five 8192-byte
+blocks. Three logical save slots plus one spare entry explain the fourth
+payload position. The value five is already named `SAVE_FILE_BLOCKS`;
+its storage relationship is supported independently of the equally valued
+retry caps, whose choice is still an authored policy.
+
+Validation agrees with the field audit: every non-debug object section and
+all 484 strict scores are unchanged, including the initializer's 100% result.
+The repository tests, flake checks and lint/whitespace checks pass; full
+`kf build` retains the existing data-ownership and placement failures.

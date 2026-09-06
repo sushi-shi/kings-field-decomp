@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/cd_file.h>
 #include <kf/game_save.h>
 #include <kf/game_player.h>
 #include <kf/psyq_audio.h>
@@ -9,6 +10,12 @@
 enum {
     IMAGE_WAIT_INITIAL_BRIGHTNESS = 32,
     IMAGE_WAIT_MAX_BRIGHTNESS = 127
+};
+
+/* Offsets in ICO1.TIM..ICO3.TIM, whose palettes each contain sixteen colors. */
+enum {
+    SAVE_ICON_TIM_CLUT_OFFSET = 0x14,
+    SAVE_ICON_TIM_PIXELS_OFFSET = 0x40
 };
 
 /* Jump tables and string literals of this unit in the retail data region. */
@@ -628,21 +635,25 @@ void save_workspace_release(void)
 ADDRESS(0x8002c304, 0x20c)
 void save_file_initialize_buffers(void)
 {
-    u8 image[0x800];
+    u8 image[KF_CD_SECTOR_BYTES];
 
     memset(save_header_buffer, 0, sizeof(KfSaveHeader));
-    save_header_buffer->playstation_header[0] = 'S';
-    save_header_buffer->playstation_header[1] = 'C';
-    save_header_buffer->playstation_header[2] = 0x13;
-    save_header_buffer->playstation_header[3] = SAVE_FILE_BLOCKS;
-    memcpy(&save_header_buffer->playstation_header[4], SAVE_TITLE_TEXT, sizeof(SAVE_TITLE_TEXT));
+    save_header_buffer->playstation_header.magic[0] = 'S';
+    save_header_buffer->playstation_header.magic[1] = 'C';
+    save_header_buffer->playstation_header.icon_type = KF_SAVE_ICON_THREE_FRAMES;
+    save_header_buffer->playstation_header.block_count = SAVE_FILE_BLOCKS;
+    memcpy(save_header_buffer->playstation_header.title, SAVE_TITLE_TEXT, sizeof(SAVE_TITLE_TEXT));
     cd_file_load_into(image, "TIM\\ICO1.TIM");
-    memcpy(&save_header_buffer->playstation_header[0x60], &image[0x14], 0x20);
-    memcpy(&save_header_buffer->playstation_header[0x80], &image[0x40], 0x80);
+    memcpy(save_header_buffer->playstation_header.clut, &image[SAVE_ICON_TIM_CLUT_OFFSET],
+           sizeof(save_header_buffer->playstation_header.clut));
+    memcpy(save_header_buffer->playstation_header.icon_frames[0], &image[SAVE_ICON_TIM_PIXELS_OFFSET],
+           sizeof(save_header_buffer->playstation_header.icon_frames[0]));
     cd_file_load_into(image, "TIM\\ICO2.TIM");
-    memcpy(&save_header_buffer->playstation_header[0x100], &image[0x40], 0x80);
+    memcpy(save_header_buffer->playstation_header.icon_frames[1], &image[SAVE_ICON_TIM_PIXELS_OFFSET],
+           sizeof(save_header_buffer->playstation_header.icon_frames[1]));
     cd_file_load_into(image, "TIM\\ICO3.TIM");
-    memcpy(&save_header_buffer->playstation_header[0x180], &image[0x40], 0x80);
+    memcpy(save_header_buffer->playstation_header.icon_frames[2], &image[SAVE_ICON_TIM_PIXELS_OFFSET],
+           sizeof(save_header_buffer->playstation_header.icon_frames[2]));
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
 }
 

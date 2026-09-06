@@ -561,6 +561,13 @@ KfPoolRecord	0x10	0x04	owner_slot	KfPoolRecord **	supported	pool.h;game_semantic
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
 KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
+KfPsxSaveHeader	0x00	0x02	magic	u8[2]	supported	game_save.h;save_file_initialize_buffers;asm;Sony-LIBOVR46-table-5-6	SC file signature, written as two bytes
+KfPsxSaveHeader	0x02	0x01	icon_type	u8	supported	game_save.h;save_file_initialize_buffers;asm;Sony-LIBOVR46-table-5-7	0x13 selects three animated icon frames
+KfPsxSaveHeader	0x03	0x01	block_count	u8	supported	game_save.h;save_file_initialize_buffers;save_file_write_slot;Sony-LIBOVR46-table-5-6	five allocated memory-card blocks
+KfPsxSaveHeader	0x04	0x40	title	u8[64]	supported	game_save.h;save_file_initialize_buffers;save_title_text;Sony-LIBOVR46-table-5-6	Shift-JIS card title; 53 bytes copied including the terminator
+KfPsxSaveHeader	0x44	0x1c	zero_pad	u8[28]	supported	game_save.h;save_file_initialize_buffers;Sony-LIBOVR46-table-5-6	format-required zeros supplied by the initial header clear
+KfPsxSaveHeader	0x60	0x20	clut	u16[16]	supported	game_save.h;save_file_initialize_buffers;ICO1.TIM;Sony-LIBOVR46-table-5-6	sixteen-color palette copied from the first icon TIM
+KfPsxSaveHeader	0x80	0x180	icon_frames	u8[3][128]	supported	game_save.h;save_file_initialize_buffers;ICO1.TIM;ICO2.TIM;ICO3.TIM;Sony-LIBOVR46-table-5-6	three 16-by-16 four-bit images in file order
 KfRenderState	0x00	0x20	view_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0x20	0x20	pitch_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
@@ -582,7 +589,7 @@ KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;
 KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	game_save.h;asm;xrefs	four save-slot identifiers
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	game_save.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	game_save.h;asm;xrefs	four slot summaries
-KfSaveHeader	0x00	0x200	playstation_header	u8[512]	supported	game_save.h;PlayStation-save-format	standard save header and icons
+KfSaveHeader	0x00	0x200	playstation_header	KfPsxSaveHeader	supported	game_save.h;PlayStation-save-format	standard save header and three icon frames
 KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	game_save.h;asm;xrefs	King's Field directory
 KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	game_save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
 KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	game_save.h;asm	not touched by the write/read pair

@@ -124,9 +124,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2954)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 93)
-        self.assertEqual(counts["structure_fields"], 772)
-        self.assertEqual(counts["structure_fields_named"], 680)
+        self.assertEqual(counts["structures"], 94)
+        self.assertEqual(counts["structure_fields"], 779)
+        self.assertEqual(counts["structure_fields_named"], 687)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -419,6 +419,7 @@ class InventoryTests(unittest.TestCase):
     def test_save_layouts_live_in_the_save_owner_header(self) -> None:
         save_header = (REPO / "include/kf/game_save.h").read_text()
         for structure in (
+            "KfPsxSaveHeader",
             "KfSaveSlotSummary",
             "KfSaveDirectory",
             "KfSaveHeader",

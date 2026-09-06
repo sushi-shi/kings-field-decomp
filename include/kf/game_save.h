@@ -21,6 +21,21 @@ enum {
     KF_SAVE_SLOT_SPARE = 4
 };
 
+enum {
+    KF_SAVE_ICON_THREE_FRAMES = 0x13
+};
+
+/* PlayStation card header with the three icon frames used by this game. */
+typedef struct KfPsxSaveHeader {
+    u8 magic[2];
+    u8 icon_type;
+    u8 block_count;
+    u8 title[64];
+    u8 zero_pad[28];
+    u16 clut[16];
+    u8 icon_frames[3][128]; /* Each 16-by-16 image has two 4-bit pixels per byte. */
+} KfPsxSaveHeader;
+
 /* On-card summaries widen the player's byte/halfword values to words. */
 typedef struct KfSaveSlotSummary {
     u32 experience;
@@ -40,7 +55,7 @@ typedef struct KfSaveDirectory {
 
 /* One standard 0x200-byte PlayStation save header plus the game directory. */
 typedef struct KfSaveHeader {
-    u8 playstation_header[0x200];
+    KfPsxSaveHeader playstation_header;
     KfSaveDirectory directory;
 } KfSaveHeader;
 
@@ -57,6 +72,18 @@ typedef struct KfSavePayload {
     u8 unknown_2548[56];
 } KfSavePayload;
 
+typedef char check_psx_save_header_size[sizeof(KfPsxSaveHeader) == 0x200 ? 1 : -1];
+#define KF_PSX_SAVE_HEADER_OFFSET_CHECK(member, offset) \
+    typedef char check_psx_save_header_##member[ \
+        ((unsigned long)&((KfPsxSaveHeader *)0)->member == (offset)) ? 1 : -1]
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(magic, 0x00);
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(icon_type, 0x02);
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(block_count, 0x03);
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(title, 0x04);
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(zero_pad, 0x44);
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(clut, 0x60);
+KF_PSX_SAVE_HEADER_OFFSET_CHECK(icon_frames, 0x80);
+#undef KF_PSX_SAVE_HEADER_OFFSET_CHECK
 typedef char check_save_summary_size[sizeof(KfSaveSlotSummary) == 0x18 ? 1 : -1];
 #define KF_SAVE_SUMMARY_OFFSET_CHECK(member, offset) \
     typedef char check_save_summary_##member[ \

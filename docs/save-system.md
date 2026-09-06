@@ -38,8 +38,11 @@ current HP, maximum HP, current MP and maximum MP. The writer independently
 identifies each source field; the dialog's display loads and positive-current-HP
 row predicate agree with those offsets. See the
 [field evidence](patterns/semantic-field-names.md#save-summary-field-recovery).
-The card header initializer writes `SC`, icon flag `0x13`, block count `5`,
-the Shift-JIS title, and three icon assets (`ICO1.TIM` through `ICO3.TIM`).
+The card header initializer writes `SC`, the three-frame icon type `0x13`,
+block count `5`, the Shift-JIS title, and three icon assets (`ICO1.TIM`
+through `ICO3.TIM`). `KfPsxSaveHeader` names the signature, type, block count,
+title, zero padding, palette and frames, with measured size/offset checks.
+See the [format and retail evidence](patterns/semantic-field-names.md#playstation-save-icon-header).
 
 There are three logical slots (IDs 1..3) and four physical directory entries.
 Tag zero denotes an empty entry, and tag four denotes the spare entry reused
