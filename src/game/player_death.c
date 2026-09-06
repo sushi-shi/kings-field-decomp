@@ -80,7 +80,7 @@ void game_state_initialize(void)
     player_state.equipped_shield_id = KF_ITEM_NONE;
     player_state.equipped_accessory_id = KF_ITEM_NONE;
     player_set_equipment_slot(0, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
-    player_select_magic(8);
+    player_select_magic(KF_MAGIC_LIGHT_NEEDLE);
     player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.illusion_staff_timer = KF_ILLUSION_STAFF_INACTIVE;
     player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
@@ -336,16 +336,16 @@ void player_recalculate_combat_stats(void)
     if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
-    if (player_state.base_magic >= 37 && magic_records[0].learned != 0 && magic_records[1].learned == 0) {
-        magic_records[1].learned = 1;
+    if (player_state.base_magic >= 37 && magic_records[KF_MAGIC_HEALING].learned != 0 && magic_records[KF_MAGIC_DISPOISON].learned == 0) {
+        magic_records[KF_MAGIC_DISPOISON].learned = 1;
         notify_enqueue(1);
     }
-    if (player_state.base_magic >= 70 && magic_records[6].learned == 0) {
-        magic_records[6].learned = 1;
+    if (player_state.base_magic >= 70 && magic_records[KF_MAGIC_FIRE_WALL].learned == 0) {
+        magic_records[KF_MAGIC_FIRE_WALL].learned = 1;
         notify_enqueue(1);
     }
-    if (player_state.base_magic >= 75 && magic_records[4].learned == 0) {
-        magic_records[4].learned = 1;
+    if (player_state.base_magic >= 75 && magic_records[KF_MAGIC_LIGHTNING_BOLT].learned == 0) {
+        magic_records[KF_MAGIC_LIGHTNING_BOLT].learned = 1;
         notify_enqueue(1);
     }
     if (player_state.physical_power >= 1000) {

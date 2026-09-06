@@ -1,11 +1,11 @@
 # Retained equipment literals
 
 Complete ledger for `equipment.c`, `menu_select.c` and `menu_draw_name_list.c`
-after the [equipment domain audit](game-equipment-domains.md) and [shop price follow-up](game-shop-price-domains.md) plus [equipment identity correction](game-item-equipment-identities.md). Claim addresses
+after the [equipment domain audit](game-equipment-domains.md) and [shop price follow-up](game-shop-price-domains.md) plus [equipment identity correction](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md). Claim addresses
 and extents are separate. Negative signs are operators, so -99 contributes
 one numeric token. Line numbers locate this source version.
 
-All **146 retained occurrences** have specific reasons.
+All **143 retained occurrences** have specific reasons.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -67,8 +67,7 @@ All **146 retained occurrences** have specific reasons.
 | `menu_spell_select` | 237 | `99` | `s32 selection = -99;` | Pending-selection sentinel outside item/spell codes and cancellation -1; retained pending a shared list-result protocol audit. The choice of -99 is unproven. |
 | `menu_spell_select` | 239, 285 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_spell_select` | 242 | `0` | `k = 0;` | Start appending selected rows at the first workspace entry. |
-| `menu_spell_select` | 243 | `4` | `name = magic_name_rows[4].codes;` | Start at the first selectable attack-spell name, magic ID 4. |
-| `menu_spell_select` | 244 | `4, 9, 10` | `for (code = 4; code < 9; code++, name += 10) {` | Selectable attack-spell IDs 4..8; advance one ten-halfword name row each iteration. IDs 0..3 belong to the separate instant-use magic panel. |
+| `menu_spell_select` | 244 | `10` | `for (code = KF_MAGIC_LIGHTNING_BOLT; code < KF_MAGIC_PLAYER_COUNT; code++, name += 10) {` | Advance one ten-halfword name row per selected spell; the named Lightning Bolt through Light Needle interval excludes the four instant spells. |
 | `menu_spell_select` | 245 | `1` | `if (magic_records[code].learned == 1) {` | The selector accepts exactly learned byte 1; do not widen the retail predicate to any nonzero value. |
 | `menu_spell_select` | 246 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
 | `menu_spell_select` | 252 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-shop-price-domains.md; atlas code 89. |

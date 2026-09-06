@@ -49,10 +49,10 @@ void effect_update_dispatch(void)
     case KF_EFFECT_KIND_EMERGING_PROJECTILE:
         radius = 150;
         goto shared_projectile;
-    case 4:
-    case 5:
-    case 7:
-    case 8:
+    case KF_EFFECT_KIND_LIGHTNING_BOLT:
+    case KF_EFFECT_KIND_FIRE_BALL:
+    case KF_EFFECT_KIND_WIND_CUTTER:
+    case KF_EFFECT_KIND_LIGHT_NEEDLE:
     case KF_EFFECT_KIND_SCATTER_PROJECTILE:
     case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
     case KF_EFFECT_KIND_CURSE_PROJECTILE:
@@ -64,7 +64,7 @@ shared_projectile:
             if (collision != (u32)KF_COLLISION_NONE) {
                 impact_magic = current_effect_magic_record;
                 collision_kind = collision >> 16;
-                if (kind == 4) {
+                if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
                     goto effect_kind4_impact;
                 }
                 power = effect_magic_power(effect);
@@ -73,7 +73,7 @@ shared_projectile:
                         &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
                 if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
-                    if (kind == 14 || kind == 22 || kind == 7) {
+                    if (kind == 14 || kind == 22 || kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         actor_apply_damage(
                             (u16)collision, power,
                             impact_magic->damage_components[0],
@@ -87,7 +87,7 @@ shared_projectile:
                             impact_magic->damage_components[1],
                             KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                     }
-                    if (kind == 7) {
+                    if (kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         goto advance_shared_projectile;
                     }
                 } else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {
@@ -112,7 +112,7 @@ shared_projectile:
                             impact_magic->damage_components[1],
                             KF_FIXED12_ONE, effect->id);
                     }
-                    if (kind == 7) {
+                    if (kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         goto advance_shared_projectile;
                     }
                 }
@@ -133,11 +133,11 @@ advance_shared_projectile:
             effect->position.vx += (s16)effect->direction.words.x;
             effect->position.vy += (s16)effect->direction.words.y;
             effect->position.vz += (s16)effect->direction.words.z;
-            if (kind == 5 || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
+            if (kind == KF_EFFECT_KIND_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
                 effect->rotation.vz = (effect->rotation.vz + 200) & KF_ANGLE_WRAP_MASK;
                 return;
             }
-            if (kind == 4) {
+            if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
                 s32 remaining;
 
                 effect->rotation.vz = (effect->rotation.vz + 200) & KF_ANGLE_WRAP_MASK;
@@ -215,14 +215,14 @@ effect_kind4_impact:
                 }
                 return;
             }
-            if (kind == 8 || kind == 22) {
+            if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == 22) {
                 return;
             }
             effect->rotation.vz = (effect->rotation.vz + 600) & KF_ANGLE_WRAP_MASK;
             return;
         }
 
-        if (phase < 5 && kind == 5) {
+        if (phase < 5 && kind == KF_EFFECT_KIND_FIRE_BALL) {
             effect->render_id = effect->base_render_id + phase;
         } else if (phase < 10) {
             goto invalidate_and_advance;
@@ -478,7 +478,7 @@ randomize_kind20:
                     &effect->position, &effect->rotation);
             }
             if (phase == 3) {
-                phase_sound = &magic_records[4].sounds[1];
+                phase_sound = &magic_records[KF_MAGIC_LIGHTNING_BOLT].sounds[1];
                 goto play_phase_sound;
             }
         }
@@ -505,12 +505,12 @@ randomize_kind20:
             power = effect_magic_power(effect);
             actor_pool_apply_radial_damage(
                 &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                magic_records[4].damage_components[0],
-                magic_records[4].damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[0],
+                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             player_apply_radial_damage(
                 &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                magic_records[4].damage_components[0],
-                magic_records[4].damage_components[1], 5000, effect->id);
+                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[0],
+                magic_records[KF_MAGIC_LIGHTNING_BOLT].damage_components[1], 5000, effect->id);
         }
         goto advance_effect_phase;
     }

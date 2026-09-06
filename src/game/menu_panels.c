@@ -40,8 +40,8 @@ s32 menu_magic_panel(void)
     menu_list_init(&ctx, 0, 1);
 
     found = 0;
-    name = magic_name_rows[0].codes;
-    for (code = 0; code < 4; code++, name += 10) {
+    name = magic_name_rows[KF_MAGIC_HEALING].codes;
+    for (code = KF_MAGIC_HEALING; code < KF_MAGIC_LIGHTNING_BOLT; code++, name += 10) {
         if (magic_records[code].learned == 1) {
             for (j = 0; j < 10; j++)
                 labels[found][j] = name[j];
@@ -137,15 +137,15 @@ s32 menu_magic_panel(void)
     if (player_state.vitals.current_mp < magic_records[selection].mp_cost)
         return selection;
     player_state.vitals.current_mp -= magic_records[selection].mp_cost;
-    if (selection == 0) {
+    if (selection == KF_MAGIC_HEALING) {
         player_state.vitals.current_hp += player_state.magic;
-    } else if (selection == 1) {
-        player_state.status_effect_flags &= 3;
-    } else if (selection == 2) {
+    } else if (selection == KF_MAGIC_DISPOISON) {
+        player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE | KF_PLAYER_STATUS_DARKNESS;
+    } else if (selection == KF_MAGIC_RESIST_FIRE) {
         player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
         player_apply_fire_defense_boost();
-    } else if (selection == 3) {
-        player_state.status_effect_flags &= 0xc;
+    } else if (selection == KF_MAGIC_BLESS) {
+        player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
         player_state.vitals.current_hp += player_state.magic * 3;
     }
     if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)

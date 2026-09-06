@@ -240,8 +240,8 @@ void menu_spell_select(void)
         ;
 
     k = 0;
-    name = magic_name_rows[4].codes;
-    for (code = 4; code < 9; code++, name += 10) {
+    name = magic_name_rows[KF_MAGIC_LIGHTNING_BOLT].codes;
+    for (code = KF_MAGIC_LIGHTNING_BOLT; code < KF_MAGIC_PLAYER_COUNT; code++, name += 10) {
         if (magic_records[code].learned == 1) {
             for (j = 0; j < 10; j++)
                 labels[k][j] = name[j];

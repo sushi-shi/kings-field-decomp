@@ -291,7 +291,7 @@ void player_update(void)
                 if (player_state.selected_magic_id != KF_MAGIC_NONE && player_state.magic_charge == 5000) {
                     player_state.weapon_magic_delay = 0;
                     player_state.weapon_magic_shots_remaining = 0;
-                    if (player_state.equipped_accessory_id == KF_ITEM_WIND_BLADE_BRACELET && player_state.selected_magic_id == 7) {
+                    if (player_state.equipped_accessory_id == KF_ITEM_WIND_BLADE_BRACELET && player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
                         cost = player_state.selected_magic_record->mp_cost >> 1;
                     } else {
                         cost = player_state.selected_magic_record->mp_cost;
@@ -333,11 +333,11 @@ void player_update(void)
                     player_state.weapon_magic_delay = 3;
                     break;
                 case KF_ITEM_FLAME_SWORD:
-                    if (magic_records[5].learned == 0) {
+                    if (magic_records[KF_MAGIC_FIRE_BALL].learned == 0) {
                         goto cancel;
                     }
-                    effect = 5;
-                    record = &magic_records[5];
+                    effect = KF_EFFECT_KIND_FIRE_BALL;
+                    record = &magic_records[KF_MAGIC_FIRE_BALL];
                     player_state.weapon_magic_delay = 2;
                     break;
                 case KF_ITEM_MOONLIGHT_SWORD:
@@ -352,8 +352,8 @@ void player_update(void)
                     if (player_state.physical_power < 60 || player_state.magic < 60) {
                         goto cancel;
                     }
-                    effect = 8;
-                    record = &magic_records[8];
+                    effect = KF_EFFECT_KIND_LIGHT_NEEDLE;
+                    record = &magic_records[KF_MAGIC_LIGHT_NEEDLE];
                     player_state.weapon_magic_delay = 1;
                     break;
                 default:

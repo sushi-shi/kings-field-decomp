@@ -58,7 +58,7 @@ KfEffectRecord *effect_pool_construct(
         magic = &magic_records[record->kind];
 
         switch (record->kind) {
-        case 5:
+        case KF_EFFECT_KIND_FIRE_BALL:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 0;
             record->render_id = 0;
@@ -68,7 +68,7 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
-        case 7:
+        case KF_EFFECT_KIND_WIND_CUTTER:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 5;
             record->render_id = 5;
@@ -83,9 +83,9 @@ KfEffectRecord *effect_pool_construct(
         case 0x17:
             record->base_render_id = 0x11;
             record->render_id = 0x11;
-            record->kind = 4;
+            record->kind = KF_EFFECT_KIND_LIGHTNING_BOLT;
             goto initialize_kind_04;
-        case 4:
+        case KF_EFFECT_KIND_LIGHTNING_BOLT:
             record->base_render_id = 6;
             record->render_id = 6;
         initialize_kind_04:
@@ -96,7 +96,7 @@ KfEffectRecord *effect_pool_construct(
             record->control.frames_remaining = *(u16 *)(va + 1);
             if (va[2] != 0) {
                 audio_play_spatial_range(
-                    &magic_records[4].sounds[0],
+                    &magic_records[KF_MAGIC_LIGHTNING_BOLT].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             }
             break;
@@ -114,7 +114,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_range(
-                &magic_records[4].sounds[1],
+                &magic_records[KF_MAGIC_LIGHTNING_BOLT].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             break;
         case 0x2a:
@@ -233,7 +233,7 @@ KfEffectRecord *effect_pool_construct(
             record->render_id = 5;
             record->rotation = *(const SVECTOR *)va[1];
             break;
-        case 8:
+        case KF_EFFECT_KIND_LIGHT_NEEDLE:
             record->animation_clip = 0;
             record->base_render_id = 6;
             record->render_id = 6;

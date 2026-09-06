@@ -11,6 +11,7 @@
 
 #include <kf/game_save.h>
 #include <kf/psyq.h>
+#include <kf/magic.h>
 
 KF_ENUM_BEGIN(KfMenuMode, s32)
     KF_MENU_MODE_ROOT = 0,
@@ -210,7 +211,7 @@ extern SVECTOR menu_item_preview_rotation;
 extern KfMenuAssets menu_assets;
 extern MenuWindowLayout menu_window_layouts[9];
 extern MenuGlyphRow item_name_rows[80];
-extern MenuGlyphRow magic_name_rows[9];
+extern MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
 extern u16 item_buy_prices[80][2];
 extern u16 item_sell_prices[80][2];
 extern s32 menu_item_model_allocation_pending;

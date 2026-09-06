@@ -37,10 +37,10 @@ ADDRESS(0x8003a2a0, 0x4c0)
 void magic_cast(void)
 {
     switch (player_state.selected_magic_id) {
-    case 4:
-    case 5:
-    case 7:
-    case 8: {
+    case KF_MAGIC_LIGHTNING_BOLT:
+    case KF_MAGIC_FIRE_BALL:
+    case KF_MAGIC_WIND_CUTTER:
+    case KF_MAGIC_LIGHT_NEEDLE: {
         SVECTOR direction;
         SVECTOR offset;
         struct KfEulerAngles angles;
@@ -67,7 +67,7 @@ void magic_cast(void)
         actor_state.player_target = target;
         if (target == 0) {
             scale = 600;
-            if (player_state.selected_magic_id == 4) {
+            if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 scale = 800;
                 angles.x = -128;
                 distance = 20;
@@ -76,7 +76,7 @@ void magic_cast(void)
             }
         } else {
             scale = 600;
-            if (player_state.selected_magic_id == 4) {
+            if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 if (map_cell_attribute_height_table[
                         map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]
                         >= -4999) {
@@ -92,14 +92,14 @@ void magic_cast(void)
                 angles.x = player_state.camera_rotation.vx;
             }
         }
-        if (player_state.selected_magic_id == 7) {
+        if (player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
             scale = 800;
         }
         angles.y = player_state.camera_rotation.vy;
         angles.z = player_state.camera_rotation.vz;
         pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
         vector3s_scale_shift12(scale, &direction);
-        if (player_state.selected_magic_id == 8) {
+        if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
             SVECTOR rotation;
 
             rotation.vx = player_state.camera_rotation.vx;
@@ -115,7 +115,7 @@ void magic_cast(void)
         }
         break;
     }
-    case KF_EFFECT_KIND_GROUND_BRANCH: {
+    case KF_MAGIC_FIRE_WALL: {
         s32 distance;
         KfActor *target;
 

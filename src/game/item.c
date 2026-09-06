@@ -21,7 +21,7 @@ DATA(0x80058dc0, 0x640)
 MenuGlyphRow item_name_rows[80];
 
 DATA(0x80059400, 0xb4)
-MenuGlyphRow magic_name_rows[9];
+MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
 
 DATA(0x800594b8, 0x140)
 u16 item_buy_prices[80][2];

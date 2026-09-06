@@ -142,9 +142,9 @@ void map_ambient_script_floor3(void)
     if (player_state.map_cell.x >= 15 && player_state.map_cell.x < 18
         && player_state.map_cell.z == 0x40) {
         player_restore_vitals_with_color_cycle();
-        if (magic_records[2].learned == 0 || magic_records[3].learned == 0) {
-            magic_records[2].learned = 1;
-            magic_records[3].learned = 1;
+        if (magic_records[KF_MAGIC_RESIST_FIRE].learned == 0 || magic_records[KF_MAGIC_BLESS].learned == 0) {
+            magic_records[KF_MAGIC_RESIST_FIRE].learned = 1;
+            magic_records[KF_MAGIC_BLESS].learned = 1;
             notify_enqueue(1);
         }
     }
@@ -243,15 +243,15 @@ ADDRESS(0x80034610, 0x90)
 void map_action_script_floor3(void)
 {
     if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {
-        if (magic_records[7].learned == 0) {
-            magic_records[7].learned = 1;
+        if (magic_records[KF_MAGIC_WIND_CUTTER].learned == 0) {
+            magic_records[KF_MAGIC_WIND_CUTTER].learned = 1;
             notify_enqueue(1);
         }
     }
     if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(3)) {
-        if (magic_records[5].learned == 0) {
-            magic_records[5].learned = 1;
+        if (magic_records[KF_MAGIC_FIRE_BALL].learned == 0) {
+            magic_records[KF_MAGIC_FIRE_BALL].learned = 1;
             notify_enqueue(1);
         }
     }
@@ -389,7 +389,7 @@ void map_event_interact(KfMapEvent *event)
     case 8:
         if (item_stock[0][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2
             && map_event_pool[2].dialogue_page < 2) {
-            magic_records[0].learned = 1;
+            magic_records[KF_MAGIC_HEALING].learned = 1;
             item_stock[0][KF_ITEM_MIRROR_OF_TRUTH]--;
             notify_enqueue(1);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
