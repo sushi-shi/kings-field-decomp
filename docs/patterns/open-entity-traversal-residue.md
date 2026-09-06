@@ -1,5 +1,50 @@
 # OPEN visible entity/item traversal
 
+## Function Match Plan: natural color-field order (`42ff64f`)
+
+OPEN `80019240`/664 bytes remains strict 96.759030%, with a 668-byte
+candidate. Hash validation, all six image-qualified views, full retail CFG,
+sole scene-0 caller, both renderer callees/neighbors, TMD selector, SDK
+SetLightMatrix body/header/provider, shared types and source history were
+refreshed. The frame is 48 bytes, with four direct calls, fifteen validated
+address pairs, sixteen conditional branches (including six checked-division
+branches), four traps and one shared return with its frame-restoring slot.
+There are no strings or candidate outgoing references. The custom visibility
+and pool traversal is not a vendored SDK body; SetLightMatrix retains its
+independent Release 2.5 LIBGTE/MTX FID.
+
+The first remaining difference is still material R's address at +0x130. The
+[XYZ source-order result](sdk-vector-publication.md) disproves treating
+scheduled retail stores as original C assignment order. The prior independent
+color trial followed B/G/R retail stores; test separate assignments in SDK
+CVECTOR's natural R/G/B field order instead. Preserve value 180, leave `cd`
+untouched, and retain both selector copies and the entire item loop. The
+SDK `setRGB0` macro addresses polygon `r0/g0/b0` fields, not this CVECTOR;
+do not introduce a cast or replacement macro. Compare resolved raw words,
+ordered references and both sibling bodies after real compilation. This is
+one source-form control, not a claim of original spelling or authorization
+to permute unrelated statements.
+
+The separate RGB assignments emit 668 bytes and strict 94.981926%, with
+72 unequal aligned words versus the starting 67. The retained address is
+still material R, now formed earlier at +0x11c; the three byte stores follow
+R/G/B rather than retail B/G/R. All four numeric calls, the physical field
+destinations and the existing loop/control differences remain unchanged.
+Both neighboring bodies and their resolved references are identical to the
+baseline, including the full 552-byte exact entity renderer. Restore the
+chained assignment: the successful XYZ source-order finding does not establish
+this color-field spelling. No source, owner, profile or bank change is kept.
+
+Fresh compilation of the restored source reproduces all three baseline raw
+instruction/reference streams. Strict unit scores return to 100%, 98.795180%
+and 96.759030%; all 484 report rows equal the pre-trial snapshot. Ruff and all
+642 repository tests pass (81.275 seconds), as does `git diff --check`.
+Full `kf build` retains the existing data/closure/placement failures: 5/60
+source data-owning units match, four independently supplied SDK contributions
+match, 110/116 target units relink, and six section-base conflicts remain.
+There are no artifact failures or exact losses. GAME remains 291/362 exact,
+OPEN 98/108, and the non-vendored total 390/471.
+
 ## Function Match Plan: item-count initialization order (`819211b`)
 
 OPEN `80019240` is strict 96.759030%, 664 retail/668 probe bytes, with 67
