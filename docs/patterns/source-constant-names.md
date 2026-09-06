@@ -25,6 +25,12 @@ extends this to projectile/hazard phases and explains all 764 retained literals
 in the five effect/magic modules, including the corrected collision-probe
 offsets formerly called velocities. The wider source audit remains open.
 
+The [map-object review](game-map-object-constants.md) separates definition
+behaviors from running actions, names switch phases and drop groups across
+their consumers, and explains all 267 retained literals in the two map-object
+modules. It preserves the paired door's missing action-1 handler and the
+switch's unsigned reverse-animation completion test.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

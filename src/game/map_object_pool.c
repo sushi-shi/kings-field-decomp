@@ -17,7 +17,7 @@ RODATA(0x80012738, 0x150)
  * destination_z, width, height} applied by map_apply_copy_region.
  */
 DATA(0x800561b0, 0x1e)
-KfMapCopyRegion map_copy_regions[5] = {
+KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT] = {
     {55, 33, 50, 39, 3, 3},
     {47, 16, 30, 20, 3, 3},
     {58, 44, 15, 48, 3, 3},
@@ -36,7 +36,7 @@ void map_apply_copy_region(u8 region_id)
     s32 source_x;
     s32 destination_x;
 
-    if (region_id == 0xff) {
+    if (region_id == KF_MAP_COPY_REGION_NONE) {
         return;
     }
     region = &map_copy_regions[region_id];
@@ -72,43 +72,43 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     const KfMapObjectDefinition *definition;
 
     definition = &map_object_state.definitions[object->object_id];
-    yaw &= 0xfff;
+    yaw &= KF_ANGLE_WRAP_MASK;
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
-    case 2:
+    case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case 3:
         map_collision_grid[cell_z][cell_x] = value;
         switch (yaw) {
         case 0x000:
             cell_z++;
             break;
-        case 0x400:
+        case KF_ANGLE_QUARTER_TURN:
             cell_x++;
             break;
-        case 0x800:
+        case KF_ANGLE_HALF_TURN:
             cell_z--;
             break;
-        case 0xc00:
+        case KF_ANGLE_THREE_QUARTER_TURN:
             cell_x--;
             break;
         }
         map_collision_grid[cell_z][cell_x] = value;
         break;
-    case 0:
+    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
         switch (yaw) {
         case 0x000:
             map_collision_grid[cell_z][cell_x + 1] =
                 map_collision_grid[cell_z - 1][cell_x + 1] = value;
             break;
-        case 0x400:
+        case KF_ANGLE_QUARTER_TURN:
             map_collision_grid[cell_z + 1][cell_x] = value;
             map_collision_grid[cell_z + 1][cell_x + 1] = value;
             break;
-        case 0x800:
+        case KF_ANGLE_HALF_TURN:
             map_collision_grid[cell_z][cell_x - 1] =
                 map_collision_grid[cell_z + 1][cell_x - 1] = value;
             break;
-        case 0xc00:
+        case KF_ANGLE_THREE_QUARTER_TURN:
             map_collision_grid[cell_z - 1][cell_x] = value;
             map_collision_grid[cell_z - 1][cell_x - 1] = value;
             break;
@@ -125,24 +125,26 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
     s32 point_z = object->position_z;
     s32 result;
 
-    yaw &= 0xfff;
+    yaw &= KF_ANGLE_WRAP_MASK;
     switch (definition->behavior_type) {
-    case 2:
+    case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     probe:
-        result = collision_query_world(point_x, 0xffff, point_z, 3000, 0, 0x21);
+        result = collision_query_world(
+            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, 3000, 0,
+            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
         break;
-    case 0:
+    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
         switch (yaw) {
         case 0x000:
             point_x += KF_MAP_TILE_SIZE;
             goto probe;
-        case 0x400:
+        case KF_ANGLE_QUARTER_TURN:
             point_z += KF_MAP_TILE_SIZE;
             goto probe;
-        case 0x800:
+        case KF_ANGLE_HALF_TURN:
             point_x -= KF_MAP_TILE_SIZE;
             goto probe;
-        case 0xc00:
+        case KF_ANGLE_THREE_QUARTER_TURN:
             point_z -= KF_MAP_TILE_SIZE;
             goto probe;
         }
@@ -160,8 +162,8 @@ void map_object_pool_clear(void)
     do {
         u32 *link_words = (u32 *)&object->link;
 
-        object->object_id = 0xff;
-        object->action = 0xff;
+        object->object_id = KF_MAP_OBJECT_FREE;
+        object->action = KF_MAP_OBJECT_ACTION_IDLE;
         /* Same aligned eight-byte block used by placement loading. */
         link_words[1] = 0;
         link_words[0] = 0;
@@ -205,20 +207,20 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
     for (;;) {
         if (ended == 1) {
         fill:
-            object->object_id = 0xff;
-        } else if (placement->object_id != 0xff) {
+            object->object_id = KF_MAP_OBJECT_FREE;
+        } else if (placement->object_id != KF_MAP_OBJECT_FREE) {
             object_id = placement->object_id;
             object->object_id = object_id;
             object->cell_x = placement->tile_x;
             object->cell_z = placement->tile_z;
             object->rotation.z = 0;
             object->rotation.x = 0;
-            object->rotation.y = placement->yaw & 0xfff;
+            object->rotation.y = placement->yaw & KF_ANGLE_WRAP_MASK;
             object->position_x = placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
             object->position_z = placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
             object->position_y = placement->local_y
                 - map_floor_height_grid[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
-            object->action = 0xff;
+            object->action = KF_MAP_OBJECT_ACTION_IDLE;
             /* The link block moves as two aligned words. */
             memcpy((u32 *)&object->link, (const u32 *)&placement->link, sizeof object->link);
             definition = &map_object_state.definitions[object->object_id];
@@ -234,13 +236,13 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object->position_x,
                                                     effect_output)
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, 0x51);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case 115:
             case 124:
             case 125:
             case 137:
-                map_object_start_action_if_idle(object, 0x50);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_PROJECTILE_EMITTER);
                 break;
             case 138:
                 object->link.action_parameter = effect_pool_construct(
@@ -251,7 +253,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     effect_output,
                                                     &object->rotation)
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, 0x51);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case 139:
                 object->link.action_parameter = effect_pool_construct(
@@ -262,7 +264,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     effect_output,
                                                     &object->rotation)
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, 0x52);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING);
                 break;
             case 135:
                 object->link.action_parameter =
@@ -270,23 +272,23 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x30, &object->position_x,
                         effect_output, &object->rotation)
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, 0x53);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_EFFECT_SWITCH);
                 break;
             case 56:
             case 63:
             case 64:
             case 68:
             case 69:
-                map_object_start_action_if_idle(object, 0xc);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_REVEAL_MAP_PIECE);
                 object->position_y += 10000;
                 break;
             case 111:
             case 123:
-                map_object_start_action_if_idle(object, 0xb);
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_ENABLE_RESTORE_POINT);
                 break;
             }
-            if (definition->behavior_type == 10) {
-                map_object_start_action_if_idle(object, 10);
+            if (definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_COPY_REGION) {
+                map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_COPY_REGION);
             }
             map_object_mark_collision_edge(object, 0, object->rotation.y);
             placement++;
@@ -312,9 +314,9 @@ s32 map_object_distance_to_point(
     if (delta_x >= -max_distance && delta_x <= max_distance) {
         delta_z = object->position_z - point_z;
         if (delta_z >= -max_distance && delta_z <= max_distance) {
-            delta_x >>= 3;
-            delta_z >>= 3;
-            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << 3;
+            delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+            delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
             if (distance <= max_distance) {
                 return distance;
             }
@@ -331,7 +333,7 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
     u16 radius;
 
     for (index = 0; index < KF_MAP_OBJECT_CAPACITY; index++, object++) {
-        if (object->object_id == 0xff) {
+        if (object->object_id == KF_MAP_OBJECT_FREE) {
             continue;
         }
         radius = map_object_state.definitions[object->object_id].collision_radius;

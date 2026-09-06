@@ -80,8 +80,8 @@ void map_restore_floor_state(void)
             } while (--k != -1);
         }
 
-        object = &map_object_state.objects[160];
-        for (i = 0; i < 10; i++, object++) {
+        object = &map_object_state.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
+        for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
             object->cell_x = *in++;
             object->cell_z = *in++;
             object->position_x =
@@ -99,8 +99,8 @@ void map_restore_floor_state(void)
             object->link.vertical_velocity = 0;
         }
 
-        object = &map_object_state.objects[170];
-        for (i = 0; i < 20; i++, object++) {
+        object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
+        for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
             object->cell_x = *in++;
             object->cell_z = *in++;
             object->position_x =

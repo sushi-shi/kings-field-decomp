@@ -97,7 +97,7 @@ void map_ambient_script_floor1(void)
             MAP_WORLD_STATE_BYTES[0] = 2;
             object_index = map_object_pool_find_near_point(0x2328, 0xdea8, 0xbb8);
             if (object_index != -1) {
-                map_object_state.objects[object_index].object_id = 0xff;
+                map_object_state.objects[object_index].object_id = KF_MAP_OBJECT_FREE;
             }
         }
         break;
@@ -276,7 +276,8 @@ void map_floor5_transition_cutscene(void)
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
 
     ReadColorMatrix(&color_matrix);
-    effect = map_object_effect_pool_acquire(180, 10, map_object_effect_sequence_180);
+    effect = map_object_effect_pool_acquire(
+        KF_MAP_OBJECT_PLACEMENT_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, map_object_effect_sequence_180);
     effect->object_id = 10;
     effect->cell_x = 85;
     effect->cell_z = 40;
@@ -286,7 +287,7 @@ void map_floor5_transition_cutscene(void)
     effect->rotation.z = 0;
     effect->rotation.x = 0;
     effect->rotation.y = 0x800;
-    effect->action = 0xff;
+    effect->action = KF_MAP_OBJECT_ACTION_IDLE;
     effect->position_y = -(grid_height * KF_MAP_HEIGHT_STEP) - 1300;
 
     spin = 0;
@@ -319,7 +320,7 @@ void map_floor5_transition_cutscene(void)
             if (spin > 0) {
                 spin -= 1;
             } else {
-                map_object_start_action_if_idle(effect, 0x60);
+                map_object_start_action_if_idle(effect, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
                 effect->link.vertical_velocity = 0;
                 goto done;
             }
@@ -516,8 +517,8 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         object = &map_object_state.objects[index];
         definition = &map_object_state.definitions[object->object_id];
         switch (definition->behavior_type) {
-        case 8:
-            if (object->link.link_id != 0xff) {
+        case KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER:
+            if (object->link.link_id != KF_MAP_LINK_NONE) {
                 notify_enqueue(object->link.linked_notification);
                 continue;
             }
@@ -526,7 +527,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             }
 
             item_index = 3;
-            while (object->link.action_parameter == 0xff) {
+            while (object->link.action_parameter == KF_MAP_OBJECT_PARAMETER_NONE) {
                 item_index--;
                 if ((s16)item_index == -1) {
                     goto notify_default;
@@ -566,7 +567,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             rotation->vx = saved_pitch;
             break;
 
-        case 9:
+        case KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER:
             item_id = &object->link.link_id;
             found_item = 0;
             item_index = 3;
@@ -591,29 +592,29 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             }
             continue;
 
-        case 2:
+        case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
             if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
                 && !angle_within_tolerance(
                     rotation->vy, object->rotation.y + 0x800, 0x155)) {
                 break;
             }
-            if (object->action != 0xff) {
+            if (object->action != KF_MAP_OBJECT_ACTION_IDLE) {
                 break;
             }
-            if (object->link.link_id != 0xff) {
+            if (object->link.link_id != KF_MAP_LINK_NONE) {
                 goto notify_default;
             }
-            map_object_start_action_if_idle(object, 2);
+            map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_LIFT_DOOR);
             continue;
 
-        case 0:
-        case 1:
+        case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
+        case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
             if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
                 && !angle_within_tolerance(
                     rotation->vy, object->rotation.y + 0x800, 0x155)) {
                 break;
             }
-            if (object->link.link_id != 0xff && definition->behavior_type == 0) {
+            if (object->link.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
                 goto notify_default;
             }
 
@@ -622,16 +623,16 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 neighbor_index = map_object_pool_find_interaction_from(
                     neighbor_index, object->position_x, object->position_z, 6000);
                 if (neighbor_index == -1) {
-                    object->link.action_parameter = 0xff;
+                    object->link.action_parameter = KF_MAP_OBJECT_PARAMETER_NONE;
                     break;
                 }
                 if (neighbor_index != index) {
                     neighbor = &map_object_state.objects[neighbor_index];
                     neighbor_definition =
                         &map_object_state.definitions[neighbor->object_id];
-                    if (neighbor_definition->behavior_type < 2) {
-                        if (neighbor->link.link_id != 0xff
-                            && neighbor_definition->behavior_type == 0) {
+                    if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR) {
+                        if (neighbor->link.link_id != KF_MAP_LINK_NONE
+                            && neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
                             goto notify_default;
                         }
                         map_object_start_action_if_idle(
@@ -646,38 +647,38 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             map_object_start_action_if_idle(object, definition->behavior_type);
             continue;
 
-        case 0x40:
+        case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:
             result = menu_enter_mode(1, object->object_id);
             if (result == 0) {
-                object->object_id = 0xff;
+                object->object_id = KF_MAP_OBJECT_FREE;
             } else if (result == 2) {
                 notify_enqueue(0x10);
                 continue;
             }
             break;
 
-        case 0x41:
+        case KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP:
             result = object->link.link_id | object->link.action_parameter << 8;
             notify_enqueue(KF_NOTIFICATION_GOLD, result);
             player_state.gold += result;
-            object->object_id = 0xff;
+            object->object_id = KF_MAP_OBJECT_FREE;
             break;
 
-        case 0x53:
-            if (object->link.link_id == 0xff) {
+        case KF_MAP_OBJECT_BEHAVIOR_EFFECT_SWITCH:
+            if (object->link.link_id == KF_MAP_LINK_NONE) {
                 goto notify_default;
             }
-            object->action_timer = 1;
+            object->action_timer = KF_MAP_OBJECT_SWITCH_FORWARD;
             break;
 
-        case 11:
-            if (object->link.link_id != 0xff) {
+        case KF_MAP_OBJECT_BEHAVIOR_RESTORE_POINT:
+            if (object->link.link_id != KF_MAP_LINK_NONE) {
                 goto notify_default;
             }
             player_restore_vitals_with_color_cycle();
             continue;
 
-        case 13:
+        case KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE:
             if (notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
                 break;
             }
@@ -693,7 +694,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             player_clear_motion();
             continue;
 
-        case 14:
+        case KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT:
             map_world_state_persist();
             menu_save_confirm();
             continue;

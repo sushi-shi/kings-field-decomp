@@ -876,14 +876,14 @@ void actor_update_current_action(void)
                 if (definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != 0x63 && definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != 0xff
                     && (rand() >> 7) <= definition->action_parameters[KF_ACTOR_PARAM_DROP_CHANCE]) {
                     map_object_spawn_effect(
-                        1,
+                        KF_MAP_OBJECT_DROP_FROM_DEFINITION,
                         definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT],
                         (struct KfVec3i *)&actor->position,
                         -(definition->collision_height >> 1));
                 }
             } else if (actor->death_drop_object_id != 0x63) {
                 map_object_spawn_effect(
-                    0,
+                    KF_MAP_OBJECT_DROP_FROM_PLACEMENT,
                     actor->death_drop_object_id,
                     (struct KfVec3i *)&actor->position,
                     -(definition->collision_height >> 1));

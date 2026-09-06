@@ -88,11 +88,11 @@ void render_map_object(KfMapObject *object)
 
     id = object->object_id;
     switch (map_object_state.definitions[object->object_id].behavior_type) {
-    case 0:
-    case 1:
+    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
+    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
         depth = 15;
         break;
-    case 2:
+    case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case 3:
         depth = 180;
         break;

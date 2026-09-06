@@ -217,14 +217,17 @@ void map_world_state_persist(void)
         u8 id = object->object_id;
         u8 behavior;
 
-        if (id == 0xff) {
+        if (id == KF_MAP_OBJECT_FREE) {
             continue;
         }
 
         behavior = definitions[id].behavior_type;
-        if ((behavior == 0xff || behavior == 0xd || behavior == 0x40
-                || behavior == 0xe || behavior == 0x41)
-                && object->action == 0xff) {
+        if ((behavior == KF_MAP_OBJECT_BEHAVIOR_NONE
+                || behavior == KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE
+                || behavior == KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP
+                || behavior == KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT
+                || behavior == KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP)
+                && object->action == KF_MAP_OBJECT_ACTION_IDLE) {
             continue;
         }
 
@@ -241,16 +244,16 @@ void map_world_state_persist(void)
     }
     *count_slot = active;
 
-    object = &map_object_state.objects[KF_MAP_OBJECT_EFFECT_FIRST];
-    for (i = 0; i < 10; i++, object++) {
+    object = &map_object_state.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
+    for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;
         *out++ = object->link.link_id;
         *out++ = (u8)(*(const u16 *)&object->link >> 8);
     }
 
-    object = &map_object_state.objects[170];
-    for (i = 0; i < 20; i++, object++) {
+    object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
+    for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;
         *out++ = (u8)((u16)object->rotation.y >> 4);
