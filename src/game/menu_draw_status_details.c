@@ -164,7 +164,7 @@ void menu_draw_status_details(void)
         gs.codes[4] = 0xc9;
         i = 3;
     }
-    if ((player_state.status_effect_flags & 4) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != 0) {
         gs.codes[i] = 0x88;
         i--;
     }
@@ -197,7 +197,7 @@ void menu_draw_status_details(void)
     gs.y += 0x10;
     menu_format_number(
         (((u32)player_state.damage_defense_component0 + player_state.damage_defense_component1 +
-          player_state.damage_defense_component2 + player_state.status_effect2_resistance / 5 +
+          player_state.damage_defense_component2 + player_state.poison_resistance / 5 +
           player_state.damage_defense_component3 + player_state.damage_defense_component4) * 10) / 7,
         6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
@@ -306,7 +306,7 @@ void menu_draw_status_details(void)
     menu_format_number(player_state.damage_defense_component2, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.status_effect2_resistance, 6, 0, gs.codes);
+    menu_format_number(player_state.poison_resistance, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
     menu_format_number(player_state.damage_defense_component3, 6, 0, gs.codes);

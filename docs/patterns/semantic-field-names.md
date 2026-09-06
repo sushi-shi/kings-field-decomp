@@ -284,3 +284,12 @@ repository tests pass (nine skips), all flake checks pass (651 tests,
 the existing ownership/placement failures, with the incoming effect-pool
 result improving source-data matches from five to six of 60. Target relink
 remains PSX 1/1, GAME 75/77 and OPEN 34/38, with no artifact failures.
+
+## Player poison witness
+
+The retail menu atlas now supplies the missing semantic witness for
+`KfPlayerState.poison_resistance`, `KfPlayerState.poison_timer` and
+`KfArmorRecord.poison_resistance`. The `毒` glyph is selected by status mask
+4 and labels the same resistance value whose timer causes periodic HP loss.
+The [poison dossier](game-player-poison.md) records the per-function plan,
+raw instruction evidence, preserved layouts and limits of the timing names.

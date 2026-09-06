@@ -160,7 +160,7 @@ The following cells are visible in that decoded page:
 | Text 0xff, UV (210,180) | Empty text cell, retained as spacing in status labels. |
 | Number 10, UV (240,110) | Empty number cell, selected for leading padding. |
 | Number 11, UV (240,121) | Slash used between current and maximum HP/MP. |
-| Text 0x88 | The character `毒` (poison), also used beside the status-effect-2 resistance value. |
+| Text 0x88 | The character `毒` (poison), also used beside `player_state.poison_resistance`; see the [status evidence](game-player-poison.md). |
 | Text 0xc5, 0xc6 | `正常`, the normal-status label. |
 
 Text layout has sixteen columns of 14-by-12 cells. Number codes select rows

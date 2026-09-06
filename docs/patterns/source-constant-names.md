@@ -1799,3 +1799,19 @@ PSX 1/1, GAME 75/77 and OPEN 34/38, and all images have zero artifact failures.
 The two GAME and four OPEN conflicting-section-base findings are unchanged.
 The post-test section, score, raw-word and source-value checks pass. No new
 result is banked; no tooling or flake files changed.
+
+## Player poison status and timing
+
+The [poison campaign](game-player-poison.md) identifies status mask 4 from
+the retail `毒` glyph, then joins it to equipment resistance, application,
+countdown and periodic HP loss. It names the mask, initial 600-update timer,
+-1 inactive sentinel, 20-update damage interval and two-update flash while
+preserving the signed countdown and final zero tick. The initial timer gives
+30 one-HP damage ticks if processing is uninterrupted; the next update clears
+the status. Its original tuning rationale remains unknown.
+
+The campaign dossier accounts for the remaining poison-path literals:
+initial resistance 5, the zero equipment sum, random scaling 100/shift 15,
+phase zero, one-HP loss, the UI's resistance weight /5 and authored poison
+glyph 0x88. It also records why composite cure masks must keep their exact
+upper-bit behavior. Other fields and status flags require their own evidence.

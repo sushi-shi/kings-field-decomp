@@ -5,6 +5,12 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+/* Flash immediately before/on each one-HP poison tick. */
+enum {
+    POISON_DAMAGE_INTERVAL_UPDATES = 20,
+    POISON_FLASH_UPDATES = 2
+};
+
 DATA(0x80055858, 0x20)
 static MATRIX player_status_effect1_color_matrix = {
     {{666, 233, 1333}, {666, 233, 1333}, {666, 233, 1333}},
@@ -528,17 +534,17 @@ void player_update(void)
             }
         }
     }
-    if (player_state.status_effect2_timer != -1) {
-        if (!(player_state.status_effect_flags & 0x4)) {
-            player_state.status_effect2_timer = -1;
-            player_state.status_effect_flags &= ~0x4;
+    if (player_state.poison_timer != KF_POISON_TIMER_INACTIVE) {
+        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_POISON)) {
+            player_state.poison_timer = KF_POISON_TIMER_INACTIVE;
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
         } else {
-            player_state.status_effect2_timer--;
-            if (player_state.status_effect2_timer == -1) {
-                player_state.status_effect_flags &= ~0x4;
+            player_state.poison_timer--;
+            if (player_state.poison_timer == KF_POISON_TIMER_INACTIVE) {
+                player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
             } else {
-                phase = player_state.status_effect2_timer % 20;
-                if (phase < 2) {
+                phase = player_state.poison_timer % POISON_DAMAGE_INTERVAL_UPDATES;
+                if (phase < POISON_FLASH_UPDATES) {
                     lighting_set_active_color_matrix(KF_GAME_COLOR_DAMAGE);
                     if (phase == 0) {
                         player_adjust_hp(-1);

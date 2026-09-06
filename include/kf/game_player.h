@@ -27,6 +27,13 @@ enum {
     KF_PLAYER_UPDATE_DYING = 0xff
 };
 
+/* Poison counts status updates; zero is still active and applies its last tick. */
+enum {
+    KF_PLAYER_STATUS_POISON = 1 << 2,
+    KF_POISON_TIMER_INACTIVE = -1,
+    KF_POISON_DURATION_UPDATES = 600
+};
+
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;
@@ -107,12 +114,12 @@ typedef struct KfPlayerState {
     u16 damage_defense_component0;
     u16 damage_defense_component1;
     u16 damage_defense_component2;
-    u16 status_effect2_resistance;
+    u16 poison_resistance;
     u16 damage_defense_component3;
     u16 damage_defense_component4;
     s16 status_effect0_timer;
     s16 status_effect1_timer;
-    s16 status_effect2_timer;
+    s16 poison_timer;
     s16 status_effect3_timer;
     s16 status_effect4_timer;
     s16 light_effect_timer;

@@ -176,6 +176,9 @@ promotes a probe to a proven historical toolchain.
   fixed pitch closes number rendering and removes the string-render preheader
   difference; retail atlas offsets prove the kana marks, blanks and slash.
   Four decoration immediates remain non-exact.
+- [game-player-poison.md](game-player-poison.md): the retail poison glyph
+  identifies the player/equipment resistance fields, status bit and countdown;
+  timing and literal-value limits are documented from the damage/update chain.
 - [game-menu-window-rows.md](game-menu-window-rows.md): signed title-test load
   correction and rejected direct-row-address control in the window renderer.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit

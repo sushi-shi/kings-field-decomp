@@ -149,7 +149,7 @@ void menu_draw_stats_header(void)
         gs.codes[4] = 0xc9;
         i = 3;
     }
-    if ((player_state.status_effect_flags & 4) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != 0) {
         gs.codes[i] = 0x88;
         i--;
     }

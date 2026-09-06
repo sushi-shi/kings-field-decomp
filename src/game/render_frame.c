@@ -66,7 +66,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
             hud_sprites[7].state = 1;
         } else if (flags & 2) {
             hud_sprites[6].state = 1;
-        } else if (flags & 4) {
+        } else if (flags & KF_PLAYER_STATUS_POISON) {
             status_sprite->state = 1;
         } else if (flags & 8) {
             hud_sprites[5].state = 1;

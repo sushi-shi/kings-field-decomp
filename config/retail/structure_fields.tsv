@@ -88,7 +88,7 @@ KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	game_equipment.h;asm;player_recalc
 KfArmorRecord	0x02	0x02	defense_component0	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added twice to damage_defense_component0
 KfArmorRecord	0x04	0x02	defense_component1	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component1
 KfArmorRecord	0x06	0x02	defense_component2	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component2
-KfArmorRecord	0x08	0x02	status_effect2_resistance	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to status_effect2_resistance
+KfArmorRecord	0x08	0x02	poison_resistance	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-poison.md;retail-menu-glyph-0x88	unsigned equipment contribution to player poison resistance
 KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component3
 KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component4
 KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
@@ -495,12 +495,12 @@ KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	game_player.h;data_identities.ts
 KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x42	0x02	status_effect2_resistance	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x42	0x02	poison_resistance	u16	supported	game_player.h;data_identities.tsv;game-player-poison.md;retail-menu-glyph-0x88	unsigned poison application threshold
 KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x4c	0x02	status_effect2_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x4c	0x02	poison_timer	s16	supported	game_player.h;data_identities.tsv;game-player-poison.md;retail-menu-glyph-0x88	signed poison countdown in status updates; -1 inactive
 KfPlayerState	0x4e	0x02	status_effect3_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x50	0x02	status_effect4_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv	signed status-bit-4 timer; -1 inactive, 500 on application, decremented by player_update
 KfPlayerState	0x52	0x02	light_effect_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv	signed item-driven lighting timer used by player update and effect-model rendering

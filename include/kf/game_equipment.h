@@ -11,7 +11,7 @@ typedef struct KfArmorRecord {
     u16 defense_component0;
     u16 defense_component1;
     u16 defense_component2;
-    u16 status_effect2_resistance;
+    u16 poison_resistance;
     u16 defense_component3;
     u16 defense_component4;
     u16 hp_regen_interval;

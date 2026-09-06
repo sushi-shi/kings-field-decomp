@@ -53,7 +53,7 @@ void game_state_initialize(void)
     player_state.damage_defense_component0 = 5;
     player_state.damage_defense_component1 = 5;
     player_state.damage_defense_component2 = 5;
-    player_state.status_effect2_resistance = 5;
+    player_state.poison_resistance = 5;
     player_state.damage_defense_component3 = 5;
     player_state.damage_defense_component4 = 5;
     player_state.view_bob_offset = 0;
@@ -79,7 +79,7 @@ void game_state_initialize(void)
     player_state.status_effect4_timer = -1;
     player_state.light_effect_timer = -1;
     player_state.status_effect3_timer = -1;
-    player_state.status_effect2_timer = -1;
+    player_state.poison_timer = KF_POISON_TIMER_INACTIVE;
     player_state.status_effect1_timer = -1;
     player_state.status_effect0_timer = -1;
     cursor = MAP_WORLD_STATE_BYTES;
@@ -235,7 +235,7 @@ void player_recalculate_combat_stats(void)
     player_state.damage_defense_component0 = 0;
     player_state.damage_defense_component1 = 0;
     player_state.damage_defense_component2 = 0;
-    player_state.status_effect2_resistance = 0;
+    player_state.poison_resistance = 0;
     player_state.damage_defense_component3 = 0;
     player_state.damage_defense_component4 = 0;
     player_state.physical_power = player_state.base_physical_power;
@@ -261,7 +261,7 @@ void player_recalculate_combat_stats(void)
         player_state.damage_defense_component0 += armor->defense_component0;
         player_state.damage_defense_component1 += armor->defense_component1;
         player_state.damage_defense_component2 += armor->defense_component2;
-        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.poison_resistance += armor->poison_resistance;
         player_state.damage_defense_component3 += armor->defense_component3;
         player_state.damage_defense_component4 += armor->defense_component4;
     }
@@ -271,7 +271,7 @@ void player_recalculate_combat_stats(void)
         player_state.damage_defense_component0 += armor->defense_component0;
         player_state.damage_defense_component1 += armor->defense_component1;
         player_state.damage_defense_component2 += armor->defense_component2;
-        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.poison_resistance += armor->poison_resistance;
         player_state.damage_defense_component3 += armor->defense_component3;
         player_state.damage_defense_component4 += armor->defense_component4;
     }
@@ -281,7 +281,7 @@ void player_recalculate_combat_stats(void)
         player_state.damage_defense_component0 += armor->defense_component0;
         player_state.damage_defense_component1 += armor->defense_component1;
         player_state.damage_defense_component2 += armor->defense_component2;
-        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.poison_resistance += armor->poison_resistance;
         player_state.damage_defense_component3 += armor->defense_component3;
         player_state.damage_defense_component4 += armor->defense_component4;
     }
@@ -291,7 +291,7 @@ void player_recalculate_combat_stats(void)
         player_state.damage_defense_component0 += armor->defense_component0;
         player_state.damage_defense_component1 += armor->defense_component1;
         player_state.damage_defense_component2 += armor->defense_component2;
-        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.poison_resistance += armor->poison_resistance;
         player_state.damage_defense_component3 += armor->defense_component3;
         player_state.damage_defense_component4 += armor->defense_component4;
     }
@@ -301,7 +301,7 @@ void player_recalculate_combat_stats(void)
         player_state.damage_defense_component0 += armor->defense_component0;
         player_state.damage_defense_component1 += armor->defense_component1;
         player_state.damage_defense_component2 += armor->defense_component2;
-        player_state.status_effect2_resistance += armor->status_effect2_resistance;
+        player_state.poison_resistance += armor->poison_resistance;
         player_state.damage_defense_component3 += armor->defense_component3;
         player_state.damage_defense_component4 += armor->defense_component4;
     }
@@ -495,10 +495,10 @@ void player_apply_damage(
         }
         player_state.status_effect_flags |= 2;
     }
-    if (status_effect_flags & 4) {
-        if (player_state.status_effect2_resistance < (rand() * 100) >> 15) {
-            player_state.status_effect2_timer = 600;
-            player_state.status_effect_flags |= 4;
+    if (status_effect_flags & KF_PLAYER_STATUS_POISON) {
+        if (player_state.poison_resistance < (rand() * 100) >> 15) {
+            player_state.poison_timer = KF_POISON_DURATION_UPDATES;
+            player_state.status_effect_flags |= KF_PLAYER_STATUS_POISON;
         }
     }
     if (status_effect_flags & 8) {
