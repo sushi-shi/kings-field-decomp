@@ -29,6 +29,27 @@ KF_ENUM_BEGIN(KfEquipmentMenuCategory, s32)
     KF_EQUIP_MENU_ACCESSORY = 7
 KF_ENUM_END(KfEquipmentMenuCategory)
 
+KF_ENUM_BEGIN(KfMenuConfirmKind, s32)
+    KF_MENU_CONFIRM_USE = 0,
+    KF_MENU_CONFIRM_DROP = 1,
+    KF_MENU_CONFIRM_YES_NO = 2,
+    KF_MENU_CONFIRM_BUY = 3,
+    KF_MENU_CONFIRM_SELL = 4,
+    KF_MENU_CONFIRM_EQUIP = 5
+KF_ENUM_END(KfMenuConfirmKind)
+
+KF_ENUM_BEGIN(KfMenuPreviewMode, s32)
+    KF_MENU_PREVIEW_ITEM_MODEL = 0,
+    KF_MENU_PREVIEW_ITEM_DETAIL = 1,
+    KF_MENU_PREVIEW_MAGIC_ICON = 2
+KF_ENUM_END(KfMenuPreviewMode)
+
+KF_ENUM_BEGIN(KfMenuConfirmResult, s32)
+    KF_MENU_CONFIRM_PENDING = -99,
+    KF_MENU_CONFIRM_CANCELLED = -1,
+    KF_MENU_CONFIRM_ACCEPTED = 0
+KF_ENUM_END(KfMenuConfirmResult)
+
 enum {
     KF_MENU_TEXTURE_NONE = 0xff
 };
@@ -205,8 +226,9 @@ extern void menu_equip_select(KfEquipmentMenuCategory category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(s32 item_id);
 extern void menu_list_init(KfMenuList *list, s32 row, s32 column);
-extern s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
-                              s32 item_id, u32 arg4, u32 arg5);
+extern KfMenuConfirmResult menu_list_interact(
+    const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
+    s32 item_id, u32 shop_id, u32 sell_price);
 extern void menu_list_render(const KfMenuList *list);
 extern u32 menu_load_item_model(s32 id);
 extern u32 menu_load_item_texture(s32 id);

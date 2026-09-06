@@ -84,7 +84,7 @@ refer to this final source; occurrence counts include both tokens on one line.
 | `item.c:498` | `0` | 1 | Model loader's zero-success/nonzero-failure boundary; preserve its complete nonzero predicate. |
 | `item.c:501,506` | `0x3c` | 2 | Authored X coordinate 60 pixels for both option labels. |
 | `item.c:502,507` | `0x1a`, `0x2e` | 2 | Authored Y coordinates 26/46 pixels, giving twenty-pixel row spacing; original placement rationale unknown. |
-| `item.c:503,504,508,509,510` | `0x53`, `0x6a`, `0x63`, `0x61`, `0x6a` | 5 | Authored atlas glyph IDs; their translation is not established by control flow. Glyph 99 is unrelated to the player stack limit. |
+| `item.c:503,504,508,509,510` | `0x53`, `0x6a`, `0x63`, `0x61`, `0x6a` | 5 | Authored atlas glyph IDs: とる (take) and やめる (cancel), decoded in the [later font audit](game-menu-confirmation-protocol.md). Glyph 99 is unrelated to the player stack limit. |
 | `item.c:503,504,505,508,509,510,511` | `0,1,2` and `0,1,2,3` | 7 | Consecutive glyph positions, including the terminator after two/three glyphs. |
 | `item.c:517,523,529` | `0,0` | 6 | Initial frames select the first option and leave its confirmation highlight clear. |
 | `item.c:531,543,550` | `1` | 3 | Retail PadRead call-site argument. The linked SDK routine reads global PadIdentifier and ignores this argument; it is not a controller-port selector. |

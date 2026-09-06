@@ -65,8 +65,15 @@ the mode dispatcher, and removes six numeric outcomes from the map ledger.
 The [equipment domain review](game-equipment-domains.md) separates menu
 categories from player slots, types both APIs, names empty item/spell/texture
 selections, and shares record extents and menu ranges. Its three-module
-ledger explains all 155 retained literals, down from 209; other consumers
+ledger explains all 149 retained literals after the menu protocol follow-up,
+down from 209; other consumers
 also replace the shared empty values and armor-record origin.
+
+The [shared confirmation review](game-menu-confirmation-protocol.md) types
+footer choices, preview modes and accepted/cancelled outcomes through all
+seven callers. It explains all 65 remaining widget literals and decodes the
+retail Japanese labels. The two positioned labels use the existing shared
+structure, recovering the retail stack spacing without pointer casts.
 
 ## Function Match Plan
 

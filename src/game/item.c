@@ -264,7 +264,9 @@ void item_menu_buy(s32 arg)
         menu_present_frame();
         if (confirm == 1) {
             selection = -99;
-            if (menu_list_interact(&ctx, 3, 1, index[ctx.selected_index], arg, 0) != -1)
+            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
+                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], arg, 0)
+                    != KF_MENU_CONFIRM_CANCELLED)
                 selection = index[ctx.selected_index];
         }
         if (selection != -99) {
@@ -406,8 +408,9 @@ void item_menu_sell(s32 arg)
         menu_present_frame();
         if (confirm == 1) {
             selection = -99;
-            if (menu_list_interact(&ctx, 4, 1, index[ctx.selected_index], arg, confirm)
-                    != -1)
+            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
+                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], arg, confirm)
+                    != KF_MENU_CONFIRM_CANCELLED)
                 selection = index[ctx.selected_index];
         }
         if (selection != -99) {

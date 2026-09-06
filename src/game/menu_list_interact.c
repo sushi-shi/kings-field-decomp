@@ -2,36 +2,27 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
-/* Positioned option label: origin then glyph codes terminated by -1. */
-typedef struct MenuOption {
-    u16 x;
-    u16 y;
-    s16 codes[4];
-} MenuOption;
-
-/*
- * Drive an interactive scrollable list with a two-option confirm footer.
- * `list` is the list widget context, `kind` selects the pair of footer labels,
- * `mode` selects the side preview redrawn each frame (0 = 3D item model, 1 =
- * item detail panel, 2 = map marker), and `item_id` / `arg4` / `arg5` feed that
- * preview.  Returns -selected_row on the up/confirm edge, -1 on cancel.
+/* Confirm the current list entry using a two-option footer. Up/down toggles
+ * the footer; confirm accepts its selected option, and cancel declines.
+ * The final highlighted frame is presented before waiting for button release.
  */
 ADDRESS(0x80028380, 0x354)
-s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
-                       s32 item_id, u32 arg4, u32 arg5)
+KfMenuConfirmResult menu_list_interact(
+    const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
+    s32 item_id, u32 shop_id, u32 sell_price)
 {
-    MenuOption opt0;
-    MenuOption opt1;
+    MenuGlyphString opt0;
+    MenuGlyphString opt1;
     s32 selected;
     u32 highlight;
     u32 pad;
     u32 prev_pad;
-    s32 result;
+    KfMenuConfirmResult result;
 
     selected = 0;
     highlight = 0;
     prev_pad = 0;
-    result = -99;
+    result = KF_MENU_CONFIRM_PENDING;
     while (PadRead(1) != 0) {
     }
 
@@ -39,22 +30,22 @@ s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
     opt0.y = 0xb9;
     opt1.x = 0x60;
     opt1.y = 0xcd;
-    if (kind == 0) {
+    if (kind == KF_MENU_CONFIRM_USE) {
         opt0.codes[0] = 0x72;
         opt0.codes[1] = 0x42;
-    } else if (kind == 1) {
+    } else if (kind == KF_MENU_CONFIRM_DROP) {
         opt0.codes[0] = 0x75;
         opt0.codes[1] = 0x52;
         opt0.codes[2] = 0x6a;
         opt0.codes[3] = MENU_TEXT_END;
         goto opt0_done;
-    } else if (kind == 2) {
+    } else if (kind == KF_MENU_CONFIRM_YES_NO) {
         opt0.codes[0] = 0x59;
         opt0.codes[1] = 0x41;
-    } else if (kind == 3) {
+    } else if (kind == KF_MENU_CONFIRM_BUY) {
         opt0.codes[0] = 0x74;
         opt0.codes[1] = 0x42;
-    } else if (kind == 4) {
+    } else if (kind == KF_MENU_CONFIRM_SELL) {
         opt0.codes[0] = 0x73;
         opt0.codes[1] = 0x6a;
     } else {
@@ -63,7 +54,7 @@ s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
     }
     opt0.codes[2] = MENU_TEXT_END;
 opt0_done:
-    if (kind == 2) {
+    if (kind == KF_MENU_CONFIRM_YES_NO) {
         opt1.codes[0] = 0x41;
         opt1.codes[1] = 0x41;
         opt1.codes[2] = 0x43;
@@ -76,34 +67,30 @@ opt0_done:
 
     menu_frame_begin();
     do {
-        if (mode == 0) {
+        if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
             menu_item_model_preview(item_id);
-        } else if (mode == 1) {
-            menu_draw_item_detail(item_id, arg4, arg5);
-        } else if (mode == 2 && item_id != KF_MAGIC_NONE) {
+        } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
+            menu_draw_item_detail(item_id, shop_id, sell_price);
+        } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
+                && item_id != KF_MAGIC_NONE) {
             menu_add_marker_quad();
         }
         menu_list_render(list);
-        menu_draw_two_option(
-            (const MenuGlyphString *)&opt0,
-            (const MenuGlyphString *)&opt1,
-            selected, highlight);
+        menu_draw_two_option(&opt0, &opt1, selected, highlight);
         menu_present_frame();
 
-        if (result != -99) {
+        if (result != KF_MENU_CONFIRM_PENDING) {
             menu_frame_begin();
-            if (mode == 0) {
+            if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
                 menu_item_model_preview(item_id);
-            } else if (mode == 1) {
-                menu_draw_item_detail(item_id, arg4, arg5);
-            } else if (mode == 2 && item_id != KF_MAGIC_NONE) {
+            } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
+                menu_draw_item_detail(item_id, shop_id, sell_price);
+            } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
+                    && item_id != KF_MAGIC_NONE) {
                 menu_add_marker_quad();
             }
             menu_list_render(list);
-            menu_draw_two_option(
-                (const MenuGlyphString *)&opt0,
-                (const MenuGlyphString *)&opt1,
-                selected, highlight);
+            menu_draw_two_option(&opt0, &opt1, selected, highlight);
             menu_present_frame();
             while (PadRead(1) != 0) {
             }
@@ -118,12 +105,12 @@ opt0_done:
             if ((pad & PADRright) == 0 || (prev_pad & PADRright) != 0) {
                 if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
                     menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-                    result = -1;
+                    result = KF_MENU_CONFIRM_CANCELLED;
                 }
             } else {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 highlight = 1;
-                result = -selected;
+                result = KF_ENUM_DECODE(KfMenuConfirmResult, -selected);
             }
         } else {
             menu_play_input_sound(MENU_SOUND_CURSOR);

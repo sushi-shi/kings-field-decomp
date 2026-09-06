@@ -221,7 +221,9 @@ s32 menu_use_item_panel(void)
         menu_present_frame();
         if (confirm == 1) {
             selection = -99;
-            if (menu_list_interact(&ctx, 0, 0, codes[ctx.selected_index], 0, 0) != -1)
+            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, 0)
+                    != KF_MENU_CONFIRM_CANCELLED)
                 selection = codes[ctx.selected_index];
         }
         if (selection != -99) {
