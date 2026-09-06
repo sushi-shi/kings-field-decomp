@@ -21,7 +21,7 @@ KfMenuConfirmResult menu_list_interact(
 
     selected = 0;
     highlight = 0;
-    prev_pad = 0;
+    pad = 0;
     result = KF_MENU_CONFIRM_PENDING;
     while (PadRead(1) != 0) {
     }
@@ -66,19 +66,18 @@ opt0_done:
     opt1.codes[3] = MENU_TEXT_END;
 
     menu_frame_begin();
+    if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
+        menu_item_model_preview(item_id);
+    } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
+        menu_draw_item_detail(item_id, shop_id, price_mode);
+    } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
+            && item_id != KF_MAGIC_NONE) {
+        menu_add_marker_quad();
+    }
+    menu_list_render(list);
+    menu_draw_two_option(&opt0, &opt1, selected, highlight);
+    menu_present_frame();
     do {
-        if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-            menu_item_model_preview(item_id);
-        } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-            menu_draw_item_detail(item_id, shop_id, price_mode);
-        } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-                && item_id != KF_MAGIC_NONE) {
-            menu_add_marker_quad();
-        }
-        menu_list_render(list);
-        menu_draw_two_option(&opt0, &opt1, selected, highlight);
-        menu_present_frame();
-
         if (result != KF_MENU_CONFIRM_PENDING) {
             menu_frame_begin();
             if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
@@ -99,23 +98,34 @@ opt0_done:
 
         highlight = 0;
         menu_frame_begin();
-        pad = PadRead(1);
-        if (((pad & PADLup) == 0 || (prev_pad & PADLup) != 0) &&
-            ((pad & PADLdown) == 0 || (prev_pad & PADLdown) != 0)) {
-            if ((pad & PADRright) == 0 || (prev_pad & PADRright) != 0) {
-                if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
-                    menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-                    result = KF_MENU_CONFIRM_CANCELLED;
-                }
-            } else {
-                menu_play_input_sound(MENU_SOUND_CONFIRM);
-                highlight = 1;
-                result = KF_ENUM_DECODE(KfMenuConfirmResult, -selected);
-            }
-        } else {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
-            selected = (selected == 0);
-        }
         prev_pad = pad;
+        pad = PadRead(1);
+        if (((pad & PADLup) != 0 && (prev_pad & PADLup) == 0) ||
+            ((pad & PADLdown) != 0 && (prev_pad & PADLdown) == 0)) {
+            menu_play_input_sound(MENU_SOUND_CURSOR);
+            if (selected == 0) {
+                selected = 1;
+            } else {
+                selected = 0;
+            }
+        } else if ((pad & PADRright) != 0 && (prev_pad & PADRright) == 0) {
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            highlight = 1;
+            result = KF_ENUM_DECODE(KfMenuConfirmResult, -selected);
+        } else if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            result = KF_MENU_CONFIRM_CANCELLED;
+        }
+        if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
+            menu_item_model_preview(item_id);
+        } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
+            menu_draw_item_detail(item_id, shop_id, price_mode);
+        } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
+                && item_id != KF_MAGIC_NONE) {
+            menu_add_marker_quad();
+        }
+        menu_list_render(list);
+        menu_draw_two_option(&opt0, &opt1, selected, highlight);
+        menu_present_frame();
     } while (1);
 }
