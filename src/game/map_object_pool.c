@@ -229,8 +229,8 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             case 136:
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
-                                                    0x23,
-                                                    0x11,
+                                                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                                                    KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object->position_x,
                                                     effect_output)
                     - effect_pool_records;
@@ -245,7 +245,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             case 138:
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
-                                                    0x23,
+                                                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     0xf,
                                                     &object->position_x,
                                                     effect_output,
@@ -256,7 +256,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             case 139:
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
-                                                    0x23,
+                                                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     0x10,
                                                     &object->position_x,
                                                     effect_output,
@@ -266,7 +266,9 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 break;
             case 135:
                 object->link.action_parameter =
-                    effect_pool_construct(0, 3, 0x30, &object->position_x, effect_output, &object->rotation)
+                    effect_pool_construct(
+                        0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x30, &object->position_x,
+                        effect_output, &object->rotation)
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, 0x53);
                 break;

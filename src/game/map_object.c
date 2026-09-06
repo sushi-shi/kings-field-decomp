@@ -397,7 +397,7 @@ void map_object_pool_update(void)
                 direction.z = (-rcos(object->rotation.y) * 175u) >> 10;
                 effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
-                    0x23,
+                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     0xe,
                     &object->position_x,
                     &direction,
@@ -413,7 +413,7 @@ void map_object_pool_update(void)
                 point.y = object->position_y - 1400;
                 effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
-                    0x23,
+                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     5,
                     &point,
                     &direction,
@@ -429,7 +429,7 @@ void map_object_pool_update(void)
                 point.y = object->position_y + 600;
                 effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
-                    0x23,
+                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     7,
                     &point,
                     &direction,
@@ -457,7 +457,7 @@ void map_object_pool_update(void)
                 point.y = object->position_y - 1000;
                 effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
-                    0x23,
+                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     7,
                     &point,
                     &direction,

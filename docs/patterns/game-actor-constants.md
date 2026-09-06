@@ -145,8 +145,9 @@ either training call in this function.
 
 ## Retained literal inventory
 
-The three C files retain 517 numeric occurrences outside constant definitions
-and retail claims: 90 in initializers and 427 in functions. The following
+At this campaign's completion (`01c741c`), the three C files retained 517
+numeric occurrences outside constant definitions and retail claims: 90 in
+initializers and 427 in functions. The following
 consumer groups account for them. Signed values include the unary sign in
 their source expression. An authored value is retained because no additional
 semantic identity or original derivation is established; this is an explicit

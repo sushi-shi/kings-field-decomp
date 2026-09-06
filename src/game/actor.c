@@ -841,7 +841,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
         && rand() >= 819) {
         return KF_ACTOR_ACTION_NONE;
     }
-    if (profile != 9) {
+    if (profile != KF_EFFECT_KIND_ACTOR_SPAWNER) {
         return action;
     }
     count = 0;
@@ -856,7 +856,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
     record = effect_pool_records;
     index = KF_EFFECT_CAPACITY - 1;
     do {
-        if (record->type != KF_EFFECT_SLOT_FREE && record->kind == 9) {
+        if (record->type != KF_EFFECT_SLOT_FREE && record->kind == KF_EFFECT_KIND_ACTOR_SPAWNER) {
             count++;
         }
         record++;

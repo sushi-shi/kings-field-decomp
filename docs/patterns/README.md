@@ -160,6 +160,9 @@ promotes a probe to a proven historical toolchain.
   unchanged explicit phase-cache control; predicate remains non-exact.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect
   owner and member-relative addressing closing the current-record selector.
+- [game-effect-protocol.md](game-effect-protocol.md): behavioral effect kinds,
+  collision/power bits, render and homing selectors, propagation roles and
+  floor phases; distinguish actor damage unity from player Q12 damage scale.
 - [game-effect-constructor.md](game-effect-constructor.md): reviewed switch
   references, full SDK-vector copies and corrected kind-dependent byte stores.
 - [game-effect-map-collision.md](game-effect-map-collision.md): signed cell

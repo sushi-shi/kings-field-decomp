@@ -18,6 +18,53 @@ enum {
     KF_EFFECT_SLOT_FREE = 0xff
 };
 
+/* Behavioral identities; other kind/resource IDs remain unresolved. */
+enum {
+    KF_EFFECT_KIND_GROUND_BRANCH = 6,
+    KF_EFFECT_KIND_ACTOR_SPAWNER = 9,
+    KF_EFFECT_KIND_SCATTER_PROJECTILE = 10,
+    KF_EFFECT_KIND_ORBITING_PROJECTILE = 17,
+    KF_EFFECT_KIND_RADIAL_BLAST = 18,
+    KF_EFFECT_KIND_GROUND_TRAIL = 19,
+    KF_EFFECT_KIND_HOMING_PROJECTILE = 20,
+    KF_EFFECT_KIND_FLOOR_DEFORMATION = 52
+};
+
+/* Low type bits select actors/player after the separate terrain checks.
+ * The power bit alone does not imply the actor-damage player-credit class. */
+enum {
+    KF_EFFECT_COLLISION_TARGETS_MASK = 3,
+    KF_EFFECT_COLLISION_TARGET_ACTORS = 1,
+    KF_EFFECT_COLLISION_TARGET_PLAYER = 2,
+    KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER = 3,
+    KF_EFFECT_USE_PLAYER_MAGIC = 0x10
+};
+
+enum {
+    KF_EFFECT_ANIMATION_BILLBOARD = 0xff,
+    KF_EFFECT_RENDER_NONE = 0xff
+};
+
+/* Other selector values request a fresh actor-cone query, not an actor index. */
+enum {
+    KF_EFFECT_HOMING_WANDER = 0xff,
+    KF_EFFECT_HOMING_PLAYER = 0xfe
+};
+
+enum {
+    KF_EFFECT_GROUND_BRANCH_ROOT = 0,
+    KF_EFFECT_GROUND_BRANCH_QUARTER_TURN = 1,
+    KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN = 2,
+    KF_EFFECT_GROUND_BRANCH_LEAF = 0xff,
+    KF_EFFECT_GROUND_BRANCH_TIMER_DONE = 0xff
+};
+
+enum {
+    KF_EFFECT_FLOOR_DEFORM_ADVANCE = 0,
+    KF_EFFECT_FLOOR_DEFORM_HOLD = 1,
+    KF_EFFECT_FLOOR_DEFORM_REVERSE = 2
+};
+
 typedef struct KfEffectDirectionWords {
     u16 x;
     u16 y;
@@ -120,7 +167,7 @@ typedef char check_effect_control_size[sizeof(KfEffectControl) == 2 ? 1 : -1];
 /* Startup clears this whole object; selection derives the magic array from
  * the current-record slot by a fixed member offset. */
 typedef struct KfEffectState {
-    KfMagicRecord magic[24];
+    KfMagicRecord magic[KF_MAGIC_RECORD_COUNT];
     KfEffectRecord records[KF_EFFECT_CAPACITY];
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;

@@ -84,7 +84,7 @@ void render_actor_sprite(KfEffectRenderView *sprite)
     u16 asset;
     KfTmdObject *object;
 
-    if (sprite->sprite_id == 0xff) {
+    if (sprite->sprite_id == KF_EFFECT_RENDER_NONE) {
         return;
     }
     SetRotMatrix((MATRIX *)&render_state.view_matrix);
@@ -98,7 +98,7 @@ void render_actor_sprite(KfEffectRenderView *sprite)
     scale.vy = sprite->scale_y;
     scale.vz = sprite->scale_z;
     ScaleMatrix(&model, &scale);
-    if (sprite->mode == 0xff) {
+    if (sprite->mode == KF_EFFECT_ANIMATION_BILLBOARD) {
         MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);

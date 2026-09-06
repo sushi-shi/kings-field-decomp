@@ -50,9 +50,9 @@ KfEffectRecord *effect_pool_construct(
         record->direction.vector = *direction;
         record->phase = 0;
         record->id = id;
-        record->scale_z = 0x1000;
-        record->scale_y = 0x1000;
-        record->scale_x = 0x1000;
+        record->scale_z = KF_FIXED12_ONE;
+        record->scale_y = KF_FIXED12_ONE;
+        record->scale_x = KF_FIXED12_ONE;
         record->visual.animation_phase = 0;
         record->sound_played = 0;
 
@@ -60,17 +60,17 @@ KfEffectRecord *effect_pool_construct(
 
         switch (record->kind) {
         case 5:
-            record->animation_clip = 0xff;
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 0;
             record->render_id = 0;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_default_range(&magic->sounds[0],
-                                             &record->position, 0x7f);
+                                             &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case 7:
-            record->animation_clip = 0xff;
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 5;
             record->render_id = 5;
             record->rotation.vx = 0x352;
@@ -78,7 +78,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vz = 0;
             if (va[2] != 0) {
                 audio_play_spatial_default_range(&magic->sounds[0],
-                                                 &record->position, 0x7f);
+                                                 &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
         case 0x17:
@@ -90,7 +90,7 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = 6;
             record->render_id = 6;
         initialize_kind_04:
-            record->animation_clip = 0xff;
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -98,7 +98,7 @@ KfEffectRecord *effect_pool_construct(
             if (va[2] != 0) {
                 audio_play_spatial_range(
                     &magic_records[4].sounds[0],
-                    &record->position, 0x7f, 0x4e20, 0xea60);
+                    &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             }
             break;
         case 0x29:
@@ -110,13 +110,13 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = 0xb;
             record->render_id = 0xb;
         initialize_kind_20:
-            record->animation_clip = 0xff;
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_range(
                 &magic_records[4].sounds[1],
-                &record->position, 0x7f, 0x4e20, 0xea60);
+                &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             break;
         case 0x2a:
             record->base_render_id = 0xf;
@@ -135,7 +135,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             break;
-        case 6:
+        case KF_EFFECT_KIND_GROUND_BRANCH:
             record->animation_clip = 0;
             record->base_render_id = 1;
             record->render_id = 1;
@@ -148,7 +148,7 @@ KfEffectRecord *effect_pool_construct(
                 record->control.frames_remaining = 6;
                 record->propagation.branch = argument;
             }
-            if (record->propagation.branch != 0xff) {
+            if (record->propagation.branch != KF_EFFECT_GROUND_BRANCH_LEAF) {
                 sound_ref_play(&magic->sounds[0], 0x78);
             }
             break;
@@ -161,7 +161,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vz = 0;
             record->scale_y = 0;
             break;
-        case 9:
+        case KF_EFFECT_KIND_ACTOR_SPAWNER:
             record->animation_clip = 0;
             record->base_render_id = 3;
             record->render_id = 3;
@@ -173,10 +173,10 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = 0;
             record->control.frames_remaining = *(u16 *)(va + 1);
             audio_play_spatial_default_range(&magic->sounds[0],
-                                             &record->position, 0x7f);
+                                             &record->position, KF_AUDIO_MAX_VOLUME);
             break;
-        case 0xa:
-            record->animation_clip = 0xff;
+        case KF_EFFECT_KIND_SCATTER_PROJECTILE:
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 9;
             record->render_id = 9;
             record->rotation.vx = 0;
@@ -187,27 +187,27 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = record->scale_y = record->scale_z =
                 record->visual.pulse_base_scale = *(u16 *)(va + 3);
             audio_play_spatial_default_range(&magic->sounds[0],
-                                             &record->position, 0x7f);
+                                             &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case 0xb:
-            record->animation_clip = 0xff;
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 8;
             record->render_id = 8;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_default_range(&magic->sounds[0],
-                                             &record->position, 0x7f);
+                                             &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case 0xc:
-            record->animation_clip = 0xff;
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 0xa;
             record->render_id = 0xa;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_default_range(&magic->sounds[0],
-                                             &record->position, 0x7f);
+                                             &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case 0xd:
             record->animation_clip = 0;
@@ -242,7 +242,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vx = -record->rotation.vx;
             if (va[2] != 0) {
                 audio_play_spatial_default_range(&magic->sounds[0],
-                                                 &record->position, 0x7f);
+                                                 &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
         case 0x16:
@@ -253,7 +253,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vx = -record->rotation.vx;
             if (va[2] != 0) {
                 audio_play_spatial_default_range(&magic->sounds[0],
-                                                 &record->position, 0x7f);
+                                                 &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
         case 0xf:
@@ -261,7 +261,7 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = 7;
             record->render_id = 7;
             record->rotation = *(const SVECTOR *)va[1];
-            record->rotation.vx = 0x200;
+            record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.z = 0;
             record->direction.words.y = 0;
             record->direction.words.x = 0;
@@ -274,12 +274,12 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = 7;
             record->render_id = 7;
             record->rotation = *(const SVECTOR *)va[1];
-            record->rotation.vx = 0x200;
+            record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.z = 0;
             record->direction.words.y = 0;
             record->direction.words.x = 0;
             break;
-        case 0x11:
+        case KF_EFFECT_KIND_ORBITING_PROJECTILE:
             record->animation_clip = 0;
             record->base_render_id = 9;
             record->render_id = 9;
@@ -303,11 +303,11 @@ KfEffectRecord *effect_pool_construct(
             record->control.bytes.low = 0xff;
             record->rotation.vx = -record->rotation.vx;
             audio_play_spatial_range(
-                &magic_records[18].sounds[1],
-                &record->position, 0x7f, 0x4e20, 0xea60);
+                &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[1],
+                &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             break;
-        case 0x13:
-            record->animation_clip = 0xff;
+        case KF_EFFECT_KIND_GROUND_TRAIL:
+            record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 0xe;
             record->render_id = 0xe;
             {
@@ -321,28 +321,28 @@ KfEffectRecord *effect_pool_construct(
         case 0x2c:
             record->base_render_id = 0x11;
             record->render_id = 0x11;
-            record->kind = 0x12;
+            record->kind = KF_EFFECT_KIND_RADIAL_BLAST;
             record->animation_clip = 0;
             if (va[1] != 0) {
                 audio_play_spatial_range(
-                    &magic_records[18].sounds[0],
-                    &record->position, 0x7f, 0x4e20, 0xea60);
+                    &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[0],
+                    &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             }
             break;
-        case 0x12:
+        case KF_EFFECT_KIND_RADIAL_BLAST:
             record->base_render_id = 0xb;
             record->render_id = 0xb;
             record->animation_clip = 0;
             if (va[1] != 0) {
                 audio_play_spatial_range(
-                    &magic_records[18].sounds[0],
-                    &record->position, 0x7f, 0x4e20, 0xea60);
+                    &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[0],
+                    &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
             }
             break;
         case 0x18:
             record->base_render_id = 0x10;
             record->render_id = 0x10;
-            record->kind = 0x14;
+            record->kind = KF_EFFECT_KIND_HOMING_PROJECTILE;
             record->animation_clip = 0;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
@@ -352,11 +352,11 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = 0x800;
             if (va[3] != 0) {
                 audio_play_spatial_default_range(
-                    &magic_records[20].sounds[0],
-                    &record->position, 0x7f);
+                    &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],
+                    &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case 0x14:
+        case KF_EFFECT_KIND_HOMING_PROJECTILE:
             record->base_render_id = 0xc;
             record->render_id = 0xc;
             record->animation_clip = 0;
@@ -368,8 +368,8 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = 0x800;
             if (va[3] != 0) {
                 audio_play_spatial_default_range(
-                    &magic_records[20].sounds[0],
-                    &record->position, 0x7f);
+                    &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],
+                    &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
         case 0x15:
@@ -405,11 +405,11 @@ KfEffectRecord *effect_pool_spawn_typed(
         record->position.vx = position_x;
         record->position.vy = position_y;
         record->direction.words.y = direction_y;
-        record->base_render_id = 0xff;
-        record->render_id = 0xff;
-        record->kind = 0x34;
+        record->base_render_id = KF_EFFECT_RENDER_NONE;
+        record->render_id = KF_EFFECT_RENDER_NONE;
+        record->kind = KF_EFFECT_KIND_FLOOR_DEFORMATION;
         record->type = 0xf0;
-        record->phase = 0;
+        record->phase = KF_EFFECT_FLOOR_DEFORM_ADVANCE;
         record->direction.words.x = position_x;
         record->direction.words.z = 0;
     }

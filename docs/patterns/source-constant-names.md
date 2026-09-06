@@ -12,9 +12,16 @@ between automatic-selection locks, completed actions and unavailable animations.
 
 The [actor constant review](game-actor-constants.md) covers all three actor
 modules, including phase limits, sound/parameter slots, collision policies,
-damage units and packed flags. Its inventory explains all 517 retained literal
+damage units and packed flags. Its inventory at `01c741c` explains 517 retained literal
 occurrences without claiming their original tuning rationale or unsupported
 effect identities.
+
+The [effect protocol review](game-effect-protocol.md) names eight decoded
+behaviors across construction, dispatch and callers, plus collision targets,
+power/render/homing selectors, branch roles and floor phases. It distinguishes
+equal-valued constants with different consumers, including actor damage unity
+and player Q12 scaling. The remaining effect tuning/resource literal audit
+and the wider source audit are still open.
 
 ## Function Match Plan
 

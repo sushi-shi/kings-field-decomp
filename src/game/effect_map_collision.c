@@ -4,14 +4,6 @@
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
-/* Low effect-type bits select the downstream world-query targets. */
-enum {
-    EFFECT_COLLISION_TARGETS_MASK = 3,
-    EFFECT_COLLISION_TARGET_ACTORS = 1,
-    EFFECT_COLLISION_TARGET_PLAYER = 2,
-    EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER = 3
-};
-
 DATA(0x80055ab8, 0x38)
 KfCellHeightRecord map_cell_height_records[7] = {
     {500, -2000, 1500, -1250},
@@ -149,16 +141,16 @@ grid_shape:
     }
 
 collide:
-    switch (effect->type & EFFECT_COLLISION_TARGETS_MASK) {
-    case EFFECT_COLLISION_TARGET_ACTORS:
+    switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
+    case KF_EFFECT_COLLISION_TARGET_ACTORS:
         return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
                 | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-    case EFFECT_COLLISION_TARGET_PLAYER:
+    case KF_EFFECT_COLLISION_TARGET_PLAYER:
         return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS
                 | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-    case EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER:
+    case KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER:
         return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS
                 | KF_COLLISION_SKIP_MAP_EVENTS);

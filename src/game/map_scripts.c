@@ -303,7 +303,9 @@ void map_floor5_transition_cutscene(void)
                 } else if (hold == 0x14) {
                     spawn = *(VECTOR *)&effect->position_x;
                     spawn.vy -= 600;
-                    effect_pool_construct(0, 0x13, 0x12, &spawn, aux, 1);
+                    effect_pool_construct(
+                        0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                        KF_EFFECT_KIND_RADIAL_BLAST, &spawn, aux, 1);
                     effect->object_id = 0xb;
                 }
             } else if (spin < 240) {

@@ -8,6 +8,10 @@
 
 #include <kf/audio.h>
 
+enum {
+    KF_MAGIC_RECORD_COUNT = 24
+};
+
 /* Runtime-loaded spell definition used by player and effect code. */
 typedef struct KfMagicRecord {
     u8 learned;

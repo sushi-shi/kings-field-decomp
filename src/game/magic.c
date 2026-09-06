@@ -11,8 +11,8 @@ void effect_pool_reset(void)
     KfEffectRecord *record = effect_pool_records;
     u16 i;
 
-    for (i = 0; i < 48; i++) {
-        record->type = 0xff;
+    for (i = 0; i < KF_EFFECT_CAPACITY; i++) {
+        record->type = KF_EFFECT_SLOT_FREE;
         record++;
     }
 }
@@ -23,7 +23,7 @@ void magic_load_records(const u32 *source)
     u32 *destination = (u32 *)magic_records;
     s32 count;
 
-    for (count = 120; count != 0; count--) {
+    for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {
         *destination++ = *source++;
     }
 }
@@ -105,15 +105,17 @@ void magic_cast(void)
             rotation.vx = player_state.camera_rotation.vx;
             rotation.vy = player_state.camera_rotation.vy;
             rotation.vz = player_state.camera_rotation.vz;
-            effect_pool_construct(0xa, 0x11, player_state.selected_magic_id, &world_pos,
-                          (SVECTOR *)&direction, &rotation, 1);
+            effect_pool_construct(
+                0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                player_state.selected_magic_id, &world_pos, (SVECTOR *)&direction, &rotation, 1);
         } else {
-            effect_pool_construct(0xa, 0x11, player_state.selected_magic_id, &world_pos,
-                          (SVECTOR *)&direction, distance, 1);
+            effect_pool_construct(
+                0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                player_state.selected_magic_id, &world_pos, (SVECTOR *)&direction, distance, 1);
         }
         break;
     }
-    case 6: {
+    case KF_EFFECT_KIND_GROUND_BRANCH: {
         s32 distance;
         KfActor *target;
 
@@ -121,23 +123,26 @@ void magic_cast(void)
             (struct KfVec3i *)&player_state.camera_position,
             player_state.camera_rotation.vy, 0x4e20, 0x155, &distance);
         if (target != 0) {
-            effect_pool_construct(0xa, 0x13, player_state.selected_magic_id,
-                          &target->position,
-                          (SVECTOR *)&player_state.camera_rotation, 0);
+            effect_pool_construct(
+                0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                player_state.selected_magic_id, &target->position,
+                (SVECTOR *)&player_state.camera_rotation, KF_EFFECT_GROUND_BRANCH_ROOT);
         } else {
             VECTOR spawn;
             s32 cell_x;
             s32 cell_z;
 
             spawn.vx = player_state.camera_position.vx
-                       - (rsin(player_state.camera_rotation.vy) * 6000 >> 12);
+                       - (rsin(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);
             spawn.vz = player_state.camera_position.vz
-                       + (rcos(player_state.camera_rotation.vy) * 6000 >> 12);
+                       + (rcos(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
             spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-            effect_pool_construct(0xa, 0x13, player_state.selected_magic_id, &spawn,
-                          (SVECTOR *)&player_state.camera_rotation, 0);
+            effect_pool_construct(
+                0xa, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                player_state.selected_magic_id, &spawn, (SVECTOR *)&player_state.camera_rotation,
+                KF_EFFECT_GROUND_BRANCH_ROOT);
         }
         break;
     }
@@ -148,10 +153,10 @@ ADDRESS(0x8003a760, 0x7c)
 void effect_pool_sweep(void)
 {
     KfEffectRecord *record = effect_pool_records;
-    u16 i = 47;
+    u16 i = KF_EFFECT_CAPACITY - 1;
 
     do {
-        if (record->type != 0xff) {
+        if (record->type != KF_EFFECT_SLOT_FREE) {
             effect_pool_set_current(record);
             effect_update_dispatch();
         }

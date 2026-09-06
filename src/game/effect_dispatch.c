@@ -53,7 +53,7 @@ void effect_update_dispatch(void)
     case 5:
     case 7:
     case 8:
-    case 10:
+    case KF_EFFECT_KIND_SCATTER_PROJECTILE:
     case 11:
     case 12:
     case 14:
@@ -61,54 +61,56 @@ void effect_update_dispatch(void)
 shared_projectile:
         if (phase == 0) {
             collision = effect_map_collision(&effect->position, radius);
-            if (collision != (u32)-1) {
+            if (collision != (u32)KF_COLLISION_NONE) {
                 impact_magic = current_effect_magic_record;
                 collision_kind = collision >> 16;
                 if (kind == 4) {
                     goto effect_kind4_impact;
                 }
                 power = effect_magic_power(effect);
-                if (kind != 10) {
+                if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                     audio_play_spatial_default_range(
-                        &impact_magic->sounds[1], &effect->position, 0x7f);
+                        &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
-                if (collision_kind == 0x10) {
+                if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
                     if (kind == 14 || kind == 22 || kind == 7) {
                         actor_apply_damage(
                             (u16)collision, power,
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
                             impact_magic->damage_components[1],
-                            0, 0, 5000, effect->type);
+                            0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                     } else if (kind != 13) {
                         actor_apply_damage(
                             (u16)collision, power,
                             0, 0, 0, impact_magic->damage_components[0],
                             impact_magic->damage_components[1],
-                            5000, effect->type);
+                            KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                     }
                     if (kind == 7) {
                         goto advance_shared_projectile;
                     }
-                } else if (collision_kind == 0x80) {
+                } else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {
                     if (kind == 13 || kind == 14 || kind == 22) {
                         player_apply_damage(
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
                             impact_magic->damage_components[1],
-                            0, 0, 0, 0x1000, effect->id);
+                            0, 0, 0, KF_FIXED12_ONE, effect->id);
                     } else if (kind == 11) {
-                        player_apply_damage(0, 0, 0, 2, 0, 0, 0x1000, effect->id);
-                    } else if (kind == 10) {
-                        player_apply_damage(0, 0, 0, 4, 0, 0, 0x1000, effect->id);
+                        player_apply_damage(
+                            0, 0, 0, KF_PLAYER_STATUS_DARKNESS, 0, 0, KF_FIXED12_ONE, effect->id);
+                    } else if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                        player_apply_damage(
+                            0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, effect->id);
                     } else if (kind == 12) {
-                        player_apply_damage(0, 0, 0, 1, 0, 0, 0x1000, effect->id);
+                        player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_CURSE, 0, 0, KF_FIXED12_ONE, effect->id);
                     } else {
                         player_apply_damage(
                             0, 0, 0, 0,
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[1],
-                            0x1000, effect->id);
+                            KF_FIXED12_ONE, effect->id);
                     }
                     if (kind == 7) {
                         goto advance_shared_projectile;
@@ -131,19 +133,19 @@ advance_shared_projectile:
             effect->position.vy += (s16)effect->direction.words.y;
             effect->position.vz += (s16)effect->direction.words.z;
             if (kind == 5 || kind == 11) {
-                effect->rotation.vz = (effect->rotation.vz + 200) & 0xfff;
+                effect->rotation.vz = (effect->rotation.vz + 200) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == 4) {
                 s32 remaining;
 
-                effect->rotation.vz = (effect->rotation.vz + 200) & 0xfff;
+                effect->rotation.vz = (effect->rotation.vz + 200) & KF_ANGLE_WRAP_MASK;
                 remaining = effect->control.frames_remaining - 1;
                 effect->control.frames_remaining = remaining;
                 if ((u16)remaining == 0) {
 effect_kind4_impact:
                     audio_play_spatial_default_range(
-                        &magic->sounds[1], &effect->position, 0x7f);
+                        &magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                     effect->phase = 0x32;
                     impact_position.vx = effect->position.vx;
                     impact_position.vz = effect->position.vz;
@@ -165,7 +167,7 @@ effect_kind4_impact:
                 }
                 return;
             }
-            if (kind == 10) {
+            if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 SVECTOR scatter;
                 s32 pulse_angle;
 
@@ -181,8 +183,8 @@ effect_kind4_impact:
                         effect_scatter_triple((u16 *)&scatter);
                         effect->control.frames_remaining = effect->propagation.generations_remaining == 0 ? 15 : 5;
                         effect_pool_construct(
-                            effect->id, effect->type, kind, &effect->position,
-                            &scatter, effect->propagation.generations_remaining, effect->control.frames_remaining,
+                            effect->id, effect->type, kind, &effect->position, &scatter,
+                            effect->propagation.generations_remaining, effect->control.frames_remaining,
                             (s16)effect->scale_x);
                         effect_scatter_triple(&effect->direction.words.x);
                     } else {
@@ -201,13 +203,13 @@ effect_kind4_impact:
                 return;
             }
             if (kind == 13) {
-                effect->rotation.vz = (effect->rotation.vz + 100) & 0xfff;
+                effect->rotation.vz = (effect->rotation.vz + 100) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == 14) {
                 if (rand() < 8192 && effect->sound_played == 0) {
                     effect->sound_played = audio_play_spatial_range(
-                        &magic->sounds[0], &effect->position, 0x7f,
+                        &magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME,
                         4000, 12000);
                 }
                 return;
@@ -215,7 +217,7 @@ effect_kind4_impact:
             if (kind == 8 || kind == 22) {
                 return;
             }
-            effect->rotation.vz = (effect->rotation.vz + 600) & 0xfff;
+            effect->rotation.vz = (effect->rotation.vz + 600) & KF_ANGLE_WRAP_MASK;
             return;
         }
 
@@ -238,7 +240,7 @@ effect_kind4_impact:
                 phase_sound = &magic->sounds[0];
 play_phase_sound:
                 audio_play_spatial_default_range(
-                    phase_sound, &effect->position, 0x7f);
+                    phase_sound, &effect->position, KF_AUDIO_MAX_VOLUME);
             }
         } else if (phase == 120) {
             effect->direction.words.y += 20;
@@ -266,13 +268,13 @@ play_phase_sound:
 
     case 36:
         if (phase < 11) {
-            if (effect_map_collision(&effect->position, 100) != (u32)-1) {
-                effect->animation_clip = 0xff;
-                effect->base_render_id = 0xff;
-                effect->render_id = 0xff;
+            if (effect_map_collision(&effect->position, 100) != (u32)KF_COLLISION_NONE) {
+                effect->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
+                effect->base_render_id = KF_EFFECT_RENDER_NONE;
+                effect->render_id = KF_EFFECT_RENDER_NONE;
                 effect->phase = 20;
                 audio_play_spatial_default_range(
-                    &magic_records[18].sounds[1], &effect->position, 0x7f);
+                    &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 return;
             }
             effect->position.vx += (s16)effect->direction.words.x;
@@ -294,7 +296,7 @@ play_phase_sound:
         } else {
             if (((phase - 20) & 1) == 0) {
                 effect_pool_construct(
-                    effect->id, effect->type, 0x12,
+                    effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
                     &effect->position, &effect->direction.vector, 1);
             }
             if (phase > 23) {
@@ -303,17 +305,17 @@ play_phase_sound:
         }
         goto advance_effect_phase;
 
-    case 19:
+    case KF_EFFECT_KIND_GROUND_TRAIL:
         linked_effect = &effect_pool_records[(u8)effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
-        if (collision != (u32)-1) {
+        if (collision != (u32)KF_COLLISION_NONE) {
             collision_kind = collision >> 16;
             power = effect_magic_power(effect);
-            if (collision_kind == 0x10) {
+            if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
                 actor_apply_damage(
                     (u16)collision, power, 0, 0, 0,
                     magic->damage_components[0], magic->damage_components[1],
-                    5000, effect->type);
+                    KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             }
         }
         effect->position.vx += (s16)effect->direction.words.x;
@@ -346,7 +348,7 @@ play_phase_sound:
         }
         break;
 
-    case 18:
+    case KF_EFFECT_KIND_RADIAL_BLAST:
         if (++effect->phase < 13) {
             next = effect->scale_x + 0x400;
             effect->scale_x = next;
@@ -357,12 +359,12 @@ play_phase_sound:
             if (effect->phase & 1) {
                 actor_pool_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
-                    radius, 0x1000, power,
+                    radius, KF_FIXED12_ONE, power,
                     0, 0, 0, magic->damage_components[0],
-                    magic->damage_components[1], 5000, effect->type);
+                    magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
-                    radius, 0x1000, power,
+                    radius, KF_FIXED12_ONE, power,
                     0, 0, 0, magic->damage_components[0],
                     magic->damage_components[1], 5000, effect->id);
             }
@@ -371,7 +373,7 @@ play_phase_sound:
         }
         break;
 
-    case 20: {
+    case KF_EFFECT_KIND_HOMING_PROJECTILE: {
         SVECTOR local_motion;
         VECTOR movement;
         MATRIX matrix;
@@ -380,15 +382,15 @@ play_phase_sound:
         if (phase == 0) {
 randomize_kind20:
             effect->direction.words.x =
-                (effect->direction.words.x + (rand() >> 6) - 0x80) & 0xfff;
+                (effect->direction.words.x + (rand() >> 6) - 0x80) & KF_ANGLE_WRAP_MASK;
             effect->direction.words.y =
-                (effect->direction.words.y + (rand() >> 3) - 0x200) & 0xfff;
+                (effect->direction.words.y + (rand() >> 3) - 0x200) & KF_ANGLE_WRAP_MASK;
         } else if (phase > 4) {
-            if ((u8)effect->control.target_mode == 0xff) {
+            if ((u8)effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
                 if (rand() < 0xccc) {
                     goto randomize_kind20;
                 }
-            } else if ((u8)effect->control.target_mode == 0xfe) {
+            } else if ((u8)effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
                 effect->direction.words.y = vector_xz_to_angle(
                     player_state.camera_position.vx - effect->position.vx,
                     effect->position.vz - player_state.camera_position.vz);
@@ -397,7 +399,7 @@ randomize_kind20:
                     /* Retail reads the shared distance slot before this branch
                      * has initialized it; preserve that original behavior. */
                     -target_distance);
-                effect->direction.words.x = -desired_pitch & 0xfff;
+                effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
             } else {
                 target = actor_pool_find_target_in_cone(
                     (const struct KfVec3i *)&effect->position,
@@ -414,7 +416,7 @@ randomize_kind20:
                             - (target->position.vy
                                - (definition->collision_height >> 1)),
                         -target_distance);
-                    effect->direction.words.x = -desired_pitch & 0xfff;
+                    effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
                 } else {
                     effect->direction.words.x = 0;
                 }
@@ -440,15 +442,15 @@ randomize_kind20:
         effect->position.vy += movement.vy;
         effect->position.vz += movement.vz;
         effect->phase++;
-        effect->rotation.vz = (effect->rotation.vz + 0x100) & 0xfff;
-        if (effect_map_collision(&effect->position, radius) != (u32)-1) {
+        effect->rotation.vz = (effect->rotation.vz + 0x100) & KF_ANGLE_WRAP_MASK;
+        if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
             if (effect->base_render_id == 0x10) {
                 effect_pool_construct(
                     effect->id, effect->type, 0x2c,
                     &effect->position, &effect->direction.vector, 1);
             } else {
                 effect_pool_construct(
-                    effect->id, effect->type, 0x12,
+                    effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
                     &effect->position, &effect->direction.vector, 1);
             }
             effect->type = KF_EFFECT_SLOT_FREE;
@@ -491,21 +493,21 @@ randomize_kind20:
         effect->scale_x = next;
         effect->scale_z = next;
         effect->scale_y = next;
-        effect->rotation.vy = (effect->rotation.vy + 0x514) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 0x514) & KF_ANGLE_WRAP_MASK;
         if (phase & 1) {
             u32 damage_radius;
 
             position.x = effect->position.vx;
-            position.y = 0xffff;
+            position.y = KF_COLLISION_IGNORE_HEIGHT;
             position.z = effect->position.vz;
             damage_radius = phase * 1000;
             power = effect_magic_power(effect);
             actor_pool_apply_radial_damage(
-                &position, damage_radius, 0x1000, power, 0, 0, 0,
+                &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
                 magic_records[4].damage_components[0],
-                magic_records[4].damage_components[1], 5000, effect->type);
+                magic_records[4].damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             player_apply_radial_damage(
-                &position, damage_radius, 0x1000, power, 0, 0, 0,
+                &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
                 magic_records[4].damage_components[0],
                 magic_records[4].damage_components[1], 5000, effect->id);
         }
@@ -518,40 +520,41 @@ advance_effect_phase:
         effect->phase++;
         break;
 
-    case 6:
+    case KF_EFFECT_KIND_GROUND_BRANCH:
         if (phase < 16) {
-            if (effect->control.frames_remaining != 0xff) {
+            if (effect->control.frames_remaining != KF_EFFECT_GROUND_BRANCH_TIMER_DONE) {
                 if (effect->control.frames_remaining-- == 0) {
                     switch (effect->propagation.branch) {
-                    case 0:
+                    case KF_EFFECT_GROUND_BRANCH_ROOT:
                         effect_spawn_ground_kind6(
-                            effect->id, effect, 0x400, 1);
+                            effect->id, effect, KF_ANGLE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_QUARTER_TURN);
                         effect_spawn_ground_kind6(
-                            effect->id, effect, 0xc00, 2);
+                            effect->id, effect, KF_ANGLE_THREE_QUARTER_TURN,
+                            KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN);
                         break;
-                    case 1:
+                    case KF_EFFECT_GROUND_BRANCH_QUARTER_TURN:
                         effect_spawn_ground_kind6(
-                            effect->id, effect, 0x400, 0xff);
+                            effect->id, effect, KF_ANGLE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_LEAF);
                         break;
-                    case 2:
+                    case KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN:
                         effect_spawn_ground_kind6(
-                            effect->id, effect, 0xc00, 0xff);
+                            effect->id, effect, KF_ANGLE_THREE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_LEAF);
                         break;
                     }
-                    effect->control.frames_remaining = 0xff;
+                    effect->control.frames_remaining = KF_EFFECT_GROUND_BRANCH_TIMER_DONE;
                 }
             }
             effect->scale_y += 0x100;
             if (phase == 15) {
                 switch (effect->propagation.branch) {
-                case 0:
+                case KF_EFFECT_GROUND_BRANCH_ROOT:
                     effect->phase = 0x10;
                     break;
-                case 1:
-                case 2:
+                case KF_EFFECT_GROUND_BRANCH_QUARTER_TURN:
+                case KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN:
                     effect->phase = 0x1a;
                     break;
-                case 0xff:
+                case KF_EFFECT_GROUND_BRANCH_LEAF:
                     effect->phase = 0x24;
                     break;
                 }
@@ -563,9 +566,9 @@ advance_effect_phase:
                 angle = (u32)rand() >> 3;
                 distance = ((u32)rand() * 0x145) >> 13;
                 spawn_position.vx = effect->position.vx
-                    + ((rsin(angle) * distance) >> 12);
+                    + ((rsin(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vz = effect->position.vz
-                    + ((rcos(angle) * distance) >> 12);
+                    + ((rcos(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vy = effect->position.vy;
                 effect_pool_construct(
                     effect->id, effect->type, 0x22,
@@ -573,12 +576,12 @@ advance_effect_phase:
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
-                    1500, 0x1000, power, 0, 0, 0,
+                    1500, KF_FIXED12_ONE, power, 0, 0, 0,
                     magic->damage_components[0],
-                    magic->damage_components[1], 5000, effect->type);
+                    magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
-                    1500, 0x1000, power, 0, 0, 0,
+                    1500, KF_FIXED12_ONE, power, 0, 0, 0,
                     magic->damage_components[0],
                     magic->damage_components[1], 5000, effect->id);
             }
@@ -587,7 +590,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vy = (effect->rotation.vy + 500) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 500) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
@@ -600,11 +603,11 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vy = (effect->rotation.vy + 500) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 500) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
-    case 9: {
+    case KF_EFFECT_KIND_ACTOR_SPAWNER: {
         s32 scale;
         u8 scale_phase;
 
@@ -620,7 +623,7 @@ advance_effect_phase:
             position.y = effect->position.vy;
             value = collision_query_world(
                 position.x, position.y, position.z, 1000, 0, 0x60);
-            if ((phase == 40 && value != -1) || effect->control.frames_remaining == 0) {
+            if ((phase == 40 && value != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
                 effect->phase = 0x75;
             } else {
                 effect->position.vx = position.x;
@@ -668,9 +671,9 @@ publish_kind9_scale:
             effect->type = KF_EFFECT_SLOT_FREE;
         }
 rotate_kind9:
-        effect->rotation.vy = (effect->rotation.vy + 0x6a4) & 0xfff;
-        effect->rotation.vx = (effect->rotation.vx + 0x578) & 0xfff;
-        effect->rotation.vz = (effect->rotation.vz + 0x76c) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 0x6a4) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vx = (effect->rotation.vx + 0x578) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vz = (effect->rotation.vz + 0x76c) & KF_ANGLE_WRAP_MASK;
         break;
     }
 
@@ -682,16 +685,16 @@ rotate_kind9:
         effect_projectile_update_3d(&effect_projectile_velocities[1], 0x3c);
         break;
 
-    case 52: {
+    case KF_EFFECT_KIND_FLOOR_DEFORMATION: {
         s16 column;
         s32 remaining;
 
         switch (phase) {
-        case 0:
+        case KF_EFFECT_FLOOR_DEFORM_ADVANCE:
             remaining = effect->direction.words.x - 1;
             effect->direction.words.x = remaining;
             if ((s16)remaining == -1) {
-                effect->phase = 1;
+                effect->phase = KF_EFFECT_FLOOR_DEFORM_HOLD;
                 return;
             }
             effect->direction.words.z += effect->rotation.vz;
@@ -702,15 +705,15 @@ rotate_kind9:
                     -(s16)effect->direction.words.y);
             }
             break;
-        case 1:
+        case KF_EFFECT_FLOOR_DEFORM_HOLD:
             if (--effect->position.vy != -1) {
                 return;
             }
-            effect->phase = 2;
-            effect->direction.words.z = 0x1000;
+            effect->phase = KF_EFFECT_FLOOR_DEFORM_REVERSE;
+            effect->direction.words.z = KF_FIXED12_ONE;
             effect->direction.words.x = effect->position.vx;
             break;
-        case 2:
+        case KF_EFFECT_FLOOR_DEFORM_REVERSE:
             remaining = effect->direction.words.x - 1;
             effect->direction.words.x = remaining;
             if ((s16)remaining == -1) {
@@ -730,7 +733,7 @@ invalidate_and_return:
         break;
     }
 
-    case 17:
+    case KF_EFFECT_KIND_ORBITING_PROJECTILE:
         effect_projectile_update_2d(0x1964, 0x28);
         break;
 

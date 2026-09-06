@@ -432,8 +432,8 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
         case 5:
         case 7:
         case 8:
-        case 9:
-        case 10:
+        case KF_EFFECT_KIND_ACTOR_SPAWNER:
+        case KF_EFFECT_KIND_SCATTER_PROJECTILE:
         case 11:
         case 12:
         case 13:
@@ -467,7 +467,8 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                     scale = 800;
                     angles.x = -32;
                     distance = 20;
-                } else if (effect_code == 9 || effect_code == 10) {
+                } else if (effect_code == KF_EFFECT_KIND_ACTOR_SPAWNER
+                           || effect_code == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                     scale = 250;
                     distance = 20;
                 } else {
@@ -486,7 +487,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 } else {
                     angles.x = vector_xz_to_angle(
                         position.vy - actor_state.player_position.vy, -distance);
-                    if (effect_code == 10) {
+                    if (effect_code == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                         scale = 250;
                         distance -= 4500;
                     /* Retail shares one step-count clamp between codes 10 and 9. */
@@ -496,7 +497,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                         } else {
                             distance = distance / scale;
                         }
-                    } else if (effect_code == 9) {
+                    } else if (effect_code == KF_EFFECT_KIND_ACTOR_SPAWNER) {
                         scale = 250;
                         distance -= 2000;
                         goto clamp_steps;
@@ -513,19 +514,23 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
             vector3s_scale_shift12(scale, &direction);
             if (effect_code == 8 || effect_code == 22) {
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x23, effect_code, &position, &direction, &angles, 1);
+                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    effect_code, &position, &direction, &angles, 1);
             } else if (effect_code == 24) {
                 burst_angles.x = actor->rotation.x;
                 burst_angles.y = facing;
                 burst_angles.z = actor->rotation.z;
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x23, 24, &position, &direction, &burst_angles, 0xfe, 1);
-            } else if (effect_code == 10) {
+                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 24,
+                    &position, &direction, &burst_angles, KF_EFFECT_HOMING_PLAYER, 1);
+            } else if (effect_code == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x23, 10, &position, &direction, 3, distance, 0xbb8);
+                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, 3, distance, 0xbb8);
             } else {
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x23, effect_code, &position, &direction, distance, 1);
+                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    effect_code, &position, &direction, distance, 1);
             }
             break;
         }
@@ -742,7 +747,9 @@ void actor_update_boss_death_sequence(void)
         position.x = actor->position.vx + (rand() & 0x1fff) - 4096;
         position.z = actor->position.vz + (rand() & 0x1fff) - 4096;
         position.y = actor->position.vy - (rand() & 0xfff);
-        effect_pool_construct(0, 0x13, 0x2c, &position, effect_output, 0);
+        effect_pool_construct(
+            0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x2c,
+            &position, effect_output, 0);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * 4) == 0) {
             sound_ref_play(&boss_death_loop_sound, 100);
         }

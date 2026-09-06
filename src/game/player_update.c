@@ -328,8 +328,8 @@ void player_update(void)
                     if (player_state.physical_power < 80 || player_state.magic < 80) {
                         goto cancel;
                     }
-                    effect = 20;
-                    record = &magic_records[20];
+                    effect = KF_EFFECT_KIND_HOMING_PROJECTILE;
+                    record = &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE];
                     player_state.weapon_magic_delay = 3;
                     break;
                 case 8:
@@ -345,7 +345,7 @@ void player_update(void)
                         goto cancel;
                     }
                     effect = 36;
-                    record = &magic_records[18];
+                    record = &magic_records[KF_EFFECT_KIND_RADIAL_BLAST];
                     player_state.weapon_magic_delay = 3;
                     break;
                 case 3:
@@ -393,24 +393,31 @@ void player_update(void)
                             player_state.camera_rotation.vy, 20000, 0x555, &distance);
                         actor_state.player_target = target;
                         if (target == 0) {
-                            attachment = 0xff;
+                            attachment = KF_EFFECT_HOMING_WANDER;
                         } else {
                             attachment = target - actor_state.actors;
                         }
                     }
                     pitch_yaw_to_forward_vector((const struct KfPitchYaw *)&angles, &direction);
                     vector3s_scale_shift12(900, &direction);
-                    effect_pool_construct(10, 17, effect, &position, &direction,
-                                  &player_state.camera_rotation, attachment, 1);
-                    if (effect == 20) {
+                    effect_pool_construct(
+                        10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
+                        &position, &direction, &player_state.camera_rotation, attachment, 1);
+                    if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                         position.vy += 300;
                         angles.y = player_state.camera_rotation.vy;
                         angles.z = player_state.camera_rotation.vz;
                         angles.x = player_state.camera_rotation.vx + 64;
-                        effect_pool_construct(10, 17, 20, &position, &direction, &angles, attachment, 0);
+                        effect_pool_construct(
+                            10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &angles, attachment,
+                            0);
                         angles.x -= 128;
                         position.vy -= 600;
-                        effect_pool_construct(10, 17, 20, &position, &direction, &angles, attachment, 0);
+                        effect_pool_construct(
+                            10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &angles, attachment,
+                            0);
                     }
                 }
                 player_state.weapon_magic_shots_remaining--;
