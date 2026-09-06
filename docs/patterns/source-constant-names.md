@@ -1639,3 +1639,67 @@ skips. The full build retains the existing ownership/placement failures:
 source-data matching is 6/60, target relink is PSX 1/1, GAME 75/77 and OPEN
 34/38, with two GAME and four OPEN conflicting-section-base findings and
 zero artifact failures. No tooling or flake files changed.
+
+## Effect collision reconciliation and target classes
+
+Function Match Plan: integrate committed master a0ffa9b into c403eac's
+naming worktree. GAME 80037850 `effect_map_collision` starts here at
+74.821050%; the incoming source is 97.452630%, still partial. Its complete
+incoming dossier and refreshed image-qualified six-view snapshot establish
+the signed cell coordinates, direct neighbor indexing, early effect-pointer
+snapshot, selected rectangle, absolute-height update, backward span join,
+ordered diagonal expression and case-local query arguments. Preserve these
+facts, the fifteen reviewed internal-jump referents, all 475 delinked retail
+words, six switch entries and the 56-byte rectangle initializer.
+
+Retain the existing map dimensions/units, cell/orientation enums, terrain
+result and query exclusion flags. Name the low-two-bit effect classes
+locally by their actual world-query target policy: class 1 permits actors,
+class 2 permits the player, and class 3 permits both. All three exclude
+terrain, map objects and map events in the downstream query because this
+wrapper has already handled its map-geometry checks. Class 0 still returns
+the literal encoded result 1 without a world query; do not reinterpret it as
+the -1 no-collision sentinel. No semantic claim about other effect-type bits
+is made by this local class enum.
+
+Require a separate compile of literal a0ffa9b source using the same pinned
+profile/headers to agree in every non-debug section with the named source.
+The other 111 objects and 483 strict rows must remain unchanged from c403eac;
+only this function may acquire the incoming improvement. The game-grid,
+attribute, effect-class and caller policy exclude SDK body ownership. The
+six-word source deficit and documented return/join/coordinate residues remain
+open; no new result is banked.
+
+The reconciled unit retains 44 inline literal occurrences:
+
+| Remaining site/value | Reason |
+| --- | --- |
+| Rectangle extent 7 and its 28 signed coordinates | Complete measured seven-record asset, in oriented cell X coordinates and floor-relative world Y. Preserve the last three rows' inverted Y bounds. Their exact authored dimensions remain unexplained; replacing them with map-unit arithmetic would suggest an unproved derivation. |
+| Three comparisons with 0 | Signed cell lower bounds and the split between a negative scalar height and a nonnegative rectangle selector. |
+| Eight neighbor offsets +1/-1 | One adjacent row or column, with the repeated direct accesses required by the incoming source. |
+| Three world-query height arguments 0 | The effect passes zero vertical extent with its radius. This is distinct from the query's 0xffff ignore-height sentinel. |
+| Default result 1 | The literal result for effect class zero, without a downstream query. Preserve its encoded value; its broader author intent remains unresolved. |
+
+The diagonal checks use a fixed half-cell margin of 1000 world units, and
+the sum boundary is 2000 + 1000 = 3000. They do not derive this margin from
+the caller's radius. The shared cell-size/center spellings expose those
+measured relationships without attributing the choice to an unknown collision
+or animation design rule.
+
+Final verdict: the named source and an independent compile of literal
+a0ffa9b source agree in every non-debug section; only `.debug_line` differs.
+The other 111 objects retain all non-debug sections from c403eac. The sole
+strict score change is GAME 80037850, 74.821050% to 97.452630%; the other
+483 scores, including all banked exact results, are unchanged. The delinked
+target restores every one of the 475 retail instructions and all six switch
+entries. The source remains 469 instructions long. Both objects retain the
+56-byte rectangle initializer, the single ordered world-query callee and all
+twelve ordered physical data references.
+
+`ruff check scripts tests` and `git diff --check` pass. The repository suite
+passes 651 tests in 87.274 seconds with nine skips, including the existing
+collision controls. The full build still fails on the existing source-data
+ownership and placement findings: 6/60 units match data, with zero artifact
+failures. Target relink remains PSX 1/1, GAME 75/77 and OPEN 34/38, with two
+GAME and four OPEN conflicting-section-base findings. No result is newly
+banked, and no tooling or flake files changed.

@@ -4,6 +4,14 @@
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
+/* Low effect-type bits select the downstream world-query targets. */
+enum {
+    EFFECT_COLLISION_TARGETS_MASK = 3,
+    EFFECT_COLLISION_TARGET_ACTORS = 1,
+    EFFECT_COLLISION_TARGET_PLAYER = 2,
+    EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER = 3
+};
+
 DATA(0x80055ab8, 0x38)
 KfCellHeightRecord map_cell_height_records[7] = {
     {500, -2000, 1500, -1250},
@@ -24,84 +32,89 @@ RODATA(0x80012ce0, 0x18)
  * below the cell floor, then tests the cell's attribute-driven height/step
  * shape and its collision-grid shape (flat, four diagonal half-cells, or the
  * neighbour-aware corner cell 0).  A surviving hit is forwarded to
- * collision_query_world with the flags selected from the active effect record;
- * KF_COLLISION_TERRAIN stops the effect at a terrain boundary.
+ * collision_query_world with the flags selected from the active effect record.
+ * Geometry rejection returns KF_COLLISION_TERRAIN; callers recognize
+ * KF_COLLISION_NONE as no collision.
  */
 ADDRESS(0x80037850, 0x76c)
 u32 effect_map_collision(VECTOR *position, s32 radius)
 {
-    KfCellHeightRecord *records;
-    u8 *cg;
-    s32 x;
-    s32 z;
+    KfCellHeightRecord *record;
+    KfEffectRecord *effect;
+    s16 x;
+    s16 z;
     s32 subx;
     s32 subz;
     s32 y;
     s32 floor;
-    s32 cell;
     s32 height;
     u8 attr;
-    u32 flags;
 
     x = position->vx / KF_MAP_TILE_SIZE;
     z = position->vz / KF_MAP_TILE_SIZE;
-    subz = (s16)(position->vz % KF_MAP_TILE_SIZE);
-    if ((x & 0xffff) > KF_MAP_COLUMNS - 1
-        || (z & 0xffff) > KF_MAP_ROWS - 1) {
+    subz = position->vz % KF_MAP_TILE_SIZE;
+    effect = current_effect;
+    if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
         return KF_COLLISION_TERRAIN;
     }
-    cell = z * KF_MAP_COLUMNS + x;
     y = position->vy;
     floor = (u8)map_floor_height_grid[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
         return KF_COLLISION_TERRAIN;
     }
     attr = map_cell_attribute_grid[z][x];
-    records = map_cell_height_records;
     if (attr != KF_MAP_ATTRIBUTE_NONE) {
         height = map_cell_attribute_height_table[attr];
         if (height < 0) {
-            if (y < height + floor) {
+            height += floor;
+            if (y < height) {
                 return KF_COLLISION_TERRAIN;
             }
-        } else if (floor + records[height].y_min <= y && y <= floor + records[height].y_max) {
-            u8 orient = map_cell_orientation_grid[z][x];
+        } else {
+            record = &map_cell_height_records[height];
+            if (floor + record->y_min <= y && y <= floor + record->y_max) {
+                u8 orient = map_cell_orientation_grid[z][x];
+                s16 coordinate;
 
-            subx = (s16)(position->vx % KF_MAP_TILE_SIZE);
-            switch (orient) {
-            case KF_MAP_ORIENT_UNROTATED:
-                subx = subz;
-                break;
-            case KF_MAP_ORIENT_QUARTER_TURN:
-                break;
-            case KF_MAP_ORIENT_HALF_TURN:
-                subx = KF_MAP_TILE_SIZE - subz;
-                break;
-            case KF_MAP_ORIENT_THREE_QUARTER_TURN:
-                subx = KF_MAP_TILE_SIZE - subx;
-                break;
-            default:
-                goto grid_shape;
-            }
-            if (records[height].x_min <= subx && subx <= records[height].x_max) {
-                goto collide;
+                subx = position->vx % KF_MAP_TILE_SIZE;
+                switch (orient) {
+                case KF_MAP_ORIENT_UNROTATED:
+                    coordinate = subz;
+rectangle_span:
+                    if (record->x_min <= coordinate && coordinate <= record->x_max) {
+                        goto collide;
+                    }
+                    break;
+                case KF_MAP_ORIENT_QUARTER_TURN:
+                    coordinate = subx;
+                    goto rectangle_span;
+                case KF_MAP_ORIENT_HALF_TURN:
+                    coordinate = KF_MAP_TILE_SIZE - subz;
+                    goto rectangle_span;
+                case KF_MAP_ORIENT_THREE_QUARTER_TURN:
+                    coordinate = KF_MAP_TILE_SIZE - subx;
+                    goto rectangle_span;
+                default:
+                    goto grid_shape;
+                }
             }
         }
     }
 
 grid_shape:
-    cg = &map_collision_grid[0][0];
-    switch (cg[cell]) {
+    switch (map_collision_grid[z][x]) {
     case KF_MAP_CELL_BLOCKED:
-        if (((cg[cell + KF_MAP_COLUMNS] != KF_MAP_CELL_FLOOR
-              && cg[cell + KF_MAP_COLUMNS] != KF_MAP_CELL_STEP)
-             || position->vz % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER)
-            && ((cg[cell - KF_MAP_COLUMNS] != KF_MAP_CELL_FLOOR
-                 && cg[cell - KF_MAP_COLUMNS] != KF_MAP_CELL_STEP)
-                || KF_MAP_TILE_CENTER < position->vz % KF_MAP_TILE_SIZE)
-            && ((cg[cell + 1] != KF_MAP_CELL_FLOOR && cg[cell + 1] != KF_MAP_CELL_STEP)
+        if (((map_collision_grid[z + 1][x] != KF_MAP_CELL_FLOOR
+                && map_collision_grid[z + 1][x] != KF_MAP_CELL_STEP)
+                || position->vz % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) &&
+            ((map_collision_grid[z - 1][x] != KF_MAP_CELL_FLOOR
+                && map_collision_grid[z - 1][x] != KF_MAP_CELL_STEP)
+                || KF_MAP_TILE_CENTER < position->vz % KF_MAP_TILE_SIZE) &&
+            ((map_collision_grid[z][x + 1] != KF_MAP_CELL_FLOOR
+                && map_collision_grid[z][x + 1] != KF_MAP_CELL_STEP)
                 || position->vx % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER)) {
-            if (cg[cell - 1] != KF_MAP_CELL_FLOOR && cg[cell - 1] != KF_MAP_CELL_STEP) {
+            if (map_collision_grid[z][x - 1] != KF_MAP_CELL_FLOOR
+                    && map_collision_grid[z][x - 1] != KF_MAP_CELL_STEP) {
                 return KF_COLLISION_TERRAIN;
             }
             if (KF_MAP_TILE_CENTER < position->vx % KF_MAP_TILE_SIZE) {
@@ -111,50 +124,45 @@ grid_shape:
         break;
     case KF_MAP_CELL_X_GE_Z:
         if (position->vx % KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER
-            < position->vz % KF_MAP_TILE_SIZE) {
+                < position->vz % KF_MAP_TILE_SIZE) {
             return KF_COLLISION_TERRAIN;
         }
         break;
     case KF_MAP_CELL_SUM_LE_SIZE:
-        if (KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER
-            < position->vx % KF_MAP_TILE_SIZE + position->vz % KF_MAP_TILE_SIZE) {
+        if ((KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER)
+                < position->vx % KF_MAP_TILE_SIZE + position->vz % KF_MAP_TILE_SIZE) {
             return KF_COLLISION_TERRAIN;
         }
         break;
     case KF_MAP_CELL_Z_GE_X:
-        if (position->vz % KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER
-            < position->vx % KF_MAP_TILE_SIZE) {
+        if (position->vx % KF_MAP_TILE_SIZE
+                > position->vz % KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER) {
             return KF_COLLISION_TERRAIN;
         }
         break;
     case KF_MAP_CELL_SUM_GE_SIZE:
         if (position->vx % KF_MAP_TILE_SIZE + position->vz % KF_MAP_TILE_SIZE
-            < KF_MAP_TILE_CENTER) {
+                < KF_MAP_TILE_CENTER) {
             return KF_COLLISION_TERRAIN;
         }
         break;
     }
 
 collide:
-    {
-        u8 kind = current_effect->type & 3;
-
-        if (kind == 2) {
-            flags = KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS
-                | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS;
-        } else if (kind < 3) {
-            if (kind != 1) {
-                return 1;
-            }
-            flags = KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
-                | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS;
-        } else {
-            if (kind != 3) {
-                return 3;
-            }
-            flags = KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS
-                | KF_COLLISION_SKIP_MAP_EVENTS;
-        }
+    switch (effect->type & EFFECT_COLLISION_TARGETS_MASK) {
+    case EFFECT_COLLISION_TARGET_ACTORS:
+        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
+                | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
+    case EFFECT_COLLISION_TARGET_PLAYER:
+        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS
+                | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
+    case EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER:
+        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS
+                | KF_COLLISION_SKIP_MAP_EVENTS);
+    default:
+        return 1;
     }
-    return collision_query_world(position->vx, position->vy, position->vz, radius, 0, flags);
 }
