@@ -1984,3 +1984,12 @@ skips. Full `kf build` retains the existing ownership/placement failures:
 34/38, two GAME/four OPEN section-base conflicts, zero artifact failures.
 Post-full-build control comparisons pass. Only the incoming scatter bank
 row is preserved; no additional result is banked and no tooling/flake changed.
+
+## Player status constants and units
+
+The [remaining status campaign](game-player-statuses.md) names four masks,
+duration/refresh values, penalties, bonuses, movement/turn limits and darkness
+fade/fog constants. Its numeric table explains the 32-step Q12 fade and
+one-fifth movement limit while retaining unexplained tuning as such. Poison
+now shares the player-status -1 timer sentinel; all distinct expiry and cure
+paths remain unchanged.

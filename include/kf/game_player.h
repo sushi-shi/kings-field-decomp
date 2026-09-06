@@ -27,11 +27,20 @@ enum {
     KF_PLAYER_UPDATE_DYING = 0xff
 };
 
-/* Poison counts status updates; zero is still active and applies its last tick. */
+/* Status timers count executions of their update blocks; -1 is inactive. */
 enum {
+    KF_PLAYER_STATUS_CURSE = 1 << 0,
+    KF_PLAYER_STATUS_DARKNESS = 1 << 1,
     KF_PLAYER_STATUS_POISON = 1 << 2,
-    KF_POISON_TIMER_INACTIVE = -1,
-    KF_POISON_DURATION_UPDATES = 600
+    KF_PLAYER_STATUS_SLOWED = 1 << 3,
+    KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST = 1 << 4,
+    KF_PLAYER_STATUS_TIMER_INACTIVE = -1,
+    KF_CURSE_DURATION_UPDATES = 600,
+    KF_DARKNESS_DURATION_UPDATES = 1000,
+    KF_DARKNESS_REAPPLY_TIMER = 970,
+    KF_POISON_DURATION_UPDATES = 600,
+    KF_SLOWED_DURATION_UPDATES = 300,
+    KF_FIRE_DEFENSE_DURATION_UPDATES = 500
 };
 
 typedef struct KfPlayerProgressState {
@@ -117,11 +126,11 @@ typedef struct KfPlayerState {
     u16 poison_resistance;
     u16 magic_defense;
     u16 fire_defense;
-    s16 status_effect0_timer;
-    s16 status_effect1_timer;
+    s16 curse_timer;
+    s16 darkness_timer;
     s16 poison_timer;
-    s16 status_effect3_timer;
-    s16 status_effect4_timer;
+    s16 slowed_timer;
+    s16 fire_defense_timer;
     s16 light_effect_timer;
     u8 unknown_54[4];
     u32 equipment_effect_ticks;
@@ -223,7 +232,7 @@ extern void player_recalculate_combat_stats(void);
 extern void player_restore_vitals_with_color_cycle(void);
 extern void player_select_magic(u8 magic_id);
 extern void player_set_equipment_slot(u8 item_id, u8 slot);
-extern void player_status_apply_effect4(void);
+extern void player_apply_fire_defense_boost(void);
 extern void player_sync_position_to_map(void);
 extern void player_use_item(u8 item_id);
 extern void player_update(void);

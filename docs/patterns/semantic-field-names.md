@@ -302,3 +302,11 @@ matching numeric rows, equipment accumulation and damage call arguments.
 All remain unsigned halfwords at their established offsets. Holy attack and
 magic defense intentionally use different names because the retail labels
 differ; no universal fourth-component element is inferred.
+
+## Remaining player status meanings
+
+Four numbered timers now name curse, darkness, slowed movement and the
+fire-defense boost. The private darkness matrix and fire-defense helper share
+the evidence-backed names in source and curated identities. See the
+[status dossier](game-player-statuses.md) for masks, widths, direct consumers
+and distinct countdown endpoints.

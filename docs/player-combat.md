@@ -3,8 +3,10 @@
 This GAME.EXE campaign follows the player-facing half of the damage system from
 the component formula through direct and radial damage. It is a semantic WIP:
 the executable proves the component lanes and status bits. Retail menu assets
-identify status bit 2 as poison and the player attack/defense components.
-Other unresolved status labels remain numbered.
+identify poison, curse, darkness and the player attack/defense components.
+The remaining status behaviors are slowed movement and a fire-defense boost;
+their [timer evidence](patterns/game-player-statuses.md) preserves each distinct
+countdown and tuning value.
 
 ## Reviewed functions
 
@@ -51,10 +53,10 @@ unresolved in the curated inventory.
 | `0x800a07c2` | `player_state.poison_resistance` | `u16` | Random threshold checked before poison mask 4 is accepted; UI label is `毒`. |
 | `0x800a07c4` | `player_state.magic_defense` | `u16` | Magic defense, labelled 魔の魔法; distinct from the holy-attack label. |
 | `0x800a07c6` | `player_state.fire_defense` | `u16` | Fire defense, labelled 炎の魔法. |
-| `0x800a07c8` | `player_state.status_effect0_timer` | `s16` | Initialized to 600 and decremented for bit 0. |
-| `0x800a07ca` | `player_state.status_effect1_timer` | `s16` | Uses `-1` as inactive and is extended toward 970/1000 for bit 1. |
+| `0x800a07c8` | `player_state.curse_timer` | `s16` | Curse countdown; stat recalculation applies a 20-point physical-power penalty. |
+| `0x800a07ca` | `player_state.darkness_timer` | `s16` | Darkness countdown; 32-step fades at both ends and distinct 970/1000 refresh/initial values. |
 | `0x800a07cc` | `player_state.poison_timer` | `s16` | Initialized to 600 after the resistance check; one HP lost every 20 status updates. |
-| `0x800a07ce` | `player_state.status_effect3_timer` | `s16` | Initialized to 300 and decremented for bit 3. |
+| `0x800a07ce` | `player_state.slowed_timer` | `s16` | Slowed movement countdown; movement limit 36 instead of 180, turn limit 5 instead of 28. |
 
 The equipment/stat recalculation function at `0x80015714` clears and rebuilds
 all six resistance/defense halfwords from equipment records, which corroborates
@@ -64,7 +66,8 @@ lifecycle. The [damage-label evidence](patterns/game-player-damage-labels.md) jo
 cutting, striking, piercing and fire labels to their attack/defense fields.
 The fourth attack is labelled holy magic, while its defense counterpart has
 a different retail label and is named magic_defense. Generic damage payload
-arguments and the other status labels retain their unresolved context.
+arguments retain their unresolved context; player status names follow the
+separate timer and behavior evidence.
 
 ## Radial calls and unresolved ownership
 

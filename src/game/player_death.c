@@ -3,6 +3,11 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+enum {
+    CURSE_PHYSICAL_POWER_PENALTY = 20,
+    FIRE_DEFENSE_STATUS_BONUS = 10
+};
+
 DATA(0x80055810, 0x9)
 SoundRef player_sound_refs[3] = {
     {7, 0, 80},
@@ -76,12 +81,12 @@ void game_state_initialize(void)
     player_state.equipped_accessory_id = 0xff;
     player_set_equipment_slot(0, 0xff);
     player_select_magic(8);
-    player_state.status_effect4_timer = -1;
+    player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.light_effect_timer = -1;
-    player_state.status_effect3_timer = -1;
-    player_state.poison_timer = KF_POISON_TIMER_INACTIVE;
-    player_state.status_effect1_timer = -1;
-    player_state.status_effect0_timer = -1;
+    player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+    player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+    player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+    player_state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     cursor = MAP_WORLD_STATE_BYTES;
     count = 0x2133;
     do {
@@ -240,8 +245,8 @@ void player_recalculate_combat_stats(void)
     player_state.fire_defense = 0;
     player_state.physical_power = player_state.base_physical_power;
     player_state.magic = player_state.base_magic;
-    if (player_state.status_effect_flags & 1) {
-        power = player_state.physical_power - 20;
+    if (player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) {
+        power = player_state.physical_power - CURSE_PHYSICAL_POWER_PENALTY;
         if (power < 0) {
             power = 0;
         }
@@ -328,8 +333,8 @@ void player_recalculate_combat_stats(void)
     if (player_state.equipped_shield_id == 16) {
         player_state.physical_power -= 8;
     }
-    if (player_state.status_effect_flags & 0x10) {
-        player_state.fire_defense += 10;
+    if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
+        player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
     if (player_state.base_magic >= 37 && magic_records[0].learned != 0 && magic_records[1].learned == 0) {
         magic_records[1].learned = 1;
@@ -461,8 +466,8 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
 
 
 /*
- * Applies the four status bits (poison, curse blocked by accessory 0x31,
- * a resisted effect, and a short one), combines the five defended damage
+ * Applies curse, darkness (blocked by accessory 0x31), resisted poison
+ * and slowed movement, then combines the five defended damage
  * components in tenths, scales the sum, and subtracts it from the hit
  * points, flagging the update state on any damage.
  */
@@ -481,19 +486,20 @@ void player_apply_damage(
     s32 loss;
     s32 remaining;
 
-    if (status_effect_flags & 1) {
-        player_state.status_effect0_timer = 600;
-        player_state.status_effect_flags |= 1;
+    if (status_effect_flags & KF_PLAYER_STATUS_CURSE) {
+        player_state.curse_timer = KF_CURSE_DURATION_UPDATES;
+        player_state.status_effect_flags |= KF_PLAYER_STATUS_CURSE;
     }
-    if ((status_effect_flags & 2) && player_state.equipped_accessory_id != 0x31) {
-        if (player_state.status_effect1_timer != -1) {
-            if (player_state.status_effect1_timer < 970) {
-                player_state.status_effect1_timer = 970;
+    if ((status_effect_flags & KF_PLAYER_STATUS_DARKNESS)
+        && player_state.equipped_accessory_id != 0x31) {
+        if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
+            if (player_state.darkness_timer < KF_DARKNESS_REAPPLY_TIMER) {
+                player_state.darkness_timer = KF_DARKNESS_REAPPLY_TIMER;
             }
         } else {
-            player_state.status_effect1_timer = 1000;
+            player_state.darkness_timer = KF_DARKNESS_DURATION_UPDATES;
         }
-        player_state.status_effect_flags |= 2;
+        player_state.status_effect_flags |= KF_PLAYER_STATUS_DARKNESS;
     }
     if (status_effect_flags & KF_PLAYER_STATUS_POISON) {
         if (player_state.poison_resistance < (rand() * 100) >> 15) {
@@ -501,9 +507,9 @@ void player_apply_damage(
             player_state.status_effect_flags |= KF_PLAYER_STATUS_POISON;
         }
     }
-    if (status_effect_flags & 8) {
-        player_state.status_effect3_timer = 300;
-        player_state.status_effect_flags |= 8;
+    if (status_effect_flags & KF_PLAYER_STATUS_SLOWED) {
+        player_state.slowed_timer = KF_SLOWED_DURATION_UPDATES;
+        player_state.status_effect_flags |= KF_PLAYER_STATUS_SLOWED;
     }
     damage = player_calculate_damage_component(
         player_state.physical_power * 10, player_state.cutting_defense * 10, component0 * 10);

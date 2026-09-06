@@ -186,6 +186,9 @@ promotes a probe to a proven historical toolchain.
 - [game-player-damage-labels.md](game-player-damage-labels.md): retail glyphs
   identify fifteen player/armor attack and defense fields, preserving the
   different fourth attack/defense labels and doubled cutting contribution.
+- [game-player-statuses.md](game-player-statuses.md): curse, darkness, slowed
+  movement and fire-defense boost; distinct timers, fade ratios and tuning
+  limits preserved with exact symbolic and raw comparisons.
 - [game-player-poison.md](game-player-poison.md): the retail poison glyph
   identifies the player/equipment resistance fields, status bit and countdown;
   timing and literal-value limits are documented from the damage/update chain.

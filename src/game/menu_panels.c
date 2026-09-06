@@ -140,8 +140,8 @@ s32 menu_magic_panel(void)
     } else if (selection == 1) {
         player_state.status_effect_flags &= 3;
     } else if (selection == 2) {
-        player_state.status_effect_flags |= 0x10;
-        player_status_apply_effect4();
+        player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
+        player_apply_fire_defense_boost();
     } else if (selection == 3) {
         player_state.status_effect_flags &= 0xc;
         player_state.vitals.current_hp += player_state.magic * 3;

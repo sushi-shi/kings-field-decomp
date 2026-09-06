@@ -117,3 +117,8 @@ target relink verifies PSX 1/1, GAME 75/77 and OPEN 34/38, and artifact failures
 remain zero. The two GAME and four OPEN conflicting-section-base findings are
 unchanged. Post-test raw-word, section, source-value and inventory checks pass.
 No result is newly banked, and no tooling implementation or flake changed.
+
+The subsequent [remaining-status campaign](game-player-statuses.md) shares
+poison's former `KF_POISON_TIMER_INACTIVE` spelling as
+`KF_PLAYER_STATUS_TIMER_INACTIVE`. The value stays -1 and every poison
+countdown/zero-tick instruction remains unchanged.

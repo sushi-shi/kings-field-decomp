@@ -11,8 +11,19 @@ enum {
     POISON_FLASH_UPDATES = 2
 };
 
+enum {
+    DARKNESS_FADE_BITS = 5,
+    DARKNESS_FADE_STEPS = 1 << DARKNESS_FADE_BITS,
+    PLAYER_NORMAL_MOVEMENT_LIMIT = 180,
+    PLAYER_SLOWED_MOVEMENT_LIMIT = PLAYER_NORMAL_MOVEMENT_LIMIT / 5,
+    PLAYER_NORMAL_TURN_LIMIT = 28,
+    PLAYER_SLOWED_TURN_LIMIT = 5,
+    PLAYER_DARKNESS_FOG_NEAR = 5000,
+    PLAYER_NORMAL_FOG_NEAR = 11000
+};
+
 DATA(0x80055858, 0x20)
-static MATRIX player_status_effect1_color_matrix = {
+static MATRIX player_darkness_color_matrix = {
     {{666, 233, 1333}, {666, 233, 1333}, {666, 233, 1333}},
     {0, 0, 0}
 };
@@ -103,12 +114,12 @@ void player_update(void)
         if ((input & PADRright) && !(player_previous_input & PADRright)) {
             map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
-        if (player_state.status_effect_flags & 0x8) {
-            player_movement_velocity_limit = 36;
-            player_turn_step_limit = 5;
+        if (player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) {
+            player_movement_velocity_limit = PLAYER_SLOWED_MOVEMENT_LIMIT;
+            player_turn_step_limit = PLAYER_SLOWED_TURN_LIMIT;
         } else {
-            player_movement_velocity_limit = 180;
-            player_turn_step_limit = 28;
+            player_movement_velocity_limit = PLAYER_NORMAL_MOVEMENT_LIMIT;
+            player_turn_step_limit = PLAYER_NORMAL_TURN_LIMIT;
         }
         if (input & PADLup) {
             forward = player_state.motion_state.forward_velocity + (player_movement_velocity_limit >> 2);
@@ -414,28 +425,32 @@ void player_update(void)
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
     player_update_weapon_attack();
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
-    if (player_state.status_effect1_timer != -1) {
-        if (!(player_state.status_effect_flags & 0x2) && player_state.status_effect1_timer >= 33) {
-            player_state.status_effect1_timer = 32;
+    if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
+        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS)
+            && player_state.darkness_timer >= DARKNESS_FADE_STEPS + 1) {
+            player_state.darkness_timer = DARKNESS_FADE_STEPS;
         }
-        player_state.status_effect1_timer--;
-        if (player_state.status_effect1_timer == -1) {
-            player_state.status_effect_flags &= ~0x2;
+        player_state.darkness_timer--;
+        if (player_state.darkness_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_DARKNESS;
         } else {
-            fade = player_state.status_effect1_timer - 968;
+            fade = player_state.darkness_timer
+                - (KF_DARKNESS_DURATION_UPDATES - DARKNESS_FADE_STEPS);
             if (fade < 0) {
-                fade = 32 - player_state.status_effect1_timer;
+                fade = DARKNESS_FADE_STEPS - player_state.darkness_timer;
             }
             if (fade >= 0) {
-                lighting_set_color_matrix(&player_status_effect1_color_matrix, color_matrix_table, fade << 7);
-                fog_interpolate_near(5000, 11000, fade << 7);
+                lighting_set_color_matrix(&player_darkness_color_matrix, color_matrix_table,
+                    fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
+                fog_interpolate_near(PLAYER_DARKNESS_FOG_NEAR, PLAYER_NORMAL_FOG_NEAR,
+                    fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
             } else {
-                SetColorMatrix(&player_status_effect1_color_matrix);
-                fog_set_near(5000);
+                SetColorMatrix(&player_darkness_color_matrix);
+                fog_set_near(PLAYER_DARKNESS_FOG_NEAR);
             }
         }
     } else {
-        fog_set_near(11000);
+        fog_set_near(PLAYER_NORMAL_FOG_NEAR);
     }
     if (player_state.update_state != KF_PLAYER_UPDATE_NORMAL
         && player_state.update_state != KF_PLAYER_UPDATE_DYING) {
@@ -520,27 +535,27 @@ void player_update(void)
         }
         break;
     case 0x3f:
-        player_apply_damage(0, 0, 0, 4, 0, 0, 0x1000, 10);
+        player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, 0x1000, 10);
         break;
     }
-    if (player_state.status_effect3_timer != -1) {
-        if (!(player_state.status_effect_flags & 0x8)) {
-            player_state.status_effect3_timer = -1;
-            player_state.status_effect_flags &= ~0x8;
+    if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
+        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED)) {
+            player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
         } else {
-            player_state.status_effect3_timer--;
-            if (player_state.status_effect3_timer == -1) {
-                player_state.status_effect_flags &= ~0x8;
+            player_state.slowed_timer--;
+            if (player_state.slowed_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
+                player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
             }
         }
     }
-    if (player_state.poison_timer != KF_POISON_TIMER_INACTIVE) {
+    if (player_state.poison_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_POISON)) {
-            player_state.poison_timer = KF_POISON_TIMER_INACTIVE;
+            player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
             player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
         } else {
             player_state.poison_timer--;
-            if (player_state.poison_timer == KF_POISON_TIMER_INACTIVE) {
+            if (player_state.poison_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
                 player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
             } else {
                 phase = player_state.poison_timer % POISON_DAMAGE_INTERVAL_UPDATES;
@@ -553,28 +568,28 @@ void player_update(void)
             }
         }
     }
-    if (player_state.status_effect0_timer != -1) {
-        if (!(player_state.status_effect_flags & 0x1)) {
-            player_state.status_effect0_timer = 0;
-            player_state.status_effect_flags &= ~0x1;
+    if (player_state.curse_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
+        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE)) {
+            player_state.curse_timer = 0;
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_CURSE;
             player_recalculate_combat_stats();
-        } else if (player_state.status_effect0_timer == 0) {
-            player_state.status_effect_flags &= ~0x1;
+        } else if (player_state.curse_timer == 0) {
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_CURSE;
             player_recalculate_combat_stats();
-        } else if (player_state.status_effect0_timer == 600) {
+        } else if (player_state.curse_timer == KF_CURSE_DURATION_UPDATES) {
             player_recalculate_combat_stats();
         }
-        player_state.status_effect0_timer--;
+        player_state.curse_timer--;
     }
-    if (player_state.status_effect4_timer != -1) {
-        if (player_state.status_effect4_timer == 0) {
-            player_state.status_effect_flags &= ~0x10;
+    if (player_state.fire_defense_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
+        if (player_state.fire_defense_timer == 0) {
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
             player_recalculate_combat_stats();
-        } else if (player_state.status_effect4_timer == 500) {
+        } else if (player_state.fire_defense_timer == KF_FIRE_DEFENSE_DURATION_UPDATES) {
             player_recalculate_combat_stats();
         }
         lighting_set_active_color_matrix(KF_GAME_COLOR_DEFENSE_EFFECT);
-        player_state.status_effect4_timer--;
+        player_state.fire_defense_timer--;
     }
     if (player_state.equipped_weapon_id == 9) {
         lighting_apply_weapon9_environment();

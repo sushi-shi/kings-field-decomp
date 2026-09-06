@@ -145,7 +145,7 @@ void menu_draw_stats_header(void)
         gs.codes[4] = 0xc6;
     }
     i = 4;
-    if ((player_state.status_effect_flags & 8) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != 0) {
         gs.codes[4] = 0xc9;
         i = 3;
     }
@@ -153,11 +153,11 @@ void menu_draw_stats_header(void)
         gs.codes[i] = 0x88;
         i--;
     }
-    if ((player_state.status_effect_flags & 2) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != 0) {
         gs.codes[i] = 199;
         i--;
     }
-    if ((player_state.status_effect_flags & 1) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != 0) {
         gs.codes[i] = 200;
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);

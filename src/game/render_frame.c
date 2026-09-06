@@ -62,13 +62,13 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         hud_sprites[2].sprite.w = player_state.attack_charge_state.current / 100;
         hud_sprites[3].sprite.w = player_state.magic_charge / 100;
         flags = player_state.status_effect_flags;
-        if (flags & 1) {
+        if (flags & KF_PLAYER_STATUS_CURSE) {
             hud_sprites[7].state = 1;
-        } else if (flags & 2) {
+        } else if (flags & KF_PLAYER_STATUS_DARKNESS) {
             hud_sprites[6].state = 1;
         } else if (flags & KF_PLAYER_STATUS_POISON) {
             status_sprite->state = 1;
-        } else if (flags & 8) {
+        } else if (flags & KF_PLAYER_STATUS_SLOWED) {
             hud_sprites[5].state = 1;
         }
     } else {

@@ -2657,12 +2657,12 @@ GAME.EXE	0x8001994c	0x814c	0x80019950	mips_hi16_lo16	reachable-code	0x800a07ca	b
 GAME.EXE	0x80019974	0x8174	0x80019978	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80019984	0x8184	0x80019988	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x8001998c	0x818c		mips26	reachable-code	0x80019a18	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x800199bc	0x81bc	0x800199c0	mips_hi16_lo16	reachable-code	0x80055858	load	player_status_effect1_color_matrix	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x800199bc	0x81bc	0x800199c0	mips_hi16_lo16	reachable-code	0x80055858	load	player_darkness_color_matrix	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800199c4	0x81c4	0x800199c8	mips_hi16_lo16	reachable-code	0x80055dbc	load		lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800199d0	0x81d0		mips26	reachable-code	0x80020364	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800199e0	0x81e0		mips26	reachable-code	0x800203bc	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800199e8	0x81e8		mips26	reachable-code	0x80019a18	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x800199f0	0x81f0	0x800199f4	mips_hi16_lo16	reachable-code	0x80055858	load	player_status_effect1_color_matrix	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x800199f0	0x81f0	0x800199f4	mips_hi16_lo16	reachable-code	0x80055858	load	player_darkness_color_matrix	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800199f8	0x81f8		mips26	reachable-code	0x8004d7e4	load	SetColorMatrix	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80019a00	0x8200		mips26	reachable-code	0x80020400	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80019a08	0x8208		mips26	reachable-code	0x80019a18	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
@@ -4109,7 +4109,7 @@ GAME.EXE	0x800235d0	0x11dd0	0x800235d4	mips_hi16_lo16	reachable-code	0x800a07aa	
 GAME.EXE	0x800235d8	0x11dd8		mips26	reachable-code	0x80023650	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x800235e8	0x11de8	0x800235ec	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x800235f8	0x11df8	0x800235fc	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+sh	v0	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x80023600	0x11e00		mips26	instruction-word	0x80018858	load	player_status_apply_effect4	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x80023600	0x11e00		mips26	instruction-word	0x80018858	load	player_apply_fire_defense_boost	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80023608	0x11e08		mips26	reachable-code	0x80023650	load		j		control-flow-reviewed	reviewed	manual:game_menu_panels
 GAME.EXE	0x80023618	0x11e18	0x8002361c	mips_hi16_lo16	reachable-code	0x800a07aa	bss	player_state	lui+lhu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80023620	0x11e20	0x80023624	mips_hi16_lo16	reachable-code	0x800a07a8	bss	player_state	lui+lhu	a0	paired-reviewed	reviewed	manual:player_state-aggregate

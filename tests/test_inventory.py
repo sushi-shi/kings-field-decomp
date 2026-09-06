@@ -362,7 +362,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(player_state_fields["vitals"].offset, 0x10)
         self.assertEqual(player_state_fields["camera_position"].offset, 0xA4)
         self.assertEqual(player_state_fields["motion_state"].offset, 0xC0)
-        self.assertEqual(player_state_fields["status_effect4_timer"].offset, 0x50)
+        self.assertEqual(player_state_fields["fire_defense_timer"].offset, 0x50)
         self.assertEqual(player_state_fields["light_effect_timer"].offset, 0x52)
         self.assertEqual(player_state_fields["map_variant"].offset, 0x0C)
         self.assertEqual(
@@ -977,7 +977,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x8001882C]["channel"], "instruction-word")
         self.assertEqual(
             by_site[0x80023600]["target_name"],
-            "player_status_apply_effect4",
+            "player_apply_fire_defense_boost",
         )
 
     def test_player_warp_campaign_matches_curated_identities(self) -> None:
@@ -3175,10 +3175,10 @@ class InventoryTests(unittest.TestCase):
                 "poison_resistance",
                 "magic_defense",
                 "fire_defense",
-                "status_effect0_timer",
-                "status_effect1_timer",
+                "curse_timer",
+                "darkness_timer",
                 "poison_timer",
-                "status_effect3_timer",
+                "slowed_timer",
             ),
         )
         self.assertEqual(

@@ -1,4 +1,4 @@
-# Player update, lighting presets, and status timer 4
+# Player update, lighting presets, and fire-defense boost
 
 The GAME.EXE band at `0x800187a4..0x8001a29c` contains three small lighting
 wrappers, one player-status leaf, and the large `player_update` routine. The
@@ -12,16 +12,16 @@ boundary, not evidence that the status leaf or `player_update` shared the TU.
 | Address | Identity | Effect | Confirmed caller |
 | --- | --- | --- | --- |
 | `0x800187a4` | `lighting_apply_weapon9_environment` | Blends the current color matrix toward `color_matrix_table[4]` by `0x9c4` and installs half the current fog-near distance. | `player_update`, guarded by equipped weapon ID 9 |
-| `0x800187f0` | `lighting_apply_timed_player_effect` | Blends toward `color_matrix_table[5]` by `0xc00`. | `player_update`, while `player_light_effect_timer` is active |
+| `0x800187f0` | `lighting_apply_timed_player_effect` | Blends toward `color_matrix_table[5]` by `0xc00`. | `player_update`, while `player_state.light_effect_timer` is active |
 | `0x80018824` | `lighting_apply_color_preset6` | Blends toward `color_matrix_table[6]` by `0xc00`. | None decoded |
-| `0x80018858` | `player_status_apply_effect4` | Sets status bit 4 and installs a 500-frame timer. | The effect dispatcher at `0x8002317c` |
+| `0x80018858` | `player_apply_fire_defense_boost` | Sets the fire-defense boost flag and installs its 500-update timer. | menu_magic_panel at `0x8002317c` |
 
 All four C reconstructions are strict 100% object matches under the current
 `probe-gcc257-o2-g0` probe. This is a matching result, not proof that GCC 2.5.7
 or this optimization profile was the historical toolchain.
 
-The following `player_status_apply_effect4` remains separate: it mutates
-player status rather than lighting state and its only proven caller is the
+The following `player_apply_fire_defense_boost` remains separate: it mutates
+the fire-defense timer and flag; its only proven caller is the
 menu magic panel. The preceding reverse-death fade is likewise retained in the
 player-death unit because it owns a larger death-state transition sequence.
 
@@ -38,8 +38,8 @@ The two recovered timers are fields of the checked `0xe0`-byte
 
 | Offset | Field | Type | Observed lifecycle |
 | ---: | --- | --- | --- |
-| `0x50` | `player_status_effect4_timer` | `s16` | Initialized to `-1`, set to 500 with status bit 4, decremented by `player_update`, and clears the bit at zero. |
-| `0x52` | `player_light_effect_timer` | `s16` | Initialized to `-1`, set to 1000 by item use, decremented by `player_update`, and sampled by effect-model rendering. |
+| `0x50` | `player_state.fire_defense_timer` | `s16` | Initialized to `-1`, set to 500 with status bit 4, decremented by `player_update`, and clears the bit at zero. |
+| `0x52` | `player_state.light_effect_timer` | `s16` | Initialized to `-1`, set to 1000 by item use, decremented by `player_update`, and sampled by effect-model rendering. |
 
 The complete structure is declared in `include/kf/game_player.h`; every field
 extent is checked against `config/retail/structures.tsv` and
@@ -64,3 +64,8 @@ relocation tables:
 
 Per-function evidence, signatures, and final verdicts are recorded in
 `config/evidence/game_semantic_player_update.tsv`.
+
+The [status naming evidence](patterns/game-player-statuses.md) identifies the
+boost as +10 fire defense and explains the countdown/recalculation endpoints.
+It also records the darkness matrix, 32-step fades, curse and slowed controls.
+The original duration and strength tuning remain unknown.
