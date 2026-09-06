@@ -1,8 +1,18 @@
 #include <kf/address.h>
+#include <kf/game_math.h>
 #include <kf/audio.h>
 #include <kf/psyq_audio.h>
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
+
+enum {
+    GAME_SEQUENCE_BUFFER_BYTES = 0x3000,
+    GAME_SEQUENCE_VOLUME = 0x4b,
+    GAME_REVERB_DEPTH = 0x10,
+    GAME_SOUND_ATTENUATION_BOOST = 36,
+    GAME_SOUND_PAN_NARROW_THRESHOLD = 64,
+    GAME_SOUND_PAN_DIVISOR = 3000
+};
 
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
@@ -15,18 +25,19 @@ void audio_initialize(void)
     s32 index;
 
     SsInit();
-    SsSetTableSize((char *)audio_sequence_table, 2, 1);
-    SsSetTickMode(1);
+    SsSetTableSize((char *)audio_sequence_table,
+        KF_AUDIO_SEQUENCE_CAPACITY, KF_AUDIO_TRACKS_PER_SEQUENCE);
+    SsSetTickMode(SS_TICK60);
     SsStart();
-    SsSetMVol(0x7f, 0x7f);
-    SsUtSetReverbType(4);
+    SsSetMVol(KF_AUDIO_MAX_VOLUME, KF_AUDIO_MAX_VOLUME);
+    SsUtSetReverbType(SS_REV_TYPE_STUDIO_C);
     SsUtReverbOn();
-    SsUtSetReverbDepth(0x10, 0x10);
-    audio_state.sequence_buffer = memory_allocate(0x3000);
+    SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
+    audio_state.sequence_buffer = memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = 0;
-    index = 9;
+    index = KF_AUDIO_VOICE_SLOTS - 1;
     do {
-        audio_state.voice_slots.voice_ids[index] = -1;
+        audio_state.voice_slots.voice_ids[index] = KF_AUDIO_VOICE_INACTIVE;
     } while (--index >= 0);
 }
 
@@ -34,18 +45,18 @@ ADDRESS(0x80032984, 0xc8)
 void audio_load_vab(u8 *vab_header, u8 *vab_body)
 {
     audio_stop_sequence_fade();
-    audio_state.active_vab_id = SsVabOpenHead(vab_header, -1);
-    if (audio_state.active_vab_id == -1) {
+    audio_state.active_vab_id = SsVabOpenHead(vab_header, KF_AUDIO_VAB_AUTO);
+    if (audio_state.active_vab_id == KF_AUDIO_VAB_UNAVAILABLE) {
         printf("VAB headder open failed\n");
         return;
     }
     audio_state.vab_header = vab_header;
     audio_state.active_vab_id = SsVabTransBody(vab_body, audio_state.active_vab_id);
-    if (audio_state.active_vab_id == -1) {
+    if (audio_state.active_vab_id == KF_AUDIO_VAB_UNAVAILABLE) {
         printf("VAB body open failed\n");
         return;
     }
-    SsVabTransCompleted(1);
+    SsVabTransCompleted(SS_WAIT_COMPLETED);
 }
 
 ADDRESS(0x80032a4c, 0x110)
@@ -60,8 +71,8 @@ void audio_play_map_sequence(u8 sequence_id)
         if (cd_file_load_into(audio_state.sequence_buffer, path) == 0) {
             audio_state.sequence_id = SsSeqOpen(
                 (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);
-            SsSeqSetVol(audio_state.sequence_id, 0x4b, 0x4b);
-            SsSeqPlay(audio_state.sequence_id, 1, 0);
+            SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
+            SsSeqPlay(audio_state.sequence_id, SSPLAY_PLAY, SSPLAY_INFINITY);
             audio_state.sequence_active = 1;
         }
     }
@@ -73,7 +84,7 @@ void audio_stop_sequence_fade(void)
     s32 volume;
 
     if (audio_state.sequence_active == 1) {
-        volume = 0x4b;
+        volume = GAME_SEQUENCE_VOLUME;
         do {
             VSync(0);
             SsSeqSetVol(audio_state.sequence_id, volume, volume);
@@ -90,10 +101,10 @@ void audio_stop_sequence_master_fade(s32 fade_step)
     s32 volume;
 
     if (audio_state.sequence_active == 1) {
-        volume = 0x4b00;
+        volume = GAME_SEQUENCE_VOLUME << KF_FIXED8_BITS;
         do {
             VSync(0);
-            SsSetMVol(volume >> 8, volume >> 8);
+            SsSetMVol(volume >> KF_FIXED8_BITS, volume >> KF_FIXED8_BITS);
             volume -= fade_step;
         } while (volume > 0);
         SsSetMVol(0, 0);
@@ -118,7 +129,7 @@ void audio_close_vab(void)
     s16 *vab_id = &audio_state.active_vab_id;
 
     SsVabClose(*vab_id);
-    *vab_id = -1;
+    *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
     audio_state.vab_header = 0;
 }
 
@@ -130,9 +141,12 @@ u32 audio_play_spatial(
     s32 max_distance,
     s32 attenuation_distance)
 {
-    s32 delta_x = (position->vx - audio_state.listener_position.vx) >> 3;
-    s32 delta_y = (position->vy - audio_state.listener_position.vy) >> 3;
-    s32 delta_z = (position->vz - audio_state.listener_position.vz) >> 3;
+    s32 delta_x = (position->vx - audio_state.listener_position.vx)
+        >> KF_LENGTH_SQUARE_DOWNSHIFT;
+    s32 delta_y = (position->vy - audio_state.listener_position.vy)
+        >> KF_LENGTH_SQUARE_DOWNSHIFT;
+    s32 delta_z = (position->vz - audio_state.listener_position.vz)
+        >> KF_LENGTH_SQUARE_DOWNSHIFT;
     s32 distance;
     s32 attenuation;
     s32 level;
@@ -140,46 +154,50 @@ u32 audio_play_spatial(
     s32 left;
     s32 right;
 
-    distance = SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z) << 3;
+    distance = SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
+        << KF_LENGTH_SQUARE_DOWNSHIFT;
     if (distance >= max_distance) {
         return 0;
     }
-    attenuation = ((attenuation_distance - distance) << 7) / attenuation_distance;
-    level = (attenuation * volume) >> 7;
+    attenuation = ((attenuation_distance - distance) << KF_FIXED7_BITS) / attenuation_distance;
+    level = (attenuation * volume) >> KF_FIXED7_BITS;
     if (level < 0) {
         level = 0;
-    } else if (level >= 128) {
-        level = 127;
+    } else if (level >= KF_AUDIO_MAX_VOLUME + 1) {
+        level = KF_AUDIO_MAX_VOLUME;
     }
     angle = vector_xz_to_angle(
         position->vx - audio_state.listener_position.vx,
         audio_state.listener_position.vz - position->vz);
-    angle = (angle - audio_state.listener_rotation.vy + 1024) & 0xfff;
-    if (angle >= 2048) {
-        angle = 4096 - angle;
+    angle = (angle - audio_state.listener_rotation.vy + KF_ANGLE_QUARTER_TURN)
+        & KF_ANGLE_WRAP_MASK;
+    if (angle >= KF_ANGLE_HALF_TURN) {
+        angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
     if ((sound->tone & 0x80) == 1) {
-        attenuation += 36;
-        if (attenuation >= 128) {
-            attenuation = 127;
+        attenuation += GAME_SOUND_ATTENUATION_BOOST;
+        if (attenuation >= KF_AUDIO_MAX_VOLUME + 1) {
+            attenuation = KF_AUDIO_MAX_VOLUME;
         }
     }
-    if (attenuation >= 64) {
-        angle = (((angle - 512) * (256 - attenuation * 2)) >> 7) + 512;
+    if (attenuation >= GAME_SOUND_PAN_NARROW_THRESHOLD) {
+        angle = (((angle - KF_ANGLE_EIGHTH_TURN)
+            * (KF_FIXED7_ONE * 2 - attenuation * 2)) >> KF_FIXED7_BITS)
+            + KF_ANGLE_EIGHTH_TURN;
     }
-    left = (level * rsin(angle)) / 3000;
-    if (left >= 128) {
-        left = 127;
+    left = (level * rsin(angle)) / GAME_SOUND_PAN_DIVISOR;
+    if (left >= KF_AUDIO_MAX_VOLUME + 1) {
+        left = KF_AUDIO_MAX_VOLUME;
     }
-    right = (level * rcos(angle)) / 3000;
-    if (right >= 128) {
-        right = 127;
+    right = (level * rcos(angle)) / GAME_SOUND_PAN_DIVISOR;
+    if (right >= KF_AUDIO_MAX_VOLUME + 1) {
+        right = KF_AUDIO_MAX_VOLUME;
     }
     audio_play_voice(
         audio_state.active_vab_id,
         sound->program,
-        sound->tone & 0xf,
+        sound->tone & KF_SOUND_TONE_INDEX_MASK,
         sound->note,
         left,
         right);
@@ -192,7 +210,8 @@ u32 audio_play_spatial_default_range(
     const VECTOR *position,
     s16 volume)
 {
-    return audio_play_spatial(sound, position, volume, 0x3e80, 0x6d60);
+    return audio_play_spatial(sound, position, volume,
+        KF_AUDIO_DEFAULT_MAX_DISTANCE, KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE);
 }
 
 ADDRESS(0x80032fe8, 0x2c)
@@ -253,10 +272,10 @@ void audio_play_voice(
         return;
     }
     audio_voice_slot_index++;
-    if (audio_voice_slot_index == 10) {
+    if (audio_voice_slot_index == KF_AUDIO_VOICE_SLOTS) {
         audio_voice_slot_index = 0;
     }
-    if (audio_state.voice_slots.voice_ids[audio_voice_slot_index] != -1) {
+    if (audio_state.voice_slots.voice_ids[audio_voice_slot_index] != KF_AUDIO_VOICE_INACTIVE) {
         SsUtKeyOff(
             audio_state.voice_slots.voice_ids[audio_voice_slot_index],
             audio_state.voice_slots.vab_ids[audio_voice_slot_index],
@@ -278,15 +297,15 @@ s16 angle_shortest_delta(s32 first, s32 second)
     s32 difference;
     s16 signed_difference;
 
-    first &= 0xfff;
-    second &= 0xfff;
+    first &= KF_ANGLE_WRAP_MASK;
+    second &= KF_ANGLE_WRAP_MASK;
     difference = second - first;
     signed_difference = difference;
-    if (signed_difference >= 2048) {
-        return difference - 4096;
+    if (signed_difference >= KF_ANGLE_HALF_TURN) {
+        return difference - KF_ANGLE_FULL_TURN;
     }
-    if (signed_difference < -2047) {
-        return difference + 4096;
+    if (signed_difference < -KF_ANGLE_HALF_TURN + 1) {
+        return difference + KF_ANGLE_FULL_TURN;
     }
     return signed_difference;
 }

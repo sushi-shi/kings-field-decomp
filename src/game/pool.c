@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_math.h>
 #include <kf/game_asset.h>
 #include <kf/game_render.h>
 #include <kf/memory.h>
@@ -40,7 +41,7 @@ typedef struct KfMorphObject {
  */
 
 DATA(0x800910c0, 0xf0)
-KfPoolRecord pool_records[12];
+KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
 
 static inline void copy_vertices(SVECTOR *output, const SVECTOR *input, u16 count)
 {
@@ -79,7 +80,7 @@ u16 *render_bind_animated_instance(
         }
         asset_registry_select(asset_index);
         tmd_select_object_vertices(0);
-        return (u16 *)1;
+        return (u16 *)KF_ANIMATION_BIND_STATIC;
     }
 
     if (record != 0) {
@@ -104,7 +105,7 @@ check_record:
         goto find_keyframe;
     }
     pool_record_release(record);
-    record->clip_index = 0xff;
+    record->clip_index = KF_ANIMATION_CACHE_CLIP_INVALID;
     goto reinitialize_record;
 
 find_keyframe:
@@ -121,12 +122,12 @@ find_keyframe:
             keyframe_offsets++;
             phase_end += keyframe->duration;
             if (phase < phase_end) {
-                u32 forward_fraction = ((u32)(u16)(phase - phase_start) << 12)
+                u32 forward_fraction = ((u32)(u16)(phase - phase_start) << KF_FIXED12_BITS)
                     / keyframe->duration;
 
                 blend_fraction = forward_fraction;
                 if (keyframe->reverse != 0) {
-                    blend_fraction = 0x1000 - forward_fraction;
+                    blend_fraction = KF_FIXED12_ONE - forward_fraction;
                 }
                 goto update_vertex_cache;
             }
@@ -135,7 +136,7 @@ find_keyframe:
         }
     }
     keyframe_index--;
-    blend_fraction = 0x1000;
+    blend_fraction = KF_FIXED12_ONE;
 
 update_vertex_cache:
     if (record->clip_index == clip_index && record->keyframe_index == keyframe_index) {
@@ -157,7 +158,7 @@ update_vertex_cache:
                 (char *)asset_header + object_table[*morph_indices]);
             morph_indices++;
             gteMIMefunc(&record->cached_vertices[morph_object->base_vertex],
-                        morph_object->deltas, morph_object->vertex_count, 0x1000);
+                        morph_object->deltas, morph_object->vertex_count, KF_FIXED12_ONE);
         }
     }
 
@@ -183,7 +184,7 @@ blend_scratch:
         ((u32 *)scratch_vertex)[1] = saved_z_pad_word;
     }
     tmd_set_current_vertices(&tmd_morph_scratch[1]);
-    record->state = 2;
+    record->state = KF_ANIMATION_CACHE_LIVE;
     return (u16 *)record;
 }
 
@@ -191,10 +192,10 @@ ADDRESS(0x80020978, 0x30)
 void pool_reset(void)
 {
     KfPoolRecord *record = pool_records;
-    u16 records_left = 12;
+    u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
-        record->state = 0;
+        record->state = KF_ANIMATION_CACHE_FREE;
         record->cached_vertices = 0;
         record++;
     } while (--records_left != 0);
@@ -204,11 +205,11 @@ ADDRESS(0x800209a8, 0x3c)
 void pool_mark_allocated(void)
 {
     KfPoolRecord *record = pool_records;
-    u16 records_left = 12;
+    u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
-        if (record->state != 0) {
-            record->state = 1;
+        if (record->state != KF_ANIMATION_CACHE_FREE) {
+            record->state = KF_ANIMATION_CACHE_STALE;
         }
         record++;
     } while (--records_left != 0);
@@ -217,7 +218,7 @@ void pool_mark_allocated(void)
 ADDRESS(0x800209e4, 0x48)
 void pool_record_release(KfPoolRecord *record)
 {
-    record->state = 0;
+    record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = 0;
     if (record->cached_vertices != 0) {
         free(record->cached_vertices);
@@ -236,8 +237,8 @@ void pool_release_all(void)
     KfPoolRecord *record = pool_records;
     s16 records_left;
 
-    for (records_left = 11; records_left != -1; records_left--) {
-        if (record->state != 0) {
+    for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
+        if (record->state != KF_ANIMATION_CACHE_FREE) {
             pool_record_release(record);
         }
         record++;
@@ -253,10 +254,10 @@ ADDRESS(0x80020a98, 0x6c)
 void pool_release_stale(void)
 {
     KfPoolRecord *record = pool_records;
-    u16 records_left = 12;
+    u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
-        if (record->state == 1) {
+        if (record->state == KF_ANIMATION_CACHE_STALE) {
             pool_record_release(record);
         }
         record++;
@@ -267,11 +268,11 @@ ADDRESS(0x80020b04, 0x48)
 KfPoolRecord *pool_allocate(void)
 {
     KfPoolRecord *record = pool_records;
-    u16 records_left = 12;
+    u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
-        if (record->state == 0) {
-            record->clip_index = 0xff;
+        if (record->state == KF_ANIMATION_CACHE_FREE) {
+            record->clip_index = KF_ANIMATION_CACHE_CLIP_INVALID;
             return record;
         }
         record++;

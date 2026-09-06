@@ -127,3 +127,93 @@ with its original effect header, then compares the resolved unit: only
 `.debug_line` differs. The improved strict result, 96.93957%, is retained.
 This integration brings master into the worktree; the full naming campaign
 has not yet been integrated into master.
+
+## Animation cache, camera, and audio plan
+
+The next related batch follows the animation-cache lifecycle, the GAME/OPEN
+camera interpolators, and their shared angle/distance operations in spatial
+audio. The existing per-function dossiers cover their complete claims and
+references. The comparison baseline is refreshed at `893a3fa`, including the
+incoming dispatcher improvements. Replace only established states, capacities,
+fixed-point scales, angle units, and audio settings; use the pinned LIBSND
+spellings for SDK modes. Preserve the GAME tone-bit comparison exactly even
+though testing `(tone & 0x80) == 1` cannot succeed. No behavior correction is
+part of this batch.
+
+Check each rebuilt object's non-debug sections and strict function results
+against this baseline. Header array bounds may use named integer constants;
+the inventory must resolve them to the same physical extents and reject
+unresolved bounds rather than omit fields.
+
+The animation cache has twelve records: reset/release stores free (0), the
+per-frame mark stores stale (1), and a successful bind stores live (2). The
+next stale sweep frees only untouched records. Clip 0xff invalidates cached
+keyframe selection; the pointer-valued return 1 reports a static asset. These
+contracts are now named in `pool.h`. The clip and morph header fields still
+lack semantic consumers and retain their unresolved spellings.
+
+Both camera interpolators keep four fractional bits, reduce coordinates by
+three bits before squaring, and restore the resulting distance scale. The
+serialized X terminator and the runtime finished-frame sentinel both encode
+-1, with separate names for the two roles. Shortest-angle helpers retain the
+asymmetric half-turn endpoints exactly.
+
+Audio keeps ten reusable voice slots, two sequence table entries and one
+track per sequence. GAME allocates 0x3000 sequence bytes, plays sequences at
+volume 75, uses studio-C reverb with depth 16, and divides panning products by
+3000. OPEN allocates 0x4800 bytes, uses volume 80, hall reverb depth 48, waits
+100 VSync calls after VAB transfer, and fades master volume by +8/-4. Spatial
+defaults are a 16000-unit cutoff and 28000-unit attenuation distance. These
+are observed settings, not claims about original author identifiers. The
+attenuation ratio has seven fractional bits; GAME narrows panning above 64,
+while OPEN equalizes its channels at 96. GAME's unreachable tone-bit branch
+still contains its original +36 adjustment.
+
+The pinned `psyq/include/LIBSND.H` defines `SS_TICK60`, the two reverb modes,
+`SSPLAY_PLAY`, `SSPLAY_INFINITY`, and `SS_WAIT_COMPLETED` with the exact retail
+arguments. VAB -1 distinguishes automatic slot selection at open from an
+unavailable result/closed handle; voice -1 means an inactive reusable slot.
+Header array dimensions are resolved from explicit integer enumerators and
+remain numeric physical extents in the curated structure inventory.
+
+The remaining 133 inline literals in these functions have these reasons.
+`opening_poll_input` is outside this batch; its six input-domain literals
+remain assigned to the controller audit.
+
+| Sites | Values | Reason for retaining inline |
+| --- | --- | --- |
+| Camera begin functions | Index/assignment 0 | Select the first serialized point and initialize the zero-based point index. |
+| Shortest-angle helpers | `+ 1` | Inclusive-endpoint adjustment to the named negative half-turn boundary. |
+| Pool trailing arrays | Extent 1 | C89 variable-tail declaration idiom for keyframe offsets, morph indices and vertex deltas; this is not a one-element resource limit. |
+| Pool pointer/animation-data checks and stores | 0 | Null pointer or absent animation-data offset; no lifecycle state is represented by these sites. |
+| Pool countdown loops | 0, -1, `capacity - 1` | Exhaustion and last zero-based index in their existing pre/post-decrement loop forms. |
+| Pool phase accumulation and reverse predicate | 0 | Start of the duration sum and a Boolean reverse flag. |
+| Pool model binding | Object index 0 | The first TMD object is selected; there is no established asset-specific identity for it. |
+| Pool allocation | Shift 3 | Convert vertex count to bytes for eight-byte SDK `SVECTOR`; retaining the shift preserves the existing integer expression and promotions. |
+| Pool scratch blend | Indices 0/1 and `vertex_count + 1` | Two 32-bit lanes form one SDK vector; the scratch's leading vector temporarily overlays the morph header and is restored after blending one extra vector. |
+| Audio sequence-active and OPEN fade flags | 0/1 | Boolean clear/set/test, including the explicit request for immediate stop. |
+| Audio pointer tests/stores | 0 | Null optional listener transform or cleared VAB header. |
+| Audio volume initialization, bounds and mute calls | 0 | Silence and the arithmetic lower bound of volume/fade counters. |
+| Audio playback returns | 0/1 | Boolean result: sound was out of range or was issued. |
+| Audio sound selector check | Three zero fields | The empty program/tone/note selector suppresses playback. |
+| Audio `SsUtKeyOn` | 0 | No fine pitch offset is added to the selected note. |
+| Audio `VSync` | 0 | The SDK's wait-for-next-vertical-sync argument; retaining the direct API value requires no project mode invention. |
+| Audio load results and OPEN failure exit | 0 | CD loader success code and the retail process exit status, respectively. The existing exit status on failure is preserved. |
+| Audio ring and fade countdowns | Index 0, `- 1`, -1 | Wrap to the first voice slot and preserve the inclusive countdown endpoints. |
+| Audio maximum-volume tests | `+ 1` | Exclusive upper bound above the named maximum. |
+| Audio pan formulas | Shift 1 and multipliers 2 | Halve the folded angle and scale the narrowing coefficient by two; these are arithmetic factors, not independent tuning parameters. |
+| GAME tone test | `0x80`, comparison 1 | Retail masks the high bit then compares it to 1, so the branch is unreachable. A behavioral flag name would imply an unsupported meaning; both operands remain visible. |
+| GAME sequence filename | Extent 20, indices 6/1, `'0'` | Preserve the original stack array extent; indices select the sequence and floor digits in the literal template, and the character is the decimal digit origin. |
+| GAME/OPEN `audio_key_off_mask` | Indices 0/2, shift 8 | Preserve the actual byte selection passed to the SDK's two voice-mask arguments, including the unused middle byte. The shift positions the selected byte rather than defining a gameplay option. |
+
+Retail claim addresses/extents remain literal ownership evidence as in the
+earlier batches. New enum initializer values define the documented constants
+and require no second layer of aliases. Every compiled non-debug section and
+the strict objdiff report are unchanged against `893a3fa`; seven objects have
+only changed debug-line metadata.
+
+Validation: lint, all 635 repository tests (nine local prerequisites skipped),
+and `nix flake check -L` pass. Full `kf build` was run and retains the existing
+data ownership/placement failures, including two conflicting GAME target
+section bases. No instruction, relocation, initialized byte, or strict match
+result changed in this batch.

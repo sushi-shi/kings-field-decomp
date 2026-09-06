@@ -13,6 +13,19 @@
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 
+enum {
+    KF_AUDIO_VOICE_SLOTS = 10,
+    KF_AUDIO_MAX_VOLUME = 0x7f,
+    KF_AUDIO_DEFAULT_MAX_DISTANCE = 16000,
+    KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE = 28000,
+    KF_AUDIO_SEQUENCE_CAPACITY = 2,
+    KF_AUDIO_TRACKS_PER_SEQUENCE = 1,
+    KF_AUDIO_VOICE_INACTIVE = -1,
+    KF_AUDIO_VAB_AUTO = -1,
+    KF_AUDIO_VAB_UNAVAILABLE = -1,
+    KF_SOUND_TONE_INDEX_MASK = 0xf
+};
+
 typedef struct SoundRef {
     u8 program;
     u8 tone;
@@ -20,11 +33,11 @@ typedef struct SoundRef {
 } SoundRef;
 
 typedef struct KfAudioVoiceSlots {
-    s16 voice_ids[10];
-    s16 vab_ids[10];
-    s16 programs[10];
-    s16 tones[10];
-    s16 notes[10];
+    s16 voice_ids[KF_AUDIO_VOICE_SLOTS];
+    s16 vab_ids[KF_AUDIO_VOICE_SLOTS];
+    s16 programs[KF_AUDIO_VOICE_SLOTS];
+    s16 tones[KF_AUDIO_VOICE_SLOTS];
+    s16 notes[KF_AUDIO_VOICE_SLOTS];
 } KfAudioVoiceSlots;
 
 typedef struct KfAudioState {

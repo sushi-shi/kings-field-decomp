@@ -75,6 +75,11 @@ typedef struct KfMapObject {
  * runtime interpolator. The fourth vector lane and two trailing halfwords
  * remain unresolved.
  */
+enum {
+    KF_CAMERA_PATH_END_X = -1,
+    KF_CAMERA_PATH_FINISHED = -1
+};
+
 typedef struct KfCameraPathPoint {
     VECTOR position;
     SVECTOR rotation;

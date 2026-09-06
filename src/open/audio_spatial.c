@@ -4,6 +4,10 @@
 #include <kf/open_audio.h>
 #include <kf/psyq_audio.h>
 
+enum {
+    OPEN_SOUND_EQUAL_PAN_THRESHOLD = 96
+};
+
 ADDRESS(0x80019f44, 0x1e8)
 u32 audio_play_spatial(
     const SoundRef *sound,
@@ -12,9 +16,9 @@ u32 audio_play_spatial(
     s32 max_distance,
     s32 attenuation_distance)
 {
-    s32 delta_x = (position->vx - audio_state.listener_position.vx) >> 3;
-    s32 delta_y = (position->vy - audio_state.listener_position.vy) >> 3;
-    s32 delta_z = (position->vz - audio_state.listener_position.vz) >> 3;
+    s32 delta_x = (position->vx - audio_state.listener_position.vx) >> KF_LENGTH_SQUARE_DOWNSHIFT;
+    s32 delta_y = (position->vy - audio_state.listener_position.vy) >> KF_LENGTH_SQUARE_DOWNSHIFT;
+    s32 delta_z = (position->vz - audio_state.listener_position.vz) >> KF_LENGTH_SQUARE_DOWNSHIFT;
     s32 attenuation;
     s32 level;
     s32 angle;
@@ -23,27 +27,27 @@ u32 audio_play_spatial(
 
     attenuation =
         SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
-        << 3;
+        << KF_LENGTH_SQUARE_DOWNSHIFT;
     if (attenuation >= max_distance) {
         return 0;
     }
     attenuation =
-        ((attenuation_distance - attenuation) << 7) / attenuation_distance;
-    level = (attenuation * volume) >> 7;
+        ((attenuation_distance - attenuation) << KF_FIXED7_BITS) / attenuation_distance;
+    level = (attenuation * volume) >> KF_FIXED7_BITS;
     angle = vector_xz_to_angle(
         position->vx - audio_state.listener_position.vx,
         audio_state.listener_position.vz - position->vz);
-    angle = (angle - audio_state.listener_rotation.vy + 1024) & 0xfff;
-    if (angle >= 2048) {
-        angle = 4096 - angle;
+    angle = (angle - audio_state.listener_rotation.vy + KF_ANGLE_QUARTER_TURN) & KF_ANGLE_WRAP_MASK;
+    if (angle >= KF_ANGLE_HALF_TURN) {
+        angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
-    if (attenuation >= 96) {
+    if (attenuation >= OPEN_SOUND_EQUAL_PAN_THRESHOLD) {
         left = attenuation;
         right = attenuation;
     } else {
-        left = (level * rsin(angle)) >> 12;
-        right = (level * rcos(angle)) >> 12;
+        left = (level * rsin(angle)) >> KF_FIXED12_BITS;
+        right = (level * rcos(angle)) >> KF_FIXED12_BITS;
     }
     audio_play_voice(
         audio_state.active_vab_id,
@@ -61,7 +65,8 @@ u32 audio_play_spatial_default_range(
     const VECTOR *position,
     s16 volume)
 {
-    return audio_play_spatial(sound, position, volume, 0x3e80, 0x6d60);
+    return audio_play_spatial(sound, position, volume,
+        KF_AUDIO_DEFAULT_MAX_DISTANCE, KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE);
 }
 
 ADDRESS(0x8001a15c, 0x2c)

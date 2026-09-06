@@ -11,10 +11,10 @@ void audio_play_voice(
         return;
     }
     audio_voice_slot_index++;
-    if (audio_voice_slot_index == 10) {
+    if (audio_voice_slot_index == KF_AUDIO_VOICE_SLOTS) {
         audio_voice_slot_index = 0;
     }
-    if (audio_state.voice_slots.voice_ids[audio_voice_slot_index] != -1) {
+    if (audio_state.voice_slots.voice_ids[audio_voice_slot_index] != KF_AUDIO_VOICE_INACTIVE) {
         SsUtKeyOff(
             audio_state.voice_slots.voice_ids[audio_voice_slot_index],
             audio_state.voice_slots.vab_ids[audio_voice_slot_index],
@@ -31,4 +31,4 @@ void audio_play_voice(
 }
 
 DATA(0x80037304, 0x4)
-s32 audio_voice_slot_index = 9;
+s32 audio_voice_slot_index = KF_AUDIO_VOICE_SLOTS - 1;

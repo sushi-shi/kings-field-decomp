@@ -408,10 +408,13 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         r"(?:[A-Za-z_]\w*)?\s*;",
         re.DOTALL,
     )
+    array_bound = r"(?:0x[0-9a-fA-F]+|\d+|[A-Za-z_]\w*)"
     declaration_pattern = re.compile(
-        r"(.+?)\s+(\**)([A-Za-z_]\w*)((?:\s*\[\s*(?:0x[0-9a-fA-F]+|\d+)\s*\])*)"
+        rf"(.+?)\s+(\**)([A-Za-z_]\w*)((?:\s*\[\s*{array_bound}\s*\])*)"
     )
-    array_pattern = re.compile(r"\[\s*(0x[0-9a-fA-F]+|\d+)\s*\]")
+    array_pattern = re.compile(rf"\[\s*({array_bound})\s*\]")
+    enum_pattern = re.compile(r"\benum(?:\s+[A-Za-z_]\w*)?\s*\{([^{}]*)\}", re.DOTALL)
+    integer_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*(0x[0-9a-fA-F]+|\d+)")
     checked_headers = (
         REPO / "include/kf/game_types.h",
         REPO / "include/kf/audio.h",
@@ -439,8 +442,20 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     # Only unions embedded in an inventoried struct become layout owners.
     # Standalone packet/formatting views are outside this inventory, as before.
     definitions = {}
+    constants: dict[str, int] = {}
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
+        text = re.sub(r"//[^\n]*", "", text)
+        # Resolve explicit integer enumerators only. Other C expressions are
+        # rejected when used as bounds; never guess an inventory's byte extent.
+        for enum in enum_pattern.finditer(text):
+            for enumerator in enum[1].split(","):
+                constant = integer_enumerator.fullmatch(enumerator.strip())
+                if constant:
+                    constant_name, value = constant.groups()
+                    if constant_name in constants:
+                        raise ValueError(f"{path}: duplicate checked constant {constant_name}")
+                    constants[constant_name] = int(value, 0)
         for match in definition_pattern.finditer(text):
             kind, name, body = match.groups()
             if name in definitions:
@@ -483,13 +498,26 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                         f"{path}: unknown field type {datatype!r} in {name}.{field_name}"
                     )
                 count = 1
-                dimensions = array_pattern.findall(arrays)
-                for dimension in dimensions:
-                    count *= int(dimension, 0)
+                dimensions = []
+                for bound in array_pattern.findall(arrays):
+                    if bound[0].isdigit():
+                        dimension = int(bound, 0)
+                    elif bound in constants:
+                        dimension = constants[bound]
+                    else:
+                        raise ValueError(
+                            f"{path}: unresolved array bound {bound!r} in {name}.{field_name}"
+                        )
+                    if dimension <= 0:
+                        raise ValueError(
+                            f"{path}: nonpositive array bound {bound!r} in {name}.{field_name}"
+                        )
+                    dimensions.append(dimension)
+                    count *= dimension
                 size = base_size * count
                 field_offset = 0 if kind == "union" else _align(offset, base_alignment)
                 if dimensions:
-                    display_type += "".join(f"[{int(value, 0)}]" for value in dimensions)
+                    display_type += "".join(f"[{value}]" for value in dimensions)
                 fields.append(
                     HeaderFieldLayout(field_offset, size, field_name, display_type)
                 )

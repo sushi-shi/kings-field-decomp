@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_math.h>
 #include <kf/open_opening_helpers.h>
 #include <kf/psyq_pad.h>
 
@@ -25,15 +26,15 @@ s16 angle_shortest_delta(s32 first, s32 second)
     s32 difference;
     s16 signed_difference;
 
-    first &= 0xfff;
-    second &= 0xfff;
+    first &= KF_ANGLE_WRAP_MASK;
+    second &= KF_ANGLE_WRAP_MASK;
     difference = second - first;
     signed_difference = difference;
-    if (signed_difference >= 2048) {
-        return difference - 4096;
+    if (signed_difference >= KF_ANGLE_HALF_TURN) {
+        return difference - KF_ANGLE_FULL_TURN;
     }
-    if (signed_difference < -2047) {
-        return difference + 4096;
+    if (signed_difference < -KF_ANGLE_HALF_TURN + 1) {
+        return difference + KF_ANGLE_FULL_TURN;
     }
     return signed_difference;
 }

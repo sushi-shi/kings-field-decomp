@@ -48,6 +48,33 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_named_array_extents_preserve_physical_layout_and_reject_unknowns(self) -> None:
+        declarations = """
+            enum { ROWS = 3, COLUMNS = 0x5, EMPTY = 0, EXPRESSION = ROWS + 1 };
+            typedef struct ExampleGrid {
+                u8 prefix;
+                u16 cells[ROWS][COLUMNS];
+                u32 suffix;
+            } ExampleGrid;
+        """
+
+        def read_header(path):
+            return declarations if path.name == "game_types.h" else ""
+
+        with patch("scripts.kf.inventory.Path.read_text", read_header):
+            layout = _header_structure_layouts()["ExampleGrid"]
+        self.assertEqual((layout.size, layout.alignment), (36, 4))
+        self.assertEqual([(f.offset, f.size, f.datatype) for f in layout.fields],
+                         [(0, 1, "u8"), (2, 30, "u16[3][5]"), (32, 4, "u32")])
+        for bound, error in (("MISSING", "unresolved"), ("EXPRESSION", "unresolved"),
+                             ("EMPTY", "nonpositive")):
+            with self.subTest(bound=bound):
+                broken = declarations.replace("cells[ROWS]", f"cells[{bound}]")
+                with patch("scripts.kf.inventory.Path.read_text",
+                           lambda path: broken if path.name == "game_types.h" else ""):
+                    with self.assertRaisesRegex(ValueError, error + " array bound"):
+                        _header_structure_layouts()
+
     def test_union_storage_overlaps_and_rounds_up_for_enclosing_struct(self) -> None:
         declarations = """
             typedef union ExamplePayload {

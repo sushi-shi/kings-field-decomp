@@ -10,6 +10,15 @@
 
 struct KfMorphObject;
 
+enum {
+    KF_ANIMATION_CACHE_CAPACITY = 12,
+    KF_ANIMATION_CACHE_FREE = 0,
+    KF_ANIMATION_CACHE_STALE = 1,
+    KF_ANIMATION_CACHE_LIVE = 2,
+    KF_ANIMATION_CACHE_CLIP_INVALID = 0xff,
+    KF_ANIMATION_BIND_STATIC = 1
+};
+
 typedef struct KfPoolRecord {
     s16 state;
     u16 asset_index;
@@ -20,7 +29,7 @@ typedef struct KfPoolRecord {
     struct KfPoolRecord **owner_slot;
 } KfPoolRecord;
 
-extern KfPoolRecord pool_records[12];
+extern KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
 
 /* Returns zero on pool exhaustion, one for a static asset, or the live record. */
 extern u16 *render_bind_animated_instance(
