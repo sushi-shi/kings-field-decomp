@@ -289,6 +289,82 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                                 self.assertNotEqual(wrong, expected)
                                 self.assertEqual(same_calls, calls)
 
+    def test_polygon_owner_recovers_addresses_without_claiming_array_capacity(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        unit = manifest.by_name()['game.render_enqueue']
+        names = {'render_enqueue_tmd', 'render_enqueue_model', 'render_enqueue_map',
+                 'render_enqueue_sprite'}
+        source = candidate_source(unit, names)
+        self.assertEqual(source.count('= tmd_projected_vertices;'), 3)
+        source = source.replace(
+            '= tmd_projected_vertices;',
+            '= (KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318;')
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        data['graphics_owner_probe'] = ORIGIN
+        self.assertEqual(ORIGIN + FIELDS['unknown_projection_morph_20318'], 0x800911B0)
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        # Observed complete-body residues. These are not permitted masks for banking.
+        spills = {
+            'render_enqueue_model': {
+                0x44: (0xAFA80020, 0xAFA80028), 0x58: (0x8FA30020, 0x8FA30028),
+                0x64: (0xAFA80020, 0xAFA80028), 0xA0: (0xAFA80028, 0xAFA80020),
+                0x68C: (0x8FA80028, 0x8FA80020), 0x6A0: (0x8FA20020, 0x8FA20028),
+                0x6B4: (0xAFA80020, 0xAFA80028),
+            },
+            'render_enqueue_map': {
+                0x58: (0xAFA20018, 0xAFA20020), 0x9C: (0xAFA70020, 0xAFA70018),
+                0x1A8: (0x8FA70018, 0x8FA70020), 0x318: (0x8FA70018, 0x8FA70020),
+                0x3C8: (0x8FA70020, 0x8FA70018),
+            },
+        }
+        pairs = {'render_enqueue_tmd': 36, 'render_enqueue_model': 10,
+                 'render_enqueue_map': 6, 'render_enqueue_sprite': 7}
+        first_pass = {}
+        for loop_local in (False, True):
+            candidate = source
+            if loop_local:
+                self.assertEqual(candidate.count('    u32 header;\n'), 3)
+                candidate = candidate.replace('    u32 header;\n', '').replace(
+                    '        header = *(u32 *)packet;', '        u32 header = *(u32 *)packet;')
+            with self.subTest(loop_local=loop_local), tempfile.TemporaryDirectory() as directory:
+                obj = self.compile(Path(directory), unit, candidate)
+                for claim in unit.functions:
+                    if claim.symbol not in names:
+                        continue
+                    with self.subTest(function=claim.symbol):
+                        actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
+                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                     image.require(claim.va, claim.body_size)))
+                        expected_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
+                                          | ((word & 0x3FFFFFF) << 2)
+                                          for i, word in enumerate(expected) if word >> 26 == 3]
+                        self.assertEqual(calls, expected_calls)
+                        self.assertEqual(len(addresses), pairs[claim.symbol])
+                        self.assertEqual(actual[-12:], expected[-12:])
+                        if claim.symbol == 'render_enqueue_sprite':
+                            self.assertEqual(actual, expected)
+                        elif claim.symbol in spills:
+                            self.assertNotEqual(actual, expected)
+                            self.assertEqual(len(actual), len(expected))
+                            differences = {i * 4: (a, b) for i, (a, b) in enumerate(zip(actual, expected))
+                                           if a != b}
+                            self.assertEqual(differences, spills[claim.symbol])
+                        else:
+                            self.assertEqual(len(actual) * 4, 3900)
+                            self.assertEqual(actual[:17], expected[:17])
+                            self.assertEqual((actual[17], expected[17]), (0xAFA80020, 0xAFA80028))
+                            self.assertEqual(addresses[-1], 0x80090EBC)
+                        shifted = dict(data, graphics_owner_probe=ORIGIN + 4)
+                        wrong, same_calls, _ = linked_words(obj, unit, claim, shifted, functions)
+                        self.assertNotEqual(wrong, actual)
+                        self.assertEqual(same_calls, calls)
+                        if loop_local:
+                            self.assertEqual(actual, first_pass[claim.symbol])
+                        else:
+                            first_pass[claim.symbol] = actual
+
 
 if __name__ == '__main__':
     unittest.main()

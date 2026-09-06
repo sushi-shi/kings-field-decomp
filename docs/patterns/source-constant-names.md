@@ -684,3 +684,51 @@ pass. The full build retains the existing data-placement/ownership failures.
 All 112 object files retain identical non-debug sections and all 484 strict
 scores are unchanged. Thirty-three objects have debug-line-only differences
 relative to 893a3fa. No function is newly banked.
+
+## Incoming renderer reconstruction reconciliation
+
+Function Match Plan: integrate the four committed renderer improvements
+through master `c518cc5` into the naming worktree. Resolve the one overlapping
+source from that committed renderer, preserving its repaired allocation
+exits, twelve-mode TMD dispatch, signed model-mode switch, guarded projection
+base lifetimes, shared lighting/depth tails, SDK sprite output type and
+transient sprite depth expression. Reapply only the already evidenced TMD,
+ordering-table, texture-brightness and fixed-point constant names.
+
+The incoming map/model/TMD/sprite dossiers were read with the source diff
+and existing image-qualified retail evidence. Their four supported partial
+results are respectively 98.770996%, 93.126690%, 98.932236% and 93.972980%.
+Compile the exact incoming C as an independent control under the merged
+headers/configuration, then require the named version to differ only in
+debug-line information. Require all other object contents and strict scores
+to remain unchanged from the preceding naming baseline. Keep the incoming
+relocation/table-ownership corrections and their regression controls.
+
+After that comparison, establish a separate baseline for later naming
+batches without overwriting the earlier 893a3fa snapshot. This imports
+committed user work into the isolated branch; final integration into master
+still waits for completion of the full naming campaign.
+
+The reconciled renderer differs from the independently compiled literal
+`c518cc5` source only in `.debug_line`. All other 111 objects retain their
+non-debug contents from 893a3fa. Exactly four of 484 score rows change:
+
+| GAME function | Earlier baseline | Imported result |
+| --- | ---: | ---: |
+| `render_enqueue_tmd` | 52.039013% | 98.932236% |
+| `render_enqueue_model` | 60.490950% | 93.126690% |
+| `render_enqueue_map` | 17.954199% | 98.770996% |
+| `render_enqueue_sprite` | 88.263510% | 93.972980% |
+
+All other 480 rows and every banked exact are unchanged. The earlier model
+comparison-tree audit is superseded by the incoming signed four-case switch;
+its named modes preserve that switch. The eight-file literal audit now has
+254 entries, all covered by the same positional, arithmetic, Boolean and
+storage reasons above. No new unexplained literal category is introduced.
+
+All 642 repository tests pass with nine skips. Lint, whitespace checks and
+flake checks pass; the flake sandbox runs the same 642 tests with 129 skips.
+The full build still reports the pre-existing data-placement/ownership
+failures. A separate `build/constant-names/post-renderer-merge/` baseline
+records all 112 objects, the complete strict report and 484 score rows for
+subsequent naming work. The original post-merge baseline is retained.
