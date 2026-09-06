@@ -70,9 +70,10 @@ attack update. All remaining bytes stay explicitly opaque; the complete table
 is in
 [`player-motion-and-weapon-attack.md`](player-motion-and-weapon-attack.md).
 
-The six-slot switch covers shield, head, body, arm, leg, and accessory. The
-item-ID ranges independently agree with the retail category tables: shield
-`0x0d..0x12`, head `0x13..0x19`, body `0x1a..0x1f`, arm `0x20..0x22`, leg
+The six-slot switch orders head, body, arm, leg, shield, and accessory. The
+[retail item/menu label audit](patterns/game-item-equipment-identities.md)
+corrects the earlier shield/head/body misclassification: head
+`0x0d..0x12`, body `0x13..0x19`, shield `0x1a..0x1f`, arm `0x20..0x22`, leg
 `0x23..0x26`, and accessory/other `0x30..0x33`. These categories describe
 observed runtime selection; original enum spellings remain unknown.
 

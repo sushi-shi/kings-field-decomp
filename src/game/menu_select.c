@@ -18,8 +18,8 @@ RODATA(0x80012310, 0x40)
  * chooses one equipment category: it selects the item-id range to list from
  * the owned-item block, runs the windowed cursor, and on confirm writes the
  * chosen id into the matching player slot and recomputes combat stats.  The
- * head-armour slot (object 4) additionally clears the arm/leg slots when the
- * special helm (id 0x15) is chosen.
+ * body-armor slot additionally clears arm/leg equipment when Full Plate is
+ * chosen, since it occupies those equipment categories too.
  */
 ADDRESS(0x800238d8, 0x5c4)
 void menu_equip_select(KfEquipmentMenuCategory category)
@@ -47,10 +47,6 @@ void menu_equip_select(KfEquipmentMenuCategory category)
         start = KF_WEAPON_ITEM_FIRST;
         end = KF_WEAPON_ITEM_END;
         break;
-    case KF_EQUIP_MENU_BODY:
-        start = KF_BODY_ARMOR_ITEM_FIRST;
-        end = KF_BODY_ARMOR_ITEM_END;
-        break;
     case KF_EQUIP_MENU_SHIELD:
         start = KF_SHIELD_ITEM_FIRST;
         end = KF_SHIELD_ITEM_END;
@@ -58,6 +54,10 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     case KF_EQUIP_MENU_HEAD:
         start = KF_HEAD_ARMOR_ITEM_FIRST;
         end = KF_HEAD_ARMOR_ITEM_END;
+        break;
+    case KF_EQUIP_MENU_BODY:
+        start = KF_BODY_ARMOR_ITEM_FIRST;
+        end = KF_BODY_ARMOR_ITEM_END;
         break;
     case KF_EQUIP_MENU_ARM:
         start = KF_ARM_ARMOR_ITEM_FIRST;
@@ -182,10 +182,6 @@ void menu_equip_select(KfEquipmentMenuCategory category)
             player_state.equipped_weapon_id = selection;
             player_equip_weapon((u8)selection);
             break;
-        case KF_EQUIP_MENU_BODY:
-            player_state.equipped_body_armor_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_BODY);
-            break;
         case KF_EQUIP_MENU_SHIELD:
             player_state.equipped_shield_id = selection;
             player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_SHIELD);
@@ -193,7 +189,11 @@ void menu_equip_select(KfEquipmentMenuCategory category)
         case KF_EQUIP_MENU_HEAD:
             player_state.equipped_head_armor_id = selection;
             player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_HEAD);
-            if (selection == 0x15) {
+            break;
+        case KF_EQUIP_MENU_BODY:
+            player_state.equipped_body_armor_id = selection;
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_BODY);
+            if (selection == KF_ITEM_FULL_PLATE) {
                 player_state.equipped_arm_armor_id = KF_ITEM_NONE;
                 player_state.equipped_leg_armor_id = KF_ITEM_NONE;
                 player_set_equipment_slot(KF_ITEM_NONE, KF_EQUIPMENT_SLOT_ARM);

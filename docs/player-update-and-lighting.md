@@ -11,7 +11,7 @@ boundary, not evidence that the status leaf or `player_update` shared the TU.
 
 | Address | Identity | Effect | Confirmed caller |
 | --- | --- | --- | --- |
-| `0x800187a4` | `lighting_apply_weapon9_environment` | Blends the current color matrix toward `color_matrix_table[4]` by `0x9c4` and installs half the current fog-near distance. | `player_update`, guarded by equipped weapon ID 9 |
+| `0x800187a4` | `lighting_apply_weapon9_environment` | Blends the current color matrix toward `color_matrix_table[4]` by `0x9c4` and installs half the current fog-near distance. | `player_update`, guarded by equipped Shadow Blade (ID9) |
 | `0x800187f0` | `lighting_apply_timed_player_effect` | Blends toward `color_matrix_table[5]` by `0xc00`. | `player_update`, while `player_state.illusion_staff_timer` is active |
 | `0x80018824` | `lighting_apply_color_preset6` | Blends toward `color_matrix_table[6]` by `0xc00`. | None decoded |
 | `0x80018858` | `player_apply_fire_defense_boost` | Sets the fire-defense boost flag and installs its 500-update timer. | menu_magic_panel at `0x8002317c` |

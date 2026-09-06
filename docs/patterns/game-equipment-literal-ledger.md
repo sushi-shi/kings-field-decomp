@@ -1,11 +1,11 @@
 # Retained equipment literals
 
 Complete ledger for `equipment.c`, `menu_select.c` and `menu_draw_name_list.c`
-after the [equipment domain audit](game-equipment-domains.md) and [shop price follow-up](game-shop-price-domains.md). Claim addresses
+after the [equipment domain audit](game-equipment-domains.md) and [shop price follow-up](game-shop-price-domains.md) plus [equipment identity correction](game-item-equipment-identities.md). Claim addresses
 and extents are separate. Negative signs are operators, so -99 contributes
 one numeric token. Line numbers locate this source version.
 
-All **147 retained occurrences** have specific reasons.
+All **146 retained occurrences** have specific reasons.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -60,7 +60,6 @@ All **147 retained occurrences** have specific reasons.
 | `menu_equip_select` | 166 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |
 | `menu_equip_select` | 172 | `0` | `if (ctx.entry_count != 0)` | Only preview an item when the list has entries. |
 | `menu_equip_select` | 179 | `1` | `if (selection != -1) {` | Apply only a completed selection; outer cancellation leaves equipment or magic unchanged. |
-| `menu_equip_select` | 196 | `0x15` | `if (selection == 0x15) {` | Authored head-armor item ID 21 clears arm/leg equipment and blocks their menu rows while equipped. Its proper resource name is not established here. |
 | `menu_spell_select` | 228 | `20, 10` | `s16 labels[20][10];` | Twenty-row local workspace with ten signed glyphs per row, matching the shared label format; current equipment ranges need at most fourteen rows including none, and spell selection at most six. Original over-allocation rationale is unknown. |
 | `menu_spell_select` | 229 | `20` | `u8 codes[20];` | Parallel twenty-entry code workspace, indexed with the label rows; original capacity choice is unproven. |
 | `menu_spell_select` | 234 | `0` | `s32 confirm = 0;` | Initially no pending confirmation; this is a UI highlight/request flag, not an equipment category. |

@@ -72,12 +72,12 @@ void game_state_initialize(void)
     player_state.base_physical_power = player_level_growth_table[0].physical_power_step;
     player_state.base_magic = player_level_growth_table[0].magic_step;
     player_state.next_level_experience = player_level_growth_table[0].experience_threshold;
-    player_equip_weapon(0);
-    player_state.equipped_shield_id = KF_ITEM_NONE;
+    player_equip_weapon(KF_ITEM_SHORT_SWORD);
     player_state.equipped_head_armor_id = KF_ITEM_NONE;
+    player_state.equipped_body_armor_id = KF_ITEM_NONE;
     player_state.equipped_arm_armor_id = KF_ITEM_NONE;
     player_state.equipped_leg_armor_id = KF_ITEM_NONE;
-    player_state.equipped_body_armor_id = KF_ITEM_NONE;
+    player_state.equipped_shield_id = KF_ITEM_NONE;
     player_state.equipped_accessory_id = KF_ITEM_NONE;
     player_set_equipment_slot(0, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
     player_select_magic(8);
@@ -97,32 +97,32 @@ void game_state_initialize(void)
     do {
         *cursor++ = 0;
     } while (--count != -1);
-    item_stock[0][0x00] = 1;
+    item_stock[0][KF_ITEM_SHORT_SWORD] = 1;
     item_stock[0][KF_ITEM_MEDICINAL_HERB] = 1;
-    item_stock[1][0x00] = 1;
-    item_stock[1][0x01] = 1;
-    item_stock[1][0x02] = 1;
-    item_stock[1][0x0d] = 1;
-    item_stock[1][0x0e] = 1;
-    item_stock[1][0x14] = 1;
-    item_stock[1][0x1a] = 1;
-    item_stock[1][0x1b] = 1;
-    item_stock[1][0x20] = 1;
-    item_stock[1][0x23] = 1;
+    item_stock[1][KF_ITEM_SHORT_SWORD] = 1;
+    item_stock[1][KF_ITEM_BATTLE_AXE] = 1;
+    item_stock[1][KF_ITEM_KNIGHT_SWORD] = 1;
+    item_stock[1][KF_ITEM_IRON_MASK] = 1;
+    item_stock[1][KF_ITEM_KNIGHT_HELM] = 1;
+    item_stock[1][KF_ITEM_KNIGHT_PLATE] = 1;
+    item_stock[1][KF_ITEM_SMALL_SHIELD] = 1;
+    item_stock[1][KF_ITEM_KNIGHT_SHIELD] = 1;
+    item_stock[1][KF_ITEM_GAUNTLET] = 1;
+    item_stock[1][KF_ITEM_IRON_BOOTS] = 1;
     item_stock[1][KF_ITEM_MEDICINAL_HERB] = 1;
     item_stock[1][KF_ITEM_ANTIDOTE_HERB] = 1;
     item_stock[1][KF_ITEM_RECOVERY_MEDICINE] = 1;
     item_stock[1][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
-    item_stock[2][0x02] = 1;
-    item_stock[2][0x03] = 1;
-    item_stock[2][0x06] = 1;
-    item_stock[2][0x0e] = 1;
-    item_stock[2][0x0f] = 1;
-    item_stock[2][0x13] = 1;
-    item_stock[2][0x15] = 1;
-    item_stock[2][0x16] = 1;
-    item_stock[2][0x1c] = 1;
-    item_stock[2][0x25] = 1;
+    item_stock[2][KF_ITEM_KNIGHT_SWORD] = 1;
+    item_stock[2][KF_ITEM_COLICHEMARDE] = 1;
+    item_stock[2][KF_ITEM_CRESCENT_AXE] = 1;
+    item_stock[2][KF_ITEM_KNIGHT_HELM] = 1;
+    item_stock[2][KF_ITEM_GREAT_HELM] = 1;
+    item_stock[2][KF_ITEM_BREASTPLATE] = 1;
+    item_stock[2][KF_ITEM_FULL_PLATE] = 1;
+    item_stock[2][KF_ITEM_FIRE_MAIL] = 1;
+    item_stock[2][KF_ITEM_TOWER_SHIELD] = 1;
+    item_stock[2][KF_ITEM_LEG_GUARDS] = 1;
     item_stock[2][KF_ITEM_MEDICINAL_HERB] = 1;
     item_stock[2][KF_ITEM_ANTIDOTE_HERB] = 1;
     item_stock[2][KF_ITEM_RECOVERY_MEDICINE] = 1;
@@ -260,8 +260,8 @@ void player_recalculate_combat_stats(void)
         player_state.holy_attack += weapon->attack_components[3];
         player_state.fire_attack += weapon->attack_components[4];
     }
-    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
-        armor = &armor_records[player_state.equipped_shield_id - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_head_armor_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -270,8 +270,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records[player_state.equipped_head_armor_id - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_body_armor_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -300,8 +300,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records[player_state.equipped_body_armor_id - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_shield_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -330,7 +330,7 @@ void player_recalculate_combat_stats(void)
         player_state.holy_attack += 3;
         break;
     }
-    if (player_state.equipped_shield_id == 16) {
+    if (player_state.equipped_head_armor_id == KF_ITEM_BLACK_MASK) {
         player_state.physical_power -= 8;
     }
     if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {

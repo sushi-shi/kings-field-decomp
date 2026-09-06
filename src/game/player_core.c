@@ -29,11 +29,11 @@ ADDRESS(0x80016848, 0x1e8)
 void player_set_equipment_slot(u8 item_id, KfEquipmentSlot slot)
 {
     switch (slot) {
-    case KF_EQUIPMENT_SLOT_SHIELD:
-        player_state.equipped_shield_id = item_id;
-        break;
     case KF_EQUIPMENT_SLOT_HEAD:
         player_state.equipped_head_armor_id = item_id;
+        break;
+    case KF_EQUIPMENT_SLOT_BODY:
+        player_state.equipped_body_armor_id = item_id;
         break;
     case KF_EQUIPMENT_SLOT_ARM:
         player_state.equipped_arm_armor_id = item_id;
@@ -41,23 +41,23 @@ void player_set_equipment_slot(u8 item_id, KfEquipmentSlot slot)
     case KF_EQUIPMENT_SLOT_LEG:
         player_state.equipped_leg_armor_id = item_id;
         break;
-    case KF_EQUIPMENT_SLOT_BODY:
-        player_state.equipped_body_armor_id = item_id;
+    case KF_EQUIPMENT_SLOT_SHIELD:
+        player_state.equipped_shield_id = item_id;
         break;
     case KF_EQUIPMENT_SLOT_ACCESSORY:
         player_state.equipped_accessory_id = item_id;
         break;
     }
-    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
-        player_state.equipped_shield_record = &armor_records[player_state.equipped_shield_id - KF_ARMOR_ITEM_FIRST];
-    } else {
-        player_state.equipped_shield_record = 0;
-    }
     if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
-        player_state.equipped_head_armor_record =
-            &armor_records[player_state.equipped_head_armor_id - KF_ARMOR_ITEM_FIRST];
+        player_state.equipped_head_armor_record = &armor_records[player_state.equipped_head_armor_id - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_head_armor_record = 0;
+    }
+    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
+        player_state.equipped_body_armor_record =
+            &armor_records[player_state.equipped_body_armor_id - KF_ARMOR_ITEM_FIRST];
+    } else {
+        player_state.equipped_body_armor_record = 0;
     }
     if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
         player_state.equipped_arm_armor_record =
@@ -71,11 +71,11 @@ void player_set_equipment_slot(u8 item_id, KfEquipmentSlot slot)
     } else {
         player_state.equipped_leg_armor_record = 0;
     }
-    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
-        player_state.equipped_body_armor_record =
-            &armor_records[player_state.equipped_body_armor_id - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
+        player_state.equipped_shield_record =
+            &armor_records[player_state.equipped_shield_id - KF_ARMOR_ITEM_FIRST];
     } else {
-        player_state.equipped_body_armor_record = 0;
+        player_state.equipped_shield_record = 0;
     }
     player_recalculate_combat_stats();
 }
@@ -137,7 +137,7 @@ void player_update_weapon_attack(void)
     if (player_state.weapon_attack_phase != -1) {
         player_state.weapon_attack_phase += 300;
         window = player_state.weapon_attack_phase;
-        if (player_state.equipped_weapon_id == 3
+        if (player_state.equipped_weapon_id == KF_ITEM_COLICHEMARDE
                 ? (u16)(window - 1000) < 300
                 : (u16)(window - 3072) < 300) {
             offset.vx = 0;
@@ -487,7 +487,7 @@ void player_update_vertical_motion(void)
     target = -(map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x] * KF_MAP_HEIGHT_STEP);
     if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
         if (player_state.floor_height - target < -3000) {
-            if (player_state.equipped_leg_armor_id == 0x26
+            if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
                 && map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
                     == 0x5d) {
                 goto done;

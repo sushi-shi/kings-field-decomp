@@ -76,7 +76,7 @@ presentation totals. The update's 120-byte frame, five calls, three internal
 jump relocations and final stack-release delay slot remain unchanged.
 
 Combat-stat recalculation reads weapon attack_components[0..4] into those
-five player fields. For shield, head, arm, leg and body armor it reads the
+five player fields. For head, body, arm, leg and shield armor it reads the
 five documented armor offsets into the corresponding defenses. Each armor
 slot adds cutting defense twice, with the same intervening halfword stores
 and loads as retail. Preserve both additions and their narrowing behavior;

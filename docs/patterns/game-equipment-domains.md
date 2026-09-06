@@ -1,5 +1,10 @@
 # GAME equipment slot and selection domains
 
+The [retail equipment-name audit](game-item-equipment-identities.md) corrects
+the earlier shield/head/body labels using both item rows and menu text. The
+slot numbers, physical offsets and code were preserved; the domain names
+below reflect that correction.
+
 ## Function Match Plan
 
 Start at `cae2910` with freshly verified GAME retail hashes. Review the
@@ -13,8 +18,8 @@ initial scores for 26 functions are captured under
 Name item/magic empty values separately from the slot setter's refresh-only
 selector. Type the byte-sized player slot parameter and the full-width menu
 category parameter across their declarations, definitions and callers.
-The orders differ: menu weapon/magic/body/shield/head/arm/leg/accessory versus
-player shield/head/arm/leg/body/accessory. Generic menu cursor/selection
+The orders differ: menu weapon/magic/shield/head/body/arm/leg/accessory versus
+player head/body/arm/leg/shield/accessory. Generic menu cursor/selection
 positions become categories at dispatch; retain the integer widget boundary.
 Name menu item ranges and the shared armor-table item origin. Express the
 record-copy word counts using the actual array/element sizes and name the

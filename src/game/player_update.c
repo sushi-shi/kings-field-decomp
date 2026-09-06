@@ -259,27 +259,27 @@ void player_update(void)
         if ((input & PADRup) && !(player_previous_input & PADRup)) {
             player_begin_weapon_attack();
         }
-        if (player_state.equipped_head_armor_id != 0x17) {
+        if (player_state.equipped_body_armor_id != KF_ITEM_SKULL_ARMOR) {
             if ((input & PADRleft) && !(player_previous_input & PADRleft)) {
                 if (player_state.weapon_attack_fully_charged == 1) {
                     player_state.weapon_attack_fully_charged = 0;
                     switch (player_state.equipped_weapon_id) {
-                    case 8:
+                    case KF_ITEM_FLAME_SWORD:
                         if (player_state.weapon_attack_phase >= 2400 && player_state.weapon_attack_phase <= 3900) {
                             player_state.weapon_magic_delay = 1;
                             player_state.weapon_magic_shots_remaining = (3900 - player_state.weapon_attack_phase) / 300 + 1;
                             goto magic_done;
                         }
                         break;
-                    case 7:
-                    case 11:
+                    case KF_ITEM_TRIPLE_FANG:
+                    case KF_ITEM_MOONLIGHT_SWORD:
                         if (player_state.weapon_attack_phase >= 2400 && player_state.weapon_attack_phase <= 3900) {
                             player_state.weapon_magic_shots_remaining = 1;
                             player_state.weapon_magic_delay = 1;
                             goto magic_done;
                         }
                         break;
-                    case 3:
+                    case KF_ITEM_COLICHEMARDE:
                         if (player_state.weapon_attack_phase >= 900 && player_state.weapon_attack_phase <= 2400) {
                             player_state.weapon_magic_delay = 1;
                             player_state.weapon_magic_shots_remaining = ((3900 - player_state.weapon_attack_phase) / 300 + 1) * 2;
@@ -324,7 +324,7 @@ void player_update(void)
         if (player_state.weapon_magic_delay == 1) {
             if (player_state.weapon_magic_shots_remaining != 0) {
                 switch (player_state.equipped_weapon_id) {
-                case 7:
+                case KF_ITEM_TRIPLE_FANG:
                     if (player_state.physical_power < 80 || player_state.magic < 80) {
                         goto cancel;
                     }
@@ -332,7 +332,7 @@ void player_update(void)
                     record = &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE];
                     player_state.weapon_magic_delay = 3;
                     break;
-                case 8:
+                case KF_ITEM_FLAME_SWORD:
                     if (magic_records[5].learned == 0) {
                         goto cancel;
                     }
@@ -340,7 +340,7 @@ void player_update(void)
                     record = &magic_records[5];
                     player_state.weapon_magic_delay = 2;
                     break;
-                case 11:
+                case KF_ITEM_MOONLIGHT_SWORD:
                     if (player_state.physical_power < 80 || player_state.magic < 80) {
                         goto cancel;
                     }
@@ -348,7 +348,7 @@ void player_update(void)
                     record = &magic_records[KF_EFFECT_KIND_RADIAL_BLAST];
                     player_state.weapon_magic_delay = 3;
                     break;
-                case 3:
+                case KF_ITEM_COLICHEMARDE:
                     if (player_state.physical_power < 60 || player_state.magic < 60) {
                         goto cancel;
                     }
@@ -483,16 +483,6 @@ void player_update(void)
             player_adjust_mp(1);
         }
     }
-    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
-        if (player_state.equipped_shield_record->hp_regen_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_regen_interval == 0) {
-            player_adjust_hp(1);
-        }
-        if (player_state.equipped_shield_record->hp_drain_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_drain_interval == 0) {
-            player_adjust_hp(-1);
-        }
-    }
     if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
         if (player_state.equipped_head_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_regen_interval == 0) {
@@ -510,6 +500,16 @@ void player_update(void)
         }
         if (player_state.equipped_body_armor_record->hp_drain_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_drain_interval == 0) {
+            player_adjust_hp(-1);
+        }
+    }
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
+        if (player_state.equipped_shield_record->hp_regen_interval != 0
+            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_regen_interval == 0) {
+            player_adjust_hp(1);
+        }
+        if (player_state.equipped_shield_record->hp_drain_interval != 0
+            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_drain_interval == 0) {
             player_adjust_hp(-1);
         }
     }
@@ -598,7 +598,7 @@ void player_update(void)
         lighting_set_active_color_matrix(KF_GAME_COLOR_DEFENSE_EFFECT);
         player_state.fire_defense_timer--;
     }
-    if (player_state.equipped_weapon_id == 9) {
+    if (player_state.equipped_weapon_id == KF_ITEM_SHADOW_BLADE) {
         lighting_apply_weapon9_environment();
     }
     if (player_state.illusion_staff_timer != KF_ILLUSION_STAFF_INACTIVE) {

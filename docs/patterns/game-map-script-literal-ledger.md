@@ -1,12 +1,12 @@
 # Retained floor-script literals
 
 Complete per-occurrence review of `src/game/map_scripts.c` after the
-[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md). Ownership claims and
+[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md). Ownership claims and
 named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
 
-All **309 retained occurrences** have an explicit reason; no fallback is used.
+All **305 retained occurrences** have an explicit reason; no fallback is used.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -75,12 +75,10 @@ All **309 retained occurrences** have an explicit reason; no fallback is used.
 | `map_action_script_floor3` | 252 | `3` | `== MAP_DIALOGUE_STARTED(3)) {` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_action_script_floor3` | 253 | `5, 0` | `if (magic_records[5].learned == 0) {` | Authored magic-record index; zero tests unlearned and one grants learning. Spell IDs stay numeric pending resource-name evidence. |
 | `map_action_script_floor3` | 254 | `5, 1` | `magic_records[5].learned = 1;` | Authored magic-record index; zero tests unlearned and one grants learning. Spell IDs stay numeric pending resource-name evidence. |
-| `map_floor5_transition_cutscene` | 279 | `10` | `if (player_state.equipped_weapon_id == 10) {` | Authored weapon ID 10 is the transformation input; unequip it if currently equipped. |
-| `map_floor5_transition_cutscene` | 282 | `0 × 2, 0xa` | `item_stock[0][0xa] = 0;` | Clear all player-owned copies of input item ID 10; stock bank zero is the player bank. |
+| `map_floor5_transition_cutscene` | 282 | `0 × 2` | `item_stock[0][KF_ITEM_DRAGON_SWORD] = 0;` | Clear all player-owned copies of the Dragon Sword; stock bank zero is the player bank. |
 | `map_floor5_transition_cutscene` | 283 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
 | `map_floor5_transition_cutscene` | 287 | `0` | `camera_path_step(&path, 0);` | No extra vertical offset on this authored camera path. |
 | `map_floor5_transition_cutscene` | 298 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
-| `map_floor5_transition_cutscene` | 303 | `10` | `effect->object_id = 10;` | Authored displayed input model ID 10; aligned with the removed inventory item. |
 | `map_floor5_transition_cutscene` | 304 | `85` | `effect->cell_x = 85;` | Authored output object tile X=85. |
 | `map_floor5_transition_cutscene` | 305 | `40` | `effect->cell_z = 40;` | Authored output object tile Z=40; separate from the countdown also encoded as 40. |
 | `map_floor5_transition_cutscene` | 309 | `0` | `effect->rotation.z = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
@@ -94,7 +92,6 @@ All **309 retained occurrences** have an explicit reason; no fallback is used.
 | `map_floor5_transition_cutscene` | 328 | `600` | `spawn.vy -= 600;` | Place the radial blast 600 world units above the displayed object. |
 | `map_floor5_transition_cutscene` | 330 | `0` | `0, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Owner/source index zero passed with the player-magic flag; preserve the effect-construction argument. |
 | `map_floor5_transition_cutscene` | 331 | `1` | `KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);` | True optional sound-request argument for the radial blast; its direction input remains unused by this kind. |
-| `map_floor5_transition_cutscene` | 332 | `0xb` | `effect->object_id = 0xb;` | Authored transformed display model ID 11; no proper weapon name inferred. |
 | `map_floor5_transition_cutscene` | 334 | `240` | `} else if (spin < 240) {` | Peak yaw velocity 240/4096 turn per update (21.09375 degrees); chosen peak rationale unknown. |
 | `map_floor5_transition_cutscene` | 335 | `1` | `spin += 1;` | Increase angular velocity by one angle unit per update. |
 | `map_floor5_transition_cutscene` | 342 | `0` | `if (spin > 0) {` | Continue deceleration until angular velocity reaches zero. |

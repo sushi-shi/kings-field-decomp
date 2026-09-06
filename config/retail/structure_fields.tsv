@@ -537,14 +537,14 @@ KfPlayerState	0x78	0x01	weapon_magic_shots_remaining	u8	supported	game_player.h;
 KfPlayerState	0x79	0x01	weapon_magic_delay	u8	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	emission countdown; emits at 1 and reloads per-weapon spacing
 KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x7b	0x01	unknown_7b	u8[1]	opaque	game_player.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x7c	0x04	equipped_shield_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x80	0x04	equipped_head_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x84	0x04	equipped_body_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x7c	0x04	equipped_head_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	head-armor record pointer resolved from item IDs13..18; menu row3 and player slot0
+KfPlayerState	0x80	0x04	equipped_body_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	body-armor record pointer resolved from item IDs19..25; menu row4 and player slot1
+KfPlayerState	0x84	0x04	equipped_shield_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield record pointer resolved from item IDs26..31; menu row2 and player slot4
 KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x90	0x01	equipped_shield_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x91	0x01	equipped_head_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x92	0x01	equipped_body_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x90	0x01	equipped_head_armor_id	u8	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	head-armor item ID; retail menu row3 selects13..18 and passes player slot0
+KfPlayerState	0x91	0x01	equipped_body_armor_id	u8	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	body-armor item ID; retail menu row4 selects19..25 and passes player slot1; Full Plate21 and Skull Armor23 controls
+KfPlayerState	0x92	0x01	equipped_shield_id	u8	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield item ID; retail menu row2 selects26..31 and passes player slot4
 KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate

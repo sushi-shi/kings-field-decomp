@@ -170,7 +170,7 @@ void map_restore_floor_state(void)
         } else {
             map_apply_copy_region(4);
         }
-        if (item_stock[0][0xa] != 0 || item_stock[0][0xb] != 0
+        if (item_stock[0][KF_ITEM_DRAGON_SWORD] != 0 || item_stock[0][KF_ITEM_MOONLIGHT_SWORD] != 0
                 || map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x34);
         }

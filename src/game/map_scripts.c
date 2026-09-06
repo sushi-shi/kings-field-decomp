@@ -276,10 +276,10 @@ void map_floor5_transition_cutscene(void)
     s32 hold;
     KfMapWeaponTransformPhase phase;
 
-    if (player_state.equipped_weapon_id == 10) {
+    if (player_state.equipped_weapon_id == KF_ITEM_DRAGON_SWORD) {
         player_equip_weapon(KF_ITEM_NONE);
     }
-    item_stock[0][0xa] = 0;
+    item_stock[0][KF_ITEM_DRAGON_SWORD] = 0;
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
 
     camera_path_begin(&path, map_floor5_camera_path);
@@ -300,7 +300,7 @@ void map_floor5_transition_cutscene(void)
     ReadColorMatrix(&color_matrix);
     effect = map_object_effect_pool_acquire(
         KF_MAP_OBJECT_PLACEMENT_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, map_object_effect_sequence_180);
-    effect->object_id = 10;
+    effect->object_id = KF_ITEM_DRAGON_SWORD;
     effect->cell_x = 85;
     effect->cell_z = 40;
     effect->position_x = effect->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
@@ -329,7 +329,7 @@ void map_floor5_transition_cutscene(void)
                     effect_pool_construct(
                         0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                         KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);
-                    effect->object_id = 0xb;
+                    effect->object_id = KF_ITEM_MOONLIGHT_SWORD;
                 }
             } else if (spin < 240) {
                 spin += 1;

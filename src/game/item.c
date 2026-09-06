@@ -375,9 +375,9 @@ void item_menu_sell(s32 shop_id)
         if (inv[slot] != 0) {
             available[found] = inv[slot];
             if (slot == player_state.equipped_weapon_id
-                    || slot == player_state.equipped_shield_id
                     || slot == player_state.equipped_head_armor_id
                     || slot == player_state.equipped_body_armor_id
+                    || slot == player_state.equipped_shield_id
                     || slot == player_state.equipped_arm_armor_id
                     || slot == player_state.equipped_leg_armor_id
                     || slot == player_state.equipped_accessory_id)

@@ -24,6 +24,9 @@ promotes a probe to a proven historical toolchain.
   clip counts, typed asset ownership/cache states and the pool/registry literal audit.
 - [game-item-pickup-outcomes.md](game-item-pickup-outcomes.md): corrected pickup
   identity, typed outcomes, positioned labels and retained pickup/modal literals.
+- [game-item-equipment-identities.md](game-item-equipment-identities.md): 38
+  retail item labels, corrected head/body/shield identities, special equipment
+  behavior and unchanged object verification.
 - [game-item-special-identities.md](game-item-special-identities.md): nineteen
   retail special-item labels, illusion staff timer propagation, harp countdown
   parameters and the complete retained item-use literal ledger.

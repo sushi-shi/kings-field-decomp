@@ -22,7 +22,7 @@ game ownership; the `rand` implementation remains a vendored boundary.
 | GAME address | Function | Starting strict score | Evidence in this campaign |
 | --- | --- | --- | --- |
 | 800151cc | game_state_initialize | 100% | Seeds resistance 5 and timer -1; preserves the existing initialization order. |
-| 80015714 | player_recalculate_combat_stats | 100% | Rebuilds resistance from zero using the shield, head, arm, leg and body armor records. |
+| 80015714 | player_recalculate_combat_stats | 100% | Rebuilds resistance from zero using the head, body, arm, leg and shield armor records. |
 | 80016324 | player_apply_damage | 100% | Tests incoming mask 4, compares unsigned resistance with the random bucket, then writes timer 600 and sets the same bit. |
 | 80018880 | player_update | 96.945540% | Signed timer countdown, mask clearing, modulo-20 damage and two-update color flash. |
 | 8001fde4 | render_frame | 100% | The copied status flags' mask 4 enables the poison HUD sprite in the existing priority chain. |

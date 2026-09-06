@@ -156,7 +156,7 @@ s32 menu_magic_panel(void)
 /*
  * Option menu: a nine-row cursor (eight slots plus an exit row) that dispatches
  * each slot to menu_equip_select, except slot 1 (menu_spell_select) and slots 5/6 which
- * are blocked while the special head-armour is equipped.  Loops until the exit
+ * are blocked while the Full Plate is equipped.  Loops until the exit
  * row or cancel.
  */
 ADDRESS(0x800236ac, 0x22c)
@@ -186,15 +186,15 @@ void menu_option_root(void)
         switch (KF_ENUM_DECODE(KfEquipmentMenuCategory, selection)) {
         case KF_EQUIP_MENU_ARM:
         case KF_EQUIP_MENU_LEG:
-            if (player_state.equipped_head_armor_id == 0x15) {
+            if (player_state.equipped_body_armor_id == KF_ITEM_FULL_PLATE) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                 break;
             }
             /* fallthrough */
         case KF_EQUIP_MENU_WEAPON:
-        case KF_EQUIP_MENU_BODY:
         case KF_EQUIP_MENU_SHIELD:
         case KF_EQUIP_MENU_HEAD:
+        case KF_EQUIP_MENU_BODY:
         case KF_EQUIP_MENU_ACCESSORY:
             menu_equip_select(KF_ENUM_DECODE(KfEquipmentMenuCategory, selection));
             break;

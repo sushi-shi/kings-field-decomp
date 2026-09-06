@@ -153,14 +153,14 @@ typedef struct KfPlayerState {
     u8 weapon_magic_delay;
     u8 weapon_attack_fully_charged;
     u8 unknown_7b[1];
-    KfArmorRecord *equipped_shield_record;
     KfArmorRecord *equipped_head_armor_record;
     KfArmorRecord *equipped_body_armor_record;
+    KfArmorRecord *equipped_shield_record;
     KfArmorRecord *equipped_arm_armor_record;
     KfArmorRecord *equipped_leg_armor_record;
-    u8 equipped_shield_id;
     u8 equipped_head_armor_id;
     u8 equipped_body_armor_id;
+    u8 equipped_shield_id;
     u8 equipped_arm_armor_id;
     u8 equipped_leg_armor_id;
     u8 equipped_accessory_id;
