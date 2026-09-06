@@ -5,6 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/enum.h>
+#include <kf/notify_types.h>
 #include <kf/psyq.h>
 #include <kf/game_math.h>
 
@@ -149,8 +150,8 @@ typedef struct KfMapObjectLink {
     u8 action_parameter;
     u16 spawn_sequence;
     s16 vertical_velocity;
-    u8 linked_notification;
-    u8 default_notification;
+    KfNotificationId linked_notification;
+    KfNotificationId default_notification;
 } KfMapObjectLink;
 
 typedef struct KfMapObjectPlacement {

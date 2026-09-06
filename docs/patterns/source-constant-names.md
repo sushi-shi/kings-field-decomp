@@ -344,11 +344,14 @@ the ones/tens/hundreds/thousands order. The effect holds fifteen frames,
 then rotates by 128 angle units per update until an eighth turn. It dequeues
 repeated ordinary messages together, but keeps each gold amount separate.
 
-The queue's 122 remaining inline literals are retained for these reasons:
+The [notification identity audit](game-notification-identities.md) names all
+32 atlas messages and types their queue, link fields and API. Its current
+[per-occurrence ledger](game-notification-literal-ledger.md) explains all 116
+retained queue literals; the table below summarizes those categories.
 
 | Sites | Values | Reason |
 | --- | --- | --- |
-| Static layout assertions | Sizes 0x16/6, offsets 0x10/0/1/2/3/4 | Independent retail byte-layout controls; deriving these expected values from the fields being checked would weaken the checks. |
+| Existing field-offset assertions | Offsets 0x10/0/1/2/3/4 | Independent retail field positions; size assertions were removed. |
 | Static assertion idiom | Pointer 0, array extents 1/-1 | The unevaluated null-base offset expression and C89 compile-success/failure mechanism. |
 | Six sprite initializer rows | All 60 scalar values | Preserve the measured UV coordinates, spans and signed screen positions stored in unsigned halfwords. Initial active flags and opaque bytes are zero; no meaning is invented for the opaque byte. Positioning/shape data remains readable as a table instead of aliases for every coordinate. |
 | `notify_enqueue` varargs access | `+ 1` | Address the first stack argument after `message_id`, preserving the retail ABI access. |

@@ -440,6 +440,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/tmd.h",
         REPO / "include/kf/game_asset.h",
         REPO / "include/kf/game_render.h",
+        REPO / "include/kf/notify_types.h",
         REPO / "include/kf/notify.h",
         REPO / "include/kf/open_render.h",
         REPO / "include/kf/open_resources.h",

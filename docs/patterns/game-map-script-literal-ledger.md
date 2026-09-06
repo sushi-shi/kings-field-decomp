@@ -1,12 +1,12 @@
 # Retained floor-script literals
 
 Complete per-occurrence review of `src/game/map_scripts.c` after the
-[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md) and [selected-spell types](game-selected-magic-types.md) and [learning-state typing](game-magic-learning-state.md). Ownership claims and
+[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md) plus [shop item identities](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), followed by [special-item identities](game-item-special-identities.md) and [equipment identities](game-item-equipment-identities.md) and [spell identities](game-spell-identities.md) and [selected-spell types](game-selected-magic-types.md) and [learning-state typing](game-magic-learning-state.md) and [notification audit](game-notification-identities.md). Ownership claims and
 named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
 
-All **287 retained occurrences** have an explicit reason; no fallback is used.
+All **276 retained occurrences** have an explicit reason; no fallback is used.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -38,7 +38,6 @@ All **287 retained occurrences** have an explicit reason; no fallback is used.
 | `map_ambient_script_floor2` | 134 | `1` | `&gameplay_sound_ref_8, (const VECTOR *)&map_event_pool[1].reference_x, KF_AUDIO_MAX_VOLUME);` | Use event slot 1 as the authored sound position. |
 | `map_ambient_script_floor3` | 142 | `15, 18` | `if (player_state.map_cell.x >= 15 && player_state.map_cell.x < 18` | Authored restoration/teaching region is tile X=15..17 and Z=64; no world-coordinate conversion here. |
 | `map_ambient_script_floor3` | 143 | `0x40` | `&& player_state.map_cell.z == 0x40) {` | Authored restoration/teaching region is tile X=15..17 and Z=64; no world-coordinate conversion here. |
-| `map_ambient_script_floor3` | 148 | `1` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_ambient_script_floor5` | 165 | `38` | `if (*encounter_started == KF_MAP_SCRIPT_UNSET && player_state.map_cell.x >= 38` | Authored encounter entry: tile X=38..40, Z=7; unsigned yaw 1808..2288 inclusive is half-turn plus/minus 240 angle units. |
 | `map_ambient_script_floor5` | 166 | `41, 7` | `&& player_state.map_cell.x < 41 && player_state.map_cell.z == 7` | Authored encounter entry: tile X=38..40, Z=7; unsigned yaw 1808..2288 inclusive is half-turn plus/minus 240 angle units. |
 | `map_ambient_script_floor5` | 167 | `1808` | `&& (u16)player_state.camera_rotation.vy >= 1808` | Authored encounter entry: tile X=38..40, Z=7; unsigned yaw 1808..2288 inclusive is half-turn plus/minus 240 angle units. |
@@ -65,7 +64,6 @@ All **287 retained occurrences** have an explicit reason; no fallback is used.
 | `map_action_script_floor2` | 235 | `2` | `== MAP_DIALOGUE_STARTED(2)` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_action_script_floor2` | 236 | `3` | `&& map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 245 | `0 × 2` | `if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
-| `map_action_script_floor3` | 248, 255 | `1 × 2` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_action_script_floor3` | 251 | `1` | `if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 252 | `3` | `== MAP_DIALOGUE_STARTED(3)) {` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_floor5_transition_cutscene` | 282 | `0 × 2` | `item_stock[0][KF_ITEM_DRAGON_SWORD] = 0;` | Clear all player-owned copies of the Dragon Sword; stock bank zero is the player bank. |
@@ -108,7 +106,6 @@ All **287 retained occurrences** have an explicit reason; no fallback is used.
 | `map_event_interact` | 390 | `0 × 2, 2 × 2` | `if (item_stock[0][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2` | Authored exchange on player stock bank zero: character 3 consumes Gold Cross for Key of the Dead, character 8 consumes Mirror of Truth to learn Healing, character 7 consumes Dragon King Grass Fruit for the harp. Nonzero means possessed; assigning one grants a copy. |
 | `map_event_interact` | 391 | `2 × 2` | `&& map_event_pool[2].dialogue_page < 2) {` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
 | `map_event_interact` | 393 | `0` | `item_stock[0][KF_ITEM_MIRROR_OF_TRUTH]--;` | Authored exchange on player stock bank zero: character 3 consumes Gold Cross for Key of the Dead, character 8 consumes Mirror of Truth to learn Healing, character 7 consumes Dragon King Grass Fruit for the harp. Nonzero means possessed; assigning one grants a copy. |
-| `map_event_interact` | 394 | `1` | `notify_enqueue(1);` | Authored notification ID emitted after teaching magic; the localized message identity is not decoded here. |
 | `map_event_interact` | 395 | `2, 1, 7` | `map_event_pool[2].dialogue_pages.last_page[1] = 7;` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
 | `map_event_interact` | 397, 412 | `2 × 2` | `event->dialogue_stage, event->character_id, 2);` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
 | `map_event_interact` | 398 | `2, 3` | `map_event_pool[2].dialogue_page = 3;` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
@@ -134,14 +131,10 @@ All **287 retained occurrences** have an explicit reason; no fallback is used.
 | `map_show_screen_image` | 446 | `10 × 2, '0'` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
 | `map_interaction_dispatch` | 470 | `1500` | `sound_x = position->vx - (rsin(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
 | `map_interaction_dispatch` | 471 | `1500` | `sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
-| `map_interaction_dispatch` | 473 | `0x3a` | `case 0x3a:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 474 | `0xc` | `notify_enqueue(0xc);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 476 | `0x3f` | `case 0x3f:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 477 | `0x17` | `notify_enqueue(0x17);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 479 | `0x5d` | `case 0x5d:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 480 | `0x18` | `notify_enqueue(0x18);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 482 | `0x45` | `case 0x45:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 483 | `0x11` | `notify_enqueue(0x11);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 473 | `0x3a` | `case 0x3a:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
+| `map_interaction_dispatch` | 476 | `0x3f` | `case 0x3f:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
+| `map_interaction_dispatch` | 479 | `0x5d` | `case 0x5d:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
+| `map_interaction_dispatch` | 482 | `0x45` | `case 0x45:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
 | `map_interaction_dispatch` | 489 | `1000` | `sound_x = position->vx - (rsin(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
 | `map_interaction_dispatch` | 490 | `1000` | `sound_z = position->vz + (rcos(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
 | `map_interaction_dispatch` | 493 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
@@ -159,7 +152,6 @@ All **287 retained occurrences** have an explicit reason; no fallback is used.
 | `map_interaction_dispatch` | 565 | `191, 1858` | `if ((u16)(rotation->vx - 191) >= 1858) {` | Unsigned subtraction selects pitches outside inclusive 191..2048; authored asymmetric interval has no established tuning rationale. |
 | `map_interaction_dispatch` | 566 | `16` | `rotation->vx += 16;` | Camera pitch step 16/4096 turn (1.40625 degrees) per qualifying update; original rate rationale unknown. |
 | `map_interaction_dispatch` | 568 | `32` | `object->rotation.x -= 32;` | Container pitch step -32/4096 turn (-2.8125 degrees) per update; 32 updates open it by 90 degrees. |
-| `map_interaction_dispatch` | 581, 605, 679 | `0x10 × 3` | `notify_enqueue(0x10);` | Authored notification ID 16 on pickup stack-full result; localized message text not decoded here. |
 | `map_interaction_dispatch` | 590 | `0` | `object->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
 | `map_interaction_dispatch` | 596 | `0` | `found_item = 0;` | Initialize the local any-item-present boolean to false. |
 | `map_interaction_dispatch` | 600 | `1` | `found_item = 1;` | Record that at least one nonempty item byte was found. |

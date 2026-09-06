@@ -77,7 +77,7 @@ void player_use_item(u8 item_id)
             case 121:
             case 122:
                 if (object->link.link_id == KF_MAP_LINK_NONE) {
-                    notify_enqueue(0x12);
+                    notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != 89
                            || angle_within_tolerance(
                                player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, KF_ANGLE_FULL_TURN / 12)) {
@@ -89,7 +89,7 @@ void player_use_item(u8 item_id)
                             sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
-                        notify_enqueue(4);
+                        notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
                     }
                 }
                 break;
@@ -110,7 +110,7 @@ void player_use_item(u8 item_id)
             object = &map_object_state.objects[index];
             if (object->object_id == item_id) {
                 if (object->link.link_id == KF_MAP_LINK_NONE) {
-                    notify_enqueue(0x12);
+                    notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
                     item_stock[0][object->object_id] = 0;
                     used = 1;
@@ -187,6 +187,6 @@ void player_use_item(u8 item_id)
     }
 done:
     if (!used) {
-        notify_enqueue(0x12);
+        notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
     }
 }

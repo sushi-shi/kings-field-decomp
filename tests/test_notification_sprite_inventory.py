@@ -42,7 +42,7 @@ class NotificationSpriteInventoryTests(unittest.TestCase):
         self.assertEqual(control, {
             "queue_tail": (0x00, 1, "u8"),
             "queue_head": (0x01, 1, "u8"),
-            "effect_phase": (0x02, 1, "u8"),
+            "effect_phase": (0x02, 1, "KfNotificationPhase"),
             "hold_frames": (0x03, 1, "u8"),
             "effect_angle_x": (0x04, 2, "u16"),
         })
@@ -66,7 +66,7 @@ class NotificationSpriteInventoryTests(unittest.TestCase):
         identity = load_function_identities(RETAIL_CONFIG, required=True)[
             ("GAME.EXE", 0x8001FA44)
         ]
-        self.assertEqual(identity.parameters, "s32 message_id;...")
+        self.assertEqual(identity.parameters, "KfNotificationArgument message_id;...")
 
     def test_complete_sprite_layouts(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)

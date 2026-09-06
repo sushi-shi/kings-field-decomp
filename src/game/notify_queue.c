@@ -38,7 +38,7 @@ KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
 };
 
 DATA(0x8009506e, 0x8)
-u8 notification_message_ids[KF_NOTIFICATION_CAPACITY];
+KfNotificationId notification_message_ids[KF_NOTIFICATION_CAPACITY];
 
 DATA(0x80095076, 0x16)
 KfNotificationState notification_state;
@@ -60,7 +60,7 @@ KfNotificationState notification_state;
  */
 
 ADDRESS(0x8001fa44, 0xa0)
-void notify_enqueue(s32 message_id, ...)
+void notify_enqueue(KfNotificationArgument message_id, ...)
 {
     u8 *head;
 
@@ -72,7 +72,15 @@ void notify_enqueue(s32 message_id, ...)
         notification_message_ids[*head] = message_id;
         if (message_id == KF_NOTIFICATION_GOLD) {
             u16 *payload = notification_state.message_payloads;
+#if KF_MODERN_TYPES
+            __builtin_va_list arguments;
+            __builtin_va_start(arguments, message_id);
+            payload[*head] = __builtin_va_arg(arguments, s32);
+            __builtin_va_end(arguments);
+#else
+            /* The pinned compiler spills four-byte argument homes. */
             payload[*head] = *(u16 *)(&message_id + 1);
+#endif
         }
         *head = (*head + 1) & (KF_NOTIFICATION_CAPACITY - 1);
     }
@@ -108,12 +116,12 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)
 {
-    u8 *phase = &notification_state.control.effect_phase;
+    KfNotificationPhase *phase = &notification_state.control.effect_phase;
 
     switch (*phase) {
     case KF_NOTIFICATION_IDLE: {
         u8 tail = notification_state.control.queue_tail;
-        u8 id = notification_message_ids[tail];
+        KfNotificationId id = notification_message_ids[tail];
         if (id == KF_NOTIFICATION_NONE) {
             return;
         }
@@ -126,9 +134,9 @@ void notify_effect_update(void)
             sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = 0;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = 1;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =
-                (id & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
+                (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.v =
-                (id & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
+                (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
             menu_format_number(
                 notification_state.message_payloads[tail],
                 NOTIFICATION_GOLD_DIGITS, 0, digits.formatted);
@@ -147,9 +155,9 @@ void notify_effect_update(void)
         } else {
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = 1;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.u =
-                (id & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
+                (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.v =
-                (id & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
+                (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = 0;
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = 0;
             notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = 0;
@@ -171,7 +179,7 @@ void notify_effect_update(void)
         notification_state.control.effect_angle_x = angle_x;
         if (angle_x >= KF_ANGLE_EIGHTH_TURN) {
             KfNotificationControl *control;
-            u8 id;
+            KfNotificationId id;
             notification_state.control.effect_angle_x = KF_ANGLE_EIGHTH_TURN;
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = 0;
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = 0;

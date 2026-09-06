@@ -1758,7 +1758,7 @@ GAME.EXE	0x80095066	0x2	DAT_80095066	unknown	bss	u16		address-only	ghidra-12.0.4
 GAME.EXE	0x80095068	0x2	DAT_80095068	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506a	0x2	DAT_8009506a	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009506c	0x2	DAT_8009506c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
-GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	u8[8]	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;render_initialize	eight-entry message ring; 0xff marks an empty slot; every consumer materializes its own array base
+GAME.EXE	0x8009506e	0x8	notification_message_ids	global	bss	KfNotificationId[8]	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;render_initialize;game-notification-identities.md;retail-notification-atlas	eight-entry message ring; 0xff marks an empty slot; every consumer materializes its own array base
 GAME.EXE	0x80095076	0x16	notification_state	global	bss	KfNotificationState	notify	supported	game_semantic_notification_state.tsv;asm;cfg;xrefs;notify_queue.c;head-minus-17;phase-minus-18	eight numeric payloads with byte cursors, phase, hold counter, and halfword sprite rotation; larger graphics-context ownership remains under investigation
 GAME.EXE	0x8009508c	0x2	DAT_8009508c	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate
 GAME.EXE	0x8009508e	0x2	DAT_8009508e	unknown	bss	u16		address-only	ghidra-12.0.4-memory-xref	unresolved referenced RAM global/static candidate

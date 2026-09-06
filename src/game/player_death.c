@@ -338,15 +338,15 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.base_magic >= 37 && magic_records[KF_MAGIC_HEALING].learned != KF_MAGIC_UNLEARNED && magic_records[KF_MAGIC_DISPOISON].learned == KF_MAGIC_UNLEARNED) {
         magic_records[KF_MAGIC_DISPOISON].learned = KF_MAGIC_LEARNED;
-        notify_enqueue(1);
+        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
     if (player_state.base_magic >= 70 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
         magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = KF_MAGIC_LEARNED;
-        notify_enqueue(1);
+        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
     if (player_state.base_magic >= 75 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == KF_MAGIC_UNLEARNED) {
         magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
-        notify_enqueue(1);
+        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
     if (player_state.physical_power >= 1000) {
         player_state.physical_power = 999;
@@ -366,7 +366,7 @@ void player_increment_physical_power_training(void)
         if (player_state.base_physical_power >= 1000) {
             player_state.base_physical_power = 999;
         } else {
-            notify_enqueue(0x1e);
+            notify_enqueue(KF_NOTIFICATION_PHYSICAL_POWER_INCREASED);
         }
         player_recalculate_combat_stats();
     }
@@ -382,7 +382,7 @@ void player_increment_magic_training(void)
         if (player_state.base_magic >= 1000) {
             player_state.base_magic = 999;
         } else {
-            notify_enqueue(0x1f);
+            notify_enqueue(KF_NOTIFICATION_MAGIC_POWER_INCREASED);
         }
         player_recalculate_combat_stats();
     }
@@ -437,7 +437,7 @@ void player_add_experience(s16 amount)
             player_state.base_magic = 999;
         }
         player_recalculate_combat_stats();
-        notify_enqueue(0);
+        notify_enqueue(KF_NOTIFICATION_LEVEL_UP);
         sound_ref_play(&player_sound_refs[2], 0x7f);
     }
 }

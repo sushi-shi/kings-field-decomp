@@ -2,14 +2,14 @@
 
 Complete per-occurrence ledger for `src/game/player_use_item.c`, including its
 two image-path buffers and target-image helpers, after the
-[special-item audit](game-item-special-identities.md). All **84 remaining
+[special-item audit](game-item-special-identities.md) and [notification audit](game-notification-identities.md). All **80 remaining
 occurrences**, down from 109, have explicit consumer explanations. Claims,
 comments, strings and named enum definitions are excluded; signs are operators.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
-| `initializers` | 8 | `14` | `char enemy_info_image_path_template[14] = "ENE 0\\EI 00.TIM";` | Thirteen path characters plus NUL; fixed buffer extent, not an item or effect ID. |
-| `initializers` | 11 | `15` | `char person_image_path_template[15] = "PRSN\\PER 00.TIM";` | Fourteen path characters plus NUL; fixed buffer extent, not a gameplay amount. |
+| `initializers` | 8 | `14` | `char enemy_info_image_path_template[14] = "ENE0\\EI00.TIM";` | Thirteen path characters plus NUL; fixed buffer extent, not an item or effect ID. |
+| `initializers` | 11 | `15` | `char person_image_path_template[15] = "PRSN\\PER00.TIM";` | Fourteen path characters plus NUL; fixed buffer extent, not a gameplay amount. |
 | `actor_show_info_image` | 16, 17 | `0 × 4` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
 | `actor_show_info_image` | 18 | `3, '0'` | `enemy_info_image_path_template[3] = '0' + player_state.progress_state.current_floor;` | Path byte 3 is the one-based floor digit; ASCII zero converts its numeric value. |
 | `actor_show_info_image` | 19 | `7, '0', 10` | `enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;` | Path byte 7 is the actor-definition decimal tens digit; base ten and ASCII zero are representation constants. |
@@ -33,13 +33,11 @@ comments, strings and named enum definitions are excluded; signs are operators.
 | `player_use_item` | 76 | `120` | `case 120:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
 | `player_use_item` | 77 | `121` | `case 121:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
 | `player_use_item` | 78 | `122` | `case 122:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 80, 113, 190 | `0x12 × 3` | `notify_enqueue(0x12);` | Notification 18 for no applicable use, an already cleared link or no target; localized message text remains undecoded. |
 | `player_use_item` | 81 | `89` | `} else if (object->object_id != 89` | Only object model 89 applies the facing test before key use; proper model name remains unresolved. |
 | `player_use_item` | 83 | `12` | `player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, KF_ANGLE_FULL_TURN / 12)) {` | Door 89 uses one-twelfth-turn tolerance, truncated to 341/4096 revolution (29.970703125 degrees), around the mirrored half-turn facing. Original tolerance tuning unproven. |
 | `player_use_item` | 84, 116, 142, 149, 184 | `1 × 5` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 87 | `0x6e` | `sound_ref_play(&gameplay_sound_ref_12, 0x6e);` | Authored key-unlock cue volume 110 out of 127; original mix choice unproven. |
 | `player_use_item` | 88 | `89` | `if (object->object_id == 89) {` | Only model 89 adds the second unlock sound; retain this authored model-specific rule without inventing a model name. |
-| `player_use_item` | 92 | `4` | `notify_enqueue(4);` | Notification 4 for an applicable door whose required key ID differs from the used key; localized message text remains undecoded. |
 | `player_use_item` | 115 | `0 × 2` | `item_stock[0][object->object_id] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
 | `player_use_item` | 126 | `1 × 2` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
 | `player_use_item` | 134 | `2` | `if (player_state.progress_state.current_floor == 2) {` | One-based floor 2 chooses the first four deformation segments. |

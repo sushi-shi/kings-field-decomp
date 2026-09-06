@@ -191,7 +191,7 @@ ADDRESS(0x8001bce0, 0x2d8)
 void render_initialize(void)
 {
     SVECTOR angles;
-    u8 *flag;
+    KfNotificationId *flag;
     u8 count;
     u8 *buffer;
 

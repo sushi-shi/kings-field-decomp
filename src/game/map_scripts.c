@@ -145,7 +145,7 @@ void map_ambient_script_floor3(void)
         if (magic_records[KF_MAGIC_RESIST_FIRE].learned == KF_MAGIC_UNLEARNED || magic_records[KF_MAGIC_BLESS].learned == KF_MAGIC_UNLEARNED) {
             magic_records[KF_MAGIC_RESIST_FIRE].learned = KF_MAGIC_LEARNED;
             magic_records[KF_MAGIC_BLESS].learned = KF_MAGIC_LEARNED;
-            notify_enqueue(1);
+            notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
 }
@@ -245,14 +245,14 @@ void map_action_script_floor3(void)
     if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {
         if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == KF_MAGIC_UNLEARNED) {
             magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = KF_MAGIC_LEARNED;
-            notify_enqueue(1);
+            notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
     if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(3)) {
         if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
             magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = KF_MAGIC_LEARNED;
-            notify_enqueue(1);
+            notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
 }
@@ -391,7 +391,7 @@ void map_event_interact(KfMapEvent *event)
             && map_event_pool[2].dialogue_page < 2) {
             magic_records[KF_MAGIC_HEALING].learned = KF_MAGIC_LEARNED;
             item_stock[0][KF_ITEM_MIRROR_OF_TRUTH]--;
-            notify_enqueue(1);
+            notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue_stage, event->character_id, 2);
@@ -471,16 +471,16 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);
     switch (map_cell_attribute_grid[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
     case 0x3a:
-        notify_enqueue(0xc);
+        notify_enqueue(KF_NOTIFICATION_PITFALL);
         break;
     case 0x3f:
-        notify_enqueue(0x17);
+        notify_enqueue(KF_NOTIFICATION_POISON_HOLE);
         break;
     case 0x5d:
-        notify_enqueue(0x18);
+        notify_enqueue(KF_NOTIFICATION_BOTTOMLESS_PIT);
         break;
     case 0x45:
-        notify_enqueue(0x11);
+        notify_enqueue(KF_NOTIFICATION_HIDDEN_DOOR);
         break;
     default:
         break;
@@ -578,7 +578,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                     if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                         *item_id = MAP_CONTAINER_ITEM_NONE;
                     } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
-                        notify_enqueue(0x10);
+                        notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
                     }
                 }
                 item_index--;
@@ -602,7 +602,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                     if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                         *item_id = MAP_CONTAINER_ITEM_NONE;
                     } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
-                        notify_enqueue(0x10);
+                        notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
                     }
                 }
                 item_index--;
@@ -676,7 +676,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                 object->object_id = KF_MAP_OBJECT_FREE;
             } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
-                notify_enqueue(0x10);
+                notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
                 continue;
             }
             break;

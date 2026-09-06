@@ -18,6 +18,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-learning-state.md](game-magic-learning-state.md): byte learning
   enum propagated through runtime records and saves, exact-one versus nonzero
   predicates, and the retail resource's initial learning state.
+- [game-notification-identities.md](game-notification-identities.md): all 32
+  retail message labels, typed queue/link fields and variadic API, separate
+  phase enum, and the [retained-literal ledger](game-notification-literal-ledger.md).
 - [game-map-dialogue-state.md](game-map-dialogue-state.md): GAME dialogue
   stages/pages, animation phase, byte enum domains and corrected call evidence.
 - [game-map-event-literals.md](game-map-event-literals.md): map-event movement,

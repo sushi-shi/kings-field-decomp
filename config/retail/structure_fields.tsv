@@ -391,8 +391,8 @@ KfMapObjectLink	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_lo
 KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	game_map.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
 KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	game_map.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
 KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	game_map.h;asm;map_object_pool_load	vertical velocity
-KfMapObjectLink	0x06	0x01	linked_notification	u8	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs	notification ID for behavior 8 with a live link
-KfMapObjectLink	0x07	0x01	default_notification	u8	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs	default notification ID in map interaction
+KfMapObjectLink	0x06	0x01	linked_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas	notification ID for behavior 8 with a live link; byte message domain propagated directly to the promoted enqueue API
+KfMapObjectLink	0x07	0x01	default_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas	default notification ID in map interaction; byte message domain propagated directly to the promoted enqueue API
 KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	game_map.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
 KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
 KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	game_map.h;asm;map_object_pool_load	map tile z
@@ -442,7 +442,7 @@ KfMenuList	0x20	0x4	glyph_rows	s16 *	supported	game_menu.h;game_menu_assets.md;a
 KfMenuList	0x24	0x4	quantities	u8 *	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfNotificationControl	0x00	0x01	queue_tail	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	read cursor, advanced modulo eight after the effect finishes
 KfNotificationControl	0x01	0x01	queue_head	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_enqueue	write cursor, advanced modulo eight after an enqueue
-KfNotificationControl	0x02	0x01	effect_phase	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch	zero is idle, two holds, three rotates out
+KfNotificationControl	0x02	0x01	effect_phase	KfNotificationPhase	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch;game-notification-identities.md	byte phase domain: idle0, hold2, rotate-out3; phase1 has no observed handler
 KfNotificationControl	0x03	0x01	hold_frames	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	countdown seeded with fifteen frames
 KfNotificationControl	0x04	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
 KfNotificationDigitBuffer	0x00	0x18	formatted	s16[12]	supported	notify.h;menu_format_number;notify_effect_update	signed formatter buffer including negative glyphs
