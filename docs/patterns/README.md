@@ -164,6 +164,8 @@ promotes a probe to a proven historical toolchain.
   partial match with a remaining register-role exchange.
 - [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
   and rejected arithmetic-association controls; scatter remains partial.
+- [game-floor-deformation.md](game-floor-deformation.md): mutable absolute
+  step, byte coordinates and direct predecrement countdown close the helper.
 - [game-menu-list-format.md](game-menu-list-format.md): typed menu-row
   access closes list initialization; index-driven termination and a word-sized
   padding temporary close decimal glyph formatting.

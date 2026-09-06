@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/audio.h>
 #include <kf/map_data.h>
 #include <kf/game_collision.h>
 #include <kf/game_effect.h>
@@ -149,33 +150,37 @@ ADDRESS(0x800384f8, 0x1cc)
 void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step)
 {
     KfFloorDeformSegment *segment = &floor_deform_segments[segment_index];
-    int range = progress_step < 0 ? -progress_step : progress_step;
+    int range = progress_step;
     VECTOR sound_position;
-    int col;
-    int row;
+    u8 col;
+    u8 row;
     int count;
     int height_delta;
 
+    if (range < 0) {
+        range = -range;
+    }
     sound_position.vy = -(segment->end_height * KF_MAP_HEIGHT_STEP);
     col = segment->column;
     row = segment->row;
-    count = segment->cell_count - 1;
+    count = segment->cell_count;
     height_delta = segment->end_height - segment->start_height;
-    for (; count != -1; count--) {
+    while (--count != -1) {
         int progress = progress_start;
         progress_start += progress_step;
         if (progress < 0) {
             progress = 0;
-        } else if (progress >= 4097) {
-            progress = 4096;
+        } else if (progress >= KF_FIXED12_ONE + 1) {
+            progress = KF_FIXED12_ONE;
         } else if (progress >= 3900 && progress < range + 3900) {
-            sound_position.vx = KF_MAP_TILE_SIZE * (col & 0xff) + KF_MAP_TILE_CENTER;
-            sound_position.vz = KF_MAP_TILE_SIZE * (row & 0xff) + KF_MAP_TILE_CENTER;
+            /* Sound begins at 3900/4096 (~95.2%); its exact tuning is unresolved. */
+            sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;
+            sound_position.vz = KF_MAP_TILE_SIZE * row + KF_MAP_TILE_CENTER;
             audio_play_spatial_default_range(&gameplay_sound_ref_4,
-                &sound_position, 0x7f);
+                &sound_position, KF_AUDIO_MAX_VOLUME);
         }
-        map_floor_height_grid[row & 0xff][col & 0xff] =
-            ((height_delta * progress) >> 12) + segment->start_height;
+        map_floor_height_grid[row][col] =
+            ((height_delta * progress) >> KF_FIXED12_BITS) + segment->start_height;
         col += segment->column_step;
         row += segment->row_step;
     }

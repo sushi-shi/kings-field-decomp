@@ -1407,3 +1407,43 @@ flake checks pass. Only the incoming constructor's strict score improves;
 all other 483 scores and every non-debug section of the other 111 objects
 remain unchanged. Full-build source-data matches improve to six of 60,
 while the existing ownership and placement gates remain unfinished.
+
+## Floor-deformation progress and incoming byte loop
+
+Function Match Plan: integrate 51ebe75's GAME 800384f8 floor-deformation
+correction into the naming worktree. The incoming complete dossier, current
+image-qualified disassembly/CFG, two callers, audio callee, data/table
+references, adjacent helpers and history establish the byte coordinates,
+explicit absolute-step calculation and signed predecrement countdown.
+Preserve its 115 exact retail words and the incoming banking record.
+Retain the map-height/cell-size/center constants, and express the progress
+clamp and interpolation shift using the shared Q12 units. The maximum-volume
+argument uses the established audio limit. Require an independent literal
+incoming-source control, all other 111 objects and 483 strict scores to
+remain unchanged from dd1e366; only this function may improve to 100%.
+
+The sound window is 3900 <= progress < 3900 + abs(step), inside the original
+unclamped 0..4096 arm. Thus its onset is about 95.2% of the height blend;
+the window width follows the step magnitude. Zero step produces an empty
+window. The exact choice of 3900 is an authored timing parameter without a
+proved derivation, so retain the literal and explain its units/behavior.
+
+| Remaining literal | Reason in this function |
+| --- | --- |
+| 0 | Sign test, zero clamp and interpolation origin. |
+| -1 | Exhausted signed countdown; the predecrement also handles a zero cell count without entering the loop. |
+| +1 | Preserve the inclusive full-Q12 endpoint in the original strict comparison. |
+| 3900, twice | Authored sound-onset progress and lower edge of the step-sized window; its precise designer rationale is unresolved. |
+
+No other effect-update helper is claimed fully audited by this reconciliation.
+
+The independently compiled literal incoming unit and named unit match every
+non-debug section. The floor helper reproduces all 115 retail instruction
+words and its ordered sound/data referents; all seven siblings preserve their
+previous raw linked words, calls and addresses. The other 111 objects retain
+every non-debug section from dd1e366. Only GAME 800384f8 changes strict score,
+from 86.704346% to 100%; the other 483 rows and all banked exacts are unchanged.
+All 651 repository tests pass (nine skips), and lint/whitespace checks pass.
+The full build retains its existing ownership/placement failures: six of
+60 source-data owners match, target relink is PSX 1/1, GAME 75/77 and OPEN
+34/38, and there are no artifact failures. No tooling or flake files changed.
