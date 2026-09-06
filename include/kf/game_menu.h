@@ -185,6 +185,13 @@ typedef struct KfMenuList {
     u8 *quantities;
 } KfMenuList;
 
+/* Angle units per preview draw; a full revolution is 4096 units. */
+enum {
+    MENU_ITEM_PREVIEW_YAW_STEP = 16,
+    MENU_PICKUP_PREVIEW_YAW_STEP = 8
+};
+
+extern SVECTOR menu_item_preview_rotation;
 extern KfMenuAssets menu_assets;
 extern MenuWindowLayout menu_window_layouts[9];
 extern MenuGlyphRow item_name_rows[80];

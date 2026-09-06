@@ -2840,9 +2840,7 @@ GAME.EXE	0x80057b5c	0x4635c	0x4	data	reviewed	model_textured_primitive_color	CVE
 GAME.EXE	0x80057b60	0x46360	0x4	data	reviewed	map_textured_primitive_color	CVECTOR	manual:game_render_enqueuers	third consecutive neutral-grey color; its cd byte at +3 carries the current map primitive code into NormalColorCol
 GAME.EXE	0x80057b64	0x46364	0x8	data	reviewed	render_sprite_light_normal	SVECTOR	manual:game_render_enqueuers	initialized {0, 0, 0x1000, 0} light normal passed by the following sprite enqueuer to NormalColorDpq
 GAME.EXE	0x80057b6c	0x4636c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80057b70	0x46370	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057b72	0x46372	0x2	defined	ghidra-defined		undefined2	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
-GAME.EXE	0x80057b74	0x46374	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80057b70	0x46370	0x8	data	reviewed	menu_item_preview_rotation	SVECTOR	manual:game_menu_preview_transform	zero-initialized item preview angles; three RotMatrix callers pass the base after updating yaw at +2
 GAME.EXE	0x80057b78	0x46378	0x5	string	byte-pattern	memory_card_root_path	ascii	investigation:string-census	escaped text: bu00:
 GAME.EXE	0x80057b7d	0x4637d	0x3	unclassified	coverage-gap			payload-complement	unclassified bytes before boss-death loop sound
 GAME.EXE	0x80057b80	0x46380	0x3	data	direct-references	boss_death_loop_sound	SoundRef	game_semantic_actor_actions.tsv;game_semantic_audio_spatial.tsv	program/tone/note reference played periodically during the boss death sequence

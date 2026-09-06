@@ -24,6 +24,8 @@ promotes a probe to a proven historical toolchain.
   clip counts, typed asset ownership/cache states and the pool/registry literal audit.
 - [game-item-pickup-outcomes.md](game-item-pickup-outcomes.md): corrected pickup
   identity, typed outcomes, positioned labels and retained pickup/modal literals.
+- [game-menu-preview-transform.md](game-menu-preview-transform.md): complete
+  shared preview rotation, draw-rate units, Q12 lighting and retained literal ledger.
 - [game-menu-confirmation-protocol.md](game-menu-confirmation-protocol.md): typed
   footer kinds, previews and results; retail Japanese labels and literal ledger.
 - [game-equipment-domains.md](game-equipment-domains.md): separate player-slot

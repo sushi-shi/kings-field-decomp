@@ -2,6 +2,9 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+DATA(0x80057b70, 0x8)
+SVECTOR menu_item_preview_rotation = {0, 0, 0, 0};
+
 /*
  * Draw a spinning 3D model preview of the inventory item plus its name and held
  * quantity.  Builds the GTE rotation from the shared spin angle and a fixed
@@ -16,7 +19,6 @@ void menu_item_model_preview(s32 item_id)
     MATRIX rot;
     MATRIX lsrc;
     MATRIX lres;
-    u16 *angle;
     s16 *name;
     s32 i;
 
@@ -24,16 +26,17 @@ void menu_item_model_preview(s32 item_id)
         rot.t[0] = 0x230;
         rot.t[1] = 0x8c;
         rot.t[2] = 0x5dc;
-        angle = &DAT_80057b72;
-        *angle = (*angle + 16) & 0xfff;
-        RotMatrix((SVECTOR *)((s16 *)angle - 1), &rot);
+        menu_item_preview_rotation.vy =
+            (menu_item_preview_rotation.vy + MENU_ITEM_PREVIEW_YAW_STEP)
+            & KF_ANGLE_WRAP_MASK;
+        RotMatrix(&menu_item_preview_rotation, &rot);
 
-        lsrc.m[0][0] = -4096;
-        lsrc.m[0][1] = -4096;
-        lsrc.m[0][2] = -4096;
-        lsrc.m[1][0] = -4096;
-        lsrc.m[1][1] = -4096;
-        lsrc.m[1][2] = -4096;
+        lsrc.m[0][0] = -KF_FIXED12_ONE;
+        lsrc.m[0][1] = -KF_FIXED12_ONE;
+        lsrc.m[0][2] = -KF_FIXED12_ONE;
+        lsrc.m[1][0] = -KF_FIXED12_ONE;
+        lsrc.m[1][1] = -KF_FIXED12_ONE;
+        lsrc.m[1][2] = -KF_FIXED12_ONE;
         lsrc.m[2][0] = 0;
         lsrc.m[2][1] = 0;
         lsrc.m[2][2] = 0;

@@ -85,15 +85,17 @@ void menu_draw_item_name_frame(s32 item_id)
     rotation.t[0] = 0xdc;
     rotation.t[1] = 0x8c;
     rotation.t[2] = 0x5dc;
-    DAT_80057b72 = (DAT_80057b72 + 8) & 0xfff;
-    RotMatrix((SVECTOR *)((s16 *)&DAT_80057b72 - 1), &rotation);
+    menu_item_preview_rotation.vy =
+        (menu_item_preview_rotation.vy + MENU_PICKUP_PREVIEW_YAW_STEP)
+        & KF_ANGLE_WRAP_MASK;
+    RotMatrix(&menu_item_preview_rotation, &rotation);
 
-    light_source.m[0][0] = -4096;
-    light_source.m[0][1] = -4096;
-    light_source.m[0][2] = -4096;
-    light_source.m[1][0] = -4096;
-    light_source.m[1][1] = -4096;
-    light_source.m[1][2] = -4096;
+    light_source.m[0][0] = -KF_FIXED12_ONE;
+    light_source.m[0][1] = -KF_FIXED12_ONE;
+    light_source.m[0][2] = -KF_FIXED12_ONE;
+    light_source.m[1][0] = -KF_FIXED12_ONE;
+    light_source.m[1][1] = -KF_FIXED12_ONE;
+    light_source.m[1][2] = -KF_FIXED12_ONE;
     light_source.m[2][0] = 0;
     light_source.m[2][1] = 0;
     light_source.m[2][2] = 0;
@@ -618,7 +620,7 @@ u32 menu_load_item_model(s32 id)
         tmd_register(KF_TMD_SLOT_MENU_ITEM, asset);
         menu_item_model_allocation_pending = 1;
     }
-    DAT_80057b72 = 0;
+    menu_item_preview_rotation.vy = 0;
     return 0;
 }
 

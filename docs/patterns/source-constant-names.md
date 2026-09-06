@@ -75,6 +75,12 @@ seven callers. It explains all 65 remaining widget literals and decodes the
 retail Japanese labels. The two positioned labels use the existing shared
 structure, recovering the retail stack spacing without pointer casts.
 
+The [preview transform review](game-menu-preview-transform.md) replaces the
+interior yaw alias with its complete SDK rotation vector and names angle-rate,
+wrapping and Q12 lighting domains. Its six-function and initializer ledger
+explains 213 retained occurrences, down from 236, and distinguishes draw-call
+rates from real-time frequency.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

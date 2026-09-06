@@ -17,7 +17,6 @@ extern s16 DAT_80055dac;
 extern s16 DAT_80055dae;
 extern s16 DAT_80055db4;
 extern s16 DAT_80055db6;
-extern u16 DAT_80057b72;
 extern u32 DAT_80057d24;
 extern u16 DAT_80095060;
 extern u16 DAT_80095062;
