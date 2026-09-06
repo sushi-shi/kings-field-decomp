@@ -293,3 +293,12 @@ The retail menu atlas now supplies the missing semantic witness for
 4 and labels the same resistance value whose timer causes periodic HP loss.
 The [poison dossier](game-player-poison.md) records the per-function plan,
 raw instruction evidence, preserved layouts and limits of the timing names.
+
+## Player and armor damage labels
+
+The [retail damage-label campaign](game-player-damage-labels.md) names ten
+player fields and five armor contributions from decoded Japanese labels,
+matching numeric rows, equipment accumulation and damage call arguments.
+All remain unsigned halfwords at their established offsets. Holy attack and
+magic defense intentionally use different names because the retail labels
+differ; no universal fourth-component element is inferred.

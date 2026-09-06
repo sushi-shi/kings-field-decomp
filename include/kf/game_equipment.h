@@ -8,12 +8,12 @@
 /* Armor and accessory record (item ids 13..54 index armor_records[id - 13]). */
 typedef struct KfArmorRecord {
     u16 unknown_00;
-    u16 defense_component0;
-    u16 defense_component1;
-    u16 defense_component2;
+    u16 cutting_defense;
+    u16 striking_defense;
+    u16 piercing_defense;
     u16 poison_resistance;
-    u16 defense_component3;
-    u16 defense_component4;
+    u16 magic_defense;
+    u16 fire_defense;
     u16 hp_regen_interval;
     u16 hp_drain_interval;
     u8 unknown_12[0x0a];

@@ -189,16 +189,16 @@ void menu_draw_status_details(void)
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0x10;
     menu_format_number(
-        (s32)(((((u32)player_state.attack_component0 + player_state.attack_component1 +
-                 player_state.attack_component2) * 3 >> 1) +
-               ((u32)player_state.attack_component3 + player_state.attack_component4) * 2) * 10) >> 3,
+        (s32)(((((u32)player_state.cutting_attack + player_state.striking_attack +
+                 player_state.piercing_attack) * 3 >> 1) +
+               ((u32)player_state.holy_attack + player_state.fire_attack) * 2) * 10) >> 3,
         6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0x10;
     menu_format_number(
-        (((u32)player_state.damage_defense_component0 + player_state.damage_defense_component1 +
-          player_state.damage_defense_component2 + player_state.poison_resistance / 5 +
-          player_state.damage_defense_component3 + player_state.damage_defense_component4) * 10) / 7,
+        (((u32)player_state.cutting_defense + player_state.striking_defense +
+          player_state.piercing_defense + player_state.poison_resistance / 5 +
+          player_state.magic_defense + player_state.fire_defense) * 10) / 7,
         6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
@@ -282,36 +282,36 @@ void menu_draw_status_details(void)
 
     gs.x = 0xfb;
     gs.y = 0x2c;
-    menu_format_number(player_state.attack_component0, 6, 0, gs.codes);
+    menu_format_number(player_state.cutting_attack, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component1, 6, 0, gs.codes);
+    menu_format_number(player_state.striking_attack, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component2, 6, 0, gs.codes);
+    menu_format_number(player_state.piercing_attack, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component3, 6, 0, gs.codes);
+    menu_format_number(player_state.holy_attack, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.attack_component4, 6, 0, gs.codes);
+    menu_format_number(player_state.fire_attack, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0x1e;
-    menu_format_number(player_state.damage_defense_component0, 6, 0, gs.codes);
+    menu_format_number(player_state.cutting_defense, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component1, 6, 0, gs.codes);
+    menu_format_number(player_state.striking_defense, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component2, 6, 0, gs.codes);
+    menu_format_number(player_state.piercing_defense, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
     menu_format_number(player_state.poison_resistance, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component3, 6, 0, gs.codes);
+    menu_format_number(player_state.magic_defense, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0xe;
-    menu_format_number(player_state.damage_defense_component4, 6, 0, gs.codes);
+    menu_format_number(player_state.fire_defense, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }

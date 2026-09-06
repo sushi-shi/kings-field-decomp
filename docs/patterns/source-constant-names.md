@@ -1925,3 +1925,12 @@ findings: 7/60 source-data units match, target relink remains PSX 1/1,
 GAME 75/77 and OPEN 34/38, with two GAME and four OPEN section-base conflicts
 and zero artifact failures. Post-full-build object, score and raw controls
 pass. No tooling implementation or flake changed.
+
+## Player damage label meanings
+
+The [player damage-label campaign](game-player-damage-labels.md) supplies
+semantic field names from the retail UI and actual damage data flow. It
+preserves all numerical values. Its numeric-limits section distinguishes
+known tenths scaling and zero accumulation from unexplained defense seeds,
+bonus tuning and the repeated cutting-defense contribution. Naming a damage
+type does not recover why the designers selected a particular magnitude.

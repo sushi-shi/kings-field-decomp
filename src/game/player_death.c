@@ -50,12 +50,12 @@ void game_state_initialize(void)
     player_state.attack_charge_state.current = 0;
     player_state.magic_charge = 0;
     player_state.weapon_charge_delay = 0;
-    player_state.damage_defense_component0 = 5;
-    player_state.damage_defense_component1 = 5;
-    player_state.damage_defense_component2 = 5;
+    player_state.cutting_defense = 5;
+    player_state.striking_defense = 5;
+    player_state.piercing_defense = 5;
     player_state.poison_resistance = 5;
-    player_state.damage_defense_component3 = 5;
-    player_state.damage_defense_component4 = 5;
+    player_state.magic_defense = 5;
+    player_state.fire_defense = 5;
     player_state.view_bob_offset = 0;
     player_state.view_bob_phase = 0;
     player_state.vertical_state = 0;
@@ -227,17 +227,17 @@ void player_recalculate_combat_stats(void)
     const KfArmorRecord *armor;
     s32 power;
 
-    player_state.attack_component0 = 0;
-    player_state.attack_component1 = 0;
-    player_state.attack_component2 = 0;
-    player_state.attack_component3 = 0;
-    player_state.attack_component4 = 0;
-    player_state.damage_defense_component0 = 0;
-    player_state.damage_defense_component1 = 0;
-    player_state.damage_defense_component2 = 0;
+    player_state.cutting_attack = 0;
+    player_state.striking_attack = 0;
+    player_state.piercing_attack = 0;
+    player_state.holy_attack = 0;
+    player_state.fire_attack = 0;
+    player_state.cutting_defense = 0;
+    player_state.striking_defense = 0;
+    player_state.piercing_defense = 0;
     player_state.poison_resistance = 0;
-    player_state.damage_defense_component3 = 0;
-    player_state.damage_defense_component4 = 0;
+    player_state.magic_defense = 0;
+    player_state.fire_defense = 0;
     player_state.physical_power = player_state.base_physical_power;
     player_state.magic = player_state.base_magic;
     if (player_state.status_effect_flags & 1) {
@@ -249,71 +249,71 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.equipped_weapon_id != 0xff) {
         weapon = &weapon_records[player_state.equipped_weapon_id];
-        player_state.attack_component0 += weapon->attack_components[0];
-        player_state.attack_component1 += weapon->attack_components[1];
-        player_state.attack_component2 += weapon->attack_components[2];
-        player_state.attack_component3 += weapon->attack_components[3];
-        player_state.attack_component4 += weapon->attack_components[4];
+        player_state.cutting_attack += weapon->attack_components[0];
+        player_state.striking_attack += weapon->attack_components[1];
+        player_state.piercing_attack += weapon->attack_components[2];
+        player_state.holy_attack += weapon->attack_components[3];
+        player_state.fire_attack += weapon->attack_components[4];
     }
     if (player_state.equipped_shield_id != 0xff) {
         armor = &armor_records[player_state.equipped_shield_id - 13];
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component1 += armor->defense_component1;
-        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.striking_defense += armor->striking_defense;
+        player_state.piercing_defense += armor->piercing_defense;
         player_state.poison_resistance += armor->poison_resistance;
-        player_state.damage_defense_component3 += armor->defense_component3;
-        player_state.damage_defense_component4 += armor->defense_component4;
+        player_state.magic_defense += armor->magic_defense;
+        player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_head_armor_id != 0xff) {
         armor = &armor_records[player_state.equipped_head_armor_id - 13];
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component1 += armor->defense_component1;
-        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.striking_defense += armor->striking_defense;
+        player_state.piercing_defense += armor->piercing_defense;
         player_state.poison_resistance += armor->poison_resistance;
-        player_state.damage_defense_component3 += armor->defense_component3;
-        player_state.damage_defense_component4 += armor->defense_component4;
+        player_state.magic_defense += armor->magic_defense;
+        player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_arm_armor_id != 0xff) {
         armor = &armor_records[player_state.equipped_arm_armor_id - 13];
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component1 += armor->defense_component1;
-        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.striking_defense += armor->striking_defense;
+        player_state.piercing_defense += armor->piercing_defense;
         player_state.poison_resistance += armor->poison_resistance;
-        player_state.damage_defense_component3 += armor->defense_component3;
-        player_state.damage_defense_component4 += armor->defense_component4;
+        player_state.magic_defense += armor->magic_defense;
+        player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_leg_armor_id != 0xff) {
         armor = &armor_records[player_state.equipped_leg_armor_id - 13];
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component1 += armor->defense_component1;
-        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.striking_defense += armor->striking_defense;
+        player_state.piercing_defense += armor->piercing_defense;
         player_state.poison_resistance += armor->poison_resistance;
-        player_state.damage_defense_component3 += armor->defense_component3;
-        player_state.damage_defense_component4 += armor->defense_component4;
+        player_state.magic_defense += armor->magic_defense;
+        player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_body_armor_id != 0xff) {
         armor = &armor_records[player_state.equipped_body_armor_id - 13];
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component0 += armor->defense_component0;
-        player_state.damage_defense_component1 += armor->defense_component1;
-        player_state.damage_defense_component2 += armor->defense_component2;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.cutting_defense += armor->cutting_defense;
+        player_state.striking_defense += armor->striking_defense;
+        player_state.piercing_defense += armor->piercing_defense;
         player_state.poison_resistance += armor->poison_resistance;
-        player_state.damage_defense_component3 += armor->defense_component3;
-        player_state.damage_defense_component4 += armor->defense_component4;
+        player_state.magic_defense += armor->magic_defense;
+        player_state.fire_defense += armor->fire_defense;
     }
     switch (player_state.equipped_accessory_id) {
     case 48:
-        player_state.attack_component3 += 5;
+        player_state.holy_attack += 5;
         break;
     case 49:
-        player_state.damage_defense_component3 += 7;
+        player_state.magic_defense += 7;
         break;
     case 50:
-        player_state.damage_defense_component4 += 7;
+        player_state.fire_defense += 7;
         break;
     case 51:
         player_state.magic += 8;
@@ -322,14 +322,14 @@ void player_recalculate_combat_stats(void)
         player_state.magic += 1;
         break;
     case 52:
-        player_state.attack_component3 += 3;
+        player_state.holy_attack += 3;
         break;
     }
     if (player_state.equipped_shield_id == 16) {
         player_state.physical_power -= 8;
     }
     if (player_state.status_effect_flags & 0x10) {
-        player_state.damage_defense_component4 += 10;
+        player_state.fire_defense += 10;
     }
     if (player_state.base_magic >= 37 && magic_records[0].learned != 0 && magic_records[1].learned == 0) {
         magic_records[1].learned = 1;
@@ -506,15 +506,15 @@ void player_apply_damage(
         player_state.status_effect_flags |= 8;
     }
     damage = player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.damage_defense_component0 * 10, component0 * 10);
+        player_state.physical_power * 10, player_state.cutting_defense * 10, component0 * 10);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.damage_defense_component1 * 10, component1 * 10);
+        player_state.physical_power * 10, player_state.striking_defense * 10, component1 * 10);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.damage_defense_component2 * 10, component2 * 10);
+        player_state.physical_power * 10, player_state.piercing_defense * 10, component2 * 10);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.damage_defense_component3 * 10, component3 * 10);
+        player_state.physical_power * 10, player_state.magic_defense * 10, component3 * 10);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.damage_defense_component4 * 10, component4 * 10);
+        player_state.physical_power * 10, player_state.fire_defense * 10, component4 * 10);
     damage += 5;
     damage = (scale_q12 * (damage / 10)) >> 12;
     loss = (multiplier_tenths * damage) / 10;

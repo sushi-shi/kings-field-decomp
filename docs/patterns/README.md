@@ -183,6 +183,9 @@ promotes a probe to a proven historical toolchain.
   fixed pitch closes number rendering and removes the string-render preheader
   difference; retail atlas offsets prove the kana marks, blanks and slash.
   Four decoration immediates remain non-exact.
+- [game-player-damage-labels.md](game-player-damage-labels.md): retail glyphs
+  identify fifteen player/armor attack and defense fields, preserving the
+  different fourth attack/defense labels and doubled cutting contribution.
 - [game-player-poison.md](game-player-poison.md): the retail poison glyph
   identifies the player/equipment resistance fields, status bit and countdown;
   timing and literal-value limits are documented from the damage/update chain.

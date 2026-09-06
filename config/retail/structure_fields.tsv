@@ -85,12 +85,12 @@ KfActorState	0x2b40	0x02	current_index	u16	supported	game_actor.h;asm;xrefs	inde
 KfActorState	0x2b42	0x02	current_definition_id	u16	supported	game_actor.h;asm;xrefs	definition id of the actor being updated
 KfActorState	0x2b44	0x04	player_target	KfActor *	supported	game_actor.h;asm;xrefs	actor targeted by the player
 KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
-KfArmorRecord	0x02	0x02	defense_component0	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added twice to damage_defense_component0
-KfArmorRecord	0x04	0x02	defense_component1	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component1
-KfArmorRecord	0x06	0x02	defense_component2	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component2
+KfArmorRecord	0x02	0x02	cutting_defense	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added twice to cutting_defense
+KfArmorRecord	0x04	0x02	striking_defense	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to striking_defense
+KfArmorRecord	0x06	0x02	piercing_defense	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to piercing_defense
 KfArmorRecord	0x08	0x02	poison_resistance	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-poison.md;retail-menu-glyph-0x88	unsigned equipment contribution to player poison resistance
-KfArmorRecord	0x0a	0x02	defense_component3	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component3
-KfArmorRecord	0x0c	0x02	defense_component4	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats	added to damage_defense_component4
+KfArmorRecord	0x0a	0x02	magic_defense	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to magic_defense
+KfArmorRecord	0x0c	0x02	fire_defense	u16	supported	game_equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to fire_defense
 KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
 KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
@@ -486,18 +486,18 @@ KfPlayerState	0x26	0x02	physical_power	u16	supported	game_player.h;data_identiti
 KfPlayerState	0x28	0x02	magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x2c	0x04	gold	u32	supported	game_player.h;asm;menu;item-buy-sell	player gold total
-KfPlayerState	0x30	0x02	attack_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x32	0x02	attack_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x34	0x02	attack_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x36	0x02	attack_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x38	0x02	attack_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x30	0x02	cutting_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned cutting_attack field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x32	0x02	striking_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned striking_attack field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x34	0x02	piercing_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned piercing_attack field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x36	0x02	holy_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned holy_attack field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x38	0x02	fire_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned fire_attack field; corresponding retail UI label and component argument/defense use establish meaning
 KfPlayerState	0x3a	0x02	unknown_3a	u8[2]	opaque	game_player.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x3c	0x02	damage_defense_component0	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x3e	0x02	damage_defense_component1	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x40	0x02	damage_defense_component2	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x3c	0x02	cutting_defense	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned cutting_defense field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x3e	0x02	striking_defense	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned striking_defense field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x40	0x02	piercing_defense	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned piercing_defense field; corresponding retail UI label and component argument/defense use establish meaning
 KfPlayerState	0x42	0x02	poison_resistance	u16	supported	game_player.h;data_identities.tsv;game-player-poison.md;retail-menu-glyph-0x88	unsigned poison application threshold
-KfPlayerState	0x44	0x02	damage_defense_component3	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x46	0x02	damage_defense_component4	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x44	0x02	magic_defense	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned magic_defense field; corresponding retail UI label and component argument/defense use establish meaning
+KfPlayerState	0x46	0x02	fire_defense	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned fire_defense field; corresponding retail UI label and component argument/defense use establish meaning
 KfPlayerState	0x48	0x02	status_effect0_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x4a	0x02	status_effect1_timer	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x4c	0x02	poison_timer	s16	supported	game_player.h;data_identities.tsv;game-player-poison.md;retail-menu-glyph-0x88	signed poison countdown in status updates; -1 inactive

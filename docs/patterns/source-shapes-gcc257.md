@@ -579,7 +579,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
 | `id*28 + 0x800a00dc` for every armor slot | `&armor_records[id - 13]`: the 1176-byte block at `0x800a0248` is 42 records of 28 bytes for item ids 13..54, and the relocation rows name `armor_records` so the addend is measured from it | `player_recalculate_combat_stats` `0x80015714`, `player_set_equipment_slot` `0x80016848` |
-| `lbu 0(rec+2)` added twice into `damage_defense_component0` | two `+=` statements of the same field, as retail does for every armor slot | `player_recalculate_combat_stats` |
+| `lhu v1,2(a0)` at 800158b8/800158cc added twice into `cutting_defense` | two `+=` statements of the same field, as retail does for every armor slot | `player_recalculate_combat_stats` |
 | `la v1,field; lhu v0,0(v1); addiu; sh v0,0(v1)` shared store for the accessory cases | a `switch` with cases 48..52 and 42 each doing one `+=`; the stores cross-jump into a single `sh v0,0(v1)` | same |
 | `lbu -12704(v0)` / `la v1,-12584; lbu 0(v1)` for the milestone flags | bytes 0, 20, 80 and 120 of the 20-byte magic record table `DAT_8009ce60[]`; the relocation rows name that base | same |
 | `bne timer,-1 -> clamp; ...; la 1000` placed after the clamp | `if (timer != -1) { if (timer < 970) timer = 970; } else { timer = 1000; }`; the `== -1` first form lays the constant inline | `player_apply_damage` `0x80016324` |

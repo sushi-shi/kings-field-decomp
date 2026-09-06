@@ -156,11 +156,11 @@ void player_update_weapon_attack(void)
                 actor_apply_damage(
                     actor,
                     player_state.physical_power,
-                    player_state.attack_component0,
-                    player_state.attack_component1,
-                    player_state.attack_component2,
-                    player_state.attack_component3,
-                    player_state.attack_component4,
+                    player_state.cutting_attack,
+                    player_state.striking_attack,
+                    player_state.piercing_attack,
+                    player_state.holy_attack,
+                    player_state.fire_attack,
                     player_state.attack_charge_state.committed,
                     0x10);
             }
