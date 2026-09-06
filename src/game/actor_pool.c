@@ -50,8 +50,8 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
         }
         actor->slot_state = placements->slot_state;
         if (actor->slot_state != KF_ACTOR_SLOT_FREE) {
-            actor->definition_id = placements->definition_flags & 0x1f;
-            if (placements->definition_flags & 0x20) {
+            actor->definition_id = placements->definition_flags & KF_ACTOR_PLACEMENT_DEFINITION_MASK;
+            if (placements->definition_flags & KF_ACTOR_PLACEMENT_VARIANT) {
                 actor->variant = 1;
             } else {
                 actor->variant = 0;

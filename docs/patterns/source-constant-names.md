@@ -10,6 +10,12 @@ vertical, collision, slot-policy and progress values across their consumers.
 It explains the remaining progress counters and retains the distinction
 between automatic-selection locks, completed actions and unavailable animations.
 
+The [actor constant review](game-actor-constants.md) covers all three actor
+modules, including phase limits, sound/parameter slots, collision policies,
+damage units and packed flags. Its inventory explains all 517 retained literal
+occurrences without claiming their original tuning rationale or unsupported
+effect identities.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

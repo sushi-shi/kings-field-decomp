@@ -153,6 +153,9 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-states.md](game-actor-states.md): name actor actions, lifecycle,
   vertical/collision states and allocation policies; distinguish progress
   markers, jump phases and counters across updates, rendering and save data.
+- [game-actor-constants.md](game-actor-constants.md): actor phase limits,
+  sound/parameter slots, collision policies, damage units and packed flags;
+  consumer explanations for all retained literals in the three actor modules.
 - [game-animation-phase.md](game-animation-phase.md): eleven-caller audit and
   unchanged explicit phase-cache control; predicate remains non-exact.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect

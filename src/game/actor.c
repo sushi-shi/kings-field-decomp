@@ -6,10 +6,11 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-/* Unresolved flag consulted before damaging definition 7 on floor 5. */
-/*
- * Shared pool of 48 sixty-byte effect records whose first byte is 0xff when free.
- */
+enum {
+    ACTOR_DAMAGE_SUBUNITS_PER_HP = 10,
+    ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
+    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
+};
 
 /*
  * Twenty-five ten-byte action-selection profiles indexed by profile_index in
@@ -17,7 +18,7 @@
  * middle_weight, near_weight}. Unused rows are zero.
  */
 DATA(0x80056080, 0xfa)
-KfActorActionProfile actor_action_profiles[25] = {
+KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT] = {
     {0},
     {0},
     {0},
@@ -46,8 +47,8 @@ KfActorActionProfile actor_action_profiles[25] = {
 };
 
 /*
- * Boss-death phase sounds {program, tone, note}; the death handler uses phases
- * one through three, and the fourth record shares the trailing filler byte.
+ * Boss-death sounds {program, tone, note}; the handler reads indices 1..3.
+ * The last record's three 88 bytes are retained literal data.
  */
 DATA(0x8005617c, 0xc)
 SoundRef boss_death_phase_sounds[4] = {
@@ -140,7 +141,7 @@ void actor_initialize(KfActor *actor)
     if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
         || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
-        actor->rotation.y = actor->heading_quadrant << 10;
+        actor->rotation.y = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
     } else {
         actor->rotation.y = rand() >> 3;
     }
@@ -236,8 +237,8 @@ void actor_pool_spawn(
 found:
     actor->definition_id = definition_id;
     actor->slot_state = KF_ACTOR_SLOT_DYNAMIC;
-    actor->tile_z = 0xff;
-    actor->tile_x = 0xff;
+    actor->tile_z = KF_MAP_CELL_COORD_INVALID;
+    actor->tile_x = KF_MAP_CELL_COORD_INVALID;
     actor->variant = 0;
     actor_set_position(actor, position);
     actor_set_rotation(actor, rotation->x, rotation->y, rotation->z);
@@ -316,22 +317,32 @@ void actor_apply_damage(
         return;
     }
     damage = combat_calculate_damage_component(
-        base_power * 10, component0 * 10, definition->defenses[0] * 10);
+        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        component0 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[0] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * 10, component1 * 10, definition->defenses[1] * 10);
+        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        component1 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[1] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * 10, component2 * 10, definition->defenses[2] * 10);
+        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        component2 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[2] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * 10, component3 * 10, definition->defenses[3] * 10);
+        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        component3 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[3] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * 10, component4 * 10, definition->defenses[4] * 10);
-    damage = (damage + 5) / 10;
-    damage = damage * scale / 5000;
+        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        component4 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[4] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+    damage = (damage + ACTOR_DAMAGE_SUBUNITS_PER_HP / 2) / ACTOR_DAMAGE_SUBUNITS_PER_HP;
+    damage = damage * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
     if (damage == 0) {
         return;
     }
-    hit_flags &= 0xf0;
-    if (actor->health != 0 && hit_flags == 0x10) {
+    hit_flags &= KF_ACTOR_DAMAGE_CREDIT_MASK;
+    if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
         if (component0 == 0 && component1 == 0 && component2 == 0) {
             player_increment_magic_training();
         } else if (component1 != 0 || component2 != 0) {
@@ -350,7 +361,7 @@ void actor_apply_damage(
         }
     } else {
         remaining = 0;
-        if (health != 0 && hit_flags == 0x10) {
+        if (health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
             player_add_experience(definition->experience_reward);
         }
         if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
@@ -375,7 +386,7 @@ void actor_pool_apply_radial_damage(
     u16 hit_flags)
 {
     s32 falloff_value = falloff;
-    s32 remaining = 0x1000 - falloff_value;
+    s32 remaining = KF_FIXED12_ONE - falloff_value;
     KfActor *actor = actor_state.actors;
     KfActorDefinition *definition;
     s16 index;
@@ -406,12 +417,12 @@ void actor_pool_apply_radial_damage(
         if (distance == -1) {
             continue;
         }
-        if (falloff_value == 0x1000) {
+        if (falloff_value == KF_FIXED12_ONE) {
             damage_scale = scale;
         } else {
-            ratio = (distance << 12) / radius;
-            weight = 0x1000 - ((u32)(ratio * remaining) >> 12);
-            damage_scale = (u32)(scale * weight) >> 12;
+            ratio = (distance << KF_FIXED12_BITS) / radius;
+            weight = KF_FIXED12_ONE - ((u32)(ratio * remaining) >> KF_FIXED12_BITS);
+            damage_scale = (u32)(scale * weight) >> KF_FIXED12_BITS;
         }
         actor_apply_damage(
             index,
@@ -471,7 +482,7 @@ void actor_try_attack_player(
         status_effect,
         0,
         0,
-        0x1000,
+        KF_FIXED12_ONE,
         10);
 }
 
@@ -503,16 +514,16 @@ KfActor *actor_pool_find_target_in_cone(
             continue;
         }
         distance = actor_distance_to_point(
-            actor, origin->x, 0xffff, origin->z, max_distance, 0, 0);
+            actor, origin->x, KF_COLLISION_IGNORE_HEIGHT, origin->z, max_distance, 0, 0);
         if (distance == -1) {
             continue;
         }
         delta = vector_xz_to_angle(
             actor->position.vx - origin->x, origin->z - actor->position.vz) - facing;
-        delta &= 0xfff;
+        delta &= KF_ANGLE_WRAP_MASK;
         folded = delta;
-        if (delta > 2048) {
-            folded = 0x1000 - delta;
+        if (delta > KF_ANGLE_HALF_TURN) {
+            folded = KF_ANGLE_FULL_TURN - delta;
         }
         if (angle_tolerance < folded) {
             continue;
@@ -549,8 +560,8 @@ s32 actor_distance_to_point(
     if (delta_z < -max_distance || max_distance < delta_z) {
         goto out_of_range;
     }
-    delta_x >>= 3;
-    if (point_y != 0xffff) {
+    delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
         actor_height >>= 1;
         point_height >>= 1;
         delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
@@ -562,8 +573,8 @@ s32 actor_distance_to_point(
             goto out_of_range;
         }
     }
-    delta_z >>= 3;
-    distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << 3;
+    delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
     if (max_distance < distance) {
         goto out_of_range;
     }
@@ -627,7 +638,7 @@ void actor_advance_animation_wrapped(KfActor *actor, s16 delta)
     } else {
         actor->animation_step = delta;
     }
-    actor->animation_phase = (actor->animation_phase + delta) & 0xfff;
+    actor->animation_phase = (actor->animation_phase + delta) & KF_ACTOR_ANIMATION_PHASE_MAX;
 }
 
 ADDRESS(0x8002dc70, 0x5c)
@@ -642,8 +653,8 @@ void actor_advance_animation_clamped(KfActor *actor, s16 delta)
     }
     phase = actor->animation_phase + delta;
     actor->animation_phase = phase;
-    if (phase >= 4096) {
-        actor->animation_phase = 0xfff;
+    if (phase >= KF_ACTOR_ANIMATION_PHASE_PERIOD) {
+        actor->animation_phase = KF_ACTOR_ANIMATION_PHASE_MAX;
     } else if (phase < 0) {
         actor->animation_phase = 0;
     }
@@ -670,10 +681,10 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     }
     if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
         audio_play_spatial_range(
-            sound, &actor->position, 0x7f, 20000, 60000);
+            sound, &actor->position, KF_AUDIO_MAX_VOLUME, 20000, 60000);
     } else {
         audio_play_spatial_default_range(
-            sound, &actor->position, 0x7f);
+            sound, &actor->position, KF_AUDIO_MAX_VOLUME);
     }
 }
 
@@ -714,7 +725,7 @@ u8 actor_try_select_action_distance_facing(
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
-            0x18e)) {
+            ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
     return KF_ACTOR_ACTION_NONE;
@@ -756,7 +767,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
-            0x18e)) {
+            ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
 rejected:
@@ -788,7 +799,7 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
-            0x1c7)) {
+            ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
     return KF_ACTOR_ACTION_NONE;
@@ -797,7 +808,7 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
 ADDRESS(0x8002e0f0, 0x1f8)
 u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, u16 chance)
 {
-    u16 profile = profile_index & 0x1f;
+    u16 profile = profile_index & KF_ACTOR_EFFECT_KIND_MASK;
     KfActorActionProfile *weights = &actor_action_profiles[profile];
     KfActor *actor = actor_state.current;
     s32 odds;
@@ -817,7 +828,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
             odds = weights->middle_weight;
         }
     }
-    odds = (chance * odds) >> 8;
+    odds = (chance * odds) >> KF_FIXED8_BITS;
     if (!((rand() >> 4) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
@@ -826,7 +837,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
-            0x155)
+            KF_ACTOR_AIM_TOLERANCE)
         && rand() >= 819) {
         return KF_ACTOR_ACTION_NONE;
     }

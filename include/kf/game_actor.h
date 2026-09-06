@@ -90,7 +90,49 @@ enum {
 };
 
 enum {
-    KF_ACTOR_ANIMATION_NONE = 0xff
+    KF_ACTOR_ANIMATION_NONE = 0xff,
+    KF_ACTOR_ANIMATION_PHASE_PERIOD = 0x1000,
+    KF_ACTOR_ANIMATION_PHASE_MAX = KF_ACTOR_ANIMATION_PHASE_PERIOD - 1,
+    KF_ACTOR_AIM_TOLERANCE = 0x155
+};
+
+enum {
+    KF_ACTOR_SOUND_ATTACK = 0,
+    KF_ACTOR_SOUND_HIT_REACTION = 1,
+    KF_ACTOR_SOUND_DEATH = 2,
+    KF_ACTOR_SOUND_COUNT = 3
+};
+
+/* Definition flags in the placement stream; unrelated to effect-code bits. */
+enum {
+    KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
+    KF_ACTOR_PLACEMENT_VARIANT = 0x20
+};
+
+/* The same encoded effect byte selects its action profile and spawned kind. */
+enum {
+    KF_ACTOR_ACTION_PROFILE_COUNT = 25,
+    KF_ACTOR_EFFECT_KIND_MASK = 0x1f,
+    KF_ACTOR_EFFECT_PAIRED = 0x20
+};
+
+enum {
+    KF_ACTOR_PARAM_EFFECT0 = 0,
+    KF_ACTOR_PARAM_EFFECT1 = 1,
+    KF_ACTOR_PARAM_EFFECT2 = 2,
+    KF_ACTOR_PARAM_EFFECT0_CHANCE = 3,
+    KF_ACTOR_PARAM_EFFECT1_CHANCE = 4,
+    KF_ACTOR_PARAM_EFFECT2_CHANCE = 5,
+    KF_ACTOR_PARAM_DROP_OBJECT = 6,
+    KF_ACTOR_PARAM_DROP_CHANCE = 7,
+    KF_ACTOR_PARAM_COUNT = 8
+};
+
+/* Only the exact credit nibble 0x10 awards player training and experience. */
+enum {
+    KF_ACTOR_DAMAGE_SCALE_ONE = 5000,
+    KF_ACTOR_DAMAGE_CREDIT_MASK = 0xf0,
+    KF_ACTOR_DAMAGE_CREDIT_PLAYER = 0x10
 };
 
 /*
@@ -109,11 +151,11 @@ typedef struct KfActorDefinition {
     u8 melee_attack_chance;
     u8 status_effect;
     u8 status_effect_chance;
-    u8 action_parameters[8];
+    u8 action_parameters[KF_ACTOR_PARAM_COUNT];
     u8 move_speed;
     u8 action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
-    SoundRef sounds[3];
+    SoundRef sounds[KF_ACTOR_SOUND_COUNT];
     struct KfVec3s attachment_offsets[2];
     s16 special_attack_chance;
     s16 special_attack_range;
@@ -206,7 +248,7 @@ typedef struct KfActorState {
     KfActor *player_target;
 } KfActorState;
 
-extern KfActorActionProfile actor_action_profiles[25];
+extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
 extern KfActorState actor_state;
 extern const SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[4];
