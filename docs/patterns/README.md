@@ -272,6 +272,9 @@ promotes a probe to a proven historical toolchain.
 - [game-drop-item-flow.md](game-drop-item-flow.md): observed initialization
   and traversal order recover the inventory back-edge delay slot; the
   remaining three register roles are an unattributed, non-exact residue.
+- [game-status-panel-flow.md](game-status-panel-flow.md): reviewed frame-head
+  jump, shared settling increment and natural corner order recover the
+  status-panel CFG; descriptor addressing and frame extent remain non-exact.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.

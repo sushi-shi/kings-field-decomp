@@ -4364,7 +4364,7 @@ GAME.EXE	0x80024918	0x13118		mips26	reachable-code	0x8002ad1c	load		jal		control
 GAME.EXE	0x80024920	0x13120		mips26	reachable-code	0x8002a510	load		jal		control-flow-reviewed	reviewed	manual:menu_status_panel
 GAME.EXE	0x80024928	0x13128		mips26	reachable-code	0x8002ac34	load		jal		control-flow-reviewed	reviewed	manual:menu_status_panel
 GAME.EXE	0x80024944	0x13144		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow-reviewed	reviewed	manual:menu_status_panel
-GAME.EXE	0x80024954	0x13154		mips26	instruction-word	0x80024348	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80024954	0x13154		mips26	instruction-word	0x80024348	load		j		control-flow-reviewed	reviewed	manual:menu_status_panel-shared-frame-increment
 GAME.EXE	0x8002495c	0x1315c		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow-reviewed	reviewed	manual:menu_status_panel
 GAME.EXE	0x8002496c	0x1316c		mips26	reachable-code	0x8002b150	load		jal		control-flow-reviewed	reviewed	manual:menu_status_panel
 GAME.EXE	0x80024974	0x13174		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow-reviewed	reviewed	manual:menu_status_panel
