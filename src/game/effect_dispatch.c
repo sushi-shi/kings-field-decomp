@@ -26,23 +26,19 @@ void effect_update_dispatch(void)
     KfMagicRecord *impact_magic;
     KfEffectRecord *linked_effect;
     KfActor *target;
-    struct KfVec3i position;
-    VECTOR movement;
-    struct KfVec3s actor_rotation;
-    SVECTOR local_motion;
-    MATRIX matrix;
-    u16 scatter[4];
+    const SoundRef *phase_sound;
+    VECTOR impact_position;
     u32 collision;
+    u16 collision_kind;
     u8 phase;
     u8 kind;
     u32 radius;
-    u32 angle;
-    u32 distance;
+    u16 angle;
+    u16 distance;
     u16 power;
     u16 next;
     s16 prior;
     s16 desired_pitch;
-    s32 target_distance;
     s32 cell_x;
     s32 cell_z;
     s32 count;
@@ -70,6 +66,7 @@ shared_projectile:
             collision = effect_map_collision(&effect->position, radius);
             if (collision != (u32)-1) {
                 impact_magic = current_effect_magic_record;
+                collision_kind = collision >> 16;
                 if (kind == 4) {
                     goto effect_kind4_impact;
                 }
@@ -78,17 +75,17 @@ shared_projectile:
                     audio_play_spatial_default_range(
                         &impact_magic->sounds[1], &effect->position, 0x7f);
                 }
-                if ((collision >> 16) == 0x10) {
+                if (collision_kind == 0x10) {
                     if (kind == 14 || kind == 22 || kind == 7) {
                         actor_apply_damage(
-                            collision, power,
+                            (u16)collision, power,
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
                             impact_magic->damage_components[1],
                             0, 0, 5000, effect->type);
                     } else if (kind != 13) {
                         actor_apply_damage(
-                            collision, power,
+                            (u16)collision, power,
                             0, 0, 0, impact_magic->damage_components[0],
                             impact_magic->damage_components[1],
                             5000, effect->type);
@@ -96,7 +93,7 @@ shared_projectile:
                     if (kind == 7) {
                         goto advance_shared_projectile;
                     }
-                } else if ((collision >> 16) == 0x80) {
+                } else if (collision_kind == 0x80) {
                     if (kind == 13 || kind == 14 || kind == 22) {
                         player_apply_damage(
                             impact_magic->damage_components[0],
@@ -151,19 +148,21 @@ advance_shared_projectile:
 effect_kind4_impact:
                 audio_play_spatial_default_range(
                     &magic->sounds[1], &effect->position, 0x7f);
-                position.x = effect->position.vx;
-                position.z = effect->position.vz;
-                cell_x = position.x / 2000;
-                cell_z = position.z / 2000;
-                position.y = -(map_floor_height_grid[cell_z][cell_x] * 100);
                 effect->unknown_07 = 0x32;
+                impact_position.vx = effect->position.vx;
+                impact_position.vz = effect->position.vz;
+                impact_position.vy =
+                    -(map_floor_height_grid[effect->position.vz / 2000]
+                                           [effect->position.vx / 2000] * 100);
                 effect_pool_construct(
                     effect->id, effect->type,
                     effect->unknown_02 == 6 ? 0x20 : 0x29,
-                    &position, &effect->rotation_x);
+                    &impact_position, &effect->rotation_x);
                 return;
             }
             if (kind == 10) {
+                SVECTOR scatter;
+
                 prior = effect->unknown_38;
                 effect->unknown_38 = prior - 1;
                 if ((s16)(prior - 1) == 0) {
@@ -176,15 +175,12 @@ effect_kind4_impact:
                         effect->scale_y = next;
                         effect->scale_z = next;
                         effect->unknown_3a--;
-                        scatter[0] = effect->direction_x;
-                        scatter[1] = effect->direction_y;
-                        scatter[2] = effect->direction_z;
-                        scatter[3] = effect->unknown_32;
-                        effect_scatter_triple(scatter);
+                        scatter = *(const SVECTOR *)&effect->direction_x;
+                        effect_scatter_triple((u16 *)&scatter);
                         effect->unknown_38 = effect->unknown_3a == 0 ? 15 : 5;
                         effect_pool_construct(
                             effect->id, effect->type, 10, &effect->position,
-                            scatter, effect->unknown_3a, effect->unknown_38,
+                            &scatter, effect->unknown_3a, effect->unknown_38,
                             (s16)effect->scale_x);
                         effect_scatter_triple(&effect->direction_x);
                     }
@@ -232,8 +228,10 @@ effect_kind4_impact:
             effect->position.vy -= 175;
             if (phase == 119) {
                 effect->unknown_07 = 0xff;
+                phase_sound = &magic->sounds[0];
+play_phase_sound:
                 audio_play_spatial_default_range(
-                    &magic->sounds[0], &effect->position, 0x7f);
+                    phase_sound, &effect->position, 0x7f);
             }
         } else if (phase == 120) {
             effect->direction_y += 20;
@@ -303,10 +301,11 @@ effect_kind4_impact:
         linked_effect = &effect_pool_records[(u8)effect->unknown_38];
         collision = effect_map_collision(&effect->position, radius);
         if (collision != (u32)-1) {
+            collision_kind = collision >> 16;
             power = effect_magic_power(effect);
-            if ((collision >> 16) == 0x10) {
+            if (collision_kind == 0x10) {
                 actor_apply_damage(
-                    collision, power, 0, 0, 0,
+                    (u16)collision, power, 0, 0, 0,
                     magic->damage_components[0], magic->damage_components[1],
                     5000, effect->type);
             }
@@ -362,7 +361,12 @@ effect_kind4_impact:
         }
         break;
 
-    case 20:
+    case 20: {
+        SVECTOR local_motion;
+        VECTOR movement;
+        MATRIX matrix;
+        s32 target_distance;
+
         if (phase == 0) {
 randomize_kind20:
             effect->direction_x =
@@ -413,7 +417,6 @@ randomize_kind20:
         local_motion.vx = 0;
         local_motion.vy = 0;
         local_motion.vz = 650;
-        local_motion.pad = 0;
         matrix_set_rotation_x(effect->rotation_x, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
         local_motion.vx = movement.vx;
@@ -434,6 +437,7 @@ randomize_kind20:
             effect->type = 0xff;
         }
         break;
+    }
 
     case 32:
         if (phase > 9) {
@@ -451,14 +455,16 @@ randomize_kind20:
                 effect->unknown_02 == 11 ? 0x21 : 0x2a,
                 &effect->position, &effect->rotation_x);
             if (phase == 3) {
-                audio_play_spatial_default_range(
-                    &magic_records[4].sounds[1], &effect->position, 0x7f);
+                phase_sound = &magic_records[4].sounds[1];
+                goto play_phase_sound;
             }
         }
         effect->unknown_07++;
         break;
 
-    case 33:
+    case 33: {
+        struct KfVec3i position;
+
         if (phase > 7) {
             effect->type = 0xff;
             effect->unknown_07++;
@@ -485,50 +491,60 @@ randomize_kind20:
         }
         effect->unknown_07++;
         break;
+    }
 
     case 6:
         if (phase < 16) {
-            if ((s16)effect->unknown_38 != 0xff) {
-                prior = effect->unknown_38;
-                effect->unknown_38 = prior - 1;
-                if (prior == 0) {
-                    if (effect->unknown_3a == 0) {
+            if (effect->unknown_38 != 0xff) {
+                if (effect->unknown_38-- == 0) {
+                    switch (effect->unknown_3a) {
+                    case 0:
                         effect_spawn_ground_kind6(
                             effect->id, effect, 0x400, 1);
                         effect_spawn_ground_kind6(
                             effect->id, effect, 0xc00, 2);
-                    } else if (effect->unknown_3a == 1) {
+                        break;
+                    case 1:
                         effect_spawn_ground_kind6(
                             effect->id, effect, 0x400, 0xff);
-                    } else if (effect->unknown_3a == 2) {
+                        break;
+                    case 2:
                         effect_spawn_ground_kind6(
                             effect->id, effect, 0xc00, 0xff);
+                        break;
                     }
                     effect->unknown_38 = 0xff;
                 }
             }
             effect->scale_y += 0x100;
             if (phase == 15) {
-                if (effect->unknown_3a == 0) {
+                switch (effect->unknown_3a) {
+                case 0:
                     effect->unknown_07 = 0x10;
-                } else if (effect->unknown_3a < 3) {
+                    break;
+                case 1:
+                case 2:
                     effect->unknown_07 = 0x1a;
-                } else if (effect->unknown_3a == 0xff) {
+                    break;
+                case 0xff:
                     effect->unknown_07 = 0x24;
+                    break;
                 }
             }
         } else if (phase < 48) {
             if ((phase & 3) == 0) {
-                angle = rand() >> 3;
-                distance = (rand() * 0x145) >> 13;
-                position.x = effect->position.vx
+                VECTOR spawn_position;
+
+                angle = (u32)rand() >> 3;
+                distance = ((u32)rand() * 0x145) >> 13;
+                spawn_position.vx = effect->position.vx
                     + ((rsin(angle) * distance) >> 12);
-                position.y = effect->position.vy;
-                position.z = effect->position.vz
+                spawn_position.vy = effect->position.vy;
+                spawn_position.vz = effect->position.vz
                     + ((rcos(angle) * distance) >> 12);
                 effect_pool_construct(
                     effect->id, effect->type, 0x22,
-                    &position, &effect->rotation_x);
+                    &spawn_position, &effect->rotation_x);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
@@ -571,6 +587,8 @@ randomize_kind20:
             effect->scale_z = next;
             effect->unknown_07++;
         } else if (phase < 41) {
+            struct KfVec3i position;
+
             position.x = effect->position.vx + (s16)effect->direction_x;
             position.y = effect->position.vy;
             position.z = effect->position.vz + (s16)effect->direction_z;
@@ -588,6 +606,9 @@ randomize_kind20:
             }
         } else if (phase < 149) {
             if (phase == 132) {
+                struct KfVec3s actor_rotation;
+                struct KfVec3i position;
+
                 position.x = effect->position.vx;
                 position.y = effect->position.vy + 800;
                 position.z = effect->position.vz;
@@ -632,21 +653,23 @@ randomize_kind20:
     case 52: {
         s16 column;
 
-        if (phase == 0) {
+        switch (phase) {
+        case 0:
             prior = effect->direction_x;
             effect->direction_x = prior - 1;
-            if ((s16)(prior - 1) != -1) {
-                effect->direction_z += effect->rotation_z;
-                for (column = 0; column < effect->rotation_y; column++) {
-                    effect_floor_deform_line(
-                        effect->rotation_x + column,
-                        (s16)effect->direction_z,
-                        -(s16)effect->direction_y);
-                }
+            if ((s16)(prior - 1) == -1) {
+                effect->unknown_07 = 1;
                 return;
             }
-            effect->unknown_07 = 1;
-        } else if (phase == 1) {
+            effect->direction_z += effect->rotation_z;
+            for (column = 0; column < effect->rotation_y; column++) {
+                effect_floor_deform_line(
+                    effect->rotation_x + column,
+                    (s16)effect->direction_z,
+                    -(s16)effect->direction_y);
+            }
+            break;
+        case 1:
             value = effect->position.vy;
             effect->position.vy = value - 1;
             if (value - 1 != -1) {
@@ -655,20 +678,22 @@ randomize_kind20:
             effect->unknown_07 = 2;
             effect->direction_z = 0x1000;
             effect->direction_x = effect->position.vx;
-        } else if (phase == 2) {
+            break;
+        case 2:
             prior = effect->direction_x;
             effect->direction_x = prior - 1;
-            if ((s16)(prior - 1) != -1) {
-                effect->direction_z -= effect->rotation_z;
-                for (column = 0; column < effect->rotation_y; column++) {
-                    effect_floor_deform_line(
-                        effect->rotation_x + column,
-                        (s16)effect->direction_z,
-                        (s16)effect->direction_y);
-                }
+            if ((s16)(prior - 1) == -1) {
+                effect->type = 0xff;
                 return;
             }
-            effect->type = 0xff;
+            effect->direction_z -= effect->rotation_z;
+            for (column = 0; column < effect->rotation_y; column++) {
+                effect_floor_deform_line(
+                    effect->rotation_x + column,
+                    (s16)effect->direction_z,
+                    (s16)effect->direction_y);
+            }
+            break;
         }
         break;
     }

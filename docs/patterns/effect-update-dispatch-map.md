@@ -262,3 +262,156 @@ no skips) and `git diff --check` pass. The focused `kf match` and full
 data 5/60, config-backed SDK data 4/4, target relink 110/116, six conflicting
 bases and zero artifact failures. No tooling or flake change is included;
 concurrent clangd changes remain outside this checkpoint.
+
+## Nested-switch and object-lifetime plan (2026-09-06)
+
+Continue GAME `80038a38`, extent `0x180c`, with the same signature, caller,
+callee, vendor and ownership evidence above. Fresh hash validation and the
+six required views confirm `8136907` at 78.656270%, 1,501/1,539 words,
+131/135 conditional branches, 60/69 internal jumps, 69/69 calls, 171/182
+text relocations and one return each. The retail disassembly is unchanged.
+
+First recover the kind-52 phase switch: retail `8003a084..8003a0bc`
+partitions 1, below 2, 0 and 2 with explicit default exits. Preserve all
+three handler bodies and their returns. Next recover kind 6's mode switches
+at `80039b8c..80039c18` (0/1/2) and `80039c38..80039c90`
+(0, 1/2, 255), retaining the shared phase-increment join and delay-slot
+state writes. Each change gets its own focused build and raw comparison.
+
+Then revisit complete constructor inputs and case-local stack objects using
+the callee's four-word VECTOR copy, SDK layouts and the retail stack offsets.
+Any lifetime reconstruction must reflect actual mutually exclusive handlers,
+not fabricated padding or storage added to force a frame size. Preserve the
+documented uninitialized retail distance read and do not initialize untouched
+SDK padding without evidence.
+
+The common collision arm also retains a halfword class across its power/audio
+calls: `80038aec` shifts the collision result by 16, and `80038b14` masks
+the saved value to 16 bits before comparing 0x10/0x80. Kind 19 repeats that
+decode at `800393e4/800393f4`. Recover this actual classification value and
+its snapshot timing, rather than repeatedly decoding the full result after
+calls. This is an independently evidenced width/lifetime hypothesis.
+
+The matching low half is the actor identifier: direct `andi a0,...,0xffff`
+at `80038b2c/80038b74/80039400` supplies the `u16 actor_index` boundary.
+Keep the full collision result for sentinel/class decoding, but explicitly
+extract that low half at the actor-damage calls. The existing shared prototype
+is already halfword-typed; this does not change the callee or other callers.
+
+Kind 6's randomized spawn has independently decoded unsigned producer shifts
+at `80039cb4/80039cc8`, halfword angle/distance masks at
+`80039ccc/80039cd8`, and signed product shifts at `80039cf0/80039d14`.
+Recover `u16` angle/distance with explicit unsigned random-value arithmetic;
+integer promotion then preserves signed trigonometric coordinate offsets.
+The current `u32` distance instead makes those final shifts logical.
+
+Kind 10's direction snapshot is a complete eight-byte aggregate: retail
+`80038f14..80038f30` uses unaligned word pairs for offsets 0x2c..0x33,
+then passes the copy both to unsigned-halfword scatter and the constructor's
+SVECTOR input. Recover an actual SVECTOR copy, retaining its fourth halfword
+and the scatter helper's unsigned interpretation; do not rebuild the SDK body.
+
+Kind 6's countdown is read twice as unsigned halfword at
+`80039b68/80039b78`; the first read checks 255, the second supplies a
+post-decrement whose old value is compared with zero. Recover that direct
+unsigned field operation, not the current signed local snapshot. Kind 52's
+separate signed countdown-result comparisons are unchanged by this step.
+
+Kind 4 publishes phase 50 at `80038d90` before filling its impact-position
+buffer and computing grid height. The grid indices are then loaded from the
+effect's Z/X words at `80038da4/80038dd8`, not from the stack copy. Recover
+the state-write ordering first, then the direct grid-index expression in a
+separate focused build.
+
+Kind 52's expired-countdown arms precede their loop bodies in retail:
+`8003a0d8` branches past the phase-1 store/return at `8003a0e0..e8`,
+and `8003a198` branches past invalidation/return at `8003a1a0..a8`.
+Spell these as early returns before the loops, preserving the signed
+countdown-result comparison, loop bounds and every delay-slot-visible write.
+
+The remaining first ordered-call difference has an explicit retail join:
+kind 32's phase-3 arm selects `magic_records[4].sounds[1]` at
+`80039a20/80039a24` and jumps to `80039124`, the common phase-119 audio
+call. That call then jumps to the shared phase increment at `80039b44`.
+Recover a shared sound-call label with a selected SoundRef pointer. The
+kind-32 path must bypass the common arm's Y movement and phase-255 store;
+both paths still increment after audio. This preserves 69 calls and does not
+introduce a helper or force an additional call.
+
+### Nested-switch and object-lifetime results
+
+Every row received its own focused build and raw comparison:
+
+| Recovered source fact | Strict objdiff |
+| --- | ---: |
+| Kind-52 phase switch | 79.734245% |
+| Kind-6 spawn-mode switch | 80.941520% |
+| Kind-6 phase-transition switch | 81.770630% |
+| Complete VECTOR constructor inputs | 81.769330% |
+| Retail-supported object scopes and stack offsets | 80.974655% |
+| No invented local-motion pad initialization | 80.962960% |
+| Halfword collision-class snapshot | 81.660170% |
+| Low-half actor identifier at damage calls | 82.115660% |
+| Halfword random angle/distance, signed coordinate offsets | 82.482130% |
+| Complete SVECTOR direction snapshot | 83.076675% |
+| Unsigned kind-6 post-decrement | 83.298250% |
+| Kind-4 phase publication before buffer fill | 83.381420% |
+| Kind-4 grid indexing from the effect's Z/X words | 83.794670% |
+| Kind-52 expired-countdown exits before loops | 84.654970% |
+| Shared phase sound and increment path | 85.690056% |
+
+The object corrections retain full SDK-sized inputs without adding pad
+initializers. `ApplyMatrix` loads two complete input words at
+`8004d4a4/8004d4a8`; do not describe it as three halfword memory reads.
+Retail's caller leaves SVECTOR padding untouched. The reconstructed stack
+now places the kind-4 VECTOR at 48, kind-10 SVECTOR at 64, kind-20 motion,
+output VECTOR, MATRIX and distance at 64/72/88/120, kind-33 and kind-6
+positions at 64, and kind-9 spawn rotation/position at 64/72. The previously
+documented uninitialized target-distance read is preserved. Correct scopes
+and complete inputs were retained through the small intermediate score dips.
+
+The current **85.690056% result remains partial and is not banked**.
+Source is 6,120 bytes / 1,530 words versus retail 6,156 / 1,539. Both now
+use a 168-byte frame with the same saved-register set (`s0..s8,ra`) and
+save/restore offsets. All 69 direct call referents now agree in order, not
+just as a multiset. The shared kind-32 sound path reaches the common call
+without performing the common arm's Y decrement or phase-255 store.
+
+Remaining source/retail differences include 134/135 conditional branches,
+66/69 internal jumps and 177/182 text relocations. The relocation-count gap
+is exactly three internal-jump rows plus kind 33's additional `effect_state`
+HI/LO pair in retail. All other relocation-kind/symbol counts agree. This is
+not an excuse to add missing source references to the target inventory.
+
+The first raw difference is now the current-effect register at +0x30, after
+the matching frame/save prologue. Later operand/register differences are
+not assigned a compiler cause while branch paths, countdown expressions,
+store order and data-address lifetimes still differ. Next audit the remaining
+kind-10 countdown/scale widths, kind-52 direct countdown-result form, kind-33
+absolute reload and the one remaining conditional-branch delta. Do not add
+frame padding or forced register carriers.
+
+Only this dispatcher changes among all 484 native function rows. GAME stays
+288/362 exact, OPEN 97/108 and PSX 1/1; all banked functions remain exact.
+The source remains under `probe-gcc257-o2-g0`, not a proved historical profile.
+
+A read-only comparison of control transfers between corresponding ordered
+calls localizes the one conditional-count delta to kind 9's second `rand`
+before `actor_pool_spawn` (`80039fbc` onward). All other call-bounded intervals
+have equal conditional counts, though twelve intervals differ in jump or
+conditional counts. This is a navigation clue, not paired CFG equivalence:
+inspect the branchless source actor-definition selection versus retail's
+explicit branch before treating the count delta as a missing source path.
+
+The raw selection is accounted for: source uses `slti` then `sll a0,v0,2`
+to produce 0 or 4; retail uses the same `<3000` condition with a branch,
+`a0=0` in its delay slot and a following `a0=4`. Neither form returns or
+skips the spawn call. Thus this particular branch-count delta is not a
+missing early return. Its original source/codegen attribution remains open.
+
+Verification: the focused build/raw comparisons, Ruff, all 633 repository
+tests (80.363s, no skips) and `git diff --check` pass. The focused `kf match`
+and full `kf build -j4` still fail the existing data/ownership/placement
+gates: source data 5/60, config-backed SDK data 4/4, target relink 110/116,
+six conflicting bases and no artifact failures. No new tool or flake change
+belongs to this campaign; concurrent clangd work is preserved separately.
