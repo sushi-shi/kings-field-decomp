@@ -229,7 +229,7 @@ void item_menu_buy(s32 arg)
     inv = item_stock[arg];
     found = 0;
     for (slot = 42; slot < 80; slot++) {
-        if (inv[slot] != 0 && item_stock[0][slot] < 99) {
+        if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             category[found] = inv[slot];
@@ -238,7 +238,7 @@ void item_menu_buy(s32 arg)
         }
     }
     for (slot = 0; slot < 42; slot++) {
-        if (inv[slot] != 0 && item_stock[0][slot] < 99) {
+        if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             category[found] = inv[slot];
@@ -479,66 +479,66 @@ void item_menu_sell(s32 arg)
 }
 
 /*
- * Item-pickup confirmation for slot `arg`: yes adds one copy (returns 0),
+ * Item-pickup confirmation for `item_id`: yes adds one copy (returns 0),
  * or leaves a full stack of 99 untouched (returns 2). Cancel/no returns 1.
  */
 ADDRESS(0x80021ffc, 0x2b8)
-s32 item_use_confirm(s32 arg)
+KfItemPickupResult item_pickup_confirm(s32 item_id)
 {
-    s16 prompt[12];
-    s16 options[12];
+    MenuGlyphString accept_label;
+    MenuGlyphString decline_label;
     s32 choice = 0;
     s32 confirm = 0;
     s32 input = 0;
-    s32 result = -99;
-    s32 item;
+    KfItemPickupResult result = KF_ITEM_PICKUP_PENDING;
+    s32 stock_count;
     s32 prev;
 
-    item = item_stock[0][arg];
-    if (menu_load_item_model(arg) != 0)
-        return 1;
+    stock_count = item_stock[0][item_id];
+    if (menu_load_item_model(item_id) != 0)
+        return KF_ITEM_PICKUP_NOT_ACQUIRED;
 
-    prompt[0] = 0x3c;
-    prompt[1] = 0x1a;
-    prompt[2] = 0x53;
-    prompt[3] = 0x6a;
-    prompt[4] = -1;
-    options[0] = 0x3c;
-    options[1] = 0x2e;
-    options[2] = 0x63;
-    options[3] = 0x61;
-    options[4] = 0x6a;
-    options[5] = -1;
+    accept_label.x = 0x3c;
+    accept_label.y = 0x1a;
+    accept_label.codes[0] = 0x53;
+    accept_label.codes[1] = 0x6a;
+    accept_label.codes[2] = MENU_TEXT_END;
+    decline_label.x = 0x3c;
+    decline_label.y = 0x2e;
+    decline_label.codes[0] = 0x63;
+    decline_label.codes[1] = 0x61;
+    decline_label.codes[2] = 0x6a;
+    decline_label.codes[3] = MENU_TEXT_END;
 
     menu_frame_begin();
-    menu_draw_item_name_frame(arg);
+    menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
-        (const MenuGlyphString *)prompt,
-        (const MenuGlyphString *)options, 0, 0);
+        &accept_label,
+        &decline_label, 0, 0);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_item_name_frame(arg);
+    menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
-        (const MenuGlyphString *)prompt,
-        (const MenuGlyphString *)options, 0, 0);
+        &accept_label,
+        &decline_label, 0, 0);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_item_name_frame(arg);
+    menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
-        (const MenuGlyphString *)prompt,
-        (const MenuGlyphString *)options, 0, 0);
+        &accept_label,
+        &decline_label, 0, 0);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
 
     for (;;) {
         menu_present_frame();
-        if (result != -99) {
+        if (result != KF_ITEM_PICKUP_PENDING) {
             menu_frame_begin();
-            menu_draw_item_name_frame(arg);
+            menu_draw_item_name_frame(item_id);
             menu_draw_two_option(
-                (const MenuGlyphString *)prompt,
-                (const MenuGlyphString *)options, choice, confirm);
+                &accept_label,
+                &decline_label, choice, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
@@ -559,22 +559,22 @@ s32 item_use_confirm(s32 arg)
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
             if (choice != 0) {
-                result = 1;
+                result = KF_ITEM_PICKUP_NOT_ACQUIRED;
             } else {
-                result = 2;
-                if (item != 0x63) {
-                    item_stock[0][arg]++;
-                    result = 0;
+                result = KF_ITEM_PICKUP_STACK_FULL;
+                if (stock_count != KF_ITEM_STACK_CAPACITY) {
+                    item_stock[0][item_id]++;
+                    result = KF_ITEM_PICKUP_ACQUIRED;
                 }
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            result = 1;
+            result = KF_ITEM_PICKUP_NOT_ACQUIRED;
         }
-        menu_draw_item_name_frame(arg);
+        menu_draw_item_name_frame(item_id);
         menu_draw_two_option(
-            (const MenuGlyphString *)prompt,
-            (const MenuGlyphString *)options, choice, confirm);
+            &accept_label,
+            &decline_label, choice, confirm);
     }
 
     menu_release_item_model();

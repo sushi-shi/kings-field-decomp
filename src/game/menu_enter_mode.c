@@ -29,7 +29,7 @@ u32 menu_enter_mode(KfMenuMode mode, ...)
         result = menu_root();
         break;
     case KF_MENU_MODE_ITEM_PICKUP:
-        result = item_use_confirm(*((u8 *)&mode + 4));
+        result = KF_ENUM_ENCODE(u32, item_pickup_confirm(*((u8 *)&mode + 4)));
         break;
     case KF_MENU_MODE_SHOP:
         item_menu_root(*((u8 *)&mode + 4));

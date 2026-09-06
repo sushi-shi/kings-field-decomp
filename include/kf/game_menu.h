@@ -18,6 +18,13 @@ KF_ENUM_BEGIN(KfMenuMode, s32)
     KF_MENU_MODE_SHOP = 2
 KF_ENUM_END(KfMenuMode)
 
+KF_ENUM_BEGIN(KfItemPickupResult, s32)
+    KF_ITEM_PICKUP_PENDING = -99,
+    KF_ITEM_PICKUP_ACQUIRED = 0,
+    KF_ITEM_PICKUP_NOT_ACQUIRED = 1,
+    KF_ITEM_PICKUP_STACK_FULL = 2
+KF_ENUM_END(KfItemPickupResult)
+
 /* Feedback styles; the cursor cue is also reused for opening/config actions. */
 enum {
     MENU_SOUND_CURSOR = 0,
@@ -152,7 +159,7 @@ extern s32 menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
 extern void item_menu_root(s32 arg);
-extern s32 item_use_confirm(s32 arg);
+extern KfItemPickupResult item_pickup_confirm(s32 item_id);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
 extern void menu_blit_sprite(

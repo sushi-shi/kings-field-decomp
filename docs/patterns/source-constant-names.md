@@ -45,7 +45,7 @@ count, and propagates the saved-world type through the memory-card payload.
 The two earlier literal censuses above are refreshed after these substitutions.
 
 The [floor-script literal review](game-map-script-literals.md) accounts for
-all 326 retained occurrences in `map_scripts.c`, down from 363. Cutscene
+all 320 retained occurrences in `map_scripts.c`, down from 363. Cutscene
 phases and menu modes have stored enum types; interaction padding, facing
 tolerances and container limits have named domains. Authored movement rates,
 fade durations, resource IDs and path digits have per-occurrence reasons.
@@ -55,6 +55,12 @@ the free/stale/live state, recovers the header's animation-clip count from
 shipped table extents, and propagates asset-header pointers. It explains all
 36 retained literals in `pool.c` and `asset_registry.c`; vertex allocation
 uses the SDK element size and the weapon buffer has a named byte capacity.
+
+The [pickup outcome review](game-item-pickup-outcomes.md) corrects the
+pickup-confirmation identity, types its result through all pickup consumers,
+names the shared player stack limit and replaces raw label arrays with
+positioned glyph objects. It explains all 50 retained literals in pickup and
+the mode dispatcher, and removes six numeric outcomes from the map ledger.
 
 ## Function Match Plan
 
@@ -1668,7 +1674,7 @@ not resolve every opaque serialized field or every original author decision.
 | Image-wait CD result 0 | CD loader's success convention. |
 | `buffer_index == 0`; draw-environment flags 0/1 | Select the opposite buffer and clear/restore the background/display-area flags. Preserve both explicit flag assignments. |
 | Image-wait `ordering_table[length - 1]` | Last entry in the reverse-linked ordering table. |
-| Image-wait pressed flag 0/1, `PadRead(1)` and input comparisons with 0 | Wait for release, then a new press, then release again on controller 1. These values are flag states, SDK port selection and no-input checks. |
+| Image-wait pressed flag 0/1, `PadRead(1)` and input comparisons with 0 | Wait for release, then a new press, then release again. Zero/one are flag states and no-input checks; the linked PadRead ignores the supplied 1, as documented in the input audit above, so it is not a controller-port selector. |
 | Talk-path divisors 10 and character `'0'` | Decimal tens/ones extraction and character encoding. |
 | Talk-path indices 6, 0xa..0xe and directory-group indices 0/1 | Existing directory digits and filename prefix/index/group/frame positions in the path template; both group copies use the same tens/ones. No gameplay ID is represented by these subscripts. |
 

@@ -1,12 +1,12 @@
 # Retained floor-script literals
 
 Complete per-occurrence review of `src/game/map_scripts.c` after the
-[floor-script audit](game-map-script-literals.md). Ownership claims and
+[floor-script audit](game-map-script-literals.md) and [pickup outcome typing](game-item-pickup-outcomes.md). Ownership claims and
 named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
 
-All **326 retained occurrences** have an explicit reason; no fallback is used.
+All **320 retained occurrences** have an explicit reason; no fallback is used.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -144,50 +144,48 @@ All **326 retained occurrences** have an explicit reason; no fallback is used.
 | `map_show_screen_image` | 444 | `'0'` | `*directory_floor = player_state.progress_state.current_floor + '0';` | Convert the one-based floor number to its ASCII path digit. |
 | `map_show_screen_image` | 445 | `9, 10, '0'` | `map_screen_image_path[9] = index / 10 + '0';` | Character position 9 is the decimal tens digit; base ten and ASCII zero are representation constants. |
 | `map_show_screen_image` | 446 | `10 × 2, '0'` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
-| `map_interaction_dispatch` | 469 | `1500` | `sound_x = position->vx - (rsin(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
-| `map_interaction_dispatch` | 470 | `1500` | `sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
-| `map_interaction_dispatch` | 472 | `0x3a` | `case 0x3a:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 473 | `0xc` | `notify_enqueue(0xc);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 475 | `0x3f` | `case 0x3f:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 476 | `0x17` | `notify_enqueue(0x17);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 478 | `0x5d` | `case 0x5d:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 479 | `0x18` | `notify_enqueue(0x18);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 481 | `0x45` | `case 0x45:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 482 | `0x11` | `notify_enqueue(0x11);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
-| `map_interaction_dispatch` | 488 | `1000` | `sound_x = position->vx - (rsin(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
-| `map_interaction_dispatch` | 489 | `1000` | `sound_z = position->vz + (rcos(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
-| `map_interaction_dispatch` | 492 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_interaction_dispatch` | 496, 505, 516, 525 | `0 × 4` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 497, 504, 524 | `0 × 3` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 499 | `2` | `audio_play_map_sequence(2);` | Authored music sequence 2 during the shop interaction; original track name unknown. |
-| `map_interaction_dispatch` | 514 | `2` | `result = asset_registry_entries[event->model_index]->animation_clip_count < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The existing registry-index expression is preserved. |
-| `map_interaction_dispatch` | 515, 521 | `0 × 2` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
-| `map_interaction_dispatch` | 517 | `1` | `event->animation_clip = 1;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 535 | `0` | `for (slot = 0;; slot++) {` | Start the interaction search at zero-based pool index zero. |
-| `map_interaction_dispatch` | 537 | `1` | `if (index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_interaction_dispatch` | 552, 572, 596 | `1 × 3` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
-| `map_interaction_dispatch` | 555, 584, 608 | `1 × 3` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
-| `map_interaction_dispatch` | 563 | `1` | `while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {` | Exclusive negative quarter-turn endpoint; from zero, 32-unit steps end at -1024. |
-| `map_interaction_dispatch` | 564 | `191, 1858` | `if ((u16)(rotation->vx - 191) >= 1858) {` | Unsigned subtraction selects pitches outside inclusive 191..2048; authored asymmetric interval has no established tuning rationale. |
-| `map_interaction_dispatch` | 565 | `16` | `rotation->vx += 16;` | Camera pitch step 16/4096 turn (1.40625 degrees) per qualifying update; original rate rationale unknown. |
-| `map_interaction_dispatch` | 567 | `32` | `object->rotation.x -= 32;` | Container pitch step -32/4096 turn (-2.8125 degrees) per update; 32 updates open it by 90 degrees. |
-| `map_interaction_dispatch` | 577, 601, 675 | `0 × 3` | `if (result == 0) {` | Pickup-confirmation result zero means acquired; clear that item byte or object. |
-| `map_interaction_dispatch` | 579, 603, 677 | `2 × 3` | `} else if (result == 2) {` | Pickup-confirmation result 2 means the player stack is full; preserve this mode-specific outcome code. |
-| `map_interaction_dispatch` | 580, 604, 678 | `0x10 × 3` | `notify_enqueue(0x10);` | Authored notification ID 16 on pickup stack-full result; localized message text not decoded here. |
-| `map_interaction_dispatch` | 589 | `0` | `object->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
-| `map_interaction_dispatch` | 595 | `0` | `found_item = 0;` | Initialize the local any-item-present boolean to false. |
-| `map_interaction_dispatch` | 599 | `1` | `found_item = 1;` | Record that at least one nonempty item byte was found. |
-| `map_interaction_dispatch` | 613 | `0` | `if (found_item == 0) {` | An empty container takes its authored default-notification path. |
-| `map_interaction_dispatch` | 644 | `0` | `neighbor_index = 0;` | Start the paired-door leaf search at the first pool slot. |
-| `map_interaction_dispatch` | 647 | `6000` | `neighbor_index, object->position_x, object->position_z, 6000);` | Authored neighbor search padding 6000 world units (three tile lengths), added to object radius. |
-| `map_interaction_dispatch` | 648 | `1` | `if (neighbor_index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_interaction_dispatch` | 684 | `8` | `result = object->link.link_id \| object->link.action_parameter << 8;` | Reassemble little-endian gold amount from the first two link bytes; high byte shifts by eight bits. |
-| `map_interaction_dispatch` | 708 | `0x82` | `if (object->object_id == 0x82) {` | Authored object ID 130 selects screen-image group zero. |
-| `map_interaction_dispatch` | 709 | `0` | `result = 0;` | Screen-image group zero selected by object ID 130. |
-| `map_interaction_dispatch` | 711 | `0x83` | `if (object->object_id != 0x83) {` | Authored object ID 131 is the only other supported screen-image selector. |
-| `map_interaction_dispatch` | 714 | `1` | `result = 1;` | Screen-image group one selected by object ID 131. |
-| `map_interaction_dispatch` | 733 | `1` | `case 1:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 736 | `2` | `case 2:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 739 | `3` | `case 3:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 742 | `4` | `case 4:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 745 | `5` | `case 5:` | One-based dungeon floor ID selects that floor-specific action script. |
+| `map_interaction_dispatch` | 470 | `1500` | `sound_x = position->vx - (rsin(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
+| `map_interaction_dispatch` | 471 | `1500` | `sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
+| `map_interaction_dispatch` | 473 | `0x3a` | `case 0x3a:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 474 | `0xc` | `notify_enqueue(0xc);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 476 | `0x3f` | `case 0x3f:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 477 | `0x17` | `notify_enqueue(0x17);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 479 | `0x5d` | `case 0x5d:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 480 | `0x18` | `notify_enqueue(0x18);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 482 | `0x45` | `case 0x45:` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 483 | `0x11` | `notify_enqueue(0x11);` | Authored attribute-to-notification binding: 58→12, 63→23, 93→24, 69→17. Localized message and tile meanings remain unproven. |
+| `map_interaction_dispatch` | 489 | `1000` | `sound_x = position->vx - (rsin(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
+| `map_interaction_dispatch` | 490 | `1000` | `sound_z = position->vz + (rcos(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
+| `map_interaction_dispatch` | 493 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
+| `map_interaction_dispatch` | 497, 506, 517, 526 | `0 × 4` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
+| `map_interaction_dispatch` | 498, 505, 525 | `0 × 3` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
+| `map_interaction_dispatch` | 500 | `2` | `audio_play_map_sequence(2);` | Authored music sequence 2 during the shop interaction; original track name unknown. |
+| `map_interaction_dispatch` | 515 | `2` | `result = asset_registry_entries[event->model_index]->animation_clip_count < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The existing registry-index expression is preserved. |
+| `map_interaction_dispatch` | 516, 522 | `0 × 2` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
+| `map_interaction_dispatch` | 518 | `1` | `event->animation_clip = 1;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
+| `map_interaction_dispatch` | 536 | `0` | `for (slot = 0;; slot++) {` | Start the interaction search at zero-based pool index zero. |
+| `map_interaction_dispatch` | 538 | `1` | `if (index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
+| `map_interaction_dispatch` | 553, 573, 597 | `1 × 3` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
+| `map_interaction_dispatch` | 556, 585, 609 | `1 × 3` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
+| `map_interaction_dispatch` | 564 | `1` | `while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {` | Exclusive negative quarter-turn endpoint; from zero, 32-unit steps end at -1024. |
+| `map_interaction_dispatch` | 565 | `191, 1858` | `if ((u16)(rotation->vx - 191) >= 1858) {` | Unsigned subtraction selects pitches outside inclusive 191..2048; authored asymmetric interval has no established tuning rationale. |
+| `map_interaction_dispatch` | 566 | `16` | `rotation->vx += 16;` | Camera pitch step 16/4096 turn (1.40625 degrees) per qualifying update; original rate rationale unknown. |
+| `map_interaction_dispatch` | 568 | `32` | `object->rotation.x -= 32;` | Container pitch step -32/4096 turn (-2.8125 degrees) per update; 32 updates open it by 90 degrees. |
+| `map_interaction_dispatch` | 581, 605, 679 | `0x10 × 3` | `notify_enqueue(0x10);` | Authored notification ID 16 on pickup stack-full result; localized message text not decoded here. |
+| `map_interaction_dispatch` | 590 | `0` | `object->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
+| `map_interaction_dispatch` | 596 | `0` | `found_item = 0;` | Initialize the local any-item-present boolean to false. |
+| `map_interaction_dispatch` | 600 | `1` | `found_item = 1;` | Record that at least one nonempty item byte was found. |
+| `map_interaction_dispatch` | 614 | `0` | `if (found_item == 0) {` | An empty container takes its authored default-notification path. |
+| `map_interaction_dispatch` | 645 | `0` | `neighbor_index = 0;` | Start the paired-door leaf search at the first pool slot. |
+| `map_interaction_dispatch` | 648 | `6000` | `neighbor_index, object->position_x, object->position_z, 6000);` | Authored neighbor search padding 6000 world units (three tile lengths), added to object radius. |
+| `map_interaction_dispatch` | 649 | `1` | `if (neighbor_index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
+| `map_interaction_dispatch` | 685 | `8` | `result = object->link.link_id \| object->link.action_parameter << 8;` | Reassemble little-endian gold amount from the first two link bytes; high byte shifts by eight bits. |
+| `map_interaction_dispatch` | 709 | `0x82` | `if (object->object_id == 0x82) {` | Authored object ID 130 selects screen-image group zero. |
+| `map_interaction_dispatch` | 710 | `0` | `result = 0;` | Screen-image group zero selected by object ID 130. |
+| `map_interaction_dispatch` | 712 | `0x83` | `if (object->object_id != 0x83) {` | Authored object ID 131 is the only other supported screen-image selector. |
+| `map_interaction_dispatch` | 715 | `1` | `result = 1;` | Screen-image group one selected by object ID 131. |
+| `map_interaction_dispatch` | 734 | `1` | `case 1:` | One-based dungeon floor ID selects that floor-specific action script. |
+| `map_interaction_dispatch` | 737 | `2` | `case 2:` | One-based dungeon floor ID selects that floor-specific action script. |
+| `map_interaction_dispatch` | 740 | `3` | `case 3:` | One-based dungeon floor ID selects that floor-specific action script. |
+| `map_interaction_dispatch` | 743 | `4` | `case 4:` | One-based dungeon floor ID selects that floor-specific action script. |
+| `map_interaction_dispatch` | 746 | `5` | `case 5:` | One-based dungeon floor ID selects that floor-specific action script. |

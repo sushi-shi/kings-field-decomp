@@ -78,19 +78,24 @@ The floor-2 ambient sound accepts 4000 of the SDK's 32768 random outputs
 output fraction, not evidence of independent trials or a specific sound name.
 
 Menu mode 0 opens the player root menu, mode 1 performs item pickup
-confirmation, and mode 2 opens the character's shop. Despite its current
-`item_use_confirm` spelling, the mode-1 callee adds inventory stock: zero
+confirmation, and mode 2 opens the character's shop. The mode-1 callee,
+now corrected to `item_pickup_confirm`, adds inventory stock: zero
 means acquired, one means cancelled/load failure, and two means stack full.
 The modal wrapper's result remains an integer because root-menu returns and
 pickup outcomes have different domains. Its existing O32 optional-argument
 home-slot access is preserved; typing the selector does not repair that
 separate modern varargs portability debt.
 
+The [pickup follow-up](game-item-pickup-outcomes.md) gives the mode-1 result
+its own enum and decodes it at all three pickup callers. The shared wrapper
+continues to carry the selected mode's numeric result.
+
 ## Coverage and verification
 
 The [literal ledger](game-map-script-literal-ledger.md) gives reasons for
-all 326 ordinary numeric/character occurrences in `map_scripts.c`, down
-from 363. There are 181 groups; identical expressions with different roles
+all 320 ordinary numeric/character occurrences in `map_scripts.c`, down
+from 363 after the pickup follow-up. There are 179 groups; identical
+expressions with different roles
 (animation availability versus successful pickup) keep separate reasons.
 Comments, strings and digits within identifiers are excluded. The 42 tokens
 in sixteen function claims, four data claims and one rodata claim remain
@@ -124,8 +129,8 @@ No new tests or size assertions were added.
 Full `kf build` retains its existing data/ownership closure gaps: source
 data 7/60, SDK data 4/4, and target relink PSX 1/1, GAME 75/77, OPEN 34/38.
 The wider naming goal remains open. In particular, the equipment sentinel
-and pickup outcome API deserve shared consumer audits; the ledger records
-their observed roles without presenting those domains as finished. The
+deserves a shared consumer audit; the ledger records its observed role
+without presenting that domain as finished. The
 [asset-header follow-up](game-asset-animation-layout.md) resolves the signed
 animation-clip count. Ten unresolved `unknown_` source lines still require
 more evidence.

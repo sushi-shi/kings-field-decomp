@@ -22,6 +22,8 @@ promotes a probe to a proven historical toolchain.
   literal ledger, cutscene units and phases, interaction bounds and menu modes.
 - [game-asset-animation-layout.md](game-asset-animation-layout.md): resource-backed
   clip counts, typed asset ownership/cache states and the pool/registry literal audit.
+- [game-item-pickup-outcomes.md](game-item-pickup-outcomes.md): corrected pickup
+  identity, typed outcomes, positioned labels and retained pickup/modal literals.
 
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the

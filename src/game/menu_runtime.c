@@ -69,7 +69,7 @@ void menu_draw_two_option(
 }
 
 /*
- * Draw the item-use preview: a spinning 3D model, its ten-glyph name, and four
+ * Draw the item-pickup preview: a spinning 3D model, its ten-glyph name, and four
  * mirrored window-sprite quads. The shared spin angle advances eight units.
  */
 ADDRESS(0x800292f8, 0x7b8)

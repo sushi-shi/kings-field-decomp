@@ -456,6 +456,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     s32 slot;
     s32 item_index;
     s32 result;
+    KfItemPickupResult pickup_result;
     s32 neighbor_index;
     u16 saved_pitch;
     u8 found_item;
@@ -573,10 +574,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             item_id = &object->link.action_parameter;
             for (;;) {
                 if (*item_id != MAP_CONTAINER_ITEM_NONE) {
-                    result = menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id);
-                    if (result == 0) {
+                    pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
+                    if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                         *item_id = MAP_CONTAINER_ITEM_NONE;
-                    } else if (result == 2) {
+                    } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
                         notify_enqueue(0x10);
                     }
                 }
@@ -597,10 +598,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             for (;;) {
                 if (*item_id != MAP_CONTAINER_ITEM_NONE) {
                     found_item = 1;
-                    result = menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id);
-                    if (result == 0) {
+                    pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
+                    if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                         *item_id = MAP_CONTAINER_ITEM_NONE;
-                    } else if (result == 2) {
+                    } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
                         notify_enqueue(0x10);
                     }
                 }
@@ -671,10 +672,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:
-            result = menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id);
-            if (result == 0) {
+            pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id));
+            if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                 object->object_id = KF_MAP_OBJECT_FREE;
-            } else if (result == 2) {
+            } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
                 notify_enqueue(0x10);
                 continue;
             }
