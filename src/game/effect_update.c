@@ -186,9 +186,21 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
 ADDRESS(0x800386c4, 0x68)
 void effect_scatter_triple(u16 *values)
 {
-    values[0] = values[0] + (rand() >> 8) - 64;
-    values[1] = values[1] + (rand() >> 8) - 64;
-    values[2] = values[2] + (rand() >> 8) - 64;
+    int random;
+    int centered;
+
+    random = rand();
+    centered = values[0] - 64;
+    centered += random >> 8;
+    values[0] = centered;
+    random = rand();
+    centered = values[1] - 64;
+    centered += random >> 8;
+    values[1] = centered;
+    random = rand();
+    centered = values[2] - 64;
+    centered += random >> 8;
+    values[2] = centered;
 }
 
 ADDRESS(0x8003872c, 0x90)

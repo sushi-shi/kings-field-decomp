@@ -99,3 +99,87 @@ is not banked. No historical compiler cause is assigned to the residue.
 The unit stays 4/8 exact; the reverted pool-reset trial remains 78.25%.
 Full-build, regression, lint and test results are recorded with the
 [map-object clearing campaign](game-map-object-clearing.md).
+
+## Function Match Plan at `3b1c834`
+
+Resume on clean `master` after map-copy closure; this unit is now 7/8 exact.
+The forward probe remains **93.755104%**, 196 bytes. The pinned profile is
+still `probe-gcc257-o2-g0`, with no historical attribution claim. Retail was
+hash-validated again. All six semantic views, both external caller windows,
+the complete world-collision callee, both neighboring bodies, source history,
+shared headers and the eight ordered relocation entries were re-read. A fresh
+focused compile reproduces the prior difference at +0xc and all seven exact
+siblings. No references, signatures, object fields, data or claims change.
+
+The radius literal occurs twice in retail: once in the type-2 guard delay
+slot (`80030ef0`) and once in the first cardinal compare delay slot
+(`80030f20`). Both paths reach the single call at `80030f04`, whose delay
+slot loads Y=65535. Our explicitly shared source call instead loads radius
+at the call and Y beforehand. Test an alternative source-level sharing
+boundary: one ordinary query expression in each of the four cardinal cases,
+with the +/-2000 adjustment directly in its X or Z argument, plus the type-2
+unchanged-point query. This differs from the earlier two-call trial, which
+adjusted coordinates in the inner switch and called once after that switch.
+
+Each admitted input still performs exactly one world query, and unsupported
+type/yaw paths still do not initialize the return local. Preserve this
+existing caller-domain limitation rather than inventing a fallback value.
+The two runtime callers consume only the query result's equality with -1.
+The function remains game object/cardinal policy, absent from the vendored
+inventory; the world query is a separate game ABI, not a new SDK body.
+
+Check whether normal compilation shares these mutually exclusive calls into
+retail's single static call and early radius setup. Reject added machine call
+sites or a wrong shared-return CFG. No explicit radius local, forced register,
+inline assembly, dummy statement, new compiler flag or inventory workaround
+is allowed. Verify all 49 raw words and eight physical relocation entries,
+the complete 30-byte descriptor owner and 84 switch rows, and all 484 function
+scores before banking any new exact result. Run the required full build,
+lint, tests and diff checks before commit.
+
+The direct-argument trial correctly loads X into t0 but produces a 268-byte
+body. It merges the actual JAL into one site at +0xf0 while retaining five
+stack-argument setup blocks and placing the call after the cardinal cases.
+The first difference is the type-0 destination (+0x50 rather than +0x5c),
+and the radius still occupies the call delay slot. Reject that form.
+
+Retail's X updates write the captured X register itself, then its common
+call block copies X into a0. The direct-argument trial instead computes
+adjusted X directly in a0. Test separate coordinate updates followed by the
+same query in each admitted arm; this preserves the observed X/Z dataflow
+while still testing source call sharing. All constants and return guards
+remain unchanged.
+
+The separate-update/per-case-call trial emits 272 bytes with the same wrong
+late call/duplicated stack setup. Its first difference is again X at +0xc,
+now loaded into v1; Z also moves before the definition-byte lookup. Reject
+both per-case-call forms and restore the original shared label.
+
+Next test the lifetime of the one-use definition address. Retail captures
+X before loading the behavior byte, then loads Z into the byte-load delay
+slot; no definition pointer survives the byte read. Keep captured X/Z and
+the shared query, but place the direct shared-owner behavior expression in
+the outer switch rather than defining a pointer before either coordinate
+capture. This preserves the same complete definition type and field, and
+does not introduce a synthetic value solely to occupy a register.
+
+The direct owner lookup reproduces the original 196-byte non-exact object;
+it is not a discriminator. Restore the pointer and test the outer dispatch
+as its directly decoded predicate chain: if behavior is nonzero, query only
+when it equals two; otherwise perform the cardinal switch. Retain the shared
+query label inside the type-2 block. Retail's BEQZ then BNE implement exactly
+these two guards; unsupported types still reach the common uninitialized
+return. This tests source control structure, not arbitrary register steering.
+
+The explicit predicate chain also reproduces the baseline instruction
+sequence. Restore the bank-safe original switch source; all four bounded
+trials are rejected. The unchanged forward-probe residue is still
+unattributed, not a proved compiler limitation. These controls rule out the
+tested per-case-call, one-use-pointer and outer-predicate spellings as the
+missing source fact; no new exact result or source change is claimed here.
+
+The final all-484-row comparison confirms forward probe is unchanged at
+**93.755104%**, and its source file has no diff. The sole score movement
+is the independently closed effect scatter helper. Required full-build,
+lint, 649-test and raw verification results are recorded with the
+[scatter closure](game-effect-scatter.md#strict-and-raw-verification).

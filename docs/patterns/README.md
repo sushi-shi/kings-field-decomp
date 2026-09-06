@@ -167,7 +167,7 @@ promotes a probe to a proven historical toolchain.
   tail closes player distance; direct actor-center expression improves its
   partial match with a remaining register-role exchange.
 - [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
-  and rejected arithmetic-association controls; scatter remains partial.
+  and signed in-place accumulation close the three-halfword scatter helper.
 - [game-floor-deformation.md](game-floor-deformation.md): mutable absolute
   step, byte coordinates and direct predecrement countdown close the helper.
 - [game-menu-list-format.md](game-menu-list-format.md): typed menu-row

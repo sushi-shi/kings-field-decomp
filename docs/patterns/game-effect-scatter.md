@@ -93,3 +93,101 @@ The existing repository test run passes **551 tests** (52.723 s), Ruff and
 data 2/2 and target relink 108/114, with incomplete known-reference ownership.
 Only signature metadata and durable evidence are committed; no baseline,
 relocation inventory, SDK body or build setting is changed.
+
+## Function Match Plan at `3b1c834`
+
+Revisit the 104-byte helper after the map-copy closure, with **394/471**
+eligible functions exact. Retail hashes, all six semantic views, both
+call-site windows, the complete two neighbors, the vendored RNG trampoline,
+SDK RAND.H, shared direction fields and original source history were checked
+again before editing. The source still has the original arithmetic and
+scores **76.923080%**; no data, signature, owner, relocation or compiler
+profile needs changing. The profile is `probe-gcc257-o2-g0`, still a probe.
+
+The halfword fields now live in `KfEffectDirection.words`; the copied caller
+uses the aliasing SDK SVECTOR view of the same eight bytes. Both calls supply
+the same six mutable bytes as in the original audit. The fourth halfword is
+still untouched. `rand` remains the separately attributed LIBAPI C47 BIOS
+trampoline at `8005049c`, with selector 47 and vector A0; no provider body is
+reconstructed here.
+
+A fresh focused compile repeats the three pairs of differing instructions:
+source adds the shifted random value before subtracting 64; retail subtracts
+64 from the loaded halfword and then adds the shifted random value. Both
+preserve `rand; lhu; sra` and the three calls at +0xc/+0x24/+0x3c. Test the
+RNG-first source expression `(rand() >> 8) + (values[i] - 64)`. This differs
+from the previously rejected value-first association and compound assignment.
+It retains the observed call-before-load and value-side bias without adding
+temporaries, narrowing casts, calls or register constraints. Operand order
+and the subtraction source must be verified from raw MIPS, not inferred from
+the source expression's algebraic equivalence.
+
+The unit has six strictly exact siblings (the focused text display calls
+the exact floor helper non-exact only because source uses `.data` and target
+uses its private datum name). The 2D projectile helper is still 99.934210%
+with different stack-frame operands. Preserve all seven other function
+scores and the exact 35-byte floor-deformation initializer. Require native
+100%, all 26 relocated retail words and three ordered numeric RNG targets
+before banking. Compare all 484 score rows and run focused/full builds,
+Ruff, repository tests and diff checks before commit.
+
+The RNG-first expression is rejected: it also preserves `0xffc0` in s1,
+grows the frame to 32 bytes and biases the random value instead of the loaded
+halfword. Its body is 116 bytes, versus retail 104. Reordering an algebraic
+expression does not establish retail's value lifetimes.
+
+Next test the two actual signed-word intermediates seen in retail: capture
+the `int rand(void)` result, then compute the promoted halfword minus 64,
+then add the shifted random result and store the low halfword. Explicitly
+capturing these used values separates the call from the arithmetic tree and
+preserves a signed intermediate capable of representing values -64..65471;
+there is no forced u16 intermediate narrowing. Retain the three draws and
+six-byte mutation extent, and check that these locals disappear into the
+observed v0/v1 dataflow with no additional frame or saved-register carrier.
+
+The signed-intermediate form recovers all three load/shift/subtract/add
+sequences, the 24-byte frame and the 104-byte body. Its remaining six
+differences are the add-result and store-source register: candidate writes
+the sum to v0 and stores v0; retail accumulates into v1 and stores v1.
+Test the observed in-place accumulation explicitly as
+`centered += random >> 8; values[i] = centered;`, retaining the same genuine
+signed intermediate instead of creating a separate final addition value.
+
+The in-place signed accumulation reproduces every normalized scatter
+instruction and relocation line. It recovers the three
+`addiu v1,v1,-64; addu v1,v1,v0` pairs and their original stores, keeping
+the 24-byte frame and 104-byte body. Retain it subject to native scoring,
+fresh raw relink and regression checks. These are the actual RNG return and
+biased halfword value, not synthetic register carriers; no historical
+compiler mechanism or unique original variable spelling is inferred.
+
+### Strict and raw verification
+
+Canonical objdiff confirms **76.923080% -> 100%** for scatter. A separate
+fresh compile matches the production object's sections. Relinking its real
+relocations to the curated numeric addresses reproduces all **26 retail
+words**, including the final return delay slot. Its three physical
+`R_MIPS_26` entries are at +0xc/+0x24/+0x3c, all targeting `8005049c`;
+there are no data references. Delinking and relinking the target independently
+also reproduces all 26 words. A wrong-RNG-target control (+4) fails raw
+equality, so target bits are not being masked away.
+
+All six previously exact siblings are independently raw-exact, and the
+35-byte floor-segment initializer remains byte-identical on both sides.
+The 2D projectile's existing frame-operand differences are unchanged; this
+unit is now **7/8** strictly exact. The focused textual floor-helper diff
+is still only `.data` versus its named static datum, not a raw mismatch.
+
+All **484** score rows were compared with the `3b1c834` snapshot: only
+scatter changed. Eligible exact counts rise **394/471 -> 395/471** and
+GAME **295/362 -> 296/362**; OPEN stays 98/108, PSX 1/1. The restored
+map forward probe remains 93.755104%, with no source diff. Bank only
+`GAME.EXE:800386c4`; no other baseline, profile or inventory is changed.
+
+Ruff, `git diff --check` and all **649 repository tests** pass (93.194 s).
+The affected unit was rebuilt and freshly compiled independently; full
+`kf build` still exits 1 on the pre-existing data/ownership/relink gates.
+Source data remains **7/60** (GAME 5/40, OPEN 2/19, PSX 0/1), config SDK
+data **4/4**, and target relink **110/116** (GAME 75/77, OPEN 34/38,
+PSX 1/1), with zero artifact failures and six conflicting-section-base
+units. This function closure does not waive those full-image failures.
