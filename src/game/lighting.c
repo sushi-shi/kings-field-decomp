@@ -1,13 +1,20 @@
 #include <kf/address.h>
+#include <kf/game_math.h>
 #include <kf/game_render.h>
 #include <kf/game.h>
+
+enum {
+    LIGHTING_COLOR_BLEND_STEP = 0x400,
+    VITAL_RESTORE_COLOR_LEVEL = 0xfff,
+    VITAL_RESTORE_STATUS_KEEP_MASK = 0xfff0
+};
 
 /*
  * Seven colour matrices for lighting/screen fades; entries 0, 3 and 4 are the
  * player-death fade endpoints. Each is a MATRIX (short m[3][3], long t[3]).
  */
 DATA(0x80055dbc, 0xe0)
-MATRIX color_matrix_table[7] = {
+MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT] = {
     {{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}, {0, 0, 0}},
     {{{3000, 1000, 4000}, {200, 70, 400}, {200, 70, 400}}, {0, 0, 0}},
     {{{1000, 350, 2000}, {1000, 350, 2000}, {3000, 1000, 4000}}, {0, 0, 0}},
@@ -26,8 +33,8 @@ void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
         lighting_set_color_matrix(from, to, blend);
         render_frame(0, 0);
         frame_pacer_wait();
-        blend += 0x400;
-    } while (blend <= 0x1000);
+        blend += LIGHTING_COLOR_BLEND_STEP;
+    } while (blend <= KF_FIXED12_ONE);
 }
 
 ADDRESS(0x80033de8, 0x28)
@@ -55,14 +62,16 @@ void player_restore_vitals_with_color_cycle(void)
     MATRIX second;
 
     ReadColorMatrix(&saved);
-    color_matrix_set_rgb(0, 0xfff, 0, &first);
+    color_matrix_set_rgb(0, VITAL_RESTORE_COLOR_LEVEL, 0, &first);
     lighting_transition_color_matrix(&saved, &first);
-    color_matrix_set_rgb(0, 0xfff, 0xfff, &second);
+    color_matrix_set_rgb(
+        0, VITAL_RESTORE_COLOR_LEVEL, VITAL_RESTORE_COLOR_LEVEL, &second);
     lighting_transition_color_matrix(&first, &second);
-    color_matrix_set_rgb(0xfff, 0xfff, 0xfff, &first);
+    color_matrix_set_rgb(VITAL_RESTORE_COLOR_LEVEL, VITAL_RESTORE_COLOR_LEVEL,
+        VITAL_RESTORE_COLOR_LEVEL, &first);
     lighting_transition_color_matrix(&second, &first);
     lighting_transition_color_matrix(&first, &saved);
     player_state.vitals.current_hp = player_state.vitals.maximum_hp;
     player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-    player_state.status_effect_flags &= 0xfff0;
+    player_state.status_effect_flags &= VITAL_RESTORE_STATUS_KEEP_MASK;
 }

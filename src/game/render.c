@@ -157,7 +157,7 @@ void display_initialize(void)
     display_draw_environments[1].b0 = 0;
     PutDispEnv(&display_disp_environments[0]);
     SetBackColor(60, 60, 60);
-    lighting_set_active_color_matrix(0);
+    lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     SetFarColor(0, 0, 0);
     render_state.fog_near_distance = 0x2af8;
     SetFogNear(0x2af8, 200);

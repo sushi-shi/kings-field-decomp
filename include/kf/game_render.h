@@ -18,6 +18,18 @@ enum {
     KF_SYSTEM_SCREEN_PAUSE = 3
 };
 
+enum {
+    KF_GAME_COLOR_PRESET_COUNT = 7,
+    KF_GAME_COLOR_DEFAULT = 0,
+    KF_GAME_COLOR_DAMAGE = 1,
+    KF_GAME_COLOR_DEFENSE_EFFECT = 2,
+    KF_GAME_COLOR_WHITE = 3,
+    KF_GAME_COLOR_BLACK = 4,
+    KF_GAME_COLOR_GREEN = 5,
+    KF_GAME_COLOR_BLUE = 6,
+    KF_HUD_DEFAULT_BRIGHTNESS = 86
+};
+
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */
 typedef struct KfHudSprite {
     u8 state;
@@ -73,7 +85,7 @@ typedef struct KfRenderState {
 
 /* Copied vertices begin at element 1; the complete capacity is unresolved. */
 extern SVECTOR tmd_morph_scratch[];
-extern MATRIX color_matrix_table[7];
+extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
 extern POLY_FT4 *current_poly_ft4;
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];

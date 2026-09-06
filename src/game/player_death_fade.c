@@ -1,6 +1,18 @@
 #include <kf/address.h>
+#include <kf/game_math.h>
 #include <kf/game_player.h>
 #include <kf/game.h>
+
+enum {
+    PLAYER_DEATH_BOB_THRESHOLD = 1000,
+    PLAYER_DEATH_BOB_REST = 1060,
+    PLAYER_DEATH_INITIAL_PITCH_STEP = 10,
+    PLAYER_DEATH_REST_PITCH_ACCELERATION = 10,
+    PLAYER_DEATH_FALL_ACCELERATION = 15,
+    PLAYER_DEATH_PITCH_MIN = -800,
+    PLAYER_DEATH_CAMERA_FLOOR_OFFSET = 1500,
+    PLAYER_DEATH_FADE_STEP = 100
+};
 
 /*
  * Fades the colour matrix and near fog from `color_from` toward the death
@@ -9,10 +21,12 @@
 ADDRESS(0x800184b0, 0x90)
 void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend)
 {
-    lighting_set_color_matrix(color_from, &color_matrix_table[4], blend);
-    matrix_interpolate(&color_matrix_table[3], &color_matrix_table[4], &render_state.effect_color_matrix, blend);
+    lighting_set_color_matrix(color_from, &color_matrix_table[KF_GAME_COLOR_BLACK], blend);
+    matrix_interpolate(&color_matrix_table[KF_GAME_COLOR_WHITE],
+        &color_matrix_table[KF_GAME_COLOR_BLACK], &render_state.effect_color_matrix, blend);
     fog_interpolate_near(player_death_saved_fog_near, 0, blend);
-    DAT_80095064 = ((blend * -86) >> 12) + 86;
+    DAT_80095064 = ((blend * -KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS)
+        + KF_HUD_DEFAULT_BRIGHTNESS;
 }
 
 ADDRESS(0x80018540, 0x184)
@@ -22,29 +36,30 @@ void player_death_update(void)
     s32 previous = *bob;
     s32 blend;
 
-    if (previous >= 1000) {
-        *bob = 1000;
-        *bob = 1060;
+    if (previous >= PLAYER_DEATH_BOB_THRESHOLD) {
+        *bob = PLAYER_DEATH_BOB_THRESHOLD;
+        *bob = PLAYER_DEATH_BOB_REST;
         player_state.camera_rotation.vx -= player_state.death_camera_pitch_step;
-        player_state.death_camera_pitch_step += 10;
+        player_state.death_camera_pitch_step += PLAYER_DEATH_REST_PITCH_ACCELERATION;
     } else {
-        player_state.camera_rotation.vx -= 10;
-        player_state.death_camera_pitch_step += 15;
+        player_state.camera_rotation.vx -= PLAYER_DEATH_INITIAL_PITCH_STEP;
+        player_state.death_camera_pitch_step += PLAYER_DEATH_FALL_ACCELERATION;
         *bob = previous + player_state.death_camera_pitch_step;
-        if (*bob >= 1000) {
-            player_state.death_camera_pitch_step = 10;
+        if (*bob >= PLAYER_DEATH_BOB_THRESHOLD) {
+            player_state.death_camera_pitch_step = PLAYER_DEATH_INITIAL_PITCH_STEP;
         }
     }
-    if (player_state.camera_rotation.vx < -800) {
-        player_state.camera_rotation.vx = -800;
+    if (player_state.camera_rotation.vx < PLAYER_DEATH_PITCH_MIN) {
+        player_state.camera_rotation.vx = PLAYER_DEATH_PITCH_MIN;
         player_state.death_camera_pitch_step = 0;
     }
-    player_state.camera_position.vy = *bob - 1500 + player_state.floor_height;
+    player_state.camera_position.vy =
+        *bob - PLAYER_DEATH_CAMERA_FLOOR_OFFSET + player_state.floor_height;
     player_update_vertical_motion();
-    player_state.death_visual_blend += 100;
+    player_state.death_visual_blend += PLAYER_DEATH_FADE_STEP;
     blend = player_state.death_visual_blend;
-    if (blend >= 0x1000) {
-        player_death_apply_visual_fade(&player_death_saved_color_matrix, 0x1000);
+    if (blend >= KF_FIXED12_ONE) {
+        player_death_apply_visual_fade(&player_death_saved_color_matrix, KF_FIXED12_ONE);
         render_frame(0, 0);
         render_frame(0, 0);
         player_death_restart();
@@ -58,15 +73,18 @@ void player_death_update_reverse_fade(void)
 {
     s16 *blend = &player_state.death_visual_blend;
 
-    lighting_set_color_matrix(&color_matrix_table[4], &color_matrix_table[0], *blend);
-    matrix_interpolate(&color_matrix_table[4], &color_matrix_table[3], &render_state.effect_color_matrix, *blend);
+    lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_BLACK],
+        &color_matrix_table[KF_GAME_COLOR_DEFAULT], *blend);
+    matrix_interpolate(&color_matrix_table[KF_GAME_COLOR_BLACK],
+        &color_matrix_table[KF_GAME_COLOR_WHITE], &render_state.effect_color_matrix, *blend);
     fog_interpolate_near(0, player_death_saved_fog_near, *blend);
-    DAT_80095064 = (*blend * 86) >> 12;
-    *blend += 100;
-    if (*blend >= 0x1000) {
-        player_death_apply_visual_fade(&color_matrix_table[0], 0);
-        player_state.update_state = 0;
+    DAT_80095064 = (*blend * KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS;
+    *blend += PLAYER_DEATH_FADE_STEP;
+    if (*blend >= KF_FIXED12_ONE) {
+        player_death_apply_visual_fade(&color_matrix_table[KF_GAME_COLOR_DEFAULT], 0);
+        player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     } else {
-        player_death_apply_visual_fade(&color_matrix_table[0], 0x1000 - *blend);
+        player_death_apply_visual_fade(
+            &color_matrix_table[KF_GAME_COLOR_DEFAULT], KF_FIXED12_ONE - *blend);
     }
 }

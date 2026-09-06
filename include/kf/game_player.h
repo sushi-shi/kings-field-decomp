@@ -11,6 +11,14 @@
 
 struct KfPoolRecord;
 
+enum {
+    KF_PLAYER_UPDATE_NORMAL = 0,
+    KF_PLAYER_DAMAGE_FRAME_FIRST = 1,
+    KF_PLAYER_DAMAGE_FRAME_END = 8,
+    KF_PLAYER_UPDATE_RECOVERY_FADE = 0xfe,
+    KF_PLAYER_UPDATE_DYING = 0xff
+};
+
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;

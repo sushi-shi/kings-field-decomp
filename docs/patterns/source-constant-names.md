@@ -499,3 +499,66 @@ scores remain unchanged. This batch adds no debug-line differences beyond
 the existing twenty-three objects. All 635 tests pass (nine local prerequisites
 skipped), lint and whitespace checks pass, and the full build retains the
 same data ownership/placement failures. No new exact result is claimed.
+
+## Lighting and death-fade plan
+
+Trace GAME's color-matrix presets, the vitals-restoration color cycle and the
+death/recovery fade helpers. Name established palette entries, interpolation
+limits/steps, and the death camera's measured timing/position constants.
+Preserve the matrix coefficient tables, both stores to the collapsed bob
+offset, the asymmetric signed camera bounds, repeated frame calls and all
+color/fog arithmetic. The existing dossiers cover GAME 800184b0..80018858
+and 80033d80..80033ee4, with their callers and constant/data references.
+Require unchanged non-debug sections and strict scores after focused rebuilds.
+
+GAME has seven color presets. Default is entry 0; damage/camera-recoil frames
+and periodic HP-loss flashes select entry 1. Entry 2 accompanies the timed
+defense effect: its status bit adds ten to defense component 4 during combat
+stat recalculation. Entries 3/4 are the equal-channel white and zero black
+endpoints; entries 5/6 populate only the green/blue rows. The row meanings
+are also explicit in `color_matrix_set_rgb`. These GAME names are not applied
+to OPEN's different five-entry table.
+
+The lighting transition advances its Q12 blend by 1024 up to and including
+4096. The vitals-restoration cycle uses channel coefficient 4095 for green,
+cyan and white, then restores the saved matrix. Its named status-preservation
+mask keeps the upper twelve bits while clearing the low four; it does not
+invent individual ailment identities. Weapon 9 blends 2500/4096 toward black
+and halves the near-fog distance; the green/blue effects blend 3072/4096.
+The fog projection argument uses the existing shared projection-distance name.
+
+The update-state values distinguish normal (0), damage animation indices
+1 through 7, recovery fade (fe), and dying (ff). The damage end is the
+exclusive bound 8, with the existing per-frame increment preserved. Death
+camera movement keeps the measured bob threshold 1000, resting bob 1060,
+initial pitch step 10, separate resting acceleration 10 and falling
+acceleration 15, pitch minimum -800, and floor-relative camera offset 1500.
+Both consecutive bob stores remain present in source. Fade progress advances
+by 100, and brightness scales between zero and the normal HUD value 86 with
+twelve fractional bits. The normal-view initializer uses the same brightness
+name. No brightness variable or data identity is renamed in this batch.
+
+The three complete lighting/fade sources retain 117 literals:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Seven color-matrix initializer rows | 84 scalar coefficients/translation values | These are the measured preset data itself. Keep the matrices readable as numeric tables; the presets have semantic selector names, and no coefficient is rounded or normalized. |
+| `color_matrix_set_rgb` subscripts | Eighteen row/column indices 0/1/2 | Explicit coordinates in the small RGB matrix assignments. |
+| Blend initialization and absent color channels | 0 | Arithmetic interpolation origin and zero channel contribution. |
+| `render_frame` arguments | 0 | Null transform arguments reuse the current view, including both repeated calls at the death endpoint. |
+| Weapon-9 fog shift | 1 | Arithmetic division by two, retaining the original subtract-half expression. |
+| Fade near-fog endpoint | 0 | Zero distance endpoint in the interpolation. |
+| Death pitch-step reset | 0 | No further pitch movement after clamping. |
+| Final normal-color fade application | 0 | The blend origin restores the unmodified normal palette. |
+
+Palette and update-state consumers outside these three complete sources only
+receive the shared names here. Their remaining literals stay with the broader
+player, map, warp and rendering audits. Claim and definition values retain
+their usual literal evidence role.
+
+Validation: all 635 tests pass with nine local prerequisites skipped; lint
+and whitespace checks pass. The full build rebuilt the final affected
+sources and retains the existing data-placement failures. A post-build
+comparison confirms unchanged non-debug sections in all 112 objects and
+unchanged strict results for all 484 scored entries. Twenty-six objects
+have only debug-line changes relative to 893a3fa; exact-count movement is zero.

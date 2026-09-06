@@ -196,7 +196,7 @@ void game_initialize_session(void)
     player_state.camera_position.vz = 0xfa0;
     player_state.weapon_asset_buffer = memory_allocate(0xc000);
     game_state_initialize();
-    player_state.update_state = 0;
+    player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = 1;
     player_state.audio_music_enabled = 1;
     player_state.hud_gauges_enabled = 1;
@@ -233,7 +233,7 @@ void player_sync_position_to_map(void)
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
-    DAT_80095064 = 0x56;
+    DAT_80095064 = KF_HUD_DEFAULT_BRIGHTNESS;
     player_state.vertical_state = 0;
     player_state.vertical_velocity = 0;
 }
@@ -485,7 +485,7 @@ void player_update_vertical_motion(void)
     s32 view_offset;
 
     target = -(map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x] * KF_MAP_HEIGHT_STEP);
-    if (player_state.update_state != 0xff) {
+    if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
         if (player_state.floor_height - target < -3000) {
             if (player_state.equipped_leg_armor_id == 0x26
                 && map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]

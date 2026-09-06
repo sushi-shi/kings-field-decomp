@@ -58,11 +58,11 @@ void player_update(void)
     u8 attribute;
     u8 magic_id;
 
-    if (player_state.update_state == 0xff) {
+    if (player_state.update_state == KF_PLAYER_UPDATE_DYING) {
         player_death_update();
         return;
     }
-    if (player_state.update_state == 0xfe) {
+    if (player_state.update_state == KF_PLAYER_UPDATE_RECOVERY_FADE) {
         player_death_update_reverse_fade();
         return;
     }
@@ -406,7 +406,7 @@ void player_update(void)
     }
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
     player_update_weapon_attack();
-    lighting_set_active_color_matrix(0);
+    lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     if (player_state.status_effect1_timer != -1) {
         if (!(player_state.status_effect_flags & 0x2) && player_state.status_effect1_timer >= 33) {
             player_state.status_effect1_timer = 32;
@@ -430,16 +430,17 @@ void player_update(void)
     } else {
         fog_set_near(11000);
     }
-    if (player_state.update_state != 0 && player_state.update_state != 0xff) {
-        if (player_state.update_state >= 8) {
-            player_state.update_state = 0;
+    if (player_state.update_state != KF_PLAYER_UPDATE_NORMAL
+        && player_state.update_state != KF_PLAYER_UPDATE_DYING) {
+        if (player_state.update_state >= KF_PLAYER_DAMAGE_FRAME_END) {
+            player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
             player_state.view_rotation_offset = player_damage_camera_offsets[0];
             if (player_state.vitals.current_hp == 0) {
                 player_death_begin();
             }
         } else {
             player_state.view_rotation_offset = player_damage_camera_offsets[player_state.update_state];
-            lighting_set_active_color_matrix(1);
+            lighting_set_active_color_matrix(KF_GAME_COLOR_DAMAGE);
             player_state.update_state++;
         }
     }
@@ -507,7 +508,7 @@ void player_update(void)
     attribute = map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x];
     switch (attribute) {
     case 0x3a:
-        if (player_state.update_state == 0) {
+        if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {
             player_apply_damage(5, 3, 5, 0, 0, 0, 0x1000, 10);
         }
         break;
@@ -537,7 +538,7 @@ void player_update(void)
             } else {
                 phase = player_state.status_effect2_timer % 20;
                 if (phase < 2) {
-                    lighting_set_active_color_matrix(1);
+                    lighting_set_active_color_matrix(KF_GAME_COLOR_DAMAGE);
                     if (phase == 0) {
                         player_adjust_hp(-1);
                     }
@@ -565,7 +566,7 @@ void player_update(void)
         } else if (player_state.status_effect4_timer == 500) {
             player_recalculate_combat_stats();
         }
-        lighting_set_active_color_matrix(2);
+        lighting_set_active_color_matrix(KF_GAME_COLOR_DEFENSE_EFFECT);
         player_state.status_effect4_timer--;
     }
     if (player_state.equipped_weapon_id == 9) {

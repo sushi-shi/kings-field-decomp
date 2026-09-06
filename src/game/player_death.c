@@ -23,7 +23,7 @@ u8 item_stock[3][80];
 ADDRESS(0x80015164, 0x68)
 void player_death_begin(void)
 {
-    player_state.update_state = 0xff;
+    player_state.update_state = KF_PLAYER_UPDATE_DYING;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
     sound_ref_play(&player_sound_refs[1], 0x7f);
@@ -159,7 +159,7 @@ void player_death_restart(void)
     }
     player_sync_position_to_map();
     player_state.view_bob_offset = 0;
-    player_state.update_state = 0xfe;
+    player_state.update_state = KF_PLAYER_UPDATE_RECOVERY_FADE;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
     DAT_80095064 = 0;
@@ -524,8 +524,8 @@ void player_apply_damage(
             remaining = 0;
         }
         player_state.vitals.current_hp = remaining;
-        if (player_state.update_state != 0xff) {
-            player_state.update_state = 1;
+        if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
+            player_state.update_state = KF_PLAYER_DAMAGE_FRAME_FIRST;
         }
     }
 }

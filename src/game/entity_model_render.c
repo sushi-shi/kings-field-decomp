@@ -108,7 +108,7 @@ void render_map_object(KfMapObject *object)
 ADDRESS(0x8001ed38, 0x58)
 void menu_render_item_model(void)
 {
-    lighting_set_active_color_matrix(0);
+    lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     SetGeomScreen(0xc8);
     tmd_select(KF_TMD_SLOT_MENU_ITEM);
     tmd_select_object_vertices(0);

@@ -182,7 +182,7 @@ void map_reveal_fade(void)
     saved = render_state.light_matrix_copy;
 
     for (blend = 0; blend < 4097; blend += 128) {
-        lighting_set_color_matrix(&color_matrix_table[0], &color_matrix_table[3], blend);
+        lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_DEFAULT], &color_matrix_table[KF_GAME_COLOR_WHITE], blend);
         if (blend >= 1025) {
             map_event_pool[3].position_y -= 130;
             map_event_pool[3].rotation += 128;
@@ -198,12 +198,12 @@ void map_reveal_fade(void)
     DAT_8009f844 = 1;
 
     for (blend = 0x1000; blend >= 0; blend -= 256) {
-        lighting_set_color_matrix(&color_matrix_table[0], &color_matrix_table[3], blend);
+        lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_DEFAULT], &color_matrix_table[KF_GAME_COLOR_WHITE], blend);
         render_frame(0, 0);
         frame_pacer_wait();
     }
 
-    lighting_set_active_color_matrix(0);
+    lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     render_state.light_matrix_copy = saved;
 }
 

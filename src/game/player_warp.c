@@ -293,5 +293,5 @@ void actor_transform_definition5_to6(KfActor *actor)
         render_frame(0, 0);
         frame_pacer_wait();
     }
-    lighting_set_active_color_matrix(0);
+    lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
 }
