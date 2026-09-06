@@ -186,7 +186,7 @@ effect_kind4_impact:
                             (s16)effect->scale_x);
                         effect_scatter_triple(&effect->direction_x);
                     } else {
-                        effect->type = 0xff;
+                        effect->type = KF_EFFECT_SLOT_FREE;
                     }
                 }
                 pulse_angle = effect->control.frames_remaining << 9;
@@ -247,7 +247,7 @@ play_phase_sound:
                 > -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
                                         [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP)
                     + 3000) {
-                effect->type = 0xff;
+                effect->type = KF_EFFECT_SLOT_FREE;
             }
             return;
         } else if (phase == 121) {
@@ -256,7 +256,7 @@ play_phase_sound:
             effect->scale_y = scale;
             effect->scale_z = scale;
             if ((s16)effect->scale_y < 0) {
-                effect->type = 0xff;
+                effect->type = KF_EFFECT_SLOT_FREE;
             }
             return;
         } else {
@@ -335,7 +335,7 @@ play_phase_sound:
             effect->scale_z = scale;
             effect->scale_y = scale;
             if ((s16)scale <= 0) {
-                effect->type = 0xff;
+                effect->type = KF_EFFECT_SLOT_FREE;
             }
             break;
         }
@@ -367,7 +367,7 @@ play_phase_sound:
                     magic->damage_components[1], 5000, effect->id);
             }
         } else {
-            effect->type = 0xff;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
         break;
 
@@ -451,7 +451,7 @@ randomize_kind20:
                     effect->id, effect->type, 0x12,
                     &effect->position, &effect->direction_x, 1);
             }
-            effect->type = 0xff;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
         break;
     }
@@ -513,7 +513,7 @@ randomize_kind20:
     }
 
 invalidate_and_advance:
-        effect->type = 0xff;
+        effect->type = KF_EFFECT_SLOT_FREE;
 advance_effect_phase:
         effect->phase++;
         break;
@@ -585,7 +585,7 @@ advance_effect_phase:
         } else if (phase < 64) {
             effect->scale_y -= 0x100;
         } else {
-            effect->type = 0xff;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
         effect->rotation_y = (effect->rotation_y + 500) & 0xfff;
         effect->phase++;
@@ -598,7 +598,7 @@ advance_effect_phase:
             effect->scale_y -= 4000;
             effect->position.vy -= 1800;
         } else {
-            effect->type = 0xff;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
         effect->rotation_y = (effect->rotation_y + 500) & 0xfff;
         effect->phase++;
@@ -665,7 +665,7 @@ publish_kind9_scale:
             effect->scale_y = scale;
             effect->phase = scale_phase + 1;
         } else {
-            effect->type = 0xff;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
 rotate_kind9:
         effect->rotation_y = (effect->rotation_y + 0x6a4) & 0xfff;
@@ -715,7 +715,7 @@ rotate_kind9:
             effect->direction_x = remaining;
             if ((s16)remaining == -1) {
 invalidate_and_return:
-                effect->type = 0xff;
+                effect->type = KF_EFFECT_SLOT_FREE;
                 return;
             }
             effect->direction_z -= effect->rotation_z;

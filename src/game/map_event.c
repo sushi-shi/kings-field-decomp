@@ -45,15 +45,15 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
     u8 exhausted = 0;
     KfMapEvent *event = map_event_pool;
-    u16 count = 7;
+    u16 count = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
         if (exhausted == 1) {
         mark_free:
-            event->state = 0xff;
+            event->state = KF_MAP_EVENT_FREE;
         } else {
             event->state = definitions->state;
-            if (event->state != 0xff) {
+            if (event->state != KF_MAP_EVENT_FREE) {
                 event->kind = definitions->kind;
                 event->variant = definitions->variant;
                 event->tag = definitions->tag;
@@ -125,7 +125,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s16 best_angle = 30000;
     s32 found_distance = 0;
     KfMapEvent *event = map_event_pool;
-    u16 count = 7;
+    u16 count = KF_MAP_EVENT_CAPACITY - 1;
     s32 distance;
     s16 angle;
     s16 folded;

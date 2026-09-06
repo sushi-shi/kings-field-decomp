@@ -51,7 +51,7 @@ typedef struct KfFloorItemStateOpen {
     u16 texture_tpage;
     u16 count;
     u8 unknown_14[4];
-    KfFloorItem items[64];
+    KfFloorItem items[KF_FLOOR_ITEM_CAPACITY];
 } KfFloorItemStateOpen;
 
 /* Cleared as one region by opening_run. Unclassified intervals stay opaque. */

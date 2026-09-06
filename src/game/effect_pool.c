@@ -42,10 +42,10 @@ ADDRESS(0x80036f00, 0x44)
 KfEffectRecord *effect_pool_find_free(void)
 {
     KfEffectRecord *record = effect_pool_records;
-    u16 i = 48;
+    u16 i = KF_EFFECT_CAPACITY;
 
     do {
-        if (record->type == 0xff) {
+        if (record->type == KF_EFFECT_SLOT_FREE) {
             return record;
         }
         record++;
@@ -455,7 +455,7 @@ KfEffectRecord *effect_pool_construct(
         record->rotation_y = player_state.camera_rotation.vy;
         break;
     default:
-        record->type = 0xff;
+        record->type = KF_EFFECT_SLOT_FREE;
         break;
     }
 

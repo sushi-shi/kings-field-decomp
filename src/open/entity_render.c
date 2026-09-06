@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/open_resources.h>
 #include <kf/map_data.h>
 #include <kf/open_opening_render.h>
 #include <kf/open_render.h>
@@ -147,7 +148,7 @@ void opening_render_entities_and_items(void)
 
     tmd_select(1);
     entity = opening_entity_state.entities;
-    for (remaining = 31; remaining != -1; remaining--) {
+    for (remaining = KF_OPENING_ENTITY_CAPACITY - 1; remaining != -1; remaining--) {
         if (entity->object_id < 32) {
             u16 row = entity->cell_z - origin_z;
             const KfCellWindow *grid = open_graphics_runtime.active_cell_window;

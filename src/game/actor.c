@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_effect.h>
 #include <kf/map_data.h>
 #include <kf/game_actor.h>
 #include <kf/game_collision.h>
@@ -61,10 +62,10 @@ KfActor *actor_pool_find_free(void)
 {
     KfActor *actor = actor_state.actors;
     KfActor *found;
-    s32 count = 127;
+    s32 count = KF_ACTOR_CAPACITY - 1;
 
     do {
-        if (actor->slot_state == 0xff) {
+        if (actor->slot_state == KF_ACTOR_SLOT_FREE) {
             found = actor;
             goto done;
         }
@@ -200,8 +201,8 @@ void actor_pool_clear(void)
     KfActor *actor = actor_state.actors;
     u16 index;
 
-    for (index = 0; index < 128; index++, actor++) {
-        actor->slot_state = 0xff;
+    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
+        actor->slot_state = KF_ACTOR_SLOT_FREE;
         actor->lifecycle = 0;
         actor->animation_cache = 0;
     }
@@ -221,10 +222,10 @@ void actor_pool_spawn(
     const struct KfVec3s *rotation)
 {
     KfActor *actor = actor_state.actors;
-    s16 count = 127;
+    s16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
-        if (actor->slot_state == 0xff) {
+        if (actor->slot_state == KF_ACTOR_SLOT_FREE) {
             goto found;
         }
         actor++;
@@ -247,10 +248,10 @@ void actor_pool_begin_death_by_definition(u16 definition_id)
 {
     KfActor *actor = actor_state.actors;
     KfActorDefinition *definition = &actor_state.definitions[definition_id];
-    s16 count = 127;
+    s16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
-        if (actor->slot_state != 0xff && actor->definition_id == definition_id) {
+        if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->definition_id == definition_id) {
             if (actor->lifecycle == 1 && definition->action_animations[KF_ACTOR_ACTION_INDEX(6)] != 0xff) {
                 actor_set_action(actor, 6);
             } else {
@@ -380,7 +381,7 @@ void actor_pool_apply_radial_damage(
     u16 weight;
     u32 damage_scale;
 
-    for (index = 0; index < 128; index++, actor++) {
+    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
         if (actor->lifecycle != 1) {
             continue;
         }
@@ -483,7 +484,7 @@ KfActor *actor_pool_find_target_in_cone(
     s16 best_difference = 30000;
     s32 best_distance = 0;
     KfActor *actor = actor_state.actors;
-    u16 count = 127;
+    u16 count = KF_ACTOR_CAPACITY - 1;
     s32 distance;
     s16 delta;
     s16 folded;
@@ -575,7 +576,7 @@ s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_hei
     KfActorDefinition *definition;
     s16 index;
 
-    for (index = 0; index < 128; index++, actor++) {
+    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
         if (actor->lifecycle != 1) {
             continue;
         }
@@ -831,17 +832,17 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
     }
     count = 0;
     candidate = actor_state.actors;
-    index = 127;
+    index = KF_ACTOR_CAPACITY - 1;
     do {
-        if (candidate->slot_state != 0xff && candidate->lifecycle == 1) {
+        if (candidate->slot_state != KF_ACTOR_SLOT_FREE && candidate->lifecycle == 1) {
             count++;
         }
         candidate++;
     } while (--index != -1);
     record = effect_pool_records;
-    index = 47;
+    index = KF_EFFECT_CAPACITY - 1;
     do {
-        if (record->type != 0xff && record->kind == 9) {
+        if (record->type != KF_EFFECT_SLOT_FREE && record->kind == 9) {
             count++;
         }
         record++;

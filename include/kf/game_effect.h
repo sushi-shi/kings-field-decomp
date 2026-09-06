@@ -13,6 +13,11 @@
 
 struct KfPoolRecord;
 
+enum {
+    KF_EFFECT_CAPACITY = 48,
+    KF_EFFECT_SLOT_FREE = 0xff
+};
+
 /* Each kind selects the interpretation; all alternatives retain u16 storage. */
 typedef union KfEffectVisualState {
     u16 animation_phase;
@@ -96,7 +101,7 @@ KF_EFFECT_OFFSET_CHECK(propagation, 0x3a);
  * the current-record slot by a fixed member offset. */
 typedef struct KfEffectState {
     KfMagicRecord magic[24];
-    KfEffectRecord records[48];
+    KfEffectRecord records[KF_EFFECT_CAPACITY];
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;
 } KfEffectState;

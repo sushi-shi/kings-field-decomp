@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_actor.h>
 #include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
@@ -177,7 +178,7 @@ void map_world_state_persist(void)
     *out++ = 1;
 
     event = map_runtime_state.events;
-    for (i = 0; i < 8; i++, event++) {
+    for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         *out++ = event->state;
         *out++ = event->image_limit;
         *out++ = event->image_index;
@@ -190,7 +191,7 @@ void map_world_state_persist(void)
     count_slot = out++;
     active = 0;
     actor = &actor_state.actors[0];
-    for (i = 0; i < 128; i++, actor++) {
+    for (i = 0; i < KF_ACTOR_CAPACITY; i++, actor++) {
         if (actor->slot_state == 1 || actor->slot_state == 3) {
             active++;
             *out++ = i;
@@ -204,7 +205,7 @@ void map_world_state_persist(void)
     *count_slot = active;
 
     object = &map_object_state.objects[0];
-    for (i = 0; i < 190; i++, object++) {
+    for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
         *out++ = object->object_id;
     }
 
@@ -212,7 +213,7 @@ void map_world_state_persist(void)
     active = 0;
     object = &map_object_state.objects[0];
     definitions = map_object_state.definitions;
-    for (i = 0; i < 160; i++, object++) {
+    for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         u8 id = object->object_id;
         u8 behavior;
 
@@ -240,7 +241,7 @@ void map_world_state_persist(void)
     }
     *count_slot = active;
 
-    object = &map_object_state.objects[160];
+    object = &map_object_state.objects[KF_MAP_OBJECT_EFFECT_FIRST];
     for (i = 0; i < 10; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;

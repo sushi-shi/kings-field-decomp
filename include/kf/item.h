@@ -5,6 +5,11 @@
 
 #include <kf/game_types.h>
 
+enum {
+    KF_FLOOR_ITEM_CAPACITY = 64,
+    KF_FLOOR_ITEM_END = 0xffff
+};
+
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
  * stream, and the runtime floor-item entry (24 bytes) the loader expands it
@@ -40,7 +45,7 @@ extern u8 item_stock[3][80];
 
 /* GAME globals; OPEN places these fields in KfFloorItemStateOpen. */
 extern u16 floor_item_count;
-extern KfFloorItem floor_items[64];
+extern KfFloorItem floor_items[KF_FLOOR_ITEM_CAPACITY];
 
 extern void item_load_floor_placements(KfFloorItemPlacement *placements);
 

@@ -9,6 +9,14 @@
 
 struct KfPoolRecord;
 
+enum {
+    KF_MAP_OBJECT_DEFINITION_COUNT = 160,
+    KF_MAP_OBJECT_CAPACITY = 190,
+    KF_MAP_OBJECT_EFFECT_FIRST = 160,
+    KF_MAP_EVENT_CAPACITY = 8,
+    KF_MAP_EVENT_FREE = 0xff
+};
+
 typedef struct KfMapCell {
     u8 z;
     u8 x;
@@ -160,13 +168,13 @@ typedef struct KfMapEvent {
 
 /* Definitions and the live pool form one base-register-relative aggregate. */
 typedef struct KfMapObjectState {
-    KfMapObjectDefinition definitions[160];
-    KfMapObject objects[190];
+    KfMapObjectDefinition definitions[KF_MAP_OBJECT_DEFINITION_COUNT];
+    KfMapObject objects[KF_MAP_OBJECT_CAPACITY];
 } KfMapObjectState;
 
 /* Cleared as 0x2360 bytes; the final 0x2134 bytes are copied by save I/O. */
 typedef struct KfMapRuntimeState {
-    KfMapEvent events[8];
+    KfMapEvent events[KF_MAP_EVENT_CAPACITY];
     KfMapEvent *current_event;
     u8 *variant_asset_buffer;
     u16 animation_gate;

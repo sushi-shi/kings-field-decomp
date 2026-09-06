@@ -218,3 +218,61 @@ and `nix flake check -L` pass. Full `kf build` was run and retains the existing
 data ownership/placement failures, including two conflicting GAME target
 section bases. No instruction, relocation, initialized byte, or strict match
 result changed in this batch.
+
+## Pool capacity and notification plan
+
+Follow the shared pool owners through their allocation, reset, render and save
+sweeps. Name each owner's fixed capacity and the sentinel for that particular
+record type; do not substitute equal-valued action IDs, sound levels or animation
+timings. GAME's map-object definitions and its first transient-object index
+both equal 160 but describe separate contracts. Keep all existing countdown
+and endpoint forms. The notification ring's eight slots, six presentation
+sprites, hold/rotation phases and numeric popup form are a separate small
+state-machine audit. The existing function dossiers and unchanged post-merge
+objects remain the evidence/comparison baseline.
+
+The shared declarations now name 128 actor slots and twelve definitions,
+190 GAME map-object slots and 160 definitions, eight map-event slots,
+48 effect slots, 64 floor-item slots, and 32 OPEN scene-entity slots. The
+definition-copy word counts derive from the complete typed arrays. The
+map-object save payload distinguishes the first transient index (160) from
+the full pool capacity; its additional transient banks remain a separate
+save-format audit. Floor-item placement termination uses its own 0xffff
+sentinel. Actor, effect, map-event and OPEN entity free markers are named
+for their respective record types.
+
+The notification ring wraps with `capacity - 1`; its free marker is 0xff.
+GAME's gold pickup reconstructs a two-byte amount, queues ID 0x13 and adds
+the same amount to `player_state.gold` at 8003554c..80035570, establishing
+`KF_NOTIFICATION_GOLD`. That ID displays a label and four decimal sprites
+instead of the ordinary message sprite. Their screen X coordinates establish
+the ones/tens/hundreds/thousands order. The effect holds fifteen frames,
+then rotates by 128 angle units per update until an eighth turn. It dequeues
+repeated ordinary messages together, but keeps each gold amount separate.
+
+The queue's 122 remaining inline literals are retained for these reasons:
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Static layout assertions | Sizes 0x16/6, offsets 0x10/0/1/2/3/4 | Independent retail byte-layout controls; deriving these expected values from the fields being checked would weaken the checks. |
+| Static assertion idiom | Pointer 0, array extents 1/-1 | The unevaluated null-base offset expression and C89 compile-success/failure mechanism. |
+| Six sprite initializer rows | All 60 scalar values | Preserve the measured UV coordinates, spans and signed screen positions stored in unsigned halfwords. Initial active flags and opaque bytes are zero; no meaning is invented for the opaque byte. Positioning/shape data remains readable as a table instead of aliases for every coordinate. |
+| `notify_enqueue` varargs access | `+ 1` | Address the first stack argument after `message_id`, preserving the retail ABI access. |
+| Queue head/tail and hold counter | `+ 1`, `- 1`, zero test | One-entry advance, mask endpoint and one-frame decrement/exhaustion. |
+| Effect angle initialization | 0 | Arithmetic zero rotation. |
+| Sprite active assignments | 0/1 | Boolean visibility. |
+| `menu_format_number` | Flag 0 | The `pad_zero` Boolean is false, so the formatter leaves leading positions blank rather than filling them with zero digits. |
+| Formatter output | Indices 3/2/1/0 | Select the four positional digits, read in reverse for the right-to-left screen arrangement. Sprite roles themselves have semantic names. |
+| `display_flip_buffer_index` | Comparison 0 | Boolean inversion switches the two display buffers. |
+
+The capacity changes retain literal zero-based origins and unit countdown
+adjustments in the other units. Equal-valued action IDs, animation phases,
+asset IDs, other flags and table values in those units remain assigned to
+their own domain audit; this batch does not claim to have reviewed them all.
+
+The final rebuild preserves all non-debug sections of all 112 objects and the
+complete strict report, including all 484 scored entries. Fourteen objects
+have debug-line changes relative to the post-merge baseline (seven already
+changed in the audio/camera batch). All 635 tests pass (nine prerequisites
+skipped), lint and `git diff --check` pass, and full `kf build` retains the
+existing data-placement/ownership failures. Exact-count movement is zero.

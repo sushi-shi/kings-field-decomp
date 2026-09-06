@@ -10,6 +10,12 @@
 
 struct KfPoolRecord;
 
+enum {
+    KF_ACTOR_DEFINITION_COUNT = 12,
+    KF_ACTOR_CAPACITY = 128,
+    KF_ACTOR_SLOT_FREE = 0xff
+};
+
 /*
  * GAME.EXE keeps twelve 0x98-byte actor definitions immediately before a
  * pool of 128 0x48-byte live actors. Only reviewed fields are named; the
@@ -113,8 +119,8 @@ typedef struct KfActor {
  * live-actor base through one register, proving this complete aggregate.
  */
 typedef struct KfActorState {
-    KfActorDefinition definitions[12];
-    KfActor actors[128];
+    KfActorDefinition definitions[KF_ACTOR_DEFINITION_COUNT];
+    KfActor actors[KF_ACTOR_CAPACITY];
     VECTOR player_position;
     SVECTOR player_rotation;
     KfActorDefinition *current_definition;

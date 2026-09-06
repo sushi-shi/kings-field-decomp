@@ -156,7 +156,7 @@ ADDRESS(0x80030f7c, 0x60)
 void map_object_pool_clear(void)
 {
     KfMapObject *object = map_object_state.objects;
-    u16 index = 189;
+    u16 index = KF_MAP_OBJECT_CAPACITY - 1;
 
     do {
         object->object_id = 0xff;
@@ -179,7 +179,7 @@ void map_object_definitions_load(const KfMapObjectDefinition *definitions)
 {
     const u32 *source = (const u32 *)definitions;
     u32 *destination = (u32 *)map_object_state.definitions;
-    s32 count = 0x140;
+    s32 count = sizeof map_object_state.definitions / sizeof *source;
 
     do {
         *destination++ = *source++;
@@ -203,7 +203,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
     u32 effect_output[2];
     u8 object_id;
 
-    remaining = 189;
+    remaining = KF_MAP_OBJECT_CAPACITY - 1;
     for (;;) {
         if (ended == 1) {
         fill:
@@ -330,7 +330,7 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
     s16 index;
     u16 radius;
 
-    for (index = 0; index < 190; index++, object++) {
+    for (index = 0; index < KF_MAP_OBJECT_CAPACITY; index++, object++) {
         if (object->object_id == 0xff) {
             continue;
         }

@@ -23,7 +23,7 @@ void render_entities(void)
 
     /* Map objects. */
     object = map_object_state.objects;
-    for (i = 189; i != -1; i--) {
+    for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {
         if (object->object_id < 133) {
             u16 row = object->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
@@ -39,7 +39,7 @@ void render_entities(void)
 
     /* Actors. */
     actor = actor_state.actors;
-    for (i = 127; i != -1; i--, actor++) {
+    for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--, actor++) {
         u8 visible;
         if (actor->lifecycle != 1) {
             continue;
@@ -96,8 +96,8 @@ void render_entities(void)
     /* Actor sprites. */
     SetLightMatrix(&render_light_matrices[2]);
     sprite = (KfEffectRenderView *)effect_pool_records;
-    for (i = 47; i != -1; i--, sprite++) {
-        if (sprite->type == 0xff || sprite->sprite_id == 0xff) {
+    for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--, sprite++) {
+        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->sprite_id == 0xff) {
             continue;
         }
         {
@@ -115,7 +115,7 @@ void render_entities(void)
     /* Map events. */
     SetLightMatrix(&render_state.light_matrix_copy);
     event = map_event_pool;
-    for (i = 7; i != -1; i--) {
+    for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {
         if (event->state == 1) {
             u16 row = event->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;

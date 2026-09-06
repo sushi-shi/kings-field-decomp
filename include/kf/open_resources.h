@@ -5,6 +5,11 @@
 
 #include <kf/game_map.h>
 
+enum {
+    KF_OPENING_ENTITY_CAPACITY = 32,
+    KF_OPENING_ENTITY_FREE = 0xff
+};
+
 /* OPEN title-scene entity and its 32-slot runtime pool. */
 typedef struct KfOpeningEntity {
     u8 object_id;
@@ -19,7 +24,7 @@ typedef struct KfOpeningEntity {
 } KfOpeningEntity;
 
 typedef struct KfOpeningEntityState {
-    KfOpeningEntity entities[32];
+    KfOpeningEntity entities[KF_OPENING_ENTITY_CAPACITY];
     u8 unknown_500[10];
     u16 unknown_control_50a;
     u16 unknown_control_50c;

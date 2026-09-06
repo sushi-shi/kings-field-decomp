@@ -9,10 +9,10 @@ ADDRESS(0x80019994, 0x4c)
 void opening_entity_pool_reset(void)
 {
     KfOpeningEntity *entity = opening_entity_state.entities;
-    u16 remaining = 31;
+    u16 remaining = KF_OPENING_ENTITY_CAPACITY - 1;
 
     do {
-        entity->object_id = 0xff;
+        entity->object_id = KF_OPENING_ENTITY_FREE;
         entity++;
     } while (remaining-- != 0);
 
@@ -27,12 +27,12 @@ KfOpeningEntity *opening_entity_find_by_object_id(
 {
     KfOpeningEntity *entity = entities;
 
-    if (entity->object_id != 0xff) {
+    if (entity->object_id != KF_OPENING_ENTITY_FREE) {
         do {
             if (entity->object_id == object_id)
                 return entity;
             entity++;
-        } while (entity->object_id != 0xff);
+        } while (entity->object_id != KF_OPENING_ENTITY_FREE);
     }
 
     return 0;
@@ -45,16 +45,16 @@ void opening_entity_pool_load_placements(
     u16 exhausted = 0;
     const KfMapObjectPlacement *placement = placements;
     KfOpeningEntity *entity = opening_entity_state.entities;
-    u16 remaining = 31;
+    u16 remaining = KF_OPENING_ENTITY_CAPACITY - 1;
 
     do {
         if (exhausted == 1) {
             /* The terminator path below shares this inactive-slot store and
              * leaves the placement pointer unchanged. */
         mark_empty:
-            entity->object_id = 0xff;
+            entity->object_id = KF_OPENING_ENTITY_FREE;
         } else {
-            if (placement->object_id != 0xff) {
+            if (placement->object_id != KF_OPENING_ENTITY_FREE) {
                 entity->object_id = placement->object_id;
                 entity->cell_x = placement->tile_x;
                 entity->cell_z = placement->tile_z;

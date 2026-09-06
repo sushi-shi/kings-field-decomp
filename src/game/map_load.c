@@ -41,7 +41,7 @@ void map_restore_floor_state(void)
     in = base - 1690 + 1700 * player_state.progress_state.current_floor;
     if (*in++ == 1) {
         event = map_runtime_state.events;
-        for (i = 0; i < 8; i++, event++) {
+        for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
             event->state = *in++;
             event->image_limit = *in++;
             event->image_index = *in++;
@@ -62,7 +62,7 @@ void map_restore_floor_state(void)
         }
 
         object = &map_object_state.objects[0];
-        for (i = 0; i < 190; i++, object++) {
+        for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
             object->object_id = *in++;
         }
 

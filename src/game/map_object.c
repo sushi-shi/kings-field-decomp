@@ -6,7 +6,6 @@
 
 RODATA(0x80012888, 0x18c)
 
-#define MAP_OBJECT_COUNT 190
 #define MAP_OBJECT_NONE 0xff
 
 /*
@@ -24,7 +23,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
     VECTOR point;
     MATRIX matrix;
 
-    for (; index < MAP_OBJECT_COUNT; index++, object++) {
+    for (; index < KF_MAP_OBJECT_CAPACITY; index++, object++) {
         if (object->object_id == MAP_OBJECT_NONE) {
             continue;
         }
@@ -149,7 +148,7 @@ void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s
     u16 angle;
 
     sequence = &map_object_effect_sequence_160;
-    object = map_object_effect_pool_acquire(160, 10, *sequence);
+    object = map_object_effect_pool_acquire(KF_MAP_OBJECT_EFFECT_FIRST, 10, *sequence);
     object->link.spawn_sequence = (*sequence)++;
     object->object_id = 39;
     /* The debris keeps its source in the link id and action parameter bytes. */
@@ -176,7 +175,7 @@ ADDRESS(0x80031b54, 0xf0)
 void map_object_pool_trigger_link(u8 link_id)
 {
     KfMapObject *object = map_object_state.objects;
-    u16 count = MAP_OBJECT_COUNT - 1;
+    u16 count = KF_MAP_OBJECT_CAPACITY - 1;
 
     do {
         switch (object->action) {
@@ -205,7 +204,7 @@ ADDRESS(0x80031c44, 0x84)
 void map_object_pool_clear_link(u8 link_id)
 {
     KfMapObject *object = map_object_state.objects;
-    u16 count = MAP_OBJECT_COUNT - 1;
+    u16 count = KF_MAP_OBJECT_CAPACITY - 1;
     KfMapObjectDefinition *definitions = map_object_state.definitions;
 
     do {
@@ -240,7 +239,7 @@ void map_object_pool_update(void)
     s32 floor;
     s32 tilt;
 
-    for (count = MAP_OBJECT_COUNT; count != 0; object++, count--) {
+    for (count = KF_MAP_OBJECT_CAPACITY; count != 0; object++, count--) {
         if (object->action == MAP_OBJECT_NONE) {
             continue;
         }

@@ -3,18 +3,16 @@
 #include <kf/game_actor.h>
 #include <kf/game.h>
 
-#define ACTOR_SLOT_FREE 0xff
-
 /* Runs awareness and the current action for every occupied actor slot. */
 ADDRESS(0x80030818, 0xa8)
 void actor_pool_update(void)
 {
     KfActor *actor = actor_state.actors;
-    u16 count = 0x7f;
+    u16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
         actor_bind_current(actor);
-        if (actor->slot_state != ACTOR_SLOT_FREE) {
+        if (actor->slot_state != KF_ACTOR_SLOT_FREE) {
             actor_update_awareness();
             if (actor->lifecycle == 1) {
                 actor_update_current_action();
@@ -35,7 +33,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
 {
     s32 finished = 0;
     KfActor *actor = actor_state.actors;
-    u16 count = 0x7f;
+    u16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
         if (finished == 1) {
@@ -46,12 +44,12 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
              * path advances the placement pointer.
              */
         mark_free:
-            actor->slot_state = ACTOR_SLOT_FREE;
+            actor->slot_state = KF_ACTOR_SLOT_FREE;
             actor->lifecycle = 0;
             continue;
         }
         actor->slot_state = placements->slot_state;
-        if (actor->slot_state != ACTOR_SLOT_FREE) {
+        if (actor->slot_state != KF_ACTOR_SLOT_FREE) {
             actor->definition_id = placements->definition_flags & 0x1f;
             if (placements->definition_flags & 0x20) {
                 actor->variant = 1;
@@ -84,7 +82,7 @@ void actor_definitions_load(const KfActorDefinition *definitions)
 {
     const u32 *source = (const u32 *)definitions;
     u32 *destination = (u32 *)actor_state.definitions;
-    s32 count = 0x1c8;
+    s32 count = sizeof actor_state.definitions / sizeof *source;
 
     do {
         *destination++ = *source++;

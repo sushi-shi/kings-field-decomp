@@ -44,13 +44,13 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
 
     *count = 0;
     first_placement = placements;
-    while (placements++->item_id != 0xffff) {
+    while (placements++->item_id != KF_FLOOR_ITEM_END) {
         (*count)++;
     }
 
     item = floor_items;
     placements = first_placement;
-    if (placements->item_id != 0xffff) {
+    if (placements->item_id != KF_FLOOR_ITEM_END) {
         do {
             s32 height;
 
@@ -65,7 +65,7 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
                 (rand() * item->facing_and_frame_count) >> 15;
             item++;
             placements++;
-        } while (placements->item_id != 0xffff);
+        } while (placements->item_id != KF_FLOOR_ITEM_END);
     }
 }
 

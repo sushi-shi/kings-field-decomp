@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/game_actor.h>
 #include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
@@ -37,7 +38,7 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
     s16 index;
 
     for (index = 0; index < 128; index++, actor++) {
-        if (actor->slot_state != 0xff && actor->tile_x == tile_x
+        if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->tile_x == tile_x
             && actor->tile_z == tile_z) {
             return index;
         }
@@ -460,7 +461,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * 1000 >> 12);
     sound_z = position->vz + (rcos(rotation->vy) * 1000 >> 12);
-    if (notification_state.control.effect_phase == 0) {
+    if (notification_state.control.effect_phase == KF_NOTIFICATION_IDLE) {
         index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
         if (index != -1) {
             event = &map_event_pool[index];
@@ -655,7 +656,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
         case 0x41:
             result = object->link.link_id | object->link.action_parameter << 8;
-            notify_enqueue(0x13, result);
+            notify_enqueue(KF_NOTIFICATION_GOLD, result);
             player_state.gold += result;
             object->object_id = 0xff;
             break;
@@ -675,7 +676,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case 13:
-            if (notification_state.control.effect_phase != 0) {
+            if (notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
                 break;
             }
             if (object->object_id == 0x82) {
