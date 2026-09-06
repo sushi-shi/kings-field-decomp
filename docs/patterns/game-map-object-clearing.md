@@ -119,3 +119,81 @@ Repository verification: **551 tests pass** (47.675 s), Ruff passes and
 the existing non-code closure gates: source data 11/59, config-provided SDK
 data 2/2 and target relink 108/114, with incomplete known-reference ownership.
 No gate, data inventory, SDK attribution or toolchain setting was changed.
+
+## Pool-reset continuation at `b19ed81`
+
+The world-collision continuation was verified progress; `master` is clean.
+Hash-identical retail and all six GAME semantic views were refreshed for
+`80030f7c map_object_pool_clear` (96 bytes, 78.250000%). The current
+`game.map_object_pool` unit has five of eight functions exact. Its complete
+reset CFG, sole startup caller at `80014778`, both immediate neighbors,
+complete placement loader, SDK MEMORY.H, source history and shared link
+field consumers were read before this edit. The existing no-argument/void
+contract, 190 iterations, four validated address pairs, zero calls/strings,
+three sequence halfword stores and both control delay slots are unchanged.
+
+The first real divergence is still the link-derived cursor at object+34
+instead of +32, followed by six narrow stores rather than retail's two
+word clears. The earlier memset trial is not repeated. The independently
+exact placement loader at `80031170..8003117c` copies this complete link
+using two aligned `lw` and two `sw` instructions. Its shared source already
+expresses that bulk representation through `u32 *` operands to memcpy.
+The serializer separately preserves all eight link bytes; individual
+consumers prove the actual byte/halfword fields and must keep those types.
+
+First hypothesis: use the same aligned whole-link word view for the reset,
+writing word 1 then word 0. This is a bounded bulk operation on the already
+owned eight-byte link, not a replacement structure, overlapping global or
+per-file incompatible field layout. The runtime pool is word-aligned,
+records have 44-byte stride, and link starts at +32; both stores are aligned
+and stay within the link. Keep the object-ID/action byte stores, old u16
+countdown, cursor advancement and sequence order. Do not infer that the
+semantic fields themselves are words or change their shared declarations.
+
+Require a fresh focused compile, strict 100%, all 24 linked instruction
+words and all eight ordered relocation entries. Verify the five exact
+neighbors and the other images before banking only this function. The
+unit's existing RODATA/placement issues remain separate closure work.
+
+The first aligned-block trial is **100% strict objdiff**. All 24 retail
+words appear in the focused comparison, including the object+32 derived
+cursor, both word clears and the old-counter branch delay slot. The other
+seven function scores are unchanged; the unit now has six exact functions.
+Add compile-time shared-layout checks for link size eight, object stride
+44 and link offsets +32/+12 in runtime/placement records before final
+verification. No struct representation or field type is changed.
+
+The layout-check rebuild remains 100%. A separate fresh compile under the
+manifest's exact GCC 2.5.7/O2/G0/r2000 profile produces the production
+sections byte-for-byte. Resolving each function's real references reproduces
+all retail instructions for the new reset and all five exact controls:
+collision-edge marker (572 bytes), definition loader (44), placement loader
+(1096), distance helper (168) and near-point search (204). Reset's eight
+relocation entries are HI/LO pairs at +0/+4, +64/+68, +72/+76 and +80/+84,
+materializing `8006ede0`, `80070e96`, `80070e94`, `80070e92` in that order.
+The source and target have no call or internal-J relocation in this leaf.
+A deliberately shifted pool base fails the raw-byte comparison; addresses
+and addends are not masked to obtain exactness.
+
+Removing the reset's 16 excess bytes also removes the previous
+placement-loader switch-table displacement. All 84 RODATA pointers now
+relink exactly to their retail destinations, and the 24 initialized map-copy
+bytes remain exact. The unit's `.data` and `.rodata` comparisons both pass;
+its two remaining partial functions do not become exact by this data result.
+
+All 484 reported function rows were compared with the `b19ed81` snapshot;
+only the reset changes (78.25% to 100%). GAME increases to **294/362 exact**,
+OPEN remains **98/108**, and PSX remains **1/1**: **393/471** eligible total.
+All thirteen vendored verification functions remain exact. No source body
+from a library, gate relaxation or compiler-profile change is included.
+
+Ruff and `git diff --check` pass; all **649 tests pass** (89.198 seconds).
+After the fresh focused build, the full `kf build` runs all three image
+checks and still fails on remaining data/ownership/placement work. Source
+data improves from 6/60 to **7/60** exact units (GAME 5/40, OPEN 2/19,
+PSX 0/1); SDK/config data remains 4/4, target relink remains 110/116 with six
+conflicting-section-base findings, and artifact failures remain zero.
+
+`kf bank --function game:0x80030f7c` banks only this verified exact function;
+the baseline diff contains one row. The unit's partial copy-region and
+forward-probe functions are not banked by this continuation.

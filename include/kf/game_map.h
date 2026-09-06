@@ -69,6 +69,14 @@ typedef struct KfMapObject {
     u16 action_timer;
 } KfMapObject;
 
+/* The pool reset and placement loader access the whole link as two words. */
+typedef char check_map_object_link_size[sizeof(KfMapObjectLink) == 8 ? 1 : -1];
+typedef char check_map_object_size[sizeof(KfMapObject) == 0x2c ? 1 : -1];
+typedef char check_map_object_link_offset[
+    (unsigned long)&((KfMapObject *)0)->link == 0x20 ? 1 : -1];
+typedef char check_map_placement_link_offset[
+    (unsigned long)&((KfMapObjectPlacement *)0)->link == 0x0c ? 1 : -1];
+
 /*
  * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte
  * runtime interpolator. The fourth vector lane and two trailing halfwords

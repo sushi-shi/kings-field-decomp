@@ -553,6 +553,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
+| `sb` object/action sentinels followed by `sw zero,4(link); sw zero,0(link)` | clear the owned eight-byte link through the same aligned `u32 *` bulk view used by the placement loader; keep byte/halfword field types for semantic accesses. Shared size/offset checks preserve the link's bounds and runtime alignment. [Pool reset closure](game-map-object-clearing.md) | `map_object_pool_clear` `0x80030f7c` |
 | `sh zero,40(sp)` before `move s7,a0` | `u16 ended = 0;` initialised before a local copy of the parameter (`placement = placements`); the parameter's own pseudo stays in `a0` and the copy lands after the flag store | `map_object_pool_load` `0x80031008` |
 | spill slots `remaining` 32, `ended` 40, `definition` 48 above the 8-byte output buffer at 24 | spilled locals take stack slots in declaration order (upward); declare `remaining`, then `ended`, then the definition pointer | same |
 | `beq id,0xff -> tail; ... tail: j fill; sh ended` and the fill block `li 0xff; j advance; sb` | `if (ended == 1) { fill: object_id = 0xff; } else if (id != 0xff) { body } else { ended = 1; goto fill; }`; `continue` jumps to the loop head instead and duplicating the store loses the earlier copy | same |

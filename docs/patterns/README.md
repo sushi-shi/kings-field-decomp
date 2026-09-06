@@ -154,7 +154,8 @@ promotes a probe to a proven historical toolchain.
   distinct distance outputs, projectile-speed lifetime and height-branch order
   improve magic casting; remaining stack/angle differences stay unattributed.
 - [game-map-object-clearing.md](game-map-object-clearing.md): corrected
-  type-0..8 link predicate and the rejected pool-reset memset control.
+  type-0..8 link predicate and aligned whole-link reset close both clearing
+  functions; the earlier memset control emitted an unsupported call.
 - [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
   block and result join; partial reconstruction improved, not exact.
 - [game-map-collision-edge.md](game-map-collision-edge.md): chained
