@@ -722,7 +722,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
 {
     SVECTOR corners[4];
     SVECTOR anchor;
-    DVECTOR anchor_sxy;
+    long anchor_sxy;
     long p;
     long clip_flag;
     long sxy0;
@@ -737,10 +737,8 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
     corners[0].vy = corners[1].vy = sprite->y;
     corners[2].vy = corners[3].vy = sprite->y + sprite->h;
     corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;
-    anchor.vx = 0;
-    anchor.vy = 0;
-    anchor.vz = 0;
-    otz = RotTransPers(&anchor, (long *)&anchor_sxy, &p, &clip_flag);
+    anchor.vx = anchor.vy = anchor.vz = 0;
+    otz = RotTransPers(&anchor, &anchor_sxy, &p, &clip_flag);
     RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],
                   &sxy0, &sxy1, &sxy2, &sxy3, &p, &clip_flag);
 
@@ -751,10 +749,10 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
     }
     SetPolyFT4(prim);
     prim->clut = active_render_clut;
+    prim->tpage = active_render_tpage;
     *(long *)&prim->x0 = sxy0;
     *(long *)&prim->x1 = sxy1;
     *(long *)&prim->x2 = sxy2;
-    prim->tpage = active_render_tpage;
     *(long *)&prim->x3 = sxy3;
     prim->u0 = prim->u2 = sprite->u;
     prim->u1 = prim->u3 = sprite->u + sprite->u_span;
@@ -767,8 +765,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
     /* WIP graphics ownership: retail derives the CVECTOR from CLUT + 4 bytes. */
     NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&active_render_clut + 2), p,
                    (CVECTOR *)&prim->r0);
-    otz += screen_scale;
-    if (otz >= 5) {
-        AddPrim(&display_state.ordering_table[otz & 0x3fff], prim);
+    if (otz + screen_scale >= 5) {
+        AddPrim(&display_state.ordering_table[(otz + screen_scale) & 0x3fff], prim);
     }
 }

@@ -150,3 +150,92 @@ controls skipped in its isolated 616-test run. The full build remains red:
 contributions pass, and 110/116 targets relink faithfully. The same six
 section-base conflicts and 620 known-referenced config-only ranges without
 independent comparison remain. Production `DAT_` references do not decrease.
+
+## Polygon-emitter owner plan (2026-09-06)
+
+At `04ffd96`, extend the same complete-clear hypothesis to the three
+polygon emitters without changing their algorithms or production ownership.
+Refresh the six image-qualified views and compare the already inspected
+retail bodies, callers, SDK boundaries, shared types and source history from
+the focused [TMD](game-tmd-enqueue.md), [model](game-model-enqueue.md) and
+[map](game-map-enqueue.md) campaigns. Their game-owned dispatch/allocation
+policies are not SDK bodies. All calls retain the authentic SDK prototypes,
+prepared offsets retain their unsigned halfword widths, and every return
+retains its owned delay slot.
+
+| GAME function | Hex extent; strict production match | Owner-only hypothesis and controls |
+| --- | --- | --- |
+| `8001c7f8 render_enqueue_tmd` | `f38`; 98.932236% | u16 selection/s16 bias; 88-byte frame, 45 ordered calls, 35 retail address pairs, eleven J relocations and a reviewed 29-word switch. Share the selected-asset, projected-base and OT field through the existing complete owner; keep twelve allocation exits and all mode-specific lighting. |
+| `8001d730 render_enqueue_model` | `6e8`; 93.126690% | Same argument widths, 96-byte frame, fifteen calls, ten retail pairs, five internal jumps. Also share active CLUT/page fields through the same owner; keep all four mode entries, material publication and quad tails. |
+| `8001de18 render_enqueue_map` | `418`; 98.770996% | u16 selection, 80-byte frame, sixteen calls, six retail pairs and one internal jump. Preserve the post-projection asset reload, two separate depth guards and both allocation returns. |
+
+The common chain is selected-asset field `80090fc8` plus 488 to projected
+storage `800911b0`, then minus 756 to the OT pointer `80090ebc`. Model's
+CLUT/page are projected base plus 16040/16042. Those are decoded addresses,
+not a licence for pointer arithmetic between separate C globals.
+
+Use temporary source copies with references to the existing complete-clear
+declaration. A temporary typed cursor at the start of its explicitly opaque
+projection/morph interval permits checking address formation without
+asserting a 1000-entry GAME capacity. Keep that byte view out of production;
+neither the existing eight-byte inventory prefix nor neighbor spacing proves
+the complete projected allocation. Do not change the shared declaration's
+layout, external colour objects, any numeric retail relocation target, the
+compiler profile, or the unselected sprite function.
+
+Resolve emitted REL addends to their real addresses and compare complete
+raw words, ordered calls, address pairs, switch entries and exit paths.
+Record each pilot's first remaining divergence; partial raw agreement does
+not update an objdiff baseline. Production migration still requires a
+consistent typed representation of the unresolved spans and an audit of
+every remaining consumer, preserving all banked functions and data claims.
+
+### First emitter probe and next source hypothesis
+
+The unchanged owner declaration recovers all retail address pairs and the
+exact 1768/1048-byte extents for model/map. Their complete linked bodies
+differ at only seven/five words, all references to exchanged stack slots:
+model's count/header use 32/40 versus 40/32; map's normal-base/header use
+24/32 versus 32/24. No branch destination, call, material selector or
+instruction outside these accesses differs. TMD becomes 3900 bytes versus
+3896 and still has 36 pairs versus 35: its OT load remains separately
+materialized, and normal/projected registers remain exchanged. These raw
+pilot results do not change production scores or constitute bankable 100%.
+
+The header word is loaded and consumed exclusively within one packet
+iteration. Test declaring that existing word at its loop-local load, in
+both the owner pilot and canonical source. This is a bounded lifetime
+hypothesis, not a local-order permutation or an assertion about GCC's spill
+allocator. Do not change the word type, packet advance, count guard, calls,
+or separately justified vertex lifetimes. Compare the complete raw bodies
+and first divergences before retaining any production change.
+
+Moving the header to its packet-local load is byte-identical in all three
+pilot functions. It is not retained in production. The corrected adjacent
+[sprite renderer](game-sprite-enqueue.md) supplies a fourth owner witness;
+its separate plan records the complete retail/ABI pass and canonical source
+corrections before extending this temporary reference-only experiment.
+
+### Emitter pilot verdicts
+
+| Witness | Final temporary-owner result |
+| --- | --- |
+| TMD | 3900 versus 3896 bytes; first difference at +44 is count spill 32 versus 40. All 45 call targets agree; projected/normal register roles, header/count spills and one extra OT address pair remain. The restore tail agrees but this body is not exact. |
+| Model | 1768 bytes, fifteen calls and ten materialized addresses. The only seven differing words exchange the count/header stack offsets; every other linked instruction agrees. |
+| Map | 1048 bytes, sixteen calls and six materialized addresses. The only five differing words exchange the normal-base/header stack offsets; every other linked instruction agrees. |
+| Sprite | All 592 linked bytes, five calls, seven materialized addresses and every delay slot agree after the separately documented canonical source corrections. This temporary owner does not become a production claim. |
+
+The durable emitter probe checks the full model/map residue sets, complete
+sprite words, ordered retail calls, address-pair counts and restore tails.
+Shifting the owner root by four breaks each raw result while preserving its
+call set. Both packet-header scopes produce identical linked words, including
+the unchanged sprite. Existing initializer, display, TMD-accessor and matrix
+witnesses still pass. The final 640-test repository run passes without skips;
+full production build retains the known strict data/placement failures.
+
+The sprite also matches with the smaller, independently evidenced eight-byte
+material record in a separate temporary source. That gives a bounded next
+ownership campaign without inventing the projection/morph capacities or
+immediately migrating the entire graphics region. Both experiments are
+evidence, not objdiff banking criteria; the retained canonical sprite is
+93.972980% until its real material ownership can be migrated consistently.
