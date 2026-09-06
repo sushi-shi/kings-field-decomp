@@ -4567,23 +4567,23 @@ GAME.EXE	0x80025b50	0x14350		mips26	reachable-code	0x8005012c	load	PadRead	jal		
 GAME.EXE	0x80025b68	0x14368		mips26	reachable-code	0x8002abb4	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
 GAME.EXE	0x80025b70	0x14370		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow-reviewed	reviewed	manual:menu_config_panel
 GAME.EXE	0x80025b94	0x14394		mips26	reachable-code	0x8002b150	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
-GAME.EXE	0x80025ba4	0x143a4		mips26	instruction-word	0x80025c88	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80025ba4	0x143a4		mips26	reachable-code	0x80025c88	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
 GAME.EXE	0x80025bc0	0x143c0		mips26	reachable-code	0x8002b150	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
-GAME.EXE	0x80025bd4	0x143d4		mips26	instruction-word	0x80025c88	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80025bd4	0x143d4		mips26	reachable-code	0x80025c88	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
 GAME.EXE	0x80025c10	0x14410		mips26	reachable-code	0x8002b150	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
-GAME.EXE	0x80025c18	0x14418		mips26	instruction-word	0x80025c50	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80025c18	0x14418		mips26	reachable-code	0x80025c50	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
 GAME.EXE	0x80025c34	0x14434		mips26	reachable-code	0x8002b150	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
-GAME.EXE	0x80025c48	0x14448		mips26	instruction-word	0x80025c84	load		j		range-filtered	candidate	investigation:relocs.tsv
-GAME.EXE	0x80025c60	0x14460		mips26	instruction-word	0x80025c88	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80025c48	0x14448		mips26	reachable-code	0x80025c84	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
+GAME.EXE	0x80025c60	0x14460		mips26	reachable-code	0x80025c88	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
 GAME.EXE	0x80025c7c	0x1447c		mips26	reachable-code	0x8002b150	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
-GAME.EXE	0x80025d0c	0x1450c		mips26	instruction-word	0x800259f0	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80025d0c	0x1450c		mips26	reachable-code	0x800259f0	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
 GAME.EXE	0x80025d20	0x14520	0x80025d24	mips_hi16_lo16	reachable-code	0x800a0817	bss	player_state	lui+sb	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80025d2c	0x1452c	0x80025d30	mips_hi16_lo16	reachable-code	0x800a0817	bss	player_state	lui+lbu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80025d34	0x14534	0x80025d38	mips_hi16_lo16	reachable-code	0x800a0818	bss	player_state	lui+sb	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80025d3c	0x1453c	0x80025d40	mips_hi16_lo16	reachable-code	0x800a0819	bss	player_state	lui+sb	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80025d44	0x14544	0x80025d48	mips_hi16_lo16	reachable-code	0x800a0816	bss	player_state	lui+sb	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80025d5c	0x1455c		mips26	reachable-code	0x80032b5c	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
-GAME.EXE	0x80025d64	0x14564		mips26	instruction-word	0x80025d74	load		j		range-filtered	candidate	investigation:relocs.tsv
+GAME.EXE	0x80025d64	0x14564		mips26	reachable-code	0x80025d74	load		j		control-flow-reviewed	reviewed	manual:game-config-panel-abi
 GAME.EXE	0x80025d6c	0x1456c		mips26	reachable-code	0x8001b49c	load		jal		control-flow-reviewed	reviewed	manual:menu_config_panel
 GAME.EXE	0x80025da0	0x145a0	0x80025da4	mips_hi16_lo16	reachable-code	0x80070eb8	bss	display_state	lui+lw	v0	paired-reviewed	reviewed	manual:menu_config_panel
 GAME.EXE	0x80025dd4	0x145d4	0x80025dd8	mips_hi16_lo16	reachable-code	0x80057e88	load	current_poly_ft4	lui+sw	at	paired-reviewed	reviewed	manual:menu_config_panel

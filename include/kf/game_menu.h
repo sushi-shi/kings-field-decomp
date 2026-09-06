@@ -28,6 +28,15 @@ typedef struct MenuGlyphString {
     s16 codes[10];
 } MenuGlyphString;
 
+/* The configuration draw ABI passes two complete halfword-aligned labels. */
+typedef char check_menu_point_size[sizeof(MenuPoint) == 4 ? 1 : -1];
+typedef char check_menu_glyph_size[sizeof(MenuGlyphString) == 24 ? 1 : -1];
+typedef char check_menu_glyph_alignment[__alignof__(MenuGlyphString) == 2 ? 1 : -1];
+typedef char check_menu_glyph_prefix[
+    (unsigned long)&((MenuGlyphString *)0)->x == 0 &&
+    (unsigned long)&((MenuGlyphString *)0)->y == 2 &&
+    (unsigned long)&((MenuGlyphString *)0)->codes == 4 ? 1 : -1];
+
 /* One title and ten selectable labels in a runtime-loaded menu window. */
 typedef struct MenuWindowLayout {
     MenuGlyphString title;
