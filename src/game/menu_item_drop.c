@@ -257,11 +257,6 @@ s32 menu_save_load_hub(void)
  * effect, holds a three-frame animation, and writes the slot.  The format row
  * first purges any temporary file, then reformats the card and clears the
  * catalogue.  Returns the slot dialog result, or -1 on cancel.
- *
- * Structurally exact; open residue is the callee-saved-register count (retail
- * keeps the reused status result in a dedicated register), which cascades every
- * offset (see docs/patterns/source-shapes-gcc257.md, "item / inventory menu
- * panels").
  */
 ADDRESS(0x800250c4, 0x468)
 s32 menu_save_panel(void)
@@ -333,7 +328,7 @@ s32 menu_save_panel(void)
                         menu_present_frame();
                     }
                     status = save_system_write_slot(cursor + 1);
-                } else {
+                } else if (cursor == 3) {
                     menu_load_item_texture(0x69);
                     for (i = 0; i < 3; i++) {
                         menu_frame_begin();
@@ -364,10 +359,10 @@ s32 menu_save_panel(void)
             }
         }
 
-        if (result != -99)
-            return result;
-
         confirm = 0;
+        if (result != -99)
+            break;
+
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
@@ -397,6 +392,7 @@ s32 menu_save_panel(void)
         menu_draw_window(4, 5, cursor, confirm);
         menu_present_frame();
     }
+    return result;
 }
 
 /*
@@ -404,12 +400,8 @@ s32 menu_save_panel(void)
  * runs a four-row cursor (three data slots plus an exit row).  Confirm on a
  * populated slot opens the confirmation dialog, plays the load effect, holds a
  * three-frame animation, and reads the slot; a failed read shows the error
- * frame.  Returns the worker's slot result, or -1 on cancel.
- *
- * Structurally exact; open residue is loop-invariant constant hoisting (retail
- * keeps 1 and 3 in callee-saved registers, cc1psx-257 rematerialises them),
- * which cascades every offset (see docs/patterns/source-shapes-gcc257.md,
- * "item / inventory menu panels").
+ * frame. Returns the dialog result after a successful read, or -1 on cancel
+ * or catalogue failure; a read failure keeps the panel open.
  */
 ADDRESS(0x8002552c, 0x370)
 s32 menu_load_panel(void)
@@ -476,10 +468,10 @@ s32 menu_load_panel(void)
             }
         }
 
-        if (result != -99)
-            return result;
-
         confirm = 0;
+        if (result != -99)
+            break;
+
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
@@ -499,11 +491,11 @@ s32 menu_load_panel(void)
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = 1;
                 result = -1;
-            } else if (summaries[cursor].current_hp != 0) {
+            } else if (summaries[cursor].current_hp == 0) {
+                menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            } else {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = 1;
-            } else {
-                menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -515,4 +507,5 @@ s32 menu_load_panel(void)
         menu_draw_window(5, 4, cursor, confirm);
         menu_present_frame();
     }
+    return result;
 }

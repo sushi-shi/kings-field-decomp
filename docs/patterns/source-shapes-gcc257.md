@@ -1193,8 +1193,8 @@ Source shapes that were load-bearing:
 | Three `KfSaveSlotSummary` rows at `sp+16`; the load panel's confirm reads `summaries[cursor].current_hp` (offset 8) for slot occupancy | the 24-byte summary with six `u32` fields, three of them (`0x48` bytes, matching the save panel's `memset(.., 0, sizeof)`) | both save/load panels |
 | the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | take `u8 *equip = &player_state.equipped_weapon_id;` and index `equip[0x2c]` etc., not the named `player_state.equipped_*` fields (which re-`lui` per field) | `func_800249a8` |
 
-Residues (structurally faithful, not steerable -- the list-widget compiler wall;
-do not chase):
+Historical residue hypotheses, not established compiler limitations. The
+linked follow-ups supersede the original claims where source gaps were found:
 
 - `func_800249a8` (91.5%): a three-way callee-saved permutation --- retail
   `selection=s1`, `codes`-base`=s2`, `input=s3`; cc1psx-257 rotates them to
@@ -1211,13 +1211,12 @@ do not chase):
   the return guard. Correcting those facts, returning after the loop, and
   expressing the case/default dispatch as a switch recovers the exact body.
   The earlier switch-only trial did not establish a compiler limitation.
-- `func_8002552c` (58.0%): retail hoists the loop-invariant constants `1` and
-  `3` into callee-saved `s5`/`s6` (frame `0x78`); cc1psx-257 rematerialises them
-  with `li` at each compare (frame `0x70`, two fewer saved regs), which cascades
-  every downstream offset. The instruction stream is otherwise identical. The
-  nearly-identical save panel `func_800250c4` shows retail itself *not* hoisting
-  here, so this is a cost-model coin-flip, not a source fact.
-- `func_800250c4` (53.8%): retail keeps the reused `status` result in a
-  dedicated `s4` (six saved regs, frame `0x78`); cc1psx-257 coalesces it with
-  the `prev`/`i` temp in `s0` (five saved regs, frame `0x70`), again cascading
-  offsets. Same callee-saved-count residue as the load panel, opposite direction.
+- `func_8002552c`: **superseded** by
+  [the save/load panel reconstruction](game-save-load-panels-flow.md).
+  Clearing confirmation before the exit guard and using a post-loop return
+  restores the frame and hoisted constants naturally; putting the empty-slot
+  arm first closes the remaining branch difference.
+- `func_800250c4`: **superseded** by the same panel reconstruction. Besides
+  the reset/return corrections, retail retains an explicit row-3 format
+  guard omitted from the old source. Restoring that path preserves the
+  existing status lifetime and recovers the complete saved-register set.

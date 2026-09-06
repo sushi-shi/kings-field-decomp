@@ -266,6 +266,9 @@ promotes a probe to a proven historical toolchain.
 - [game-save-load-hub-flow.md](game-save-load-hub-flow.md): exit-row highlight,
   pending-action reset, post-loop return and case dispatch close the hub;
   the earlier basic-block-layout limitation was not established.
+- [game-save-load-panels-flow.md](game-save-load-panels-flow.md): confirmation
+  resets, shared returns, empty-slot arm order and the explicit format-row
+  guard recover both panels without register or constant carriers.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.
