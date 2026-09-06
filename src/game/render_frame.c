@@ -22,6 +22,13 @@ KfEffectSprite effect_sprites[2] = {
     {0xff},
 };
 
+/* One 16-colour palette row per HUD/message material. */
+DATA(0x80055dac, 0x8)
+RECT hud_palette_rect = {0, 500, 16, 1};
+
+DATA(0x80055db4, 0x8)
+RECT notification_palette_rect = {0, 499, 16, 1};
+
 ADDRESS(0x8001fde4, 0x518)
 void render_frame(const VECTOR *position, const SVECTOR *rotation)
 {
@@ -88,11 +95,11 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & 0xfff;
     render_effect_sprites();
 
-    active_render_tpage = DAT_80095062;
-    active_render_clut = DAT_80095060;
-    active_render_blue = DAT_80095064;
-    active_render_green = DAT_80095064;
-    active_render_red = DAT_80095064;
+    active_render_tpage = hud_tpage;
+    active_render_clut = hud_clut;
+    active_render_blue = hud_brightness;
+    active_render_green = hud_brightness;
+    active_render_red = hud_brightness;
     render_hud_gauges(auxiliary_sprite - 12);
 
     SetLightMatrix(&render_light_matrices[5]);
@@ -111,8 +118,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     SetRotMatrix(&model);
     SetTransMatrix(&model);
 
-    active_render_tpage = DAT_80095068;
-    active_render_clut = DAT_80095066;
+    active_render_tpage = notification_text_tpage;
+    active_render_clut = notification_text_clut;
     record = notification_sprites;
     if (record[0].active == 1) {
         render_enqueue_sprite(&record[0].sprite, 0, 0);
@@ -121,8 +128,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         render_enqueue_sprite(&record[1].sprite, 0, 0);
     }
     record += 2;
-    active_render_tpage = DAT_8009506c;
-    active_render_clut = DAT_8009506a;
+    active_render_tpage = notification_digit_tpage;
+    active_render_clut = notification_digit_clut;
     for (i = 3; i != -1; i--) {
         if (record->active == 1) {
             render_enqueue_sprite(&record->sprite, 0, 0);

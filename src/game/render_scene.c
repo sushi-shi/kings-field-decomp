@@ -76,8 +76,8 @@ void render_entities(void)
     active_render_blue = 0xb4;
     active_render_green = 0xb4;
     active_render_red = 0xb4;
-    active_render_tpage = DAT_8009508e;
-    active_render_clut = DAT_8009508c;
+    active_render_tpage = floor_item_tpage;
+    active_render_clut = floor_item_clut;
     {
         KfFloorItem *items = floor_items;
         for (i = floor_item_count - 1; i != -1; i--) {

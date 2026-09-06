@@ -241,19 +241,20 @@ void render_initialize(void)
         &render_state.light_matrix,
         &render_state.quadrant_matrices[3],
         &light_quadrant_matrices[3]);
-    DAT_8009508e = GetTPage(
+    floor_item_tpage = GetTPage(
         KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
         FLOOR_ITEM_TPAGE_X, 0);
-    DAT_8009508c = FLOOR_ITEM_CLUT;
-    DAT_80095062 = GetTPage(
+    floor_item_clut = FLOOR_ITEM_CLUT;
+    hud_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         HUD_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    DAT_80095060 = GetClut(DAT_80055dac, DAT_80055dae);
-    DAT_80095068 = GetTPage(
+    hud_clut = GetClut(hud_palette_rect.x, hud_palette_rect.y);
+    notification_text_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         NOTIFICATION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    DAT_8009506a = DAT_80095066 = GetClut(DAT_80055db4, DAT_80055db6);
-    DAT_8009506c = NOTIFICATION_DIGIT_TPAGE;
+    notification_digit_clut = notification_text_clut =
+        GetClut(notification_palette_rect.x, notification_palette_rect.y);
+    notification_digit_tpage = NOTIFICATION_DIGIT_TPAGE;
     notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     notification_state.control.queue_tail = 0;
     notification_state.control.queue_head = 0;

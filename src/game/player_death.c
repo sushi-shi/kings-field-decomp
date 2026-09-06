@@ -167,7 +167,7 @@ void player_death_restart(void)
     player_state.update_state = KF_PLAYER_UPDATE_RECOVERY_FADE;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
-    DAT_80095064 = 0;
+    hud_brightness = 0;
     player_state.view_rotation_offset.vz = 0;
     player_state.view_rotation_offset.vy = 0;
     player_state.view_rotation_offset.vx = 0;

@@ -18,6 +18,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-learning-state.md](game-magic-learning-state.md): byte learning
   enum propagated through runtime records and saves, exact-one versus nonzero
   predicates, and the retail resource's initial learning state.
+- [game-render-material-identities.md](game-render-material-identities.md): HUD,
+  notification and floor-item material names; SDK palette records and their
+  ownership evidence.
 - [game-notification-identities.md](game-notification-identities.md): all 32
   retail message labels, typed queue/link fields and variadic API, separate
   phase enum, and the [retained-literal ledger](game-notification-literal-ledger.md).

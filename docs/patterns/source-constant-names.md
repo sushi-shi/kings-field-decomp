@@ -870,6 +870,11 @@ entries are initialized only when the caller's current-floor value is five;
 their X coordinates remain distinct 320, 384 and 832 with CLUT row 491.
 Keep their existing curated function/data identity spellings in this batch.
 
+The later [render material identity campaign](game-render-material-identities.md)
+names these cached globals and recovers two SDK palette records. It decodes
+`7a40` as CLUT `(0,489)` and `1c` as the 4-bit page `(768,256)`, and documents
+all eight retained coordinate/dimension literals in the palette initializers.
+
 This completes the literal audit of GAME `render.c` and
 `display_play_transition.c` and OPEN `opening_fade.c`. Their remaining
 inline values have these specific roles:

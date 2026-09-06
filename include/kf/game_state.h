@@ -13,20 +13,7 @@
 #include <kf/psyq.h>
 
 extern u8 DAT_80055afc[];
-extern s16 DAT_80055dac;
-extern s16 DAT_80055dae;
-extern s16 DAT_80055db4;
-extern s16 DAT_80055db6;
 extern u32 DAT_80057d24;
-extern u16 DAT_80095060;
-extern u16 DAT_80095062;
-extern u8 DAT_80095064;
-extern u16 DAT_80095066;
-extern u16 DAT_80095068;
-extern u16 DAT_8009506a;
-extern u16 DAT_8009506c;
-extern u16 DAT_8009508c;
-extern u16 DAT_8009508e;
 extern u32 DAT_80095698;
 extern u32 DAT_8009569c;
 extern u32 DAT_800a0768;

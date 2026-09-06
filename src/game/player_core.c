@@ -233,7 +233,7 @@ void player_sync_position_to_map(void)
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
-    DAT_80095064 = KF_HUD_DEFAULT_BRIGHTNESS;
+    hud_brightness = KF_HUD_DEFAULT_BRIGHTNESS;
     player_state.vertical_state = 0;
     player_state.vertical_velocity = 0;
 }

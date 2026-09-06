@@ -114,6 +114,18 @@ extern KfTmdState tmd_state;
 /* GAME's projected-array capacity remains unresolved. */
 extern SVECTOR *current_tmd_vertices;
 extern KfScreenVertex tmd_projected_vertices[];
+extern RECT hud_palette_rect;
+extern RECT notification_palette_rect;
+/* Cached SDK selectors and HUD intensity; enclosing graphics storage is WIP. */
+extern u16 hud_clut;
+extern u16 hud_tpage;
+extern u8 hud_brightness;
+extern u16 notification_text_clut;
+extern u16 notification_text_tpage;
+extern u16 notification_digit_clut;
+extern u16 notification_digit_tpage;
+extern u16 floor_item_clut;
+extern u16 floor_item_tpage;
 extern u16 active_render_clut;
 extern u16 active_render_tpage;
 /* Contiguous RGB/command bytes; the enclosing graphics object is unresolved. */

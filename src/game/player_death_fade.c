@@ -25,7 +25,7 @@ void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend)
     matrix_interpolate(&color_matrix_table[KF_GAME_COLOR_WHITE],
         &color_matrix_table[KF_GAME_COLOR_BLACK], &render_state.effect_color_matrix, blend);
     fog_interpolate_near(player_death_saved_fog_near, 0, blend);
-    DAT_80095064 = ((blend * -KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS)
+    hud_brightness = ((blend * -KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS)
         + KF_HUD_DEFAULT_BRIGHTNESS;
 }
 
@@ -78,7 +78,7 @@ void player_death_update_reverse_fade(void)
     matrix_interpolate(&color_matrix_table[KF_GAME_COLOR_BLACK],
         &color_matrix_table[KF_GAME_COLOR_WHITE], &render_state.effect_color_matrix, *blend);
     fog_interpolate_near(0, player_death_saved_fog_near, *blend);
-    DAT_80095064 = (*blend * KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS;
+    hud_brightness = (*blend * KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS;
     *blend += PLAYER_DEATH_FADE_STEP;
     if (*blend >= KF_FIXED12_ONE) {
         player_death_apply_visual_fade(&color_matrix_table[KF_GAME_COLOR_DEFAULT], 0);
