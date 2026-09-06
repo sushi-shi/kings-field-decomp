@@ -68,13 +68,13 @@ void player_update(void)
     }
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
     input = PadRead(1);
-    if (input & 0x800) {
+    if (input & PADh) {
         display_show_error_screen(KF_SYSTEM_SCREEN_PAUSE);
     }
-    if (input & 0x100) {
-        input = 0x40;
+    if (input & PADk) {
+        input = PADRdown;
     }
-    if ((input & 0x40) && !(player_previous_input & 0x40) && player_state.weapon_attack_phase == -1) {
+    if ((input & PADRdown) && !(player_previous_input & PADRdown) && player_state.weapon_attack_phase == -1) {
         item = menu_enter_mode(0);
         if (item >= 0) {
             player_use_item(item);
@@ -93,7 +93,7 @@ void player_update(void)
         }
         player_previous_input = input;
     } else {
-        if ((input & 0x20) && !(player_previous_input & 0x20)) {
+        if ((input & PADRright) && !(player_previous_input & PADRright)) {
             map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
         if (player_state.status_effect_flags & 0x8) {
@@ -103,14 +103,14 @@ void player_update(void)
             player_movement_velocity_limit = 180;
             player_turn_step_limit = 28;
         }
-        if (input & 0x1000) {
+        if (input & PADLup) {
             forward = player_state.motion_state.forward_velocity + (player_movement_velocity_limit >> 2);
             if (forward > player_movement_velocity_limit) {
                 player_state.motion_state.forward_velocity = player_movement_velocity_limit;
             } else {
                 player_state.motion_state.forward_velocity = forward;
             }
-        } else if (input & 0x4000) {
+        } else if (input & PADLdown) {
             forward = player_state.motion_state.forward_velocity - (player_movement_velocity_limit >> 2);
             if (forward >= -player_movement_velocity_limit) {
                 player_state.motion_state.forward_velocity = forward;
@@ -128,14 +128,14 @@ void player_update(void)
                 player_state.motion_state.forward_velocity = 0;
             }
         }
-        if (input & 0x8) {
+        if (input & PADl) {
             strafe = player_state.motion_state.strafe_velocity + (player_movement_velocity_limit >> 2);
             if (strafe > player_movement_velocity_limit) {
                 player_state.motion_state.strafe_velocity = player_movement_velocity_limit;
             } else {
                 player_state.motion_state.strafe_velocity = strafe;
             }
-        } else if (input & 0x4) {
+        } else if (input & PADn) {
             strafe = player_state.motion_state.strafe_velocity - (player_movement_velocity_limit >> 2);
             if (strafe >= -player_movement_velocity_limit) {
                 player_state.motion_state.strafe_velocity = strafe;
@@ -183,12 +183,12 @@ void player_update(void)
             player_move_horizontal((player_state.camera_rotation.vy + 0x400) & 0xfff, -strafe);
         }
         player_update_view_bob();
-        if (input & 0x8000) {
+        if (input & PADLleft) {
             player_state.motion_state.yaw_step += player_turn_step_limit >> 2;
             if (player_state.motion_state.yaw_step > player_turn_step_limit) {
                 player_state.motion_state.yaw_step = player_turn_step_limit;
             }
-        } else if (input & 0x2000) {
+        } else if (input & PADLright) {
             player_state.motion_state.yaw_step -= player_turn_step_limit >> 2;
             if (player_state.motion_state.yaw_step < -player_turn_step_limit) {
                 player_state.motion_state.yaw_step = -player_turn_step_limit;
@@ -206,12 +206,12 @@ void player_update(void)
         }
         player_state.camera_rotation.vy =
             (player_state.camera_rotation.vy + player_state.motion_state.yaw_step) & 0xfff;
-        if (input & 0x2) {
+        if (input & PADm) {
             player_state.motion_state.pitch_step += 3;
             if (player_state.motion_state.pitch_step >= 11) {
                 player_state.motion_state.pitch_step = 10;
             }
-        } else if (input & 0x1) {
+        } else if (input & PADo) {
             player_state.motion_state.pitch_step -= 3;
             if (player_state.motion_state.pitch_step < -10) {
                 player_state.motion_state.pitch_step = -10;
@@ -238,11 +238,11 @@ void player_update(void)
                 player_state.camera_rotation.vx = -191;
             }
         }
-        if ((input & 0x10) && !(player_previous_input & 0x10)) {
+        if ((input & PADRup) && !(player_previous_input & PADRup)) {
             player_begin_weapon_attack();
         }
         if (player_state.equipped_head_armor_id != 0x17) {
-            if ((input & 0x80) && !(player_previous_input & 0x80)) {
+            if ((input & PADRleft) && !(player_previous_input & PADRleft)) {
                 if (player_state.weapon_attack_fully_charged == 1) {
                     player_state.weapon_attack_fully_charged = 0;
                     switch (player_state.equipped_weapon_id) {

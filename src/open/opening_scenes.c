@@ -151,7 +151,7 @@ void opening_scene0_run(void)
         if (opening_camera_path_state.point_index >= 15) {
             goto fade_out;
         }
-        if (opening_input_action == 0) {
+        if (opening_input_action == KF_OPENING_INPUT_NONE) {
             goto fade_in;
         }
 
@@ -275,7 +275,7 @@ void opening_scene1_run(void)
         }
         VSync(0);
         opening_poll_input();
-        if (opening_input_action != 0) {
+        if (opening_input_action != KF_OPENING_INPUT_NONE) {
             break;
         }
         frame++;
@@ -422,7 +422,7 @@ void opening_scene3_run(void)
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         opening_poll_input();
-        if (opening_input_action != 0) {
+        if (opening_input_action != KF_OPENING_INPUT_NONE) {
             break;
         }
     }
@@ -459,12 +459,12 @@ void opening_scene3_run(void)
         } while (overlay_index < 2);
         display_present_frame();
         opening_poll_input();
-    } while (opening_input_action == 0);
+    } while (opening_input_action == KF_OPENING_INPUT_NONE);
 
     transition_position.vx = opening_camera_path_state.position.vx;
     transition_position.vy = -10000;
     transition_position.vz = opening_camera_path_state.position.vz;
-    if (opening_input_action == 0) {
+    if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_entity_transition(0, &transition_position);
     }
 
@@ -478,7 +478,7 @@ void opening_scene3_run(void)
         blend += 0x100;
     } while (blend < 0x1001);
 
-    if (opening_input_action == 0) {
+    if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_entity_transition(1, &transition_position);
     }
 }

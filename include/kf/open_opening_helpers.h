@@ -3,6 +3,12 @@
 
 #include <kf/game_types.h>
 
+enum {
+    KF_OPENING_INPUT_NONE = 0,
+    KF_OPENING_INPUT_ADVANCE = 1,
+    KF_OPENING_INPUT_SKIP = 2
+};
+
 extern u32 opening_input_action;
 
 extern void opening_poll_input(void);

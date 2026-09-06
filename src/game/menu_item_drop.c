@@ -101,7 +101,7 @@ void menu_drop_item(void)
                 menu_play_input_sound(0);
                 selection = -1;
             }
-        } else if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
@@ -121,7 +121,7 @@ void menu_drop_item(void)
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
@@ -136,10 +136,10 @@ void menu_drop_item(void)
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             selection = -1;
         }
@@ -218,19 +218,19 @@ s32 menu_save_load_hub(void)
         confirm = 0;
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 2;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (cursor != 2)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             if (cursor == 2) {
                 result = -1;
@@ -238,7 +238,7 @@ s32 menu_save_load_hub(void)
                 confirm = 1;
                 action = cursor;
             }
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = -1;
         }
@@ -369,24 +369,24 @@ s32 menu_save_panel(void)
         confirm = 0;
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 4;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (cursor != 4)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
             if (cursor == 4)
                 result = -1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = -1;
         }
@@ -481,19 +481,19 @@ s32 menu_load_panel(void)
         confirm = 0;
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 3;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (cursor != 3)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (cursor == 3) {
                 menu_play_input_sound(1);
                 confirm = 1;
@@ -504,7 +504,7 @@ s32 menu_load_panel(void)
             } else {
                 menu_play_input_sound(2);
             }
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = -1;
         }

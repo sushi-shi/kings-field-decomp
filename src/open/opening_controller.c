@@ -65,15 +65,15 @@ void opening_run(s32 display_mode)
                 opening_initial_tim_path) != 0) {
             return;
         }
-        scene3_action = 1;
+        scene3_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer);
-        skip_action = 2;
+        skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
         allocation_state = (OpeningAllocationState *)&memory_arena_cursor;
         tim_upload_images(tim_data);
         memory_release_last();
-        opening_input_action = 0;
+        opening_input_action = KF_OPENING_INPUT_NONE;
 
 opening_scene0:
         opening_scene0_run();
@@ -94,7 +94,7 @@ opening_reload:
         goto opening_complete;
 
 opening_scene1:
-        opening_input_action = 0;
+        opening_input_action = KF_OPENING_INPUT_NONE;
         opening_scene1_run();
         if (opening_input_action == scene3_action) {
             goto opening_scene3;
@@ -106,7 +106,7 @@ opening_scene1:
 
 opening_scene3:
         audio_stop_sequence(1);
-        opening_input_action = 0;
+        opening_input_action = KF_OPENING_INPUT_NONE;
         opening_scene3_run();
 
 opening_complete:

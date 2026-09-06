@@ -84,7 +84,7 @@ s32 menu_magic_panel(void)
                 menu_play_input_sound(0);
                 selection = -1;
             }
-        } else if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
@@ -102,7 +102,7 @@ s32 menu_magic_panel(void)
             }
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return -1;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
@@ -117,10 +117,10 @@ s32 menu_magic_panel(void)
             }
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
                 return -1;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             selection = -1;
         }
@@ -207,26 +207,26 @@ void menu_option_root(void)
         confirm = 0;
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 8;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (cursor != 8)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
             if (cursor < 8)
                 selection = cursor;
             else
                 result = -1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = -1;
         }

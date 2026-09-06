@@ -56,18 +56,18 @@ s32 menu_two_option_prompt(
         highlight = 0;
         prev = input;
         input = PadRead(1);
-        if (((input & 0x1000) != 0 && (prev & 0x1000) == 0) ||
-            ((input & 0x4000) != 0 && (prev & 0x4000) == 0)) {
+        if (((input & PADLup) != 0 && (prev & PADLup) == 0) ||
+            ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {
             menu_play_input_sound(0);
             if (selected)
                 selected = 0;
             else
                 selected = 1;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             highlight = 1;
             result = -selected;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = -1;
         }

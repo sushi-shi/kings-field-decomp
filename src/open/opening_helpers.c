@@ -12,10 +12,10 @@ void opening_poll_input(void)
     u32 input = PadRead(1);
 
     if (input != 0) {
-        if ((input & 0x100) != 0) {
-            opening_input_action = 2;
+        if ((input & PADk) != 0) {
+            opening_input_action = KF_OPENING_INPUT_SKIP;
         } else {
-            opening_input_action = 1;
+            opening_input_action = KF_OPENING_INPUT_ADVANCE;
         }
     }
 }

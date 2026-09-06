@@ -457,3 +457,45 @@ tests pass (nine local prerequisites skipped), lint and whitespace checks
 pass, and `nix flake check -L` passes. Full `kf build` retains the existing
 data-placement failures: target relink still verifies GAME 75/77, OPEN 34/38
 and PSX 1/1 units, with the same conflicting section bases.
+
+## Controller-mask and opening-input plan
+
+Follow `PadRead` results and saved previous-input masks through GAME menu and
+player input consumers, using the existing per-function retail snapshots.
+Replace only bit tests on those input values with the exact definitions in
+the pinned LIBETC.H. Preserve edge-versus-held tests, branch ordering, and
+the player's forced input value. Name OPEN's no-action, advance and skip
+values from `opening_poll_input` and the controller's scene-transition
+branches; do not conflate them with scene numbers or other status fields.
+Rebuild and compare non-debug sections and the full strict report as before.
+
+This batch replaces 160 controller-mask occurrences in ten input-consuming
+sources. The mappings are the pinned Release 2.5 LIBETC.H definitions:
+
+| Mask | SDK name |
+| --- | --- |
+| 1000/4000/8000/2000 hex | `PADLup` / `PADLdown` / `PADLleft` / `PADLright` |
+| 10/40/80/20 hex | `PADRup` / `PADRdown` / `PADRleft` / `PADRright` |
+| 100/800 hex | `PADk` / `PADh` |
+| 8/4/2/1 hex | `PADl` / `PADn` / `PADm` / `PADo` |
+
+The names retain the SDK's spellings, including its letter-named buttons.
+GAME's `PADk` path still replaces the entire sampled input with `PADRdown`;
+it does not OR that bit into the sample. Menu consumers still test current
+and previous samples separately for a rising edge; held movement controls
+remain held tests. OPEN sets skip (2) when `PADk` is present and advance (1)
+for other nonzero input. Zero input leaves the previously latched action
+untouched; only the existing controller sites clear it to none (0).
+
+The remaining input-related literals are deliberate: `PadRead(1)` retains the
+ignored retail call-site argument, zero bit-test operands express Boolean
+absence, and raw-input zero tests mean no pressed buttons. Scene IDs, menu
+selections, layout data and timing constants in the surrounding functions
+belong to their separate domain audits. No new raw controller masks are
+introduced, and non-input bit fields are not rewritten based on equal values.
+
+All 112 compiled objects retain their non-debug sections and all 484 strict
+scores remain unchanged. This batch adds no debug-line differences beyond
+the existing twenty-three objects. All 635 tests pass (nine local prerequisites
+skipped), lint and whitespace checks pass, and the full build retains the
+same data ownership/placement failures. No new exact result is claimed.

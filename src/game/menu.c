@@ -110,26 +110,26 @@ s32 menu_root(void)
         confirm = 0;
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 7;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (cursor != 7)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
             if (cursor < 7)
                 selection = cursor;
             else
                 result = -1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = -1;
         }
@@ -233,7 +233,7 @@ s32 menu_use_item_panel(void)
 
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
@@ -251,7 +251,7 @@ s32 menu_use_item_panel(void)
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return -1;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
@@ -266,7 +266,7 @@ s32 menu_use_item_panel(void)
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
                 return -1;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             if (codes[ctx.selected_index] == 0x37 || codes[ctx.selected_index] == 0x49) {
                 menu_release_item_model();
@@ -277,7 +277,7 @@ s32 menu_use_item_panel(void)
             } else {
                 confirm = 1;
             }
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             selection = -1;
         }

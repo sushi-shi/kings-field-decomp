@@ -98,12 +98,12 @@ void menu_config_panel(void)
         confirm = 0;
         menu_frame_begin();
         pad = PadRead();
-        if ((pad & 0x1000) == 0 || (prev & 0x1000) != 0) {
-            if ((pad & 0x4000) == 0 || (prev & 0x4000) != 0) {
-                if (((pad & 0x2000) == 0 || (prev & 0x2000) != 0) &&
-                    ((pad & 0x8000) == 0 || (prev & 0x8000) != 0)) {
-                    if ((pad & 0x20) == 0 || (prev & 0x20) != 0) {
-                        if ((pad & 0x40) == 0 || (prev & 0x40) != 0) {
+        if ((pad & PADLup) == 0 || (prev & PADLup) != 0) {
+            if ((pad & PADLdown) == 0 || (prev & PADLdown) != 0) {
+                if (((pad & PADLright) == 0 || (prev & PADLright) != 0) &&
+                    ((pad & PADLleft) == 0 || (prev & PADLleft) != 0)) {
+                    if ((pad & PADRright) == 0 || (prev & PADRright) != 0) {
+                        if ((pad & PADRdown) == 0 || (prev & PADRdown) != 0) {
                             goto no_input;
                         }
                         menu_play_input_sound(0);

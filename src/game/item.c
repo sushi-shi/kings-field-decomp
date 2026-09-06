@@ -174,26 +174,26 @@ void item_menu_root(s32 arg)
         confirm = 0;
         prev = input;
         input = PadRead(1);
-        if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = 2;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (cursor != 2)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
             if (cursor < 2)
                 selection = cursor;
             else
                 done = -1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             done = -1;
         }
@@ -281,7 +281,7 @@ void item_menu_buy(s32 arg)
                 menu_play_input_sound(0);
                 selection = -1;
             }
-        } else if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
@@ -299,7 +299,7 @@ void item_menu_buy(s32 arg)
             }
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
@@ -314,7 +314,7 @@ void item_menu_buy(s32 arg)
             }
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (player_state.gold
                     < item_buy_prices[index[ctx.selected_index]][arg - 1]) {
                 menu_play_input_sound(2);
@@ -322,7 +322,7 @@ void item_menu_buy(s32 arg)
                 menu_play_input_sound(1);
                 confirm = 1;
             }
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             selection = -1;
         }
@@ -424,7 +424,7 @@ void item_menu_sell(s32 arg)
                 menu_play_input_sound(0);
                 selection = -1;
             }
-        } else if ((input & 0x1000) != 0 && (prev & 0x1000) == 0) {
+        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index != 0) {
                 ctx.selected_index--;
@@ -442,7 +442,7 @@ void item_menu_sell(s32 arg)
             }
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
-        } else if ((input & 0x4000) != 0 && (prev & 0x4000) == 0) {
+        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(0);
             if (ctx.selected_index < ctx.entry_count - 1) {
                 ctx.selected_index++;
@@ -457,10 +457,10 @@ void item_menu_sell(s32 arg)
             }
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             selection = -1;
         }
@@ -548,14 +548,14 @@ s32 item_use_confirm(s32 arg)
         menu_frame_begin();
         prev = input;
         input = PadRead(1);
-        if (((input & 0x1000) != 0 && (prev & 0x1000) == 0)
-                || ((input & 0x4000) != 0 && (prev & 0x4000) == 0)) {
+        if (((input & PADLup) != 0 && (prev & PADLup) == 0)
+                || ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {
             menu_play_input_sound(0);
             if (choice != 0)
                 choice = 0;
             else
                 choice = 1;
-        } else if ((input & 0x20) != 0 && (prev & 0x20) == 0) {
+        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(1);
             confirm = 1;
             if (choice != 0) {
@@ -567,7 +567,7 @@ s32 item_use_confirm(s32 arg)
                     result = 0;
                 }
             }
-        } else if ((input & 0x40) != 0 && (prev & 0x40) == 0) {
+        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(2);
             result = 1;
         }

@@ -113,10 +113,10 @@ opt0_done:
         highlight = 0;
         menu_frame_begin();
         pad = PadRead(1);
-        if (((pad & 0x1000) == 0 || (prev_pad & 0x1000) != 0) &&
-            ((pad & 0x4000) == 0 || (prev_pad & 0x4000) != 0)) {
-            if ((pad & 0x20) == 0 || (prev_pad & 0x20) != 0) {
-                if ((pad & 0x40) != 0 && (prev_pad & 0x40) == 0) {
+        if (((pad & PADLup) == 0 || (prev_pad & PADLup) != 0) &&
+            ((pad & PADLdown) == 0 || (prev_pad & PADLdown) != 0)) {
+            if ((pad & PADRright) == 0 || (prev_pad & PADRright) != 0) {
+                if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
                     menu_play_input_sound(2);
                     result = -1;
                 }
