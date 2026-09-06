@@ -194,8 +194,8 @@ s32 menu_use_item_panel(void)
             found++;
         }
     }
-    name = item_name_rows[0x34].codes;
-    for (code = 0x34; code < 0x50; code++, name += 10) {
+    name = item_name_rows[KF_ITEM_GOLD_CROSS].codes;
+    for (code = KF_ITEM_GOLD_CROSS; code < 0x50; code++, name += 10) {
         if (code != 0x37 && code != 0x49 && inv[code] != 0) {
             for (j = 0; j < 10; j++)
                 labels[found][j] = name[j];
@@ -222,7 +222,7 @@ s32 menu_use_item_panel(void)
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, 0)
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     != KF_MENU_CONFIRM_CANCELLED)
                 selection = codes[ctx.selected_index];
         }

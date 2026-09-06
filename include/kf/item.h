@@ -9,6 +9,8 @@ enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
     KF_FLOOR_ITEM_END = 0xffff,
     KF_ITEM_STACK_CAPACITY = 99,
+    KF_ITEM_GOLD_CROSS = 52,
+    KF_ITEM_KEY_OF_THE_DEAD = 53,
     KF_ITEM_NONE = 0xff
 };
 

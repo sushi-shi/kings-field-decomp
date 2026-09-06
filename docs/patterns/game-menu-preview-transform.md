@@ -78,7 +78,8 @@ explain what the values do, without inventing the original placement rationale.
 ## Literal coverage
 
 The [per-occurrence ledger](game-menu-preview-literal-ledger.md) accounts for
-213 retained literals in the selected functions and edited-module initializers,
+204 retained literals after the [shop price follow-up](game-shop-price-domains.md)
+(initially 213) in the selected functions and edited-module initializers,
 down from 236 in the captured source. It distinguishes matrix indices and Q12
 coefficients, layout pixels and ordering-table positions, glyph data and field
 widths, zero orientation and independent allocation/file-result protocols.
@@ -107,7 +108,7 @@ all prior exact results are preserved. No bank rows or compiler profiles change.
 Source and delinked target each own the eight zero initializer bytes and match
 raw retail. The full report changes only the new eight-byte data comparison,
 its aggregate counters, and the pickup preview's fuzzy values. Full build
-improves source-data matches from 7/60 to 8/60; SDK/config-data remains 4/4,
+improves source-data matches from 7/60 to 8/61; SDK/config-data remains 4/4,
 and target relink remains PSX 1/1, GAME 75/77 and OPEN 34/38. Existing two
 GAME/four OPEN section-base conflicts remain, with no artifact failures.
 

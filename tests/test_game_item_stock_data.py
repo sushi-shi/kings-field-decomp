@@ -78,8 +78,14 @@ class GameItemStockDataTests(unittest.TestCase):
                       (RETAIL_CONFIG / 'structure_fields.tsv').read_text())
         source = manifest.by_name()[owner].source_path.read_text()
         self.assertNotRegex(source, r'item_stock\[3\]\[80\]\s*=')
-        seeds = [(int(bank), int(slot, 0)) for bank, slot in re.findall(
-            r'item_stock\[(\d)\]\[(0x[0-9a-f]+)\] = 1;', source)]
+        item_constants = {
+            name: int(value, 0) for name, value in re.findall(
+                r'\b(KF_ITEM_\w+)\s*=\s*(0x[0-9a-f]+|\d+)\b',
+                (REPO / 'include/kf/item.h').read_text())
+        }
+        seeds = [(int(bank), item_constants[slot] if slot in item_constants else int(slot, 0))
+                 for bank, slot in re.findall(
+                     r'item_stock\[(\d)\]\[(\w+)\] = 1;', source)]
         self.assertEqual([bank * 80 + slot for bank, slot in seeds], list(SEEDS))
         self.assertTrue(all(0 <= bank < 3 and 0 <= slot < 80 for bank, slot in seeds))
 

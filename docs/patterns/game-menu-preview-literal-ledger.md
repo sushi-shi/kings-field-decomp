@@ -5,7 +5,7 @@ load/release pair, and initializers in their three edited modules. Named enum
 definitions and ADDRESS/DATA/RODATA claims are excluded. Other functions in
 the same source files are outside this focused ledger.
 
-All **213 occurrences** have a specific reason.
+All **204 occurrences** have a specific reason.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -50,8 +50,7 @@ All **213 occurrences** have a specific reason.
 | `menu_draw_item_detail` | 62 | `0, 10` | `for (i = 0; i < 10; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
 | `menu_draw_item_detail` | 67 | `0xc8` | `gs.x = 0xc8;` | Authored text-origin x coordinate 200 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_draw_item_detail` | 68, 85 | `18 × 2` | `gs.y += 18;` | Advance the price/quantity baseline by 18 screen pixels; authored line spacing. |
-| `menu_draw_item_detail` | 69 | `0` | `prices = (mode != 0) ? item_sell_prices : item_buy_prices;` | Zero selects buy prices and any nonzero mode selects sell prices. Retain this exact predicate; the price-mode API and all its callers still need a separate enum propagation audit. |
-| `menu_draw_item_detail` | 70 | `1, 6, 0` | `menu_format_number(prices[object][col - 1], 6, 0, gs.codes);` | Convert one-based shop column to a zero-based array index; render six price digits with blank rather than zero padding. |
+| `menu_draw_item_detail` | 70 | `1, 6, 0` | `menu_format_number(prices[item_id][shop_id - 1], 6, 0, gs.codes);` | Convert one-based shop column to a zero-based array index; render six price digits with blank rather than zero padding. |
 | `menu_draw_item_detail` | 73, 81 | `0xf2 × 2` | `gs.x = 0xf2;` | Authored text-origin x coordinate 242 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_draw_item_detail` | 74 | `0, 0x9` | `gs.codes[0] = MENU_TEXT_DAKUTEN \| 0x9;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 75 | `1, 0x2d` | `gs.codes[1] = 0x2d;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
@@ -62,11 +61,8 @@ All **213 occurrences** have a specific reason.
 | `menu_draw_item_detail` | 83 | `1, 0xcb` | `gs.codes[1] = 0xcb;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 84 | `2` | `gs.codes[2] = MENU_TEXT_END;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 88 | `0x11c` | `gs.x = 0x11c;` | Authored text-origin x coordinate 284 screen pixels; retained as local layout data, with original placement rationale unknown. |
-| `menu_draw_item_detail` | 89 | `0 × 2, 2` | `menu_format_number(item_stock[0][object], 2, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
-| `menu_draw_item_detail` | 94 | `7, 3` | `(const MenuPoint *)&menu_window_layouts[7].rows[3]);` | Loaded menu window 7, row 3 is the positioned gold label; positional resource indices shared with its glyph draw. |
-| `menu_draw_item_detail` | 95 | `7, 3` | `menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[7].rows[3]);` | Loaded menu window 7, row 3 supplies the gold-label glyphs. |
-| `menu_draw_item_detail` | 97 | `7, 3, 28` | `gs.x = menu_window_layouts[7].rows[3].x + 28;` | Place the gold value 28 screen pixels right of menu window 7 row 3, with the original spacing rationale unproven. |
-| `menu_draw_item_detail` | 98 | `7, 3` | `gs.y = menu_window_layouts[7].rows[3].y;` | Use the same baseline as menu window 7 row 3 gold label. |
+| `menu_draw_item_detail` | 89 | `0 × 2, 2` | `menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
+| `menu_draw_item_detail` | 97 | `28` | `gs.x = menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD].x + 28;` | Place the gold value 28 screen pixels right of menu window 7 row 3, with the original spacing rationale unproven. |
 | `menu_draw_item_detail` | 99 | `6, 0` | `menu_format_number(player_state.gold, 6, 0, gs.codes);` | Render six gold digits without leading zeros; authored field width, shared numeric-render API Boolean. |
 | `initializers` | 20 | `0 × 2, 0x1c, 1 × 2` | `(u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];` | Existing offset check: first row code prefix is byte 28; null-base unevaluated member address and positive/negative bound encode the check. This is not a size assertion. |
 | `initializers` | 31 | `0` | `POLY_FT4 *current_poly_ft4 = 0;` | Initialized null current primitive pointer; each renderer binds it to the active primitive cursor before use. |

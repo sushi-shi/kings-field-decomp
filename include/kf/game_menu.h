@@ -44,6 +44,21 @@ KF_ENUM_BEGIN(KfMenuPreviewMode, s32)
     KF_MENU_PREVIEW_MAGIC_ICON = 2
 KF_ENUM_END(KfMenuPreviewMode)
 
+KF_ENUM_BEGIN(KfItemPriceMode, s32)
+    KF_ITEM_PRICE_BUY = 0,
+    KF_ITEM_PRICE_SELL = 1
+KF_ENUM_END(KfItemPriceMode)
+
+/* Rows in the loaded shop window; the gold row is not a menu choice. */
+enum {
+    KF_MENU_WINDOW_SHOP = 7,
+    KF_SHOP_ROW_BUY = 0,
+    KF_SHOP_ROW_SELL = 1,
+    KF_SHOP_ROW_RETURN = 2,
+    KF_SHOP_ROW_GOLD = 3,
+    KF_SHOP_CHOICE_COUNT = KF_SHOP_ROW_RETURN + 1
+};
+
 KF_ENUM_BEGIN(KfMenuConfirmResult, s32)
     KF_MENU_CONFIRM_PENDING = -99,
     KF_MENU_CONFIRM_CANCELLED = -1,
@@ -201,7 +216,7 @@ extern u16 item_sell_prices[80][2];
 extern s32 menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
-extern void item_menu_root(s32 arg);
+extern void item_menu_root(s32 shop_id);
 extern KfItemPickupResult item_pickup_confirm(s32 item_id);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
@@ -212,7 +227,8 @@ extern void menu_blit_sprite_translucent(
 extern void menu_config_panel(void);
 extern void menu_draw_dialog_frame(
     const KfSaveSlotSummary *summaries, s32 kind);
-extern void menu_draw_item_detail(s32 object, s32 col, s32 mode);
+extern void menu_draw_item_detail(
+    s32 item_id, s32 shop_id, KfItemPriceMode price_mode);
 extern void menu_draw_item_name_frame(s32 item_id);
 extern void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string);
@@ -235,7 +251,7 @@ extern void menu_item_model_preview(s32 item_id);
 extern void menu_list_init(KfMenuList *list, s32 row, s32 column);
 extern KfMenuConfirmResult menu_list_interact(
     const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
-    s32 item_id, u32 shop_id, u32 sell_price);
+    s32 item_id, u32 shop_id, KfItemPriceMode price_mode);
 extern void menu_list_render(const KfMenuList *list);
 extern u32 menu_load_item_model(s32 id);
 extern u32 menu_load_item_texture(s32 id);

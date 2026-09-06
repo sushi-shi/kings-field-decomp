@@ -87,8 +87,8 @@ translation uncertainty without assigning names to item assets.
 
 All **65 ordinary numeric occurrences** in `menu_list_interact.c` are covered
 below. Claims and enum definitions are excluded. Glyph-array positions and
-text codes count separately. The equipment ledger now has 149 occurrences,
-down from 155 after replacing its two widget calls’ kind/mode/result values.
+text codes count separately. The equipment ledger now has 147 occurrences
+after this protocol audit and the [price follow-up](game-shop-price-domains.md).
 
 | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- |

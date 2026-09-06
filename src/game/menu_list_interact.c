@@ -9,7 +9,7 @@
 ADDRESS(0x80028380, 0x354)
 KfMenuConfirmResult menu_list_interact(
     const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
-    s32 item_id, u32 shop_id, u32 sell_price)
+    s32 item_id, u32 shop_id, KfItemPriceMode price_mode)
 {
     MenuGlyphString opt0;
     MenuGlyphString opt1;
@@ -70,7 +70,7 @@ opt0_done:
         if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
             menu_item_model_preview(item_id);
         } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-            menu_draw_item_detail(item_id, shop_id, sell_price);
+            menu_draw_item_detail(item_id, shop_id, price_mode);
         } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
                 && item_id != KF_MAGIC_NONE) {
             menu_add_marker_quad();
@@ -84,7 +84,7 @@ opt0_done:
             if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
                 menu_item_model_preview(item_id);
             } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-                menu_draw_item_detail(item_id, shop_id, sell_price);
+                menu_draw_item_detail(item_id, shop_id, price_mode);
             } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
                     && item_id != KF_MAGIC_NONE) {
                 menu_add_marker_quad();

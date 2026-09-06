@@ -105,7 +105,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     for (;;) {
         if (confirm == 1) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, 0)
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = -99;
             else
@@ -275,7 +275,7 @@ void menu_spell_select(void)
         menu_present_frame();
         if (confirm == 1) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, 0)
+                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = -99;
             else

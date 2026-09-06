@@ -8,8 +8,8 @@
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
 
 /* Item sub-panels dispatched by the item menu (defined below). */
-void item_menu_buy(s32 arg);
-void item_menu_sell(s32 arg);
+void item_menu_buy(s32 shop_id);
+void item_menu_sell(s32 shop_id);
 
 DATA(0x800580e8, 0x390)
 KfMenuAssets menu_assets;
@@ -125,9 +125,9 @@ void item_load_database(void)
  * or confirming the exit row leaves the menu.
  */
 ADDRESS(0x800212d8, 0x260)
-void item_menu_root(s32 arg)
+void item_menu_root(s32 shop_id)
 {
-    s32 cursor = 0;
+    s32 cursor = KF_SHOP_ROW_BUY;
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
@@ -135,13 +135,13 @@ void item_menu_root(s32 arg)
     s32 selection = -1;
 
     menu_frame_begin();
-    menu_draw_window(7, 3, 0, 0);
+    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_window(7, 3, 0, 0);
+    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_window(7, 3, 0, 0);
+    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
@@ -150,17 +150,17 @@ void item_menu_root(s32 arg)
         menu_present_frame();
         if (selection != -1 || done == selection) {
             menu_frame_begin();
-            menu_draw_window(7, 3, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
         }
         switch (selection) {
-        case 0:
-            item_menu_buy(arg);
+        case KF_SHOP_ROW_BUY:
+            item_menu_buy(shop_id);
             break;
-        case 1:
-            item_menu_sell(arg);
+        case KF_SHOP_ROW_SELL:
+            item_menu_sell(shop_id);
             break;
         }
         selection = -1;
@@ -176,20 +176,20 @@ void item_menu_root(s32 arg)
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (cursor != 0)
+            if (cursor != KF_SHOP_ROW_BUY)
                 cursor--;
             else
-                cursor = 2;
+                cursor = KF_SHOP_ROW_RETURN;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (cursor != 2)
+            if (cursor != KF_SHOP_ROW_RETURN)
                 cursor++;
             else
-                cursor = 0;
+                cursor = KF_SHOP_ROW_BUY;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
-            if (cursor < 2)
+            if (cursor < KF_SHOP_ROW_RETURN)
                 selection = cursor;
             else
                 done = -1;
@@ -197,21 +197,21 @@ void item_menu_root(s32 arg)
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             done = -1;
         }
-        menu_draw_window(7, 3, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
     }
 }
 
 /*
- * Buy panel: lists available items from shop bank `arg` whose player stack
+ * Buy panel: lists available items from shop bank `shop_id` whose player stack
  * is below 99, then runs a windowed grid cursor. Confirm on an entry the player
  * can afford deducts its price from gold and adds the item to inventory.
  */
 ADDRESS(0x80021538, 0x5c4)
-void item_menu_buy(s32 arg)
+void item_menu_buy(s32 shop_id)
 {
     KfMenuList ctx;
     s16 entries[80][10];
-    u8 category[80];
+    u8 available[80];
     u8 index[80];
     u8 *inv;
     s32 slot;
@@ -224,15 +224,15 @@ void item_menu_buy(s32 arg)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, 7, 0);
+    menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, KF_SHOP_ROW_BUY);
 
-    inv = item_stock[arg];
+    inv = item_stock[shop_id];
     found = 0;
     for (slot = 42; slot < 80; slot++) {
         if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
-            category[found] = inv[slot];
+            available[found] = inv[slot];
             index[found] = slot;
             found++;
         }
@@ -241,7 +241,7 @@ void item_menu_buy(s32 arg)
         if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < 10; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
-            category[found] = inv[slot];
+            available[found] = inv[slot];
             index[found] = slot;
             found++;
         }
@@ -256,7 +256,7 @@ void item_menu_buy(s32 arg)
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(index[ctx.selected_index]) != 0)
             return;
-        menu_draw_item_detail(index[ctx.selected_index], arg, 0);
+        menu_draw_item_detail(index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY);
     }
     menu_list_render(&ctx);
 
@@ -265,7 +265,7 @@ void item_menu_buy(s32 arg)
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], arg, 0)
+                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY)
                     != KF_MENU_CONFIRM_CANCELLED)
                 selection = index[ctx.selected_index];
         }
@@ -318,7 +318,7 @@ void item_menu_buy(s32 arg)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (player_state.gold
-                    < item_buy_prices[index[ctx.selected_index]][arg - 1]) {
+                    < item_buy_prices[index[ctx.selected_index]][shop_id - 1]) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             } else {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -331,15 +331,15 @@ void item_menu_buy(s32 arg)
 
         menu_frame_begin();
         if (ctx.entry_count != 0)
-            menu_draw_item_detail(index[ctx.selected_index], arg, 0);
+            menu_draw_item_detail(index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY);
         menu_list_render(&ctx);
     }
 
     menu_release_item_model();
     if (selection != -1) {
-        if (selection == 0x34)
-            inv[52]--;
-        player_state.gold -= item_buy_prices[selection][arg - 1];
+        if (selection == KF_ITEM_GOLD_CROSS)
+            inv[KF_ITEM_GOLD_CROSS]--;
+        player_state.gold -= item_buy_prices[selection][shop_id - 1];
         item_stock[0][selection]++;
     }
 }
@@ -350,11 +350,11 @@ void item_menu_buy(s32 arg)
  * copy from inventory and credits its sell price to gold.
  */
 ADDRESS(0x80021afc, 0x500)
-void item_menu_sell(s32 arg)
+void item_menu_sell(s32 shop_id)
 {
     KfMenuList ctx;
     s16 entries[80][10];
-    u8 category[80];
+    u8 available[80];
     u8 index[80];
     u8 *inv;
     s32 slot;
@@ -367,13 +367,13 @@ void item_menu_sell(s32 arg)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, 7, 1);
+    menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, KF_SHOP_ROW_SELL);
 
     inv = item_stock[0];
     found = 0;
-    for (slot = 0; slot < 52; slot++) {
+    for (slot = 0; slot < KF_ITEM_GOLD_CROSS; slot++) {
         if (inv[slot] != 0) {
-            category[found] = inv[slot];
+            available[found] = inv[slot];
             if (slot == player_state.equipped_weapon_id
                     || slot == player_state.equipped_shield_id
                     || slot == player_state.equipped_head_armor_id
@@ -381,8 +381,8 @@ void item_menu_sell(s32 arg)
                     || slot == player_state.equipped_arm_armor_id
                     || slot == player_state.equipped_leg_armor_id
                     || slot == player_state.equipped_accessory_id)
-                category[found]--;
-            if (category[found] != 0) {
+                available[found]--;
+            if (available[found] != 0) {
                 for (j = 0; j < 10; j++)
                     entries[found][j] = item_name_rows[slot].codes[j];
                 index[found] = slot;
@@ -400,7 +400,7 @@ void item_menu_sell(s32 arg)
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(index[ctx.selected_index]) != 0)
             return;
-        menu_draw_item_detail(index[ctx.selected_index], arg, 1);
+        menu_draw_item_detail(index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL);
     }
     menu_list_render(&ctx);
 
@@ -409,7 +409,7 @@ void item_menu_sell(s32 arg)
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], arg, confirm)
+                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL)
                     != KF_MENU_CONFIRM_CANCELLED)
                 selection = index[ctx.selected_index];
         }
@@ -470,14 +470,14 @@ void item_menu_sell(s32 arg)
 
         menu_frame_begin();
         if (ctx.entry_count != 0)
-            menu_draw_item_detail(index[ctx.selected_index], arg, 1);
+            menu_draw_item_detail(index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL);
         menu_list_render(&ctx);
     }
 
     menu_release_item_model();
     if (selection != -1) {
         inv[selection]--;
-        player_state.gold += item_sell_prices[selection][arg - 1];
+        player_state.gold += item_sell_prices[selection][shop_id - 1];
     }
 }
 

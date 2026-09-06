@@ -67,7 +67,7 @@ s32 menu_magic_panel(void)
         if (confirm == 1) {
             selection = -99;
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, 0)
+                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     != KF_MENU_CONFIRM_CANCELLED)
                 selection = codes[ctx.selected_index];
         }

@@ -55,7 +55,7 @@ void player_use_item(u8 item_id)
     reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * 1000) >> 12);
     index = 0;
     switch (item_id) {
-    case 53:
+    case KF_ITEM_KEY_OF_THE_DEAD:
     case 54:
     case 60:
     case 74:

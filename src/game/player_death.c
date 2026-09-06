@@ -129,7 +129,7 @@ void game_state_initialize(void)
     item_stock[2][0x2e] = 1;
     item_stock[2][0x2f] = 1;
     item_stock[2][0x30] = 1;
-    item_stock[2][0x34] = 1;
+    item_stock[2][KF_ITEM_GOLD_CROSS] = 1;
 }
 
 ADDRESS(0x800154b0, 0x19c)
@@ -326,7 +326,7 @@ void player_recalculate_combat_stats(void)
     case 42:
         player_state.magic += 1;
         break;
-    case 52:
+    case KF_ITEM_GOLD_CROSS:
         player_state.holy_attack += 3;
         break;
     }

@@ -372,11 +372,11 @@ void map_event_interact(KfMapEvent *event)
 {
     switch (event->character_id) {
     case 3:
-        if (item_stock[0][0x34] != 0 && map_event_pool[2].dialogue_stage == 1
+        if (item_stock[0][KF_ITEM_GOLD_CROSS] != 0 && map_event_pool[2].dialogue_stage == 1
             && map_event_pool[2].dialogue_page < 3) {
-            item_stock[0][0x35] = 1;
+            item_stock[0][KF_ITEM_KEY_OF_THE_DEAD] = 1;
             map_event_pool[2].dialogue_pages.last_page[0] = 7;
-            item_stock[0][0x34]--;
+            item_stock[0][KF_ITEM_GOLD_CROSS]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue_stage, event->character_id, 3);
             map_event_pool[2].dialogue_page = 4;

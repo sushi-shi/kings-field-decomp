@@ -93,7 +93,7 @@ continues to carry the selected mode's numeric result.
 ## Coverage and verification
 
 The [literal ledger](game-map-script-literal-ledger.md) gives reasons for
-all 319 ordinary numeric/character occurrences in `map_scripts.c`, down
+all 316 ordinary numeric/character occurrences in `map_scripts.c`, down
 from 363 after the pickup and equipment follow-ups. There are 178 groups; identical
 expressions with different roles
 (animation availability versus successful pickup) keep separate reasons.
@@ -161,3 +161,7 @@ evidence. The menu parameter retains its s32 storage with its new enum domain.
 | `0x80034d54 / 144` | `map_show_screen_image` | 88.8889 | Partial, unchanged |
 | `0x80034de4 / 2308` | `map_interaction_dispatch` | 83.0468 | Partial, unchanged |
 | `0x80036e38 / 200` | `menu_enter_mode` | 100 | Exact / 50 |
+
+The [shop identity follow-up](game-shop-price-domains.md) names Gold Cross and
+Key of the Dead in the character-3 exchange, removing three further literals
+without changing its code or other exchange behavior.

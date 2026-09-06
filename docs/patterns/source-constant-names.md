@@ -45,7 +45,7 @@ count, and propagates the saved-world type through the memory-card payload.
 The two earlier literal censuses above are refreshed after these substitutions.
 
 The [floor-script literal review](game-map-script-literals.md) accounts for
-all 319 retained occurrences in `map_scripts.c`, down from 363. Cutscene
+all 316 retained occurrences in `map_scripts.c`, down from 363. Cutscene
 phases and menu modes have stored enum types; interaction padding, facing
 tolerances and container limits have named domains. Authored movement rates,
 fade durations, resource IDs and path digits have per-occurrence reasons.
@@ -65,7 +65,7 @@ the mode dispatcher, and removes six numeric outcomes from the map ledger.
 The [equipment domain review](game-equipment-domains.md) separates menu
 categories from player slots, types both APIs, names empty item/spell/texture
 selections, and shares record extents and menu ranges. Its three-module
-ledger explains all 149 retained literals after the menu protocol follow-up,
+ledger explains all 147 retained literals after the menu and price follow-ups,
 down from 209; other consumers
 also replace the shared empty values and armor-record origin.
 
@@ -78,8 +78,14 @@ structure, recovering the retail stack spacing without pointer casts.
 The [preview transform review](game-menu-preview-transform.md) replaces the
 interior yaw alias with its complete SDK rotation vector and names angle-rate,
 wrapping and Q12 lighting domains. Its six-function and initializer ledger
-explains 213 retained occurrences, down from 236, and distinguishes draw-call
+explains 204 retained occurrences after the shop follow-up, down from 236, and distinguishes draw-call
 rates from real-time frequency.
+
+The [shop price review](game-shop-price-domains.md) types buy/sell selection
+through every price-preview consumer, names the shop-window rows, and decodes
+Gold Cross and Key of the Dead from the retail item names. It propagates those
+IDs through their actual consumers and explains all 155 retained shop literals,
+down from 188. Shop bank IDs remain indices rather than invented merchant names.
 
 ## Function Match Plan
 

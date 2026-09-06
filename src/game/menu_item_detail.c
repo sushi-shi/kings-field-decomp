@@ -13,11 +13,11 @@
  * Draw the selected inventory item's detail: a spinning 3D TMD preview (built
  * from the GTE rotation and a fixed local light matrix), the item name, its
  * price for the active shop column/table, the held quantity, and the player's
- * gold.  `object` is the item id (0xff = empty slot), `col` the price column,
- * and `mode` selects the buy (0) or sell (non-zero) price table.
+ * gold.  `item_id` selects the item and `shop_id` the one-based price column.
+ * `price_mode` selects buy prices at zero and sell prices for any nonzero value.
  */
 ADDRESS(0x80027b7c, 0x2dc)
-void menu_draw_item_detail(s32 object, s32 col, s32 mode)
+void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
 {
     MenuGlyphString gs;
     MATRIX rot;
@@ -27,7 +27,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     s16 *name;
     s32 i;
 
-    if (object == KF_ITEM_NONE) {
+    if (item_id == KF_ITEM_NONE) {
         return;
     }
 
@@ -58,7 +58,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = 0xae;
     gs.y = 0x24;
-    name = item_name_rows[object].codes;
+    name = item_name_rows[item_id].codes;
     for (i = 0; i < 10; i++) {
         gs.codes[i] = name[i];
     }
@@ -66,8 +66,8 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
 
     gs.x = 0xc8;
     gs.y += 18;
-    prices = (mode != 0) ? item_sell_prices : item_buy_prices;
-    menu_format_number(prices[object][col - 1], 6, 0, gs.codes);
+    prices = (price_mode != KF_ITEM_PRICE_BUY) ? item_sell_prices : item_buy_prices;
+    menu_format_number(prices[item_id][shop_id - 1], 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xf2;
@@ -86,16 +86,16 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0x11c;
-    menu_format_number(item_stock[0][object], 2, 0, gs.codes);
+    menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(
         &menu_assets.row_background,
-        (const MenuPoint *)&menu_window_layouts[7].rows[3]);
-    menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[7].rows[3]);
+        (const MenuPoint *)&menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD]);
+    menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD]);
 
-    gs.x = menu_window_layouts[7].rows[3].x + 28;
-    gs.y = menu_window_layouts[7].rows[3].y;
+    gs.x = menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD].x + 28;
+    gs.y = menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD].y;
     menu_format_number(player_state.gold, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }

@@ -83,7 +83,7 @@ void menu_drop_item(void)
         menu_present_frame();
         if (confirm == 1) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, 0)
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = -99;
             else

@@ -1,12 +1,11 @@
 # Retained equipment literals
 
 Complete ledger for `equipment.c`, `menu_select.c` and `menu_draw_name_list.c`
-after the [equipment domain audit](game-equipment-domains.md) and
-[menu protocol follow-up](game-menu-confirmation-protocol.md). Claim addresses
+after the [equipment domain audit](game-equipment-domains.md) and [shop price follow-up](game-shop-price-domains.md). Claim addresses
 and extents are separate. Negative signs are operators, so -99 contributes
 one numeric token. Line numbers locate this source version.
 
-All **149 retained occurrences** have specific reasons.
+All **147 retained occurrences** have specific reasons.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -25,7 +24,7 @@ All **149 retained occurrences** have specific reasons.
 | `menu_equip_select` | 77 | `0` | `owned = &item_stock[0][start];` | Player-owned stock bank zero, starting at the chosen category range. |
 | `menu_equip_select` | 79 | `0` | `if (*owned != 0) {` | Any nonzero owned quantity includes that item in the selection list. |
 | `menu_equip_select` | 81 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
-| `menu_equip_select` | 87 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-menu-confirmation-protocol.md; atlas code 89. |
+| `menu_equip_select` | 87 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-shop-price-domains.md; atlas code 89. |
 | `menu_equip_select` | 88 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_equip_select` | 89 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_equip_select` | 90 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
@@ -36,7 +35,7 @@ All **149 retained occurrences** have specific reasons.
 | `menu_equip_select` | 100 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
 | `menu_equip_select` | 101, 146, 161 | `0 × 3` | `if (menu_load_item_model(codes[ctx.selected_index]) != 0)` | Any nonzero model-loader result aborts this panel; empty item ID is a successful no-load path. |
 | `menu_equip_select` | 106 | `1` | `if (confirm == 1) {` | A set confirmation flag enters the second-stage confirmation widget. |
-| `menu_equip_select` | 108 | `0 × 2` | `KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, 0)` | Both trailing detail-preview arguments are unused zeros for the named model/icon mode. |
+| `menu_equip_select` | 108 | `0` | `KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
 | `menu_equip_select` | 110 | `99` | `selection = -99;` | Return to pending selection after the confirmation widget is cancelled; distinct from exiting the outer panel. |
 | `menu_equip_select` | 114 | `0` | `confirm = 0;` | Clear the pending confirmation/highlight request for the next input frame. |
 | `menu_equip_select` | 115 | `99` | `if (selection != -99) {` | Any completed selection or cancellation ends the modal loop; pending -99 continues it. |
@@ -73,7 +72,7 @@ All **149 retained occurrences** have specific reasons.
 | `menu_spell_select` | 244 | `4, 9, 10` | `for (code = 4; code < 9; code++, name += 10) {` | Selectable attack-spell IDs 4..8; advance one ten-halfword name row each iteration. IDs 0..3 belong to the separate instant-use magic panel. |
 | `menu_spell_select` | 245 | `1` | `if (magic_records[code].learned == 1) {` | The selector accepts exactly learned byte 1; do not widen the retail predicate to any nonzero value. |
 | `menu_spell_select` | 246 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
-| `menu_spell_select` | 252 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-menu-confirmation-protocol.md; atlas code 89. |
+| `menu_spell_select` | 252 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-shop-price-domains.md; atlas code 89. |
 | `menu_spell_select` | 253 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_spell_select` | 254 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_spell_select` | 255 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
@@ -84,7 +83,7 @@ All **149 retained occurrences** have specific reasons.
 | `menu_spell_select` | 266, 342 | `0 × 2` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
 | `menu_spell_select` | 267, 317, 332 | `1 × 3` | `if (menu_load_item_texture(codes[ctx.selected_index]) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
 | `menu_spell_select` | 276 | `1` | `if (confirm == 1) {` | A set confirmation flag enters the second-stage confirmation widget. |
-| `menu_spell_select` | 278 | `0 × 2` | `KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, 0)` | Both trailing detail-preview arguments are unused zeros for the named model/icon mode. |
+| `menu_spell_select` | 278 | `0` | `KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
 | `menu_spell_select` | 280 | `99` | `selection = -99;` | Return to pending selection after the confirmation widget is cancelled; distinct from exiting the outer panel. |
 | `menu_spell_select` | 284 | `99` | `if (selection != -99) {` | Any completed selection or cancellation ends the modal loop; pending -99 continues it. |
 | `menu_spell_select` | 291 | `0` | `confirm = 0;` | Clear the pending confirmation/highlight request for the next input frame. |
