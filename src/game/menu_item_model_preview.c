@@ -20,7 +20,7 @@ void menu_item_model_preview(s32 item_id)
     s16 *name;
     s32 i;
 
-    if (item_id != 0xff) {
+    if (item_id != KF_ITEM_NONE) {
         rot.t[0] = 0x230;
         rot.t[1] = 0x8c;
         rot.t[2] = 0x5dc;

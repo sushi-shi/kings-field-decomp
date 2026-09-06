@@ -18,49 +18,49 @@ void menu_draw_name_list(void)
 
     gs.x = 0xae;
     gs.y = 0x28;
-    if (player_state.equipped_weapon_id != 0xff) {
+    if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_weapon_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.selected_magic_id != 0xff) {
+    if (player_state.selected_magic_id != KF_MAGIC_NONE) {
         *(MenuGlyphRow *)gs.codes =
             magic_name_rows[player_state.selected_magic_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.equipped_body_armor_id != 0xff) {
+    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_body_armor_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.equipped_shield_id != 0xff) {
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_shield_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.equipped_head_armor_id != 0xff) {
+    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_head_armor_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.equipped_arm_armor_id != 0xff) {
+    if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_arm_armor_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.equipped_leg_armor_id != 0xff) {
+    if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_leg_armor_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
     }
     gs.y += 0x14;
-    if (player_state.equipped_accessory_id != 0xff) {
+    if (player_state.equipped_accessory_id != KF_ITEM_NONE) {
         *(MenuGlyphRow *)gs.codes =
             item_name_rows[player_state.equipped_accessory_id];
         menu_draw_string(&menu_assets.glyph_atlas, &gs);

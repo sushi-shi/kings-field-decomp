@@ -26,54 +26,54 @@ KfFloorEntryCell floor_entry_cells[5] = {
 
 /* Stores the item id into one of the six armor slots, re-resolves the five armor record pointers, and recalculates. */
 ADDRESS(0x80016848, 0x1e8)
-void player_set_equipment_slot(u8 item_id, u8 slot)
+void player_set_equipment_slot(u8 item_id, KfEquipmentSlot slot)
 {
     switch (slot) {
-    case 0:
+    case KF_EQUIPMENT_SLOT_SHIELD:
         player_state.equipped_shield_id = item_id;
         break;
-    case 1:
+    case KF_EQUIPMENT_SLOT_HEAD:
         player_state.equipped_head_armor_id = item_id;
         break;
-    case 2:
+    case KF_EQUIPMENT_SLOT_ARM:
         player_state.equipped_arm_armor_id = item_id;
         break;
-    case 3:
+    case KF_EQUIPMENT_SLOT_LEG:
         player_state.equipped_leg_armor_id = item_id;
         break;
-    case 4:
+    case KF_EQUIPMENT_SLOT_BODY:
         player_state.equipped_body_armor_id = item_id;
         break;
-    case 5:
+    case KF_EQUIPMENT_SLOT_ACCESSORY:
         player_state.equipped_accessory_id = item_id;
         break;
     }
-    if (player_state.equipped_shield_id != 0xff) {
-        player_state.equipped_shield_record = &armor_records[player_state.equipped_shield_id - 13];
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
+        player_state.equipped_shield_record = &armor_records[player_state.equipped_shield_id - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_shield_record = 0;
     }
-    if (player_state.equipped_head_armor_id != 0xff) {
+    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
         player_state.equipped_head_armor_record =
-            &armor_records[player_state.equipped_head_armor_id - 13];
+            &armor_records[player_state.equipped_head_armor_id - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_head_armor_record = 0;
     }
-    if (player_state.equipped_arm_armor_id != 0xff) {
+    if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
         player_state.equipped_arm_armor_record =
-            &armor_records[player_state.equipped_arm_armor_id - 13];
+            &armor_records[player_state.equipped_arm_armor_id - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_arm_armor_record = 0;
     }
-    if (player_state.equipped_leg_armor_id != 0xff) {
+    if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
         player_state.equipped_leg_armor_record =
-            &armor_records[player_state.equipped_leg_armor_id - 13];
+            &armor_records[player_state.equipped_leg_armor_id - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_leg_armor_record = 0;
     }
-    if (player_state.equipped_body_armor_id != 0xff) {
+    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
         player_state.equipped_body_armor_record =
-            &armor_records[player_state.equipped_body_armor_id - 13];
+            &armor_records[player_state.equipped_body_armor_id - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_body_armor_record = 0;
     }
@@ -88,7 +88,7 @@ void player_equip_weapon(u8 weapon_id)
     player_state.attack_charge_state.committed = 0;
     player_state.weapon_charge_delay = 10;
     player_state.equipped_weapon_id = weapon_id;
-    if (weapon_id != 0xff) {
+    if (weapon_id != KF_ITEM_NONE) {
         player_state.equipped_weapon_record = &weapon_records[weapon_id];
         weapon_image_path_template[9] = '0' + weapon_id / 10;
         weapon_image_path_template[10] = '0' + weapon_id % 10;
@@ -105,7 +105,7 @@ void player_equip_weapon(u8 weapon_id)
 ADDRESS(0x80016b24, 0x9c)
 void player_begin_weapon_attack(void)
 {
-    if (player_state.weapon_attack_phase == -1 && player_state.equipped_weapon_id != 0xff) {
+    if (player_state.weapon_attack_phase == -1 && player_state.equipped_weapon_id != KF_ITEM_NONE) {
         player_state.weapon_attack_phase = 0;
         sound_ref_play(&player_sound_refs[0], 0x7f);
         player_state.attack_charge_state.committed = player_state.attack_charge_state.current;
@@ -131,7 +131,7 @@ void player_update_weapon_attack(void)
     u16 window;
     s32 actor;
 
-    if (player_state.equipped_weapon_id == 0xff) {
+    if (player_state.equipped_weapon_id == KF_ITEM_NONE) {
         return;
     }
     if (player_state.weapon_attack_phase != -1) {

@@ -277,7 +277,7 @@ void map_floor5_transition_cutscene(void)
     KfMapWeaponTransformPhase phase;
 
     if (player_state.equipped_weapon_id == 10) {
-        player_equip_weapon(0xff);
+        player_equip_weapon(KF_ITEM_NONE);
     }
     item_stock[0][0xa] = 0;
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);

@@ -288,7 +288,7 @@ void player_update(void)
                         break;
                     }
                 }
-                if (player_state.selected_magic_id != 0xff && player_state.magic_charge == 5000) {
+                if (player_state.selected_magic_id != KF_MAGIC_NONE && player_state.magic_charge == 5000) {
                     player_state.weapon_magic_delay = 0;
                     player_state.weapon_magic_shots_remaining = 0;
                     if (player_state.equipped_accessory_id == 50 && player_state.selected_magic_id == 7) {
@@ -305,7 +305,7 @@ void player_update(void)
                     }
                 }
                 magic_id = player_state.selected_magic_id;
-                if (magic_id != 0xff) {
+                if (magic_id != KF_MAGIC_NONE) {
                     player_state.magic_charge +=
                         fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate) * 2;
                     if (player_state.magic_charge > 5000) {
@@ -473,7 +473,7 @@ void player_update(void)
             player_state.update_state++;
         }
     }
-    if (player_state.equipped_weapon_id != 0xff) {
+    if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
         if (player_state.equipped_weapon_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_weapon_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -483,7 +483,7 @@ void player_update(void)
             player_adjust_mp(1);
         }
     }
-    if (player_state.equipped_shield_id != 0xff) {
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
         if (player_state.equipped_shield_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -493,7 +493,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_head_armor_id != 0xff) {
+    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
         if (player_state.equipped_head_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -503,7 +503,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_body_armor_id != 0xff) {
+    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
         if (player_state.equipped_body_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -513,7 +513,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_arm_armor_id != 0xff) {
+    if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
         if (player_state.equipped_arm_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_arm_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -523,7 +523,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_leg_armor_id != 0xff) {
+    if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
         if (player_state.equipped_leg_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_leg_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);

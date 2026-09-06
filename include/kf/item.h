@@ -8,7 +8,8 @@
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
     KF_FLOOR_ITEM_END = 0xffff,
-    KF_ITEM_STACK_CAPACITY = 99
+    KF_ITEM_STACK_CAPACITY = 99,
+    KF_ITEM_NONE = 0xff
 };
 
 /*

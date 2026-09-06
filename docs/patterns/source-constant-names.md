@@ -45,7 +45,7 @@ count, and propagates the saved-world type through the memory-card payload.
 The two earlier literal censuses above are refreshed after these substitutions.
 
 The [floor-script literal review](game-map-script-literals.md) accounts for
-all 320 retained occurrences in `map_scripts.c`, down from 363. Cutscene
+all 319 retained occurrences in `map_scripts.c`, down from 363. Cutscene
 phases and menu modes have stored enum types; interaction padding, facing
 tolerances and container limits have named domains. Authored movement rates,
 fade durations, resource IDs and path digits have per-occurrence reasons.
@@ -61,6 +61,12 @@ pickup-confirmation identity, types its result through all pickup consumers,
 names the shared player stack limit and replaces raw label arrays with
 positioned glyph objects. It explains all 50 retained literals in pickup and
 the mode dispatcher, and removes six numeric outcomes from the map ledger.
+
+The [equipment domain review](game-equipment-domains.md) separates menu
+categories from player slots, types both APIs, names empty item/spell/texture
+selections, and shares record extents and menu ranges. Its three-module
+ledger explains all 155 retained literals, down from 209; other consumers
+also replace the shared empty values and armor-record origin.
 
 ## Function Match Plan
 

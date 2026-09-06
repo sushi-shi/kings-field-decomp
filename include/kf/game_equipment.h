@@ -4,6 +4,37 @@
 /* Runtime-loaded weapon, armor, and accessory definitions. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
+
+KF_ENUM_BEGIN(KfEquipmentSlot, u8)
+    KF_EQUIPMENT_SLOT_SHIELD = 0,
+    KF_EQUIPMENT_SLOT_HEAD = 1,
+    KF_EQUIPMENT_SLOT_ARM = 2,
+    KF_EQUIPMENT_SLOT_LEG = 3,
+    KF_EQUIPMENT_SLOT_BODY = 4,
+    KF_EQUIPMENT_SLOT_ACCESSORY = 5,
+    KF_EQUIPMENT_SLOT_REFRESH_ONLY = 0xff
+KF_ENUM_END(KfEquipmentSlot)
+
+enum {
+    KF_WEAPON_RECORD_COUNT = 16,
+    KF_ARMOR_RECORD_COUNT = 42,
+    KF_ARMOR_ITEM_FIRST = 13,
+    KF_WEAPON_ITEM_FIRST = 0,
+    KF_WEAPON_ITEM_END = 13,
+    KF_SHIELD_ITEM_FIRST = 13,
+    KF_SHIELD_ITEM_END = 19,
+    KF_HEAD_ARMOR_ITEM_FIRST = 19,
+    KF_HEAD_ARMOR_ITEM_END = 26,
+    KF_BODY_ARMOR_ITEM_FIRST = 26,
+    KF_BODY_ARMOR_ITEM_END = 32,
+    KF_ARM_ARMOR_ITEM_FIRST = 32,
+    KF_ARM_ARMOR_ITEM_END = 35,
+    KF_LEG_ARMOR_ITEM_FIRST = 35,
+    KF_LEG_ARMOR_ITEM_END = 39,
+    KF_ACCESSORY_ITEM_FIRST = 48,
+    KF_ACCESSORY_ITEM_END = 52
+};
 
 /* Armor and accessory record (item ids 13..54 index armor_records[id - 13]). */
 typedef struct KfArmorRecord {
@@ -37,8 +68,8 @@ typedef struct KfWeaponRecord {
     u8 unknown_28[0x04];
 } KfWeaponRecord;
 
-extern KfWeaponRecord weapon_records[16];
-extern KfArmorRecord armor_records[42];
+extern KfWeaponRecord weapon_records[KF_WEAPON_RECORD_COUNT];
+extern KfArmorRecord armor_records[KF_ARMOR_RECORD_COUNT];
 
 extern void weapon_records_load_and_mirror_angles(
     const KfWeaponRecord *source);

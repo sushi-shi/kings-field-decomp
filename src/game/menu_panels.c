@@ -181,22 +181,22 @@ void menu_option_root(void)
             while (PadRead(1) != 0)
                 ;
         }
-        switch (selection) {
-        case 5:
-        case 6:
+        switch (KF_ENUM_DECODE(KfEquipmentMenuCategory, selection)) {
+        case KF_EQUIP_MENU_ARM:
+        case KF_EQUIP_MENU_LEG:
             if (player_state.equipped_head_armor_id == 0x15) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                 break;
             }
             /* fallthrough */
-        case 0:
-        case 2:
-        case 3:
-        case 4:
-        case 7:
-            menu_equip_select(selection);
+        case KF_EQUIP_MENU_WEAPON:
+        case KF_EQUIP_MENU_BODY:
+        case KF_EQUIP_MENU_SHIELD:
+        case KF_EQUIP_MENU_HEAD:
+        case KF_EQUIP_MENU_ACCESSORY:
+            menu_equip_select(KF_ENUM_DECODE(KfEquipmentMenuCategory, selection));
             break;
-        case 1:
+        case KF_EQUIP_MENU_MAGIC:
             menu_spell_select();
             break;
         }

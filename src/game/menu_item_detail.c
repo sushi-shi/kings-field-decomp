@@ -28,7 +28,7 @@ void menu_draw_item_detail(s32 object, s32 col, s32 mode)
     s16 *name;
     s32 i;
 
-    if (object == 0xff) {
+    if (object == KF_ITEM_NONE) {
         return;
     }
 

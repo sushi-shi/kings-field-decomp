@@ -22,7 +22,7 @@ RODATA(0x80012310, 0x40)
  * special helm (id 0x15) is chosen.
  */
 ADDRESS(0x800238d8, 0x5c4)
-void menu_equip_select(s32 object)
+void menu_equip_select(KfEquipmentMenuCategory category)
 {
     KfMenuList ctx;
     s16 labels[20][10];
@@ -42,34 +42,34 @@ void menu_equip_select(s32 object)
     while (PadRead(1) != 0)
         ;
 
-    switch (object) {
-    case 0:
-        start = 0x00;
-        end = 0x0d;
+    switch (category) {
+    case KF_EQUIP_MENU_WEAPON:
+        start = KF_WEAPON_ITEM_FIRST;
+        end = KF_WEAPON_ITEM_END;
         break;
-    case 2:
-        start = 0x1a;
-        end = 0x20;
+    case KF_EQUIP_MENU_BODY:
+        start = KF_BODY_ARMOR_ITEM_FIRST;
+        end = KF_BODY_ARMOR_ITEM_END;
         break;
-    case 3:
-        start = 0x0d;
-        end = 0x13;
+    case KF_EQUIP_MENU_SHIELD:
+        start = KF_SHIELD_ITEM_FIRST;
+        end = KF_SHIELD_ITEM_END;
         break;
-    case 4:
-        start = 0x13;
-        end = 0x1a;
+    case KF_EQUIP_MENU_HEAD:
+        start = KF_HEAD_ARMOR_ITEM_FIRST;
+        end = KF_HEAD_ARMOR_ITEM_END;
         break;
-    case 5:
-        start = 0x20;
-        end = 0x23;
+    case KF_EQUIP_MENU_ARM:
+        start = KF_ARM_ARMOR_ITEM_FIRST;
+        end = KF_ARM_ARMOR_ITEM_END;
         break;
-    case 6:
-        start = 0x23;
-        end = 0x27;
+    case KF_EQUIP_MENU_LEG:
+        start = KF_LEG_ARMOR_ITEM_FIRST;
+        end = KF_LEG_ARMOR_ITEM_END;
         break;
-    case 7:
-        start = 0x30;
-        end = 0x34;
+    case KF_EQUIP_MENU_ACCESSORY:
+        start = KF_ACCESSORY_ITEM_FIRST;
+        end = KF_ACCESSORY_ITEM_END;
         break;
     }
 
@@ -88,10 +88,10 @@ void menu_equip_select(s32 object)
     labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[k][2] = 0x4c;
     labels[k][3] = MENU_TEXT_END;
-    codes[k] = 0xff;
+    codes[k] = KF_ITEM_NONE;
     k++;
 
-    menu_list_init(&ctx, 1, object);
+    menu_list_init(&ctx, 1, KF_ENUM_ENCODE(s32, category));
     ctx.entry_count = k;
     ctx.glyphs_per_entry = 10;
     ctx.glyph_rows = &labels[0][0];
@@ -175,40 +175,40 @@ void menu_equip_select(s32 object)
 
     menu_release_item_model();
     if (selection != -1) {
-        switch (object) {
-        case 0:
+        switch (category) {
+        case KF_EQUIP_MENU_WEAPON:
             player_state.equipped_weapon_id = selection;
             player_equip_weapon((u8)selection);
             break;
-        case 2:
+        case KF_EQUIP_MENU_BODY:
             player_state.equipped_body_armor_id = selection;
-            player_set_equipment_slot((u8)selection, 4);
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_BODY);
             break;
-        case 3:
+        case KF_EQUIP_MENU_SHIELD:
             player_state.equipped_shield_id = selection;
-            player_set_equipment_slot((u8)selection, 0);
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_SHIELD);
             break;
-        case 4:
+        case KF_EQUIP_MENU_HEAD:
             player_state.equipped_head_armor_id = selection;
-            player_set_equipment_slot((u8)selection, 1);
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_HEAD);
             if (selection == 0x15) {
-                player_state.equipped_arm_armor_id = 0xff;
-                player_state.equipped_leg_armor_id = 0xff;
-                player_set_equipment_slot(0xff, 2);
-                player_set_equipment_slot(0xff, 3);
+                player_state.equipped_arm_armor_id = KF_ITEM_NONE;
+                player_state.equipped_leg_armor_id = KF_ITEM_NONE;
+                player_set_equipment_slot(KF_ITEM_NONE, KF_EQUIPMENT_SLOT_ARM);
+                player_set_equipment_slot(KF_ITEM_NONE, KF_EQUIPMENT_SLOT_LEG);
             }
             break;
-        case 5:
+        case KF_EQUIP_MENU_ARM:
             player_state.equipped_arm_armor_id = selection;
-            player_set_equipment_slot((u8)selection, 2);
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_ARM);
             break;
-        case 6:
+        case KF_EQUIP_MENU_LEG:
             player_state.equipped_leg_armor_id = selection;
-            player_set_equipment_slot((u8)selection, 3);
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_LEG);
             break;
-        case 7:
+        case KF_EQUIP_MENU_ACCESSORY:
             player_state.equipped_accessory_id = selection;
-            player_set_equipment_slot((u8)selection, 5);
+            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_ACCESSORY);
             break;
         }
     }
@@ -251,7 +251,7 @@ void menu_spell_select(void)
     labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[k][2] = 0x4c;
     labels[k][3] = MENU_TEXT_END;
-    codes[k] = 0xff;
+    codes[k] = KF_MAGIC_NONE;
     k++;
 
     menu_list_init(&ctx, 1, 1);
@@ -264,7 +264,7 @@ void menu_spell_select(void)
     if (ctx.entry_count != 0) {
         if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
             return;
-        if (codes[ctx.selected_index] != 0xff)
+        if (codes[ctx.selected_index] != KF_MAGIC_NONE)
             menu_add_marker_quad();
     }
     menu_list_render(&ctx);
@@ -336,7 +336,7 @@ void menu_spell_select(void)
         }
 
         if (ctx.entry_count != 0) {
-            if (codes[ctx.selected_index] != 0xff)
+            if (codes[ctx.selected_index] != KF_MAGIC_NONE)
                 menu_add_marker_quad();
         }
         menu_list_render(&ctx);

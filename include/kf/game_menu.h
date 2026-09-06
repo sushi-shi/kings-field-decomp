@@ -18,6 +18,21 @@ KF_ENUM_BEGIN(KfMenuMode, s32)
     KF_MENU_MODE_SHOP = 2
 KF_ENUM_END(KfMenuMode)
 
+KF_ENUM_BEGIN(KfEquipmentMenuCategory, s32)
+    KF_EQUIP_MENU_WEAPON = 0,
+    KF_EQUIP_MENU_MAGIC = 1,
+    KF_EQUIP_MENU_BODY = 2,
+    KF_EQUIP_MENU_SHIELD = 3,
+    KF_EQUIP_MENU_HEAD = 4,
+    KF_EQUIP_MENU_ARM = 5,
+    KF_EQUIP_MENU_LEG = 6,
+    KF_EQUIP_MENU_ACCESSORY = 7
+KF_ENUM_END(KfEquipmentMenuCategory)
+
+enum {
+    KF_MENU_TEXTURE_NONE = 0xff
+};
+
 KF_ENUM_BEGIN(KfItemPickupResult, s32)
     KF_ITEM_PICKUP_PENDING = -99,
     KF_ITEM_PICKUP_ACQUIRED = 0,
@@ -186,7 +201,7 @@ extern void menu_format_number(
     s32 value, s32 count, s32 pad_zero, s16 *out);
 extern void menu_drop_item(void);
 extern u32 menu_enter_mode(KfMenuMode mode, ...);
-extern void menu_equip_select(s32 object);
+extern void menu_equip_select(KfEquipmentMenuCategory category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(s32 item_id);
 extern void menu_list_init(KfMenuList *list, s32 row, s32 column);

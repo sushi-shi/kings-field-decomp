@@ -80,7 +80,7 @@ opt0_done:
             menu_item_model_preview(item_id);
         } else if (mode == 1) {
             menu_draw_item_detail(item_id, arg4, arg5);
-        } else if (mode == 2 && item_id != 0xff) {
+        } else if (mode == 2 && item_id != KF_MAGIC_NONE) {
             menu_add_marker_quad();
         }
         menu_list_render(list);
@@ -96,7 +96,7 @@ opt0_done:
                 menu_item_model_preview(item_id);
             } else if (mode == 1) {
                 menu_draw_item_detail(item_id, arg4, arg5);
-            } else if (mode == 2 && item_id != 0xff) {
+            } else if (mode == 2 && item_id != KF_MAGIC_NONE) {
                 menu_add_marker_quad();
             }
             menu_list_render(list);

@@ -7,14 +7,14 @@ void weapon_records_load_and_mirror_angles(const KfWeaponRecord *source)
 {
     u32 *destination_word = (u32 *)weapon_records;
     const u32 *source_word = (const u32 *)source;
-    s32 remaining = 176;
+    s32 remaining = sizeof weapon_records / sizeof *source_word;
     KfWeaponRecord *record;
 
     do {
         *destination_word++ = *source_word++;
     } while (--remaining != 0);
 
-    remaining = 15;
+    remaining = KF_WEAPON_RECORD_COUNT - 1;
     record = weapon_records;
     do {
         record->mirrored_angle = -record->mirrored_angle;
@@ -27,7 +27,7 @@ void armor_records_load(const KfArmorRecord *source)
 {
     u32 *destination_word = (u32 *)armor_records;
     const u32 *source_word = (const u32 *)source;
-    s32 remaining = 294;
+    s32 remaining = sizeof armor_records / sizeof *source_word;
 
     do {
         *destination_word++ = *source_word++;

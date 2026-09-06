@@ -73,13 +73,13 @@ void game_state_initialize(void)
     player_state.base_magic = player_level_growth_table[0].magic_step;
     player_state.next_level_experience = player_level_growth_table[0].experience_threshold;
     player_equip_weapon(0);
-    player_state.equipped_shield_id = 0xff;
-    player_state.equipped_head_armor_id = 0xff;
-    player_state.equipped_arm_armor_id = 0xff;
-    player_state.equipped_leg_armor_id = 0xff;
-    player_state.equipped_body_armor_id = 0xff;
-    player_state.equipped_accessory_id = 0xff;
-    player_set_equipment_slot(0, 0xff);
+    player_state.equipped_shield_id = KF_ITEM_NONE;
+    player_state.equipped_head_armor_id = KF_ITEM_NONE;
+    player_state.equipped_arm_armor_id = KF_ITEM_NONE;
+    player_state.equipped_leg_armor_id = KF_ITEM_NONE;
+    player_state.equipped_body_armor_id = KF_ITEM_NONE;
+    player_state.equipped_accessory_id = KF_ITEM_NONE;
+    player_set_equipment_slot(0, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
     player_select_magic(8);
     player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.light_effect_timer = -1;
@@ -252,7 +252,7 @@ void player_recalculate_combat_stats(void)
         }
         player_state.physical_power = power;
     }
-    if (player_state.equipped_weapon_id != 0xff) {
+    if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
         weapon = &weapon_records[player_state.equipped_weapon_id];
         player_state.cutting_attack += weapon->attack_components[0];
         player_state.striking_attack += weapon->attack_components[1];
@@ -260,8 +260,8 @@ void player_recalculate_combat_stats(void)
         player_state.holy_attack += weapon->attack_components[3];
         player_state.fire_attack += weapon->attack_components[4];
     }
-    if (player_state.equipped_shield_id != 0xff) {
-        armor = &armor_records[player_state.equipped_shield_id - 13];
+    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_shield_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -270,8 +270,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_head_armor_id != 0xff) {
-        armor = &armor_records[player_state.equipped_head_armor_id - 13];
+    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_head_armor_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -280,8 +280,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_arm_armor_id != 0xff) {
-        armor = &armor_records[player_state.equipped_arm_armor_id - 13];
+    if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_arm_armor_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -290,8 +290,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_leg_armor_id != 0xff) {
-        armor = &armor_records[player_state.equipped_leg_armor_id - 13];
+    if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_leg_armor_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -300,8 +300,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_body_armor_id != 0xff) {
-        armor = &armor_records[player_state.equipped_body_armor_id - 13];
+    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
+        armor = &armor_records[player_state.equipped_body_armor_id - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -579,7 +579,7 @@ void player_select_magic(u8 magic_id)
 {
     player_state.magic_charge = 0;
     player_state.selected_magic_id = magic_id;
-    if (magic_id == 0xff) {
+    if (magic_id == KF_MAGIC_NONE) {
         player_state.selected_magic_record = 0;
     } else {
         player_state.selected_magic_record =

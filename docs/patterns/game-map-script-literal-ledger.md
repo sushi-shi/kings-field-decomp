@@ -6,7 +6,7 @@ named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
 
-All **320 retained occurrences** have an explicit reason; no fallback is used.
+All **319 retained occurrences** have an explicit reason; no fallback is used.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -76,7 +76,6 @@ All **320 retained occurrences** have an explicit reason; no fallback is used.
 | `map_action_script_floor3` | 253 | `5, 0` | `if (magic_records[5].learned == 0) {` | Authored magic-record index; zero tests unlearned and one grants learning. Spell IDs stay numeric pending resource-name evidence. |
 | `map_action_script_floor3` | 254 | `5, 1` | `magic_records[5].learned = 1;` | Authored magic-record index; zero tests unlearned and one grants learning. Spell IDs stay numeric pending resource-name evidence. |
 | `map_floor5_transition_cutscene` | 279 | `10` | `if (player_state.equipped_weapon_id == 10) {` | Authored weapon ID 10 is the transformation input; unequip it if currently equipped. |
-| `map_floor5_transition_cutscene` | 280 | `0xff` | `player_equip_weapon(0xff);` | Equipment API no-weapon sentinel 255; retained here pending a shared equipment-domain audit. |
 | `map_floor5_transition_cutscene` | 282 | `0 × 2, 0xa` | `item_stock[0][0xa] = 0;` | Clear all player-owned copies of input item ID 10; stock bank zero is the player bank. |
 | `map_floor5_transition_cutscene` | 283 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
 | `map_floor5_transition_cutscene` | 287 | `0` | `camera_path_step(&path, 0);` | No extra vertical offset on this authored camera path. |

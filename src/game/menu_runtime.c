@@ -611,7 +611,7 @@ u32 menu_load_item_model(s32 id)
     void *asset;
 
     menu_release_item_model();
-    if (id != 0xff) {
+    if (id != KF_ITEM_NONE) {
         if (cd_file_load_table_entry(&asset, id) != 0) {
             return 1;
         }
@@ -640,7 +640,7 @@ u32 menu_load_item_texture(s32 id)
     s32 number;
     s32 remainder;
 
-    if (id != 0xff) {
+    if (id != KF_MENU_TEXTURE_NONE) {
         number = id + 1;
         name[5] = number / 100 + '0';
         remainder = number % 100;

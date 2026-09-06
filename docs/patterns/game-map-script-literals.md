@@ -93,8 +93,8 @@ continues to carry the selected mode's numeric result.
 ## Coverage and verification
 
 The [literal ledger](game-map-script-literal-ledger.md) gives reasons for
-all 320 ordinary numeric/character occurrences in `map_scripts.c`, down
-from 363 after the pickup follow-up. There are 179 groups; identical
+all 319 ordinary numeric/character occurrences in `map_scripts.c`, down
+from 363 after the pickup and equipment follow-ups. There are 178 groups; identical
 expressions with different roles
 (animation availability versus successful pickup) keep separate reasons.
 Comments, strings and digits within identifiers are excluded. The 42 tokens
@@ -128,9 +128,9 @@ No new tests or size assertions were added.
 
 Full `kf build` retains its existing data/ownership closure gaps: source
 data 7/60, SDK data 4/4, and target relink PSX 1/1, GAME 75/77, OPEN 34/38.
-The wider naming goal remains open. In particular, the equipment sentinel
-deserves a shared consumer audit; the ledger records its observed role
-without presenting that domain as finished. The
+The wider naming goal remains open. The
+[equipment follow-up](game-equipment-domains.md) names the shared empty-item
+sentinel, including this cutscene's weapon removal. The
 [asset-header follow-up](game-asset-animation-layout.md) resolves the signed
 animation-clip count. Ten unresolved `unknown_` source lines still require
 more evidence.
