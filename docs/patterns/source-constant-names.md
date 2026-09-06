@@ -1703,3 +1703,99 @@ ownership and placement findings: 6/60 units match data, with zero artifact
 failures. Target relink remains PSX 1/1, GAME 75/77 and OPEN 34/38, with two
 GAME and four OPEN conflicting-section-base findings. No result is newly
 banked, and no tooling or flake files changed.
+
+## Menu glyph encoding and atlas dimensions
+
+Function Match Plan: name the shared GAME text terminator, empty glyph,
+decimal-atlas blank/slash and kana voicing flags from the renderer and retail
+assets. Preserve the signed halfword code stream, unsigned descriptor fields,
+all SDK packet types, function shapes, literals' values and ordered referents.
+The two renderers and decimal formatter define the contract; their label and
+quantity producers form the related campaign. All fourteen affected functions
+have refreshed image-qualified addr/disassembly/CFG/xrefs/callees/strings/match
+snapshots and source history under the ignored menu-glyph-names evidence
+directory. The existing glyph-render and list-format dossiers cover their
+neighbors, ABI, primitive-provider boundary and non-vendored ownership.
+
+The proposed names distinguish text glyph 255 from number glyph 10, though
+both draw an empty cell. Number glyph 11 draws a slash. Text bits 0x1000 and
+0x2000 independently add dakuten and handakuten marks; the low twelve bits
+select the base glyph. Name composite voiced glyphs as a flag OR the retained
+authored character index. The decimal divisor 10 stays literal: it is a radix,
+not the coincidentally equal blank-glyph index. Likewise, -1 used as a loop
+index or result is not a text terminator. Selection arrays named `codes` hold
+item/spell IDs; their 255 sentinel is not a blank text glyph.
+
+The font has sixteen columns of 14-by-12 cells. The number atlas advances
+seven screen pixels and eleven texture rows per code. These dimensions agree
+with the runtime-loaded descriptors and the decoded pixels; they are asset
+contracts, not inferred animation tuning. The mark cells occupy columns 14
+and 15 of row 2, giving UV origins (196,24) and (210,24). Keep the existing
+four signed-versus-positive-immediate discrepancies in the string renderer;
+the atlas does not justify a false exact claim. Text ordering-table depth
+1000 is a shared draw-layer convention; no recovered rationale selects that
+particular numeric depth.
+
+Require every non-debug section of all 112 objects, every one of the 484
+strict function rows and the complete strict report to remain unchanged from
+58ed256. Rebuild the affected sources, inspect raw renderer/formatter words
+and ordered relocations, then run the full build and repository checks. No
+new exact result is proposed for banking.
+
+The three format-defining bodies retain eleven inline numeric occurrences:
+
+| Remaining site | Reason |
+| --- | --- |
+| Three index initializations to 0 | Start at the first glyph/output slot. |
+| `pad_zero == 0` and its alternative glyph 0 | Test the zero-padding flag and select the actual decimal digit zero. |
+| `count - 1` and index lower bound 0 | Visit the requested output positions from last to first. |
+| Two decimal divisors 10 | Base-ten quotient and remainder, independent of blank glyph 10. |
+| `value == 0` | Stop when no more decimal digits remain. |
+| `i = -1` | End the signed index loop through its existing decrement/test tail; no terminator store occurs here. |
+
+The shared header owns the seven encoded values. The renderer's private
+constants own atlas dimensions, mark-cell coordinates and text depth. Their
+numeric choices are either the measured file format or the existing draw
+layer; the original artist's reasons for choosing 14-by-12 and 7-by-11 glyph
+sizes remain unknown. Other authored character codes stay literal asset
+indices. The atlas, exact offsets and hashes are documented in
+[game-menu-glyph-render.md](game-menu-glyph-render.md#retail-glyph-format-and-asset-evidence).
+
+The affected GAME functions have these starting scores; each must retain
+the same score and all raw source-object sections outside debug line tables:
+
+| Address | Function | Strict score |
+| --- | --- | --- |
+| 800238d8 | menu_equip_select | 97.899730% |
+| 80023e9c | menu_spell_select | 98.063380% |
+| 8002589c | menu_config_panel | 30.713396% |
+| 80025f38 | menu_draw_stats_header | 97.686110% |
+| 800264d8 | menu_draw_status_details | 95.110700% |
+| 800279c4 | menu_item_model_preview | 98.181816% |
+| 80027b7c | menu_draw_item_detail | 91.284160% |
+| 80027ee4 | menu_draw_dialog_frame | 100% |
+| 80028380 | menu_list_interact | 87.079810% |
+| 800286d4 | menu_two_option_prompt | 100% |
+| 80028a70 | menu_list_render | 88.252610% |
+| 80029de0 | menu_draw_string | 99.987950% |
+| 8002a310 | menu_draw_number | 100% |
+| 8002adf8 | menu_format_number | 100% |
+
+Final verdict: every row above is unchanged, as are the other 470 strict
+rows and the complete report. All 112 objects retain every non-debug section;
+only the menu-runtime object's debug line table differs. An independent
+source-value audit also preserves every numeric value, expression and
+statement across the ten edited C files. The number renderer matches all
+128 retail words, with two ordered calls and eight data references; the
+formatter matches all 43 words without relocations. The string renderer
+retains precisely the documented four differences among 332 words, with
+the same six ordered calls and 24 data references. Both blank cells decode
+entirely to palette index zero.
+
+Ruff and diff checks pass. The repository suite passes 651 tests in 103.328
+seconds with nine skips. Full `kf build` still fails on the existing data
+ownership/placement findings: source-data matching is 6/60, target relink is
+PSX 1/1, GAME 75/77 and OPEN 34/38, and all images have zero artifact failures.
+The two GAME and four OPEN conflicting-section-base findings are unchanged.
+The post-test section, score, raw-word and source-value checks pass. No new
+result is banked; no tooling or flake files changed.

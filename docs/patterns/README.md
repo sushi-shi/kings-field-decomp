@@ -174,7 +174,8 @@ promotes a probe to a proven historical toolchain.
   padding temporary close decimal glyph formatting.
 - [game-menu-glyph-render.md](game-menu-glyph-render.md): index-derived
   fixed pitch closes number rendering and removes the string-render preheader
-  difference; four decoration immediates remain non-exact.
+  difference; retail atlas offsets prove the kana marks, blanks and slash.
+  Four decoration immediates remain non-exact.
 - [game-menu-window-rows.md](game-menu-window-rows.md): signed title-test load
   correction and rejected direct-row-address control in the window renderer.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit

@@ -127,3 +127,57 @@ remains nonzero for existing non-code gaps: source-data 11/59, config SDK data
 2/2, target relink 108/114 and incomplete known-reference ownership. Ruff,
 diff check and all 551 repository tests pass (49.124 s). Only the newly
 strict-exact `menu_draw_number` row is selected for banking.
+
+## Retail glyph format and asset evidence
+
+The naming pass decodes the retail menu texture without running the game.
+`item_load_database` copies the first 0x390 bytes of `KF/COM/STAT.DAT` to
+`menu_assets`. Its descriptors at file offsets 0x300 and 0x30c contain the
+following six little-endian halfwords:
+
+| Atlas | Texture page | CLUT | U | V | Width | Height |
+| --- | --- | --- | --- | --- | --- | --- |
+| Number | 28 | 31872 | 240 | 0 | 7 | 11 |
+| Text | 28 | 31872 | 0 | 0 | 14 | 12 |
+
+`common_resources_load` uploads the consecutive TIM records in
+`KF/COM/MIX.TIM`. The fifth record starts at file offset 231552 (flags 8,
+four bits per pixel). Its image payload starts at 232096 and contains
+32768 bytes: 64 VRAM words by 256 rows at (768,256), equivalent to a
+256-by-256 texel page. Its selected 16-color CLUT is the first 32 bytes at
+231572, uploaded to (0,498). These agree with texture page 28 and CLUT 31872
+in both descriptors. Decode each little-endian word's four palette indices
+from low to high nibble. The selected page and palette are complete payloads;
+no behavior is inferred from the unrelated palette rows extending past
+VRAM row 511 elsewhere in the file.
+
+The following cells are visible in that decoded page:
+
+| Encoding | Cell / meaning |
+| --- | --- |
+| Text 0x2e, UV (196,24) | Dakuten, the two-stroke kana voicing mark. Text flag 0x1000 overlays this cell. |
+| Text 0x2f, UV (210,24) | Handakuten, the circular kana mark. Text flag 0x2000 overlays this cell. |
+| Text 0xff, UV (210,180) | Empty text cell, retained as spacing in status labels. |
+| Number 10, UV (240,110) | Empty number cell, selected for leading padding. |
+| Number 11, UV (240,121) | Slash used between current and maximum HP/MP. |
+| Text 0x88 | The character `毒` (poison), also used beside the status-effect-2 resistance value. |
+| Text 0xc5, 0xc6 | `正常`, the normal-status label. |
+
+Text layout has sixteen columns of 14-by-12 cells. Number codes select rows
+eleven texels high at U=240, advancing seven screen pixels per code. These
+are measured asset geometry, not unexplained tuning aliases. Low twelve code
+bits select the base text cell; the two independently tested flag bits add
+marks over the same screen rectangle. For example, authored label code
+0x104c is `MENU_TEXT_DAKUTEN | 0x4c`, producing `ず` from `す` in `はずす`.
+Character indices stay asset data; they are not Unicode values.
+
+Reproduction identities (SHA-256):
+
+- `KF/COM/STAT.DAT`, 5708 bytes:
+  `3f51069ac6291bffdfeb981b14963a22564b40fa5d9034f226797f84247b97f4`.
+- `KF/COM/MIX.TIM`, 331488 bytes:
+  `9e1031c32ea9efc2d124ae97dd6f2a0291bc88153b74b8c1d57f99abefd55959`.
+
+The atlas proves the mark origins' low-byte values; it does not resolve the
+four raw immediate discrepancies described above. The naming change retains
+positive 196/210 arithmetic and keeps `menu_draw_string` partial.

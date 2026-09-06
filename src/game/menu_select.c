@@ -85,9 +85,9 @@ void menu_equip_select(s32 object)
         }
     }
     labels[k][0] = 0x59;
-    labels[k][1] = 0x104c;
+    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[k][2] = 0x4c;
-    labels[k][3] = -1;
+    labels[k][3] = MENU_TEXT_END;
     codes[k] = 0xff;
     k++;
 
@@ -248,9 +248,9 @@ void menu_spell_select(void)
         }
     }
     labels[k][0] = 0x59;
-    labels[k][1] = 0x104c;
+    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[k][2] = 0x4c;
-    labels[k][3] = -1;
+    labels[k][3] = MENU_TEXT_END;
     codes[k] = 0xff;
     k++;
 

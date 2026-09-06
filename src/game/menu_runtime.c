@@ -2,6 +2,20 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+/* COM\\MIX.TIM font geometry; STAT.DAT descriptors confirm the cell extents. */
+enum {
+    MENU_FONT_COLUMNS = 16,
+    MENU_FONT_CELL_WIDTH = 14,
+    MENU_FONT_CELL_HEIGHT = 12,
+    MENU_NUMBER_ADVANCE = 7,
+    MENU_NUMBER_CELL_HEIGHT = 11,
+    /* Kana marks occupy columns 14/15 of row 2 in the text atlas. */
+    MENU_DAKUTEN_U = 14 * MENU_FONT_CELL_WIDTH,
+    MENU_HANDAKUTEN_U = 15 * MENU_FONT_CELL_WIDTH,
+    MENU_KANA_MARK_V = 2 * MENU_FONT_CELL_HEIGHT,
+    MENU_TEXT_OT_DEPTH = 1000
+};
+
 typedef char menu_glyph_string_size[sizeof(MenuGlyphString) == 0x18 ? 1 : -1];
 typedef char menu_window_layout_size[sizeof(MenuWindowLayout) == 0x108 ? 1 : -1];
 typedef char menu_window_row_codes_offset[
@@ -275,10 +289,10 @@ void menu_draw_string(
     s32 i;
     s32 x_offset;
 
-    for (i = 0; string->codes[i] != -1; i++) {
+    for (i = 0; string->codes[i] != MENU_TEXT_END; i++) {
         s32 glyph;
 
-        x_offset = i * 14;
+        x_offset = i * MENU_FONT_CELL_WIDTH;
         primitive_buffer_begin_poly_ft4();
         current_poly_ft4->tpage = font->tpage;
         current_poly_ft4->clut = font->clut;
@@ -290,18 +304,18 @@ void menu_draw_string(
         current_poly_ft4->y2 = string->y + font->height;
         current_poly_ft4->x3 = string->x + x_offset + font->width;
         current_poly_ft4->y3 = string->y + font->height;
-        glyph = string->codes[i] & 0xfff;
-        current_poly_ft4->u0 = (glyph % 16) * 14;
-        current_poly_ft4->v0 = (glyph / 16) * 12;
-        current_poly_ft4->u1 = (glyph % 16) * 14 + font->width;
-        current_poly_ft4->v1 = (glyph / 16) * 12;
-        current_poly_ft4->u2 = (glyph % 16) * 14;
-        current_poly_ft4->v2 = (glyph / 16) * 12 + font->height;
-        current_poly_ft4->u3 = (glyph % 16) * 14 + font->width;
-        current_poly_ft4->v3 = (glyph / 16) * 12 + font->height;
-        primitive_buffer_commit_poly_ft4(1000);
+        glyph = string->codes[i] & MENU_TEXT_GLYPH_MASK;
+        current_poly_ft4->u0 = (glyph % MENU_FONT_COLUMNS) * MENU_FONT_CELL_WIDTH;
+        current_poly_ft4->v0 = (glyph / MENU_FONT_COLUMNS) * MENU_FONT_CELL_HEIGHT;
+        current_poly_ft4->u1 = (glyph % MENU_FONT_COLUMNS) * MENU_FONT_CELL_WIDTH + font->width;
+        current_poly_ft4->v1 = (glyph / MENU_FONT_COLUMNS) * MENU_FONT_CELL_HEIGHT;
+        current_poly_ft4->u2 = (glyph % MENU_FONT_COLUMNS) * MENU_FONT_CELL_WIDTH;
+        current_poly_ft4->v2 = (glyph / MENU_FONT_COLUMNS) * MENU_FONT_CELL_HEIGHT + font->height;
+        current_poly_ft4->u3 = (glyph % MENU_FONT_COLUMNS) * MENU_FONT_CELL_WIDTH + font->width;
+        current_poly_ft4->v3 = (glyph / MENU_FONT_COLUMNS) * MENU_FONT_CELL_HEIGHT + font->height;
+        primitive_buffer_commit_poly_ft4(MENU_TEXT_OT_DEPTH);
 
-        if (string->codes[i] & 0x1000) {
+        if (string->codes[i] & MENU_TEXT_DAKUTEN) {
             primitive_buffer_begin_poly_ft4();
             current_poly_ft4->tpage = font->tpage;
             current_poly_ft4->clut = font->clut;
@@ -313,18 +327,18 @@ void menu_draw_string(
             current_poly_ft4->y2 = string->y + font->height;
             current_poly_ft4->x3 = string->x + x_offset + font->width;
             current_poly_ft4->y3 = string->y + font->height;
-            current_poly_ft4->u0 = 196;
-            current_poly_ft4->v0 = 24;
-            current_poly_ft4->u1 = 196 + font->width;
-            current_poly_ft4->v1 = 24;
-            current_poly_ft4->u2 = 196;
-            current_poly_ft4->v2 = 24 + font->height;
-            current_poly_ft4->u3 = 196 + font->width;
-            current_poly_ft4->v3 = 24 + font->height;
-            primitive_buffer_commit_poly_ft4(1000);
+            current_poly_ft4->u0 = MENU_DAKUTEN_U;
+            current_poly_ft4->v0 = MENU_KANA_MARK_V;
+            current_poly_ft4->u1 = MENU_DAKUTEN_U + font->width;
+            current_poly_ft4->v1 = MENU_KANA_MARK_V;
+            current_poly_ft4->u2 = MENU_DAKUTEN_U;
+            current_poly_ft4->v2 = MENU_KANA_MARK_V + font->height;
+            current_poly_ft4->u3 = MENU_DAKUTEN_U + font->width;
+            current_poly_ft4->v3 = MENU_KANA_MARK_V + font->height;
+            primitive_buffer_commit_poly_ft4(MENU_TEXT_OT_DEPTH);
         }
 
-        if (string->codes[i] & 0x2000) {
+        if (string->codes[i] & MENU_TEXT_HANDAKUTEN) {
             primitive_buffer_begin_poly_ft4();
             current_poly_ft4->tpage = font->tpage;
             current_poly_ft4->clut = font->clut;
@@ -336,15 +350,15 @@ void menu_draw_string(
             current_poly_ft4->y2 = string->y + font->height;
             current_poly_ft4->x3 = string->x + x_offset + font->width;
             current_poly_ft4->y3 = string->y + font->height;
-            current_poly_ft4->u0 = 210;
-            current_poly_ft4->v0 = 24;
-            current_poly_ft4->u1 = 210 + font->width;
-            current_poly_ft4->v1 = 24;
-            current_poly_ft4->u2 = 210;
-            current_poly_ft4->v2 = 24 + font->height;
-            current_poly_ft4->u3 = 210 + font->width;
-            current_poly_ft4->v3 = 24 + font->height;
-            primitive_buffer_commit_poly_ft4(1000);
+            current_poly_ft4->u0 = MENU_HANDAKUTEN_U;
+            current_poly_ft4->v0 = MENU_KANA_MARK_V;
+            current_poly_ft4->u1 = MENU_HANDAKUTEN_U + font->width;
+            current_poly_ft4->v1 = MENU_KANA_MARK_V;
+            current_poly_ft4->u2 = MENU_HANDAKUTEN_U;
+            current_poly_ft4->v2 = MENU_KANA_MARK_V + font->height;
+            current_poly_ft4->u3 = MENU_HANDAKUTEN_U + font->width;
+            current_poly_ft4->v3 = MENU_KANA_MARK_V + font->height;
+            primitive_buffer_commit_poly_ft4(MENU_TEXT_OT_DEPTH);
         }
     }
 }
@@ -363,8 +377,8 @@ void menu_draw_number(
     s32 i;
     s32 xoff;
 
-    for (i = 0; label->codes[i] != -1; i++) {
-        xoff = i * 7;
+    for (i = 0; label->codes[i] != MENU_TEXT_END; i++) {
+        xoff = i * MENU_NUMBER_ADVANCE;
         primitive_buffer_begin_poly_ft4();
         current_poly_ft4->tpage = font->tpage;
         current_poly_ft4->clut = font->clut;
@@ -377,14 +391,14 @@ void menu_draw_number(
         current_poly_ft4->x3 = label->x + xoff + font->width;
         current_poly_ft4->y3 = label->y + font->height;
         current_poly_ft4->u0 = font->u;
-        current_poly_ft4->v0 = label->codes[i] * 11;
+        current_poly_ft4->v0 = label->codes[i] * MENU_NUMBER_CELL_HEIGHT;
         current_poly_ft4->u1 = font->u + font->width;
-        current_poly_ft4->v1 = label->codes[i] * 11;
+        current_poly_ft4->v1 = label->codes[i] * MENU_NUMBER_CELL_HEIGHT;
         current_poly_ft4->u2 = font->u;
-        current_poly_ft4->v2 = label->codes[i] * 11 + font->height;
+        current_poly_ft4->v2 = label->codes[i] * MENU_NUMBER_CELL_HEIGHT + font->height;
         current_poly_ft4->u3 = font->u + font->width;
-        current_poly_ft4->v3 = label->codes[i] * 11 + font->height;
-        primitive_buffer_commit_poly_ft4(1000);
+        current_poly_ft4->v3 = label->codes[i] * MENU_NUMBER_CELL_HEIGHT + font->height;
+        primitive_buffer_commit_poly_ft4(MENU_TEXT_OT_DEPTH);
     }
 }
 
@@ -578,11 +592,11 @@ void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
     s32 i = 0;
     s32 blank;
 
-    blank = (pad_zero == 0) ? 10 : 0;
+    blank = (pad_zero == 0) ? MENU_NUMBER_BLANK : 0;
     for (; i < count; i++) {
         out[i] = blank;
     }
-    out[count] = -1;
+    out[count] = MENU_TEXT_END;
     for (i = count - 1; i >= 0; i--) {
         out[i] = value % 10;
         value /= 10;

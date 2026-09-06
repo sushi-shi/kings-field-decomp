@@ -61,9 +61,9 @@ void menu_list_render(const KfMenuList *list)
                 gs.x += 0x6e;
                 gs.codes[0] = tens;
                 if (tens == 0) {
-                    gs.codes[0] = 10;
+                    gs.codes[0] = MENU_NUMBER_BLANK;
                 }
-                gs.codes[2] = -1;
+                gs.codes[2] = MENU_TEXT_END;
                 menu_draw_number(
                     &menu_assets.number_atlas, (const MenuGlyphString *)&gs);
                 counts++;

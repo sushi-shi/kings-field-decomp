@@ -54,13 +54,13 @@ void menu_config_panel(void)
     la->y = 0x29;
     la->codes[0] = 0xf9;
     la->codes[1] = 0xfa;
-    la->codes[2] = -1;
+    la->codes[2] = MENU_TEXT_END;
     lb->x = 0xf0;
     lb->y = 0x29;
     lb->codes[0] = 0xf9;
     lb->codes[1] = 0xfb;
     lb->codes[2] = 0xfb;
-    lb->codes[3] = -1;
+    lb->codes[3] = MENU_TEXT_END;
     states[0] = player_state.audio_effects_enabled;
     music_orig = player_state.audio_music_enabled;
     states[1] = music_orig;

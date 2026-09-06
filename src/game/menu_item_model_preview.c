@@ -56,7 +56,7 @@ void menu_item_model_preview(s32 item_id)
         gs.x = 0xe6;
         gs.codes[0] = 0xca;
         gs.codes[1] = 0xcb;
-        gs.codes[2] = -1;
+        gs.codes[2] = MENU_TEXT_END;
         gs.y += 18;
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 

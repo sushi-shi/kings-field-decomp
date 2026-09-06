@@ -33,13 +33,13 @@ s32 menu_two_option_prompt(
     label_a.y = count * 20 + 44;
     label_a.codes[0] = 0x59;
     label_a.codes[1] = 0x41;
-    label_a.codes[2] = -1;
+    label_a.codes[2] = MENU_TEXT_END;
     label_b.x = 0x60;
     label_b.y = count * 20 + 64;
     label_b.codes[0] = 0x41;
     label_b.codes[1] = 0x41;
     label_b.codes[2] = 0x43;
-    label_b.codes[3] = -1;
+    label_b.codes[3] = MENU_TEXT_END;
 
     for (;;) {
         if (result != -99) {

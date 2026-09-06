@@ -19,6 +19,17 @@ enum {
     MENU_SOUND_CANCEL_OR_ERROR = 2
 };
 
+/* Signed glyph streams share a terminator; each atlas has its own blank. */
+enum {
+    MENU_TEXT_END = -1,
+    MENU_TEXT_BLANK = 0xff,
+    MENU_TEXT_GLYPH_MASK = 0x0fff,
+    MENU_TEXT_DAKUTEN = 0x1000,
+    MENU_TEXT_HANDAKUTEN = 0x2000,
+    MENU_NUMBER_BLANK = 10,
+    MENU_NUMBER_SLASH = 11
+};
+
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
     u16 x;

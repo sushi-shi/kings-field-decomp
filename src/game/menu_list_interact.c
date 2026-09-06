@@ -46,7 +46,7 @@ s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
         opt0.codes[0] = 0x75;
         opt0.codes[1] = 0x52;
         opt0.codes[2] = 0x6a;
-        opt0.codes[3] = -1;
+        opt0.codes[3] = MENU_TEXT_END;
         goto opt0_done;
     } else if (kind == 2) {
         opt0.codes[0] = 0x59;
@@ -61,7 +61,7 @@ s32 menu_list_interact(const KfMenuList *list, s32 kind, s32 mode,
         opt0.codes[0] = 0x70;
         opt0.codes[1] = 0x71;
     }
-    opt0.codes[2] = -1;
+    opt0.codes[2] = MENU_TEXT_END;
 opt0_done:
     if (kind == 2) {
         opt1.codes[0] = 0x41;
@@ -72,7 +72,7 @@ opt0_done:
         opt1.codes[1] = 0x61;
         opt1.codes[2] = 0x6a;
     }
-    opt1.codes[3] = -1;
+    opt1.codes[3] = MENU_TEXT_END;
 
     menu_frame_begin();
     do {
