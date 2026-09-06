@@ -1237,3 +1237,82 @@ pass (644 tests, 131 sandbox skips), and lint/whitespace checks pass. The full
 build retains its existing ownership and placement failures: target relink
 PSX 1/1, GAME 75/77 and OPEN 34/38, five of 60 source data owners matching,
 and no artifact failures.
+
+## Map mesh banks and visibility classes
+
+Function Match Plan: finish the literal audit of GAME `render_map_cell`
+(8001e5ec), GAME `render_map_cells` (8001e83c), OPEN `render_map_cell`
+(80018bbc), and OPEN `opening_render_map_cells` (80018d8c). The existing
+complete image-qualified dossiers, incoming raw controls and current source
+cover the emitters, traversals, callers, SDK boundaries, data references,
+adjacent bodies and history. The selected resource loaders independently
+identify the map TMD and visibility-table payloads. Preserve the byte object
+index, narrowing casts, natural XYZ publication, callback order, loop widths
+and raw relocation targets. Require all 112 non-debug objects and all 484
+strict scores to remain identical to the 1a2cbce baseline.
+
+The second raw TMD in each B1..B5 `MIXB.DAT` contains exactly 200 objects,
+as does OPEN's B0 `MIXB0.` map TMD. The attribute is decremented as a byte
+and rejected above 99. Window class 1 adds 100, selecting indices 100..199;
+class 2 retains indices 0..99. Thus 100 is the number of map meshes in each
+bank, distinct from the equal-valued map-grid width. Name that shared count.
+
+The GAME `COM/COM.DAT` second chunk and OPEN `B0/RTBL.` each supply sixteen
+204-byte records: four halfword dimensions/origins and 196 visibility bytes.
+Every shipped directional window is 14 by 14 and uses only classes 0, 1, 2.
+Class 0 is skipped; the six class-2 cells are a near-view rectangle inside
+the central 3-by-3 neighborhood, while class 1 covers the outward region.
+GAME's fixed window has a 3-by-3 class-2 center and class 1 around it. Name
+these hidden/distant/near classes, but retain the explicit table pattern.
+These are authored selections: a few directional class-1 cells also lie in
+the central neighborhood, so do not replace the table with a distance test.
+
+The second bank generally reduces geometric detail. Among the 100 paired
+objects in floors 1..5, its primitive counts are fewer/equal/more in
+59/41/0, 73/26/1, 63/37/0, 51/49/0 and 61/39/0 cases, respectively.
+For example, every floor's objects 0 and 100 retain the same measured bounds
+while changing from 28 polygons to four. The exception is B2 object 49/149:
+two polygons in a small planar object versus fifteen in a cell-sized object.
+OPEN has equal polygon counts in all 100 pairs. The bank names describe the
+selection policy; they do not claim every second-bank mesh is a simplification
+of its counterpart or that the two OPEN payloads are byte-identical.
+
+GAME selects directional windows only for signed pitch -511..511, strictly
+between -45 and +45 degrees in the 4096-unit turn. Express its original
+511/1023 bias/span using an eighth turn and endpoint adjustments; retain
+both unsigned-halfword casts and the original comparison. The zero-based
+orientation tests derive from the already named one-based quarter/half/
+three-quarter-turn encodings. The light timer's -1 exhaustion and two-on/
+two-off remapping remain explicit, as does the authored three-pair mesh
+mapping; neither a timer-phase alias nor an invented door identity adds
+evidence about why those particular values were chosen.
+
+All 201 remaining inline literals in the two map-render source files have
+these reasons. The retail ownership claims remain literal evidence as in the
+rest of the campaign.
+
+| Sites | Values | Reason |
+| --- | --- | --- |
+| Fixed-window dimensions and origin | 13/13, 6/6 | Authored 13-by-13 sampling area with its origin at the center cell; its chosen extent is not derived from a separately proved rendering limit. |
+| Fixed-window cells | 0/1/2 | Explicit hidden/distant/near pattern, with a source legend and shared class names. Numeric rows preserve the shape's readability; the remaining 27 bytes of the 196-byte array are implicitly zero-filled. |
+| Light timer test | -1 | Exhausted countdown disables remapping; initialization and the per-frame decrement independently establish this sentinel. |
+| Light timer mask and comparison | 3/2 | Modulo-four phase with two active and two inactive updates. The choice of that flicker period remains an authored timing parameter. |
+| Light mesh-remapping switch | 44/45/46 -> 17/18/19 hex | Authored pairs of one-based map attributes. Their individual semantic mesh identities remain unresolved; the ordinary switch preserves their real control flow. |
+| Mesh bound | -1 | Last zero-based index in a bank with the named mesh count. |
+| Orientation subtraction and comparisons | -1 | Convert both the serialized value and named orientation tags from one-based encoding to zero-based matrix indices. |
+| Pitch bias and span | -1 and 2 | Strict endpoints around zero: two equal half-ranges, minus one, with the original unsigned-halfword wrap behavior. |
+| Directional-window index | -1 | Last index before reversing the sixteen yaw bins. |
+| Row and column countdown tests | 0 | Exhaustion of the existing byte counters. |
+
+The shared header's remaining 196-byte cell-array extent is the independently
+measured serialized payload capacity (14 by 14 in both shipped directional
+tables), not the fixed window's 13-by-13 active area. It is intentionally
+unchanged by this source audit.
+
+Validation: all 644 repository tests pass (nine skips), and lint and
+whitespace checks pass. All 112 objects retain every non-debug section and
+all 484 strict scores from 1a2cbce; only GAME's map-unit debug-line section
+changes. The OPEN emitter/traversal and GAME traversal remain strict 100%,
+and the GAME emitter remains 96.743240%. The full build retains the existing
+ownership and placement failures, with target relink PSX 1/1, GAME 75/77 and
+OPEN 34/38, five of 60 source data owners matching, and no artifact failures.

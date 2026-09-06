@@ -75,7 +75,13 @@ typedef struct KfOrderingTable {
     u32 entries[KF_ORDERING_TABLE_LENGTH];
 } KfOrderingTable;
 
-/* Per-yaw row-major visible-cell window shared by GAME and OPEN. */
+enum {
+    KF_CELL_WINDOW_HIDDEN = 0,
+    KF_CELL_WINDOW_DISTANT = 1,
+    KF_CELL_WINDOW_NEAR = 2
+};
+
+/* Per-yaw row-major cell classes shared by GAME and OPEN. */
 typedef struct KfCellWindow {
     u16 width;
     u16 height;

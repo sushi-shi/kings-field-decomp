@@ -3,6 +3,7 @@
 #include <kf/game_render.h>
 #include <kf/game.h>
 
+/* Authored mask: 0 hidden, 1 distant mesh bank, 2 near mesh bank. */
 DATA(0x80055e9c, 0xcc)
 static KfCellWindow render_fixed_cell_window = {
     13, 13, 6, 6,
@@ -27,24 +28,8 @@ DATA(0x80095860, 0x4)
 const KfCellWindow *active_cell_window;
 
 /*
- * Contiguous visible-map-cell render path 0x8001e5ec..0x8001e9a4. The
- * dispatcher is the emitter's sole external caller, and both functions share
- * the same cell grids, render state, and map-render call chain.
- */
-
-/*
- * Per-cell wall/floor geometry emitter for the map pass, called by
- * render_map_cells for each visible, populated cell.  Reads the cell's
- * attribute byte to pick the wall TMD object (remapping the three door codes
- * 0x44/0x45/0x46 to 0x17/0x18/0x19 while a light effect is active and level),
- * builds the cell's world position relative to the view origin, applies the
- * per-orientation quadrant rotation/light matrices, and enqueues the object.
- *
- * The view world position is read as its low 16 bits (`(u16)view_position.*`),
- * matching the wrapped-coordinate reads shared with the actor/object emitters.
- * RotTrans writes the transformed origin straight into the cell matrix's
- * translation slot before MulMatrix0 fills its rotation (the shared
- * &model.t idiom from render_actor).
+ * Keep the unsigned low-halfword view coordinates. RotTrans writes MATRIX.t
+ * before MulMatrix0 fills its rotation without overwriting that translation.
  */
 ADDRESS(0x8001e5ec, 0x250)
 void render_map_cell(s32 col, s32 row, char cell)
@@ -57,10 +42,11 @@ void render_map_cell(s32 col, s32 row, char cell)
     s16 light;
 
     object_index = map_cell_attribute_grid[row][col];
-    if (object_index == 0xff) {
+    if (object_index == KF_MAP_ATTRIBUTE_NONE) {
         return;
     }
     light = player_state.light_effect_timer;
+    /* Two-on/two-off updates; -1 disables the authored mesh remapping. */
     if (light != -1 && (light & 3) < 2) {
         switch (object_index) {
         case 0x44:
@@ -75,24 +61,24 @@ void render_map_cell(s32 col, s32 row, char cell)
         }
     }
     object_index--;
-    if (object_index > 99) {
+    if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
     orient = map_cell_orientation_grid[row][col] - 1;
-    if (cell == 1) {
-        object_index += 100;
+    if (cell == KF_CELL_WINDOW_DISTANT) {
+        object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
         col * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vx,
         map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP
             - (u16)render_state.view_position.vy,
         row * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vz);
-    if (orient == 1) {
+    if (orient == KF_MAP_ORIENT_QUARTER_TURN - 1) {
         position.vz += KF_MAP_TILE_SIZE;
-    } else if (orient == 2) {
+    } else if (orient == KF_MAP_ORIENT_HALF_TURN - 1) {
         position.vx += KF_MAP_TILE_SIZE;
         position.vz += KF_MAP_TILE_SIZE;
-    } else if (orient == 3) {
+    } else if (orient == KF_MAP_ORIENT_THREE_QUARTER_TURN - 1) {
         position.vx += KF_MAP_TILE_SIZE;
     }
 
@@ -127,7 +113,9 @@ void render_map_cells(void)
     u8 rows;
     u8 cols;
 
-    if ((u16)((u16)render_state.view_rotation.vx + 0x1ff) >= 0x3ff) {
+    /* Directional windows apply only for -45 degrees < pitch < 45 degrees. */
+    if ((u16)((u16)render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
+        >= 2 * KF_ANGLE_EIGHTH_TURN - 1) {
         active_cell_window = &render_fixed_cell_window;
     } else {
         active_cell_window =
@@ -146,7 +134,7 @@ void render_map_cells(void)
             col = col_base;
             cols = active_cell_window->width;
             do {
-                if ((u32)col < KF_MAP_COLUMNS && *cell != 0) {
+                if ((u32)col < KF_MAP_COLUMNS && *cell != KF_CELL_WINDOW_HIDDEN) {
                     render_map_cell(col, row, *cell);
                 }
                 cell++;
