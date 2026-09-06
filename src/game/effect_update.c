@@ -148,19 +148,22 @@ ADDRESS(0x800384f8, 0x1cc)
 void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step)
 {
     KfFloorDeformSegment *segment = &floor_deform_segments[segment_index];
-    int range = progress_step < 0 ? -progress_step : progress_step;
+    int range = progress_step;
     VECTOR sound_position;
-    int col;
-    int row;
+    u8 col;
+    u8 row;
     int count;
     int height_delta;
 
+    if (range < 0) {
+        range = -range;
+    }
     sound_position.vy = -(segment->end_height * 100);
     col = segment->column;
     row = segment->row;
-    count = segment->cell_count - 1;
+    count = segment->cell_count;
     height_delta = segment->end_height - segment->start_height;
-    for (; count != -1; count--) {
+    while (--count != -1) {
         int progress = progress_start;
         progress_start += progress_step;
         if (progress < 0) {
@@ -168,12 +171,12 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         } else if (progress >= 4097) {
             progress = 4096;
         } else if (progress >= 3900 && progress < range + 3900) {
-            sound_position.vx = 2000 * (col & 0xff) + 1000;
-            sound_position.vz = 2000 * (row & 0xff) + 1000;
+            sound_position.vx = 2000 * col + 1000;
+            sound_position.vz = 2000 * row + 1000;
             audio_play_spatial_default_range(&gameplay_sound_ref_4,
                 &sound_position, 0x7f);
         }
-        map_floor_height_grid[row & 0xff][col & 0xff] =
+        map_floor_height_grid[row][col] =
             ((height_delta * progress) >> 12) + segment->start_height;
         col += segment->column_step;
         row += segment->row_step;
