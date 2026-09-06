@@ -198,3 +198,12 @@ fingerprint differences from the original 112-unit comparison are the new
 The combined tree keeps all 349 historically exact functions and 13 vendor
 controls exact, with 60 matching data owners. The exact-only bank inputs are
 refreshed for this integrated base.
+
+## Subsequent strict closure
+
+The [scratch/retry campaign](game-graphics-scratch.md) closes the binder at
+strict 100% with all 932 retail bytes exact. An explicit allocation-retry
+label restores the count reload in the backedge, and publishing clip before
+keyframe restores the scratch-copy setup. All six lifecycle siblings remain
+exact; the full 1136-case animation oracle passes. No array capacity or
+complete graphics-owner claim is required for this function's closure.

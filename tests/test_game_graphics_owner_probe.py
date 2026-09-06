@@ -337,6 +337,56 @@ extern KfMaterialProbe material_probe;
                     self.assertNotEqual(actual[1], expected[1])
                     self.assertEqual(len(addresses), 59)
 
+    def test_scratch_consumers_preserve_typed_accesses_without_capacity_claims(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        data['graphics_owner_probe'] = ORIGIN
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        selected = {
+            'game.render': {'tmd_project_vertices', 'tmd_project_vertices_shift',
+                            'tmd_transform_vertices'},
+            'game.pool': {'render_bind_animated_instance'},
+        }
+        for unit_name, names in selected.items():
+            unit = manifest.by_name()[unit_name]
+            for owner in (False, True):
+                source = unit.source_path.read_text()
+                if owner:
+                    source = candidate_source(unit, names).replace(
+                        'tmd_projected_vertices',
+                        '(KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318')
+                    source = source.replace(
+                        'tmd_morph_scratch',
+                        '((SVECTOR *)(graphics_owner_probe.unknown_projection_morph_20318 + 0x1f40))')
+                    source = source.replace(
+                        'asset_registry_entries',
+                        '((KfAssetHeader **)graphics_owner_probe.unknown_registry_20134)')
+                with self.subTest(unit=unit_name, owner=owner), tempfile.TemporaryDirectory() as directory:
+                    obj = self.compile(Path(directory), unit, source)
+                    for claim in unit.functions:
+                        if claim.symbol not in names:
+                            continue
+                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                     image.require(claim.va, claim.body_size)))
+                        actual, calls, _ = linked_words(obj, unit, claim, data, functions)
+                        self.assertEqual(actual, expected, claim.symbol)
+                        if owner:
+                            wrong, same_calls, _ = linked_words(
+                                obj, unit, claim, dict(data, graphics_owner_probe=ORIGIN + 4), functions)
+                            self.assertNotEqual(wrong, expected)
+                            self.assertEqual(same_calls, calls)
+                        if claim.symbol == 'render_bind_animated_instance':
+                            # Retrying at the call skips the real count reload;
+                            # all calls still exist, so call-set equality misses it.
+                            self.assertEqual(actual[0xB8 // 4], 0x97AA0018)
+                            self.assertEqual(actual[0xD4 // 4] & 0x3FFFFFF,
+                                             (claim.va + 0xB8) >> 2 & 0x3FFFFFF)
+                            wrong = actual.copy()
+                            wrong[0xD4 // 4] += 1
+                            self.assertNotEqual(wrong, expected)
+
     def test_polygon_owner_recovers_addresses_without_claiming_array_capacity(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()

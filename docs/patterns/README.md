@@ -55,6 +55,8 @@ promotes a probe to a proven historical toolchain.
   reviewed switch/internal jumps and shared lighting/depth tails.
 - [game-sprite-enqueue.md](game-sprite-enqueue.md): projected sprite depth,
   authentic SDK outputs and texture publication order.
+- [game-graphics-scratch.md](game-graphics-scratch.md): projection/morph owner
+  controls and the animation allocation-retry target.
 - [open-floor-item-render-residue.md](open-floor-item-render-residue.md):
   typed floor-item sprite descriptors and the extra facing-byte mask shared
   by the GAME and OPEN retail renderers.
