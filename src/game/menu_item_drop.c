@@ -25,8 +25,7 @@ void menu_drop_item(void)
     u8 counts[80];
     u8 codes[80];
     u8 *inv;
-    u8 *equip;
-    s16 *name;
+    KfPlayerState *player;
     s32 found;
     s32 code;
     s32 j;
@@ -41,27 +40,26 @@ void menu_drop_item(void)
 
     found = 0;
     code = 0;
-    /* The seven equipment ids: [0] worn weapon, [0x2c..0x31] shield, head,
-     * body, arm and leg armour, and accessory. */
-    equip = &player_state.equipped_weapon_id;
+    player = &player_state;
     inv = item_stock[0];
-    name = item_name_rows[0].codes;
     for (; code < 80; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
-            if (code == equip[0x00] || code == equip[0x2c] ||
-                code == equip[0x2d] || code == equip[0x2e] ||
-                code == equip[0x2f] || code == equip[0x30] ||
-                code == equip[0x31])
+            if (code == player->equipped_weapon_id ||
+                code == player->equipped_head_armor_id ||
+                code == player->equipped_body_armor_id ||
+                code == player->equipped_shield_id ||
+                code == player->equipped_arm_armor_id ||
+                code == player->equipped_leg_armor_id ||
+                code == player->equipped_accessory_id)
                 counts[found]--;
             if (counts[found] != 0) {
                 for (j = 0; j < 10; j++)
-                    labels[found][j] = name[j];
+                    labels[found][j] = item_name_rows[code].codes[j];
                 codes[found] = code;
                 found++;
             }
         }
-        name += 10;
     }
 
     ctx.entry_count = found;

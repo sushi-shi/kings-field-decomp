@@ -106,3 +106,64 @@ pass. Full kf build still fails the existing data/relink closure gates:
 source data 8/61, SDK config data 4/4 and target relink 110/116, with six
 conflicting section bases and no data artifact failures. No baseline rows,
 shared headers, compiler profiles or unrelated dirty inputs are banked.
+
+## Typed-field and name-index follow-up plan at `8c801db`
+
+The six retail views, sole caller, complete cleanup/return tail, adjacent
+boundaries, original history and fresh unit compile were rechecked. The
+starting strict score remains 99.603960%; the three save/load neighbors
+remain exact. Preserve all twenty calls, eleven direct jumps, three ordered
+referents, the 1856-byte frame and distinct model-failure/normal-cleanup exits.
+The bodies remain absent from the curated vendor list and local FID matches.
+
+The byte-offset equipment view is not a final model for the known player
+object. Its seven retail loads select weapon, head, body, shield, arm, leg
+and accessory in that order (`+64,+90,+91,+92,+93,+94,+95` in KfPlayerState).
+The old comment incorrectly puts shield first among armor fields. Test a
+pointer to the existing complete KfPlayerState with those named fields;
+do not invent a per-file structure or change shared layout to fit codegen.
+
+Separately test direct `item_name_rows[code].codes[j]`: the 20-byte cursor
+and item index demonstrably advance together through all eighty records.
+The existing loop already matches the retail cursor-advance schedule, so
+measure the complete fresh object rather than assuming another panel's
+outcome transfers. Preserve accepted-row counters and every early return.
+
+## Typed-field follow-up result at `45dede3`
+
+The named-field pointer preserves one shared base register, but the probe
+chooses `player_state` (800a0780) rather than retail's interior base
+`player_state+64` (800a07e4). The seven load displacements change from
+`0,2c,2d,2e,2f,30,31` to `64,90,91,92,93,94,95` (hexadecimal). An independent
+fresh compile verifies identical effective addresses for all seven reads:
+800a07e4 and 800a0810..800a0815. No shared type or object layout changes.
+Retain the proper complete-object field accesses; a pointer rooted at one
+scalar member and indexed across other members is not the final object model.
+The older advice that named fields necessarily emit a separate LUI for each
+field is disproved by this pointer-based experiment.
+
+Direct name indexing emits the identical object as the typed-field version
+with a walking name pointer. Retain the simpler table/index expression;
+it does not introduce another mismatch or change the traversal schedule.
+
+Strict native objdiff is **99.547850%**, down from **99.603960%**. The body
+still has 303 words: the previous 24 register-operand differences plus eight
+base/displacement differences described above. The first divergence remains
+input initialization at +024. All 68 transfer sites/kinds/destinations and
+twenty numeric calls agree; seven delay-slot words retain register-operand
+differences. The two other address pairs still name item_name_rows and
+item_stock in retail order. Numeric base-pair equality is not claimed for
+the player reference, and this body is neither exact nor banked.
+
+Every raw word of the three save/load neighbors remains exact. Across all
+484 scored bodies only this non-exact score changes; eligible exact counts
+remain GAME 302/362, OPEN 98/108, PSX 1/1 (401/471 overall). The required
+657-test run passes. This is a source-model correction, not a new exact match
+or an attribution of the remaining register/address choices to a compiler
+mechanism. Further source changes require an independently evidenced fact.
+
+Ruff and whitespace checks pass. Full `kf build` reruns every image's
+verification and still fails the existing data/ownership/placement gates:
+source data 10/61, SDK config data 4/4, target relink 110/116 and six
+conflicting section bases, with no data artifact failures. No banked baseline
+row, generated product or unrelated source is included in this correction.
