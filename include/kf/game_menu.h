@@ -12,6 +12,12 @@
 #include <kf/game_save.h>
 #include <kf/psyq.h>
 
+KF_ENUM_BEGIN(KfMenuMode, s32)
+    KF_MENU_MODE_ROOT = 0,
+    KF_MENU_MODE_ITEM_PICKUP = 1,
+    KF_MENU_MODE_SHOP = 2
+KF_ENUM_END(KfMenuMode)
+
 /* Feedback styles; the cursor cue is also reused for opening/config actions. */
 enum {
     MENU_SOUND_CURSOR = 0,
@@ -172,7 +178,7 @@ extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 count, s32 pad_zero, s16 *out);
 extern void menu_drop_item(void);
-extern u32 menu_enter_mode(s32 mode, ...);
+extern u32 menu_enter_mode(KfMenuMode mode, ...);
 extern void menu_equip_select(s32 object);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(s32 item_id);

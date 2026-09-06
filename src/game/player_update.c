@@ -93,7 +93,7 @@ void player_update(void)
         input = PADRdown;
     }
     if ((input & PADRdown) && !(player_previous_input & PADRdown) && player_state.weapon_attack_phase == -1) {
-        item = menu_enter_mode(0);
+        item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
             player_use_item(item);
         } else if (item == -3) {

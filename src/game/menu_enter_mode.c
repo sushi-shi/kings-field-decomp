@@ -17,7 +17,7 @@ void func_80036e30(void)
 }
 
 ADDRESS(0x80036e38, 0xc8)
-u32 menu_enter_mode(s32 mode, ...)
+u32 menu_enter_mode(KfMenuMode mode, ...)
 {
     u32 result;
 
@@ -25,13 +25,13 @@ u32 menu_enter_mode(s32 mode, ...)
     pool_release_all();
     memory_reset_system_heap();
     switch (mode) {
-    case 0:
+    case KF_MENU_MODE_ROOT:
         result = menu_root();
         break;
-    case 1:
+    case KF_MENU_MODE_ITEM_PICKUP:
         result = item_use_confirm(*((u8 *)&mode + 4));
         break;
-    case 2:
+    case KF_MENU_MODE_SHOP:
         item_menu_root(*((u8 *)&mode + 4));
         result = 0;
         break;

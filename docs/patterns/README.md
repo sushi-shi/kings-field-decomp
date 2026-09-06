@@ -18,6 +18,8 @@ promotes a probe to a proven historical toolchain.
   queries, saved fields and the complete three-module retained-literal ledger.
 - [game-map-script-state.md](game-map-script-state.md): typed saved floor-script
   fields, area-trigger stages, revival, map-piece reveals and boss progression.
+- [game-map-script-literals.md](game-map-script-literals.md): floor-script
+  literal ledger, cutscene units and phases, interaction bounds and menu modes.
 
 - [gcc257-epilogue-and-scheduling.md](gcc257-epilogue-and-scheduling.md):
   the framed-epilogue delay-slot form, the checked `div` expansion, and the

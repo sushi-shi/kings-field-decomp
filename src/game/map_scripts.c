@@ -10,6 +10,20 @@
 /* Floor-specific ambient/action scripts and their shared interaction dispatch.
  * The original module boundary remains WIP. */
 
+KF_ENUM_BEGIN(KfMapWeaponTransformPhase, s32)
+    MAP_WEAPON_TRANSFORM_SPIN_UP = 0,
+    MAP_WEAPON_TRANSFORM_SPIN_DOWN = 1
+KF_ENUM_END(KfMapWeaponTransformPhase)
+
+enum {
+    MAP_WEAPON_TRANSFORM_HOLD_UPDATES = 40,
+    MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN = 20,
+    MAP_INTERACTION_RADIUS_PADDING = 800,
+    MAP_DOOR_FACING_TOLERANCE = 341,
+    MAP_CONTAINER_ITEM_COUNT = 4,
+    MAP_CONTAINER_ITEM_NONE = 255
+};
+
 /* Word at event+8: ignored stage cap, stage, page, gated delay (little endian). */
 #define MAP_DIALOGUE_TRIGGER_MASK 0xffffff00
 #define MAP_DIALOGUE_STARTED(stage) \
@@ -18,8 +32,8 @@
 
 DATA(0x800561d0, 0x38)
 static KfCameraPathPoint map_floor5_camera_path[2] = {
-    {{173000, -11500, 85000, 0}, {0, 2048, 0, 0}, 100, 0},
-    {{-1, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0}
+    {{173000, -11500, 85000, 0}, {0, KF_ANGLE_HALF_TURN, 0, 0}, 100, 0},
+    {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0}
 };
 
 DATA(0x80056208, 0x10)
@@ -27,7 +41,7 @@ static VECTOR map_floor1_sound_position = {65000, -10000, 25000, 0};
 
 DATA(0x80056218, 0x20)
 static MATRIX map_reveal_light_matrix = {
-    {{0, -4096, 0}, {0, -4096, 0}, {0, -4096, 0}}, {0, 0, 0}
+    {{0, -KF_FIXED12_ONE, 0}, {0, -KF_FIXED12_ONE, 0}, {0, -KF_FIXED12_ONE, 0}}, {0, 0, 0}
 };
 
 DATA(0x80056238, 0x10)
@@ -43,7 +57,7 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
     KfActor *actor = actor_state.actors;
     s16 index;
 
-    for (index = 0; index < 128; index++, actor++) {
+    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
         if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->tile_x == tile_x
             && actor->tile_z == tile_z) {
             return index;
@@ -110,18 +124,18 @@ void map_ambient_script_floor1(void)
     }
 }
 
-/* Floor 2 ambient script: random fire-crackle on the second map event. */
+/* Floor 2 ambient sound during the first two pages of event 1's stage 2. */
 ADDRESS(0x800341ec, 0x70)
 void map_ambient_script_floor2(void)
 {
     if (map_event_pool[1].dialogue_stage == 2 && map_event_pool[1].dialogue_page < 3
         && rand() < 4000) {
         audio_play_spatial_default_range(
-            &gameplay_sound_ref_8, (const VECTOR *)&map_event_pool[1].reference_x, 0x7f);
+            &gameplay_sound_ref_8, (const VECTOR *)&map_event_pool[1].reference_x, KF_AUDIO_MAX_VOLUME);
     }
 }
 
-/* Floor 3 ambient script: healing altar that also teaches two spells. */
+/* Floor 3: restore vitals and teach two spells within the fixed map region. */
 ADDRESS(0x8003425c, 0x88)
 void map_ambient_script_floor3(void)
 {
@@ -187,9 +201,9 @@ void map_reveal_fade(void)
 
     saved = render_state.light_matrix_copy;
 
-    for (blend = 0; blend < 4097; blend += 128) {
+    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += 128) {
         lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_DEFAULT], &color_matrix_table[KF_GAME_COLOR_WHITE], blend);
-        if (blend >= 1025) {
+        if (blend >= KF_FIXED12_ONE / 4 + 1) {
             map_event_pool[3].position_y -= 130;
             map_event_pool[3].rotation += 128;
         } else {
@@ -203,7 +217,7 @@ void map_reveal_fade(void)
     map_event_pool[3].state = KF_MAP_EVENT_DISABLED;
     map_floor5_script.character_arrived = KF_MAP_SCRIPT_SET;
 
-    for (blend = 0x1000; blend >= 0; blend -= 256) {
+    for (blend = KF_FIXED12_ONE; blend >= 0; blend -= 256) {
         lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_DEFAULT], &color_matrix_table[KF_GAME_COLOR_WHITE], blend);
         render_frame(0, 0);
         frame_pacer_wait();
@@ -260,7 +274,7 @@ void map_floor5_transition_cutscene(void)
     s32 grid_height;
     s32 spin;
     s32 hold;
-    s32 stage;
+    KfMapWeaponTransformPhase phase;
 
     if (player_state.equipped_weapon_id == 10) {
         player_equip_weapon(0xff);
@@ -271,7 +285,7 @@ void map_floor5_transition_cutscene(void)
     camera_path_begin(&path, map_floor5_camera_path);
     for (;;) {
         camera_path_step(&path, 0);
-        if (path.frames_remaining == -1) {
+        if (path.frames_remaining == KF_CAMERA_PATH_FINISHED) {
             break;
         }
         render_frame(&path.position, &path.rotation);
@@ -294,22 +308,22 @@ void map_floor5_transition_cutscene(void)
     grid_height = map_floor_height_grid[effect->cell_z][effect->cell_x];
     effect->rotation.z = 0;
     effect->rotation.x = 0;
-    effect->rotation.y = 0x800;
+    effect->rotation.y = KF_ANGLE_HALF_TURN;
     effect->action = KF_MAP_OBJECT_ACTION_IDLE;
     effect->position_y = -(grid_height * KF_MAP_HEIGHT_STEP) - 1300;
 
     spin = 0;
     hold = 0;
-    stage = 0;
+    phase = MAP_WEAPON_TRANSFORM_SPIN_UP;
     for (;;) {
-        switch (stage) {
-        case 0:
+        switch (phase) {
+        case MAP_WEAPON_TRANSFORM_SPIN_UP:
             effect->rotation.y += spin;
             if (hold != 0) {
                 hold -= 1;
                 if (hold == 1) {
-                    stage = 1;
-                } else if (hold == 0x14) {
+                    phase = MAP_WEAPON_TRANSFORM_SPIN_DOWN;
+                } else if (hold == MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN) {
                     spawn = *(VECTOR *)&effect->position_x;
                     spawn.vy -= 600;
                     effect_pool_construct(
@@ -320,10 +334,10 @@ void map_floor5_transition_cutscene(void)
             } else if (spin < 240) {
                 spin += 1;
             } else {
-                hold = 0x28;
+                hold = MAP_WEAPON_TRANSFORM_HOLD_UPDATES;
             }
             break;
-        case 1:
+        case MAP_WEAPON_TRANSFORM_SPIN_DOWN:
             effect->rotation.y += spin;
             if (spin > 0) {
                 spin -= 1;
@@ -375,7 +389,7 @@ void map_event_interact(KfMapEvent *event)
     case 8:
         if (item_stock[0][0x3b] != 0 && map_event_pool[2].dialogue_stage == 2
             && map_event_pool[2].dialogue_page < 2) {
-            *(u8 *)&magic_records[0] = 1;
+            magic_records[0].learned = 1;
             item_stock[0][0x3b]--;
             notify_enqueue(1);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
@@ -452,8 +466,8 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     KfMapObjectDefinition *definition;
     KfMapObjectDefinition *neighbor_definition;
 
-    sound_x = position->vx - (rsin(rotation->vy) * 1500 >> 12);
-    sound_z = position->vz + (rcos(rotation->vy) * 1500 >> 12);
+    sound_x = position->vx - (rsin(rotation->vy) * 1500 >> KF_FIXED12_BITS);
+    sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);
     switch (map_cell_attribute_grid[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
     case 0x3a:
         notify_enqueue(0xc);
@@ -471,10 +485,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         break;
     }
 
-    sound_x = position->vx - (rsin(rotation->vy) * 1000 >> 12);
-    sound_z = position->vz + (rcos(rotation->vy) * 1000 >> 12);
+    sound_x = position->vx - (rsin(rotation->vy) * 1000 >> KF_FIXED12_BITS);
+    sound_z = position->vz + (rcos(rotation->vy) * 1000 >> KF_FIXED12_BITS);
     if (notification_state.control.effect_phase == KF_NOTIFICATION_IDLE) {
-        index = map_event_pool_find_overlap(sound_x, sound_z, 0x320);
+        index = map_event_pool_find_overlap(sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING);
         if (index != -1) {
             event = &map_event_pool[index];
             switch (event->behavior) {
@@ -484,7 +498,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(2);
                 map_event_interact(event);
-                menu_enter_mode(2, event->character_id);
+                menu_enter_mode(KF_MENU_MODE_SHOP, event->character_id);
                 audio_play_current_map_sequence();
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 event->animation_clip = 0;
@@ -519,7 +533,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     }
 
     for (slot = 0;; slot++) {
-        index = map_object_pool_find_interaction_from(slot, sound_x, sound_z, 0x320);
+        index = map_object_pool_find_interaction_from(slot, sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING);
         if (index == -1) {
             break;
         }
@@ -531,11 +545,11 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 notify_enqueue(object->link.linked_notification);
                 continue;
             }
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x200)) {
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, KF_ANGLE_EIGHTH_TURN)) {
                 break;
             }
 
-            item_index = 3;
+            item_index = MAP_CONTAINER_ITEM_COUNT - 1;
             while (object->link.action_parameter == KF_MAP_OBJECT_PARAMETER_NONE) {
                 item_index--;
                 if ((s16)item_index == -1) {
@@ -544,24 +558,24 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             }
 
             audio_play_spatial_default_range(
-                &gameplay_sound_ref_2, (const VECTOR *)&object->position_x, 0x7f);
+                &gameplay_sound_ref_2, (const VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
             saved_pitch = rotation->vx;
-            while (object->rotation.x >= -0x3ff) {
-                if ((u16)(rotation->vx - 0xbf) >= 0x742) {
-                    rotation->vx += 0x10;
+            while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
+                if ((u16)(rotation->vx - 191) >= 1858) {
+                    rotation->vx += 16;
                 }
-                object->rotation.x -= 0x20;
+                object->rotation.x -= 32;
                 render_frame(position, rotation);
                 frame_pacer_wait();
             }
 
-            item_index = 3;
+            item_index = MAP_CONTAINER_ITEM_COUNT - 1;
             item_id = &object->link.action_parameter;
             for (;;) {
-                if (*item_id != 0xff) {
-                    result = menu_enter_mode(1, *item_id);
+                if (*item_id != MAP_CONTAINER_ITEM_NONE) {
+                    result = menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id);
                     if (result == 0) {
-                        *item_id = 0xff;
+                        *item_id = MAP_CONTAINER_ITEM_NONE;
                     } else if (result == 2) {
                         notify_enqueue(0x10);
                     }
@@ -579,13 +593,13 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER:
             item_id = &object->link.link_id;
             found_item = 0;
-            item_index = 3;
+            item_index = MAP_CONTAINER_ITEM_COUNT - 1;
             for (;;) {
-                if (*item_id != 0xff) {
+                if (*item_id != MAP_CONTAINER_ITEM_NONE) {
                     found_item = 1;
-                    result = menu_enter_mode(1, *item_id);
+                    result = menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id);
                     if (result == 0) {
-                        *item_id = 0xff;
+                        *item_id = MAP_CONTAINER_ITEM_NONE;
                     } else if (result == 2) {
                         notify_enqueue(0x10);
                     }
@@ -602,9 +616,9 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, MAP_DOOR_FACING_TOLERANCE)
                 && !angle_within_tolerance(
-                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
+                    rotation->vy, object->rotation.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                 break;
             }
             if (object->action != KF_MAP_OBJECT_ACTION_IDLE) {
@@ -618,9 +632,9 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, 0x155)
+            if (!angle_within_tolerance(rotation->vy, object->rotation.y, MAP_DOOR_FACING_TOLERANCE)
                 && !angle_within_tolerance(
-                    rotation->vy, object->rotation.y + 0x800, 0x155)) {
+                    rotation->vy, object->rotation.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                 break;
             }
             if (object->link.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
@@ -657,7 +671,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:
-            result = menu_enter_mode(1, object->object_id);
+            result = menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id);
             if (result == 0) {
                 object->object_id = KF_MAP_OBJECT_FREE;
             } else if (result == 2) {

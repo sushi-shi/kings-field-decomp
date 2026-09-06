@@ -44,6 +44,12 @@ It names area-trigger stages, binary flags and the four-reveal completion
 count, and propagates the saved-world type through the memory-card payload.
 The two earlier literal censuses above are refreshed after these substitutions.
 
+The [floor-script literal review](game-map-script-literals.md) accounts for
+all 326 retained occurrences in `map_scripts.c`, down from 363. Cutscene
+phases and menu modes have stored enum types; interaction padding, facing
+tolerances and container limits have named domains. Authored movement rates,
+fade durations, resource IDs and path digits have per-occurrence reasons.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under
