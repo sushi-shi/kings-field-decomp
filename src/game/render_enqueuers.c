@@ -374,13 +374,11 @@ ADDRESS(0x8001d730, 0x6e8)
 void render_enqueue_model(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object;
-    u8 *payload;
     u8 *normals;
     u8 *packet;
-    KfScreenVertex *vertices;
     u32 remaining;
     u32 header;
-    u32 type;
+    s32 type;
     s32 otz;
     KfScreenVertex *va;
     KfScreenVertex *vb;
@@ -388,20 +386,18 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     KfScreenVertex *vd;
 
     object = tmd_get_object(object_index);
-    payload = tmd_state.current_asset;
     remaining = object->primitive_count;
-    packet = payload + object->primitive_offset + 12;
-    normals = payload + object->normal_offset + 12;
-    vertices = tmd_projected_vertices;
-    if (remaining == 0) {
-        return;
-    }
-    remaining--;
-    do {
+    packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + 12);
+    normals = (u8 *)tmd_state.current_asset + (object->normal_offset + 12);
+    while (remaining-- != 0) {
+        KfScreenVertex *vertices = tmd_projected_vertices;
+
         header = *(u32 *)packet;
+        packet += 4;
         type = header >> 24;
-        if (type == 0x34) {
-            KfTmdGt3 *gt = (KfTmdGt3 *)(packet + 4);
+        switch (type) {
+        case 0x34: {
+            KfTmdGt3 *gt = (KfTmdGt3 *)packet;
 
             va = (KfScreenVertex *)((u8 *)vertices + gt->v0);
             vb = (KfScreenVertex *)((u8 *)vertices + gt->v1);
@@ -414,7 +410,6 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyGT3(prim);
-                model_textured_primitive_color.cd = prim->code;
                 prim->clut = active_render_clut;
                 prim->tpage = active_render_tpage;
                 *(long *)&prim->x0 = va->sxy;
@@ -423,6 +418,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 *(u16 *)&prim->u0 = *(u16 *)&gt->tu0;
                 *(u16 *)&prim->u1 = *(u16 *)&gt->tu1;
                 *(u16 *)&prim->u2 = *(u16 *)&gt->tu2;
+                model_textured_primitive_color.cd = prim->code;
                 NormalColorDpq3((SVECTOR *)(normals + gt->n0), (SVECTOR *)(normals + gt->n1),
                                 (SVECTOR *)(normals + gt->n2), &model_textured_primitive_color, va->p2,
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
@@ -431,73 +427,10 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                     AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
                 }
             }
-        } else if (type < 0x35) {
-            if (type == 0x24) {
-                KfTmdFt3 *ft = (KfTmdFt3 *)(packet + 4);
-
-                va = (KfScreenVertex *)((u8 *)vertices + ft->v0);
-                vb = (KfScreenVertex *)((u8 *)vertices + ft->v1);
-                vc = (KfScreenVertex *)((u8 *)vertices + ft->v2);
-                if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                    POLY_FT3 *prim = (POLY_FT3 *)display_state.primitive_buffer->cursor;
-
-                    display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
-                    if (display_state.primitive_buffer->cursor > display_state.primitive_buffer->end) {
-                        return;
-                    }
-                    SetPolyFT3(prim);
-                    model_textured_primitive_color.cd = prim->code;
-                    prim->clut = active_render_clut;
-                    prim->tpage = active_render_tpage;
-                    *(long *)&prim->x0 = va->sxy;
-                    *(long *)&prim->x1 = vb->sxy;
-                    *(long *)&prim->x2 = vc->sxy;
-                    *(u16 *)&prim->u0 = *(u16 *)&ft->tu0;
-                    *(u16 *)&prim->u1 = *(u16 *)&ft->tu1;
-                    *(u16 *)&prim->u2 = *(u16 *)&ft->tu2;
-                    NormalColorDpq((SVECTOR *)(normals + ft->n0), &model_textured_primitive_color,
-                                   (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
-                    otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
-                    if (otz + depth_bias > 4) {
-                        AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
-                    }
-                }
-            } else if (type == 0x2c) {
-                KfTmdFt4 *ft = (KfTmdFt4 *)(packet + 4);
-
-                va = (KfScreenVertex *)((u8 *)vertices + ft->v0);
-                vb = (KfScreenVertex *)((u8 *)vertices + ft->v1);
-                vc = (KfScreenVertex *)((u8 *)vertices + ft->v2);
-                if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                    POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-
-                    display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-                    vd = (KfScreenVertex *)((u8 *)vertices + ft->v3);
-                    if (display_state.primitive_buffer->cursor > display_state.primitive_buffer->end) {
-                        return;
-                    }
-                    SetPolyFT4(prim);
-                    model_textured_primitive_color.cd = prim->code;
-                    prim->clut = active_render_clut;
-                    prim->tpage = active_render_tpage;
-                    *(long *)&prim->x0 = va->sxy;
-                    *(long *)&prim->x1 = vb->sxy;
-                    *(long *)&prim->x2 = vc->sxy;
-                    *(long *)&prim->x3 = vd->sxy;
-                    *(u16 *)&prim->u0 = *(u16 *)&ft->tu0;
-                    *(u16 *)&prim->u1 = *(u16 *)&ft->tu1;
-                    *(u16 *)&prim->u2 = *(u16 *)&ft->tu2;
-                    *(u16 *)&prim->u3 = *(u16 *)&ft->tu3;
-                    NormalColorDpq((SVECTOR *)(normals + ft->n0), &model_textured_primitive_color,
-                                   (va->p2 + vc->p2 + vb->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
-                    otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
-                    if (otz + depth_bias > 4) {
-                        AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
-                    }
-                }
-            }
-        } else if (type == 0x3c) {
-            KfTmdGt4 *gt = (KfTmdGt4 *)(packet + 4);
+            break;
+        }
+        case 0x3c: {
+            KfTmdGt4 *gt = (KfTmdGt4 *)packet;
 
             va = (KfScreenVertex *)((u8 *)vertices + gt->v0);
             vb = (KfScreenVertex *)((u8 *)vertices + gt->v1);
@@ -505,13 +438,12 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
                 POLY_GT4 *prim = (POLY_GT4 *)display_state.primitive_buffer->cursor;
 
-                display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 vd = (KfScreenVertex *)((u8 *)vertices + gt->v3);
+                display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 if (display_state.primitive_buffer->cursor > display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT4(prim);
-                model_textured_primitive_color.cd = prim->code;
                 prim->clut = active_render_clut;
                 prim->tpage = active_render_tpage;
                 *(long *)&prim->x0 = va->sxy;
@@ -522,19 +454,89 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 *(u16 *)&prim->u1 = *(u16 *)&gt->tu1;
                 *(u16 *)&prim->u2 = *(u16 *)&gt->tu2;
                 *(u16 *)&prim->u3 = *(u16 *)&gt->tu3;
+                model_textured_primitive_color.cd = prim->code;
                 NormalColorDpq3((SVECTOR *)(normals + gt->n0), (SVECTOR *)(normals + gt->n1),
                                 (SVECTOR *)(normals + gt->n2), &model_textured_primitive_color, va->p2,
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 NormalColorDpq((SVECTOR *)(normals + gt->n3), &model_textured_primitive_color, va->p2,
                                (CVECTOR *)&prim->r3);
-                otz = (va->sz + vc->sz + vb->sz + vd->sz) >> 4;
+                otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
                 if (otz + depth_bias > 4) {
                     AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
                 }
             }
+            break;
         }
-        packet += 4 + ((header >> 6) & 0x3fc);
-    } while (remaining-- != 0);
+        case 0x24: {
+            KfTmdFt3 *ft = (KfTmdFt3 *)packet;
+
+            va = (KfScreenVertex *)((u8 *)vertices + ft->v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + ft->v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + ft->v2);
+            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+                POLY_FT3 *prim = (POLY_FT3 *)display_state.primitive_buffer->cursor;
+
+                display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
+                if (display_state.primitive_buffer->cursor > display_state.primitive_buffer->end) {
+                    return;
+                }
+                SetPolyFT3(prim);
+                prim->clut = active_render_clut;
+                prim->tpage = active_render_tpage;
+                *(long *)&prim->x0 = va->sxy;
+                *(long *)&prim->x1 = vb->sxy;
+                *(long *)&prim->x2 = vc->sxy;
+                *(u16 *)&prim->u0 = *(u16 *)&ft->tu0;
+                *(u16 *)&prim->u1 = *(u16 *)&ft->tu1;
+                *(u16 *)&prim->u2 = *(u16 *)&ft->tu2;
+                model_textured_primitive_color.cd = prim->code;
+                NormalColorDpq((SVECTOR *)(normals + ft->n0), &model_textured_primitive_color,
+                               (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
+                otz = (va->sz + vb->sz + vc->sz) / 3 >> 2;
+                if (otz + depth_bias > 4) {
+                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                }
+            }
+            break;
+        }
+        case 0x2c: {
+            KfTmdFt4 *ft = (KfTmdFt4 *)packet;
+
+            va = (KfScreenVertex *)((u8 *)vertices + ft->v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + ft->v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + ft->v2);
+            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+                POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+
+                vd = (KfScreenVertex *)((u8 *)vertices + ft->v3);
+                display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
+                if (display_state.primitive_buffer->cursor > display_state.primitive_buffer->end) {
+                    return;
+                }
+                SetPolyFT4(prim);
+                prim->clut = active_render_clut;
+                prim->tpage = active_render_tpage;
+                *(long *)&prim->x0 = va->sxy;
+                *(long *)&prim->x1 = vb->sxy;
+                *(long *)&prim->x2 = vc->sxy;
+                *(long *)&prim->x3 = vd->sxy;
+                *(u16 *)&prim->u0 = *(u16 *)&ft->tu0;
+                *(u16 *)&prim->u1 = *(u16 *)&ft->tu1;
+                *(u16 *)&prim->u2 = *(u16 *)&ft->tu2;
+                *(u16 *)&prim->u3 = *(u16 *)&ft->tu3;
+                model_textured_primitive_color.cd = prim->code;
+                NormalColorDpq((SVECTOR *)(normals + ft->n0), &model_textured_primitive_color,
+                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
+                otz = (va->sz + vb->sz + vc->sz + vd->sz) >> 4;
+                if (otz + depth_bias > 4) {
+                    AddPrim(&display_state.ordering_table[(otz + depth_bias) & 0x3fff], prim);
+                }
+            }
+            break;
+        }
+        }
+        packet += (header >> 6) & 0x3fc;
+    }
 }
 
 DATA(0x80057b60, 0x4)
