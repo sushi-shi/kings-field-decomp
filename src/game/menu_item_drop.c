@@ -158,16 +158,9 @@ void menu_drop_item(void)
 }
 
 /*
- * Save/load hub dispatched by the option menu (slot 5).  Runs a three-row
- * cursor (0 load, 1 save, 2 exit); confirm on a data row invokes the matching
- * worker.  A successful load returns its slot result (or -3 when the worker
- * reports an empty catalogue); a successful save plays the confirmation cue,
- * stops the map sequence, and holds the save-complete frame.  Returns the
- * chosen result, or -1/-99 on cancel.
- *
- * Structurally exact; open residue is the two-arm action dispatch's basic-block
- * layout (see docs/patterns/source-shapes-gcc257.md, "item / inventory menu
- * panels").
+ * Three-row hub dispatched by menu_root. The load action maps result 0 to -3;
+ * accepting the second action loads texture 0x3e6, stops music, and redraws
+ * forever. Cancellation of a sub-action keeps this hub open.
  */
 ADDRESS(0x80024e64, 0x260)
 s32 menu_save_load_hub(void)
@@ -193,11 +186,13 @@ s32 menu_save_load_hub(void)
                 ;
         }
 
-        if (action == 0) {
+        switch (action) {
+        case 0:
             result = menu_load_panel();
             if (result == 0)
                 result = -3;
-        } else if (action == 1) {
+            break;
+        case 1:
             result = menu_two_option_prompt(2, 3, cursor, 0);
             if (result == 0) {
                 menu_load_item_texture(0x3e6);
@@ -209,14 +204,17 @@ s32 menu_save_load_hub(void)
                     menu_present_frame();
                 }
             }
+            break;
+        default:
+            break;
         }
 
         if (action != -1 && result == -1)
             result = -99;
-        if (result != -99)
-            return result;
-
         action = -1;
+        if (result != -99)
+            break;
+
         confirm = 0;
         prev = input;
         input = PadRead(1);
@@ -234,10 +232,10 @@ s32 menu_save_load_hub(void)
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
+            confirm = 1;
             if (cursor == 2) {
                 result = -1;
             } else {
-                confirm = 1;
                 action = cursor;
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
@@ -249,6 +247,7 @@ s32 menu_save_load_hub(void)
         menu_draw_window(2, 3, cursor, confirm);
         menu_present_frame();
     }
+    return result;
 }
 
 /*

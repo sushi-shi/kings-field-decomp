@@ -263,6 +263,9 @@ promotes a probe to a proven historical toolchain.
 - [game-config-panel-abi.md](game-config-panel-abi.md): two by-value labels,
   input policy and first-frame/loop-tail draw structure recover the options
   panel's CFG; its draw helper stays exact and nine register-role words remain.
+- [game-save-load-hub-flow.md](game-save-load-hub-flow.md): exit-row highlight,
+  pending-action reset, post-loop return and case dispatch close the hub;
+  the earlier basic-block-layout limitation was not established.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.

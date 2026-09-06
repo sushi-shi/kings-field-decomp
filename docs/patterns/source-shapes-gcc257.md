@@ -1205,12 +1205,12 @@ do not chase):
   branch slot and the name pointer `t4` in the body; ours reverses it).
   Declaration-order and induction-shape variants do not flip either; a `scan`
   helper local is a forbidden fake and did not help.
-- `func_80024e64` (91.2%): the two-arm action dispatch (`if (action==0) load;
-  else if (action==1) save;`) -- retail branches *out of line* to the load/save
-  blocks and returns `move v0,s1` at the epilogue; cc1psx-257 inlines the load
-  block (inverting the first test) and schedules `move v0,result` into the
-  fall-through. A `switch (action)` did not change it. The `-1` constant does
-  hoist into `s6` as retail has it.
+- `func_80024e64`: **superseded** by
+  [the save/load hub reconstruction](game-save-load-hub-flow.md). The old
+  source omitted confirmation on the exit row and reset action only after
+  the return guard. Correcting those facts, returning after the loop, and
+  expressing the case/default dispatch as a switch recovers the exact body.
+  The earlier switch-only trial did not establish a compiler limitation.
 - `func_8002552c` (58.0%): retail hoists the loop-invariant constants `1` and
   `3` into callee-saved `s5`/`s6` (frame `0x78`); cc1psx-257 rematerialises them
   with `li` at each compare (frame `0x70`, two fewer saved regs), which cascades
