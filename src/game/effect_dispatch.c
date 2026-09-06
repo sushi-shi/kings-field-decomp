@@ -116,7 +116,7 @@ shared_projectile:
                 }
 
                 if (kind == 13) {
-                    effect->direction_y = 0;
+                    effect->direction.words.y = 0;
                     effect->phase = 0x78;
                 } else if (kind == 11 || kind == 12) {
                     effect->phase = 0x79;
@@ -127,17 +127,17 @@ shared_projectile:
             }
 
 advance_shared_projectile:
-            effect->position.vx += (s16)effect->direction_x;
-            effect->position.vy += (s16)effect->direction_y;
-            effect->position.vz += (s16)effect->direction_z;
+            effect->position.vx += (s16)effect->direction.words.x;
+            effect->position.vy += (s16)effect->direction.words.y;
+            effect->position.vz += (s16)effect->direction.words.z;
             if (kind == 5 || kind == 11) {
-                effect->rotation_z = (effect->rotation_z + 200) & 0xfff;
+                effect->rotation.vz = (effect->rotation.vz + 200) & 0xfff;
                 return;
             }
             if (kind == 4) {
                 s32 remaining;
 
-                effect->rotation_z = (effect->rotation_z + 200) & 0xfff;
+                effect->rotation.vz = (effect->rotation.vz + 200) & 0xfff;
                 remaining = effect->control.frames_remaining - 1;
                 effect->control.frames_remaining = remaining;
                 if ((u16)remaining == 0) {
@@ -153,11 +153,11 @@ effect_kind4_impact:
                     if (effect->base_render_id == 6) {
                         effect_pool_construct(
                             effect->id, effect->type, 0x20,
-                            &impact_position, &effect->rotation_x);
+                            &impact_position, &effect->rotation);
                     } else {
                         effect_pool_construct(
                             effect->id, effect->type, 0x29,
-                            &impact_position, &effect->rotation_x);
+                            &impact_position, &effect->rotation);
                     }
                 } else {
                     effect->render_id =
@@ -177,14 +177,14 @@ effect_kind4_impact:
                         effect->scale_y = next;
                         effect->scale_x = next;
                         effect->propagation.generations_remaining--;
-                        scatter = *(const SVECTOR *)&effect->direction_x;
+                        scatter = effect->direction.vector;
                         effect_scatter_triple((u16 *)&scatter);
                         effect->control.frames_remaining = effect->propagation.generations_remaining == 0 ? 15 : 5;
                         effect_pool_construct(
                             effect->id, effect->type, kind, &effect->position,
                             &scatter, effect->propagation.generations_remaining, effect->control.frames_remaining,
                             (s16)effect->scale_x);
-                        effect_scatter_triple(&effect->direction_x);
+                        effect_scatter_triple(&effect->direction.words.x);
                     } else {
                         effect->type = KF_EFFECT_SLOT_FREE;
                     }
@@ -201,7 +201,7 @@ effect_kind4_impact:
                 return;
             }
             if (kind == 13) {
-                effect->rotation_z = (effect->rotation_z + 100) & 0xfff;
+                effect->rotation.vz = (effect->rotation.vz + 100) & 0xfff;
                 return;
             }
             if (kind == 14) {
@@ -215,7 +215,7 @@ effect_kind4_impact:
             if (kind == 8 || kind == 22) {
                 return;
             }
-            effect->rotation_z = (effect->rotation_z + 600) & 0xfff;
+            effect->rotation.vz = (effect->rotation.vz + 600) & 0xfff;
             return;
         }
 
@@ -241,8 +241,8 @@ play_phase_sound:
                     phase_sound, &effect->position, 0x7f);
             }
         } else if (phase == 120) {
-            effect->direction_y += 20;
-            effect->position.vy += (s16)effect->direction_y;
+            effect->direction.words.y += 20;
+            effect->position.vy += (s16)effect->direction.words.y;
             if (effect->position.vy
                 > -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
                                         [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP)
@@ -275,9 +275,9 @@ play_phase_sound:
                     &magic_records[18].sounds[1], &effect->position, 0x7f);
                 return;
             }
-            effect->position.vx += (s16)effect->direction_x;
-            effect->position.vy += (s16)effect->direction_y;
-            effect->position.vz += (s16)effect->direction_z;
+            effect->position.vx += (s16)effect->direction.words.x;
+            effect->position.vy += (s16)effect->direction.words.y;
+            effect->position.vz += (s16)effect->direction.words.z;
             effect->scale_z += 0x400;
             if ((s16)effect->scale_z < 0) {
                 effect->scale_z = 0x7fff;
@@ -295,7 +295,7 @@ play_phase_sound:
             if (((phase - 20) & 1) == 0) {
                 effect_pool_construct(
                     effect->id, effect->type, 0x12,
-                    &effect->position, &effect->direction_x, 1);
+                    &effect->position, &effect->direction.vector, 1);
             }
             if (phase > 23) {
                 goto invalidate_and_return;
@@ -316,9 +316,9 @@ play_phase_sound:
                     5000, effect->type);
             }
         }
-        effect->position.vx += (s16)effect->direction_x;
-        effect->position.vy += (s16)effect->direction_y;
-        effect->position.vz += (s16)effect->direction_z;
+        effect->position.vx += (s16)effect->direction.words.x;
+        effect->position.vy += (s16)effect->direction.words.y;
+        effect->position.vz += (s16)effect->direction.words.z;
         effect->position.vy =
             -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
@@ -379,17 +379,17 @@ play_phase_sound:
 
         if (phase == 0) {
 randomize_kind20:
-            effect->direction_x =
-                (effect->direction_x + (rand() >> 6) - 0x80) & 0xfff;
-            effect->direction_y =
-                (effect->direction_y + (rand() >> 3) - 0x200) & 0xfff;
+            effect->direction.words.x =
+                (effect->direction.words.x + (rand() >> 6) - 0x80) & 0xfff;
+            effect->direction.words.y =
+                (effect->direction.words.y + (rand() >> 3) - 0x200) & 0xfff;
         } else if (phase > 4) {
             if ((u8)effect->control.target_mode == 0xff) {
                 if (rand() < 0xccc) {
                     goto randomize_kind20;
                 }
             } else if ((u8)effect->control.target_mode == 0xfe) {
-                effect->direction_y = vector_xz_to_angle(
+                effect->direction.words.y = vector_xz_to_angle(
                     player_state.camera_position.vx - effect->position.vx,
                     effect->position.vz - player_state.camera_position.vz);
                 desired_pitch = vector_xz_to_angle(
@@ -397,16 +397,16 @@ randomize_kind20:
                     /* Retail reads the shared distance slot before this branch
                      * has initialized it; preserve that original behavior. */
                     -target_distance);
-                effect->direction_x = -desired_pitch & 0xfff;
+                effect->direction.words.x = -desired_pitch & 0xfff;
             } else {
                 target = actor_pool_find_target_in_cone(
                     (const struct KfVec3i *)&effect->position,
-                    (s16)effect->rotation_y, 20000, 0x555, &target_distance);
+                    (s16)effect->rotation.vy, 20000, 0x555, &target_distance);
                 if (target != 0) {
                     KfActorDefinition *definition =
                         &actor_state.definitions[target->definition_id];
 
-                    effect->direction_y = vector_xz_to_angle(
+                    effect->direction.words.y = vector_xz_to_angle(
                         target->position.vx - effect->position.vx,
                         effect->position.vz - target->position.vz);
                     desired_pitch = vector_xz_to_angle(
@@ -414,42 +414,42 @@ randomize_kind20:
                             - (target->position.vy
                                - (definition->collision_height >> 1)),
                         -target_distance);
-                    effect->direction_x = -desired_pitch & 0xfff;
+                    effect->direction.words.x = -desired_pitch & 0xfff;
                 } else {
-                    effect->direction_x = 0;
+                    effect->direction.words.x = 0;
                 }
             }
             effect->phase = 20;
         }
 
-        effect->rotation_x = angle_approach(
-            effect->rotation_x, (s16)effect->direction_x, 0x40);
-        effect->rotation_y = angle_approach(
-            effect->rotation_y, (s16)effect->direction_y, 0x40);
+        effect->rotation.vx = angle_approach(
+            effect->rotation.vx, (s16)effect->direction.words.x, 0x40);
+        effect->rotation.vy = angle_approach(
+            effect->rotation.vy, (s16)effect->direction.words.y, 0x40);
         local_motion.vx = 0;
         local_motion.vy = 0;
         local_motion.vz = 650;
-        matrix_set_rotation_x(effect->rotation_x, &matrix);
+        matrix_set_rotation_x(effect->rotation.vx, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
         local_motion.vx = movement.vx;
         local_motion.vy = movement.vy;
         local_motion.vz = movement.vz;
-        matrix_set_rotation_y(effect->rotation_y, &matrix);
+        matrix_set_rotation_y(effect->rotation.vy, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
         effect->position.vx += movement.vx;
         effect->position.vy += movement.vy;
         effect->position.vz += movement.vz;
         effect->phase++;
-        effect->rotation_z = (effect->rotation_z + 0x100) & 0xfff;
+        effect->rotation.vz = (effect->rotation.vz + 0x100) & 0xfff;
         if (effect_map_collision(&effect->position, radius) != (u32)-1) {
             if (effect->base_render_id == 0x10) {
                 effect_pool_construct(
                     effect->id, effect->type, 0x2c,
-                    &effect->position, &effect->direction_x, 1);
+                    &effect->position, &effect->direction.vector, 1);
             } else {
                 effect_pool_construct(
                     effect->id, effect->type, 0x12,
-                    &effect->position, &effect->direction_x, 1);
+                    &effect->position, &effect->direction.vector, 1);
             }
             effect->type = KF_EFFECT_SLOT_FREE;
         }
@@ -468,11 +468,11 @@ randomize_kind20:
             if (effect->base_render_id == 11) {
                 effect_pool_construct(
                     effect->id, effect->type, 0x21,
-                    &effect->position, &effect->rotation_x);
+                    &effect->position, &effect->rotation);
             } else {
                 effect_pool_construct(
                     effect->id, effect->type, 0x2a,
-                    &effect->position, &effect->rotation_x);
+                    &effect->position, &effect->rotation);
             }
             if (phase == 3) {
                 phase_sound = &magic_records[4].sounds[1];
@@ -491,7 +491,7 @@ randomize_kind20:
         effect->scale_x = next;
         effect->scale_z = next;
         effect->scale_y = next;
-        effect->rotation_y = (effect->rotation_y + 0x514) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 0x514) & 0xfff;
         if (phase & 1) {
             u32 damage_radius;
 
@@ -569,7 +569,7 @@ advance_effect_phase:
                 spawn_position.vy = effect->position.vy;
                 effect_pool_construct(
                     effect->id, effect->type, 0x22,
-                    &spawn_position, &effect->rotation_x);
+                    &spawn_position, &effect->rotation);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
@@ -587,7 +587,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation_y = (effect->rotation_y + 500) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 500) & 0xfff;
         effect->phase++;
         break;
 
@@ -600,7 +600,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation_y = (effect->rotation_y + 500) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 500) & 0xfff;
         effect->phase++;
         break;
 
@@ -615,8 +615,8 @@ advance_effect_phase:
         } else if (phase < 41) {
             struct KfVec3i position;
 
-            position.x = effect->position.vx + (s16)effect->direction_x;
-            position.z = effect->position.vz + (s16)effect->direction_z;
+            position.x = effect->position.vx + (s16)effect->direction.words.x;
+            position.z = effect->position.vz + (s16)effect->direction.words.z;
             position.y = effect->position.vy;
             value = collision_query_world(
                 position.x, position.y, position.z, 1000, 0, 0x60);
@@ -668,9 +668,9 @@ publish_kind9_scale:
             effect->type = KF_EFFECT_SLOT_FREE;
         }
 rotate_kind9:
-        effect->rotation_y = (effect->rotation_y + 0x6a4) & 0xfff;
-        effect->rotation_x = (effect->rotation_x + 0x578) & 0xfff;
-        effect->rotation_z = (effect->rotation_z + 0x76c) & 0xfff;
+        effect->rotation.vy = (effect->rotation.vy + 0x6a4) & 0xfff;
+        effect->rotation.vx = (effect->rotation.vx + 0x578) & 0xfff;
+        effect->rotation.vz = (effect->rotation.vz + 0x76c) & 0xfff;
         break;
     }
 
@@ -688,18 +688,18 @@ rotate_kind9:
 
         switch (phase) {
         case 0:
-            remaining = effect->direction_x - 1;
-            effect->direction_x = remaining;
+            remaining = effect->direction.words.x - 1;
+            effect->direction.words.x = remaining;
             if ((s16)remaining == -1) {
                 effect->phase = 1;
                 return;
             }
-            effect->direction_z += effect->rotation_z;
-            for (column = 0; column < effect->rotation_y; column++) {
+            effect->direction.words.z += effect->rotation.vz;
+            for (column = 0; column < effect->rotation.vy; column++) {
                 effect_floor_deform_line(
-                    effect->rotation_x + column,
-                    (s16)effect->direction_z,
-                    -(s16)effect->direction_y);
+                    effect->rotation.vx + column,
+                    (s16)effect->direction.words.z,
+                    -(s16)effect->direction.words.y);
             }
             break;
         case 1:
@@ -707,23 +707,23 @@ rotate_kind9:
                 return;
             }
             effect->phase = 2;
-            effect->direction_z = 0x1000;
-            effect->direction_x = effect->position.vx;
+            effect->direction.words.z = 0x1000;
+            effect->direction.words.x = effect->position.vx;
             break;
         case 2:
-            remaining = effect->direction_x - 1;
-            effect->direction_x = remaining;
+            remaining = effect->direction.words.x - 1;
+            effect->direction.words.x = remaining;
             if ((s16)remaining == -1) {
 invalidate_and_return:
                 effect->type = KF_EFFECT_SLOT_FREE;
                 return;
             }
-            effect->direction_z -= effect->rotation_z;
-            for (column = 0; column < effect->rotation_y; column++) {
+            effect->direction.words.z -= effect->rotation.vz;
+            for (column = 0; column < effect->rotation.vy; column++) {
                 effect_floor_deform_line(
-                    effect->rotation_x + column,
-                    (s16)effect->direction_z,
-                    (s16)effect->direction_y);
+                    effect->rotation.vx + column,
+                    (s16)effect->direction.words.z,
+                    (s16)effect->direction.words.y);
             }
             break;
         }

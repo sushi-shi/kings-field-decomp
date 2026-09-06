@@ -380,7 +380,11 @@ def _align(value: int, alignment: int) -> int:
 
 
 def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
-    """Calculate target 32-bit C layouts from the ordered owner headers."""
+    """Calculate target 32-bit layouts of flat named structs and unions.
+
+    Inline anonymous aggregates remain outside this inventory; a containing
+    checked type must use a separately named member type.
+    """
     primitive_layouts = {
         "s8": (1, 1),
         "u8": (1, 1),
@@ -439,8 +443,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/game_menu.h",
         REPO / "include/kf/game_cd.h",
     )
-    # Only unions embedded in an inventoried struct become layout owners.
-    # Standalone packet/formatting views are outside this inventory, as before.
+    # Resolve named aggregates recursively, including standalone union views.
     definitions = {}
     constants: dict[str, int] = {}
     for path in checked_headers:
@@ -530,9 +533,8 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
             )
         return layouts[name]
 
-    for name, (_, kind, _) in definitions.items():
-        if kind == "struct":
-            layout_definition(name)
+    for name in definitions:
+        layout_definition(name)
     return layouts
 
 

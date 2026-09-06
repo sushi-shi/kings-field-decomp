@@ -1382,3 +1382,28 @@ Validation agrees with the field audit: every non-debug object section and
 all 484 strict scores are unchanged, including the initializer's 100% result.
 The repository tests, flake checks and lint/whitespace checks pass; full
 `kf build` retains the existing data-ownership and placement failures.
+
+## Incoming effect constructor
+
+The [effect field-width reconciliation](semantic-field-names.md#incoming-effect-constructor-and-field-widths)
+retains 282cbe7's exact constructor, source joins, complete SDK vector copies
+and repaired retail references while preserving the naming campaign's pool
+capacity/free-slot constants and typed semantic fields. The four incoming
+source units have independent compiler controls; the existing raw-word and
+45-row switch-table tests continue to compare directly against GAME retail.
+This integration does not claim completion of the effect family's remaining
+animation, asset-ID, range and timing literal audit.
+
+The added layout assertions retain measured offsets and byte extents as
+independent evidence. Their 1/-1 values are valid/invalid compile-time bounds.
+The low/high byte view at control +0x38 preserves kind 36's two 0xff writes;
+their designer purpose is still unknown. The parent-index and homing-selector
+members instead have proved byte stores and reads, so they remain named and
+are narrowed to the correct width. No unexplained store is relabelled as a
+countdown or branch merely because another kind uses that same storage.
+
+The four incoming controls, raw retail checks, all 651 repository tests and
+flake checks pass. Only the incoming constructor's strict score improves;
+all other 483 scores and every non-debug section of the other 111 objects
+remain unchanged. Full-build source-data matches improve to six of 60,
+while the existing ownership and placement gates remain unfinished.

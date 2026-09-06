@@ -18,17 +18,37 @@ enum {
     KF_EFFECT_SLOT_FREE = 0xff
 };
 
-/* Each kind selects the interpretation; all alternatives retain u16 storage. */
+typedef struct KfEffectDirectionWords {
+    u16 x;
+    u16 y;
+    u16 z;
+    u16 pad;
+} KfEffectDirectionWords;
+
+/* Effect kinds use these same eight bytes as a vector or unsigned state. */
+typedef union KfEffectDirection {
+    SVECTOR vector;
+    KfEffectDirectionWords words;
+} KfEffectDirection;
+
+/* Each kind selects the interpretation of the shared storage. */
 typedef union KfEffectVisualState {
     u16 animation_phase;
     u16 pulse_base_scale;
 } KfEffectVisualState;
 
+/* Kind 36 initializes both bytes; their behavioral purpose is unresolved. */
+typedef struct KfEffectControlBytes {
+    u8 low;
+    u8 high;
+} KfEffectControlBytes;
+
 typedef union KfEffectControl {
     u16 frames_remaining;
     u16 orbit_angle;
-    u16 parent_effect_index;
-    u16 target_mode;
+    u8 parent_effect_index;
+    u8 target_mode;
+    KfEffectControlBytes bytes;
 } KfEffectControl;
 
 typedef union KfEffectPropagation {
@@ -68,34 +88,34 @@ typedef struct KfEffectRecord {
     KfEffectVisualState visual; /* 0x08: animation phase, or kind-10 pulse scale */
     u16 unknown_0a;      /* 0x0a */
     VECTOR position;     /* 0x0c */
-    s16 rotation_x;      /* 0x1c */
-    s16 rotation_y;      /* 0x1e */
-    s16 rotation_z;      /* 0x20 */
-    u16 rotation_pad;    /* 0x22: copied SVECTOR fourth lane */
+    SVECTOR rotation;    /* 0x1c */
     u16 scale_x;         /* 0x24 */
     u16 scale_y;         /* 0x26 */
     u16 scale_z;         /* 0x28 */
     u16 unknown_2a;      /* 0x2a */
-    u16 direction_x;     /* 0x2c */
-    u16 direction_y;     /* 0x2e */
-    u16 direction_z;     /* 0x30 */
-    u16 direction_pad;   /* 0x32: copied SVECTOR fourth lane */
+    KfEffectDirection direction; /* 0x2c */
     struct KfPoolRecord *animation_cache; /* 0x34 */
     KfEffectControl control; /* 0x38: countdown, orbit, parent, or homing selector */
     KfEffectPropagation propagation; /* 0x3a: kind-10 generations or kind-6 branch */
 } KfEffectRecord;
 
 typedef char check_effect_record_size[sizeof(KfEffectRecord) == 0x3c ? 1 : -1];
-#define KF_EFFECT_OFFSET_CHECK(member, offset) \
-    typedef char check_effect_##member[ \
+#define KF_EFFECT_OFFSET_CHECK(label, member, offset) \
+    typedef char check_effect_##label[ \
         ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
-KF_EFFECT_OFFSET_CHECK(rotation_x, 0x1c);
-KF_EFFECT_OFFSET_CHECK(rotation_y, 0x1e);
-KF_EFFECT_OFFSET_CHECK(rotation_z, 0x20);
-KF_EFFECT_OFFSET_CHECK(visual, 0x08);
-KF_EFFECT_OFFSET_CHECK(control, 0x38);
-KF_EFFECT_OFFSET_CHECK(propagation, 0x3a);
+KF_EFFECT_OFFSET_CHECK(rotation, rotation, 0x1c);
+KF_EFFECT_OFFSET_CHECK(rotation_y, rotation.vy, 0x1e);
+KF_EFFECT_OFFSET_CHECK(rotation_z, rotation.vz, 0x20);
+KF_EFFECT_OFFSET_CHECK(rotation_pad, rotation.pad, 0x22);
+KF_EFFECT_OFFSET_CHECK(direction, direction, 0x2c);
+KF_EFFECT_OFFSET_CHECK(direction_pad, direction.words.pad, 0x32);
+KF_EFFECT_OFFSET_CHECK(visual, visual, 0x08);
+KF_EFFECT_OFFSET_CHECK(control, control, 0x38);
+KF_EFFECT_OFFSET_CHECK(control_high_byte, control.bytes.high, 0x39);
+KF_EFFECT_OFFSET_CHECK(propagation, propagation, 0x3a);
 #undef KF_EFFECT_OFFSET_CHECK
+typedef char check_effect_direction_size[sizeof(KfEffectDirection) == 8 ? 1 : -1];
+typedef char check_effect_control_size[sizeof(KfEffectControl) == 2 ? 1 : -1];
 
 /* Startup clears this whole object; selection derives the magic array from
  * the current-record slot by a fixed member offset. */

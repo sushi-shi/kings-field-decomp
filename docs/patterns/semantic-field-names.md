@@ -52,16 +52,18 @@ All addresses in this table refer to GAME.EXE.
 | Effect +5 | `sound_played` | 80039040 checks the latch; 8003906c stores the spatial-audio result. audio_play_spatial returns 0 outside range and 1 after issuing sound; helpers reset the latch for another pass. |
 | Effect +7 | `phase` | Entry byte snapshot at 80038a7c; kind-specific lifecycle/age transitions and map-object triggers. |
 | Effect +8 | `visual.animation_phase`, `visual.pulse_base_scale` | Model animation consumes this halfword; kind 10 instead stores its base scale at 80038efc and computes sin/cos scale oscillation at 80038fb4 onward. |
-| Effect +0x22/+0x32 | `rotation_pad`, `direction_pad` | Copied fourth lanes of the constructor's SVECTOR arguments and between rotation/direction vectors; no invented operational meaning for SDK padding. |
+| Effect +0x22/+0x32 | `rotation.pad`, `direction.words.pad` | Copied fourth lanes of the constructor's SVECTOR arguments and between rotation/direction vectors; no invented operational meaning for SDK padding. |
 | Effect +0x38 | `control.frames_remaining` | Halfword countdown in kinds 4/6/9/10; kind 4 decrement/store at 80038d54/80038d68, kind 10 at 80038eb8/80038ec4. |
 | Effect +0x38 | `control.orbit_angle` | Kind 17 initializes to zero; 2D projectile helper feeds it to sin/cos and advances by 64 modulo 4096. |
 | Effect +0x38 | `control.parent_effect_index` | Kind 19 constructor receives parent pointer difference; dispatcher 800393b4 reads its low byte and indexes the effect pool. |
 | Effect +0x38 | `control.target_mode` | Kind 20 uses 0xff for random motion, 0xfe for player homing, and any other value for actor cone search. The value is not used as an actor array index. |
 | Effect +0x3a | `propagation.generations_remaining`, `propagation.branch` | Kind 10 decrements and passes it to its child (80038ed4..80038f70); kind 6 uses 0/1/2/0xff to choose propagation direction and lifetime. |
 
-The kind-36 constructor initializes the trailing two slots to 0xff although its
-handler does not consume them. Their union names describe the established uses
-in the other kinds; no new behavior is inferred from those stores.
+The kind-36 constructor initializes the two bytes at +0x38/+0x39 to 0xff,
+although its handler does not consume them. The byte view retains that
+unresolved purpose; other kinds establish the union's countdown, orbit,
+parent-index and homing-selector meanings. The incoming constructor audit
+below corrects the former two-halfword interpretation of these stores.
 
 ## Still requiring evidence
 
@@ -236,3 +238,49 @@ and lint/whitespace checks pass. The full build retains the existing
 ownership and placement failures: five of 60 source data owners match,
 target relink is PSX 1/1, GAME 75/77 and OPEN 34/38, and there are no artifact
 failures. No new function is banked by this field recovery.
+
+## Incoming effect constructor and field widths
+
+Function Match Plan: integrate committed master 282cbe7 into the naming
+worktree. Its GAME constructor dossier and independent raw-word/table
+controls establish full SVECTOR copies, exact optional-argument publication,
+the decoded case joins and corrected relocation targets. Preserve that exact
+constructor and the semantic fields established by the dispatcher and
+projectile helpers. The selected family is `game.effect_pool`,
+`game.effect_dispatch`, `game.effect_update` and the warp-shimmer consumer;
+their image-qualified dossiers, current sources, histories and incoming
+evidence cover all affected bodies.
+
+Refine `control.parent_effect_index` and `control.target_mode` to byte members:
+the constructor's byte stores agree with their byte-only dispatcher reads.
+Retain halfword countdown/orbit members in the same shared union. Kind 36
+writes +0x39 and +0x38 as bytes, not the two halfwords +0x3a and +0x38;
+preserve a low/high byte view without inventing their unused semantic roles.
+Use the incoming complete SDK rotation and unsigned direction union, and
+retain the established animation, audio, lifecycle and propagation names.
+
+Verification: independently compile the four literal incoming source units
+with their incoming effect header and compare every non-debug section with
+the reconciled sources. Require the other 108 objects and 483 unaffected
+strict function scores to remain unchanged from 1a2cbce; only the constructor
+may improve to 100%. Run the incoming fresh retail-word/switch-table controls,
+the full repository and flake checks, and full `kf build`. Keep the incoming
+banking record without creating another banked result.
+
+The reconciled constructor is byte-identical to the entire independently
+compiled incoming object. Its three companion units match every non-debug
+section of the incoming controls, and the other 111 objects retain every
+non-debug section from 1a2cbce. Exactly one of 484 strict scores changes:
+GAME 80036f44 improves from 52.130020% to 100%, as established by the incoming
+source work. The four direct retail controls reproduce all 523 constructor
+words, ordered calls/referents, its 45 table rows and the three exact siblings.
+
+The combined inventory retains recursive named-bound support and adds the
+incoming standalone-union coverage. It has 98 types and 784 fields, 689
+named. Parent/target selectors are `u8`; countdown/orbit and propagation
+remain `u16`. The kind-36 low/high bytes remain explicitly opaque. All 651
+repository tests pass (nine skips), all flake checks pass (651 tests,
+135 sandbox skips), and lint/whitespace checks pass. Full `kf build` retains
+the existing ownership/placement failures, with the incoming effect-pool
+result improving source-data matches from five to six of 60. Target relink
+remains PSX 1/1, GAME 75/77 and OPEN 34/38, with no artifact failures.

@@ -40,9 +40,9 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
     s16 next_pitch;
 
     if (life < 2u) {
-        RotMatrix((SVECTOR *)&record->rotation_x, &rotation_matrix);
-        matrix_set_rotation_x(record->rotation_x, &rotation_matrix);
-        matrix_set_rotation_y(record->rotation_y, &yaw_matrix);
+        RotMatrix(&record->rotation, &rotation_matrix);
+        matrix_set_rotation_x(record->rotation.vx, &rotation_matrix);
+        matrix_set_rotation_y(record->rotation.vy, &yaw_matrix);
         MulMatrix2(&yaw_matrix, &rotation_matrix);
         ApplyMatrix(&rotation_matrix, velocity, &world);
         world.vx += record->position.vx;
@@ -59,7 +59,7 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, 0, 0x1000, record->id);
             }
-            record->direction_x = -record->direction_x;
+            record->direction.words.x = -record->direction.words.x;
         }
         if (record->sound_played == 0) {
             if (rand() < 8192) {
@@ -68,20 +68,20 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
                     0xbb8, 0x36b0);
             }
         }
-        if (record->rotation_x >= 512) {
-            record->rotation_x = 512;
-            record->direction_x = 0;
-        } else if (record->rotation_y < -511) {
-            record->rotation_x = -512;
-            record->direction_x = 0;
+        if (record->rotation.vx >= 512) {
+            record->rotation.vx = 512;
+            record->direction.words.x = 0;
+        } else if (record->rotation.vy < -511) {
+            record->rotation.vx = -512;
+            record->direction.words.x = 0;
         }
-        if (record->rotation_x > 0) {
-            record->direction_x -= 10;
+        if (record->rotation.vx > 0) {
+            record->direction.words.x -= 10;
         } else {
-            record->direction_x += 10;
+            record->direction.words.x += 10;
         }
-        pitch = record->rotation_x;
-        next_pitch = (s16)(record->rotation_x + record->direction_x);
+        pitch = record->rotation.vx;
+        next_pitch = (s16)(record->rotation.vx + record->direction.words.x);
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
             if (life == 1) {
                 next_pitch = 0;
@@ -90,7 +90,7 @@ void effect_projectile_update_3d(SVECTOR *velocity, s32 frame_limit)
                 record->sound_played = 0;
             }
         }
-        record->rotation_x = next_pitch;
+        record->rotation.vx = next_pitch;
     } else if (life >= 10u && (s16)frame_limit >= life) {
         record->position.vy -= 60;
         record->phase++;
@@ -106,11 +106,11 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
     u32 collision;
 
     if ((life & 0xff) < 2) {
-        record->position.vx = ((s16)record->direction_x << 8)
+        record->position.vx = ((s16)record->direction.words.x << 8)
             + (rsin((s16)record->control.orbit_angle) * speed >> 12);
-        record->position.vz = ((s16)record->direction_z << 8)
+        record->position.vz = ((s16)record->direction.words.z << 8)
             + (rcos((s16)record->control.orbit_angle) * speed >> 12);
-        record->position.vy = (s16)record->direction_y
+        record->position.vy = (s16)record->direction.words.y
             + (rsin((s16)record->control.orbit_angle << 1) >> 2);
         record->control.orbit_angle = (record->control.orbit_angle + 64) & 0xfff;
         collision = effect_map_collision(&record->position, 0x96);
@@ -213,19 +213,19 @@ void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 dis
     s32 index;
     s32 scale = (distance << 12) / 800;
 
-    effect_rotate_scale_offset_y((SVECTOR *)&record->direction_x, &position, angle, scale);
+    effect_rotate_scale_offset_y(&record->direction.vector, &position, angle, scale);
     index = record - effect_pool_records;
     position.vx += record->position.vx;
     position.vz += record->position.vz;
     effect_pool_construct(id, record->type, 0x13, &position,
-        (SVECTOR *)&record->direction_x, index);
+        &record->direction.vector, index);
 }
 
 ADDRESS(0x800388b4, 0x184)
 void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 arg6)
 {
     VECTOR position;
-    s32 angle = -(s16)(record->direction_y + angle_offset);
+    s32 angle = -(s16)(record->direction.words.y + angle_offset);
     s32 cell_x;
     s32 cell_z;
 
@@ -235,5 +235,5 @@ void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, 
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, record->type, 6, &position,
-        (SVECTOR *)&record->direction_x, arg6);
+        &record->direction.vector, arg6);
 }

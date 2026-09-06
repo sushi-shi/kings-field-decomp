@@ -162,8 +162,17 @@ KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	open
 KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfEffectControl	0x00	0x02	frames_remaining	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	countdown for kinds 4, 6, 9 and 10
 KfEffectControl	0x00	0x02	orbit_angle	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 17 sin/cos angle, advanced by 64 modulo 4096
-KfEffectControl	0x00	0x02	parent_effect_index	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 19 parent pool index; dispatcher uses its low byte
-KfEffectControl	0x00	0x02	target_mode	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 20: 0xff random, 0xfe player, other values select actor cone search
+KfEffectControl	0x00	0x01	parent_effect_index	u8	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md;retail-byte-store-and-load	kind 19 parent pool index; dispatcher uses its low byte
+KfEffectControl	0x00	0x01	target_mode	u8	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md;retail-byte-store-and-load	kind 20: 0xff random, 0xfe player, other values select actor cone search
+KfEffectControl	0x00	0x02	bytes	KfEffectControlBytes	opaque	game_effect.h;asm;effect_pool_construct;game-effect-constructor.md	kind 36 initializes both bytes; behavioral purpose remains unresolved
+KfEffectControlBytes	0x00	0x01	low	u8	opaque	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	record +0x38; kinds 0x13/0x14/0x18 write only this byte
+KfEffectControlBytes	0x01	0x01	high	u8	opaque	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	record +0x39; kind 0x24 initializes both bytes to 0xff
+KfEffectDirection	0x00	0x08	vector	SVECTOR	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	complete SDK vector copy including pad
+KfEffectDirection	0x00	0x08	words	KfEffectDirectionWords	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	same bytes used as unsigned kind-dependent halfwords
+KfEffectDirectionWords	0x00	0x02	x	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	low X component bits or kind-dependent unsigned state
+KfEffectDirectionWords	0x02	0x02	y	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	low Y component bits or kind-dependent unsigned state
+KfEffectDirectionWords	0x04	0x02	z	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	low Z component bits or kind-dependent unsigned state
+KfEffectDirectionWords	0x06	0x02	pad	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	last halfword of the complete SDK vector copy
 KfEffectPropagation	0x00	0x02	generations_remaining	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 decrements the count passed to its child
 KfEffectPropagation	0x00	0x02	branch	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 6 propagation branch: center, side or terminal
 KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
@@ -177,18 +186,12 @@ KfEffectRecord	0x07	0x01	phase	u8	supported	game_effect.h;asm;effect_pool_constr
 KfEffectRecord	0x08	0x02	visual	KfEffectVisualState	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 pulse scale shares storage with model animation phase
 KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
 KfEffectRecord	0x0c	0x10	position	VECTOR	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
-KfEffectRecord	0x1c	0x02	rotation_x	s16	supported	game_effect.h;asm;LIBGTE.H;effect_pool_constructor;effect_projectile_update_3d;game-projectile-helpers.md	signed pitch component; SVECTOR copy and RotMatrix boundary; negative clamp and signed angle-call loads
-KfEffectRecord	0x1e	0x02	rotation_y	s16	supported	game_effect.h;asm;LIBGTE.H;effect_pool_constructor;effect_projectile_update_3d;game-projectile-helpers.md	signed yaw component; SVECTOR and matrix/angle interfaces; warp shimmer uses its modulo4096 rotation phase
-KfEffectRecord	0x20	0x02	rotation_z	s16	supported	game_effect.h;asm;LIBGTE.H;effect_pool_constructor;effect_projectile_update_3d;game-projectile-helpers.md	third signed component of the SVECTOR rotation family at 0x1c; shared with the renderer's signed Euler view
-KfEffectRecord	0x22	0x02	rotation_pad	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	fourth lane copied with the SDK SVECTOR rotation
+KfEffectRecord	0x1c	0x08	rotation	SVECTOR	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md;LIBGTE.H;game-projectile-helpers.md	complete signed rotation vector including pad; SDK matrix/angle consumers
 KfEffectRecord	0x24	0x02	scale_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
 KfEffectRecord	0x26	0x02	scale_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
 KfEffectRecord	0x28	0x02	scale_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
 KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x2c	0x02	direction_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction x copied from the constructor SVECTOR argument
-KfEffectRecord	0x2e	0x02	direction_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction y copied from the constructor SVECTOR argument
-KfEffectRecord	0x30	0x02	direction_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	direction z copied from the constructor SVECTOR argument
-KfEffectRecord	0x32	0x02	direction_pad	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	fourth lane copied with the SDK SVECTOR direction
+KfEffectRecord	0x2c	0x08	direction	KfEffectDirection	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	complete constructor SVECTOR copy, reused as unsigned per-kind state
 KfEffectRecord	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;asm;game_semantic_animation_slots.tsv	live animation record; same word and type as the KfEffectRenderView slot passed to the binder
 KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind selects countdown, orbit angle, parent effect index or homing mode; not an audio handle
 KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
@@ -425,6 +428,8 @@ KfNotificationControl	0x01	0x01	queue_head	u8	supported	notify.h;game_semantic_n
 KfNotificationControl	0x02	0x01	effect_phase	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch	zero is idle, two holds, three rotates out
 KfNotificationControl	0x03	0x01	hold_frames	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	countdown seeded with fifteen frames
 KfNotificationControl	0x04	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
+KfNotificationDigitBuffer	0x00	0x18	formatted	s16[12]	supported	notify.h;menu_format_number;notify_effect_update	signed formatter buffer including negative glyphs
+KfNotificationDigitBuffer	0x00	0x18	values	u16[12]	supported	notify.h;menu_format_number;notify_effect_update	unsigned halfword view consumed by the notification renderer
 KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v

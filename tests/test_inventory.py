@@ -48,6 +48,50 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_named_union_uses_maximum_extent_and_alignment(self) -> None:
+        source = """
+            typedef union LayoutUnion { u8 bytes[5]; u32 word; } LayoutUnion;
+            typedef struct LayoutCarrier {
+                u8 prefix;
+                union LayoutUnion payload;
+                u8 suffix;
+            } LayoutCarrier;
+        """
+        def header(path):
+            return source if path.name == "game_types.h" else ""
+
+        with patch("pathlib.Path.read_text", header):
+            layouts = _header_structure_layouts()
+        union = layouts["LayoutUnion"]
+        self.assertEqual((union.size, union.alignment), (8, 4))
+        self.assertEqual([(f.offset, f.size) for f in union.fields], [(0, 5), (0, 4)])
+        carrier = layouts["LayoutCarrier"]
+        self.assertEqual((carrier.size, carrier.alignment), (16, 4))
+        self.assertEqual([(f.offset, f.size) for f in carrier.fields],
+                         [(0, 1), (4, 8), (12, 1)])
+
+    def test_named_union_rejects_unknown_member_type(self) -> None:
+        def header(path):
+            return ("typedef union BadLayout { Missing value; } BadLayout;"
+                    if path.name == "game_types.h" else "")
+
+        with patch("pathlib.Path.read_text", header):
+            with self.assertRaisesRegex(ValueError, "unknown field type 'Missing'"):
+                _header_structure_layouts()
+
+    def test_effect_union_views_preserve_record_layout(self) -> None:
+        layouts = _header_structure_layouts()
+        for name, size, members in (("KfEffectDirection", 8, 2), ("KfEffectControl", 2, 5)):
+            layout = layouts[name]
+            self.assertEqual((layout.size, layout.alignment), (size, 2))
+            self.assertEqual([f.offset for f in layout.fields], [0] * members)
+        record = layouts["KfEffectRecord"]
+        self.assertEqual((record.size, record.alignment), (60, 4))
+        offsets = {f.name: f.offset for f in record.fields}
+        self.assertEqual((offsets["rotation"], offsets["direction"],
+                          offsets["control"], offsets["propagation"]),
+                         (0x1c, 0x2c, 0x38, 0x3a))
+
     def test_named_array_extents_preserve_physical_layout_and_reject_unknowns(self) -> None:
         declarations = """
             enum { ROWS = 3, COLUMNS = 0x5, EMPTY = 0, EXPRESSION = ROWS + 1 };
@@ -124,9 +168,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2954)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 94)
-        self.assertEqual(counts["structure_fields"], 779)
-        self.assertEqual(counts["structure_fields_named"], 687)
+        self.assertEqual(counts["structures"], 98)
+        self.assertEqual(counts["structure_fields"], 784)
+        self.assertEqual(counts["structure_fields_named"], 689)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)

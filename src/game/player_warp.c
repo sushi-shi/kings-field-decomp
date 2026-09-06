@@ -32,7 +32,7 @@ enum {
     (((u32)(x) << WARP_CELL_X_SHIFT) | ((u32)(z) << WARP_CELL_Z_SHIFT))
 
 /* The shimmer reuses rotation_y as phase and scale_y as intensity. */
-#define EFFECT_ROTATION_PHASE(e) ((e)->rotation_y)
+#define EFFECT_ROTATION_PHASE(e) ((e)->rotation.vy)
 #define EFFECT_INTENSITY(e) ((e)->scale_y)
 
 ADDRESS(0x80036618, 0x238)
