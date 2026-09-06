@@ -42,6 +42,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     while (PadRead(1) != 0)
         ;
 
+    owned = item_stock[0];
     switch (category) {
     case KF_EQUIP_MENU_WEAPON:
         start = KF_WEAPON_ITEM_FIRST;
@@ -74,9 +75,8 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     }
 
     k = 0;
-    owned = &item_stock[0][start];
-    for (i = start; i < end; i++, owned++) {
-        if (*owned != 0) {
+    for (i = start; i < end; i++) {
+        if (owned[i] != 0) {
             name = item_name_rows[i].codes;
             for (j = 0; j < 10; j++)
                 labels[k][j] = name[j];
@@ -227,7 +227,6 @@ void menu_spell_select(void)
     KfMenuList ctx;
     s16 labels[20][10];
     KfSelectedMagicId codes[20];
-    s16 *name;
     s32 code;
     s32 j;
     s32 k;
@@ -240,11 +239,10 @@ void menu_spell_select(void)
         ;
 
     k = 0;
-    name = magic_name_rows[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].codes;
-    for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++, name += 10) {
+    for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++) {
         if (magic_records[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < 10; j++)
-                labels[k][j] = name[j];
+                labels[k][j] = magic_name_rows[code].codes[j];
             codes[k] = KF_ENUM_DECODE(KfSelectedMagicId, code);
             k++;
         }

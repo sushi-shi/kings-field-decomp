@@ -293,6 +293,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-panel-flow.md](game-magic-panel-flow.md): direct spell-name
   indexing, cancellation-first handling, cursor branches and a shared normal
   return close the magic panel while preserving its distinct failure exits.
+- [game-equipment-spell-selector-flow.md](game-equipment-spell-selector-flow.md):
+  pre-switch stock-bank acquisition closes equipment selection and its two
+  tables; indexed spell names remove a separate cursor-order mismatch.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.

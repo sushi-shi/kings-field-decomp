@@ -965,34 +965,26 @@ Residue recorded (not steered):
   switch owner or claiming an optimizer limit. See
   [the evidence and focused sequence](game-warp-trigger-results.md).
 
-Residues recorded in `game.menu_select` (`func_800238d8`, `func_80023e9c`):
+Follow-up in `game.menu_select`:
 
-- The two panels are the option menu's equipment-select (`func_800238d8`) and
-  spell-select (`func_80023e9c`) handlers, and both reconstruct with the
-  window-cursor test already flipped to `if (window == 0) scroll--; else
-  window--;` and the confirmation join written as the `func_80028380 == -1`
-  if/else — i.e. they do not carry the two residues catalogued above for
-  `func_8002317c`. Referents, call set, constants, the two equipment jump
-  tables, and the equip/select writes all match.
-- `func_800238d8` (84.7%): the equip list-build reads the owned-item block
-  `DAT_800652a8[i]` and the name table `DAT_80058dc0[i*10]` as two loop givs.
-  Retail strength-reduces the stride-1 owned access to a walking pointer whose
-  base `&DAT_800652a8[0]` is hoisted into the caller-saved `a0` at the top of
-  the function (the list-build loop is call-free), then forms `owned = a0 + i`;
-  the probe keeps `owned` as a preheader-initialised `&DAT_800652a8[start]`
-  walking pointer with the base in a scratch temporary instead, so the top of
-  the function is one instruction shorter and the switch-merge/jump-table
-  offsets shift by that instruction. The name giv, its inner copy, the loop
-  counter register, and everything after the loop are identical. Making the
-  base a source variable forces a seventh callee-saved register (`s7`) rather
-  than the retail `a0`, so it is not steerable from C — the same giv-base /
-  register-choice compiler-build question as the `func_8002317c` class.
-- `func_80023e9c` (90.7%): structurally identical to retail except for a
-  callee-saved register permutation. The literal `1` (compared by both
-  `confirm == 1` and `func_8002af48(...) == 1`) is hoisted into a callee-saved
-  register; retail assigns `s2=selection`, `s3=1`, `s4=input`, whereas the probe
-  assigns `s2=1`, `s3=input`, `s4=selection`, plus the same paired-giv
-  increment-order swap seen in `func_8002317c`. Unattributed; not steered.
+- `menu_equip_select` (`800238d8`) is **100%**, up from strict 97.899730%.
+  Acquire `owned = item_stock[0]` after the initial PadRead release wait and
+  before the category switch, then use `owned[i]` in the bounded item loop.
+  This source-level bank view reproduces all 369 words, including retail's
+  pre-switch `a0` base and both switch tables' exact addends. It does not force
+  another saved register. The previous claim that this address setup could
+  not be reproduced from C was disproved by the focused compile.
+- `menu_spell_select` (`80023e9c`) improves from strict 98.063380% to
+  **99.542250%**. Direct `magic_name_rows[code].codes[j]` restores the name
+  preheader and stride-20 increment order, including the back-edge delay slot.
+  Twenty-six register-operand words remain; all 62 transfer sites, mnemonics
+  and numeric targets, twenty ordered calls and three ordered referents agree.
+  Six delay slots still differ in register operands. This is an unattributed
+  residue, not an exact or bankable body.
+- Both panels already had the cancellation-first confirmation join and
+  correct cursor-wrap arms. Their different frame/confirmation-reset locations
+  and failure exits were preserved. See the
+  [individual plans and raw verification](game-equipment-spell-selector-flow.md).
 
 ## effect-pool spawn (0x80036f44..0x8003784f)
 
