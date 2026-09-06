@@ -250,8 +250,10 @@ play_phase_sound:
             }
             return;
         } else if (phase == 121) {
-            effect->scale_y -= 0x180;
-            effect->scale_z = effect->scale_y;
+            s32 scale = effect->scale_y - 0x180;
+
+            effect->scale_y = scale;
+            effect->scale_z = scale;
             if ((s16)effect->scale_y < 0) {
                 effect->type = 0xff;
             }
@@ -295,8 +297,7 @@ play_phase_sound:
                     &effect->position, &effect->direction_x, 1);
             }
             if (phase > 23) {
-                effect->type = 0xff;
-                break;
+                goto invalidate_and_return;
             }
         }
         goto advance_effect_phase;
@@ -345,8 +346,7 @@ play_phase_sound:
         break;
 
     case 18:
-        effect->unknown_07++;
-        if (effect->unknown_07 < 13) {
+        if (++effect->unknown_07 < 13) {
             next = effect->scale_x + 0x400;
             effect->scale_x = next;
             effect->scale_z = next;
@@ -492,16 +492,19 @@ randomize_kind20:
         effect->scale_y = next;
         effect->rotation_y = (effect->rotation_y + 0x514) & 0xfff;
         if (phase & 1) {
+            u32 damage_radius;
+
             position.x = effect->position.vx;
             position.y = 0xffff;
             position.z = effect->position.vz;
+            damage_radius = phase * 1000;
             power = effect_magic_power(effect);
             actor_pool_apply_radial_damage(
-                &position, phase * 1000, 0x1000, power, 0, 0, 0,
+                &position, damage_radius, 0x1000, power, 0, 0, 0,
                 magic_records[4].damage_components[0],
                 magic_records[4].damage_components[1], 5000, effect->type);
             player_apply_radial_damage(
-                &position, phase * 1000, 0x1000, power, 0, 0, 0,
+                &position, damage_radius, 0x1000, power, 0, 0, 0,
                 magic_records[4].damage_components[0],
                 magic_records[4].damage_components[1], 5000, effect->id);
         }
@@ -602,28 +605,31 @@ advance_effect_phase:
 
     case 9: {
         s32 scale;
+        u8 scale_phase;
 
         if (phase < 17) {
             scale = effect->scale_x + 220;
+            scale_phase = effect->unknown_07;
             goto publish_kind9_scale;
         } else if (phase < 41) {
             struct KfVec3i position;
 
             position.x = effect->position.vx + (s16)effect->direction_x;
-            position.y = effect->position.vy;
             position.z = effect->position.vz + (s16)effect->direction_z;
+            position.y = effect->position.vy;
             value = collision_query_world(
                 position.x, position.y, position.z, 1000, 0, 0x60);
-            if ((phase == 40 && value != -1) || (s16)effect->unknown_38 == 0) {
+            if ((phase == 40 && value != -1) || effect->unknown_38 == 0) {
                 effect->unknown_07 = 0x75;
             } else {
                 effect->position.vx = position.x;
                 effect->position.vz = position.z;
                 effect->unknown_38--;
             }
-            if (phase != 40) {
-                effect->unknown_07++;
+            if (phase == 40) {
+                goto rotate_kind9;
             }
+            goto advance_kind9_phase;
         } else if (phase < 149) {
             if (phase == 132) {
                 struct KfVec3s actor_rotation;
@@ -646,17 +652,21 @@ advance_effect_phase:
                     actor_pool_spawn(0, &position, &actor_rotation);
                 }
             }
+advance_kind9_phase:
             effect->unknown_07++;
+            goto rotate_kind9;
         } else if (phase < 165) {
             scale = effect->scale_x - 220;
+            scale_phase = effect->unknown_07;
 publish_kind9_scale:
             effect->scale_x = scale;
             effect->scale_z = scale;
             effect->scale_y = scale;
-            effect->unknown_07++;
+            effect->unknown_07 = scale_phase + 1;
         } else {
             effect->type = 0xff;
         }
+rotate_kind9:
         effect->rotation_y = (effect->rotation_y + 0x6a4) & 0xfff;
         effect->rotation_x = (effect->rotation_x + 0x578) & 0xfff;
         effect->rotation_z = (effect->rotation_z + 0x76c) & 0xfff;
@@ -703,6 +713,7 @@ publish_kind9_scale:
             remaining = effect->direction_x - 1;
             effect->direction_x = remaining;
             if ((s16)remaining == -1) {
+invalidate_and_return:
                 effect->type = 0xff;
                 return;
             }

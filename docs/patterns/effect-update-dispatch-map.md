@@ -756,3 +756,176 @@ affected source; the subsequent full `kf build -j4` exits 1 on the existing
 data/ownership/placement gates, not a compiler or code regression: source
 data 5/60, config-backed SDK data 4/4, target relink 110/116, six conflicting
 section bases, and zero artifact failures. No partial result is banked.
+
+## Kind-9 phase-exit Function Match Plan (2026-09-06)
+
+Resume GAME `80038a38` / `0x180c` from `534a103`, strict 95.052635%.
+Fresh hash validation and all six semantic views preserve the 1,539 retail
+words and identical incoming/outgoing reference dossiers. The reviewed
+no-argument sweep caller, adjacent spawn/reset boundaries, shared types,
+constants and vendor-negative evidence are unchanged. The source has
+1,538 words, 69 ordered calls, 135 conditionals, 69 internal jumps and
+180 relocations; retail has 1,539/69/135/69/182. Both frames are 168 bytes
+and each transfer owns its following instruction. The first raw difference
+remains the current-effect register at +`0x30`; the kind-33 absolute-address
+rematerialization still lacks a new independently evidenced source cause.
+
+Kind 9 has explicit separate increment and rotation joins. Retail's
+`80039f34` sends phase 40 directly to rotation at `8003a020`, while
+`80039f3c` sends other phases in this arm to `80039fd8`. The latter is also
+the destination of the phase !=132 guard and the spawn-call fallthrough.
+Its increment stores the byte before exiting to rotation; it does not
+enter the scale path's store. Test those two named shared joins in source,
+leaving the scale publication, random-call arms and all counters intact.
+If the compiler emits the same inappropriate tail merge, discard the
+extra labels rather than treating them as a proven original source form.
+
+Independently, retail fills the collision position in X/Z/Y order at
+`80039e98/80039eac/80039eb8`; the current source spells X/Y/Z. After the
+exit-only build, inspect that store-order correction separately. The
+complete 12-byte position object and collision-call arguments stay fixed.
+
+The explicit joins reach 95.172840%. They do recover the first shared
+increment edge: the phase !=40 path now jumps to the spawn arm's increment
+instead of duplicating the phase load/increment. Retain that independently
+proved join. The later phase-byte store is still merged with the scale
+path, so the full proposed exit separation is not achieved or claimed.
+The first-join improvement is distinct from that remaining tail merge.
+
+The counter-zero guard has a separate width discrepancy: retail
+`80039ef4` is `lhu ...,56(effect)`, while the compiled signed cast produces
+`lh`. After the position-order build, remove that unnecessary signed cast
+and test the existing u16 member directly against zero. This changes no
+possible zero/nonzero result and preserves the two preceding short-circuit
+guards and the counter-decrement schedule.
+
+X/Z/Y position publication reaches 95.516570% and recovers the full
+position-construction sequence through the collision call, apart from
+the effect register. The unsigned guard is the directly evidenced `lhu`
+replacement, not a change to the counter object's type or zero predicate.
+
+Both scale-entry paths snapshot the current phase before the three scale
+stores: the +220 path loads it at `80039e70` before its jump, and the -220
+path at `80039ffc`. A later `addiu` consumes that byte snapshot and writes
+the new phase. The source currently rereads the field only after publishing
+the scale. Model the two early loads with a case-local `u8 scale_phase`,
+assigned alongside the scale result in each entry arm and consumed at the
+existing phase store. Keep the current-phase read distinct from the entry
+`phase` value and from the spawn-path increment. This is an observed
+load-before-store value lifetime, not an extra read or a forced register.
+
+The unsigned guard reaches 95.562050%; the scale-phase snapshot reaches
+95.914880%. It also separates the spawn-path increment/store from the
+scale store as retail requires. Both scale-entry loads are now present in
+the correct arms; their byte increment still chooses a different temporary
+register, which is not by itself another source fact.
+
+A call-bounded opcode audit exposes a new kind-33 value-lifetime fact:
+retail computes `phase * 1000` at `80039a78..80039a94`, before
+`effect_magic_power` at `80039a98`, and carries the result to both damage
+calls. The current source repeats the expression in those calls, so its
+common calculation is after `effect_magic_power`. Introduce a local
+`u32 damage_radius`, calculated after filling the position and before the
+power call, with the two actual radius-argument consumers. The established
+API consumes u32 radius. Do not modify the magic-component references or
+force their address rematerialization; observe whether that independent
+radius lifetime correction changes the remaining address behavior.
+
+Kind 18 also has a direct result-use difference: retail increments/stores
+the phase at `800395b0..800395bc`, masks that result and compares it with
+13; our standalone increment followed by a field test reloads the phase.
+After the radius build, use the preincrement expression in the guard,
+preserving unsigned-byte wrap, the entry-phase radius calculation and the
+later post-call phase reload. This removes no genuine memory consumer.
+
+The radius snapshot reaches 96.712150% and recovers the full pre-power
+multiplication schedule; it does not remove the kind-33 address-lifetime
+residue. Kind 18's direct preincrement guard reaches 96.819370%, replacing
+the extra byte reload/load-delay NOP with retail's mask of the stored result.
+
+Kind 36's terminal guard still inverts retail's arm placement. Retail
+`800393a0` branches to the shared no-increment invalidation at `8003a1a4`
+for phase >=24; the allowed phase falls through to the jump to
+`80039b44`. The source instead branches to increment and falls through to
+invalidation. Name the already-decoded shared invalidation/return path
+at kind 52's phase-2 exhausted-counter arm, and direct only kind 36's
+phase >23 edge there for this build. Do not redirect it to the separate
+invalidation-and-increment path or alter either kind-52 countdown.
+
+Common phase 121 has a separate arithmetic-form fact: retail
+`80039230` is a full-word `addiu ..., -384`, followed by a halfword store,
+and a genuine signed-halfword reread for its negative guard. The compound
+u16 subtraction currently materializes `0xfe80` and adds it. After the
+exit build, test the direct promoted subtraction assignment, preserving
+the later field accesses and that signed reload rather than replacing
+the guard with a local arithmetic result.
+
+The kind-36 named exit restores the required `beqz` to invalidation and
+fallthrough jump to increment, but reaches 96.679016%: other incoming
+invalidation paths still use duplicate source bodies and the compiled
+parity path now also repeats a phase-bound comparison. Retain this as an
+intermediate experiment while reconstructing the other independently
+decoded incoming paths, not as a completed CFG match. Retail common
+phase 120/121 jumps (`80039218`, `80039248`) and kind-20 post-constructor
+jump (`8003996c`) enter the same `8003a1a4` store/return. Kind 18's exhausted
+phase enters its preceding constant load at `8003a1a0`. Direct these four
+no-increment invalidation paths to the same named exit, without changing
+successful returns, actor/audio calls or any phase increment.
+
+The direct phase-121 subtraction assignment compiles identically to the
+compound form; it does not establish the promoted arithmetic model.
+Refine that one experiment to a shared word subtraction result used by
+both Y/Z halfword stores, as retail's `v0` is, but retain the subsequent
+signed Y-field reread for the guard. This gives the actual two store
+consumers an arithmetic-word value without inventing another read or
+replacing the independently decoded guard load.
+
+The full incoming-exit experiment reaches 96.738144%, and the shared
+phase-121 word value reaches 96.816120%, emitting the required -384
+instruction while preserving the signed reread. Full raw-path review
+corrects an earlier observation: retail also evaluates the kind-36 phase
+bound in the parity branch's delay slot and after the constructor. That
+repetition is not an introduced defect. However, expanding all named-exit
+uses changes common phase 121's required `bgez`-to-return plus jump-to-
+invalidation into `bltz`-to-invalidation plus jump-to-return. Drop those
+four expanded incoming-edge spellings and retain only the focused kind-36
+use, whose branch placement follows retail, plus the word scale result.
+The other paths already share their compiled store without source labels;
+no source-level need for those extra gotos is established.
+
+### Kind-9/value-lifetime checkpoint verdict
+
+The retained source reaches strict **96.939570%** from `534a103`'s
+95.052635%. The focused kind-36 no-increment exit and phase-121 word value
+compose successfully: the former branches to invalidation as retail does,
+while phase 121 retains its `bgez`-to-return and jump-to-invalidation.
+The kind-9 shared increment, X/Z/Y position stores, unsigned counter guard
+and early scale-phase snapshot are retained, along with the kind-33
+pre-power damage radius and kind-18 direct preincrement guard. No widened
+shared field, fabricated carrier, assembly body or compiler-profile change
+is involved.
+
+Final focused census is 1,539 words / 6,156 bytes on both sides, with
+69 ordered direct calls, 135 conditional branches, 69 internal jumps,
+one switch jump and one return each. Both frames are 168 bytes with the
+same saved-register slots. Source still has 180 text relocations (21
+HI16/LO16 pairs) versus retail 182 (22 pairs): kind 33 retains a component
+address across the radial-damage call where retail reconstructs it.
+The first raw difference remains the current-effect register at +`0x30`.
+Kind 10 still materializes its stack-object address and invalidation
+constant at different points; kind 19's scale-copy and other temporary
+register choices remain distinct. None establishes an optimizer mechanism
+or a historical compiler/profile attribution. Equal control counts and
+extent do not prove paired CFG equivalence or exact closure.
+
+Across all 484 native comparison rows, only the dispatcher moves from the
+previous committed checkpoint. No banked function regresses; GAME remains
+288/362 exact and OPEN 97/108, with no OPEN source change in this campaign.
+
+Verification: focused rebuilds/raw instruction and relocation comparisons,
+Ruff, all 633 tests (78.141s, no skips), and `git diff --check` pass. The
+recorded final match and full `kf build -j4` exit 1 on the unchanged
+data/ownership/placement gates: source data 5/60, config-backed SDK data
+4/4, target relink 110/116, six conflicting section bases, and zero
+artifact failures. The final object is identical to the retained focused
+build. No partial result is banked.
