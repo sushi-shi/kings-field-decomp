@@ -41,7 +41,7 @@ void render_entities(void)
     actor = actor_state.actors;
     for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--, actor++) {
         u8 visible;
-        if (actor->lifecycle != 1) {
+        if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
         if (actor->variant == 0) {

@@ -5,6 +5,11 @@ table indices, resource animation IDs and action codes. It replaces the false
 general action-minus-two mapping and documents the remaining inline resource
 IDs without assigning unsupported spell or creature identities.
 
+The [actor state review](game-actor-states.md) names the action, lifecycle,
+vertical, collision, slot-policy and progress values across their consumers.
+It explains the remaining progress counters and retains the distinction
+between automatic-selection locks, completed actions and unavailable animations.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

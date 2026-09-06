@@ -130,7 +130,7 @@ void map_restore_floor_state(void)
         if (MAP_WORLD_STATE_BYTES[1] != 2) {
             index = actor_pool_find_at_tile(7, 0x28);
             if (index != -1) {
-                actor_state.actors[index].lifecycle = 3;
+                actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
         if (DAT_8009f845 == 1) {

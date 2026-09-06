@@ -71,7 +71,7 @@ void map_ambient_script_floor1(void)
             MAP_WORLD_STATE_BYTES[1] = 2;
             actor_index = actor_pool_find_at_tile(7, 0x28);
             if (actor_index != -1) {
-                actor_state.actors[actor_index].lifecycle = 0;
+                actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
                 actor_initialize_slot(actor_index);
             }
             object_index = map_object_pool_find_near_point(0x5208, 0x105b8, 0xbb8);

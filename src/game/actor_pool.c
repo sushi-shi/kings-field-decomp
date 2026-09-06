@@ -14,7 +14,7 @@ void actor_pool_update(void)
         actor_bind_current(actor);
         if (actor->slot_state != KF_ACTOR_SLOT_FREE) {
             actor_update_awareness();
-            if (actor->lifecycle == 1) {
+            if (actor->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
                 actor_update_current_action();
             }
         }
@@ -45,7 +45,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
              */
         mark_free:
             actor->slot_state = KF_ACTOR_SLOT_FREE;
-            actor->lifecycle = 0;
+            actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
             continue;
         }
         actor->slot_state = placements->slot_state;
@@ -63,7 +63,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->death_drop_object_id = placements->death_drop_object_id;
             actor->local_z = placements->local_z;
             actor->local_x = placements->local_x;
-            actor->lifecycle = 0;
+            actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
             actor->position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
             actor->position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
             actor->position.vy = map_floor_height_at_position(&actor->position);

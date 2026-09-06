@@ -192,13 +192,13 @@ void map_world_state_persist(void)
     active = 0;
     actor = &actor_state.actors[0];
     for (i = 0; i < KF_ACTOR_CAPACITY; i++, actor++) {
-        if (actor->slot_state == 1 || actor->slot_state == 3) {
+        if (actor->slot_state == KF_ACTOR_SLOT_PERSISTENT || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
             active++;
             *out++ = i;
-            if (actor->lifecycle == 3) {
-                *out++ = 3;
+            if (actor->lifecycle == KF_ACTOR_LIFECYCLE_DISABLED) {
+                *out++ = KF_ACTOR_LIFECYCLE_DISABLED;
             } else {
-                *out++ = 0;
+                *out++ = KF_ACTOR_LIFECYCLE_DORMANT;
             }
         }
     }

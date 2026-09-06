@@ -13,7 +13,63 @@ struct KfPoolRecord;
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
     KF_ACTOR_CAPACITY = 128,
+    KF_ACTOR_SLOT_DYNAMIC = 0,
+    KF_ACTOR_SLOT_PERSISTENT = 1,
+    KF_ACTOR_SLOT_RESPAWNING = 2,
+    KF_ACTOR_SLOT_HOMEBOUND = 3,
     KF_ACTOR_SLOT_FREE = 0xff
+};
+
+/* Lifecycle controls activation independently of slot/respawn policy. */
+enum {
+    KF_ACTOR_LIFECYCLE_DORMANT = 0,
+    KF_ACTOR_LIFECYCLE_ACTIVE = 1,
+    KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT = 2,
+    KF_ACTOR_LIFECYCLE_DISABLED = 3
+};
+
+enum {
+    KF_ACTOR_ACTION_IDLE = 0,
+    KF_ACTOR_ACTION_WANDER = 1,
+    KF_ACTOR_ACTION_PURSUE = 2,
+    KF_ACTOR_ACTION_RETREAT = 3,
+    KF_ACTOR_ACTION_MELEE_ATTACK = 4,
+    KF_ACTOR_ACTION_HIT_REACTION = 5,
+    KF_ACTOR_ACTION_DYING = 6,
+    KF_ACTOR_ACTION_JUMP_ATTACK = 16,
+    KF_ACTOR_ACTION_SPECIAL_ATTACK = 17,
+    KF_ACTOR_ACTION_DRIFT = 18,
+    KF_ACTOR_ACTION_EFFECT0 = 19,
+    KF_ACTOR_ACTION_EFFECT1 = 20,
+    KF_ACTOR_ACTION_EFFECT2 = 21,
+    KF_ACTOR_ACTION_MULTI_HIT_ATTACK = 22,
+    KF_ACTOR_ACTION_EXIT_BLOCKED_PLACEMENT = 32,
+    KF_ACTOR_ACTION_RETURN_HOME = 33,
+    KF_ACTOR_ACTION_POST_DEATH = 127,
+    KF_ACTOR_ACTION_NONE = 0xff
+};
+
+/* LOCKED suppresses automatic selection; damage can still change the action. */
+enum {
+    KF_ACTOR_PROGRESS_INIT = 0,
+    KF_ACTOR_PROGRESS_RUNNING = 1,
+    KF_ACTOR_PROGRESS_LOCKED = 0xf0,
+    KF_ACTOR_PROGRESS_COMPLETE = 0xff
+};
+
+enum {
+    KF_ACTOR_VERTICAL_NONE = 0,
+    KF_ACTOR_VERTICAL_STEP_UP = 1,
+    KF_ACTOR_VERTICAL_FALL = 2,
+    KF_ACTOR_VERTICAL_LONG_DROP = 3,
+    KF_ACTOR_VERTICAL_JUMP_ATTACK = 4
+};
+
+/* Horizontal steering state, distinct from collision-query return codes. */
+enum {
+    KF_ACTOR_COLLISION_CLEAR = 0,
+    KF_ACTOR_COLLISION_SLIDING = 1,
+    KF_ACTOR_COLLISION_BLOCKED = 2
 };
 
 /* Parallel definition-table indices, independent of action and resource IDs. */
@@ -123,7 +179,7 @@ typedef struct KfActor {
     struct KfEulerAngles rotation;
     u16 unknown_32;
     struct KfPoolRecord *animation_cache;
-    u8 action_timer;
+    u8 action_progress;
     u8 collision_state;
     s16 movement_yaw;
     s16 animation_step;

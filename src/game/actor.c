@@ -128,16 +128,18 @@ void actor_set_rotation(
 ADDRESS(0x8002cc64, 0xc4)
 void actor_initialize(KfActor *actor)
 {
-    actor->lifecycle = 1;
+    actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
     actor->animation_id = 0;
     actor->animation_phase = 0;
-    actor->collision_state = 0;
+    actor->collision_state = KF_ACTOR_COLLISION_CLEAR;
     actor->vertical_velocity = 0;
-    actor->vertical_state = 0;
-    actor->action = 0xff;
-    actor->action_timer = 0xff;
+    actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
+    actor->action = KF_ACTOR_ACTION_NONE;
+    actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
     actor->health = actor_state.definitions[actor->definition_id].initial_health;
-    if (actor->slot_state == 2 || actor->slot_state == 3 || actor->slot_state == 1) {
+    if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
+        || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
+        || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
         actor->rotation.y = actor->heading_quadrant << 10;
     } else {
         actor->rotation.y = rand() >> 3;
@@ -180,7 +182,7 @@ void actor_initialize_slot(u16 actor_index)
     s32 coordinate;
     s32 world;
 
-    actor->lifecycle = 1;
+    actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
     coordinate = actor->tile_x;
     world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_x;
@@ -203,7 +205,7 @@ void actor_pool_clear(void)
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
         actor->slot_state = KF_ACTOR_SLOT_FREE;
-        actor->lifecycle = 0;
+        actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
         actor->animation_cache = 0;
     }
 }
@@ -212,7 +214,7 @@ ADDRESS(0x8002cec8, 0xc)
 void actor_set_action(KfActor *actor, u8 action)
 {
     actor->action = action;
-    actor->action_timer = 0;
+    actor->action_progress = KF_ACTOR_PROGRESS_INIT;
 }
 
 ADDRESS(0x8002ced4, 0xb0)
@@ -233,14 +235,14 @@ void actor_pool_spawn(
     return;
 found:
     actor->definition_id = definition_id;
-    actor->slot_state = 0;
+    actor->slot_state = KF_ACTOR_SLOT_DYNAMIC;
     actor->tile_z = 0xff;
     actor->tile_x = 0xff;
     actor->variant = 0;
     actor_set_position(actor, position);
     actor_set_rotation(actor, rotation->x, rotation->y, rotation->z);
     actor_initialize(actor);
-    actor_set_action(actor, 2);
+    actor_set_action(actor, KF_ACTOR_ACTION_PURSUE);
 }
 
 ADDRESS(0x8002cf84, 0xf4)
@@ -252,11 +254,11 @@ void actor_pool_begin_death_by_definition(u16 definition_id)
 
     do {
         if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->definition_id == definition_id) {
-            if (actor->lifecycle == 1
+            if (actor->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
                 && definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
-                actor_set_action(actor, 6);
+                actor_set_action(actor, KF_ACTOR_ACTION_DYING);
             } else {
-                actor->lifecycle = 3;
+                actor->lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
         actor++;
@@ -307,10 +309,10 @@ void actor_apply_damage(
     if (actor->health == 0) {
         return;
     }
-    if (actor->action == 6 && actor->animation_phase >= 1548) {
+    if (actor->action == KF_ACTOR_ACTION_DYING && actor->animation_phase >= 1548) {
         return;
     }
-    if (actor->action == 0x7f) {
+    if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
         return;
     }
     damage = combat_calculate_damage_component(
@@ -336,15 +338,15 @@ void actor_apply_damage(
             player_increment_physical_power_training();
         }
     }
-    if (actor->action == 0x12) {
-        actor->vertical_state = 2;
+    if (actor->action == KF_ACTOR_ACTION_DRIFT) {
+        actor->vertical_state = KF_ACTOR_VERTICAL_FALL;
         actor->vertical_velocity = 0;
     }
     health = actor->health;
     remaining = health - damage;
     if (remaining > 0) {
         if (definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION] != KF_ACTOR_ANIMATION_NONE) {
-            actor_set_action(actor, 5);
+            actor_set_action(actor, KF_ACTOR_ACTION_HIT_REACTION);
         }
     } else {
         remaining = 0;
@@ -352,7 +354,7 @@ void actor_apply_damage(
             player_add_experience(definition->experience_reward);
         }
         if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
-            actor_set_action(actor, 6);
+            actor_set_action(actor, KF_ACTOR_ACTION_DYING);
         }
     }
     actor->health = remaining;
@@ -383,10 +385,10 @@ void actor_pool_apply_radial_damage(
     u32 damage_scale;
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
-        if (actor->lifecycle != 1) {
+        if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
-        if (actor->action == 0x7f) {
+        if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
         if (actor == actor_state.current) {
@@ -491,10 +493,10 @@ KfActor *actor_pool_find_target_in_cone(
     s16 folded;
 
     do {
-        if (actor->lifecycle != 1) {
+        if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
-        if (actor->action == 0x7f) {
+        if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
         if (actor == actor_state.current) {
@@ -578,13 +580,13 @@ s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_hei
     s16 index;
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
-        if (actor->lifecycle != 1) {
+        if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
-        if (actor->action == 6) {
+        if (actor->action == KF_ACTOR_ACTION_DYING) {
             continue;
         }
-        if (actor->action == 0x7f) {
+        if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
         if (actor == actor_state.current) {
@@ -685,12 +687,12 @@ u8 actor_try_select_action_distance_facing(
     KfActor *actor = actor_state.current;
     u16 odds = chance;
 
-    if (actor->action == action && actor->action_timer != 0xff) {
+    if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
     if (distance_scale * 4 < distance) {
-        if (actor->slot_state == 3) {
-            return 0xff;
+        if (actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
+            return KF_ACTOR_ACTION_NONE;
         }
         odds >>= 4;
     }
@@ -702,7 +704,7 @@ u8 actor_try_select_action_distance_facing(
         odds >>= 2;
     }
     if (!((rand() >> 4) < odds)) {
-        return 0xff;
+        return KF_ACTOR_ACTION_NONE;
     }
     if (rand() < 1638) {
         return action;
@@ -715,7 +717,7 @@ u8 actor_try_select_action_distance_facing(
             0x18e)) {
         return action;
     }
-    return 0xff;
+    return KF_ACTOR_ACTION_NONE;
 }
 
 ADDRESS(0x8002deb4, 0x164)
@@ -724,7 +726,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
     KfActor *actor = actor_state.current;
     u16 odds = chance;
 
-    if (actor->action == action && actor->action_timer != 0xff) {
+    if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
     if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
@@ -758,7 +760,7 @@ u8 actor_try_select_ground_action(u8 action, s32 distance, u16 chance)
         return action;
     }
 rejected:
-    return 0xff;
+    return KF_ACTOR_ACTION_NONE;
 }
 
 ADDRESS(0x8002e018, 0xd8)
@@ -767,19 +769,19 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
     KfActor *actor = actor_state.current;
     u16 odds = chance;
 
-    if (actor->action == action && actor->action_timer != 0xff) {
+    if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
     if (distance > 11000) {
         odds >>= 4;
     } else {
         if (distance < 8000) {
-            return 0xff;
+            return KF_ACTOR_ACTION_NONE;
         }
         odds <<= 2;
     }
     if (!((rand() >> 4) < odds)) {
-        return 0xff;
+        return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
             actor->rotation.y,
@@ -789,7 +791,7 @@ u8 actor_try_select_facing_action(u8 action, s32 distance, u16 chance)
             0x1c7)) {
         return action;
     }
-    return 0xff;
+    return KF_ACTOR_ACTION_NONE;
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
@@ -804,7 +806,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
     s16 index;
     s16 count;
 
-    if (actor->action == action && actor->action_timer != 0xff) {
+    if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
     odds = weights->near_weight;
@@ -817,7 +819,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
     }
     odds = (chance * odds) >> 8;
     if (!((rand() >> 4) < odds)) {
-        return 0xff;
+        return KF_ACTOR_ACTION_NONE;
     }
     if (!angle_within_tolerance(
             actor->rotation.y,
@@ -826,7 +828,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
                 actor_state.player_position.vz - actor->position.vz),
             0x155)
         && rand() >= 819) {
-        return 0xff;
+        return KF_ACTOR_ACTION_NONE;
     }
     if (profile != 9) {
         return action;
@@ -835,7 +837,7 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
     candidate = actor_state.actors;
     index = KF_ACTOR_CAPACITY - 1;
     do {
-        if (candidate->slot_state != KF_ACTOR_SLOT_FREE && candidate->lifecycle == 1) {
+        if (candidate->slot_state != KF_ACTOR_SLOT_FREE && candidate->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
             count++;
         }
         candidate++;
@@ -851,5 +853,5 @@ u8 actor_try_select_profiled_action(u8 action, s32 distance, u16 profile_index, 
     if (count < 2) {
         return action;
     }
-    return 0xff;
+    return KF_ACTOR_ACTION_NONE;
 }

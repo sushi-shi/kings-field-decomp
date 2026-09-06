@@ -35,10 +35,10 @@ separate C globals; curation replaces them with the owning array extents.
 `KfActorPlacement`, `KfActor`, the complete `KfActorState` aggregate, and the
 actor-owned globals and operations. The packed `SoundRef` embedded by actor
 definitions remains owned by `include/kf/audio.h`. The structure inventory
-validates all of these layouts; unknown bytes remain explicit padding. The
+validates all of these layouts; unknown bytes remain explicitly opaque. The
 currently supported actor fields include the slot/free
 marker, definition ID, tile/local/world positions, lifecycle,
-action and timer, animation phase and step, health, rotation, and movement
+action and progress, animation phase and step, health, rotation, and movement
 components. Definition fields used by the reviewed functions include collision
 radius and height, awareness distance, initial health, hit/death actions,
 death sound, three player-attack components, and five actor defenses.
@@ -86,15 +86,17 @@ common mechanics:
 
 `actor_try_attack_player` is named from its complete effect chain rather than
 proximity alone. Its success path passes the current definition's three attack
-components and status bytes to `func_80016324`; that callee calculates five
-player damage components and subtracts the result from player health. The
-callee remains address-named until the larger player-combat family is reviewed.
+components and status bytes to `player_apply_damage`; that callee calculates
+player damage and subtracts the result from player health.
 
 The animation tables now use `KF_ACTOR_ANIM_SLOT_*` indices, independently
 of action codes and resource animation IDs. The dispatcher mapping and its
 exceptions are documented in
 [actor animation-table slots](patterns/game-actor-animation-slots.md).
-Action and lifecycle numeric values still need a separate state-machine review.
+The [actor state review](patterns/game-actor-states.md) names all decoded
+action, lifecycle, vertical, collision and slot-policy values. The byte at
++`0x38` is `action_progress`, because it contains phase markers and counters,
+including a selection lock, rather than solely a timer.
 Per-function CFG, xref, signature, and
 vendor-negative evidence for this block is in
 `config/evidence/game_semantic_actor_ai.tsv`.
@@ -109,10 +111,10 @@ update.
 
 `actor_update_current_action` has two indirect jumps. The first indexes 128
 entries at `0x80012524` by the actor's action byte; the second indexes five
-entries at `0x80012724` by vertical state. The individual pointer extents remain
-address-named until the structural inventory is collapsed into reviewed jump
-table objects. Their topology nevertheless proves the dispatcher role and is
-recorded as indirect control flow rather than direct calls.
+entries at `0x80012724` by vertical state. Both tables belong to the behavior
+unit's `RODATA(0x800124d4, 0x264)` claim. Their topology supports the dispatcher
+role; the transfers remain indirect control flow, and candidate pointer edges
+are not promoted merely by naming their source cases.
 
 The special death path is constrained more tightly than a generic animation:
 action six invokes it only on floor five for definition seven. It plays three
@@ -136,10 +138,8 @@ in `config/evidence/game_semantic_actor_core.tsv`.
 
 - Name the five defense/damage components from inventory, combat, and spell
   callers rather than their numeric position alone.
-- Resolve lifecycle, action, collision, and vertical-state enum labels without
-  conflating numeric action codes with animation IDs.
-- Collapse the action and vertical-state pointer runs at `0x80012524` and
-  `0x80012724` into reviewed jump-table data objects.
+- Explain the remaining attack, movement and effect tuning values without
+  inventing original design rationale.
 - Determine which remaining `KfActor` bytes are collision, AI, and render state.
 - Recover translation-unit boundaries before deciding whether actor globals
   had external or file-local linkage in the original C.

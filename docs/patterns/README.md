@@ -150,6 +150,9 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-animation-slots.md](game-actor-animation-slots.md): separate
   action codes, definition-table slots and resource animation IDs; preserve
   the dispatcher mapping and remove the misleading action-minus-two macro.
+- [game-actor-states.md](game-actor-states.md): name actor actions, lifecycle,
+  vertical/collision states and allocation policies; distinguish progress
+  markers, jump phases and counters across updates, rendering and save data.
 - [game-animation-phase.md](game-animation-phase.md): eleven-caller audit and
   unchanged explicit phase-cache control; predicate remains non-exact.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect
