@@ -239,3 +239,18 @@ ownership campaign without inventing the projection/morph capacities or
 immediately migrating the entire graphics region. Both experiments are
 evidence, not objdiff banking criteria; the retained canonical sprite is
 93.972980% until its real material ownership can be migrated consistently.
+
+### Frame control supersedes the standalone-material route
+
+The follow-up at `c518cc5` reproduced the older standalone-material
+regression before changing production: the exact frame renderer becomes
+1296 bytes versus retail 1304, retaining a selector pointer across calls.
+The same frame body under this complete owner matches all 1304 linked
+bytes, twenty calls and 64 address pairs. Its complete semantic and caller
+pass, raw findings and rejected narrow-owner control are recorded in
+[game-sprite-enqueue.md](game-sprite-enqueue.md#material-consumer-control-plan-at-c518cc5).
+
+Thus the eight-byte sprite result is not an independent production migration
+path. The complete owner jointly explains the sprite and frame renderer;
+the typed scratch representation and remaining consumer audit are still
+required. No production ownership or banked score changes in this control.

@@ -240,6 +240,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'game.display_play_transition': {'display_play_transition'},
             'game.menu_runtime': {'menu_present_frame'},
             'game.save_system': {'screen_show_image_until_input'},
+            'game.render_frame': {'render_frame'},
         }
         # Size and first raw divergence are observed symptoms, not attributed
         # compiler mechanisms. Neither the pilot nor a partial suffix is banked.
@@ -288,6 +289,103 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                                     obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
                                 self.assertNotEqual(wrong, expected)
                                 self.assertEqual(same_calls, calls)
+
+    def test_narrow_material_owner_does_not_preserve_exact_frame(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        unit = manifest.by_name()['game.render_frame']
+        claim = unit.functions[0]
+        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                     image.require(claim.va, claim.body_size)))
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        fields = {
+            'active_render_clut': 'clut', 'active_render_tpage': 'tpage',
+            'active_render_red': 'color.r', 'active_render_green': 'color.g',
+            'active_render_blue': 'color.b', 'active_render_code': 'color.cd',
+        }
+        canonical = unit.source_path.read_text()
+        narrow = '''#include <kf/game_render.h>
+typedef struct KfMaterialProbe {
+    u16 clut;
+    u16 tpage;
+    CVECTOR color;
+} KfMaterialProbe;
+typedef char check_material_size[sizeof(KfMaterialProbe) == 8 ? 1 : -1];
+extern KfMaterialProbe material_probe;
+''' + re.sub(r'\b(' + '|'.join(fields) + r')\b',
+             lambda match: 'material_probe.' + fields[match[0]], canonical)
+        data['material_probe'] = 0x80095058
+        for changed, source in ((False, canonical), (True, narrow)):
+            with self.subTest(narrow=changed), tempfile.TemporaryDirectory() as directory:
+                obj = self.compile(Path(directory), unit, source)
+                actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
+                retail_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
+                                | ((word & 0x3FFFFFF) << 2)
+                                for i, word in enumerate(expected) if word >> 26 == 3]
+                self.assertEqual(calls, retail_calls)
+                if not changed:
+                    self.assertEqual(actual, expected)
+                    self.assertEqual(len(addresses), 64)
+                else:
+                    # This rejected owner retains a texture-selector pointer
+                    # across calls. A sprite-only exact probe cannot authorize it.
+                    self.assertNotEqual(actual, expected)
+                    self.assertEqual(len(actual) * 4, 1296)
+                    self.assertEqual(actual[0], expected[0])
+                    self.assertNotEqual(actual[1], expected[1])
+                    self.assertEqual(len(addresses), 59)
+
+    def test_scratch_consumers_preserve_typed_accesses_without_capacity_claims(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        data['graphics_owner_probe'] = ORIGIN
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        selected = {
+            'game.render': {'tmd_project_vertices', 'tmd_project_vertices_shift',
+                            'tmd_transform_vertices'},
+            'game.pool': {'render_bind_animated_instance'},
+        }
+        for unit_name, names in selected.items():
+            unit = manifest.by_name()[unit_name]
+            for owner in (False, True):
+                source = unit.source_path.read_text()
+                if owner:
+                    source = candidate_source(unit, names).replace(
+                        'tmd_projected_vertices',
+                        '(KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318')
+                    source = source.replace(
+                        'tmd_morph_scratch',
+                        '((SVECTOR *)(graphics_owner_probe.unknown_projection_morph_20318 + 0x1f40))')
+                    source = source.replace(
+                        'asset_registry_entries',
+                        '((KfAssetHeader **)graphics_owner_probe.unknown_registry_20134)')
+                with self.subTest(unit=unit_name, owner=owner), tempfile.TemporaryDirectory() as directory:
+                    obj = self.compile(Path(directory), unit, source)
+                    for claim in unit.functions:
+                        if claim.symbol not in names:
+                            continue
+                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                     image.require(claim.va, claim.body_size)))
+                        actual, calls, _ = linked_words(obj, unit, claim, data, functions)
+                        self.assertEqual(actual, expected, claim.symbol)
+                        if owner:
+                            wrong, same_calls, _ = linked_words(
+                                obj, unit, claim, dict(data, graphics_owner_probe=ORIGIN + 4), functions)
+                            self.assertNotEqual(wrong, expected)
+                            self.assertEqual(same_calls, calls)
+                        if claim.symbol == 'render_bind_animated_instance':
+                            # Retrying at the call skips the real count reload;
+                            # all calls still exist, so call-set equality misses it.
+                            self.assertEqual(actual[0xB8 // 4], 0x97AA0018)
+                            self.assertEqual(actual[0xD4 // 4] & 0x3FFFFFF,
+                                             (claim.va + 0xB8) >> 2 & 0x3FFFFFF)
+                            wrong = actual.copy()
+                            wrong[0xD4 // 4] += 1
+                            self.assertNotEqual(wrong, expected)
 
     def test_polygon_owner_recovers_addresses_without_claiming_array_capacity(self):
         self.tools()

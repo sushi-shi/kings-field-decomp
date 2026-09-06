@@ -94,8 +94,11 @@ u16 *render_bind_animated_instance(
 reinitialize_record:
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
-    while ((record->cached_vertices = memory_malloc_checked(vertex_count << 3)) == 0) {
+retry_allocation:
+    record->cached_vertices = memory_malloc_checked(vertex_count << 3);
+    if (record->cached_vertices == 0) {
         pool_release_all();
+        goto retry_allocation;
     }
     *owner_slot = record;
     goto find_keyframe;
@@ -166,8 +169,8 @@ update_vertex_cache:
         (char *)asset_header + object_table[keyframe->rest_index]);
 
 blend_scratch:
-    record->keyframe_index = keyframe_index;
     record->clip_index = clip_index;
+    record->keyframe_index = keyframe_index;
 
     copy_vertices(&tmd_morph_scratch[1], record->cached_vertices, vertex_count);
 

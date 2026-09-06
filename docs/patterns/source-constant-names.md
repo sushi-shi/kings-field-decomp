@@ -910,3 +910,30 @@ pass, and flake checks pass (642 tests, 129 sandbox skips). All 112 objects
 retain their non-debug contents and all 484 strict scores are unchanged
 from 1839ef2; twelve objects differ only in debug-line records. The full
 build still reports the pre-existing data-placement and ownership failures.
+
+## Incoming animation binder closure
+
+Integrate the user's committed frame-owner controls (`40b5700`) and exact
+animation binder (`4199d60`) into the naming worktree. The binder's new retry
+label and clip-before-keyframe publication are supported by its committed
+[scratch/retry campaign](game-graphics-scratch.md). Retain those source
+changes together with the earlier named cache states, pool capacity, Q12
+constants and morph object selector. The merge needs no source conflict
+resolution and does not touch the user's uncommitted OPEN renderer work.
+
+Verification plan: compile the literal incoming `pool.c` independently with
+the same headers/profile, compare its non-debug contents with the named
+merged object, and check all other objects against 1839ef2. Only the incoming
+binder improvement to strict 100% is expected among the 484 function scores.
+Run the imported raw-word controls, repository tests, flake checks and full
+build before committing the merge.
+
+The independent literal and named pool objects differ only in debug-line
+records. The other 111 objects retain all non-debug contents from 1839ef2.
+Exactly one score changes: GAME 800205d4 rises from 98.798290% to 100%,
+preserving the user's closure; all other 483 scores and every banked exact
+remain unchanged. All 644 tests pass (nine skipped), including the imported
+canonical/owner raw-word controls; lint and whitespace checks pass. Flake
+checks pass (644 tests, 131 sandbox skips). The full build retains the same
+ownership/placement failures, six section-base conflicts and zero artifact
+failures. No new banking operation belongs to this merge.
