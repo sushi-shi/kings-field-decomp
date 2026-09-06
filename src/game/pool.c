@@ -25,12 +25,12 @@ typedef struct KfAnimKeyframe {
     u16 morph_indices[1]; /* +8: object-table indices of the morph targets */
 } KfAnimKeyframe;
 
-/* asset base + object_table[index]: one morph/rest vertex-delta object. */
+/* asset base + object_table[index]: one VDF-format morph/rest object. */
 typedef struct KfMorphObject {
-    u32 unknown_00;    /* +0 */
-    u32 base_vertex;   /* +4: first vertex index (byte offset == index << 3) */
-    u32 vertex_count;  /* +8 */
-    SVECTOR deltas[1]; /* +12: signed vertex deltas */
+    u32 tmd_object_index; /* +0: ignored; retail always selects TMD object zero */
+    u32 base_vertex;      /* +4: first vertex index (byte offset == index << 3) */
+    u32 vertex_count;     /* +8 */
+    SVECTOR deltas[1];    /* +12: signed vertex deltas */
 } KfMorphObject;
 
 /*

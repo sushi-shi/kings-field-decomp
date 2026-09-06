@@ -65,7 +65,7 @@ in the other kinds; no new behavior is inferred from those stores.
 
 ## Still requiring evidence
 
-The patch leaves the two unused animation-file header fields, OPEN reset-only
+The patch leaves the unused animation-clip header field, OPEN reset-only
 control words, floor-item +3, and map-event +0x0c/+0x0d open. Each needs its actual serialized or binary
 consumer checked before a final semantic name. Renaming them to generic
 `reserved`/`data` merely to remove the search hits would not meet the goal.
@@ -73,8 +73,8 @@ consumer checked before a final semantic name. Renaming them to generic
 The shipped-resource audit provides constraints, not semantic names:
 
 - All 214 animation clip headers have 20 at +2. This is not zero padding.
-- All 827 morph objects have zero in the initial word. This alone does not
-  distinguish a flag, index, exporter field, or reserved storage.
+- All 827 morph objects have zero in the initial word. This observation alone
+  was inconclusive; the VDF format follow-up below identifies the field.
 - Floor-item +3 varies across the five floors (8, 28, 32, 64); GAME and OPEN
   copy it from placement records, but their current renderers do not read it.
 - Active event definitions have zero in both +0x0b and +0x0c in all five
@@ -99,7 +99,41 @@ oracles. It covers 169 shipped assets, including 70 animated assets. The
 actor-definition loader copies 12 records per floor; trailing chunk bytes are
 not automatically additional live actor definitions.
 
-## Verification
+## Morph-record format follow-up
+
+The GAME `render_bind_animated_instance` dossier at 800205d4 and the shipped
+asset census now have external format evidence. Sony's
+[Data Conversion Utilities, figure 2-7](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/Dataconv.pdf#page=100)
+defines each VDF object record as three 32-bit words (TMD object number,
+first affected vertex, affected vertex count), followed by eight-byte vertex
+deltas. This matches the complete `KfMorphObject` layout. Sony's
+[MIMe support answer](https://psx.arthus.net/sdk/Psy-Q/DOCS/BBS/scej_bbs.pdf#page=43)
+explains that the object number selects a TMD object and is zero for a
+single-object model.
+
+Audit the full shipped record corpus against that layout and its TMD object
+bounds, then name +0 `tmd_object_index`. This is a supported format identity,
+not proof of the particular converter/version used by FromSoftware. Retail
+ignores this word and explicitly selects TMD object zero; keep that behavior.
+The clip's +2 word belongs to the game's surrounding animation grammar and
+is not explained by the VDF diagram. Rebuild the affected unit and verify its
+sections and strict match state before keeping the rename.
+
+The audit passes for all 827 records in 70 animated assets. Each selected TMD
+object exists, each vertex range fits that object, and all 757 within-asset
+record boundaries equal the next table offset after exactly twelve header
+bytes and eight bytes per vertex. Every object selector is zero. The complete
+record correspondence plus the documented format supports the rename; it
+does not rely on zero values alone. The surrounding clip grammar is still
+unresolved.
+
+The rebuilt pool has unchanged non-debug sections and retains its strict
+98.79829% binder result; its six lifecycle functions remain exact. Lint and
+all 635 tests pass (nine local prerequisites skipped). Full `kf build` retains
+the existing data-placement failures. The source now has ten `unknown_`
+lines; no unmatched function was banked.
+
+## Initial field-naming verification
 
 Changes are isolated on `codex/semantic-names`. After rebuilding the affected
 units, all 112 compiled objects are SHA-256 identical to the fresh baseline at

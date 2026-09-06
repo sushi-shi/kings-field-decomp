@@ -149,8 +149,9 @@ The animation cache has twelve records: reset/release stores free (0), the
 per-frame mark stores stale (1), and a successful bind stores live (2). The
 next stale sweep frees only untouched records. Clip 0xff invalidates cached
 keyframe selection; the pointer-valued return 1 reports a static asset. These
-contracts are now named in `pool.h`. The clip and morph header fields still
-lack semantic consumers and retain their unresolved spellings.
+contracts are now named in `pool.h`. The clip's unused header field retains
+its unresolved spelling. The later VDF format audit in
+`semantic-field-names.md` identifies the morph's object selector.
 
 Both camera interpolators keep four fractional bits, reduce coordinates by
 three bits before squaring, and restore the resulting distance scale. The
