@@ -3,6 +3,11 @@
 #include <kf/game_actor.h>
 #include <kf/game.h>
 
+KF_ENUM_BEGIN(KfActorPlacementStreamState, s32)
+    KF_ACTOR_PLACEMENTS_READING = 0,
+    KF_ACTOR_PLACEMENTS_EXHAUSTED = 1
+KF_ENUM_END(KfActorPlacementStreamState)
+
 /* Runs awareness and the current action for every occupied actor slot. */
 ADDRESS(0x80030818, 0xa8)
 void actor_pool_update(void)
@@ -31,12 +36,12 @@ void actor_pool_update(void)
 ADDRESS(0x800308c0, 0x1ac)
 void actor_pool_load_placements(const KfActorPlacement *placements)
 {
-    s32 finished = 0;
+    KfActorPlacementStreamState stream_state = KF_ACTOR_PLACEMENTS_READING;
     KfActor *actor = actor_state.actors;
     u16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
-        if (finished == 1) {
+        if (stream_state == KF_ACTOR_PLACEMENTS_EXHAUSTED) {
             /*
              * Reached directly once the terminator has been seen; the
              * terminator slot itself arrives through the goto below and the
@@ -51,10 +56,10 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
         actor->slot_state = placements->slot_state;
         if (actor->slot_state != KF_ACTOR_SLOT_FREE) {
             actor->definition_id = placements->definition_flags & KF_ACTOR_PLACEMENT_DEFINITION_MASK;
-            if (placements->definition_flags & KF_ACTOR_PLACEMENT_VARIANT) {
-                actor->variant = 1;
+            if (placements->definition_flags & KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING) {
+                actor->culling_mode = KF_ACTOR_CULL_NEAR_SQUARE;
             } else {
-                actor->variant = 0;
+                actor->culling_mode = KF_ACTOR_CULL_VISIBILITY_GRID;
             }
             actor->heading_quadrant = placements->heading_quadrant;
             actor->tile_z = placements->tile_z;
@@ -70,7 +75,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->cell_x = actor->tile_x;
             actor->cell_z = actor->tile_z;
         } else {
-            finished = 1;
+            stream_state = KF_ACTOR_PLACEMENTS_EXHAUSTED;
             goto mark_free;
         }
         placements++;

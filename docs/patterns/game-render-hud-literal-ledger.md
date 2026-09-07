@@ -33,7 +33,8 @@ and names the effect table state values, compass slot and bound.
 
 ## `src/game/render_scene.c`
 
-15 retained occurrences.
+14 retained occurrences. The [actor culling review](actor-culling-domain.md)
+replaces the raw mode comparison with a typed visibility-grid member.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -42,7 +43,6 @@ and names the effect table state values, compass slot and bound.
 | `render_entities` | 38 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
 | `render_entities` | 48 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
 | `render_entities` | 48 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 53 | `0` | `if (actor->variant == 0) {` | Ordinary actor variant uses the active cell window; nonzero variants use the separately bounded square. |
 | `render_entities` | 75 | `0` | `if (visible != 0) {` | Boolean/nonzero visibility result gates the actor emitter. |
 | `render_entities` | 92 | `1` | `for (i--; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
 | `render_entities` | 97 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |

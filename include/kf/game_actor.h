@@ -33,6 +33,11 @@ KF_ENUM_BEGIN(KfActorLifecycle, u8)
     KF_ACTOR_LIFECYCLE_DISABLED = 3
 KF_ENUM_END(KfActorLifecycle)
 
+KF_ENUM_BEGIN(KfActorCullingMode, u8)
+    KF_ACTOR_CULL_VISIBILITY_GRID = 0,
+    KF_ACTOR_CULL_NEAR_SQUARE = 1
+KF_ENUM_END(KfActorCullingMode)
+
 KF_ENUM_BEGIN(KfActorAction, u8)
     KF_ACTOR_ACTION_IDLE = 0,
     KF_ACTOR_ACTION_WANDER = 1,
@@ -119,7 +124,7 @@ enum {
 /* Definition flags in the placement stream; unrelated to effect-code bits. */
 enum {
     KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
-    KF_ACTOR_PLACEMENT_VARIANT = 0x20
+    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20
 };
 
 /* The same encoded effect byte selects its action profile and spawned kind. */
@@ -212,7 +217,7 @@ typedef struct KfActorPlacement {
 typedef struct KfActor {
     KfActorSlotState slot_state;
     u8 definition_id;
-    u8 variant;
+    KfActorCullingMode culling_mode;
     u8 heading_quadrant;
     u8 tile_z;
     u8 tile_x;

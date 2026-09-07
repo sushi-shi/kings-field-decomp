@@ -105,9 +105,10 @@ review preserves that access and does not assert a proved three-vector owner.
 A parameter's low five bits select the effect kind and index the 25-row
 action-profile table; indices 25..31 are not range-checked. Bit 5 requests
 two attachments mirrored by 1500 units.
-The placement stream's separate low-five-bit definition index and variant
-bit have their own names. No bounds check or new meaning for the other bits
-is invented.
+The placement stream's separate low-five-bit definition index and bit 5 have
+their own names. The later [culling review](actor-culling-domain.md) identifies
+bit 5 as near-square visibility selection and types the live field accordingly.
+No bounds check or new meaning for the other bits is invented.
 
 The shared aim tolerance is 341 angle units (29.970703125 degrees on either
 side), while the two selection tolerances are 398 (34.98046875 degrees) and
@@ -171,7 +172,7 @@ limit of the evidence, not a claim that its design rationale has been recovered.
 
 | Sites | Retained values and reason |
 | --- | --- |
-| Pool scans, initialization and getters | `0`, `1`, `-1`: null pointers, zero rotation/phase/velocity, Boolean variant/finished state, occupancy increment/removal, index origin, inclusive last index and exhausted-count sentinel. The discarded free-slot wrapper has no literals and retains its unresolved identity. |
+| Pool scans, initialization and getters | `0`, `1`, `-1`: null pointers, zero rotation/phase/velocity, occupancy increment/removal, index origin, inclusive last index and exhausted-count sentinel. Culling mode and placement-stream exhaustion now use separate enums; see the [complete pool ledger](actor-pool-literal-ledger.md). The discarded free-slot wrapper has no literals and retains its unresolved identity. |
 | Distance, overlap and cone queries | `-1` means no in-range result/index; zero height arguments have no vertical extent when the separate ignore-height sentinel is used. Half-height shifts by 1 compare volume centers. Output/best-pointer zeros represent no candidate. |
 | Animation advance/predicate | `0` is the lower phase/sign boundary and the Boolean predicate seed. Taking a negative delta's magnitude preserves its existing signed-halfword behavior. |
 | Five damage and three attack array positions | `0..4` and `0..2` retain the fixed argument order. Physical positions are cutting/striking/piercing; the player weapon caller supplies holy/fire in its remaining positions, while effect callers supply kind-dependent magic payloads. This review does not assign one universal elemental identity to every generic payload. |

@@ -2383,3 +2383,10 @@ The [matrix/vector/color review](math-literal-coverage.md) completes the
 [189-occurrence ledger](math-literal-ledger.md) across nine files. It also
 reconciles GAME's RGB555 signature with the exact source and OPEN homolog,
 and removes unsupported indirect-caller/range assumptions.
+
+The [actor culling review](actor-culling-domain.md) corrects a field-name
+assumption: live actor byte +2 chooses grid or square visibility testing, not
+an asset variant. The shared field and placement flag now express this meaning,
+and the loader's separate exhaustion state has its own enum. Seven literal uses
+become enum members; the [complete pool ledger](actor-pool-literal-ledger.md)
+retains only pointer and countdown arithmetic.

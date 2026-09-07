@@ -559,3 +559,7 @@ promotes a probe to a proven historical toolchain.
 - [Allocation mode and startup coverage](allocation-mode-domain.md): typed
   shared allocator API and all nine mode calls, with a
   [complete four-file ledger](allocator-startup-literal-ledger.md).
+
+- [Actor culling and placement stream state](actor-culling-domain.md): recover
+  actor byte +2 as a visibility policy, type it through both writers and its
+  renderer, and complete the [actor-pool ledger](actor-pool-literal-ledger.md).

@@ -4,8 +4,8 @@
 #include <kf/game_state.h>
 
 enum {
-    ACTOR_VARIANT_WINDOW_HALF_WIDTH = 12,
-    ACTOR_VARIANT_WINDOW_WIDTH = 2 * ACTOR_VARIANT_WINDOW_HALF_WIDTH,
+    ACTOR_CULL_SQUARE_HALF_WIDTH = 12,
+    ACTOR_CULL_SQUARE_WIDTH = 2 * ACTOR_CULL_SQUARE_HALF_WIDTH,
     FLOOR_ITEM_RENDER_BRIGHTNESS = 180
 };
 
@@ -50,7 +50,7 @@ void render_entities(void)
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             goto next_actor;
         }
-        if (actor->variant == 0) {
+        if (actor->culling_mode == KF_ACTOR_CULL_VISIBILITY_GRID) {
             u16 row = actor->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row >= g->height) {
@@ -64,13 +64,13 @@ void render_entities(void)
                 visible = g->cells[row * g->width + col];
             }
         } else {
-            u16 dz = actor->cell_z + ACTOR_VARIANT_WINDOW_HALF_WIDTH;
+            u16 dz = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
             u16 dx;
-            if ((u16)(dz - (u16)render_state.view_cell.z) >= ACTOR_VARIANT_WINDOW_WIDTH) {
+            if ((u16)(dz - (u16)render_state.view_cell.z) >= ACTOR_CULL_SQUARE_WIDTH) {
                 goto next_actor;
             }
-            dx = actor->cell_x + ACTOR_VARIANT_WINDOW_HALF_WIDTH;
-            visible = (u16)(dx - (u16)render_state.view_cell.x) < ACTOR_VARIANT_WINDOW_WIDTH;
+            dx = actor->cell_x + ACTOR_CULL_SQUARE_HALF_WIDTH;
+            visible = (u16)(dx - (u16)render_state.view_cell.x) < ACTOR_CULL_SQUARE_WIDTH;
         }
         if (visible != 0) {
             render_actor(actor);

@@ -1,7 +1,7 @@
 # Actor-core remainder literal ledger
 
-Complete account of **172 numeric occurrences** in `src/game/actor.c`: 89
-authored initializer occurrences and 83 function occurrences. The
+Complete account of **171 numeric occurrences** in `src/game/actor.c`: 89
+authored initializer occurrences and 82 function occurrences. The
 [core review](game-actor-core-constants.md) records names, units and verification.
 Comments, strings, identifier digits, enums and retail claims are excluded.
 Signs stay in expressions; repeated tokens each have their own row.
@@ -9,6 +9,10 @@ Signs stay in expressions; repeated tokens each have their own row.
 The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
 through the current source; this ledger reflects its named comparisons and
 explicit numeric boundaries.
+
+The [culling review](actor-culling-domain.md) replaces the former `variant`
+initializer with the visibility-grid enum member. Its reviewed meaning is
+culling policy; the earlier asset-variant description was incorrect.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -120,7 +124,6 @@ explicit numeric boundaries.
 | `actor_pool_clear` | 234 | `0` | `actor->animation_cache = 0;` | Null pointer: no free/selected actor, cleared animation cache, or consumed player target. |
 | `actor_pool_spawn` | 252 | `1` | `s16 count = KF_ACTOR_CAPACITY - 1;` | Last pool index initializes the inclusive scan countdown. |
 | `actor_pool_spawn` | 259 | `1` | `} while (--count != -1);` | Exhausted-count sentinel with the original pre/postdecrement ordering. |
-| `actor_pool_spawn` | 266 | `0` | `actor->variant = 0;` | Default asset variant for a dynamically spawned actor. |
 | `actor_pool_begin_death_by_definition` | 278 | `1` | `s16 count = KF_ACTOR_CAPACITY - 1;` | Last pool index initializes the inclusive scan countdown. |
 | `actor_pool_begin_death_by_definition` | 290 | `1` | `} while (--count != -1);` | Exhausted-count sentinel with the original pre/postdecrement ordering. |
 | `combat_calculate_damage_component` | 298 | `0` | `if (attack == 0) {` | An absent attack channel contributes zero damage, before base power is added. |

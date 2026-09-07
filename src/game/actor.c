@@ -263,7 +263,7 @@ found:
     actor->slot_state = KF_ACTOR_SLOT_DYNAMIC;
     actor->tile_z = KF_MAP_CELL_COORD_INVALID;
     actor->tile_x = KF_MAP_CELL_COORD_INVALID;
-    actor->variant = 0;
+    actor->culling_mode = KF_ACTOR_CULL_VISIBILITY_GRID;
     actor_set_position(actor, position);
     actor_set_rotation(actor, rotation->x, rotation->y, rotation->z);
     actor_initialize(actor);

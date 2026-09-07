@@ -37,6 +37,7 @@ All addresses in this table refer to GAME.EXE.
 | Actor definition +0 | `pursuit_distance_scale` | 8002e364 loads the byte; selection shifts it by 8 and selects player-pursuit action 2 inside the threshold, with existing hysteresis. |
 | Actor definition +1 | `model_and_texture` | render_actor takes low nibble as asset and high nibble as texture-page/CLUT variant. |
 | Actor definition +2 | `melee_attack_chance` | 8002e4b0 supplies chance for action 4, whose animation triggers actor_try_attack_player. |
+| Live actor +2 | `culling_mode` | Placement flag 0x20 stores one; dynamic spawn stores zero. `render_entities` uses the active visibility grid at zero and a 24-cell square around the view cell at nonzero. See the [culling review](actor-culling-domain.md). |
 | Actor definition +0x34/+0x36 | `special_attack_chance`, `special_attack_range` | Signed loads at 8002e3b0/8002e3e0/8002e3e4 feed selection of actions 16/17; 80030108/800301ec pass the same range to the attack. |
 | Actor definition +0x82 | `effect_owner_id` | Halfword loads at 8002f10c/8002f164/8002f19c/8002f1c4 supply the constructor's owning-ID argument. |
 | Actor definition +0x96 | `gold_drop_limit` | Actor death at 8002fd3c computes `rand() * limit >> 15`. The callee at 800319c8 places object 39 and stores the resulting amount in the two link bytes. COM.DAT defines object 39 as behavior 0x41; `map_interaction_dispatch` reconstructs that amount, notifies it, credits `player_state.gold`, and frees the object. The bound is exclusive. |
