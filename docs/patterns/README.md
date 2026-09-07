@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [floor-item-billboard-selector.md](floor-item-billboard-selector.md): shared
+  name for the packed-facing zero selector in GAME and OPEN.
 - [map-image-groups.md](map-image-groups.md): typed signboard/inscription image
   groups, the shop sequence index and current map-script ledger reconciliation.
 - [game-render-setup-literal-ledger.md](game-render-setup-literal-ledger.md):

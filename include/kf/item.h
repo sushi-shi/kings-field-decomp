@@ -91,6 +91,7 @@ enum {
 /* High nibble: zero billboard or biased quarter-turn facing; low: frame count. */
 enum {
     KF_FLOOR_ITEM_FACING_MASK = 0xf0,
+    KF_FLOOR_ITEM_FACING_BILLBOARD = 0,
     KF_FLOOR_ITEM_FACING_ZERO_YAW = 0x10,
     KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT = 6,
     KF_FLOOR_ITEM_FRAME_COUNT_MASK = 0x0f,

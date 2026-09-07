@@ -1,13 +1,13 @@
 # Entity and HUD renderer retained literals
 
-Companion to [the renderer review](renderer-literal-review.md). All **250**
+Companion to [the renderer review](renderer-literal-review.md). All **249**
 remaining numeric occurrences in the listed files have individual reasons.
 Claims, comments, strings and named constant definitions are excluded.
 Repeated tokens have separate rows in source order.
 
 ## `src/game/entity_render.c`
 
-244 retained occurrences.
+243 retained occurrences.
 
 | Function / data owner | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -245,7 +245,6 @@ Repeated tokens have separate rows in source order.
 | `effect_billboard_sprites` | 51 | `0xec78` | `{0xc8, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},` | Authored local Y origin; preserve the unsigned halfword bit pattern and its later signed-corner conversion. |
 | `effect_billboard_sprites` | 51 | `0x190` | `{0xc8, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},` | Authored local width; retain the exact atlas placement or rectangle span for this descriptor. |
 | `effect_billboard_sprites` | 51 | `0x1388` | `{0xc8, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},` | Authored local height; retain the exact atlas placement or rectangle span for this descriptor. |
-| `render_floor_item` | 79 | `0` | `if ((u8)facing != 0) {` | Zero packed facing selects billboard orientation; nonzero facing uses the named fixed-yaw conversion. |
 | `render_floor_item` | 94 | `1` | `next_frame = item->animation_frame + 1;` | Advance the animation by one frame before its original byte-wrap comparison. |
 | `render_floor_item` | 97 | `0xff` | `if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {` | The full byte mask preserves modulo-256 narrowing before comparing with the packed low-nibble frame count. |
 | `render_floor_item` | 98 | `0` | `item->animation_frame = 0;` | Reset an exhausted animation to its first frame; frame zero is an ordinal, not an independent mode. |

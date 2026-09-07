@@ -76,7 +76,7 @@ void render_floor_item(KfFloorItem *item)
     screen.vz = (u16)item->position_z - (u16)render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = item->facing_and_frame_count & KF_FLOOR_ITEM_FACING_MASK;
-    if ((u8)facing != 0) {
+    if ((u8)facing != KF_FLOOR_ITEM_FACING_BILLBOARD) {
         matrix_set_rotation_y(
             (facing - KF_FLOOR_ITEM_FACING_ZERO_YAW) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
             &model);
