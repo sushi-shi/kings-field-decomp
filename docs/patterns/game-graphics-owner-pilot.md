@@ -400,3 +400,63 @@ slots 20/21, this establishes shipped registry use through slot 47, not a
 60-entry declaration. The opaque intervals must not be replaced with guessed
 array capacities on this evidence. Continue matching remaining consumers and
 source lifetimes without treating the complete owner as ready for migration.
+
+### Screen-geometry consumer audit at `fcd555e`
+
+Function Match Plan: extend the unchanged owner declaration to
+`game.geometry_render`, preserving its three exact functions and initialized
+HUD table. Refresh all six GAME semantic views, complete disassembly/CFG,
+the three caller windows in `render_frame`, adjacent boundaries, shared
+types, source history and library evidence before compiling a temporary copy.
+Only `render_effect_sprites` directly reads a field inside this owner;
+the weapon and HUD functions are independent same-unit controls. No source
+algorithm, local lifetime, shared layout, capacity, production DATA claim,
+retail relocation or compiler profile changes.
+
+| GAME function | Bytes; frame; blocks/branches | Preserved evidence and verdict |
+| --- | --- | --- |
+| `8001f798 render_weapon` | 280; 72; 4/2 | No arguments from `800202c8`; ten calls and five address pairs. Preserve the -1 attack guard, halfword projection/translation reads, rotation pointer, fifth animation argument and signed depth bias. All 70 words remain raw exact; no direct candidate-owner reference. |
+| `8001f8b0 render_effect_sprites` | 292; 120; 6/3 | No arguments from `8002012c`; twelve calls and two address pairs. Save/restore the SDK color matrix, use `render_state.effect_color_matrix`, stop at the first non-1 byte state, retain the 28-byte stride, Q12 scale, animation guard and projection/enqueue order. All 73 words remain raw exact. |
+| `8001f9d4 render_hud_gauges` | 112; 32; 6/3 | Table argument comes from compass-row pointer minus 168 in the caller's `80020178` delay slot; one call, no data pairs. Keep the 255 sentinel, skip-hidden behavior, 14-byte stride and sprite pointer +2. All 28 words remain raw exact; no direct candidate-owner reference. |
+
+Each function has one common return with its frame-restoring delay slot;
+there are no strings, candidate outgoing references, internal J relocations
+or unresolved indirect transfers. These authored HUD/weapon/effect policies
+are game code. SDK boundaries retain the pinned LIBGTE.H declarations:
+REG's SetGeomScreen, MTX's matrix getters/setters and ScaleMatrix, and GEO's
+RotMatrix have separate archive/FID evidence in the vendored inventory.
+History includes `cd679e4`'s HUD naming and `3d0adb4`'s animation owner slots.
+
+Fresh canonical and candidate-owner compiles both reproduce all 171 retail
+words, 23 ordered call targets and seven ordered materialized addresses.
+The delinked target independently reproduces retail, and the complete
+196-byte initialized HUD section is unchanged. The effect color matrix's
+physical address stays `80095720`, now expressed as owner +`24888` rather
+than render_state +`80`. Shifting the owner by four breaks exactly the low
+address instruction at effect-renderer +`20`, with calls unchanged; it leaves
+both independent control functions unchanged. Existing CFG diagnostic word
+windows can still display different *unlinked data addends* for this exact
+pair; the complete relinked words decide the comparison.
+
+Retail body SHA-256 values, in table order:
+
+```text
+8439d46e5115da3f517c13bd8f3aa23c749625d081c9782bfb31bb1f06b0e08f
+cc6741c09ebdf105ae6463594ff3183258b15f349e1bb5f9d7576aefe206808d
+5d571231c277936bbdbd833bbac3d71216320ceab72f964c6082cdb82ab53886
+```
+
+The existing extended-owner probe now retains this consumer and its two
+controls. This removes one untested direct graphics consumer, not three:
+transitive calls do not establish new owner accesses. No new function is
+exact in production or banked. The unresolved registry/projection/morph
+representation and remaining direct-consumer audit still precede migration.
+
+The focused extended-owner control and all 680 repository tests pass
+(90.103 seconds for the full suite), as do Ruff and `git diff --check`.
+All 484 production score rows are unchanged: GAME 313/362, OPEN 98/108,
+PSX 1/1 and thirteen exact vendored controls. Full `kf build` retains the
+existing data/ownership/placement failures: source-data matches 0/1, 9/42,
+2/19 and target relinks 1/1, 75/77, 34/38 for PSX/GAME/OPEN respectively,
+with six conflicting section bases and zero artifact failures. No production
+source, shared header, fixture layout, inventory or banking entry changes.

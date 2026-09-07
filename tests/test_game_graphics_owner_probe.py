@@ -253,6 +253,9 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'game.menu_runtime': {'menu_present_frame'},
             'game.save_system': {'screen_show_image_until_input'},
             'game.render_frame': {'render_frame'},
+            'game.geometry_render': {
+                'render_weapon', 'render_effect_sprites', 'render_hud_gauges',
+            },
         }
         # Size and first raw divergence are observed symptoms, not attributed
         # compiler mechanisms. Neither the pilot nor a partial suffix is banked.
