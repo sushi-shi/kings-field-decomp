@@ -107,9 +107,9 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
     u32 collision;
 
     if ((life & 0xff) < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1) {
-        record->position.vx = ((s16)record->direction.words.x << 8)
+        record->position.vx = ((s16)record->direction.words.x << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rsin((s16)record->control.orbit_angle) * speed >> KF_FIXED12_BITS);
-        record->position.vz = ((s16)record->direction.words.z << 8)
+        record->position.vz = ((s16)record->direction.words.z << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rcos((s16)record->control.orbit_angle) * speed >> KF_FIXED12_BITS);
         record->position.vy = (s16)record->direction.words.y
             + (rsin((s16)record->control.orbit_angle << 1) >> 2);

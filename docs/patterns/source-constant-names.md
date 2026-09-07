@@ -1,5 +1,12 @@
 # Source constant naming
 
+The [effect-constructor review](game-effect-pool-constants.md) names lightning
+impact/blast and ground-branch visual kinds, scales/orientation, propagation
+delay, sound ranges and the live floor-controller tag. It shares emergence
+depth/step and orbit-center quantization through their consumers, removing
+40 inline occurrences. The complete pool ledger covers all 226 retained uses,
+including existing alignment/offset witnesses and unresolved render variants.
+
 The [player-update review](game-player-update-constants.md) names movement
 fractions, pitch bounds, weapon-magic power/timing and projectile geometry,
 then propagates the Moonlight projectile and map hazard identities through

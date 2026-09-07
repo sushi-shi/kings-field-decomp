@@ -318,6 +318,10 @@ promotes a probe to a proven historical toolchain.
   acceleration and pitch limits, weapon-magic timing and projectile geometry,
   Moonlight projectile and map hazard identities; includes the complete
   [player-update literal ledger](game-player-update-literal-ledger.md).
+- [game-effect-pool-constants.md](game-effect-pool-constants.md): lightning
+  impact/blast and ground-branch visual identities, constructor scale/audio
+  units, emergence-depth and orbit-center relationships; includes the complete
+  [effect-pool literal ledger](game-effect-pool-literal-ledger.md).
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

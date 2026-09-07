@@ -155,7 +155,7 @@ effect_kind4_impact:
                                                [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
                     if (effect->base_render_id == 6) {
                         effect_pool_construct(
-                            effect->id, effect->type, 0x20,
+                            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
                             &impact_position, &effect->rotation);
                     } else {
                         effect_pool_construct(
@@ -235,7 +235,7 @@ effect_kind4_impact:
         } else if (phase == KF_EFFECT_PROJECTILE_DISSIPATE_END) {
             goto invalidate_and_advance;
         } else if (phase < KF_EFFECT_PROJECTILE_FALL) {
-            effect->position.vy -= 175;
+            effect->position.vy -= KF_EFFECT_EMERGE_Y_STEP;
             if (phase == KF_EFFECT_PROJECTILE_EMERGE_LAST) {
                 effect->phase = KF_EFFECT_PROJECTILE_LAUNCH_WRAP;
                 phase_sound = &magic->sounds[0];
@@ -459,7 +459,7 @@ randomize_kind20:
         break;
     }
 
-    case 32:
+    case KF_EFFECT_KIND_LIGHTNING_IMPACT:
         if (phase > 9) {
             goto invalidate_and_advance;
         }
@@ -470,7 +470,7 @@ randomize_kind20:
         if (phase == 3 || phase == 5 || phase == 7) {
             if (effect->base_render_id == 11) {
                 effect_pool_construct(
-                    effect->id, effect->type, 0x21,
+                    effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
                     &effect->position, &effect->rotation);
             } else {
                 effect_pool_construct(
@@ -484,7 +484,7 @@ randomize_kind20:
         }
         goto advance_effect_phase;
 
-    case 33: {
+    case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST: {
         struct KfVec3i position;
 
         if (phase > 7) {
@@ -572,7 +572,7 @@ advance_effect_phase:
                     + ((rcos(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vy = effect->position.vy;
                 effect_pool_construct(
-                    effect->id, effect->type, 0x22,
+                    effect->id, effect->type, KF_EFFECT_KIND_GROUND_BRANCH_VISUAL,
                     &spawn_position, &effect->rotation);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
@@ -595,7 +595,7 @@ advance_effect_phase:
         effect->phase++;
         break;
 
-    case 34:
+    case KF_EFFECT_KIND_GROUND_BRANCH_VISUAL:
         if (phase < 4) {
             effect->scale_y += 4000;
         } else if (phase < 8) {

@@ -10,6 +10,17 @@ typedef char effect_state_current_magic_offset[
 typedef char effect_state_current_record_offset[
     (u32)&((KfEffectState *)0)->current_record == 0xd24 ? 1 : -1];
 
+enum {
+    EFFECT_WIND_CUTTER_PITCH = 850,
+    EFFECT_GROUND_BRANCH_DELAY = 6,
+    EFFECT_GROUND_BRANCH_SOUND_VOLUME = 120,
+    EFFECT_EMERGING_INITIAL_SCALE = 1500,
+    EFFECT_SHORT_SWING_SCALE = 2600,
+    EFFECT_ORBIT_SCALE = 2800,
+    EFFECT_EXTENDED_SOUND_MAX_DISTANCE = 20000,
+    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE = 60000
+};
+
 DATA(0x8009ce60, 0xd28)
 KfEffectState effect_state;
 
@@ -72,7 +83,7 @@ KfEffectRecord *effect_pool_construct(
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->base_render_id = 5;
             record->render_id = 5;
-            record->rotation.vx = 0x352;
+            record->rotation.vx = EFFECT_WIND_CUTTER_PITCH;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             if (va[2] != 0) {
@@ -84,11 +95,11 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = 0x11;
             record->render_id = 0x11;
             record->kind = KF_EFFECT_KIND_LIGHTNING_BOLT;
-            goto initialize_kind_04;
+            goto initialize_lightning_bolt;
         case KF_EFFECT_KIND_LIGHTNING_BOLT:
             record->base_render_id = 6;
             record->render_id = 6;
-        initialize_kind_04:
+        initialize_lightning_bolt:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
@@ -97,36 +108,40 @@ KfEffectRecord *effect_pool_construct(
             if (va[2] != 0) {
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[0],
-                    &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
+                    &record->position, KF_AUDIO_MAX_VOLUME,
+                    EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
+                    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
         case 0x29:
             record->base_render_id = 0x13;
             record->render_id = 0x13;
-            record->kind = 0x20;
-            goto initialize_kind_20;
-        case 0x20:
+            record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
+            goto initialize_lightning_impact;
+        case KF_EFFECT_KIND_LIGHTNING_IMPACT:
             record->base_render_id = 0xb;
             record->render_id = 0xb;
-        initialize_kind_20:
+        initialize_lightning_impact:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             audio_play_spatial_range(
                 &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
-                &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
+                &record->position, KF_AUDIO_MAX_VOLUME,
+                EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
+                EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             break;
         case 0x2a:
             record->base_render_id = 0xf;
             record->render_id = 0xf;
-            record->kind = 0x21;
+            record->kind = KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST;
             record->animation_clip = 0;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             break;
-        case 0x21:
+        case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST:
             record->base_render_id = 0;
             record->render_id = 0;
             record->animation_clip = 0;
@@ -144,14 +159,14 @@ KfEffectRecord *effect_pool_construct(
             record->scale_y = 0;
             {
                 u16 argument = *(u16 *)(va + 1);
-                record->control.frames_remaining = 6;
+                record->control.frames_remaining = EFFECT_GROUND_BRANCH_DELAY;
                 record->propagation.branch = argument;
             }
             if (record->propagation.branch != KF_EFFECT_GROUND_BRANCH_LEAF) {
-                sound_ref_play(&magic->sounds[0], 0x78);
+                sound_ref_play(&magic->sounds[0], EFFECT_GROUND_BRANCH_SOUND_VOLUME);
             }
             break;
-        case 0x22:
+        case KF_EFFECT_KIND_GROUND_BRANCH_VISUAL:
             record->animation_clip = 0;
             record->base_render_id = 2;
             record->render_id = 2;
@@ -216,10 +231,10 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             record->phase = KF_EFFECT_PROJECTILE_EMERGE_FIRST;
-            record->scale_z = 0x5dc;
-            record->scale_y = 0x5dc;
-            record->scale_x = 0x5dc;
-            record->position.vy += 3500;
+            record->scale_z = EFFECT_EMERGING_INITIAL_SCALE;
+            record->scale_y = EFFECT_EMERGING_INITIAL_SCALE;
+            record->scale_x = EFFECT_EMERGING_INITIAL_SCALE;
+            record->position.vy += KF_EFFECT_EMERGE_DEPTH;
             break;
         case 0xe:
             record->animation_clip = 0;
@@ -264,9 +279,9 @@ KfEffectRecord *effect_pool_construct(
             record->direction.words.z = 0;
             record->direction.words.y = 0;
             record->direction.words.x = 0;
-            record->scale_z = 0xa28;
-            record->scale_y = 0xa28;
-            record->scale_x = 0xa28;
+            record->scale_z = EFFECT_SHORT_SWING_SCALE;
+            record->scale_y = EFFECT_SHORT_SWING_SCALE;
+            record->scale_x = EFFECT_SHORT_SWING_SCALE;
             break;
         case KF_EFFECT_KIND_SWINGING_HAZARD_LONG:
             record->animation_clip = 0;
@@ -286,11 +301,11 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vy = 0;
             record->rotation.vx = 0;
             record->control.orbit_angle = 0;
-            record->scale_z = 0xaf0;
-            record->scale_y = 0xaf0;
-            record->scale_x = 0xaf0;
-            record->direction.words.x = record->position.vx >> 8;
-            record->direction.words.z = record->position.vz >> 8;
+            record->scale_z = EFFECT_ORBIT_SCALE;
+            record->scale_y = EFFECT_ORBIT_SCALE;
+            record->scale_x = EFFECT_ORBIT_SCALE;
+            record->direction.words.x = record->position.vx >> KF_EFFECT_ORBIT_CENTER_SHIFT;
+            record->direction.words.z = record->position.vz >> KF_EFFECT_ORBIT_CENTER_SHIFT;
             record->direction.words.y = (u16)record->position.vy;
             break;
         case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
@@ -303,7 +318,9 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vx = -record->rotation.vx;
             audio_play_spatial_range(
                 &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[1],
-                &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
+                &record->position, KF_AUDIO_MAX_VOLUME,
+                EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
+                EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             break;
         case KF_EFFECT_KIND_GROUND_TRAIL:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
@@ -325,7 +342,9 @@ KfEffectRecord *effect_pool_construct(
             if (va[1] != 0) {
                 audio_play_spatial_range(
                     &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[0],
-                    &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
+                    &record->position, KF_AUDIO_MAX_VOLUME,
+                    EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
+                    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
         case KF_EFFECT_KIND_RADIAL_BLAST:
@@ -335,7 +354,9 @@ KfEffectRecord *effect_pool_construct(
             if (va[1] != 0) {
                 audio_play_spatial_range(
                     &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[0],
-                    &record->position, KF_AUDIO_MAX_VOLUME, 0x4e20, 0xea60);
+                    &record->position, KF_AUDIO_MAX_VOLUME,
+                    EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
+                    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
         case 0x18:
@@ -347,8 +368,8 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vx = -record->rotation.vx;
             record->control.target_mode = *(u8 *)(va + 2);
             record->direction.vector = record->rotation;
-            record->scale_y = 0x800;
-            record->scale_x = 0x800;
+            record->scale_y = KF_FIXED12_ONE / 2;
+            record->scale_x = KF_FIXED12_ONE / 2;
             if (va[3] != 0) {
                 audio_play_spatial_default_range(
                     &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],
@@ -363,8 +384,8 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vx = -record->rotation.vx;
             record->control.target_mode = *(u8 *)(va + 2);
             record->direction.vector = record->rotation;
-            record->scale_y = 0x800;
-            record->scale_x = 0x800;
+            record->scale_y = KF_FIXED12_ONE / 2;
+            record->scale_x = KF_FIXED12_ONE / 2;
             if (va[3] != 0) {
                 audio_play_spatial_default_range(
                     &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],
@@ -407,7 +428,7 @@ KfEffectRecord *effect_pool_spawn_typed(
         record->base_render_id = KF_EFFECT_RENDER_NONE;
         record->render_id = KF_EFFECT_RENDER_NONE;
         record->kind = KF_EFFECT_KIND_FLOOR_DEFORMATION;
-        record->type = 0xf0;
+        record->type = KF_EFFECT_FLOOR_DEFORM_TYPE;
         record->phase = KF_EFFECT_FLOOR_DEFORM_ADVANCE;
         record->direction.words.x = sweep_updates;
         record->direction.words.z = 0;

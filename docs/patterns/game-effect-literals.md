@@ -1,5 +1,11 @@
 # GAME effect literal audit
 
+The [constructor follow-up](game-effect-pool-constants.md) supplies current
+names and a complete [per-occurrence pool ledger](game-effect-pool-literal-ledger.md).
+Its pool counts supersede the historical census below, which also predates
+the removal of size assertions. The follow-up propagates lightning/branch
+identities, emergence units and orbit-center quantization into the consumers.
+
 ## Function Match Plan
 
 Continue from master `92f01ef`. Audit every numeric literal in `effect_pool.c`,
