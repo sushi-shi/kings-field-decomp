@@ -1,5 +1,30 @@
 # OPEN unlit triangle emission
 
+## Function Match Plan: enclosing graphics owner (`62f6dc8`)
+
+OPEN `80018344` starts at 676 retail/680 probe bytes and 98.828400% strict.
+The complete CFG, sole exact caller, eight calls, one internal jump, signed
+depth path, packet modes and SDK-provider negative controls remain unchanged.
+Retail already derives projected vertices and the material color from one
+address family, then reloads the ordering table at projected base minus 276.
+The repository now has a complete `KfGraphicsRuntimeOpen` owner with checked
+offsets for both named members. Test recovering that real enclosing object
+from the loop's projected-array member and use its ordinary ordering-table
+field at the accepted-depth AddPrim site. This is typed owner recovery, not a
+raw numeric alias or a cached pointer across SDK calls.
+
+The typed enclosing-owner expression emits retail's `lw -276(projected_base)`.
+It removes the extra HI16/LO16 pair and the four-byte body excess: compiled and
+retail bodies are both 676 bytes, and strict objdiff rises to **99.455620%**.
+All eight calls, the one remaining state address pair, CFG, constants, widths
+and numeric referents agree. The remaining differences are the probe's 56-byte
+frame versus retail's 64-byte frame and exchanged register identities for the
+second and third projected vertices in both triangle modes. Declaration-order
+and semantics-preserving symmetric-vertex controls could recover either the
+load order or register identities, but not both, and are reverted. No unused
+stack object or register carrier is introduced; the function remains partial
+and is not banked.
+
 ## Function Match Plan: accepted-packet table reload (`6a25ae8`)
 
 OPEN `80018344` is 676 retail/680 probe bytes, strict 98.828400%, with
