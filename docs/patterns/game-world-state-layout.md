@@ -1,5 +1,18 @@
 # GAME world-state layout investigation
 
+## Later exact reader closure
+
+`map_restore_floor_state` now matches all `0x69c` retail bytes at strict
+**100%**. The final source correction keeps the established world owner and
+spells the stream address as two short-lived components: `floor_offset` is the
+current-floor byte multiplied by 1,700, while `records_base` is the world-state
+anchor minus 1,690. Assigning their sum to the input cursor emits retail's
+`addiu v1,a0,-1690; addu s0,v0,v1` without changing the address, call set,
+five-floor switch, or any later instruction. A single combined expression
+associates `-1690` with the multiplied offset instead; assigning the adjusted
+base directly to the long-lived cursor moves it too early. The exact form uses
+no padding, volatile state, forced register, or compiler-profile change.
+
 ## Function Match Plan
 
 The full goal remains 29 strict-exact GAME parsers/serializers. This campaign

@@ -42,8 +42,14 @@ void map_restore_floor_state(void)
     s32 i;
     s32 index;
 
-    in = base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET)
-        + KF_MAP_SAVED_FLOOR_BYTES * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
+    {
+        s32 floor_offset = KF_MAP_SAVED_FLOOR_BYTES
+            * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
+        u8 *records_base =
+            base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET);
+
+        in = records_base + floor_offset;
+    }
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {

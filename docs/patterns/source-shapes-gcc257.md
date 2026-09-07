@@ -856,6 +856,7 @@ common tail dispatches a per-floor script through a five-entry jump table.
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
+| `addiu v1,a0,-1690; addu s0,v0,v1`, where `v0` is floor times 1700 | compute a block-scoped `s32 floor_offset`, compute a block-scoped `u8 *records_base = base - 1690`, then assign `in = records_base + floor_offset`; one combined expression associates the constant with the product, while two updates of the long-lived cursor move the base adjustment too early | `map_restore_floor_state` `0x80035e44` |
 | `sb v0,0(a1); sb v0,-5(a0); ...; lbu v0,-4(a0); addu v0,a1,v0; sb v1,2(v0)` (a store whose offset is a just-read field) | mirror the serialiser field-for-field: `event->image_index = *in++; event->tag.bytes[event->image_index - 1] = *in++;` — the `+2` is `tag` at struct offset 3 minus the `-1` index | `func_80035e44` `0x80035e44` |
 | effect record position rebuilt as `cell*2000 + ((rand()*2000)>>15)` with a `-height*100` y | `object->position_x = object->cell_x * 2000 + ((rand() * 2000) >> 15);` etc., `object->position_y = -(map_floor_height_grid[cell_z][cell_x] * 100);` — the u16 cell members drive the `*125<<4` strength reduction | same |
 | two `sh` to `&object->link` (a dead `lo` store then `lo|hi<<8`) | `*(u16 *)&object->link = *in++; *(u16 *)&object->link |= *in++ << 8;` — the reserialised low byte then the OR keeps `lo` in-register (no reload) | same |
