@@ -1,5 +1,21 @@
 # OPEN ending-scroll controller and data owners
 
+## Selector-layout and initialization-lifetime controls
+
+At 106/108, reversing the two lighting cases gives a 49-block candidate but
+reorders the case bodies and falls to a 78.2% focused listing comparison. An
+explicit `if`/label dispatch spelling in the exact retail block order folds
+back to the retained 51-block, 83.0% listing candidate; it does not change the
+selector copy or the `t1`/`t0` failed-path literal split localized below.
+
+Moving only the real lighting-phase zero initialization before the entity
+position update extends its source lifetime to the point where retail stores
+it. The probe then emits that store before, rather than after, the camera-path
+address construction and otherwise retains the same 51-block residue. The
+retail order is recovered only when the source keeps all five state
+initializations after `opening_camera_path_begin` and scheduling moves them as
+a group. All three trials are removed; the 97.952675% strict source remains.
+
 ## Function Match Plan: post-allocation cross-jump tail
 
 Pinned GCC 2.5.7 pass dumps now explain the five-register cycle in the known
