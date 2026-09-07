@@ -1,5 +1,10 @@
 # Source constant naming
 
+The [source coverage map](source-literal-coverage.md) inventories all 111 C files,
+links their existing audits, and records the outstanding scope checks. Its
+7,098 inline occurrences include authored data and already explained values;
+the number is not a missing-name count.
+
 The [OPEN renderer review](open-render-constants.md) shares the six scene model
 identities with their renderer, names yaw/depth/material/gradient units and
 propagates projection/Q12/visibility constants. It replaces 21 inline uses and

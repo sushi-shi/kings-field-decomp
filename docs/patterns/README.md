@@ -13,6 +13,8 @@ promotes a probe to a proven historical toolchain.
   and the remaining serialized-field questions.
 - [source-constant-names.md](source-constant-names.md): domain-specific constant
   names and the reasons for retaining individual classes of inline literals.
+- [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
+  current literal counts, verified ledger coverage and remaining audit scopes.
 - [game-effect-update-constants.md](game-effect-update-constants.md): effect
   motion, collision/audio units, typed helper boundaries and the complete
   [105-occurrence remainder ledger](game-effect-update-literal-ledger.md).
