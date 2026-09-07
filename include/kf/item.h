@@ -12,6 +12,13 @@ enum {
     KF_ITEM_STOCK_BANK_COUNT = 3
 };
 
+/* Stock rows distinguish owned quantities from the two shop lists. */
+enum {
+    KF_ITEM_STOCK_PLAYER = 0,
+    KF_ITEM_STOCK_FIRST_SHOP = 1,
+    KF_ITEM_STOCK_SECOND_SHOP = 2
+};
+
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
     KF_FLOOR_ITEM_END = 0xffff,

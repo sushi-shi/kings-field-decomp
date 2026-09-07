@@ -1,7 +1,7 @@
 # Retained item-use literals
 
 Complete current ledger for `src/game/player_use_item.c`, including both image
-path buffers and all three functions: **42 numeric/character occurrences**.
+path buffers and all three functions: **39 numeric/character occurrences**.
 The [range and effect settings review](game-item-use-constants.md) names 23
 previously inline uses. The [special-item audit](game-item-special-identities.md)
 supplies item/resource identities and consumer evidence.
@@ -46,16 +46,13 @@ explicit numeric boundaries.
 | `player_use_item` | 81 | `1` | `if (index == -1) {` | Negative query-miss sentinel ends the object scan, outside nonnegative pool indices. |
 | `player_use_item` | 101 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 124 | `1` | `if (index == -1) {` | Negative query-miss sentinel ends the object scan, outside nonnegative pool indices. |
-| `player_use_item` | 132 | `0` | `item_stock[0][KF_ENUM_ENCODE(u8, object->object_id)] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
-| `player_use_item` | 132 | `0` | `item_stock[0][KF_ENUM_ENCODE(u8, object->object_id)] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
+| `player_use_item` | 132 | `0` | `item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, object->object_id)] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
 | `player_use_item` | 133 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
 | `player_use_item` | 165 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 172 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
-| `player_use_item` | 179 | `0` | `if (item_stock[0][KF_ITEM_ILLUSION_STAFF] != 0) {` | Only decrement a possessed player-bank copy; the timer write already happened before this guard. |
-| `player_use_item` | 179 | `0` | `if (item_stock[0][KF_ITEM_ILLUSION_STAFF] != 0) {` | Only decrement a possessed player-bank copy; the timer write already happened before this guard. |
-| `player_use_item` | 180 | `0` | `item_stock[0][KF_ITEM_ILLUSION_STAFF]--;` | Consume one copy from the player-owned bank zero. |
+| `player_use_item` | 179 | `0` | `if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_ILLUSION_STAFF] != 0) {` | Only decrement a possessed player-bank copy; the timer write already happened before this guard. |
 | `player_use_item` | 190 | `0` | `if (actor != 0) {` | A non-null actor wins the mirror query and its info image is shown immediately. |
 | `player_use_item` | 200 | `0` | `if (event == 0) {` | No event target after the actor miss leaves the mirror use unacknowledged. |
 | `player_use_item` | 207 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |

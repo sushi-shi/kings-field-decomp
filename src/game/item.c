@@ -237,7 +237,7 @@ void item_menu_buy(s32 shop_id)
     inv = item_stock[shop_id];
     found = 0;
     for (slot = KF_ITEM_VERDITE; slot < KF_ITEM_COUNT; slot++) {
-        if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
+        if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             available[found] = inv[slot];
@@ -246,7 +246,7 @@ void item_menu_buy(s32 shop_id)
         }
     }
     for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {
-        if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
+        if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             available[found] = inv[slot];
@@ -329,7 +329,7 @@ void item_menu_buy(s32 shop_id)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (player_state.gold
-                    < item_buy_prices[index[ctx.selected_index]][shop_id - 1]) {
+                    < item_buy_prices[index[ctx.selected_index]][shop_id - KF_ITEM_STOCK_FIRST_SHOP]) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             } else {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -350,8 +350,8 @@ void item_menu_buy(s32 shop_id)
     if (selection != KF_MENU_LIST_NO_SELECTION) {
         if (selection == KF_ITEM_GOLD_CROSS)
             inv[KF_ITEM_GOLD_CROSS]--;
-        player_state.gold -= item_buy_prices[selection][shop_id - 1];
-        item_stock[0][selection]++;
+        player_state.gold -= item_buy_prices[selection][shop_id - KF_ITEM_STOCK_FIRST_SHOP];
+        item_stock[KF_ITEM_STOCK_PLAYER][selection]++;
     }
 }
 
@@ -380,7 +380,7 @@ void item_menu_sell(s32 shop_id)
         ;
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, KF_SHOP_ROW_SELL);
 
-    inv = item_stock[0];
+    inv = item_stock[KF_ITEM_STOCK_PLAYER];
     found = 0;
     for (slot = 0; slot < KF_ITEM_GOLD_CROSS; slot++) {
         if (inv[slot] != 0) {
@@ -491,7 +491,7 @@ void item_menu_sell(s32 shop_id)
     menu_release_item_model();
     if (selection != KF_MENU_LIST_NO_SELECTION) {
         inv[selection]--;
-        player_state.gold += item_sell_prices[selection][shop_id - 1];
+        player_state.gold += item_sell_prices[selection][shop_id - KF_ITEM_STOCK_FIRST_SHOP];
     }
 }
 
@@ -511,7 +511,7 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
     s32 stock_count;
     s32 prev;
 
-    stock_count = item_stock[0][item_id];
+    stock_count = item_stock[KF_ITEM_STOCK_PLAYER][item_id];
     if (menu_load_item_model(item_id) != 0)
         return KF_ITEM_PICKUP_NOT_ACQUIRED;
 
@@ -580,7 +580,7 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
             } else {
                 result = KF_ITEM_PICKUP_STACK_FULL;
                 if (stock_count != KF_ITEM_STACK_CAPACITY) {
-                    item_stock[0][item_id]++;
+                    item_stock[KF_ITEM_STOCK_PLAYER][item_id]++;
                     result = KF_ITEM_PICKUP_ACQUIRED;
                 }
             }

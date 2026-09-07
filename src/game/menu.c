@@ -175,7 +175,7 @@ s32 menu_use_item_panel(void)
         ;
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, KF_ENUM_ENCODE(s32, KF_ROOT_CHOICE_USE_ITEM));
 
-    inv = item_stock[0];
+    inv = item_stock[KF_ITEM_STOCK_PLAYER];
     found = 0;
     if (inv[KF_ITEM_WATCHMAN_MAP] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)

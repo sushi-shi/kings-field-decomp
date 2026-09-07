@@ -213,7 +213,7 @@ void map_ambient_script_floor5(void)
 ADDRESS(0x800343e0, 0x58)
 void map_action_script_floor1(void)
 {
-    if (item_stock[0][KF_ITEM_DRAGON_CHALICE] != 0
+    if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_CHALICE] != 0
         && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
         map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
@@ -271,7 +271,7 @@ void map_action_script_floor2(void)
 ADDRESS(0x80034610, 0x90)
 void map_action_script_floor3(void)
 {
-    if (item_stock[0][KF_ITEM_WIND_BLADE_BRACELET] != 0) {
+    if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_WIND_BLADE_BRACELET] != 0) {
         if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == KF_MAGIC_UNLEARNED) {
             magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
@@ -308,7 +308,7 @@ void map_floor5_transition_cutscene(void)
     if (player_state.equipped_weapon_id == KF_ITEM_DRAGON_SWORD) {
         player_equip_weapon(KF_ITEM_NONE);
     }
-    item_stock[0][KF_ITEM_DRAGON_SWORD] = 0;
+    item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_SWORD] = 0;
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
 
     camera_path_begin(&path, map_floor5_camera_path);
@@ -401,11 +401,11 @@ void map_event_interact(KfMapEvent *event)
 {
     switch (event->character_id) {
     case KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE:
-        if (item_stock[0][KF_ITEM_GOLD_CROSS] != 0 && map_event_pool[2].dialogue_stage == 1
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_GOLD_CROSS] != 0 && map_event_pool[2].dialogue_stage == 1
             && map_event_pool[2].dialogue_page < 3) {
-            item_stock[0][KF_ITEM_KEY_OF_THE_DEAD] = 1;
+            item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_KEY_OF_THE_DEAD] = 1;
             map_event_pool[2].dialogue_pages.last_page[0] = 7;
-            item_stock[0][KF_ITEM_GOLD_CROSS]--;
+            item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_GOLD_CROSS]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue_stage, event->character_id, 3);
             map_event_pool[2].dialogue_page = 4;
@@ -416,10 +416,10 @@ void map_event_interact(KfMapEvent *event)
         }
         break;
     case KF_CHARACTER_HEALING_EXCHANGE:
-        if (item_stock[0][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2
             && map_event_pool[2].dialogue_page < 2) {
             magic_records[KF_MAGIC_HEALING].learned = KF_MAGIC_LEARNED;
-            item_stock[0][KF_ITEM_MIRROR_OF_TRUTH]--;
+            item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_MIRROR_OF_TRUTH]--;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
@@ -432,11 +432,11 @@ void map_event_interact(KfMapEvent *event)
         }
         break;
     case KF_CHARACTER_HARP_EXCHANGE:
-        if (item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0 && map_event_pool[1].dialogue_stage == 2
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0 && map_event_pool[1].dialogue_stage == 2
             && map_event_pool[1].dialogue_page < 2) {
-            item_stock[0][KF_ITEM_HARP] = 1;
+            item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_HARP] = 1;
             map_event_pool[1].dialogue_pages.last_page[1] = 5;
-            item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
+            item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue_stage, event->character_id, 2);
             map_event_pool[1].dialogue_page = 3;

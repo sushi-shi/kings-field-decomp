@@ -103,39 +103,39 @@ void game_state_initialize(void)
     do {
         *cursor++ = 0;
     } while (--count != -1);
-    item_stock[0][KF_ITEM_SHORT_SWORD] = 1;
-    item_stock[0][KF_ITEM_MEDICINAL_HERB] = 1;
-    item_stock[1][KF_ITEM_SHORT_SWORD] = 1;
-    item_stock[1][KF_ITEM_BATTLE_AXE] = 1;
-    item_stock[1][KF_ITEM_KNIGHT_SWORD] = 1;
-    item_stock[1][KF_ITEM_IRON_MASK] = 1;
-    item_stock[1][KF_ITEM_KNIGHT_HELM] = 1;
-    item_stock[1][KF_ITEM_KNIGHT_PLATE] = 1;
-    item_stock[1][KF_ITEM_SMALL_SHIELD] = 1;
-    item_stock[1][KF_ITEM_KNIGHT_SHIELD] = 1;
-    item_stock[1][KF_ITEM_GAUNTLET] = 1;
-    item_stock[1][KF_ITEM_IRON_BOOTS] = 1;
-    item_stock[1][KF_ITEM_MEDICINAL_HERB] = 1;
-    item_stock[1][KF_ITEM_ANTIDOTE_HERB] = 1;
-    item_stock[1][KF_ITEM_RECOVERY_MEDICINE] = 1;
-    item_stock[1][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
-    item_stock[2][KF_ITEM_KNIGHT_SWORD] = 1;
-    item_stock[2][KF_ITEM_COLICHEMARDE] = 1;
-    item_stock[2][KF_ITEM_CRESCENT_AXE] = 1;
-    item_stock[2][KF_ITEM_KNIGHT_HELM] = 1;
-    item_stock[2][KF_ITEM_GREAT_HELM] = 1;
-    item_stock[2][KF_ITEM_BREASTPLATE] = 1;
-    item_stock[2][KF_ITEM_FULL_PLATE] = 1;
-    item_stock[2][KF_ITEM_FIRE_MAIL] = 1;
-    item_stock[2][KF_ITEM_TOWER_SHIELD] = 1;
-    item_stock[2][KF_ITEM_LEG_GUARDS] = 1;
-    item_stock[2][KF_ITEM_MEDICINAL_HERB] = 1;
-    item_stock[2][KF_ITEM_ANTIDOTE_HERB] = 1;
-    item_stock[2][KF_ITEM_RECOVERY_MEDICINE] = 1;
-    item_stock[2][KF_ITEM_DRAGON_KING_GRASS_LEAF] = 1;
-    item_stock[2][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
-    item_stock[2][KF_ITEM_LIGHT_RING] = 1;
-    item_stock[2][KF_ITEM_GOLD_CROSS] = 1;
+    item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_SHORT_SWORD] = 1;
+    item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_MEDICINAL_HERB] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_SHORT_SWORD] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_BATTLE_AXE] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_KNIGHT_SWORD] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_IRON_MASK] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_KNIGHT_HELM] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_KNIGHT_PLATE] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_SMALL_SHIELD] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_KNIGHT_SHIELD] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_GAUNTLET] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_IRON_BOOTS] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_MEDICINAL_HERB] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_ANTIDOTE_HERB] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_RECOVERY_MEDICINE] = 1;
+    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_KNIGHT_SWORD] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_COLICHEMARDE] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_CRESCENT_AXE] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_KNIGHT_HELM] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_GREAT_HELM] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_BREASTPLATE] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_FULL_PLATE] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_FIRE_MAIL] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_TOWER_SHIELD] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_LEG_GUARDS] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_MEDICINAL_HERB] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_ANTIDOTE_HERB] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_RECOVERY_MEDICINE] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_DRAGON_KING_GRASS_LEAF] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_DRAGON_KING_GRASS_FRUIT] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_LIGHT_RING] = 1;
+    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ITEM_GOLD_CROSS] = 1;
 }
 
 ADDRESS(0x800154b0, 0x19c)
@@ -143,8 +143,8 @@ void player_death_restart(void)
 {
     KfFloorId floor = player_state.progress_state.current_floor;
 
-    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0) {
-        item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
+    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0) {
+        item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
         map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;

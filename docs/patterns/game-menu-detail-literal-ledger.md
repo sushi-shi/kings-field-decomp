@@ -1,7 +1,7 @@
 # Retained item-detail and dialog literals
 
 Complete current token/expression ledger after the [preview-layout review](game-menu-preview-layout.md).
-All 87 retained occurrences have a reason; named definitions and claims are excluded.
+All 85 retained occurrences have a reason; named definitions and claims are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -30,8 +30,7 @@ All 87 retained occurrences have a reason; named definitions and claims are excl
 | `menu_draw_item_detail` | 69 | `2` | `lsrc.m[2][2] = 0;` | Matrix row/column indices select the 3×3 directional coefficients: first two rows use named negative Q12 unity; third row is zero and contributes no direction. |
 | `menu_draw_item_detail` | 69 | `0` | `lsrc.m[2][2] = 0;` | Matrix row/column indices select the 3×3 directional coefficients: first two rows use named negative Q12 unity; third row is zero and contributes no direction. |
 | `menu_draw_item_detail` | 81 | `0` | `for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
-| `menu_draw_item_detail` | 92 | `1` | `menu_format_number(prices[item_id][shop_id - 1], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);` | Convert one-based shop column to a zero-based array index; render six price digits with blank rather than zero padding. |
-| `menu_draw_item_detail` | 92 | `0` | `menu_format_number(prices[item_id][shop_id - 1], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);` | Convert one-based shop column to a zero-based array index; render six price digits with blank rather than zero padding. |
+| `menu_draw_item_detail` | 92 | `0` | `menu_format_number(prices[item_id][shop_id - KF_ITEM_STOCK_FIRST_SHOP], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);` | Convert one-based shop column to a zero-based array index; render six price digits with blank rather than zero padding. |
 | `menu_draw_item_detail` | 96 | `0` | `gs.codes[0] = MENU_TEXT_DAKUTEN \| 0x9;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 96 | `0x9` | `gs.codes[0] = MENU_TEXT_DAKUTEN \| 0x9;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 97 | `1` | `gs.codes[1] = 0x2d;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
@@ -46,8 +45,7 @@ All 87 retained occurrences have a reason; named definitions and claims are excl
 | `menu_draw_item_detail` | 105 | `1` | `gs.codes[1] = 0xcb;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 105 | `0xcb` | `gs.codes[1] = 0xcb;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 106 | `2` | `gs.codes[2] = MENU_TEXT_END;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
-| `menu_draw_item_detail` | 111 | `0` | `menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
-| `menu_draw_item_detail` | 111 | `0` | `menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
+| `menu_draw_item_detail` | 111 | `0` | `menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
 | `menu_draw_item_detail` | 121 | `0` | `menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, 0, gs.codes);` | Render six gold digits without leading zeros; authored field width, shared numeric-render API Boolean. |
 | `menu_draw_dialog_frame` | 165 | `0` | `if (highlighted_slot == 0) {` | Zero-based first slot: omit its named overlay and enqueue the second and third slot overlays. |
 | `menu_draw_dialog_frame` | 171 | `1` | `if (highlighted_slot == 1) {` | Zero-based second slot: omit its named overlay and enqueue the first and third slot overlays. |

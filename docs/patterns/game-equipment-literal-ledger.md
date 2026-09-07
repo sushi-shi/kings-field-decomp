@@ -2,7 +2,7 @@
 
 Complete current ledger for `equipment.c`, `menu_select.c` and
 `menu_draw_name_list.c` after the [confirmation/layout review](game-equipment-confirm-layout.md).
-All **103 retained occurrences** have an individual row and reason. Duplicate
+All **102 retained occurrences** have an individual row and reason. Duplicate
 tokens remain separate; line numbers locate this version, while the complete
 expression and multiplicity establish coverage. Claims, definitions and string
 contents are excluded.
@@ -31,7 +31,7 @@ this ledger does not claim that all domain propagation is complete.
 
 ## `src/game/menu_select.c`
 
-96 retained occurrences.
+95 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -40,7 +40,6 @@ this ledger does not claim that all domain propagation is complete.
 | `menu_equip_select` | 38 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
 | `menu_equip_select` | 42 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_equip_select` | 42 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
-| `menu_equip_select` | 45 | `0` | `owned = item_stock[0];` | Player-owned stock bank zero, acquired after the release wait and before the category switch; its item index follows the category bounds. |
 | `menu_equip_select` | 77 | `0` | `k = 0;` | Start appending selected rows at the first workspace entry. |
 | `menu_equip_select` | 79 | `0` | `if (owned[i] != 0) {` | Any nonzero owned quantity includes that item in the selection list. |
 | `menu_equip_select` | 81 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |

@@ -129,7 +129,7 @@ void player_use_item(u8 item_id)
                 if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
-                    item_stock[0][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
+                    item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
                     used = 1;
                     map_object_pool_trigger_link(object->link.link_id);
                     object->link.link_id = KF_MAP_LINK_NONE;
@@ -176,8 +176,8 @@ void player_use_item(u8 item_id)
         return;
     case KF_ITEM_ILLUSION_STAFF:
         player_state.illusion_staff_timer = PLAYER_ILLUSION_STAFF_TIMER_RELOAD;
-        if (item_stock[0][KF_ITEM_ILLUSION_STAFF] != 0) {
-            item_stock[0][KF_ITEM_ILLUSION_STAFF]--;
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_ILLUSION_STAFF] != 0) {
+            item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_ILLUSION_STAFF]--;
         }
         return;
     case KF_ITEM_MIRROR_OF_TRUTH:

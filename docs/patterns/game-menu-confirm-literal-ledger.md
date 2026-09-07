@@ -108,7 +108,7 @@ Other documented retained selectors may still need a future semantic domain.
 
 ## `src/game/item.c`
 
-156 retained occurrences.
+147 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -155,12 +155,10 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_buy` | 233 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 233 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 238 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
-| `item_menu_buy` | 240 | `0` | `if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
-| `item_menu_buy` | 240 | `0` | `if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
+| `item_menu_buy` | 240 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
 | `item_menu_buy` | 241 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
 | `item_menu_buy` | 248 | `0` | `for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
-| `item_menu_buy` | 249 | `0` | `if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
-| `item_menu_buy` | 249 | `0` | `if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
+| `item_menu_buy` | 249 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
 | `item_menu_buy` | 250 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
 | `item_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
 | `item_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
@@ -191,16 +189,12 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_buy` | 328 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
 | `item_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 332 | `1` | `< item_buy_prices[index[ctx.selected_index]][shop_id - 1]) {` | Convert one-based shop ID into its zero-based price column for the affordability check. |
 | `item_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 344 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
-| `item_menu_buy` | 353 | `1` | `player_state.gold -= item_buy_prices[selection][shop_id - 1];` | Subtract the selected item’s unsigned halfword price in the shop’s zero-based column. |
-| `item_menu_buy` | 354 | `0` | `item_stock[0][selection]++;` | Increment the player-owned stock bank, distinct from shop availability. |
 | `item_menu_sell` | 375 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_sell` | 379 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 379 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_sell` | 383 | `0` | `inv = item_stock[0];` | Sell from the player-owned quantity bank zero. |
 | `item_menu_sell` | 384 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
 | `item_menu_sell` | 385 | `0` | `for (slot = 0; slot < KF_ITEM_GOLD_CROSS; slot++) {` | Start with item zero and stop before Gold Cross ID 52; the Gold Cross and later key/quest-item band is excluded from selling. |
 | `item_menu_sell` | 386 | `0` | `if (inv[slot] != 0) {` | Only possessed player items can become sale candidates. |
@@ -238,9 +232,7 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_sell` | 486 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
-| `item_menu_sell` | 494 | `1` | `player_state.gold += item_sell_prices[selection][shop_id - 1];` | Credit the selected item’s sell price in the shop’s zero-based price column. |
 | `item_pickup_confirm` | 509 | `0` | `s32 input = 0;` | Initial button word has no pressed bits for subsequent edge detection. |
-| `item_pickup_confirm` | 514 | `0` | `stock_count = item_stock[0][item_id];` | Bank zero is player inventory; shop stock occupies the other banks. |
 | `item_pickup_confirm` | 515 | `0` | `if (menu_load_item_model(item_id) != 0)` | Any nonzero model-loader status aborts pickup with the existing not-acquired result. |
 | `item_pickup_confirm` | 520 | `0` | `accept_label.codes[0] = 0x53;` | Consecutive glyph/terminator position in the take (とる) or cancel (やめる) label, decoded in the retail font audit; numeric codes remain text asset data. |
 | `item_pickup_confirm` | 520 | `0x53` | `accept_label.codes[0] = 0x53;` | Consecutive glyph/terminator position in the take (とる) or cancel (やめる) label, decoded in the retail font audit; numeric codes remain text asset data. |
@@ -265,7 +257,6 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_pickup_confirm` | 569 | `0` | `\|\| ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `item_pickup_confirm` | 575 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `item_pickup_confirm` | 575 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
-| `item_pickup_confirm` | 583 | `0` | `item_stock[0][item_id]++;` | Increment the player-inventory bank only after the accepted pickup passes the exact stack-capacity check. |
 | `item_pickup_confirm` | 587 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `item_pickup_confirm` | 587 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 

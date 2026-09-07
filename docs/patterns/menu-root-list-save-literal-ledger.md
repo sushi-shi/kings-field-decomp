@@ -2,7 +2,7 @@
 
 Complete current per-occurrence ledger for `menu.c`, `menu_panels.c`,
 `menu_item_drop.c` and `menu_draw_window.c` after the
-[shared confirmation-state review](menu-confirm-state.md): **259 occurrences**.
+[shared confirmation-state review](menu-confirm-state.md): **257 occurrences**.
 Named definitions, claims, comments, string contents and identifier digits are
 excluded. Duplicate occurrences have individual rows. This consolidates the
 older choice, spell, item-list, save and window slices against current source.
@@ -48,7 +48,6 @@ without inventing a reason for the original capacity or timing choices.
 | `menu.c` / `menu_use_item_panel` | 170 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
 | `menu.c` / `menu_use_item_panel` | 174 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu.c` / `menu_use_item_panel` | 174 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
-| `menu.c` / `menu_use_item_panel` | 178 | `0` | `inv = item_stock[0];` | Player-owned stock bank zero; other banks belong to the wider stock/save/shop domain, so no merchant identity is inferred from this index. |
 | `menu.c` / `menu_use_item_panel` | 179 | `0` | `found = 0;` | Begin appending compacted rows at the first workspace entry. |
 | `menu.c` / `menu_use_item_panel` | 180 | `0` | `if (inv[KF_ITEM_WATCHMAN_MAP] != 0) {` | Any nonzero owned map quantity includes its row before the other usable-item ranges. |
 | `menu.c` / `menu_use_item_panel` | 181 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
@@ -154,7 +153,6 @@ without inventing a reason for the original capacity or timing choices.
 | `menu_item_drop.c` / `menu_drop_item` | 46 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_item_drop.c` / `menu_drop_item` | 50 | `0` | `found = 0;` | Begin appending compacted rows at the first workspace entry. |
 | `menu_item_drop.c` / `menu_drop_item` | 51 | `0` | `code = 0;` | Start scanning the complete stock array at its first zero-based item ID. |
-| `menu_item_drop.c` / `menu_drop_item` | 53 | `0` | `inv = item_stock[0];` | Player-owned stock bank zero; other banks belong to the wider stock/save/shop domain, so no merchant identity is inferred from this index. |
 | `menu_item_drop.c` / `menu_drop_item` | 55 | `0` | `if (inv[code] != 0) {` | Only owned nonzero quantities enter the equipped-copy adjustment and row-construction path. |
 | `menu_item_drop.c` / `menu_drop_item` | 65 | `0` | `if (counts[found] != 0) {` | Append a discard row only if a quantity remains after subtracting one equipped copy. Preserve the single decrement when any of the seven equipment IDs matches. |
 | `menu_item_drop.c` / `menu_drop_item` | 66 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |

@@ -89,7 +89,7 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     if (price_mode == KF_ITEM_PRICE_BUY) {
         prices = item_buy_prices;
     }
-    menu_format_number(prices[item_id][shop_id - 1], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
+    menu_format_number(prices[item_id][shop_id - KF_ITEM_STOCK_FIRST_SHOP], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = MENU_ITEM_DETAIL_LABEL_X;
@@ -108,7 +108,7 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = MENU_ITEM_DETAIL_QUANTITY_X;
-    menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
+    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(

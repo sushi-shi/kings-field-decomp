@@ -1,7 +1,7 @@
 # Retained inventory-preview literals
 
 Complete current file ledger after the [preview-layout review](game-menu-preview-layout.md).
-All 36 retained occurrences have a reason; named definitions and claims are excluded.
+All 35 retained occurrences have a reason; named definitions and claims are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -39,5 +39,4 @@ All 36 retained occurrences have a reason; named definitions and claims are excl
 | `menu_item_model_preview` | 66 | `1` | `gs.codes[1] = 0xcb;` | Second glyph of the held-quantity label, text-atlas cell 0xcb. Keep the authored encoded text and its zero-based position. |
 | `menu_item_model_preview` | 66 | `0xcb` | `gs.codes[1] = 0xcb;` | Second glyph of the held-quantity label, text-atlas cell 0xcb. Keep the authored encoded text and its zero-based position. |
 | `menu_item_model_preview` | 67 | `2` | `gs.codes[2] = MENU_TEXT_END;` | Terminate the two-glyph quantity label at zero-based position two; the terminator value itself is named. |
-| `menu_item_model_preview` | 72 | `0` | `menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | The first zero selects player-owned stock; the second requests blank leading padding. The two-digit display width is named; neither zero is a quantity-state enum. |
-| `menu_item_model_preview` | 72 | `0` | `menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | The first zero selects player-owned stock; the second requests blank leading padding. The two-digit display width is named; neither zero is a quantity-state enum. |
+| `menu_item_model_preview` | 72 | `0` | `menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | The first zero selects player-owned stock; the second requests blank leading padding. The two-digit display width is named; neither zero is a quantity-state enum. |

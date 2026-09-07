@@ -42,7 +42,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     while (PadRead(1) != 0)
         ;
 
-    owned = item_stock[0];
+    owned = item_stock[KF_ITEM_STOCK_PLAYER];
     switch (category) {
     case KF_EQUIP_MENU_WEAPON:
         start = KF_WEAPON_ITEM_FIRST;

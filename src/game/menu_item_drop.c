@@ -50,7 +50,7 @@ void menu_drop_item(void)
     found = 0;
     code = 0;
     player = &player_state;
-    inv = item_stock[0];
+    inv = item_stock[KF_ITEM_STOCK_PLAYER];
     for (; code < KF_ITEM_COUNT; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
