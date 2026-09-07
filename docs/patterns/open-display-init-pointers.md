@@ -1,5 +1,17 @@
 # OPEN display-initialization pointer lifetimes
 
+## Split-DTD and complete-owner controls (`82320b9` follow-up)
+
+Splitting the chained DTD assignment around initialization of the existing
+typed first-DRAWENV pointer does not retain retail's first-member anchor. The
+probe instead anchors the second DTD member and derives the later DRAWENV and
+DISPENV arguments backward from it, while preserving the 40-byte frame and
+four absolute DFE pairs. A block-local `KfGraphicsRuntimeOpen *` used for the
+same complete customization lifetime is also wrong: it reserves 64 bytes and
+collapses the independently observed absolute RGB references into base-relative
+stores. Both trials are reverted. They rule out two real typed lifetimes; they
+do not justify a raw byte alias or a register carrier.
+
 ## DTD-member lifetime controls (`d8f448e`)
 
 Retail retains the address of `display_draw_environments[0].dtd` in `s0` only

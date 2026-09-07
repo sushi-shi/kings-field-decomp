@@ -1,5 +1,14 @@
 # OPEN visible entity/item traversal
 
+## Direct active-window expression control (`82320b9` follow-up)
+
+Removing the item loop's local `grid` name and spelling its three accesses
+directly through `open_graphics_runtime.active_cell_window` leaves the first
+row/window load-delay mismatch unchanged and adds one instruction later in the
+loop. The two sibling functions remain exact, but the traversal grows to 668
+bytes. Restore the single typed window pointer; direct owner expressions do
+not recover retail's quotient/subtraction schedule.
+
 ## Scheduler-profile control (`b46dd11` follow-up)
 
 `probe-gcc257-o2-plain` does not fill the remaining item-window load delay.

@@ -1,5 +1,15 @@
 # OPEN TMD preparation countdown
 
+## Equivalent decrement-expression controls (`82320b9` follow-up)
+
+Writing the proven outer countdown as two statements (`left = count; left--`)
+changes the live halfword and object-pointer registers and inserts eight bytes
+of real instructions; it does not create retail's leaf frame. Explicitly narrowing
+`count - 1` to `u16`, and spelling the same wrap as `count + 0xffff`, both emit
+the canonical body byte for byte and retain only the two missing frame words.
+The direct subtraction is restored. Equivalent arithmetic syntax is not the
+unattributed stale pseudo that owns this frame.
+
 ## Scheduler-profile control (`d8f448e`)
 
 The existing `probe-gcc257-o2-plain` profile does not recover the unused

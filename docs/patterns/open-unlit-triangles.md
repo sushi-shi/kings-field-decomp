@@ -1,5 +1,13 @@
 # OPEN unlit triangle emission
 
+## Complete read-only pointer qualification (`82320b9` follow-up)
+
+Qualifying the projected byte stream and all three `KfScreenVertex *` locals
+as `const` emits the canonical candidate byte for byte. The 56/64-byte frame
+and symmetric vertex-1/vertex-2 saved-register roles remain unchanged in both
+packet modes. The established mutable types are restored; alias qualification
+does not supply the missing source dependency.
+
 ## Function Match Plan: enclosing graphics owner (`62f6dc8`)
 
 OPEN `80018344` starts at 676 retail/680 probe bytes and 98.828400% strict.

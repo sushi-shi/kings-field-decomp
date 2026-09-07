@@ -1,5 +1,16 @@
 # OPEN ending-scroll controller and data owners
 
+## Complete camera-array and signed carrier controls (`82320b9` follow-up)
+
+A pointer to the complete three-element ending camera-path array, assigned at
+retail's early address-materialization point and dereferenced at the unchanged
+call, is folded to the canonical late argument setup. It does not alter one
+instruction. A signed-halfword next-lighting-phase carrier does recover the
+retail 49-block CFG and shared phase-store/reset tail, but rotates all long-lived
+state registers and reduces the body by four bytes, just like the wider carrier
+family. Both are reverted. Owner extent and selector signedness alone do not
+explain the early address schedule or the shared join.
+
 ## Opening-scenes scheduler control (`b46dd11` follow-up)
 
 The consolidated `open.opening_scenes` unit was rebuilt under
