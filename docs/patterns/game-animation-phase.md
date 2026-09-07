@@ -136,3 +136,11 @@ correctly refuses three independently modified player-naming build inputs.
 Keep the verified reconstruction without a dirty override; its one exact
 ledger update remains pending that campaign's completion. The four earlier
 menu results were separately banked while inputs were clean in `0f00593`.
+
+### Deferred bank completed
+
+After progression naming committed as `8bb4c8b`, a fresh pinned actor compile
+again matches all twelve predicate words and the other 25 exact actor bodies.
+The restored actor source and full build preserve strict 100%. Selected
+`kf bank --function game:0x8002dccc` succeeds with clean build inputs and no
+dirty override, changing only this baseline row. The prior deferral is resolved.
