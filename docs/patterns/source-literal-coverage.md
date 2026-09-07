@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [shop-control review](game-shop-menu-controls.md):
+Working snapshot after the [save-status review](game-save-status-domain.md):
 **111 C files**, **112 source/image variants**,
-and **6,640 inline numeric/character occurrences**. The counts include authored
+and **6,635 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **38 files / 3,778 occurrences**, the explicit ledger rows were compared
+For **39 files / 3,927 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -73,7 +73,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 5,343 occurrences.
+73 files; 5,338 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -148,7 +148,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_scene.c](../../src/game/render_scene.c) | 15 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_sprite.c](../../src/game/render_sprite.c) | 1 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
 | [resources.c](../../src/game/resources.c) | 14 | [domain notes](source-constant-names.md#cd-and-resource-registration-plan) | Expand the domain audit into current occurrence coverage. |
-| [save_system.c](../../src/game/save_system.c) | 154 | [domain notes](source-constant-names.md#save-statuses-messages-and-io-attempts) | Expand the domain audit into current occurrence coverage. |
+| [save_system.c](../../src/game/save_system.c) | 149 | [complete ledger](game-save-system-literal-ledger.md); [status domain](game-save-status-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [sprite_add_ft4.c](../../src/game/sprite_add_ft4.c) | 27 | [domain notes](source-constant-names.md#display-dimensions-and-ordering-table-bounds) | Expand the domain audit into current occurrence coverage. |
 
 ## OPEN.EXE

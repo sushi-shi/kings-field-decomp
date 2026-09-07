@@ -52,7 +52,7 @@ void game_main_loop(void)
     vsync_event = OpenEvent(RCntCNT3, EvSpINT, EvMdINTR, frame_pacer_vsync_callback);
     EnableEvent(vsync_event);
     player_warp_shimmer_at_player(KF_WARP_SHIMMER_SHRINK_REMOVE);
-    if (save_file_cleanup_temporary() == KF_CARD_STATUS_TIMEOUT) {
+    if (save_file_cleanup_temporary() == KF_ENUM_ENCODE(s32, KF_CARD_STATUS_TIMEOUT)) {
         display_show_error_screen(KF_SYSTEM_SCREEN_NO_MEMORY_CARD);
     }
     game_exit_code = KF_GAME_EXIT_NONE;

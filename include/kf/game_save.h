@@ -4,18 +4,33 @@
 /* GAME.EXE memory-card file layouts, shared workspace, and public save API. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 #include <kf/game_map.h>
 #include <kf/item.h>
 #include <kf/magic.h>
 
 enum {
-    KF_CARD_CHANNEL = 0,
+    KF_CARD_CHANNEL = 0
+};
+
+/* Card events and file-policy statuses share this internal channel. */
+KF_ENUM_BEGIN(KfSaveStatus, s32)
     KF_CARD_STATUS_NOT_STARTED = 0,
     KF_CARD_STATUS_IO_END = 1,
     KF_CARD_STATUS_TIMEOUT = 2,
     KF_CARD_STATUS_NEW_DEVICE = 3,
-    KF_CARD_STATUS_ERROR = 4
-};
+    KF_CARD_STATUS_ERROR = 4,
+    SAVE_STATUS_OK = KF_CARD_STATUS_IO_END,
+    SAVE_STATUS_FORMAT_REQUIRED = KF_CARD_STATUS_NEW_DEVICE,
+    SAVE_STATUS_NO_SPACE = 5,
+    SAVE_STATUS_FAILED = 6,
+    SAVE_STATUS_NO_DATA = 7,
+    SAVE_STATUS_FORMAT_CONFIRMATION = 8,
+    SAVE_STATUS_FORMAT_FAILED = 11,
+    SAVE_STATUS_STALE_CATALOG = 12,
+    SAVE_STATUS_READ_FAILED = 13,
+    SAVE_STATUS_WRITE_FAILED = 14
+KF_ENUM_END(KfSaveStatus)
 
 enum {
     KF_SAVE_SLOT_COUNT = 3,

@@ -113,8 +113,13 @@ selecting a result. `memory_card_begin_status_check` returns zero when
 `_card_info` does not start an operation. The public `KF_CARD_STATUS_*`
 constants describe that BIOS-event contract.
 
-The file/UI layer reuses this number space. Its private `SAVE_STATUS_*`
-constants describe the handling policy, with success also equal to one:
+The file/UI layer reuses this number space. The shared `KfSaveStatus` domain
+in `game_save.h` contains both card-event and `SAVE_STATUS_*` policy names,
+with success also equal to one. Producers and status locals carry that type;
+the message dispatcher retains its signed-halfword storage. The
+[domain review](patterns/game-save-status-domain.md) records the conversions
+and the [current ledger](patterns/game-save-system-literal-ledger.md) explains
+every retained literal:
 
 | Value | Source name suffix | Producer or observed handling |
 | ---: | --- | --- |
@@ -172,11 +177,12 @@ messages. `menu_load_message_image` takes the decimal filename ID directly:
 | 6 | 114 | Failed. |
 | 8 | 115 | Game data exists; confirm initialization. |
 
-The loader skips only ID 255. Success maps to -1 in the status dispatcher,
-which would still enter filename construction if passed directly to the
-loader; the usual wrappers display a status only when it differs from one.
-Preserve this distinction rather than normalizing the two values. Unknown
-statuses also retain the dispatcher's original pass-through behavior.
+The loader skips only ID 255. Status one selects image ID -1, which still
+enters filename construction; the usual wrappers display a status only when
+it differs from one. Unknown statuses become signed-halfword image IDs.
+Separately, the dispatcher returns -1 when the image loader reports failure
+one and forwards every other loader result, including successful zero.
+The image selection and function result are distinct contracts.
 
 `menu_load_item_texture` uses a different contract: it adds one to its
 argument before constructing the same filename family. Consequently menu

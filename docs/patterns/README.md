@@ -517,3 +517,7 @@ promotes a probe to a proven historical toolchain.
 - [GAME statistics text layout](game-status-text-layout.md): view-specific row
   spacing, shared decimal widths and digit advance; the
   [current status ledger](game-menu-status-literal-ledger.md) includes corrected rating arithmetic.
+
+- [game-save-status-domain.md](game-save-status-domain.md): typed internal card/file statuses,
+  preserved menu result mappings, signed-halfword message dispatch and the
+  [complete save literal ledger](game-save-system-literal-ledger.md).
