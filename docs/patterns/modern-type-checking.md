@@ -366,3 +366,42 @@ remains the only failure. No new tests were added.
 Full `kf build` retains the same data/ownership failures: source contributions
 7/60, config SDK contributions 4/4, target relink PSX 1/1, GAME 75/77, OPEN
 34/38. Removing assertions has not fixed or hidden those discrepancies.
+
+## Local HoMM2 and Gruntz comparison
+
+Rechecked the local HoMM2 `decomp-gold-2.1-buka` checkout at `ca2904a9`
+(`include/Ints.h`, `scripts/homm2/clang_options.py` and
+`scripts/homm2/build/clang_cxx11.py`) and Gruntz at `b1de0e555`
+(`include/Enums.h` and `docs/patterns/enum-domains.md`). Both select scoped,
+explicitly stored enum domains from C++20 language support and provide
+storage wrappers for domains appearing at different field widths. Their
+strict compiler pass checks consumers as well as declarations.
+
+King's Field already follows that model in [enum.h](../../include/kf/enum.h).
+The retail C expansion retains integer storage and promoted expression types;
+modern Clang sees scoped enums and domain-preserving field wrappers. Gruntz's
+retail C++ branch can use ordinary enums for some domains; that compiler and
+ABI result does not establish the corresponding Psy-Q C behavior.
+
+Both inspected sibling storage wrappers also accept their raw storage integer
+in construction and assignment. King's Field deliberately requires an enum
+value instead. Retain this stricter boundary: `KF_ENUM_DECODE` admits encoded
+integers explicitly and `KF_ENUM_ENCODE` exposes integers explicitly. Neither
+operation validates that an encoded value is a named member. SDK calls retain
+their authentic types; raw conversion is not a substitute for propagating a
+known domain through game parameters, locals and returns.
+
+A fresh bounded Clang probe accepts the typed object/floor chain and explicit
+encode/decode chain. Ten negative controls reject raw object and floor
+assignments/comparisons, wrong-domain field and parameter values, an erased
+parameter, and implicit domain-to-integer conversions. In particular,
+`object->object_id == 89` and `progress->current_floor == 2` both fail; the
+named members compile. These are ignored compiler controls, not new production
+tests or size assertions.
+
+`kf check-types` checks all selected source/image variants with unlimited
+error reporting and returns failure when any variant fails. The current run
+has 300 errors: 65/112 variants pass, 47 fail. This is remaining propagation
+and declaration debt, not a clean strict build or an accepted-error gate.
+Clangd's generated commands default to the same modern mode; an explicitly
+selected retail editor mode does not weaken `kf check-types`.
