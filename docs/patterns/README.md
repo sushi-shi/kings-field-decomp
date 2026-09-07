@@ -234,6 +234,9 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-constants.md](game-actor-constants.md): actor phase limits,
   sound/parameter slots, collision policies, damage units and packed flags;
   consumer explanations for all retained literals in the three actor modules.
+- [game-actor-behavior-constants.md](game-actor-behavior-constants.md): actor
+  movement and jump units, animation contacts, selection cutoffs, projectile
+  parameters and boss-death timing; complete 173-occurrence behavior ledger.
 - [game-animation-phase.md](game-animation-phase.md): exact short-circuit
   phase predicate; eleven-caller audit and rejected cache/early-return controls.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect

@@ -1,5 +1,10 @@
 # GAME actor constants and retained literals
 
+The [complete behavior follow-up](game-actor-behavior-constants.md) names the
+remaining supported movement, timing, selection and effect parameters in
+`actor_behavior.c`. Its [173-occurrence ledger](game-actor-behavior-literal-ledger.md)
+supersedes that module's portion of this historical census.
+
 ## Function Match Plan
 
 Review all literals in `actor.c`, `actor_behavior.c` and `actor_pool.c` as one

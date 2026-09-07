@@ -1,5 +1,11 @@
 # Source constant naming
 
+The [actor-behavior review](game-actor-behavior-constants.md) names movement
+and jump units, animation contacts, selection cutoffs, effect speeds and
+boss-death timing. It propagates three existing spell-effect identities,
+removes 95 inline uses, and documents all 173 remaining occurrences in the
+complete eleven-function module.
+
 The [world-collision remainder review](game-world-collision-literals.md)
 completes the per-occurrence account of all 270 literals in the world query
 and grid helpers, including every entry of the 255-halfword height table.
