@@ -72,3 +72,67 @@ campaign. Canonical strict reports still give this predicate 97.5%, and all
 tests, lint and flake checks ran with that restored source. The full build's
 remaining failures concern the documented data/ownership/relink work, not a
 new actor-function regression.
+
+## Return-form control at `2f1f04a`
+
+Refresh all six GAME-qualified views, the complete twelve retail words, both
+adjacent boundaries, and the argument/result windows at all eleven callers.
+The current strict score remains 97.5%; all 25 exact actor siblings are
+controls. Retail loads phase into v1 and initializes the false result in a2
+in the first branch's delay slot. Canonical source exchanges those two roles
+at six instructions. There are three blocks, one branch, one return, and no
+calls, strings, relocations or unresolved control in this game-owned leaf.
+The shared unsigned phase and signed step fields remain at +0x12 and +0x3c;
+callers still pass a halfword threshold and consume a word zero/nonzero result.
+
+Function Match Plan: express the decoded failure edge directly as
+`if (phase >= actor->animation_phase) return 0;`, followed by the signed
+lower-bound comparison as the return expression. This removes the explicit
+result initializer and assignment without changing either predicate, the
+short-circuit step load, or the interface. It tests a return-form hypothesis,
+not a register-forcing local or declaration permutation. Compare the first
+raw divergence and all twelve words; revert if it does not explain retail.
+Keep the already rejected explicit-phase-cache control out of this experiment.
+
+The direct early-return control recovers retail's v1 phase operand, but emits
+60 bytes, a fourth block and a new internal jump; its branch delay slot is
+empty instead of initializing the shared boolean result. Reject it. Retail's
+single false-result definition and conditional lower-bound evaluation instead
+support a short-circuit boolean return expression. Test the conjunction of
+the same two comparisons: it must retain the first guard's conditional step
+load and produce the common result/return without the extra exit block.
+
+### Exact short-circuit result
+
+The conjunction emits all twelve retail words and reaches strict **100%**,
+up from 97.5%. It retains the same three blocks, conditional signed-step load,
+one return and both delay slots, with no relocations or extra jump. The
+false-result initialization, phase operand and returned boolean now use the
+retail registers naturally. The retained source changes only the function's
+return expression; shared types, input widths and compiler profile are unchanged.
+This establishes the successful source form, not a historical optimizer cause.
+
+A separate fresh compilation compares all 26 exact actor bodies directly
+against the hash-verified GAME bytes, including the new predicate's 48 bytes
+with SHA-256 `f4c3f9cd9ea09ec8503c78b1b8c43f931201524d1ab7fe8ce88c850149d7a1ac`.
+Each target object first relinks back to retail, and every ordered call and
+address pair agrees. A second fresh compilation substitutes the committed
+`2f1f04a` player header for the concurrent progression-naming edit: the complete
+actor text and all non-debug relocation identities/addends remain identical.
+The exact result does not depend on that unrelated header change.
+
+Only this predicate changes among all 484 scored rows. GAME advances
+308 -> 309/362 exact, OPEN remains 98/108 and PSX 1/1; total 408/471.
+The full build retains the existing data/placement/ownership failures:
+source data PSX 0/1, GAME 9/42, OPEN 2/19; target relinks 1/1, 75/77 and
+34/38 respectively, with six conflicting-section cases and zero artifact
+failures. No other function score or data claim is changed by this campaign.
+
+Ruff, `git diff --check`, and all 678 repository tests pass with the final
+short-circuit source (78.336 seconds). No tooling or flake change is involved.
+
+After staging only the matching campaign, selected banking of `GAME:8002dccc`
+correctly refuses three independently modified player-naming build inputs.
+Keep the verified reconstruction without a dirty override; its one exact
+ledger update remains pending that campaign's completion. The four earlier
+menu results were separately banked while inputs were clean in `0f00593`.

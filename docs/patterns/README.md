@@ -216,8 +216,8 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-constants.md](game-actor-constants.md): actor phase limits,
   sound/parameter slots, collision policies, damage units and packed flags;
   consumer explanations for all retained literals in the three actor modules.
-- [game-animation-phase.md](game-animation-phase.md): eleven-caller audit and
-  unchanged explicit phase-cache control; predicate remains non-exact.
+- [game-animation-phase.md](game-animation-phase.md): exact short-circuit
+  phase predicate; eleven-caller audit and rejected cache/early-return controls.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect
   owner and member-relative addressing closing the current-record selector.
 - [game-effect-protocol.md](game-effect-protocol.md): behavioral effect kinds,

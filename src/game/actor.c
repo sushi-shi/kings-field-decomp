@@ -664,12 +664,8 @@ void actor_advance_animation_clamped(KfActor *actor, s16 delta)
 ADDRESS(0x8002dccc, 0x30)
 s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase)
 {
-    s32 crossed = 0;
-
-    if (phase < actor->animation_phase) {
-        crossed = phase >= actor->animation_phase - actor->animation_step;
-    }
-    return crossed;
+    return phase < actor->animation_phase
+        && phase >= actor->animation_phase - actor->animation_step;
 }
 
 ADDRESS(0x8002dcfc, 0x98)
