@@ -1,5 +1,29 @@
 # OPEN display-initialization pointer lifetimes
 
+## Midpoint lifetime and supplied-profile controls (`ad5c075`)
+
+At strict 92.177960%, the retained retail base begins at the chained `dtd`
+write and survives through the later `dfe` clear/submit/restore sequence. A
+bounded source trial therefore moved the two existing typed `DRAWENV *`
+initializations from after the RGB clears to immediately after the chained
+`dtd` assignment. This midpoint is distinct from the already tested
+whole-field lifetime: it neither changes a field expression nor introduces a
+member pointer. A real focused rebuild produced the identical 484-byte object,
+with the same four extra `dfe` address pairs and the same 40-byte frame. The
+trial is reverted.
+
+The complete supplied profile matrix was also checked on the unmodified unit.
+GCC 2.5.7 without the explicit CPU flag emits the same `display_initialize`
+listing as the canonical R2000 profile and preserves the three exact sibling
+functions. Disabling scheduling does not improve the target and makes exact
+`primitive_buffer_allocate` differ in its counter register. GCC 2.6.0 changes
+all four functions, uses a different return delay-slot convention, changes the
+target CFG from seven to six blocks, and reaches only a 55.8% listing
+similarity for `display_initialize`. Canonical `probe-gcc257-o2-g0` remains the
+only exact-sibling-preserving profile. None of these results explains the
+retail `s0` base, fourth saved register, or 48-byte frame, so the residue stays
+unattributed rather than being assigned to a compiler mechanism.
+
 ## Function Match Plan: SDK background-color macro (`262a978`)
 
 OPEN `80016adc display_initialize`, 472 retail/484 probe bytes, remains strict

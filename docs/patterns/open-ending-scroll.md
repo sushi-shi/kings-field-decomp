@@ -1,5 +1,31 @@
 # OPEN ending-scroll controller and data owners
 
+## Camera-call/local-initialization order (`073ada0`)
+
+OPEN `80014e28` began this pass at 1944 bytes and strict 97.129630%. The six
+image-qualified semantic views, complete 49-block retail CFG, sole caller,
+adjacent exact controllers, SDK/provider boundaries, data owners and source
+history were refreshed before editing. Retail forms the ending camera-path
+argument before five local selector/blend initializations, performs the entity
+handoff, and only then calls `opening_camera_path_begin`; the probe formerly
+formed the argument immediately before that call.
+
+Moving the five ordinary local initializations to immediately after the camera
+call is behavior-preserving because none is observable by the callee and none
+is read before the loop. Under the pinned GCC 2.5.7 probe, those initializations
+schedule upward between argument formation and the entity stores. The camera
+path HI16/LO16 pair consequently moves to the exact retail position and the
+strict score rises to **97.952675%**. All forty calls and 31 resolved address
+pairs still agree, and the four exact functions in `open.opening_scenes` remain
+byte-identical. The source order is retained as a supported correction.
+
+The next real structural residue remains the lighting selector: retail has 49
+CFG blocks while the candidate has 51 because the first completed phase keeps
+an extra store/jump block. Earlier counter, shared-label, `if` dispatch and
+case-local-exit trials remain rejected. The remaining register and stack
+pointer schedule is not attributed to a compiler mechanism, and the function
+is not exact or banked.
+
 ## Function Match Plan: interpolation-path case exits (`4647acc`)
 
 OPEN `80014e28` remains 1944 bytes, strict 97.129630%, with 167 unequal

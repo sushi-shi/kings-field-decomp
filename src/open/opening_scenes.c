@@ -740,14 +740,14 @@ void opening_ending_scroll_run(void)
         opening_entity_state.entities, KF_OPENING_ENDING_ORANGE_DISK);
     entity_27 = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_ENDING_STARFIELD);
+    entity_26->position.vy -= ENDING_MODEL_START_Y_OFFSET;
+    entity_27->object_id = KF_OPENING_ENTITY_FREE;
+    opening_camera_path_begin(opening_ending_scroll_camera_path);
     lighting_phase = ENDING_LIGHT_TO_MIDPOINT;
     background_blend = 0;
     sequence_phase = ENDING_SEQUENCE_WAIT_SCROLL;
     scrolling = 0;
     scroll_phase = 0;
-    entity_26->position.vy -= ENDING_MODEL_START_Y_OFFSET;
-    entity_27->object_id = KF_OPENING_ENTITY_FREE;
-    opening_camera_path_begin(opening_ending_scroll_camera_path);
     SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
     SetBackColor(0, 0, 0);
     SetFarColor(0, 0, 0);
