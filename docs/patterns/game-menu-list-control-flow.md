@@ -136,3 +136,12 @@ refused those other unstaged build inputs. The source is verified exact;
 ledger banking is deferred until that independent campaign is staged or
 committed. Do not bypass the dirty-input guard or stage another campaign to
 make this bank succeed.
+
+### Deferred bank completed
+
+After the independent naming work committed as `2f1f04a`, a fresh pinned
+compilation reconfirmed all 479 raw words, fourteen calls and seventy address
+pairs. The full build preserved strict 100%. With clean source/config inputs,
+`kf bank --function game:0x80028a70` was selected together with the three
+completed menu blit/glyph functions; all four ledger updates succeeded without
+a dirty override. No other baseline row changed.

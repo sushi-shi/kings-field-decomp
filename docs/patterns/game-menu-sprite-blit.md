@@ -140,6 +140,17 @@ unstaged dimension-naming inputs. No dirty override is used. Commit the
 independently verified reconstruction, leaving those four exact ledger updates
 pending until the unrelated inputs are committed or otherwise finalized.
 
+### Deferred bank completed
+
+With the independent dimension-naming work committed as `2f1f04a`, fresh
+pinned compilations reconfirmed all 104/100/332 retail words and the ordered
+calls/address pairs for these three functions, alongside the exact list
+renderer and fourteen other exact controls. The full build preserves their
+strict 100% results. Selected banking of these three functions and
+`GAME.EXE:80028a70` then succeeded with clean source/config inputs and no dirty
+override. Only those four ledger rows changed; the prior banking deferral is
+resolved.
+
 ## Function Match Plan
 
 Campaign: the two single-quad blitters in `game.menu_runtime`, using the
