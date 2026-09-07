@@ -48,7 +48,7 @@ s32 menu_root(void)
     s32 input = 0;
     s32 prev;
     s32 result = KF_MENU_ROOT_PENDING;
-    s32 selection = -1;
+    KfMenuRootChoice selection = KF_ROOT_CHOICE_NONE;
     s32 i;
 
     i = 0;
@@ -56,7 +56,7 @@ s32 menu_root(void)
         i++;
         menu_frame_begin();
         menu_draw_stats_header();
-        menu_draw_window(KF_MENU_WINDOW_ROOT, 8, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -64,49 +64,49 @@ s32 menu_root(void)
         ;
 
     for (;;) {
-        if (selection != -1 || result == selection) {
+        if (selection != KF_ROOT_CHOICE_NONE || result == KF_ENUM_ENCODE(s32, selection)) {
             menu_frame_begin();
             menu_draw_stats_header();
-            menu_draw_window(KF_MENU_WINDOW_ROOT, 8, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
         }
         switch (selection) {
-        case 0:
+        case KF_ROOT_CHOICE_USE_ITEM:
             result = menu_use_item_panel();
             goto join_result;
-        case 1:
+        case KF_ROOT_CHOICE_USE_MAGIC:
             result = KF_MENU_ROOT_NO_ITEM;
             if (menu_magic_panel() == -1)
                 result = KF_MENU_ROOT_PENDING;
             break;
-        case 2:
+        case KF_ROOT_CHOICE_EQUIPMENT:
             menu_option_root();
             break;
-        case 3:
+        case KF_ROOT_CHOICE_STATUS:
             menu_status_panel();
             break;
-        case 4:
+        case KF_ROOT_CHOICE_DROP_ITEM:
             menu_drop_item();
             break;
-        case 5:
+        case KF_ROOT_CHOICE_SYSTEM:
             result = menu_save_load_hub();
         join_result:
             if (result == KF_MENU_ROOT_NO_ITEM)
                 result = KF_MENU_ROOT_PENDING;
             break;
-        case 6:
+        case KF_ROOT_CHOICE_CONFIG:
             menu_config_panel();
             break;
         }
         if (result != KF_MENU_ROOT_PENDING) {
-            selection = -1;
+            selection = KF_ROOT_CHOICE_NONE;
             while (PadRead(1) != 0)
                 ;
             return result;
         }
-        selection = -1;
+        selection = KF_ROOT_CHOICE_NONE;
         confirm = 0;
         prev = input;
         input = PadRead(1);
@@ -115,18 +115,18 @@ s32 menu_root(void)
             if (cursor != 0)
                 cursor--;
             else
-                cursor = 7;
+                cursor = KF_MENU_ROOT_RETURN_ROW;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (cursor != 7)
+            if (cursor != KF_MENU_ROOT_RETURN_ROW)
                 cursor++;
             else
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
-            if (cursor < 7)
-                selection = cursor;
+            if (cursor < KF_MENU_ROOT_RETURN_ROW)
+                selection = KF_ENUM_DECODE(KfMenuRootChoice, cursor);
             else
                 result = KF_MENU_ROOT_NO_ITEM;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
@@ -135,7 +135,7 @@ s32 menu_root(void)
         }
         menu_frame_begin();
         menu_draw_stats_header();
-        menu_draw_window(KF_MENU_WINDOW_ROOT, 8, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     }
 }
@@ -165,7 +165,7 @@ s32 menu_use_item_panel(void)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, 0);
+    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, KF_ENUM_ENCODE(s32, KF_ROOT_CHOICE_USE_ITEM));
 
     inv = item_stock[0];
     found = 0;

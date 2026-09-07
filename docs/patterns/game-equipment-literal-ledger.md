@@ -5,9 +5,11 @@ after the [equipment domain audit](game-equipment-domains.md) and [shop price fo
 and extents are separate. Negative signs are operators, so -99 contributes
 one numeric token. Line numbers locate this source version.
 
-All **139 retained occurrences** have specific reasons.
+All **138 retained occurrences** have specific reasons.
 
 The [window-kind review](game-menu-window-kinds.md) names the two layout-selector literals.
+
+The [choice-domain review](game-menu-choice-state.md) also names the equipment magic heading row.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -73,7 +75,6 @@ The [window-kind review](game-menu-window-kinds.md) names the two layout-selecto
 | `menu_spell_select` | 251 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_spell_select` | 252 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_spell_select` | 253 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
-| `menu_spell_select` | 257 | `1` | `menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, 1);` | Row one of the named equipment window supplies the magic heading, matching equipment category MAGIC; the row remains an integer index in the generic label-copy API. |
 | `menu_spell_select` | 259 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
 | `menu_spell_select` | 260 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_spell_select` | 261 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |

@@ -36,7 +36,7 @@ s32 menu_magic_panel(void)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, 1);
+    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, KF_ENUM_ENCODE(s32, KF_ROOT_CHOICE_USE_MAGIC));
 
     found = 0;
     for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
@@ -167,24 +167,24 @@ void menu_option_root(void)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 result = -99;
-    s32 selection = -1;
+    KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
+    KfEquipmentMenuCategory selection = KF_EQUIP_MENU_NONE;
 
     menu_frame_begin();
     menu_draw_name_list();
-    menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, 9, 0, 0);
+    menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, 0);
 
     for (;;) {
         menu_present_frame();
-        if (selection != -1 || result == selection) {
+        if (selection != KF_EQUIP_MENU_NONE || KF_ENUM_ENCODE(s32, phase) == KF_ENUM_ENCODE(s32, selection)) {
             menu_frame_begin();
             menu_draw_name_list();
-            menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, 9, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
         }
-        switch (KF_ENUM_DECODE(KfEquipmentMenuCategory, selection)) {
+        switch (selection) {
         case KF_EQUIP_MENU_ARM:
         case KF_EQUIP_MENU_LEG:
             if (player_state.equipped_body_armor_id == KF_ITEM_FULL_PLATE) {
@@ -197,14 +197,14 @@ void menu_option_root(void)
         case KF_EQUIP_MENU_HEAD:
         case KF_EQUIP_MENU_BODY:
         case KF_EQUIP_MENU_ACCESSORY:
-            menu_equip_select(KF_ENUM_DECODE(KfEquipmentMenuCategory, selection));
+            menu_equip_select(selection);
             break;
         case KF_EQUIP_MENU_MAGIC:
             menu_spell_select();
             break;
         }
-        selection = -1;
-        if (result != -99)
+        selection = KF_EQUIP_MENU_NONE;
+        if (phase != KF_MENU_PANEL_OPEN)
             return;
         menu_frame_begin();
         confirm = 0;
@@ -215,25 +215,25 @@ void menu_option_root(void)
             if (cursor != 0)
                 cursor--;
             else
-                cursor = 8;
+                cursor = KF_MENU_EQUIPMENT_RETURN_ROW;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (cursor != 8)
+            if (cursor != KF_MENU_EQUIPMENT_RETURN_ROW)
                 cursor++;
             else
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
-            if (cursor < 8)
-                selection = cursor;
+            if (cursor < KF_MENU_EQUIPMENT_RETURN_ROW)
+                selection = KF_ENUM_DECODE(KfEquipmentMenuCategory, cursor);
             else
-                result = -1;
+                phase = KF_MENU_PANEL_CLOSED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            result = -1;
+            phase = KF_MENU_PANEL_CLOSED;
         }
         menu_draw_name_list();
-        menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, 9, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, cursor, confirm);
     }
 }

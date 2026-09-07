@@ -45,7 +45,7 @@ void menu_drop_item(void)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, 4);
+    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, KF_ENUM_ENCODE(s32, KF_ROOT_CHOICE_DROP_ITEM));
 
     found = 0;
     code = 0;

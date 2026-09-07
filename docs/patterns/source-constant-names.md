@@ -70,7 +70,7 @@ the mode dispatcher, and removes six numeric outcomes from the map ledger.
 The [equipment domain review](game-equipment-domains.md) separates menu
 categories from player slots, types both APIs, names empty item/spell/texture
 selections, and shares record extents and menu ranges. Its three-module
-ledger explains all 139 retained literals after the type and menu follow-ups,
+ledger explains all 138 retained literals after the type and menu follow-ups,
 down from 209; other consumers
 also replace the shared empty values and armor-record origin.
 
@@ -118,6 +118,13 @@ the root menu's item IDs and negative controls distinct. It names window
 rows and five decoded message textures, replaces 84 numeric uses, and
 explains all 140 remaining literals in the
 [save/confirmation ledger](game-menu-save-literal-ledger.md).
+
+The [root-choice and panel-phase review](game-menu-choice-state.md) keeps typed
+choices through root and equipment dispatch, names configuration bindings and
+row boundaries, and shares heading identities with list callers. It replaces
+61 numeric uses and explains all 97 retained occurrences in its complete
+[four-function ledger](game-menu-choice-literal-ledger.md), while preserving
+the configuration renderer's distinction between exact one and other values.
 
 ## Function Match Plan
 

@@ -15,14 +15,14 @@ void menu_config_panel_draw(
 ADDRESS(0x8002589c, 0x504)
 void menu_config_panel(void)
 {
-    s32 states[4];
+    s32 states[KF_MENU_CONFIG_SETTING_COUNT];
     MenuGlyphString option_a;
     MenuGlyphString option_b;
     s32 row = 0;
     s32 confirm = 0;
     u32 pad = 0;
     u32 prev;
-    s32 phase = -99;
+    KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
     s32 music_orig;
 
     while (PadRead(1) != 0) {
@@ -39,26 +39,26 @@ void menu_config_panel(void)
     option_b.codes[1] = 0xfb;
     option_b.codes[2] = 0xfb;
     option_b.codes[3] = MENU_TEXT_END;
-    states[0] = player_state.audio_effects_enabled;
-    states[1] = player_state.audio_music_enabled;
-    states[2] = player_state.hud_gauges_enabled;
-    states[3] = player_state.compass_enabled;
-    music_orig = states[1];
+    states[KF_MENU_CONFIG_EFFECTS_ROW] = player_state.audio_effects_enabled;
+    states[KF_MENU_CONFIG_MUSIC_ROW] = player_state.audio_music_enabled;
+    states[KF_MENU_CONFIG_GAUGES_ROW] = player_state.hud_gauges_enabled;
+    states[KF_MENU_CONFIG_COMPASS_ROW] = player_state.compass_enabled;
+    music_orig = states[KF_MENU_CONFIG_MUSIC_ROW];
 
     menu_frame_begin();
     menu_config_panel_draw(option_a, option_b, states);
-    menu_draw_window(KF_MENU_WINDOW_CONFIG, 5, row, confirm);
+    menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
     menu_present_frame();
     do {
-        if (confirm == 1 || phase == -1) {
+        if (confirm == 1 || phase == KF_MENU_PANEL_CLOSED) {
             menu_frame_begin();
             menu_config_panel_draw(option_a, option_b, states);
-            menu_draw_window(KF_MENU_WINDOW_CONFIG, 5, row, confirm);
+            menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
             menu_present_frame();
             while (PadRead(1) != 0) {
             }
         }
-        if (phase != -99) {
+        if (phase != KF_MENU_PANEL_OPEN) {
             break;
         }
         confirm = 0;
@@ -70,43 +70,43 @@ void menu_config_panel(void)
             if (row != 0) {
                 row--;
             } else {
-                row = 4;
+                row = KF_MENU_CONFIG_RETURN_ROW;
             }
         } else if ((pad & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (row != 4) {
+            if (row != KF_MENU_CONFIG_RETURN_ROW) {
                 row++;
             } else {
                 row = 0;
             }
         } else if (((pad & PADLright) != 0 && (prev & PADLright) == 0) ||
                    ((pad & PADLleft) != 0 && (prev & PADLleft) == 0)) {
-            if (row != 4) {
+            if (row != KF_MENU_CONFIG_RETURN_ROW) {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 goto toggle;
             }
         } else if ((pad & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            if (row == 4) {
+            if (row == KF_MENU_CONFIG_RETURN_ROW) {
                 confirm = 1;
-                phase = -1;
+                phase = KF_MENU_PANEL_CLOSED;
             } else {
             toggle:
                 states[row] = (states[row] == 0);
             }
         } else if ((pad & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            phase = -1;
+            phase = KF_MENU_PANEL_CLOSED;
         }
         menu_config_panel_draw(option_a, option_b, states);
-        menu_draw_window(KF_MENU_WINDOW_CONFIG, 5, row, confirm);
+        menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
         menu_present_frame();
     } while (1);
 
-    player_state.audio_effects_enabled = states[0];
-    player_state.audio_music_enabled = states[1];
-    player_state.hud_gauges_enabled = states[2];
-    player_state.compass_enabled = states[3];
+    player_state.audio_effects_enabled = states[KF_MENU_CONFIG_EFFECTS_ROW];
+    player_state.audio_music_enabled = states[KF_MENU_CONFIG_MUSIC_ROW];
+    player_state.hud_gauges_enabled = states[KF_MENU_CONFIG_GAUGES_ROW];
+    player_state.compass_enabled = states[KF_MENU_CONFIG_COMPASS_ROW];
     if (player_state.audio_music_enabled != music_orig) {
         if (player_state.audio_music_enabled == 0) {
             audio_stop_sequence_fade();
@@ -133,7 +133,7 @@ void menu_config_panel_draw(
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     states = values;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
         if (*states == 1) {
             menu_blit_sprite_translucent(&menu_assets.option_highlight, (const MenuPoint *)&option_a);
             box_b = &menu_assets.option_background;
@@ -152,12 +152,12 @@ void menu_config_panel_draw(
         option_a.y += 22;
         option_b.y += 22;
     }
-    AddPrim(&display_state.ordering_table[3000],
+    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
             &menu_assets.background_quads[display_state.buffer_index][3]);
-    AddPrim(&display_state.ordering_table[3000],
+    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
             &menu_assets.background_quads[display_state.buffer_index][2]);
-    AddPrim(&display_state.ordering_table[3000],
+    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
             &menu_assets.background_quads[display_state.buffer_index][1]);
-    AddPrim(&display_state.ordering_table[3000],
+    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
             &menu_assets.background_quads[display_state.buffer_index][0]);
 }
