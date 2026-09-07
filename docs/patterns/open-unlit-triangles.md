@@ -1,5 +1,26 @@
 # OPEN unlit triangle emission
 
+## Updated vertex-allocation and related-address controls
+
+After retaining the depth-use order below, reversing the declarations of the
+second and third scalar vertex pointers is byte-identical. Reversing their
+initialization statements does assign the two prepared offsets to retail's
+saved registers, but it also reverses the retail halfword-load order and the
+`NormalClip` argument-load schedule in both packet modes. Composing the newer
+depth order therefore does not rescue the earlier initialization variant.
+
+The `register` storage-class hint on all three vertex pointers, or only the
+second pointer, is byte-identical to the canonical candidate. A live
+two-element pointer array is not scalarized even when declared `register`:
+the probe stores both elements at `sp+16/+20`, reloads them after calls, and
+removes saved-register lifetimes that retail visibly retains. It is removed.
+
+Pointers to the real `primitive_count` field, `primitive_offset` field, and
+selected-asset slot each fold away without changing one candidate byte, but
+none creates retail's extra eight-byte frame. Thus the empty-frame mechanism
+seen in exact `tmd_select` does not transfer through these natural related
+addresses, and the symmetric saved-register residue remains unattributed.
+
 ## Prepared-offset address-base control
 
 The general TMD emitter's fixed-width projected-buffer address recovered all
