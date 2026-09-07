@@ -1,5 +1,25 @@
 # OPEN unlit triangle emission
 
+## Function Match Plan: symmetric depth-use order
+
+At strict 99.455620%, retail and probe both emit 676-byte bodies with the
+same 17 CFG blocks, eight calls, one validated internal jump, one state
+address pair, and no strings. The residue is an eight-byte frame difference
+plus exchanged saved-register identities for vertices one and two. Retail's
+common depth tail reads those vertices in the opposite commutative order from
+the candidate. Three signed-halfword depths cannot overflow `s32`, so spelling
+the sum as vertex zero, vertex two, vertex one preserves the supported value
+while testing that directly observed use dependency.
+
+The reordered sum removes all three depth-load register differences without
+changing body size, CFG, calls, relocations, or packet behavior. Strict
+objdiff improves to **99.514790%**; keep this range-safe commutative form. A
+separate control also initialized the vertex locals in retail's offset-fetch
+order. That changed both halfword and call-argument scheduling while failing
+to recover the saved-register identities, and is reverted. The remaining
+body differences are the two symmetric pointer roles during clipping/copying;
+the 64-byte retail versus 56-byte probe frame remains unattributed.
+
 ## R3000 scheduling-model control
 
 An OPEN-unit-only GCC 2.5.7 `-mcpu=r3000` build is byte-identical to the

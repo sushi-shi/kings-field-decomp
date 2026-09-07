@@ -75,7 +75,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         default:
             goto next_packet;
         }
-        depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
+        depth = ((vertex0->sz + vertex2->sz + vertex1->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
         depth += bias;
         if (depth >= KF_SCENE_MIN_OT_DEPTH) {
             /* The projected array and active OT share this complete owner. */
