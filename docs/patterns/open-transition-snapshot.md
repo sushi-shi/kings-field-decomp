@@ -1,5 +1,20 @@
 # OPEN transition position snapshot
 
+## Frame-extent ambiguity control
+
+After the adjacent scene-3 array extent was recovered, the remaining
+56/48-byte transition frame was tested against a common 24-byte transform
+shape: a `VECTOR` position followed by an `SVECTOR` rotation. With only the
+three retail-proven position stores, that aggregate produces an identical
+retail listing. However, a separate, completely untouched `SVECTOR` local
+produces the same listing and frame. The machine code therefore cannot
+distinguish a transform aggregate from an unused declaration or other
+eight-byte source allocation.
+
+Both controls are removed. Neither the aggregate type nor an unobserved
+rotation is claimed merely because it reaches 100%; the documented 48-byte
+candidate and ten-word frame-only residue remain the defensible source model.
+
 ## Function Match Plan and pre-edit evidence
 
 OPEN `80014608`, `opening_entity_transition`, owns 508 bytes through the return

@@ -16,6 +16,7 @@ all 332 bytes, calls and relocations match, and the exact preceding entity
 renderer remains unchanged. The image-qualified GAME homolog at `8001ed90`
 has the same source shape and residue; the identical correction is also strict
 **100.000000%** for all 332 GAME bytes, nine calls and six address references.
+Both functions are banked.
 
 ## GAME/OPEN Function Match Plan: one-based facing index at `29d1ddb`
 

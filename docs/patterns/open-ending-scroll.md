@@ -25,6 +25,114 @@ an extra store/jump block. Earlier counter, shared-label, `if` dispatch and
 case-local-exit trials remain rejected. The remaining register and stack
 pointer schedule is not attributed to a compiler mechanism, and the function
 is not exact or banked.
+## Edge-scoped lighting-phase join control
+
+A next-phase short live only on the two failed interpolation edges, with the
+successful paths and completed-state default bypassing one shared store/reset,
+recovers retail's 49-block CFG and branch count. Moving that temporary between
+loop and function scope is byte-identical. Both forms rotate every long-lived
+scene-state register and score below the canonical source, reproducing the
+earlier carrier-family residue. They are removed; narrower C scope does not
+explain the retail join under this probe.
+
+## Function Match Plan: scene-3 CLUT work extent
+
+OPEN `opening_scene3_run` at `80014804` was 816 bytes and strict
+99.931370%. Its retail and candidate streams had the same 19-block CFG, 27
+direct calls, 19 ordered address pairs, constants, delay slots and body words;
+all fourteen unequal words were the 112-byte retail frame versus the 96-byte
+candidate frame and their saved-register offsets. The six image-qualified
+semantic views, callers, callees, adjacent functions, resources, data owners,
+relocations and source history were refreshed before editing. There are no
+string references. The exact scene 0, scene 1 and ending-scene functions in
+the same unit serve as compiler-profile controls.
+
+Retail places the two texture-page values at sp+40/sp+44 and the two populated
+CLUT values at sp+48/sp+52, then saves s0 at sp+88. Expanding both arrays to
+four words recovers the 112-byte frame but incorrectly moves all three CLUT
+accesses eight bytes higher. Keeping the texture-page extent at two words and
+recovering the existing CLUT work array as six words preserves every accessed
+offset while accounting for the otherwise unused sixteen-byte tail before the
+saved registers. The scene initializes and consumes only the first two CLUT
+slots, but the compiler reserves the complete source object.
+
+The named six-slot extent emits an identical retail listing for
+`opening_scene3_run`; all four exact sibling listings remain identical. This
+is a recovered stack-object extent, not a separate padding local. Strict
+objdiff confirms 100.000000%, and the full build raises OPEN to 101/108 exact
+functions without a code-match regression. The result is banked; the build
+still stops only at the repository's existing section-placement, data-owner
+and relocation-addend gates.
+
+## Retail GCC 2.4.1 availability control
+
+The two frame-only residues prompted a TU-wide compiler discriminator after
+refreshing both functions' six OPEN semantic views. The pinned toolchain does
+contain Sony's GCC 2.4.1 `CPPPSX` and `CC1PSX`, but they are legacy Intel COFF
+executables rather than native probes. They are not executable directly, and
+Wine cannot launch them even from executable `.exe` copies. The experiment
+therefore never reached preprocessing or compilation and says nothing about
+the 56/48-byte transition or 112/96-byte scene-3 frames. All temporary
+compiler-registry, manifest, profile, and TU-assignment wiring is removed.
+The available native GCC 2.5.7 result remains authoritative.
+
+## R3000 and combined-live-range controls
+
+Compiling the complete opening-scenes unit with GCC 2.5.7 `-mcpu=r3000` is
+byte-identical to the configured r2000 probe. The exact scene 0/1 and ending
+scene functions stay exact; `opening_entity_transition` and
+`opening_scene3_run` retain their eight- and sixteen-byte frame deficits, and
+the ending scroll retains its 51-block residue. The temporary profile is
+removed.
+
+The independently observed ending-scroll facts were also tested together: a
+typed camera-path pointer initialized after the second entity lookup, plus an
+`s16` next-lighting-phase value joining both completed interpolation cases.
+The result has retail's 49-block CFG, but the camera address is still delayed,
+every long-lived scene-state register rotates, and the body is four bytes
+shorter. This is the same substantive divergence as the earlier carrier
+control, not a complementary live-range fix. Both locals are removed.
+
+## Complete camera-array and signed carrier controls (`82320b9` follow-up)
+
+A pointer to the complete three-element ending camera-path array, assigned at
+retail's early address-materialization point and dereferenced at the unchanged
+call, is folded to the canonical late argument setup. It does not alter one
+instruction. A signed-halfword next-lighting-phase carrier does recover the
+retail 49-block CFG and shared phase-store/reset tail, but rotates all long-lived
+state registers and reduces the body by four bytes, just like the wider carrier
+family. Both are reverted. Owner extent and selector signedness alone do not
+explain the early address schedule or the shared join.
+
+## Opening-scenes scheduler control (`b46dd11` follow-up)
+
+The consolidated `open.opening_scenes` unit was rebuilt under
+`probe-gcc257-o2-plain` as a TU-wide control. It does not recover the retail
+lighting join in `opening_ending_scroll_run`: the probe still emits 51 blocks
+against retail's 49 and retains the broad instruction-order differences.
+It also introduces new scheduling differences in the otherwise frame-only
+`opening_entity_transition` and `opening_scene3_run`, and regresses exact
+`opening_ending_scene_run`. The pinned `probe-gcc257-o2-g0` profile is restored.
+
+This rejects a plain-versus-`g0` scheduler explanation for the scroll residue
+without attributing a historical compiler or optimizer mechanism. The exact
+sibling is the negative control; no source, profile, baseline, or bank change
+is retained.
+
+### Full-word phase-carrier and camera-pointer controls
+
+An ordinary shared `s32` next-phase value recovers retail's 49-block CFG and
+single literal phase store. Function and loop block scope compile identically,
+however: the extra pseudo rotates every long-lived lighting, background,
+sequence, scroll and entity register, and the body becomes four bytes shorter.
+Changing the carrier to `u16` is also identical. The structurally improved but
+globally divergent form is reverted rather than kept for its block count.
+
+Retail materializes the ending camera-path address after the second entity
+lookup and before the initial state stores. An explicit typed local assigned at
+that point is optimized back to the existing late call-argument setup, so it
+does not recover the schedule or any raw word. No register hint, volatile use,
+or artificial access is introduced to force the address lifetime.
 
 ## Function Match Plan: interpolation-path case exits (`4647acc`)
 
@@ -311,3 +419,15 @@ vendor-source controls and 63 exact data-owning units. No C, retail model or
 banked baseline change is retained by this follow-up.
 Staged `nix flake check -L` also passes; its isolated 383-test run skips the
 43 controls that require local artifacts.
+
+## Ending-data linkage control
+
+The focused listing renders references to the ten ending-scroll-only initialized
+objects as `.data+offset` in the candidate and as curated object identities in
+the delinked target. Removing internal linkage from the camera path, panel and
+background rectangles, four gradient colors, panel/background colors, and UV
+bytes makes the relocations retain those names and raises listing similarity
+from 82.8% to 90.0%. Strict resolved objdiff remains exactly **97.129630%**:
+all physical targets and code bytes are unchanged. Restore `static`, which
+matches their supported single-TU ownership. Symbol presentation is not the
+remaining camera-setup, phase-join, or register-lifetime source fact.

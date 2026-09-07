@@ -1,5 +1,64 @@
 # OPEN TMD preparation countdown
 
+## Related-address and debug-lifetime controls
+
+The exact `tmd_select` sibling exposes the old-GCC mechanism behind its empty
+eight-byte frame: after CSE and combine fold the indexed source address into a
+load, one related-address pseudo remains in global allocation without a hard
+register disposition and receives an unused stack slot. The preparation
+function has no equivalent unallocated pseudo under the retained source.
+
+Natural packet-format expressions do not transfer that effect. Spelling the
+header word as `*(u32 *)(body - 4)`, spelling `ilen` as `body[-3]`, stepping
+from a typed TMD header to the object table, and omitting explicit `!= 0` from
+both post-decrement loop conditions are each byte-identical to the canonical
+candidate and retain the two-word frame residue. Reusing the packet cursor for
+the initial asset load removes the independently observed asset reload and
+rotates the packet/count registers. Chaining the two outer counters adds eight
+real instructions and changes their register allocation. Those forms are
+removed.
+
+Compiling the TU with GCC 2.5.7 `-O2 -mcpu=r2000 -g` also leaves the frame
+absent. Debug-local branch labels create relocation-identity differences in
+six exact sibling functions, so this is not a viable TU profile and is
+removed. Neither source-relative address syntax nor debug pseudo lifetime
+explains retail's empty frame.
+
+## Equivalent decrement-expression controls (`82320b9` follow-up)
+
+Writing the proven outer countdown as two statements (`left = count; left--`)
+changes the live halfword and object-pointer registers and inserts eight bytes
+of real instructions; it does not create retail's leaf frame. Explicitly narrowing
+`count - 1` to `u16`, and spelling the same wrap as `count + 0xffff`, both emit
+the canonical body byte for byte and retain only the two missing frame words.
+The direct subtraction is restored. Equivalent arithmetic syntax is not the
+unattributed stale pseudo that owns this frame.
+
+A plain `int` outer countdown with an explicit `u16` observation retains the
+guard but emits `andi t0` directly and `addiu -1`, losing retail's promoted
+copy and shared `0xffff` decrement. A genuine local `KfTmdHeader *` for the
+first count read lets CSE reuse the selected-asset load and removes four bytes;
+retail independently reloads that global before forming the object table.
+Both are reverted. Neither known leaf-frame witness transfers without changing
+substantive instructions.
+
+## Scheduler-profile control (`d8f448e`)
+
+The existing `probe-gcc257-o2-plain` profile does not recover the unused
+eight-byte leaf frame. It instead changes the switch-arm scheduling broadly,
+reduces `tmd_prepare_primitive_indices` listing similarity to 15.9%, and
+regresses seven of the unit's thirteen exact sibling controls. The configured
+R3000 scheduling profile is retained. This rules out the repository's plain
+GCC 2.5.7 profile as an explanation for the two remaining frame instructions;
+it does not identify the historical compiler or justify source padding.
+
+The repository's `probe-gcc260-o2-g0` profile is also negative. It still
+emits `nop` at both frame positions, changes the switch CFG from 18 to 16
+known blocks, and broadly reorders the otherwise exact case bodies. Only two
+of the unit's fourteen function listings remain identical. The GCC 2.5.7
+profile is restored; compiler-version substitution does not explain the
+retail leaf frame.
+
 ## Function Match Plan (`8ac47fe`)
 
 OPEN `tmd_prepare_primitive_indices`, `0x80017030`, owns 768 bytes and is

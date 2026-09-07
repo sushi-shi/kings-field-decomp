@@ -23,6 +23,64 @@ similarity for `display_initialize`. Canonical `probe-gcc257-o2-g0` remains the
 only exact-sibling-preserving profile. None of these results explains the
 retail `s0` base, fourth saved register, or 48-byte frame, so the residue stays
 unattributed rather than being assigned to a compiler mechanism.
+## Remaining scheduler-model controls
+
+An OPEN-render-init-only `-mcpu=r3000` build is byte-identical to the
+configured r2000 candidate: `display_initialize` retains its 40-byte frame
+and four absolute DFE pairs, while all three sibling functions remain exact.
+Disabling instruction scheduling also leaves the initializer's ownership
+residue intact and additionally changes the exact allocator's final global
+increment register. Both temporary profiles are removed. Together with the
+existing plain-profile result, the available pinned scheduling controls do
+not recover the retail DTD-rooted lifetime.
+
+## Split-DTD and complete-owner controls (`82320b9` follow-up)
+
+Splitting the chained DTD assignment around initialization of the existing
+typed first-DRAWENV pointer does not retain retail's first-member anchor. The
+probe instead anchors the second DTD member and derives the later DRAWENV and
+DISPENV arguments backward from it, while preserving the 40-byte frame and
+four absolute DFE pairs. A block-local `KfGraphicsRuntimeOpen *` used for the
+same complete customization lifetime is also wrong: it reserves 64 bytes and
+collapses the independently observed absolute RGB references into base-relative
+stores. Both trials are reverted. They rule out two real typed lifetimes; they
+do not justify a raw byte alias or a register carrier.
+
+## DTD-member lifetime controls (`d8f448e`)
+
+Retail retains the address of `display_draw_environments[0].dtd` in `s0` only
+after the four SetDef calls, then uses offsets 1 and 93 for the two `dfe`
+fields. A typed pointer initialized at function entry reproduces the 48-byte
+frame, saved `s3` mode and all four base-relative stores, but necessarily
+materializes the address before the first mode branch and assigns the remaining
+long-lived values to different saved registers. Creating the same real member
+pointer immediately before the fourth SetDef call recovers the target frame
+without the early address pair, but GCC then constant-folds all four typed
+`DRAWENV.dfe` accesses back into absolute references. Both forms remain strict
+92.177960% and are reverted.
+
+Using byte indexing from `dtd` can force the observed physical offsets, but it
+does not improve strict objdiff and is not an acceptable final model for the
+known DRAWENV array. An explicit byte-sized enable value also emits the same
+candidate. The existing `probe-gcc257-o2-plain` profile is byte-identical for
+this unit. These controls isolate a lifetime/allocation residue; they do not
+justify an unused stack object, `register` hint, volatile carrier or raw alias.
+
+### Typed DRAWENV-array owner controls
+
+A single pointer to the authentic `DRAWENV[2]` array, introduced after the four
+definition calls, is constant-folded into absolute field accesses and worsens
+the candidate. Moving it before the fourth call recovers retail's 48-byte frame
+and saved `s3` mode, but retains the array base in `s1`, the value one in `s0`,
+and still emits absolute `dfe` pairs.
+
+Recovering a typed `DRAWENV *` from a retained first-`dtd` member and adding a
+real second-element pointer recovers the complete four-register save set:
+mode maps to `s3` and the second DRAWENV to `s2`, as in retail. The first member
+and value remain exchanged in `s1`/`s0`, and GCC still folds all four later
+flags absolute. Moving the member anchor after the call drops the fourth saved
+value again. All variants are reverted; the remaining opacity cannot be forced
+with a volatile or raw cross-object alias.
 
 ## Function Match Plan: SDK background-color macro (`262a978`)
 

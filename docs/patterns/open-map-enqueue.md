@@ -16,6 +16,7 @@ Declaring the real packet header before constructing the normal-stream pointer
 recovers retail's slot assignment without changing a type, expression, call,
 branch, referent or storage extent. A focused rebuild produced an identical
 listing; strict objdiff confirms **100.000000%**, including all relocations.
+The function is banked.
 
 ## Function Match Plan: mode-discriminated output pointer (`6a25ae8`)
 

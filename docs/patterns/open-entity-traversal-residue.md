@@ -36,6 +36,99 @@ loop. A natural tpage-rooted nested owner is impossible at offset +2 under the
 ABI because its 32-bit item members require four-byte alignment; packing it
 would be artificial. Retain the historical pointer and the established `u16`
 origins/row. This remains partial and is not banked.
+## Exact closure: shared visibility coordinates
+
+At the retained 98.885544% baseline, all differences came from one extra
+item-row instruction and the resulting four-byte branch displacement. RTL
+inspection showed the probe assigning the wrapped row to `v0` and window
+height to `v1`; retail assigns row to `v1` and height to `v0`, allowing the
+row subtraction to fill the active-window pointer load delay.
+
+A simple inline position-to-cell helper emits the baseline byte for byte. A
+larger inline row-culling helper materializes its output at `sp+16`, grows the
+frame by eight bytes and is rejected. Moving item-only row and column locals
+to function scope is also byte-identical.
+
+The exact source reuses one function-scope `u16 row` and `u16 col` pair across
+the entity and floor-item visibility sweeps. These are the same wrapped cell
+coordinates with disjoint lifetimes, rather than new carriers. Their shared
+pseudos preserve the already-exact entity loop and recover retail's item-loop
+allocation: `subu v1,v0,s6` fills the window load delay, `lhu v0,2(a1)` follows,
+and the extra `nop` disappears. Strict objdiff is **100.000000%** for all 664
+bytes, with all 25 CFG blocks, four calls and fifteen validated address pairs
+unchanged. Both neighboring functions remain exact, and the result is banked.
+
+## GCC 2.6.0 profile control
+
+The alternate pinned GCC 2.6.0 O2 probe does not explain the final item-row
+load-delay residue. It replaces both checked divisions by 2000 with reciprocal
+multiplication, collapses the traversal from 25 to 15 CFG blocks, and broadly
+changes register allocation. More decisively, it regresses both exact sibling
+functions in `open.entity_render`, including call topology in
+`opening_entity_render`. Restore GCC 2.5.7 O2 with the expanded-division
+assembler pass; the one-instruction traversal excess is not evidence for a
+TU-wide GCC 2.6.0 profile.
+
+Retail's item-Z path holds the relative row in a word and masks it before the
+height comparison, so a separate control declared the row as `u32` and used
+an explicit `&= 0xffff`. The usual arithmetic conversions then force an extra
+mask of the saved `u16` origin before subtraction, which retail does not have;
+the candidate remains four bytes too long and diverges earlier. Restore the
+single `u16` expression, whose post-subtraction narrowing matches the supported
+wrapped-coordinate semantics without the false origin mask.
+
+## Item-window declaration and R3000 controls
+
+With the retained tpage-member pointer, declaring the item loop's current
+window before its row expression is byte-identical. GCC still hoists the
+window load above the row subtraction and leaves a load-delay `nop`; source
+declaration order is not the missing dependency. An OPEN-TU-only
+`-mcpu=r3000` control is also byte-identical to the configured r2000 probe for
+all three functions: the exact entity and floor-item renderers remain exact,
+and the traversal retains the same 664-byte candidate and item-row residue.
+Both temporary changes are removed.
+
+## Direct active-window expression control (`82320b9` follow-up)
+
+Removing the item loop's local `grid` name and spelling its three accesses
+directly through `open_graphics_runtime.active_cell_window` leaves the first
+row/window load-delay mismatch unchanged and adds one instruction later in the
+loop. The two sibling functions remain exact, but the traversal grows to 668
+bytes. Restore the single typed window pointer; direct owner expressions do
+not recover retail's quotient/subtraction schedule.
+
+## Scheduler-profile control (`b46dd11` follow-up)
+
+`probe-gcc257-o2-plain` does not fill the remaining item-window load delay.
+It retains the extra `nop`, broadly changes register assignment in the entity
+and item loops, and regresses the exact 552-byte `opening_entity_render`
+sibling. It also omits the same floor-item byte narrowing as the configured
+profile. Restore `probe-gcc257-o2-g0`; the traversal schedule and floor-item
+mask are not explained by the repository's plain scheduler control.
+
+## Function Match Plan: material tpage base lifetime (`codex/open-10-functions`)
+
+OPEN `80019240`, 664 bytes, began at strict 96.759030%. All six semantic views,
+the complete 25-block CFG, sole exact scene-frame caller, renderer neighbors,
+SDK provider boundary, layouts and history were rechecked. The four calls,
+fifteen validated address pairs, signed countdowns, halfword-wrapped window
+coordinates and checked signed divisions remain unchanged. This is authored
+visibility/material policy, not the independently attributed SetLightMatrix
+provider.
+
+Retail retains the address of `floor_item_state.material.tpage` across the
+selector copy and then derives the item record and X-coordinate cursors at
++22 and +26. The probe instead retained `material.color.r`, derived +20/+24,
+and rematerialized tpage. Preparing an ordinary `u16 *` to the real tpage
+member before the chained color initialization recovers the complete retail
+material-address sequence. Strict objdiff rises to **98.885544%** and the
+candidate contracts from 668 to the retail 664 bytes. The remaining first
+divergence is the item-row/window load schedule; calls, CFG and referents stay
+correct. Split row statements, word-width wrapping, local declaration order,
+GAME-style loop spelling and later/independent member pointers were tested and
+rejected. An assignment-expression row initialization is also byte-identical
+to the retained declaration initializer and does not fill the load delay. The
+partial function is not banked.
 
 ## Function Match Plan: current-window local at `11552f7`
 
@@ -454,3 +547,23 @@ panel verification passes all 651 tests, Ruff and diff checks, with no OPEN
 score change across the full 484-row comparison. Existing full-build data
 and placement failures remain documented in
 [the panel audit](game-config-panel-abi.md); no OPEN source change is kept.
+
+## Same-function row and byte-local controls
+
+With the retained tpage-member pointer, the item traversal agrees through the
+first signed division and remains 668 bytes against retail's 664. The entity
+loop in this same function is an exact source/code control: its direct
+halfword row subtraction fills the active-window pointer load delay. The item
+loop instead leaves a nop there, then loads height before subtracting the
+division result. Naming `grid->height` as a `u16` local and reversing the
+equivalent comparison to `grid->height > row` both emit the identical baseline.
+Neither spelling changes the first divergence, registers, branches, or size.
+
+The adjacent floor-item renderer still differs only by retail's second
+`andi 0xff` after `andi 0xf0`. Exact `render_map_cell` demonstrates that this
+probe can preserve repeated byte narrowing when a `u8` local is decremented
+and consumed later. Splitting facing extraction into assignment followed by
+`facing &= KF_FLOOR_ITEM_FACING_MASK`, and separately widening the arithmetic
+local with an explicit `u8` conversion, both collapse to the same 328-byte
+candidate. Restore the direct expression. These controls do not explain the
+retail truncation and do not justify a volatile or artificial consumer.

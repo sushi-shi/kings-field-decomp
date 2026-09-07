@@ -25,7 +25,7 @@ are validated, and direct calls are proven.
 | OPEN function | Retail bytes; strict baseline | Calls / address pairs / internal jumps | Relevant contract |
 | --- | --- | --- | --- |
 | `8001764c render_enqueue_tmd` | 3320; 99.171080% | 57 / 11 / 11 | u16 object, s16 bias; twelve modes; frame 96 retail/88 probe, extra probe OT pair |
-| `80018344 render_enqueue_unlit_triangles` | 676; 98.828400% | 8 / 1 / 1 | u16 object, s16 bias; F3/FT3; frame 64 retail/56 probe, extra probe OT pair |
+| `80018344 render_enqueue_unlit_triangles` | 676; 99.455620% | 8 / 1 / 1 | u16 object, s16 bias; F3/FT3; frame 64 retail/56 probe, two vertex-register roles |
 | `800185e8 render_enqueue_map` | 952; 99.978990% | 18 / 2 / 1 | u16 object; GT3/GT4; frame 80, normal/header slots differ |
 | `800189a0 render_enqueue_sprite` | 540; 100% | 6 / 5 / 0 | KfSpriteQuad pointer, s16 bias, s32 flag; exact control |
 
@@ -99,6 +99,18 @@ normal/header spill-slot operands still differ. The word cursor is not kept;
 it supplies no basis for declaration permutations to exchange those slots.
 
 The driver-default control is recorded [separately](open-driver-default-control.md).
+
+## Read-only stream qualification control
+
+Retail keeps the projected-vertex base in `s6` and the normal base in `s7`;
+the current general TMD emitter assigns those two saved-register roles in the
+opposite order. Both streams are read-only in this function. Qualifying only
+the normal byte stream as `const`, then coherently qualifying the projected
+byte stream and all four `KfScreenVertex` pointers as `const`, emits the exact
+same 3324-byte candidate in both trials. The 88/96-byte frame difference,
+base-register roles, extra absolute ordering-table pair, and default-table
+addend remain unchanged. Restore the established types; read-only alias
+information is not the missing source dependency under this probe.
 The final full build preserves 97/108 OPEN exact functions and thirteen SDK
 controls, reporting only the known OPEN TMD addend mismatch and existing GAME
 deficits. Ruff, the existing 401 tests (16.580 seconds) and `git diff --check`

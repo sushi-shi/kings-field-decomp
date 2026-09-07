@@ -75,11 +75,16 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         default:
             goto next_packet;
         }
-        depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
+        depth = ((vertex0->sz + vertex2->sz + vertex1->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
         depth += bias;
         if (depth >= KF_SCENE_MIN_OT_DEPTH) {
+            /* The projected array and active OT share this complete owner. */
+            KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
+                vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    tmd_projected_vertices);
+
             AddPrim(
-                &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                 primitive);
         }
 

@@ -1,5 +1,110 @@
 # OPEN unlit triangle emission
 
+## Updated vertex-allocation and related-address controls
+
+After retaining the depth-use order below, reversing the declarations of the
+second and third scalar vertex pointers is byte-identical. Reversing their
+initialization statements does assign the two prepared offsets to retail's
+saved registers, but it also reverses the retail halfword-load order and the
+`NormalClip` argument-load schedule in both packet modes. Composing the newer
+depth order therefore does not rescue the earlier initialization variant.
+
+The `register` storage-class hint on all three vertex pointers, or only the
+second pointer, is byte-identical to the canonical candidate. A live
+two-element pointer array is not scalarized even when declared `register`:
+the probe stores both elements at `sp+16/+20`, reloads them after calls, and
+removes saved-register lifetimes that retail visibly retains. It is removed.
+
+Pointers to the real `primitive_count` field, `primitive_offset` field, and
+selected-asset slot each fold away without changing one candidate byte, but
+none creates retail's extra eight-byte frame. Thus the empty-frame mechanism
+seen in exact `tmd_select` does not transfer through these natural related
+addresses, and the symmetric saved-register residue remains unattributed.
+
+## Prepared-offset address-base control
+
+The general TMD emitter's fixed-width projected-buffer address recovered all
+of its prepared-offset operand order, so the same representation was tested
+in this two-mode emitter. It leaves the candidate byte stream unchanged:
+retail still assigns the second and third projected vertices to the opposite
+saved registers in both modes, and the frame remains 64 versus 56 bytes.
+Restore the typed byte pointer. The representation is not the missing
+dependency in this function and supplies no new retained source fact.
+
+## Function Match Plan: symmetric depth-use order
+
+At strict 99.455620%, retail and probe both emit 676-byte bodies with the
+same 17 CFG blocks, eight calls, one validated internal jump, one state
+address pair, and no strings. The residue is an eight-byte frame difference
+plus exchanged saved-register identities for vertices one and two. Retail's
+common depth tail reads those vertices in the opposite commutative order from
+the candidate. Three signed-halfword depths cannot overflow `s32`, so spelling
+the sum as vertex zero, vertex two, vertex one preserves the supported value
+while testing that directly observed use dependency.
+
+The reordered sum removes all three depth-load register differences without
+changing body size, CFG, calls, relocations, or packet behavior. Strict
+objdiff improves to **99.514790%**; keep this range-safe commutative form. A
+separate control also initialized the vertex locals in retail's offset-fetch
+order. That changed both halfword and call-argument scheduling while failing
+to recover the saved-register identities, and is reverted. The remaining
+body differences are the two symmetric pointer roles during clipping/copying;
+the 64-byte retail versus 56-byte probe frame remains unattributed.
+
+## R3000 scheduling-model control
+
+An OPEN-unit-only GCC 2.5.7 `-mcpu=r3000` build is byte-identical to the
+configured r2000 probe. It retains the 56-byte candidate frame against
+retail's 64 bytes and the same exchanged second/third vertex saved-register
+roles in both F3 and FT3 paths. Calls, CFG, owner-relative ordering-table load
+and the 676-byte body remain unchanged. The temporary profile is removed;
+CPU scheduling-model selection does not explain this final residue.
+
+## Complete read-only pointer qualification (`82320b9` follow-up)
+
+Qualifying the projected byte stream and all three `KfScreenVertex *` locals
+as `const` emits the canonical candidate byte for byte. The 56/64-byte frame
+and symmetric vertex-1/vertex-2 saved-register roles remain unchanged in both
+packet modes. The established mutable types are restored; alias qualification
+does not supply the missing source dependency.
+
+## Function Match Plan: enclosing graphics owner (`62f6dc8`)
+
+OPEN `80018344` starts at 676 retail/680 probe bytes and 98.828400% strict.
+The complete CFG, sole exact caller, eight calls, one internal jump, signed
+depth path, packet modes and SDK-provider negative controls remain unchanged.
+Retail already derives projected vertices and the material color from one
+address family, then reloads the ordering table at projected base minus 276.
+The repository now has a complete `KfGraphicsRuntimeOpen` owner with checked
+offsets for both named members. Test recovering that real enclosing object
+from the loop's projected-array member and use its ordinary ordering-table
+field at the accepted-depth AddPrim site. This is typed owner recovery, not a
+raw numeric alias or a cached pointer across SDK calls.
+
+The typed enclosing-owner expression emits retail's `lw -276(projected_base)`.
+It removes the extra HI16/LO16 pair and the four-byte body excess: compiled and
+retail bodies are both 676 bytes, and strict objdiff rises to **99.455620%**.
+All eight calls, the one remaining state address pair, CFG, constants, widths
+and numeric referents agree. The remaining differences are the probe's 56-byte
+frame versus retail's 64-byte frame and exchanged register identities for the
+second and third projected vertices in both triangle modes. Declaration-order
+and semantics-preserving symmetric-vertex controls could recover either the
+load order or register identities, but not both, and are reverted. No unused
+stack object or register carrier is introduced; the function remains partial
+and is not banked.
+
+### Triangle-aggregate and use-order controls
+
+A genuine three-pointer local array produces the retail 64-byte total frame,
+but materializes its elements at `sp+16..24`, removes three saved-register
+lifetimes, and adds pointer reloads throughout both modes. Retail has no such
+stack traffic, so the aggregate is rejected rather than retained for its frame
+size. A reused `u16` packet-index local and assignments inside the NormalClip
+arguments both optimize to already-tested scalar forms. Reversing the two
+post-call coordinate stores changes the physical packet write order instead of
+the saved-register identities. All variants are reverted; they preserve no new
+retail instruction evidence.
+
 ## Function Match Plan: accepted-packet table reload (`6a25ae8`)
 
 OPEN `80018344` is 676 retail/680 probe bytes, strict 98.828400%, with

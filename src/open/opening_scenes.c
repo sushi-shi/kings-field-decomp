@@ -35,6 +35,7 @@ enum {
 
 enum {
     SCENE3_YAW_STEP = 0x10,
+    SCENE3_CLUT_WORK_CAPACITY = 6,
     SCENE_CAMERA_WAVE_SHIFT = 7,
     SCENE_CAMERA_WAVE_ANGLE_STEP = 100,
     TRANSITION_BASE_Y = -10000,
@@ -451,7 +452,8 @@ void opening_scene3_run(void)
     KfOpeningEntity *entity_14;
     VECTOR transition_position;
     u32 texture_pages[KF_OPENING_SCENE3_OVERLAY_COUNT];
-    u32 cluts[KF_OPENING_SCENE3_OVERLAY_COUNT];
+    /* Retail reserves six CLUT work slots; this scene populates the first two. */
+    u32 cluts[SCENE3_CLUT_WORK_CAPACITY];
     u16 *overlay_rect;
     s16 *overlay_y;
     s16 blend;

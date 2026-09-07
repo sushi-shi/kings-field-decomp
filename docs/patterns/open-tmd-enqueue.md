@@ -1,5 +1,107 @@
 # OPEN general TMD polygon emission
 
+## Function Match Plan: prepared-offset address base
+
+OPEN `render_enqueue_tmd` at `8001764c` resumed at strict 99.171080%, with
+the correct 80-block known CFG, 57 calls, packet-mode behavior and physical
+data targets, but a 3324-byte candidate against 3320 retail bytes. The six
+OPEN semantic views, complete switch, two caller paths, adjacent projection
+and unlit emitters, current graphics owner, SDK packet/GTE interfaces and
+source history were refreshed. Retail's accepted-packet tail reaches the
+ordering table relative to the live projected-vertex base; the candidate
+rematerialized it with an extra absolute address pair, shifting the default
+switch-table addends by four bytes.
+
+Apply the same complete-owner relationship already established in the unlit
+emitter, scoped to each accepted packet path. This removes the extra address
+pair and restores the 3320-byte body and all switch addends. A loop-wide owner
+pointer is a negative control: it rotates the projected/normal base registers
+and GCC folds the ordering-table access back to an absolute pair, so that form
+is removed.
+
+The prepared TMD indices are unsigned halfword byte offsets. Retail adds each
+offset before the common projected-buffer address. Holding that buffer as the
+32-bit address consumed by those offsets, rather than a C byte pointer, makes
+all projected-vertex additions agree while retaining typed pointers at their
+uses. A one-expression integer-address control independently recovered the
+same operand order before applying the representation to every mode.
+
+Strict objdiff rises to **99.967470%**. Retail and candidate are both 3320
+bytes; calls, CFG, case and default jump-table addends, and ordered physical
+referents agree. The remaining differences are confined to retail's 96-byte
+frame versus the probe's 88 bytes and the count spill at sp+48 versus sp+32.
+No instruction establishes an owner for the missing eight bytes, so no unused
+local or padding is added and the function remains unbanked.
+
+The full build preserves 101/108 exact OPEN functions and raises OPEN's
+size-weighted fuzzy result to 99.628%. The former OPEN render-TMD relocation
+addend mismatch is gone; only the established section-placement and data-owner
+gates remain for that image. Ruff and the focused TMD/transition tests pass.
+The full suite has 666 passes and 13 skips; its sole failure requires the
+absent external `/tmp/kf-toolchain-clean/B1/MIXA.DAT` fixture.
+
+## Typed stream-base controls
+
+The TMD normal and projected-vertex streams contain `SVECTOR` and
+`KfScreenVertex` records, respectively, while primitive packets store byte
+offsets into both streams. Two focused controls recovered each local as its
+record pointer type and made every offset operation explicit through a `u8 *`
+view. GCC 2.5.7 emits both forms byte-for-byte identically to the retained byte
+bases: the 88-byte frame, exchanged normal/projected saved registers, absolute
+ordering-table address pair, 3324-byte body, 57 calls, and 80-block CFG do not
+change. Remove the more verbose cast forms; these source types do not explain
+the remaining retail dependency or register allocation.
+
+## Header lifetime and scheduler controls
+
+Focused controls on OPEN `render_enqueue_tmd` preserve the supported stream
+model but do not explain its 3320/3324-byte residue. Moving the projected
+vertex declaration to function scope, or declaring it before the normal base,
+is byte-identical. A four-byte union exposing the packet header as a word and
+bytes is also byte-identical, as are spelling the header `unsigned int` and
+spelling signed depth `int`. These equivalent type and declaration forms are
+removed in favor of the existing fixed-width boundary types and narrowest
+scope.
+
+The primitive counter is not an interchangeable native integer. Changing
+`u32 remaining` (Psy-Q `unsigned long`) to `unsigned int` changes the loop to
+compare the decremented value with `-1`, grows/shifts the body, and disagrees
+with retail's postdecrement zero test. Keep the decoded 32-bit unsigned-long
+form.
+
+Compiler scheduling controls separate this residue from a profile guess.
+Adding `-mcpu=r3000` to the GCC 2.5.7 O2 probe is byte-identical to the current
+`-mcpu=r2000` candidate. Removing the CPU selection falls to 64.1% similarity,
+while disabling instruction scheduling falls to 64.0%; both broadly change
+load scheduling and the projected/normal register roles without recovering
+the 96-byte frame or projected-base-relative ordering-table load. All temporary
+profiles and assignments are removed. The retained source remains strict
+99.171080%, with the established 57 calls and twelve case addends intact.
+
+## Shared AddPrim owner controls (`d8f448e`)
+
+The enclosing-owner expression that removes the unlit emitter's extra OT pair
+does not transfer directly to this twelve-mode emitter. Repeating the typed
+expression in every accepted-depth arm increases register pressure, spills the
+signed bias and grows the body. A single loop-local pointer to that same real
+ordering-table member preserves the CFG but exchanges the persistent projected
+and normal bases and still emits the absolute OT pair. Expressing all twelve
+accepted paths as explicit gotos to one source-level AddPrim block collapses
+retail's 80-block switch to 52 compiled blocks and is structurally false.
+
+A distinct loop-local `KfGraphicsRuntimeOpen *` recovered from the projected
+member has the same negative result: it exchanges the normal/projected saved
+registers, retains the probe's 88-byte frame against retail's 96, and GCC still
+constant-folds the final table load to an absolute HI16/LO16 pair. Thus the
+successful block-local unlit owner expression does not transfer merely by
+naming the enclosing owner once for this twelve-mode loop.
+
+All three trials are reverted. Retail's shared machine-code tail is therefore
+an optimizer merge of case-local packet paths, not evidence for a common C
+label. Recovering its `lw -276(projected_base)` must preserve those twelve
+case-local lifetimes and cannot be inferred solely from the successful two-mode
+unlit owner expression.
+
 ## Function Match Plan: one-packet insertion consumer (`5784c14`)
 
 OPEN `8001764c` remains 3320 retail/3324 probe bytes, strict 99.171080%,
