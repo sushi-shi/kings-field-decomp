@@ -1,5 +1,17 @@
 # OPEN ending-scroll controller and data owners
 
+## Retail GCC 2.4.1 availability control
+
+The two frame-only residues prompted a TU-wide compiler discriminator after
+refreshing both functions' six OPEN semantic views. The pinned toolchain does
+contain Sony's GCC 2.4.1 `CPPPSX` and `CC1PSX`, but they are legacy Intel COFF
+executables rather than native probes. They are not executable directly, and
+Wine cannot launch them even from executable `.exe` copies. The experiment
+therefore never reached preprocessing or compilation and says nothing about
+the 56/48-byte transition or 112/96-byte scene-3 frames. All temporary
+compiler-registry, manifest, profile, and TU-assignment wiring is removed.
+The available native GCC 2.5.7 result remains authoritative.
+
 ## R3000 and combined-live-range controls
 
 Compiling the complete opening-scenes unit with GCC 2.5.7 `-mcpu=r3000` is
