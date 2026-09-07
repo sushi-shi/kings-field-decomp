@@ -20,6 +20,12 @@ enum {
     KF_ITEM_STOCK_SECOND_SHOP = 2
 };
 
+/* Shop identity shares the stock-row encoding; zero is the player's bank. */
+KF_ENUM_BEGIN(KfShopId, u8)
+    KF_SHOP_FIRST = KF_ITEM_STOCK_FIRST_SHOP,
+    KF_SHOP_SECOND = KF_ITEM_STOCK_SECOND_SHOP
+KF_ENUM_END(KfShopId)
+
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
     KF_FLOOR_ITEM_END = 0xffff,

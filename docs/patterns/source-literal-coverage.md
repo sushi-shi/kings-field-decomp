@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [save-slot overlay review](save-slot-overlay-domain.md):
+Working snapshot after the [shop-ID review](shop-id-domain.md):
 **111 C files**, **112 source/image variants**, and
 **6,002 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -46,6 +46,9 @@ values and shared menu payloads use explicit boundaries; the six word-argument
 helpers retain their legacy C parameter widths. Literal counts remain unchanged.
 The save-overlay review names five raw selectors and carries the signed domain
 through the renderer, confirmation prompt and every save/load cursor boundary.
+The shop-ID review types the optional shop byte and four shop-specific word
+interfaces, with explicit price-index and shared-widget boundaries. Its existing
+table-order identities and constant values leave the literal count unchanged.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

@@ -36,7 +36,7 @@ enum {
  * `price_mode` selects buy prices at zero and sell prices for any nonzero value.
  */
 ADDRESS(0x80027b7c, 0x2dc)
-void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, s32 shop_id, KfItemPriceMode price_mode)
+void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(KfShopId, s32) shop_id, KfItemPriceMode price_mode)
 {
     MenuGlyphString gs;
     MATRIX rot;
@@ -89,7 +89,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, s32 shop_id, Kf
     if (price_mode == KF_ITEM_PRICE_BUY) {
         prices = item_buy_prices;
     }
-    menu_format_number(prices[KF_ENUM_ENCODE(s32, item_id)][shop_id - KF_ITEM_STOCK_FIRST_SHOP], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
+    menu_format_number(prices[KF_ENUM_ENCODE(s32, item_id)][KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = MENU_ITEM_DETAIL_LABEL_X;

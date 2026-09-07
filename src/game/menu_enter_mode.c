@@ -46,13 +46,13 @@ u32 menu_enter_mode(KfMenuMode mode, ...)
     case KF_MENU_MODE_SHOP: {
 #if KF_MODERN_TYPES
         __builtin_va_list arguments;
-        u8 shop_id;
+        KfShopId shop_id;
 
         __builtin_va_start(arguments, mode);
-        shop_id = (u8)__builtin_va_arg(arguments, int);
+        shop_id = KF_ENUM_DECODE(KfShopId, __builtin_va_arg(arguments, int));
         __builtin_va_end(arguments);
 #else
-        u8 shop_id = *((u8 *)&mode + sizeof(mode));
+        KfShopId shop_id = KF_ENUM_DECODE(KfShopId, *((u8 *)&mode + sizeof(mode)));
 #endif
         item_menu_root(shop_id);
         result = 0;

@@ -383,7 +383,7 @@ extern u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 extern s32 menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
-extern void item_menu_root(s32 shop_id);
+extern void item_menu_root(KF_ENUM_PARAM(KfShopId, s32) shop_id);
 extern KfItemPickupResult item_pickup_confirm(KF_ENUM_PARAM(KfItemId, s32) item_id);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
@@ -395,7 +395,7 @@ extern void menu_config_panel(void);
 extern void menu_draw_dialog_frame(
     const KfSaveSlotSummary *summaries, KfSaveSlotOverlay overlay);
 extern void menu_draw_item_detail(
-    KF_ENUM_PARAM(KfItemId, s32) item_id, s32 shop_id, KfItemPriceMode price_mode);
+    KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(KfShopId, s32) shop_id, KfItemPriceMode price_mode);
 extern void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id);
 extern void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string);
