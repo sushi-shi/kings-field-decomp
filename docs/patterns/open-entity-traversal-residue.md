@@ -1,5 +1,27 @@
 # OPEN visible entity/item traversal
 
+## Exact closure: shared visibility coordinates
+
+At the retained 98.885544% baseline, all differences came from one extra
+item-row instruction and the resulting four-byte branch displacement. RTL
+inspection showed the probe assigning the wrapped row to `v0` and window
+height to `v1`; retail assigns row to `v1` and height to `v0`, allowing the
+row subtraction to fill the active-window pointer load delay.
+
+A simple inline position-to-cell helper emits the baseline byte for byte. A
+larger inline row-culling helper materializes its output at `sp+16`, grows the
+frame by eight bytes and is rejected. Moving item-only row and column locals
+to function scope is also byte-identical.
+
+The exact source reuses one function-scope `u16 row` and `u16 col` pair across
+the entity and floor-item visibility sweeps. These are the same wrapped cell
+coordinates with disjoint lifetimes, rather than new carriers. Their shared
+pseudos preserve the already-exact entity loop and recover retail's item-loop
+allocation: `subu v1,v0,s6` fills the window load delay, `lhu v0,2(a1)` follows,
+and the extra `nop` disappears. Strict objdiff is **100.000000%** for all 664
+bytes, with all 25 CFG blocks, four calls and fifteen validated address pairs
+unchanged. Both neighboring functions remain exact, and the result is banked.
+
 ## GCC 2.6.0 profile control
 
 The alternate pinned GCC 2.6.0 O2 probe does not explain the final item-row

@@ -156,17 +156,19 @@ void opening_render_entities_and_items(void)
     KfOpeningEntity *entity;
     KfFloorItem *item;
     u16 *material_tpage;
+    u16 row;
+    u16 col;
     s16 remaining;
 
     tmd_select(KF_TMD_SLOT_ENTITIES);
     entity = opening_entity_state.entities;
     for (remaining = KF_OPENING_ENTITY_CAPACITY - 1; remaining != -1; remaining--) {
         if (entity->object_id < KF_OPENING_ENTITY_MODEL_LIMIT) {
-            u16 row = entity->cell_z - origin_z;
             const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
 
+            row = entity->cell_z - origin_z;
             if (row < grid->height) {
-                u16 col = entity->cell_x - origin_x;
+                col = entity->cell_x - origin_x;
 
                 if (col < grid->width && grid->cells[row * grid->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     opening_entity_render(entity);
@@ -185,13 +187,15 @@ void opening_render_entities_and_items(void)
     item = open_graphics_runtime.floor_item_state.items;
     remaining = open_graphics_runtime.floor_item_state.count;
     while (--remaining != -1) {
-        u16 row = item->position_z / KF_MAP_TILE_SIZE - origin_z;
         const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
 
+        row = item->position_z / KF_MAP_TILE_SIZE - origin_z;
         if (row < grid->height) {
-            u16 col = item->position_x / KF_MAP_TILE_SIZE - origin_x;
+            col = item->position_x / KF_MAP_TILE_SIZE - origin_x;
 
-            if (col < grid->width && grid->cells[row * grid->width + col] != KF_CELL_WINDOW_HIDDEN) {
+            if (col < grid->width
+                    && grid->cells[row * grid->width + col]
+                        != KF_CELL_WINDOW_HIDDEN) {
                 render_floor_item(item);
             }
         }
