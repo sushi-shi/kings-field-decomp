@@ -499,3 +499,7 @@ promotes a probe to a proven historical toolchain.
 - [OPEN model enum domain](open-model-domain.md): separate model IDs through
   entity storage, lookup and rendering, with resource-backed geometry names;
   [entity-pool ledger](open-entity-pool-literal-ledger.md) covers its retained literals.
+
+- [OPEN scene control domains](open-scene-domains.md): transition, lighting
+  and sequence enum propagation; [complete scene ledger](open-scene-literal-ledger.md)
+  accounts for all 595 retained occurrences, including initialized data.

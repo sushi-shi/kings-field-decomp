@@ -24,10 +24,6 @@ enum {
     SCENE1_SHADE_STEP = 4,
     SCENE1_SEQUENCE_STOP_FRAME = 600,
     SCENE1_HOLD_FRAMES = 1000,
-    TRANSITION_GROW = 0,
-    TRANSITION_REMOVE = 1,
-    TRANSITION_SHRINK = 2,
-    TRANSITION_CREATE = 3,
     TRANSITION_FIRST_ENTITY_SLOT = 24,
     TRANSITION_ENTITY_COUNT = 4,
     TRANSITION_TALL_SCALE_Y = 0x2000,
@@ -67,15 +63,18 @@ enum {
     ENDING_SEQUENCE_VOLUME_DIVISOR = 3
 };
 
-enum {
+KF_ENUM_BEGIN(KfEndingLightingPhase, s16)
     ENDING_LIGHT_TO_MIDPOINT = 0,
     ENDING_LIGHT_TO_GREEN = 1,
-    ENDING_LIGHT_FINISHED = 2,
+    ENDING_LIGHT_FINISHED = 2
+KF_ENUM_END(KfEndingLightingPhase)
+
+KF_ENUM_BEGIN(KfEndingSequencePhase, s16)
     ENDING_SEQUENCE_WAIT_SCROLL = 0,
     ENDING_SEQUENCE_DELAY = 1,
     ENDING_SEQUENCE_FADE = 2,
     ENDING_SEQUENCE_REPLACED = 3
-};
+KF_ENUM_END(KfEndingSequencePhase)
 
 typedef char KfOpeningEntityPositionOffsetCheck[
     (u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];
@@ -360,7 +359,7 @@ void opening_scene1_run(void)
 }
 
 ADDRESS(0x80014608, 0x1fc)
-void opening_entity_transition(s16 mode, const VECTOR *position)
+void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *position)
 {
     KfOpeningEntity *entity;
     VECTOR position_snapshot;
@@ -370,14 +369,14 @@ void opening_entity_transition(s16 mode, const VECTOR *position)
     s16 scale_step;
 
     switch (mode) {
-    case TRANSITION_GROW:
+    case KF_OPENING_TRANSITION_GROW:
         initial_scale_y = 0;
         scale_step = TRANSITION_SCALE_STEP;
         break;
-    case TRANSITION_REMOVE:
+    case KF_OPENING_TRANSITION_REMOVE:
         goto deactivate;
-    case TRANSITION_SHRINK:
-    case TRANSITION_CREATE:
+    case KF_OPENING_TRANSITION_SHRINK:
+    case KF_OPENING_TRANSITION_CREATE:
         initial_scale_y = TRANSITION_TALL_SCALE_Y;
         scale_step = -TRANSITION_SCALE_STEP;
         break;
@@ -402,7 +401,7 @@ void opening_entity_transition(s16 mode, const VECTOR *position)
         entity_index--;
     } while (entity_index != -1);
 
-    if (mode == TRANSITION_CREATE) {
+    if (mode == KF_OPENING_TRANSITION_CREATE) {
         return;
     }
 
@@ -428,7 +427,7 @@ void opening_entity_transition(s16 mode, const VECTOR *position)
         frame++;
     } while (frame < TRANSITION_FRAMES);
 
-    if (mode == TRANSITION_GROW) {
+    if (mode == KF_OPENING_TRANSITION_GROW) {
         return;
     }
 
@@ -543,7 +542,7 @@ void opening_scene3_run(void)
     transition_position.vy = TRANSITION_BASE_Y;
     transition_position.vz = opening_camera_path_state.position.vz;
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
-        opening_entity_transition(TRANSITION_GROW, &transition_position);
+        opening_entity_transition(KF_OPENING_TRANSITION_GROW, &transition_position);
     }
 
     blend = 0;
@@ -558,7 +557,7 @@ void opening_scene3_run(void)
     } while (blend < KF_FIXED12_ONE + 1);
 
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
-        opening_entity_transition(TRANSITION_REMOVE, &transition_position);
+        opening_entity_transition(KF_OPENING_TRANSITION_REMOVE, &transition_position);
     }
 }
 
@@ -587,7 +586,7 @@ void opening_ending_scene_run(void)
     transition_position.vz = opening_camera_path_state.position.vz;
     SetDispMask(1);
     blend = 0;
-    opening_entity_transition(TRANSITION_CREATE, &transition_position);
+    opening_entity_transition(KF_OPENING_TRANSITION_CREATE, &transition_position);
 
     do {
         lighting_set_color_matrix(
@@ -599,7 +598,7 @@ void opening_ending_scene_run(void)
         blend += OPENING_COLOR_FADE_STEP;
     } while (blend < KF_FIXED12_ONE + 1);
 
-    opening_entity_transition(TRANSITION_SHRINK, &transition_position);
+    opening_entity_transition(KF_OPENING_TRANSITION_SHRINK, &transition_position);
     brightness = 0;
     blend = 0;
     for (;;) {
@@ -686,9 +685,9 @@ void opening_ending_scroll_run(void)
     CVECTOR bottom_color;
     KfOpeningEntity *entity_26;
     KfOpeningEntity *entity_27;
-    s16 lighting_phase;
+    KfEndingLightingPhase lighting_phase;
     s16 scrolling;
-    s16 sequence_phase;
+    KfEndingSequencePhase sequence_phase;
     s32 sequence_delay;
     s32 sequence_volume;
     s16 lighting_blend;

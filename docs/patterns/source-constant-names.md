@@ -1270,6 +1270,11 @@ data-placement failures. No function's match verdict changes.
 
 ## Later opening scenes and ending sequence
 
+The later [scene-domain review](open-scene-domains.md) propagates the control
+enums and replaces this grouped accounting with a
+[complete current ledger](open-scene-literal-ledger.md). The historical totals
+and assertion references below describe the source at that earlier review.
+
 Function Match Plan: finish the literal audit of OPEN `opening_scenes.c`
 through `opening_scene3_run`, `opening_ending_scene_run`,
 `opening_ending_scroll_run` and their initialized data. Their complete
