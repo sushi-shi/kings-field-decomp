@@ -1,5 +1,11 @@
 # Source constant naming
 
+The [world-collision remainder review](game-world-collision-literals.md)
+completes the per-occurrence account of all 270 literals in the world query
+and grid helpers, including every entry of the 255-halfword height table.
+Its 160 zero entries retain their consumer-specific meanings. All behavior
+constants there were already named; this follow-up changes documentation only.
+
 The [magic/collision review](game-magic-collision-constants.md) names launch
 offsets, projectile speeds, Lightning height/countdown choices, Fire Wall
 placement and shared rectangle capacity. It reuses the player's tenths

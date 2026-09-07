@@ -19,6 +19,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-collision-constants.md](game-magic-collision-constants.md): magic
   launch/targeting units, shared collision-rectangle capacity and the complete
   [52-occurrence remainder ledger](game-magic-collision-literal-ledger.md).
+- [game-world-collision-literals.md](game-world-collision-literals.md): world
+  query/grid remainder audit, all 255 height-table entries and the complete
+  [270-occurrence ledger](game-world-collision-literal-ledger.md).
 - [modern-type-checking.md](modern-type-checking.md): modern compiler adoption,
   enum storage requirements, and consumer-backed vector pointer corrections.
 - [game-selected-magic-types.md](game-selected-magic-types.md): selected-spell
