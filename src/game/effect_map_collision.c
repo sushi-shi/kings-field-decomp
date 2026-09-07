@@ -5,7 +5,7 @@
 #include <kf/game.h>
 
 DATA(0x80055ab8, 0x38)
-KfCellHeightRecord map_cell_height_records[7] = {
+KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {
     {500, -2000, 1500, -1250},
     {1000, -2500, 2000, -1000},
     {0, -2500, 2000, -1000},

@@ -16,6 +16,9 @@ promotes a probe to a proven historical toolchain.
 - [game-effect-dispatch-constants.md](game-effect-dispatch-constants.md): full
   dispatcher tuning/phase audit, parent-child timing, random-call order and
   the [153-occurrence remainder ledger](game-effect-dispatch-literal-ledger.md).
+- [game-magic-collision-constants.md](game-magic-collision-constants.md): magic
+  launch/targeting units, shared collision-rectangle capacity and the complete
+  [52-occurrence remainder ledger](game-magic-collision-literal-ledger.md).
 - [modern-type-checking.md](modern-type-checking.md): modern compiler adoption,
   enum storage requirements, and consumer-backed vector pointer corrections.
 - [game-selected-magic-types.md](game-selected-magic-types.md): selected-spell

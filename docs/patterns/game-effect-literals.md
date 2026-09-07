@@ -1,5 +1,10 @@
 # GAME effect literal audit
 
+The [magic/collision follow-up](game-magic-collision-constants.md) supplies
+current casting parameter names and the complete
+[52-occurrence ledger](game-magic-collision-literal-ledger.md). Its counts
+supersede those two modules in this historical census.
+
 The [complete dispatcher follow-up](game-effect-dispatch-constants.md) names
 remaining tuning and phase boundaries and supplies its current
 [153-occurrence ledger](game-effect-dispatch-literal-ledger.md). Its counts

@@ -46,6 +46,8 @@ typedef struct KfCollisionTarget {
 } KfCollisionTarget;
 
 /* Attribute-selected rectangle, in oriented cell coordinates and floor offsets. */
+enum { KF_MAP_CELL_HEIGHT_RECORD_COUNT = 7 };
+
 typedef struct KfCellHeightRecord {
     s16 x_min;
     s16 y_min;
@@ -55,7 +57,7 @@ typedef struct KfCellHeightRecord {
 
 extern KfCollisionTarget collision_target;
 extern s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT];
-extern KfCellHeightRecord map_cell_height_records[7];
+extern KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT];
 
 extern void collision_adjust_cell_occupancy(
     u16 cell_x, u16 cell_z, s32 delta);

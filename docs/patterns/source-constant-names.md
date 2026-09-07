@@ -1,5 +1,11 @@
 # Source constant naming
 
+The [magic/collision review](game-magic-collision-constants.md) names launch
+offsets, projectile speeds, Lightning height/countdown choices, Fire Wall
+placement and shared rectangle capacity. It reuses the player's tenths
+multiplier, removes 22 inline occurrences and accounts for all 52 retained
+literals across the complete magic and effect-collision modules.
+
 The [complete effect-dispatch review](game-effect-dispatch-constants.md)
 names projectile geometry, phase boundaries, child emission, homing,
 ground-branch and actor-spawner parameters. It removes 104 inline occurrences
