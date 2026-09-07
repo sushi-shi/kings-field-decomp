@@ -40,6 +40,9 @@ promotes a probe to a proven historical toolchain.
   fields through quad builders, fades and scrolling scene callers.
 - [ending-scroll-states.md](ending-scroll-states.md): typed scrolling enable
   state and the four-tick starfield/panel update cadence.
+- [renderer-literal-review.md](renderer-literal-review.md): named HUD layer and
+  complete [packet](renderer-packet-literal-ledger.md) and
+  [entity/HUD](entity-render-literal-ledger.md) retained-literal ledgers.
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete
