@@ -10,6 +10,14 @@ the canonical body byte for byte and retain only the two missing frame words.
 The direct subtraction is restored. Equivalent arithmetic syntax is not the
 unattributed stale pseudo that owns this frame.
 
+A plain `int` outer countdown with an explicit `u16` observation retains the
+guard but emits `andi t0` directly and `addiu -1`, losing retail's promoted
+copy and shared `0xffff` decrement. A genuine local `KfTmdHeader *` for the
+first count read lets CSE reuse the selected-asset load and removes four bytes;
+retail independently reloads that global before forming the object table.
+Both are reverted. Neither known leaf-frame witness transfers without changing
+substantive instructions.
+
 ## Scheduler-profile control (`d8f448e`)
 
 The existing `probe-gcc257-o2-plain` profile does not recover the unused
