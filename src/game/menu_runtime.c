@@ -227,14 +227,8 @@ void menu_blit_sprite_translucent(
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = sprite->tpage;
     current_poly_ft4->clut = sprite->clut;
-    current_poly_ft4->x0 = position->x - 4;
-    current_poly_ft4->y0 = position->y - 3;
-    current_poly_ft4->x1 = position->x + (sprite->width - 4);
-    current_poly_ft4->y1 = position->y - 3;
-    current_poly_ft4->x2 = position->x - 4;
-    current_poly_ft4->y2 = position->y + (sprite->height - 3);
-    current_poly_ft4->x3 = position->x + (sprite->width - 4);
-    current_poly_ft4->y3 = position->y + (sprite->height - 3);
+    setXYWH(current_poly_ft4, position->x - 4, position->y - 3,
+        sprite->width, sprite->height);
     current_poly_ft4->u0 = sprite->u;
     current_poly_ft4->v0 = sprite->v;
     current_poly_ft4->u1 = sprite->u + sprite->width;
@@ -258,14 +252,8 @@ void menu_blit_sprite(
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = sprite->tpage;
     current_poly_ft4->clut = sprite->clut;
-    current_poly_ft4->x0 = position->x - 18;
-    current_poly_ft4->y0 = position->y - 2;
-    current_poly_ft4->x1 = position->x + (sprite->width - 18);
-    current_poly_ft4->y1 = position->y - 2;
-    current_poly_ft4->x2 = position->x - 18;
-    current_poly_ft4->y2 = position->y + (sprite->height - 2);
-    current_poly_ft4->x3 = position->x + (sprite->width - 18);
-    current_poly_ft4->y3 = position->y + (sprite->height - 2);
+    setXYWH(current_poly_ft4, position->x - 18, position->y - 2,
+        sprite->width, sprite->height);
     current_poly_ft4->u0 = sprite->u;
     current_poly_ft4->v0 = sprite->v;
     current_poly_ft4->u1 = sprite->u + sprite->width;

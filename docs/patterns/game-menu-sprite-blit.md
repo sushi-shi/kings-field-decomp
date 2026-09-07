@@ -1,5 +1,145 @@
 # GAME menu sprite coordinate control
 
+## Function Match Plan: signed screen-coordinate interpretation (`8def349`)
+
+Revalidated retail and refreshed all six views for GAME `80029ab0` (416 bytes,
+88.269230%) and `80029c50` (400 bytes, 87.800000%). All thirteen direct caller
+windows, both full bodies, the adjacent item-frame/string boundaries, the
+primitive begin/commit bodies, SetSemiTrans, shared types, resource loader
+and source history were inspected. Keep the unchanged gcc257/O2/G0 profile,
+32-byte frames, no conditional branches, one return each, and the 3/2 calls
+and 9/8 validated cursor address pairs. There are no candidate references or
+strings. The custom menu insets are game policy; SetSemiTrans and SetPolyFT4
+have exact Release 2.5 LIBGPU PRIM provider evidence.
+
+The first raw differences remain the near-corner subtractions: retail loads
+a halfword, leaves a load-delay nop, and uses addiu with -4/-3 or -18/-2.
+The candidate instead loads a truncated positive halfword constant into a
+register and adds it. All coordinates are eventually stored as SDK signed
+shorts (`LIBGPU.H` POLY_FT4, lines 373-383); the layout/title guards elsewhere
+also consume signed halfwords. A narrowed halfword load alone cannot establish
+the source's signedness when only a final halfword is observable. The current
+unsigned MenuPoint originated as a reconstruction assumption, not SDK source.
+
+Test a single shared signed-halfword screen-point interpretation, without
+changing its four-byte extent, API pointer arguments, resource bits, sprite
+dimensions, expressions, packet types or calls. This is a type hypothesis,
+not a claim that a negative immediate uniquely proves a signed input. Check
+all sixteen unit functions and every dependent unit if it produces a retained
+correction; do not introduce per-file views or carry an unsupported signed
+declaration merely for a score. Revert if it does not explain the observed
+near-corner arithmetic. Only raw exactness and strict 100% qualify for banking.
+
+### Signed point result and dimension follow-up plan
+
+The shared signed point recovers all four near-corner addiu instructions in
+each blitter, while preserving retail's lhu loads. Six words now differ per
+function instead of ten: two positive constant materializations and the four
+far-corner extent subtractions. Their remaining operands are the shared
+descriptor's width/height halfwords, not the point. No other unit function's
+listing changes. This demonstrates why those lhu instructions did not prove
+an unsigned source field.
+
+Inspecting all descriptor field users finds only these blitters and the text
+and number renderers. Their six views and complete bodies were refreshed:
+`80029de0 menu_draw_string` remains 1328 bytes/99.987950%, 48-byte frame,
+12 branches, one return, six calls and 24 validated cursor address pairs;
+`8002a310 menu_draw_number` is 512 bytes/100%, 40-byte frame, two branches,
+one return, two calls and eight pairs. Both take read-only descriptor/label
+pointers, retain the signed -1 glyph guard and have no candidate references,
+strings or indirect dispatch. Their 63/47 incoming calls and shared atlas
+ownership are recorded in the glyph-rendering dossier. Descriptor dimensions
+are consumed only into final halfword XY or byte UV values; no full-width
+signed comparison or allocation depends on them. Resource loading copies
+the complete 12-byte records without interpreting or extending dimensions.
+
+The actual SDK RECT also declares signed-short width/height (LIBGPU.H
+298-301), alongside signed coordinate origins. Test that signed extent
+interpretation in the one shared MenuSpriteDef definition, keeping page,
+CLUT and UV fields unchanged. Retail's extent-first negative additions in
+both blitters are the direct instruction-selection constraint. Do not change
+the texture constants, add casts at individual uses, or replace the authentic
+packet. Verify the complete four-consumer family and preserve the exact
+number renderer before retaining the dimension hypothesis.
+
+With signed dimensions, the string renderer's four immediate discrepancies
+disappear without changing its positive 196/210 atlas constants; its complete
+listing now agrees, as does the number renderer. Both blitters emit the
+negative immediate operations, but the far corners now subtract from the
+point before adding the extent. Retail subtracts from the extent first.
+Test expressing that observed extent adjustment as the left operand of each
+far-corner sum. Keep all eight stores in place and do not add truncation
+casts, cached locals or per-use type exceptions to constrain reassociation.
+
+The extent-left expression retains the negative adjustments and correct sum
+destination, but still exchanges the point/extent loads at the four far
+corners (eight words each). Revisit the genuine SDK setXYWH macro once with
+the now-supported signed point and dimensions. The earlier rejected macro
+control used unsigned inputs; it therefore did not test this recovered type
+contract. Pass the same point-minus-inset and descriptor extents, preserving
+the SDK's eight ordered assignments. Stop this expression experiment if the
+real macro does not explain the remaining load order; no invented helper or
+truncation is justified.
+
+### Exact result
+
+The real SDK setXYWH macro with signed point coordinates and signed descriptor
+dimensions reproduces both blitters completely. Keep that shared type model
+and those two macro invocations. No UV/page/CLUT type, resource byte, inset,
+call, packet definition or compiler option changed. The ordinary source's
+unsigned types and arithmetic association were separate reconstruction facts;
+the earlier unsigned macro control did not rule out the SDK macro itself.
+
+Strict objdiff is **100%** for `menu_blit_sprite_translucent` (from 88.269230%)
+and `menu_blit_sprite` (from 87.800000%). A fresh independent compilation,
+linked using the actual relocations, reproduces all 104/100 retail words,
+3/2 ordered calls and 9/8 ordered address pairs. The target object was itself
+reconstructed to raw retail before comparing the candidate. Complete linked
+SHA-256 values:
+
+- Translucent: `ef8bd8b517828832b0723610cb1f959515fcd814adfeff54101e134d728a624d`.
+- Opaque: `cd1b95e77113360c923d48c7153416facd4ff2637b42385110660ab613064733`.
+
+The same descriptor correction independently closes `menu_draw_string`:
+all 332 words, six calls and 24 address pairs agree, without changing its
+positive atlas constants. See the glyph-rendering dossier. The unit advances
+from 11/16 to 14/16 exact. All fourteen exact bodies, the previously closed
+menu-list renderer and three restored OPEN render-initialization controls
+were independently raw-checked. Of all 484 scored functions, only these three
+scores change; no prior exact result or other partial score regresses.
+Eligible counts advance GAME 305/362 to 308/362 and overall 404/471 to
+407/471. OPEN remains 98/108 and PSX 1/1.
+
+This is evidence for the recovered type/macro combination, not historical
+compiler attribution or proof of a unique original C declaration. In
+particular, lhu/lbu instructions feeding narrowed stores do not by themselves
+prove unsigned source fields; here the signed fields preserve those very
+loads while correcting the arithmetic.
+
+### Verification and isolation
+
+The four curated structure-field entries now carry the recovered signed
+types and evidence; all extents and offsets remain unchanged. An isolated
+fresh build of committed `8def349` menu source/header plus only this campaign's
+four signed fields and two SDK macros produces identical complete text and
+all 699 ordered non-debug relocation identities/addends to the live tree.
+Debug-line metadata differs with the temporary source path. Thus these exact
+results do not depend on the concurrent dimension-naming edits.
+
+Ruff and both whitespace checks pass. The full test rerun completes 678
+tests in 79.170 seconds: 677 pass; the sole failure is the independently dirty
+item-stock test's new initializer regex also matching ordinary runtime element
+assignments. The inventory failure from stale unsigned field entries is fixed.
+Do not change or stage that other campaign's test here. The complete build
+retains the existing data/ownership/placement failures: data PSX 0/1,
+GAME 9/42, OPEN 2/19; target relinks 1/1, 75/77 and 34/38; zero artifact failures.
+
+After staging only this campaign, selected banking of these three functions
+and the previously exact list renderer correctly refuses the remaining
+unstaged dimension-naming inputs. No dirty override is used. Commit the
+independently verified reconstruction, leaving those four exact ledger updates
+pending until the unrelated inputs are committed or otherwise finalized.
+
 ## Function Match Plan
 
 Campaign: the two single-quad blitters in `game.menu_runtime`, using the

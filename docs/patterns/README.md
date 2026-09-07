@@ -258,9 +258,9 @@ promotes a probe to a proven historical toolchain.
   access closes list initialization; index-driven termination and a word-sized
   padding temporary close decimal glyph formatting.
 - [game-menu-glyph-render.md](game-menu-glyph-render.md): index-derived
-  fixed pitch closes number rendering and removes the string-render preheader
-  difference; retail atlas offsets prove the kana marks, blanks and slash.
-  Four decoration immediates remain non-exact.
+  fixed pitch closes number rendering; signed shared dimensions close the
+  string renderer without altering its positive decoration constants.
+  Retail atlas offsets prove the kana marks, blanks and slash.
 - [game-menu-class-titles.md](game-menu-class-titles.md): decoded SOLDIER/MAGE
   title grid, shared base-stat thresholds and atlas strides, and the complete
   [status-text literal ledger](game-menu-status-literal-ledger.md).
@@ -291,8 +291,8 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-window-rows.md](game-menu-window-rows.md): signed title-test load
   correction and rejected direct-row-address control in the window renderer.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
-  and the rejected SDK rectangle-macro control; inset instructions remain
-  non-exact without changing shared or SDK types.
+  and shared signed point/dimension recovery; the genuine SDK rectangle macro
+  closes both blitters while preserving every narrow load and ordered store.
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

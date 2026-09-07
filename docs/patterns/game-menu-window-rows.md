@@ -1,5 +1,42 @@
 # GAME menu-window row addressing
 
+## Function Match Plan: conditional sprite value (`81ded14`)
+
+Refresh GAME `80028914`, 348 retail/352 candidate bytes, strict 87.540230%,
+under unchanged `probe-gcc257-o2-g0`. Hash validation, all six semantic views,
+the complete retail CFG, all 31 caller argument/result windows, adjacent
+prompt/list boundaries, draw-helper interfaces, shared resource layout and
+source history precede edits. The full-width four-argument void interface,
+264-byte layout, 24-byte labels, seven conditional branches, six calls,
+one return and its stack-restoration delay slot remain supported. Retail
+has nine validated address pairs and no candidate references or strings.
+This game-specific menu composer is absent from the vendored inventory;
+its calls are game presentation helpers, not SDK bodies.
+
+Retail computes the highlighted row displacement before materializing the
+default background, and conditionally materializes the confirmed background
+with a separate symbol pair. The candidate initializes a default `box` before
+the condition and derives the confirmed member by adding 12. Test expressing
+the same short-circuit choice as the blit's conditional pointer argument.
+Keep the current row-label local for this first control, isolating the sprite
+value's source boundary. Preserve both highlight tests and flag==1, the title
+and positive-count guards, row traversal and kind!=6 backdrop policy. Do not
+split the asset owner, invent byte offsets, or repeat the already rejected
+standalone label-removal experiment. If this changes the evidenced address
+formation, inspect that new result before considering another source fact.
+
+The raw difference starts with an extra saved s6/ra slot, not proof of its
+cause. Compare referents, call set, branch destinations and then instruction
+forms after each fresh compile. Only strict 100% with complete raw-word and
+ordered-reference agreement may be banked; retain all previous exact rows
+and keep concurrent menu-naming changes outside this campaign.
+
+The conditional argument produces identical complete text and ordered ELF
+relocation records to the starting object. The extra row pointer, confirmed
+member's +12 derivation, 352-byte extent and 87.540230% residue remain. Restore
+the original source; this provides no basis for composing another spelling
+experiment on top of it. No new exact result is claimed for this function.
+
 ## Function Match Plan
 
 GAME `0x80028914 menu_draw_window`, 348 bytes/87 words, single-function unit

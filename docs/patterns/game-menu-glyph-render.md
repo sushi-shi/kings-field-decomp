@@ -1,5 +1,30 @@
 # GAME menu glyph rendering
 
+## Exact string-renderer follow-up (`8def349`)
+
+The shared descriptor-dimension audit in
+[game-menu-sprite-blit.md](game-menu-sprite-blit.md) closes the four remaining
+immediate discrepancies below. After refreshing both glyph renderers' six
+views and complete bodies, interpret MenuSpriteDef width/height as signed
+halfwords, consistent with SDK rectangle dimensions and the adjacent
+blitters' observed negative extent arithmetic. Keep the declared extent,
+field offsets, glyph data, packet types and all source expressions unchanged.
+
+That one shared correction emits retail's -60/-46 additions from the original
+positive `MENU_DAKUTEN_U`/`MENU_HANDAKUTEN_U` constants. It retains every
+existing lhu/lbu load. No negative texture constant, signed-byte carrier,
+per-use cast or fabricated local was introduced. The earlier instruction-
+selection residue was not proof that the unsigned dimension model was right.
+
+`menu_draw_string` is now strict **100%**, from 99.987950%. A fresh independent
+compilation reproduces all 332 raw retail words, six ordered calls and 24
+ordered address pairs, including all branches and delay slots. Linked SHA-256:
+`0c22fa9c8d5959465fc12c56048313332c90742f070dd4c1e4fe31d833778021`.
+The exact number renderer preserves all 128 words, two calls and eight pairs.
+Whole-repository score comparison changes only the text renderer and the two
+newly exact blitters; no other function regresses. The original plans and
+intermediate verdicts below remain historical evidence, not current scores.
+
 ## Function Match Plan: number renderer
 
 `GAME.EXE 0x8002a310 menu_draw_number`, 512 bytes, existing

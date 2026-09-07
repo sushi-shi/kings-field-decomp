@@ -190,8 +190,8 @@ enum {
 
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
-    u16 x;
-    u16 y;
+    s16 x;
+    s16 y;
 } MenuPoint;
 
 /*
@@ -233,8 +233,8 @@ typedef struct MenuSpriteDef {
     u16 clut;
     u16 u;
     u16 v;
-    u16 width;
-    u16 height;
+    s16 width;
+    s16 height;
 } MenuSpriteDef;
 
 /* Menu-list tile descriptor with byte-sized texture coordinates. */

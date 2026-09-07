@@ -1,5 +1,34 @@
 # OPEN display-initialization pointer lifetimes
 
+## Function Match Plan: SDK background-color macro (`262a978`)
+
+OPEN `80016adc display_initialize`, 472 retail/484 probe bytes, remains strict
+92.177960%. Hash validation, all six image-qualified views, the sole caller's
+full-width mode/result window, all three exact unit siblings, the retail
+PutDrawEnv body, source history, shared graphics layout and SDK declarations
+were refreshed. The frame is 48 retail/40 probe bytes; both sides retain
+eighteen calls, two conditional branches, two internal jumps and one return.
+Sixteen retail address pairs are validated; the probe emits four extra pairs
+for the dfe writes. There are no strings or candidate outgoing references.
+LIBGPU EXT/PRIM/SYS and LIBGTE providers remain vendor boundaries; the
+mode-specific initialization policy is game code.
+
+The pinned LIBGPU.H `setRGB0` macro (lines 105-106) is a comma-expression
+sequence of the real r0/g0/b0 members, which DRAWENV also declares. Retail
+clears those bytes independently and in that order for each environment.
+Test replacing only those six ordinary assignments with the two genuine
+SDK macro invocations, without moving pointer initialization, fields or calls.
+This is an authentic SDK source-form hypothesis, not a new macro or cast.
+Compare all instructions and ordered numeric references, preserve the three
+exact siblings, and do not bank a non-exact result or alter compiler options.
+
+The two actual SDK macros emit identical complete unit text and ordered
+relocation records to the committed source. All three siblings remain exact;
+display initialization retains the same 484-byte candidate and four extra
+dfe pairs. Restore the original assignments. This rules out the macro's
+comma-expression boundary as the explanation, not its possible historical
+use. No new OPEN source or score change is retained.
+
 ## Paired drawing-area flag control (`4cd8fae`)
 
 The refreshed six views, complete caller/CFG, neighboring controls, SDK

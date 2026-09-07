@@ -781,14 +781,14 @@ MenuGlyphRow	0x0	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;as
 MenuGlyphString	0x0	0x2	x	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
 MenuGlyphString	0x2	0x2	y	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
 MenuGlyphString	0x4	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
-MenuPoint	0x0	0x2	x	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	sprite blitters read two screen-coordinate halfwords
-MenuPoint	0x2	0x2	y	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	sprite blitters read two screen-coordinate halfwords
+MenuPoint	0x0	0x2	x	s16	supported	game_menu.h;game-menu-sprite-blit.md;asm;STAT.DAT;LIBGPU.H	signed screen-coordinate interpretation reproduces the blitters' negative inset arithmetic while retaining narrowed lhu loads
+MenuPoint	0x2	0x2	y	s16	supported	game_menu.h;game-menu-sprite-blit.md;asm;STAT.DAT;LIBGPU.H	signed screen-coordinate interpretation reproduces the blitters' negative inset arithmetic while retaining narrowed lhu loads
 MenuSpriteDef	0x0	0x2	tpage	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters
 MenuSpriteDef	0x2	0x2	clut	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters
 MenuSpriteDef	0x4	0x2	u	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters
 MenuSpriteDef	0x6	0x2	v	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters
-MenuSpriteDef	0x8	0x2	width	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters
-MenuSpriteDef	0xa	0x2	height	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters
+MenuSpriteDef	0x8	0x2	width	s16	supported	game_menu.h;game-menu-sprite-blit.md;game-menu-glyph-render.md;asm;STAT.DAT;LIBGPU.H	signed extent shared by sprite and font renderers; narrowed lhu/lbu loads remain exact and negative inset/decoration additions match
+MenuSpriteDef	0xa	0x2	height	s16	supported	game_menu.h;game-menu-sprite-blit.md;game-menu-glyph-render.md;asm;STAT.DAT;LIBGPU.H	signed extent shared by sprite and font renderers; narrowed lhu/lbu loads remain exact and negative inset arithmetic matches
 MenuTileSprite	0x0	0x2	tpage	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	byte UV view consumed by backdrop and list rendering
 MenuTileSprite	0x2	0x2	clut	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	byte UV view consumed by backdrop and list rendering
 MenuTileSprite	0x4	0x1	u	u8	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	byte UV view consumed by backdrop and list rendering
