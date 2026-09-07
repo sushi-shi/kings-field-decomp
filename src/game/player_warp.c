@@ -12,8 +12,6 @@ static MATRIX actor_transform_color_matrix = {
 enum {
     WARP_SHIMMER_COUNT = 4,
     WARP_SHIMMER_OWNER_ID = 10,
-    WARP_SHIMMER_TYPE = 0x11,
-    WARP_SHIMMER_KIND = 0x15,
     WARP_SHIMMER_TALL_SCALE = 0x2000,
     WARP_SHIMMER_SCALE_STEP = 0x100,
     WARP_SHIMMER_YAW_STEP = 512,
@@ -30,12 +28,8 @@ enum {
 #define WARP_CELL_KEY(x, z) \
     (((u32)(x) << WARP_CELL_X_SHIFT) | ((u32)(z) << WARP_CELL_Z_SHIFT))
 
-/* The shimmer reuses rotation_y as phase and scale_y as intensity. */
-#define EFFECT_ROTATION_PHASE(e) ((e)->rotation.vy)
-#define EFFECT_INTENSITY(e) ((e)->scale_y)
-
 ADDRESS(0x80036618, 0x238)
-void player_warp_shimmer(s32 mode, VECTOR *position)
+void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
 {
     KfEffectRecord *effects[WARP_SHIMMER_COUNT];
     KfEffectRecord **cursor;
@@ -44,21 +38,21 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
         VECTOR position;
         SVECTOR direction;
     } scratch;
-    s16 intensity;
-    s16 intensity_delta;
+    s16 scale_y;
+    s16 scale_y_step;
     s16 frame;
     s16 i;
-    s16 mode_value = mode;
+    KF_ENUM_STORAGE(KfWarpShimmerMode, s16) mode_value = mode;
 
     switch (mode_value) {
     case KF_WARP_SHIMMER_GROW_REMOVE:
     case KF_WARP_SHIMMER_GROW_KEEP:
-        intensity = 0;
-        intensity_delta = WARP_SHIMMER_SCALE_STEP;
+        scale_y = 0;
+        scale_y_step = WARP_SHIMMER_SCALE_STEP;
         break;
     case KF_WARP_SHIMMER_SHRINK_REMOVE:
-        intensity = WARP_SHIMMER_TALL_SCALE;
-        intensity_delta = -WARP_SHIMMER_SCALE_STEP;
+        scale_y = WARP_SHIMMER_TALL_SCALE;
+        scale_y_step = -WARP_SHIMMER_SCALE_STEP;
         break;
     }
 
@@ -68,9 +62,11 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
     display_flip_buffer_index();
     cursor = effects;
     for (i = WARP_SHIMMER_COUNT - 1; i != -1; i--) {
-        effect = effect_pool_construct(WARP_SHIMMER_OWNER_ID, WARP_SHIMMER_TYPE,
-                                       WARP_SHIMMER_KIND, position, &scratch.direction);
-        EFFECT_INTENSITY(effect) = intensity;
+        effect = effect_pool_construct(
+            WARP_SHIMMER_OWNER_ID,
+            KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+            KF_EFFECT_KIND_WARP_SHIMMER, position, &scratch.direction);
+        effect->scale_y = scale_y;
         *cursor++ = effect;
     }
 
@@ -88,14 +84,14 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
             effect = *cursor++;
 
             if (i * WARP_SHIMMER_STAGGER_FRAMES < frame) {
-                u16 current_intensity = EFFECT_INTENSITY(effect);
+                u16 current_scale_y = effect->scale_y;
 
-                if (current_intensity < WARP_SHIMMER_TALL_SCALE + 1) {
-                    EFFECT_INTENSITY(effect) = intensity_delta + current_intensity;
+                if (current_scale_y < WARP_SHIMMER_TALL_SCALE + 1) {
+                    effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
-            EFFECT_ROTATION_PHASE(effect) =
-                (EFFECT_ROTATION_PHASE(effect) + WARP_SHIMMER_YAW_STEP)
+            effect->rotation.vy =
+                (effect->rotation.vy + WARP_SHIMMER_YAW_STEP)
                 & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);

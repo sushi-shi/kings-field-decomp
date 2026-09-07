@@ -392,7 +392,7 @@ KfEffectRecord *effect_pool_construct(
                     &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case 0x15:
+        case KF_EFFECT_KIND_WARP_SHIMMER:
             record->animation_clip = 0;
             record->base_render_id = 0xd;
             record->render_id = 0xd;

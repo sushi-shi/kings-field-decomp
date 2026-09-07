@@ -33,10 +33,13 @@ enum {
     KF_WEAPON_ATTACK_PHASE_END = 4096
 };
 
-enum {
+KF_ENUM_BEGIN(KfWarpShimmerMode, s32)
     KF_WARP_SHIMMER_GROW_REMOVE = 0,
     KF_WARP_SHIMMER_SHRINK_REMOVE = 1,
-    KF_WARP_SHIMMER_GROW_KEEP = 2,
+    KF_WARP_SHIMMER_GROW_KEEP = 2
+KF_ENUM_END(KfWarpShimmerMode)
+
+enum {
     KF_FLOOR5_ENTRY_VARIANT = 1,
     KF_FLOOR5_ALTERNATE_MUSIC_VARIANT = 3,
     KF_PLAYER_FLOOR_ENTRY_COUNT = 5
@@ -289,8 +292,8 @@ extern void player_update_view_bob(void);
 extern void player_update_weapon_attack(void);
 /* Warp variant inputs remain full words until the player-state byte store. */
 extern void player_warp_change_floor(KfFloorId floor, u32 variant);
-extern void player_warp_shimmer(s32 mode, VECTOR *position);
-extern void player_warp_shimmer_at_player(u32 mode);
+extern void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position);
+extern void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) mode);
 extern void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
 extern u32 player_warp_trigger_update(void);

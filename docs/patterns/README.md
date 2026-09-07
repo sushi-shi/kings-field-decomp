@@ -183,6 +183,10 @@ promotes a probe to a proven historical toolchain.
 - [game-notification-dequeue.md](game-notification-dequeue.md): typed dequeue
   control subobject and late pointer binding recover retail base/offset forms;
   the initial tail-load address materialization remains non-exact.
+- [game-warp-mode-domain.md](game-warp-mode-domain.md): checked shimmer modes,
+  constructor kind identity and the renderer's Y-scale/yaw consumers.
+- [game-warp-literal-ledger.md](game-warp-literal-ledger.md): complete current
+  warp and lifecycle literal accounting, including authored motion values.
 - [game-warp-shimmer-traversal.md](game-warp-shimmer-traversal.md): forward
   effect cursors, descending allocation/release counts and one active-effect
   pointer close the 568-byte warp-shimmer animator.

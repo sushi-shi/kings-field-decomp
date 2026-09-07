@@ -1,15 +1,17 @@
 # Effect-pool remainder literal ledger
 
-Complete per-occurrence account of **225 retained numeric literals** in `src/game/effect_pool.c`,
+Complete per-occurrence account of **224 retained numeric literals** in `src/game/effect_pool.c`,
 including the existing alignment/offset witnesses. The
 [map-effect follow-up](game-map-effect-identities.md) names the former kind-48
 occurrence and updates this ledger. The [constructor review](game-effect-pool-constants.md)
 records named values, effect identities and verification. Named definitions and retail claims
 are excluded; comments/strings/identifier digits are not literals, and signs are operators.
 `effect_pool_set_current` has no remaining numeric literals.
+The [warp-mode review](game-warp-mode-domain.md) names kind 21 and establishes
+its Y-scale and yaw consumers; its model asset remains unidentified.
 
 | Function | Line | Token | Expression | Reason |
-| --- | --- | --- | --- | --- |
+| --- | ---: | --- | --- | --- |
 | `initializers` | 5 | `4` | `typedef char effect_state_alignment[__alignof__(KfEffectState) == 4 ? 1 : -1];` | Existing four-byte alignment witness for the shared effect owner; one/-one are the C typedef success/failure extents. Keep the measured ABI constraint explicit. |
 | `initializers` | 5 | `1` | `typedef char effect_state_alignment[__alignof__(KfEffectState) == 4 ? 1 : -1];` | Existing four-byte alignment witness for the shared effect owner; one/-one are the C typedef success/failure extents. Keep the measured ABI constraint explicit. |
 | `initializers` | 5 | `1` | `typedef char effect_state_alignment[__alignof__(KfEffectState) == 4 ? 1 : -1];` | Existing four-byte alignment witness for the shared effect owner; one/-one are the C typedef success/failure extents. Keep the measured ABI constraint explicit. |
@@ -224,13 +226,12 @@ are excluded; comments/strings/identifier digits are not literals, and signs are
 | `effect_pool_construct` | 389 | `3` | `if (va[3] != 0) {` | Index 3 relative to the saved fifth argument selects O32 argument 8, used here as the optional sound flag. The argument position varies by kind. |
 | `effect_pool_construct` | 389 | `0` | `if (va[3] != 0) {` | Zero suppresses this optional constructor sound; any nonzero word enables the call. This is a boolean test of the selected argument slot. |
 | `effect_pool_construct` | 391 | `0` | `&magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],` | Select the first stored SoundRef for this construction path. Other effect kinds use the same slot at different events, so no universal cast/impact enum is inferred. |
-| `effect_pool_construct` | 395 | `0x15` | `case 0x15:` | Kind 21 selects model 13, faces camera yaw and starts with zero Y scale and 1.5 Q12 X/Z scale. The current dispatcher has no kind-21 arm; its gameplay identity is unresolved. |
 | `effect_pool_construct` | 396 | `0` | `record->animation_clip = 0;` | Select the first animation clip in this model resource. It is a resource ordinal; the billboard mode uses its own named sentinel. |
-| `effect_pool_construct` | 397 | `0xd` | `record->base_render_id = 0xd;` | Authored render-resource index for 0x15: the branch chooses billboard or model mode separately. Base and current selector start equal. Keep the resource ordinal until the corresponding sprite/model asset has an independent semantic identity; equal indices in different modes do not identify the same resource. |
-| `effect_pool_construct` | 398 | `0xd` | `record->render_id = 0xd;` | Authored render-resource index for 0x15: the branch chooses billboard or model mode separately. Base and current selector start equal. Keep the resource ordinal until the corresponding sprite/model asset has an independent semantic identity; equal indices in different modes do not identify the same resource. |
+| `effect_pool_construct` | 397 | `0xd` | `record->base_render_id = 0xd;` | Authored model-resource index for the warp shimmer. Base and current selectors start equal. Keep the ordinal until the model geometry has an independent semantic identity. |
+| `effect_pool_construct` | 398 | `0xd` | `record->render_id = 0xd;` | Authored model-resource index for the warp shimmer. Base and current selectors start equal. Keep the ordinal until the model geometry has an independent semantic identity. |
 | `effect_pool_construct` | 399 | `0` | `record->scale_y = 0;` | This branch begins the indicated visual scale at zero for its later growth. Scale zero is a numeric origin, independently of pool liveness. |
-| `effect_pool_construct` | 400 | `0x1800` | `record->scale_z = 0x1800;` | Authored kind-21 X/Z scale is 6144 Q12 units, exactly 1.5 unity; Y begins at zero. Its visual identity and original tuning rationale are unresolved, so keep this resource-specific value. |
-| `effect_pool_construct` | 401 | `0x1800` | `record->scale_x = 0x1800;` | Authored kind-21 X/Z scale is 6144 Q12 units, exactly 1.5 unity; Y begins at zero. Its visual identity and original tuning rationale are unresolved, so keep this resource-specific value. |
+| `effect_pool_construct` | 400 | `0x1800` | `record->scale_z = 0x1800;` | Warp-shimmer X/Z scale is 6144 Q12 units, exactly 1.5 unity; Y begins at zero. Preserve this authored model scale; the original tuning rationale is unresolved. |
+| `effect_pool_construct` | 401 | `0x1800` | `record->scale_x = 0x1800;` | Warp-shimmer X/Z scale is 6144 Q12 units, exactly 1.5 unity; Y begins at zero. Preserve this authored model scale; the original tuning rationale is unresolved. |
 | `effect_pool_construct` | 402 | `0` | `record->rotation.vx = 0;` | Zero the indicated Euler angle in this branch. These are neutral orientation components; other branches copy supplied angles or camera yaw. |
 | `effect_pool_construct` | 404 | `0` | `record->rotation.vz = 0;` | Zero the indicated Euler angle in this branch. These are neutral orientation components; other branches copy supplied angles or camera yaw. |
 | `effect_pool_spawn_typed` | 421 | `0` | `if (record != 0) {` | Only a non-null result from the free-slot scan may be initialized; zero is the allocation-miss pointer. |
