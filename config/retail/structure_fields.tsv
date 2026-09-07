@@ -567,7 +567,7 @@ KfPlayerState	0xd6	0x02	view_bob_phase	u16	supported	game_player.h;data_identiti
 KfPlayerState	0xd8	0x02	death_camera_pitch_step	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xda	0x02	death_visual_blend	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xdc	0x02	vertical_velocity	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xde	0x01	vertical_state	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xde	0x01	vertical_state	KfPlayerVerticalState	supported	game_player.h;asm;xrefs;game-player-vertical-state.md	player vertical policy: grounded 0, falling 0x10, terrain step-up 0x20; saved byte at GAME 0x800a085e
 KfPlayerState	0xdf	0x01	unknown_df	u8[1]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	maximum HP
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game_player.h;asm;xrefs	current HP

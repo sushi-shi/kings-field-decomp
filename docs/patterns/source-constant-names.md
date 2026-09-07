@@ -1,5 +1,12 @@
 # Source constant naming
 
+The [player vertical-state review](game-player-vertical-state.md) types the
+saved byte as grounded/falling/step-up, propagates the shared camera height,
+and names motion/bob parameters and the bottomless-pit attribute. It replaces
+26 inline occurrences and documents all seven remaining literals in the three
+sync/bob/vertical functions. The complete player-death module ledger now covers
+197 remaining occurrences after naming its initial state and camera offset.
+
 The [actor animation-table slot review](game-actor-animation-slots.md) separates
 table indices, resource animation IDs and action codes. It replaces the false
 general action-minus-two mapping and documents the remaining inline resource

@@ -4,6 +4,7 @@
 /* Player state, shared player data, and player operations. */
 
 #include <kf/audio.h>
+#include <kf/enum.h>
 #include <kf/game_equipment.h>
 #include <kf/game_effect.h>
 #include <kf/game_map.h>
@@ -11,6 +12,17 @@
 
 struct KfPoolRecord;
 struct KfAssetHeader;
+
+KF_ENUM_BEGIN(KfPlayerVerticalState, u8)
+    KF_PLAYER_VERTICAL_GROUNDED = 0,
+    KF_PLAYER_VERTICAL_FALLING = 0x10,
+    KF_PLAYER_VERTICAL_STEP_UP = 0x20
+KF_ENUM_END(KfPlayerVerticalState)
+
+/* Downward-positive world Y; view bob is added independently. */
+enum {
+    KF_PLAYER_CAMERA_HEIGHT = 1500
+};
 
 enum {
     KF_WARP_SHIMMER_GROW_REMOVE = 0,
@@ -198,7 +210,7 @@ typedef struct KfPlayerState {
     u16 death_camera_pitch_step;
     s16 death_visual_blend;
     s16 vertical_velocity;
-    u8 vertical_state;
+    KfPlayerVerticalState vertical_state;
     u8 unknown_df[1];
 } KfPlayerState;
 

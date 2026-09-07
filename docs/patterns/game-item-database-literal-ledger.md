@@ -1,10 +1,12 @@
 # Database-loader and startup literal ledger
 
-Complete ledger for `item_load_database` and `game_state_initialize`: **120
-retained occurrences** (22 database, 98 startup). Named definitions and
+Complete ledger for `item_load_database` and `game_state_initialize`: **119
+retained occurrences** (22 database, 97 startup). Named definitions and
 retail claims are excluded; negative signs are operators. Other functions
 and static initializers in their modules are outside this ledger. See the
 [dimension review](game-item-menu-dimensions.md) for the owner evidence.
+The initial vertical-state literal was subsequently named by the
+[player state review](game-player-vertical-state.md).
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -37,7 +39,6 @@ and static initializers in their modules are outside this ledger. See the
 | `game_state_initialize` | 70 | `5` | `player_state.fire_defense = 5;` | Authored initial value five for this named defense/resistance field. Preserve the per-field assignments without asserting that physical defenses and poison resistance use interchangeable calculations; tuning rationale is unknown. |
 | `game_state_initialize` | 71 | `0` | `player_state.view_bob_offset = 0;` | Reset the view-bob displacement and phase to their zero origin; these are distinct state fields rather than a shared scale. |
 | `game_state_initialize` | 72 | `0` | `player_state.view_bob_phase = 0;` | Reset the view-bob displacement and phase to their zero origin; these are distinct state fields rather than a shared scale. |
-| `game_state_initialize` | 73 | `0` | `player_state.vertical_state = 0;` | Initial vertical-state encoding zero. Preserve its byte value pending a complete player vertical-state domain audit; it is not an actor lifecycle state. |
 | `game_state_initialize` | 74 | `0` | `player_state.vertical_velocity = 0;` | Start with no vertical motion; zero is the velocity origin. |
 | `game_state_initialize` | 75 | `0` | `player_state.vitals.current_hp = player_level_growth_table[0].maximum_hp;` | Use the first zero-based growth row to seed level-one HP, MP, base-stat or next-experience values. Each destination keeps its existing source field. |
 | `game_state_initialize` | 76 | `0` | `player_state.vitals.maximum_hp = player_level_growth_table[0].maximum_hp;` | Use the first zero-based growth row to seed level-one HP, MP, base-stat or next-experience values. Each destination keeps its existing source field. |

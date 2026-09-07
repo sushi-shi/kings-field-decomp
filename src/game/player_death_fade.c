@@ -10,7 +10,6 @@ enum {
     PLAYER_DEATH_REST_PITCH_ACCELERATION = 10,
     PLAYER_DEATH_FALL_ACCELERATION = 15,
     PLAYER_DEATH_PITCH_MIN = -800,
-    PLAYER_DEATH_CAMERA_FLOOR_OFFSET = 1500,
     PLAYER_DEATH_FADE_STEP = 100
 };
 
@@ -54,7 +53,7 @@ void player_death_update(void)
         player_state.death_camera_pitch_step = 0;
     }
     player_state.camera_position.vy =
-        *bob - PLAYER_DEATH_CAMERA_FLOOR_OFFSET + player_state.floor_height;
+        *bob - KF_PLAYER_CAMERA_HEIGHT + player_state.floor_height;
     player_update_vertical_motion();
     player_state.death_visual_blend += PLAYER_DEATH_FADE_STEP;
     blend = player_state.death_visual_blend;

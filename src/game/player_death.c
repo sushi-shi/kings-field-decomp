@@ -70,7 +70,7 @@ void game_state_initialize(void)
     player_state.fire_defense = 5;
     player_state.view_bob_offset = 0;
     player_state.view_bob_phase = 0;
-    player_state.vertical_state = 0;
+    player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
     player_state.vertical_velocity = 0;
     player_state.vitals.current_hp = player_level_growth_table[0].maximum_hp;
     player_state.vitals.maximum_hp = player_level_growth_table[0].maximum_hp;
@@ -180,7 +180,7 @@ void player_death_restart(void)
     player_state.view_rotation_offset.vx = 0;
     player_state.previous_map_cell.x = player_state.map_cell.x;
     player_state.previous_map_cell.z = player_state.map_cell.z;
-    player_state.camera_position.vy = player_state.floor_height - 1500;
+    player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;
 }
 
 

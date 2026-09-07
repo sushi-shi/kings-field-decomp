@@ -5,6 +5,18 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+/* Motion rates count executions of the player update, not elapsed seconds. */
+enum {
+    PLAYER_FATAL_DROP_DISTANCE = 3000,
+    PLAYER_FALL_ACCELERATION = 40,
+    PLAYER_FALL_LANDING_OVERSHOOT = 100,
+    PLAYER_STEP_UP_ACCELERATION = 5,
+    PLAYER_FAST_STEP_MIN_SPEED = 181,
+    PLAYER_FAST_STEP_UP_VELOCITY = -300,
+    PLAYER_SLOW_STEP_UP_VELOCITY = -100,
+    PLAYER_BOB_PHASE_PER_SPEED = 2,
+    PLAYER_BOB_SINE_DOWNSHIFT = 6
+};
 
 /*
  * Player movement, motion, and interaction run, one contiguous band
@@ -228,13 +240,13 @@ void player_sync_position_to_map(void)
     floor = map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x];
     player_state.allow_near_actor_spawn = 1;
     floor_height = -(floor * KF_MAP_HEIGHT_STEP);
-    view_offset = player_state.view_bob_offset - 1500;
+    view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
     player_state.floor_height = floor_height;
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
     hud_brightness = KF_HUD_DEFAULT_BRIGHTNESS;
-    player_state.vertical_state = 0;
+    player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
     player_state.vertical_velocity = 0;
 }
 
@@ -469,11 +481,12 @@ void player_update_view_bob(void)
 {
     s32 phase;
 
-    if (player_state.vertical_state == 0) {
-        phase = (player_state.view_bob_phase + player_state.motion_state.movement_speed * 2)
-            & 0xfff;
+    if (player_state.vertical_state == KF_PLAYER_VERTICAL_GROUNDED) {
+        phase = (player_state.view_bob_phase
+            + player_state.motion_state.movement_speed * PLAYER_BOB_PHASE_PER_SPEED)
+            & KF_ANGLE_WRAP_MASK;
         player_state.view_bob_phase = phase;
-        player_state.view_bob_offset = rsin(phase) >> 6;
+        player_state.view_bob_offset = rsin(phase) >> PLAYER_BOB_SINE_DOWNSHIFT;
     }
 }
 
@@ -486,10 +499,10 @@ void player_update_vertical_motion(void)
 
     target = -(map_floor_height_grid[player_state.map_cell.z][player_state.map_cell.x] * KF_MAP_HEIGHT_STEP);
     if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
-        if (player_state.floor_height - target < -3000) {
+        if (player_state.floor_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
             if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
                 && map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
-                    == 0x5d) {
+                    == KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT) {
                 goto done;
             }
             player_death_begin();
@@ -500,43 +513,43 @@ void player_update_vertical_motion(void)
         }
     }
     switch (player_state.vertical_state) {
-    case 0x10:
+    case KF_PLAYER_VERTICAL_FALLING:
     falling:
         player_state.floor_height += player_state.vertical_velocity;
-        player_state.vertical_velocity += 40;
-        if (target + 100 < player_state.floor_height) {
+        player_state.vertical_velocity += PLAYER_FALL_ACCELERATION;
+        if (target + PLAYER_FALL_LANDING_OVERSHOOT < player_state.floor_height) {
             player_state.floor_height = target;
-            player_state.vertical_state = 0;
+            player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
         }
         break;
-    case 0x20:
-    jumping:
+    case KF_PLAYER_VERTICAL_STEP_UP:
+    stepping_up:
         player_state.floor_height += player_state.vertical_velocity;
-        player_state.vertical_velocity += 5;
+        player_state.vertical_velocity += PLAYER_STEP_UP_ACCELERATION;
         if (player_state.floor_height <= target) {
             player_state.floor_height = target;
-            player_state.vertical_state = 0;
+            player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
         }
         break;
-    case 0:
+    case KF_PLAYER_VERTICAL_GROUNDED:
         if (target < player_state.floor_height) {
-            player_state.vertical_state = 0x20;
-            if ((s16)player_state.motion_state.movement_speed >= 181) {
-                player_state.vertical_velocity = -300;
+            player_state.vertical_state = KF_PLAYER_VERTICAL_STEP_UP;
+            if ((s16)player_state.motion_state.movement_speed >= PLAYER_FAST_STEP_MIN_SPEED) {
+                player_state.vertical_velocity = PLAYER_FAST_STEP_UP_VELOCITY;
             } else {
-                player_state.vertical_velocity = -100;
+                player_state.vertical_velocity = PLAYER_SLOW_STEP_UP_VELOCITY;
             }
-            goto jumping;
+            goto stepping_up;
         }
         if (player_state.floor_height < target) {
-            player_state.vertical_state = 0x10;
+            player_state.vertical_state = KF_PLAYER_VERTICAL_FALLING;
             player_state.vertical_velocity = 0;
             goto falling;
         }
         break;
     }
 done:
-    view_offset = player_state.view_bob_offset - 1500;
+    view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
     player_state.camera_position.vy = view_offset + player_state.floor_height;
 }
 

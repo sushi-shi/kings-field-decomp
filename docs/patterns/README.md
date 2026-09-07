@@ -302,6 +302,12 @@ promotes a probe to a proven historical toolchain.
 - [game-player-progression.md](game-player-progression.md): training and stat
   limits, runtime growth-table extent and extrapolation, spell-learning
   requirements, and a complete progression/stat literal ledger.
+- [game-player-damage-units.md](game-player-damage-units.md): damage and
+  multiplier scales, Q12 falloff, poison-roll conversion and restart override;
+  completes literal-ledger coverage of the player death/combat module.
+- [game-player-vertical-state.md](game-player-vertical-state.md): typed player
+  vertical states, terrain step/fall parameters, walking bob, shared camera
+  height and bottomless-pit identity; includes the motion literal ledger.
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

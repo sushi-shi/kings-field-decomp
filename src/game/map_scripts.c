@@ -476,7 +476,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     case 0x3f:
         notify_enqueue(KF_NOTIFICATION_POISON_HOLE);
         break;
-    case 0x5d:
+    case KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT:
         notify_enqueue(KF_NOTIFICATION_BOTTOMLESS_PIT);
         break;
     case 0x45:

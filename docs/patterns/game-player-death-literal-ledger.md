@@ -1,10 +1,12 @@
 # Player death/combat remainder literal ledger
 
-Complete ledger for the eight functions and sound initializers below: **56
+Complete ledger for the eight functions and sound initializers below: **55
 retained occurrences**. Claims and named definitions are excluded; signs are
 operators. Together with the startup and progression ledgers, this covers
 every inline numeric occurrence in `src/game/player_death.c`.
 See the [damage-unit review](game-player-damage-units.md) for the scope audit.
+The camera-height literal was subsequently shared by the
+[player state review](game-player-vertical-state.md).
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -35,7 +37,6 @@ See the [damage-unit review](game-player-damage-units.md) for the scope audit.
 | `player_death_restart` | 178 | `0` | `player_state.view_rotation_offset.vz = 0;` | Zero the named camera Euler angle or transient view-rotation component, preserving their independent stores and restart orientation. |
 | `player_death_restart` | 179 | `0` | `player_state.view_rotation_offset.vy = 0;` | Zero the named camera Euler angle or transient view-rotation component, preserving their independent stores and restart orientation. |
 | `player_death_restart` | 180 | `0` | `player_state.view_rotation_offset.vx = 0;` | Zero the named camera Euler angle or transient view-rotation component, preserving their independent stores and restart orientation. |
-| `player_death_restart` | 183 | `1500` | `player_state.camera_position.vy = player_state.floor_height - 1500;` | Place the restarted camera 1500 world units above the sampled floor in the downward-positive Y convention. The authored standing-camera offset is preserved. |
 | `player_adjust_hp` | 194 | `0` | `if (value <= 0) {` | Zero is the lower resource bound after applying the signed delta. HP reaching it enters death; MP reaching it only stores zero and returns. Positive results are separately limited by the corresponding maximum. |
 | `player_adjust_hp` | 195 | `0` | `player_state.vitals.current_hp = 0;` | Zero is the lower resource bound after applying the signed delta. HP reaching it enters death; MP reaching it only stores zero and returns. Positive results are separately limited by the corresponding maximum. |
 | `player_adjust_mp` | 213 | `0` | `if (value <= 0) {` | Zero is the lower resource bound after applying the signed delta. HP reaching it enters death; MP reaching it only stores zero and returns. Positive results are separately limited by the corresponding maximum. |

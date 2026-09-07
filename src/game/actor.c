@@ -454,7 +454,7 @@ void actor_try_attack_player(
     distance = actor_distance_to_point(
         actor,
         actor_state.player_position.vx,
-        actor_state.player_position.vy + 1500,
+        actor_state.player_position.vy + KF_PLAYER_CAMERA_HEIGHT,
         actor_state.player_position.vz,
         maximum_distance,
         definition->collision_height,
@@ -484,7 +484,7 @@ void actor_try_attack_player(
         0,
         0,
         KF_FIXED12_ONE,
-        10);
+        KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
 }
 
 ADDRESS(0x8002d7f8, 0x184)
