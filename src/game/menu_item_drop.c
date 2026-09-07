@@ -285,7 +285,7 @@ KfMenuConfirmResult menu_save_panel(void)
         while (PadRead(1) == 0) {
             menu_frame_begin();
             menu_add_frame_quad();
-            menu_draw_dialog_frame(summaries, cursor);
+            menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
             menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
             menu_present_frame();
         }
@@ -298,7 +298,7 @@ KfMenuConfirmResult menu_save_panel(void)
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED || result == KF_MENU_CONFIRM_CANCELLED) {
             menu_frame_begin();
-            menu_draw_dialog_frame(summaries, cursor);
+            menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
             menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
@@ -313,7 +313,7 @@ KfMenuConfirmResult menu_save_panel(void)
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();
-                        menu_draw_dialog_frame(summaries, cursor);
+                        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
@@ -332,7 +332,7 @@ KfMenuConfirmResult menu_save_panel(void)
                     for (i = 0; i < 3; i++) {
                         menu_frame_begin();
                         menu_add_frame_quad();
-                        menu_draw_dialog_frame(summaries, cursor);
+                        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
@@ -342,7 +342,7 @@ KfMenuConfirmResult menu_save_panel(void)
                     for (i = 0; i < 3; i++) {
                         menu_frame_begin();
                         menu_add_frame_quad();
-                        menu_draw_dialog_frame(summaries, cursor);
+                        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
@@ -354,7 +354,7 @@ KfMenuConfirmResult menu_save_panel(void)
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();
-                        menu_draw_dialog_frame(summaries, cursor);
+                        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
@@ -397,7 +397,7 @@ KfMenuConfirmResult menu_save_panel(void)
         }
 
         menu_frame_begin();
-        menu_draw_dialog_frame(summaries, cursor);
+        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     }
@@ -428,7 +428,7 @@ KfMenuConfirmResult menu_load_panel(void)
         while (PadRead(1) == 0) {
             menu_frame_begin();
             menu_add_frame_quad();
-            menu_draw_dialog_frame(summaries, cursor);
+            menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
             menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
             menu_present_frame();
         }
@@ -441,7 +441,7 @@ KfMenuConfirmResult menu_load_panel(void)
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED || result == KF_MENU_CONFIRM_CANCELLED) {
             menu_frame_begin();
-            menu_draw_dialog_frame(summaries, cursor);
+            menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
             menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
@@ -457,7 +457,7 @@ KfMenuConfirmResult menu_load_panel(void)
                 for (i = 0; i < 3; i++) {
                     menu_frame_begin();
                     menu_add_frame_quad();
-                    menu_draw_dialog_frame(summaries, cursor);
+                    menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
                     menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
                     menu_present_frame();
                 }
@@ -465,7 +465,7 @@ KfMenuConfirmResult menu_load_panel(void)
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();
-                        menu_draw_dialog_frame(summaries, cursor);
+                        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
                         menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
@@ -512,7 +512,7 @@ KfMenuConfirmResult menu_load_panel(void)
         }
 
         menu_frame_begin();
-        menu_draw_dialog_frame(summaries, cursor);
+        menu_draw_dialog_frame(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
         menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     }

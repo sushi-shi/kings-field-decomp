@@ -74,11 +74,10 @@ Other documented retained selectors may still need a future semantic domain.
 
 ## `src/game/menu_two_option_prompt.c`
 
-27 retained occurrences.
+26 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `menu_two_option_prompt` | 26 | `1` | `s32 composite = -1;` | No selected composite save-summary row outside save/load windows. The caller row replaces this sentinel only for those two window kinds; it is separate from a confirmation result. |
 | `menu_two_option_prompt` | 27 | `0` | `s32 input = 0;` | Initial button word has no pressed bits for subsequent edge detection. |
 | `menu_two_option_prompt` | 31 | `1` | `while (PadRead(1) != 0)` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `menu_two_option_prompt` | 31 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK reads its global pad identifier. A zero returned button mask means release; the loop waits while any button remains pressed. |

@@ -155,32 +155,32 @@ void menu_add_frame_quad(void)
  * confirmation, and the two-option confirm dialog.
  */
 ADDRESS(0x80027ee4, 0x49c)
-void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 highlighted_slot)
+void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay overlay)
 {
     MenuGlyphString gs;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
-    if (highlighted_slot == 0) {
+    if (overlay == KF_SAVE_OVERLAY_SKIP_FIRST) {
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
-    if (highlighted_slot == 1) {
+    if (overlay == KF_SAVE_OVERLAY_SKIP_SECOND) {
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
-    if (highlighted_slot == 2) {
+    if (overlay == KF_SAVE_OVERLAY_SKIP_THIRD) {
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
     }
-    if (highlighted_slot >= KF_SAVE_SLOT_COUNT) {
+    if (overlay >= KF_SAVE_OVERLAY_ALL) {
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
                 &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,

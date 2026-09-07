@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [inventory item-ID review](item-id-domain.md):
+Working snapshot after the [save-slot overlay review](save-slot-overlay-domain.md):
 **111 C files**, **112 source/image variants**, and
-**6,007 inline numeric/character occurrences**. Counts include authored
+**6,002 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 6,007 occurrences**, explicit ledger rows were compared
+For **all 111 files / 6,002 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -44,6 +44,8 @@ The inventory review carries seventy existing item names through seven equipment
 fields, five byte lists and nine item-specific interfaces. Integer loop/control
 values and shared menu payloads use explicit boundaries; the six word-argument
 helpers retain their legacy C parameter widths. Literal counts remain unchanged.
+The save-overlay review names five raw selectors and carries the signed domain
+through the renderer, confirmation prompt and every save/load cursor boundary.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -88,7 +90,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,784 occurrences.
+73 files; 4,779 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -128,14 +130,14 @@ fields and address-derived function names are separate from this ten-line count.
 | [matrix.c](../../src/game/matrix.c) | 2 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix_rotation.c](../../src/game/matrix_rotation.c) | 82 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [memory.c](../../src/game/memory.c) | 11 | [complete allocator/startup ledger](allocator-startup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [menu.c](../../src/game/menu.c) | 78 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu.c](../../src/game/menu.c) | 77 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_config_panel.c](../../src/game/menu_config_panel.c) | 39 | [complete ledger](game-menu-config-literal-ledger.md); [option domain](game-player-option-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_name_list.c](../../src/game/menu_draw_name_list.c) | 0 | [complete equipment ledger](game-equipment-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_stats_header.c](../../src/game/menu_draw_stats_header.c) | 104 | [status ledger](game-menu-status-literal-ledger.md); [layout evidence](game-status-text-layout.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_status_details.c](../../src/game/menu_draw_status_details.c) | 216 | [status ledger](game-menu-status-literal-ledger.md); [layout evidence](game-status-text-layout.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_window.c](../../src/game/menu_draw_window.c) | 3 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_enter_mode.c](../../src/game/menu_enter_mode.c) | 2 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [menu_item_detail.c](../../src/game/menu_item_detail.c) | 85 | [complete detail/dialog ledger](game-menu-detail-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu_item_detail.c](../../src/game/menu_item_detail.c) | 82 | [complete detail/dialog ledger](game-menu-detail-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_drop.c](../../src/game/menu_item_drop.c) | 120 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_model_preview.c](../../src/game/menu_item_model_preview.c) | 35 | [complete inventory-preview ledger](game-menu-inventory-preview-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_list_interact.c](../../src/game/menu_list_interact.c) | 56 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -145,7 +147,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_runtime.c](../../src/game/menu_runtime.c) | 100 | [complete runtime ledger](game-menu-runtime-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_select.c](../../src/game/menu_select.c) | 95 | [complete equipment ledger](game-equipment-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_status_panel.c](../../src/game/menu_status_panel.c) | 12 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 27 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 26 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [notify_queue.c](../../src/game/notify_queue.c) | 92 | [complete ledger](game-notification-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_core.c](../../src/game/player_core.c) | 74 | [complete ledger](game-player-core-literal-ledger.md); [sound slots](game-player-sound-slots.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death.c](../../src/game/player_death.c) | 155 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |

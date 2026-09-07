@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [save-slot-overlay-domain.md](save-slot-overlay-domain.md): signed overlay
+  selection through save/load drawing and confirmation, retaining range behavior.
 - [item-id-domain.md](item-id-domain.md): inventory IDs through equipment fields,
   item lists and player/menu APIs, with explicit integer and resource boundaries.
 - [floor-sprite-base-index.md](floor-sprite-base-index.md): correct the floor

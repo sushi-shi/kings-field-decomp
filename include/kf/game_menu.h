@@ -168,6 +168,15 @@ enum {
     KF_MENU_LOAD_ROW_COUNT = KF_MENU_LOAD_RETURN_ROW + 1
 };
 
+/* Negative values suppress overlays; values at least ALL draw all three. */
+KF_ENUM_BEGIN(KfSaveSlotOverlay, s32)
+    KF_SAVE_OVERLAY_NONE = -1,
+    KF_SAVE_OVERLAY_SKIP_FIRST = 0,
+    KF_SAVE_OVERLAY_SKIP_SECOND = 1,
+    KF_SAVE_OVERLAY_SKIP_THIRD = 2,
+    KF_SAVE_OVERLAY_ALL = KF_SAVE_SLOT_COUNT
+KF_ENUM_END(KfSaveSlotOverlay)
+
 enum {
     KF_MENU_TEXTURE_NONE = 0xff
 };
@@ -384,7 +393,7 @@ extern void menu_blit_sprite_translucent(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_config_panel(void);
 extern void menu_draw_dialog_frame(
-    const KfSaveSlotSummary *summaries, s32 highlighted_slot);
+    const KfSaveSlotSummary *summaries, KfSaveSlotOverlay overlay);
 extern void menu_draw_item_detail(
     KF_ENUM_PARAM(KfItemId, s32) item_id, s32 shop_id, KfItemPriceMode price_mode);
 extern void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id);

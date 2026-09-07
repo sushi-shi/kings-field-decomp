@@ -1,7 +1,7 @@
 # Retained item-detail and dialog literals
 
 Complete current token/expression ledger after the [preview-layout review](game-menu-preview-layout.md).
-All 85 retained occurrences have a reason; named definitions and claims are excluded.
+All 82 retained occurrences have a reason; named definitions and claims are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -47,9 +47,6 @@ All 85 retained occurrences have a reason; named definitions and claims are excl
 | `menu_draw_item_detail` | 106 | `2` | `gs.codes[2] = MENU_TEXT_END;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_draw_item_detail` | 111 | `0` | `menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
 | `menu_draw_item_detail` | 121 | `0` | `menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, 0, gs.codes);` | Render six gold digits without leading zeros; authored field width, shared numeric-render API Boolean. |
-| `menu_draw_dialog_frame` | 165 | `0` | `if (highlighted_slot == 0) {` | Zero-based first slot: omit its named overlay and enqueue the second and third slot overlays. |
-| `menu_draw_dialog_frame` | 171 | `1` | `if (highlighted_slot == 1) {` | Zero-based second slot: omit its named overlay and enqueue the first and third slot overlays. |
-| `menu_draw_dialog_frame` | 177 | `2` | `if (highlighted_slot == 2) {` | Zero-based third slot: omit its named overlay and enqueue the first and second slot overlays. |
 | `menu_draw_dialog_frame` | 192 | `0` | `if (rows == 0) {` | A null summary pointer suppresses text after overlay insertion; the selector still controls overlays independently. |
 | `menu_draw_dialog_frame` | 196 | `0` | `for (i = 0; i < KF_SAVE_SLOT_COUNT; i++) {` | Start at the first zero-based save summary and visit all three records. |
 | `menu_draw_dialog_frame` | 197 | `30` | `gs.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;` | Authored first-summary baseline is screen Y30; named row spacing locates later slots. The original choice of this six-pixel offset from the first overlay top is unknown. |

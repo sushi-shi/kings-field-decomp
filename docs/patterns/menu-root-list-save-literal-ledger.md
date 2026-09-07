@@ -2,7 +2,7 @@
 
 Complete current per-occurrence ledger for `menu.c`, `menu_panels.c`,
 `menu_item_drop.c` and `menu_draw_window.c` after the
-[shared confirmation-state review](menu-confirm-state.md): **257 occurrences**.
+[shared confirmation-state review](menu-confirm-state.md): **256 occurrences**.
 Named definitions, claims, comments, string contents and identifier digits are
 excluded. Duplicate occurrences have individual rows. This consolidates the
 older choice, spell, item-list, save and window slices against current source.
@@ -15,8 +15,7 @@ without inventing a reason for the original capacity or timing choices.
 | Source / function | Line | Token | Expression | Reason |
 |---|---:|---|---|---|
 | `menu.c` / `menu_save_confirm` | 22 | `0` | `i = 0;` | Initialize the local draw counter before the preincremented three-frame loop; zero is the arithmetic origin. |
-| `menu.c` / `menu_save_confirm` | 26 | `0` | `menu_draw_dialog_frame(0, 3);` | Null save-summary pointer: draw the background quads without reading summary records. |
-| `menu.c` / `menu_save_confirm` | 26 | `3` | `menu_draw_dialog_frame(0, 3);` | Composite selector three draws all three slot backgrounds because it is at the slot-count boundary; it is separate from the following draw-loop count. This selector still needs propagation with the dialog-frame domain. |
+| `menu.c` / `menu_save_confirm` | 26 | `0` | `menu_draw_dialog_frame(0, KF_SAVE_OVERLAY_ALL);` | Null save-summary pointer: draw the background quads without reading summary records. |
 | `menu.c` / `menu_save_confirm` | 27 | `0` | `menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);` | First visible save-window row; confirmation state is separately typed and initially idle. |
 | `menu.c` / `menu_save_confirm` | 29 | `3` | `} while (i < 3);` | Present exactly three initial confirmation-screen frames before the opening cue and input-release wait. This authored draw count is independent of the slot count; its original timing rationale is unproven. |
 | `menu.c` / `menu_save_confirm` | 31 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead argument one; the linked SDK routine reads its global pad identifier, not an argument-selected port. |

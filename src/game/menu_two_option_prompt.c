@@ -23,7 +23,7 @@ KfMenuConfirmResult menu_two_option_prompt(
     MenuGlyphString label_b;
     KfMenuConfirmChoice selected = KF_MENU_CHOICE_ACCEPT;
     KfMenuConfirmState highlight = KF_MENU_CONFIRM_IDLE;
-    s32 composite = -1;
+    KfSaveSlotOverlay overlay = KF_SAVE_OVERLAY_NONE;
     s32 input = 0;
     s32 prev;
     KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
@@ -32,7 +32,7 @@ KfMenuConfirmResult menu_two_option_prompt(
         ;
 
     if (kind == KF_MENU_WINDOW_SAVE || kind == KF_MENU_WINDOW_LOAD)
-        composite = highlight_row;
+        overlay = KF_ENUM_DECODE(KfSaveSlotOverlay, highlight_row);
 
     label_a.x = MENU_CONFIRM_TEXT_X;
     label_a.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_ACCEPT_Y_OFFSET;
@@ -49,7 +49,7 @@ KfMenuConfirmResult menu_two_option_prompt(
     for (;;) {
         if (result != KF_MENU_CONFIRM_PENDING) {
             menu_frame_begin();
-            menu_draw_dialog_frame(summaries, composite);
+            menu_draw_dialog_frame(summaries, overlay);
             menu_draw_window(kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
             menu_draw_two_option(&label_a, &label_b, selected, highlight);
             menu_present_frame();
@@ -78,7 +78,7 @@ KfMenuConfirmResult menu_two_option_prompt(
         }
 
         menu_frame_begin();
-        menu_draw_dialog_frame(summaries, composite);
+        menu_draw_dialog_frame(summaries, overlay);
         menu_draw_window(kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
         menu_draw_two_option(&label_a, &label_b, selected, highlight);
         menu_present_frame();

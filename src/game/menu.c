@@ -23,7 +23,7 @@ void menu_save_confirm(void)
     do {
         i++;
         menu_frame_begin();
-        menu_draw_dialog_frame(0, 3);
+        menu_draw_dialog_frame(0, KF_SAVE_OVERLAY_ALL);
         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);
         menu_present_frame();
     } while (i < 3);
