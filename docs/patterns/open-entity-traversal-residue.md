@@ -1,5 +1,24 @@
 # OPEN visible entity/item traversal
 
+## GCC 2.6.0 profile control
+
+The alternate pinned GCC 2.6.0 O2 probe does not explain the final item-row
+load-delay residue. It replaces both checked divisions by 2000 with reciprocal
+multiplication, collapses the traversal from 25 to 15 CFG blocks, and broadly
+changes register allocation. More decisively, it regresses both exact sibling
+functions in `open.entity_render`, including call topology in
+`opening_entity_render`. Restore GCC 2.5.7 O2 with the expanded-division
+assembler pass; the one-instruction traversal excess is not evidence for a
+TU-wide GCC 2.6.0 profile.
+
+Retail's item-Z path holds the relative row in a word and masks it before the
+height comparison, so a separate control declared the row as `u32` and used
+an explicit `&= 0xffff`. The usual arithmetic conversions then force an extra
+mask of the saved `u16` origin before subtraction, which retail does not have;
+the candidate remains four bytes too long and diverges earlier. Restore the
+single `u16` expression, whose post-subtraction narrowing matches the supported
+wrapped-coordinate semantics without the false origin mask.
+
 ## Item-window declaration and R3000 controls
 
 With the retained tpage-member pointer, declaring the item loop's current
