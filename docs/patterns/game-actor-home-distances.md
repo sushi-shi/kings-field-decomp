@@ -108,5 +108,14 @@ relink 75/77, 34/38, 1/1 respectively. The new GAME data-owning unit comes from
 concurrent entity-render ownership work, not this dispatcher edit. Config-owned
 SDK data remains 4/4 verified.
 
-Banking is deferred while unrelated render/type/inventory build inputs are
-unstaged. Do not use `--dirty` or stage that work merely to admit this row.
+Banking was initially deferred while unrelated render/type/inventory build
+inputs were unstaged; no `--dirty` override was used. After that work was
+committed as `fef7f30`, the full rebuilt corpus still had this function at
+strict 100%, with all 484 scores unchanged. The single function was then
+banked with `kf bank --function game:0x8002fa88`; no other ledger row changed.
+
+The intervening CFG-tool correction (`d378713`) now marks the actor dispatcher's
+159 untraced blocks as `reachability-unknown` and reports both unresolved
+dispatches. It does not manufacture switch edges or change the independently
+verified five early-exit jumps. All 665 repository tests, Ruff, and
+`nix flake check -L` pass; the full-build data/placement limitations above remain.
