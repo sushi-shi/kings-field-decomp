@@ -1,5 +1,16 @@
 # OPEN display-initialization pointer lifetimes
 
+## Remaining scheduler-model controls
+
+An OPEN-render-init-only `-mcpu=r3000` build is byte-identical to the
+configured r2000 candidate: `display_initialize` retains its 40-byte frame
+and four absolute DFE pairs, while all three sibling functions remain exact.
+Disabling instruction scheduling also leaves the initializer's ownership
+residue intact and additionally changes the exact allocator's final global
+increment register. Both temporary profiles are removed. Together with the
+existing plain-profile result, the available pinned scheduling controls do
+not recover the retail DTD-rooted lifetime.
+
 ## Split-DTD and complete-owner controls (`82320b9` follow-up)
 
 Splitting the chained DTD assignment around initialization of the existing
