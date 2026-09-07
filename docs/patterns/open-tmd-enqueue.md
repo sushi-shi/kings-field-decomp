@@ -1,5 +1,17 @@
 # OPEN general TMD polygon emission
 
+## Typed stream-base controls
+
+The TMD normal and projected-vertex streams contain `SVECTOR` and
+`KfScreenVertex` records, respectively, while primitive packets store byte
+offsets into both streams. Two focused controls recovered each local as its
+record pointer type and made every offset operation explicit through a `u8 *`
+view. GCC 2.5.7 emits both forms byte-for-byte identically to the retained byte
+bases: the 88-byte frame, exchanged normal/projected saved registers, absolute
+ordering-table address pair, 3324-byte body, 57 calls, and 80-block CFG do not
+change. Remove the more verbose cast forms; these source types do not explain
+the remaining retail dependency or register allocation.
+
 ## Header lifetime and scheduler controls
 
 Focused controls on OPEN `render_enqueue_tmd` preserve the supported stream
