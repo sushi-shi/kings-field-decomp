@@ -1,5 +1,15 @@
 # OPEN TMD preparation countdown
 
+## Scheduler-profile control (`d8f448e`)
+
+The existing `probe-gcc257-o2-plain` profile does not recover the unused
+eight-byte leaf frame. It instead changes the switch-arm scheduling broadly,
+reduces `tmd_prepare_primitive_indices` listing similarity to 15.9%, and
+regresses seven of the unit's thirteen exact sibling controls. The configured
+R3000 scheduling profile is retained. This rules out the repository's plain
+GCC 2.5.7 profile as an explanation for the two remaining frame instructions;
+it does not identify the historical compiler or justify source padding.
+
 ## Function Match Plan (`8ac47fe`)
 
 OPEN `tmd_prepare_primitive_indices`, `0x80017030`, owns 768 bytes and is

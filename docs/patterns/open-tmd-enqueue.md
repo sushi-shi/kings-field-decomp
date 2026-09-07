@@ -1,5 +1,22 @@
 # OPEN general TMD polygon emission
 
+## Shared AddPrim owner controls (`d8f448e`)
+
+The enclosing-owner expression that removes the unlit emitter's extra OT pair
+does not transfer directly to this twelve-mode emitter. Repeating the typed
+expression in every accepted-depth arm increases register pressure, spills the
+signed bias and grows the body. A single loop-local pointer to that same real
+ordering-table member preserves the CFG but exchanges the persistent projected
+and normal bases and still emits the absolute OT pair. Expressing all twelve
+accepted paths as explicit gotos to one source-level AddPrim block collapses
+retail's 80-block switch to 52 compiled blocks and is structurally false.
+
+All three trials are reverted. Retail's shared machine-code tail is therefore
+an optimizer merge of case-local packet paths, not evidence for a common C
+label. Recovering its `lw -276(projected_base)` must preserve those twelve
+case-local lifetimes and cannot be inferred solely from the successful two-mode
+unlit owner expression.
+
 ## Function Match Plan: one-packet insertion consumer (`5784c14`)
 
 OPEN `8001764c` remains 3320 retail/3324 probe bytes, strict 99.171080%,

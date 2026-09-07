@@ -1,5 +1,25 @@
 # OPEN display-initialization pointer lifetimes
 
+## DTD-member lifetime controls (`d8f448e`)
+
+Retail retains the address of `display_draw_environments[0].dtd` in `s0` only
+after the four SetDef calls, then uses offsets 1 and 93 for the two `dfe`
+fields. A typed pointer initialized at function entry reproduces the 48-byte
+frame, saved `s3` mode and all four base-relative stores, but necessarily
+materializes the address before the first mode branch and assigns the remaining
+long-lived values to different saved registers. Creating the same real member
+pointer immediately before the fourth SetDef call recovers the target frame
+without the early address pair, but GCC then constant-folds all four typed
+`DRAWENV.dfe` accesses back into absolute references. Both forms remain strict
+92.177960% and are reverted.
+
+Using byte indexing from `dtd` can force the observed physical offsets, but it
+does not improve strict objdiff and is not an acceptable final model for the
+known DRAWENV array. An explicit byte-sized enable value also emits the same
+candidate. The existing `probe-gcc257-o2-plain` profile is byte-identical for
+this unit. These controls isolate a lifetime/allocation residue; they do not
+justify an unused stack object, `register` hint, volatile carrier or raw alias.
+
 ## Function Match Plan: SDK background-color macro (`262a978`)
 
 OPEN `80016adc display_initialize`, 472 retail/484 probe bytes, remains strict
