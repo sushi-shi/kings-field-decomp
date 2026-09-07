@@ -199,6 +199,8 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-states.md](game-actor-states.md): name actor actions, lifecycle,
   vertical/collision states and allocation policies; distinguish progress
   markers, jump phases and counters across updates, rendering and save data.
+- [game-actor-home-distances.md](game-actor-home-distances.md): dispatcher
+  home-distance dependency control and explicit shared-epilogue exit audit.
 - [game-actor-constants.md](game-actor-constants.md): actor phase limits,
   sound/parameter slots, collision policies, damage units and packed flags;
   consumer explanations for all retained literals in the three actor modules.

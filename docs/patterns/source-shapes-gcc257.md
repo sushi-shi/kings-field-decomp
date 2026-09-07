@@ -532,7 +532,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | jump table at `0x800124d4` for codes 5..24 (20 entries) | a `switch (effect_code)` listing cases 5, 7..13, 22..24 with an empty default; the table is claimed with `RODATA(0x800124d4, 0x50)` | same |
 | `bnez s6 -> L; addiu v0,a0,-1500 (delay); addiu v0,a0,1500; L: sh` | `if (i == 0) offset.x += 1500; else offset.x -= 1500;` reorg hoists the else arm's instruction into the delay slot because the fallthrough overwrites it | same |
 
-### Action dispatcher (`actor_update_current_action`, 90%)
+### Action dispatcher (`actor_update_current_action`)
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
@@ -547,7 +547,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `lh a1,54(s1)` / `lhu a1,60(s1)` passed without extension | `actor_try_attack_player`, `actor_advance_animation_clamped` and `actor_advance_animation_wrapped` are declared without prototypes in this unit, so halfword fields are promoted as `int` | same |
 | `move a0,v0; sra v1,a0,16` for the vertical collision result | a separate local for the vertical query. Sharing one `result` across three sites gives it nine references and a higher priority than the shifted copy, which swaps `a0` and `v1` | same |
 | `lui/addiu DAT_80055880+0x36` | `map_cell_attribute_height_table[attribute - 1]`; the reviewed relocation row names the table in `target_name` so the delinker measures the addend from it | same |
-| residue: `lbu v0,5; ... sll v1,v0,5` (tile load in `v0`, product chain in `v1`) | ours loads the tile into `v1` and accumulates in `v0`, costing two `nop`s on the following `lh a0,14`. Every multiply spelling, named-local variant and the 2.6.0 probe allocate the same way: local-alloc ranks the in-place accumulator (4 refs in 2 insns) above the load. Unattributed | same |
+| both position loads precede the first near-home test; the Z subtraction occupies its branch delay slot | compute signed `home_dx` and `home_dz` before either bounds test, after the existing home coordinates. This also reproduces the earlier tile/product register sequence and removes both extra load-delay nops. Multiply-only experiments had not tested this dependency boundary; their failure did not prove an allocation cause. [Full dispatcher control](game-actor-home-distances.md) | same |
 
 ### Map object placement loader (`map_object_pool_load`)
 

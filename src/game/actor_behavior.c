@@ -1123,10 +1123,14 @@ void actor_update_current_action(void)
             actor->movement_yaw =
                 vector_xz_to_angle(home_x - actor->position.vx, home_z - actor->position.vz);
         } else if (actor->collision_state == KF_ACTOR_COLLISION_CLEAR) {
+            s32 home_dx;
+            s32 home_dz;
+
             home_x = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
             home_z = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
-            if (actor->position.vx - home_x > -200 && actor->position.vx - home_x < 200
-                && actor->position.vz - home_z > -200 && actor->position.vz - home_z < 200) {
+            home_dx = actor->position.vx - home_x;
+            home_dz = actor->position.vz - home_z;
+            if (home_dx > -200 && home_dx < 200 && home_dz > -200 && home_dz < 200) {
                 actor->movement_yaw = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
                 actor->rotation.y = angle_approach(
                     actor->rotation.y, actor->movement_yaw, definition->turn_rate);
