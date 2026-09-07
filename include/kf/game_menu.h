@@ -167,7 +167,9 @@ enum {
     MENU_TEXT_DAKUTEN = 0x1000,
     MENU_TEXT_HANDAKUTEN = 0x2000,
     MENU_NUMBER_BLANK = 10,
-    MENU_NUMBER_SLASH = 11
+    MENU_NUMBER_SLASH = 11,
+    /* Screen pixels between consecutive digits in the numeric atlas. */
+    MENU_NUMBER_ADVANCE = 7
 };
 
 /* Displayed class titles: physical tier rows, magic tier columns. */
@@ -325,7 +327,7 @@ extern void menu_blit_sprite_translucent(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_config_panel(void);
 extern void menu_draw_dialog_frame(
-    const KfSaveSlotSummary *summaries, s32 kind);
+    const KfSaveSlotSummary *summaries, s32 highlighted_slot);
 extern void menu_draw_item_detail(
     s32 item_id, s32 shop_id, KfItemPriceMode price_mode);
 extern void menu_draw_item_name_frame(s32 item_id);

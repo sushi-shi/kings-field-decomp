@@ -471,3 +471,7 @@ promotes a probe to a proven historical toolchain.
 - [GAME menu-runtime constants](game-menu-runtime-constants.md): backdrop resource
   geometry, sprite offsets, primitive brightness and distinct list defaults;
   [complete retained-literal ledger](game-menu-runtime-literal-ledger.md).
+
+- [GAME item-detail and dialog constants](game-menu-detail-constants.md):
+  save-slot overlays, summary geometry and shared numeric spacing;
+  [complete retained-literal ledger](game-menu-detail-literal-ledger.md).

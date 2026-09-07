@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [menu-runtime review](game-menu-runtime-constants.md):
+Working snapshot after the [detail/dialog review](game-menu-detail-constants.md):
 **111 C files**, **112 source/image variants**,
-and **7,025 inline numeric/character occurrences**. The counts include authored
+and **6,985 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **19 files / 1,809 occurrences**, the explicit ledger rows were compared
+For **20 files / 1,909 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -34,8 +34,7 @@ by subtracting this subtotal from the source census.
 
 ## Next coverage work
 
-1. Cover the dialog/frame/marker helpers in the item-detail module and refresh
-   the status/list ledgers after their later reconstruction changes.
+1. Refresh the status/list ledgers after their later reconstruction changes.
 2. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
 3. Verify every retained occurrence against its reason before marking a file
@@ -117,7 +116,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_draw_status_details.c](../../src/game/menu_draw_status_details.c) | 283 | [game-menu-status ledger](game-menu-status-literal-ledger.md) | Historical ledger predates the signed-rating correction; refresh arithmetic occurrences. |
 | [menu_draw_window.c](../../src/game/menu_draw_window.c) | 4 | [game-menu-window ledger](game-menu-window-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_enter_mode.c](../../src/game/menu_enter_mode.c) | 4 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Expand the domain audit into current occurrence coverage. |
-| [menu_item_detail.c](../../src/game/menu_item_detail.c) | 140 | [game-menu-preview ledger](game-menu-preview-literal-ledger.md) | Preview ledger excludes dialog/frame/marker helpers; review their placement and packet values. |
+| [menu_item_detail.c](../../src/game/menu_item_detail.c) | 100 | [complete detail/dialog ledger](game-menu-detail-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_drop.c](../../src/game/menu_item_drop.c) | 145 | [game-menu-save ledger](game-menu-save-literal-ledger.md); [game-menu-item-list ledger](game-menu-item-list-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_item_model_preview.c](../../src/game/menu_item_model_preview.c) | 45 | [game-menu-preview ledger](game-menu-preview-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_list_interact.c](../../src/game/menu_list_interact.c) | 67 | [domain evidence](game-menu-list-control-flow.md) | Expand the domain audit into current occurrence coverage. |

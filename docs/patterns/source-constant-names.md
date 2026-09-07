@@ -2,7 +2,7 @@
 
 The [source coverage map](source-literal-coverage.md) inventories all 111 C files,
 links their existing audits, and records the outstanding scope checks. Its
-7,025 inline occurrences include authored data and already explained values;
+6,985 inline occurrences include authored data and already explained values;
 the number is not a missing-name count.
 
 The [OPEN renderer review](open-render-constants.md) shares the six scene model
@@ -2318,3 +2318,8 @@ The [complete menu-runtime review](game-menu-runtime-constants.md) names 73 inli
 uses through sprite offsets, default brightness/list settings and backdrop grid
 geometry. Its [ledger](game-menu-runtime-literal-ledger.md) accounts for all
 103 retained occurrences, including decimal filenames and SDK call modes.
+
+The [complete item-detail/dialog review](game-menu-detail-constants.md) names
+40 inline uses, identifies the slot-overlay selector and shares numeric glyph
+spacing. Its [ledger](game-menu-detail-literal-ledger.md) accounts for all
+100 retained occurrences across the four-function module.

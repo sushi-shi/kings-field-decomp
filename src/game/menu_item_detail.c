@@ -2,6 +2,20 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    MENU_ITEM_DETAIL_LINE_HEIGHT = 18,
+    MENU_MARKER_OT_DEPTH = 500,
+    MENU_DIALOG_OT_DEPTH = 1000,
+    MENU_SAVE_SLOT0_QUAD = 2,
+    MENU_SAVE_SLOT1_QUAD = 3,
+    MENU_SAVE_SLOT2_QUAD = 4,
+    MENU_SAVE_SUMMARY_ROW_HEIGHT = 65,
+    MENU_SAVE_SUMMARY_LINE_HEIGHT = 14,
+    MENU_SAVE_SUMMARY_LABEL_X = 181,
+    MENU_SAVE_SUMMARY_VALUE_X = 230,
+    MENU_SAVE_STATUS_DIGITS = 4
+};
+
 /*
  * Item-detail / dialog-frame menu drawing, one contiguous run
  * (0x80027b7c..0x80028380): the spinning item preview and its labels, the two
@@ -65,7 +79,7 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0xc8;
-    gs.y += 18;
+    gs.y += MENU_ITEM_DETAIL_LINE_HEIGHT;
     prices = item_sell_prices;
     if (price_mode == KF_ITEM_PRICE_BUY) {
         prices = item_buy_prices;
@@ -85,7 +99,7 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     gs.codes[0] = 0xca;
     gs.codes[1] = 0xcb;
     gs.codes[2] = MENU_TEXT_END;
-    gs.y += 18;
+    gs.y += MENU_ITEM_DETAIL_LINE_HEIGHT;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0x11c;
@@ -106,16 +120,15 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
 /*
  * Two shared menu ordering-table primitives: double-buffered POLY_FT4 quads
  * that the surrounding panels prime and these helpers link into the current
- * frame's ordering table at a fixed depth.  BSS; the quad bodies are filled
- * elsewhere, so both helpers only select the active buffer's copy and enqueue
- * it.  Both are shared by the magic, list, save and load panels.
+ * frame's ordering table at a fixed depth. The packets are loaded from
+ * STAT.DAT; both helpers select the active buffer's copy and enqueue it.  Both are shared by the magic, list, save and load panels.
  */
 
 /* Link the shared mid-depth menu quad at ordering-table slot 500. */
 ADDRESS(0x80027e58, 0x48)
 void menu_add_marker_quad(void)
 {
-    AddPrim(display_state.ordering_table + 500,
+    AddPrim(display_state.ordering_table + MENU_MARKER_OT_DEPTH,
             &menu_assets.mid_depth_quads[display_state.buffer_index]);
 }
 
@@ -128,47 +141,47 @@ void menu_add_frame_quad(void)
 }
 
 /*
- * Draw a bordered menu dialog frame plus optional save-slot summary rows.
- * `kind` selects which of the composite-frame quads (indices 2..4 of the
- * double-buffered flat-quad array) border the box.  When `rows` is non-null,
+ * Draw save-slot overlays plus optional summary rows. The highlighted slot
+ * omits its overlay; negative indices suppress all overlays and indices beyond
+ * the three slots draw all overlays.  When `rows` is non-null,
  * up to three slot summaries are drawn, each gated by positive saved current
  * HP; every row prints an icon label plus its numeric fields through the
  * shared glyph-string workspace.  Used by the save/load panels, the save
  * confirmation, and the two-option confirm dialog.
  */
 ADDRESS(0x80027ee4, 0x49c)
-void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
+void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 highlighted_slot)
 {
     MenuGlyphString gs;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
-    if (kind == 0) {
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][3]);
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][4]);
+    if (highlighted_slot == 0) {
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
-    if (kind == 1) {
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][2]);
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][4]);
+    if (highlighted_slot == 1) {
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
-    if (kind == 2) {
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][2]);
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][3]);
+    if (highlighted_slot == 2) {
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
     }
-    if (kind >= 3) {
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][2]);
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][3]);
-        AddPrim(display_state.ordering_table + 1000,
-                &menu_assets.dialog_quads[display_state.buffer_index][4]);
+    if (highlighted_slot >= KF_SAVE_SLOT_COUNT) {
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
 
     if (rows == 0) {
@@ -176,9 +189,9 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
     }
 
     for (i = 0; i < KF_SAVE_SLOT_COUNT; i++) {
-        gs.y = i * 65 + 30;
+        gs.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;
         if ((s32)rows[i].current_hp > 0) {
-            gs.x = 181;
+            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
             gs.codes[0] = 0x82;
             gs.codes[1] = 0x83;
             gs.codes[2] = 0x84;
@@ -189,55 +202,55 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 kind)
             menu_format_number(rows[i].experience, 6, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x = 181;
+            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
             gs.codes[0] = 0xcc;
             gs.codes[1] = 0xcd;
             gs.codes[2] = MENU_TEXT_END;
-            gs.y += 14;
+            gs.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 286;
             menu_format_number(rows[i].current_floor, 1, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x = 181;
+            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
             gs.codes[0] = 0xf0;
             gs.codes[1] = 242;
             gs.codes[2] = MENU_TEXT_END;
-            gs.y += 14;
+            gs.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-            gs.x = 230;
-            menu_format_number(rows[i].current_hp, 4, 0, gs.codes);
+            gs.x = MENU_SAVE_SUMMARY_VALUE_X;
+            menu_format_number(rows[i].current_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = MENU_NUMBER_SLASH;
             gs.codes[1] = MENU_TEXT_END;
-            gs.x += 28;
+            gs.x += MENU_SAVE_STATUS_DIGITS * MENU_NUMBER_ADVANCE;
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x += 7;
-            menu_format_number(rows[i].maximum_hp, 4, 0, gs.codes);
+            gs.x += MENU_NUMBER_ADVANCE;
+            menu_format_number(rows[i].maximum_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x = 181;
+            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
             gs.codes[0] = 0xf1;
             gs.codes[1] = 242;
             gs.codes[2] = MENU_TEXT_END;
-            gs.y += 14;
+            gs.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-            gs.x = 230;
-            menu_format_number(rows[i].current_mp, 4, 0, gs.codes);
+            gs.x = MENU_SAVE_SUMMARY_VALUE_X;
+            menu_format_number(rows[i].current_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.codes[0] = MENU_NUMBER_SLASH;
             gs.codes[1] = MENU_TEXT_END;
-            gs.x += 28;
+            gs.x += MENU_SAVE_STATUS_DIGITS * MENU_NUMBER_ADVANCE;
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x += 7;
-            menu_format_number(rows[i].maximum_mp, 4, 0, gs.codes);
+            gs.x += MENU_NUMBER_ADVANCE;
+            menu_format_number(rows[i].maximum_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
         }
     }

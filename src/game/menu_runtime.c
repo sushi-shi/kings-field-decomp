@@ -26,7 +26,6 @@ enum {
     MENU_FONT_COLUMNS = 16,
     MENU_FONT_CELL_WIDTH = 14,
     MENU_FONT_CELL_HEIGHT = 12,
-    MENU_NUMBER_ADVANCE = 7,
     MENU_NUMBER_CELL_HEIGHT = 11,
     /* Kana marks occupy columns 14/15 of row 2 in the text atlas. */
     MENU_DAKUTEN_U = 14 * MENU_FONT_CELL_WIDTH,
