@@ -64,6 +64,9 @@ promotes a probe to a proven historical toolchain.
   the framed-epilogue delay-slot form, the checked `div` expansion, and the
   prologue/load scheduling that separate the GCC 2.5.7 probe from the 2.6.0
   probe, with the corpus numbers behind the profile change.
+- [game-menu-list-control-flow.md](game-menu-list-control-flow.md): exact menu
+  list renderer; shared glyph workspace, unsigned decimal split, pointer walk,
+  row-derived displacement and guarded loops resolve the former residue.
 - [source-shapes-gcc257.md](source-shapes-gcc257.md): source shapes that
   decided exact matches under the 2.5.7 probe (loop counters, return-value
   joins, struct copies, two-statement accumulations).

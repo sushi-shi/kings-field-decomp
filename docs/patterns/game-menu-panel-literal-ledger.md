@@ -1,10 +1,13 @@
 # Menu panel, map and list literal ledger
 
-Complete ledger for `menu_status_panel.c`, `menu_map_viewer.c`, and
+Historical ledger from `5659505` for `menu_status_panel.c`, `menu_map_viewer.c`, and
 `menu_list_render.c`, including its local glyph-workspace extent.
 All 190 remaining numeric/character occurrences have a reason; named
 constant definitions and retail claims are excluded. See the
 [drawing-layer review](game-menu-drawing-layers.md) for the source and asset evidence.
+The list's later [exact reconstruction](game-menu-list-control-flow.md)
+supersedes its workspace assumption and loop/quantity expressions below;
+the numerical geometry, decimal radix and drawing-layer contracts are unchanged.
 
 ## menu_status_panel
 
@@ -102,7 +105,7 @@ constant definitions and retail claims are excluded. See the
 
 | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- |
-| 9 | `22` | `s16 codes[22];` | The local glyph workspace has 22 halfwords after its X/Y origin. Keep the observed extent; the renderer copies the caller-supplied row length without checking this capacity or adding a terminator. |
+| 9 | `22` | `s16 codes[22];` | Superseded reconstruction assumption, not a proved extent. The exact renderer uses the shared ten-code `MenuGlyphString`, supported by all seven panel producers. It still copies the caller-supplied row length without adding a terminator. |
 
 ## menu_list_render
 
