@@ -7,7 +7,13 @@
 #include <kf/game.h>
 
 enum {
-    MAP_AMBIENT_COUNTDOWN_RELOAD = 10
+    MAP_AMBIENT_COUNTDOWN_RELOAD = 10,
+    MAP_EVENT_WANDER_TURN_STEP = 70,
+    MAP_EVENT_WANDER_VECTOR_SCALE = 20,
+    MAP_EVENT_WANDER_TURN_RANDOM_LIMIT = 1584,
+    MAP_EVENT_RANDOM_YAW_SHIFT = 3,
+    MAP_EVENT_LOOP_SOUND_MAX_DISTANCE = 18000,
+    MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE = 50000
 };
 
 /*
@@ -49,10 +55,10 @@ void map_event_update_wander(void)
 
     collision_adjust_cell_occupancy(event->cell_x, event->cell_z, -1);
 
-    heading = angle_approach(event->rotation, event->rotation_target, 70);
+    heading = angle_approach(event->rotation, event->rotation_target, MAP_EVENT_WANDER_TURN_STEP);
     event->rotation = heading;
     angle_to_forward_xz(heading, &forward);
-    vector2s_scale_shift11(20, &forward);
+    vector2s_scale_shift11(MAP_EVENT_WANDER_VECTOR_SCALE, &forward);
 
     point.vx = forward.x + event->reference_x;
     point.vz = forward.z + event->reference_z;
@@ -66,12 +72,12 @@ void map_event_update_wander(void)
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
         event->cell_z = point.vz / KF_MAP_TILE_SIZE;
         event->collision_turn_pending = 0;
-        if (event->rotation == event->rotation_target && rand() < 1584) {
-            event->rotation_target = rand() >> 3;
+        if (event->rotation == event->rotation_target && rand() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
+            event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
         }
     } else {
         if (event->collision_turn_pending == 0 || event->rotation == event->rotation_target) {
-            event->rotation_target = rand() >> 3;
+            event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
             event->collision_turn_pending = 1;
         }
     }
@@ -96,7 +102,7 @@ void map_event_update_animation_loop(void)
             && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_ref_10,
             (const VECTOR *)&map_event_pool[0].reference_x,
-            KF_AUDIO_MAX_VOLUME, 18000, 50000);
+            KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }
 }
 

@@ -1,5 +1,10 @@
 # Source constant naming
 
+The [map-event motion follow-up](game-map-event-motion-constants.md) names
+wandering turn/vector parameters, random extraction, cone ranking, sound
+distances and restored drop-position scaling. It replaces twelve inline uses
+and refreshes the complete three-module ledger to 129 occurrences.
+
 The [actor-core follow-up](game-actor-core-constants.md) names combat weights,
 selection bands and odds, shared multi-hit ranges, yaw extraction and sound
 table extent. Its complete ledger explains 174 retained core occurrences.

@@ -1,5 +1,9 @@
 # Map-event movement, queries and saved records
 
+The [motion and sound follow-up](game-map-event-motion-constants.md) names
+eight further roles and refreshes the complete three-module ledger to 129
+occurrences. Counts and verification below describe this earlier campaign.
+
 ## Function Match Plan
 
 Starting at `80e4ee7`, audit every numeric/character expression in

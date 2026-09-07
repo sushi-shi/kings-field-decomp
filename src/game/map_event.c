@@ -4,6 +4,10 @@
 #include <kf/game_collision.h>
 #include <kf/game.h>
 
+enum {
+    MAP_EVENT_CONE_INITIAL_BEST_ERROR = 30000
+};
+
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)
 {
@@ -123,7 +127,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s32 *distance_out)
 {
     KfMapEvent *found = 0;
-    s16 best_angle = 30000;
+    s16 best_angle = MAP_EVENT_CONE_INITIAL_BEST_ERROR;
     s32 found_distance = 0;
     KfMapEvent *event = map_event_pool;
     u16 count = KF_MAP_EVENT_CAPACITY - 1;

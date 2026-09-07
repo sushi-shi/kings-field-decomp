@@ -41,6 +41,9 @@ promotes a probe to a proven historical toolchain.
   phase enum, and the [retained-literal ledger](game-notification-literal-ledger.md).
 - [game-map-dialogue-state.md](game-map-dialogue-state.md): GAME dialogue
   stages/pages, animation phase, byte enum domains and corrected call evidence.
+- [game-map-event-motion-constants.md](game-map-event-motion-constants.md):
+  wandering units, cone ranking, audio distances and restored random positions;
+  complete 129-occurrence event/query/load ledger.
 - [game-map-event-literals.md](game-map-event-literals.md): map-event movement,
   queries, saved fields and the complete three-module retained-literal ledger.
 - [game-map-script-state.md](game-map-script-state.md): typed saved floor-script
