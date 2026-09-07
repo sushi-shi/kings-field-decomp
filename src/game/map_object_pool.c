@@ -30,7 +30,7 @@ KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT] = {
 };
 
 ADDRESS(0x80030a98, 0x1e4)
-void map_apply_copy_region(u8 region_id)
+void map_apply_copy_region(KfMapCopyRegionId region_id)
 {
     const KfMapCopyRegion *region;
     u8 height;
@@ -43,7 +43,7 @@ void map_apply_copy_region(u8 region_id)
     if (region_id == KF_MAP_COPY_REGION_NONE) {
         return;
     }
-    region = &map_copy_regions[region_id];
+    region = &map_copy_regions[KF_ENUM_ENCODE(u8, region_id)];
     height = region->height;
     source_z = region->source_z;
     destination_z = region->destination_z;

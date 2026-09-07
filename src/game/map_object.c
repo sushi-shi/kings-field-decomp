@@ -562,7 +562,7 @@ void map_object_pool_update(void)
         case KF_MAP_OBJECT_ACTION_COPY_REGION:
             if (object->link.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {
                 if (object->link.action_parameter != KF_MAP_OBJECT_PARAMETER_NONE) {
-                    map_apply_copy_region(object->link.action_parameter);
+                    map_apply_copy_region(KF_ENUM_DECODE(KfMapCopyRegionId, object->link.action_parameter));
                 }
                 object->action_timer = 1;
             }
@@ -585,8 +585,8 @@ void map_object_pool_update(void)
                     if (*counter != KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                         (*counter)++;
                         if (*counter >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
-                            map_apply_copy_region(2);
-                            map_apply_copy_region(3);
+                            map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
+                            map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
                             sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
                             *counter = KF_MAP_FLOOR3_REQUIRED_REVEALS;
                         }

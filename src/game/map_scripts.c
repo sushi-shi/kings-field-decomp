@@ -205,7 +205,7 @@ void map_ambient_script_floor5(void)
         actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = 3;
         actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = 3;
         actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;
-        map_apply_copy_region(4);
+        map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
     }
 }
 
@@ -216,7 +216,7 @@ void map_action_script_floor1(void)
     if (item_stock[0][KF_ITEM_DRAGON_CHALICE] != 0
         && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
         map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
-        map_apply_copy_region(1);
+        map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         sound_ref_play(&gameplay_sound_ref_7, MAP_PASSAGE_OPEN_SOUND_VOLUME);
     }
 }

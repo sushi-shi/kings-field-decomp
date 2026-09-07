@@ -1,6 +1,6 @@
 # Retained map-event literals
 
-Complete account of **107 numeric occurrences** in `map_event.c`,
+Complete account of **103 numeric occurrences** in `map_event.c`,
 `map_events.c` and `map_load.c` after the
 [motion and sound follow-up](game-map-event-motion-constants.md).
 The [animation/turn type review](map-event-animation-turn-domains.md) names
@@ -87,7 +87,7 @@ explicit numeric boundaries.
 
 ## `src/game/map_load.c`
 
-48 retained occurrences.
+44 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -115,20 +115,16 @@ explicit numeric boundaries.
 | `map_restore_floor_state` | 124 | `0` | `*(u16 *)&object->link = 0;` | Initialize both bytes of the transient drop's link prefix to zero, not the absent-link encoding 255. |
 | `map_restore_floor_state` | 125 | `0` | `object->link.spawn_sequence = 0;` | Initialize the transient drop sequence to zero. |
 | `map_restore_floor_state` | 126 | `0` | `object->link.vertical_velocity = 0;` | Start the transient drop with zero vertical velocity. |
-| `map_restore_floor_state` | 133 | `1` | `map_apply_copy_region(1);` | Authored copy-region index for that floor-1 passage. |
 | `map_restore_floor_state` | 136 | `7` | `index = actor_pool_find_at_tile(7, 0x28);` | Authored tile X=7, Z=40 locates the actor controlled by that floor-1 script. |
 | `map_restore_floor_state` | 136 | `0x28` | `index = actor_pool_find_at_tile(7, 0x28);` | Authored tile X=7, Z=40 locates the actor controlled by that floor-1 script. |
 | `map_restore_floor_state` | 137 | `1` | `if (index != -1) {` | Do not index the actor pool when the tile query returns its negative miss sentinel. |
 | `map_restore_floor_state` | 150 | `0` | `map_event_pool[0].state = KF_MAP_EVENT_DISABLED;` | First floor-2 event slot selected by that progression rule. |
-| `map_restore_floor_state` | 158 | `2` | `map_apply_copy_region(2);` | First authored region index enabled by completion of four floor-3 map-piece reveals. |
-| `map_restore_floor_state` | 159 | `3` | `map_apply_copy_region(3);` | Second authored region index enabled by completion of four floor-3 map-piece reveals. |
 | `map_restore_floor_state` | 166 | `1` | `map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;` | Second floor-5 slot is the transfer destination (character ID 11). |
 | `map_restore_floor_state` | 169 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_restore_floor_state` | 170 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_restore_floor_state` | 171 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_restore_floor_state` | 172 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
 | `map_restore_floor_state` | 173 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ACTOR_ANIMATION_NONE;` | Authored actor definition 7; slot names carry the decoded action role, and the inverse reveal script writes the same definition. |
-| `map_restore_floor_state` | 175 | `4` | `map_apply_copy_region(4);` | Authored floor-5 map-copy region applied after the reveal flag is set. |
 | `map_restore_floor_state` | 177 | `0` | `if (item_stock[0][KF_ITEM_DRAGON_SWORD] != 0 \|\| item_stock[0][KF_ITEM_MOONLIGHT_SWORD] != 0` | Stock row zero and nonzero possession tests for the named Dragon Sword and Moonlight Sword; the script flag supplies the separate alternative. |
 | `map_restore_floor_state` | 177 | `0` | `if (item_stock[0][KF_ITEM_DRAGON_SWORD] != 0 \|\| item_stock[0][KF_ITEM_MOONLIGHT_SWORD] != 0` | Stock row zero and nonzero possession tests for the named Dragon Sword and Moonlight Sword; the script flag supplies the separate alternative. |
 | `map_restore_floor_state` | 177 | `0` | `if (item_stock[0][KF_ITEM_DRAGON_SWORD] != 0 \|\| item_stock[0][KF_ITEM_MOONLIGHT_SWORD] != 0` | Stock row zero and nonzero possession tests for the named Dragon Sword and Moonlight Sword; the script flag supplies the separate alternative. |

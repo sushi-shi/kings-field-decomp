@@ -1,7 +1,7 @@
 # Retained GAME map-object literals
 
 Complete current occurrence ledger for `src/game/map_object.c` and
-`src/game/map_object_pool.c`: **145 numeric/character occurrences**.
+`src/game/map_object_pool.c`: **143 numeric/character occurrences**.
 The [motion review](game-map-object-motion-constants.md) supplies the original
 reasons; [model identities](game-object-model-domain.md) and
 [behavior/action typing](game-map-object-state-domains.md) account for later
@@ -16,7 +16,7 @@ The presence of a ledger reason does not declare those domains complete.
 
 ## `src/game/map_object.c`
 
-67 retained occurrences.
+65 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -85,8 +85,6 @@ The presence of a ledger reason does not declare those domains complete.
 | `map_object_pool_update` | 567 | `1` | `object->action_timer = 1;` | One records completion even when the copy parameter was absent. |
 | `map_object_pool_update` | 574 | `0` | `if (object->action_timer == 0) {` | Zero selects the initial reveal displacement. |
 | `map_object_pool_update` | 576 | `1` | `object->action_timer = 1;` | First settling timer; updates 1 through 5 restore the overshoot. |
-| `map_object_pool_update` | 588 | `2` | `map_apply_copy_region(2);` | Authored copy-region table index applied when floor 3 completes four reveals. |
-| `map_object_pool_update` | 589 | `3` | `map_apply_copy_region(3);` | Authored copy-region table index applied when floor 3 completes four reveals. |
 
 ## `src/game/map_object_pool.c`
 

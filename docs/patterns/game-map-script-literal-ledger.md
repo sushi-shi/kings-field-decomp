@@ -1,6 +1,6 @@
 # Retained floor-script literals
 
-Complete account of **224 numeric/character occurrences** in
+Complete account of **222 numeric/character occurrences** in
 `src/game/map_scripts.c` after the
 [image-group and current-source review](map-image-groups.md).
 Comments, strings, identifier digits, enum/macro definitions and retail
@@ -98,10 +98,8 @@ explicit numeric boundaries.
 | `map_ambient_script_floor5` | 199 | `3` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = 3;` | Actor definition 7 receives authored melee/effect/multi-hit clip IDs 2/3/3/3/1; these are resource clips, not action states. |
 | `map_ambient_script_floor5` | 200 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;` | Actor definition 7 receives authored melee/effect/multi-hit clip IDs 2/3/3/3/1; these are resource clips, not action states. |
 | `map_ambient_script_floor5` | 200 | `1` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;` | Actor definition 7 receives authored melee/effect/multi-hit clip IDs 2/3/3/3/1; these are resource clips, not action states. |
-| `map_ambient_script_floor5` | 201 | `4` | `map_apply_copy_region(4);` | Authored copy-region ID: 1 opens the floor-1 passage; 4 applies the floor-5 encounter geometry. |
 | `map_action_script_floor1` | 209 | `0` | `if (item_stock[0][KF_ITEM_DRAGON_CHALICE] != 0` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
 | `map_action_script_floor1` | 209 | `0` | `if (item_stock[0][KF_ITEM_DRAGON_CHALICE] != 0` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
-| `map_action_script_floor1` | 212 | `1` | `map_apply_copy_region(1);` | Authored copy-region ID: 1 opens the floor-1 passage; 4 applies the floor-5 encounter geometry. |
 | `map_reveal_fade` | 226 | `0` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {` | Include both Q12 endpoints, starting at zero and stepping by 1/32 blend: 33 render/wait samples. |
 | `map_reveal_fade` | 226 | `1` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {` | Include both Q12 endpoints, starting at zero and stepping by 1/32 blend: 33 render/wait samples. |
 | `map_reveal_fade` | 228 | `4` | `if (blend >= KF_FIXED12_ONE / 4 + 1) {` | Strictly above one-quarter blend begins movement; +1 preserves the exclusive boundary. |

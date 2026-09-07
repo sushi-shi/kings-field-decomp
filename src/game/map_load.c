@@ -136,7 +136,7 @@ void map_restore_floor_state(void)
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
         if (map_floor1_script.passage_opened == KF_MAP_SCRIPT_SET) {
-            map_apply_copy_region(1);
+            map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
         if (map_floor1_script.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
             index = actor_pool_find_at_tile(7, 0x28);
@@ -161,8 +161,8 @@ void map_restore_floor_state(void)
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         if (map_floor3_script.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
-            map_apply_copy_region(2);
-            map_apply_copy_region(3);
+            map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
+            map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
         }
         break;
     case KF_FLOOR_4:
@@ -178,7 +178,7 @@ void map_restore_floor_state(void)
             actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ACTOR_ANIMATION_NONE;
             actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ACTOR_ANIMATION_NONE;
         } else {
-            map_apply_copy_region(4);
+            map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
         }
         if (item_stock[0][KF_ITEM_DRAGON_SWORD] != 0 || item_stock[0][KF_ITEM_MOONLIGHT_SWORD] != 0
                 || map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {

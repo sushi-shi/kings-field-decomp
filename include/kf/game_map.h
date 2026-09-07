@@ -140,10 +140,18 @@ enum {
     KF_MAP_LINK_FLOOR5_SWORD_DOOR = 52
 };
 
+KF_ENUM_BEGIN(KfMapCopyRegionId, u8)
+    KF_MAP_COPY_FLOOR1_GRAVESTONE = 0,
+    KF_MAP_COPY_FLOOR1_PASSAGE = 1,
+    KF_MAP_COPY_FLOOR3_REVEAL_FIRST = 2,
+    KF_MAP_COPY_FLOOR3_REVEAL_SECOND = 3,
+    KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER = 4,
+    KF_MAP_COPY_REGION_NONE = 255
+KF_ENUM_END(KfMapCopyRegionId)
+
 /* Link IDs 128..254 permit repeated switch/door activation; 255 is absent. */
 enum {
     KF_MAP_COPY_REGION_COUNT = 5,
-    KF_MAP_COPY_REGION_NONE = 255,
     KF_MAP_LINK_NONE = 255,
     KF_MAP_OBJECT_PARAMETER_NONE = 255,
     KF_MAP_LINK_REUSABLE_FIRST = 128,
@@ -448,7 +456,7 @@ extern char map_resource_path[12];
 extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);
 extern void camera_path_compute_segment(KfCameraPathState *path);
 extern void camera_path_step(KfCameraPathState *path, s32 y_offset);
-extern void map_apply_copy_region(u8 region_id);
+extern void map_apply_copy_region(KfMapCopyRegionId region_id);
 extern void map_ambient_script_floor1(void);
 extern void map_ambient_script_floor2(void);
 extern void map_ambient_script_floor3(void);
