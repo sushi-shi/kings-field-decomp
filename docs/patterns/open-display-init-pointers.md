@@ -1,5 +1,15 @@
 # OPEN display-initialization pointer lifetimes
 
+## Post-increment typed DRAWENV cursor control
+
+A single authentic `DRAWENV *` cursor, initialized after the four definition
+calls and advanced by the first `PutDrawEnv` argument, retains the whole first
+and then second DRAWENV across the calls. It improves the focused rendered
+listing to 84.3%, but keeps all four absolute `dfe` address pairs, retains the
+40-byte frame, and anchors the whole object rather than retail's first `dtd`
+member. Strict objdiff falls from 92.177960% to **90.855934%**. The cursor is
+removed and the canonical edge object is rebuilt back to 92.177960%.
+
 ## Function Match Plan: linked SDK-object and member lifetimes
 
 After merging master `97b2184`, a fresh pinned build reports OPEN at 106/108.
