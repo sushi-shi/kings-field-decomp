@@ -80,7 +80,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
-    case 3:
+    case KF_ENUM_DECODE(KfMapObjectBehavior, 3):
         map_collision_grid[cell_z][cell_x] = value;
         switch (yaw) {
         case 0x000:

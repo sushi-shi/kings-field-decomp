@@ -233,7 +233,7 @@ void map_world_state_persist(void)
     definitions = map_object_state.definitions;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         KfMapObjectId id = object->object_id;
-        u8 behavior;
+        KfMapObjectBehavior behavior;
 
         if (id == KF_MAP_OBJECT_FREE) {
             continue;

@@ -108,7 +108,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
 }
 
 ADDRESS(0x80031784, 0x20)
-void map_object_start_action_if_idle(KfMapObject *object, u8 action)
+void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectAction action)
 {
     if (object->action == KF_MAP_OBJECT_ACTION_IDLE) {
         object->action = action;
@@ -232,10 +232,10 @@ void map_object_pool_trigger_link(u8 link_id)
             }
             break;
         default:
-            if (map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type < KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER
+            if (map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type < KF_MAP_OBJECT_BEHAVIOR_LINK_TRIGGER_END
                 && !(object->link.link_id < KF_MAP_LINK_REUSABLE_FIRST) && object->link.link_id == link_id) {
                 map_object_start_action_if_idle(
-                    object, map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type);
+                    object, map_object_action_from_behavior(map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type));
             }
             break;
         }
@@ -252,8 +252,8 @@ void map_object_pool_clear_link(u8 link_id)
     KfMapObjectDefinition *definitions = map_object_state.definitions;
 
     do {
-        if ((definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type < KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER
-             || definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER)
+        if ((definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type < KF_MAP_OBJECT_BEHAVIOR_LINK_CLEAR_LAST
+             || definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type == KF_MAP_OBJECT_BEHAVIOR_LINK_CLEAR_LAST)
             && object->link.link_id == link_id) {
             object->link.link_id = KF_MAP_LINK_NONE;
         }

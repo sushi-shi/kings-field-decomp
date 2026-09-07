@@ -86,7 +86,7 @@ typedef union KfMapSavedWorld {
 } KfMapSavedWorld;
 
 /* Definition behavior and running action are separate byte domains. */
-enum {
+KF_ENUM_BEGIN(KfMapObjectBehavior, u8)
     KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR = 0,
     KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER = 1,
     KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR = 2,
@@ -94,16 +94,21 @@ enum {
     KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER = 9,
     KF_MAP_OBJECT_BEHAVIOR_COPY_REGION = 10,
     KF_MAP_OBJECT_BEHAVIOR_RESTORE_POINT = 11,
+    KF_MAP_OBJECT_BEHAVIOR_REVEAL_MAP_PIECE = 12,
     KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE = 13,
     KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT = 14,
     KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP = 64,
     KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP = 65,
     KF_MAP_OBJECT_BEHAVIOR_EFFECT_SWITCH = 83,
-    KF_MAP_OBJECT_BEHAVIOR_NONE = 255
-};
+    KF_MAP_OBJECT_BEHAVIOR_NONE = 255,
+    KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_END = 2,
+    KF_MAP_OBJECT_BEHAVIOR_LINK_TRIGGER_END = 8,
+    KF_MAP_OBJECT_BEHAVIOR_LINK_CLEAR_LAST = 8
+KF_ENUM_END(KfMapObjectBehavior)
 
-enum {
+KF_ENUM_BEGIN(KfMapObjectAction, u8)
     KF_MAP_OBJECT_ACTION_SWING_DOOR = 0,
+    KF_MAP_OBJECT_ACTION_SWING_DOOR_PARTNER = 1,
     KF_MAP_OBJECT_ACTION_LIFT_DOOR = 2,
     KF_MAP_OBJECT_ACTION_COPY_REGION = 10,
     KF_MAP_OBJECT_ACTION_ENABLE_RESTORE_POINT = 11,
@@ -116,7 +121,17 @@ enum {
     KF_MAP_OBJECT_ACTION_FALL_AND_SPIN = 97,
     KF_MAP_OBJECT_ACTION_BOUNCE = 98,
     KF_MAP_OBJECT_ACTION_IDLE = 255
-};
+KF_ENUM_END(KfMapObjectAction)
+
+/* Door/link dispatch reuses the definition's encoded value as an action. */
+#if KF_MODERN_TYPES
+constexpr KfMapObjectAction map_object_action_from_behavior(KfMapObjectBehavior behavior)
+{
+    return KF_ENUM_DECODE(KfMapObjectAction, KF_ENUM_ENCODE(u8, behavior));
+}
+#else
+#define map_object_action_from_behavior(behavior) ((KfMapObjectAction)(behavior))
+#endif
 
 /* Link IDs 128..254 permit repeated switch/door activation; 255 is absent. */
 enum {
@@ -223,7 +238,7 @@ typedef struct KfMapObjectPlacement {
 } KfMapObjectPlacement;
 
 typedef struct KfMapObjectDefinition {
-    u8 behavior_type;
+    KfMapObjectBehavior behavior_type;
     u8 unknown_01;
     u16 collision_radius;
     u16 interaction_radius;
@@ -243,7 +258,7 @@ typedef struct KfMapObject {
     struct KfEulerAngles rotation;
     u16 unknown_1e;
     KfMapObjectLink link;
-    u8 action;
+    KfMapObjectAction action;
     u8 unknown_29;
     u16 action_timer;
 } KfMapObject;
@@ -447,7 +462,7 @@ extern void map_object_pool_update(void);
 extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s32 y_offset);
 extern void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const struct KfVec3i *position, s32 y_offset);
-extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
+extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectAction action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
 extern void *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);

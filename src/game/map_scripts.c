@@ -676,13 +676,13 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                     neighbor = &map_object_state.objects[neighbor_index];
                     neighbor_definition =
                         &map_object_state.definitions[KF_ENUM_ENCODE(u8, neighbor->object_id)];
-                    if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR) {
+                    if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_END) {
                         if (neighbor->link.link_id != KF_MAP_LINK_NONE
                             && neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
                             goto notify_default;
                         }
                         map_object_start_action_if_idle(
-                            neighbor, neighbor_definition->behavior_type);
+                            neighbor, map_object_action_from_behavior(neighbor_definition->behavior_type));
                         object->link.action_parameter = neighbor_index;
                         neighbor->link.action_parameter = index;
                         break;
@@ -690,7 +690,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 }
                 neighbor_index++;
             }
-            map_object_start_action_if_idle(object, definition->behavior_type);
+            map_object_start_action_if_idle(object, map_object_action_from_behavior(definition->behavior_type));
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:

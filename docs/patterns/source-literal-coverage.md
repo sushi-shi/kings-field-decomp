@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **26 files / 2,339 occurrences**, the explicit ledger rows were compared
+For **28 files / 2,484 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -105,8 +105,8 @@ fields and address-derived function names are separate from this ten-line count.
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [domain evidence](game-map-event-literals.md) | Expand the domain audit into current occurrence coverage. |
 | [map_events.c](../../src/game/map_events.c) | 36 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_load.c](../../src/game/map_load.c) | 53 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_object.c](../../src/game/map_object.c) | 67 | [domain evidence](game-map-object-motion-constants.md) | Expand the domain audit into current occurrence coverage. |
-| [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md) | Expand the domain audit into current occurrence coverage. |
+| [map_object.c](../../src/game/map_object.c) | 67 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_scripts.c](../../src/game/map_scripts.c) | 238 | [game-map-script ledger](game-map-script-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/game/matrix.c) | 2 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [matrix_rotation.c](../../src/game/matrix_rotation.c) | 82 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |

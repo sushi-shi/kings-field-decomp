@@ -491,3 +491,7 @@ promotes a probe to a proven historical toolchain.
 
 - [GAME object-model domain](game-object-model-domain.md): resource-backed model
   identities and enum propagation through runtime objects, actor drops and rendering.
+
+- [GAME map-object state domains](game-map-object-state-domains.md): distinct
+  behavior/action types, typed door mapping and retained behavior-3 evidence;
+  [current occurrence ledger](game-map-object-literal-ledger.md) covers both modules.

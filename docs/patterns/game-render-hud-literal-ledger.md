@@ -22,7 +22,7 @@ retained values and explicitly identifies unresolved type/behavior debt.
 | `render_actor` | 62 | `0` | `render_enqueue_tmd(0, 0);` | Zero extra ordering-table depth bias. |
 | `render_actor` | 66 | `0` | `render_enqueue_model(0, 0);` | First object within the selected TMD resource. |
 | `render_actor` | 66 | `0` | `render_enqueue_model(0, 0);` | Zero extra ordering-table depth bias. |
-| `render_map_object` | 99 | `3` | `case 3:` | Unresolved authored map-object behavior ID sharing the lift-door depth bias; no evidence justifies calling the behavior a lift door. |
+| `render_map_object` | 99 | `3` | `case KF_ENUM_DECODE(KfMapObjectBehavior, 3):` | Unresolved authored map-object behavior ID sharing the lift-door depth bias; no evidence justifies calling the behavior a lift door. |
 | `render_map_object` | 107 | `0` | `depth = 0;` | No additional ordering-table depth bias in the default behavior. |
 | `menu_render_item_model` | 121 | `0` | `tmd_select_object_vertices(0);` | First object within the selected TMD resource; local array origin, not a global asset ID. |
 | `menu_render_item_model` | 122 | `0` | `tmd_project_vertices(tmd_get_object(0)->vertex_count);` | First object within the selected TMD resource; local array origin, not a global asset ID. |

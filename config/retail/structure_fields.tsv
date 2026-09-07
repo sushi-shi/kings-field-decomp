@@ -379,10 +379,10 @@ KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	game_map.h;asm;xrefs	meaning unres
 KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	game_map.h;asm;xrefs	object rotation
 KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied verbatim from the placement record
-KfMapObject	0x28	0x01	action	u8	supported	game_map.h;asm;xrefs	action dispatcher selector
+KfMapObject	0x28	0x01	action	KfMapObjectAction	supported	game_map.h;asm;xrefs	action dispatcher selector
 KfMapObject	0x29	0x01	unknown_29	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x2a	0x02	action_timer	u16	supported	game_map.h;asm;xrefs	action timer
-KfMapObjectDefinition	0x00	0x01	behavior_type	u8	supported	game_map.h;asm;xrefs	behavior selector
+KfMapObjectDefinition	0x00	0x01	behavior_type	KfMapObjectBehavior	supported	game_map.h;asm;xrefs	behavior selector
 KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
