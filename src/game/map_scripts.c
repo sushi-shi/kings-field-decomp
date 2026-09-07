@@ -475,8 +475,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     s32 sound_x;
     s32 sound_z;
     s32 index;
-    s32 slot;
-    s32 item_index;
+    s16 item_index;
     s32 result;
     KfItemPickupResult pickup_result;
     s32 neighbor_index;
@@ -524,17 +523,12 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 menu_enter_mode(KF_MENU_MODE_SHOP, event->character_id);
                 audio_play_current_map_sequence();
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
-                event->animation_clip = 0;
-                event->animation_phase = 0;
-                player_clear_motion();
-                break;
-            case KF_MAP_EVENT_BEHAVIOR_WANDER:
-                map_event_interact(event);
-                player_clear_motion();
-                break;
+                goto clear_event_phase;
             case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
+                result = asset_registry_entries[
+                    event->model_index + KF_ASSET_MAP_EVENT_FIRST]->animation_clip_count;
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
-                result = asset_registry_entries[event->model_index]->animation_clip_count < 2;
+                result = result < 2;
                 if (result == 0) {
                     event->animation_phase = 0;
                     event->animation_clip = 1;
@@ -545,18 +539,23 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                     map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 event->animation_clip = 0;
+clear_event_phase:
                 event->animation_phase = 0;
+                player_clear_motion();
+                break;
+            case KF_MAP_EVENT_BEHAVIOR_WANDER:
+                map_event_interact(event);
                 player_clear_motion();
                 break;
             default:
                 break;
             }
+            return;
         }
-        return;
     }
 
-    for (slot = 0;; slot++) {
-        index = map_object_pool_find_interaction_from(slot, sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING);
+    for (index = 0;; index++) {
+        index = map_object_pool_find_interaction_from(index, sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING);
         if (index == -1) {
             break;
         }
@@ -565,8 +564,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         switch (definition->behavior_type) {
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER:
             if (object->link.link_id != KF_MAP_LINK_NONE) {
-                notify_enqueue(object->link.linked_notification);
-                continue;
+                goto notify_linked;
             }
             if (!angle_within_tolerance(rotation->vy, object->rotation.y, KF_ANGLE_EIGHTH_TURN)) {
                 break;
@@ -574,15 +572,14 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
             item_index = MAP_CONTAINER_ITEM_COUNT - 1;
             while (object->link.action_parameter == KF_MAP_OBJECT_PARAMETER_NONE) {
-                item_index--;
-                if ((s16)item_index == -1) {
+                if (--item_index == -1) {
                     goto notify_default;
                 }
             }
 
+            saved_pitch = rotation->vx;
             audio_play_spatial_default_range(
                 &gameplay_sound_ref_2, (const VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
-            saved_pitch = rotation->vx;
             while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
                 if ((u16)(rotation->vx - MAP_CONTAINER_CAMERA_PITCH_MIN) >= MAP_CONTAINER_CAMERA_PITCH_SPAN) {
                     rotation->vx += MAP_CONTAINER_CAMERA_PITCH_STEP;
@@ -597,10 +594,15 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             for (;;) {
                 if (*item_id != MAP_CONTAINER_ITEM_NONE) {
                     pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
-                    if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
+                    switch (pickup_result) {
+                    case KF_ITEM_PICKUP_ACQUIRED:
                         *item_id = MAP_CONTAINER_ITEM_NONE;
-                    } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
+                        break;
+                    case KF_ITEM_PICKUP_STACK_FULL:
                         notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
+                        break;
+                    default:
+                        break;
                     }
                 }
                 item_index--;
@@ -613,6 +615,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             rotation->vx = saved_pitch;
             break;
 
+notify_linked:
+            notify_enqueue(object->link.linked_notification);
+            continue;
+
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER:
             item_id = &object->link.link_id;
             found_item = 0;
@@ -621,10 +627,15 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 if (*item_id != MAP_CONTAINER_ITEM_NONE) {
                     found_item = 1;
                     pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
-                    if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
+                    switch (pickup_result) {
+                    case KF_ITEM_PICKUP_ACQUIRED:
                         *item_id = MAP_CONTAINER_ITEM_NONE;
-                    } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
+                        break;
+                    case KF_ITEM_PICKUP_STACK_FULL:
                         notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
+                        break;
+                    default:
+                        break;
                     }
                 }
                 item_index--;
@@ -695,16 +706,20 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:
             pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, KF_ENUM_ENCODE(u8, object->object_id)));
-            if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
+            switch (pickup_result) {
+            case KF_ITEM_PICKUP_ACQUIRED:
                 object->object_id = KF_MAP_OBJECT_FREE;
-            } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
+                break;
+            case KF_ITEM_PICKUP_STACK_FULL:
                 notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
                 continue;
+            default:
+                break;
             }
             break;
 
         case KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP:
-            result = object->link.link_id | object->link.action_parameter << 8;
+            result = *(u16 *)&object->link.link_id;
             notify_enqueue(KF_NOTIFICATION_GOLD, result);
             player_state.gold += result;
             object->object_id = KF_MAP_OBJECT_FREE;
