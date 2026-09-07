@@ -1,5 +1,14 @@
 # OPEN unlit triangle emission
 
+## R3000 scheduling-model control
+
+An OPEN-unit-only GCC 2.5.7 `-mcpu=r3000` build is byte-identical to the
+configured r2000 probe. It retains the 56-byte candidate frame against
+retail's 64 bytes and the same exchanged second/third vertex saved-register
+roles in both F3 and FT3 paths. Calls, CFG, owner-relative ordering-table load
+and the 676-byte body remain unchanged. The temporary profile is removed;
+CPU scheduling-model selection does not explain this final residue.
+
 ## Complete read-only pointer qualification (`82320b9` follow-up)
 
 Qualifying the projected byte stream and all three `KfScreenVertex *` locals
