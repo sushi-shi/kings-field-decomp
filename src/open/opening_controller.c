@@ -43,8 +43,8 @@ void opening_run(KfOpenMode display_mode)
 {
     void *tim_data;
     OpeningAllocationState *allocation_state;
-    s32 scene3_action;
-    s32 skip_action;
+    KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
+    KF_ENUM_STORAGE(KfOpeningInputAction, s32) skip_action;
 
     PadInit(0);
     /* Retail clears the display state and the contiguous opening runtime BSS. */

@@ -1676,7 +1676,7 @@ class InventoryTests(unittest.TestCase):
         action = data[("OPEN.EXE", 0x80043178)]
         self.assertEqual(
             (action.name, action.storage, action.datatype, action.size),
-            ("opening_input_action", "bss", "u32", 4),
+            ("opening_input_action", "bss", "KfOpeningInputAction", 4),
         )
 
         _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

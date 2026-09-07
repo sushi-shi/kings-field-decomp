@@ -4,7 +4,7 @@
 #include <kf/psyq_pad.h>
 
 DATA(0x80043178, 0x4)
-u32 opening_input_action;
+KfOpeningInputAction opening_input_action;
 
 ADDRESS(0x80013c70, 0x3c)
 void opening_poll_input(void)

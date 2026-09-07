@@ -27,6 +27,8 @@ promotes a probe to a proven historical toolchain.
 - [overlay-mode-domains.md](overlay-mode-domains.md): separate GAME exit status
   and OPEN mode, typed global/API flow through the raw Exec boundary, and the
   [154-occurrence OPEN initializer ledger](open-render-init-literal-ledger.md).
+- [open-input-action-domain.md](open-input-action-domain.md): typed opening
+  input actions through the shared state and controller; verification deferred.
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete
