@@ -1,5 +1,45 @@
 # OPEN ending-scroll controller and data owners
 
+## Function Match Plan: post-allocation cross-jump tail
+
+Pinned GCC 2.5.7 pass dumps now explain the five-register cycle in the known
+49-block carrier.  In the retained 51-block source, pseudo 80
+(`lighting_blend`) has 17 local-allocation references and is allocated before
+the other persistent scene values, receiving retail's `s4`.  Moving the phase
+store and blend reset into a pre-allocation shared block reduces it to 15
+references; its allocation moves behind sequence phase, scroll tick, entity
+27 and background blend, rotating the five values through `s4`-`s8`.  The
+carrier's short next-phase pseudo is 85, has six references over four
+instructions and is assigned `v0`; it does not itself occupy a saved register.
+
+GCC's final jump/cross-jump pass follows local and global register allocation.
+Test two source-level copies of the same `lighting_phase = next_phase` and
+`lighting_blend = 0` tail, one in each failed interpolation path, with only
+the real next-phase constant differing.  This should keep both blend
+definitions visible during allocation while permitting the identical
+hard-register tails to merge afterward.  Preserve the switch, signed blend
+tests, calls, increments and literal 1/2 transitions.  Retain only an exact or
+independently evidenced improvement; otherwise restore the highest strict
+source and record the pass result.
+
+The duplicated typed tails preserve the retail saved-register assignment, but
+reload chooses `t1` for the first literal and `t0` for the second.  Final
+cross-jumping consequently merges only the two blend resets, leaving 51
+blocks and the same 83.0% listing comparison as the retained source.  Using a
+single typed phase snapshot as both selector and next-phase carrier restores
+the 49-block successor graph, but it is byte-identical to the earlier carrier
+family: blend references fall to 15 and the five saved values rotate.  Both
+source trials are removed.
+
+This places the decisive split after global allocation.  The retained dump
+loads phase into `t0`, copies it to `v1`, then reload assigns the first failed
+path's constant one to `t1`; the second path's constant two uses `t0`.
+Retail instead copies the phase from `t0` to `v0`, immediately reuses `t0` for
+the compare/next value one, and also uses `t0` for value two.  Its final common
+block can therefore store `t0` and clear `s4`.  The next experiment must
+explain that reload conflict or an earlier real lifetime; another pre-joined
+carrier cannot.
+
 ## Dispatch/value-allocation controls at 106/108
 
 The two-condition `if` spelling preserves retail's five long-lived scene-state
