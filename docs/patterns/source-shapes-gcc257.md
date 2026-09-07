@@ -1117,22 +1117,21 @@ model emitters `render_actor`/`render_map_object`.
 | `POLY_FT4 *p = display_state.primitive_buffer->cursor; ...->cursor += 40; if (->cursor > ->end) return;` | keep the cursor advance and the overflow guard as the buffer's own member accesses (re-read after the store); write the guard `cursor > end` so the cursor loads before the end | `func_8001e480` `0x8001e480` (structural; scheduling residue) |
 | `p->x0 = p->x2 = v;` storing the higher-index cell first | chained assignment `p->x0 = p->x2 = value;` — the outer destination's store is emitted after the inner (`sh @24` before `sh @8`) | same |
 
-Residues left in the band (not steered):
+Later correction: [model-emitter lifetimes](game-model-emitter-lifetimes.md)
+supersedes the two emitter diagnoses below. The historical trials did not
+establish a compiler limitation.
 
-- `render_actor` `0x8001e9a4`: retail keeps a redundant `andi 0xff` on the
-  lbu-loaded actor descriptor byte before the `>> 4` nibble shift (and again on
-  `high - 1` before the depth-table index), and computes `high - 1` in its own
-  register rather than folding the `-1` into the DAT_80095038/DAT_80095048
-  addends. cc1psx-257's `nonzero_bits` provably drops the mask (verified in
-  isolation for `u8`, `int`, `(unsigned char)`-cast, and `(x & 0xff) >> 4`
-  spellings), which also swaps the descriptor/object callee-saved registers and
-  trims the frame by 8. Same class as `func_8001ed90` above.
-- `render_map_object` `0x8001ebb8`: retail lowers the four-way `behavior_type`
-  dispatch as a sequential comparison tree (`bltz; slti 2; bnez; slti 4; beqz;`
-  fall-through `li 0xb4`) with the object-id mask duplicated across the exit
-  blocks. cc1psx-257 if-converts the `< 4 ? 180 : 0` tail to `negu; andi 0xb4`
-  and cross-jumps the mask into one block for every `switch`, if-else-chain, and
-  `goto`-shaped source tried. Retail optimises the tail less, not more.
+- `render_actor` `0x8001e9a4`: keeping the descriptor as an updated byte
+  (`descriptor >>= 4; if (descriptor-- == 0)`) reproduces both pre-shift
+  masks, the byte table index, decrement and saved-register roles. The
+  unchanged complete graphics-owner fixture also restores retail's frame and
+  cross-field CLUT address chain: together these source facts emit all 532
+  retail bytes. The canonical storage model remains partial; the owner-only
+  witness is not banked and does not resolve unknown array capacities.
+- `render_map_object` `0x8001ebb8`: putting the 2/3 cases before the 0/1
+  cases follows the retail depth-body order (180, 15, zero) and reproduces
+  the entire 384-byte body, including the duplicated object-ID mask and both
+  internal jumps. No guard, constant, type, compiler or flag change is needed.
 - `func_8001e480` `0x8001e480`: the post-reload scheduler hoists the clut/tpage
   global loads into the load-delay slots after the screen X/Y reads; retail
   leaves those nops and keeps each load beside its store. `-O2` reproduces
@@ -1140,9 +1139,10 @@ Residues left in the band (not steered):
   `-fno-schedule-insns2` drops both. No single 2.5.7 flag matches retail's
   partial scheduling, so this is left as an open compiler-attribution residue.
 
-All three are the recurring "2.5.7 optimises more aggressively than the retail
-compiler" pattern (mask elision, if-conversion, delay-slot filling); the sources
-are the honest shapes and are not distorted to re-introduce the retail idioms.
+The remaining sprite scheduling observation is not a general conclusion that
+the probe optimizes more aggressively than retail; the two model-emitter
+counterexamples show why source lifetime, case order and ownership must be
+settled before naming a compiler limitation.
 
 ## GAME polygon-emitter / geometry-render band (0x8001ed90..0x8001f218)
 

@@ -70,6 +70,9 @@ promotes a probe to a proven historical toolchain.
 - [source-shapes-gcc257.md](source-shapes-gcc257.md): source shapes that
   decided exact matches under the 2.5.7 probe (loop counters, return-value
   joins, struct copies, two-statement accumulations).
+- [game-model-emitter-lifetimes.md](game-model-emitter-lifetimes.md): retail
+  case-body order closes map-object rendering; updating the byte texture index
+  and the temporary complete graphics owner reproduce the entire actor body.
 - [compiler-attribution.md](compiler-attribution.md): a dedicated
   cross-version pass over the residue corpus. How GCC 2.4.1 CC1PSX was made
   runnable (a go32-stub frankenbinary under DOSBox) and the finding that it

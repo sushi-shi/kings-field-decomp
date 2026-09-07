@@ -20,7 +20,6 @@ void render_actor(KfActor *actor)
     KfTmdObject *object;
     u8 descriptor;
     u16 asset;
-    int high;
 
     SetRotMatrix(&render_state.view_matrix);
     SetTransMatrix(&render_state.view_matrix);
@@ -50,12 +49,12 @@ void render_actor(KfActor *actor)
         tmd_project_vertices(object->vertex_count);
     }
 
-    high = descriptor >> 4;
-    if (high == 0) {
+    descriptor >>= 4;
+    if (descriptor-- == 0) {
         render_enqueue_tmd(0, 0);
     } else {
-        active_render_tpage = effect5_texture_pages[high - 1];
-        active_render_clut = effect5_texture_cluts[high - 1];
+        active_render_tpage = effect5_texture_pages[descriptor];
+        active_render_clut = effect5_texture_cluts[descriptor];
         render_enqueue_model(0, 0);
     }
 }
@@ -88,13 +87,13 @@ void render_map_object(KfMapObject *object)
 
     id = object->object_id;
     switch (map_object_state.definitions[object->object_id].behavior_type) {
-    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
-    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
-        depth = 15;
-        break;
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case 3:
         depth = 180;
+        break;
+    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
+    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
+        depth = 15;
         break;
     default:
         depth = 0;

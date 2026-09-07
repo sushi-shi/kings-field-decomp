@@ -1,5 +1,13 @@
 # Compiler attribution probe: does GCC 2.4.1 (or any candidate) beat cc1psx-257?
 
+Later model-emitter correction: source case order now reproduces the entire
+`render_map_object` body under the current pinned profile. Updating the actor's
+byte descriptor restores the formerly missing masks; combined with the
+unchanged complete graphics-owner fixture it also restores the 168-byte frame
+and every linked actor word. The historical results below concern their old
+inputs, not proven compiler limitations. See
+[game-model-emitter-lifetimes.md](game-model-emitter-lifetimes.md).
+
 Later source correction: the GAME FT4 emitter in this historical batch now
 matches exactly after recovering its [promoted selector arguments](game-ft4-selectors.md).
 No compiler/profile change was needed. The old batch results below remain a

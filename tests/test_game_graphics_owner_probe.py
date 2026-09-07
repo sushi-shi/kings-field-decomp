@@ -341,6 +341,51 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                         self.assertNotEqual(wrong, actual)
                         self.assertEqual(same_calls, calls)
 
+    def test_actor_byte_index_and_shared_owner_are_independent_requirements(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        unit = manifest.by_name()['game.entity_model_render']
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        data['graphics_owner_probe'] = ORIGIN
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        for owner in (False, True):
+            source = (candidate_source(unit, {'render_actor'}) if owner
+                      else unit.source_path.read_text())
+            for byte_index in (False, True):
+                candidate = source
+                if not byte_index:
+                    self.assertEqual(candidate.count('    descriptor >>= 4;'), 1)
+                    candidate = candidate.replace('    u16 asset;\n', '    u16 asset;\n    int high;\n')
+                    candidate = candidate.replace('    descriptor >>= 4;', '    high = descriptor >> 4;')
+                    candidate = candidate.replace('if (descriptor-- == 0)', 'if (high == 0)')
+                    candidate = candidate.replace('[descriptor]', '[high - 1]')
+                with self.subTest(owner=owner, byte_index=byte_index), tempfile.TemporaryDirectory() as directory:
+                    obj = self.compile(Path(directory), unit, candidate)
+                    for claim in unit.functions:
+                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                     image.require(claim.va, claim.body_size)))
+                        actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
+                        retail_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
+                                        | ((word & 0x3FFFFFF) << 2)
+                                        for i, word in enumerate(expected) if word >> 26 == 3]
+                        self.assertEqual(calls, retail_calls)
+                        if claim.symbol != 'render_actor':
+                            self.assertEqual(actual, expected, claim.symbol)
+                            continue
+                        self.assertEqual(actual == expected, owner and byte_index)
+                        self.assertEqual(len(actual) * 4, 532 if byte_index else 516 if owner else 520)
+                        self.assertEqual(len(addresses), 10 if owner else 11)
+                        if owner and byte_index:
+                            self.assertEqual(addresses, [0x800956A0, 0x800956A0, 0x80095744,
+                                                        0x80095748, 0x8009574C, 0x80055F68,
+                                                        0x8006BD99, 0x80095038, 0x8009505A,
+                                                        0x80095058])
+                            wrong, same_calls, _ = linked_words(
+                                obj, unit, claim, dict(data, graphics_owner_probe=ORIGIN + 4), functions)
+                            self.assertNotEqual(wrong, expected)
+                            self.assertEqual(same_calls, calls)
+
     def test_narrow_material_owner_does_not_preserve_exact_frame(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
