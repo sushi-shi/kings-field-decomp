@@ -1,5 +1,15 @@
 # OPEN ending-scroll controller and data owners
 
+## Edge-scoped lighting-phase join control
+
+A next-phase short live only on the two failed interpolation edges, with the
+successful paths and completed-state default bypassing one shared store/reset,
+recovers retail's 49-block CFG and branch count. Moving that temporary between
+loop and function scope is byte-identical. Both forms rotate every long-lived
+scene-state register and score below the canonical source, reproducing the
+earlier carrier-family residue. They are removed; narrower C scope does not
+explain the retail join under this probe.
+
 ## Function Match Plan: scene-3 CLUT work extent
 
 OPEN `opening_scene3_run` at `80014804` was 816 bytes and strict
