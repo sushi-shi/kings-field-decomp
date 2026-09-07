@@ -258,15 +258,12 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             },
         }
         # Size and first raw divergence are observed symptoms, not attributed
-        # compiler mechanisms. Neither the pilot nor a partial suffix is banked.
+        # compiler mechanisms. The remaining partial suffix is not banked.
         partial = {
             'display_initialize': (336, 0xA4, 0x3C048009, 0x3C108009, [
                 0x80090EC0, 0x80090F78, 0x80090F1C, 0x80090F8C, 0x80090F32, 0x80090ED6,
                 0x80090ED8, 0x80090F34, 0x80090ED9, 0x80090EDA, 0x80090EDB, 0x80090F35,
                 0x80090F36, 0x80090F37, 0x80095740,
-            ]),
-            'tmd_prepare_primitive_indices': (768, 8, 0, 0x27BDFFF8, [
-                0x80090FC8, 0x80090FC8, 0x80090FC8, 0x800121B4,
             ]),
         }
         for name, names in selected.items():
@@ -291,11 +288,6 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                             self.assertEqual(actual[:first // 4], expected[:first // 4])
                             self.assertEqual((actual[first // 4], expected[first // 4]), (left, right))
                             self.assertEqual(targets, addresses)
-                            if claim.symbol == 'tmd_prepare_primitive_indices':
-                                self.assertEqual(
-                                    [(i * 4, a, b) for i, (a, b) in
-                                     enumerate(zip(actual, expected)) if a != b],
-                                    [(8, 0, 0x27BDFFF8), (0x2FC, 0, 0x27BD0008)])
                         else:
                             self.assertEqual(actual, expected)
                             if any(ORIGIN <= target < ORIGIN + EXTENT for target in targets):

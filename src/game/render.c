@@ -350,7 +350,7 @@ void tmd_prepare_primitive_indices(void)
     u16 objects_left;
     u16 primitive_count;
     u16 primitives_left;
-    u32 word;
+    KfTmdPacketHeader header;
 
     object_count = (u16)((KfTmdHeader *)tmd_state.current_asset)->object_count;
     objects_left = object_count - 1;
@@ -366,9 +366,9 @@ void tmd_prepare_primitive_indices(void)
         if (primitive_count != 0) {
             do {
                 body = TMD_PACKET_BODY(packet);
-                word = *(u32 *)packet;
-                packet = body + packet[KF_TMD_ILEN_BYTE] * KF_TMD_WORD_BYTES;
-                switch ((word >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK) {
+                header.word = *(u32 *)packet;
+                packet = body + header.bytes.input_length * KF_TMD_WORD_BYTES;
+                switch ((header.word >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK) {
                 case KF_TMD_MODE_F3: {
                     KfTmdF3 *p = (KfTmdF3 *)body;
                     p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;

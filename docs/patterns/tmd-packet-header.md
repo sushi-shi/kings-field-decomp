@@ -1,6 +1,26 @@
 # GAME TMD packet-header investigation
 
-## Function Match Plan
+## Cross-image exact closure
+
+The later exact OPEN reconstruction established `KfTmdPacketHeader` as a
+shared packet-format type. Reusing that type in GAME and keeping both observed
+views of the same value is decisive: `header.bytes.input_length` advances to
+the next packet, while `header.word` supplies the mode dispatch. With that
+complete aggregate lifetime, the pinned compiler emits GAME's otherwise
+unused eight-byte frame and preserves the retail instruction schedule.
+
+GAME `tmd_prepare_primitive_indices` at `8001c2b0` now compares at strict
+100% across all 768 bytes. This is a cross-image type-recovery result, not a
+stack-steering workaround: no padding, volatile object, fake local, helper, or
+assembly is present. The useful matching pattern is to retain the authentic
+aggregate when retail consumes multiple-width views of one serialized header;
+prematurely splitting those views into an independent byte load and scalar
+word can erase a compiler-visible lifetime even when the values are equal.
+
+The sections below preserve the earlier negative experiments that preceded
+the OPEN evidence.
+
+## Historical Function Match Plan
 
 This continuation starts at clean `c35fdfc`; the full objective remains all
 29 GAME parsers/serializers at strict 100%, currently 23. The previous turn
