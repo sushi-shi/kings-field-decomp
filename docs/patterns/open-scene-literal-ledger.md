@@ -1,6 +1,6 @@
 # OPEN scene retained-literal ledger
 
-Companion to [the scene-domain evidence](open-scene-domains.md). All **579**
+Companion to [the scene-domain evidence](open-scene-domains.md). All **570**
 current numeric/character occurrences in `src/open/opening_scenes.c` have
 individual rows, including duplicate tokens within one expression. Comments,
 strings, identifier digits, named enum/macro definitions and address claims
@@ -568,8 +568,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_run` | 737 | `0` | `cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);` | VRAM X origin of the panel CLUT. |
 | `opening_ending_scroll_run` | 737 | `8` | `cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);` | Panel ordinal added to the first CLUT row; one row per panel. |
 | `opening_ending_scroll_run` | 747 | `0` | `background_blend = 0;` | Zero starts the background gradient interpolation. |
-| `opening_ending_scroll_run` | 749 | `0` | `scrolling = 0;` | False scroll-enable flag before the disk reaches its final Y. |
-| `opening_ending_scroll_run` | 750 | `0` | `scroll_phase = 0;` | Start position of the numeric 0,3,2,1 cycle. |
 | `opening_ending_scroll_run` | 752 | `0` | `SetBackColor(0, 0, 0);` | Black red component passed to the SDK. |
 | `opening_ending_scroll_run` | 752 | `0` | `SetBackColor(0, 0, 0);` | Black green component passed to the SDK. |
 | `opening_ending_scroll_run` | 752 | `0` | `SetBackColor(0, 0, 0);` | Black blue component passed to the SDK. |
@@ -584,16 +582,9 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_run` | 792 | `1` | `if (--sequence_delay == -1) {` | Countdown expires at minus one: the initial 20 produces 21 pre-decrements. |
 | `opening_ending_scroll_run` | 801 | `0` | `if (sequence_volume == 0) {` | Mute endpoint triggers replacement of the sequence. |
 | `opening_ending_scroll_run` | 808 | `0` | `opening_camera_path_step(0);` | No added world-space Y displacement for this camera step. |
-| `opening_ending_scroll_run` | 812 | `0` | `} else if (scrolling == 0) {` | False scroll-enable flag prevents repeating the disk/starfield visibility swap. |
-| `opening_ending_scroll_run` | 814 | `1` | `scrolling = 1;` | True scroll-enable flag after the disk reaches its final Y. |
 | `opening_ending_scroll_run` | 831 | `0` | `sprite_add_g4(&opening_ending_scroll_backgrounds[0],` | First authored background rectangle receives the vertical gradient. |
 | `opening_ending_scroll_run` | 833 | `1` | `sprite_add_f4(&opening_ending_scroll_backgrounds[1],` | Second authored background rectangle receives the uniform color. |
-| `opening_ending_scroll_run` | 836 | `0` | `if (scroll_phase == 0) {` | Start position of the 0,3,2,1 four-step cycle; starfield roll/color update once per cycle. |
 | `opening_ending_scroll_run` | 837 | `1` | `entity_27->rotation.z = (entity_27->rotation.z - 1) & KF_ANGLE_WRAP_MASK;` | Unit decrement is one of 4096 angle units per selected update (0.087890625 degrees); the cycle selects one update in four. |
-| `opening_ending_scroll_run` | 847 | `0` | `if (scrolling > 0) {` | Positive boolean scroll-enable value. |
 | `opening_ending_scroll_run` | 848 | `0` | `panel_index = 0;` | First ending-panel index. |
-| `opening_ending_scroll_run` | 851 | `0` | `if (scroll_phase == 0 \|\| scroll_phase == 2) {` | Cycle start selects the first of two panel updates per four-step cycle. |
-| `opening_ending_scroll_run` | 851 | `2` | `if (scroll_phase == 0 \|\| scroll_phase == 2) {` | Cycle midpoint selects the second of two panel updates per four-step cycle. |
 | `opening_ending_scroll_run` | 852 | `1` | `if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1].y >` | Last panel index selects the stopping reference for the entire scroll. |
-| `opening_ending_scroll_run` | 868 | `1` | `if (--scroll_phase == -1) {` | Minus one triggers wrap after cycle position zero. |
-| `opening_ending_scroll_run` | 869 | `1` | `scroll_phase = ENDING_SCROLL_PHASE_COUNT - 1;` | Last cycle position restores the 0,3,2,1 countdown. |
+| `opening_ending_scroll_run` | 885 | `1` | `KfEndingScrollTick, KF_ENUM_ENCODE(s16, scroll_tick) - 1);` | Unit decrement advances the named four-tick countdown; explicit conversion retains its signed-halfword domain. |

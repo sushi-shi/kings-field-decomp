@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [quad rectangle review](quad-rectangle-types.md):
+Working snapshot after the [ending-scroll state review](ending-scroll-states.md):
 **111 C files**, **112 source/image variants**,
-and **6,119 inline numeric/character occurrences**. The counts include authored
+and **6,110 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **93 files / 5,272 occurrences**, the explicit ledger rows were compared
+For **93 files / 5,263 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -56,7 +56,10 @@ three redundant color extents and adds complete fade/quad coverage. The
 rectangle review then replaces 48 position-component indices, five array
 extents and nine scene cursor/index literals with typed fields and traversal.
 Current fade/quad coverage is 59 occurrences; all six changed C files retain
-complete accounting, including the now literal-free G4 module.
+complete accounting, including the now literal-free G4 module. The ending
+scroll review then gives the enable state and four cadence ticks distinct enum
+domains, replacing ten control-value occurrences with named values and retaining
+one documented unit decrement: nine fewer inline literals.
 
 The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
 verified and normalized the death, item-use and notification accounting. Other
@@ -183,7 +186,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## OPEN.EXE
 
-34 files; 1,212 occurrences.
+34 files; 1,203 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -208,7 +211,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [opening_render.c](../../src/open/opening_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_render_entities.c](../../src/open/opening_render_entities.c) | 2 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_scene0_render.c](../../src/open/opening_scene0_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [opening_scenes.c](../../src/open/opening_scenes.c) | 579 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [opening_scenes.c](../../src/open/opening_scenes.c) | 570 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render.c](../../src/open/render.c) | 19 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
 | [render_init.c](../../src/open/render_init.c) | 154 | [complete initializer ledger](open-render-init-literal-ledger.md); [mode domain](overlay-mode-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map.c](../../src/open/render_map.c) | 6 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |

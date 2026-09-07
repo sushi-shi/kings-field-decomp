@@ -38,6 +38,8 @@ promotes a probe to a proven historical toolchain.
   quad APIs and fade callers; [retained literals](fade-quad-literal-ledger.md).
 - [quad-rectangle-types.md](quad-rectangle-types.md): unsigned screen rectangle
   fields through quad builders, fades and scrolling scene callers.
+- [ending-scroll-states.md](ending-scroll-states.md): typed scrolling enable
+  state and the four-tick starfield/panel update cadence.
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete

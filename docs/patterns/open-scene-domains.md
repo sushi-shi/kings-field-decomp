@@ -1,5 +1,10 @@
 # OPEN scene control domains and literal accounting
 
+The later [ending-scroll review](ending-scroll-states.md) also types the scroll
+enable latch and gives the four cadence ticks semantic names while retaining
+the countdown arithmetic. The plan and verification below describe the earlier
+transition/lighting/sequence batch.
+
 ## Function Match Plan
 
 Starting at `8514c78`, propagate a signed-halfword transition-mode enum

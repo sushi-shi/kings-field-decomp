@@ -52,7 +52,6 @@ enum {
     ENDING_PANEL_COUNT = 9,
     ENDING_PANEL_STOP_Y = 50,
     ENDING_BACKGROUND_OT_DEPTH = 0x2f65,
-    ENDING_SCROLL_PHASE_COUNT = 4,
     ENDING_TMD_PROJECTION_SHIFT = 2,
     ENDING_MODEL_START_Y_OFFSET = 1500,
     ENDING_MODEL_FINAL_Y = -8000,
@@ -76,6 +75,20 @@ KF_ENUM_BEGIN(KfEndingSequencePhase, s16)
     ENDING_SEQUENCE_FADE = 2,
     ENDING_SEQUENCE_REPLACED = 3
 KF_ENUM_END(KfEndingSequencePhase)
+
+KF_ENUM_BEGIN(KfEndingScrollState, s16)
+    ENDING_SCROLL_WAIT_DISK = 0,
+    ENDING_SCROLL_ACTIVE = 1
+KF_ENUM_END(KfEndingScrollState)
+
+/* Countdown order: combined update, hold, panel update, hold. */
+KF_ENUM_BEGIN(KfEndingScrollTick, s16)
+    ENDING_SCROLL_TICK_WRAP = -1,
+    ENDING_SCROLL_TICK_STARFIELD_AND_PANELS = 0,
+    ENDING_SCROLL_TICK_HOLD_AFTER_PANELS = 1,
+    ENDING_SCROLL_TICK_PANELS = 2,
+    ENDING_SCROLL_TICK_HOLD_AFTER_STARFIELD = 3
+KF_ENUM_END(KfEndingScrollTick)
 
 typedef char KfOpeningEntityPositionOffsetCheck[
     (u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];
@@ -688,13 +701,13 @@ void opening_ending_scroll_run(void)
     KfOpeningEntity *entity_26;
     KfOpeningEntity *entity_27;
     KfEndingLightingPhase lighting_phase;
-    s16 scrolling;
+    KfEndingScrollState scroll_state;
     KfEndingSequencePhase sequence_phase;
     s32 sequence_delay;
     s32 sequence_volume;
     s16 lighting_blend;
     s16 background_blend;
-    s16 scroll_phase;
+    KfEndingScrollTick scroll_tick;
     s16 panel_index;
     KfScreenRect *panel;
 
@@ -748,8 +761,8 @@ void opening_ending_scroll_run(void)
     lighting_phase = ENDING_LIGHT_TO_MIDPOINT;
     background_blend = 0;
     sequence_phase = ENDING_SEQUENCE_WAIT_SCROLL;
-    scrolling = 0;
-    scroll_phase = 0;
+    scroll_state = ENDING_SCROLL_WAIT_DISK;
+    scroll_tick = ENDING_SCROLL_TICK_STARFIELD_AND_PANELS;
     SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
     SetBackColor(0, 0, 0);
     SetFarColor(0, 0, 0);
@@ -811,9 +824,9 @@ void opening_ending_scroll_run(void)
         }
         if (entity_26->position.vy < ENDING_MODEL_FINAL_Y) {
             entity_26->position.vy += ENDING_MODEL_Y_STEP;
-        } else if (scrolling == 0) {
+        } else if (scroll_state == ENDING_SCROLL_WAIT_DISK) {
             entity_26->object_id = KF_OPENING_ENTITY_FREE;
-            scrolling = 1;
+            scroll_state = ENDING_SCROLL_ACTIVE;
             entity_27->object_id = KF_OPENING_ENDING_STARFIELD;
         }
         render_set_view_transform(
@@ -835,7 +848,7 @@ void opening_ending_scroll_run(void)
         sprite_add_f4(&opening_ending_scroll_backgrounds[1],
                       &opening_ending_scroll_background_color, ENDING_BACKGROUND_OT_DEPTH);
 
-        if (scroll_phase == 0) {
+        if (scroll_tick == ENDING_SCROLL_TICK_STARFIELD_AND_PANELS) {
             entity_27->rotation.z = (entity_27->rotation.z - 1) & KF_ANGLE_WRAP_MASK;
             if (entity_27->object_id != KF_OPENING_ENTITY_FREE &&
                 open_graphics_runtime.floor_item_state.material.color.r < ENDING_MAX_BRIGHTNESS) {
@@ -846,11 +859,12 @@ void opening_ending_scroll_run(void)
                     open_graphics_runtime.floor_item_state.material.color.r;
             }
         }
-        if (scrolling > 0) {
+        if (scroll_state > ENDING_SCROLL_WAIT_DISK) {
             panel_index = 0;
             panel = opening_ending_scroll_panels;
             do {
-                if (scroll_phase == 0 || scroll_phase == 2) {
+                if (scroll_tick == ENDING_SCROLL_TICK_STARFIELD_AND_PANELS ||
+                    scroll_tick == ENDING_SCROLL_TICK_PANELS) {
                     if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1].y >
                         ENDING_PANEL_STOP_Y) {
                         --panel->y;
@@ -867,8 +881,10 @@ void opening_ending_scroll_run(void)
                 ++panel_index;
                 panel++;
             } while (panel_index < ENDING_PANEL_COUNT);
-            if (--scroll_phase == -1) {
-                scroll_phase = ENDING_SCROLL_PHASE_COUNT - 1;
+            scroll_tick = KF_ENUM_DECODE(
+                KfEndingScrollTick, KF_ENUM_ENCODE(s16, scroll_tick) - 1);
+            if (scroll_tick == ENDING_SCROLL_TICK_WRAP) {
+                scroll_tick = ENDING_SCROLL_TICK_HOLD_AFTER_STARFIELD;
             }
         }
         display_present_frame();
