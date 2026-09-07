@@ -49,7 +49,7 @@ void render_weapon(void)
     KfTmdObject *object;
     s32 depth_bias;
 
-    if (player_state.weapon_attack_phase == -1) {
+    if (player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         return;
     }
     SetLightMatrix(&render_light_matrices[3]);

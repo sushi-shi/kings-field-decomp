@@ -12,6 +12,13 @@ enum {
 };
 
 enum {
+    PLAYER_WEAPON_MAGIC_PHASE_FIRST = 2400,
+    PLAYER_WEAPON_MAGIC_PHASE_LAST = 3900,
+    PLAYER_COLICHEMARDE_MAGIC_PHASE_FIRST = 900,
+    PLAYER_COLICHEMARDE_MAGIC_PHASE_LAST = 2400
+};
+
+enum {
     DARKNESS_FADE_BITS = 5,
     DARKNESS_FADE_STEPS = 1 << DARKNESS_FADE_BITS,
     PLAYER_NORMAL_MOVEMENT_LIMIT = 180,
@@ -92,7 +99,8 @@ void player_update(void)
     if (input & PADk) {
         input = PADRdown;
     }
-    if ((input & PADRdown) && !(player_previous_input & PADRdown) && player_state.weapon_attack_phase == -1) {
+    if ((input & PADRdown) && !(player_previous_input & PADRdown)
+        && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
             player_use_item(item);
@@ -193,12 +201,15 @@ void player_update(void)
         if (forward > 0) {
             player_move_horizontal(player_state.camera_rotation.vy, forward);
         } else if (forward < 0) {
-            player_move_horizontal((player_state.camera_rotation.vy + 0x800) & 0xfff, -forward);
+            player_move_horizontal(
+                (player_state.camera_rotation.vy + KF_ANGLE_HALF_TURN) & KF_ANGLE_WRAP_MASK, -forward);
         }
         if (strafe > 0) {
-            player_move_horizontal((player_state.camera_rotation.vy - 0x400) & 0xfff, strafe);
+            player_move_horizontal(
+                (player_state.camera_rotation.vy - KF_ANGLE_QUARTER_TURN) & KF_ANGLE_WRAP_MASK, strafe);
         } else if (strafe < 0) {
-            player_move_horizontal((player_state.camera_rotation.vy + 0x400) & 0xfff, -strafe);
+            player_move_horizontal(
+                (player_state.camera_rotation.vy + KF_ANGLE_QUARTER_TURN) & KF_ANGLE_WRAP_MASK, -strafe);
         }
         player_update_view_bob();
         if (input & PADLleft) {
@@ -265,30 +276,38 @@ void player_update(void)
                     player_state.weapon_attack_fully_charged = 0;
                     switch (player_state.equipped_weapon_id) {
                     case KF_ITEM_FLAME_SWORD:
-                        if (player_state.weapon_attack_phase >= 2400 && player_state.weapon_attack_phase <= 3900) {
+                        if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
+                            && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
                             player_state.weapon_magic_delay = 1;
-                            player_state.weapon_magic_shots_remaining = (3900 - player_state.weapon_attack_phase) / 300 + 1;
+                            player_state.weapon_magic_shots_remaining =
+                                (PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
+                                / KF_WEAPON_ATTACK_PHASE_STEP + 1;
                             goto magic_done;
                         }
                         break;
                     case KF_ITEM_TRIPLE_FANG:
                     case KF_ITEM_MOONLIGHT_SWORD:
-                        if (player_state.weapon_attack_phase >= 2400 && player_state.weapon_attack_phase <= 3900) {
+                        if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
+                            && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
                             player_state.weapon_magic_shots_remaining = 1;
                             player_state.weapon_magic_delay = 1;
                             goto magic_done;
                         }
                         break;
                     case KF_ITEM_COLICHEMARDE:
-                        if (player_state.weapon_attack_phase >= 900 && player_state.weapon_attack_phase <= 2400) {
+                        if (player_state.weapon_attack_phase >= PLAYER_COLICHEMARDE_MAGIC_PHASE_FIRST
+                            && player_state.weapon_attack_phase <= PLAYER_COLICHEMARDE_MAGIC_PHASE_LAST) {
                             player_state.weapon_magic_delay = 1;
-                            player_state.weapon_magic_shots_remaining = ((3900 - player_state.weapon_attack_phase) / 300 + 1) * 2;
+                            player_state.weapon_magic_shots_remaining =
+                                ((PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
+                                 / KF_WEAPON_ATTACK_PHASE_STEP + 1) * 2;
                             goto magic_done;
                         }
                         break;
                     }
                 }
-                if (player_state.selected_magic_id != KF_MAGIC_NONE && player_state.magic_charge == 5000) {
+                if (player_state.selected_magic_id != KF_MAGIC_NONE
+                    && player_state.magic_charge == KF_PLAYER_CHARGE_FULL) {
                     player_state.weapon_magic_delay = 0;
                     player_state.weapon_magic_shots_remaining = 0;
                     if (player_state.equipped_accessory_id == KF_ITEM_WIND_BLADE_BRACELET && player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
@@ -307,16 +326,18 @@ void player_update(void)
                 magic_id = player_state.selected_magic_id;
                 if (magic_id != KF_MAGIC_NONE) {
                     player_state.magic_charge +=
-                        fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate) * 2;
-                    if (player_state.magic_charge > 5000) {
-                        player_state.magic_charge = 5000;
+                        fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
+                        * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
+                    if (player_state.magic_charge > KF_PLAYER_CHARGE_FULL) {
+                        player_state.magic_charge = KF_PLAYER_CHARGE_FULL;
                     }
                 }
             } else {
                 player_state.magic_charge +=
-                    fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate) * 2;
-                if (player_state.magic_charge > 5000) {
-                    player_state.magic_charge = 5000;
+                    fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
+                        * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
+                if (player_state.magic_charge > KF_PLAYER_CHARGE_FULL) {
+                    player_state.magic_charge = KF_PLAYER_CHARGE_FULL;
                 }
             }
         }

@@ -1,5 +1,12 @@
 # Source constant naming
 
+The [complete player-core review](game-player-core-constants.md) names weapon
+charge/phase units, hit windows and collision geometry, then propagates shared
+values through input, rendering and actor attacks. It removes 116 inline
+occurrences across the family. The core and motion ledgers cover all 80
+remaining numeric/character literals in the fourteen-function core module,
+including both initialized data claims.
+
 The [player vertical-state review](game-player-vertical-state.md) types the
 saved byte as grounded/falling/step-up, propagates the shared camera height,
 and names motion/bob parameters and the bottomless-pit attribute. It replaces

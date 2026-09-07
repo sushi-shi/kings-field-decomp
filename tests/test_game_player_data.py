@@ -63,7 +63,8 @@ class GamePlayerDataTests(unittest.TestCase):
         for unit, _, name, payload in OWNERS:
             source = units[unit].source_path.read_text()
             if name == 'floor_entry_cells':
-                definition = re.search(r'KfFloorEntryCell floor_entry_cells\[5\] = \{(.*?)\};', source, re.S)
+                definition = re.search(
+                    r'KfFloorEntryCell floor_entry_cells\[[^]]+\] = \{(.*?)\};', source, re.S)
                 self.assertIsNotNone(definition)
                 pairs = re.findall(r'\{(\d+), (\d+)\}', definition[1])
                 self.assertEqual(bytes(int(value) for pair in pairs for value in pair), payload)

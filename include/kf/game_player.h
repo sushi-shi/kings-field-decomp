@@ -24,12 +24,22 @@ enum {
     KF_PLAYER_CAMERA_HEIGHT = 1500
 };
 
+/* Charge counters share a full value; weapon phase has a separate time base. */
+enum {
+    KF_PLAYER_CHARGE_FULL = 5000,
+    KF_PLAYER_CHARGE_GAIN_MULTIPLIER = 2,
+    KF_WEAPON_ATTACK_INACTIVE = -1,
+    KF_WEAPON_ATTACK_PHASE_STEP = 300,
+    KF_WEAPON_ATTACK_PHASE_END = 4096
+};
+
 enum {
     KF_WARP_SHIMMER_GROW_REMOVE = 0,
     KF_WARP_SHIMMER_SHRINK_REMOVE = 1,
     KF_WARP_SHIMMER_GROW_KEEP = 2,
     KF_FLOOR5_ENTRY_VARIANT = 1,
-    KF_FLOOR5_ALTERNATE_MUSIC_VARIANT = 3
+    KF_FLOOR5_ALTERNATE_MUSIC_VARIANT = 3,
+    KF_PLAYER_FLOOR_ENTRY_COUNT = 5
 };
 
 enum {
@@ -225,7 +235,7 @@ typedef struct KfFloorEntryCell {
 } KfFloorEntryCell;
 
 extern SoundRef player_sound_refs[3];
-extern KfFloorEntryCell floor_entry_cells[5];
+extern KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT];
 extern MATRIX player_death_saved_color_matrix;
 extern s32 player_death_saved_fog_near;
 extern KfPlayerLevelGrowth player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT];

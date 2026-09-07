@@ -458,7 +458,7 @@ void actor_try_attack_player(
         actor_state.player_position.vz,
         maximum_distance,
         definition->collision_height,
-        1700);
+        KF_COLLISION_PLAYER_HEIGHT);
     if (distance == -1) {
         return;
     }

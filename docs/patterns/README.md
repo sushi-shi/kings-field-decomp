@@ -311,6 +311,9 @@ promotes a probe to a proven historical toolchain.
 - [game-player-vertical-state.md](game-player-vertical-state.md): typed player
   vertical states, terrain step/fall parameters, walking bob, shared camera
   height and bottomless-pit identity; includes the motion literal ledger.
+- [game-player-core-constants.md](game-player-core-constants.md): weapon charge
+  and phase units, hit windows, collision geometry and shared HUD dimensions;
+  completes the literal ledger for all fourteen player-core functions.
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

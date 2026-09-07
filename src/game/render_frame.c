@@ -6,6 +6,11 @@
 #include <kf/game_state.h>
 #include <kf/pool.h>
 
+enum {
+    HUD_GAUGE_WIDTH = 50,
+    HUD_CHARGE_UNITS_PER_PIXEL = KF_PLAYER_CHARGE_FULL / HUD_GAUGE_WIDTH
+};
+
 /*
  * Per-frame renderer entry, called by the player warp/update path.  It rebuilds
  * the view transform, opens the frame, refreshes the HUD gauge table, draws the
@@ -60,14 +65,14 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         hud_sprites[9].state = 1;
         hud_sprites[10].state = 1;
         hud_sprites[11].state = 1;
-        hud_sprites[0].sprite.w = (player_state.vitals.current_hp * 50
-                                   + (player_state.vitals.maximum_hp - 1) / 50)
+        hud_sprites[0].sprite.w = (player_state.vitals.current_hp * HUD_GAUGE_WIDTH
+                                   + (player_state.vitals.maximum_hp - 1) / HUD_GAUGE_WIDTH)
                                   / player_state.vitals.maximum_hp;
-        hud_sprites[1].sprite.w = (player_state.vitals.current_mp * 50
-                                   + (player_state.vitals.maximum_mp - 1) / 50)
+        hud_sprites[1].sprite.w = (player_state.vitals.current_mp * HUD_GAUGE_WIDTH
+                                   + (player_state.vitals.maximum_mp - 1) / HUD_GAUGE_WIDTH)
                                   / player_state.vitals.maximum_mp;
-        hud_sprites[2].sprite.w = player_state.attack_charge_state.current / 100;
-        hud_sprites[3].sprite.w = player_state.magic_charge / 100;
+        hud_sprites[2].sprite.w = player_state.attack_charge_state.current / HUD_CHARGE_UNITS_PER_PIXEL;
+        hud_sprites[3].sprite.w = player_state.magic_charge / HUD_CHARGE_UNITS_PER_PIXEL;
         flags = player_state.status_effect_flags;
         if (flags & KF_PLAYER_STATUS_CURSE) {
             hud_sprites[7].state = 1;
