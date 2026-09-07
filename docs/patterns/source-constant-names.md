@@ -296,7 +296,8 @@ instructions distinguish the following domains:
 - The three-bit pre-square reduction in `fixed_vector2_length` reduces the
   magnitude before 32-bit multiplication; the final shift restores the scale.
 - RGB555 uses five-bit channel masks, green at bit 5, blue at bit 10, and the
-  STP bit at bit 15. Interpolation retains STP from the first input.
+  STP bit at bit 15. Interpolation retains STP from the first input for an
+  in-range blend; unclamped out-of-range channels can spill into that bit.
 - Matrix interpolation traverses nine rotation coefficients. Its counter is
   initialized to `element count - 1` and terminates at -1.
 - Fog setup passes projection distance 200 to `SetFogNear`, consistent with
@@ -2370,3 +2371,8 @@ The [equipment confirmation/layout review](game-equipment-confirm-layout.md)
 names seventeen request-state and coordinate uses. Its reconciled
 [equipment ledger](game-equipment-literal-ledger.md) individually accounts
 for all 103 remaining occurrences across the three modules.
+
+The [matrix/vector/color review](math-literal-coverage.md) completes the
+[189-occurrence ledger](math-literal-ledger.md) across nine files. It also
+reconciles GAME's RGB555 signature with the exact source and OPEN homolog,
+and removes unsupported indirect-caller/range assumptions.

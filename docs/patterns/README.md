@@ -547,3 +547,7 @@ promotes a probe to a proven historical toolchain.
 - [Equipment confirmation and name-column layout](game-equipment-confirm-layout.md):
   typed pending requests, fixed category rows and the
   [complete equipment ledger](game-equipment-literal-ledger.md).
+
+- [Matrix/vector/color coverage](math-literal-coverage.md): explicit component
+  arithmetic, corrected RGB555 signature and caller limits, with the
+  [complete nine-file ledger](math-literal-ledger.md).
