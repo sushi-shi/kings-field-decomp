@@ -59,10 +59,17 @@ KF_ENUM_END(KfCardFormatConfirmation)
 
 enum {
     KF_SAVE_SLOT_COUNT = 3,
-    KF_SAVE_DIRECTORY_ENTRIES = 4,
-    KF_SAVE_SLOT_EMPTY = 0,
-    KF_SAVE_SLOT_SPARE = 4
+    KF_SAVE_DIRECTORY_ENTRIES = 4
 };
+
+/* Directory tags use bytes; read/write APIs take signed-halfword slot IDs. */
+KF_ENUM_BEGIN(KfSaveSlotId, s16)
+    KF_SAVE_SLOT_EMPTY = 0,
+    KF_SAVE_SLOT_FIRST = 1,
+    KF_SAVE_SLOT_SECOND = 2,
+    KF_SAVE_SLOT_THIRD = 3,
+    KF_SAVE_SLOT_SPARE = 4
+KF_ENUM_END(KfSaveSlotId)
 
 enum {
     KF_SAVE_ICON_THREE_FRAMES = 0x13
@@ -91,7 +98,7 @@ typedef struct KfSaveSlotSummary {
 
 /* King's Field's 0x80-byte directory appended to the PlayStation header. */
 typedef struct KfSaveDirectory {
-    u8 slot_ids[KF_SAVE_DIRECTORY_ENTRIES];
+    KF_ENUM_STORAGE(KfSaveSlotId, u8) slot_ids[KF_SAVE_DIRECTORY_ENTRIES];
     u8 reserved[0x1c];
     KfSaveSlotSummary summaries[KF_SAVE_DIRECTORY_ENTRIES];
 } KfSaveDirectory;
@@ -153,7 +160,7 @@ extern void memory_card_initialize(void);
 extern void memory_card_shutdown_events(void);
 extern KfSaveCleanupResult save_file_cleanup_temporary(void);
 extern KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries);
-extern KfSaveResult save_system_read_slot(s16 slot_id);
-extern KfSaveResult save_system_write_slot(s16 slot_id);
+extern KfSaveResult save_system_read_slot(KfSaveSlotId slot_id);
+extern KfSaveResult save_system_write_slot(KfSaveSlotId slot_id);
 
 #endif

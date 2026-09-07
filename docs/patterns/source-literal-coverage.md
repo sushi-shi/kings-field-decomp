@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [menu sound-cue review](menu-sound-cue-domain.md):
+Working snapshot after the [save-slot ID review](save-slot-id-domain.md):
 **111 C files**, **112 source/image variants**, and
-**6,000 inline numeric/character occurrences**. Counts include authored
+**5,997 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 6,000 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,997 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -51,6 +51,9 @@ interfaces, with explicit price-index and shared-widget boundaries. Its existing
 table-order identities and constant values leave the literal count unchanged.
 The sound-cue review carries three feedback identities through the helper and
 90 callers, and names the common channel volume, removing two raw occurrences.
+The save-slot review types directory tags and read/write IDs while retaining
+byte storage and signed-halfword parameters. Naming the one-based origin in
+two menu calls and the catalogue reader removes three more raw occurrences.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -95,7 +98,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,777 occurrences.
+73 files; 4,774 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -143,7 +146,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_draw_window.c](../../src/game/menu_draw_window.c) | 3 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_enter_mode.c](../../src/game/menu_enter_mode.c) | 2 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_detail.c](../../src/game/menu_item_detail.c) | 82 | [complete detail/dialog ledger](game-menu-detail-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [menu_item_drop.c](../../src/game/menu_item_drop.c) | 120 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu_item_drop.c](../../src/game/menu_item_drop.c) | 118 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_model_preview.c](../../src/game/menu_item_model_preview.c) | 35 | [complete inventory-preview ledger](game-menu-inventory-preview-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_list_interact.c](../../src/game/menu_list_interact.c) | 56 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_list_render.c](../../src/game/menu_list_render.c) | 16 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -170,7 +173,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_scene.c](../../src/game/render_scene.c) | 10 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_sprite.c](../../src/game/render_sprite.c) | 0 | [complete renderer ledger](entity-render-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [resources.c](../../src/game/resources.c) | 14 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [save_system.c](../../src/game/save_system.c) | 133 | [complete ledger](game-save-system-literal-ledger.md); [status domain](game-save-status-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [save_system.c](../../src/game/save_system.c) | 132 | [complete ledger](game-save-system-literal-ledger.md); [status domain](game-save-status-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [sprite_add_ft4.c](../../src/game/sprite_add_ft4.c) | 12 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
 
 ## OPEN.EXE

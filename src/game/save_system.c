@@ -62,10 +62,10 @@ void memory_card_clear_events(void);
 KfSaveStatus memory_card_wait_event(void);
 void memory_card_undeliver_events(void);
 KfSaveStatus memory_card_format(void);
-KfSaveStatus save_file_write_slot(s16 slot_id);
+KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id);
 KfSaveResult save_system_read_header(void);
 KfSaveStatus save_file_read_header(void);
-KfSaveStatus save_file_read_slot(s16 slot_id);
+KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id);
 void save_file_initialize_buffers(void);
 s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status);
 s32 menu_load_message_image(s32 message_id);
@@ -84,10 +84,10 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
     if (result == KF_SAVE_RESULT_OK) {
         header = save_header_buffer;
         for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
-            u8 slot = header->directory.slot_ids[index];
+            KF_ENUM_STORAGE(KfSaveSlotId, u8) slot = header->directory.slot_ids[index];
 
             if (slot != KF_SAVE_SLOT_EMPTY && slot != KF_SAVE_SLOT_SPARE) {
-                s32 entry = slot - 1;
+                s32 entry = KF_ENUM_ENCODE(u8, slot) - KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST);
 
                 summaries[entry].experience = header->directory.summaries[index].experience;
                 summaries[entry].current_floor = header->directory.summaries[index].current_floor;
@@ -272,7 +272,7 @@ KfSaveStatus memory_card_format(void)
 }
 
 ADDRESS(0x8002b648, 0xf4)
-KfSaveResult save_system_write_slot(s16 slot_id)
+KfSaveResult save_system_write_slot(KfSaveSlotId slot_id)
 {
     KfSaveStatus status;
     KfSaveResult result;
@@ -316,7 +316,7 @@ KfSaveResult save_system_write_slot(s16 slot_id)
 }
 
 ADDRESS(0x8002b73c, 0x4f4)
-KfSaveStatus save_file_write_slot(s16 slot_id)
+KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
 {
     s32 file;
     s32 index;
@@ -504,7 +504,7 @@ KfSaveStatus save_file_read_header(void)
 }
 
 ADDRESS(0x8002bde4, 0xcc)
-KfSaveResult save_system_read_slot(s16 slot_id)
+KfSaveResult save_system_read_slot(KfSaveSlotId slot_id)
 {
     KfSaveStatus status;
     KfSaveResult result;
@@ -540,7 +540,7 @@ KfSaveResult save_system_read_slot(s16 slot_id)
 }
 
 ADDRESS(0x8002beb0, 0x3cc)
-KfSaveStatus save_file_read_slot(s16 slot_id)
+KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
 {
     KfSaveHeader header;
     s32 file;

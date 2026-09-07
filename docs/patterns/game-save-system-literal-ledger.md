@@ -6,14 +6,13 @@ comments, string contents and identifier digits are excluded. Signs remain in
 expressions; repeated tokens have separate rows. Retained encoded statuses
 and unconsumed storage do not acquire invented semantic identities.
 
-**133 retained occurrences.**
+**132 retained occurrences.**
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `save_system_read_catalog` | 78 | `0` | `memset(summaries, 0, 0x24);` | Observed partial clear: zero-fill 36 bytes although the three output summaries occupy 72. Its rationale is unresolved; preserve the exact span. |
 | `save_system_read_catalog` | 78 | `0x24` | `memset(summaries, 0, 0x24);` | Observed partial clear: zero-fill 36 bytes although the three output summaries occupy 72. Its rationale is unresolved; preserve the exact span. |
 | `save_system_read_catalog` | 82 | `0` | `for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {` | Begin the complete named directory-entry or magic-record scan at its first zero-based index. |
-| `save_system_read_catalog` | 86 | `1` | `s32 entry = slot - 1;` | Convert the one-based logical save-slot ID to its zero-based displayed summary row. |
 | `menu_play_input_sound` | 106 | `0xe` | `sound.program = 0xe;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |
 | `menu_play_input_sound` | 107 | `0x44` | `sound.note = 0x44;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |
 | `menu_play_input_sound` | 109 | `0xd` | `sound.program = 0xd;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |

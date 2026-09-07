@@ -608,7 +608,7 @@ KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open_render.h;asm;bas
 KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfSaveDirectory	0x00	0x04	slot_ids	u8[4]	supported	game_save.h;asm;xrefs	four save-slot identifiers
+KfSaveDirectory	0x00	0x04	slot_ids	KF_ENUM_STORAGE(KfSaveSlotId, u8)[4]	supported	game_save.h;asm;xrefs	four byte directory tags: empty0, logical slots1..3, spare4; signed-halfword API domain and byte storage: save-slot-id-domain.md
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	game_save.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	game_save.h;asm;xrefs	four slot summaries
 KfSaveHeader	0x00	0x200	playstation_header	KfPsxSaveHeader	supported	game_save.h;PlayStation-save-format	standard save header and three icon frames

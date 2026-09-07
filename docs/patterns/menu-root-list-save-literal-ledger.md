@@ -2,7 +2,7 @@
 
 Complete current per-occurrence ledger for `menu.c`, `menu_panels.c`,
 `menu_item_drop.c` and `menu_draw_window.c` after the
-[shared confirmation-state review](menu-confirm-state.md): **256 occurrences**.
+[shared confirmation-state review](menu-confirm-state.md): **254 occurrences**.
 Named definitions, claims, comments, string contents and identifier digits are
 excluded. Duplicate occurrences have individual rows. This consolidates the
 older choice, spell, item-list, save and window slices against current source.
@@ -221,7 +221,6 @@ without inventing a reason for the original capacity or timing choices.
 | `menu_item_drop.c` / `menu_save_panel` | 322 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
 | `menu_item_drop.c` / `menu_save_panel` | 332 | `0` | `for (i = 0; i < 3; i++) {` | Present exactly three frames of the loading/saving/formatting message before starting the operation. Zero initializes the draw counter; three is an authored draw count, independent of the three save slots. |
 | `menu_item_drop.c` / `menu_save_panel` | 332 | `3` | `for (i = 0; i < 3; i++) {` | Present exactly three frames of the loading/saving/formatting message before starting the operation. Zero initializes the draw counter; three is an authored draw count, independent of the three save slots. |
-| `menu_item_drop.c` / `menu_save_panel` | 339 | `1` | `status.operation = save_system_write_slot(cursor + 1);` | Convert zero-based visible slot index to the one-based on-card slot ID; the unit adjustment is the encoding boundary. |
 | `menu_item_drop.c` / `menu_save_panel` | 342 | `0` | `for (i = 0; i < 3; i++) {` | Present exactly three frames of the loading/saving/formatting message before starting the operation. Zero initializes the draw counter; three is an authored draw count, independent of the three save slots. |
 | `menu_item_drop.c` / `menu_save_panel` | 342 | `3` | `for (i = 0; i < 3; i++) {` | Present exactly three frames of the loading/saving/formatting message before starting the operation. Zero initializes the draw counter; three is an authored draw count, independent of the three save slots. |
 | `menu_item_drop.c` / `menu_save_panel` | 350 | `0` | `memset(summaries, 0, sizeof(summaries));` | Zero every local summary after the format attempt, preserving the original unconditional clearing before its status check. |
@@ -250,7 +249,6 @@ without inventing a reason for the original capacity or timing choices.
 | `menu_item_drop.c` / `menu_load_panel` | 447 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
 | `menu_item_drop.c` / `menu_load_panel` | 457 | `0` | `for (i = 0; i < 3; i++) {` | Present exactly three frames of the loading/saving/formatting message before starting the operation. Zero initializes the draw counter; three is an authored draw count, independent of the three save slots. |
 | `menu_item_drop.c` / `menu_load_panel` | 457 | `3` | `for (i = 0; i < 3; i++) {` | Present exactly three frames of the loading/saving/formatting message before starting the operation. Zero initializes the draw counter; three is an authored draw count, independent of the three save slots. |
-| `menu_item_drop.c` / `menu_load_panel` | 464 | `1` | `if (save_system_read_slot(cursor + 1) != KF_SAVE_RESULT_OK) {` | Convert the zero-based row to a one-based file slot and require normalized read result one; all other outcomes keep the panel open after acknowledgement. |
 | `menu_item_drop.c` / `menu_load_panel` | 465 | `1` | `while (PadRead(1) == 0) {` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
 | `menu_item_drop.c` / `menu_load_panel` | 465 | `0` | `while (PadRead(1) == 0) {` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
 | `menu_item_drop.c` / `menu_load_panel` | 473 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
