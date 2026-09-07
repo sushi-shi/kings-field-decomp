@@ -78,11 +78,12 @@ next_actor:
     active_render_blue = 0xb4;
     active_render_green = 0xb4;
     active_render_red = 0xb4;
+    i = floor_item_count;
     active_render_tpage = floor_item_tpage;
     active_render_clut = floor_item_clut;
     {
         KfFloorItem *items = floor_items;
-        for (i = floor_item_count - 1; i != -1; i--) {
+        for (i--; i != -1; i--) {
             u16 row = (items->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {

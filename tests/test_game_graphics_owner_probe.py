@@ -301,6 +301,46 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                                 self.assertNotEqual(wrong, expected)
                                 self.assertEqual(same_calls, calls)
 
+    def test_floor_item_counter_requires_direct_member_access(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        unit = manifest.by_name()['game.item']
+        claim = next(c for c in unit.functions if c.symbol == 'item_load_floor_placements')
+        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                     image.require(claim.va, claim.body_size)))
+        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+                if key == 'GAME.EXE'}
+        data['graphics_owner_probe'] = ORIGIN
+        functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
+        for owner in (False, True):
+            prefix = 'graphics_owner_probe.' if owner else ''
+            source = (candidate_source(unit, {claim.symbol}) if owner
+                      else unit.source_path.read_text())
+            for direct in (False, True):
+                candidate = source
+                if direct:
+                    declaration = f'    u16 *count = &{prefix}floor_item_count;\n'
+                    self.assertEqual(candidate.count(declaration), 1)
+                    self.assertEqual(candidate.count('    *count = 0;'), 1)
+                    self.assertEqual(candidate.count('        (*count)++;'), 1)
+                    candidate = candidate.replace(declaration, '').replace(
+                        '    *count = 0;', f'    {prefix}floor_item_count = 0;').replace(
+                        '        (*count)++;', f'        {prefix}floor_item_count++;')
+                with self.subTest(owner=owner, direct=direct), tempfile.TemporaryDirectory() as directory:
+                    obj = self.compile(Path(directory), unit, candidate)
+                    actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
+                    self.assertEqual(calls, [0x8005049C])
+                    self.assertEqual(actual == expected, owner and direct)
+                    self.assertEqual(len(actual) * 4, 432 if owner and direct else 428)
+                    count_uses = 3 if direct and not owner else 1
+                    self.assertEqual(addresses, [0x80095090] * count_uses
+                                     + [0x80095098, 0x80095900])
+                    if owner:
+                        wrong, same_calls, _ = linked_words(
+                            obj, unit, claim, dict(data, graphics_owner_probe=ORIGIN + 4), functions)
+                        self.assertNotEqual(wrong, actual)
+                        self.assertEqual(same_calls, calls)
+
     def test_narrow_material_owner_does_not_preserve_exact_frame(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()

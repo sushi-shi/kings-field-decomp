@@ -122,3 +122,10 @@ source data PSX 0/1, GAME 9/42, OPEN 2/19; target relinks 1/1, 75/77, 34/38;
 six conflicting-section cases, incomplete known-reference ownership and zero
 artifact failures. No header, toolchain profile, tooling, test, inventory or
 OPEN source change belongs to this campaign.
+
+The subsequent [floor-item ownership campaign](game-graphics-owner-pilot.md#floor-item-verdicts-and-verification)
+retains a pre-texture-copy snapshot of the existing floor counter, improving
+strict matching to 97.380684% and reducing the candidate to 1416 bytes without
+changing the known successor lists or call set. The owner-only loader exact
+and remaining traversal/ownership differences are recorded there; traversal
+is still partial and is not banked.

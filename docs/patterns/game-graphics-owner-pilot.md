@@ -260,3 +260,123 @@ Thus the eight-byte sprite result is not an independent production migration
 path. The complete owner jointly explains the sprite and frame renderer;
 the typed scratch representation and remaining consumer audit are still
 required. No production ownership or banked score changes in this control.
+
+## Floor-item consumer plan at `88d0ad1`
+
+Extend the unchanged complete-region declaration to the corrected entity
+traversal and placement loader, using the exact initializer and frame renderer
+as controls. The six image-qualified evidence views, full retail bodies/CFG,
+caller constraints, adjacent boundaries, source history and SDK boundaries
+were reviewed; the four current strict scores are rechecked before the trial.
+No function signature, algorithm, local type, compiler profile, fixture layout,
+production data identity or relocation target changes in this first control.
+
+| GAME function | Retail bytes; strict score | Evidence snapshot and owner hypothesis |
+| --- | --- | --- |
+| `8001f218 render_entities` | 1408; 95.164770% | No arguments, sole caller at `800202c0`; 48-byte frame, 61 blocks, 40 branches, nine calls, one internal jump, eight division traps, one return. The traversal plan records the complete five-pool semantics. Retail has 24 address pairs, derives floor_items from active tpage plus 62, and derives its coordinate cursor with plus 66; separate globals emit 25 pairs. Test the real field relationship without inter-object pointer arithmetic. |
+| `80020b4c item_load_floor_placements` | 432; 98.888885% | Placement pointer supplied at `8001b664` with `addiu a0,s2,4` in its delay slot; 40-byte frame, seven blocks, four branches, one rand call, three address pairs and one return. Preserve both sentinel-ffff passes, u16 count, 12/24-byte record strides, u8 tiles, signed s16 offsets, 2000/100 coordinate scales, and the full packed-byte random product shifted by 15. Retail transfers the count address before its first loop and independently forms the item base; test whether the common owner explains that transfer. |
+| `8001bce0 render_initialize` | 728; 100% | Exact no-argument control from display_initialize; 32-byte frame, three blocks, fifteen calls, 41 address pairs and one return. Preserve allocation 32c80, buffer stride 19640, four quadrant matrices, all texture API arguments and notification byte initialization. |
+| `8001fde4 render_frame` | 1304; 100% | Exact nullable VECTOR/SVECTOR forwarding control; 80-byte frame, twenty calls, 64 address pairs, four internal jumps and one return. Preserve HUD guards, material reloads across calls, notification loops, complete SDK matrices and final entity/weapon/display dispatch. |
+
+Every return owns its frame-restoring delay slot. No outgoing candidate or
+string evidence belongs to these four functions. Their game-specific pool,
+resource and rendering policy is absent from the vendored roster; rand is
+LIBAPI C47, texture APIs are LIBGPU PRIM, and matrix operations retain the
+reviewed LIBGTE identities and authentic SDK declarations. These library
+bodies are negative controls, not reconstructed game progress.
+
+Compile canonical and temporary-owner copies freshly. Resolve all REL addends
+to numeric destinations and verify the delinked target against hash-checked
+retail bytes before comparing complete words, ordered calls, address pairs and
+known successors. Shift the temporary owner root by four as a negative control.
+Any remaining difference is recorded without banking the temporary source.
+The typed scratch representation and all-consumer audit still precede a
+production ownership migration; this trial does not invent array capacities.
+
+### First floor-item owner result and focused source controls
+
+Both exact controls retain every linked word and ordered address pair. The
+loader remains 428 bytes with its original four-byte count-loop deficit.
+The traversal keeps 1420 bytes and all 61 known successor lists; its two
+saved-origin and view-pointer register roles now agree with retail, and the
+extra floor_items address pair disappears. It derives the pool from the blue
+member rather than the retail tpage member, however, and the material/count
+address order still differs. This is not exact reference formation merely
+because both sides now contain 24 pairs. The first remaining raw difference
+is the actor Z subtraction/mask destination at +1b0.
+
+The exact OPEN loader supplies an independently documented source control:
+remove the explicit count pointer and access the real count member directly
+for both reset and halfword increments. Earlier rejected GAME direct-global
+trials did not use this complete owner. Test that spelling under the shared
+owner without changing the two input walks or expansion, and compare the
+canonical direct-global form separately as a negative ownership control.
+
+For traversal, the three material stores publish one brightness value in
+blue/green/red order. Test the single right-associated assignment
+`red = green = blue = 0xb4`, preserving that store order, under both original
+and temporary-owner declarations. This expresses the shared value without
+adding state, changing widths, reordering independent side effects or forcing
+registers. Retain a production change only if it recovers evidenced retail
+instructions without a banked regression; neither owner-only success nor a
+different register choice by itself proves the original source spelling.
+
+Direct member accesses make the temporary-owner loader match all 432 retail
+bytes, all three ordered address pairs and the single rand call. Shifting its
+owner root still breaks the bytes. Direct standalone-global accesses instead
+emit five address pairs and retain 428 bytes. This isolates the count-transfer
+deficit to an ownership-dependent source expression, rather than establishing
+a compiler limitation. It remains a temporary result, not a banked function.
+
+The traversal's chained colour assignment leaves canonical linked words
+unchanged. Under the owner it derives the pool from red rather than blue, but
+still misses retail's tpage base and count ordering; do not retain it. Retail
+loads the floor count at +244, before the texture-selector copies, whereas
+the source reads it only in the subsequent loop initializer. Next test taking
+that existing counter snapshot after brightness publication and before those
+copies, then decrementing it in the loop initializer. Keep the original three
+colour stores. This follows the observed halfword load lifetime without an
+extra local, a new access or changes to the floor-item traversal's exit paths.
+
+### Floor-item verdicts and verification
+
+Retain the canonical counter snapshot. It restores the floor count's saved
+register/load lifetime, removes four bytes and raises strict render_entities
+from **95.164770% to 97.380684%**. The result is 1416 versus 1408 retail
+bytes, with all 61 known successor lists, forty branches, nine calls, eight
+division traps and the frame-restoring return preserved. Its ordered address
+sequence moves the count before the two texture reads, as retail requires;
+the same extra independent floor_items pair remains. The first raw difference
+is still the saved-origin register at +5c, followed by the actor Z
+subtraction/mask destination and the material-base/division residues. It is
+partial and is not banked. The canonical chained-colour form is not retained.
+
+Under the complete owner, that same snapshot emits 1416 bytes but does not
+close traversal: saved-origin/actor register roles change again and the pool
+still derives from the blue member. No production owner is inferred from a
+fuzzy gain or from eliminating an address pair alone.
+
+The loader's direct-member form supplies a new complete-owner witness:
+all 432 linked bytes, one rand call and three address pairs agree with retail.
+The four-way existing-pointer/direct-access and separate-global/shared-owner
+control is retained in the existing probe suite; only direct shared-member
+access is exact. Its retail SHA-256 is
+`777284628fdec37c637aa589a75aeb6cfa392c64f5735e694a16e5a97eb87acd`.
+Its canonical source stays unchanged at 98.888885% until the owner can be
+migrated consistently. Initializer and frame witnesses retain all 728/1304
+linked bytes and 41/64 ordered address pairs. Wrong-root controls fail without
+changing calls. These text-only experiments neither bank a function nor waive
+the unresolved scratch representation, remaining consumers or data-layout
+checks required for migration.
+
+Fresh production compilation reproduces both the measured snapshot and the
+strict-report object's complete linked words and ordered references. Across
+all 484 report rows, only render_entities changes relative to `a348881`;
+no previously exact function regresses. GAME remains 311/362, OPEN 98/108,
+PSX 1/1, or 410/471 total. Ruff, all 679 repository tests (84.189 seconds)
+and diff whitespace checks pass. The focused match actually compiles
+game.render_scene; full `kf build` retains the known source-data failures
+(PSX 0/1, GAME 9/42, OPEN 2/19), target relinks 1/1, 75/77 and 34/38,
+six conflicting-section cases, incomplete reference ownership and zero
+artifact failures. Concurrent player/effect/map naming edits are not part of
+this campaign; its only production C change is the floor-count lifetime.
