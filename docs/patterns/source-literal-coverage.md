@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [audio sequence-domain review](audio-sequence-domains.md):
+Working snapshot after the [resource/OPEN audio coverage review](resource-audio-coverage.md):
 **111 C files**, **112 source/image variants**,
 and **6,567 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **50 files / 4,194 occurrences**, the explicit ledger rows were compared
+For **54 files / 4,017 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -27,6 +27,10 @@ below. This validates retained-literal accounting, not proof that every possible
 semantic improvement has been exhausted.
 This includes the reviewed warp forwarding wrapper, which has zero retained
 literal occurrences.
+The resource/audio review adds five complete files and 61 occurrences. A changed
+registry-index expression in `map_scripts.c` no longer agrees with its older
+ledger row, so that file's 238 occurrences are temporarily excluded from this
+verified subtotal until the row and its referent evidence are reconciled.
 
 The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
 verified and normalized the death, item-use and notification accounting. Other
@@ -83,7 +87,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [asset_registry.c](../../src/game/asset_registry.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [audio.c](../../src/game/audio.c) | 39 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [camera_path.c](../../src/game/camera_path.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [cd_file.c](../../src/game/cd_file.c) | 35 | [domain notes](source-constant-names.md#cd-and-resource-registration-plan) | Expand the domain audit into current occurrence coverage. |
+| [cd_file.c](../../src/game/cd_file.c) | 35 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [collision.c](../../src/game/collision.c) | 265 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
 | [collision_grid.c](../../src/game/collision_grid.c) | 5 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
 | [color_lerp_rgb555.c](../../src/game/color_lerp_rgb555.c) | 0 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | No retained literal tokens. |
@@ -109,7 +113,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [map_load.c](../../src/game/map_load.c) | 53 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object.c](../../src/game/map_object.c) | 67 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_scripts.c](../../src/game/map_scripts.c) | 238 | [game-map-script ledger](game-map-script-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_scripts.c](../../src/game/map_scripts.c) | 238 | [game-map-script ledger](game-map-script-literal-ledger.md) | Reconcile the changed animation-registry index expression and its referent evidence before restoring complete coverage. |
 | [matrix.c](../../src/game/matrix.c) | 2 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [matrix_rotation.c](../../src/game/matrix_rotation.c) | 82 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [memory.c](../../src/game/memory.c) | 11 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
@@ -147,7 +151,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_map_cells.c](../../src/game/render_map_cells.c) | 191 | [domain notes](source-constant-names.md#map-mesh-banks-and-visibility-classes) | Expand the domain audit into current occurrence coverage. |
 | [render_scene.c](../../src/game/render_scene.c) | 15 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_sprite.c](../../src/game/render_sprite.c) | 1 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
-| [resources.c](../../src/game/resources.c) | 14 | [domain notes](source-constant-names.md#cd-and-resource-registration-plan) | Expand the domain audit into current occurrence coverage. |
+| [resources.c](../../src/game/resources.c) | 14 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [save_system.c](../../src/game/save_system.c) | 149 | [complete ledger](game-save-system-literal-ledger.md); [status domain](game-save-status-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [sprite_add_ft4.c](../../src/game/sprite_add_ft4.c) | 27 | [domain notes](source-constant-names.md#display-dimensions-and-ordering-table-bounds) | Expand the domain audit into current occurrence coverage. |
 
@@ -159,8 +163,8 @@ fields and address-derived function names are separate from this ten-line count.
 | --- | ---: | --- | --- |
 | [angle_mod_delta.c](../../src/open/angle_mod_delta.c) | 1 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [audio.c](../../src/open/audio.c) | 23 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [audio_play_voice.c](../../src/open/audio_play_voice.c) | 6 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
-| [audio_spatial.c](../../src/open/audio_spatial.c) | 6 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
+| [audio_play_voice.c](../../src/open/audio_play_voice.c) | 6 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [audio_spatial.c](../../src/open/audio_spatial.c) | 6 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [camera_path.c](../../src/open/camera_path.c) | 3 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [debug.c](../../src/open/debug.c) | 0 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | No retained literal tokens. |
 | [display_adjust.c](../../src/open/display_adjust.c) | 19 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
@@ -187,7 +191,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_tmd.c](../../src/open/render_tmd.c) | 36 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
 | [render_unlit.c](../../src/open/render_unlit.c) | 4 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
 | [resources.c](../../src/open/resources.c) | 31 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [sound_ref.c](../../src/open/sound_ref.c) | 0 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | No retained literal tokens. |
+| [sound_ref.c](../../src/open/sound_ref.c) | 0 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [sprite_add_ft4.c](../../src/open/sprite_add_ft4.c) | 42 | [domain notes](source-constant-names.md#display-dimensions-and-ordering-table-bounds) | Expand the domain audit into current occurrence coverage. |
 | [vector_math.c](../../src/open/vector_math.c) | 6 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [vector_xz_to_angle.c](../../src/open/vector_xz_to_angle.c) | 3 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |

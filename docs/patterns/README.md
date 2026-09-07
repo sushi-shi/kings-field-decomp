@@ -539,3 +539,7 @@ promotes a probe to a proven historical toolchain.
 - [Audio sequence domains](audio-sequence-domains.md): separate playback state and
   stop-mode enums, typed call sites and compiler rejection controls; the
   [complete audio/resource ledger](audio-sequence-literal-ledger.md) covers four modules.
+
+- [Resource loading and remaining OPEN audio coverage](resource-audio-coverage.md):
+  CD completion semantics, path offsets and voice dispatch, with a
+  [complete five-module ledger](resource-audio-literal-ledger.md).

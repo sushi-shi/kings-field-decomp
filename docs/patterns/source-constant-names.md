@@ -2359,3 +2359,9 @@ state/mode uses with distinct enums and propagates the stop-mode signature.
 Its [complete ledger](audio-sequence-literal-ledger.md) accounts for 100 retained
 occurrences across GAME/OPEN audio, OPEN resources and the opening controller;
 older grouped audio totals remain historical.
+
+The [resource/OPEN audio coverage review](resource-audio-coverage.md) completes
+current occurrence accounting for GAME CD/resource loading and the remaining
+OPEN spatial/voice wrappers. Its [ledger](resource-audio-literal-ledger.md)
+records 61 retained occurrences; map-sequence and variant-selector type
+propagation remain separate outstanding work.
