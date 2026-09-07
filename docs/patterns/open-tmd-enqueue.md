@@ -1,5 +1,45 @@
 # OPEN general TMD polygon emission
 
+## Function Match Plan: prepared-offset address base
+
+OPEN `render_enqueue_tmd` at `8001764c` resumed at strict 99.171080%, with
+the correct 80-block known CFG, 57 calls, packet-mode behavior and physical
+data targets, but a 3324-byte candidate against 3320 retail bytes. The six
+OPEN semantic views, complete switch, two caller paths, adjacent projection
+and unlit emitters, current graphics owner, SDK packet/GTE interfaces and
+source history were refreshed. Retail's accepted-packet tail reaches the
+ordering table relative to the live projected-vertex base; the candidate
+rematerialized it with an extra absolute address pair, shifting the default
+switch-table addends by four bytes.
+
+Apply the same complete-owner relationship already established in the unlit
+emitter, scoped to each accepted packet path. This removes the extra address
+pair and restores the 3320-byte body and all switch addends. A loop-wide owner
+pointer is a negative control: it rotates the projected/normal base registers
+and GCC folds the ordering-table access back to an absolute pair, so that form
+is removed.
+
+The prepared TMD indices are unsigned halfword byte offsets. Retail adds each
+offset before the common projected-buffer address. Holding that buffer as the
+32-bit address consumed by those offsets, rather than a C byte pointer, makes
+all projected-vertex additions agree while retaining typed pointers at their
+uses. A one-expression integer-address control independently recovered the
+same operand order before applying the representation to every mode.
+
+Strict objdiff rises to **99.967470%**. Retail and candidate are both 3320
+bytes; calls, CFG, case and default jump-table addends, and ordered physical
+referents agree. The remaining differences are confined to retail's 96-byte
+frame versus the probe's 88 bytes and the count spill at sp+48 versus sp+32.
+No instruction establishes an owner for the missing eight bytes, so no unused
+local or padding is added and the function remains unbanked.
+
+The full build preserves 101/108 exact OPEN functions and raises OPEN's
+size-weighted fuzzy result to 99.628%. The former OPEN render-TMD relocation
+addend mismatch is gone; only the established section-placement and data-owner
+gates remain for that image. Ruff and the focused TMD/transition tests pass.
+The full suite has 666 passes and 13 skips; its sole failure requires the
+absent external `/tmp/kf-toolchain-clean/B1/MIXA.DAT` fixture.
+
 ## Typed stream-base controls
 
 The TMD normal and projected-vertex streams contain `SVECTOR` and
