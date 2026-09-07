@@ -132,17 +132,17 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     active_render_tpage = notification_text_tpage;
     active_render_clut = notification_text_clut;
     record = notification_sprites;
-    if (record[KF_NOTIFICATION_TEXT_SPRITE].active == 1) {
+    if (record[KF_NOTIFICATION_TEXT_SPRITE].active == KF_NOTIFICATION_SPRITE_VISIBLE) {
         render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     }
-    if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == 1) {
+    if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == KF_NOTIFICATION_SPRITE_VISIBLE) {
         render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     }
     record += KF_NOTIFICATION_ONES_SPRITE;
     active_render_tpage = notification_digit_tpage;
     active_render_clut = notification_digit_clut;
     for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {
-        if (record->active == 1) {
+        if (record->active == KF_NOTIFICATION_SPRITE_VISIBLE) {
             render_enqueue_sprite(&record->sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
         }
         record++;

@@ -208,3 +208,30 @@ explains all 116 retained queue-unit occurrences. The refreshed
 [floor-script ledger](game-map-script-literal-ledger.md) has 276.
 Per-function snapshots, atlas decoding, compiler/ABI controls and verification
 logs remain under the ignored `build/constant-names/notification-identities/`.
+
+## Sprite visibility state
+
+The follow-up plan is to type `KfNotificationSprite.active` as a byte-backed
+`KfNotificationSpriteState`, name all hidden/visible values, and propagate the
+domain through initialization, `notify_effect_update` and `render_frame`.
+This state is separate from both message identity and notification effect phase.
+
+The reviewed GAME dossiers and `game_semantic_notification_sprites.tsv` establish
+the two consumers. In `notify_effect_update` (0x8001fafc, extent 0x2cc), byte
+stores select gold plus digits or a text row, then clear all six rows after
+rotation. In `render_frame` (0x8001fde4, extent 0x518), byte loads at 0x8002021c,
+0x8002023c and 0x80020288 are compared with exactly one before emission. Keep
+that exact-one predicate; this edit does not turn other byte values into true.
+The six 14-byte initialized rows at GAME 0x80055d20 all start hidden.
+
+The two game-owned bodies retain their existing calls, branches and validated
+data referents. Six initializer values, eighteen stores and three comparisons
+now use `KF_NOTIFICATION_SPRITE_HIDDEN` or `KF_NOTIFICATION_SPRITE_VISIBLE`.
+The field's curated type and existing inventory expectation agree. Its unread
+neighboring byte is still opaque; no padding or semantic identity is invented.
+
+This names 27 inline occurrences. The queue ledger now contains 92 retained
+occurrences, and the frame-renderer ledger contains 35; every remaining row
+was reconciled against source expressions. Builds, tests and post-edit matches
+are deferred until the naming pass finishes, at the user's request. Earlier
+match results above describe earlier source, not verification of this edit.

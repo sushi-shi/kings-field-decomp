@@ -29,12 +29,12 @@ typedef char notification_angle_offset[
 
 DATA(0x80055d20, 0x54)
 KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
-    {0, 0, {0, 0, 0x7f, 0x0f, 0xffc0, 0xffa0, 0x7f, 0x0f}},
-    {0, 0, {0, 0, 0x7f, 0x0f, 0xffc4, 0xffa0, 0x7f, 0x0f}},
-    {0, 0, {0xf0, 0, 7, 0x0b, 0xffc4, 0xffa3, 7, 0x0b}},
-    {0, 0, {0xf0, 0, 7, 0x0b, 0xffba, 0xffa3, 7, 0x0b}},
-    {0, 0, {0xf0, 0, 7, 0x0b, 0xffb0, 0xffa3, 7, 0x0b}},
-    {0, 0, {0xf0, 0, 7, 0x0b, 0xffa6, 0xffa3, 7, 0x0b}},
+    {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0, 0, 0x7f, 0x0f, 0xffc0, 0xffa0, 0x7f, 0x0f}},
+    {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0, 0, 0x7f, 0x0f, 0xffc4, 0xffa0, 0x7f, 0x0f}},
+    {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffc4, 0xffa3, 7, 0x0b}},
+    {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffba, 0xffa3, 7, 0x0b}},
+    {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffb0, 0xffa3, 7, 0x0b}},
+    {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffa6, 0xffa3, 7, 0x0b}},
 };
 
 DATA(0x8009506e, 0x8)
@@ -131,8 +131,8 @@ void notify_effect_update(void)
         if (id == KF_NOTIFICATION_GOLD) {
             KfNotificationSprite *sprite_records = notification_sprites;
             KfNotificationDigitBuffer digits;
-            sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = 1;
+            sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.v =
@@ -140,29 +140,29 @@ void notify_effect_update(void)
             menu_format_number(
                 notification_state.message_payloads[tail],
                 NOTIFICATION_GOLD_DIGITS, 0, digits.formatted);
-            notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = 1;
+            notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
                 &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, digits.values[3]);
-            notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = 1;
+            notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
                 &sprite_records[KF_NOTIFICATION_TENS_SPRITE].sprite, digits.values[2]);
-            notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = 1;
+            notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
                 &sprite_records[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, digits.values[1]);
-            notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = 1;
+            notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
                 &sprite_records[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, digits.values[0]);
         } else {
-            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = 1;
+            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.u =
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.v =
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
-            notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = 0;
+            notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
         }
         break;
     }
@@ -181,12 +181,12 @@ void notify_effect_update(void)
             KfNotificationControl *control;
             KfNotificationId id;
             notification_state.control.effect_angle_x = KF_ANGLE_EIGHTH_TURN;
-            notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = 0;
-            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = 0;
+            notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             control = &notification_state.control;
             id = notification_message_ids[notification_state.control.queue_tail];
             do {

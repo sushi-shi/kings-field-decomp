@@ -447,7 +447,7 @@ KfNotificationControl	0x03	0x01	hold_frames	u8	supported	notify.h;game_semantic_
 KfNotificationControl	0x04	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
 KfNotificationDigitBuffer	0x00	0x18	formatted	s16[12]	supported	notify.h;menu_format_number;notify_effect_update	signed formatter buffer including negative glyphs
 KfNotificationDigitBuffer	0x00	0x18	values	u16[12]	supported	notify.h;menu_format_number;notify_effect_update	unsigned halfword view consumed by the notification renderer
-KfNotificationSprite	0x00	0x01	active	u8	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
+KfNotificationSprite	0x00	0x01	active	KfNotificationSpriteState	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfNotificationState	0x00	0x10	message_payloads	u16[8]	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	parallel numeric payloads used only by message 0x13
