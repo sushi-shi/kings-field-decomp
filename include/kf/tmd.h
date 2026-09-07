@@ -53,6 +53,19 @@ typedef struct KfTmdObject {
     s32 scale;
 } KfTmdObject;
 
+/* Four-byte primitive header, viewed both as its packed word and disk bytes. */
+typedef union KfTmdPacketHeader {
+    u32 word;
+    struct {
+        u8 output_length;
+        u8 input_length;
+        u8 flag;
+        u8 mode;
+    } bytes;
+} KfTmdPacketHeader;
+typedef char check_tmd_packet_header_size[
+    sizeof(KfTmdPacketHeader) == KF_TMD_PACKET_HEADER_BYTES ? 1 : -1];
+
 /*
  * Primitive bodies follow the four-byte olen/ilen/flag/mode header. n0..n3
  * are normal indices, v0..v3 are vertex indices, and tu/tv are texel pairs.

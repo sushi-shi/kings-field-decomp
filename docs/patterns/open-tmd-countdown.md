@@ -1,5 +1,26 @@
 # OPEN TMD preparation countdown
 
+## Exact packet-header aggregate closure
+
+OPEN `tmd_prepare_primitive_indices` at `80017030` is now strict
+**100.000000000%** under `probe-gcc257-o2-g0`. The retained source models the
+real four-byte primitive header as `KfTmdPacketHeader`, with a packed-word view
+for mode extraction and a byte view for the input-length field. A by-value
+header local preserves that authored relationship:
+
+- `header.word = *(u32 *)packet` emits retail's full-word load;
+- `header.bytes.input_length` emits retail's independent byte load;
+- shifting `header.word` emits the existing mode extraction unchanged;
+- the optimized aggregate home accounts for retail's otherwise empty
+  eight-byte leaf frame.
+
+All 768 bytes now agree, including the entry stack decrement, return delay-slot
+restore, 18 known CFG blocks, five branches, four address pairs, seven internal
+jumps, 29-row switch, and all index loads/stores. The type expresses actual TMD
+packet data; no unused local, padding, volatile carrier, assembly, or compiler
+change is involved. The other thirteen functions in `open.render` remain
+instruction-identical.
+
 ## Related-address and debug-lifetime controls
 
 The exact `tmd_select` sibling exposes the old-GCC mechanism behind its empty
