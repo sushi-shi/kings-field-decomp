@@ -4,7 +4,7 @@
 
 /*
  * Draw the full status page: the left column of vitals (experience, level,
- * floor, coloured STR/MAG rating, HP/MP pairs, status icons, gold, the derived
+ * displayed class, HP/MP pairs, status icons, gold, the derived
  * attack and defence ratings) and the right column of per-element attack and
  * defence component values, all through the shared glyph workspace.
  */
@@ -12,7 +12,7 @@ ADDRESS(0x800264d8, 0xcb4)
 void menu_draw_status_details(void)
 {
     MenuGlyphString gs;
-    s32 color;
+    s32 class_glyph_offset;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
@@ -100,26 +100,26 @@ void menu_draw_status_details(void)
 
     gs.x = 0x4d;
     gs.y += 0x10;
-    if (player_state.base_magic < 0x28) {
-        color = 0;
+    if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
+        class_glyph_offset = 0;
     } else {
-        color = 2;
-        if (player_state.base_magic < 0x3c) {
-            color = 1;
+        class_glyph_offset = 2;
+        if (player_state.base_magic < MENU_CLASS_HIGH_STAT_MIN) {
+            class_glyph_offset = 1;
         }
     }
-    if (player_state.base_physical_power > 0x27) {
-        if (player_state.base_physical_power < 0x3c) {
-            color += 3;
+    if (player_state.base_physical_power > (MENU_CLASS_MIDDLE_STAT_MIN - 1)) {
+        if (player_state.base_physical_power < MENU_CLASS_HIGH_STAT_MIN) {
+            class_glyph_offset += MENU_CLASS_MAGIC_TIER_COUNT;
         } else {
-            color += 6;
+            class_glyph_offset += 2 * MENU_CLASS_MAGIC_TIER_COUNT;
         }
     }
-    color *= 4;
-    gs.codes[0] = color + 0x100;
-    gs.codes[1] = color + 0x101;
-    gs.codes[2] = color + 0x102;
-    gs.codes[3] = color + 0x103;
+    class_glyph_offset *= MENU_CLASS_LABEL_GLYPHS;
+    gs.codes[0] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH;
+    gs.codes[1] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 1;
+    gs.codes[2] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 2;
+    gs.codes[3] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 3;
     gs.codes[4] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 

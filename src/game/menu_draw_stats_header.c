@@ -3,16 +3,15 @@
 #include <kf/game.h>
 
 /*
- * Draw the status-panel header column: the fixed field labels down the left,
- * then the player's experience, level, floor, HP/MP value pairs, the coloured
- * STR/MAG rating glyphs (four cells whose base is chosen from the two base
- * stats), the active status-effect icons, and the gold total.
+ * Draw the main menu's player statistics: experience, level, displayed class,
+ * floor, HP/MP pairs, status-effect icons and gold. The class title occupies
+ * four atlas cells selected by the base physical-power and magic tiers.
  */
 ADDRESS(0x80025f38, 0x5a0)
 void menu_draw_stats_header(void)
 {
     MenuGlyphString gs;
-    s32 color;
+    s32 class_glyph_offset;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
@@ -80,26 +79,26 @@ void menu_draw_stats_header(void)
 
     gs.x = 0xed;
     gs.y += 0x17;
-    if (player_state.base_magic < 0x28) {
-        color = 0;
+    if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
+        class_glyph_offset = 0;
     } else {
-        color = 2;
-        if (player_state.base_magic < 0x3c) {
-            color = 1;
+        class_glyph_offset = 2;
+        if (player_state.base_magic < MENU_CLASS_HIGH_STAT_MIN) {
+            class_glyph_offset = 1;
         }
     }
-    if (player_state.base_physical_power > 0x27) {
-        if (player_state.base_physical_power < 0x3c) {
-            color += 3;
+    if (player_state.base_physical_power > (MENU_CLASS_MIDDLE_STAT_MIN - 1)) {
+        if (player_state.base_physical_power < MENU_CLASS_HIGH_STAT_MIN) {
+            class_glyph_offset += MENU_CLASS_MAGIC_TIER_COUNT;
         } else {
-            color += 6;
+            class_glyph_offset += 2 * MENU_CLASS_MAGIC_TIER_COUNT;
         }
     }
-    color *= 4;
-    gs.codes[0] = color + 0x100;
-    gs.codes[1] = color + 0x101;
-    gs.codes[2] = color + 0x102;
-    gs.codes[3] = color + 0x103;
+    class_glyph_offset *= MENU_CLASS_LABEL_GLYPHS;
+    gs.codes[0] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH;
+    gs.codes[1] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 1;
+    gs.codes[2] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 2;
+    gs.codes[3] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 3;
     gs.codes[4] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 

@@ -92,6 +92,12 @@ Gold Cross and Key of the Dead from the retail item names. It propagates those
 IDs through their actual consumers and explains all 155 retained shop literals,
 down from 188. Shop bank IDs remain indices rather than invented merchant names.
 
+The [displayed class-title review](game-menu-class-titles.md) decodes the
+nine four-cell title groups selected by base physical power and magic. It
+corrects the old color/rating interpretation in both status renderers, shares
+their threshold and atlas constants, and explains all 413 remaining numeric
+occurrences in the [status-text ledger](game-menu-status-literal-ledger.md).
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

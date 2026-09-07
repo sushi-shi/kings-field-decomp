@@ -256,6 +256,9 @@ promotes a probe to a proven historical toolchain.
   fixed pitch closes number rendering and removes the string-render preheader
   difference; retail atlas offsets prove the kana marks, blanks and slash.
   Four decoration immediates remain non-exact.
+- [game-menu-class-titles.md](game-menu-class-titles.md): decoded SOLDIER/MAGE
+  title grid, shared base-stat thresholds and atlas strides, and the complete
+  [status-text literal ledger](game-menu-status-literal-ledger.md).
 - [game-player-damage-labels.md](game-player-damage-labels.md): retail glyphs
   identify fifteen player/armor attack and defense fields, preserving the
   different fourth attack/defense labels and doubled cutting contribution.

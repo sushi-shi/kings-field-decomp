@@ -95,6 +95,15 @@ enum {
     MENU_NUMBER_SLASH = 11
 };
 
+/* Displayed class titles: physical tier rows, magic tier columns. */
+enum {
+    MENU_CLASS_MIDDLE_STAT_MIN = 40,
+    MENU_CLASS_HIGH_STAT_MIN = 60,
+    MENU_CLASS_MAGIC_TIER_COUNT = 3,
+    MENU_CLASS_LABEL_GLYPHS = 4,
+    MENU_CLASS_FIRST_GLYPH = 0x100
+};
+
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
     u16 x;
