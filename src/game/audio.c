@@ -23,6 +23,7 @@ ADDRESS(0x800328e0, 0xa4)
 void audio_initialize(void)
 {
     s32 index;
+    s16 inactive_voice_id;
 
     SsInit();
     SsSetTableSize((char *)audio_sequence_table,
@@ -35,9 +36,10 @@ void audio_initialize(void)
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
     audio_state.sequence_buffer = memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = 0;
+    inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
     do {
-        audio_state.voice_slots.voice_ids[index] = KF_AUDIO_VOICE_INACTIVE;
+        audio_state.voice_slots.voice_ids[index] = inactive_voice_id;
     } while (--index >= 0);
 }
 

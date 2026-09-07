@@ -271,6 +271,9 @@ promotes a probe to a proven historical toolchain.
 - [game-spatial-audio-lifetime.md](game-spatial-audio-lifetime.md): one evolving
   distance/attenuation value restores the GAME spatial-audio body, with the
   exact OPEN counterpart as an independent source-shape witness.
+- [game-audio-initialize-fill.md](game-audio-initialize-fill.md): the consumed
+  signed-halfword voice reset value shared with OPEN restores GAME's setup
+  order and the complete initializer body.
 - [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
   and signed in-place accumulation close the three-halfword scatter helper.
 - [game-floor-deformation.md](game-floor-deformation.md): mutable absolute
@@ -320,6 +323,9 @@ promotes a probe to a proven historical toolchain.
 - [game-player-progression.md](game-player-progression.md): training and stat
   limits, runtime growth-table extent and extrapolation, spell-learning
   requirements, and a complete progression/stat literal ledger.
+- [game-experience-loop-addresses.md](game-experience-loop-addresses.md): bounded
+  loop and typed-player-view controls do not recover the simultaneous player
+  and growth-field address lifetimes; the experience body remains non-exact.
 - [game-player-damage-units.md](game-player-damage-units.md): damage and
   multiplier scales, Q12 falloff, poison-roll conversion and restart override;
   completes literal-ledger coverage of the player death/combat module.
