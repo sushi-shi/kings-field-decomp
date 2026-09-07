@@ -1,5 +1,15 @@
 # OPEN unlit triangle emission
 
+## Prepared-offset address-base control
+
+The general TMD emitter's fixed-width projected-buffer address recovered all
+of its prepared-offset operand order, so the same representation was tested
+in this two-mode emitter. It leaves the candidate byte stream unchanged:
+retail still assigns the second and third projected vertices to the opposite
+saved registers in both modes, and the frame remains 64 versus 56 bytes.
+Restore the typed byte pointer. The representation is not the missing
+dependency in this function and supplies no new retained source fact.
+
 ## Function Match Plan: symmetric depth-use order
 
 At strict 99.455620%, retail and probe both emit 676-byte bodies with the
