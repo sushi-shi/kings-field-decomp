@@ -16,6 +16,13 @@ from retail. The retained `<=` form remains the best supported source. These
 results strengthen the classification as an unattributed cross-branch-tail
 residue; they do not justify a register hint, fake local, or compiler change.
 
+The remaining supplied GCC 2.5.7 scheduling control was also run: disabling
+the instruction scheduler leaves the scroll controller at 51 blocks and drops
+its listing similarity to 74.9%. It additionally regresses four exact sibling
+functions in the consolidated unit. Together with the prior plain and R3000
+controls, no available scheduling profile recovers this tail; the attributed
+R2000 profile is restored.
+
 ## Camera-call/local-initialization order (`073ada0`)
 
 OPEN `80014e28` began this pass at 1944 bytes and strict 97.129630%. The six
