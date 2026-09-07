@@ -11,6 +11,12 @@
 void item_menu_buy(s32 shop_id);
 void item_menu_sell(s32 shop_id);
 
+enum {
+    MENU_PICKUP_CONFIRM_TEXT_X = 60,
+    MENU_PICKUP_CONFIRM_ACCEPT_Y = 26,
+    MENU_PICKUP_CONFIRM_DECLINE_Y = MENU_PICKUP_CONFIRM_ACCEPT_Y + MENU_CONFIRM_ROW_STEP
+};
+
 DATA(0x800580e8, 0x390)
 KfMenuAssets menu_assets;
 
@@ -496,7 +502,7 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
 {
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
-    s32 choice = 0;
+    KfMenuConfirmChoice choice = KF_MENU_CHOICE_ACCEPT;
     s32 confirm = 0;
     s32 input = 0;
     KfItemPickupResult result = KF_ITEM_PICKUP_PENDING;
@@ -507,13 +513,13 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
     if (menu_load_item_model(item_id) != 0)
         return KF_ITEM_PICKUP_NOT_ACQUIRED;
 
-    accept_label.x = 0x3c;
-    accept_label.y = 0x1a;
+    accept_label.x = MENU_PICKUP_CONFIRM_TEXT_X;
+    accept_label.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
     accept_label.codes[0] = 0x53;
     accept_label.codes[1] = 0x6a;
     accept_label.codes[2] = MENU_TEXT_END;
-    decline_label.x = 0x3c;
-    decline_label.y = 0x2e;
+    decline_label.x = MENU_PICKUP_CONFIRM_TEXT_X;
+    decline_label.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
     decline_label.codes[0] = 0x63;
     decline_label.codes[1] = 0x61;
     decline_label.codes[2] = 0x6a;
@@ -523,19 +529,19 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
     menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
         &accept_label,
-        &decline_label, 0, 0);
+        &decline_label, KF_MENU_CHOICE_ACCEPT, 0);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
         &accept_label,
-        &decline_label, 0, 0);
+        &decline_label, KF_MENU_CHOICE_ACCEPT, 0);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
         &accept_label,
-        &decline_label, 0, 0);
+        &decline_label, KF_MENU_CHOICE_ACCEPT, 0);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
@@ -560,14 +566,14 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
         if (((input & PADLup) != 0 && (prev & PADLup) == 0)
                 || ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (choice != 0)
-                choice = 0;
+            if (choice != KF_MENU_CHOICE_ACCEPT)
+                choice = KF_MENU_CHOICE_ACCEPT;
             else
-                choice = 1;
+                choice = KF_MENU_CHOICE_DECLINE;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
-            if (choice != 0) {
+            if (choice != KF_MENU_CHOICE_ACCEPT) {
                 result = KF_ITEM_PICKUP_NOT_ACQUIRED;
             } else {
                 result = KF_ITEM_PICKUP_STACK_FULL;

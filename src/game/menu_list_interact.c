@@ -2,6 +2,11 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    MENU_LIST_CONFIRM_ACCEPT_Y = 185,
+    MENU_LIST_CONFIRM_DECLINE_Y = MENU_LIST_CONFIRM_ACCEPT_Y + MENU_CONFIRM_ROW_STEP
+};
+
 /* Confirm the current list entry using a two-option footer. Up/down toggles
  * the footer; confirm accepts its selected option, and cancel declines.
  * The final highlighted frame is presented before waiting for button release.
@@ -13,23 +18,23 @@ KfMenuConfirmResult menu_list_interact(
 {
     MenuGlyphString opt0;
     MenuGlyphString opt1;
-    s32 selected;
+    KfMenuConfirmChoice selected;
     u32 highlight;
     u32 pad;
     u32 prev_pad;
     KfMenuConfirmResult result;
 
-    selected = 0;
+    selected = KF_MENU_CHOICE_ACCEPT;
     highlight = 0;
     pad = 0;
     result = KF_MENU_CONFIRM_PENDING;
     while (PadRead(1) != 0) {
     }
 
-    opt0.x = 0x60;
-    opt0.y = 0xb9;
-    opt1.x = 0x60;
-    opt1.y = 0xcd;
+    opt0.x = MENU_CONFIRM_TEXT_X;
+    opt0.y = MENU_LIST_CONFIRM_ACCEPT_Y;
+    opt1.x = MENU_CONFIRM_TEXT_X;
+    opt1.y = MENU_LIST_CONFIRM_DECLINE_Y;
     if (kind == KF_MENU_CONFIRM_USE) {
         opt0.codes[0] = 0x72;
         opt0.codes[1] = 0x42;
@@ -103,15 +108,15 @@ opt0_done:
         if (((pad & PADLup) != 0 && (prev_pad & PADLup) == 0) ||
             ((pad & PADLdown) != 0 && (prev_pad & PADLdown) == 0)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (selected == 0) {
-                selected = 1;
+            if (selected == KF_MENU_CHOICE_ACCEPT) {
+                selected = KF_MENU_CHOICE_DECLINE;
             } else {
-                selected = 0;
+                selected = KF_MENU_CHOICE_ACCEPT;
             }
         } else if ((pad & PADRright) != 0 && (prev_pad & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             highlight = 1;
-            result = KF_ENUM_DECODE(KfMenuConfirmResult, -selected);
+            result = menu_confirm_result_from_choice(selected);
         } else if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_CONFIRM_CANCELLED;

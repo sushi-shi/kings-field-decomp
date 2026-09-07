@@ -1,5 +1,9 @@
 # GAME menu confirmation protocol
 
+Current list-confirmation literals are accounted for in the
+[confirmation/item ledger](game-menu-confirm-literal-ledger.md). The earlier
+counts and source spellings below describe their recorded audit snapshot.
+
 ## Function Match Plan
 
 Starting at master `51dfd8d`, use the hash-verified GAME retail and the six-view

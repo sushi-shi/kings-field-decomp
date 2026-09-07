@@ -1,5 +1,9 @@
 # Save-panel and confirmation literal ledger
 
+Current the two-option prompt are accounted for in the
+[confirmation/item ledger](game-menu-confirm-literal-ledger.md). The earlier
+counts and source spellings below describe their recorded audit snapshot.
+
 Complete ledger for `menu_two_option_prompt`, `menu_save_load_hub`,
 `menu_save_panel` and `menu_load_panel`: **140 retained occurrences**,
 down from 213. Named constant definitions and retail claims are excluded;

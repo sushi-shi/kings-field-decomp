@@ -116,11 +116,26 @@ enum {
     KF_SHOP_CHOICE_COUNT = KF_SHOP_ROW_RETURN + 1
 };
 
+KF_ENUM_BEGIN(KfMenuConfirmChoice, s32)
+    KF_MENU_CHOICE_ACCEPT = 0,
+    KF_MENU_CHOICE_DECLINE = 1
+KF_ENUM_END(KfMenuConfirmChoice)
+
 KF_ENUM_BEGIN(KfMenuConfirmResult, s32)
     KF_MENU_CONFIRM_PENDING = -99,
     KF_MENU_CONFIRM_CANCELLED = -1,
     KF_MENU_CONFIRM_ACCEPTED = 0
 KF_ENUM_END(KfMenuConfirmResult)
+
+static inline KfMenuConfirmResult menu_confirm_result_from_choice(KfMenuConfirmChoice choice)
+{
+    return KF_ENUM_DECODE(KfMenuConfirmResult, -KF_ENUM_ENCODE(s32, choice));
+}
+
+enum {
+    MENU_CONFIRM_TEXT_X = 96,
+    MENU_CONFIRM_ROW_STEP = 20
+};
 
 /* Signed list-result controls; nonnegative payloads are IDs or list rows. */
 enum {
@@ -354,7 +369,7 @@ extern void menu_draw_stats_header(void);
 extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
-    s32 selected, s32 highlight);
+    KfMenuConfirmChoice selected, s32 highlight);
 extern void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, s32 flag);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(

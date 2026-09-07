@@ -1,5 +1,9 @@
 # GAME item-pickup outcome types
 
+Current pickup literals are accounted for in the
+[confirmation/item ledger](game-menu-confirm-literal-ledger.md). The earlier
+counts and source spellings below describe their recorded audit snapshot.
+
 ## Function Match Plan
 
 Starting from `fd3ecb9`, freshly hash-verify GAME retail and inspect the pickup

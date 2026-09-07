@@ -2,6 +2,11 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    MENU_PROMPT_ACCEPT_Y_OFFSET = 44,
+    MENU_PROMPT_DECLINE_Y_OFFSET = MENU_PROMPT_ACCEPT_Y_OFFSET + MENU_CONFIRM_ROW_STEP
+};
+
 /*
  * Interactive two-option confirm dialog.  Draws the window and the two labels
  * every frame, toggling the selected option on an up/down edge, and returns
@@ -16,7 +21,7 @@ KfMenuConfirmResult menu_two_option_prompt(
 {
     MenuGlyphString label_a;
     MenuGlyphString label_b;
-    s32 selected = 0;
+    KfMenuConfirmChoice selected = KF_MENU_CHOICE_ACCEPT;
     s32 highlight = 0;
     s32 composite = -1;
     s32 input = 0;
@@ -29,13 +34,13 @@ KfMenuConfirmResult menu_two_option_prompt(
     if (kind == KF_MENU_WINDOW_SAVE || kind == KF_MENU_WINDOW_LOAD)
         composite = highlight_row;
 
-    label_a.x = 0x60;
-    label_a.y = count * 20 + 44;
+    label_a.x = MENU_CONFIRM_TEXT_X;
+    label_a.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_ACCEPT_Y_OFFSET;
     label_a.codes[0] = 0x59;
     label_a.codes[1] = 0x41;
     label_a.codes[2] = MENU_TEXT_END;
-    label_b.x = 0x60;
-    label_b.y = count * 20 + 64;
+    label_b.x = MENU_CONFIRM_TEXT_X;
+    label_b.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_DECLINE_Y_OFFSET;
     label_b.codes[0] = 0x41;
     label_b.codes[1] = 0x41;
     label_b.codes[2] = 0x43;
@@ -59,14 +64,14 @@ KfMenuConfirmResult menu_two_option_prompt(
         if (((input & PADLup) != 0 && (prev & PADLup) == 0) ||
             ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (selected)
-                selected = 0;
+            if (selected != KF_MENU_CHOICE_ACCEPT)
+                selected = KF_MENU_CHOICE_ACCEPT;
             else
-                selected = 1;
+                selected = KF_MENU_CHOICE_DECLINE;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             highlight = 1;
-            result = KF_ENUM_DECODE(KfMenuConfirmResult, -selected);
+            result = menu_confirm_result_from_choice(selected);
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_CONFIRM_CANCELLED;

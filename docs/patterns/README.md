@@ -86,6 +86,10 @@ promotes a probe to a proven historical toolchain.
   shared preview rotation, draw-rate units, Q12 lighting and retained literal ledger.
 - [game-menu-preview-source-controls.md](game-menu-preview-source-controls.md):
   audited name-row ordering residue and recovered sell/buy price-selection CFG.
+- [game-menu-confirm-choice.md](game-menu-confirm-choice.md): typed accept/decline
+  choices across input and rendering, with distinct outcome domains.
+- [game-menu-confirm-literal-ledger.md](game-menu-confirm-literal-ledger.md):
+  current per-occurrence confirmation and item-module literal accounting.
 - [game-menu-confirmation-protocol.md](game-menu-confirmation-protocol.md): typed
   footer kinds, previews and results; retail Japanese labels and literal ledger.
 - [game-equipment-domains.md](game-equipment-domains.md): separate player-slot

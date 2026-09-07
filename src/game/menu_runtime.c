@@ -51,16 +51,16 @@ POLY_FT4 *current_poly_ft4 = 0;
 ADDRESS(0x800291ec, 0x10c)
 void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
-    s32 selected, s32 highlight)
+    KfMenuConfirmChoice selected, s32 highlight)
 {
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
-    if (selected == 0) {
+    if (selected == KF_MENU_CHOICE_ACCEPT) {
         menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)option0);
     } else {
         menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)option1);
     }
     if (highlight == 1) {
-        if (selected == 0) {
+        if (selected == KF_MENU_CHOICE_ACCEPT) {
             menu_blit_sprite_translucent(
                 &menu_assets.option_highlight, (const MenuPoint *)option0);
             menu_blit_sprite_translucent(
