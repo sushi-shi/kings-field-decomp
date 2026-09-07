@@ -154,7 +154,7 @@ DATA(0x80037284, 0x8)
 u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};
 
 DATA(0x8003728c, 0x4)
-u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};
+CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};
 
 DATA(0x80037290, 0x10)
 static u16 opening_ending_scroll_backgrounds[2][4] = {
@@ -532,7 +532,7 @@ void opening_scene3_run(void)
                     opening_scene3_overlay_uv,
                     texture_pages[overlay_index],
                     cluts[overlay_index],
-                    opening_scene3_overlay_color,
+                    &opening_scene3_overlay_color,
                     PANEL_OT_DEPTH);
             }
             overlay_index++;
@@ -834,9 +834,9 @@ void opening_ending_scroll_run(void)
         color_lerp_cvector(&opening_ending_scroll_bottom_start,
                           &opening_ending_scroll_bottom_end, &bottom_color, background_blend);
         sprite_add_g4(opening_ending_scroll_backgrounds[0],
-                      &top_color.r, &top_color.r, &bottom_color.r, &bottom_color.r);
+                      &top_color, &top_color, &bottom_color, &bottom_color);
         sprite_add_f4(opening_ending_scroll_backgrounds[1],
-                      &opening_ending_scroll_background_color.r, ENDING_BACKGROUND_OT_DEPTH);
+                      &opening_ending_scroll_background_color, ENDING_BACKGROUND_OT_DEPTH);
 
         if (scroll_phase == 0) {
             entity_27->rotation.z = (entity_27->rotation.z - 1) & KF_ANGLE_WRAP_MASK;
@@ -865,7 +865,7 @@ void opening_ending_scroll_run(void)
                 if ((u16)(panel[1] + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                     sprite_add_ft4(panel, opening_ending_scroll_uv,
                                    texture_pages[panel_index], cluts[panel_index],
-                                   &opening_ending_scroll_panel_color.r, PANEL_OT_DEPTH);
+                                   &opening_ending_scroll_panel_color, PANEL_OT_DEPTH);
                 }
                 ++panel_index;
                 panel += 4;

@@ -3,7 +3,7 @@
 
 ADDRESS(0x8001399c, 0x1c0)
 void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
-                    u8 *color, u16 ot_index)
+                    const CVECTOR *color, u16 ot_index)
 {
     POLY_FT4 *prim = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
 
@@ -27,9 +27,9 @@ void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
     prim->v2 = texcoords[2] + texcoords[6];
     prim->u3 = texcoords[0] + texcoords[4];
     prim->v3 = texcoords[2] + texcoords[6];
-    prim->r0 = color[0];
-    prim->g0 = color[1];
-    prim->b0 = color[2];
+    prim->r0 = color->r;
+    prim->g0 = color->g;
+    prim->b0 = color->b;
     AddPrim(
         &open_graphics_runtime.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
         prim);
@@ -37,7 +37,7 @@ void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
 
 ADDRESS(0x80013b5c, 0x114)
 void sprite_add_f4(
-    const u16 *position, const u8 *color, u16 ot_index)
+    const u16 *position, const CVECTOR *color, u16 ot_index)
 {
     POLY_F4 *prim = (POLY_F4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
 
@@ -51,9 +51,9 @@ void sprite_add_f4(
     prim->y2 = position[1] + position[3];
     prim->x3 = position[0] + position[2];
     prim->y3 = position[1] + position[3];
-    prim->r0 = color[0];
-    prim->g0 = color[1];
-    prim->b0 = color[2];
+    prim->r0 = color->r;
+    prim->g0 = color->g;
+    prim->b0 = color->b;
     AddPrim(
         &open_graphics_runtime.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
         prim);

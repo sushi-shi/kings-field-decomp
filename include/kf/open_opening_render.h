@@ -8,8 +8,8 @@
 extern void opening_render_frame(
     const VECTOR *position, const SVECTOR *rotation);
 extern void sprite_add_g4(
-    const u16 *position, const u8 *color0, const u8 *color1,
-    const u8 *color2, const u8 *color3);
+    const u16 *position, const CVECTOR *color0, const CVECTOR *color1,
+    const CVECTOR *color2, const CVECTOR *color3);
 extern void opening_entity_render(KfOpeningEntity *entity);
 extern void opening_render_entities(void);
 

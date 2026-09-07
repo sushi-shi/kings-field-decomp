@@ -3,7 +3,7 @@
 
 ADDRESS(0x80014314, 0x1c0)
 void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
-                   u8 *color, u16 ot_index)
+                   const CVECTOR *color, u16 ot_index)
 {
     POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
@@ -27,9 +27,9 @@ void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
     prim->v2 = texcoords[2] + texcoords[6];
     prim->u3 = texcoords[0] + texcoords[4];
     prim->v3 = texcoords[2] + texcoords[6];
-    prim->r0 = color[0];
-    prim->g0 = color[1];
-    prim->b0 = color[2];
+    prim->r0 = color->r;
+    prim->g0 = color->g;
+    prim->b0 = color->b;
     AddPrim(
         &display_state.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
         prim);

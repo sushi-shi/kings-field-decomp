@@ -1462,7 +1462,7 @@ GAME.EXE	0x80057b0c	0x4	frame_pacer_vsync_count	global	load	u32	frame_pacer	supp
 GAME.EXE	0x80057b10	0x4	frame_pacer_last_vsync	global	load	u32	frame_pacer	supported	game_semantic_math_lifecycle.tsv;asm;xrefs;named-HI16-reloc	last vertical-sync count admitted by frame_pacer_wait; retail references it by named HI16/LO16 reloc, proving external linkage
 GAME.EXE	0x80057b14	0x8	fade_screen_rect	global	load	u16[4]	display	supported	asm;func_800144d4;sprite_add_ft4	position rect {x,y,w,h} of the faded full-screen transition image
 GAME.EXE	0x80057b1c	0x8	fade_screen_uv	global	load	u8[8]	display	supported	asm;func_800144d4;sprite_add_ft4	texture-coordinate rect (even bytes u,v,w,h) of the faded full-screen transition image
-GAME.EXE	0x80057b24	0x4	fade_screen_color	global	load	u8[4]	display	supported	asm;func_800144d4	base modulation color ramped up 6 per frame during the fade-in
+GAME.EXE	0x80057b24	0x4	fade_screen_color	global	load	CVECTOR	display	supported	asm;func_800144d4	base modulation color ramped up 6 per frame during the fade-in
 GAME.EXE	0x80057b28	0x7	fade_screen_path	global	load	char[7]	display	supported	asm;func_800144d4;cd_file_load_into	disc file name loaded and faded in by func_800144d4
 GAME.EXE	0x80057b30	0x4	player_previous_input	static	load	u32	player	supported	game_semantic_player_update.tsv;asm;xrefs;retail-zero	zero-initialized previous frame input bits held exclusively by and defined in player_update for edge detection
 GAME.EXE	0x80057b3c	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	asm;cd_file_load_allocated;cd_file_load_into;func_8001ae60	"\\KF\\": five bytes copied to the head of the CD path buffer before the file name
@@ -2672,7 +2672,7 @@ OPEN.EXE	0x80037244	0x4	DAT_80037244	unknown	load	undefined4		address-only	data.
 OPEN.EXE	0x80037248	0x4	DAT_80037248	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x8003724c	0x4	DAT_8003724c	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 OPEN.EXE	0x80037284	0x8	opening_scene3_overlay_uv	global	load	u8[8]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	texture-coordinate rectangle stored in even bytes {u, v, width, height}
-OPEN.EXE	0x8003728c	0x4	opening_scene3_overlay_color	global	load	u8[4]	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	RGB 200 modulation color plus one pad byte
+OPEN.EXE	0x8003728c	0x4	opening_scene3_overlay_color	global	load	CVECTOR	opening_scene3	supported	open_semantic_opening_scene3.tsv;asm;retail-bytes;sprite_add_ft4	RGB 200 modulation color plus one pad byte
 OPEN.EXE	0x80037290	0x10	opening_ending_scroll_backgrounds	static	load	u16[2][4]	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	two four-halfword background rectangles supplied to G4 and F4 builders
 OPEN.EXE	0x800372a0	0x4	opening_ending_scroll_top_start	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	initial top gradient color; complete four-byte SDK color copy
 OPEN.EXE	0x800372a4	0x4	opening_ending_scroll_bottom_start	static	load	CVECTOR	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	initial bottom gradient color; complete four-byte SDK color copy
@@ -2683,7 +2683,7 @@ OPEN.EXE	0x800372b4	0x4	opening_ending_scroll_background_color	static	load	CVECT
 OPEN.EXE	0x800372b8	0x8	opening_ending_scroll_uv	static	load	u8[8]	opening_ending_scroll	supported	open_semantic_ending_scroll.tsv;asm;retail-bytes;SDK-headers	packed texture-coordinate bytes used by all nine panels
 OPEN.EXE	0x800372c0	0x8	opening_fade_rect	global	load	u16[4]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	full-screen fade rectangle {x, y, width, height}
 OPEN.EXE	0x800372c8	0x8	opening_fade_uv	global	load	u8[8]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	texture-coordinate rectangle with u, v, width, and height in its even bytes
-OPEN.EXE	0x800372d0	0x4	opening_fade_color	global	load	u8[4]	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	base modulation color copied locally and ramped by six each frame
+OPEN.EXE	0x800372d0	0x4	opening_fade_color	global	load	CVECTOR	opening_fade	supported	open_semantic_opening_fade.tsv;asm;retail-bytes;opening_fade_in;GAME-homolog	base modulation color copied locally and ramped by six each frame
 OPEN.EXE	0x800372d4	0x6	opening_initial_tim_path	unknown	load	char[6]	opening_controller	supported	open_semantic_opening_controller.tsv;asm;retail-bytes;sole-xref	B0\\L0. initial TIM path loaded directly into the display asset buffer before the opening scenes
 OPEN.EXE	0x800372dc	0x5	cd_path_prefix	unknown	load	char[5]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	"\\KF\\": five bytes copied to the head of the OPEN CD path buffer before the file name
 OPEN.EXE	0x800372e4	0x3	cd_version_suffix	unknown	load	char[3]	cd_file	supported	open_semantic_cd_file.tsv;asm;direct-bytes	";1": ISO 9660 version suffix appended to every OPEN CD path

@@ -1,10 +1,6 @@
 #include <kf/address.h>
 #include <kf/open_render.h>
 
-typedef struct {
-    u8 v[4];
-} OpeningFadeColor;
-
 DATA(0x800372c0, 0x8)
 u16 opening_fade_rect[4] = {
     KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
@@ -14,12 +10,12 @@ u8 opening_fade_uv[8] = {
     0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
 };
 DATA(0x800372d0, 0x4)
-OpeningFadeColor opening_fade_color = {{0, 0, 0, 0}};
+CVECTOR opening_fade_color = {0, 0, 0, 0};
 
 ADDRESS(0x800155c0, 0xfc)
 void opening_fade_in(void)
 {
-    OpeningFadeColor color = opening_fade_color;
+    CVECTOR color = opening_fade_color;
     int tpage;
     int clut;
     s32 frame;
@@ -31,15 +27,15 @@ void opening_fade_in(void)
     frame = 0;
     do {
         display_begin_frame();
-        if (color.v[0] < KF_TRANSITION_FADE_LIMIT) {
-            color.v[0] += KF_TRANSITION_FADE_STEP;
+        if (color.r < KF_TRANSITION_FADE_LIMIT) {
+            color.r += KF_TRANSITION_FADE_STEP;
         } else {
-            color.v[0] = KF_TRANSITION_FADE_LIMIT;
+            color.r = KF_TRANSITION_FADE_LIMIT;
         }
-        color.v[2] = color.v[0];
-        color.v[1] = color.v[0];
+        color.b = color.r;
+        color.g = color.r;
         sprite_add_ft4(
-            opening_fade_rect, opening_fade_uv, tpage, clut, color.v, KF_TRANSITION_OT_DEPTH);
+            opening_fade_rect, opening_fade_uv, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
         frame++;
     } while (frame < KF_TRANSITION_FADE_FRAMES);

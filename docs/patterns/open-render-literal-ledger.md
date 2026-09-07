@@ -10,7 +10,8 @@ constants and retains its separate earlier literal audit.
 
 ## `src/open/opening_render.c`
 
-24 retained occurrences.
+12 retained occurrences. Color components now use SDK fields; see
+[quad color types](quad-color-types.md).
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -26,18 +27,6 @@ constants and retains its separate earlier literal audit.
 | `sprite_add_g4` | 33 | `2` | `prim->x3 = position[0] + position[2];` | Rectangle width halfword index. |
 | `sprite_add_g4` | 34 | `1` | `prim->y3 = position[1] + position[3];` | Rectangle Y halfword index. |
 | `sprite_add_g4` | 34 | `3` | `prim->y3 = position[1] + position[3];` | Rectangle height halfword index. |
-| `sprite_add_g4` | 35 | `0` | `prim->r0 = color0[0];` | Red byte index in the borrowed color array. |
-| `sprite_add_g4` | 36 | `1` | `prim->g0 = color0[1];` | Green byte index in the borrowed color array. |
-| `sprite_add_g4` | 37 | `2` | `prim->b0 = color0[2];` | Blue byte index in the borrowed color array. |
-| `sprite_add_g4` | 38 | `0` | `prim->r1 = color1[0];` | Red byte index in the borrowed color array. |
-| `sprite_add_g4` | 39 | `1` | `prim->g1 = color1[1];` | Green byte index in the borrowed color array. |
-| `sprite_add_g4` | 40 | `2` | `prim->b1 = color1[2];` | Blue byte index in the borrowed color array. |
-| `sprite_add_g4` | 41 | `0` | `prim->r2 = color2[0];` | Red byte index in the borrowed color array. |
-| `sprite_add_g4` | 42 | `1` | `prim->g2 = color2[1];` | Green byte index in the borrowed color array. |
-| `sprite_add_g4` | 43 | `2` | `prim->b2 = color2[2];` | Blue byte index in the borrowed color array. |
-| `sprite_add_g4` | 44 | `0` | `prim->r3 = color3[0];` | Red byte index in the borrowed color array. |
-| `sprite_add_g4` | 45 | `1` | `prim->g3 = color3[1];` | Green byte index in the borrowed color array. |
-| `sprite_add_g4` | 46 | `2` | `prim->b3 = color3[2];` | Blue byte index in the borrowed color array. |
 
 ## `src/open/opening_scene0_render.c`
 

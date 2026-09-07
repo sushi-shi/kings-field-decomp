@@ -10,9 +10,6 @@ typedef struct {
 typedef struct {
     u8 v[8];
 } FadeUv;
-typedef struct {
-    u8 v[4];
-} FadeColor;
 
 /* Position rect {x, y, w, h}, texture-coordinate rect (even bytes u, v, w, h),
  * and the fade modulation color that ramps up from black. */
@@ -25,7 +22,7 @@ FadeUv fade_screen_uv = {{
     0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
 }};
 DATA(0x80057b24, 0x4)
-FadeColor fade_screen_color = {{0, 0, 0, 0}};
+CVECTOR fade_screen_color = {0, 0, 0, 0};
 DATA(0x80057b28, 0x7)
 char fade_screen_path[7] = "B0\\L0.";
 
@@ -36,7 +33,7 @@ void display_play_transition(void)
 {
     FadeRect rect = fade_screen_rect;
     FadeUv uv = fade_screen_uv;
-    FadeColor color = fade_screen_color;
+    CVECTOR color = fade_screen_color;
     int tpage;
     int clut;
     s32 i;
@@ -58,14 +55,14 @@ void display_play_transition(void)
 
     for (i = 0; i < KF_TRANSITION_FADE_FRAMES; i++) {
         display_begin_frame();
-        if (color.v[0] < KF_TRANSITION_FADE_LIMIT) {
-            color.v[0] += KF_TRANSITION_FADE_STEP;
+        if (color.r < KF_TRANSITION_FADE_LIMIT) {
+            color.r += KF_TRANSITION_FADE_STEP;
         } else {
-            color.v[0] = KF_TRANSITION_FADE_LIMIT;
+            color.r = KF_TRANSITION_FADE_LIMIT;
         }
-        color.v[2] = color.v[0];
-        color.v[1] = color.v[0];
-        sprite_add_ft4(rect.v, uv.v, tpage, clut, color.v, KF_TRANSITION_OT_DEPTH);
+        color.b = color.r;
+        color.g = color.r;
+        sprite_add_ft4(rect.v, uv.v, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
     }
     DrawSync(0);

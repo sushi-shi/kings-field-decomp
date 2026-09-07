@@ -1,6 +1,6 @@
 # OPEN scene retained-literal ledger
 
-Companion to [the scene-domain evidence](open-scene-domains.md). All **592**
+Companion to [the scene-domain evidence](open-scene-domains.md). All **591**
 current numeric/character occurrences in `src/open/opening_scenes.c` have
 individual rows, including duplicate tokens within one expression. Comments,
 strings, identifier digits, named enum/macro definitions and address claims
@@ -400,11 +400,10 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
 | `opening_scene3_overlay_uv` | 153 | `254` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
 | `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_color` | 156 | `4` | `u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};` | Four authored color bytes: RGB followed by the retained fourth byte. |
-| `opening_scene3_overlay_color` | 156 | `200` | `u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};` | Authored red color component; preserve the gradient endpoint or material modulation. |
-| `opening_scene3_overlay_color` | 156 | `200` | `u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
-| `opening_scene3_overlay_color` | 156 | `200` | `u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
-| `opening_scene3_overlay_color` | 156 | `0` | `u8 opening_scene3_overlay_color[4] = {200, 200, 200, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
+| `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored red color component; preserve the gradient endpoint or material modulation. |
+| `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
+| `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
+| `opening_scene3_overlay_color` | 156 | `0` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
 | `opening_ending_scroll_backgrounds` | 159 | `2` | `static u16 opening_ending_scroll_backgrounds[2][4] = {` | Two explicitly initialized background rectangles. |
 | `opening_ending_scroll_backgrounds` | 159 | `4` | `static u16 opening_ending_scroll_backgrounds[2][4] = {` | Four halfwords per rectangle: X, Y, width, height. |
 | `opening_ending_scroll_backgrounds` | 160 | `0` | `{0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
