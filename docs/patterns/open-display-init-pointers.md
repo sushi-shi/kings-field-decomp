@@ -10,6 +10,15 @@ below and is byte-identical to the ordinary RGB assignments. There is no
 authentic SDK macro boundary left that could retain retail's first-`dtd`
 address; do not introduce a project-local wrapper to manufacture one.
 
+The original Release 2.5 floppy archive also contains the Sony graphics,
+movie, card, and sound demo C sources. A complete scan of those sources finds
+double-buffer setup expressed as direct `SetDefDrawEnv(&db[i].draw, ...)` and
+`SetDefDispEnv(&db[i].disp, ...)` calls, followed by direct `PutDrawEnv` and
+`PutDispEnv` calls. None customizes `dtd` or `dfe`, and none retains a byte or
+post-increment cursor over DRAWENV. These samples support the authentic SDK
+object view but provide no missing source idiom for retail's member-rooted
+lifetime.
+
 ## Post-increment typed DRAWENV cursor control
 
 A single authentic `DRAWENV *` cursor, initialized after the four definition
