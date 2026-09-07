@@ -358,8 +358,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     s32 step;
     u32 cell_z;
     u32 cell_x;
-    s16 delta_x;
-    s16 delta_z;
+    SVECTOR delta;
     s16 attempt = 1;
     u8 type;
 
@@ -374,21 +373,22 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             == KF_COLLISION_NONE) {
             break;
         }
-        delta_x = collision_target.position.vx - player_state.camera_position.vx;
-        delta_z = collision_target.position.vz - player_state.camera_position.vz;
-        angle = vector_xz_to_angle(delta_x, delta_z);
+        /* The bearing inputs use opposite X/Z subtraction directions. */
+        delta.vx = collision_target.position.vx - player_state.camera_position.vx;
+        delta.vz = player_state.camera_position.vz - collision_target.position.vz;
+        angle = vector_xz_to_angle(delta.vx, delta.vz);
         angle = (angle_mod_delta_le_half_turn(heading, angle) == 0
             ? angle + (KF_ANGLE_HALF_TURN + PLAYER_COLLISION_DEFLECTION_ANGLE)
             : angle + (KF_ANGLE_HALF_TURN - PLAYER_COLLISION_DEFLECTION_ANGLE))
             & KF_ANGLE_WRAP_MASK;
         radius = collision_target.radius
             + (KF_COLLISION_PLAYER_RADIUS + PLAYER_COLLISION_SLIDE_CLEARANCE);
-        delta_z = (rcos(angle) * radius) >> KF_FIXED12_BITS;
-        delta_x = (-rsin(angle) * radius) >> KF_FIXED12_BITS;
+        delta.vz = (rcos(angle) * radius) >> KF_FIXED12_BITS;
+        delta.vx = (-rsin(angle) * radius) >> KF_FIXED12_BITS;
         attempt--;
-        new_z = collision_target.position.vz + delta_z;
+        new_z = collision_target.position.vz + delta.vz;
         dz = new_z - player_state.camera_position.vz;
-        new_x = collision_target.position.vx + delta_x;
+        new_x = collision_target.position.vx + delta.vx;
         dx = new_x - player_state.camera_position.vx;
         if (attempt == -1) {
             return 1;

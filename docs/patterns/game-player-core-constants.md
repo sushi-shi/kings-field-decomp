@@ -120,6 +120,11 @@ foot height can be mid-integration.
 
 ## Verification
 
+This is the historical constants-only verification. The later
+[bearing/vector correction](game-horizontal-movement-bearing.md) supersedes
+the horizontal movement score and frame result below without changing its
+constants or the other thirteen unit functions.
+
 Every row in the table retains its original strict percentage and raw body:
 3591 candidate words, 134 calls and 485 ordered address references across
 18 reviewed functions. Sixteen exact bodies independently reproduce all

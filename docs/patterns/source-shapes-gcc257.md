@@ -615,6 +615,12 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | `la t4,collision_target; addiu s8,t4,24`, deltas as absolute `lhu`, re-target as `lw -16(s8)`/`lw -24(s8)` | plain global accesses reproduce this: the hoisted invariant is the radius address and CSE folds the position loads onto it | same |
 | residue: `la s0,player_state+202; lbu 0(s0)`, then `addiu s5,s0,-22` as the base for the camera position, floor height and map cell through the loop and after it | every probe (global accesses, a `KfPlayerState *` pointer, a map-cell pointer, a floor-height pointer, the pointer assigned before or inside the loop) either folds the pointer into absolute addresses or anchors the base at another offset; the register permutation and the two halfword delta spills follow from that. Best result 54% with direct accesses. Unattributed | same |
 
+The later [bearing/vector correction](game-horizontal-movement-bearing.md)
+supersedes the scalar-delta explanation above: the halfword stores and
+88-byte frame are reproduced by an SDK `SVECTOR`. It also corrects the
+previously reversed Z bearing input. Strict matching reaches 96.568960%;
+the pointer/register differences remain unattributed.
+
 ### Player frame update (`player_update`)
 
 | Retail evidence | Source shape | Function |

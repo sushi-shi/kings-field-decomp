@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
+  corrected collision-bearing Z sign, SDK short-vector stack layout,
+  and rejected cell-pointer/angle-update controls.
 - [semantic-field-names.md](semantic-field-names.md): consumer-backed actor,
   player, map, render, and effect field identities, reused effect storage,
   and the remaining serialized-field questions.
