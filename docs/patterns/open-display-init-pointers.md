@@ -1,5 +1,15 @@
 # OPEN display-initialization pointer lifetimes
 
+## Release 2.5 LIBGPU macro audit
+
+The pinned Release 2.5 `LIBGPU.H` (`3.51`, 1994-11-21) defines DRAWENV with
+adjacent byte fields `dtd`, `dfe`, `isbg`, `r0`, `g0`, and `b0`, but supplies
+no environment helper for the two flags or for DRAWENV submission. The only
+applicable field macro is `setRGB0`, whose exact expansion was already tested
+below and is byte-identical to the ordinary RGB assignments. There is no
+authentic SDK macro boundary left that could retain retail's first-`dtd`
+address; do not introduce a project-local wrapper to manufacture one.
+
 ## Post-increment typed DRAWENV cursor control
 
 A single authentic `DRAWENV *` cursor, initialized after the four definition
