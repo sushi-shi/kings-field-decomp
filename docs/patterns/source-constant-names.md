@@ -1,5 +1,11 @@
 # Source constant naming
 
+The [complete effect-dispatch review](game-effect-dispatch-constants.md)
+names projectile geometry, phase boundaries, child emission, homing,
+ground-branch and actor-spawner parameters. It removes 104 inline occurrences
+and documents every one of the 153 retained literals, preserving counter
+snapshots, random-call order and unresolved resource identities.
+
 The [effect-update review](game-effect-update-constants.md) names collision
 and sound distances, angular acceleration, orbit period/radius, withdrawal
 limits, floor-sound progress and child spacing. It removes 25 inline uses

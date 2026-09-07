@@ -1,5 +1,10 @@
 # GAME effect literal audit
 
+The [complete dispatcher follow-up](game-effect-dispatch-constants.md) names
+remaining tuning and phase boundaries and supplies its current
+[153-occurrence ledger](game-effect-dispatch-literal-ledger.md). Its counts
+supersede the dispatcher portion of this historical census.
+
 The [update follow-up](game-effect-update-constants.md) supplies current
 helper parameter names, typed declarations and a complete
 [105-occurrence update ledger](game-effect-update-literal-ledger.md).
