@@ -1,5 +1,22 @@
 # OPEN floor-item rendering: facing-byte mask
 
+## Exact GAME/OPEN closure: 16-bit value, byte consumption
+
+OPEN `800190f4 render_floor_item`, 332 bytes, began at strict 98.795180%.
+Its nine calls, six validated address pairs, one internal jump, 80-byte frame,
+signed depth biases, sprite selection and animation tail already agreed. The
+only missing retail instruction was the unsigned-byte narrowing between the
+high-nibble mask and its zero test.
+
+Retail's two operations describe distinct domains: the decoded facing value is
+held as `u16`, while the branch consumes it as `u8`. Declaring the real local
+accordingly and spelling that consumption as `(u8)facing` emits the observed
+`andi 0xf0; andi 0xff` sequence. A focused rebuild is strict **100.000000%**:
+all 332 bytes, calls and relocations match, and the exact preceding entity
+renderer remains unchanged. The image-qualified GAME homolog at `8001ed90`
+has the same source shape and residue; the identical correction is also strict
+**100.000000%** for all 332 GAME bytes, nine calls and six address references.
+
 ## GAME/OPEN Function Match Plan: one-based facing index at `29d1ddb`
 
 Both image-qualified six-view snapshots were refreshed against hash-verified
