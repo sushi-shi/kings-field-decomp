@@ -247,7 +247,7 @@ KfFloorDeformSegment	0x05	0x01	start_height	u8	supported	game_effect.h;effect_fl
 KfFloorDeformSegment	0x06	0x01	end_height	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu6	grid height at progress 4096; also determines sound Y times -100
 KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
-KfFloorItem	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id copied from the placement record
+KfFloorItem	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; animation_frame is added by rendering
 KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
 KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
 KfFloorItem	0x04	0x04	position_x	s32	supported	item.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
@@ -256,7 +256,7 @@ KfFloorItem	0x0c	0x04	position_z	s32	supported	item.h;asm;func_80020b4c	world z 
 KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	item.h;func_80020b4c	not written by the loader
 KfFloorItem	0x14	0x01	animation_frame	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
 KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	item.h;func_80020b4c	not written by the loader
-KfFloorItemPlacement	0x00	0x02	item_id	u16	supported	item.h;asm;func_80020b4c	item id; 0xffff terminates the placement list
+KfFloorItemPlacement	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; 0xffff terminates the placement stream
 KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
 KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
 KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	item.h;asm;func_80020b4c	map tile z (floor-height grid row)

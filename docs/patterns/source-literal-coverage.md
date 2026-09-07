@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [item-stock bank review](item-stock-banks.md):
+Working snapshot after the [floor-sprite field review](floor-sprite-base-index.md):
 **111 C files**, **112 source/image variants**, and
 **6,007 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -37,6 +37,9 @@ all 33 current constructor calls, dispatch, weapon effects and masked actor
 profile selection; its explicit numeric boundaries retain the same literal count.
 The stock-bank review names 62 direct player/shop selectors and four price-column
 origins, removing 66 more raw occurrences while retaining quantity values.
+The floor-sprite review corrects the misleading `item_id` field to
+`base_sprite_index` in both placement and runtime records; its halfword stream
+terminator is separate from inventory item IDs. No literal counts change.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

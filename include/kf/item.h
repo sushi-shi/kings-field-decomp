@@ -110,12 +110,13 @@ enum {
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
  * stream, and the runtime floor-item entry (24 bytes) the loader expands it
- * into. The tile bytes index map_floor_height_grid[tile_z][tile_x]; the world
+ * into. base_sprite_index selects the first sprite descriptor of the animation.
+ * The tile bytes index map_floor_height_grid[tile_z][tile_x]; the world
  * position is tile*2000 plus the signed local offset, and the height byte times
  * -100 sinks the item onto the floor.
  */
 typedef struct KfFloorItemPlacement {
-    u16 item_id;
+    u16 base_sprite_index;
     u8 facing_and_frame_count;
     u8 unknown_03;
     u8 tile_z;
@@ -126,7 +127,7 @@ typedef struct KfFloorItemPlacement {
 } KfFloorItemPlacement;
 
 typedef struct KfFloorItem {
-    u16 item_id;
+    u16 base_sprite_index;
     u8 facing_and_frame_count;
     u8 unknown_03;
     s32 position_x;

@@ -62,11 +62,12 @@ The existing save payload copies the whole owner and needs no bank conversion.
 
 ## Remaining item-ID work
 
-The separate item-ID review found byte-sized equipment slots and halfword floor
-records. `KF_ITEM_NONE` is 0xff while `KF_FLOOR_ITEM_END` is 0xffff; a single byte
-enum cannot represent both without losing that distinction. Item-domain typing
-must preserve both sentinels and the integer payload boundaries in shared menu
-APIs. This bank naming pass does not claim to complete that work or resolve the
+The initial review grouped byte-sized equipment IDs with the halfword selector
+in floor records. The subsequent [renderer trace](floor-sprite-base-index.md)
+corrects that assumption: the floor selector is `base_sprite_index`, and its
+0xffff terminator belongs to the sprite-placement stream. Inventory item IDs
+and their 0xff absent value form a separate domain. Propagating that domain
+through equipment and shared menu payload boundaries remains open, as does the
 floor placement's unconsumed byte +3.
 
 ## Source result

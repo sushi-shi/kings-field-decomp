@@ -20,7 +20,7 @@ CHECK_OFFSET(KfSpriteQuad, w, 8);
 CHECK_OFFSET(KfSpriteQuad, h, 10);
 
 typedef char floor_item_size[sizeof(KfFloorItem) == 24 ? 1 : -1];
-CHECK_OFFSET(KfFloorItem, item_id, 0);
+CHECK_OFFSET(KfFloorItem, base_sprite_index, 0);
 CHECK_OFFSET(KfFloorItem, facing_and_frame_count, 2);
 CHECK_OFFSET(KfFloorItem, position_x, 4);
 CHECK_OFFSET(KfFloorItem, position_y, 8);
