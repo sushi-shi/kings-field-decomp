@@ -133,6 +133,11 @@ is `n*v + 10*n*(n-1)`. The first update uses the initial velocity before
 adding gravity. The original choice of these distances and acceleration
 remains unknown; the names identify their actual jobs and units.
 
+The [player damage-unit follow-up](game-player-damage-units.md) shares the
+dimensionless tenths-multiplier unity through the direct actor attack and
+player-bounce calls. Their argument remains ten; the actor-target damage
+calculation keeps its independent scaling contract.
+
 Actor damage computes each channel in tenths of an HP, adds half a unit
 before division by ten, then multiplies by `scale/5000`. Full weapon charge
 and ordinary effect callers supply 5000, so this scale's unity is distinct

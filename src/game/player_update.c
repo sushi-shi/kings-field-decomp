@@ -538,11 +538,11 @@ void player_update(void)
     switch (attribute) {
     case 0x3a:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {
-            player_apply_damage(5, 3, 5, 0, 0, 0, 0x1000, 10);
+            player_apply_damage(5, 3, 5, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         }
         break;
     case 0x3f:
-        player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, 0x1000, 10);
+        player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         break;
     }
     if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {

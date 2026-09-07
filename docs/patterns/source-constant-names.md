@@ -152,6 +152,13 @@ fifty shipped rows and derives the extrapolation indices. Its complete
 45 retained numeric occurrences, down from 63; the shared Verdite threshold
 also reduces the existing item-use ledger from 80 to 79.
 
+The [player damage-unit review](game-player-damage-units.md) separates
+intermediate damage tenths from multiplier tenths, names the poison roll
+conversion and restart override, and propagates Q12/multiplier unity through
+direct callers. Its [remainder ledger](game-player-death-literal-ledger.md)
+covers 56 occurrences; together with startup 98 and progression 45, all 199
+remaining inline numeric occurrences in `player_death.c` have specific reasons.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

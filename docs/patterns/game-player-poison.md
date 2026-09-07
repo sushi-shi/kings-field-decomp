@@ -58,6 +58,10 @@ at 8005049c is only a three-instruction BIOS dispatch stub: it loads 0xa0,
 jumps through that register, and sets selector 0x2f in the delay slot. The
 RNG implementation and bucket probabilities are not reconstructed here.
 
+The [damage-unit follow-up](game-player-damage-units.md) names the hundred
+buckets and fifteen-bit normalization shift without changing this strict
+comparison or claiming a percentage-success rule.
+
 At 8001a07c..8001a13c, retail loads the timer with `lh`, skips -1, tests
 mask 4, decrements and stores the halfword, explicitly sign-extends it, and
 checks for -1 before the signed remainder by 20. It narrows the remainder

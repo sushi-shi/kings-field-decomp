@@ -8,7 +8,11 @@ enum {
     FIRE_DEFENSE_STATUS_BONUS = 10,
     DISPOISON_REQUIRED_BASE_MAGIC = 37,
     FIRE_WALL_REQUIRED_BASE_MAGIC = 70,
-    LIGHTNING_BOLT_REQUIRED_BASE_MAGIC = 75
+    LIGHTNING_BOLT_REQUIRED_BASE_MAGIC = 75,
+    PLAYER_DAMAGE_SUBUNITS_PER_HP = 10,
+    PLAYER_POISON_ROLL_BUCKETS = 100,
+    PLAYER_POISON_ROLL_SHIFT = 15,
+    PLAYER_RESTART_FORCE_FLOOR_LOAD = 0xff
 };
 
 DATA(0x80055810, 0x9)
@@ -34,7 +38,7 @@ void player_death_begin(void)
     player_state.update_state = KF_PLAYER_UPDATE_DYING;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
-    sound_ref_play(&player_sound_refs[1], 0x7f);
+    sound_ref_play(&player_sound_refs[1], KF_AUDIO_MAX_VOLUME);
     ReadColorMatrix(&player_death_saved_color_matrix);
     player_death_saved_fog_near = render_state.fog_near_distance;
 }
@@ -153,7 +157,7 @@ void player_death_restart(void)
         player_state.camera_position.vz = 0x1388;
         player_state.camera_rotation.vy = 0;
         game_state_initialize();
-        floor = 0xff;
+        floor = PLAYER_RESTART_FORCE_FLOOR_LOAD;
     }
     player_state.status_effect_flags = 0;
     player_state.camera_rotation.vz = 0;
@@ -505,7 +509,8 @@ void player_apply_damage(
         player_state.status_effect_flags |= KF_PLAYER_STATUS_DARKNESS;
     }
     if (status_effect_flags & KF_PLAYER_STATUS_POISON) {
-        if (player_state.poison_resistance < (rand() * 100) >> 15) {
+        if (player_state.poison_resistance
+            < (rand() * PLAYER_POISON_ROLL_BUCKETS) >> PLAYER_POISON_ROLL_SHIFT) {
             player_state.poison_timer = KF_POISON_DURATION_UPDATES;
             player_state.status_effect_flags |= KF_PLAYER_STATUS_POISON;
         }
@@ -515,18 +520,28 @@ void player_apply_damage(
         player_state.status_effect_flags |= KF_PLAYER_STATUS_SLOWED;
     }
     damage = player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.cutting_defense * 10, component0 * 10);
+        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        player_state.cutting_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        component0 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.striking_defense * 10, component1 * 10);
+        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        player_state.striking_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        component1 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.piercing_defense * 10, component2 * 10);
+        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        player_state.piercing_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        component2 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.magic_defense * 10, component3 * 10);
+        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        player_state.magic_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        component3 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * 10, player_state.fire_defense * 10, component4 * 10);
-    damage += 5;
-    damage = (scale_q12 * (damage / 10)) >> 12;
-    loss = (multiplier_tenths * damage) / 10;
+        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        player_state.fire_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
+        component4 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
+    damage += PLAYER_DAMAGE_SUBUNITS_PER_HP / 2;
+    damage = (scale_q12 * (damage / PLAYER_DAMAGE_SUBUNITS_PER_HP)) >> KF_FIXED12_BITS;
+    loss = (multiplier_tenths * damage) / KF_PLAYER_DAMAGE_MULTIPLIER_ONE;
     if (loss != 0) {
         remaining = player_state.vitals.current_hp - loss;
         if (remaining <= 0) {
@@ -561,12 +576,12 @@ void player_apply_radial_damage(
     if (distance == -1) {
         return;
     }
-    if (falloff_q12 != 0x1000) {
-        attenuation = (distance << 12) / radius;
-        value = attenuation * (0x1000 - falloff_q12);
-        attenuation = 0x1000 - (value >> 12);
+    if (falloff_q12 != KF_FIXED12_ONE) {
+        attenuation = (distance << KF_FIXED12_BITS) / radius;
+        value = attenuation * (KF_FIXED12_ONE - falloff_q12);
+        attenuation = KF_FIXED12_ONE - (value >> KF_FIXED12_BITS);
         value = scale_q12 * attenuation;
-        attenuation = value >> 12;
+        attenuation = value >> KF_FIXED12_BITS;
     } else {
         attenuation = scale_q12;
     }

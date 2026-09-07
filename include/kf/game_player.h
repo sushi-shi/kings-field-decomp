@@ -58,6 +58,11 @@ enum {
     KF_PLAYER_TRAINING_POINTS_PER_GAIN = 100
 };
 
+/* Final player-damage multiplier is expressed in tenths. */
+enum {
+    KF_PLAYER_DAMAGE_MULTIPLIER_ONE = 10
+};
+
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;

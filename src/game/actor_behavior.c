@@ -1234,7 +1234,7 @@ vertical:
             goto fall;
         }
         if ((hit >> 16) == (KF_COLLISION_PLAYER >> 16)) {
-            player_apply_damage(0, 15, 0, 0, 0, 0, KF_FIXED12_ONE, 10);
+            player_apply_damage(0, 15, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         stagger:
             actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
             actor->vertical_velocity = -120;
