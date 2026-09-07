@@ -1,5 +1,29 @@
 # OPEN TMD preparation countdown
 
+## Related-address and debug-lifetime controls
+
+The exact `tmd_select` sibling exposes the old-GCC mechanism behind its empty
+eight-byte frame: after CSE and combine fold the indexed source address into a
+load, one related-address pseudo remains in global allocation without a hard
+register disposition and receives an unused stack slot. The preparation
+function has no equivalent unallocated pseudo under the retained source.
+
+Natural packet-format expressions do not transfer that effect. Spelling the
+header word as `*(u32 *)(body - 4)`, spelling `ilen` as `body[-3]`, stepping
+from a typed TMD header to the object table, and omitting explicit `!= 0` from
+both post-decrement loop conditions are each byte-identical to the canonical
+candidate and retain the two-word frame residue. Reusing the packet cursor for
+the initial asset load removes the independently observed asset reload and
+rotates the packet/count registers. Chaining the two outer counters adds eight
+real instructions and changes their register allocation. Those forms are
+removed.
+
+Compiling the TU with GCC 2.5.7 `-O2 -mcpu=r2000 -g` also leaves the frame
+absent. Debug-local branch labels create relocation-identity differences in
+six exact sibling functions, so this is not a viable TU profile and is
+removed. Neither source-relative address syntax nor debug pseudo lifetime
+explains retail's empty frame.
+
 ## Equivalent decrement-expression controls (`82320b9` follow-up)
 
 Writing the proven outer countdown as two statements (`left = count; left--`)
