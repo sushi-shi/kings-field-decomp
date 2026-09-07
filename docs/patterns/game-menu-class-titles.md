@@ -87,6 +87,11 @@ run remain ordinary small integers, documented in the linked literal ledger.
 
 ## Retained literals and verification
 
+The following verification records the naming pass. Subsequent
+[header index-lifetime recovery](game-stats-header-index.md) improves the
+header to 97.991670%; the [rating correction](game-status-rating-arithmetic.md)
+improves the detailed renderer to 98.161130%. Neither is yet exact.
+
 The [complete status-text ledger](game-menu-status-literal-ledger.md) accounts
 for all 413 remaining numeric occurrences: 130 in the main-menu header and
 283 in the detailed page. It distinguishes atlas text from status masks,

@@ -8,6 +8,11 @@ line count separately, including glyph positions and glyph values.
 
 ## menu_draw_stats_header
 
+This section records the class-title review snapshot. The later
+[index-lifetime recovery](game-stats-header-index.md) replaces both
+`class_glyph_offset` and `i` with `glyph_index`, removing one declaration;
+all listed values and expressions otherwise remain, one source line earlier.
+
 130 occurrences.
 
 | Lines | Tokens | Expression | Reason |
