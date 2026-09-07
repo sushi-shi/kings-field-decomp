@@ -74,3 +74,9 @@ target-relink and known-reference ownership gaps. Data-owning matches remain
 PSX 0/1, GAME 9/42 and OPEN 2/19; this function result is not whole-image
 closure. Unrelated concurrent map-object source/header changes were neither
 edited nor staged by this campaign.
+
+Source and evidence are committed in `ed926a0`. The first targeted banking
+attempt correctly refused the concurrent unstaged map-object inputs. After
+their independent commit `c503559`, ordinary
+`kf bank --function game:0x800328e0` accepted exactly this one strict-100% row;
+no dirty override or unrelated baseline refresh was used.
