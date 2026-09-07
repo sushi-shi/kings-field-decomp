@@ -12,6 +12,7 @@ void item_menu_buy(s32 shop_id);
 void item_menu_sell(s32 shop_id);
 
 enum {
+    MENU_SHOP_VISIBLE_ROWS = 9,
     MENU_PICKUP_CONFIRM_TEXT_X = 60,
     MENU_PICKUP_CONFIRM_ACCEPT_Y = 26,
     MENU_PICKUP_CONFIRM_DECLINE_Y = MENU_PICKUP_CONFIRM_ACCEPT_Y + MENU_CONFIRM_ROW_STEP
@@ -137,8 +138,8 @@ void item_menu_root(s32 shop_id)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 done = -99;
-    s32 selection = -1;
+    KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
+    KfShopMenuAction action = KF_SHOP_ACTION_NONE;
 
     menu_frame_begin();
     menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
@@ -154,23 +155,24 @@ void item_menu_root(s32 shop_id)
 
     for (;;) {
         menu_present_frame();
-        if (selection != -1 || done == selection) {
+        if (action != KF_SHOP_ACTION_NONE
+                || KF_ENUM_ENCODE(s32, phase) == KF_ENUM_ENCODE(s32, action)) {
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
         }
-        switch (selection) {
-        case KF_SHOP_ROW_BUY:
+        switch (action) {
+        case KF_SHOP_ACTION_BUY:
             item_menu_buy(shop_id);
             break;
-        case KF_SHOP_ROW_SELL:
+        case KF_SHOP_ACTION_SELL:
             item_menu_sell(shop_id);
             break;
         }
-        selection = -1;
-        if (done != -99) {
+        action = KF_SHOP_ACTION_NONE;
+        if (phase != KF_MENU_PANEL_OPEN) {
             while (PadRead(1) != 0)
                 ;
             return;
@@ -196,12 +198,12 @@ void item_menu_root(s32 shop_id)
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
             if (cursor < KF_SHOP_ROW_RETURN)
-                selection = cursor;
+                action = KF_ENUM_DECODE(KfShopMenuAction, cursor);
             else
-                done = -1;
+                phase = KF_MENU_PANEL_CLOSED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            done = -1;
+            phase = KF_MENU_PANEL_CLOSED;
         }
         menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
     }
@@ -226,7 +228,7 @@ void item_menu_buy(s32 shop_id)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 selection = -99;
+    s32 selection = KF_MENU_LIST_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -253,7 +255,7 @@ void item_menu_buy(s32 shop_id)
         }
     }
     ctx.entry_count = found;
-    ctx.visible_rows = 9;
+    ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &entries[0][0];
     ctx.quantities = 0;
@@ -272,12 +274,12 @@ void item_menu_buy(s32 shop_id)
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
                     KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
-                selection = -99;
+                selection = KF_MENU_LIST_PENDING;
             else
                 selection = index[ctx.selected_index];
         }
         confirm = 0;
-        if (selection != -99) {
+        if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -288,7 +290,7 @@ void item_menu_buy(s32 shop_id)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = -1;
+                selection = KF_MENU_LIST_NO_SELECTION;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -335,7 +337,7 @@ void item_menu_buy(s32 shop_id)
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = -1;
+            selection = KF_MENU_LIST_NO_SELECTION;
         }
 
         menu_frame_begin();
@@ -345,7 +347,7 @@ void item_menu_buy(s32 shop_id)
     }
 
     menu_release_item_model();
-    if (selection != -1) {
+    if (selection != KF_MENU_LIST_NO_SELECTION) {
         if (selection == KF_ITEM_GOLD_CROSS)
             inv[KF_ITEM_GOLD_CROSS]--;
         player_state.gold -= item_buy_prices[selection][shop_id - 1];
@@ -372,7 +374,7 @@ void item_menu_sell(s32 shop_id)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 selection = -99;
+    s32 selection = KF_MENU_LIST_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -400,7 +402,7 @@ void item_menu_sell(s32 shop_id)
         }
     }
     ctx.entry_count = found;
-    ctx.visible_rows = 9;
+    ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &entries[0][0];
     ctx.quantities = 0;
@@ -419,12 +421,12 @@ void item_menu_sell(s32 shop_id)
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
                     KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL)
                     == KF_MENU_CONFIRM_CANCELLED)
-                selection = -99;
+                selection = KF_MENU_LIST_PENDING;
             else
                 selection = index[ctx.selected_index];
         }
         confirm = 0;
-        if (selection != -99) {
+        if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -435,7 +437,7 @@ void item_menu_sell(s32 shop_id)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = -1;
+                selection = KF_MENU_LIST_NO_SELECTION;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -477,7 +479,7 @@ void item_menu_sell(s32 shop_id)
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = -1;
+            selection = KF_MENU_LIST_NO_SELECTION;
         }
 
         menu_frame_begin();
@@ -487,7 +489,7 @@ void item_menu_sell(s32 shop_id)
     }
 
     menu_release_item_model();
-    if (selection != -1) {
+    if (selection != KF_MENU_LIST_NO_SELECTION) {
         inv[selection]--;
         player_state.gold += item_sell_prices[selection][shop_id - 1];
     }

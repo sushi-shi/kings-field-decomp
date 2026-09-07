@@ -86,6 +86,8 @@ promotes a probe to a proven historical toolchain.
   shared preview rotation, draw-rate units, Q12 lighting and retained literal ledger.
 - [game-menu-preview-source-controls.md](game-menu-preview-source-controls.md):
   audited name-row ordering residue and recovered sell/buy price-selection CFG.
+- [game-shop-menu-controls.md](game-shop-menu-controls.md): separate typed shop
+  actions and panel phases, named list results and the nine-row viewport.
 - [game-menu-confirm-choice.md](game-menu-confirm-choice.md): typed accept/decline
   choices across input and rendering, with distinct outcome domains.
 - [game-menu-confirm-literal-ledger.md](game-menu-confirm-literal-ledger.md):

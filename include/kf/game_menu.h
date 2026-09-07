@@ -107,10 +107,16 @@ enum {
     KF_MENU_WINDOW_LAYOUT_COUNT = 9
 };
 
+KF_ENUM_BEGIN(KfShopMenuAction, s32)
+    KF_SHOP_ACTION_NONE = -1,
+    KF_SHOP_ACTION_BUY = 0,
+    KF_SHOP_ACTION_SELL = 1
+KF_ENUM_END(KfShopMenuAction)
+
 /* Rows in the loaded shop window; the gold row is not a menu choice. */
 enum {
-    KF_SHOP_ROW_BUY = 0,
-    KF_SHOP_ROW_SELL = 1,
+    KF_SHOP_ROW_BUY = KF_ENUM_ENCODE(s32, KF_SHOP_ACTION_BUY),
+    KF_SHOP_ROW_SELL = KF_ENUM_ENCODE(s32, KF_SHOP_ACTION_SELL),
     KF_SHOP_ROW_RETURN = 2,
     KF_SHOP_ROW_GOLD = 3,
     KF_SHOP_CHOICE_COUNT = KF_SHOP_ROW_RETURN + 1

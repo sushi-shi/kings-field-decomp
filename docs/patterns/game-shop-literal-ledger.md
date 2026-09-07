@@ -1,5 +1,9 @@
 # Retained shop-menu literals
 
+Current shop literals are accounted for in the
+[confirmation/item ledger](game-menu-confirm-literal-ledger.md). The earlier
+counts and spellings below describe the recorded shop-flow audit snapshot.
+
 Complete root/buy/sell ledger after the [price-domain audit](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), refreshed by the [shop-panel flow audit](game-shop-panel-flow.md).
 All **139 remaining occurrences**, down from 188, have specific reasons. Claims
 and named enum definitions are separate; signs do not count as numeric tokens.
