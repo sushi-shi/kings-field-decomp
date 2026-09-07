@@ -2349,3 +2349,7 @@ The [floor enum domain](game-floor-enum-domain.md) replaces 50 inline floor
 identifiers and propagates one type through byte player state, word save summaries,
 warp/resource APIs and byte dialogue parameters. Modern compiler rejection
 controls establish domain separation; the retail objects remain unchanged.
+
+The [cache/camera coverage review](game-animation-cache-camera-coverage.md)
+provides complete current occurrence accounting for the registry, animation
+cache and both camera-path modules; the older grouped totals remain historical.

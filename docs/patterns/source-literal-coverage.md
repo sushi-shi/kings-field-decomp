@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [preview-layout review](game-menu-preview-layout.md):
+Working snapshot after the [cache/camera review](game-animation-cache-camera-coverage.md):
 **111 C files**, **112 source/image variants**,
 and **6,589 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **42 files / 4,057 occurrences**, the explicit ledger rows were compared
+For **46 files / 4,097 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -80,9 +80,9 @@ fields and address-derived function names are separate from this ten-line count.
 | [actor.c](../../src/game/actor.c) | 172 | [game-actor-core ledger](game-actor-core-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [actor_behavior.c](../../src/game/actor_behavior.c) | 171 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [actor_pool.c](../../src/game/actor_pool.c) | 11 | [domain evidence](game-actor-constants.md) | Expand the domain audit into current occurrence coverage. |
-| [asset_registry.c](../../src/game/asset_registry.c) | 1 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
+| [asset_registry.c](../../src/game/asset_registry.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [audio.c](../../src/game/audio.c) | 45 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
-| [camera_path.c](../../src/game/camera_path.c) | 1 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
+| [camera_path.c](../../src/game/camera_path.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [cd_file.c](../../src/game/cd_file.c) | 35 | [domain notes](source-constant-names.md#cd-and-resource-registration-plan) | Expand the domain audit into current occurrence coverage. |
 | [collision.c](../../src/game/collision.c) | 265 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
 | [collision_grid.c](../../src/game/collision_grid.c) | 5 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
@@ -140,7 +140,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [player_use_item.c](../../src/game/player_use_item.c) | 42 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp.c](../../src/game/player_warp.c) | 96 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [pool.c](../../src/game/pool.c) | 35 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
+| [pool.c](../../src/game/pool.c) | 35 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render.c](../../src/game/render.c) | 146 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
 | [render_enqueuers.c](../../src/game/render_enqueuers.c) | 95 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
 | [render_frame.c](../../src/game/render_frame.c) | 41 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -161,7 +161,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [audio.c](../../src/open/audio.c) | 31 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
 | [audio_play_voice.c](../../src/open/audio_play_voice.c) | 6 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
 | [audio_spatial.c](../../src/open/audio_spatial.c) | 6 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
-| [camera_path.c](../../src/open/camera_path.c) | 3 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
+| [camera_path.c](../../src/open/camera_path.c) | 3 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [debug.c](../../src/open/debug.c) | 0 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | No retained literal tokens. |
 | [display_adjust.c](../../src/open/display_adjust.c) | 19 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
 | [entity_render.c](../../src/open/entity_render.c) | 78 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |

@@ -170,3 +170,7 @@ callees and referents alongside source history and the resource evidence.
 | `0x80020b04 / 72` | `pool_allocate` | 100 | Exact / 18 |
 | `0x8002beb0 / 972` | `save_file_read_slot` | 100 | Exact / 243 |
 | `0x80034de4 / 2308` | `map_interaction_dispatch` | 83.04679 | Partial, unchanged |
+
+The [cache/camera coverage review](game-animation-cache-camera-coverage.md)
+reconciles the current registry/cache expressions in a [complete ledger](game-animation-cache-camera-literal-ledger.md)
+and records all 813 shipped keyframe reversal references as zero.

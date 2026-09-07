@@ -533,3 +533,5 @@ promotes a probe to a proven historical toolchain.
   domains, preserved traversal rules and explicit compass-option conversion.
 
 - [Inventory and shop preview layout](game-menu-preview-layout.md): shared model placement, text origins, row pitch and numeric widths; [complete inventory-preview ledger](game-menu-inventory-preview-literal-ledger.md).
+
+- [Animation-cache and camera coverage](game-animation-cache-camera-coverage.md): serialized reversal evidence, GAME/OPEN point origins and a [complete forty-occurrence ledger](game-animation-cache-camera-literal-ledger.md).
