@@ -31,14 +31,14 @@ u32 menu_enter_mode(KfMenuMode mode, ...)
     case KF_MENU_MODE_ITEM_PICKUP: {
 #if KF_MODERN_TYPES
         __builtin_va_list arguments;
-        u8 item_id;
+        KfItemId item_id;
 
         __builtin_va_start(arguments, mode);
-        item_id = (u8)__builtin_va_arg(arguments, int);
+        item_id = KF_ENUM_DECODE(KfItemId, __builtin_va_arg(arguments, int));
         __builtin_va_end(arguments);
 #else
         /* The pinned compiler spills mode and the optional argument to homes. */
-        u8 item_id = *((u8 *)&mode + sizeof(mode));
+        KfItemId item_id = KF_ENUM_DECODE(KfItemId, *((u8 *)&mode + sizeof(mode)));
 #endif
         result = KF_ENUM_ENCODE(u32, item_pickup_confirm(item_id));
         break;

@@ -161,7 +161,7 @@ s32 menu_use_item_panel(void)
     KfMenuList ctx;
     s16 labels[50][MENU_GLYPHS_PER_ROW];
     u8 counts[56];
-    u8 codes[56];
+    KfItemId codes[56];
     u8 *inv;
     s32 found;
     s32 code;
@@ -177,35 +177,35 @@ s32 menu_use_item_panel(void)
 
     inv = item_stock[KF_ITEM_STOCK_PLAYER];
     found = 0;
-    if (inv[KF_ITEM_WATCHMAN_MAP] != 0) {
+    if (inv[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-            labels[found][j] = item_name_rows[KF_ITEM_WATCHMAN_MAP].codes[j];
-        counts[found] = inv[KF_ITEM_WATCHMAN_MAP];
+            labels[found][j] = item_name_rows[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)].codes[j];
+        counts[found] = inv[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)];
         codes[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
-    if (inv[KF_ITEM_SORCERER_MAP] != 0) {
+    if (inv[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-            labels[found][j] = item_name_rows[KF_ITEM_SORCERER_MAP].codes[j];
-        counts[found] = inv[KF_ITEM_SORCERER_MAP];
+            labels[found][j] = item_name_rows[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)].codes[j];
+        counts[found] = inv[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)];
         codes[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
-    for (code = KF_ITEM_VERDITE; code < KF_ITEM_LIGHT_RING; code++) {
-        if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
+    for (code = KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE); code < KF_ENUM_ENCODE(s32, KF_ITEM_LIGHT_RING); code++) {
+        if (code != KF_ENUM_ENCODE(s32, KF_ITEM_WATCHMAN_MAP) && code != KF_ENUM_ENCODE(s32, KF_ITEM_SORCERER_MAP) && inv[code] != 0) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = item_name_rows[code].codes[j];
             counts[found] = inv[code];
-            codes[found] = code;
+            codes[found] = KF_ENUM_DECODE(KfItemId, code);
             found++;
         }
     }
-    for (code = KF_ITEM_GOLD_CROSS; code < KF_ITEM_COUNT; code++) {
-        if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
+    for (code = KF_ENUM_ENCODE(s32, KF_ITEM_GOLD_CROSS); code < KF_ITEM_COUNT; code++) {
+        if (code != KF_ENUM_ENCODE(s32, KF_ITEM_WATCHMAN_MAP) && code != KF_ENUM_ENCODE(s32, KF_ITEM_SORCERER_MAP) && inv[code] != 0) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = item_name_rows[code].codes[j];
             counts[found] = inv[code];
-            codes[found] = code;
+            codes[found] = KF_ENUM_DECODE(KfItemId, code);
             found++;
         }
     }
@@ -226,11 +226,11 @@ s32 menu_use_item_panel(void)
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = KF_MENU_LIST_PENDING;
             else
-                selection = codes[ctx.selected_index];
+                selection = KF_ENUM_ENCODE(u8, codes[ctx.selected_index]);
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {
@@ -305,22 +305,22 @@ s32 menu_use_item_panel(void)
     }
 
     menu_release_item_model();
-    if ((u32)(selection - KF_ITEM_VERDITE) < KF_ITEM_LIGHT_RING - KF_ITEM_VERDITE) {
+    if ((u32)(selection - KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE)) < KF_ENUM_ENCODE(s32, KF_ITEM_LIGHT_RING) - KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE)) {
         inv[selection]--;
-        if (selection == KF_ITEM_MEDICINAL_HERB) {
+        if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_MEDICINAL_HERB)) {
             player_state.vitals.current_hp += MEDICINAL_HERB_HP_RECOVERY;
-        } else if (selection == KF_ITEM_ANTIDOTE_HERB) {
+        } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_ANTIDOTE_HERB)) {
             player_state.vitals.current_hp += ANTIDOTE_HERB_HP_RECOVERY;
             player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE
                 | KF_PLAYER_STATUS_DARKNESS | KF_PLAYER_STATUS_SLOWED;
-        } else if (selection == KF_ITEM_RECOVERY_MEDICINE) {
+        } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_RECOVERY_MEDICINE)) {
             player_state.vitals.current_hp += RECOVERY_MEDICINE_HP_RECOVERY;
             player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE
                 | KF_PLAYER_STATUS_DARKNESS;
-        } else if (selection == KF_ITEM_DRAGON_KING_GRASS_LEAF) {
+        } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_DRAGON_KING_GRASS_LEAF)) {
             player_state.vitals.current_hp += DRAGON_KING_GRASS_LEAF_HP_RECOVERY;
             player_state.status_effect_flags = 0;
-        } else if (selection == KF_ITEM_DRAGON_KING_GRASS_FRUIT) {
+        } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_DRAGON_KING_GRASS_FRUIT)) {
             player_state.status_effect_flags = 0;
             player_state.vitals.current_hp += DRAGON_KING_GRASS_FRUIT_HP_RECOVERY;
             player_state.vitals.current_mp = player_state.vitals.maximum_mp;

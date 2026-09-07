@@ -26,7 +26,7 @@ RODATA(0x800122e4, 0xc)
 
 /* Display the current-floor map image and player-position marker. */
 ADDRESS(0x80022d7c, 0x400)
-void menu_map_viewer(s32 item_code)
+void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
 {
     s32 frame = 0;
     POLY_FT4 poly_bg[KF_DISPLAY_BUFFER_COUNT];

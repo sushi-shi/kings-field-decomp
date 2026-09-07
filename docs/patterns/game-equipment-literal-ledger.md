@@ -12,8 +12,9 @@ The [equipment identities](game-item-equipment-identities.md),
 [learning-state domain](game-magic-learning-state.md) and
 [shared dimensions](game-item-menu-dimensions.md) provide the existing domain
 evidence. Encoded glyphs retain the [retail-font interpretation](game-shop-price-domains.md).
-Player stock-bank naming and broader item-ID typing remain separate work;
-this ledger does not claim that all domain propagation is complete.
+The [stock-bank](item-stock-banks.md) and [item-ID](item-id-domain.md) reviews
+now name bank indices and propagate inventory IDs through equipment storage
+and menu boundaries. Broader source-domain review remains open.
 
 ## `src/game/equipment.c`
 
@@ -36,7 +37,7 @@ this ledger does not claim that all domain propagation is complete.
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `menu_equip_select` | 28 | `20` | `s16 labels[20][MENU_GLYPHS_PER_ROW];` | Twenty-row local workspace with the shared named glyph width. Equipment needs at most fourteen entries including unequip, and ranged magic at most six; original over-allocation rationale is unproven. |
-| `menu_equip_select` | 29 | `20` | `u8 codes[20];` | Parallel twenty-entry code workspace, indexed with the label rows; original capacity choice is unproven. |
+| `menu_equip_select` | 29 | `20` | `KfItemId codes[20];` | Parallel twenty-entry code workspace, indexed with the label rows; original capacity choice is unproven. |
 | `menu_equip_select` | 38 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
 | `menu_equip_select` | 42 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_equip_select` | 42 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
@@ -55,7 +56,7 @@ this ledger does not claim that all domain propagation is complete.
 | `menu_equip_select` | 98 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_equip_select` | 100 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
 | `menu_equip_select` | 101 | `0` | `if (menu_load_item_model(codes[ctx.selected_index]) != 0)` | Any nonzero model-loader result aborts this panel; empty item ID is a successful no-load path. |
-| `menu_equip_select` | 108 | `0` | `KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
+| `menu_equip_select` | 108 | `0` | `KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
 | `menu_equip_select` | 116 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_equip_select` | 116 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_equip_select` | 122 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument; the linked routine uses its global pad identifier. |

@@ -4,6 +4,7 @@
 /* Floor-item resource loading shared by GAME and OPEN. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 
 /* Database IDs exclude the no-item sentinel; stock adds the player bank. */
 enum {
@@ -22,7 +23,10 @@ enum {
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
     KF_FLOOR_ITEM_END = 0xffff,
-    KF_ITEM_STACK_CAPACITY = 99,
+    KF_ITEM_STACK_CAPACITY = 99
+};
+
+KF_ENUM_BEGIN(KfItemId, u8)
     KF_ITEM_SHORT_SWORD = 0,
     KF_ITEM_BATTLE_AXE = 1,
     KF_ITEM_KNIGHT_SWORD = 2,
@@ -93,7 +97,7 @@ enum {
     KF_ITEM_DEMON_KING_HAND = 75,
     KF_ITEM_SALAMANDER_STATUE = 76,
     KF_ITEM_NONE = 0xff
-};
+KF_ENUM_END(KfItemId)
 
 /* High nibble: zero billboard or biased quarter-turn facing; low: frame count. */
 enum {

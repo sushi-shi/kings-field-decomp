@@ -72,9 +72,9 @@ opt0_done:
 
     menu_frame_begin();
     if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-        menu_item_model_preview(item_id);
+        menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id));
     } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-        menu_draw_item_detail(item_id, shop_id, price_mode);
+        menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), shop_id, price_mode);
     } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
             && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
         menu_add_marker_quad();
@@ -86,9 +86,9 @@ opt0_done:
         if (result != KF_MENU_CONFIRM_PENDING) {
             menu_frame_begin();
             if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-                menu_item_model_preview(item_id);
+                menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id));
             } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-                menu_draw_item_detail(item_id, shop_id, price_mode);
+                menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), shop_id, price_mode);
             } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
                     && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
                 menu_add_marker_quad();
@@ -122,9 +122,9 @@ opt0_done:
             result = KF_MENU_CONFIRM_CANCELLED;
         }
         if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-            menu_item_model_preview(item_id);
+            menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id));
         } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-            menu_draw_item_detail(item_id, shop_id, price_mode);
+            menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), shop_id, price_mode);
         } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
                 && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
             menu_add_marker_quad();

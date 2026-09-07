@@ -26,7 +26,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
 {
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
-    u8 codes[20];
+    KfItemId codes[20];
     s16 *name;
     u8 *owned;
     s32 i;
@@ -80,7 +80,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
             name = item_name_rows[i].codes;
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[k][j] = name[j];
-            codes[k] = i;
+            codes[k] = KF_ENUM_DECODE(KfItemId, i);
             k++;
         }
     }
@@ -105,11 +105,11 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = KF_MENU_LIST_PENDING;
             else
-                selection = codes[ctx.selected_index];
+                selection = KF_ENUM_ENCODE(u8, codes[ctx.selected_index]);
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {
@@ -179,21 +179,21 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     if (selection != KF_MENU_LIST_NO_SELECTION) {
         switch (category) {
         case KF_EQUIP_MENU_WEAPON:
-            player_state.equipped_weapon_id = selection;
-            player_equip_weapon((u8)selection);
+            player_state.equipped_weapon_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_equip_weapon(KF_ENUM_DECODE(KfItemId, (u8)selection));
             break;
         case KF_EQUIP_MENU_SHIELD:
-            player_state.equipped_shield_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_SHIELD);
+            player_state.equipped_shield_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_SHIELD);
             break;
         case KF_EQUIP_MENU_HEAD:
-            player_state.equipped_head_armor_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_HEAD);
+            player_state.equipped_head_armor_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_HEAD);
             break;
         case KF_EQUIP_MENU_BODY:
-            player_state.equipped_body_armor_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_BODY);
-            if (selection == KF_ITEM_FULL_PLATE) {
+            player_state.equipped_body_armor_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_BODY);
+            if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_FULL_PLATE)) {
                 player_state.equipped_arm_armor_id = KF_ITEM_NONE;
                 player_state.equipped_leg_armor_id = KF_ITEM_NONE;
                 player_set_equipment_slot(KF_ITEM_NONE, KF_EQUIPMENT_SLOT_ARM);
@@ -201,16 +201,16 @@ void menu_equip_select(KfEquipmentMenuCategory category)
             }
             break;
         case KF_EQUIP_MENU_ARM:
-            player_state.equipped_arm_armor_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_ARM);
+            player_state.equipped_arm_armor_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_ARM);
             break;
         case KF_EQUIP_MENU_LEG:
-            player_state.equipped_leg_armor_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_LEG);
+            player_state.equipped_leg_armor_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_LEG);
             break;
         case KF_EQUIP_MENU_ACCESSORY:
-            player_state.equipped_accessory_id = selection;
-            player_set_equipment_slot((u8)selection, KF_EQUIPMENT_SLOT_ACCESSORY);
+            player_state.equipped_accessory_id = KF_ENUM_DECODE(KfItemId, selection);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_ACCESSORY);
             break;
         }
     }

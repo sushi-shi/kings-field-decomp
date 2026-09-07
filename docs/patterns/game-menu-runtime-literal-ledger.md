@@ -87,7 +87,7 @@ first-choice comparisons in the widget renderer.
 | `menu_format_number` | 603 | `10` | `value /= 10;` | Decimal radix: signed integer division removes the digit just emitted. |
 | `menu_format_number` | 604 | `0` | `if (value == 0) {` | A zero quotient means no more significant digits remain. |
 | `menu_format_number` | 605 | `1` | `i = -1;` | Set a negative loop index so the next loop test exits after its decrement; preserve this control-flow form. |
-| `menu_load_item_model` | 618 | `0` | `if (cd_file_load_table_entry(&asset, id) != 0) {` | Nonzero file-loader status is failure and exits before yaw reset or model-registration publication. |
+| `menu_load_item_model` | 618 | `0` | `if (cd_file_load_table_entry(&asset, KF_ENUM_ENCODE(s32, id)) != 0) {` | Nonzero file-loader status is failure and exits before yaw reset or model-registration publication. |
 | `menu_load_item_model` | 619 | `1` | `return 1;` | Model-loader failure result; existing callers test nonzero or equality to one. Full loader-result enum propagation remains separate from rotation recovery. |
 | `menu_load_item_model` | 622 | `1` | `menu_item_model_allocation_pending = 1;` | Publish that the menu TMD slot now owns an allocation to release. |
 | `menu_load_item_model` | 624 | `0` | `menu_item_preview_rotation.vy = 0;` | Reset the successfully loaded or empty model to zero yaw; pitch/roll and SDK alignment halfword remain intact. |

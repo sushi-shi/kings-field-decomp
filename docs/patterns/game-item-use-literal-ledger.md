@@ -52,7 +52,7 @@ explicit numeric boundaries.
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
 | `player_use_item` | 165 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 172 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
-| `player_use_item` | 179 | `0` | `if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_ILLUSION_STAFF] != 0) {` | Only decrement a possessed player-bank copy; the timer write already happened before this guard. |
+| `player_use_item` | 179 | `0` | `if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_ILLUSION_STAFF)] != 0) {` | Only decrement a possessed player-bank copy; the timer write already happened before this guard. |
 | `player_use_item` | 190 | `0` | `if (actor != 0) {` | A non-null actor wins the mirror query and its info image is shown immediately. |
 | `player_use_item` | 200 | `0` | `if (event == 0) {` | No event target after the actor miss leaves the mirror use unacknowledged. |
 | `player_use_item` | 207 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |

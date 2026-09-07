@@ -375,7 +375,7 @@ extern s32 menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
 extern void item_menu_root(s32 shop_id);
-extern KfItemPickupResult item_pickup_confirm(s32 item_id);
+extern KfItemPickupResult item_pickup_confirm(KF_ENUM_PARAM(KfItemId, s32) item_id);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);
 extern void menu_blit_sprite(
@@ -386,8 +386,8 @@ extern void menu_config_panel(void);
 extern void menu_draw_dialog_frame(
     const KfSaveSlotSummary *summaries, s32 highlighted_slot);
 extern void menu_draw_item_detail(
-    s32 item_id, s32 shop_id, KfItemPriceMode price_mode);
-extern void menu_draw_item_name_frame(s32 item_id);
+    KF_ENUM_PARAM(KfItemId, s32) item_id, s32 shop_id, KfItemPriceMode price_mode);
+extern void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id);
 extern void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string);
 extern void menu_draw_string(
@@ -405,18 +405,18 @@ extern void menu_drop_item(void);
 extern u32 menu_enter_mode(KfMenuMode mode, ...);
 extern void menu_equip_select(KfEquipmentMenuCategory category);
 extern void menu_frame_begin(void);
-extern void menu_item_model_preview(s32 item_id);
+extern void menu_item_model_preview(KF_ENUM_PARAM(KfItemId, s32) item_id);
 extern void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row);
 extern KfMenuConfirmResult menu_list_interact(
     const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
     s32 item_id, u32 shop_id, KfItemPriceMode price_mode);
 extern void menu_list_render(const KfMenuList *list);
-extern u32 menu_load_item_model(s32 id);
+extern u32 menu_load_item_model(KF_ENUM_PARAM(KfItemId, s32) id);
 extern u32 menu_load_item_texture(s32 id);
 extern void menu_release_item_model(void);
 extern KfMenuConfirmResult menu_load_panel(void);
 extern s32 menu_magic_panel(void);
-extern void menu_map_viewer(s32 item_code);
+extern void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code);
 extern void menu_option_root(void);
 extern void menu_play_input_sound(s32 cue);
 extern void menu_present_frame(void);

@@ -180,7 +180,7 @@ void map_restore_floor_state(void)
         } else {
             map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
         }
-        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_DRAGON_SWORD] != 0 || item_stock[KF_ITEM_STOCK_PLAYER][KF_ITEM_MOONLIGHT_SWORD] != 0
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)] != 0 || item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MOONLIGHT_SWORD)] != 0
                 || map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_FLOOR5_SWORD_DOOR);
         }

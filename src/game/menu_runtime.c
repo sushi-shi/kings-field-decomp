@@ -86,7 +86,7 @@ void menu_draw_two_option(
  * mirrored window-sprite quads. The shared spin angle advances eight units.
  */
 ADDRESS(0x800292f8, 0x7b8)
-void menu_draw_item_name_frame(s32 item_id)
+void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
 {
     MenuGlyphString string;
     MATRIX rotation;
@@ -118,7 +118,7 @@ void menu_draw_item_name_frame(s32 item_id)
     SetTransMatrix(&rotation);
     menu_render_item_model();
 
-    name = item_name_rows[item_id].codes;
+    name = item_name_rows[KF_ENUM_ENCODE(s32, item_id)].codes;
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     string.x = 0x80;
     string.y = 0x24;
@@ -609,13 +609,13 @@ void menu_format_number(s32 value, s32 count, s32 pad_zero, s16 *out)
 
 /* Release the previous item model, then load and register the selection. */
 ADDRESS(0x8002aea4, 0x68)
-u32 menu_load_item_model(s32 id)
+u32 menu_load_item_model(KF_ENUM_PARAM(KfItemId, s32) id)
 {
     void *asset;
 
     menu_release_item_model();
     if (id != KF_ITEM_NONE) {
-        if (cd_file_load_table_entry(&asset, id) != 0) {
+        if (cd_file_load_table_entry(&asset, KF_ENUM_ENCODE(s32, id)) != 0) {
             return 1;
         }
         tmd_register(KF_TMD_SLOT_MENU_ITEM, asset);

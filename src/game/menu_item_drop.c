@@ -32,7 +32,7 @@ void menu_drop_item(void)
     KfMenuList ctx;
     s16 labels[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
     u8 counts[KF_ITEM_COUNT];
-    u8 codes[KF_ITEM_COUNT];
+    KfItemId codes[KF_ITEM_COUNT];
     u8 *inv;
     KfPlayerState *player;
     s32 found;
@@ -54,18 +54,18 @@ void menu_drop_item(void)
     for (; code < KF_ITEM_COUNT; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
-            if (code == player->equipped_weapon_id ||
-                code == player->equipped_head_armor_id ||
-                code == player->equipped_body_armor_id ||
-                code == player->equipped_shield_id ||
-                code == player->equipped_arm_armor_id ||
-                code == player->equipped_leg_armor_id ||
-                code == player->equipped_accessory_id)
+            if (code == KF_ENUM_ENCODE(u8, player->equipped_weapon_id) ||
+                code == KF_ENUM_ENCODE(u8, player->equipped_head_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player->equipped_body_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player->equipped_shield_id) ||
+                code == KF_ENUM_ENCODE(u8, player->equipped_arm_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player->equipped_leg_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player->equipped_accessory_id))
                 counts[found]--;
             if (counts[found] != 0) {
                 for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                     labels[found][j] = item_name_rows[code].codes[j];
-                codes[found] = code;
+                codes[found] = KF_ENUM_DECODE(KfItemId, code);
                 found++;
             }
         }
@@ -88,11 +88,11 @@ void menu_drop_item(void)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = KF_MENU_LIST_PENDING;
             else
-                selection = codes[ctx.selected_index];
+                selection = KF_ENUM_ENCODE(u8, codes[ctx.selected_index]);
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {

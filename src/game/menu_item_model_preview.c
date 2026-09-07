@@ -18,7 +18,7 @@ SVECTOR menu_item_preview_rotation = {0, 0, 0, 0};
  * `item_id` 0xff selects the empty slot and draws nothing.
  */
 ADDRESS(0x800279c4, 0x1b8)
-void menu_item_model_preview(s32 item_id)
+void menu_item_model_preview(KF_ENUM_PARAM(KfItemId, s32) item_id)
 {
     MenuGlyphString gs;
     MATRIX rot;
@@ -55,7 +55,7 @@ void menu_item_model_preview(s32 item_id)
 
         gs.x = MENU_ITEM_PREVIEW_NAME_X;
         gs.y = MENU_ITEM_PREVIEW_NAME_Y;
-        name = item_name_rows[item_id].codes;
+        name = item_name_rows[KF_ENUM_ENCODE(s32, item_id)].codes;
         for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
             gs.codes[i] = name[i];
         }
@@ -69,7 +69,7 @@ void menu_item_model_preview(s32 item_id)
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
         gs.x = MENU_INVENTORY_QUANTITY_VALUE_X;
-        menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
+        menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
         menu_draw_number(&menu_assets.number_atlas, &gs);
     }
 }

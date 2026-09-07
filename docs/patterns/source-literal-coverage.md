@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [floor-sprite field review](floor-sprite-base-index.md):
+Working snapshot after the [inventory item-ID review](item-id-domain.md):
 **111 C files**, **112 source/image variants**, and
 **6,007 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -40,6 +40,10 @@ origins, removing 66 more raw occurrences while retaining quantity values.
 The floor-sprite review corrects the misleading `item_id` field to
 `base_sprite_index` in both placement and runtime records; its halfword stream
 terminator is separate from inventory item IDs. No literal counts change.
+The inventory review carries seventy existing item names through seven equipment
+fields, five byte lists and nine item-specific interfaces. Integer loop/control
+values and shared menu payloads use explicit boundaries; the six word-argument
+helpers retain their legacy C parameter widths. Literal counts remain unchanged.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

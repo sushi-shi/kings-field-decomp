@@ -526,7 +526,7 @@ KfPlayerState	0x58	0x04	equipment_effect_ticks	u32	supported	game_player.h;data_
 KfPlayerState	0x5c	0x01	selected_magic_id	KfSelectedMagicId	supported	game_player.h;data_identities.tsv;game-selected-magic-types.md;player_select_magic;menu_spell_select	byte selected-ranged-spell domain: Lightning Bolt through Light Needle (4..8), or none255; raw save-prefix copies preserve storage
 KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x64	0x01	equipped_weapon_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x64	0x01	equipped_weapon_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x6c	0x04	weapon_asset_buffer	KfAssetHeader *	supported	game_player.h;data_identities.tsv;game-asset-animation-layout.md	49152-byte weapon asset allocation; loaded header passed to asset_registry_set and pointer preserved across save restoration
@@ -542,12 +542,12 @@ KfPlayerState	0x80	0x04	equipped_body_armor_record	KfArmorRecord *	supported	gam
 KfPlayerState	0x84	0x04	equipped_shield_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield record pointer resolved from item IDs26..31; menu row2 and player slot4
 KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x90	0x01	equipped_head_armor_id	u8	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	head-armor item ID; retail menu row3 selects13..18 and passes player slot0
-KfPlayerState	0x91	0x01	equipped_body_armor_id	u8	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	body-armor item ID; retail menu row4 selects19..25 and passes player slot1; Full Plate21 and Skull Armor23 controls
-KfPlayerState	0x92	0x01	equipped_shield_id	u8	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield item ID; retail menu row2 selects26..31 and passes player slot4
-KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x90	0x01	equipped_head_armor_id	KfItemId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	head-armor item ID; retail menu row3 selects13..18 and passes player slot0
+KfPlayerState	0x91	0x01	equipped_body_armor_id	KfItemId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	body-armor item ID; retail menu row4 selects19..25 and passes player slot1; Full Plate21 and Skull Armor23 controls
+KfPlayerState	0x92	0x01	equipped_shield_id	KfItemId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield item ID; retail menu row2 selects26..31 and passes player slot4
+KfPlayerState	0x93	0x01	equipped_arm_armor_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x94	0x01	equipped_leg_armor_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x95	0x01	equipped_accessory_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x96	0x01	audio_effects_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x97	0x01	audio_music_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x98	0x01	hud_gauges_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	config row 2; controls HP/MP/charge/status sprites

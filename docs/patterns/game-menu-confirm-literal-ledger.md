@@ -157,7 +157,7 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_buy` | 238 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
 | `item_menu_buy` | 240 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
 | `item_menu_buy` | 241 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
-| `item_menu_buy` | 248 | `0` | `for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
+| `item_menu_buy` | 248 | `0` | `for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE); slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
 | `item_menu_buy` | 249 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
 | `item_menu_buy` | 250 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
 | `item_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
@@ -196,7 +196,7 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_sell` | 379 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 379 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 384 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
-| `item_menu_sell` | 385 | `0` | `for (slot = 0; slot < KF_ITEM_GOLD_CROSS; slot++) {` | Start with item zero and stop before Gold Cross ID 52; the Gold Cross and later key/quest-item band is excluded from selling. |
+| `item_menu_sell` | 385 | `0` | `for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_GOLD_CROSS); slot++) {` | Start with item zero and stop before Gold Cross ID 52; the Gold Cross and later key/quest-item band is excluded from selling. |
 | `item_menu_sell` | 386 | `0` | `if (inv[slot] != 0) {` | Only possessed player items can become sale candidates. |
 | `item_menu_sell` | 396 | `0` | `if (available[found] != 0) {` | After subtracting an equipped copy, retain the row only if another copy remains available. |
 | `item_menu_sell` | 397 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
