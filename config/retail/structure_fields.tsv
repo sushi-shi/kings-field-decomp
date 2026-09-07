@@ -177,7 +177,7 @@ KfEffectDirectionWords	0x06	0x02	pad	u16	supported	game_effect.h;asm;effect_pool
 KfEffectPropagation	0x00	0x02	generations_remaining	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 decrements the count passed to its child
 KfEffectPropagation	0x00	0x02	branch	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 6 propagation branch: center, side or terminal
 KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
-KfEffectRecord	0x01	0x01	kind	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
+KfEffectRecord	0x01	0x01	kind	KfEffectKind	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
 KfEffectRecord	0x02	0x01	base_render_id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	initial sprite or model selector; current ID cycles from this value
 KfEffectRecord	0x03	0x01	render_id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	current sprite or model selector consumed by rendering
 KfEffectRecord	0x04	0x01	animation_clip	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	animation clip index; 0xff selects billboard rendering
@@ -197,7 +197,7 @@ KfEffectRecord	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;
 KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind selects countdown, orbit angle, parent effect index or homing mode; not an audio handle
 KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
 KfEffectRenderView	0x00	0x01	type	u8	supported	game_effect.h;asm;render_actor_sprite;semantic-field-names.md;asm;CFG;callers;callees;xrefs	same storage as KfEffectRecord.type
-KfEffectRenderView	0x01	0x01	kind	u8	supported	game_effect.h;asm;render_actor_sprite;semantic-field-names.md;asm;CFG;callers;callees;xrefs	same storage as KfEffectRecord.kind
+KfEffectRenderView	0x01	0x01	kind	KfEffectKind	supported	game_effect.h;asm;render_actor_sprite;semantic-field-names.md;asm;CFG;callers;callees;xrefs	same storage as KfEffectRecord.kind
 KfEffectRenderView	0x02	0x01	base_render_id	u8	supported	game_effect.h;asm;render_actor_sprite;semantic-field-names.md;asm;CFG;callers;callees;xrefs	same storage as KfEffectRecord.base_render_id
 KfEffectRenderView	0x03	0x01	sprite_id	u8	supported	game_effect.h;asm;render_actor_sprite	0xff skips the record; otherwise selects the billboard or model asset
 KfEffectRenderView	0x04	0x01	mode	u8	supported	game_effect.h;asm;render_actor_sprite	0xff selects the billboard path; other values select animation clips

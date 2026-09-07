@@ -155,7 +155,7 @@ void effect_update_dispatch(void)
     u32 collision;
     u16 collision_kind;
     u8 phase;
-    u8 kind;
+    KfEffectKind kind;
     u32 radius;
     u16 angle;
     u16 distance;
@@ -179,8 +179,8 @@ void effect_update_dispatch(void)
     case KF_EFFECT_KIND_SCATTER_PROJECTILE:
     case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
     case KF_EFFECT_KIND_CURSE_PROJECTILE:
-    case 14:
-    case 22:
+    case KF_ENUM_DECODE(KfEffectKind, 14):
+    case KF_ENUM_DECODE(KfEffectKind, 22):
 shared_projectile:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
             collision = effect_map_collision(&effect->position, radius);
@@ -196,7 +196,7 @@ shared_projectile:
                         &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
                 if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
-                    if (kind == 14 || kind == 22 || kind == KF_EFFECT_KIND_WIND_CUTTER) {
+                    if (kind == KF_ENUM_DECODE(KfEffectKind, 14) || kind == KF_ENUM_DECODE(KfEffectKind, 22) || kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         actor_apply_damage(
                             (u16)collision, power,
                             impact_magic->damage_components[0],
@@ -214,7 +214,7 @@ shared_projectile:
                         goto advance_shared_projectile;
                     }
                 } else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {
-                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == 14 || kind == 22) {
+                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == KF_ENUM_DECODE(KfEffectKind, 14) || kind == KF_ENUM_DECODE(KfEffectKind, 22)) {
                         player_apply_damage(
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
@@ -282,7 +282,7 @@ effect_kind4_impact:
                             &impact_position, &effect->rotation);
                     } else {
                         effect_pool_construct(
-                            effect->id, effect->type, 0x29,
+                            effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x29),
                             &impact_position, &effect->rotation);
                     }
                 } else {
@@ -330,7 +330,7 @@ effect_kind4_impact:
                 effect->rotation.vz = (effect->rotation.vz + EMERGING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
-            if (kind == 14) {
+            if (kind == KF_ENUM_DECODE(KfEffectKind, 14)) {
                 if (rand() < KIND14_SOUND_RANDOM_CUTOFF && effect->sound_played == 0) {
                     effect->sound_played = audio_play_spatial_range(
                         &magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME,
@@ -338,7 +338,7 @@ effect_kind4_impact:
                 }
                 return;
             }
-            if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == 22) {
+            if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == KF_ENUM_DECODE(KfEffectKind, 22)) {
                 return;
             }
             effect->rotation.vz = (effect->rotation.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
@@ -398,7 +398,7 @@ play_phase_sound:
                 effect->render_id = KF_EFFECT_RENDER_NONE;
                 effect->phase = MOONLIGHT_IMPACT_FIRST;
                 audio_play_spatial_default_range(
-                    &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
+                    &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 return;
             }
             effect->position.vx += (s16)effect->direction.words.x;
@@ -570,7 +570,7 @@ randomize_kind20:
         if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
             if (effect->base_render_id == 0x10) {
                 effect_pool_construct(
-                    effect->id, effect->type, 0x2c,
+                    effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x2c),
                     &effect->position, &effect->direction.vector, 1);
             } else {
                 effect_pool_construct(
@@ -597,7 +597,7 @@ randomize_kind20:
                     &effect->position, &effect->rotation);
             } else {
                 effect_pool_construct(
-                    effect->id, effect->type, 0x2a,
+                    effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x2a),
                     &effect->position, &effect->rotation);
             }
             if (phase == LIGHTNING_IMPACT_EMIT_FIRST) {

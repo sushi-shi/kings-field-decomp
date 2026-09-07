@@ -509,6 +509,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
     VECTOR position;
     MATRIX matrix;
     struct KfEulerAngles burst_angles;
+    KF_ENUM_PARAM(KfEffectKind, s32) effect_kind;
     s32 repeat;
     s32 i;
     s16 facing;
@@ -519,9 +520,9 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
     if (effect_code & KF_ACTOR_EFFECT_PAIRED) {
         repeat = 2;
     }
-    effect_code &= KF_ACTOR_EFFECT_KIND_MASK;
+    effect_kind = KF_ENUM_DECODE(KfEffectKind, effect_code & KF_ACTOR_EFFECT_KIND_MASK);
     for (i = 0; i < repeat; i++) {
-        switch (effect_code) {
+        switch (effect_kind) {
         case KF_EFFECT_KIND_FIRE_BALL:
         case KF_EFFECT_KIND_WIND_CUTTER:
         case KF_EFFECT_KIND_LIGHT_NEEDLE:
@@ -530,9 +531,9 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
         case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
         case KF_EFFECT_KIND_CURSE_PROJECTILE:
         case KF_EFFECT_KIND_EMERGING_PROJECTILE:
-        case 22:
-        case 23:
-        case 24:
+        case KF_ENUM_DECODE(KfEffectKind, 22):
+        case KF_ENUM_DECODE(KfEffectKind, 23):
+        case KF_ENUM_DECODE(KfEffectKind, 24):
             offset.vx = definition->attachment_offsets[attachment_index].x;
             offset.vy = definition->attachment_offsets[attachment_index].y;
             offset.vz = definition->attachment_offsets[attachment_index].z;
@@ -556,12 +557,12 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 (struct KfVec3i *)&position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
             if (distance == -1) {
                 angles.x = 0;
-                if (effect_code == 23) {
+                if (effect_kind == KF_ENUM_DECODE(KfEffectKind, 23)) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
                     angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
-                } else if (effect_code == KF_EFFECT_KIND_ACTOR_SPAWNER
-                           || effect_code == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                } else if (effect_kind == KF_EFFECT_KIND_ACTOR_SPAWNER
+                           || effect_kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                     speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
                 } else {
@@ -572,7 +573,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 angles.y = vector_xz_to_angle(
                     actor_state.player_position.vx - position.vx,
                     position.vz - actor_state.player_position.vz);
-                if (effect_code == 23) {
+                if (effect_kind == KF_ENUM_DECODE(KfEffectKind, 23)) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
                     angles.x = vector_xz_to_angle(
                         position.vy - (actor_state.player_position.vy - ACTOR_LIGHTNING_TARGET_Y_OFFSET), -distance);
@@ -580,7 +581,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 } else {
                     angles.x = vector_xz_to_angle(
                         position.vy - actor_state.player_position.vy, -distance);
-                    if (effect_code == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                    if (effect_kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                         distance -= ACTOR_SCATTER_TARGET_STANDOFF;
                     /* Retail shares one step-count clamp between codes 10 and 9. */
@@ -590,7 +591,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                         } else {
                             distance = distance / speed;
                         }
-                    } else if (effect_code == KF_EFFECT_KIND_ACTOR_SPAWNER) {
+                    } else if (effect_kind == KF_EFFECT_KIND_ACTOR_SPAWNER) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                         distance -= ACTOR_SPAWNER_TARGET_STANDOFF;
                         goto clamp_steps;
@@ -600,30 +601,30 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 }
             }
             angles.z = 0;
-            if (effect_code == KF_EFFECT_KIND_WIND_CUTTER) {
+            if (effect_kind == KF_EFFECT_KIND_WIND_CUTTER) {
                 speed = ACTOR_WIND_CUTTER_SPEED;
             }
             pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
             vector3s_scale_shift12(speed, &direction);
-            if (effect_code == KF_EFFECT_KIND_LIGHT_NEEDLE || effect_code == 22) {
+            if (effect_kind == KF_EFFECT_KIND_LIGHT_NEEDLE || effect_kind == KF_ENUM_DECODE(KfEffectKind, 22)) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    effect_code, &position, &direction, &angles, 1);
-            } else if (effect_code == 24) {
+                    effect_kind, &position, &direction, &angles, 1);
+            } else if (effect_kind == KF_ENUM_DECODE(KfEffectKind, 24)) {
                 burst_angles.x = actor->rotation.x;
                 burst_angles.y = facing;
                 burst_angles.z = actor->rotation.z;
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 24,
+                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 24),
                     &position, &direction, &burst_angles, KF_EFFECT_HOMING_PLAYER, 1);
-            } else if (effect_code == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+            } else if (effect_kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE);
             } else {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    effect_code, &position, &direction, distance, 1);
+                    effect_kind, &position, &direction, distance, 1);
             }
             break;
         }
@@ -842,7 +843,7 @@ void actor_update_boss_death_sequence(void)
         position.vy = actor->position.vy - (rand() & ACTOR_BOSS_DEATH_SCATTER_Y_MASK);
         /* Retail leaves this kind's direction and the position pad unwritten. */
         effect_pool_construct(
-            0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x2c,
+            0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 0x2c),
             &position, &direction, 0);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * ACTOR_BOSS_DEATH_SOUND_PERIOD) == 0) {
             sound_ref_play(&boss_death_loop_sound, ACTOR_BOSS_DEATH_LOOP_VOLUME);

@@ -104,7 +104,7 @@ void player_update(void)
     s16 fade;
     u16 phase;
     s32 cost;
-    s32 effect;
+    KF_ENUM_PARAM(KfEffectKind, s32) effect;
     s32 attachment;
     KfMagicRecord *record;
     KfActor *target;
@@ -395,7 +395,7 @@ void player_update(void)
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_HOMING_PROJECTILE;
-                    record = &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE];
+                    record = &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE)];
                     player_state.weapon_magic_delay = PLAYER_TRIPLE_FANG_MAGIC_DELAY;
                     break;
                 case KF_ITEM_FLAME_SWORD:
@@ -412,7 +412,7 @@ void player_update(void)
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_MOONLIGHT_PROJECTILE;
-                    record = &magic_records[KF_EFFECT_KIND_RADIAL_BLAST];
+                    record = &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)];
                     player_state.weapon_magic_delay = PLAYER_MOONLIGHT_SWORD_MAGIC_DELAY;
                     break;
                 case KF_ITEM_COLICHEMARDE:

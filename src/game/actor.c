@@ -828,8 +828,8 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
 ADDRESS(0x8002e0f0, 0x1f8)
 KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, u16 profile_index, u16 chance)
 {
-    u16 profile = profile_index & KF_ACTOR_EFFECT_KIND_MASK;
-    KfActorActionProfile *weights = &actor_action_profiles[profile];
+    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KfEffectKind, profile_index & KF_ACTOR_EFFECT_KIND_MASK);
+    KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
     s32 odds;
     KfActor *candidate;

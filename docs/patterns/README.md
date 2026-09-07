@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [effect-kind-domain.md](effect-kind-domain.md): effect-kind byte storage,
+  constructor/dispatch propagation, and spell/packed-code/index boundaries.
 - [map-copy-region-domain.md](map-copy-region-domain.md): five authored map-copy
   regions, a byte selector domain, and all direct/dynamic call boundaries.
 - [progress-controlled-map-links.md](progress-controlled-map-links.md): shared

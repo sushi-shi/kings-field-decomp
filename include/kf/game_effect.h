@@ -19,7 +19,7 @@ enum {
 };
 
 /* Behavioral identities; other kind/resource IDs remain unresolved. */
-enum {
+KF_ENUM_BEGIN(KfEffectKind, u8)
     KF_EFFECT_KIND_LIGHTNING_BOLT = KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT),
     KF_EFFECT_KIND_FIRE_BALL = KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL),
     KF_EFFECT_KIND_GROUND_BRANCH = KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL),
@@ -43,7 +43,7 @@ enum {
     KF_EFFECT_KIND_MOONLIGHT_PROJECTILE = 36,
     KF_EFFECT_KIND_MAP_SWITCH = 48,
     KF_EFFECT_KIND_FLOOR_DEFORMATION = 52
-};
+KF_ENUM_END(KfEffectKind)
 
 /* Low type bits select actors/player after the separate terrain checks.
  * The power bit alone does not imply the actor-damage player-credit class. */
@@ -179,7 +179,7 @@ typedef struct KfFloorDeformSegment {
  */
 typedef struct KfEffectRecord {
     u8 type;             /* 0x00 */
-    u8 kind;             /* 0x01 */
+    KfEffectKind kind;   /* 0x01 */
     u8 base_render_id;   /* 0x02: first sprite/model in the animation */
     u8 render_id;        /* 0x03 */
     u8 animation_clip;   /* 0x04: 0xff selects a billboard instead of a model */
@@ -229,7 +229,7 @@ typedef struct KfEffectState {
  * bytes as sprite selectors. */
 typedef struct KfEffectRenderView {
     u8 type;
-    u8 kind;
+    KfEffectKind kind;
     u8 base_render_id;
     u8 sprite_id;
     u8 mode;
@@ -262,7 +262,7 @@ extern KfEffectState effect_state;
 
 extern KfEffectRecord *effect_pool_find_free(void);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, u8 kind, const VECTOR *position,
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...);
 extern KfEffectRecord *effect_pool_spawn_typed(
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,

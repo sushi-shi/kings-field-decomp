@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [map-copy region review](map-copy-region-domain.md):
+Working snapshot after the [effect-kind type review](effect-kind-domain.md):
 **111 C files**, **112 source/image variants**, and
 **6,073 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -32,6 +32,9 @@ unlock, removing two more raw selectors. The progress-link review names six
 weapon-door and boss-emitter link uses from shipped placements and consumers.
 The map-copy review names eight region selections and propagates their byte
 enum through the helper and its dynamic object-parameter boundary.
+The effect-kind review carries the existing identities through byte storage,
+all 33 current constructor calls, dispatch, weapon effects and masked actor
+profile selection; its explicit numeric boundaries retain the same literal count.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

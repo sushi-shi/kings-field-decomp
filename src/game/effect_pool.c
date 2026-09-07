@@ -46,7 +46,7 @@ RODATA(0x80012c28, 0xb4)
 
 ADDRESS(0x80036f44, 0x82c)
 KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, u8 kind, const VECTOR *position,
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...)
 {
     s32 *va = (s32 *)&direction;   /* variadic stack base: va[1]=arg6, va[2]=arg7, va[3]=arg8 */
@@ -66,7 +66,7 @@ KfEffectRecord *effect_pool_construct(
         record->visual.animation_phase = 0;
         record->sound_played = 0;
 
-        magic = &magic_records[record->kind];
+        magic = &magic_records[KF_ENUM_ENCODE(u8, record->kind)];
 
         switch (record->kind) {
         case KF_EFFECT_KIND_FIRE_BALL:
@@ -91,7 +91,7 @@ KfEffectRecord *effect_pool_construct(
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case 0x17:
+        case KF_ENUM_DECODE(KfEffectKind, 0x17):
             record->base_render_id = 0x11;
             record->render_id = 0x11;
             record->kind = KF_EFFECT_KIND_LIGHTNING_BOLT;
@@ -113,7 +113,7 @@ KfEffectRecord *effect_pool_construct(
                     EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
-        case 0x29:
+        case KF_ENUM_DECODE(KfEffectKind, 0x29):
             record->base_render_id = 0x13;
             record->render_id = 0x13;
             record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
@@ -132,7 +132,7 @@ KfEffectRecord *effect_pool_construct(
                 EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
                 EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             break;
-        case 0x2a:
+        case KF_ENUM_DECODE(KfEffectKind, 0x2a):
             record->base_render_id = 0xf;
             record->render_id = 0xf;
             record->kind = KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST;
@@ -236,7 +236,7 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = EFFECT_EMERGING_INITIAL_SCALE;
             record->position.vy += KF_EFFECT_EMERGE_DEPTH;
             break;
-        case 0xe:
+        case KF_ENUM_DECODE(KfEffectKind, 0xe):
             record->animation_clip = 0;
             record->base_render_id = 4;
             record->render_id = 4;
@@ -259,7 +259,7 @@ KfEffectRecord *effect_pool_construct(
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case 0x16:
+        case KF_ENUM_DECODE(KfEffectKind, 0x16):
             record->animation_clip = 0;
             record->base_render_id = 0xe;
             record->render_id = 0xe;
@@ -317,7 +317,7 @@ KfEffectRecord *effect_pool_construct(
             record->control.bytes.low = 0xff;
             record->rotation.vx = -record->rotation.vx;
             audio_play_spatial_range(
-                &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[1],
+                &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME,
                 EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
                 EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
@@ -334,14 +334,14 @@ KfEffectRecord *effect_pool_construct(
                 record->control.parent_effect_index = argument;
             }
             break;
-        case 0x2c:
+        case KF_ENUM_DECODE(KfEffectKind, 0x2c):
             record->base_render_id = 0x11;
             record->render_id = 0x11;
             record->kind = KF_EFFECT_KIND_RADIAL_BLAST;
             record->animation_clip = 0;
             if (va[1] != 0) {
                 audio_play_spatial_range(
-                    &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[0],
+                    &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
                     EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
                     EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
@@ -353,13 +353,13 @@ KfEffectRecord *effect_pool_construct(
             record->animation_clip = 0;
             if (va[1] != 0) {
                 audio_play_spatial_range(
-                    &magic_records[KF_EFFECT_KIND_RADIAL_BLAST].sounds[0],
+                    &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
                     EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
                     EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
-        case 0x18:
+        case KF_ENUM_DECODE(KfEffectKind, 0x18):
             record->base_render_id = 0x10;
             record->render_id = 0x10;
             record->kind = KF_EFFECT_KIND_HOMING_PROJECTILE;
@@ -372,7 +372,7 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = KF_FIXED12_ONE / 2;
             if (va[3] != 0) {
                 audio_play_spatial_default_range(
-                    &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],
+                    &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -388,7 +388,7 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = KF_FIXED12_ONE / 2;
             if (va[3] != 0) {
                 audio_play_spatial_default_range(
-                    &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE].sounds[0],
+                    &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -440,5 +440,5 @@ ADDRESS(0x8003781c, 0x34)
 void effect_pool_set_current(KfEffectRecord *record)
 {
     current_effect = record;
-    current_effect_magic_record = &magic_records[record->kind];
+    current_effect_magic_record = &magic_records[KF_ENUM_ENCODE(u8, record->kind)];
 }
