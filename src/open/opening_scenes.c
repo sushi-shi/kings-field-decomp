@@ -361,8 +361,11 @@ void opening_scene1_run(void)
 ADDRESS(0x80014608, 0x1fc)
 void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *position)
 {
+    struct KfOpeningTransformSnapshot {
+        VECTOR position;
+        SVECTOR rotation;
+    } transform_snapshot;
     KfOpeningEntity *entity;
-    VECTOR position_snapshot;
     s16 entity_index;
     s16 frame;
     s16 initial_scale_y;
@@ -385,9 +388,9 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
     entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
     entity_index = TRANSITION_ENTITY_COUNT - 1;
     /* Retail retains these stack coordinates without a subsequent consumer. */
-    position_snapshot.vx = position->vx;
-    position_snapshot.vz = position->vz;
-    position_snapshot.vy = position->vy;
+    transform_snapshot.position.vx = position->vx;
+    transform_snapshot.position.vz = position->vz;
+    transform_snapshot.position.vy = position->vy;
     do {
         entity->object_id = KF_OPENING_TRANSITION_CYLINDER;
         entity->position = *position;
