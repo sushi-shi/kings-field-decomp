@@ -24,6 +24,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-collision-constants.md](game-magic-collision-constants.md): magic
   launch/targeting units, shared collision-rectangle capacity and the complete
   [52-occurrence remainder ledger](game-magic-collision-literal-ledger.md).
+- [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete
+  117-occurrence lighting/fade accounting, seven retail color matrices, signed
+  fog rounding and nine exact function reviews.
 - [save-result-domains.md](save-result-domains.md): distinct internal/menu/cleanup
   result channels, typed formatting confirmation and shared union storage;
   20 named values with unchanged 32-function verification.

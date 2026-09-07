@@ -775,6 +775,11 @@ same data ownership/placement failures. No new exact result is claimed.
 
 ## Lighting and death-fade plan
 
+Current follow-up: the [per-occurrence lighting/fade ledger](game-lighting-literal-ledger.md)
+accounts for all 117 retained literals and rechecks the seven retail matrices
+and all nine functions, including the now-exact death update. The results below
+remain the historical results of the original naming batch.
+
 Trace GAME's color-matrix presets, the vitals-restoration color cycle and the
 death/recovery fade helpers. Name established palette entries, interpolation
 limits/steps, and the death camera's measured timing/position constants.
