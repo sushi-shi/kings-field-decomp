@@ -261,6 +261,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-class-titles.md](game-menu-class-titles.md): decoded SOLDIER/MAGE
   title grid, shared base-stat thresholds and atlas strides, and the complete
   [status-text literal ledger](game-menu-status-literal-ledger.md).
+- [game-menu-save-results.md](game-menu-save-results.md): typed save/load
+  confirmation results, distinct root controls, window rows, decoded message
+  textures, and the complete four-function literal ledger.
 - [game-menu-window-kinds.md](game-menu-window-kinds.md): decoded window layouts,
   enum propagation through drawing/prompt/list APIs, and retained initializer
   literals with their measured units.

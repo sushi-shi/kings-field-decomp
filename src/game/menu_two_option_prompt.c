@@ -10,7 +10,7 @@
  * suppress the composite-frame selection (-1).
  */
 ADDRESS(0x800286d4, 0x240)
-s32 menu_two_option_prompt(
+KfMenuConfirmResult menu_two_option_prompt(
     KfMenuWindowKind kind, s32 count, s32 highlight_row,
     const KfSaveSlotSummary *summaries)
 {
@@ -21,7 +21,7 @@ s32 menu_two_option_prompt(
     s32 composite = -1;
     s32 input = 0;
     s32 prev;
-    s32 result = -99;
+    KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -42,7 +42,7 @@ s32 menu_two_option_prompt(
     label_b.codes[3] = MENU_TEXT_END;
 
     for (;;) {
-        if (result != -99) {
+        if (result != KF_MENU_CONFIRM_PENDING) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, composite);
             menu_draw_window(kind, count, highlight_row, 1);
@@ -66,10 +66,10 @@ s32 menu_two_option_prompt(
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             highlight = 1;
-            result = -selected;
+            result = KF_ENUM_DECODE(KfMenuConfirmResult, -selected);
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            result = -1;
+            result = KF_MENU_CONFIRM_CANCELLED;
         }
 
         menu_frame_begin();

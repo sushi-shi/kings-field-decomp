@@ -24,7 +24,7 @@ void menu_save_confirm(void)
         i++;
         menu_frame_begin();
         menu_draw_dialog_frame(0, 3);
-        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, 0, 0);
+        menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, 0);
         menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -47,7 +47,7 @@ s32 menu_root(void)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 result = -99;
+    s32 result = KF_MENU_ROOT_PENDING;
     s32 selection = -1;
     s32 i;
 
@@ -77,9 +77,9 @@ s32 menu_root(void)
             result = menu_use_item_panel();
             goto join_result;
         case 1:
-            result = -1;
+            result = KF_MENU_ROOT_NO_ITEM;
             if (menu_magic_panel() == -1)
-                result = -99;
+                result = KF_MENU_ROOT_PENDING;
             break;
         case 2:
             menu_option_root();
@@ -93,14 +93,14 @@ s32 menu_root(void)
         case 5:
             result = menu_save_load_hub();
         join_result:
-            if (result == -1)
-                result = -99;
+            if (result == KF_MENU_ROOT_NO_ITEM)
+                result = KF_MENU_ROOT_PENDING;
             break;
         case 6:
             menu_config_panel();
             break;
         }
-        if (result != -99) {
+        if (result != KF_MENU_ROOT_PENDING) {
             selection = -1;
             while (PadRead(1) != 0)
                 ;
@@ -128,10 +128,10 @@ s32 menu_root(void)
             if (cursor < 7)
                 selection = cursor;
             else
-                result = -1;
+                result = KF_MENU_ROOT_NO_ITEM;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            result = -1;
+            result = KF_MENU_ROOT_NO_ITEM;
         }
         menu_frame_begin();
         menu_draw_stats_header();

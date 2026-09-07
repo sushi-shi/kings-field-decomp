@@ -19,6 +19,14 @@ KF_ENUM_BEGIN(KfMenuMode, s32)
     KF_MENU_MODE_SHOP = 2
 KF_ENUM_END(KfMenuMode)
 
+/* Negative controls in the root result channel; nonnegative values are item IDs. */
+enum {
+    KF_MENU_ROOT_PENDING = -99,
+    KF_MENU_ROOT_GAME_LOADED = -3,
+    KF_MENU_ROOT_RETURN_TO_INTRO = -2,
+    KF_MENU_ROOT_NO_ITEM = -1
+};
+
 KF_ENUM_BEGIN(KfEquipmentMenuCategory, s32)
     KF_EQUIP_MENU_WEAPON = 0,
     KF_EQUIP_MENU_MAGIC = 1,
@@ -82,6 +90,19 @@ KF_ENUM_BEGIN(KfMenuConfirmResult, s32)
     KF_MENU_CONFIRM_CANCELLED = -1,
     KF_MENU_CONFIRM_ACCEPTED = 0
 KF_ENUM_END(KfMenuConfirmResult)
+
+/* Row positions in the loaded System, save and load windows. */
+enum {
+    KF_MENU_SYSTEM_LOAD_ROW = 0,
+    KF_MENU_SYSTEM_QUIT_ROW = 1,
+    KF_MENU_SYSTEM_RETURN_ROW = 2,
+    KF_MENU_SYSTEM_ROW_COUNT = KF_MENU_SYSTEM_RETURN_ROW + 1,
+    KF_MENU_SAVE_FORMAT_ROW = KF_SAVE_SLOT_COUNT,
+    KF_MENU_SAVE_RETURN_ROW = KF_MENU_SAVE_FORMAT_ROW + 1,
+    KF_MENU_SAVE_ROW_COUNT = KF_MENU_SAVE_RETURN_ROW + 1,
+    KF_MENU_LOAD_RETURN_ROW = KF_SAVE_SLOT_COUNT,
+    KF_MENU_LOAD_ROW_COUNT = KF_MENU_LOAD_RETURN_ROW + 1
+};
 
 enum {
     KF_MENU_TEXTURE_NONE = 0xff
@@ -292,7 +313,7 @@ extern void menu_list_render(const KfMenuList *list);
 extern u32 menu_load_item_model(s32 id);
 extern u32 menu_load_item_texture(s32 id);
 extern void menu_release_item_model(void);
-extern s32 menu_load_panel(void);
+extern KfMenuConfirmResult menu_load_panel(void);
 extern s32 menu_magic_panel(void);
 extern void menu_map_viewer(s32 item_code);
 extern void menu_option_root(void);
@@ -301,10 +322,10 @@ extern void menu_present_frame(void);
 extern s32 menu_root(void);
 extern void menu_save_confirm(void);
 extern s32 menu_save_load_hub(void);
-extern s32 menu_save_panel(void);
+extern KfMenuConfirmResult menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);
-extern s32 menu_two_option_prompt(
+extern KfMenuConfirmResult menu_two_option_prompt(
     KfMenuWindowKind kind, s32 count, s32 highlight,
     const KfSaveSlotSummary *summaries);
 extern void talk_show_dialogue_page(u8 floor, u8 stage, s32 character_id, u8 page);

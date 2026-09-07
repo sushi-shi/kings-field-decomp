@@ -96,7 +96,7 @@ void player_update(void)
         item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
             player_use_item(item);
-        } else if (item == -3) {
+        } else if (item == KF_MENU_ROOT_GAME_LOADED) {
             pool_release_all();
             audio_close_vab();
             func_800365f8();
@@ -105,7 +105,7 @@ void player_update(void)
             player_state.previous_map_cell.z = player_state.map_cell.z;
             player_equip_weapon(player_state.equipped_weapon_id);
             player_select_magic(player_state.selected_magic_id);
-        } else if (item == -2) {
+        } else if (item == KF_MENU_ROOT_RETURN_TO_INTRO) {
             game_exit_code = KF_OPEN_MODE_INTRO;
             return;
         }

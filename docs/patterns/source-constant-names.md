@@ -112,6 +112,13 @@ It distinguishes the System window from the unreferenced Save/Load record,
 replaces 37 source literals, and explains the 16 retained occurrences in the
 [window/list initializer ledger](game-menu-window-literal-ledger.md).
 
+The [save-result review](game-menu-save-results.md) propagates typed
+confirmation results through the prompt and save/load panels, while keeping
+the root menu's item IDs and negative controls distinct. It names window
+rows and five decoded message textures, replaces 84 numeric uses, and
+explains all 140 remaining literals in the
+[save/confirmation ledger](game-menu-save-literal-ledger.md).
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under
