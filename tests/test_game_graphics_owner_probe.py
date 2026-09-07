@@ -446,6 +446,10 @@ extern KfMaterialProbe material_probe;
         data['graphics_owner_probe'] = ORIGIN
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         selected = {
+            'game.asset_registry': {
+                'asset_registry_load_tmd_archive', 'asset_registry_set',
+                'asset_registry_select',
+            },
             'game.render': {'tmd_project_vertices', 'tmd_project_vertices_shift',
                             'tmd_transform_vertices'},
             'game.pool': {'render_bind_animated_instance'},

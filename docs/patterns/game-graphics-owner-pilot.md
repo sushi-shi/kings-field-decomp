@@ -460,3 +460,57 @@ existing data/ownership/placement failures: source-data matches 0/1, 9/42,
 2/19 and target relinks 1/1, 75/77, 34/38 for PSX/GAME/OPEN respectively,
 with six conflicting section bases and zero artifact failures. No production
 source, shared header, fixture layout, inventory or banking entry changes.
+
+### Asset-registry consumer audit at `cfd71c6`
+
+Function Match Plan: extend the existing scratch-span owner control to all
+three functions in `game.asset_registry`. Each function is already strict
+100%; the objective is to prove that expressing both the registry base and
+selected-TMD field through the proposed owner preserves the complete retail
+bodies. Keep the public registry declaration unsized because shipped assets
+prove use through slot 47 but not the allocation's capacity. Inside the
+temporary source only, use the explicitly unresolved `20134..20224` span as
+a `KfAssetHeader **` view. Do not promote it to a sixty-pointer array, change
+the production source/header, or infer an original declaration spelling.
+
+| GAME function | Retail contract | Complete-owner verdict |
+| --- | --- | --- |
+| `800204c0 asset_registry_load_tmd_archive` | 156 bytes, 40-byte frame, four blocks, two branches, two calls and one registry address pair. Callers pass a `u16` first slot and archive pointer; retain the four-byte archive header, postdecremented `u16` count, chunk byte-size advance, registration, selection and primitive-index preparation. | All 39 words and ordered targets remain exact. A four-byte owner shift changes only candidate offset `+40`. |
+| `8002055c asset_registry_set` | 64 bytes, 24-byte frame, one block, no branch, two calls and one registry pair. Callers pass a narrowed slot and asset pointer; retain store/select/prepare order and the return delay slot. | All 16 words and ordered targets remain exact. A four-byte owner shift changes only `+14`. |
+| `8002059c asset_registry_select` | 56-byte frameless leaf, one block, no branch or call, and two address pairs. A `u16` index selects a header, whose word at +8 is added to its base and written to `tmd_state.current_asset` at owner +`20130`. | All 14 words and ordered targets remain exact. A four-byte owner shift changes `+c` and `+2c`, independently checking both fields. |
+
+All returns retain their owned delay slots. There are no strings, candidate
+outgoing references, internal jumps or indirect transfers. The three bodies
+implement game archive/registry policy and have no vendored attribution; their
+downstream TMD preparation remains a game helper. Four archive-load call sites,
+two set call sites and all nine selection call sites were inspected for O32
+argument widths and ignored returns. Source history includes the initial exact
+archive reconstruction `42a9dd1` and later asset-header typing `fd3ecb9`.
+
+Fresh canonical and owner compiles both reproduce every retail word, the four
+ordered direct calls and four ordered materialized addresses. The delinked
+target independently reproduces the same raw bodies. Retail body SHA-256 values
+in table order are:
+
+```text
+5af9bcc0812149f9cfc95b61c4a9d4a4e8e893e1ce8ab23f6f62599364cf4afb
+7d216c12b821eca40061efbf9445bdae5939409c1ed16f6d550a696c101bb39d
+fe60d5074410fd627c9d6291b52bc910981c3ba3a30bc39e1571a6bea31fd0f0
+```
+
+The durable scratch-consumer probe now covers these three functions alongside
+the exact projection and animation consumers. Shifting the owner root by four
+breaks each registry body without changing its calls. As with the screen-
+geometry audit, CFG word windows may show different unresolved ELF addends
+before linking; full numeric relinking is the exact comparison. This advances
+the direct-consumer audit but does not establish registry capacity, change a
+production score or authorize complete-owner migration.
+
+The focused registry control and all 680 repository tests pass (87.948
+seconds), as do Ruff and `git diff --check`. All 484 production scores remain
+unchanged: GAME 313/362, OPEN 98/108 and PSX 1/1, plus thirteen exact vendored
+controls. Full `kf build` retains source-data matches 0/1, 9/42 and 2/19 and
+target relinks 1/1, 75/77 and 34/38 for PSX/GAME/OPEN, respectively. Its six
+conflicting section bases and incomplete ownership remain; there are zero
+artifact failures. No production source, header, fixture layout, inventory or
+banking entry changes.
