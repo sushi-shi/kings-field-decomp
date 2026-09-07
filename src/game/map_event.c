@@ -18,9 +18,9 @@ ADDRESS(0x800337ac, 0x74)
 void map_event_refresh_dialogue_stage(KfMapEvent *event)
 {
     if (event->dialogue_stage_limit > event->dialogue_stage) {
-        if (player_state.progress_state.highest_floor < event->dialogue_stage_limit) {
-            if (event->dialogue_stage != player_state.progress_state.highest_floor) {
-                event->dialogue_stage = player_state.progress_state.highest_floor;
+        if (KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor) < event->dialogue_stage_limit) {
+            if (event->dialogue_stage != KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor)) {
+                event->dialogue_stage = KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor);
             reset_dialogue_page:
                 event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
                 event->dialogue_page_delay = 0;

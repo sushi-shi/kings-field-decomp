@@ -581,21 +581,21 @@ void player_warp_to_floor_entry(void)
 {
     VECTOR position;
     const KfFloorEntryCell *entry;
-    u8 floor;
+    KF_ENUM_STORAGE(KfFloorId, u8) floor;
 
     position.vx = player_state.camera_position.vx;
     position.vz = player_state.camera_position.vz;
     position.vy = player_state.floor_height;
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     floor = player_state.progress_state.current_floor;
-    entry = &floor_entry_cells[floor - 1];
+    entry = &floor_entry_cells[KF_ENUM_ENCODE(u8, floor) - 1];
     player_state.previous_map_cell.x = entry->x;
     player_state.previous_map_cell.z = entry->z;
     player_state.camera_position.vx = player_state.previous_map_cell.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vx = player_state.camera_position.vx;
     player_state.camera_position.vz = player_state.previous_map_cell.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
-    if (floor == 5 && player_state.map_variant != KF_FLOOR5_ENTRY_VARIANT) {
+    if (floor == KF_FLOOR_5 && player_state.map_variant != KF_FLOOR5_ENTRY_VARIANT) {
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             audio_play_current_map_sequence();
         }

@@ -210,7 +210,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, s32 highlighted_slot)
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.x = 286;
-            menu_format_number(rows[i].current_floor, 1, 0, gs.codes);
+            menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, 0, gs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.x = MENU_SAVE_SUMMARY_LABEL_X;

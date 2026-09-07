@@ -69,7 +69,7 @@ void audio_play_map_sequence(u8 sequence_id)
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled) {
         path[6] = sequence_id + '0';
-        path[1] = player_state.progress_state.current_floor + '0';
+        path[1] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
         if (cd_file_load_into(audio_state.sequence_buffer, path) == 0) {
             audio_state.sequence_id = SsSeqOpen(
                 (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);

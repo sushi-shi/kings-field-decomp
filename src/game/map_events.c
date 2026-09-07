@@ -97,7 +97,7 @@ void map_event_update_animation_loop(void)
         (event->animation_phase + KF_MAP_EVENT_ANIMATION_LOOP_STEP)
         & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
 
-    if (player_state.progress_state.current_floor == 5
+    if (player_state.progress_state.current_floor == KF_FLOOR_5
             && event == &map_event_pool[0]
             && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_ref_10,
@@ -159,19 +159,19 @@ void map_event_pool_update(void)
     if (map_ambient_script_countdown-- == 0) {
         map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
         switch (player_state.progress_state.current_floor) {
-        case 1:
+        case KF_FLOOR_1:
             map_ambient_script_floor1();
             break;
-        case 2:
+        case KF_FLOOR_2:
             map_ambient_script_floor2();
             break;
-        case 3:
+        case KF_FLOOR_3:
             map_ambient_script_floor3();
             break;
-        case 4:
+        case KF_FLOOR_4:
             map_ambient_script_floor4();
             break;
-        case 5:
+        case KF_FLOOR_5:
             map_ambient_script_floor5();
             break;
         }
@@ -192,7 +192,7 @@ void map_world_state_persist(void)
     s32 active;
 
     out = base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET)
-        + KF_MAP_SAVED_FLOOR_BYTES * player_state.progress_state.current_floor;
+        + KF_MAP_SAVED_FLOOR_BYTES * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
     *out++ = 1;
 
     event = map_runtime_state.events;

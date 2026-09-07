@@ -4,6 +4,7 @@
 /* Map, floor, map-object, event, and camera layouts and operations. */
 
 #include <kf/game_types.h>
+#include <kf/floor.h>
 #include <kf/enum.h>
 #include <kf/notify_types.h>
 #include <kf/psyq.h>
@@ -414,8 +415,8 @@ extern void map_object_spawn_effect(u8 kind, u8 object_id, const struct KfVec3i 
 extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
 extern void *map_resource_load_file(const char *filename);
-extern void map_resource_path_set_floor(s32 floor);
-extern void map_resources_load(s32 floor, s32 map_variant);
+extern void map_resource_path_set_floor(KfFloorId floor);
+extern void map_resources_load(KfFloorId floor, s32 map_variant);
 extern void map_unload_floor(void);
 extern void map_variant_assets_load(void);
 extern void map_world_state_persist(void);

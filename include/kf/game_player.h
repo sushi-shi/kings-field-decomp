@@ -88,8 +88,8 @@ enum {
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;
-    u8 current_floor;
-    u8 highest_floor;
+    KF_ENUM_STORAGE(KfFloorId, u8) current_floor;
+    KF_ENUM_STORAGE(KfFloorId, u8) highest_floor;
 } KfPlayerProgressState;
 
 /*
@@ -288,7 +288,7 @@ extern void player_update_vertical_motion(void);
 extern void player_update_view_bob(void);
 extern void player_update_weapon_attack(void);
 /* Warp variant inputs remain full words until the player-state byte store. */
-extern void player_warp_change_floor(s32 floor, u32 variant);
+extern void player_warp_change_floor(KfFloorId floor, u32 variant);
 extern void player_warp_shimmer(s32 mode, VECTOR *position);
 extern void player_warp_shimmer_at_player(u32 mode);
 extern void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z);

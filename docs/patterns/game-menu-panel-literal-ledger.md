@@ -7,6 +7,10 @@ Complete current ledger of **103 numeric/character occurrences** across
 Comments, strings, identifier digits, named definitions and retail claims are
 excluded. Every repeated token has its own row; signs are expression operators.
 
+The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
+through the current source; this ledger reflects its named comparisons and
+explicit numeric boundaries.
+
 ## `src/game/menu_map_viewer.c`
 
 75 retained occurrences.
@@ -17,8 +21,8 @@ excluded. Every repeated token has its own row; signs are expression operators.
 | `menu_map_viewer` | 34 | `16` | `char path[16] = "MAP\\M00.";` | Sixteen-byte local path workspace initialized with the eight-character map template and trailing zeros; retain its retail stack footprint. |
 | `menu_map_viewer` | 41 | `5` | `path[5] = map_number + '0';` | Byte five is the map-set digit in MAP/Msf.; adding ASCII zero encodes the numeric selector as a path character. |
 | `menu_map_viewer` | 41 | `'0'` | `path[5] = map_number + '0';` | Byte five is the map-set digit in MAP/Msf.; adding ASCII zero encodes the numeric selector as a path character. |
-| `menu_map_viewer` | 42 | `6` | `path[6] = player_state.progress_state.current_floor + '0';` | Byte six is the current-floor digit in MAP/Msf.; adding ASCII zero encodes the numeric floor as a path character. |
-| `menu_map_viewer` | 42 | `'0'` | `path[6] = player_state.progress_state.current_floor + '0';` | Byte six is the current-floor digit in MAP/Msf.; adding ASCII zero encodes the numeric floor as a path character. |
+| `menu_map_viewer` | 42 | `6` | `path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';` | Byte six is the current-floor digit in MAP/Msf.; adding ASCII zero encodes the numeric floor as a path character. |
+| `menu_map_viewer` | 42 | `'0'` | `path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';` | Byte six is the current-floor digit in MAP/Msf.; adding ASCII zero encodes the numeric floor as a path character. |
 | `menu_map_viewer` | 45 | `0` | `if (cd_file_load_into(buffer, path) != 0)` | Nonzero file-loader status returns before the TIM upload and rendering. |
 | `menu_map_viewer` | 49 | `0` | `SetPolyFT4(&poly_bg[0]);` | Initialize packet element zero before copying it to element one for double buffering. |
 | `menu_map_viewer` | 50 | `0` | `SetSemiTrans(&poly_bg[0], 1);` | SDK Boolean 1 enables semi-transparency. Packet index 0 selects the initialized copy before double-buffer duplication. |

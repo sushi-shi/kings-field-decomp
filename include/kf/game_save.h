@@ -42,7 +42,7 @@ typedef struct KfPsxSaveHeader {
 /* On-card summaries widen the player's byte/halfword values to words. */
 typedef struct KfSaveSlotSummary {
     u32 experience;
-    u32 current_floor;
+    KF_ENUM_STORAGE(KfFloorId, u32) current_floor;
     u32 current_hp;
     u32 maximum_hp;
     u32 current_mp;

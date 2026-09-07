@@ -1,9 +1,13 @@
 # Actor-behavior remainder literal ledger
 
-Complete account of **173 numeric occurrences** in `src/game/actor_behavior.c`.
+Complete account of **171 numeric occurrences** in `src/game/actor_behavior.c`.
 The [behavior review](game-actor-behavior-constants.md) records the names, units,
 evidence and verification. Comments, strings, identifier digits, enums and retail
 claims are excluded. Repeated tokens have separate rows; signs stay in expressions.
+
+The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
+through the current source; this ledger reflects its named comparisons and
+explicit numeric boundaries.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -103,8 +107,7 @@ claims are excluded. Repeated tokens have separate rows; signs stay in expressio
 | `actor_update_current_action` | 948 | `0` | `0,` | Zero height or vertical padding in the height-ignored actor-distance query. |
 | `actor_update_current_action` | 949 | `0` | `0));` | Zero height or vertical padding in the height-ignored actor-distance query. |
 | `actor_update_current_action` | 956 | `0` | `actor->animation_phase = 0;` | Reset the selected animation cycle to its initial phase. |
-| `actor_update_current_action` | 960 | `5` | `if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {` | Authored floor/actor-definition pair: 5/7 selects boss death, 4/5 selects transformation. |
-| `actor_update_current_action` | 960 | `7` | `if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {` | Authored floor/actor-definition pair: 5/7 selects boss death, 4/5 selects transformation. |
+| `actor_update_current_action` | 960 | `7` | `if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {` | Authored floor/actor-definition pair: 5/7 selects boss death, 4/5 selects transformation. |
 | `actor_update_current_action` | 966 | `0` | `if (debris != 0) {` | Skip spawning a gold drop when its computed amount is zero. |
 | `actor_update_current_action` | 968 | `1` | `debris, (struct KfVec3i *)&actor->position, -(definition->collision_height >> 1));` | Half the collision height places drops at the actor volume center. |
 | `actor_update_current_action` | 977 | `1` | `-(definition->collision_height >> 1));` | Half the collision height places drops at the actor volume center. |
@@ -120,8 +123,7 @@ claims are excluded. Repeated tokens have separate rows; signs stay in expressio
 | `actor_update_current_action` | 1028 | `0` | `actor_try_attack_player(0, definition->awareness_distance, 0, KF_ACTOR_AIM_TOLERANCE);` | Zero yaw offset; attack along the current facing. |
 | `actor_update_current_action` | 1038 | `0` | `0,` | Zero height or vertical padding in the height-ignored actor-distance query. |
 | `actor_update_current_action` | 1039 | `0` | `0));` | Zero height or vertical padding in the height-ignored actor-distance query. |
-| `actor_update_current_action` | 1043 | `4` | `if (player_state.progress_state.current_floor == 4 && actor->definition_id == 5) {` | Authored floor/actor-definition pair: 5/7 selects boss death, 4/5 selects transformation. |
-| `actor_update_current_action` | 1043 | `5` | `if (player_state.progress_state.current_floor == 4 && actor->definition_id == 5) {` | Authored floor/actor-definition pair: 5/7 selects boss death, 4/5 selects transformation. |
+| `actor_update_current_action` | 1043 | `5` | `if (player_state.progress_state.current_floor == KF_FLOOR_4 && actor->definition_id == 5) {` | Authored floor/actor-definition pair: 5/7 selects boss death, 4/5 selects transformation. |
 | `actor_update_current_action` | 1064 | `0` | `actor->animation_phase = 0;` | Reset the selected animation cycle to its initial phase. |
 | `actor_update_current_action` | 1066 | `1` | `if (map_cell_attribute_height_table[attribute - 1] > ACTOR_JUMP_HEIGHT_THRESHOLD) {` | Retail one-row bias in the attribute-height lookup; preserve even for attribute zero. |
 | `actor_update_current_action` | 1085 | `0` | `if (actor->vertical_velocity >= 0) {` | End of upward motion; reaching nonnegative Y velocity triggers the second charge preparation. |

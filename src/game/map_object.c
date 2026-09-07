@@ -578,7 +578,7 @@ void map_object_pool_update(void)
                 object->position_y += KF_MAP_OBJECT_REVEAL_SETTLE_STEP;
                 object->action_timer++;
             } else if (object->action_timer == MAP_REVEAL_SETTLE_END) {
-                if (player_state.progress_state.current_floor == 3) {
+                if (player_state.progress_state.current_floor == KF_FLOOR_3) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_11, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                     counter = &map_floor3_script.revealed_piece_count;
@@ -591,7 +591,7 @@ void map_object_pool_update(void)
                             *counter = KF_MAP_FLOOR3_REQUIRED_REVEALS;
                         }
                     }
-                } else if (player_state.progress_state.current_floor == 1) {
+                } else if (player_state.progress_state.current_floor == KF_FLOOR_1) {
                     if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_UNSET) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_ref_5, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);

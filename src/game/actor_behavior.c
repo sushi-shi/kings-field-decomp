@@ -957,7 +957,7 @@ void actor_update_current_action(void)
         }
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH]);
         actor_play_sound_at_phase(&definition->sounds[KF_ACTOR_SOUND_DEATH], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_DEATH]);
-        if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
+        if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
             actor_update_boss_death_sequence();
             return;
         }
@@ -1040,7 +1040,7 @@ void actor_update_current_action(void)
         }
         break;
     case KF_ACTOR_ACTION_POST_DEATH:
-        if (player_state.progress_state.current_floor == 4 && actor->definition_id == 5) {
+        if (player_state.progress_state.current_floor == KF_FLOOR_4 && actor->definition_id == 5) {
             actor_transform_definition5_to6(actor);
             actor_initialize(actor);
             return;

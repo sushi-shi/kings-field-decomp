@@ -85,9 +85,9 @@ void common_resources_load(void)
 }
 
 ADDRESS(0x8001b390, 0x14)
-void map_resource_path_set_floor(s32 floor)
+void map_resource_path_set_floor(KfFloorId floor)
 {
-    map_resource_path[1] = floor + '0';
+    map_resource_path[1] = KF_ENUM_ENCODE(s32, floor) + '0';
 }
 
 ADDRESS(0x8001b3a4, 0x40)
@@ -130,17 +130,17 @@ void audio_play_current_map_sequence(void)
     s32 sequence_id = MAP_SEQUENCE_DEFAULT;
 
     switch (player_state.progress_state.current_floor) {
-    case 1:
+    case KF_FLOOR_1:
         if (player_state.progress_state.level >= MAP_FLOOR1_ALTERNATE_MUSIC_PROGRESS) {
             sequence_id = MAP_SEQUENCE_ALTERNATE;
         }
         break;
-    case 2:
+    case KF_FLOOR_2:
         if (player_state.progress_state.level >= MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS) {
             sequence_id = MAP_SEQUENCE_ALTERNATE;
         }
         break;
-    case 5:
+    case KF_FLOOR_5:
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             sequence_id = MAP_SEQUENCE_ALTERNATE;
         }
@@ -150,7 +150,7 @@ void audio_play_current_map_sequence(void)
 }
 
 ADDRESS(0x8001b558, 0x258)
-void map_resources_load(s32 floor, s32 use_variant)
+void map_resources_load(KfFloorId floor, s32 use_variant)
 {
     u8 *stream;
     u8 *block;

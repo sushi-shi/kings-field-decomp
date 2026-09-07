@@ -1,11 +1,15 @@
 # Retained floor-script literals
 
-Complete account of **246 numeric/character occurrences** in
+Complete account of **241 numeric/character occurrences** in
 `src/game/map_scripts.c` after the
 [motion and interaction review](game-map-script-motion-constants.md).
 Comments, strings, identifier digits, enum/macro definitions and retail
 claims are excluded. Each repeated token has its own row; signs remain
 expression operators. Initializer tuples retain their authored values.
+
+The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
+through the current source; this ledger reflects its named comparisons and
+explicit numeric boundaries.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -210,7 +214,7 @@ expression operators. Initializer tuples retain their authored values.
 | `map_show_screen_image` | 463 | `5` | `char *directory_floor = &map_screen_image_path[5];` | Character position 5 is the floor digit in KAN\Bf\Kgnn.TIM. |
 | `map_show_screen_image` | 465 | `8` | `map_screen_image_path[8] = group + '0';` | Character position 8 is the group digit; ASCII zero converts the numeric selector. |
 | `map_show_screen_image` | 465 | `'0'` | `map_screen_image_path[8] = group + '0';` | Character position 8 is the group digit; ASCII zero converts the numeric selector. |
-| `map_show_screen_image` | 466 | `'0'` | `*directory_floor = player_state.progress_state.current_floor + '0';` | Convert the one-based floor number to its ASCII path digit. |
+| `map_show_screen_image` | 466 | `'0'` | `*directory_floor = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';` | Convert the one-based floor number to its ASCII path digit. |
 | `map_show_screen_image` | 467 | `9` | `map_screen_image_path[9] = index / 10 + '0';` | Character position 9 is the decimal tens digit; base ten and ASCII zero are representation constants. |
 | `map_show_screen_image` | 467 | `10` | `map_screen_image_path[9] = index / 10 + '0';` | Character position 9 is the decimal tens digit; base ten and ASCII zero are representation constants. |
 | `map_show_screen_image` | 467 | `'0'` | `map_screen_image_path[9] = index / 10 + '0';` | Character position 9 is the decimal tens digit; base ten and ASCII zero are representation constants. |
@@ -250,8 +254,3 @@ expression operators. Initializer tuples retain their authored values.
 | `map_interaction_dispatch` | 732 | `0` | `result = 0;` | Screen-image group zero selected by object ID 130. |
 | `map_interaction_dispatch` | 734 | `0x83` | `if (object->object_id != 0x83) {` | Authored object ID 131 is the only other supported screen-image selector. |
 | `map_interaction_dispatch` | 737 | `1` | `result = 1;` | Screen-image group one selected by object ID 131. |
-| `map_interaction_dispatch` | 756 | `1` | `case 1:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 759 | `2` | `case 2:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 762 | `3` | `case 3:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 765 | `4` | `case 4:` | One-based dungeon floor ID selects that floor-specific action script. |
-| `map_interaction_dispatch` | 768 | `5` | `case 5:` | One-based dungeon floor ID selects that floor-specific action script. |

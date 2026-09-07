@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [item-use settings review](game-item-use-constants.md):
+Working snapshot after the [floor enum review](game-floor-enum-domain.md):
 **111 C files**, **112 source/image variants**,
-and **6,880 inline numeric/character occurrences**. The counts include authored
+and **6,830 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **26 files / 2,381 occurrences**, the explicit ledger rows were compared
+For **26 files / 2,354 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -35,8 +35,8 @@ subtracting the verified subtotal from the source census.
 ## Next coverage work
 
 1. Refresh the status-text ledgers after their later reconstruction changes.
-2. Type and propagate floor/object identifier domains, using named enum
-   members in comparisons and switches as well as typed storage and APIs.
+2. Type and name object-model identifier domains; the floor domain now
+   propagates through player/save storage, comparisons and resource/warp APIs.
 3. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
 4. Verify every retained occurrence against its reason before marking a file
@@ -71,12 +71,12 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 5,734 occurrences.
+73 files; 5,489 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
-| [actor.c](../../src/game/actor.c) | 174 | [game-actor-core ledger](game-actor-core-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [actor_behavior.c](../../src/game/actor_behavior.c) | 173 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [actor.c](../../src/game/actor.c) | 172 | [game-actor-core ledger](game-actor-core-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [actor_behavior.c](../../src/game/actor_behavior.c) | 171 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [actor_pool.c](../../src/game/actor_pool.c) | 11 | [domain evidence](game-actor-constants.md) | Expand the domain audit into current occurrence coverage. |
 | [asset_registry.c](../../src/game/asset_registry.c) | 1 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
 | [audio.c](../../src/game/audio.c) | 45 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
@@ -103,11 +103,11 @@ fields and address-derived function names are separate from this ten-line count.
 | [main.c](../../src/game/main.c) | 4 | [domain notes](source-constant-names.md#startup-store-destinations-and-initial-heaps) | Expand the domain audit into current occurrence coverage. |
 | [map_event.c](../../src/game/map_event.c) | 28 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [domain evidence](game-map-event-literals.md) | Expand the domain audit into current occurrence coverage. |
-| [map_events.c](../../src/game/map_events.c) | 42 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_load.c](../../src/game/map_load.c) | 59 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_object.c](../../src/game/map_object.c) | 77 | [domain evidence](game-map-object-motion-constants.md) | Expand the domain audit into current occurrence coverage. |
+| [map_events.c](../../src/game/map_events.c) | 36 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_load.c](../../src/game/map_load.c) | 53 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_object.c](../../src/game/map_object.c) | 75 | [domain evidence](game-map-object-motion-constants.md) | Expand the domain audit into current occurrence coverage. |
 | [map_object_pool.c](../../src/game/map_object_pool.c) | 93 | [domain evidence](game-map-object-motion-constants.md) | Expand the domain audit into current occurrence coverage. |
-| [map_scripts.c](../../src/game/map_scripts.c) | 246 | [game-map-script ledger](game-map-script-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_scripts.c](../../src/game/map_scripts.c) | 241 | [game-map-script ledger](game-map-script-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/game/matrix.c) | 2 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [matrix_rotation.c](../../src/game/matrix_rotation.c) | 82 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [memory.c](../../src/game/memory.c) | 11 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
@@ -130,13 +130,13 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_status_panel.c](../../src/game/menu_status_panel.c) | 12 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 41 | [game-menu-save ledger](game-menu-save-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [notify_queue.c](../../src/game/notify_queue.c) | 116 | [complete ledger](game-notification-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_core.c](../../src/game/player_core.c) | 80 | [game-player-core ledger](game-player-core-literal-ledger.md); [game-player-motion ledger](game-player-motion-literal-ledger.md) | Recent movement correction updated its ledger; include that combined core/motion ledger in the next coverage validation. |
-| [player_death.c](../../src/game/player_death.c) | 197 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_core.c](../../src/game/player_core.c) | 79 | [game-player-core ledger](game-player-core-literal-ledger.md); [game-player-motion ledger](game-player-motion-literal-ledger.md) | Recent movement correction updated its ledger; include that combined core/motion ledger in the next coverage validation. |
+| [player_death.c](../../src/game/player_death.c) | 193 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death_fade.c](../../src/game/player_death_fade.c) | 8 | [domain notes](source-constant-names.md#lighting-and-death-fade-plan) | Expand the domain audit into current occurrence coverage. |
 | [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [domain evidence](game-player-progression-literal-ledger.md) | No retained literal tokens. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_use_item.c](../../src/game/player_use_item.c) | 56 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_warp.c](../../src/game/player_warp.c) | 113 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Domain note covers states; audit remaining motion/timing and authored coordinate uses per function. |
+| [player_use_item.c](../../src/game/player_use_item.c) | 54 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_warp.c](../../src/game/player_warp.c) | 96 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Domain note covers states; audit remaining motion/timing and authored coordinate uses per function. |
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [domain evidence](semantic-field-names.md) | No retained literal tokens. |
 | [pool.c](../../src/game/pool.c) | 35 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
 | [render.c](../../src/game/render.c) | 146 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
@@ -145,7 +145,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_map_cells.c](../../src/game/render_map_cells.c) | 191 | [domain notes](source-constant-names.md#map-mesh-banks-and-visibility-classes) | Expand the domain audit into current occurrence coverage. |
 | [render_scene.c](../../src/game/render_scene.c) | 15 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_sprite.c](../../src/game/render_sprite.c) | 1 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
-| [resources.c](../../src/game/resources.c) | 17 | [domain notes](source-constant-names.md#cd-and-resource-registration-plan) | Expand the domain audit into current occurrence coverage. |
+| [resources.c](../../src/game/resources.c) | 14 | [domain notes](source-constant-names.md#cd-and-resource-registration-plan) | Expand the domain audit into current occurrence coverage. |
 | [save_system.c](../../src/game/save_system.c) | 154 | [domain notes](source-constant-names.md#save-statuses-messages-and-io-attempts) | Expand the domain audit into current occurrence coverage. |
 | [sprite_add_ft4.c](../../src/game/sprite_add_ft4.c) | 27 | [domain notes](source-constant-names.md#display-dimensions-and-ordering-table-bounds) | Expand the domain audit into current occurrence coverage. |
 

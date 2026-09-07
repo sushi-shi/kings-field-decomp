@@ -32,7 +32,7 @@ void actor_show_info_image(const KfActor *actor)
 {
     render_frame(0, 0);
     render_frame(0, 0);
-    enemy_info_image_path_template[3] = '0' + player_state.progress_state.current_floor;
+    enemy_info_image_path_template[3] = '0' + KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
     enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;
     enemy_info_image_path_template[8] = '0' + actor->definition_id % 10;
     screen_show_image_until_input(enemy_info_image_path_template);
@@ -148,12 +148,12 @@ void player_use_item(u8 item_id)
                 goto done;
             }
         }
-        if (player_state.progress_state.current_floor == 2) {
+        if (player_state.progress_state.current_floor == KF_FLOOR_2) {
             effect_pool_spawn_typed(
                 PLAYER_HARP_FLOOR2_FIRST_SEGMENT, PLAYER_HARP_FLOOR2_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR2_SWEEP_UPDATES, PLAYER_HARP_FLOOR2_HOLD_COUNTDOWN);
-        } else if (player_state.progress_state.current_floor == 3) {
+        } else if (player_state.progress_state.current_floor == KF_FLOOR_3) {
             effect_pool_spawn_typed(
                 PLAYER_HARP_FLOOR3_FIRST_SEGMENT, PLAYER_HARP_FLOOR3_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,

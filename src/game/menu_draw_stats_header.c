@@ -103,7 +103,7 @@ void menu_draw_stats_header(void)
 
     gs.x = 0xfb;
     gs.y += 0x17;
-    menu_format_number(player_state.progress_state.current_floor, 6, 0, gs.codes);
+    menu_format_number(KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor), 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xe6;

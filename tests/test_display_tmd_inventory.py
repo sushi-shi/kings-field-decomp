@@ -32,7 +32,7 @@ PAIRS = (
         0x8001BAE4,
         "effect5_texture_cache_prepare",
         "void",
-        "s32 mode",
+        "KfFloorId floor",
     ),
     ("GAME.EXE", 0x8001BB94, "display_initialize", "void", ""),
     ("GAME.EXE", 0x8001BCE0, "render_initialize", "void", ""),

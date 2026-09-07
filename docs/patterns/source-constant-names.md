@@ -2339,3 +2339,8 @@ shared map-interaction reach/padding and door tolerance, mirror targeting limits
 unlock volume, illusion-staff timer reload and both harp deformation recipes.
 The complete item-use ledger now records 56 retained occurrences; floor and
 object identifiers still require typed domain propagation.
+
+The [floor enum domain](game-floor-enum-domain.md) replaces 50 inline floor
+identifiers and propagates one type through byte player state, word save summaries,
+warp/resource APIs and byte dialogue parameters. Modern compiler rejection
+controls establish domain separation; the retail objects remain unchanged.

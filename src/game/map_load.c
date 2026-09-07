@@ -43,7 +43,7 @@ void map_restore_floor_state(void)
     s32 index;
 
     in = base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET)
-        + KF_MAP_SAVED_FLOOR_BYTES * player_state.progress_state.current_floor;
+        + KF_MAP_SAVED_FLOOR_BYTES * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
@@ -128,7 +128,7 @@ void map_restore_floor_state(void)
     }
 
     switch (player_state.progress_state.current_floor) {
-    case 1:
+    case KF_FLOOR_1:
         if (map_floor1_script.passage_opened == KF_MAP_SCRIPT_SET) {
             map_apply_copy_region(1);
         }
@@ -142,15 +142,15 @@ void map_restore_floor_state(void)
             map_object_pool_clear_link(0x33);
         }
         break;
-    case 2:
+    case KF_FLOOR_2:
         if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x33);
         }
-        if (player_state.progress_state.highest_floor >= 3) {
+        if (player_state.progress_state.highest_floor >= KF_FLOOR_3) {
             map_event_pool[0].state = KF_MAP_EVENT_DISABLED;
         }
         break;
-    case 3:
+    case KF_FLOOR_3:
         if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(0x33);
         }
@@ -159,9 +159,9 @@ void map_restore_floor_state(void)
             map_apply_copy_region(3);
         }
         break;
-    case 4:
+    case KF_FLOOR_4:
         break;
-    case 5:
+    case KF_FLOOR_5:
         if (map_floor5_script.character_arrived == KF_MAP_SCRIPT_SET) {
             map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;
         }

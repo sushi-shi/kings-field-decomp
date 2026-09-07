@@ -422,9 +422,13 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         r"\bKF_ENUM_BEGIN\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*\)"
         r"(.*?)\bKF_ENUM_END\(\s*\1\s*\)", re.DOTALL,
     )
+    enum_storage_pattern = re.compile(
+        r"KF_ENUM_STORAGE\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*\)"
+    )
     integer_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*(0x[0-9a-fA-F]+|\d+)")
     checked_headers = (
         REPO / "include/kf/game_types.h",
+        REPO / "include/kf/floor.h",
         REPO / "include/kf/audio.h",
         REPO / "include/kf/game_math.h",
         REPO / "include/kf/game_actor.h",
@@ -451,6 +455,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     # Resolve named aggregates recursively, including standalone union views.
     definitions = {}
     constants: dict[str, int] = {}
+    enum_domains: set[str] = set()
     for path in checked_headers:
         text = re.sub(r"/\*.*?\*/", "", path.read_text(), flags=re.DOTALL)
         text = re.sub(r"//[^\n]*", "", text)
@@ -462,6 +467,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
             if name in primitive_layouts or name in definitions:
                 raise ValueError(f"{path}: duplicate checked type {name}")
             primitive_layouts[name] = primitive_layouts[storage]
+            enum_domains.add(name)
             enum_bodies.append(body)
         # Resolve explicit integer enumerators only. Other C expressions are
         # rejected when used as bounds; never guess an inventory's byte extent.
@@ -500,7 +506,16 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                     .removeprefix("struct ")
                     .removeprefix("union ")
                 )
-                if pointer:
+                storage_match = enum_storage_pattern.fullmatch(datatype)
+                if storage_match and not pointer:
+                    domain, storage = storage_match.groups()
+                    if domain not in enum_domains:
+                        raise ValueError(f"{path}: undeclared enum domain {domain!r}")
+                    if storage not in {"s8", "u8", "s16", "u16", "s32", "u32", "long"}:
+                        raise ValueError(f"{path}: unsupported enum storage {storage!r}")
+                    base_size, base_alignment = primitive_layouts[storage]
+                    display_type = f"KF_ENUM_STORAGE({domain}, {storage})"
+                elif pointer:
                     base_size, base_alignment = 4, 4
                     display_type = f"{datatype} {'*' * len(pointer)}"
                 elif datatype in primitive_layouts:

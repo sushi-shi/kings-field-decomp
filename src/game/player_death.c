@@ -11,8 +11,7 @@ enum {
     LIGHTNING_BOLT_REQUIRED_BASE_MAGIC = 75,
     PLAYER_DAMAGE_SUBUNITS_PER_HP = 10,
     PLAYER_POISON_ROLL_BUCKETS = 100,
-    PLAYER_POISON_ROLL_SHIFT = 15,
-    PLAYER_RESTART_FORCE_FLOOR_LOAD = 0xff
+    PLAYER_POISON_ROLL_SHIFT = 15
 };
 
 DATA(0x80055810, 0x9)
@@ -56,8 +55,8 @@ void game_state_initialize(void)
 
     player_state.experience = 0;
     player_state.progress_state.level = 1;
-    player_state.progress_state.current_floor = 1;
-    player_state.progress_state.highest_floor = 1;
+    player_state.progress_state.current_floor = KF_FLOOR_1;
+    player_state.progress_state.highest_floor = KF_FLOOR_1;
     player_state.gold = 0x96;
     player_state.attack_charge_state.current = 0;
     player_state.magic_charge = 0;
@@ -142,7 +141,7 @@ void game_state_initialize(void)
 ADDRESS(0x800154b0, 0x19c)
 void player_death_restart(void)
 {
-    s32 floor = player_state.progress_state.current_floor;
+    KfFloorId floor = player_state.progress_state.current_floor;
 
     if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0) {
         item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT]--;
@@ -157,13 +156,13 @@ void player_death_restart(void)
         player_state.camera_position.vz = 0x1388;
         player_state.camera_rotation.vy = 0;
         game_state_initialize();
-        floor = PLAYER_RESTART_FORCE_FLOOR_LOAD;
+        floor = KF_FLOOR_FORCE_RELOAD;
     }
     player_state.status_effect_flags = 0;
     player_state.camera_rotation.vz = 0;
     player_state.camera_rotation.vx = 0;
-    if (floor != 1) {
-        player_state.progress_state.current_floor = 1;
+    if (floor != KF_FLOOR_1) {
+        player_state.progress_state.current_floor = KF_FLOOR_1;
         player_state.map_variant = 0;
         pool_release_all();
         audio_close_vab();

@@ -1,10 +1,14 @@
 # Actor-core remainder literal ledger
 
-Complete account of **174 numeric occurrences** in `src/game/actor.c`: 89
-authored initializer occurrences and 85 function occurrences. The
+Complete account of **172 numeric occurrences** in `src/game/actor.c`: 89
+authored initializer occurrences and 83 function occurrences. The
 [core review](game-actor-core-constants.md) records names, units and verification.
 Comments, strings, identifier digits, enums and retail claims are excluded.
 Signs stay in expressions; repeated tokens each have their own row.
+
+The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
+through the current source; this ledger reflects its named comparisons and
+explicit numeric boundaries.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -126,8 +130,7 @@ Signs stay in expressions; repeated tokens each have their own row.
 | `combat_calculate_damage_component` | 306 | `0` | `if (defense == 0) {` | Replace zero defense with one before dividing; retain the formula boundary. |
 | `combat_calculate_damage_component` | 307 | `1` | `defense = 1;` | Replace zero defense with one before dividing; retain the formula boundary. |
 | `combat_calculate_damage_component` | 309 | `2` | `return difference + attack * attack / (defense * 2);` | The squared-attack term divides by twice defense; explicit arithmetic in the damage formula. |
-| `actor_apply_damage` | 330 | `5` | `if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
-| `actor_apply_damage` | 330 | `7` | `if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
+| `actor_apply_damage` | 330 | `7` | `if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
 | `actor_apply_damage` | 334 | `0` | `if (actor->health == 0) {` | Zero-health guard distinguishes existing death from a newly credited hit/kill. |
 | `actor_apply_damage` | 347 | `0` | `definition->defenses[0] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
 | `actor_apply_damage` | 351 | `1` | `definition->defenses[1] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
@@ -173,8 +176,7 @@ Signs stay in expressions; repeated tokens each have their own row.
 | `actor_advance_animation_clamped` | 673 | `0` | `if (delta < 0) {` | Zero sign boundary selects the stored magnitude of the animation step. |
 | `actor_advance_animation_clamped` | 682 | `0` | `} else if (phase < 0) {` | Clamp negative animation phase to its zero lower endpoint. |
 | `actor_advance_animation_clamped` | 683 | `0` | `actor->animation_phase = 0;` | Initial/lower animation phase coordinate. |
-| `actor_play_sound_at_phase` | 702 | `5` | `if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
-| `actor_play_sound_at_phase` | 702 | `7` | `if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
+| `actor_play_sound_at_phase` | 702 | `7` | `if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
 | `actor_try_select_action_distance_facing` | 732 | `2` | `} else if (distance < distance_scale + distance_scale / 2) {` | Middle distance boundary is scale plus half scale, with integer division preserved. |
 | `actor_try_select_ground_action` | 768 | `0` | `actor_state.player_target = 0;` | Null pointer: no free/selected actor, cleared animation cache, or consumed player target. |
 | `actor_try_select_profiled_action` | 867 | `0` | `count = 0;` | Start counting active actors and pending spawner effects. |

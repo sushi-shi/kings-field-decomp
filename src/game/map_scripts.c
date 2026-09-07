@@ -463,7 +463,7 @@ void map_show_screen_image(s32 group, s32 index)
     char *directory_floor = &map_screen_image_path[5];
 
     map_screen_image_path[8] = group + '0';
-    *directory_floor = player_state.progress_state.current_floor + '0';
+    *directory_floor = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
     map_screen_image_path[9] = index / 10 + '0';
     map_screen_image_path[10] = index % 10 + '0';
     screen_show_image_until_input(map_screen_image_path);
@@ -753,19 +753,19 @@ notify_default:
     }
 
     switch (player_state.progress_state.current_floor) {
-    case 1:
+    case KF_FLOOR_1:
         map_action_script_floor1();
         break;
-    case 2:
+    case KF_FLOOR_2:
         map_action_script_floor2();
         break;
-    case 3:
+    case KF_FLOOR_3:
         map_action_script_floor3();
         break;
-    case 4:
+    case KF_FLOOR_4:
         map_action_script_floor4();
         break;
-    case 5:
+    case KF_FLOOR_5:
         map_action_script_floor5();
         break;
     default:

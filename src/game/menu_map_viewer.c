@@ -39,7 +39,7 @@ void menu_map_viewer(s32 item_code)
     if (item_code == KF_ITEM_WATCHMAN_MAP)
         map_number = MENU_MAP_WATCHMAN_SET;
     path[5] = map_number + '0';
-    path[6] = player_state.progress_state.current_floor + '0';
+    path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
 
     buffer = display_state.primitive_buffer->cursor;
     if (cd_file_load_into(buffer, path) != 0)

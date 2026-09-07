@@ -381,6 +381,6 @@ extern void menu_status_panel(void);
 extern KfMenuConfirmResult menu_two_option_prompt(
     KfMenuWindowKind kind, s32 count, s32 highlight,
     const KfSaveSlotSummary *summaries);
-extern void talk_show_dialogue_page(u8 floor, u8 stage, s32 character_id, u8 page);
+extern void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, s32 character_id, u8 page);
 
 #endif

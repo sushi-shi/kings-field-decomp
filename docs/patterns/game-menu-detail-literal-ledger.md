@@ -6,6 +6,10 @@ Comments, strings, identifier digits, named definitions and retail claims are
 excluded. Every repeated token has its own row; signs are expression operators.
 The marker and foreground helper functions have no remaining literal tokens.
 
+The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
+through the current source; this ledger reflects its named comparisons and
+explicit numeric boundaries.
+
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `menu_draw_item_detail` | 48 | `0` | `rot.t[0] = 0x230;` | GTE translation x component 560, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
@@ -88,8 +92,8 @@ The marker and foreground helper functions have no remaining literal tokens.
 | `menu_draw_dialog_frame` | 207 | `0xcd` | `gs.codes[1] = 0xcd;` | Glyph position 1 in the authored summary label: text-atlas cell 0xcd, not an ASCII/Unicode value. Retain this encoded label data instead of inventing a per-character constant. |
 | `menu_draw_dialog_frame` | 208 | `2` | `gs.codes[2] = MENU_TEXT_END;` | Glyph position 2 in the authored summary label: the named terminator ends this stream. |
 | `menu_draw_dialog_frame` | 212 | `286` | `gs.x = 286;` | Authored screen X286 for the single-digit floor value; no recovered reason chooses this origin. |
-| `menu_draw_dialog_frame` | 213 | `1` | `menu_format_number(rows[i].current_floor, 1, 0, gs.codes);` | Present the floor in one decimal position with blank leading padding; the field is a display parameter, not a count of available floors. |
-| `menu_draw_dialog_frame` | 213 | `0` | `menu_format_number(rows[i].current_floor, 1, 0, gs.codes);` | Present the floor in one decimal position with blank leading padding; the field is a display parameter, not a count of available floors. |
+| `menu_draw_dialog_frame` | 213 | `1` | `menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, 0, gs.codes);` | Present the floor in one decimal position with blank leading padding; the field is a display parameter, not a count of available floors. |
+| `menu_draw_dialog_frame` | 213 | `0` | `menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, 0, gs.codes);` | Present the floor in one decimal position with blank leading padding; the field is a display parameter, not a count of available floors. |
 | `menu_draw_dialog_frame` | 217 | `0` | `gs.codes[0] = 0xf0;` | Glyph position 0 in the authored summary label: text-atlas cell 0xf0, not an ASCII/Unicode value. Retain this encoded label data instead of inventing a per-character constant. |
 | `menu_draw_dialog_frame` | 217 | `0xf0` | `gs.codes[0] = 0xf0;` | Glyph position 0 in the authored summary label: text-atlas cell 0xf0, not an ASCII/Unicode value. Retain this encoded label data instead of inventing a per-character constant. |
 | `menu_draw_dialog_frame` | 218 | `1` | `gs.codes[1] = 242;` | Glyph position 1 in the authored summary label: text-atlas cell 242, not an ASCII/Unicode value. Retain this encoded label data instead of inventing a per-character constant. |

@@ -14,7 +14,6 @@ enum {
     INITIAL_BACK_COLOR = 60,
     SYSTEM_SCREEN_BRIGHTNESS = 96,
     SYSTEM_SCREEN_PATH_DIGIT = 2,
-    EFFECT_TEXTURE_FLOOR = 5,
     EFFECT_TEXTURE_FIRST_PAGE_X = 320,
     EFFECT_TEXTURE_SECOND_PAGE_X = 384,
     EFFECT_TEXTURE_THIRD_PAGE_X = 832,
@@ -133,9 +132,9 @@ void lighting_set_active_color_matrix(s32 index)
 }
 
 ADDRESS(0x8001bae4, 0xb0)
-void effect5_texture_cache_prepare(s32 mode)
+void effect5_texture_cache_prepare(KfFloorId floor)
 {
-    if (mode == EFFECT_TEXTURE_FLOOR) {
+    if (floor == KF_FLOOR_5) {
         effect5_texture_pages[0] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_FIRST_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);

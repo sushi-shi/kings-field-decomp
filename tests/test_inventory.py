@@ -51,6 +51,22 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_storage_macro_requires_a_declared_enum_domain(self) -> None:
+        declaration = """
+            KF_ENUM_BEGIN(Floor, s32)
+                FLOOR_FIRST = 1
+            KF_ENUM_END(Floor)
+        """
+        carrier = "typedef struct Carrier { KF_ENUM_STORAGE(Floor, u8) floor; } Carrier;"
+        with patch("pathlib.Path.read_text", lambda path:
+                   declaration + carrier if path.name == "game_types.h" else ""):
+            field = _header_structure_layouts()["Carrier"].fields[0]
+            self.assertEqual(field.datatype, "KF_ENUM_STORAGE(Floor, u8)")
+        with patch("pathlib.Path.read_text", lambda path:
+                   carrier if path.name == "game_types.h" else ""):
+            with self.assertRaisesRegex(ValueError, "undeclared enum domain 'Floor'"):
+                _header_structure_layouts()
+
     def test_stored_enum_fields_keep_domain_names_widths_and_alignment(self) -> None:
         source = """
             KF_ENUM_BEGIN(ByteState, u8)

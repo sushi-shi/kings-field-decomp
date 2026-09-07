@@ -483,8 +483,8 @@ KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	game_player.h;game_semantic
 KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
 KfPlayerProgressState	0x00	0x01	level	u8	supported	game_player.h;asm;xrefs	player level
 KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	game_player.h;asm;xrefs	meaning unresolved
-KfPlayerProgressState	0x02	0x01	current_floor	u8	supported	game_player.h;asm;xrefs	current dungeon floor
-KfPlayerProgressState	0x03	0x01	highest_floor	u8	supported	game_player.h;asm;xrefs	highest reached floor
+KfPlayerProgressState	0x02	0x01	current_floor	KF_ENUM_STORAGE(KfFloorId, u8)	supported	game_player.h;asm;xrefs;game-floor-enum-domain.md	current dungeon floor
+KfPlayerProgressState	0x03	0x01	highest_floor	KF_ENUM_STORAGE(KfFloorId, u8)	supported	game_player.h;asm;xrefs;game-floor-enum-domain.md	highest reached floor
 KfPlayerState	0x00	0x04	experience	s32	supported	game_player.h;data_identities.tsv;slt-compares	member of the player_state aggregate
 KfPlayerState	0x04	0x04	next_level_experience	s32	supported	game_player.h;data_identities.tsv;slt-compares	member of the player_state aggregate
 KfPlayerState	0x08	0x04	progress_state	KfPlayerProgressState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
@@ -620,7 +620,7 @@ KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game_save.h;game_state_
 KfSavePayload	0x2530	0x18	magic_flags	KfMagicLearningState[24]	supported	game_save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride;game-magic-learning-state.md	24 learning-state bytes copied directly from/to byte0 of each20-byte runtime magic record; enum storage preserves unnamed encoded values
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game_save.h;asm	not touched by the write/read pair
 KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player experience word; stored and copied as a word
-KfSaveSlotSummary	0x04	0x04	current_floor	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-floor byte; stored and copied as a word
+KfSaveSlotSummary	0x04	0x04	current_floor	KF_ENUM_STORAGE(KfFloorId, u32)	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm;game-floor-enum-domain.md	serialized player unsigned current-floor byte; stored and copied as a word
 KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-HP halfword; stored and copied as a word
 KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
 KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-MP halfword; stored and copied as a word

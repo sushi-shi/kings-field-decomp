@@ -485,3 +485,6 @@ promotes a probe to a proven historical toolchain.
 
 - [GAME item-use range and effect settings](game-item-use-constants.md):
   shared interaction policy, mirror targeting, staff reload and harp recipes.
+
+- [GAME floor enum domain](game-floor-enum-domain.md): one floor identity across
+  byte/word storage and APIs, explicit encoding boundaries and compiler rejection controls.

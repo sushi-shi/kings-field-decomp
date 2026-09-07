@@ -112,7 +112,7 @@ void player_warp_shimmer(s32 mode, VECTOR *position)
 }
 
 ADDRESS(0x80036850, 0x15c)
-void player_warp_change_floor(s32 floor, u32 variant)
+void player_warp_change_floor(KfFloorId floor, u32 variant)
 {
     VECTOR position;
 
@@ -154,7 +154,7 @@ void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
     previous_variant = player_state.map_variant;
     player_state.map_variant = variant;
     map_variant_assets_load();
-    if (player_state.progress_state.current_floor == 5) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5) {
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT
             || previous_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             audio_play_current_map_sequence();
@@ -176,19 +176,19 @@ ADDRESS(0x80036af0, 0x24c)
 u32 player_warp_trigger_update(void)
 {
     u32 cell;
-    s32 destination_floor;
+    KfFloorId destination_floor;
     u8 destination_variant = WARP_DEFAULT_VARIANT;
 
     /* The aligned word spans pitch_step and map_cell; mask out pitch_step. */
     switch (player_state.progress_state.current_floor) {
-    case 1:
+    case KF_FLOOR_1:
         cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(29, 56)) {
-            destination_floor = 2;
+            destination_floor = KF_FLOOR_2;
 change_floor:
             player_warp_change_floor(destination_floor, destination_variant);
         } else if (cell == WARP_CELL_KEY(25, 11)) {
-            destination_floor = 3;
+            destination_floor = KF_FLOOR_3;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(39, 35)) {
             goto change_to_floor4;
@@ -198,48 +198,48 @@ change_floor:
             }
         }
         break;
-    case 2:
+    case KF_FLOOR_2:
         cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(29, 56)) {
-            destination_floor = 1;
+            destination_floor = KF_FLOOR_1;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(28, 18)) {
-            destination_floor = 3;
+            destination_floor = KF_FLOOR_3;
             goto change_floor;
         }
         break;
-    case 3:
+    case KF_FLOOR_3:
         cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(25, 11)) {
-            destination_floor = 1;
+            destination_floor = KF_FLOOR_1;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(28, 18)) {
-            destination_floor = 2;
+            destination_floor = KF_FLOOR_2;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(7, 22) || cell == WARP_CELL_KEY(43, 92)) {
 change_to_floor4:
-            destination_floor = 4;
+            destination_floor = KF_FLOOR_4;
             goto change_floor;
         }
         break;
-    case 4:
+    case KF_FLOOR_4:
         cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(39, 35)) {
-            destination_floor = 1;
+            destination_floor = KF_FLOOR_1;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(7, 22)) {
-            destination_floor = 3;
+            destination_floor = KF_FLOOR_3;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(39, 69)) {
-            destination_floor = 5;
+            destination_floor = KF_FLOOR_5;
             destination_variant = KF_FLOOR5_ENTRY_VARIANT;
             goto change_floor;
         } else if (cell == WARP_CELL_KEY(43, 92)) {
-            destination_floor = 3;
+            destination_floor = KF_FLOOR_3;
             goto change_floor;
         }
         break;
-    case 5:
+    case KF_FLOOR_5:
         cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(39, 69)) {
             goto change_to_floor4;

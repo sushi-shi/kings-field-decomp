@@ -1,15 +1,19 @@
 # Retained item-use literals
 
 Complete current ledger for `src/game/player_use_item.c`, including both image
-path buffers and all three functions: **56 numeric/character occurrences**.
+path buffers and all three functions: **54 numeric/character occurrences**.
 The [range and effect settings review](game-item-use-constants.md) names 23
 previously inline uses. The [special-item audit](game-item-special-identities.md)
 supplies item/resource identities and consumer evidence.
 
 Every token and complete source-line expression is accounted for, including
 duplicates. Claims, comments, strings, identifier digits and named definitions
-are excluded. Floor and object identifiers remain pending domain typing; their
-ledger rows record current evidence, not an exemption from further naming.
+are excluded. Object identifiers remain pending domain typing; their ledger
+rows record current evidence, not an exemption from further naming.
+
+The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
+through the current source; this ledger reflects its named comparisons and
+explicit numeric boundaries.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -19,8 +23,8 @@ ledger rows record current evidence, not an exemption from further naming.
 | `actor_show_info_image` | 33 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
 | `actor_show_info_image` | 34 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
 | `actor_show_info_image` | 34 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
-| `actor_show_info_image` | 35 | `3` | `enemy_info_image_path_template[3] = '0' + player_state.progress_state.current_floor;` | Path byte 3 is the one-based floor digit; ASCII zero converts its numeric value. |
-| `actor_show_info_image` | 35 | `'0'` | `enemy_info_image_path_template[3] = '0' + player_state.progress_state.current_floor;` | Path byte 3 is the one-based floor digit; ASCII zero converts its numeric value. |
+| `actor_show_info_image` | 35 | `3` | `enemy_info_image_path_template[3] = '0' + KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);` | Path byte 3 is the one-based floor digit; ASCII zero converts its numeric value. |
+| `actor_show_info_image` | 35 | `'0'` | `enemy_info_image_path_template[3] = '0' + KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);` | Path byte 3 is the one-based floor digit; ASCII zero converts its numeric value. |
 | `actor_show_info_image` | 36 | `7` | `enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;` | Path byte 7 is the actor-definition decimal tens digit; base ten and ASCII zero are representation constants. |
 | `actor_show_info_image` | 36 | `'0'` | `enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;` | Path byte 7 is the actor-definition decimal tens digit; base ten and ASCII zero are representation constants. |
 | `actor_show_info_image` | 36 | `10` | `enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;` | Path byte 7 is the actor-definition decimal tens digit; base ten and ASCII zero are representation constants. |
@@ -59,8 +63,6 @@ ledger rows record current evidence, not an exemption from further naming.
 | `player_use_item` | 133 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
-| `player_use_item` | 151 | `2` | `if (player_state.progress_state.current_floor == 2) {` | One-based floor 2 chooses the first four deformation segments. |
-| `player_use_item` | 156 | `3` | `} else if (player_state.progress_state.current_floor == 3) {` | One-based floor 3 chooses the last deformation segment; other floors do not spawn this effect. |
 | `player_use_item` | 165 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 172 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 179 | `0` | `if (item_stock[0][KF_ITEM_ILLUSION_STAFF] != 0) {` | Only decrement a possessed player-bank copy; the timer write already happened before this guard. |
