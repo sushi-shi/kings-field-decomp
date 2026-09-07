@@ -1,6 +1,6 @@
 # Retained GAME menu-runtime literals
 
-Complete account of **101 numeric/character occurrences** in
+Complete account of **100 numeric/character occurrences** in
 `src/game/menu_runtime.c` after the [runtime review](game-menu-runtime-constants.md).
 Comments, string contents, identifier digits, named definitions and retail claims
 are excluded. Every repeated token has its own row; signs are expression operators.
@@ -15,7 +15,6 @@ first-choice comparisons in the widget renderer.
 | `initializers` | 33 | `1` | `(u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];` | Existing offset check: first row code prefix is byte 28; null-base constant member-address expression and positive/negative bound encode the check. This is not a size assertion. |
 | `initializers` | 33 | `1` | `(u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];` | Existing offset check: first row code prefix is byte 28; null-base constant member-address expression and positive/negative bound encode the check. This is not a size assertion. |
 | `initializers` | 44 | `0` | `POLY_FT4 *current_poly_ft4 = 0;` | Initialized null current primitive pointer; each renderer binds it to the active primitive cursor before use. |
-| `menu_draw_two_option` | 62 | `1` | `if (highlight == 1) {` | Highlight is enabled only for the exact Boolean value one; preserve equality rather than treating every nonzero value as true. |
 | `menu_draw_item_name_frame` | 98 | `0` | `rotation.t[0] = 0xdc;` | GTE translation x component 220, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
 | `menu_draw_item_name_frame` | 98 | `0xdc` | `rotation.t[0] = 0xdc;` | GTE translation x component 220, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
 | `menu_draw_item_name_frame` | 99 | `1` | `rotation.t[1] = 0x8c;` | GTE translation y component 140, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
@@ -110,3 +109,7 @@ first-choice comparisons in the widget renderer.
 | `menu_load_item_texture` | 653 | `0` | `if (cd_file_load_into(destination, name) != 0) {` | Propagate any nonzero loader failure through the wrapper failure result. |
 | `menu_load_item_texture` | 654 | `1` | `return 1;` | Wrapper failure result; the loader failed before texture upload. |
 | `menu_load_item_texture` | 658 | `0` | `return 0;` | Wrapper success result, including the no-texture sentinel path. |
+
+The [shared confirmation-state review](menu-confirm-state.md) names the request
+flag and preserves its type through both drawing APIs. This ledger reflects
+those current expressions; other retained selector domains still need review.

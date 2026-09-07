@@ -22,7 +22,7 @@ KfMenuConfirmResult menu_two_option_prompt(
     MenuGlyphString label_a;
     MenuGlyphString label_b;
     KfMenuConfirmChoice selected = KF_MENU_CHOICE_ACCEPT;
-    s32 highlight = 0;
+    KfMenuConfirmState highlight = KF_MENU_CONFIRM_IDLE;
     s32 composite = -1;
     s32 input = 0;
     s32 prev;
@@ -50,7 +50,7 @@ KfMenuConfirmResult menu_two_option_prompt(
         if (result != KF_MENU_CONFIRM_PENDING) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, composite);
-            menu_draw_window(kind, count, highlight_row, 1);
+            menu_draw_window(kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
             menu_draw_two_option(&label_a, &label_b, selected, highlight);
             menu_present_frame();
             while (PadRead(1) != 0)
@@ -58,7 +58,7 @@ KfMenuConfirmResult menu_two_option_prompt(
             return result;
         }
 
-        highlight = 0;
+        highlight = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if (((input & PADLup) != 0 && (prev & PADLup) == 0) ||
@@ -70,7 +70,7 @@ KfMenuConfirmResult menu_two_option_prompt(
                 selected = KF_MENU_CHOICE_DECLINE;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            highlight = 1;
+            highlight = KF_MENU_CONFIRM_REQUESTED;
             result = menu_confirm_result_from_choice(selected);
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -79,7 +79,7 @@ KfMenuConfirmResult menu_two_option_prompt(
 
         menu_frame_begin();
         menu_draw_dialog_frame(summaries, composite);
-        menu_draw_window(kind, count, highlight_row, 1);
+        menu_draw_window(kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
         menu_draw_two_option(&label_a, &label_b, selected, highlight);
         menu_present_frame();
     }

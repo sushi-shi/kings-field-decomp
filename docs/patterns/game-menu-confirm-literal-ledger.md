@@ -11,11 +11,10 @@ Other documented retained selectors may still need a future semantic domain.
 
 ## `src/game/menu_list_interact.c`
 
-59 retained occurrences.
+56 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `menu_list_interact` | 28 | `0` | `highlight = 0;` | Clear the Boolean confirmation highlight; active confirmation enables it for the final presented frame. |
 | `menu_list_interact` | 29 | `0` | `pad = 0;` | Initial button word has no pressed bits for subsequent edge detection. |
 | `menu_list_interact` | 31 | `1` | `while (PadRead(1) != 0) {` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `menu_list_interact` | 31 | `0` | `while (PadRead(1) != 0) {` | Preserve the ignored retail PadRead argument one; the linked SDK reads its global pad identifier. A zero returned button mask means release; the loop waits while any button remains pressed. |
@@ -62,7 +61,6 @@ Other documented retained selectors may still need a future semantic domain.
 | `menu_list_interact` | 71 | `3` | `opt1.codes[3] = MENU_TEXT_END;` | Authored glyph sequence and consecutive element index for the selected use/drop/yes/buy/sell/equip or no/cancel label; the protocol dossier decodes each sequence. Numeric codes are text asset data; the named terminator ends the string. |
 | `menu_list_interact` | 99 | `1` | `while (PadRead(1) != 0) {` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `menu_list_interact` | 99 | `0` | `while (PadRead(1) != 0) {` | Preserve the ignored retail PadRead argument one; the linked SDK reads its global pad identifier. A zero returned button mask means release; the loop waits while any button remains pressed. |
-| `menu_list_interact` | 104 | `0` | `highlight = 0;` | Clear the Boolean confirmation highlight; active confirmation enables it for the final presented frame. |
 | `menu_list_interact` | 107 | `1` | `pad = PadRead(1);` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `menu_list_interact` | 108 | `0` | `if (((pad & PADLup) != 0 && (prev_pad & PADLup) == 0) \|\|` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_list_interact` | 108 | `0` | `if (((pad & PADLup) != 0 && (prev_pad & PADLup) == 0) \|\|` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
@@ -70,18 +68,16 @@ Other documented retained selectors may still need a future semantic domain.
 | `menu_list_interact` | 109 | `0` | `((pad & PADLdown) != 0 && (prev_pad & PADLdown) == 0)) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_list_interact` | 116 | `0` | `} else if ((pad & PADRright) != 0 && (prev_pad & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_list_interact` | 116 | `0` | `} else if ((pad & PADRright) != 0 && (prev_pad & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
-| `menu_list_interact` | 118 | `1` | `highlight = 1;` | Enable the confirmation highlight for the accepted input and final redraw. |
 | `menu_list_interact` | 120 | `0` | `} else if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_list_interact` | 120 | `0` | `} else if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_list_interact` | 135 | `1` | `} while (1);` | Modal loop continues until the explicit completed-result return after its final redraw and button-release wait. |
 
 ## `src/game/menu_two_option_prompt.c`
 
-32 retained occurrences.
+27 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `menu_two_option_prompt` | 25 | `0` | `s32 highlight = 0;` | Clear the Boolean confirmation highlight; active confirmation enables it for the final presented frame. |
 | `menu_two_option_prompt` | 26 | `1` | `s32 composite = -1;` | No selected composite save-summary row outside save/load windows. The caller row replaces this sentinel only for those two window kinds; it is separate from a confirmation result. |
 | `menu_two_option_prompt` | 27 | `0` | `s32 input = 0;` | Initial button word has no pressed bits for subsequent edge detection. |
 | `menu_two_option_prompt` | 31 | `1` | `while (PadRead(1) != 0)` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
@@ -98,10 +94,8 @@ Other documented retained selectors may still need a future semantic domain.
 | `menu_two_option_prompt` | 46 | `2` | `label_b.codes[2] = 0x43;` | Consecutive glyph/terminator position in the authored yes (はい) or no (いいえ) label, decoded in the retail font audit; numeric codes remain text asset data. |
 | `menu_two_option_prompt` | 46 | `0x43` | `label_b.codes[2] = 0x43;` | Consecutive glyph/terminator position in the authored yes (はい) or no (いいえ) label, decoded in the retail font audit; numeric codes remain text asset data. |
 | `menu_two_option_prompt` | 47 | `3` | `label_b.codes[3] = MENU_TEXT_END;` | Consecutive glyph/terminator position in the authored yes (はい) or no (いいえ) label, decoded in the retail font audit; numeric codes remain text asset data. |
-| `menu_two_option_prompt` | 53 | `1` | `menu_draw_window(kind, count, highlight_row, 1);` | Keep the parent window row in its confirmed-highlight state while presenting the two-option footer. |
 | `menu_two_option_prompt` | 56 | `1` | `while (PadRead(1) != 0)` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `menu_two_option_prompt` | 56 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK reads its global pad identifier. A zero returned button mask means release; the loop waits while any button remains pressed. |
-| `menu_two_option_prompt` | 61 | `0` | `highlight = 0;` | Clear the Boolean confirmation highlight; active confirmation enables it for the final presented frame. |
 | `menu_two_option_prompt` | 63 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `menu_two_option_prompt` | 64 | `0` | `if (((input & PADLup) != 0 && (prev & PADLup) == 0) \|\|` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_two_option_prompt` | 64 | `0` | `if (((input & PADLup) != 0 && (prev & PADLup) == 0) \|\|` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
@@ -109,14 +103,12 @@ Other documented retained selectors may still need a future semantic domain.
 | `menu_two_option_prompt` | 65 | `0` | `((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_two_option_prompt` | 71 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_two_option_prompt` | 71 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
-| `menu_two_option_prompt` | 73 | `1` | `highlight = 1;` | Enable the confirmation highlight for the accepted input and final redraw. |
 | `menu_two_option_prompt` | 75 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `menu_two_option_prompt` | 75 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
-| `menu_two_option_prompt` | 82 | `1` | `menu_draw_window(kind, count, highlight_row, 1);` | Keep the parent window row in its confirmed-highlight state while presenting the two-option footer. |
 
 ## `src/game/item.c`
 
-176 retained occurrences.
+157 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -144,18 +136,13 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_load_database` | 122 | `1` | `if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)` | Subtract one from the power-of-two sector size to form its low-byte-count mask. Zero masked bits mean already aligned; only partial sectors enter the round-up path. |
 | `item_load_database` | 122 | `0` | `if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)` | Subtract one from the power-of-two sector size to form its low-byte-count mask. Zero masked bits mean already aligned; only partial sectors enter the round-up path. |
 | `item_load_database` | 124 | `1` | `((cd_file_table[i].size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;` | Add one to the truncated complete-sector count before shifting back to bytes; the preceding partial-sector guard prevents rounding an aligned size up unnecessarily. |
-| `item_menu_root` | 138 | `0` | `s32 confirm = 0;` | Clear the pending confirmation/highlight flag before processing input. |
 | `item_menu_root` | 139 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
-| `item_menu_root` | 145 | `0` | `menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);` | Draw the initial shop window with confirmation highlight disabled; its resource, choice count and initial row are named. |
-| `item_menu_root` | 148 | `0` | `menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);` | Draw the initial shop window with confirmation highlight disabled; its resource, choice count and initial row are named. |
-| `item_menu_root` | 151 | `0` | `menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);` | Draw the initial shop window with confirmation highlight disabled; its resource, choice count and initial row are named. |
 | `item_menu_root` | 153 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_root` | 153 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_root` | 163 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_root` | 163 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_root` | 176 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_root` | 176 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 182 | `0` | `confirm = 0;` | Clear the pending confirmation/highlight request for subsequent input. |
 | `item_menu_root` | 184 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
 | `item_menu_root` | 185 | `0` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_root` | 185 | `0` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
@@ -163,10 +150,8 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_root` | 191 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_root` | 197 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_root` | 197 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 199 | `1` | `confirm = 1;` | Set the Boolean confirmation/highlight request on a fresh confirm-button edge. |
 | `item_menu_root` | 204 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_root` | 204 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 228 | `0` | `s32 confirm = 0;` | Clear the pending confirmation/highlight flag before processing input. |
 | `item_menu_buy` | 229 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_buy` | 233 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 233 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
@@ -183,8 +168,6 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_buy` | 261 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
 | `item_menu_buy` | 264 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
 | `item_menu_buy` | 265 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_buy` | 273 | `1` | `if (confirm == 1) {` | Enter the confirmation widget only for the exact set value one; this also proves the former sell-price argument was one. |
-| `item_menu_buy` | 281 | `0` | `confirm = 0;` | Unconditionally clear the request before the exit guard, including when the panel remains open after a declined confirmation. |
 | `item_menu_buy` | 283 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 283 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 289 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
@@ -210,13 +193,11 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 332 | `1` | `< item_buy_prices[index[ctx.selected_index]][shop_id - 1]) {` | Convert one-based shop ID into its zero-based price column for the affordability check. |
-| `item_menu_buy` | 336 | `1` | `confirm = 1;` | Set the Boolean confirmation/highlight request on a fresh confirm-button edge. |
 | `item_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 344 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
 | `item_menu_buy` | 353 | `1` | `player_state.gold -= item_buy_prices[selection][shop_id - 1];` | Subtract the selected item’s unsigned halfword price in the shop’s zero-based column. |
 | `item_menu_buy` | 354 | `0` | `item_stock[0][selection]++;` | Increment the player-owned stock bank, distinct from shop availability. |
-| `item_menu_sell` | 374 | `0` | `s32 confirm = 0;` | Clear the pending confirmation/highlight flag before processing input. |
 | `item_menu_sell` | 375 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_sell` | 379 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 379 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
@@ -231,8 +212,6 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_sell` | 408 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
 | `item_menu_sell` | 411 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
 | `item_menu_sell` | 412 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_sell` | 420 | `1` | `if (confirm == 1) {` | Enter the confirmation widget only for the exact set value one; this also proves the former sell-price argument was one. |
-| `item_menu_sell` | 428 | `0` | `confirm = 0;` | Unconditionally clear the request before the exit guard, including when the panel remains open after a declined confirmation. |
 | `item_menu_sell` | 430 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 430 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 436 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
@@ -257,12 +236,10 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_sell` | 475 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
 | `item_menu_sell` | 477 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_sell` | 477 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 479 | `1` | `confirm = 1;` | Set the Boolean confirmation/highlight request on a fresh confirm-button edge. |
 | `item_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_sell` | 486 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
 | `item_menu_sell` | 494 | `1` | `player_state.gold += item_sell_prices[selection][shop_id - 1];` | Credit the selected item’s sell price in the shop’s zero-based price column. |
-| `item_pickup_confirm` | 508 | `0` | `s32 confirm = 0;` | Clear the Boolean confirmation highlight; active confirmation enables it for the final presented frame. |
 | `item_pickup_confirm` | 509 | `0` | `s32 input = 0;` | Initial button word has no pressed bits for subsequent edge detection. |
 | `item_pickup_confirm` | 514 | `0` | `stock_count = item_stock[0][item_id];` | Bank zero is player inventory; shop stock occupies the other banks. |
 | `item_pickup_confirm` | 515 | `0` | `if (menu_load_item_model(item_id) != 0)` | Any nonzero model-loader status aborts pickup with the existing not-acquired result. |
@@ -278,9 +255,6 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_pickup_confirm` | 527 | `2` | `decline_label.codes[2] = 0x6a;` | Consecutive glyph/terminator position in the take (とる) or cancel (やめる) label, decoded in the retail font audit; numeric codes remain text asset data. |
 | `item_pickup_confirm` | 527 | `0x6a` | `decline_label.codes[2] = 0x6a;` | Consecutive glyph/terminator position in the take (とる) or cancel (やめる) label, decoded in the retail font audit; numeric codes remain text asset data. |
 | `item_pickup_confirm` | 528 | `3` | `decline_label.codes[3] = MENU_TEXT_END;` | Consecutive glyph/terminator position in the take (とる) or cancel (やめる) label, decoded in the retail font audit; numeric codes remain text asset data. |
-| `item_pickup_confirm` | 534 | `0` | `&decline_label, KF_MENU_CHOICE_ACCEPT, 0);` | The initial frames select accept with confirmation highlighting disabled. |
-| `item_pickup_confirm` | 540 | `0` | `&decline_label, KF_MENU_CHOICE_ACCEPT, 0);` | The initial frames select accept with confirmation highlighting disabled. |
-| `item_pickup_confirm` | 546 | `0` | `&decline_label, KF_MENU_CHOICE_ACCEPT, 0);` | The initial frames select accept with confirmation highlighting disabled. |
 | `item_pickup_confirm` | 548 | `1` | `while (PadRead(1) != 0)` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
 | `item_pickup_confirm` | 548 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK reads its global pad identifier. A zero returned button mask means release; the loop waits while any button remains pressed. |
 | `item_pickup_confirm` | 560 | `1` | `while (PadRead(1) != 0)` | Ignored retail PadRead call-site argument one; the linked SDK uses its global pad identifier, so this is not named as a controller port. |
@@ -292,7 +266,10 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_pickup_confirm` | 569 | `0` | `\|\| ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `item_pickup_confirm` | 575 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `item_pickup_confirm` | 575 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
-| `item_pickup_confirm` | 577 | `1` | `confirm = 1;` | Enable the confirmation highlight for the accepted input and final redraw. |
 | `item_pickup_confirm` | 583 | `0` | `item_stock[0][item_id]++;` | Increment the player-inventory bank only after the accepted pickup passes the exact stack-capacity check. |
 | `item_pickup_confirm` | 587 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
 | `item_pickup_confirm` | 587 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Zero tests the absence of the named button bit. Current set and previous clear detect a rising edge, preserving movement/confirm/cancel priority. |
+
+The [shared confirmation-state review](menu-confirm-state.md) names the request
+flag and preserves its type through both drawing APIs. This ledger reflects
+those current expressions; other retained selector domains still need review.

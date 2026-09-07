@@ -2,11 +2,6 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
-KF_ENUM_BEGIN(KfEquipmentConfirmState, s32)
-    KF_EQUIPMENT_CONFIRM_IDLE = 0,
-    KF_EQUIPMENT_CONFIRM_REQUESTED = 1
-KF_ENUM_END(KfEquipmentConfirmState)
-
 /* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
  * and the deferred state acknowledgement. */
 
@@ -39,7 +34,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     s32 k;
     s32 start;
     s32 end;
-    KfEquipmentConfirmState confirm = KF_EQUIPMENT_CONFIRM_IDLE;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 selection = KF_MENU_LIST_PENDING;
@@ -108,7 +103,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     }
 
     for (;;) {
-        if (confirm == KF_EQUIPMENT_CONFIRM_REQUESTED) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
                     KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
@@ -116,7 +111,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
             else
                 selection = codes[ctx.selected_index];
         }
-        confirm = KF_EQUIPMENT_CONFIRM_IDLE;
+        confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
@@ -167,7 +162,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = KF_EQUIPMENT_CONFIRM_REQUESTED;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_MENU_LIST_NO_SELECTION;
@@ -235,7 +230,7 @@ void menu_spell_select(void)
     s32 code;
     s32 j;
     s32 k;
-    KfEquipmentConfirmState confirm = KF_EQUIPMENT_CONFIRM_IDLE;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 selection = KF_MENU_LIST_PENDING;
@@ -276,7 +271,7 @@ void menu_spell_select(void)
 
     for (;;) {
         menu_present_frame();
-        if (confirm == KF_EQUIPMENT_CONFIRM_REQUESTED) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
                     KF_MENU_PREVIEW_MAGIC_ICON, KF_ENUM_ENCODE(s32, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
@@ -291,7 +286,7 @@ void menu_spell_select(void)
         }
 
         menu_frame_begin();
-        confirm = KF_EQUIPMENT_CONFIRM_IDLE;
+        confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if (ctx.entry_count == 0) {
@@ -336,7 +331,7 @@ void menu_spell_select(void)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = KF_EQUIPMENT_CONFIRM_REQUESTED;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_MENU_LIST_NO_SELECTION;

@@ -19,13 +19,13 @@ KfMenuConfirmResult menu_list_interact(
     MenuGlyphString opt0;
     MenuGlyphString opt1;
     KfMenuConfirmChoice selected;
-    u32 highlight;
+    KF_ENUM_STORAGE(KfMenuConfirmState, u32) highlight;
     u32 pad;
     u32 prev_pad;
     KfMenuConfirmResult result;
 
     selected = KF_MENU_CHOICE_ACCEPT;
-    highlight = 0;
+    highlight = KF_MENU_CONFIRM_IDLE;
     pad = 0;
     result = KF_MENU_CONFIRM_PENDING;
     while (PadRead(1) != 0) {
@@ -101,7 +101,7 @@ opt0_done:
             return result;
         }
 
-        highlight = 0;
+        highlight = KF_MENU_CONFIRM_IDLE;
         menu_frame_begin();
         prev_pad = pad;
         pad = PadRead(1);
@@ -115,7 +115,7 @@ opt0_done:
             }
         } else if ((pad & PADRright) != 0 && (prev_pad & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            highlight = 1;
+            highlight = KF_MENU_CONFIRM_REQUESTED;
             result = menu_confirm_result_from_choice(selected);
         } else if ((pad & PADRdown) != 0 && (prev_pad & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);

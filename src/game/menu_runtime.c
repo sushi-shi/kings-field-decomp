@@ -51,7 +51,7 @@ POLY_FT4 *current_poly_ft4 = 0;
 ADDRESS(0x800291ec, 0x10c)
 void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
-    KfMenuConfirmChoice selected, s32 highlight)
+    KfMenuConfirmChoice selected, KfMenuConfirmState highlight)
 {
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     if (selected == KF_MENU_CHOICE_ACCEPT) {
@@ -59,7 +59,7 @@ void menu_draw_two_option(
     } else {
         menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)option1);
     }
-    if (highlight == 1) {
+    if (highlight == KF_MENU_CONFIRM_REQUESTED) {
         if (selected == KF_MENU_CHOICE_ACCEPT) {
             menu_blit_sprite_translucent(
                 &menu_assets.option_highlight, (const MenuPoint *)option0);

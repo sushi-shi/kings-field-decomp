@@ -26,7 +26,7 @@ void menu_config_panel(void)
     MenuGlyphString option_a;
     MenuGlyphString option_b;
     s32 row = 0;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     u32 pad = 0;
     u32 prev;
     KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
@@ -57,7 +57,7 @@ void menu_config_panel(void)
     menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
     menu_present_frame();
     do {
-        if (confirm == 1 || phase == KF_MENU_PANEL_CLOSED) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED || phase == KF_MENU_PANEL_CLOSED) {
             menu_frame_begin();
             menu_config_panel_draw(option_a, option_b, states);
             menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
@@ -68,7 +68,7 @@ void menu_config_panel(void)
         if (phase != KF_MENU_PANEL_OPEN) {
             break;
         }
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         menu_frame_begin();
         prev = pad;
         pad = PadRead(1);
@@ -95,7 +95,7 @@ void menu_config_panel(void)
         } else if ((pad & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (row == KF_MENU_CONFIG_RETURN_ROW) {
-                confirm = 1;
+                confirm = KF_MENU_CONFIRM_REQUESTED;
                 phase = KF_MENU_PANEL_CLOSED;
             } else {
             toggle:

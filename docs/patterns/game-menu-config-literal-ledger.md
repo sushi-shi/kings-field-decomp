@@ -1,7 +1,7 @@
 # Configuration panel retained-literal ledger
 
 Complete current ledger for both functions in `src/game/menu_config_panel.c`
-after the [player option review](game-player-option-domain.md): **43 retained
+after the [player option review](game-player-option-domain.md): **39 retained
 numeric/character occurrences**. Named definitions and claims, comments,
 string contents and identifier digits are excluded. Repeated tokens have
 separate rows. The [choice review](game-menu-choice-state.md) retains the glyph
@@ -11,7 +11,6 @@ module. ON/OFF values and four layout parameters now have names.
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `menu_config_panel` | 28 | `0` | `s32 row = 0;` | Start or wrap the zero-based cursor at the first visible row; the named return row supplies the opposite boundary. |
-| `menu_config_panel` | 29 | `0` | `s32 confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
 | `menu_config_panel` | 30 | `0` | `u32 pad = 0;` | Initialize previous button bits to none before edge detection. |
 | `menu_config_panel` | 35 | `1` | `while (PadRead(1) != 0) {` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
 | `menu_config_panel` | 35 | `0` | `while (PadRead(1) != 0) {` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
@@ -27,10 +26,8 @@ module. ON/OFF values and four layout parameters now have names.
 | `menu_config_panel` | 47 | `2` | `option_b.codes[2] = 0xfb;` | Consecutive glyph and terminator positions spell ON (0xf9, 0xfa) and OFF (0xf9, 0xfb, 0xfb), verified against the retail atlas. These are authored encoded characters, with the terminator immediately after each label. |
 | `menu_config_panel` | 47 | `0xfb` | `option_b.codes[2] = 0xfb;` | Consecutive glyph and terminator positions spell ON (0xf9, 0xfa) and OFF (0xf9, 0xfb, 0xfb), verified against the retail atlas. These are authored encoded characters, with the terminator immediately after each label. |
 | `menu_config_panel` | 48 | `3` | `option_b.codes[3] = MENU_TEXT_END;` | Consecutive glyph and terminator positions spell ON (0xf9, 0xfa) and OFF (0xf9, 0xfb, 0xfb), verified against the retail atlas. These are authored encoded characters, with the terminator immediately after each label. |
-| `menu_config_panel` | 60 | `1` | `if (confirm == 1 \|\| phase == KF_MENU_PANEL_CLOSED) {` | Exact Boolean one requests the highlighted redraw; the independently named closed phase also enters this final draw/release path. |
 | `menu_config_panel` | 65 | `1` | `while (PadRead(1) != 0) {` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
 | `menu_config_panel` | 65 | `0` | `while (PadRead(1) != 0) {` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
-| `menu_config_panel` | 71 | `0` | `confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
 | `menu_config_panel` | 74 | `1` | `pad = PadRead(1);` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
 | `menu_config_panel` | 75 | `0` | `if ((pad & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_config_panel` | 75 | `0` | `if ((pad & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
@@ -44,7 +41,6 @@ module. ON/OFF values and four layout parameters now have names.
 | `menu_config_panel` | 90 | `0` | `((pad & PADLleft) != 0 && (prev & PADLleft) == 0)) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_config_panel` | 95 | `0` | `} else if ((pad & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_config_panel` | 95 | `0` | `} else if ((pad & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
-| `menu_config_panel` | 98 | `1` | `confirm = 1;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
 | `menu_config_panel` | 104 | `0` | `} else if ((pad & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_config_panel` | 104 | `0` | `} else if ((pad & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_config_panel` | 111 | `1` | `} while (1);` | Unconditional input loop exits through the explicit typed phase guard after the final redraw and release wait. |
@@ -53,3 +49,7 @@ module. ON/OFF values and four layout parameters now have names.
 | `menu_config_panel_draw` | 165 | `2` | `&menu_assets.background_quads[display_state.buffer_index][2]);` | Explicitly prepend the four current-buffer background packets in index order 3,2,1,0 at the named background depth. The reverse insertion preserves traversal order; these numbers identify array positions rather than distinct gameplay states. |
 | `menu_config_panel_draw` | 167 | `1` | `&menu_assets.background_quads[display_state.buffer_index][1]);` | Explicitly prepend the four current-buffer background packets in index order 3,2,1,0 at the named background depth. The reverse insertion preserves traversal order; these numbers identify array positions rather than distinct gameplay states. |
 | `menu_config_panel_draw` | 169 | `0` | `&menu_assets.background_quads[display_state.buffer_index][0]);` | Explicitly prepend the four current-buffer background packets in index order 3,2,1,0 at the named background depth. The reverse insertion preserves traversal order; these numbers identify array positions rather than distinct gameplay states. |
+
+The [shared confirmation-state review](menu-confirm-state.md) names the request
+flag and preserves its type through both drawing APIs. This ledger reflects
+those current expressions; other retained selector domains still need review.

@@ -6,12 +6,12 @@
  * Draw one menu window: an optional title label (drawn when the record's first
  * halfword is non-zero), then `count` selectable rows, then the shared
  * translucent backdrop for every window kind but the configuration window.  The highlighted row
- * (index `highlight`) takes the confirmed-selection background when `flag` is
- * 1 and always gets the selection-cursor sprite overlaid.  Rows advance one
+ * (index `highlight`) takes the confirmed-selection background when confirmation is
+ * requested and always gets the selection-cursor sprite overlaid.  Rows advance one
  * MenuGlyphString per step starting at the record's first row.
  */
 ADDRESS(0x80028914, 0x15c)
-void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, s32 flag)
+void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuConfirmState confirmation)
 {
     const MenuWindowLayout *layout;
     s32 row;
@@ -29,7 +29,7 @@ void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, s32 flag)
             const MenuGlyphString *label = &layout->rows[row];
             const MenuSpriteDef *box = &menu_assets.row_background;
 
-            if (row == highlight && flag == 1) {
+            if (row == highlight && confirmation == KF_MENU_CONFIRM_REQUESTED) {
                 box = &menu_assets.row_confirmed_background;
             }
             menu_blit_sprite_translucent(box, (const MenuPoint *)label);

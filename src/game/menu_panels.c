@@ -33,7 +33,7 @@ s32 menu_magic_panel(void)
     s32 found;
     s32 code;
     s32 j;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 selection = KF_MENU_LIST_PENDING;
@@ -66,7 +66,7 @@ s32 menu_magic_panel(void)
 
     for (;;) {
         menu_present_frame();
-        if (confirm == 1) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
                     KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
@@ -81,7 +81,7 @@ s32 menu_magic_panel(void)
         }
 
         menu_frame_begin();
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if (ctx.entry_count == 0) {
@@ -126,7 +126,7 @@ s32 menu_magic_panel(void)
                 return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_MENU_LIST_NO_SELECTION;
@@ -168,7 +168,7 @@ ADDRESS(0x800236ac, 0x22c)
 void menu_option_root(void)
 {
     s32 cursor = 0;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
@@ -176,7 +176,7 @@ void menu_option_root(void)
 
     menu_frame_begin();
     menu_draw_name_list();
-    menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, 0);
+    menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);
 
     for (;;) {
         menu_present_frame();
@@ -211,7 +211,7 @@ void menu_option_root(void)
         if (phase != KF_MENU_PANEL_OPEN)
             return;
         menu_frame_begin();
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
@@ -228,7 +228,7 @@ void menu_option_root(void)
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_MENU_EQUIPMENT_RETURN_ROW)
                 selection = KF_ENUM_DECODE(KfEquipmentMenuCategory, cursor);
             else

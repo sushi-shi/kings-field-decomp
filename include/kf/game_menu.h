@@ -122,6 +122,12 @@ enum {
     KF_SHOP_CHOICE_COUNT = KF_SHOP_ROW_RETURN + 1
 };
 
+/* Confirm-button state, independent of the selected option and its result. */
+KF_ENUM_BEGIN(KfMenuConfirmState, s32)
+    KF_MENU_CONFIRM_IDLE = 0,
+    KF_MENU_CONFIRM_REQUESTED = 1
+KF_ENUM_END(KfMenuConfirmState)
+
 KF_ENUM_BEGIN(KfMenuConfirmChoice, s32)
     KF_MENU_CHOICE_ACCEPT = 0,
     KF_MENU_CHOICE_DECLINE = 1
@@ -390,8 +396,8 @@ extern void menu_draw_stats_header(void);
 extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
-    KfMenuConfirmChoice selected, s32 highlight);
-extern void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, s32 flag);
+    KfMenuConfirmChoice selected, KfMenuConfirmState highlight);
+extern void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuConfirmState confirmation);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 count, s32 pad_zero, s16 *out);

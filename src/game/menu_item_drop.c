@@ -38,7 +38,7 @@ void menu_drop_item(void)
     s32 found;
     s32 code;
     s32 j;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 selection = KF_MENU_LIST_PENDING;
@@ -86,7 +86,7 @@ void menu_drop_item(void)
 
     for (;;) {
         menu_present_frame();
-        if (confirm == 1) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
                     KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
@@ -94,7 +94,7 @@ void menu_drop_item(void)
             else
                 selection = codes[ctx.selected_index];
         }
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
@@ -145,7 +145,7 @@ void menu_drop_item(void)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_MENU_LIST_NO_SELECTION;
@@ -173,7 +173,7 @@ s32 menu_save_load_hub(void)
     KfSaveHeader header;
     KfSavePayload payload;
     s32 cursor = KF_MENU_SYSTEM_LOAD_ROW;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 result = KF_MENU_ROOT_PENDING;
@@ -221,7 +221,7 @@ s32 menu_save_load_hub(void)
         if (result != KF_MENU_ROOT_PENDING)
             break;
 
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
@@ -238,7 +238,7 @@ s32 menu_save_load_hub(void)
                 cursor = KF_MENU_SYSTEM_LOAD_ROW;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor == KF_MENU_SYSTEM_RETURN_ROW) {
                 result = KF_MENU_ROOT_NO_ITEM;
             } else {
@@ -269,7 +269,7 @@ KfMenuConfirmResult menu_save_panel(void)
 {
     KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
     s32 cursor = 0;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
@@ -293,7 +293,7 @@ KfMenuConfirmResult menu_save_panel(void)
     }
 
     for (;;) {
-        if (confirm == 1 || result == KF_MENU_CONFIRM_CANCELLED) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED || result == KF_MENU_CONFIRM_CANCELLED) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, cursor);
             menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
@@ -302,7 +302,7 @@ KfMenuConfirmResult menu_save_panel(void)
                 ;
         }
 
-        if (confirm == 1 && cursor != KF_MENU_SAVE_RETURN_ROW) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED && cursor != KF_MENU_SAVE_RETURN_ROW) {
             if (cursor == KF_MENU_SAVE_FORMAT_ROW) {
                 status = save_file_cleanup_temporary();
                 if (status == 1) {
@@ -365,7 +365,7 @@ KfMenuConfirmResult menu_save_panel(void)
             }
         }
 
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         if (result != KF_MENU_CONFIRM_PENDING)
             break;
 
@@ -385,7 +385,7 @@ KfMenuConfirmResult menu_save_panel(void)
                 cursor = 0;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor == KF_MENU_SAVE_RETURN_ROW)
                 result = KF_MENU_CONFIRM_CANCELLED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
@@ -414,7 +414,7 @@ KfMenuConfirmResult menu_load_panel(void)
 {
     KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
     s32 cursor = 0;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
@@ -436,7 +436,7 @@ KfMenuConfirmResult menu_load_panel(void)
     }
 
     for (;;) {
-        if (confirm == 1 || result == KF_MENU_CONFIRM_CANCELLED) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED || result == KF_MENU_CONFIRM_CANCELLED) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, cursor);
             menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
@@ -445,7 +445,7 @@ KfMenuConfirmResult menu_load_panel(void)
                 ;
         }
 
-        if (confirm == 1 && cursor != KF_MENU_LOAD_RETURN_ROW) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED && cursor != KF_MENU_LOAD_RETURN_ROW) {
             result = menu_two_option_prompt(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, summaries);
             if (result == KF_MENU_CONFIRM_CANCELLED) {
                 result = KF_MENU_CONFIRM_PENDING;
@@ -474,7 +474,7 @@ KfMenuConfirmResult menu_load_panel(void)
             }
         }
 
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         if (result != KF_MENU_CONFIRM_PENDING)
             break;
 
@@ -495,13 +495,13 @@ KfMenuConfirmResult menu_load_panel(void)
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (cursor == KF_MENU_LOAD_RETURN_ROW) {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
-                confirm = 1;
+                confirm = KF_MENU_CONFIRM_REQUESTED;
                 result = KF_MENU_CONFIRM_CANCELLED;
             } else if (summaries[cursor].current_hp == 0) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             } else {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
-                confirm = 1;
+                confirm = KF_MENU_CONFIRM_REQUESTED;
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);

@@ -2397,3 +2397,9 @@ modules. It corrects an omitted height-table consumer: actor jump selection
 uses the same attribute-minus-one bias as Lightning aiming. No literal or
 source change is needed; the verified coverage subtotal becomes 78 files and
 4,748 occurrences.
+
+The [shared menu confirmation state](menu-confirm-state.md) propagates the
+idle/requested domain through seventeen locals and both drawing helpers,
+replacing 67 raw state values. Its [complete root/list/save ledger](menu-root-list-save-literal-ledger.md)
+adds 265 individually explained occurrences across four files. Confirmation
+request, selected option and accepted/cancelled result remain distinct types.

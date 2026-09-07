@@ -135,20 +135,20 @@ ADDRESS(0x800212d8, 0x260)
 void item_menu_root(s32 shop_id)
 {
     s32 cursor = KF_SHOP_ROW_BUY;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
     KfShopMenuAction action = KF_SHOP_ACTION_NONE;
 
     menu_frame_begin();
-    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
+    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
+    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, 0);
+    menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_SHOP_ROW_BUY, KF_MENU_CONFIRM_IDLE);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
@@ -179,7 +179,7 @@ void item_menu_root(s32 shop_id)
         }
 
         menu_frame_begin();
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
@@ -196,7 +196,7 @@ void item_menu_root(s32 shop_id)
                 cursor = KF_SHOP_ROW_BUY;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_SHOP_ROW_RETURN)
                 action = KF_ENUM_DECODE(KfShopMenuAction, cursor);
             else
@@ -225,7 +225,7 @@ void item_menu_buy(s32 shop_id)
     s32 slot;
     s32 found;
     s32 j;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 selection = KF_MENU_LIST_PENDING;
@@ -270,7 +270,7 @@ void item_menu_buy(s32 shop_id)
 
     for (;;) {
         menu_present_frame();
-        if (confirm == 1) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
                     KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
@@ -278,7 +278,7 @@ void item_menu_buy(s32 shop_id)
             else
                 selection = index[ctx.selected_index];
         }
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
@@ -333,7 +333,7 @@ void item_menu_buy(s32 shop_id)
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             } else {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
-                confirm = 1;
+                confirm = KF_MENU_CONFIRM_REQUESTED;
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -371,7 +371,7 @@ void item_menu_sell(s32 shop_id)
     s32 slot;
     s32 found;
     s32 j;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
     s32 selection = KF_MENU_LIST_PENDING;
@@ -417,7 +417,7 @@ void item_menu_sell(s32 shop_id)
 
     for (;;) {
         menu_present_frame();
-        if (confirm == 1) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
                     KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL)
                     == KF_MENU_CONFIRM_CANCELLED)
@@ -425,7 +425,7 @@ void item_menu_sell(s32 shop_id)
             else
                 selection = index[ctx.selected_index];
         }
-        confirm = 0;
+        confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
@@ -476,7 +476,7 @@ void item_menu_sell(s32 shop_id)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_MENU_LIST_NO_SELECTION;
@@ -505,7 +505,7 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
     KfMenuConfirmChoice choice = KF_MENU_CHOICE_ACCEPT;
-    s32 confirm = 0;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     KfItemPickupResult result = KF_ITEM_PICKUP_PENDING;
     s32 stock_count;
@@ -531,19 +531,19 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
     menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
         &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, 0);
+        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
         &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, 0);
+        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_item_name_frame(item_id);
     menu_draw_two_option(
         &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, 0);
+        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0)
         ;
@@ -574,7 +574,7 @@ KfItemPickupResult item_pickup_confirm(s32 item_id)
                 choice = KF_MENU_CHOICE_DECLINE;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            confirm = 1;
+            confirm = KF_MENU_CONFIRM_REQUESTED;
             if (choice != KF_MENU_CHOICE_ACCEPT) {
                 result = KF_ITEM_PICKUP_NOT_ACQUIRED;
             } else {
