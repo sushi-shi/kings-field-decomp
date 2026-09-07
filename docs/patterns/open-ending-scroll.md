@@ -1,5 +1,34 @@
 # OPEN ending-scroll controller and data owners
 
+## Function Match Plan: scene-3 CLUT work extent
+
+OPEN `opening_scene3_run` at `80014804` was 816 bytes and strict
+99.931370%. Its retail and candidate streams had the same 19-block CFG, 27
+direct calls, 19 ordered address pairs, constants, delay slots and body words;
+all fourteen unequal words were the 112-byte retail frame versus the 96-byte
+candidate frame and their saved-register offsets. The six image-qualified
+semantic views, callers, callees, adjacent functions, resources, data owners,
+relocations and source history were refreshed before editing. There are no
+string references. The exact scene 0, scene 1 and ending-scene functions in
+the same unit serve as compiler-profile controls.
+
+Retail places the two texture-page values at sp+40/sp+44 and the two populated
+CLUT values at sp+48/sp+52, then saves s0 at sp+88. Expanding both arrays to
+four words recovers the 112-byte frame but incorrectly moves all three CLUT
+accesses eight bytes higher. Keeping the texture-page extent at two words and
+recovering the existing CLUT work array as six words preserves every accessed
+offset while accounting for the otherwise unused sixteen-byte tail before the
+saved registers. The scene initializes and consumes only the first two CLUT
+slots, but the compiler reserves the complete source object.
+
+The named six-slot extent emits an identical retail listing for
+`opening_scene3_run`; all four exact sibling listings remain identical. This
+is a recovered stack-object extent, not a separate padding local. Strict
+objdiff confirms 100.000000%, and the full build raises OPEN to 101/108 exact
+functions without a code-match regression. The result is banked; the build
+still stops only at the repository's existing section-placement, data-owner
+and relocation-addend gates.
+
 ## Retail GCC 2.4.1 availability control
 
 The two frame-only residues prompted a TU-wide compiler discriminator after
