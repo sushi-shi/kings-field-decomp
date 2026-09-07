@@ -70,7 +70,7 @@ the mode dispatcher, and removes six numeric outcomes from the map ledger.
 The [equipment domain review](game-equipment-domains.md) separates menu
 categories from player slots, types both APIs, names empty item/spell/texture
 selections, and shares record extents and menu ranges. Its three-module
-ledger explains all 138 retained literals after the type and menu follow-ups,
+ledger explains all 126 retained literals after the type and menu follow-ups,
 down from 209; other consumers
 also replace the shared empty values and armor-record origin.
 
@@ -122,9 +122,17 @@ explains all 140 remaining literals in the
 The [root-choice and panel-phase review](game-menu-choice-state.md) keeps typed
 choices through root and equipment dispatch, names configuration bindings and
 row boundaries, and shares heading identities with list callers. It replaces
-61 numeric uses and explains all 97 retained occurrences in its complete
+61 numeric uses and explains all 96 retained occurrences after the list-result
+follow-up in its complete
 [four-function ledger](game-menu-choice-literal-ledger.md), while preserving
 the configuration renderer's distinction between exact one and other values.
+
+The [list-result and recovery review](game-menu-list-results.md) names the
+pending/no-selection controls without conflating integer item IDs, spell IDs
+and list rows. It also names five item HP additions and Bless's MAGIC-to-HP
+multiplier, replacing 43 numeric uses. Its new
+[item-use/discard ledger](game-menu-item-list-literal-ledger.md) explains 115
+retained literals and refreshes the equipment, spell and root-choice ledgers.
 
 ## Function Match Plan
 

@@ -1,11 +1,14 @@
 # Root, equipment-root and configuration literal ledger
 
 Complete ledger for `menu_root`, `menu_option_root`, `menu_config_panel`
-and `menu_config_panel_draw`: **97 retained occurrences**, down from 154.
+and `menu_config_panel_draw`: **96 retained occurrences**, down from 154.
 Named constant definitions and retail address/extent claims are excluded.
 Negative signs are operators, so -1 contributes one numeric token.
 See the [choice and phase review](game-menu-choice-state.md) for evidence
 and verification; line numbers locate this source version.
+
+The [list-result review](game-menu-list-results.md) names pending/no-selection
+controls and recovery amounts, and refreshes earlier window/choice substitutions.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -15,7 +18,6 @@ and verification; line numbers locate this source version.
 | `menu_root` | 54 | `0` | `i = 0;` | Initialize the initial-frame draw counter before its pre-draw increment. |
 | `menu_root` | 61 | `3` | `} while (i < 3);` | Present exactly three initial root-menu frames before the sound and input-release wait. This is an authored draw count; no evidence establishes why three was chosen or a real-time duration. |
 | `menu_root` | 63, 72, 105 | `1 × 3, 0 × 3` | `while (PadRead(1) != 0)` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
-| `menu_root` | 81 | `1` | `if (menu_magic_panel() == -1)` | Magic-panel cancellation or texture-load failure returns -1 and keeps the root open. Other returns close it without an item result, including the insufficient-MP path; retain the mixed spell/control result until its own API audit. |
 | `menu_root` | 110 | `0` | `confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
 | `menu_root` | 112 | `1` | `input = PadRead(1);` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
 | `menu_root` | 113 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
@@ -25,20 +27,20 @@ and verification; line numbers locate this source version.
 | `menu_root` | 125 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_root` | 127 | `1` | `confirm = 1;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
 | `menu_root` | 132 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
-| `menu_option_root` | 166 | `0` | `s32 cursor = 0;` | Start or wrap the zero-based cursor at the first visible row; the named return row supplies the opposite boundary. |
-| `menu_option_root` | 167 | `0` | `s32 confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
-| `menu_option_root` | 168 | `0` | `s32 input = 0;` | Initialize previous button bits to none before edge detection. |
-| `menu_option_root` | 175 | `0 × 2` | `menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, 0);` | Initial equipment frame selects the first zero-based row with its Boolean confirmation highlight clear. |
-| `menu_option_root` | 184 | `1, 0` | `while (PadRead(1) != 0)` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
-| `menu_option_root` | 210 | `0` | `confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
-| `menu_option_root` | 212 | `1` | `input = PadRead(1);` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
-| `menu_option_root` | 213 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
-| `menu_option_root` | 215 | `0` | `if (cursor != 0)` | Decrement only above the first zero-based row; at zero, wrap to the named return row. |
-| `menu_option_root` | 219 | `0 × 2` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
-| `menu_option_root` | 224 | `0` | `cursor = 0;` | Start or wrap the zero-based cursor at the first visible row; the named return row supplies the opposite boundary. |
-| `menu_option_root` | 225 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
-| `menu_option_root` | 227 | `1` | `confirm = 1;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
-| `menu_option_root` | 232 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
+| `menu_option_root` | 170 | `0` | `s32 cursor = 0;` | Start or wrap the zero-based cursor at the first visible row; the named return row supplies the opposite boundary. |
+| `menu_option_root` | 171 | `0` | `s32 confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
+| `menu_option_root` | 172 | `0` | `s32 input = 0;` | Initialize previous button bits to none before edge detection. |
+| `menu_option_root` | 179 | `0 × 2` | `menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, 0);` | Initial equipment frame selects the first zero-based row with its Boolean confirmation highlight clear. |
+| `menu_option_root` | 188 | `1, 0` | `while (PadRead(1) != 0)` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
+| `menu_option_root` | 214 | `0` | `confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
+| `menu_option_root` | 216 | `1` | `input = PadRead(1);` | Retain the ignored SDK argument one: the linked routine uses global PadIdentifier. Zero returned button bits mean released; the wait consumes held input before proceeding, while assignment samples the next edge. |
+| `menu_option_root` | 217 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
+| `menu_option_root` | 219 | `0` | `if (cursor != 0)` | Decrement only above the first zero-based row; at zero, wrap to the named return row. |
+| `menu_option_root` | 223 | `0 × 2` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
+| `menu_option_root` | 228 | `0` | `cursor = 0;` | Start or wrap the zero-based cursor at the first visible row; the named return row supplies the opposite boundary. |
+| `menu_option_root` | 229 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
+| `menu_option_root` | 231 | `1` | `confirm = 1;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
+| `menu_option_root` | 236 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear define a rising edge. Zero denotes absence; retain the existing priority among navigation, toggle, confirmation and cancellation. |
 | `menu_config_panel` | 21 | `0` | `s32 row = 0;` | Start or wrap the zero-based cursor at the first visible row; the named return row supplies the opposite boundary. |
 | `menu_config_panel` | 22 | `0` | `s32 confirm = 0;` | Boolean confirmation/highlight request: start or reset clear, set on the confirm edge for the pending action or final return-row redraw. This is independent of the typed pending choice and open/closed phase. |
 | `menu_config_panel` | 23 | `0` | `u32 pad = 0;` | Initialize previous button bits to none before edge detection. |

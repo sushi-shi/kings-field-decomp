@@ -122,6 +122,12 @@ KF_ENUM_BEGIN(KfMenuConfirmResult, s32)
     KF_MENU_CONFIRM_ACCEPTED = 0
 KF_ENUM_END(KfMenuConfirmResult)
 
+/* Signed list-result controls; nonnegative payloads are IDs or list rows. */
+enum {
+    KF_MENU_LIST_PENDING = -99,
+    KF_MENU_LIST_NO_SELECTION = -1
+};
+
 /* Row positions in the loaded System, save and load windows. */
 enum {
     KF_MENU_SYSTEM_LOAD_ROW = 0,

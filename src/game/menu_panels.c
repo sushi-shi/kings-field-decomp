@@ -14,6 +14,10 @@
 /* menu_option_root selection dispatch table. */
 RODATA(0x800122f0, 0x20)
 
+enum {
+    BLESS_HP_RECOVERY_MAGIC_MULTIPLIER = 3
+};
+
 /*
  * Magic panel: builds the list of learned spells (magic_records[0..3]) with
  * their names, runs the windowed cursor, and on confirm deducts the spell's
@@ -32,7 +36,7 @@ s32 menu_magic_panel(void)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 selection = -99;
+    s32 selection = KF_MENU_LIST_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -55,7 +59,7 @@ s32 menu_magic_panel(void)
     menu_frame_begin();
     if (ctx.entry_count != 0) {
         if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
-            return -1;
+            return KF_MENU_LIST_NO_SELECTION;
         menu_add_marker_quad();
     }
     menu_list_render(&ctx);
@@ -66,11 +70,11 @@ s32 menu_magic_panel(void)
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
                     KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
-                selection = -99;
+                selection = KF_MENU_LIST_PENDING;
             else
                 selection = codes[ctx.selected_index];
         }
-        if (selection != -99) {
+        if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -83,7 +87,7 @@ s32 menu_magic_panel(void)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = -1;
+                selection = KF_MENU_LIST_NO_SELECTION;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -104,7 +108,7 @@ s32 menu_magic_panel(void)
                 }
             }
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
-                return -1;
+                return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
@@ -119,13 +123,13 @@ s32 menu_magic_panel(void)
                 ctx.cursor_row = 0;
             }
             if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
-                return -1;
+                return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = -1;
+            selection = KF_MENU_LIST_NO_SELECTION;
         }
 
         if (ctx.entry_count != 0)
@@ -133,7 +137,7 @@ s32 menu_magic_panel(void)
         menu_list_render(&ctx);
     }
 
-    if (selection != -1) {
+    if (selection != KF_MENU_LIST_NO_SELECTION) {
         if (player_state.vitals.current_mp < magic_records[selection].mp_cost)
             return selection;
         player_state.vitals.current_mp -= magic_records[selection].mp_cost;
@@ -146,7 +150,7 @@ s32 menu_magic_panel(void)
             player_apply_fire_defense_boost();
         } else if (selection == KF_MAGIC_BLESS) {
             player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
-            player_state.vitals.current_hp += player_state.magic * 3;
+            player_state.vitals.current_hp += player_state.magic * BLESS_HP_RECOVERY_MAGIC_MULTIPLIER;
         }
         if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
             player_state.vitals.current_hp = player_state.vitals.maximum_hp;

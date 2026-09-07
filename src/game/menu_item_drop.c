@@ -41,7 +41,7 @@ void menu_drop_item(void)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 selection = -99;
+    s32 selection = KF_MENU_LIST_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -90,12 +90,12 @@ void menu_drop_item(void)
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
                     KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
-                selection = -99;
+                selection = KF_MENU_LIST_PENDING;
             else
                 selection = codes[ctx.selected_index];
         }
         confirm = 0;
-        if (selection != -99) {
+        if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -106,7 +106,7 @@ void menu_drop_item(void)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = -1;
+                selection = KF_MENU_LIST_NO_SELECTION;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -148,7 +148,7 @@ void menu_drop_item(void)
             confirm = 1;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = -1;
+            selection = KF_MENU_LIST_NO_SELECTION;
         }
 
         menu_frame_begin();
@@ -158,7 +158,7 @@ void menu_drop_item(void)
     }
 
     menu_release_item_model();
-    if (selection != -1)
+    if (selection != KF_MENU_LIST_NO_SELECTION)
         inv[selection]--;
 }
 

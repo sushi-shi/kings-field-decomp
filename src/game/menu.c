@@ -78,7 +78,7 @@ s32 menu_root(void)
             goto join_result;
         case KF_ROOT_CHOICE_USE_MAGIC:
             result = KF_MENU_ROOT_NO_ITEM;
-            if (menu_magic_panel() == -1)
+            if (menu_magic_panel() == KF_MENU_LIST_NO_SELECTION)
                 result = KF_MENU_ROOT_PENDING;
             break;
         case KF_ROOT_CHOICE_EQUIPMENT:
@@ -140,6 +140,14 @@ s32 menu_root(void)
     }
 }
 
+enum {
+    MEDICINAL_HERB_HP_RECOVERY = 25,
+    ANTIDOTE_HERB_HP_RECOVERY = 10,
+    RECOVERY_MEDICINE_HP_RECOVERY = 80,
+    DRAGON_KING_GRASS_LEAF_HP_RECOVERY = 150,
+    DRAGON_KING_GRASS_FRUIT_HP_RECOVERY = 300
+};
+
 /*
  * Consumable-item panel: builds a scrollable list of the usable items the
  * player holds, runs the windowed cursor, and applies the selected item's
@@ -161,7 +169,7 @@ s32 menu_use_item_panel(void)
     s32 confirm = 0;
     s32 input = 0;
     s32 prev;
-    s32 selection = -99;
+    s32 selection = KF_MENU_LIST_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -209,7 +217,7 @@ s32 menu_use_item_panel(void)
     menu_frame_begin();
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(codes[ctx.selected_index]) != 0)
-            return -1;
+            return KF_MENU_LIST_NO_SELECTION;
         menu_item_model_preview(codes[ctx.selected_index]);
     }
     menu_list_render(&ctx);
@@ -220,12 +228,12 @@ s32 menu_use_item_panel(void)
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
                     KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
-                selection = -99;
+                selection = KF_MENU_LIST_PENDING;
             else
                 selection = codes[ctx.selected_index];
         }
         confirm = 0;
-        if (selection != -99) {
+        if (selection != KF_MENU_LIST_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -236,7 +244,7 @@ s32 menu_use_item_panel(void)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = -1;
+                selection = KF_MENU_LIST_NO_SELECTION;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -257,7 +265,7 @@ s32 menu_use_item_panel(void)
                 }
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
-                return -1;
+                return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
@@ -272,7 +280,7 @@ s32 menu_use_item_panel(void)
                 ctx.cursor_row = 0;
             }
             if (menu_load_item_model(codes[ctx.selected_index]) != 0)
-                return -1;
+                return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (codes[ctx.selected_index] == KF_ITEM_WATCHMAN_MAP || codes[ctx.selected_index] == KF_ITEM_SORCERER_MAP) {
@@ -280,13 +288,13 @@ s32 menu_use_item_panel(void)
                 menu_map_viewer(codes[ctx.selected_index]);
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                 if (menu_load_item_model(codes[ctx.selected_index]) != 0)
-                    return -1;
+                    return KF_MENU_LIST_NO_SELECTION;
             } else {
                 confirm = 1;
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = -1;
+            selection = KF_MENU_LIST_NO_SELECTION;
         }
 
         menu_frame_begin();
@@ -300,21 +308,21 @@ s32 menu_use_item_panel(void)
     if ((u32)(selection - KF_ITEM_VERDITE) < KF_ITEM_LIGHT_RING - KF_ITEM_VERDITE) {
         inv[selection]--;
         if (selection == KF_ITEM_MEDICINAL_HERB) {
-            player_state.vitals.current_hp += 25;
+            player_state.vitals.current_hp += MEDICINAL_HERB_HP_RECOVERY;
         } else if (selection == KF_ITEM_ANTIDOTE_HERB) {
-            player_state.vitals.current_hp += 10;
+            player_state.vitals.current_hp += ANTIDOTE_HERB_HP_RECOVERY;
             player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE
                 | KF_PLAYER_STATUS_DARKNESS | KF_PLAYER_STATUS_SLOWED;
         } else if (selection == KF_ITEM_RECOVERY_MEDICINE) {
-            player_state.vitals.current_hp += 80;
+            player_state.vitals.current_hp += RECOVERY_MEDICINE_HP_RECOVERY;
             player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE
                 | KF_PLAYER_STATUS_DARKNESS;
         } else if (selection == KF_ITEM_DRAGON_KING_GRASS_LEAF) {
-            player_state.vitals.current_hp += 150;
+            player_state.vitals.current_hp += DRAGON_KING_GRASS_LEAF_HP_RECOVERY;
             player_state.status_effect_flags = 0;
         } else if (selection == KF_ITEM_DRAGON_KING_GRASS_FRUIT) {
             player_state.status_effect_flags = 0;
-            player_state.vitals.current_hp += 300;
+            player_state.vitals.current_hp += DRAGON_KING_GRASS_FRUIT_HP_RECOVERY;
             player_state.vitals.current_mp = player_state.vitals.maximum_mp;
         }
         if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
