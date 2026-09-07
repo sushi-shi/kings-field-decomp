@@ -18,6 +18,23 @@ controls are removed. The best source therefore remains at strict 92.177960%;
 no raw byte alias, overlapping view, volatile carrier, or compiler change is
 supported.
 
+Deriving the second typed DRAWENV as `first_draw + 1` also does not retain the
+first pointer across the two `PutDrawEnv` calls; GCC rematerializes both later
+`dfe` addresses. An explicit diagnostic pointer at the observed DTD member,
+including the decoded `+1`, `+93`, and `+162` uses, is optimized back to the
+same candidate under the configured profile. The derived pointer and raw view
+are removed; the latter is not a source model for the known SDK objects.
+
+GCC 2.5.7 controls with `-fno-force-addr`, `-fno-force-mem`, and
+`-fno-cse-follow-jumps` are byte-identical for the target and preserve the
+exact siblings. `-fno-expensive-optimizations` is also identical for the
+target but regresses one instruction in exact `render_initialize`.
+`-fforce-addr` is the only tested switch that recovers retail's 48-byte frame
+and `s3` mode allocation, but it anchors the entire graphics runtime rather
+than the DTD member and severely changes all three exact siblings. Combining
+it with the explicit member diagnostic is worse. All profile controls are
+removed; no compiler flag, raw alias, or source change is retained.
+
 ## Midpoint lifetime and supplied-profile controls (`ad5c075`)
 
 At strict 92.177960%, the retained retail base begins at the chained `dtd`
