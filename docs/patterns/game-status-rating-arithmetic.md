@@ -101,6 +101,11 @@ retail words, including the final `addiu sp,sp,80` return delay slot.
 
 ## Final verdict and verification
 
+This section records the rating pass. The later
+[shared-index correction](game-stats-header-index.md#detailed-status-follow-up)
+recovers the class-index register roles and improves the score to 98.296430%;
+the signed rating arithmetic and its remaining operand differences are unchanged.
+
 Keep the signed attack subtotal and both division corrections. The function
 improves from 95.110700% to **98.161130%**, remains partial, and is not banked.
 Retail/candidate size is 3252 bytes with the same 80-byte frame. All 72

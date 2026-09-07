@@ -93,6 +93,9 @@ This ledger records the class-title review snapshot. The later
 [rating-arithmetic correction](game-status-rating-arithmetic.md) replaces
 the outer attack shift with signed division by eight and removes the
 unsigned defense cast; its arithmetic discussion supersedes those rows below.
+The subsequent [shared-index correction](game-stats-header-index.md#detailed-status-follow-up)
+replaces `class_glyph_offset` and `i` with `glyph_index`, removing one
+declaration without changing the listed values or arithmetic expressions.
 
 283 occurrences.
 

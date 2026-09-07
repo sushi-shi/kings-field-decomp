@@ -12,8 +12,7 @@ ADDRESS(0x800264d8, 0xcb4)
 void menu_draw_status_details(void)
 {
     MenuGlyphString gs;
-    s32 class_glyph_offset;
-    s32 i;
+    s32 glyph_index;
     s32 attack_rating;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
@@ -102,25 +101,25 @@ void menu_draw_status_details(void)
     gs.x = 0x4d;
     gs.y += 0x10;
     if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
-        class_glyph_offset = 0;
+        glyph_index = 0;
     } else {
-        class_glyph_offset = 2;
+        glyph_index = 2;
         if (player_state.base_magic < MENU_CLASS_HIGH_STAT_MIN) {
-            class_glyph_offset = 1;
+            glyph_index = 1;
         }
     }
     if (player_state.base_physical_power > (MENU_CLASS_MIDDLE_STAT_MIN - 1)) {
         if (player_state.base_physical_power < MENU_CLASS_HIGH_STAT_MIN) {
-            class_glyph_offset += MENU_CLASS_MAGIC_TIER_COUNT;
+            glyph_index += MENU_CLASS_MAGIC_TIER_COUNT;
         } else {
-            class_glyph_offset += 2 * MENU_CLASS_MAGIC_TIER_COUNT;
+            glyph_index += 2 * MENU_CLASS_MAGIC_TIER_COUNT;
         }
     }
-    class_glyph_offset *= MENU_CLASS_LABEL_GLYPHS;
-    gs.codes[0] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH;
-    gs.codes[1] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 1;
-    gs.codes[2] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 2;
-    gs.codes[3] = class_glyph_offset + MENU_CLASS_FIRST_GLYPH + 3;
+    glyph_index *= MENU_CLASS_LABEL_GLYPHS;
+    gs.codes[0] = glyph_index + MENU_CLASS_FIRST_GLYPH;
+    gs.codes[1] = glyph_index + MENU_CLASS_FIRST_GLYPH + 1;
+    gs.codes[2] = glyph_index + MENU_CLASS_FIRST_GLYPH + 2;
+    gs.codes[3] = glyph_index + MENU_CLASS_FIRST_GLYPH + 3;
     gs.codes[4] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
@@ -160,21 +159,21 @@ void menu_draw_status_details(void)
         gs.codes[3] = 0xc5;
         gs.codes[4] = 0xc6;
     }
-    i = 4;
+    glyph_index = 4;
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != 0) {
         gs.codes[4] = 0xc9;
-        i = 3;
+        glyph_index = 3;
     }
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != 0) {
-        gs.codes[i] = 0x88;
-        i--;
+        gs.codes[glyph_index] = 0x88;
+        glyph_index--;
     }
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != 0) {
-        gs.codes[i] = 199;
-        i--;
+        gs.codes[glyph_index] = 199;
+        glyph_index--;
     }
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != 0) {
-        gs.codes[i] = 200;
+        gs.codes[glyph_index] = 200;
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 

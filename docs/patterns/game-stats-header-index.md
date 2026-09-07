@@ -48,7 +48,8 @@ The single `s32 glyph_index` replaces `class_glyph_offset` and `i` in this
 function only. It first selects the class row/column and four-glyph offset,
 then is reset to four for status placement, or three when the slowed icon
 already occupies the rightmost slot. Both phases retain all previous values
-and stores. The analogous detailed status renderer is unchanged.
+and stores. The analogous detailed status renderer was unchanged in this
+header pass; its subsequent control is recorded below.
 
 Exactly eighteen candidate words change, at these relative byte offsets:
 
@@ -98,3 +99,70 @@ The full build remains non-green on existing data/ownership/placement gates:
 source data PSX 0/1, GAME 9/42, OPEN 2/19; target relink PSX 1/1, GAME 75/77,
 OPEN 34/38, six conflicting section bases and zero artifact failures. These
 failures remain part of the wider reconstruction work, not waived checks.
+
+## Detailed status follow-up
+
+### Function Match Plan
+
+GAME `800264d8 menu_draw_status_details` starts at strict 98.161130%, after
+the [signed-rating correction](game-status-rating-arithmetic.md). Retail and
+candidate both contain 3,252 bytes, an 80-byte frame, 31 blocks, 16 branches,
+two internal jumps and one shared return. The six image-qualified views,
+complete disassembly/CFG, caller, three callee implementations, adjacent
+functions, shared types and source history were inspected before editing.
+`menu_status_panel` calls at `80024350` without arguments or a consumed
+result; the following name-list renderer is exact. The same custom
+player-statistics/atlas policy excludes vendored ownership. There are 72
+proven calls, 89 validated HI16/LO16 pairs, no strings and no unresolved
+indirect transfers. The target relinks to all 813 retail words, SHA-256
+`f210314ce339a8c9c3fd1f3e81596d2e4e3b8fb0755a971ce57b9582d3e9c2aa`.
+
+Test the same shared glyph-index lifetime as the header, keeping the real
+signed attack subtotal separate. Retail's class index is in `$a0`, with
+the two base-stat loads in `$v1`; the later status-slot index also uses
+`$a0`. The class value is dead before the status phase reinitializes it.
+This supports a single consumed index as a source hypothesis, not proof of
+the original declarations. Preserve all widths, predicates, stores, calls,
+referents, frame and compiler options. The first existing raw difference
+is `+3c`, where retail materializes Y=35 and the candidate emits a nop.
+
+### Result and negative control
+
+One `s32 glyph_index` replaces `class_glyph_offset` and `i`; `attack_rating`
+is unchanged. Exactly eighteen words recover the class calculation's retail
+register roles, at these candidate-relative offsets:
+
+```text
+2fc 300 30c 314 31c 324 328 32c 330
+338 340 350 354 358 35c 364 36c 374
+```
+
+The other 795 candidate words are unchanged. Complete ordered sequences
+of 72 numeric calls and 89 data addresses equal both the original candidate
+and raw retail. Fresh canonical compilation equals the trial's complete
+text and relocations, except for one `.debug_line` relocation offset: its
+24-byte displacement is exactly the difference in source-path length.
+The canonical and recorded live objects agree in full text and all
+relocations. This debug exception is checked explicitly, not generalized
+into ignored relocation differences.
+
+A separate arithmetic control spells the existing multiplication and
+division as `attack_rating *= 10; attack_rating /= 8;`. Its text and every
+relocation equal the retained single-expression trial; it is not adopted.
+
+Strict objdiff improves **98.161130% -> 98.296430%**. Size, frame and known
+successor lists remain unchanged. The first ordered branch-operand residue
+is still the signed attack guard, using `$a0` in retail versus `$v1` in
+the candidate. Initial Y materialization, retained 16-pixel spacing,
+blank/glyph constant placement and other rating-register differences remain.
+No missing early return or compiler mechanism is inferred. The function
+remains partial and is not banked.
+
+The full 484-row comparison shows only this function's score movement and
+no exact regression: GAME 313/362, OPEN 98/108, PSX 1/1, with all thirteen
+vendored controls exact. Full `kf build` retains the same data/ownership/
+placement failures documented above, with zero artifact failures. Concurrent
+menu naming/layout changes are outside this source-and-evidence campaign.
+All 680 existing repository tests pass in 83.512 seconds; Ruff and
+`git diff --check` pass. No shared header, tooling, inventory or banking
+change belongs to this follow-up.
