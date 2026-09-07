@@ -144,6 +144,14 @@ and reuses the CD sector units. Its
 120 retained numeric uses in those two functions; six existing ledgers are
 refreshed, including 94 retained occurrences in the spell ledger.
 
+The [player progression review](game-player-progression.md) names power,
+HP/MP, experience and level limits, the training threshold and base-magic
+learning requirements. It separates the forty loaded growth rows from the
+fifty shipped rows and derives the extrapolation indices. Its complete
+[four-function ledger](game-player-progression-literal-ledger.md) explains
+45 retained numeric occurrences, down from 63; the shared Verdite threshold
+also reduces the existing item-use ledger from 80 to 79.
+
 ## Function Match Plan
 
 The campaign covers numeric and character literals in every C source under

@@ -180,7 +180,7 @@ void player_use_item(u8 item_id)
         map_event_show_person_image(event);
         return;
     case KF_ITEM_VERDITE:
-        player_state.magic_training += 100;
+        player_state.magic_training += KF_PLAYER_TRAINING_POINTS_PER_GAIN;
         used = 1;
         player_increment_magic_training();
         break;

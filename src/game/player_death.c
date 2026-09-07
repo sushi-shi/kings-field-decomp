@@ -5,7 +5,10 @@
 
 enum {
     CURSE_PHYSICAL_POWER_PENALTY = 20,
-    FIRE_DEFENSE_STATUS_BONUS = 10
+    FIRE_DEFENSE_STATUS_BONUS = 10,
+    DISPOISON_REQUIRED_BASE_MAGIC = 37,
+    FIRE_WALL_REQUIRED_BASE_MAGIC = 70,
+    LIGHTNING_BOLT_REQUIRED_BASE_MAGIC = 75
 };
 
 DATA(0x80055810, 0x9)
@@ -336,23 +339,23 @@ void player_recalculate_combat_stats(void)
     if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
-    if (player_state.base_magic >= 37 && magic_records[KF_MAGIC_HEALING].learned != KF_MAGIC_UNLEARNED && magic_records[KF_MAGIC_DISPOISON].learned == KF_MAGIC_UNLEARNED) {
+    if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC && magic_records[KF_MAGIC_HEALING].learned != KF_MAGIC_UNLEARNED && magic_records[KF_MAGIC_DISPOISON].learned == KF_MAGIC_UNLEARNED) {
         magic_records[KF_MAGIC_DISPOISON].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.base_magic >= 70 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
+    if (player_state.base_magic >= FIRE_WALL_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
         magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.base_magic >= 75 && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == KF_MAGIC_UNLEARNED) {
+    if (player_state.base_magic >= LIGHTNING_BOLT_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == KF_MAGIC_UNLEARNED) {
         magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.physical_power >= 1000) {
-        player_state.physical_power = 999;
+    if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {
+        player_state.physical_power = KF_PLAYER_POWER_MAX;
     }
-    if (player_state.magic >= 1000) {
-        player_state.magic = 999;
+    if (player_state.magic >= KF_PLAYER_POWER_MAX + 1) {
+        player_state.magic = KF_PLAYER_POWER_MAX;
     }
 }
 
@@ -360,11 +363,11 @@ ADDRESS(0x80015f28, 0x98)
 void player_increment_physical_power_training(void)
 {
     player_state.physical_power_training++;
-    if (player_state.physical_power_training >= 100) {
+    if (player_state.physical_power_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_physical_power++;
         player_state.physical_power_training = 0;
-        if (player_state.base_physical_power >= 1000) {
-            player_state.base_physical_power = 999;
+        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+            player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_PHYSICAL_POWER_INCREASED);
         }
@@ -376,11 +379,11 @@ ADDRESS(0x80015fc0, 0x98)
 void player_increment_magic_training(void)
 {
     player_state.magic_training++;
-    if (player_state.magic_training >= 100) {
+    if (player_state.magic_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_magic++;
         player_state.magic_training = 0;
-        if (player_state.base_magic >= 1000) {
-            player_state.base_magic = 999;
+        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+            player_state.base_magic = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_MAGIC_POWER_INCREASED);
         }
@@ -395,27 +398,27 @@ void player_add_experience(s16 amount)
     u8 level;
 
     player_state.experience += amount;
-    if (player_state.experience > 99999) {
-        player_state.experience = 99999;
+    if (player_state.experience > KF_PLAYER_EXPERIENCE_MAX) {
+        player_state.experience = KF_PLAYER_EXPERIENCE_MAX;
     }
     while (player_state.experience >= player_state.next_level_experience) {
         level = player_state.progress_state.level;
-        if (player_state.progress_state.level >= 255) {
+        if (player_state.progress_state.level >= KF_PLAYER_LEVEL_MAX) {
             break;
         }
         player_state.progress_state.level = level + 1;
-        if (level >= 40) {
+        if (level >= KF_PLAYER_LEVEL_GROWTH_COUNT) {
             player_state.vitals.maximum_hp +=
-                player_level_growth_table[39].maximum_hp
-                - player_level_growth_table[38].maximum_hp;
+                player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1].maximum_hp
+                - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_hp;
             player_state.vitals.maximum_mp +=
-                player_level_growth_table[39].maximum_mp
-                - player_level_growth_table[38].maximum_mp;
-            player_state.base_physical_power += player_level_growth_table[39].physical_power_step;
-            player_state.base_magic += player_level_growth_table[39].magic_step;
+                player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1].maximum_mp
+                - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_mp;
+            player_state.base_physical_power += player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1].physical_power_step;
+            player_state.base_magic += player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1].magic_step;
             player_state.next_level_experience +=
-                player_level_growth_table[39].experience_threshold
-                - player_level_growth_table[38].experience_threshold;
+                player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1].experience_threshold
+                - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].experience_threshold;
         } else {
             growth = &player_level_growth_table[level];
             player_state.vitals.maximum_hp = growth->maximum_hp;
@@ -424,21 +427,21 @@ void player_add_experience(s16 amount)
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience = growth->experience_threshold;
         }
-        if (player_state.vitals.maximum_hp >= 10000) {
-            player_state.vitals.maximum_hp = 9999;
+        if (player_state.vitals.maximum_hp >= KF_PLAYER_VITAL_MAX + 1) {
+            player_state.vitals.maximum_hp = KF_PLAYER_VITAL_MAX;
         }
-        if (player_state.vitals.maximum_mp >= 10000) {
-            player_state.vitals.maximum_mp = 9999;
+        if (player_state.vitals.maximum_mp >= KF_PLAYER_VITAL_MAX + 1) {
+            player_state.vitals.maximum_mp = KF_PLAYER_VITAL_MAX;
         }
-        if (player_state.base_physical_power >= 1000) {
-            player_state.base_physical_power = 999;
+        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+            player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         }
-        if (player_state.base_magic >= 1000) {
-            player_state.base_magic = 999;
+        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+            player_state.base_magic = KF_PLAYER_POWER_MAX;
         }
         player_recalculate_combat_stats();
         notify_enqueue(KF_NOTIFICATION_LEVEL_UP);
-        sound_ref_play(&player_sound_refs[2], 0x7f);
+        sound_ref_play(&player_sound_refs[2], KF_AUDIO_MAX_VOLUME);
     }
 }
 

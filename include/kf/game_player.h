@@ -48,6 +48,16 @@ enum {
     KF_ILLUSION_STAFF_INACTIVE = -1
 };
 
+/* Runtime progression limits; only the first forty resource rows are loaded. */
+enum {
+    KF_PLAYER_POWER_MAX = 999,
+    KF_PLAYER_VITAL_MAX = 9999,
+    KF_PLAYER_EXPERIENCE_MAX = 99999,
+    KF_PLAYER_LEVEL_MAX = 255,
+    KF_PLAYER_LEVEL_GROWTH_COUNT = 40,
+    KF_PLAYER_TRAINING_POINTS_PER_GAIN = 100
+};
+
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;
@@ -201,7 +211,7 @@ extern SoundRef player_sound_refs[3];
 extern KfFloorEntryCell floor_entry_cells[5];
 extern MATRIX player_death_saved_color_matrix;
 extern s32 player_death_saved_fog_near;
-extern KfPlayerLevelGrowth player_level_growth_table[40];
+extern KfPlayerLevelGrowth player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT];
 extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;

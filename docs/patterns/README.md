@@ -296,6 +296,9 @@ promotes a probe to a proven historical toolchain.
 - [game-item-menu-dimensions.md](game-item-menu-dimensions.md): shared item,
   stock and glyph-row extents, complete-object startup clears, CD sector units,
   and the [database/startup literal ledger](game-item-database-literal-ledger.md).
+- [game-player-progression.md](game-player-progression.md): training and stat
+  limits, runtime growth-table extent and extrapolation, spell-learning
+  requirements, and a complete progression/stat literal ledger.
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

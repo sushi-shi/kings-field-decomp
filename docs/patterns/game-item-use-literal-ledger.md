@@ -2,9 +2,12 @@
 
 Complete per-occurrence ledger for `src/game/player_use_item.c`, including its
 two image-path buffers and target-image helpers, after the
-[special-item audit](game-item-special-identities.md) and [notification audit](game-notification-identities.md). All **80 remaining
+[special-item audit](game-item-special-identities.md) and [notification audit](game-notification-identities.md). All **79 remaining
 occurrences**, down from 109, have explicit consumer explanations. Claims,
 comments, strings and named enum definitions are excluded; signs are operators.
+
+The [progression review](game-player-progression.md) names Verdite's shared
+training threshold without changing its increment/store/call sequence.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -51,4 +54,3 @@ comments, strings and named enum definitions are excluded; signs are operators.
 | `player_use_item` | 165, 175 | `12 × 2` | `KF_ANGLE_FULL_TURN / 12,` | Target-cone angular tolerance 341/4096 revolution, the truncated one-twelfth turn; shared representation with the door-facing tolerance, without assuming their tuning rationale. |
 | `player_use_item` | 167 | `0` | `if (actor != 0) {` | A non-null actor wins the mirror query and its info image is shown immediately. |
 | `player_use_item` | 177 | `0` | `if (event == 0) {` | No event target after the actor miss leaves the mirror use unacknowledged. |
-| `player_use_item` | 183 | `100` | `player_state.magic_training += 100;` | Add an entire 100-count training threshold before the normal helper increments once and resets the counter; see the consumable audit for caps and halfword behavior. |
