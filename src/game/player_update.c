@@ -149,7 +149,7 @@ void player_update(void)
             player_equip_weapon(player_state.equipped_weapon_id);
             player_select_magic(player_state.selected_magic_id);
         } else if (item == KF_MENU_ROOT_RETURN_TO_INTRO) {
-            game_exit_code = KF_OPEN_MODE_INTRO;
+            game_exit_code = KF_GAME_EXIT_INTRO;
             return;
         }
         player_previous_input = input;

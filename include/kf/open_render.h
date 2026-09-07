@@ -6,6 +6,7 @@
 #include <kf/enum.h>
 #include <kf/game_math.h>
 #include <kf/item.h>
+#include <kf/overlay.h>
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
@@ -124,7 +125,7 @@ extern CVECTOR map_textured_primitive_color;
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern u32 primitive_allocation_count;
 
-extern void display_initialize(s32 mode);
+extern void display_initialize(KfOpenMode mode);
 extern void lighting_set_active_color_matrix(KfOpenColorPreset preset);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);

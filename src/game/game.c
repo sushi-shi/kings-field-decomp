@@ -76,7 +76,7 @@ void game_main_loop(void)
             if (*(u16 *)&player_state.previous_map_cell
                 != *(u16 *)&player_state.map_cell) {
                 if (player_warp_trigger_update() != 0) {
-                    game_exit_code = KF_OPEN_MODE_ENDING;
+                    game_exit_code = KF_GAME_EXIT_ENDING;
                     player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
                     display_play_transition();
                     audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8);

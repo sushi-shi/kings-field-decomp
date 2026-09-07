@@ -10,13 +10,14 @@
 
 #include <kf/audio.h>
 #include <kf/game_types.h>
+#include <kf/overlay.h>
 #include <kf/psyq.h>
 
 extern u32 DAT_80057d24;
 extern u32 DAT_80095698;
 extern u32 DAT_8009569c;
 extern u32 DAT_800a0768;
-extern u32 game_exit_code;
+extern KfGameExitCode game_exit_code;
 extern const SoundRef gameplay_sound_ref_0;
 extern const SoundRef gameplay_sound_ref_1;
 extern SoundRef gameplay_sound_ref_10;

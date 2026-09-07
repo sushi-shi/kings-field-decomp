@@ -39,7 +39,7 @@ char opening_initial_tim_path[6] = "B0\\L0.";
 RODATA(0x80012020, 0x18)
 
 ADDRESS(0x800156bc, 0x214)
-void opening_run(s32 display_mode)
+void opening_run(KfOpenMode display_mode)
 {
     void *tim_data;
     OpeningAllocationState *allocation_state;

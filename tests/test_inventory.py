@@ -2978,7 +2978,7 @@ class InventoryTests(unittest.TestCase):
         exit_code = game.datum(0x800958F8)
         self.assertEqual(
             (exit_code.name, exit_code.datatype, exit_code.owner_type),
-            ("game_exit_code", "u32", "game"),
+            ("game_exit_code", "KfGameExitCode", "game"),
         )
         save_writer = game.function(0x8002B73C)
         self.assertEqual(

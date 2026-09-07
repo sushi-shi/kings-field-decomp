@@ -36,5 +36,5 @@ void main(s32 entry_arg0, u32 *entry_args)
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();
-    entry_args[KF_OVERLAY_RESULT_WORD] = game_exit_code;
+    entry_args[KF_OVERLAY_RESULT_WORD] = KF_ENUM_ENCODE(u32, game_exit_code);
 }

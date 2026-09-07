@@ -24,6 +24,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-collision-constants.md](game-magic-collision-constants.md): magic
   launch/targeting units, shared collision-rectangle capacity and the complete
   [52-occurrence remainder ledger](game-magic-collision-literal-ledger.md).
+- [overlay-mode-domains.md](overlay-mode-domains.md): separate GAME exit status
+  and OPEN mode, typed global/API flow through the raw Exec boundary, and the
+  [154-occurrence OPEN initializer ledger](open-render-init-literal-ledger.md).
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete

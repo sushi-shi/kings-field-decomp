@@ -23,7 +23,7 @@ void main(void)
     s32 entry_args[KF_OVERLAY_ARGUMENT_WORDS];
 
     _96_remove();
-    entry_args[KF_OVERLAY_RESULT_WORD] = KF_OPEN_MODE_INTRO;
+    entry_args[KF_OVERLAY_RESULT_WORD] = KF_ENUM_ENCODE(s32, KF_OPEN_MODE_INTRO);
     for (;;) {
         entry_args[KF_OVERLAY_REQUEST_WORD] = entry_args[KF_OVERLAY_RESULT_WORD];
         _96_init();

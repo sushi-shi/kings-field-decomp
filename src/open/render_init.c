@@ -100,7 +100,7 @@ void render_initialize(void)
 }
 
 ADDRESS(0x80016adc, 0x1d8)
-void display_initialize(s32 mode)
+void display_initialize(KfOpenMode mode)
 {
     s32 framebuffer_height;
     s32 lower_buffer_y = KF_DISPLAY_HEIGHT;
