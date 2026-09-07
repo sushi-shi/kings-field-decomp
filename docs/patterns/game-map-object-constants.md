@@ -1,5 +1,9 @@
 # GAME map-object constants
 
+The later [motion-constant pass](game-map-object-motion-constants.md) names
+the interaction distances and motion/timing units left inline here. Its
+171-occurrence ledger and verification supersede this historical census.
+
 ## Function Match Plan
 
 Continue from master `20bf14c` with hash-verified GAME retail and the unchanged

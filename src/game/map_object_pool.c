@@ -10,6 +10,10 @@
  * The following map-object runtime/action unit remains a separate WIP owner.
  */
 
+enum {
+    MAP_DOOR_CLOSING_PROBE_RADIUS = 3000
+};
+
 RODATA(0x80012738, 0x150)
 
 /*
@@ -130,7 +134,7 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     probe:
         result = collision_query_world(
-            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, 3000, 0,
+            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
         break;
     case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
@@ -280,7 +284,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             case 68:
             case 69:
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_REVEAL_MAP_PIECE);
-                object->position_y += 10000;
+                object->position_y += KF_MAP_OBJECT_REVEAL_DEPTH;
                 break;
             case 111:
             case 123:
@@ -290,7 +294,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             if (definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_COPY_REGION) {
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_COPY_REGION);
             }
-            map_object_mark_collision_edge(object, 0, object->rotation.y);
+            map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.y);
             placement++;
         } else {
             ended = 1;

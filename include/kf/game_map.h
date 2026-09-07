@@ -130,6 +130,12 @@ enum {
     KF_MAP_OBJECT_SWITCH_REVERSE = 3
 };
 
+/* Positive Y hides the piece; five settling updates undo the reveal overshoot. */
+enum {
+    KF_MAP_OBJECT_REVEAL_DEPTH = 10000,
+    KF_MAP_OBJECT_REVEAL_SETTLE_STEP = 40
+};
+
 typedef struct KfMapCell {
     u8 z;
     u8 x;

@@ -83,6 +83,11 @@ extends this to projectile/hazard phases and explains all 764 retained literals
 in the five effect/magic modules, including the corrected collision-probe
 offsets formerly called velocities. The wider source audit remains open.
 
+The [map-object motion follow-up](game-map-object-motion-constants.md) names
+88 further inline uses in the two map-object modules: interaction distances,
+drop routing, door timing, emitter and falling motion, and reveal geometry.
+Its full ledger accounts for the 171 remaining occurrences.
+
 The [map-object review](game-map-object-constants.md) separates definition
 behaviors from running actions, names switch phases and drop groups across
 their consumers, and explains all 259 retained literals in the two map-object
