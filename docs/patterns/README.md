@@ -70,6 +70,8 @@ promotes a probe to a proven historical toolchain.
   shop-window rows, retail Gold Cross/key identities and the shop literal ledger.
 - [game-menu-preview-transform.md](game-menu-preview-transform.md): complete
   shared preview rotation, draw-rate units, Q12 lighting and retained literal ledger.
+- [game-menu-preview-source-controls.md](game-menu-preview-source-controls.md):
+  audited name-row ordering residue and recovered sell/buy price-selection CFG.
 - [game-menu-confirmation-protocol.md](game-menu-confirmation-protocol.md): typed
   footer kinds, previews and results; retail Japanese labels and literal ledger.
 - [game-equipment-domains.md](game-equipment-domains.md): separate player-slot

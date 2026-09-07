@@ -66,7 +66,10 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
 
     gs.x = 0xc8;
     gs.y += 18;
-    prices = (price_mode != KF_ITEM_PRICE_BUY) ? item_sell_prices : item_buy_prices;
+    prices = item_sell_prices;
+    if (price_mode == KF_ITEM_PRICE_BUY) {
+        prices = item_buy_prices;
+    }
     menu_format_number(prices[item_id][shop_id - 1], 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
