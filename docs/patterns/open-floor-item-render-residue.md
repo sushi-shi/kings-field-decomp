@@ -1,5 +1,114 @@
 # OPEN floor-item rendering: facing-byte mask
 
+## GAME/OPEN Function Match Plan: one-based facing index at `29d1ddb`
+
+Both image-qualified six-view snapshots were refreshed against hash-verified
+retail, together with their caller argument windows, matrix-Y/SDK boundaries,
+placement initializers, shared record, neighbors and source history. GAME
+`8001ed90` and OPEN `800190f4 render_floor_item` retain a 332-byte retail extent,
+328-byte candidate, strict 98.795180%, nine calls, six address pairs, six
+blocks, two branches, one internal jump and 80-byte frame/return slot. There
+are no strings, candidates or indirect transfers. Custom facing/animation
+policy is game-owned; matrix and GTE services retain their SDK attribution.
+
+The packed high nibble encodes zero for billboarding and nonzero values for
+biased quarter turns: `((packed & 0xf0) - 16) << 6` equals
+`((packed >> 4) - 1) << 10` on every nonzero high nibble. Test decoding that
+one-based index into the existing byte local, testing its old value while
+post-decrementing, then using its zero-based value for the angle. The zero
+case still takes the billboard path and never consumes the wrapped index.
+This differs from updating the masked byte by sixteen or reusing a frame
+temporary; it asks whether the actor descriptor's consumed byte-index form
+also explains this format. Keep all calls, reads, writes, owners and the
+animation tail unchanged. No artificial mask, carrier or padding is added.
+
+Compare the entire raw body, ordered targets and both units' siblings after
+real compilation. In particular, extra shifts or a moved narrowing reject
+the hypothesis even if the total size equals 332. Only strict 100% and full
+verification can justify banking; semantic equivalence alone is insufficient.
+
+Both image-specific trials emit 328 bytes. The first difference moves to
++0x88: the matrix-address setup replaces the load-delay nop, followed by
+`srl 4`, a zero branch with `addiu -1` in its slot, then `andi ff` and
+`sll 10`. Retail instead retains `andi f0; andi ff` before its guard and
+`addiu -16; sll 6` after it. All nine calls and six ordered numeric data
+targets agree; both exact neighboring renderers and OPEN's traversal retain
+their complete baseline words/references. Reject this source form in both
+images. The actor's index result does not transfer to this facing decoder;
+no floor-item C, header, profile or banking change is kept.
+
+Verification of these floor and OPEN traversal controls: fresh complete-unit
+compiles preserve the canonical source streams, and all 484 strict report
+scores equal the pre-trial snapshot. GAME remains 312/362 exact and OPEN
+98/108; neither floor renderer nor the traversal is newly banked. Ruff and
+`git diff --check` pass, and all 680 tests pass in 83.582 seconds. Full
+`kf build` retains the existing data/ownership/placement failures: source
+data PSX 0/1, GAME 9/42, OPEN 2/19; target relink 1/1, 75/77, 34/38;
+zero artifact failures. Concurrent effect naming work is separate from
+these documentation-only findings, and subsequent unrelated source edits
+are not part of this campaign's verification claim.
+
+## GAME/OPEN Function Match Plan: byte temporary lifetime at `11552f7`
+
+The exact actor-index correction at `d7e0260` motivates a new lifetime
+question, not another spelling of the same mask. Refresh both images' six
+semantic views, complete bodies and CFGs, sole 24-byte-stride callers
+(`GAME:8001f560`, `OPEN:80019488`), exact neighboring renderers, placement
+loaders, shared item layout, matrix-Y signed-halfword boundary, SDK headers
+and vendored provider rows. The game-owned placement/facing/frame policy is
+not a vendored body; its `LIBGTE` MTX/SMP services remain separately attributed.
+There are no strings, candidates or indirect transfers in either target.
+
+| Image | Function | Retail / current bytes | Strict baseline |
+| --- | --- | --- | --- |
+| GAME | `8001ed90 render_floor_item` | 332 / 328 | 98.795180% |
+| OPEN | `800190f4 render_floor_item` | 332 / 328 | 98.795180% |
+
+Each body has nine direct calls, six address pairs, six blocks, two
+conditional branches, one internal jump and one common return with the
+80-byte frame restoration in its delay slot. The complete linked bodies
+currently differ only by the missing `andi ff` at +90 and shifted internal
+destinations. Preserve every load/store, selected image's owner, sprite data,
+150/200 depth biases, high/low nibble masks, signed angle API and draw-before-
+animation-update order. The initializer's full-packed-byte random seed is
+unchanged; this trial must not silently repair its initial-index limitation.
+
+Retail's facing test and post-draw frame increment both consume byte values;
+the increment is stored and narrowed before its unsigned frame-count compare.
+Test using one consumed byte temporary for those successive, non-overlapping
+phases rather than the current `u8 facing` plus separate `u32 next_frame` and
+explicit `& ff`. Independently test a byte-sized but separate `next_frame`
+to distinguish byte width from source-variable lifetime. Both candidates
+retain the post-call packed-byte read and defined byte wrap, remove no real
+side effect, and add no local, volatile access, synthetic mask or padding.
+Keep only humane source supported by full linked words and ordered referents;
+preserve the exact GAME actor-sprite / OPEN entity siblings and the current
+OPEN traversal bytes. Rebuild both affected units, require strict 100% for
+banking, and run the full project checks before handoff.
+
+The separate-byte frame control leaves the OPEN instruction stream unchanged.
+Reusing that byte across the draw boundary does not restore the facing mask
+and additionally changes the animation-tail load order/registers. Reject
+cross-phase reuse. A second, narrower question stays within the facing phase:
+retail subtracts the biased zero-yaw value after its nonzero guard. Test
+updating the existing facing byte by that subtraction, then consuming it in
+the angle shift. For every permitted nonzero high nibble the result is
+0..224, so no overflow or angle behavior changes. Preserve the original
+animation temporaries; reject the trial if it introduces additional narrowing
+or otherwise fails the complete-body comparison.
+
+The same complete-unit controls were compiled separately for GAME and OPEN.
+Both images give the same verdict: separate byte frame is byte-identical to
+baseline (328 bytes); shared cross-phase byte is 332 bytes but retains the
+original omission and changes the animation tail; byte facing subtraction is
+332 bytes but emits `andi a0,a0,ff` after subtraction instead of retail's
+pre-guard narrowing. Its four unequal aligned words are at +90..+9c. Neither
+same size nor improved listing similarity makes that an exact match.
+All nine ordered calls and six numeric address pairs remain correct in every
+trial. Both exact neighboring bodies and the OPEN traversal's baseline
+instruction/reference stream are unchanged. No floor-renderer source edit
+is retained and neither function is banked.
+
 ## Function Match Plan: packed-control value (`5784c14`)
 
 OPEN `800190f4` remains 332 retail/328 probe bytes, strict 98.795180%.

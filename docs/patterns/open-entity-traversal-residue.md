@@ -1,5 +1,60 @@
 # OPEN visible entity/item traversal
 
+## Function Match Plan: current-window local at `11552f7`
+
+Refresh the six OPEN views and full 664-byte body, sole scene-0 caller,
+neighboring renderers, slot selector, SDK SetLightMatrix/header/provider,
+shared view/item layouts, and all earlier source trials below. Baseline is
+strict 96.759030%, 668 compiled bytes. The 48-byte frame, four calls, fifteen
+address pairs, 25 blocks, sixteen branches, four division traps and common
+return with frame-restoring slot remain the contract. No strings, candidates
+or unresolved indirect transfers occur. Visibility/pool policy remains game
+code, separate from the SDK light-matrix service.
+
+The source has an entry `window` and distinct inner `grid` locals for its two
+loops, all holding the same current visibility-window type. Retail reloads
+that global for each qualifying entity and every item iteration. Test one
+current-window local reloaded at those same sites and used for their existing
+bounds and row-major lookups. This models one recurring semantic role without
+hoisting a load, adding a carrier, changing widths or coalescing independent
+data objects. Entry origins, material setup, divisions and iteration order
+stay unchanged. This differs from earlier owner-pointer and quotient trials;
+do not repeat those or mistake equal CFGs for value equivalence. Compare from
+the material/reference divergence first, then every control and instruction;
+retain only a humane correction that moves the raw evidence toward retail
+without regressing either neighboring renderer.
+
+The shared-window trial retains all four calls and fifteen address targets
+but moves the first difference back to entry +34 and changes item-window
+register roles without recovering the missing load-delay schedule. Size
+remains 668 bytes; both sibling bodies stay unchanged. Reject it and keep
+the distinct existing locals.
+
+### Selector publication order
+
+The same refreshed snapshot applies. The previous color-order trials did
+not test the two halfword selector copies. The material and source-selector
+subobjects both lay out CLUT before texture page, while the source currently
+publishes tpage first. Test that natural field order for these two independent
+assignments only. Retail's scheduled tpage-first stores do not prove the
+original C order. The copied values, read/write widths, owner, RGB expression,
+counter/pointer initialization and loops remain unchanged; do not combine
+this trial with the rejected shared-window form. Judge the ordered numeric
+referents and actual store/load schedule, not just the percentage.
+
+The reversed selector copies still emit 668 bytes, retain the material-R
+anchor and extra item-row load-delay instruction, and reverse the two
+selector load/store referents relative to retail. The four numeric calls
+remain unchanged; both neighboring renderers retain their complete baseline
+instruction/reference streams. Reject the trial and retain the original
+tpage-before-CLUT source. Neither selector publication order nor the shared
+window local explains the remaining retail sequence.
+
+Canonical strict scores and every other report row remain unchanged after
+the full build. The shared verification checkpoint is recorded with the
+[floor-renderer controls](open-floor-item-render-residue.md); this traversal
+remains 96.759030%, partial and unbanked. Only evidence notes are retained.
+
 ## Function Match Plan: natural color-field order (`42ff64f`)
 
 OPEN `80019240`/664 bytes remains strict 96.759030%, with a 668-byte
