@@ -24,7 +24,6 @@ CLAIM_RE = re.compile(
     r"^\s*(ADDRESS|DATA)\(\s*(0x[0-9A-Fa-f]+)\s*,\s*(0x[0-9A-Fa-f]+|[0-9]+)\s*\)\s*"
     r"(?:/\*.*\*/\s*)?$"
 )
-DEFINITION_NAME_RE = re.compile(r"([A-Za-z_][A-Za-z0-9_]*)\s*\(")
 IDENTIFIER_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 FUNCTION_POINTER_RE = re.compile(r"\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)")
 BINDING_FIELDS = ("image", "va", "kind", "name", "unit", "source", "line", "ordinal")
@@ -97,6 +96,23 @@ def _data_name(definition: str) -> str | None:
     return names[-1] if names else None
 
 
+def _function_name(definition: str) -> str | None:
+    """Return the declarator name without mistaking parameter macros for it."""
+    head = definition.split("{", 1)[0]
+    depth = 0
+    candidates: list[str] = []
+    for index, character in enumerate(head):
+        if character == "(":
+            if depth == 0:
+                names = IDENTIFIER_RE.findall(head[:index])
+                if names:
+                    candidates.append(names[-1])
+            depth += 1
+        elif character == ")" and depth:
+            depth -= 1
+    return candidates[-1] if candidates else None
+
+
 def scan_source(source: Path) -> tuple[tuple[Claim, ...], tuple[DataClaim, ...]]:
     """Return the ADDRESS() and DATA() claims of one source in file order."""
     lines = source.read_text(encoding="utf-8").splitlines()
@@ -111,13 +127,13 @@ def scan_source(source: Path) -> tuple[tuple[Claim, ...], tuple[DataClaim, ...]]
         size = int(match.group(3), 0)
         definition = _definition_after(lines, index)
         if kind == "ADDRESS":
-            names = DEFINITION_NAME_RE.findall(definition.split("{")[0])
-            if not names:
+            name = _function_name(definition)
+            if name is None:
                 raise ValueError(
                     f"{source}:{index + 1}: ADDRESS({va:#x}) is not followed by a "
                     "function definition"
                 )
-            claims.append(Claim(va, size, names[-1], index + 1))
+            claims.append(Claim(va, size, name, index + 1))
             continue
         name = _data_name(definition)
         if name is None:

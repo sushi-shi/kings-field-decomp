@@ -49,6 +49,23 @@ class ClaimScanTests(unittest.TestCase):
             (Claim(0x80010000, 0x10, "first", 3), Claim(0x80010010, 0x20, "second", 8)),
         )
 
+    def test_parameter_type_macro_does_not_mask_function_name(self) -> None:
+        claims = self._scan(
+            "ADDRESS(0x80010000, 0x10)\n"
+            "void talk_show_dialogue_page(\n"
+            "    KF_ENUM_PARAM(KfFloorId, u8) floor, u8 page)\n"
+            "{\n}\n"
+        )
+        self.assertEqual(claims, (Claim(0x80010000, 0x10, "talk_show_dialogue_page", 1),))
+
+    def test_return_type_macro_does_not_mask_function_name(self) -> None:
+        claims = self._scan(
+            "ADDRESS(0x80010000, 0x10)\n"
+            "KF_RESULT(KfStatus) read_status(void)\n"
+            "{\n}\n"
+        )
+        self.assertEqual(claims, (Claim(0x80010000, 0x10, "read_status", 1),))
+
     def test_claim_without_definition_is_rejected(self) -> None:
         with self.assertRaises(ValueError):
             self._scan("ADDRESS(0x80010000, 0x10)\nextern int x;\n")
