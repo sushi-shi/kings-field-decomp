@@ -1,5 +1,31 @@
 # OPEN general TMD polygon emission
 
+## Header lifetime and scheduler controls
+
+Focused controls on OPEN `render_enqueue_tmd` preserve the supported stream
+model but do not explain its 3320/3324-byte residue. Moving the projected
+vertex declaration to function scope, or declaring it before the normal base,
+is byte-identical. A four-byte union exposing the packet header as a word and
+bytes is also byte-identical, as are spelling the header `unsigned int` and
+spelling signed depth `int`. These equivalent type and declaration forms are
+removed in favor of the existing fixed-width boundary types and narrowest
+scope.
+
+The primitive counter is not an interchangeable native integer. Changing
+`u32 remaining` (Psy-Q `unsigned long`) to `unsigned int` changes the loop to
+compare the decremented value with `-1`, grows/shifts the body, and disagrees
+with retail's postdecrement zero test. Keep the decoded 32-bit unsigned-long
+form.
+
+Compiler scheduling controls separate this residue from a profile guess.
+Adding `-mcpu=r3000` to the GCC 2.5.7 O2 probe is byte-identical to the current
+`-mcpu=r2000` candidate. Removing the CPU selection falls to 64.1% similarity,
+while disabling instruction scheduling falls to 64.0%; both broadly change
+load scheduling and the projected/normal register roles without recovering
+the 96-byte frame or projected-base-relative ordering-table load. All temporary
+profiles and assignments are removed. The retained source remains strict
+99.171080%, with the established 57 calls and twelve case addends intact.
+
 ## Shared AddPrim owner controls (`d8f448e`)
 
 The enclosing-owner expression that removes the unlit emitter's extra OT pair
