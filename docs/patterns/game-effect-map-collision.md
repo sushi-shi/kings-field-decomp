@@ -251,3 +251,116 @@ recover the retail local bounds return and changes the entry remainder and
 effect-pointer roles. Reject this hypothesis and restore the committed
 97.452630% source. The result-variable ownership does not explain the missing
 return block; no artificial liveness or undefined-default trial is justified.
+
+## Entry-guard scope control at `4eb958c`
+
+Fresh hash validation, all six GAME views, all six caller windows, both
+adjacent helpers, the world-query source/ABI, shared typed geometry and source
+history confirm the same 1900-byte retail / 1876-byte candidate at strict
+97.452630%. The 32-byte frame, one query call, twelve address pairs, fifteen
+retail internal jumps, fourteen checked signed divisions and one return remain
+the contract. The grid dispatch is bounded to six raw table entries; its
+unresolved indirect edge still prevents a complete navigator reachability
+claim. This game-specific geometry/active-effect policy is not SDK code.
+
+The first bounds branch at +`0x94` reaches the local rejection at retail
++`0xac`; the candidate reaches its negative-height rejection at +`0x154`.
+Both return `KF_COLLISION_TERRAIN`, so this is different block sharing, not
+evidence of a missing collision result. Retail's negative-height branch
+prepares that result in its delay slot, leaving the following return jump's
+slot empty; the candidate prepares the result in the shared jump's slot.
+The two diagonal X/Z cases also differ in rejection-tail sharing.
+
+Test one positive in-bounds scope containing the entire existing cell query,
+with the bounds-failure return after that scope. This preserves short-circuit
+X-before-Z evaluation, accepted signed-halfword coordinates 0..99, and every
+body statement and return, but distinguishes the entry guard's source scope
+from the existing early rejection. It does not repeat the already negative
+signed-versus-unsigned predicate or long-lived result-variable controls.
+Do not introduce a result carrier, extra memory access, padding, assembler,
+undefined default or compiler change. Inspect the first raw branch and all
+numeric referents after a fresh full-unit trial; reject the spelling if it
+does not explain the separately emitted bounds rejection.
+
+The positive scope does not recover the entry rejection: both range failures
+now branch to a new trailing constant-return block. Although it restores
+retail's separate shape-2 exit, the added trailing jump/constant explains the
+same overall 1900-byte extent without making the body exact. Do not retain
+the positive scope or equate its 126 blocks/78 branches with matching paths.
+
+The remaining return-sharing question is specifically the negative-height
+arm. Retail's passing height test branches directly to `grid_shape`; its
+failure falls through to a local return jump. On the original source base,
+test that explicit passing continuation (`if (y >= height) goto grid_shape;`)
+followed by the unchanged terrain return. This preserves the signed test and
+all possible outcomes, does not add a result local, and distinguishes that
+existing shared continuation from implicit completion of nested `if` scopes.
+Check whether it explains both the negative-height delay slot and the entry
+bounds return before pursuing any later register/conversion symptoms.
+
+The explicit negative-height continuation emits the original listing and
+retains the same first branch. Neither entry-control trial is kept. The
+positive-scope control did independently expose the missing diagonal case's
+separate success/rejection sequence. Isolate that evidence on the original
+base: in `KF_MAP_CELL_X_GE_Z`, spell the successful `X remainder + 1000 >=
+Z remainder` path as an early switch `break`, followed by the unchanged
+terrain return. Retail has precisely that branch to the post-switch query
+with a local rejection fallthrough. Keep X-before-Z remainder evaluation,
+signed comparisons, inclusive boundary and all other cases unchanged; no
+new comparison value or shared return carrier is introduced.
+
+The isolated early `break` recovers retail's five-instruction case exit:
+signed comparison, successful branch to the post-switch query, terrain value
+in its delay slot, and a separate rejection jump with an empty slot. The
+candidate grows from 1876 to 1888 bytes. An independent complete-word audit
+proves that the old two-word shared-tail jump is the only replaced sequence;
+all other instructions agree with the original after translating destinations
+for the added twelve bytes. All twelve ordered numeric data targets, the sole
+query call and all 56 rectangle bytes remain unchanged. Keep only this local
+case correction, not either entry-scope experiment.
+
+The retail body SHA-256 is
+`5734e37be2f919af2508a63eb7cb9f7e507ce3a3a4bb989c0db8ac7ea0d316c7`.
+Unadjusted aligned mismatches rise from 413 to 418 as subsequent instructions
+move; that count does not falsify the recovered source/control-flow fact.
+The first bounds rejection remains non-exact, as do the orientation value's
+register/conversion sequence and final class-default/flag setup. No exactness
+or banking claim follows from this partial correction.
+
+One bounded tail control remains independent of those entry experiments:
+move the final switch's defined `return 1` fallback after the switch, keeping
+the three case-local query returns. This keeps the zero-selector result and
+all other inputs defined; it does not imitate the incidental register value
+on the impossible above-three selector path. It tests whether ownership of
+the fallback by the switch explains the premature third-case flag setup and
+the extra default-slot constant. Use the retained diagonal-case source as
+the base, and reject the tail spelling if it supplies no raw correction.
+
+The fallback-after-switch trial emits identical allocated section bytes,
+section sizes/alignment and ordered symbolic relocations to the retained
+diagonal-case trial. It does not explain the third-case flag setup. Reject
+the spelling and retain the explicit switch default. Object-wide differences
+are source/debug metadata, not executable differences; raw symbol indices
+alone are not a stable relocation comparison across these source files.
+
+### Retained correction and verification
+
+**Partial, 97.452630% -> 98.221054%; not banked.** The fresh canonical
+object's allocated sections and ordered symbolic relocations equal the
+independently compiled and completely audited diagonal-case trial. The
+1900-byte retail body is still twelve bytes longer than the reconstruction.
+The two-word bounds-return block, orientation conversion sequence and final
+flag/default setup remain concrete differences; no compiler limitation is
+inferred from them.
+
+The resumed full `kf build` checks all three images and retains the known
+non-green data/ownership/placement findings: PSX data 0/1 and target relink
+1/1, GAME data 9/42 and relink 75/77, OPEN data 2/19 and relink 34/38.
+There are no artifact failures. Ruff and `git diff --check` pass, and all
+680 repository tests pass (84.364 seconds).
+
+Comparison of all 484 reported function rows with the pre-control snapshot
+finds only this function's score change. Exact counts remain GAME 313/362,
+OPEN 98/108 and PSX 1/1; all thirteen vendored verification functions stay
+exact. There are still 59 non-exact GAME/OPEN functions. No banked function,
+baseline, unrelated source or configuration is changed by this correction.

@@ -116,10 +116,10 @@ grid_shape:
         break;
     case KF_MAP_CELL_X_GE_Z:
         if (position->vx % KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER
-                < position->vz % KF_MAP_TILE_SIZE) {
-            return KF_COLLISION_TERRAIN;
+                >= position->vz % KF_MAP_TILE_SIZE) {
+            break;
         }
-        break;
+        return KF_COLLISION_TERRAIN;
     case KF_MAP_CELL_SUM_LE_SIZE:
         if ((KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER)
                 < position->vx % KF_MAP_TILE_SIZE + position->vz % KF_MAP_TILE_SIZE) {
