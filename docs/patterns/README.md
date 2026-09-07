@@ -482,6 +482,9 @@ promotes a probe to a proven historical toolchain.
 - [game-status-panel-flow.md](game-status-panel-flow.md): reviewed frame-head
   jump, shared settling increment and natural corner order recover the
   status-panel CFG; descriptor addressing and frame extent remain non-exact.
+- [menu-backdrop-stack-frame.md](menu-backdrop-stack-frame.md): isolates the
+  shared 64-byte menu-tile frame residue and rejects debug, GCC 2.6.0, and
+  materialized typed-aggregate explanations.
 - [game-list-confirmation-flow.md](game-list-confirmation-flow.md): current-pad
   lifetime, positive edge order, explicit toggle and first-frame/post-input
   redraw entries close the shared list-confirmation loop.
