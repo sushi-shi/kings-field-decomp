@@ -550,7 +550,7 @@ clear_event_phase:
             default:
                 break;
             }
-            return;
+            goto run_floor_action;
         }
     }
 
@@ -739,21 +739,24 @@ notify_linked:
             player_restore_vitals_with_color_cycle();
             continue;
 
-        case KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE:
+        case KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE: {
+            s32 image_group;
+
             if (notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
                 break;
             }
             if (object->object_id == KF_MAP_OBJECT_SIGNBOARD) {
-                result = 0;
+                image_group = 0;
             } else {
                 if (object->object_id != KF_MAP_OBJECT_INSCRIPTION_PANEL) {
                     return;
                 }
-                result = 1;
+                image_group = 1;
             }
-            map_show_screen_image(result, object->link.link_id);
+            map_show_screen_image(image_group, object->link.link_id);
             player_clear_motion();
             continue;
+        }
 
         case KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT:
             map_world_state_persist();
@@ -767,6 +770,7 @@ notify_default:
         }
     }
 
+run_floor_action:
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
         map_action_script_floor1();
