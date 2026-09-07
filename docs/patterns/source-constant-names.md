@@ -580,8 +580,10 @@ specified. OPEN's seven-byte prefix names only the evidenced leading padding,
 not a recovered allocation boundary. The VRAM viewer moves by four storage
 coordinates and wraps X/Y within the 1024-by-512 VRAM rectangle.
 
-All 156 literals still inline in the complete memory, formatter, debug and
-VRAM-viewer sources have these reasons:
+At that campaign's snapshot, 156 literals remained inline in the complete
+memory, formatter, debug and VRAM-viewer sources, grouped below. The later
+[formatter review](formatter-state-domains.md) replaces 38 state uses and
+provides a [current occurrence ledger](formatter-literal-ledger.md).
 
 | Sites | Values | Reason |
 | --- | --- | --- |
@@ -589,7 +591,7 @@ VRAM-viewer sources have these reasons:
 | Decimal/hex digit generation | 10, 4, `'0'`, `'A'`, `'-'` | Decimal radix, four bits per hex digit, and visible character encoding. The arithmetic directly states the conversion rule. |
 | Format grammar and padding characters | `'1'`..`'8'`, `'%'`, `'0'`, `'D'`/`'d'`, `'X'`/`'x'`, `'S'`/`'s'`, space, LF/CR | Literal characters make the accepted language and newline translation clearer than aliases for each character. Width recognition remains the exact inclusive character range. |
 | Formatter string scans and endings | 0, `'\0'` | C string termination, including the numeric zero comparisons. |
-| Formatter state and debug flag | 0/1 | Boolean initial values, state tests, setting and inversion. |
+| Formatter state and debug flag (historical) | 0/1 | Formatter digit/parser/padding states now use separate enums. The debug word's zero initializer and logical inversion remain explicit; no admitted consumer proves a halt/pause state. |
 | Formatter loop origins, counts, sign and zero-digit tests | 0 | Arithmetic zero, zero-based iteration and the signed value boundary. |
 | Formatter index/count adjustments | 1 | Last-index derivation, first-character advance, and inclusion of the final terminator in the returned count. |
 | Allocator null values and depth reset | 0 | Null pointer checks/assignments and an empty allocation stack. |

@@ -551,3 +551,7 @@ promotes a probe to a proven historical toolchain.
 - [Matrix/vector/color coverage](math-literal-coverage.md): explicit component
   arithmetic, corrected RGB555 signature and caller limits, with the
   [complete nine-file ledger](math-literal-ledger.md).
+
+- [Formatter state domains](formatter-state-domains.md): separate digit, parser
+  and padding enums, preserved custom grammar and clarified scratch ownership,
+  with the [complete three-file ledger](formatter-literal-ledger.md).

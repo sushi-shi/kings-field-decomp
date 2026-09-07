@@ -16,7 +16,7 @@ char *format_int_dec(s32 value)
 {
     s32 divisor = KF_FORMAT_DECIMAL_HIGHEST_PLACE;
     char *out = (format_number_storage + FORMAT_LEADING_PAD_BYTES);
-    u8 started = 0;
+    KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
     u8 i;
 
     if (value < 0) {
@@ -26,9 +26,9 @@ char *format_int_dec(s32 value)
     for (i = 0; i < KF_FORMAT_DECIMAL_DIGITS; i++) {
         s32 digit = value / divisor;
         value = value % divisor;
-        if (digit != 0 || started != 0 || i == KF_FORMAT_DECIMAL_DIGITS - 1) {
+        if (digit != 0 || digit_state != KF_FORMAT_DIGITS_LEADING || i == KF_FORMAT_DECIMAL_DIGITS - 1) {
             *out++ = digit + '0';
-            started = 1;
+            digit_state = KF_FORMAT_DIGITS_EMITTED;
         }
         divisor /= 10;
     }
@@ -40,20 +40,20 @@ ADDRESS(0x8001a4dc, 0x8c)
 char *format_int_hex(u32 value)
 {
     u32 divisor = KF_FORMAT_HEX_HIGHEST_PLACE;
-    u8 started = 0;
+    KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
     char *out = format_number_storage + FORMAT_LEADING_PAD_BYTES;
     u8 i;
 
     for (i = 0; i < KF_FORMAT_HEX_DIGITS; i++) {
         u32 digit = value / divisor;
         value = value % divisor;
-        if (digit != 0 || started != 0 || i == KF_FORMAT_HEX_DIGITS - 1) {
+        if (digit != 0 || digit_state != KF_FORMAT_DIGITS_LEADING || i == KF_FORMAT_HEX_DIGITS - 1) {
             if (digit < 10) {
                 *out++ = digit + '0';
             } else {
                 *out++ = digit + ('A' - 10);
             }
-            started = 1;
+            digit_state = KF_FORMAT_DIGITS_EMITTED;
         }
         divisor >>= 4;
     }
@@ -85,15 +85,15 @@ ADDRESS(0x8001a5d4, 0x240)
 s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
 {
     s32 count = 0;
-    u8 in_format = 0;
+    KfFormatParserState parser_state = KF_FORMAT_PARSER_TEXT;
     u8 width;
-    u8 zero_pad;
+    KfFormatPaddingMode padding_mode;
     u8 c;
     char *s;
 
     while ((c = *format++) != 0) {
         if (c >= '1' && c <= '8') {
-            if (in_format != 0) {
+            if (parser_state != KF_FORMAT_PARSER_TEXT) {
                 width = c - '0';
                 continue;
             }
@@ -101,26 +101,26 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
         }
         switch (c) {
         case '%':
-            in_format = 1;
-            zero_pad = 0;
+            parser_state = KF_FORMAT_PARSER_CONVERSION;
+            padding_mode = KF_FORMAT_PAD_SPACES;
             width = KF_FORMAT_WIDTH_UNSPECIFIED;
             continue;
         case '0':
-            if (in_format == 0) {
+            if (parser_state == KF_FORMAT_PARSER_TEXT) {
                 goto literal;
             }
-            zero_pad = 1;
+            padding_mode = KF_FORMAT_PAD_ZEROES;
             continue;
         case 'D':
         case 'd':
-            if (in_format == 0) {
+            if (parser_state == KF_FORMAT_PARSER_TEXT) {
                 goto literal;
             }
-            in_format = 0;
+            parser_state = KF_FORMAT_PARSER_TEXT;
             s = format_int_dec(*args++);
         emit_padded:
             if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
-                if (zero_pad == 0) {
+                if (padding_mode == KF_FORMAT_PAD_SPACES) {
                     s = format_pad_left(s, ' ', width);
                 } else {
                     s = format_pad_left(s, '0', width);
@@ -134,18 +134,18 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
             continue;
         case 'X':
         case 'x':
-            if (in_format == 0) {
+            if (parser_state == KF_FORMAT_PARSER_TEXT) {
                 goto literal;
             }
-            in_format = 0;
+            parser_state = KF_FORMAT_PARSER_TEXT;
             s = format_int_hex(*args++);
             goto emit_padded;
         case 'S':
         case 's':
-            if (in_format == 0) {
+            if (parser_state == KF_FORMAT_PARSER_TEXT) {
                 goto literal;
             }
-            in_format = 0;
+            parser_state = KF_FORMAT_PARSER_TEXT;
             s = (char *)*args++;
             goto copy;
         case '\n':

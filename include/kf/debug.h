@@ -1,7 +1,25 @@
 #ifndef KF_DEBUG_H
 #define KF_DEBUG_H
 
+#include <kf/game_types.h>
+#include <kf/enum.h>
+
 /* Custom diagnostic formatter and sink shared by GAME.EXE and OPEN.EXE. */
+KF_ENUM_BEGIN(KfFormatDigitState, u8)
+    KF_FORMAT_DIGITS_LEADING = 0,
+    KF_FORMAT_DIGITS_EMITTED = 1
+KF_ENUM_END(KfFormatDigitState)
+
+KF_ENUM_BEGIN(KfFormatParserState, u8)
+    KF_FORMAT_PARSER_TEXT = 0,
+    KF_FORMAT_PARSER_CONVERSION = 1
+KF_ENUM_END(KfFormatParserState)
+
+KF_ENUM_BEGIN(KfFormatPaddingMode, u8)
+    KF_FORMAT_PAD_SPACES = 0,
+    KF_FORMAT_PAD_ZEROES = 1
+KF_ENUM_END(KfFormatPaddingMode)
+
 enum {
     KF_FORMAT_DECIMAL_DIGITS = 10,
     KF_FORMAT_DECIMAL_HIGHEST_PLACE = 1000000000,

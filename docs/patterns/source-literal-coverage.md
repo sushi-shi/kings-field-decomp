@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [matrix/vector/color review](math-literal-coverage.md):
+Working snapshot after the [formatter state review](formatter-state-domains.md):
 **111 C files**, **112 source/image variants**,
-and **6,547 inline numeric/character occurrences**. The counts include authored
+and **6,509 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **66 files / 4,309 occurrences**, the explicit ledger rows were compared
+For **69 files / 4,397 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -27,7 +27,7 @@ below. This validates retained-literal accounting, not proof that every possible
 semantic improvement has been exhausted.
 This includes the reviewed warp forwarding wrapper, which has zero retained
 literal occurrences.
-The math review adds nine complete files with 189 retained occurrences.
+The formatter review names 38 state uses and adds three complete files with 88 retained occurrences.
 The evolving expressions in `map_scripts.c` no longer agree with its older
 ledger, so that file remains excluded from the verified subtotal until its
 rows and referent evidence are reconciled.
@@ -77,7 +77,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 5,228 occurrences.
+73 files; 5,209 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -91,7 +91,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [collision.c](../../src/game/collision.c) | 265 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
 | [collision_grid.c](../../src/game/collision_grid.c) | 5 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
 | [color_lerp_rgb555.c](../../src/game/color_lerp_rgb555.c) | 0 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [debug_text.c](../../src/game/debug_text.c) | 64 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
+| [debug_text.c](../../src/game/debug_text.c) | 45 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [display_play_transition.c](../../src/game/display_play_transition.c) | 29 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
 | [effect_dispatch.c](../../src/game/effect_dispatch.c) | 153 | [game-effect-dispatch ledger](game-effect-dispatch-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_map_collision.c](../../src/game/effect_map_collision.c) | 43 | [game-magic-collision ledger](game-magic-collision-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
@@ -157,7 +157,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## OPEN.EXE
 
-34 files; 1,297 occurrences.
+34 files; 1,278 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -166,11 +166,11 @@ fields and address-derived function names are separate from this ten-line count.
 | [audio_play_voice.c](../../src/open/audio_play_voice.c) | 6 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [audio_spatial.c](../../src/open/audio_spatial.c) | 6 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [camera_path.c](../../src/open/camera_path.c) | 3 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [debug.c](../../src/open/debug.c) | 0 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | No retained literal tokens. |
+| [debug.c](../../src/open/debug.c) | 0 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [display_adjust.c](../../src/open/display_adjust.c) | 19 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
 | [entity_render.c](../../src/open/entity_render.c) | 78 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [fixed_vector2_length.c](../../src/open/fixed_vector2_length.c) | 0 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [format.c](../../src/open/format.c) | 62 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
+| [format.c](../../src/open/format.c) | 43 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [item.c](../../src/open/item.c) | 2 | [domain evidence](game-entity-sprite-tables.md) | Expand the domain audit into current occurrence coverage. |
 | [main.c](../../src/open/main.c) | 2 | [domain notes](source-constant-names.md#startup-store-destinations-and-initial-heaps) | Expand the domain audit into current occurrence coverage. |
 | [matrix.c](../../src/open/matrix.c) | 8 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
