@@ -1,5 +1,15 @@
 # OPEN ending-scroll controller and data owners
 
+## Front-end width and bound-expression controls
+
+Three ordinary source spellings compile byte-identically to the retained
+51-block candidate: explicitly decoding the two integer phase constants into
+the real 16-bit phase domain, spelling both signed blend bounds as `< 4097`
+instead of `<= 4096`, and initializing the real blend local at its declaration
+instead of immediately before the resource-loader call. None changes the
+selector copy, failed-path `t1`/`t0` split, saved registers, delay slots, or
+focused listing. All are removed; the canonical 97.952675% source remains.
+
 ## Selector-layout and initialization-lifetime controls
 
 At 106/108, reversing the two lighting cases gives a 49-block candidate but
