@@ -3,6 +3,13 @@
 #include <kf/game_render.h>
 #include <kf/game_state.h>
 
+enum {
+    MAP_OBJECT_RENDER_ID_END = 133,
+    ACTOR_VARIANT_WINDOW_HALF_WIDTH = 12,
+    ACTOR_VARIANT_WINDOW_WIDTH = 2 * ACTOR_VARIANT_WINDOW_HALF_WIDTH,
+    FLOOR_ITEM_RENDER_BRIGHTNESS = 180
+};
+
 /* Cull each pool against the active cell window before dispatching its emitter.
  * Effect records remain a temporary view of the shared pool storage.
  */
@@ -24,7 +31,7 @@ void render_entities(void)
     /* Map objects. */
     object = map_object_state.objects;
     for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {
-        if (object->object_id < 133) {
+        if (object->object_id < MAP_OBJECT_RENDER_ID_END) {
             u16 row = object->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
@@ -58,13 +65,13 @@ void render_entities(void)
                 visible = g->cells[row * g->width + col];
             }
         } else {
-            u16 dz = actor->cell_z + 12;
+            u16 dz = actor->cell_z + ACTOR_VARIANT_WINDOW_HALF_WIDTH;
             u16 dx;
-            if ((u16)(dz - (u16)render_state.view_cell.z) >= 24) {
+            if ((u16)(dz - (u16)render_state.view_cell.z) >= ACTOR_VARIANT_WINDOW_WIDTH) {
                 goto next_actor;
             }
-            dx = actor->cell_x + 12;
-            visible = (u16)(dx - (u16)render_state.view_cell.x) < 24;
+            dx = actor->cell_x + ACTOR_VARIANT_WINDOW_HALF_WIDTH;
+            visible = (u16)(dx - (u16)render_state.view_cell.x) < ACTOR_VARIANT_WINDOW_WIDTH;
         }
         if (visible != 0) {
             render_actor(actor);
@@ -74,10 +81,10 @@ next_actor:
     }
 
     /* Floor items. */
-    SetLightMatrix(&render_light_matrices[1]);
-    active_render_blue = 0xb4;
-    active_render_green = 0xb4;
-    active_render_red = 0xb4;
+    SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
+    active_render_blue = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    active_render_green = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    active_render_red = FLOOR_ITEM_RENDER_BRIGHTNESS;
     i = floor_item_count;
     active_render_tpage = floor_item_tpage;
     active_render_clut = floor_item_clut;
@@ -97,7 +104,7 @@ next_actor:
     }
 
     /* Actor sprites. */
-    SetLightMatrix(&render_light_matrices[2]);
+    SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
     sprite = (KfEffectRenderView *)effect_pool_records;
     for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {
         if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->sprite_id == KF_EFFECT_RENDER_NONE) {

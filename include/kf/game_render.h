@@ -41,6 +41,39 @@ enum {
     KF_HUD_DEFAULT_BRIGHTNESS = 86
 };
 
+enum {
+    KF_HUD_HP_GAUGE = 0,
+    KF_HUD_MP_GAUGE = 1,
+    KF_HUD_ATTACK_GAUGE = 2,
+    KF_HUD_MAGIC_GAUGE = 3,
+    KF_HUD_POISON_ICON = 4,
+    KF_HUD_SLOWED_ICON = 5,
+    KF_HUD_DARKNESS_ICON = 6,
+    KF_HUD_CURSE_ICON = 7,
+    KF_HUD_HP_PANEL = 8,
+    KF_HUD_MP_PANEL = 9,
+    KF_HUD_ATTACK_PANEL = 10,
+    KF_HUD_MAGIC_PANEL = 11,
+    KF_HUD_COMPASS = 12,
+    KF_HUD_TABLE_ROWS = 14 /* Thirteen sprites and the terminating row. */
+};
+
+enum {
+    KF_HUD_HIDDEN = 0,
+    KF_HUD_VISIBLE = 1,
+    KF_HUD_END = 0xff
+};
+
+enum {
+    KF_RENDER_LIGHT_ACTOR = 0,
+    KF_RENDER_LIGHT_FLOOR_ITEM = 1,
+    KF_RENDER_LIGHT_EFFECT = 2,
+    KF_RENDER_LIGHT_WEAPON = 3,
+    KF_RENDER_LIGHT_HUD = 4,
+    KF_RENDER_LIGHT_NOTIFICATION = 5,
+    KF_RENDER_LIGHT_COUNT = 6
+};
+
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */
 typedef struct KfHudSprite {
     u8 state;
@@ -108,9 +141,9 @@ extern u16 effect5_texture_cluts[3];
 extern KfSpriteQuad floor_item_sprites[7];
 extern KfSpriteQuad effect_billboard_sprites[22];
 extern KfEffectSprite effect_sprites[2];
-extern KfHudSprite hud_sprites[14];
+extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
 extern MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
-extern MATRIX render_light_matrices[6];
+extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
 extern KfRenderState render_state;
 extern KfTmdState tmd_state;
 /* GAME's projected-array capacity remains unresolved. */

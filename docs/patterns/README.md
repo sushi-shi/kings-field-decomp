@@ -36,6 +36,9 @@ promotes a probe to a proven historical toolchain.
 - [game-render-material-identities.md](game-render-material-identities.md): HUD,
   notification and floor-item material names; SDK palette records and their
   ownership evidence.
+- [game-render-hud-constants.md](game-render-hud-constants.md): atlas-backed HUD
+  slots, lighting consumers, culling and depth units; complete
+  [223-occurrence remainder ledger](game-render-hud-literal-ledger.md).
 - [game-notification-identities.md](game-notification-identities.md): all 32
   retail message labels, typed queue/link fields and variadic API, separate
   phase enum, and the [retained-literal ledger](game-notification-literal-ledger.md).

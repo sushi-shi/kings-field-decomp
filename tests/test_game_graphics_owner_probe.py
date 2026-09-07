@@ -355,9 +355,11 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             for byte_index in (False, True):
                 candidate = source
                 if not byte_index:
-                    self.assertEqual(candidate.count('    descriptor >>= 4;'), 1)
+                    shift = '    descriptor >>= ACTOR_MODEL_TEXTURE_SHIFT;'
+                    self.assertEqual(candidate.count(shift), 1)
                     candidate = candidate.replace('    u16 asset;\n', '    u16 asset;\n    int high;\n')
-                    candidate = candidate.replace('    descriptor >>= 4;', '    high = descriptor >> 4;')
+                    candidate = candidate.replace(
+                        shift, '    high = descriptor >> ACTOR_MODEL_TEXTURE_SHIFT;')
                     candidate = candidate.replace('if (descriptor-- == 0)', 'if (high == 0)')
                     candidate = candidate.replace('[descriptor]', '[high - 1]')
                 with self.subTest(owner=owner, byte_index=byte_index), tempfile.TemporaryDirectory() as directory:

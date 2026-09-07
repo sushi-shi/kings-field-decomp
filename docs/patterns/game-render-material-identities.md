@@ -1,5 +1,9 @@
 # GAME HUD, notification, and floor-item materials
 
+The later [HUD/rendering constant audit](game-render-hud-constants.md) names
+the atlas slots and six lighting consumers and supplies a complete literal
+ledger for the frame, geometry, model and scene modules.
+
 ## Function Match Plan
 
 At `13e081a`, name the cached GPU selectors and the HUD colour intensity from

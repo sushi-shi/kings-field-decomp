@@ -1,5 +1,10 @@
 # Source constant naming
 
+The [HUD/rendering review](game-render-hud-constants.md) names atlas slots,
+lighting consumers, descriptor packing, culling and depth/brightness units.
+It replaces 108 inline occurrences and documents all 223 retained literals
+across the four rendering modules, including authored initializer tuples.
+
 The [floor-script motion review](game-map-script-motion-constants.md) names
 fade and rotation steps, transform heights, camera bounds, sound mixing and
 interaction-query distances. It replaces 26 inline uses and refreshes the
