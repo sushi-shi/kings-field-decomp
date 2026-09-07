@@ -44,7 +44,7 @@ expected or banked.
 | 0x80014e28 / 1944 | `opening_ending_scroll_run` | 97.129630 | IDs 26/27, translation until hide/show swap and later roll; sole G4 caller; propagate existing role names. |
 | 0x80018ecc / 552 | `opening_entity_render` | 100.000000 | Byte model ID; signed rotations/scales; 17-entry switch table; yaw increments occur after transform; signed depth bias. |
 | 0x800190f4 / 332 | `render_floor_item` | 98.795180 | Byte facing/frame packing and increment/narrow/compare order; unchanged full-module control. |
-| 0x80019240 / 664 | `opening_render_entities_and_items` | 96.759030 | Halfword-wrapped window bounds, signed item coordinates and countdowns; named visibility class and RGB180. |
+| 0x80019240 / 664 | `opening_render_entities_and_items` | 98.885544 | Halfword-wrapped window bounds, signed item coordinates and countdowns; tpage member lifetime, named visibility class and RGB180. |
 | 0x800194d8 / 72 | `opening_scene0_render_frame` | 100.000000 | Two borrowed SDK-vector pointers; six ordered calls; projection 200. |
 | 0x80019520 / 120 | `opening_render_entities` | 100.000000 | 32-slot pool, model ID below 32, signed countdown; unchanged traversal control. |
 
@@ -143,7 +143,7 @@ First raw differences in the unchanged partial functions:
 | `opening_scene3_run`, `80014804` | Stack frame -96 | Stack frame -112 |
 | `opening_ending_scroll_run`, `800150c0` | `sh zero,176(sp)` | `lui a0,0x8003` |
 | `render_floor_item`, `80019184` | `beqz v0,800191b8` | `andi v0,v0,0xff` |
-| `opening_render_entities_and_items`, `80019370` | `lui a0,0x8007` | `lui at,0x8007` |
+| `opening_render_entities_and_items`, `800193f4` | item-window load followed by `nop` | item-window load followed by Z-origin subtraction |
 
 These are observations, not an attribution to a compiler pass. Exact source
 structure and the existing signedness/ownership questions remain independent

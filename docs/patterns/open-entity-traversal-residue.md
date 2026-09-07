@@ -1,5 +1,42 @@
 # OPEN visible entity/item traversal
 
+## Function Match Plan: historical tpage member lifetime (`97740c4`)
+
+OPEN `80019240` remains a 664-byte, game-owned entity/item traversal with a
+48-byte frame, 25 blocks, sixteen branches, four checked-division traps, four
+ordered calls, fifteen address pairs and one return with its delay slot. The
+hash-identical retail body, all six image-qualified views, sole caller, both
+renderer callees and adjacent functions, shared layouts, source history and
+SetLightMatrix provider evidence were refreshed. Baseline strict matching was
+96.759030%, with a 668-byte candidate whose first difference was the active
+material R address at +0x130. Preserve all types, values, CFG and referents.
+
+Repository history contained a real `u16 *material_tpage` local initialized
+before the chained B/G/R assignment and first consumed by the later tpage
+copy. Re-test that source form under the current corrected owner and origin
+types. It expresses the independently observed address-taken member lifetime:
+retail materializes the tpage address after the color stores, writes through
+it, and derives the item and position cursors at +22/+26. Do not derive across
+fields manually or alter the supported eight-byte material prefix.
+
+The historical pointer recovers the complete material sequence and cursor
+derivation. Strict objdiff rises to **98.885544%** and the first difference
+moves to item-row evaluation at +0x1b4. Retail fills the active-window load
+delay with the independent Z-origin subtraction; the probe emits one `nop`,
+then exchanges quotient/height registers through the remaining row path. The
+candidate remains 668 bytes, while all calls, address targets, blocks,
+successors, traps and the exact sibling renderers remain unchanged.
+
+Focused negative controls show that moving item/count initialization, moving
+the window declaration, reversing the equivalent height comparison, staging
+the signed quotient around the window load, and using full-word `s32` or native
+`int` rows do not recover retail. The full-word forms add an unsupported origin
+mask. Native `unsigned int` origins regress the previously exact entry/entity
+loop. A natural tpage-rooted nested owner is impossible at offset +2 under the
+ABI because its 32-bit item members require four-byte alignment; packing it
+would be artificial. Retain the historical pointer and the established `u16`
+origins/row. This remains partial and is not banked.
+
 ## Function Match Plan: current-window local at `11552f7`
 
 Refresh the six OPEN views and full 664-byte body, sole scene-0 caller,
