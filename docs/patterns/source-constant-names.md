@@ -2328,3 +2328,8 @@ The [panel-geometry review](game-menu-panel-geometry.md) names 82 inline uses
 in the map viewer, status backdrop and list renderer. The refreshed
 [panel ledger](game-menu-panel-literal-ledger.md) accounts for all 103 retained
 occurrences and replaces the obsolete list workspace and loop expressions.
+
+The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
+verifies 392 current occurrences across player death/vitals, item use and
+notifications. Their normalized ledgers retain the existing reasons and give
+each occurrence its own row; the death ledger now covers the full module.

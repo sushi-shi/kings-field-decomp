@@ -479,3 +479,6 @@ promotes a probe to a proven historical toolchain.
 - [GAME list, status-panel and map geometry](game-menu-panel-geometry.md):
   shared backdrop dimensions, list row/quantity offsets and map crop/resources;
   [complete panel ledger](game-menu-panel-literal-ledger.md).
+
+- [Grouped retained-literal reconciliation](game-retained-ledger-reconciliation.md):
+  complete current accounting for player death/vitals, item use and notifications.

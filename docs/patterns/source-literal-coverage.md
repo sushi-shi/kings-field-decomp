@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [panel-geometry review](game-menu-panel-geometry.md):
+Working snapshot after the [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md):
 **111 C files**, **112 source/image variants**,
 and **6,903 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **23 files / 2,012 occurrences**, the explicit ledger rows were compared
+For **26 files / 2,404 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -26,18 +26,20 @@ expressions and multiplicity establish content coverage. These files are marked
 below. This validates retained-literal accounting, not proof that every possible
 semantic improvement has been exhausted.
 
-The grouped player-death, item-use and notification ledgers were not classified
-by that single-occurrence-row check. Their compressed rows require expansion;
-unparsed rows do not mean undocumented values. The other existing domain audits
-also remain outside this verified subtotal. No missing-name total can be derived
-by subtracting this subtotal from the source census.
+The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
+verified and normalized the death, item-use and notification accounting. Other
+focused and historical audits remain outside this subtotal until their current
+scope and expressions are checked. No missing-name total can be derived by
+subtracting the verified subtotal from the source census.
 
 ## Next coverage work
 
 1. Refresh the status-text ledgers after their later reconstruction changes.
-2. Audit the remaining warp motion/timing values against retail and complete
+2. Name and propagate the remaining item-use interaction/range/timer values;
+   complete retained-literal accounting does not exhaust useful naming.
+3. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
-3. Verify every retained occurrence against its reason before marking a file
+4. Verify every retained occurrence against its reason before marking a file
    complete. File-name mentions, table totals and unchanged object bytes alone
    cannot establish semantic coverage.
 
@@ -127,13 +129,13 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_select.c](../../src/game/menu_select.c) | 104 | [game-equipment ledger](game-equipment-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_status_panel.c](../../src/game/menu_status_panel.c) | 12 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 41 | [game-menu-save ledger](game-menu-save-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
-| [notify_queue.c](../../src/game/notify_queue.c) | 116 | [game-notification ledger](game-notification-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [notify_queue.c](../../src/game/notify_queue.c) | 116 | [complete ledger](game-notification-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_core.c](../../src/game/player_core.c) | 80 | [game-player-core ledger](game-player-core-literal-ledger.md); [game-player-motion ledger](game-player-motion-literal-ledger.md) | Recent movement correction updated its ledger; include that combined core/motion ledger in the next coverage validation. |
-| [player_death.c](../../src/game/player_death.c) | 197 | [game-item-database ledger](game-item-database-literal-ledger.md); [game-player-death ledger](game-player-death-literal-ledger.md); [game-player-progression ledger](game-player-progression-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [player_death.c](../../src/game/player_death.c) | 197 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death_fade.c](../../src/game/player_death_fade.c) | 8 | [domain notes](source-constant-names.md#lighting-and-death-fade-plan) | Expand the domain audit into current occurrence coverage. |
 | [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [domain evidence](game-player-progression-literal-ledger.md) | No retained literal tokens. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_use_item.c](../../src/game/player_use_item.c) | 79 | [game-item-use ledger](game-item-use-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [player_use_item.c](../../src/game/player_use_item.c) | 79 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp.c](../../src/game/player_warp.c) | 113 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Domain note covers states; audit remaining motion/timing and authored coordinate uses per function. |
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [domain evidence](semantic-field-names.md) | No retained literal tokens. |
 | [pool.c](../../src/game/pool.c) | 35 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
