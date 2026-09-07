@@ -89,3 +89,15 @@ the combiner either.
 - Non-exact residues under 2.5.7 are single-instruction placements
   (`move` before a load, `sw ra` kept out of a branch slot) or register
   assignment. They remain unattributed until the optimizer sources are read.
+
+## Pass-localized map-object control
+
+An all-pass (`-da`) RTL dump of the current `map_object_pool_update` source
+localizes both repeated door-sound residues. After `combine`, each block is in
+the retail order: load the object ID, materialize 119, materialize the default
+sound reference, then branch. The first scheduling pass moves the independent
+default-sound reference ahead of the byte load; later allocation and scheduling
+passes preserve that changed order. This proves which pass changes the current
+probe output, not which compiler or scheduler retail used. Disabling scheduling
+for the whole unit retains the local order but regresses unrelated functions
+and the rest of this body, so it is not a valid unit profile.

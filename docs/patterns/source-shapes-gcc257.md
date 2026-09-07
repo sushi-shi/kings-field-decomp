@@ -581,7 +581,7 @@ lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
 | case 80: `bnez timer -> tail` with the decrement after the inner switch | `if (timer == 0) { ... } else { timer--; }` rather than an early `timer--; break;` | same |
 | `lui s1; addiu s1` address kept across three calls for the stair counter | `counter = &DAT_8009eafc;` and `*counter` accesses; a plain global is re-addressed at every use | same |
 | `lui/addiu` for both door sounds, never folded from one another | the sound refs at `0x80056188` are thirteen separate `SoundRef` objects (`gameplay_sound_ref_N`); with one array CSE derives the second address from the first | same |
-| residue: `lbu; li; la B; bne; la A` for the door sound | ours schedules `la B` above the compare operands with every spelling (if/else, ternary, default-then-override); only `-fno-schedule-insns` keeps retail's order, which breaks the rest. Unattributed | same |
+| residue: `lbu; li; la B; bne; la A` for the door sound | ours schedules `la B` above the compare operands with every spelling (if/else, ternary, default-then-override); an all-pass GCC RTL dump places `lbu; li; la B; bne` after `combine`, then the first scheduler moves `la B` ahead of the load. Thus the local divergence is pass-localized, while `-fno-schedule-insns` breaks the rest of the TU and does not establish the historical scheduler. | same |
 
 ### Player combat stats and equipment
 
