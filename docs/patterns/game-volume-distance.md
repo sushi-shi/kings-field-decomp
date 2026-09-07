@@ -190,3 +190,12 @@ same actor source. Preserve that unstaged hunk and do not use a dirty override.
 Commit the isolated exact distance reconstruction; its one baseline update
 remains pending those independent inputs. The preceding phase predicate's
 deferred bank was completed separately in `fb0297b` while inputs were clean.
+
+### Deferred banking completed
+
+After concurrent naming committed as `c6ad920`, fresh actor/audio raw controls
+and a full build revalidated the two pending exact bodies with a clean tree.
+Selected `kf bank` then succeeded for GAME actor_distance_to_point and
+audio_play_spatial. Only their two baseline rows changed; strict totals stay
+GAME 311/362, OPEN 98/108 and PSX 1/1. The existing full-build data/ownership
+failures are unchanged. Subsequent independent edits are not part of this bank.

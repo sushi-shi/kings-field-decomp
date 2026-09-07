@@ -88,3 +88,12 @@ refuses the concurrent unstaged player-vertical-state inputs and actor
 damage-naming hunk. Do not override that guard or stage those independent
 edits. The verified audio reconstruction is committed separately; these two
 baseline updates remain pending clean campaign inputs and revalidation.
+
+### Deferred banking completed
+
+Concurrent naming committed as `c6ad920`, leaving clean inputs. Fresh raw
+actor/audio controls and full `kf build` revalidated the pending exact bodies;
+selected `kf bank` then succeeded for this function and actor_distance_to_point.
+Only those two baseline rows changed. Strict totals remain GAME 311/362,
+OPEN 98/108 and PSX 1/1, with the same existing data/ownership build failures.
+Subsequent independent edits are excluded from this banking campaign.
