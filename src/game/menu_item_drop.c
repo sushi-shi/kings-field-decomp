@@ -273,11 +273,14 @@ KfMenuConfirmResult menu_save_panel(void)
     s32 input = 0;
     s32 prev;
     KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
-    s32 status;
+    union {
+        KfSaveResult operation;
+        KfSaveCleanupResult cleanup;
+    } status;
     s32 i;
 
-    status = save_system_read_catalog(summaries);
-    if (status != 1 && status != 3) {
+    status.operation = save_system_read_catalog(summaries);
+    if (status.operation != KF_SAVE_RESULT_OK && status.operation != KF_ENUM_DECODE(KfSaveResult, 3)) {
         menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
             menu_frame_begin();
@@ -304,8 +307,8 @@ KfMenuConfirmResult menu_save_panel(void)
 
         if (confirm == KF_MENU_CONFIRM_REQUESTED && cursor != KF_MENU_SAVE_RETURN_ROW) {
             if (cursor == KF_MENU_SAVE_FORMAT_ROW) {
-                status = save_file_cleanup_temporary();
-                if (status == 1) {
+                status.cleanup = save_file_cleanup_temporary();
+                if (status.cleanup == KF_SAVE_CLEANUP_TEMP_OPENED) {
                     menu_load_item_texture(MENU_TEXTURE_CONFIRM_CARD_FORMAT);
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
@@ -333,7 +336,7 @@ KfMenuConfirmResult menu_save_panel(void)
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
-                    status = save_system_write_slot(cursor + 1);
+                    status.operation = save_system_write_slot(cursor + 1);
                 } else if (cursor == KF_MENU_SAVE_FORMAT_ROW) {
                     menu_load_item_texture(MENU_TEXTURE_FORMATTING_CARD);
                     for (i = 0; i < 3; i++) {
@@ -343,11 +346,11 @@ KfMenuConfirmResult menu_save_panel(void)
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
-                    status = memory_card_check_or_format(1);
+                    status.operation = memory_card_check_or_format(KF_CARD_FORMAT_CONFIRMED);
                     memset(summaries, 0, sizeof(summaries));
                 }
 
-                if (status != 1) {
+                if (status.operation != KF_SAVE_RESULT_OK) {
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();
@@ -420,7 +423,7 @@ KfMenuConfirmResult menu_load_panel(void)
     KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
     s32 i;
 
-    if (save_system_read_catalog(summaries) != 1) {
+    if (save_system_read_catalog(summaries) != KF_SAVE_RESULT_OK) {
         menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
             menu_frame_begin();
@@ -458,7 +461,7 @@ KfMenuConfirmResult menu_load_panel(void)
                     menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
                     menu_present_frame();
                 }
-                if (save_system_read_slot(cursor + 1) != 1) {
+                if (save_system_read_slot(cursor + 1) != KF_SAVE_RESULT_OK) {
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();

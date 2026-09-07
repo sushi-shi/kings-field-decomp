@@ -32,6 +32,31 @@ KF_ENUM_BEGIN(KfSaveStatus, s32)
     SAVE_STATUS_WRITE_FAILED = 14
 KF_ENUM_END(KfSaveStatus)
 
+/* Menu mappings retain unlisted encoded statuses, including read failure. */
+KF_ENUM_BEGIN(KfSaveResult, s32)
+    KF_SAVE_RESULT_FAILED = 0,
+    /* Header reads also accept an empty catalogue with this result. */
+    KF_SAVE_RESULT_OK = 1,
+    KF_SAVE_RESULT_FORMAT_REQUIRED = 2,
+    KF_SAVE_RESULT_FORMAT_CONFIRMATION = 2,
+    KF_SAVE_RESULT_NO_SPACE = 3,
+    KF_SAVE_RESULT_READ_FAILED = KF_ENUM_ENCODE(s32, SAVE_STATUS_READ_FAILED)
+KF_ENUM_END(KfSaveResult)
+
+/* The cleanup path reports open success, not the result of close or erase. */
+KF_ENUM_BEGIN(KfSaveCleanupResult, s32)
+    KF_SAVE_CLEANUP_TEMP_OPEN_FAILED = 0,
+    KF_SAVE_CLEANUP_TEMP_OPENED = 1,
+    KF_SAVE_CLEANUP_CARD_TIMEOUT = KF_ENUM_ENCODE(s32, KF_CARD_STATUS_TIMEOUT),
+    KF_SAVE_CLEANUP_CARD_ERROR = KF_ENUM_ENCODE(s32, KF_CARD_STATUS_ERROR)
+KF_ENUM_END(KfSaveCleanupResult)
+
+/* Checked on the I/O-end path; new-device handling has its own format path. */
+KF_ENUM_BEGIN(KfCardFormatConfirmation, s16)
+    KF_CARD_FORMAT_UNCONFIRMED = 0,
+    KF_CARD_FORMAT_CONFIRMED = 1
+KF_ENUM_END(KfCardFormatConfirmation)
+
 enum {
     KF_SAVE_SLOT_COUNT = 3,
     KF_SAVE_DIRECTORY_ENTRIES = 4,
@@ -123,12 +148,12 @@ extern const char save_main_file_path[];
 extern KfSavePayload *save_payload_buffer;
 extern const char save_temporary_file_path[];
 
-extern s32 memory_card_check_or_format(s16 allow_format);
+extern KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation);
 extern void memory_card_initialize(void);
 extern void memory_card_shutdown_events(void);
-extern s32 save_file_cleanup_temporary(void);
-extern s32 save_system_read_catalog(KfSaveSlotSummary *summaries);
-extern s32 save_system_read_slot(s16 slot_id);
-extern s32 save_system_write_slot(s16 slot_id);
+extern KfSaveCleanupResult save_file_cleanup_temporary(void);
+extern KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries);
+extern KfSaveResult save_system_read_slot(s16 slot_id);
+extern KfSaveResult save_system_write_slot(s16 slot_id);
 
 #endif

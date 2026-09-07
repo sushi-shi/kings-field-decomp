@@ -59,7 +59,7 @@ KfSaveStatus memory_card_wait_event(void);
 void memory_card_undeliver_events(void);
 KfSaveStatus memory_card_format(void);
 KfSaveStatus save_file_write_slot(s16 slot_id);
-s32 save_system_read_header(void);
+KfSaveResult save_system_read_header(void);
 KfSaveStatus save_file_read_header(void);
 KfSaveStatus save_file_read_slot(s16 slot_id);
 void save_file_initialize_buffers(void);
@@ -68,16 +68,16 @@ s32 menu_load_message_image(s32 message_id);
 void screen_show_image_until_input(const char *path);
 
 ADDRESS(0x8002b078, 0xd8)
-s32 save_system_read_catalog(KfSaveSlotSummary *summaries)
+KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
 {
-    s32 result;
+    KfSaveResult result;
     s32 index;
     KfSaveHeader *header;
 
     /* Retail clears 0x24 bytes although three summaries span 0x48. */
     memset(summaries, 0, 0x24);
     result = save_system_read_header();
-    if (result == 1) {
+    if (result == KF_SAVE_RESULT_OK) {
         header = save_header_buffer;
         for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
             u8 slot = header->directory.slot_ids[index];
@@ -199,10 +199,10 @@ void memory_card_undeliver_events(void)
 }
 
 ADDRESS(0x8002b4d8, 0xf8)
-s32 memory_card_check_or_format(s16 allow_format)
+KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
 {
     KfSaveStatus status;
-    s32 result;
+    KfSaveResult result;
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
@@ -215,7 +215,7 @@ s32 memory_card_check_or_format(s16 allow_format)
         memory_card_begin_status_check();
         status = memory_card_format();
     } else if (status == KF_CARD_STATUS_IO_END) {
-        if (allow_format == 0) {
+        if (confirmation == KF_CARD_FORMAT_UNCONFIRMED) {
             status = SAVE_STATUS_FORMAT_CONFIRMATION;
         } else {
             status = memory_card_format();
@@ -224,7 +224,7 @@ s32 memory_card_check_or_format(s16 allow_format)
     if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
-    result = KF_ENUM_ENCODE(s32, status);
+    result = KF_ENUM_DECODE(KfSaveResult, KF_ENUM_ENCODE(s32, status));
     switch (status) {
     case KF_CARD_STATUS_NOT_STARTED:
     case KF_CARD_STATUS_TIMEOUT:
@@ -233,13 +233,13 @@ s32 memory_card_check_or_format(s16 allow_format)
     case KF_ENUM_DECODE(KfSaveStatus, 9):
     case KF_ENUM_DECODE(KfSaveStatus, 10):
     case SAVE_STATUS_FORMAT_FAILED:
-        result = 0;
+        result = KF_SAVE_RESULT_FAILED;
         break;
     case SAVE_STATUS_OK:
-        result = 1;
+        result = KF_SAVE_RESULT_OK;
         break;
     case SAVE_STATUS_FORMAT_CONFIRMATION:
-        result = 2;
+        result = KF_SAVE_RESULT_FORMAT_CONFIRMATION;
         break;
     }
     return result;
@@ -268,10 +268,10 @@ KfSaveStatus memory_card_format(void)
 }
 
 ADDRESS(0x8002b648, 0xf4)
-s32 save_system_write_slot(s16 slot_id)
+KfSaveResult save_system_write_slot(s16 slot_id)
 {
     KfSaveStatus status;
-    s32 result;
+    KfSaveResult result;
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
@@ -290,22 +290,22 @@ s32 save_system_write_slot(s16 slot_id)
     if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
-    result = KF_ENUM_ENCODE(s32, status);
+    result = KF_ENUM_DECODE(KfSaveResult, KF_ENUM_ENCODE(s32, status));
     switch (status) {
     case KF_CARD_STATUS_NOT_STARTED:
     case KF_CARD_STATUS_TIMEOUT:
     case KF_CARD_STATUS_ERROR:
     case SAVE_STATUS_WRITE_FAILED:
-        result = 0;
+        result = KF_SAVE_RESULT_FAILED;
         break;
     case SAVE_STATUS_OK:
-        result = 1;
+        result = KF_SAVE_RESULT_OK;
         break;
     case SAVE_STATUS_FORMAT_REQUIRED:
-        result = 2;
+        result = KF_SAVE_RESULT_FORMAT_REQUIRED;
         break;
     case SAVE_STATUS_NO_SPACE:
-        result = 3;
+        result = KF_SAVE_RESULT_NO_SPACE;
         break;
     }
     return result;
@@ -428,10 +428,10 @@ KfSaveStatus save_file_write_slot(s16 slot_id)
 }
 
 ADDRESS(0x8002bc30, 0xd8)
-s32 save_system_read_header(void)
+KfSaveResult save_system_read_header(void)
 {
     KfSaveStatus status;
-    s32 result;
+    KfSaveResult result;
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
@@ -450,17 +450,17 @@ s32 save_system_read_header(void)
     if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
-    result = KF_ENUM_ENCODE(s32, status);
+    result = KF_ENUM_DECODE(KfSaveResult, KF_ENUM_ENCODE(s32, status));
     switch (status) {
     case KF_CARD_STATUS_NOT_STARTED:
     case KF_CARD_STATUS_TIMEOUT:
     case KF_CARD_STATUS_ERROR:
-        result = 0;
+        result = KF_SAVE_RESULT_FAILED;
         break;
     case SAVE_STATUS_OK:
     case KF_CARD_STATUS_NEW_DEVICE:
     case SAVE_STATUS_NO_DATA:
-        result = 1;
+        result = KF_SAVE_RESULT_OK;
         break;
     }
     return result;
@@ -500,17 +500,17 @@ KfSaveStatus save_file_read_header(void)
 }
 
 ADDRESS(0x8002bde4, 0xcc)
-s32 save_system_read_slot(s16 slot_id)
+KfSaveResult save_system_read_slot(s16 slot_id)
 {
     KfSaveStatus status;
-    s32 result;
+    KfSaveResult result;
 
     memory_card_clear_events();
     status = memory_card_begin_status_check();
     if (status == KF_CARD_STATUS_NEW_DEVICE) {
         save_system_read_header();
         memory_card_show_status_message(SAVE_STATUS_STALE_CATALOG);
-        return 0;
+        return KF_SAVE_RESULT_FAILED;
     }
     if (status == KF_CARD_STATUS_IO_END) {
         status = save_file_read_slot(slot_id);
@@ -518,7 +518,7 @@ s32 save_system_read_slot(s16 slot_id)
     if (status != SAVE_STATUS_OK) {
         memory_card_show_status_message(status);
     }
-    result = KF_ENUM_ENCODE(s32, status);
+    result = KF_ENUM_DECODE(KfSaveResult, KF_ENUM_ENCODE(s32, status));
     switch (status) {
     case KF_CARD_STATUS_NOT_STARTED:
     case KF_CARD_STATUS_TIMEOUT:
@@ -526,10 +526,10 @@ s32 save_system_read_slot(s16 slot_id)
     case KF_CARD_STATUS_ERROR:
     case SAVE_STATUS_NO_DATA:
     case SAVE_STATUS_STALE_CATALOG:
-        result = 0;
+        result = KF_SAVE_RESULT_FAILED;
         break;
     case SAVE_STATUS_OK:
-        result = 1;
+        result = KF_SAVE_RESULT_OK;
         break;
     }
     return result;
@@ -753,22 +753,22 @@ s32 menu_load_message_image(s32 message_id)
 }
 
 ADDRESS(0x8002c70c, 0x88)
-s32 save_file_cleanup_temporary(void)
+KfSaveCleanupResult save_file_cleanup_temporary(void)
 {
     KfSaveStatus status;
     s32 file;
 
     if (_card_info(KF_CARD_CHANNEL) == 0) {
-        return KF_ENUM_ENCODE(s32, KF_CARD_STATUS_ERROR);
+        return KF_SAVE_CLEANUP_CARD_ERROR;
     }
     status = memory_card_wait_event();
     if (status == KF_CARD_STATUS_IO_END || status == KF_CARD_STATUS_NEW_DEVICE) {
         file = open(save_temporary_file_path, O_CREAT);
         close(file);
         erase(save_temporary_file_path);
-        return file != -1;
+        return KF_ENUM_DECODE(KfSaveCleanupResult, file != -1);
     }
-    return KF_ENUM_ENCODE(s32, status);
+    return KF_ENUM_DECODE(KfSaveCleanupResult, KF_ENUM_ENCODE(s32, status));
 }
 
 ADDRESS(0x8002c794, 0x240)

@@ -138,3 +138,9 @@ across the wider project. The total source census is 6,635 occurrences;
 it is not a count of missing names. Ten source lines still contain fourteen
 `unknown_` tokens with unresolved identities, as recorded in the
 [coverage map](source-literal-coverage.md). The overall naming goal remains open.
+
+The subsequent [save-result review](save-result-domains.md) also types the
+menu-facing and cleanup channels while preserving their distinct mappings and
+pass-through values. It supersedes the earlier decision above to leave those
+returns as integers. The internal `KfSaveStatus` domain remains in place; the
+current complete save ledger has 135 retained occurrences.

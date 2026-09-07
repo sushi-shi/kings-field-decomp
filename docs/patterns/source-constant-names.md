@@ -2403,3 +2403,9 @@ idle/requested domain through seventeen locals and both drawing helpers,
 replacing 67 raw state values. Its [complete root/list/save ledger](menu-root-list-save-literal-ledger.md)
 adds 265 individually explained occurrences across four files. Confirmation
 request, selected option and accepted/cancelled result remain distinct types.
+
+The [save-result review](save-result-domains.md) names 20 further wrapper and
+format-confirmation values. Internal statuses, menu-facing results and cleanup
+results have separate domains. The save panel's reused result word is a typed
+union whose two members preserve the original storage and complete retail
+object; callers no longer erase cleanup's type into an operation result.

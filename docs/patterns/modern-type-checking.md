@@ -405,3 +405,13 @@ has 300 errors: 65/112 variants pass, 47 fail. This is remaining propagation
 and declaration debt, not a clean strict build or an accepted-error gate.
 Clangd's generated commands default to the same modern mode; an explicitly
 selected retail editor mode does not weaken `kf check-types`.
+
+## Shared storage with different result domains
+
+The [save-result review](save-result-domains.md) uses a local union when one
+retail result word carries operation results and temporary-cleanup results at
+different points. Each member keeps its own scoped enum, so assignments and
+comparisons reject the wrong domain. This preserves the exact compiled source
+object while propagating types into every producer and consumer. It is an
+untagged union: the compiler does not prove which member is active. The
+reviewed control flow must establish that before each read.

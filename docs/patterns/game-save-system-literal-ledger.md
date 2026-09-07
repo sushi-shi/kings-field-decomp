@@ -6,13 +6,12 @@ comments, string contents and identifier digits are excluded. Signs remain in
 expressions; repeated tokens have separate rows. Retained encoded statuses
 and unconsumed storage do not acquire invented semantic identities.
 
-**149 retained occurrences.**
+**135 retained occurrences.**
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `save_system_read_catalog` | 78 | `0` | `memset(summaries, 0, 0x24);` | Observed partial clear: zero-fill 36 bytes although the three output summaries occupy 72. Its rationale is unresolved; preserve the exact span. |
 | `save_system_read_catalog` | 78 | `0x24` | `memset(summaries, 0, 0x24);` | Observed partial clear: zero-fill 36 bytes although the three output summaries occupy 72. Its rationale is unresolved; preserve the exact span. |
-| `save_system_read_catalog` | 80 | `1` | `if (result == 1) {` | Catalog-ready result one permits directory extraction; the wrapper also maps no-data/new-device to one, so readiness alone does not establish a populated slot. |
 | `save_system_read_catalog` | 82 | `0` | `for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {` | Begin the complete named directory-entry or magic-record scan at its first zero-based index. |
 | `save_system_read_catalog` | 86 | `1` | `s32 entry = slot - 1;` | Convert the one-based logical save-slot ID to its zero-based displayed summary row. |
 | `menu_play_input_sound` | 106 | `0xe` | `sound.program = 0xe;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |
@@ -38,19 +37,11 @@ and unconsumed storage do not acquire invented semantic identities.
 | `memory_card_wait_event` | 177 | `1` | `if (TestEvent(memory_card_timeout_event) == 1) {` | Require the exact BIOS event-ready result one, preserving the IO-end/timeout/new-device/error polling order. |
 | `memory_card_wait_event` | 181 | `1` | `if (TestEvent(memory_card_new_device_event) == 1) {` | Require the exact BIOS event-ready result one, preserving the IO-end/timeout/new-device/error polling order. |
 | `memory_card_wait_event` | 185 | `1` | `if (TestEvent(memory_card_error_event) == 1) {` | Require the exact BIOS event-ready result one, preserving the IO-end/timeout/new-device/error polling order. |
-| `memory_card_check_or_format` | 218 | `0` | `if (allow_format == 0) {` | Zero withholds formatting permission on an existing card and requests confirmation; nonzero permits the format call. |
 | `memory_card_check_or_format` | 233 | `9` | `case KF_ENUM_DECODE(KfSaveStatus, 9):` | Internal status 9/10 maps to an unusable-card image (and formatting failure); no distinct producer establishes separate meanings. Keep the encoded case explicit rather than inventing a status identity. |
 | `memory_card_check_or_format` | 234 | `10` | `case KF_ENUM_DECODE(KfSaveStatus, 10):` | Internal status 9/10 maps to an unusable-card image (and formatting failure); no distinct producer establishes separate meanings. Keep the encoded case explicit rather than inventing a status identity. |
-| `memory_card_check_or_format` | 236 | `0` | `result = 0;` | Format-policy mapping: selected error statuses become zero, completed format/I/O-end becomes one, and confirmation-required becomes two. Unlisted statuses retain their encoded value. |
-| `memory_card_check_or_format` | 239 | `1` | `result = 1;` | Format-policy mapping: selected error statuses become zero, completed format/I/O-end becomes one, and confirmation-required becomes two. Unlisted statuses retain their encoded value. |
-| `memory_card_check_or_format` | 242 | `2` | `result = 2;` | Format-policy mapping: selected error statuses become zero, completed format/I/O-end becomes one, and confirmation-required becomes two. Unlisted statuses retain their encoded value. |
 | `memory_card_format` | 251 | `0` | `s32 attempt = 0;` | Start the attempt counter at zero before the first operation; the named bound limits total attempts, including that first call. |
 | `memory_card_format` | 259 | `1` | `if (formatted == 1) {` | The SDK format call reports exact success one. Keep the same comparison for the early break and final failure check; the attempt limit includes the first call. |
 | `memory_card_format` | 264 | `1` | `if (formatted != 1) {` | The SDK format call reports exact success one. Keep the same comparison for the early break and final failure check; the attempt limit includes the first call. |
-| `save_system_write_slot` | 299 | `0` | `result = 0;` | Write-policy mapping: selected failures become zero, success one, format-required two and no-space three. Preserve the separate meanings from card event codes and the pass-through default. |
-| `save_system_write_slot` | 302 | `1` | `result = 1;` | Write-policy mapping: selected failures become zero, success one, format-required two and no-space three. Preserve the separate meanings from card event codes and the pass-through default. |
-| `save_system_write_slot` | 305 | `2` | `result = 2;` | Write-policy mapping: selected failures become zero, success one, format-required two and no-space three. Preserve the separate meanings from card event codes and the pass-through default. |
-| `save_system_write_slot` | 308 | `3` | `result = 3;` | Write-policy mapping: selected failures become zero, success one, format-required two and no-space three. Preserve the separate meanings from card event codes and the pass-through default. |
 | `save_file_write_slot` | 331 | `1` | `if (file == -1) {` | SDK file-open failure sentinel minus one. Preserve the operation-specific error path and any preceding unconditional close; this is separate from a directory index. |
 | `save_file_write_slot` | 333 | `16` | `file = open(save_main_file_path, O_CREAT \| (SAVE_FILE_BLOCKS << 16));` | The BIOS create request stores the file block count in the high halfword; shift sixteen encodes that format independently of the five I/O attempts. |
 | `save_file_write_slot` | 335 | `1` | `if (file == -1) {` | SDK file-open failure sentinel minus one. Preserve the operation-specific error path and any preceding unconditional close; this is separate from a directory index. |
@@ -64,15 +55,10 @@ and unconsumed storage do not acquire invented semantic identities.
 | `save_file_write_slot` | 409 | `1` | `if (file == -1) {` | SDK file-open failure sentinel minus one. Preserve the operation-specific error path and any preceding unconditional close; this is separate from a directory index. |
 | `save_file_write_slot` | 412 | `0` | `index = 0;` | Start the attempt counter at zero before the first operation; the named bound limits total attempts, including that first call. |
 | `save_file_write_slot` | 415 | `0` | `lseek(file, 0, SEEK_SET);` | Seek to byte zero at the start of the save header, relative to the named file-origin seek mode. |
-| `save_system_read_header` | 458 | `0` | `result = 0;` | Catalog-policy mapping: selected card failures become zero; success, new-device and no-data become one. The remaining status values pass through unchanged. |
-| `save_system_read_header` | 463 | `1` | `result = 1;` | Catalog-policy mapping: selected card failures become zero; success, new-device and no-data become one. The remaining status values pass through unchanged. |
 | `save_file_read_header` | 477 | `0` | `memset(save_header_buffer, 0, sizeof(KfSaveHeader));` | Zero byte pattern initializes the specified typed header/payload range; preserve the exact destination and extent. |
 | `save_file_read_header` | 481 | `1` | `if (file == -1) {` | SDK file-open failure sentinel minus one. Preserve the operation-specific error path and any preceding unconditional close; this is separate from a directory index. |
 | `save_file_read_header` | 484 | `0` | `attempt = 0;` | Start the attempt counter at zero before the first operation; the named bound limits total attempts, including that first call. |
 | `save_file_read_header` | 487 | `0` | `lseek(file, 0, SEEK_SET);` | Seek to byte zero at the start of the save header, relative to the named file-origin seek mode. |
-| `save_system_read_slot` | 513 | `0` | `return 0;` | Read-policy mapping: selected card/missing/stale failures become zero and success one; other statuses pass through. A new-device event refreshes the header and returns zero after the stale-catalog message. |
-| `save_system_read_slot` | 529 | `0` | `result = 0;` | Read-policy mapping: selected card/missing/stale failures become zero and success one; other statuses pass through. A new-device event refreshes the header and returns zero after the stale-catalog message. |
-| `save_system_read_slot` | 532 | `1` | `result = 1;` | Read-policy mapping: selected card/missing/stale failures become zero and success one; other statuses pass through. A new-device event refreshes the header and returns zero after the stale-catalog message. |
 | `save_file_read_slot` | 555 | `0` | `for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {` | Begin the complete named directory-entry or magic-record scan at its first zero-based index. |
 | `save_file_read_slot` | 566 | `1` | `if (file == -1) {` | SDK file-open failure sentinel minus one. Preserve the operation-specific error path and any preceding unconditional close; this is separate from a directory index. |
 | `save_file_read_slot` | 569 | `0` | `index = 0;` | Start the attempt counter at zero before the first operation; the named bound limits total attempts, including that first call. |
@@ -118,7 +104,7 @@ and unconsumed storage do not acquire invented semantic identities.
 | `menu_load_message_image` | 748 | `1` | `return 1;` | One reports message-image CD loading failure to the status dispatcher. |
 | `menu_load_message_image` | 752 | `0` | `return 0;` | Zero reports successful upload or the explicit skip-ID path. |
 | `save_file_cleanup_temporary` | 761 | `0` | `if (_card_info(KF_CARD_CHANNEL) == 0) {` | BIOS operation-start result: zero means the request did not start. The guard preserves the direct failure exit versus asynchronous event polling. |
-| `save_file_cleanup_temporary` | 769 | `1` | `return file != -1;` | Convert the temporary-file open result to a Boolean. Other paths forward card statuses, so this whole API is not Boolean. |
+| `save_file_cleanup_temporary` | 769 | `1` | `return KF_ENUM_DECODE(KfSaveCleanupResult, file != -1);` | SDK open failure is the descriptor sentinel -1. Convert its inequality result into the cleanup open-result domain; close and erase results are not examined. |
 | `screen_show_image_until_input` | 779 | `0` | `u8 pressed = 0;` | Begin by waiting for all buttons to be released before accepting a new press. |
 | `screen_show_image_until_input` | 782 | `0` | `DrawSync(0);` | SDK blocking draw-synchronization mode zero. |
 | `screen_show_image_until_input` | 784 | `1` | `SetSemiTrans(&polygon, 1);` | Enable semitransparency through the SDK primitive flag. |
@@ -159,3 +145,8 @@ and unconsumed storage do not acquire invented semantic identities.
 | `talk_show_dialogue_page` | 852 | `1` | `directory_character[1] = talk_image_path_template[0xd] = ones + '0';` | Decimal dialogue-path construction: tens/ones select both directory and character digits, while fixed filename positions receive floor, stage and page. Subscripts identify path bytes, and ASCII zero/base ten encode digits. |
 | `talk_show_dialogue_page` | 852 | `0xd` | `directory_character[1] = talk_image_path_template[0xd] = ones + '0';` | Decimal dialogue-path construction: tens/ones select both directory and character digits, while fixed filename positions receive floor, stage and page. Subscripts identify path bytes, and ASCII zero/base ten encode digits. |
 | `talk_show_dialogue_page` | 852 | `'0'` | `directory_character[1] = talk_image_path_template[0xd] = ones + '0';` | Decimal dialogue-path construction: tens/ones select both directory and character digits, while fixed filename positions receive floor, stage and page. Subscripts identify path bytes, and ASCII zero/base ten encode digits. |
+
+The [save-result review](save-result-domains.md) names the wrapper outputs and
+format-confirmation state, with a separate cleanup result and typed shared
+storage in the save panel. The remaining encoded catalogue value three and
+internal statuses nine/ten retain the documented evidence limits.
