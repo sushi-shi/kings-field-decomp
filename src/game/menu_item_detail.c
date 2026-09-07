@@ -3,7 +3,12 @@
 #include <kf/game.h>
 
 enum {
-    MENU_ITEM_DETAIL_LINE_HEIGHT = 18,
+    MENU_ITEM_DETAIL_PRICE_X = 200,
+    MENU_ITEM_DETAIL_LABEL_X = 242,
+    MENU_ITEM_DETAIL_QUANTITY_X = 284,
+    MENU_ITEM_DETAIL_GOLD_X_OFFSET = 28,
+    MENU_ITEM_DETAIL_PRICE_DIGITS = 6,
+    MENU_ITEM_DETAIL_GOLD_DIGITS = 6,
     MENU_MARKER_OT_DEPTH = 500,
     MENU_DIALOG_OT_DEPTH = 1000,
     MENU_SAVE_SLOT0_QUAD = 2,
@@ -45,9 +50,9 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
         return;
     }
 
-    rot.t[0] = 0x230;
-    rot.t[1] = 0x8c;
-    rot.t[2] = 0x5dc;
+    rot.t[0] = MENU_ITEM_PREVIEW_TRANSLATION_X;
+    rot.t[1] = MENU_ITEM_PREVIEW_TRANSLATION_Y;
+    rot.t[2] = MENU_ITEM_PREVIEW_TRANSLATION_Z;
     menu_item_preview_rotation.vy =
         (menu_item_preview_rotation.vy + MENU_ITEM_PREVIEW_YAW_STEP)
         & KF_ANGLE_WRAP_MASK;
@@ -70,24 +75,24 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
-    gs.x = 0xae;
-    gs.y = 0x24;
+    gs.x = MENU_ITEM_PREVIEW_NAME_X;
+    gs.y = MENU_ITEM_PREVIEW_NAME_Y;
     name = item_name_rows[item_id].codes;
     for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
         gs.codes[i] = name[i];
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.x = 0xc8;
-    gs.y += MENU_ITEM_DETAIL_LINE_HEIGHT;
+    gs.x = MENU_ITEM_DETAIL_PRICE_X;
+    gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     prices = item_sell_prices;
     if (price_mode == KF_ITEM_PRICE_BUY) {
         prices = item_buy_prices;
     }
-    menu_format_number(prices[item_id][shop_id - 1], 6, 0, gs.codes);
+    menu_format_number(prices[item_id][shop_id - 1], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
-    gs.x = 0xf2;
+    gs.x = MENU_ITEM_DETAIL_LABEL_X;
     gs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
     gs.codes[1] = 0x2d;
     gs.codes[2] = 0x2a;
@@ -95,15 +100,15 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     gs.codes[4] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.x = 0xf2;
+    gs.x = MENU_ITEM_DETAIL_LABEL_X;
     gs.codes[0] = 0xca;
     gs.codes[1] = 0xcb;
     gs.codes[2] = MENU_TEXT_END;
-    gs.y += MENU_ITEM_DETAIL_LINE_HEIGHT;
+    gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.x = 0x11c;
-    menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);
+    gs.x = MENU_ITEM_DETAIL_QUANTITY_X;
+    menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(
@@ -111,9 +116,9 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
         (const MenuPoint *)&menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
     menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
 
-    gs.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].x + 28;
+    gs.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].x + MENU_ITEM_DETAIL_GOLD_X_OFFSET;
     gs.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].y;
-    menu_format_number(player_state.gold, 6, 0, gs.codes);
+    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }
 

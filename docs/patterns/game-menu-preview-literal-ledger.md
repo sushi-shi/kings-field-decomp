@@ -5,7 +5,7 @@ load/release pair, and initializers in their three edited modules. Named enum
 definitions and ADDRESS/DATA/RODATA claims are excluded. Other functions in
 the same source files are outside this focused ledger.
 
-All **158 occurrences** have a specific reason. The [drawing-layer review](game-menu-drawing-layers.md)
+This historical snapshot accounts for **158 occurrences**. The [drawing-layer review](game-menu-drawing-layers.md)
 names the eight former pickup-window/background depth literals.
 
 The [shared-dimension review](game-item-menu-dimensions.md) names the database
@@ -105,3 +105,7 @@ the full item-detail module after naming its repeated line spacing.
 | `menu_render_item_model` | 114 | `0` | `tmd_select_object_vertices(0);` | The menu model uses object zero within the selected TMD asset. |
 | `menu_render_item_model` | 115 | `0` | `tmd_project_vertices(tmd_get_object(0)->vertex_count);` | Project the vertex extent of object zero from the selected menu TMD. |
 | `menu_render_item_model` | 116 | `0, 0x3e8` | `render_enqueue_tmd(0, 0x3e8);` | Enqueue object zero at authored menu depth parameter 1000; preserve the established renderer layering independently of projection distance. |
+
+The [preview-layout review](game-menu-preview-layout.md) names shared transform,
+text and formatting settings. Use the [complete inventory-preview ledger](game-menu-inventory-preview-literal-ledger.md)
+and [complete detail ledger](game-menu-detail-literal-ledger.md) for current expressions and counts.

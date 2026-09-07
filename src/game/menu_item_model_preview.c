@@ -2,6 +2,11 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    MENU_INVENTORY_QUANTITY_LABEL_X = 230,
+    MENU_INVENTORY_QUANTITY_VALUE_X = 279
+};
+
 DATA(0x80057b70, 0x8)
 SVECTOR menu_item_preview_rotation = {0, 0, 0, 0};
 
@@ -23,9 +28,9 @@ void menu_item_model_preview(s32 item_id)
     s32 i;
 
     if (item_id != KF_ITEM_NONE) {
-        rot.t[0] = 0x230;
-        rot.t[1] = 0x8c;
-        rot.t[2] = 0x5dc;
+        rot.t[0] = MENU_ITEM_PREVIEW_TRANSLATION_X;
+        rot.t[1] = MENU_ITEM_PREVIEW_TRANSLATION_Y;
+        rot.t[2] = MENU_ITEM_PREVIEW_TRANSLATION_Z;
         menu_item_preview_rotation.vy =
             (menu_item_preview_rotation.vy + MENU_ITEM_PREVIEW_YAW_STEP)
             & KF_ANGLE_WRAP_MASK;
@@ -48,23 +53,23 @@ void menu_item_model_preview(s32 item_id)
 
         current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
-        gs.x = 0xae;
-        gs.y = 0x24;
+        gs.x = MENU_ITEM_PREVIEW_NAME_X;
+        gs.y = MENU_ITEM_PREVIEW_NAME_Y;
         name = item_name_rows[item_id].codes;
         for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
             gs.codes[i] = name[i];
         }
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-        gs.x = 0xe6;
+        gs.x = MENU_INVENTORY_QUANTITY_LABEL_X;
         gs.codes[0] = 0xca;
         gs.codes[1] = 0xcb;
         gs.codes[2] = MENU_TEXT_END;
-        gs.y += 18;
+        gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-        gs.x = 0x117;
-        menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);
+        gs.x = MENU_INVENTORY_QUANTITY_VALUE_X;
+        menu_format_number(item_stock[0][item_id], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
         menu_draw_number(&menu_assets.number_atlas, &gs);
     }
 }
