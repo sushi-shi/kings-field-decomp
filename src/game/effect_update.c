@@ -251,7 +251,7 @@ void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 s
 }
 
 ADDRESS(0x800387bc, 0xf8)
-void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 distance)
+void effect_spawn_ground_trail(u8 id, KfEffectRecord *record, s16 angle, s32 distance)
 {
     VECTOR position;
     s32 index;
@@ -266,7 +266,7 @@ void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 dis
 }
 
 ADDRESS(0x800388b4, 0x184)
-void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 branch_role)
+void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role)
 {
     VECTOR position;
     s32 angle = -(s16)(record->direction.words.y + angle_offset);
@@ -279,5 +279,5 @@ void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, 
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_BRANCH, &position,
-        &record->direction.vector, branch_role);
+        &record->direction.vector, KF_ENUM_ENCODE(s32, branch_role));
 }

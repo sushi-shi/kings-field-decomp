@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [save-slot ID review](save-slot-id-domain.md):
+Working snapshot after the [ground-effect branch review](ground-effect-branch-domain.md):
 **111 C files**, **112 source/image variants**, and
 **5,997 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -54,6 +54,9 @@ The sound-cue review carries three feedback identities through the helper and
 The save-slot review types directory tags and read/write IDs while retaining
 byte storage and signed-halfword parameters. Naming the one-based origin in
 two menu calls and the catalogue reader removes three more raw occurrences.
+The ground-effect review names both child-spawn helpers and carries the branch
+role through its halfword field, word helper argument and variadic boundaries.
+Its existing role values and positional reads leave literal counts unchanged.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

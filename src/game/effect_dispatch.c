@@ -409,10 +409,10 @@ play_phase_sound:
                 effect->scale_z = MOONLIGHT_LENGTH_MAX;
             }
             if (phase == MOONLIGHT_TRAIL_EMIT_PHASE) {
-                effect_spawn_trail_kind13(effect->id, effect, MOONLIGHT_NEAR_TRAIL_ANGLE, MOONLIGHT_NEAR_TRAIL_DISTANCE);
-                effect_spawn_trail_kind13(effect->id, effect, -MOONLIGHT_NEAR_TRAIL_ANGLE, MOONLIGHT_NEAR_TRAIL_DISTANCE);
-                effect_spawn_trail_kind13(effect->id, effect, MOONLIGHT_FAR_TRAIL_ANGLE, MOONLIGHT_FAR_TRAIL_DISTANCE);
-                effect_spawn_trail_kind13(effect->id, effect, -MOONLIGHT_FAR_TRAIL_ANGLE, MOONLIGHT_FAR_TRAIL_DISTANCE);
+                effect_spawn_ground_trail(effect->id, effect, MOONLIGHT_NEAR_TRAIL_ANGLE, MOONLIGHT_NEAR_TRAIL_DISTANCE);
+                effect_spawn_ground_trail(effect->id, effect, -MOONLIGHT_NEAR_TRAIL_ANGLE, MOONLIGHT_NEAR_TRAIL_DISTANCE);
+                effect_spawn_ground_trail(effect->id, effect, MOONLIGHT_FAR_TRAIL_ANGLE, MOONLIGHT_FAR_TRAIL_DISTANCE);
+                effect_spawn_ground_trail(effect->id, effect, -MOONLIGHT_FAR_TRAIL_ANGLE, MOONLIGHT_FAR_TRAIL_DISTANCE);
             }
             if (phase == MOONLIGHT_TRAVEL_LAST) {
                 return;
@@ -650,18 +650,18 @@ advance_effect_phase:
                 if (effect->control.frames_remaining-- == 0) {
                     switch (effect->propagation.branch) {
                     case KF_EFFECT_GROUND_BRANCH_ROOT:
-                        effect_spawn_ground_kind6(
+                        effect_spawn_ground_branch(
                             effect->id, effect, KF_ANGLE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_QUARTER_TURN);
-                        effect_spawn_ground_kind6(
+                        effect_spawn_ground_branch(
                             effect->id, effect, KF_ANGLE_THREE_QUARTER_TURN,
                             KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN);
                         break;
                     case KF_EFFECT_GROUND_BRANCH_QUARTER_TURN:
-                        effect_spawn_ground_kind6(
+                        effect_spawn_ground_branch(
                             effect->id, effect, KF_ANGLE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_LEAF);
                         break;
                     case KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN:
-                        effect_spawn_ground_kind6(
+                        effect_spawn_ground_branch(
                             effect->id, effect, KF_ANGLE_THREE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_LEAF);
                         break;
                     }

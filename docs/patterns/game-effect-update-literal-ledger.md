@@ -6,7 +6,7 @@ Named definitions and retail claims are excluded; comments, strings and identifi
 digits are not numeric literals. Signs remain operators. See the
 [effect-update review](game-effect-update-constants.md) for named units and verification.
 
-`effect_magic_power`, `effect_spawn_trail_kind13` and `effect_spawn_ground_kind6`
+`effect_magic_power`, `effect_spawn_ground_trail` and `effect_spawn_ground_branch`
 have no remaining inline numeric literals.
 
 | Function | Line | Token | Expression | Reason |

@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [ground-effect-branch-domain.md](ground-effect-branch-domain.md): semantic child
+  helper names and branch-role propagation through halfword storage and word calls.
 - [save-slot-id-domain.md](save-slot-id-domain.md): logical slot IDs through
   signed-halfword APIs and byte directory tags, separate from physical indices.
 - [menu-sound-cue-domain.md](menu-sound-cue-domain.md): typed feedback cues across

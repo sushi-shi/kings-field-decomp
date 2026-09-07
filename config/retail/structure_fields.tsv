@@ -175,7 +175,7 @@ KfEffectDirectionWords	0x02	0x02	y	u16	supported	game_effect.h;asm;effect_pool_c
 KfEffectDirectionWords	0x04	0x02	z	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	low Z component bits or kind-dependent unsigned state
 KfEffectDirectionWords	0x06	0x02	pad	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	last halfword of the complete SDK vector copy
 KfEffectPropagation	0x00	0x02	generations_remaining	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 decrements the count passed to its child
-KfEffectPropagation	0x00	0x02	branch	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 6 propagation branch: center, side or terminal
+KfEffectPropagation	0x00	0x02	branch	KfEffectGroundBranchRole	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;ground-effect-branch-domain.md	kind 6 propagation branch: center, side or terminal
 KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
 KfEffectRecord	0x01	0x01	kind	KfEffectKind	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
 KfEffectRecord	0x02	0x01	base_render_id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	initial sprite or model selector; current ID cycles from this value

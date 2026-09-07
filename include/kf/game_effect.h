@@ -66,11 +66,14 @@ enum {
     KF_EFFECT_HOMING_PLAYER = 0xfe
 };
 
-enum {
+KF_ENUM_BEGIN(KfEffectGroundBranchRole, u16)
     KF_EFFECT_GROUND_BRANCH_ROOT = 0,
     KF_EFFECT_GROUND_BRANCH_QUARTER_TURN = 1,
     KF_EFFECT_GROUND_BRANCH_THREE_QUARTER_TURN = 2,
-    KF_EFFECT_GROUND_BRANCH_LEAF = 0xff,
+    KF_EFFECT_GROUND_BRANCH_LEAF = 0xff
+KF_ENUM_END(KfEffectGroundBranchRole)
+
+enum {
     KF_EFFECT_GROUND_BRANCH_TIMER_DONE = 0xff
 };
 
@@ -154,7 +157,7 @@ typedef union KfEffectControl {
 
 typedef union KfEffectPropagation {
     u16 generations_remaining;
-    u16 branch;
+    KfEffectGroundBranchRole branch;
 } KfEffectPropagation;
 
 /* Coordinates wrap modulo 256; the retail loads both steps as unsigned bytes. */
@@ -277,8 +280,8 @@ extern void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
 extern void effect_scatter_triple(u16 *values);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale);
-extern void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 distance);
-extern void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 branch_role);
+extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *record, s16 angle, s32 distance);
+extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role);
 extern u32 effect_map_collision(VECTOR *position, s32 radius);
 
 #endif

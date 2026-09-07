@@ -158,9 +158,9 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vz = 0;
             record->scale_y = 0;
             {
-                u16 argument = *(u16 *)(va + 1);
+                KfEffectGroundBranchRole branch_role = KF_ENUM_DECODE(KfEffectGroundBranchRole, *(u16 *)(va + 1));
                 record->control.frames_remaining = EFFECT_GROUND_BRANCH_DELAY;
-                record->propagation.branch = argument;
+                record->propagation.branch = branch_role;
             }
             if (record->propagation.branch != KF_EFFECT_GROUND_BRANCH_LEAF) {
                 sound_ref_play(&magic->sounds[0], EFFECT_GROUND_BRANCH_SOUND_VOLUME);
