@@ -11,6 +11,13 @@ and normal bases and still emits the absolute OT pair. Expressing all twelve
 accepted paths as explicit gotos to one source-level AddPrim block collapses
 retail's 80-block switch to 52 compiled blocks and is structurally false.
 
+A distinct loop-local `KfGraphicsRuntimeOpen *` recovered from the projected
+member has the same negative result: it exchanges the normal/projected saved
+registers, retains the probe's 88-byte frame against retail's 96, and GCC still
+constant-folds the final table load to an absolute HI16/LO16 pair. Thus the
+successful block-local unlit owner expression does not transfer merely by
+naming the enclosing owner once for this twelve-mode loop.
+
 All three trials are reverted. Retail's shared machine-code tail is therefore
 an optimizer merge of case-local packet paths, not evidence for a common C
 label. Recovering its `lw -276(projected_base)` must preserve those twelve

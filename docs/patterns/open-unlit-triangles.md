@@ -25,6 +25,18 @@ load order or register identities, but not both, and are reverted. No unused
 stack object or register carrier is introduced; the function remains partial
 and is not banked.
 
+### Triangle-aggregate and use-order controls
+
+A genuine three-pointer local array produces the retail 64-byte total frame,
+but materializes its elements at `sp+16..24`, removes three saved-register
+lifetimes, and adds pointer reloads throughout both modes. Retail has no such
+stack traffic, so the aggregate is rejected rather than retained for its frame
+size. A reused `u16` packet-index local and assignments inside the NormalClip
+arguments both optimize to already-tested scalar forms. Reversing the two
+post-call coordinate stores changes the physical packet write order instead of
+the saved-register identities. All variants are reverted; they preserve no new
+retail instruction evidence.
+
 ## Function Match Plan: accepted-packet table reload (`6a25ae8`)
 
 OPEN `80018344` is 676 retail/680 probe bytes, strict 98.828400%, with

@@ -15,6 +15,21 @@ without attributing a historical compiler or optimizer mechanism. The exact
 sibling is the negative control; no source, profile, baseline, or bank change
 is retained.
 
+### Full-word phase-carrier and camera-pointer controls
+
+An ordinary shared `s32` next-phase value recovers retail's 49-block CFG and
+single literal phase store. Function and loop block scope compile identically,
+however: the extra pseudo rotates every long-lived lighting, background,
+sequence, scroll and entity register, and the body becomes four bytes shorter.
+Changing the carrier to `u16` is also identical. The structurally improved but
+globally divergent form is reverted rather than kept for its block count.
+
+Retail materializes the ending camera-path address after the second entity
+lookup and before the initial state stores. An explicit typed local assigned at
+that point is optimized back to the existing late call-argument setup, so it
+does not recover the schedule or any raw word. No register hint, volatile use,
+or artificial access is introduced to force the address lifetime.
+
 ## Function Match Plan: interpolation-path case exits (`4647acc`)
 
 OPEN `80014e28` remains 1944 bytes, strict 97.129630%, with 167 unequal

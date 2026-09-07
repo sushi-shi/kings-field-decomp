@@ -20,6 +20,22 @@ candidate. The existing `probe-gcc257-o2-plain` profile is byte-identical for
 this unit. These controls isolate a lifetime/allocation residue; they do not
 justify an unused stack object, `register` hint, volatile carrier or raw alias.
 
+### Typed DRAWENV-array owner controls
+
+A single pointer to the authentic `DRAWENV[2]` array, introduced after the four
+definition calls, is constant-folded into absolute field accesses and worsens
+the candidate. Moving it before the fourth call recovers retail's 48-byte frame
+and saved `s3` mode, but retains the array base in `s1`, the value one in `s0`,
+and still emits absolute `dfe` pairs.
+
+Recovering a typed `DRAWENV *` from a retained first-`dtd` member and adding a
+real second-element pointer recovers the complete four-register save set:
+mode maps to `s3` and the second DRAWENV to `s2`, as in retail. The first member
+and value remain exchanged in `s1`/`s0`, and GCC still folds all four later
+flags absolute. Moving the member anchor after the call drops the fourth saved
+value again. All variants are reverted; the remaining opacity cannot be forced
+with a volatile or raw cross-object alias.
+
 ## Function Match Plan: SDK background-color macro (`262a978`)
 
 OPEN `80016adc display_initialize`, 472 retail/484 probe bytes, remains strict
