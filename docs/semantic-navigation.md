@@ -91,10 +91,42 @@ labelled `in: none`, not another function entry. Only an issue-free graph with
 no reachable unresolved jump marks unreached blocks `unreachable`, within the
 curated function extent and normal call/return model.
 
-This is a retail graph, not an automatic retail-versus-compiled equivalence
-check. Count and inspect branches into shared epilogues as well as `jr ra`
+`kf sema cfg` shows the retail graph. `kf try --unit <image.unit>` additionally
+compares the target and freshly compiled object's known successor lists for
+each differing function. It reports the first differing block successors and
+ordered control instruction, including its register operands, destination,
+three preceding instruction words, and delay slot. If the controls agree,
+the first differing preceding-word/delay-slot window is shown instead.
+
+Each object supplies its own ELF function extent; terminal `nop` delay slots
+are retained, while padding outside the symbol is excluded. Direct J/JAL
+relocations are resolved before graph construction. Internal section addends
+use that object's function offset; external targets use the selected image's
+curated identities. Missing/unsupported control relocations, unresolved
+symbols, and invalid extents make the paired comparison unavailable rather
+than guessing targets. Ordinary data relocations remain in the listing diff.
+
+Block ordinals provide a layout-tolerant diagnostic correspondence, not graph
+isomorphism or semantic equivalence. A split/reordered block can change that
+correspondence; register allocation can change control operands without
+changing semantics. The preceding-word window is not dataflow analysis and
+cannot establish which values reach a guard from other blocks. Unresolved
+indirect dispatch retains the CFG warnings and an explicit `INCOMPLETE`
+qualification, even when all currently decoded successor lists agree.
+
+Count and inspect branches into shared epilogues as well as `jr ra`
 instructions: several early exits can share one return instruction. Equal
-branch/return counts do not establish equal paths or predicates.
+branch/return counts do not establish equal paths or predicates. The paired
+controls include a mutation of GAME `actor_apply_damage`'s two boss guards:
+redirecting them into the health test instead of past it is detected with the
+same 27 branches and one return. OPEN floor-item rendering demonstrates a
+missing mask with unchanged successors; OPEN TMD preparation demonstrates an
+unresolved switch and a different return delay slot. These are diagnostic
+controls, not new source matches.
+
+`kf try` labels identical normalized instruction/relocation listings `SAME`,
+not `EXACT`. Its similarity percentage and CFG output never bank a function;
+strict objdiff `100%` plus the raw-byte/referent audit remains the exact gate.
 
 ### Xrefs and call trees
 
