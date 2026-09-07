@@ -24,6 +24,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-collision-constants.md](game-magic-collision-constants.md): magic
   launch/targeting units, shared collision-rectangle capacity and the complete
   [52-occurrence remainder ledger](game-magic-collision-literal-ledger.md).
+- [collision-ledger-reconciliation.md](collision-ledger-reconciliation.md): current
+  four-file, 322-occurrence coverage; actor jump's biased height-table consumer
+  and unchanged nine-function verification.
 - [game-world-collision-literals.md](game-world-collision-literals.md): world
   query/grid remainder audit, all 255 height-table entries and the complete
   [270-occurrence ledger](game-world-collision-literal-ledger.md).

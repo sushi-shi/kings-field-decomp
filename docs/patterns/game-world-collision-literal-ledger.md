@@ -4,8 +4,8 @@ Complete account of **270 retained numeric literals**: 265 in `collision.c`
 (255 authored table values plus ten query zeros) and five in `collision_grid.c`.
 Named definitions, retail claims, comments, strings and identifier digits are
 excluded; signs remain operators. Table row numbers below are attribute indices
-for direct consumers; magic casting uses the preceding index. See the
-[world-collision review](game-world-collision-literals.md).
+for direct consumers; magic casting and actor jump selection use the preceding
+index. See the [world-collision review](game-world-collision-literals.md).
 
 | Source | Function | Line | Token | Expression | Reason |
 | --- | --- | --- | --- | --- | --- |

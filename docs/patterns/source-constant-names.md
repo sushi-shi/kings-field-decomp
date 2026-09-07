@@ -2390,3 +2390,10 @@ an asset variant. The shared field and placement flag now express this meaning,
 and the loader's separate exhaustion state has its own enum. Seven literal uses
 become enum members; the [complete pool ledger](actor-pool-literal-ledger.md)
 retains only pointer and countdown arithmetic.
+
+The [collision ledger reconciliation](collision-ledger-reconciliation.md) verifies
+all 322 retained occurrences across the world/grid and magic/effect-collision
+modules. It corrects an omitted height-table consumer: actor jump selection
+uses the same attribute-minus-one bias as Lightning aiming. No literal or
+source change is needed; the verified coverage subtotal becomes 78 files and
+4,748 occurrences.

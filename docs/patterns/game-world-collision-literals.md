@@ -45,14 +45,18 @@ suggest independent state or asset identities.
 | 0 | 160 | Rectangle ordinal zero for effect collision; also participates as scalar zero in the world query. |
 | 1..6 | 1 each | The other six rectangle ordinals for effect collision. |
 
-There are three distinct consumers. `effect_map_collision` adds negative
+There are four distinct consuming functions. `effect_map_collision` adds negative
 values to floor Y, and treats nonnegative values as indices into the seven
 rectangle records. `collision_query_world` first adds its caller's height
 to the table value, then performs its ceiling test only if that sum is
 negative. Therefore zero does not universally mean “no height test,” especially
 for negative caller heights. `magic_cast` performs the separately documented
-attribute-minus-one lookup for Lightning's aiming threshold. The direct
-attribute indices in this ledger must not erase that casting bias.
+attribute-minus-one lookup for Lightning's aiming threshold. The jump-attack
+arm of `actor_update_current_action` also uses attribute minus one, selecting
+velocity and animation step around the -5000 threshold. The direct attribute
+indices in this ledger must not erase either bias. See the
+[current reconciliation](collision-ledger-reconciliation.md) for the actor
+consumer's raw instructions and the four-file verification.
 
 The complete 510-byte source initializer reproduces retail and both compiled
 and delinked target symbol spans. Its SHA-256 is

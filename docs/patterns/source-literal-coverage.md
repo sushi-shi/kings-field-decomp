@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [actor culling review](actor-culling-domain.md):
+Working snapshot after the [collision reconciliation](collision-ledger-reconciliation.md):
 **111 C files**, **112 source/image variants**,
 and **6,515 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **74 files / 4,426 occurrences**, the explicit ledger rows were compared
+For **78 files / 4,748 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -29,6 +29,8 @@ This includes the reviewed warp forwarding wrapper, which has zero retained
 literal occurrences.
 The actor culling review names seven literal uses, reconciles two existing
 ledgers and adds complete six-occurrence coverage for the actor pool.
+The collision reconciliation verifies 322 already-documented occurrences across
+four files and corrects the omitted actor jump consumer of the height table.
 The evolving expressions in `map_scripts.c` no longer agree with its older
 ledger, so that file remains excluded from the verified subtotal until its
 rows and referent evidence are reconciled.
@@ -89,13 +91,13 @@ fields and address-derived function names are separate from this ten-line count.
 | [audio.c](../../src/game/audio.c) | 39 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [camera_path.c](../../src/game/camera_path.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [cd_file.c](../../src/game/cd_file.c) | 35 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [collision.c](../../src/game/collision.c) | 265 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
-| [collision_grid.c](../../src/game/collision_grid.c) | 5 | [domain evidence](game-world-collision-literals.md) | Expand the domain audit into current occurrence coverage. |
+| [collision.c](../../src/game/collision.c) | 265 | [complete ledger](game-world-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [collision_grid.c](../../src/game/collision_grid.c) | 5 | [complete ledger](game-world-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [color_lerp_rgb555.c](../../src/game/color_lerp_rgb555.c) | 0 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [debug_text.c](../../src/game/debug_text.c) | 45 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [display_play_transition.c](../../src/game/display_play_transition.c) | 29 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
 | [effect_dispatch.c](../../src/game/effect_dispatch.c) | 153 | [game-effect-dispatch ledger](game-effect-dispatch-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [effect_map_collision.c](../../src/game/effect_map_collision.c) | 43 | [game-magic-collision ledger](game-magic-collision-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [effect_map_collision.c](../../src/game/effect_map_collision.c) | 43 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_pool.c](../../src/game/effect_pool.c) | 224 | [game-effect-pool ledger](game-effect-pool-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_update.c](../../src/game/effect_update.c) | 105 | [game-effect-update ledger](game-effect-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [entity_model_render.c](../../src/game/entity_model_render.c) | 14 | [game-render-hud ledger](game-render-hud-literal-ledger.md); [game-menu-preview ledger](game-menu-preview-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -106,7 +108,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [item.c](../../src/game/item.c) | 176 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting.c](../../src/game/lighting.c) | 108 | [domain notes](source-constant-names.md#lighting-and-death-fade-plan) | Expand the domain audit into current occurrence coverage. |
 | [lighting_presets.c](../../src/game/lighting_presets.c) | 1 | [domain notes](source-constant-names.md#lighting-and-death-fade-plan) | Expand the domain audit into current occurrence coverage. |
-| [magic.c](../../src/game/magic.c) | 9 | [game-magic-collision ledger](game-magic-collision-literal-ledger.md); [game-spell ledger](game-spell-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [magic.c](../../src/game/magic.c) | 9 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [main.c](../../src/game/main.c) | 4 | [complete allocator/startup ledger](allocator-startup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_event.c](../../src/game/map_event.c) | 28 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [domain evidence](game-map-event-literals.md) | Expand the domain audit into current occurrence coverage. |
