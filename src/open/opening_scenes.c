@@ -468,6 +468,7 @@ void opening_scene3_run(void)
     /* Retail reserves six CLUT work slots; this scene populates the first two. */
     u32 cluts[SCENE3_CLUT_WORK_CAPACITY];
     KfScreenRect *overlay_rect;
+    s16 *overlay_y;
     s16 blend;
     s16 overlay_index;
     s32 wave_angle;
@@ -535,9 +536,10 @@ void opening_scene3_run(void)
         opening_render_entities();
         overlay_index = 0;
         overlay_rect = opening_scene3_overlay_rects;
+        overlay_y = &overlay_rect->y;
         do {
             /* Retain quads while their signed Y span can still cross the screen. */
-            if ((u16)((s16)--overlay_rect->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
+            if ((u16)(--*overlay_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
                     overlay_rect,
                     opening_scene3_overlay_uv,
@@ -547,6 +549,7 @@ void opening_scene3_run(void)
                     PANEL_OT_DEPTH);
             }
             overlay_index++;
+            overlay_y += sizeof(*overlay_rect) / sizeof(*overlay_y);
             overlay_rect++;
         } while (overlay_index < KF_OPENING_SCENE3_OVERLAY_COUNT);
         display_present_frame();
