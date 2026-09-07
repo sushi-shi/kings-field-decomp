@@ -314,6 +314,10 @@ promotes a probe to a proven historical toolchain.
 - [game-player-core-constants.md](game-player-core-constants.md): weapon charge
   and phase units, hit windows, collision geometry and shared HUD dimensions;
   completes the literal ledger for all fourteen player-core functions.
+- [game-player-update-constants.md](game-player-update-constants.md): input
+  acceleration and pitch limits, weapon-magic timing and projectile geometry,
+  Moonlight projectile and map hazard identities; includes the complete
+  [player-update literal ledger](game-player-update-literal-ledger.md).
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

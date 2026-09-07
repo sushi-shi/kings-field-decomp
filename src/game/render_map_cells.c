@@ -52,7 +52,7 @@ void render_map_cell(s32 col, s32 row, char cell)
         case 0x44:
             object_index = 0x17;
             break;
-        case 0x45:
+        case KF_MAP_ATTRIBUTE_HIDDEN_DOOR:
             object_index = 0x18;
             break;
         case 0x46:

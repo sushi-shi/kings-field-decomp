@@ -293,7 +293,7 @@ KfEffectRecord *effect_pool_construct(
             record->direction.words.z = record->position.vz >> 8;
             record->direction.words.y = (u16)record->position.vy;
             break;
-        case 0x24:
+        case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
             record->animation_clip = 0;
             record->base_render_id = 0xa;
             record->render_id = 0xa;

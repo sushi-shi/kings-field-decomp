@@ -36,6 +36,7 @@ enum {
     KF_EFFECT_KIND_RADIAL_BLAST = 18,
     KF_EFFECT_KIND_GROUND_TRAIL = 19,
     KF_EFFECT_KIND_HOMING_PROJECTILE = 20,
+    KF_EFFECT_KIND_MOONLIGHT_PROJECTILE = 36,
     KF_EFFECT_KIND_FLOOR_DEFORMATION = 52
 };
 
@@ -122,7 +123,7 @@ typedef union KfEffectVisualState {
     u16 pulse_base_scale;
 } KfEffectVisualState;
 
-/* Kind 36 initializes both bytes; their behavioral purpose is unresolved. */
+/* Moonlight projectiles initialize both bytes; their purpose is unresolved. */
 typedef struct KfEffectControlBytes {
     u8 low;
     u8 high;

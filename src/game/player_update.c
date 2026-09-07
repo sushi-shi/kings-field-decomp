@@ -29,6 +29,41 @@ enum {
     PLAYER_NORMAL_FOG_NEAR = 11000
 };
 
+/* Fractions of the active limit; signed shifts preserve retail truncation. */
+enum {
+    PLAYER_FORWARD_ACCEL_SHIFT = 2,
+    PLAYER_FORWARD_DECEL_SHIFT = 3,
+    PLAYER_STRAFE_ACCEL_DECEL_SHIFT = 2,
+    PLAYER_YAW_ACCEL_DECEL_SHIFT = 2,
+    PLAYER_PITCH_ACCEL = 3,
+    PLAYER_PITCH_DECEL = 2,
+    PLAYER_PITCH_STEP_LIMIT = 10,
+    PLAYER_CAMERA_PITCH_LIMIT = 191
+};
+
+/* Delay counts down to one; zero disables the pending sequence. */
+enum {
+    PLAYER_WEAPON_MAGIC_READY = 1,
+    PLAYER_TRIPLE_FANG_MAGIC_DELAY = 3,
+    PLAYER_FLAME_SWORD_MAGIC_DELAY = 2,
+    PLAYER_MOONLIGHT_SWORD_MAGIC_DELAY = 3,
+    PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER = 80,
+    PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER = 80,
+    PLAYER_COLICHEMARDE_MAGIC_MIN_POWER = 60,
+    PLAYER_COLICHEMARDE_SHOTS_PER_PHASE = 2,
+    PLAYER_WEAPON_MAGIC_SPAWN_X = 200,
+    PLAYER_WEAPON_MAGIC_SPAWN_Y = 200,
+    PLAYER_WEAPON_MAGIC_SPAWN_Z = 400,
+    PLAYER_WEAPON_MAGIC_TARGET_RANGE = 20000,
+    PLAYER_WEAPON_MAGIC_BURST_CONE = 0x155,
+    PLAYER_WEAPON_MAGIC_TARGET_CONE = 0x555,
+    PLAYER_WEAPON_MAGIC_JITTER_BIAS = 4,
+    PLAYER_WEAPON_MAGIC_RANDOM_SHIFT = 9,
+    PLAYER_WEAPON_MAGIC_SPEED = 900,
+    PLAYER_TRIPLE_FANG_Y_OFFSET = 300,
+    PLAYER_TRIPLE_FANG_PITCH_OFFSET = 64
+};
+
 DATA(0x80055858, 0x20)
 static MATRIX player_darkness_color_matrix = {
     {{666, 233, 1333}, {666, 233, 1333}, {666, 233, 1333}},
@@ -36,7 +71,7 @@ static MATRIX player_darkness_color_matrix = {
 };
 
 DATA(0x80055878, 0x40)
-static SVECTOR player_damage_camera_offsets[8] = {
+static SVECTOR player_damage_camera_offsets[KF_PLAYER_DAMAGE_FRAME_END] = {
     {0, 0, 0, 0},
     {-32, 0, -32, 0},
     {-64, 0, -64, 0},
@@ -75,7 +110,7 @@ void player_update(void)
     KfActor *target;
     const struct KfVec3i *origin;
     SVECTOR direction;
-    SVECTOR scale;
+    SVECTOR spawn_offset;
     struct KfEulerAngles angles;
     VECTOR position;
     MATRIX matrix;
@@ -130,51 +165,59 @@ void player_update(void)
             player_turn_step_limit = PLAYER_NORMAL_TURN_LIMIT;
         }
         if (input & PADLup) {
-            forward = player_state.motion_state.forward_velocity + (player_movement_velocity_limit >> 2);
+            forward = player_state.motion_state.forward_velocity
+                + (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
             if (forward > player_movement_velocity_limit) {
                 player_state.motion_state.forward_velocity = player_movement_velocity_limit;
             } else {
                 player_state.motion_state.forward_velocity = forward;
             }
         } else if (input & PADLdown) {
-            forward = player_state.motion_state.forward_velocity - (player_movement_velocity_limit >> 2);
+            forward = player_state.motion_state.forward_velocity
+                - (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
             if (forward >= -player_movement_velocity_limit) {
                 player_state.motion_state.forward_velocity = forward;
             } else {
                 player_state.motion_state.forward_velocity = -player_movement_velocity_limit;
             }
         } else if (player_state.motion_state.forward_velocity > 0) {
-            player_state.motion_state.forward_velocity -= player_movement_velocity_limit >> 3;
+            player_state.motion_state.forward_velocity -=
+                player_movement_velocity_limit >> PLAYER_FORWARD_DECEL_SHIFT;
             if (player_state.motion_state.forward_velocity < 0) {
                 player_state.motion_state.forward_velocity = 0;
             }
         } else if (player_state.motion_state.forward_velocity < 0) {
-            player_state.motion_state.forward_velocity += player_movement_velocity_limit >> 3;
+            player_state.motion_state.forward_velocity +=
+                player_movement_velocity_limit >> PLAYER_FORWARD_DECEL_SHIFT;
             if (player_state.motion_state.forward_velocity > 0) {
                 player_state.motion_state.forward_velocity = 0;
             }
         }
         if (input & PADl) {
-            strafe = player_state.motion_state.strafe_velocity + (player_movement_velocity_limit >> 2);
+            strafe = player_state.motion_state.strafe_velocity
+                + (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
             if (strafe > player_movement_velocity_limit) {
                 player_state.motion_state.strafe_velocity = player_movement_velocity_limit;
             } else {
                 player_state.motion_state.strafe_velocity = strafe;
             }
         } else if (input & PADn) {
-            strafe = player_state.motion_state.strafe_velocity - (player_movement_velocity_limit >> 2);
+            strafe = player_state.motion_state.strafe_velocity
+                - (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
             if (strafe >= -player_movement_velocity_limit) {
                 player_state.motion_state.strafe_velocity = strafe;
             } else {
                 player_state.motion_state.strafe_velocity = -player_movement_velocity_limit;
             }
         } else if (player_state.motion_state.strafe_velocity > 0) {
-            player_state.motion_state.strafe_velocity -= player_movement_velocity_limit >> 2;
+            player_state.motion_state.strafe_velocity -=
+                player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.strafe_velocity < 0) {
                 player_state.motion_state.strafe_velocity = 0;
             }
         } else if (player_state.motion_state.strafe_velocity < 0) {
-            player_state.motion_state.strafe_velocity += player_movement_velocity_limit >> 2;
+            player_state.motion_state.strafe_velocity +=
+                player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.strafe_velocity > 0) {
                 player_state.motion_state.strafe_velocity = 0;
             }
@@ -213,58 +256,58 @@ void player_update(void)
         }
         player_update_view_bob();
         if (input & PADLleft) {
-            player_state.motion_state.yaw_step += player_turn_step_limit >> 2;
+            player_state.motion_state.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.yaw_step > player_turn_step_limit) {
                 player_state.motion_state.yaw_step = player_turn_step_limit;
             }
         } else if (input & PADLright) {
-            player_state.motion_state.yaw_step -= player_turn_step_limit >> 2;
+            player_state.motion_state.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.yaw_step < -player_turn_step_limit) {
                 player_state.motion_state.yaw_step = -player_turn_step_limit;
             }
         } else if (player_state.motion_state.yaw_step > 0) {
-            player_state.motion_state.yaw_step -= player_turn_step_limit >> 2;
+            player_state.motion_state.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.yaw_step < 0) {
                 player_state.motion_state.yaw_step = 0;
             }
         } else if (player_state.motion_state.yaw_step < 0) {
-            player_state.motion_state.yaw_step += player_turn_step_limit >> 2;
+            player_state.motion_state.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.yaw_step > 0) {
                 player_state.motion_state.yaw_step = 0;
             }
         }
         player_state.camera_rotation.vy =
-            (player_state.camera_rotation.vy + player_state.motion_state.yaw_step) & 0xfff;
+            (player_state.camera_rotation.vy + player_state.motion_state.yaw_step) & KF_ANGLE_WRAP_MASK;
         if (input & PADm) {
-            player_state.motion_state.pitch_step += 3;
-            if (player_state.motion_state.pitch_step >= 11) {
-                player_state.motion_state.pitch_step = 10;
+            player_state.motion_state.pitch_step += PLAYER_PITCH_ACCEL;
+            if (player_state.motion_state.pitch_step >= PLAYER_PITCH_STEP_LIMIT + 1) {
+                player_state.motion_state.pitch_step = PLAYER_PITCH_STEP_LIMIT;
             }
         } else if (input & PADo) {
-            player_state.motion_state.pitch_step -= 3;
-            if (player_state.motion_state.pitch_step < -10) {
-                player_state.motion_state.pitch_step = -10;
+            player_state.motion_state.pitch_step -= PLAYER_PITCH_ACCEL;
+            if (player_state.motion_state.pitch_step < -PLAYER_PITCH_STEP_LIMIT) {
+                player_state.motion_state.pitch_step = -PLAYER_PITCH_STEP_LIMIT;
             }
         } else if (player_state.motion_state.pitch_step > 0) {
-            player_state.motion_state.pitch_step -= 2;
+            player_state.motion_state.pitch_step -= PLAYER_PITCH_DECEL;
             if (player_state.motion_state.pitch_step < 0) {
                 player_state.motion_state.pitch_step = 0;
             }
         } else if (player_state.motion_state.pitch_step < 0) {
-            player_state.motion_state.pitch_step += 2;
+            player_state.motion_state.pitch_step += PLAYER_PITCH_DECEL;
             if (player_state.motion_state.pitch_step > 0) {
                 player_state.motion_state.pitch_step = 0;
             }
         }
         if (player_state.motion_state.pitch_step > 0) {
             player_state.camera_rotation.vx += player_state.motion_state.pitch_step;
-            if (player_state.camera_rotation.vx >= 192) {
-                player_state.camera_rotation.vx = 191;
+            if (player_state.camera_rotation.vx >= PLAYER_CAMERA_PITCH_LIMIT + 1) {
+                player_state.camera_rotation.vx = PLAYER_CAMERA_PITCH_LIMIT;
             }
         } else if (player_state.motion_state.pitch_step < 0) {
             player_state.camera_rotation.vx += player_state.motion_state.pitch_step;
-            if (player_state.camera_rotation.vx < -191) {
-                player_state.camera_rotation.vx = -191;
+            if (player_state.camera_rotation.vx < -PLAYER_CAMERA_PITCH_LIMIT) {
+                player_state.camera_rotation.vx = -PLAYER_CAMERA_PITCH_LIMIT;
             }
         }
         if ((input & PADRup) && !(player_previous_input & PADRup)) {
@@ -278,7 +321,7 @@ void player_update(void)
                     case KF_ITEM_FLAME_SWORD:
                         if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
                             && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
-                            player_state.weapon_magic_delay = 1;
+                            player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
                             player_state.weapon_magic_shots_remaining =
                                 (PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
                                 / KF_WEAPON_ATTACK_PHASE_STEP + 1;
@@ -290,17 +333,18 @@ void player_update(void)
                         if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
                             && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
                             player_state.weapon_magic_shots_remaining = 1;
-                            player_state.weapon_magic_delay = 1;
+                            player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
                             goto magic_done;
                         }
                         break;
                     case KF_ITEM_COLICHEMARDE:
                         if (player_state.weapon_attack_phase >= PLAYER_COLICHEMARDE_MAGIC_PHASE_FIRST
                             && player_state.weapon_attack_phase <= PLAYER_COLICHEMARDE_MAGIC_PHASE_LAST) {
-                            player_state.weapon_magic_delay = 1;
+                            player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
                             player_state.weapon_magic_shots_remaining =
                                 ((PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
-                                 / KF_WEAPON_ATTACK_PHASE_STEP + 1) * 2;
+                                 / KF_WEAPON_ATTACK_PHASE_STEP + 1)
+                                * PLAYER_COLICHEMARDE_SHOTS_PER_PHASE;
                             goto magic_done;
                         }
                         break;
@@ -342,16 +386,17 @@ void player_update(void)
             }
         }
     magic_done:
-        if (player_state.weapon_magic_delay == 1) {
+        if (player_state.weapon_magic_delay == PLAYER_WEAPON_MAGIC_READY) {
             if (player_state.weapon_magic_shots_remaining != 0) {
                 switch (player_state.equipped_weapon_id) {
                 case KF_ITEM_TRIPLE_FANG:
-                    if (player_state.physical_power < 80 || player_state.magic < 80) {
+                    if (player_state.physical_power < PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER
+                        || player_state.magic < PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER) {
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_HOMING_PROJECTILE;
                     record = &magic_records[KF_EFFECT_KIND_HOMING_PROJECTILE];
-                    player_state.weapon_magic_delay = 3;
+                    player_state.weapon_magic_delay = PLAYER_TRIPLE_FANG_MAGIC_DELAY;
                     break;
                 case KF_ITEM_FLAME_SWORD:
                     if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
@@ -359,42 +404,44 @@ void player_update(void)
                     }
                     effect = KF_EFFECT_KIND_FIRE_BALL;
                     record = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)];
-                    player_state.weapon_magic_delay = 2;
+                    player_state.weapon_magic_delay = PLAYER_FLAME_SWORD_MAGIC_DELAY;
                     break;
                 case KF_ITEM_MOONLIGHT_SWORD:
-                    if (player_state.physical_power < 80 || player_state.magic < 80) {
+                    if (player_state.physical_power < PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER
+                        || player_state.magic < PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER) {
                         goto cancel;
                     }
-                    effect = 36;
+                    effect = KF_EFFECT_KIND_MOONLIGHT_PROJECTILE;
                     record = &magic_records[KF_EFFECT_KIND_RADIAL_BLAST];
-                    player_state.weapon_magic_delay = 3;
+                    player_state.weapon_magic_delay = PLAYER_MOONLIGHT_SWORD_MAGIC_DELAY;
                     break;
                 case KF_ITEM_COLICHEMARDE:
-                    if (player_state.physical_power < 60 || player_state.magic < 60) {
+                    if (player_state.physical_power < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER
+                        || player_state.magic < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER) {
                         goto cancel;
                     }
                     effect = KF_EFFECT_KIND_LIGHT_NEEDLE;
                     record = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHT_NEEDLE)];
-                    player_state.weapon_magic_delay = 1;
+                    player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
                     break;
                 default:
                 cancel:
                     player_state.weapon_magic_shots_remaining = 0;
-                    player_state.weapon_magic_delay = 2;
+                    player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY + 1;
                     goto store_input;
                 }
                 if (player_state.vitals.current_mp >= record->mp_cost) {
                     if (player_state.weapon_magic_shots_remaining == 1) {
                         player_state.vitals.current_mp -= record->mp_cost;
                     }
-                    scale.vx = 200;
-                    scale.vy = 200;
-                    scale.vz = 400;
+                    spawn_offset.vx = PLAYER_WEAPON_MAGIC_SPAWN_X;
+                    spawn_offset.vy = PLAYER_WEAPON_MAGIC_SPAWN_Y;
+                    spawn_offset.vz = PLAYER_WEAPON_MAGIC_SPAWN_Z;
                     angles.x = -player_state.camera_rotation.vx;
                     angles.y = player_state.camera_rotation.vy;
                     angles.z = -player_state.camera_rotation.vz;
                     matrix_set_rotation_yxz(&angles, &matrix);
-                    ApplyMatrix(&matrix, &scale, &position);
+                    ApplyMatrix(&matrix, &spawn_offset, &position);
                     position.vx += player_state.camera_position.vx;
                     position.vy += player_state.camera_position.vy;
                     angles.y = player_state.camera_rotation.vy;
@@ -402,16 +449,21 @@ void player_update(void)
                     angles.x = player_state.camera_rotation.vx;
                     angles.z = player_state.camera_rotation.vz;
                     origin = (const struct KfVec3i *)&player_state.camera_position;
-                    if ((effect == 5 || effect == 8) && player_state.weapon_magic_shots_remaining != 1) {
+                    if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
+                        && player_state.weapon_magic_shots_remaining != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
-                            origin, player_state.camera_rotation.vy, 20000, 0x155, &distance);
-                        angles.x -= 4 - (rand() >> 9);
-                        angles.y -= 4 - (rand() >> 9);
+                            origin, player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
+                            PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
+                        angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                            - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
+                        angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                            - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
                         attachment = player_state.weapon_magic_shots_remaining & 1;
                     } else {
                         target = actor_pool_find_target_in_cone(
                             (const struct KfVec3i *)&player_state.camera_position,
-                            player_state.camera_rotation.vy, 20000, 0x555, &distance);
+                            player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
+                            PLAYER_WEAPON_MAGIC_TARGET_CONE, &distance);
                         actor_state.player_target = target;
                         if (target == 0) {
                             attachment = KF_EFFECT_HOMING_WANDER;
@@ -420,21 +472,21 @@ void player_update(void)
                         }
                     }
                     pitch_yaw_to_forward_vector((const struct KfPitchYaw *)&angles, &direction);
-                    vector3s_scale_shift12(900, &direction);
+                    vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, &direction);
                     effect_pool_construct(
                         10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
                         &position, &direction, &player_state.camera_rotation, attachment, 1);
                     if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
-                        position.vy += 300;
+                        position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
                         angles.y = player_state.camera_rotation.vy;
                         angles.z = player_state.camera_rotation.vz;
-                        angles.x = player_state.camera_rotation.vx + 64;
+                        angles.x = player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &angles, attachment,
                             0);
-                        angles.x -= 128;
-                        position.vy -= 600;
+                        angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
+                        position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &angles, attachment,
@@ -484,7 +536,7 @@ void player_update(void)
         && player_state.update_state != KF_PLAYER_UPDATE_DYING) {
         if (player_state.update_state >= KF_PLAYER_DAMAGE_FRAME_END) {
             player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
-            player_state.view_rotation_offset = player_damage_camera_offsets[0];
+            player_state.view_rotation_offset = player_damage_camera_offsets[KF_PLAYER_UPDATE_NORMAL];
             if (player_state.vitals.current_hp == 0) {
                 player_death_begin();
             }
@@ -557,12 +609,12 @@ void player_update(void)
     player_state.equipment_effect_ticks++;
     attribute = map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x];
     switch (attribute) {
-    case 0x3a:
+    case KF_MAP_ATTRIBUTE_PITFALL:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {
             player_apply_damage(5, 3, 5, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         }
         break;
-    case 0x3f:
+    case KF_MAP_ATTRIBUTE_POISON_HOLE:
         player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         break;
     }

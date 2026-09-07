@@ -1,5 +1,12 @@
 # Source constant naming
 
+The [player-update review](game-player-update-constants.md) names movement
+fractions, pitch bounds, weapon-magic power/timing and projectile geometry,
+then propagates the Moonlight projectile and map hazard identities through
+their effect, interaction and rendering consumers. It removes 65 inline
+occurrences. Its complete ledger covers all 168 retained literals in the
+module, including authored data; the refreshed map-script ledger covers 272.
+
 The [complete player-core review](game-player-core-constants.md) names weapon
 charge/phase units, hit windows and collision geometry, then propagates shared
 values through input, rendering and actor attacks. It removes 116 inline

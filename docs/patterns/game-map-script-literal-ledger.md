@@ -6,7 +6,9 @@ named enum/macro definitions are counted separately in that note. Minus
 signs are operators, so negative values contribute a positive numeric token.
 Line numbers locate this version; function and expression identify the use.
 
-All **276 retained occurrences** have an explicit reason; no fallback is used.
+The [player update audit](game-player-update-constants.md) records the four shared map-attribute names.
+
+All **272 retained occurrences** have an explicit reason; no fallback is used.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -131,10 +133,6 @@ All **276 retained occurrences** have an explicit reason; no fallback is used.
 | `map_show_screen_image` | 446 | `10 × 2, '0'` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
 | `map_interaction_dispatch` | 470 | `1500` | `sound_x = position->vx - (rsin(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
 | `map_interaction_dispatch` | 471 | `1500` | `sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);` | Authored 1500-world-unit forward probe for cell-attribute notifications; Q12 direction shifts by its named fractional width. |
-| `map_interaction_dispatch` | 473 | `0x3a` | `case 0x3a:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
-| `map_interaction_dispatch` | 476 | `0x3f` | `case 0x3f:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
-| `map_interaction_dispatch` | 479 | `0x5d` | `case 0x5d:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
-| `map_interaction_dispatch` | 482 | `0x45` | `case 0x45:` | Authored attribute-to-message binding: 58→pitfall, 63→poison hole, 93→bottomless pit, 69→hidden door. Messages are decoded in the notification audit; broader tile behavior remains a separate domain. |
 | `map_interaction_dispatch` | 489 | `1000` | `sound_x = position->vx - (rsin(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
 | `map_interaction_dispatch` | 490 | `1000` | `sound_z = position->vz + (rcos(rotation->vy) * 1000 >> KF_FIXED12_BITS);` | Authored 1000-world-unit forward probe for event/object overlap, separate from radius padding. |
 | `map_interaction_dispatch` | 493 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |

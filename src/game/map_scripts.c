@@ -470,16 +470,16 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     sound_x = position->vx - (rsin(rotation->vy) * 1500 >> KF_FIXED12_BITS);
     sound_z = position->vz + (rcos(rotation->vy) * 1500 >> KF_FIXED12_BITS);
     switch (map_cell_attribute_grid[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
-    case 0x3a:
+    case KF_MAP_ATTRIBUTE_PITFALL:
         notify_enqueue(KF_NOTIFICATION_PITFALL);
         break;
-    case 0x3f:
+    case KF_MAP_ATTRIBUTE_POISON_HOLE:
         notify_enqueue(KF_NOTIFICATION_POISON_HOLE);
         break;
     case KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT:
         notify_enqueue(KF_NOTIFICATION_BOTTOMLESS_PIT);
         break;
-    case 0x45:
+    case KF_MAP_ATTRIBUTE_HIDDEN_DOOR:
         notify_enqueue(KF_NOTIFICATION_HIDDEN_DOOR);
         break;
     default:

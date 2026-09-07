@@ -267,7 +267,7 @@ play_phase_sound:
         }
         goto advance_effect_phase;
 
-    case 36:
+    case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
         if (phase < 11) {
             if (effect_map_collision(&effect->position, 100) != (u32)KF_COLLISION_NONE) {
                 effect->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;

@@ -171,7 +171,7 @@ class GamePlayerEffectDataTests(unittest.TestCase):
         units = load_manifest().by_name()
         for unit, _va, name, size, _scope, digest in OWNERS:
             source = units[unit].source_path.read_text()
-            initializer = re.search(name + r'(?:\[\d+\])? = \{(.*?)\};', source, re.S)
+            initializer = re.search(name + r'(?:\[[^\]]+\])? = \{(.*?)\};', source, re.S)
             self.assertIsNotNone(initializer)
             values = [int(v) for v in re.findall(r'-?\d+', initializer[1])]
             fmt = {9: '<9B', 32: '<9h2x3i', 64: '<32h'}[size]
