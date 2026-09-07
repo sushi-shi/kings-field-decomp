@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [detail/dialog review](game-menu-detail-constants.md):
+Working snapshot after the [panel-geometry review](game-menu-panel-geometry.md):
 **111 C files**, **112 source/image variants**,
-and **6,985 inline numeric/character occurrences**. The counts include authored
+and **6,903 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **20 files / 1,909 occurrences**, the explicit ledger rows were compared
+For **23 files / 2,012 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -34,7 +34,7 @@ by subtracting this subtotal from the source census.
 
 ## Next coverage work
 
-1. Refresh the status/list ledgers after their later reconstruction changes.
+1. Refresh the status-text ledgers after their later reconstruction changes.
 2. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
 3. Verify every retained occurrence against its reason before marking a file
@@ -120,12 +120,12 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_item_drop.c](../../src/game/menu_item_drop.c) | 145 | [game-menu-save ledger](game-menu-save-literal-ledger.md); [game-menu-item-list ledger](game-menu-item-list-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_item_model_preview.c](../../src/game/menu_item_model_preview.c) | 45 | [game-menu-preview ledger](game-menu-preview-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_list_interact.c](../../src/game/menu_list_interact.c) | 67 | [domain evidence](game-menu-list-control-flow.md) | Expand the domain audit into current occurrence coverage. |
-| [menu_list_render.c](../../src/game/menu_list_render.c) | 34 | [game-menu-panel ledger](game-menu-panel-literal-ledger.md) | Historical panel ledger is superseded by the exact list reconstruction; refresh current expressions. |
-| [menu_map_viewer.c](../../src/game/menu_map_viewer.c) | 107 | [game-menu-panel ledger](game-menu-panel-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [menu_list_render.c](../../src/game/menu_list_render.c) | 16 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu_map_viewer.c](../../src/game/menu_map_viewer.c) | 75 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_panels.c](../../src/game/menu_panels.c) | 64 | [game-menu-choice ledger](game-menu-choice-literal-ledger.md); [game-spell ledger](game-spell-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_runtime.c](../../src/game/menu_runtime.c) | 103 | [complete runtime ledger](game-menu-runtime-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_select.c](../../src/game/menu_select.c) | 104 | [game-equipment ledger](game-equipment-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
-| [menu_status_panel.c](../../src/game/menu_status_panel.c) | 44 | [game-menu-panel ledger](game-menu-panel-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
+| [menu_status_panel.c](../../src/game/menu_status_panel.c) | 12 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 41 | [game-menu-save ledger](game-menu-save-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [notify_queue.c](../../src/game/notify_queue.c) | 116 | [game-notification ledger](game-notification-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [player_core.c](../../src/game/player_core.c) | 80 | [game-player-core ledger](game-player-core-literal-ledger.md); [game-player-motion ledger](game-player-motion-literal-ledger.md) | Recent movement correction updated its ledger; include that combined core/motion ledger in the next coverage validation. |

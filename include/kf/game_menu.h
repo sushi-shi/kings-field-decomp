@@ -181,6 +181,15 @@ enum {
     MENU_CLASS_FIRST_GLYPH = 0x100
 };
 
+/* Shared fixed backdrop grid; packet extents still read the resource descriptor. */
+enum {
+    /* Fixed grid steps match the shipped STAT.DAT backdrop tile. */
+    MENU_BACKDROP_COLUMN_STEP = 71,
+    MENU_BACKDROP_ROW_STEP = 104,
+    MENU_BACKDROP_TOP_Y = 16,
+    MENU_BACKDROP_BOTTOM_Y = MENU_BACKDROP_TOP_Y + MENU_BACKDROP_ROW_STEP
+};
+
 /* Shared ordering-table buckets; preserve insertion order within each bucket. */
 enum {
     MENU_WIDGET_OT_DEPTH = 2000,

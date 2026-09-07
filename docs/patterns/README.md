@@ -475,3 +475,7 @@ promotes a probe to a proven historical toolchain.
 - [GAME item-detail and dialog constants](game-menu-detail-constants.md):
   save-slot overlays, summary geometry and shared numeric spacing;
   [complete retained-literal ledger](game-menu-detail-literal-ledger.md).
+
+- [GAME list, status-panel and map geometry](game-menu-panel-geometry.md):
+  shared backdrop dimensions, list row/quantity offsets and map crop/resources;
+  [complete panel ledger](game-menu-panel-literal-ledger.md).

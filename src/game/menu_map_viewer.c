@@ -7,7 +7,19 @@ enum {
     MENU_MAP_MARKER_OT_DEPTH = 500,
     MENU_MAP_IMAGE_OT_DEPTH = 1000,
     MENU_MAP_PIXELS_PER_CELL = 2,
-    MENU_MAP_MARKER_SPAN = 4
+    MENU_MAP_MARKER_SPAN = 4,
+    MENU_MAP_WATCHMAN_SET = 1,
+    MENU_MAP_DEFAULT_SET = 2,
+    MENU_MAP_BRIGHTNESS = 64,
+    MENU_MAP_IMAGE_CLUT = 0x7d40,
+    MENU_MAP_IMAGE_TPAGE = 0x1f,
+    MENU_MAP_MARKER_CLUT = 0x7c40,
+    MENU_MAP_MARKER_TPAGE = 0x1b,
+    MENU_MAP_IMAGE_SPAN = 219,
+    MENU_MAP_IMAGE_LEFT_X = 50,
+    MENU_MAP_IMAGE_TOP_Y = 10,
+    MENU_MAP_MARKER_ORIGIN_X = 58,
+    MENU_MAP_MARKER_ORIGIN_Y = 216
 };
 
 RODATA(0x800122e4, 0xc)
@@ -23,9 +35,9 @@ void menu_map_viewer(s32 item_code)
     u8 *buffer;
     s32 map_number;
 
-    map_number = 2;
+    map_number = MENU_MAP_DEFAULT_SET;
     if (item_code == KF_ITEM_WATCHMAN_MAP)
-        map_number = 1;
+        map_number = MENU_MAP_WATCHMAN_SET;
     path[5] = map_number + '0';
     path[6] = player_state.progress_state.current_floor + '0';
 
@@ -36,35 +48,35 @@ void menu_map_viewer(s32 item_code)
 
     SetPolyFT4(&poly_bg[0]);
     SetSemiTrans(&poly_bg[0], 1);
-    poly_bg[0].r0 = 0x40;
-    poly_bg[0].g0 = 0x40;
-    poly_bg[0].b0 = 0x40;
-    poly_bg[0].clut = 0x7d40;
-    poly_bg[0].tpage = 0x1f;
+    poly_bg[0].r0 = MENU_MAP_BRIGHTNESS;
+    poly_bg[0].g0 = MENU_MAP_BRIGHTNESS;
+    poly_bg[0].b0 = MENU_MAP_BRIGHTNESS;
+    poly_bg[0].clut = MENU_MAP_IMAGE_CLUT;
+    poly_bg[0].tpage = MENU_MAP_IMAGE_TPAGE;
     poly_bg[0].u0 = 0;
     poly_bg[0].v0 = 0;
-    poly_bg[0].u1 = 0xdb;
+    poly_bg[0].u1 = MENU_MAP_IMAGE_SPAN;
     poly_bg[0].v1 = 0;
     poly_bg[0].u2 = 0;
-    poly_bg[0].v2 = 0xdb;
-    poly_bg[0].u3 = 0xdb;
-    poly_bg[0].v3 = 0xdb;
-    poly_bg[0].x0 = 0x32;
-    poly_bg[0].y0 = 0xa;
-    poly_bg[0].x1 = 0x10d;
-    poly_bg[0].y1 = 0xa;
-    poly_bg[0].x2 = 0x32;
-    poly_bg[0].y2 = 0xe5;
-    poly_bg[0].x3 = 0x10d;
-    poly_bg[0].y3 = 0xe5;
+    poly_bg[0].v2 = MENU_MAP_IMAGE_SPAN;
+    poly_bg[0].u3 = MENU_MAP_IMAGE_SPAN;
+    poly_bg[0].v3 = MENU_MAP_IMAGE_SPAN;
+    poly_bg[0].x0 = MENU_MAP_IMAGE_LEFT_X;
+    poly_bg[0].y0 = MENU_MAP_IMAGE_TOP_Y;
+    poly_bg[0].x1 = MENU_MAP_IMAGE_LEFT_X + MENU_MAP_IMAGE_SPAN;
+    poly_bg[0].y1 = MENU_MAP_IMAGE_TOP_Y;
+    poly_bg[0].x2 = MENU_MAP_IMAGE_LEFT_X;
+    poly_bg[0].y2 = MENU_MAP_IMAGE_TOP_Y + MENU_MAP_IMAGE_SPAN;
+    poly_bg[0].x3 = MENU_MAP_IMAGE_LEFT_X + MENU_MAP_IMAGE_SPAN;
+    poly_bg[0].y3 = MENU_MAP_IMAGE_TOP_Y + MENU_MAP_IMAGE_SPAN;
     poly_bg[1] = poly_bg[0];
 
     SetPolyFT4(&poly_marker[0]);
-    poly_marker[0].r0 = 0x40;
-    poly_marker[0].g0 = 0x40;
-    poly_marker[0].b0 = 0x40;
-    poly_marker[0].clut = 0x7c40;
-    poly_marker[0].tpage = 0x1b;
+    poly_marker[0].r0 = MENU_MAP_BRIGHTNESS;
+    poly_marker[0].g0 = MENU_MAP_BRIGHTNESS;
+    poly_marker[0].b0 = MENU_MAP_BRIGHTNESS;
+    poly_marker[0].clut = MENU_MAP_MARKER_CLUT;
+    poly_marker[0].tpage = MENU_MAP_MARKER_TPAGE;
     poly_marker[0].u0 = 0;
     poly_marker[0].v0 = 0;
     poly_marker[0].u1 = MENU_MAP_MARKER_SPAN;
@@ -73,14 +85,14 @@ void menu_map_viewer(s32 item_code)
     poly_marker[0].v2 = MENU_MAP_MARKER_SPAN;
     poly_marker[0].u3 = MENU_MAP_MARKER_SPAN;
     poly_marker[0].v3 = MENU_MAP_MARKER_SPAN;
-    poly_marker[0].x0 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 58;
-    poly_marker[0].y0 = 0xd8 - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
-    poly_marker[0].x1 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 62;
-    poly_marker[0].y1 = 0xd8 - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
-    poly_marker[0].x2 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 58;
-    poly_marker[0].y2 = 0xdc - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
-    poly_marker[0].x3 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 62;
-    poly_marker[0].y3 = 0xdc - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x0 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    poly_marker[0].y0 = MENU_MAP_MARKER_ORIGIN_Y - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x1 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + (MENU_MAP_MARKER_ORIGIN_X + MENU_MAP_MARKER_SPAN);
+    poly_marker[0].y1 = MENU_MAP_MARKER_ORIGIN_Y - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x2 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    poly_marker[0].y2 = (MENU_MAP_MARKER_ORIGIN_Y + MENU_MAP_MARKER_SPAN) - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x3 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + (MENU_MAP_MARKER_ORIGIN_X + MENU_MAP_MARKER_SPAN);
+    poly_marker[0].y3 = (MENU_MAP_MARKER_ORIGIN_Y + MENU_MAP_MARKER_SPAN) - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
     poly_marker[1] = poly_marker[0];
 
     for (;;) {

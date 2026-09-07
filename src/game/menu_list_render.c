@@ -2,6 +2,13 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    MENU_LIST_TEXT_INSET = 3,
+    MENU_LIST_ROW_HEIGHT = 12,
+    MENU_LIST_QUANTITY_X_OFFSET = 110,
+    MENU_LIST_QUANTITY_Y_OFFSET = 1
+};
+
 /*
  * Render a scrollable menu list: the optional title label, the visible glyph
  * rows (each with an optional two-digit quantity), the list backdrop tile, the
@@ -38,9 +45,9 @@ void menu_list_render(const KfMenuList *list)
     row = 0;
     if (row < list->visible_rows && row < list->entry_count) {
         do {
-            gs.x = list->list_x + 3;
-            gs.y = list->list_y + 3;
-            gs.y += row * 0xc;
+            gs.x = list->list_x + MENU_LIST_TEXT_INSET;
+            gs.y = list->list_y + MENU_LIST_TEXT_INSET;
+            gs.y += row * MENU_LIST_ROW_HEIGHT;
             for (i = 0; i < list->glyphs_per_entry; i++) {
                 gs.codes[i] = *src++;
             }
@@ -49,8 +56,8 @@ void menu_list_render(const KfMenuList *list)
             if (list->quantities != 0) {
                 tens = *counts / 10u;
                 ones = *counts % 10u;
-                gs.x += 0x6e;
-                gs.y += 1;
+                gs.x += MENU_LIST_QUANTITY_X_OFFSET;
+                gs.y += MENU_LIST_QUANTITY_Y_OFFSET;
                 gs.codes[0] = tens;
                 if (tens == 0) {
                     gs.codes[0] = MENU_NUMBER_BLANK;
@@ -100,13 +107,13 @@ void menu_list_render(const KfMenuList *list)
             current_poly_ft4->tpage = tile->tpage;
             current_poly_ft4->clut = tile->clut;
             current_poly_ft4->x0 = list->list_x;
-            current_poly_ft4->y0 = list->list_y + yoff + 3;
+            current_poly_ft4->y0 = list->list_y + yoff + MENU_LIST_TEXT_INSET;
             current_poly_ft4->x1 = list->list_x + tile->width;
-            current_poly_ft4->y1 = list->list_y + yoff + 3;
+            current_poly_ft4->y1 = list->list_y + yoff + MENU_LIST_TEXT_INSET;
             current_poly_ft4->x2 = list->list_x;
-            current_poly_ft4->y2 = list->list_y + yoff + (tile->height + 3);
+            current_poly_ft4->y2 = list->list_y + yoff + (tile->height + MENU_LIST_TEXT_INSET);
             current_poly_ft4->x3 = list->list_x + tile->width;
-            current_poly_ft4->y3 = list->list_y + yoff + (tile->height + 3);
+            current_poly_ft4->y3 = list->list_y + yoff + (tile->height + MENU_LIST_TEXT_INSET);
             current_poly_ft4->u0 = tile->u;
             current_poly_ft4->v0 = tile->v;
             current_poly_ft4->u1 = tile->u + tile->width;
@@ -117,7 +124,7 @@ void menu_list_render(const KfMenuList *list)
             current_poly_ft4->v3 = tile->v + tile->height;
             SetSemiTrans(current_poly_ft4, 1);
             primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
-            yoff += 0xc;
+            yoff += MENU_LIST_ROW_HEIGHT;
         } while (row < list->visible_rows);
     }
 
@@ -126,15 +133,15 @@ void menu_list_render(const KfMenuList *list)
     current_poly_ft4->tpage = tile->tpage;
     current_poly_ft4->clut = tile->clut;
     current_poly_ft4->x0 = list->list_x;
-    current_poly_ft4->y0 = list->list_y + list->visible_rows * 0xc + 3;
+    current_poly_ft4->y0 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT + MENU_LIST_TEXT_INSET;
     current_poly_ft4->x1 = list->list_x + tile->width;
-    current_poly_ft4->y1 = list->list_y + list->visible_rows * 0xc + 3;
+    current_poly_ft4->y1 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT + MENU_LIST_TEXT_INSET;
     current_poly_ft4->x2 = list->list_x;
-    current_poly_ft4->y2 = list->list_y + list->visible_rows * 0xc +
-                           (tile->height + 3);
+    current_poly_ft4->y2 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT +
+                           (tile->height + MENU_LIST_TEXT_INSET);
     current_poly_ft4->x3 = list->list_x + tile->width;
-    current_poly_ft4->y3 = list->list_y + list->visible_rows * 0xc +
-                           (tile->height + 3);
+    current_poly_ft4->y3 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT +
+                           (tile->height + MENU_LIST_TEXT_INSET);
     current_poly_ft4->u0 = tile->u;
     current_poly_ft4->v0 = tile->v;
     current_poly_ft4->u1 = tile->u + tile->width;
