@@ -231,3 +231,65 @@ pass. Full `kf build` regenerates the comparisons but still rejects the
 pre-existing data/ownership/placement gaps (11/59 source-data units, 2/2 SDK
 data controls, 108/114 target relinks). The simultaneous screen-image
 closure is documented separately; this selector remains unbanked.
+
+## Parameter-lifetime control at `258f6ad`
+
+Function Match Plan: GAME `8002e0f0`, 504 bytes, strict 96.333336%, remains
+under `probe-gcc257-o2-g0`. Refresh all six image-qualified views, the full
+126 retail words/CFG, the three caller setups, neighboring facing selector
+and following caller, both angle callees, BIOS rand attribution and source
+history. There are 23 blocks, fifteen branches, four calls, one internal
+jump and one return with its 40-byte restore delay slot. Five address pairs
+and that internal jump are validated; no strings or unresolved indirect
+transfers occur. All 26 exact actor functions and the three-site caller are
+controls. The selector remains game-owned policy over the actor/effect pools.
+
+The incoming profile is masked to five bits before its ten-byte table index
+is formed; the unmasked value is never used again. Retail keeps the masked
+profile in s2 and the byte action in s3, while canonical source exchanges
+those roles. Test masking `profile_index` in place instead of introducing a
+second halfword `profile` variable, then use that same parameter for the table
+index and profile-nine guard. Preserve the existing u16 interface, both
+narrowings, the far-first weight selection, evolving signed odds, chance and
+facing gates, signed countdowns and return form. This is an input-lifetime
+hypothesis, not permission to permute declarations or force registers.
+
+Keep the distinct address question separate: retail retains player position
+in s0 and derives actors by -9216, while canonical source forms the actor
+array independently. The earlier explicit VECTOR pointer was byte-identical
+and is not repeated. Compare the first raw divergence after the focused
+compile; retain the parameter change only if it explains retail. Preserve
+all sibling bytes and use strict objdiff/full verification before banking.
+
+The in-place parameter mask emits the same instruction/relocation listing as
+the starting source, including all remaining action/profile register operands
+and the extra actor-array address pair. Revert the no-effect control. It does
+not explain the residue or authorize another width change; the next source
+investigation must address an independently evidenced difference.
+
+### Actor-array pointer lifetime
+
+Retail forms the player-position address at +0xc4 and keeps that register
+through both angle calls and the optional second rand call. Its only later
+use is deriving the actor-array cursor at +0x124. Canonical source does not
+bind that cursor until after all these calls and the profile-nine guard.
+Test assigning the existing `candidate = actor_state.actors` after the first
+odds rejection and before the facing expression, leaving its first dereference
+and both pool loops in their original positions. This is a genuine lifetime
+test for the later cursor, distinct from the rejected player VECTOR pointer,
+which had no post-call use. Keep the original profile local and every other
+expression. No cross-member byte arithmetic or new global/type is introduced.
+
+The early actor cursor is rejected. It keeps the actor-array address itself
+in s0 across the calls, but still materializes the player-position load
+independently; retail keeps the player-position address and later derives a
+v1 cursor. The actor scan also changes its cursor and comparison registers.
+Restore the original post-guard cursor assignment. Neither tested lifetime
+form explains the shared-base residue, and the original strict 96.333336%
+source is retained without a forced offset or register.
+
+Final restored verification ran with the separately closed actor-distance
+helper: fresh raw controls preserve every other actor body and ordered
+relocation, and this selector remains 96.333336%. All 678 tests, Ruff and
+diff checks pass; the full build retains the existing data/ownership/placement
+failures. No profile-selector source or signature change is kept or banked.

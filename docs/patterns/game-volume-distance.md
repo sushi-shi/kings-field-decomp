@@ -133,3 +133,60 @@ Verification: **551 repository tests pass** (47.806 s), Ruff passes and
 non-code closure gates: source data 11/59, config SDK data 2/2 and target
 relink 108/114, plus incomplete known-reference data ownership. No source
 owner, SDK attribution, curated relocation or verification gate was changed.
+
+## Horizontal-parameter control at `8bb4c8b`
+
+Function Match Plan: GAME `8002d97c`, 240 bytes, strict 99.333336%, unchanged
+GCC 2.5.7 probe. Refresh all six image-qualified views, the complete sixty
+retail instructions, nine caller setups and both adjacent actor scans. The
+seven word arguments, signed heights, half-height arithmetic, Y sentinel,
+24-byte frame, ten blocks, eight branches, sole SDK call and common -1 exit
+remain as documented. SquareRoot0 retains its independent LIBGTE attribution;
+this coordinate/volume policy has no vendored identity. There are no data
+references, strings or unresolved transfers in the selected game function.
+
+Retail overwrites the incoming X/Z registers with actor-relative differences
+and then eighth-scale differences; the original absolute X/Z values are not
+used again. Test expressing those two evolving values through `point_x` and
+`point_z` themselves, removing only the separate `delta_x`/`delta_z` locals.
+Keep the Y calculation, signed comparisons, their operand order, the two
+shift locations and the shared rejection tail unchanged. This tests the
+observed input lifetime; it does not add a cached negative bound or permute
+height locals to choose t1/t2. Require complete raw comparison and unchanged
+sibling bodies before retaining it; strict 100% remains the closure criterion.
+
+### Exact actor-distance result
+
+Using the two horizontal parameters as evolving coordinates reaches strict
+**100%**, up from 99.333336%. All sixty retail words agree, including the
+eight rejection/sentinel branches, the SquareRoot0 call at +0xc4 and the
+restoring return delay slot. The only changes from the previous body are
+the seven register operands already identified above: height now uses t1 and
+the negative horizontal bound uses t2. No constant, type, signature, source
+owner, relocation or SDK interface changes. Both player and actor distance
+helpers are now exact; no optimizer-mechanism attribution is implied.
+
+A fresh pinned compilation compares all 27 exact actor functions directly
+against hash-verified GAME bytes and their ordered calls/address pairs. The
+distance body's SHA-256 is
+`db54e4f032fba574067312f16346237ef9700aa11b699a4421fe316c26b843a7`.
+The other 28 actor bodies retain their previous bytes and all non-debug
+relocation identities/addends; the two remaining partial actor functions
+are unchanged after their rejected controls. A committed-source/header
+control isolates this function from concurrent player-damage naming in the
+same actor file and shared player header.
+
+Across all 484 scored rows, only actor distance changes. GAME advances
+309 -> 310/362 exact, OPEN stays 98/108 and PSX 1/1, totaling 409/471.
+Ruff, `git diff --check` and all 678 repository tests pass (79.059 seconds).
+The source was freshly rebuilt and the full build run; existing failures
+remain data/ownership/placement: PSX data 0/1, GAME 9/42, OPEN 2/19;
+target relinks 1/1, 75/77 and 34/38, six conflicting-section cases and
+zero artifact failures. No tooling, flake or verification gate changes.
+
+Selected banking after staging only this campaign refuses the concurrent
+player-damage naming inputs, including the unrelated multiplier call in the
+same actor source. Preserve that unstaged hunk and do not use a dirty override.
+Commit the isolated exact distance reconstruction; its one baseline update
+remains pending those independent inputs. The preceding phase predicate's
+deferred bank was completed separately in `fb0297b` while inputs were clean.

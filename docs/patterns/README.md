@@ -247,9 +247,9 @@ promotes a probe to a proven historical toolchain.
   block and result join; partial reconstruction improved, not exact.
 - [game-map-collision-edge.md](game-map-collision-edge.md): chained
   opposite-row assignments recover the shared grid base and close the marker.
-- [game-volume-distance.md](game-volume-distance.md): shared rejection
-  tail closes player distance; direct actor-center expression improves its
-  partial match with a remaining register-role exchange.
+- [game-volume-distance.md](game-volume-distance.md): exact player and actor
+  volume distances through a shared rejection tail and evolving horizontal
+  coordinate parameters; signed height and SDK square-root contracts retained.
 - [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
   and signed in-place accumulation close the three-halfword scatter helper.
 - [game-floor-deformation.md](game-floor-deformation.md): mutable absolute

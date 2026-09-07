@@ -115,3 +115,40 @@ Concurrent menu-title/status-text work was left untouched and committed
 separately as `c05548a`. This campaign changes only the radial source,
 its evidence notes/index, and the generated score summary. No compiler,
 tooling, shared type declaration, relocation inventory or banked row changes.
+
+## Falloff-parameter control at `8bb4c8b`
+
+Function Match Plan: refresh the six GAME-qualified views, all 126 retail
+words, all three eleven-argument call setups, both callee interfaces and the
+adjacent boundaries. The retained source is 508 bytes and strict 90.087300%;
+the 136-byte frame, fourteen blocks, seven branches, two calls, divide trap,
+one internal jump and one return remain as documented above. Three data
+address pairs are validated, with no candidate references or strings. This
+remains game-owned actor traversal; no SDK body or compiler setting changes.
+
+Retail normalizes the incoming halfword falloff once into s6, computes its
+word deficit at entry, and uses the same normalized value for the unity guard.
+The source separately introduces `s32 falloff_value = falloff`; the unmodified
+parameter is otherwise unused. Test using `falloff` directly in the existing
+word deficit initializer and unity comparison. Normal C integer promotion
+preserves both expressions over the full u16 domain, and the deficit remains
+an explicit signed word local at its original entry-time lifetime. This does
+not repeat the rejected experiment that moved the subtraction into the loop.
+
+Compare complete raw words and ordered references after the focused build.
+Preserve the other 28 actor functions, including the exact phase predicate;
+revert an unchanged or less faithful parameter control. Do not add a constant
+carrier, force argument-home stores or change local order to choose registers.
+
+The direct halfword-parameter control is rejected. It retains an unnormalized
+copy in s6 and adds masks for both the deficit and the in-loop unity test;
+retail normalizes once. The candidate grows to 516 bytes, retains both 4096
+materializations and merges the distance-failure continuation differently.
+Restore the explicit word `falloff_value`. This is evidence that eliminating
+that promotion does not explain the entry residue, not grounds to change the
+halfword ABI or discard the real non-unity path.
+
+Final restored verification with the separately closed actor-distance helper
+retains every radial instruction/relocation and strict 90.087300%. All 678
+tests, Ruff and diff checks pass; the full build retains the existing
+data/ownership/placement failures. No radial source change is kept or banked.

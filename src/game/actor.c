@@ -549,19 +549,18 @@ s32 actor_distance_to_point(
     s32 actor_height,
     s32 point_height)
 {
-    s32 delta_x = actor->position.vx - point_x;
-    s32 delta_z;
     s32 delta_y;
     s32 distance;
 
-    if (delta_x < -max_distance || max_distance < delta_x) {
+    point_x = actor->position.vx - point_x;
+    if (point_x < -max_distance || max_distance < point_x) {
         goto out_of_range;
     }
-    delta_z = actor->position.vz - point_z;
-    if (delta_z < -max_distance || max_distance < delta_z) {
+    point_z = actor->position.vz - point_z;
+    if (point_z < -max_distance || max_distance < point_z) {
         goto out_of_range;
     }
-    delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
     if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
         actor_height >>= 1;
         point_height >>= 1;
@@ -574,8 +573,8 @@ s32 actor_distance_to_point(
             goto out_of_range;
         }
     }
-    delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-    distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = SquareRoot0(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
     if (max_distance < distance) {
         goto out_of_range;
     }
