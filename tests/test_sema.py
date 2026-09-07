@@ -8,11 +8,13 @@ from scripts.kf.cli import main as cli_main
 from scripts.kf.sema import Context
 from scripts.kf.sema.addr import _render as render_address
 from scripts.kf.sema.cfg import build_graph
+from scripts.kf.sema.disasm import _render_cfg_text, _render_listing
 from scripts.kf.sema.evidence import Evidence
 from scripts.kf.sema.image import RetailImage
 from scripts.kf.sema.index import Binding, index
 from scripts.kf.sema.mips import (
     branch_target,
+    constant_branch_outcome,
     decode_control,
     load_delay_register,
 )
@@ -119,7 +121,7 @@ class SemanticToolTests(unittest.TestCase):
     def test_cfg_keeps_delay_slots_and_edges(self) -> None:
         payload = words(
             0x27BDFFF8,  # addiu sp,sp,-8
-            0x10000002,  # beq zero,zero,0x1010
+            0x10800002,  # beq a0,zero,0x1010: either outcome is possible
             0x24420001,  # delay slot
             0x24630001,  # fallthrough-only instruction
             0x00000000,
@@ -141,6 +143,119 @@ class SemanticToolTests(unittest.TestCase):
                 ("return", None),
             ],
         )
+
+    def test_constant_branch_operands(self) -> None:
+        for word, expected in (
+            (0x10000003, True),   # beq zero,zero
+            (0x10840003, True),   # beq a0,a0
+            (0x14000003, False),  # bne zero,zero
+            (0x14840003, False),  # bne a0,a0
+            (0x18000003, True),   # blez zero
+            (0x1C000003, False),  # bgtz zero
+            (0x04000003, False),  # bltz zero
+            (0x04010003, True),   # bgez zero
+            (0x10800003, None),   # beq a0,zero
+            (0x18800003, None),   # blez a0
+            (0x04810003, None),   # bgez a0
+            (0x04110003, None),   # bgezal zero: link form, not this helper
+            (0x50000003, None),   # beql: not MIPS-I
+        ):
+            with self.subTest(word=hex(word)):
+                self.assertIs(constant_branch_outcome(word), expected)
+
+    def test_constant_branches_keep_only_feasible_edges_and_both_delay_slots(self) -> None:
+        for word, kind, destination, dead in (
+            (0x10000003, "taken", 0x1010, 0x1008),
+            (0x14000003, "fallthrough", 0x1008, 0x1010),
+        ):
+            with self.subTest(word=hex(word)):
+                payload = words(word, 0x24420001, 0x03E00008, 0, 0x03E00008, 0)
+                graph = build_graph(function(0x1000, len(payload)), payload, FakeIndex())
+                self.assertTrue(graph.reachability_complete)
+                self.assertEqual(graph.issues, ())
+                self.assertEqual(
+                    [(edge.kind, edge.target) for edge in graph.blocks[0].successors],
+                    [(kind, destination)],
+                )
+                self.assertEqual(graph.blocks[0].instructions[-1].word, 0x24420001)
+                self.assertEqual(graph.delay_slots, {
+                    0x1004: 0x1000, 0x100C: 0x1008, 0x1014: 0x1010,
+                })
+                self.assertIn("unreachable", next(b for b in graph.blocks if b.start == dead).flags)
+
+    def test_unresolved_dispatch_does_not_prove_other_blocks_unreachable(self) -> None:
+        payload = words(0x00400008, 0, 0x03E00008, 0)  # jr v0; possible case tail
+        graph = build_graph(function(0x1000, len(payload)), payload, FakeIndex())
+        self.assertFalse(graph.as_dict()["reachability_complete"])
+        self.assertIn("unresolved-successor", graph.blocks[0].flags)
+        self.assertIn("reachability-unknown", graph.blocks[1].flags)
+        self.assertNotIn("unreachable", graph.blocks[1].flags)
+        self.assertIn("unresolved indirect jump", graph.issues[0])
+        self.assertEqual(
+            [(edge.kind, edge.target) for edge in graph.edges],
+            [("indirect-jump", None), ("return", None)],
+        )
+
+    def test_dead_indirect_jump_does_not_invalidate_known_reachability(self) -> None:
+        payload = words(0x03E00008, 0, 0x00400008, 0)
+        graph = build_graph(function(0x1000, len(payload)), payload, FakeIndex())
+        self.assertTrue(graph.reachability_complete)
+        self.assertIn("unreachable", graph.blocks[1].flags)
+
+    def test_two_exit_paths_share_one_return_without_losing_either_jump(self) -> None:
+        payload = words(
+            0x10800003, 0,             # beq a0,zero,0x1010
+            0x08000406, 0x24020001,    # j 0x1018; result=1
+            0x08000406, 0x24020002,    # j 0x1018; result=2
+            0x03E00008, 0x27BD0008,    # shared return and stack restore
+        )
+        graph = build_graph(function(0x1000, len(payload)), payload, FakeIndex())
+        self.assertTrue(graph.reachability_complete)
+        self.assertEqual(sum(e.kind == "return" for e in graph.edges), 1)
+        self.assertEqual(graph.blocks[-1].predecessors, [0x1008, 0x1010])
+        self.assertEqual(
+            [(e.site, e.target) for e in graph.edges if e.kind == "jump"],
+            [(0x1008, 0x1018), (0x1010, 0x1018)],
+        )
+
+    def test_incomplete_graph_warnings_are_visible_in_both_text_views(self) -> None:
+        payload = words(0x00400008, 0, 0x03E00008, 0)
+        graph = build_graph(function(0x1000, len(payload)), payload, FakeIndex())
+        document = graph.as_dict()
+        listing_rows = []
+        for block in document["blocks"]:
+            for row in block["instructions"]:
+                row.update(text=f".word {row['word']:#x}", notes=[])
+                listing_rows.append({
+                    **row, "block": block["start"],
+                    "bytes": row["word"].to_bytes(4, "little").hex(),
+                })
+        listing = {
+            "target": graph.function.as_dict(), "va": 0x1000, "size": len(payload),
+            "instructions": listing_rows, "cfg": document,
+        }
+        for rendered in (
+            _render_cfg_text(document),
+            _render_listing(listing, lite=False, blocks=True),
+        ):
+            self.assertEqual(rendered.count("in: entry"), 1)
+            self.assertIn("in: none", rendered)
+            self.assertIn("reachability-unknown", rendered)
+            self.assertIn("WARNING: 0x00001000 has an unresolved indirect jump", rendered)
+
+    def test_missing_delay_slot_and_truncation_are_incomplete(self) -> None:
+        for body_size, payload in ((4, words(0x03E00008)), (12, words(0x03E00008, 0)), (0, b"")):
+            with self.subTest(body_size=body_size):
+                graph = build_graph(function(0x1000, body_size), payload, FakeIndex())
+                self.assertFalse(graph.reachability_complete)
+                self.assertTrue(graph.issues)
+
+    def test_branch_into_delay_slot_makes_reachability_uncertain(self) -> None:
+        payload = words(0x10000000, 0, 0x03E00008, 0)  # branch to its own slot
+        graph = build_graph(function(0x1000, len(payload)), payload, FakeIndex())
+        self.assertFalse(graph.reachability_complete)
+        self.assertIn("enters the delay slot", graph.issues[0])
+        self.assertIn("reachability-unknown", graph.blocks[1].flags)
 
     def test_call_keeps_delay_slot_and_proven_target(self) -> None:
         target = 0x3000

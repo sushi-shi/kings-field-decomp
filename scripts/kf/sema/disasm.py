@@ -199,7 +199,7 @@ def _render_listing(document: dict[str, object], *, lite: bool, blocks: bool) ->
             detail = block_details.get(block, {})
             predecessors = ", ".join(
                 f"0x{value:08x}" for value in detail.get("predecessors", [])
-            ) or "entry"
+            ) or ("entry" if block == target.get("va") else "none")
             flags = ", ".join(detail.get("flags", []))
             lines.append("")
             lines.append(
@@ -213,6 +213,8 @@ def _render_listing(document: dict[str, object], *, lite: bool, blocks: bool) ->
         else:
             raw = bytes.fromhex(row["bytes"]).hex(" ")
             lines.append(f"  {row['va']:08x}: {raw:<11} {row['text']}{notes}")
+    if isinstance(cfg, dict):
+        lines.extend(f"WARNING: {issue}" for issue in cfg.get("issues", []))
     return "\n".join(lines)
 
 
@@ -255,7 +257,8 @@ def _render_cfg_text(document: dict[str, object]) -> str:
         f"{len(document['blocks'])} block(s), {len(document['edges'])} edge(s)"
     ]
     for block in document["blocks"]:
-        preds = ", ".join(f"0x{value:08x}" for value in block["predecessors"]) or "entry"
+        preds = ", ".join(f"0x{value:08x}" for value in block["predecessors"])
+        preds = preds or ("entry" if block["start"] == function["va"] else "none")
         flags = ", ".join(block["flags"])
         lines.append("")
         lines.append(

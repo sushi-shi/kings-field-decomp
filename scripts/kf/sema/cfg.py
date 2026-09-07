@@ -5,7 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from scripts.kf.sema.index import Binding, Index
-from scripts.kf.sema.mips import Instruction, with_controls, decode_words
+from scripts.kf.sema.mips import (
+    Instruction, constant_branch_outcome, with_controls, decode_words,
+)
 
 
 @dataclass
@@ -60,6 +62,7 @@ class Graph:
     edges: tuple[Edge, ...]
     delay_slots: dict[int, int]
     issues: tuple[str, ...]
+    reachability_complete: bool = True
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -71,6 +74,7 @@ class Graph:
                 for slot, owner in sorted(self.delay_slots.items())
             ],
             "issues": list(self.issues),
+            "reachability_complete": self.reachability_complete,
         }
 
 
@@ -90,29 +94,36 @@ def build_graph(function: Binding, payload: bytes, idx: Index) -> Graph:
         )
     instructions = with_controls(decode_words(function.va, payload[:function.body_size]))
     if not instructions:
-        return Graph(function, (), (), {}, ("no complete instruction decoded",))
+        return Graph(function, (), (), {}, ("no complete instruction decoded",), False)
 
     addresses = {row.va for row in instructions}
     instruction_by_va = {row.va: row for row in instructions}
     leaders = {instructions[0].va}
     delay_slots: dict[int, int] = {}
     issues: list[str] = []
+    if len(payload) < function.body_size or function.body_size % 4:
+        issues.append("function extent is not completely decoded; reachability is incomplete")
 
     for row in instructions:
         control = row.control
         if control is None:
             continue
         after = row.va + (8 if control.delay_slot else 4)
-        if control.delay_slot and row.va + 4 in addresses:
-            previous = delay_slots.setdefault(row.va + 4, row.va)
-            if previous != row.va:
-                issues.append(
-                    f"0x{row.va + 4:08x} is a delay slot for multiple transfers"
-                )
+        if control.delay_slot:
+            if row.va + 4 in addresses:
+                delay_slots[row.va + 4] = row.va
+            else:
+                issues.append(f"0x{row.va:08x} has no decoded delay slot")
+        if control.annulled:
+            issues.append(f"0x{row.va:08x} has an unmodeled annulled delay slot")
         if control.target in addresses:
             leaders.add(control.target)
         if control.terminates_block and after in addresses:
             leaders.add(after)
+
+    for slot in delay_slots:
+        if instruction_by_va[slot].control is not None:
+            issues.append(f"0x{slot:08x} contains a control transfer in a delay slot")
 
     targeted_delay_slots = sorted(leaders & set(delay_slots))
     for va in targeted_delay_slots:
@@ -185,15 +196,17 @@ def build_graph(function: Binding, payload: bytes, idx: Index) -> Graph:
         after = terminal.va + (8 if control.delay_slot else 4)
         target_block = _block_for(blocks, control.target)
         if control.kind == "branch":
-            edges.append(Edge(
-                block.start,
-                terminal.va,
-                "taken" if target_block else "taken-external",
-                control.target,
-                target_block.start if target_block else None,
-            ))
+            outcome = constant_branch_outcome(terminal.word)
+            if outcome is not False:
+                edges.append(Edge(
+                    block.start,
+                    terminal.va,
+                    "taken" if target_block else "taken-external",
+                    control.target,
+                    target_block.start if target_block else None,
+                ))
             fallthrough = _block_for(blocks, after)
-            if fallthrough is not None:
+            if outcome is not True and fallthrough is not None:
                 edges.append(Edge(
                     block.start,
                     terminal.va,
@@ -253,9 +266,20 @@ def build_graph(function: Binding, payload: bytes, idx: Index) -> Graph:
                 continue
             pending.append(edge.target_block)
 
+    for edge in edges:
+        if edge.kind == "indirect-jump" and edge.source in reachable:
+            issues.append(
+                f"0x{edge.site:08x} has an unresolved indirect jump; "
+                "reachability is incomplete"
+            )
+    reachability_complete = not issues
     for block in blocks:
         if block.start not in reachable:
-            block.flags.add("unreachable")
+            block.flags.add(
+                "unreachable" if reachability_complete else "reachability-unknown"
+            )
+        if any(edge.kind == "indirect-jump" for edge in block.successors):
+            block.flags.add("unresolved-successor")
         if any(source > block.start for source in block.predecessors):
             block.flags.add("loop-head")
         if len(set(block.predecessors)) > 2 and any(
@@ -272,4 +296,5 @@ def build_graph(function: Binding, payload: bytes, idx: Index) -> Graph:
         tuple(edges),
         delay_slots,
         tuple(dict.fromkeys(issues)),
+        reachability_complete,
     )

@@ -73,10 +73,28 @@ tails, and unusual branches into delay slots are annotated. GPR loads are also
 marked because their value is unavailable to the immediately following
 instruction on the R3000A.
 
+Operand-proven MIPS-I branches have only their feasible successor: for example,
+`beq zero,zero` has no fallthrough, and `bne r,r` has no taken edge. Both still
+execute their delay slot. Unknown register values are not guessed.
+
 Direct J/JAL and conditional branch targets are decoded. JALR/JR targets are
 reported as unresolved indirect calls/jumps. Switch-table and general indirect
 target recovery are deliberately deferred; the tool does not invent edges from
 unproven pointer tables.
+
+CFG JSON includes `reachability_complete`. A reachable unresolved indirect jump
+or an unsupported/missing control-flow detail makes this false. Blocks not
+reached by the known edges are then `reachability-unknown`, not `unreachable`;
+the unresolved dispatch block is marked `unresolved-successor`. Both CFG text
+and `disasm --blocks` print the warnings. A block without known predecessors is
+labelled `in: none`, not another function entry. Only an issue-free graph with
+no reachable unresolved jump marks unreached blocks `unreachable`, within the
+curated function extent and normal call/return model.
+
+This is a retail graph, not an automatic retail-versus-compiled equivalence
+check. Count and inspect branches into shared epilogues as well as `jr ra`
+instructions: several early exits can share one return instruction. Equal
+branch/return counts do not establish equal paths or predicates.
 
 ### Xrefs and call trees
 

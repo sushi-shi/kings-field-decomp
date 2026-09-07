@@ -48,6 +48,24 @@ def branch_target(va: int, word: int) -> int:
     return (va + 4 + (sign_extend_16(word & 0xFFFF) << 2)) & 0xFFFFFFFF
 
 
+def constant_branch_outcome(word: int) -> bool | None:
+    """Decide only MIPS-I non-link branches whose operands prove the result.
+
+    None means both outcomes remain possible; this does not follow register
+    values through preceding instructions or reinterpret a branch as a jump.
+    The ordinary branch delay slot executes even when the result is False.
+    """
+    opcode, rs, rt = word >> 26, (word >> 21) & 0x1F, (word >> 16) & 0x1F
+    if opcode in {0x04, 0x05} and rs == rt:  # beq/bne r,r
+        return opcode == 0x04
+    if rs == 0:
+        if opcode in {0x06, 0x07} and rt == 0:  # blez/bgtz zero
+            return opcode == 0x06
+        if opcode == 0x01 and rt in {0x00, 0x01}:  # bltz/bgez zero
+            return rt == 0x01
+    return None
+
+
 def _branch(va: int, word: int, mnemonic: str, *, call: bool = False,
             annulled: bool = False) -> Control:
     return Control(
