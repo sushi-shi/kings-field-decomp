@@ -7,24 +7,31 @@
 
 enum {
     KF_OPENING_ENTITY_CAPACITY = 32,
-    KF_OPENING_ENTITY_FREE = 0xff,
-    KF_OPENING_ENTITY_MODEL_LIMIT = 32,
     KF_OPENING_ENTITY_FLOOR_HEIGHT = 0
 };
 
-/* Shared resource indices, named by their scene-script motion roles. */
-enum {
+/* OPEN's entity TMD indices; the serialized placement byte is shared with GAME. */
+KF_ENUM_BEGIN(KfOpeningModelId, u8)
     KF_OPENING_SCENE0_DECREASING_YAW_MODEL = 11,
     KF_OPENING_SCENE0_INCREASING_YAW_MODEL = 12,
     KF_OPENING_SCENE3_INCREASING_YAW_MODEL = 13,
     KF_OPENING_SCENE3_DECREASING_YAW_MODEL = 14,
-    KF_OPENING_ENDING_TRANSLATING_MODEL = 26,
-    KF_OPENING_ENDING_ROTATING_MODEL = 27
-};
+    KF_OPENING_TRANSITION_CYLINDER = 19,
+    KF_OPENING_TAPERED_COLUMN = 20,
+    KF_OPENING_GREEN_CRYSTAL_INCREASING_YAW = 21,
+    KF_OPENING_PINK_CRYSTAL_INCREASING_YAW = 22,
+    KF_OPENING_GREEN_CRYSTAL_DECREASING_YAW = 23,
+    KF_OPENING_PINK_CRYSTAL_DECREASING_YAW = 24,
+    KF_OPENING_CASTLE_MOUNTAIN_BACKDROP = 25,
+    KF_OPENING_ENDING_ORANGE_DISK = 26,
+    KF_OPENING_ENDING_STARFIELD = 27,
+    KF_OPENING_ENTITY_MODEL_LIMIT = 32,
+    KF_OPENING_ENTITY_FREE = 0xff
+KF_ENUM_END(KfOpeningModelId)
 
 /* OPEN title-scene entity and its 32-slot runtime pool. */
 typedef struct KfOpeningEntity {
-    u8 object_id;
+    KfOpeningModelId object_id;
     u8 unknown_01;
     u16 cell_x;
     u16 cell_z;
@@ -48,7 +55,7 @@ extern u16 floor_item_count;
 
 extern void opening_entity_pool_reset(void);
 extern KfOpeningEntity *opening_entity_find_by_object_id(
-    KfOpeningEntity *entities, u8 object_id);
+    KfOpeningEntity *entities, KfOpeningModelId object_id);
 extern void opening_entity_pool_load_placements(
     const KfMapObjectPlacement *placements, s32 base_y);
 

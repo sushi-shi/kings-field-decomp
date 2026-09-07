@@ -30,7 +30,6 @@ enum {
     TRANSITION_CREATE = 3,
     TRANSITION_FIRST_ENTITY_SLOT = 24,
     TRANSITION_ENTITY_COUNT = 4,
-    TRANSITION_MODEL_ID = 0x13,
     TRANSITION_TALL_SCALE_Y = 0x2000,
     TRANSITION_SCALE_STEP = 0x100,
     TRANSITION_YAW_STEP = 0x200,
@@ -391,7 +390,7 @@ void opening_entity_transition(s16 mode, const VECTOR *position)
     position_snapshot.vz = position->vz;
     position_snapshot.vy = position->vy;
     do {
-        entity->object_id = TRANSITION_MODEL_ID;
+        entity->object_id = KF_OPENING_TRANSITION_CYLINDER;
         entity->position = *position;
         entity->rotation.z = 0;
         entity->rotation.y = 0;
@@ -739,9 +738,9 @@ void opening_ending_scroll_run(void)
     cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);
 
     entity_26 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, KF_OPENING_ENDING_TRANSLATING_MODEL);
+        opening_entity_state.entities, KF_OPENING_ENDING_ORANGE_DISK);
     entity_27 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, KF_OPENING_ENDING_ROTATING_MODEL);
+        opening_entity_state.entities, KF_OPENING_ENDING_STARFIELD);
     lighting_phase = ENDING_LIGHT_TO_MIDPOINT;
     background_blend = 0;
     sequence_phase = ENDING_SEQUENCE_WAIT_SCROLL;
@@ -814,7 +813,7 @@ void opening_ending_scroll_run(void)
         } else if (scrolling == 0) {
             entity_26->object_id = KF_OPENING_ENTITY_FREE;
             scrolling = 1;
-            entity_27->object_id = KF_OPENING_ENDING_ROTATING_MODEL;
+            entity_27->object_id = KF_OPENING_ENDING_STARFIELD;
         }
         render_set_view_transform(
             &opening_camera_path_state.position, &opening_camera_path_state.rotation);

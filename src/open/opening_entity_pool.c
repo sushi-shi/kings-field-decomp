@@ -24,7 +24,7 @@ void opening_entity_pool_reset(void)
 
 ADDRESS(0x800199e0, 0x44)
 KfOpeningEntity *opening_entity_find_by_object_id(
-    KfOpeningEntity *entities, u8 object_id)
+    KfOpeningEntity *entities, KfOpeningModelId object_id)
 {
     KfOpeningEntity *entity = entities;
 
@@ -55,8 +55,8 @@ void opening_entity_pool_load_placements(
         mark_empty:
             entity->object_id = KF_OPENING_ENTITY_FREE;
         } else {
-            if (placement->object_id != KF_OPENING_ENTITY_FREE) {
-                entity->object_id = placement->object_id;
+            if (KF_ENUM_DECODE(KfOpeningModelId, placement->object_id) != KF_OPENING_ENTITY_FREE) {
+                entity->object_id = KF_ENUM_DECODE(KfOpeningModelId, placement->object_id);
                 entity->cell_x = placement->tile_x;
                 entity->cell_z = placement->tile_z;
                 entity->rotation.z = 0;

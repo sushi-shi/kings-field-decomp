@@ -42,7 +42,7 @@ void opening_entity_render(KfOpeningEntity *entity)
     MATRIX model;
     MATRIX light;
     long flag;
-    u16 object_id;
+    KF_ENUM_STORAGE(KfOpeningModelId, u16) object_id;
     s16 depth;
 
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
@@ -70,41 +70,41 @@ void opening_entity_render(KfOpeningEntity *entity)
     case KF_OPENING_SCENE0_INCREASING_YAW_MODEL:
     case KF_OPENING_SCENE3_INCREASING_YAW_MODEL:
     case KF_OPENING_SCENE3_DECREASING_YAW_MODEL:
-    case 20:
+    case KF_OPENING_TAPERED_COLUMN:
         depth = OPENING_MODEL_DEPTH_BIAS;
         break;
-    case 21:
-    case 22:
+    case KF_OPENING_GREEN_CRYSTAL_INCREASING_YAW:
+    case KF_OPENING_PINK_CRYSTAL_INCREASING_YAW:
         entity->rotation.y = (entity->rotation.y + OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
-    case 23:
-    case 24:
+    case KF_OPENING_GREEN_CRYSTAL_DECREASING_YAW:
+    case KF_OPENING_PINK_CRYSTAL_DECREASING_YAW:
         entity->rotation.y = (entity->rotation.y - OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
-    case 25:
-        tmd_select_object_vertices(object_id);
+    case KF_OPENING_CASTLE_MOUNTAIN_BACKDROP:
+        tmd_select_object_vertices(KF_ENUM_ENCODE(u16, object_id));
         tmd_project_vertices_perspective_right(
-            tmd_get_object(object_id)->vertex_count);
-        render_enqueue_tmd(object_id, 0);
+            tmd_get_object(KF_ENUM_ENCODE(u16, object_id))->vertex_count);
+        render_enqueue_tmd(KF_ENUM_ENCODE(u16, object_id), 0);
         return;
-    case KF_OPENING_ENDING_TRANSLATING_MODEL:
+    case KF_OPENING_ENDING_ORANGE_DISK:
         depth = ENDING_TRANSLATING_MODEL_DEPTH_BIAS;
         goto render_alternate;
-    case KF_OPENING_ENDING_ROTATING_MODEL:
+    case KF_OPENING_ENDING_STARFIELD:
         depth = ENDING_ROTATING_MODEL_DEPTH_BIAS;
     render_alternate:
-        tmd_select_object_vertices(object_id);
-        tmd_project_vertices(tmd_get_object(object_id)->vertex_count);
-        render_enqueue_unlit_triangles(object_id, depth);
+        tmd_select_object_vertices(KF_ENUM_ENCODE(u16, object_id));
+        tmd_project_vertices(tmd_get_object(KF_ENUM_ENCODE(u16, object_id))->vertex_count);
+        render_enqueue_unlit_triangles(KF_ENUM_ENCODE(u16, object_id), depth);
         return;
     default:
         depth = 0;
         break;
     }
 
-    tmd_select_object_vertices(object_id);
-    tmd_project_vertices(tmd_get_object(object_id)->vertex_count);
-    render_enqueue_tmd(object_id, depth);
+    tmd_select_object_vertices(KF_ENUM_ENCODE(u16, object_id));
+    tmd_project_vertices(tmd_get_object(KF_ENUM_ENCODE(u16, object_id))->vertex_count);
+    render_enqueue_tmd(KF_ENUM_ENCODE(u16, object_id), depth);
 }
 
 ADDRESS(0x800190f4, 0x14c)

@@ -1,5 +1,10 @@
 # OPEN renderer constants and shared scene model IDs
 
+The later [OPEN model-domain review](open-model-domain.md) types the selector,
+identifies the six formerly raw renderer IDs from resources, and refines the
+ending disk/starfield names. The account below records the earlier campaign;
+the [retained-literal ledger](open-render-literal-ledger.md) tracks current source.
+
 ## Function Match Plan
 
 Baseline `cd679e4`, hash-verified OPEN retail and unchanged `probe-gcc257-o2-g0`.

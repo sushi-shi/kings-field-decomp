@@ -452,7 +452,7 @@ KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfNotificationState	0x00	0x10	message_payloads	u16[8]	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	parallel numeric payloads used only by message 0x13
 KfNotificationState	0x10	0x06	control	KfNotificationControl	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	shared dequeue and effect controls immediately after the eight numeric payloads
-KfOpeningEntity	0x00	0x01	object_id	u8	supported	open_resources.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
+KfOpeningEntity	0x00	0x01	object_id	KfOpeningModelId	supported	open_resources.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
 KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
 KfOpeningEntity	0x02	0x02	cell_x	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record
 KfOpeningEntity	0x04	0x02	cell_z	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell z copied from the placement record

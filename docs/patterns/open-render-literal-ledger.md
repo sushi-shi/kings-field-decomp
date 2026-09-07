@@ -1,6 +1,7 @@
 # OPEN renderer retained-literal ledger
 
-Companion to [the renderer evidence](open-render-constants.md). Every remaining
+Companion to [the renderer evidence](open-render-constants.md) and the
+[model-domain review](open-model-domain.md). Every remaining
 numeric/character occurrence in these four C files has a row. Comments, strings,
 identifier digits, enum/macro definitions and ADDRESS/DATA/RODATA claims are
 excluded. Repeated literals have separate rows in source order; unary minus
@@ -9,9 +10,9 @@ constants and retains its separate earlier literal audit.
 
 ## `src/open/opening_render.c`
 
-26 → 24 retained occurrences.
+24 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `sprite_add_g4` | 27 | `0` | `prim->x0 = position[0];` | Rectangle X halfword index. |
 | `sprite_add_g4` | 28 | `1` | `prim->y0 = position[1];` | Rectangle Y halfword index. |
@@ -40,18 +41,16 @@ constants and retains its separate earlier literal audit.
 
 ## `src/open/opening_scene0_render.c`
 
-1 → 0 retained occurrences.
+0 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-
-No retained numeric/character literals.
 
 ## `src/open/entity_render.c`
 
-102 → 84 retained occurrences.
+78 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `initializers` | 19 | `7` | `KfSpriteQuad floor_item_sprites[7] = {` | Complete authored descriptor count, including the duplicated second frame; not an inferred item-type enum. |
 | `initializers` | 20 | `0x90` | `{0x90, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored floor-item sprite u coordinate/span; the typed tuple preserves atlas layout and projected billboard geometry. |
@@ -121,13 +120,7 @@ No retained numeric/character literals.
 | `initializers` | 31 | `0` | `{{0, 0, KF_FIXED12_ONE}, {0, 0, KF_FIXED12_ONE}, {0, 0, 0}}, {0, 0, 0},` | Zero SDK matrix translation Y. |
 | `initializers` | 31 | `0` | `{{0, 0, KF_FIXED12_ONE}, {0, 0, KF_FIXED12_ONE}, {0, 0, 0}}, {0, 0, 0},` | Zero SDK matrix translation Z. |
 | `opening_entity_render` | 67 | `0` | `depth = 0;` | Zero additional ordering-table depth bias. |
-| `opening_entity_render` | 73 | `20` | `case 20:` | Authored model ordinal: shares the -100 depth bias. No additional scene/story identity is established; preserve the resource index. |
-| `opening_entity_render` | 76 | `21` | `case 21:` | Authored model ordinal: increments yaw. No additional scene/story identity is established; preserve the resource index. |
-| `opening_entity_render` | 77 | `22` | `case 22:` | Authored model ordinal: increments yaw. No additional scene/story identity is established; preserve the resource index. |
-| `opening_entity_render` | 80 | `23` | `case 23:` | Authored model ordinal: decrements yaw. No additional scene/story identity is established; preserve the resource index. |
-| `opening_entity_render` | 81 | `24` | `case 24:` | Authored model ordinal: decrements yaw. No additional scene/story identity is established; preserve the resource index. |
-| `opening_entity_render` | 84 | `25` | `case 25:` | Authored model ordinal: uses the alternate perspective-right projection helper. No additional scene/story identity is established; preserve the resource index. |
-| `opening_entity_render` | 88 | `0` | `render_enqueue_tmd(object_id, 0);` | Zero additional ordering-table depth bias. |
+| `opening_entity_render` | 88 | `0` | `render_enqueue_tmd(KF_ENUM_ENCODE(u16, object_id), 0);` | Zero additional ordering-table depth bias. |
 | `opening_entity_render` | 101 | `0` | `depth = 0;` | Zero additional ordering-table depth bias. |
 | `render_floor_item` | 128 | `0` | `if ((u8)facing != 0) {` | Zero packed facing selects billboard rotation; nonzero values select fixed yaw. |
 | `render_floor_item` | 141 | `1` | `&floor_item_sprites[item->item_id + item->animation_frame], depth_bias, 1);` | True sprite perspective-adjustment flag; the callee boosts its perspective/fog input by one half. |
@@ -140,9 +133,9 @@ No retained numeric/character literals.
 
 ## `src/open/opening_render_entities.c`
 
-2 → 2 retained occurrences.
+2 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `opening_render_entities` | 14 | `1` | `remaining = KF_OPENING_ENTITY_CAPACITY - 1;` | Convert entity capacity to the last zero-based countdown value. |
 | `opening_render_entities` | 20 | `1` | `} while (--remaining != -1);` | Negative-one countdown exhaustion; unary minus remains in the source context. |

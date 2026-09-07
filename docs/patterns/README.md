@@ -495,3 +495,7 @@ promotes a probe to a proven historical toolchain.
 - [GAME map-object state domains](game-map-object-state-domains.md): distinct
   behavior/action types, typed door mapping and retained behavior-3 evidence;
   [current occurrence ledger](game-map-object-literal-ledger.md) covers both modules.
+
+- [OPEN model enum domain](open-model-domain.md): separate model IDs through
+  entity storage, lookup and rendering, with resource-backed geometry names;
+  [entity-pool ledger](open-entity-pool-literal-ledger.md) covers its retained literals.

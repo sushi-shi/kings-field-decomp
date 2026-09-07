@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [object-model enum review](game-object-model-domain.md):
+Working snapshot after the [OPEN model enum review](open-model-domain.md):
 **111 C files**, **112 source/image variants**,
-and **6,792 inline numeric/character occurrences**. The counts include authored
+and **6,786 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **28 files / 2,484 occurrences**, the explicit ledger rows were compared
+For **29 files / 2,491 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -35,8 +35,8 @@ subtracting the verified subtotal from the source census.
 ## Next coverage work
 
 1. Refresh the status-text ledgers after their later reconstruction changes.
-2. Type and name object-model identifier domains; the floor domain now
-   propagates through player/save storage, comparisons and resource/warp APIs.
+2. Continue domain propagation beyond the typed GAME/OPEN model IDs and floor
+   identity; audit remaining selector fields and their consumers.
 3. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
 4. Verify every retained occurrence against its reason before marking a file
@@ -151,7 +151,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## OPEN.EXE
 
-34 files; 1,319 occurrences.
+34 files; 1,313 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -162,7 +162,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [camera_path.c](../../src/open/camera_path.c) | 3 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |
 | [debug.c](../../src/open/debug.c) | 0 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | No retained literal tokens. |
 | [display_adjust.c](../../src/open/display_adjust.c) | 19 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
-| [entity_render.c](../../src/open/entity_render.c) | 84 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [entity_render.c](../../src/open/entity_render.c) | 78 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [fixed_vector2_length.c](../../src/open/fixed_vector2_length.c) | 0 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | No retained literal tokens. |
 | [format.c](../../src/open/format.c) | 62 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
 | [item.c](../../src/open/item.c) | 2 | [domain evidence](game-entity-sprite-tables.md) | Expand the domain audit into current occurrence coverage. |
@@ -170,7 +170,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [matrix.c](../../src/open/matrix.c) | 8 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [matrix_rotation.c](../../src/open/matrix_rotation.c) | 87 | [domain notes](source-constant-names.md#math-and-packed-color-batch) | Expand the domain audit into current occurrence coverage. |
 | [opening_controller.c](../../src/open/opening_controller.c) | 9 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | Expand the domain audit into current occurrence coverage. |
-| [opening_entity_pool.c](../../src/open/opening_entity_pool.c) | 13 | [domain evidence](semantic-field-names.md) | Expand the domain audit into current occurrence coverage. |
+| [opening_entity_pool.c](../../src/open/opening_entity_pool.c) | 13 | [pool ledger](open-entity-pool-literal-ledger.md); [domain evidence](open-model-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_fade.c](../../src/open/opening_fade.c) | 24 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
 | [opening_helpers.c](../../src/open/opening_helpers.c) | 4 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | Expand the domain audit into current occurrence coverage. |
 | [opening_render.c](../../src/open/opening_render.c) | 24 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
