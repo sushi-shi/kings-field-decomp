@@ -43,7 +43,7 @@ void memory_allocation_reset(void)
 }
 
 ADDRESS(0x8001ab08, 0xa8)
-void memory_set_allocation_mode(s32 mode)
+void memory_set_allocation_mode(KfMemoryAllocationMode mode)
 {
     switch (mode) {
     case KF_MEMORY_CREATE_ARENA:

@@ -545,6 +545,11 @@ existing data-placement/ownership failures. Exact-count movement is zero.
 
 ## Allocator, formatter, and VRAM viewer plan
 
+The later [allocation-mode/startup review](allocation-mode-domain.md) makes
+the shared mode API enum-typed and supplies a
+[complete current allocator/startup ledger](allocator-startup-literal-ledger.md).
+The historical plan and grouped accounting below describe the earlier naming pass.
+
 Follow the shared allocator from GAME/OPEN startup through arena rebasing and
 the resource loaders' switch to heap allocation. Name the three modes, stack
 metadata position, allocation alignment, and observed RAM/heap bounds without

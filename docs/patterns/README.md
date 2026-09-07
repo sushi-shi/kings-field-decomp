@@ -555,3 +555,7 @@ promotes a probe to a proven historical toolchain.
 - [Formatter state domains](formatter-state-domains.md): separate digit, parser
   and padding enums, preserved custom grammar and clarified scratch ownership,
   with the [complete three-file ledger](formatter-literal-ledger.md).
+
+- [Allocation mode and startup coverage](allocation-mode-domain.md): typed
+  shared allocator API and all nine mode calls, with a
+  [complete four-file ledger](allocator-startup-literal-ledger.md).
