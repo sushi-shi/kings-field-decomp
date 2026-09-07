@@ -1,6 +1,6 @@
 # Window renderer and list-initializer literals
 
-Complete ledger for `menu_draw_window` and `menu_list_init`: all **15**
+Complete ledger for `menu_draw_window` and `menu_list_init`: all **13**
 remaining numeric occurrences have specific reasons. Retail address/extent
 claims and named constant definitions are excluded. Other functions in
 `menu_runtime.c` are outside this ledger. See the
@@ -8,6 +8,9 @@ claims and named constant definitions are excluded. Other functions in
 
 The [shared-dimension review](game-item-menu-dimensions.md) names the database
 extents and glyph-row width while preserving local workspace capacities.
+
+The [complete runtime ledger](game-menu-runtime-literal-ledger.md) now covers
+the full runtime module, including these focused slices.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -21,8 +24,6 @@ extents and glyph-row width while preserving local workspace capacities.
 | `menu_list_init` | 566 | `0x16` | `list->list_x = 0x16;` | Authored list-panel X origin, 22 screen pixels. The renderer adds its three-pixel text inset independently. |
 | `menu_list_init` | 567 | `0x26` | `list->list_y = 0x26;` | Authored list-panel Y origin, 38 screen pixels. The renderer adds its three-pixel inset and twelve-pixel row offsets. |
 | `menu_list_init` | 568 | `0` | `list->entry_count = 0;` | The list initially has no entries; each caller fills the count after constructing its rows. |
-| `menu_list_init` | 569 | `0x0b` | `list->visible_rows = 0x0b;` | Default visible-row count eleven gives a 132-pixel sequence at the renderer's twelve-pixel pitch. This is layout configuration, not the item-buffer capacity; the original choice of eleven is unknown. |
 | `menu_list_init` | 570 | `0` | `list->scroll_offset = 0;` | Start the visible window at entry zero. |
 | `menu_list_init` | 571 | `0` | `list->selected_index = 0;` | Initial selection is the first entry, with empty lists handled by the caller. |
 | `menu_list_init` | 572 | `0` | `list->cursor_row = 0;` | Initial highlight is the top visible row. |
-| `menu_list_init` | 573 | `8` | `list->glyphs_per_entry = 8;` | Default row stride is eight glyph halfwords. All seven confirmed callers overwrite it with ten before rendering; preserve this initializer behavior rather than pretending it is the common asset-name width. |

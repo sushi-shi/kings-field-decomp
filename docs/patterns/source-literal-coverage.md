@@ -1,7 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after `fe423df`: **111 C files**, **112 source/image variants**,
-and **7,098 inline numeric/character occurrences**. The counts include authored
+Working snapshot after the [menu-runtime review](game-menu-runtime-constants.md):
+**111 C files**, **112 source/image variants**,
+and **7,025 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -17,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **18 files / 1,706 occurrences**, the explicit ledger rows were compared
+For **19 files / 1,809 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -33,14 +34,11 @@ by subtracting this subtotal from the source census.
 
 ## Next coverage work
 
-1. Complete the menu-runtime module audit beyond its existing window/preview
-   slices, including drawing offsets, default primitive brightness, list defaults
-   and numbered texture-path construction.
-2. Cover the dialog/frame/marker helpers in the item-detail module and refresh
+1. Cover the dialog/frame/marker helpers in the item-detail module and refresh
    the status/list ledgers after their later reconstruction changes.
-3. Audit the remaining warp motion/timing values against retail and complete
+2. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
-4. Verify every retained occurrence against its reason before marking a file
+3. Verify every retained occurrence against its reason before marking a file
    complete. File-name mentions, table totals and unchanged object bytes alone
    cannot establish semantic coverage.
 
@@ -126,7 +124,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_list_render.c](../../src/game/menu_list_render.c) | 34 | [game-menu-panel ledger](game-menu-panel-literal-ledger.md) | Historical panel ledger is superseded by the exact list reconstruction; refresh current expressions. |
 | [menu_map_viewer.c](../../src/game/menu_map_viewer.c) | 107 | [game-menu-panel ledger](game-menu-panel-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_panels.c](../../src/game/menu_panels.c) | 64 | [game-menu-choice ledger](game-menu-choice-literal-ledger.md); [game-spell ledger](game-spell-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
-| [menu_runtime.c](../../src/game/menu_runtime.c) | 176 | [game-menu-preview ledger](game-menu-preview-literal-ledger.md); [game-menu-window ledger](game-menu-window-literal-ledger.md); [domain notes](source-constant-names.md#menu-glyph-encoding-and-atlas-dimensions) | Focused ledgers omit several drawing/formatting/frame helpers; finish a complete module ledger. |
+| [menu_runtime.c](../../src/game/menu_runtime.c) | 103 | [complete runtime ledger](game-menu-runtime-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_select.c](../../src/game/menu_select.c) | 104 | [game-equipment ledger](game-equipment-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_status_panel.c](../../src/game/menu_status_panel.c) | 44 | [game-menu-panel ledger](game-menu-panel-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 41 | [game-menu-save ledger](game-menu-save-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |

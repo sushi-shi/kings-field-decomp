@@ -464,3 +464,7 @@ promotes a probe to a proven historical toolchain.
 - [config-owned-data-comparison.md](config-owned-data-comparison.md): independent
   SDK/retail data-only objects, native reports, whole-object ownership checks
   and two-sided relinking before config ranges count as compared.
+
+- [GAME menu-runtime constants](game-menu-runtime-constants.md): backdrop resource
+  geometry, sprite offsets, primitive brightness and distinct list defaults;
+  [complete retained-literal ledger](game-menu-runtime-literal-ledger.md).

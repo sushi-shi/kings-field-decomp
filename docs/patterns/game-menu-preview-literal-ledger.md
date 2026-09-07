@@ -5,11 +5,14 @@ load/release pair, and initializers in their three edited modules. Named enum
 definitions and ADDRESS/DATA/RODATA claims are excluded. Other functions in
 the same source files are outside this focused ledger.
 
-All **192 occurrences** have a specific reason. The [drawing-layer review](game-menu-drawing-layers.md)
+All **160 occurrences** have a specific reason. The [drawing-layer review](game-menu-drawing-layers.md)
 names the eight former pickup-window/background depth literals.
 
 The [shared-dimension review](game-item-menu-dimensions.md) names the database
 extents and glyph-row width while preserving local workspace capacities.
+
+The [complete runtime ledger](game-menu-runtime-literal-ledger.md) now covers
+the full runtime module, including these focused slices.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -67,7 +70,7 @@ extents and glyph-row width while preserving local workspace capacities.
 | `menu_draw_item_detail` | 89 | `0 × 2, 2` | `menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
 | `menu_draw_item_detail` | 97 | `28` | `gs.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].x + 28;` | Place the gold value 28 screen pixels right of menu window 7 row 3, with the original spacing rationale unproven. |
 | `menu_draw_item_detail` | 99 | `6, 0` | `menu_format_number(player_state.gold, 6, 0, gs.codes);` | Render six gold digits without leading zeros; authored field width, shared numeric-render API Boolean. |
-| `initializers` | 20 | `0 × 2, 0x1c, 1 × 2` | `(u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];` | Existing offset check: first row code prefix is byte 28; null-base unevaluated member address and positive/negative bound encode the check. This is not a size assertion. |
+| `initializers` | 20 | `0 × 2, 0x1c, 1 × 2` | `(u32)&((MenuWindowLayout *)0)->rows[0].codes == 0x1c ? 1 : -1];` | Existing offset check: first row code prefix is byte 28; null-base constant member-address expression and positive/negative bound encode the check. This is not a size assertion. |
 | `initializers` | 31 | `0` | `POLY_FT4 *current_poly_ft4 = 0;` | Initialized null current primitive pointer; each renderer binds it to the active primitive cursor before use. |
 | `menu_draw_item_name_frame` | 85 | `0, 0xdc` | `rotation.t[0] = 0xdc;` | GTE translation x component 220, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
 | `menu_draw_item_name_frame` | 86 | `1, 0x8c` | `rotation.t[1] = 0x8c;` | GTE translation y component 140, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
@@ -85,22 +88,6 @@ extents and glyph-row width while preserving local workspace capacities.
 | `menu_draw_item_name_frame` | 111 | `0x24` | `string.y = 0x24;` | Authored text-origin y coordinate 36 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_draw_item_name_frame` | 112 | `0` | `for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
 | `menu_draw_item_name_frame` | 118, 140, 162, 184 | `1 × 4` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean enables semi-transparency on each of the four mirrored pickup-window quads. |
-| `menu_draw_item_name_frame` | 121, 165 | `0x76 × 2` | `current_poly_ft4->x0 = 0x76;` | Pickup tile anchor 118 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 122, 144 | `0x10 × 2` | `current_poly_ft4->y0 = 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 123, 145 | `0x10 × 2` | `current_poly_ft4->y1 = 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 124, 168 | `0x76 × 2` | `current_poly_ft4->x2 = 0x76;` | Pickup tile anchor 118 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 125, 169 | `0x76 × 2` | `current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0x76;` | Pickup tile anchor 118 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 126, 148 | `0x10 × 2` | `current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 127, 171 | `0x76 × 2` | `current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0x76;` | Pickup tile anchor 118 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 128, 150 | `0x10 × 2` | `current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 143, 187 | `0xbd × 2` | `current_poly_ft4->x0 = 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 146, 190 | `0xbd × 2` | `current_poly_ft4->x2 = 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 147, 191 | `0xbd × 2` | `current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 149, 193 | `0xbd × 2` | `current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 166, 188 | `0x78 × 2` | `current_poly_ft4->y0 = 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 167, 189 | `0x78 × 2` | `current_poly_ft4->y1 = 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 170, 192 | `0x78 × 2` | `current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 172, 194 | `0x78 × 2` | `current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 207 | `3` | `&menu_assets.background_quads[display_state.buffer_index][3]);` | Persistent background-quad indices 3,2,1,0 inserted in reverse order; equal-depth AddPrim prepending reverses their submission order. |
 | `menu_draw_item_name_frame` | 210 | `2` | `&menu_assets.background_quads[display_state.buffer_index][2]);` | Persistent background-quad indices 3,2,1,0 inserted in reverse order; equal-depth AddPrim prepending reverses their submission order. |
 | `menu_draw_item_name_frame` | 213 | `1` | `&menu_assets.background_quads[display_state.buffer_index][1]);` | Persistent background-quad indices 3,2,1,0 inserted in reverse order; equal-depth AddPrim prepending reverses their submission order. |

@@ -2,6 +2,25 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    MENU_TRANSLUCENT_SPRITE_X_OFFSET = 4,
+    MENU_TRANSLUCENT_SPRITE_Y_OFFSET = 3,
+    MENU_OPAQUE_SPRITE_X_OFFSET = 18,
+    MENU_OPAQUE_SPRITE_Y_OFFSET = 2,
+    MENU_PRIMITIVE_BRIGHTNESS = 96,
+    MENU_LIST_DEFAULT_VISIBLE_ROWS = 11,
+    MENU_LIST_DEFAULT_GLYPHS_PER_ENTRY = 8,
+    /* Fixed grid steps match the shipped STAT.DAT backdrop tile. */
+    MENU_BACKDROP_COLUMN_STEP = 71,
+    MENU_BACKDROP_ROW_STEP = 104,
+    MENU_BACKDROP_TOP_Y = 16,
+    MENU_BACKDROP_BOTTOM_Y = MENU_BACKDROP_TOP_Y + MENU_BACKDROP_ROW_STEP,
+    MENU_BACKDROP_LEFT_X = 166,
+    MENU_BACKDROP_RIGHT_X = MENU_BACKDROP_LEFT_X + MENU_BACKDROP_COLUMN_STEP,
+    MENU_PICKUP_BACKDROP_LEFT_X = 118,
+    MENU_PICKUP_BACKDROP_RIGHT_X = MENU_PICKUP_BACKDROP_LEFT_X + MENU_BACKDROP_COLUMN_STEP
+};
+
 /* COM\\MIX.TIM font geometry; STAT.DAT descriptors confirm the cell extents. */
 enum {
     MENU_FONT_COLUMNS = 16,
@@ -118,14 +137,14 @@ void menu_draw_item_name_frame(s32 item_id)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 0x76;
-    current_poly_ft4->y0 = 0x10;
-    current_poly_ft4->y1 = 0x10;
-    current_poly_ft4->x2 = 0x76;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0x76;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x10;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0x76;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x10;
+    current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->y1 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
@@ -140,14 +159,14 @@ void menu_draw_item_name_frame(s32 item_id)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 0xbd;
-    current_poly_ft4->y0 = 0x10;
-    current_poly_ft4->y1 = 0x10;
-    current_poly_ft4->x2 = 0xbd;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0xbd;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x10;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0xbd;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x10;
+    current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->y1 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u;
@@ -162,14 +181,14 @@ void menu_draw_item_name_frame(s32 item_id)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 0x76;
-    current_poly_ft4->y0 = 0x78;
-    current_poly_ft4->y1 = 0x78;
-    current_poly_ft4->x2 = 0x76;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0x76;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x78;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0x76;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x78;
+    current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->y1 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
@@ -184,14 +203,14 @@ void menu_draw_item_name_frame(s32 item_id)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 0xbd;
-    current_poly_ft4->y0 = 0x78;
-    current_poly_ft4->y1 = 0x78;
-    current_poly_ft4->x2 = 0xbd;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0xbd;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x78;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0xbd;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x78;
+    current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->y1 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u;
@@ -217,7 +236,7 @@ void menu_draw_item_name_frame(s32 item_id)
 }
 
 /*
- * Build a translucent textured quad at a menu point, inset by (4, 3), and
+ * Build a translucent textured quad four pixels left and three above a menu point, and
  * link it at ordering-table depth 2000.
  */
 ADDRESS(0x80029ab0, 0x1a0)
@@ -227,7 +246,7 @@ void menu_blit_sprite_translucent(
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = sprite->tpage;
     current_poly_ft4->clut = sprite->clut;
-    setXYWH(current_poly_ft4, position->x - 4, position->y - 3,
+    setXYWH(current_poly_ft4, position->x - MENU_TRANSLUCENT_SPRITE_X_OFFSET, position->y - MENU_TRANSLUCENT_SPRITE_Y_OFFSET,
         sprite->width, sprite->height);
     current_poly_ft4->u0 = sprite->u;
     current_poly_ft4->v0 = sprite->v;
@@ -242,7 +261,7 @@ void menu_blit_sprite_translucent(
 }
 
 /*
- * Build an opaque textured quad at a menu point, inset by (18, 2), and link
+ * Build an opaque textured quad eighteen pixels left and two above a menu point, and link
  * it at ordering-table depth 2000.
  */
 ADDRESS(0x80029c50, 0x190)
@@ -252,7 +271,7 @@ void menu_blit_sprite(
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = sprite->tpage;
     current_poly_ft4->clut = sprite->clut;
-    setXYWH(current_poly_ft4, position->x - 18, position->y - 2,
+    setXYWH(current_poly_ft4, position->x - MENU_OPAQUE_SPRITE_X_OFFSET, position->y - MENU_OPAQUE_SPRITE_Y_OFFSET,
         sprite->width, sprite->height);
     current_poly_ft4->u0 = sprite->u;
     current_poly_ft4->v0 = sprite->v;
@@ -405,14 +424,14 @@ void menu_draw_window_backdrop(void)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 166;
-    current_poly_ft4->y0 = 16;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 166;
-    current_poly_ft4->y1 = 16;
-    current_poly_ft4->x2 = 166;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 16;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 166;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 16;
+    current_poly_ft4->x0 = MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y1 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x2 = MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
@@ -427,14 +446,14 @@ void menu_draw_window_backdrop(void)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 237;
-    current_poly_ft4->y0 = 16;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 237;
-    current_poly_ft4->y1 = 16;
-    current_poly_ft4->x2 = 237;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 16;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 237;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 16;
+    current_poly_ft4->x0 = MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y1 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x2 = MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u;
@@ -449,14 +468,14 @@ void menu_draw_window_backdrop(void)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 166;
-    current_poly_ft4->y0 = 120;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 166;
-    current_poly_ft4->y1 = 120;
-    current_poly_ft4->x2 = 166;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 120;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 166;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 120;
+    current_poly_ft4->x0 = MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y1 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x2 = MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_BACKDROP_LEFT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
@@ -471,14 +490,14 @@ void menu_draw_window_backdrop(void)
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = menu_assets.window_backdrop.tpage;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = 237;
-    current_poly_ft4->y0 = 120;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + 237;
-    current_poly_ft4->y1 = 120;
-    current_poly_ft4->x2 = 237;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + 120;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + 237;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + 120;
+    current_poly_ft4->x0 = MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y0 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y1 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x2 = MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_BACKDROP_RIGHT_X;
+    current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->u0 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
     current_poly_ft4->v0 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
     current_poly_ft4->u1 = menu_assets.window_backdrop.u;
@@ -536,9 +555,9 @@ ADDRESS(0x8002accc, 0x50)
 void primitive_buffer_begin_poly_ft4(void)
 {
     SetPolyFT4(current_poly_ft4);
-    current_poly_ft4->r0 = 0x60;
-    current_poly_ft4->g0 = 0x60;
-    current_poly_ft4->b0 = 0x60;
+    current_poly_ft4->r0 = MENU_PRIMITIVE_BRIGHTNESS;
+    current_poly_ft4->g0 = MENU_PRIMITIVE_BRIGHTNESS;
+    current_poly_ft4->b0 = MENU_PRIMITIVE_BRIGHTNESS;
 }
 
 ADDRESS(0x8002ad1c, 0x50)
@@ -566,11 +585,11 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row)
     list->list_x = 0x16;
     list->list_y = 0x26;
     list->entry_count = 0;
-    list->visible_rows = 0x0b;
+    list->visible_rows = MENU_LIST_DEFAULT_VISIBLE_ROWS;
     list->scroll_offset = 0;
     list->selected_index = 0;
     list->cursor_row = 0;
-    list->glyphs_per_entry = 8;
+    list->glyphs_per_entry = MENU_LIST_DEFAULT_GLYPHS_PER_ENTRY;
 }
 
 /* Expand a signed value into decimal glyphs and a trailing -1 sentinel. */

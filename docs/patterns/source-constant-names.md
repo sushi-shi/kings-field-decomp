@@ -2,7 +2,7 @@
 
 The [source coverage map](source-literal-coverage.md) inventories all 111 C files,
 links their existing audits, and records the outstanding scope checks. Its
-7,098 inline occurrences include authored data and already explained values;
+7,025 inline occurrences include authored data and already explained values;
 the number is not a missing-name count.
 
 The [OPEN renderer review](open-render-constants.md) shares the six scene model
@@ -2313,3 +2313,8 @@ and target-relink PSX 1/1, GAME 75/77 and OPEN 34/38 results. The six section
 base conflicts remain, with no artifact failures. This reconciliation also
 removes the earlier inaccurate assertion that all five config-menu cues
 were deliberately zero; their reviewed argument sequence is 0/0/1/1/2.
+
+The [complete menu-runtime review](game-menu-runtime-constants.md) names 73 inline
+uses through sprite offsets, default brightness/list settings and backdrop grid
+geometry. Its [ledger](game-menu-runtime-literal-ledger.md) accounts for all
+103 retained occurrences, including decimal filenames and SDK call modes.
