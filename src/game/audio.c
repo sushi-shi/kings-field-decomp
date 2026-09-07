@@ -147,19 +147,18 @@ u32 audio_play_spatial(
         >> KF_LENGTH_SQUARE_DOWNSHIFT;
     s32 delta_z = (position->vz - audio_state.listener_position.vz)
         >> KF_LENGTH_SQUARE_DOWNSHIFT;
-    s32 distance;
     s32 attenuation;
     s32 level;
     s32 angle;
     s32 left;
     s32 right;
 
-    distance = SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
+    attenuation = SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
         << KF_LENGTH_SQUARE_DOWNSHIFT;
-    if (distance >= max_distance) {
+    if (attenuation >= max_distance) {
         return 0;
     }
-    attenuation = ((attenuation_distance - distance) << KF_FIXED7_BITS) / attenuation_distance;
+    attenuation = ((attenuation_distance - attenuation) << KF_FIXED7_BITS) / attenuation_distance;
     level = (attenuation * volume) >> KF_FIXED7_BITS;
     if (level < 0) {
         level = 0;

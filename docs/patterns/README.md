@@ -250,6 +250,9 @@ promotes a probe to a proven historical toolchain.
 - [game-volume-distance.md](game-volume-distance.md): exact player and actor
   volume distances through a shared rejection tail and evolving horizontal
   coordinate parameters; signed height and SDK square-root contracts retained.
+- [game-spatial-audio-lifetime.md](game-spatial-audio-lifetime.md): one evolving
+  distance/attenuation value restores the GAME spatial-audio body, with the
+  exact OPEN counterpart as an independent source-shape witness.
 - [game-effect-scatter.md](game-effect-scatter.md): unsigned caller evidence
   and signed in-place accumulation close the three-halfword scatter helper.
 - [game-floor-deformation.md](game-floor-deformation.md): mutable absolute
