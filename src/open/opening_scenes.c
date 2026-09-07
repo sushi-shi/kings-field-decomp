@@ -249,7 +249,7 @@ render_frame:
     }
 
 scene_complete:
-    audio_stop_sequence(1);
+    audio_stop_sequence(KF_AUDIO_STOP_FADE);
 }
 
 ADDRESS(0x800143dc, 0x180)
@@ -340,7 +340,7 @@ void opening_scene1_run(void)
     frame = 0;
     do {
         if (frame == SCENE1_SEQUENCE_STOP_FRAME) {
-            audio_stop_sequence(0);
+            audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
         }
         VSync(0);
         opening_poll_input();
@@ -350,7 +350,7 @@ void opening_scene1_run(void)
         frame++;
     } while (frame < SCENE1_HOLD_FRAMES);
 
-    audio_stop_sequence(1);
+    audio_stop_sequence(KF_AUDIO_STOP_FADE);
     shade = KF_TEXTURE_BASE_BRIGHTNESS;
     do {
         opening_scene1_draw_fade((u8)shade);

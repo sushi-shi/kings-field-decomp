@@ -512,7 +512,7 @@ promotes a probe to a proven historical toolchain.
 
 - [OPEN scene control domains](open-scene-domains.md): transition, lighting
   and sequence enum propagation; [complete scene ledger](open-scene-literal-ledger.md)
-  accounts for all 595 retained occurrences, including initialized data.
+  accounts for all 592 retained occurrences, including initialized data.
 
 - [GAME statistics text layout](game-status-text-layout.md): view-specific row
   spacing, shared decimal widths and digit advance; the
@@ -535,3 +535,7 @@ promotes a probe to a proven historical toolchain.
 - [Inventory and shop preview layout](game-menu-preview-layout.md): shared model placement, text origins, row pitch and numeric widths; [complete inventory-preview ledger](game-menu-inventory-preview-literal-ledger.md).
 
 - [Animation-cache and camera coverage](game-animation-cache-camera-coverage.md): serialized reversal evidence, GAME/OPEN point origins and a [complete forty-occurrence ledger](game-animation-cache-camera-literal-ledger.md).
+
+- [Audio sequence domains](audio-sequence-domains.md): separate playback state and
+  stop-mode enums, typed call sites and compiler rejection controls; the
+  [complete audio/resource ledger](audio-sequence-literal-ledger.md) covers four modules.

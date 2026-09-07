@@ -2353,3 +2353,9 @@ controls establish domain separation; the retail objects remain unchanged.
 The [cache/camera coverage review](game-animation-cache-camera-coverage.md)
 provides complete current occurrence accounting for the registry, animation
 cache and both camera-path modules; the older grouped totals remain historical.
+
+The [audio sequence domain review](audio-sequence-domains.md) replaces 22 inline
+state/mode uses with distinct enums and propagates the stop-mode signature.
+Its [complete ledger](audio-sequence-literal-ledger.md) accounts for 100 retained
+occurrences across GAME/OPEN audio, OPEN resources and the opening controller;
+older grouped audio totals remain historical.

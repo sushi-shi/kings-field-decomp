@@ -11,6 +11,7 @@
  */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 #include <kf/psyq.h>
 
 enum {
@@ -25,6 +26,16 @@ enum {
     KF_AUDIO_VAB_UNAVAILABLE = -1,
     KF_SOUND_TONE_INDEX_MASK = 0xf
 };
+
+KF_ENUM_BEGIN(KfAudioSequenceState, s32)
+    KF_AUDIO_SEQUENCE_INACTIVE = 0,
+    KF_AUDIO_SEQUENCE_ACTIVE = 1
+KF_ENUM_END(KfAudioSequenceState)
+
+KF_ENUM_BEGIN(KfAudioStopMode, s32)
+    KF_AUDIO_STOP_IMMEDIATE = 0,
+    KF_AUDIO_STOP_FADE = 1
+KF_ENUM_END(KfAudioStopMode)
 
 typedef struct SoundRef {
     u8 program;
@@ -47,7 +58,7 @@ typedef struct KfAudioState {
     u8 *sequence_buffer;
     s16 sequence_id;
     u8 unknown_0e[2];
-    s32 sequence_active;
+    KfAudioSequenceState sequence_active;
     VECTOR listener_position;
     SVECTOR listener_rotation;
     KfAudioVoiceSlots voice_slots;
@@ -80,6 +91,6 @@ extern void audio_set_listener_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void audio_stop_sequence_fade(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
-extern void audio_stop_sequence(s32 fade);
+extern void audio_stop_sequence(KfAudioStopMode mode);
 
 #endif

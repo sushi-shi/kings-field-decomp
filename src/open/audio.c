@@ -38,14 +38,14 @@ void audio_initialize(void)
     SsUtReverbOn();
     SsUtSetReverbDepth(OPEN_REVERB_DEPTH, OPEN_REVERB_DEPTH);
     audio_state.sequence_buffer = memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
-    audio_state.sequence_active = 0;
+    audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
     do {
         audio_state.voice_slots.voice_ids[index] = inactive_voice_id;
     } while (--index >= 0);
     audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
-    audio_state.sequence_active = 0;
+    audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
 }
 
 ADDRESS(0x80019c5c, 0xf4)
@@ -53,7 +53,7 @@ void audio_load_vab(u8 *vab_header, u8 *vab_body)
 {
     s32 frame;
 
-    audio_stop_sequence(0);
+    audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
     SsSetMVol(0, 0);
     audio_state.active_vab_id = SsVabOpenHead(vab_header, KF_AUDIO_VAB_AUTO);
     if (audio_state.active_vab_id == KF_AUDIO_VAB_UNAVAILABLE) {
@@ -79,7 +79,7 @@ void audio_play_sequence_file(const char *path)
 {
     s32 volume;
 
-    audio_stop_sequence(0);
+    audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
     if (cd_file_load_into(audio_state.sequence_buffer, path) != 0) {
         return;
     }
@@ -95,16 +95,16 @@ void audio_play_sequence_file(const char *path)
         volume += OPEN_SEQUENCE_FADE_IN_STEP;
     } while (volume < KF_AUDIO_MAX_VOLUME);
     SsSetMVol(KF_AUDIO_MAX_VOLUME, KF_AUDIO_MAX_VOLUME);
-    audio_state.sequence_active = 1;
+    audio_state.sequence_active = KF_AUDIO_SEQUENCE_ACTIVE;
 }
 
 ADDRESS(0x80019e24, 0x9c)
-void audio_stop_sequence(s32 fade)
+void audio_stop_sequence(KfAudioStopMode mode)
 {
     s32 volume;
 
-    if (audio_state.sequence_active == 1) {
-        if (fade == 1) {
+    if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
+        if (mode == KF_AUDIO_STOP_FADE) {
             volume = KF_AUDIO_MAX_VOLUME;
             do {
                 VSync(0);
@@ -116,7 +116,7 @@ void audio_stop_sequence(s32 fade)
         SsSeqSetVol(audio_state.sequence_id, 0, 0);
         SsSeqStop(audio_state.sequence_id);
         SsSeqClose(audio_state.sequence_id);
-        audio_state.sequence_active = 0;
+        audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     }
 }
 

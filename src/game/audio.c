@@ -35,7 +35,7 @@ void audio_initialize(void)
     SsUtReverbOn();
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
     audio_state.sequence_buffer = memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
-    audio_state.sequence_active = 0;
+    audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
     do {
@@ -75,7 +75,7 @@ void audio_play_map_sequence(u8 sequence_id)
                 (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);
             SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
             SsSeqPlay(audio_state.sequence_id, SSPLAY_PLAY, SSPLAY_INFINITY);
-            audio_state.sequence_active = 1;
+            audio_state.sequence_active = KF_AUDIO_SEQUENCE_ACTIVE;
         }
     }
 }
@@ -85,7 +85,7 @@ void audio_stop_sequence_fade(void)
 {
     s32 volume;
 
-    if (audio_state.sequence_active == 1) {
+    if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
         volume = GAME_SEQUENCE_VOLUME;
         do {
             VSync(0);
@@ -93,7 +93,7 @@ void audio_stop_sequence_fade(void)
         } while (--volume >= 0);
         SsSeqStop(audio_state.sequence_id);
         SsSeqClose(audio_state.sequence_id);
-        audio_state.sequence_active = 0;
+        audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     }
 }
 
@@ -102,7 +102,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
 {
     s32 volume;
 
-    if (audio_state.sequence_active == 1) {
+    if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
         volume = GAME_SEQUENCE_VOLUME << KF_FIXED8_BITS;
         do {
             VSync(0);
@@ -113,7 +113,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
         SsSeqSetVol(audio_state.sequence_id, 0, 0);
         SsSeqStop(audio_state.sequence_id);
         SsSeqClose(audio_state.sequence_id);
-        audio_state.sequence_active = 0;
+        audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     }
 }
 

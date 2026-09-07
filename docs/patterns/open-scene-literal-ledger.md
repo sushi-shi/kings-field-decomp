@@ -1,6 +1,6 @@
 # OPEN scene retained-literal ledger
 
-Companion to [the scene-domain evidence](open-scene-domains.md). All **595**
+Companion to [the scene-domain evidence](open-scene-domains.md). All **592**
 current numeric/character occurrences in `src/open/opening_scenes.c` have
 individual rows, including duplicate tokens within one expression. Comments,
 strings, identifier digits, named enum/macro definitions and address claims
@@ -13,7 +13,10 @@ The sprite helpers consume four rectangle halfwords and only the even bytes
 of each UV descriptor. These contracts distinguish coordinates and lengths
 from ignored bytes; ignored storage is not automatically named padding.
 
-| Function / datum | Line | Token | Expression | Reason |
+
+The [audio sequence-domain review](audio-sequence-domains.md) names all three stop requests.
+
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `initializers` | 80 | `0` | `(u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];` | Null base used only to calculate the measured field offset. |
 | `initializers` | 80 | `0x08` | `(u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];` | Measured position offset within the opening entity; this is an offset check, not a size assertion. |
@@ -446,7 +449,6 @@ from ignored bytes; ignored storage is not automatically named padding.
 | `opening_scene0_run` | 194 | `0` | `blend = 0;` | Zero blend accumulator at the start of this interpolation or intermediate counter. |
 | `opening_scene0_run` | 206 | `0` | `opening_camera_path_step(0);` | No added world-space Y displacement for this camera step. |
 | `opening_scene0_run` | 223 | `0` | `if (blend < 0) {` | Signed blend falling below zero ends the scene fade-out. |
-| `opening_scene0_run` | 252 | `1` | `audio_stop_sequence(1);` | True fade flag; the OPEN callee runs its master-volume ramp before stopping. |
 | `opening_scene1_draw_fade` | 277 | `0` | `left->x0 = 0;` | Zero x0 coordinate anchors this panel vertex or texture sample at its origin. |
 | `opening_scene1_draw_fade` | 278 | `0` | `left->y0 = 0;` | Zero y0 coordinate anchors this panel vertex or texture sample at its origin. |
 | `opening_scene1_draw_fade` | 280 | `0` | `left->y1 = 0;` | Zero y1 coordinate anchors this panel vertex or texture sample at its origin. |
@@ -464,9 +466,7 @@ from ignored bytes; ignored storage is not automatically named padding.
 | `opening_scene1_run` | 333 | `0` | `shade = 0;` | Black starting shade for the panel fade. |
 | `opening_scene1_run` | 338 | `1` | `} while (shade < KF_TEXTURE_BASE_BRIGHTNESS + 1);` | One-past bound preserves inclusion of the base-brightness endpoint. |
 | `opening_scene1_run` | 340 | `0` | `frame = 0;` | Frame countdown/index origin. |
-| `opening_scene1_run` | 343 | `0` | `audio_stop_sequence(0);` | False fade flag; stop without the optional master-volume ramp. |
 | `opening_scene1_run` | 345 | `0` | `VSync(0);` | SDK wait-for-next-VBlank mode. |
-| `opening_scene1_run` | 353 | `1` | `audio_stop_sequence(1);` | True fade flag; the OPEN callee runs its master-volume ramp before stopping. |
 | `opening_scene1_run` | 358 | `0` | `} while (shade >= 0);` | Zero is the black endpoint of the signed fade countdown. |
 | `opening_entity_transition` | 373 | `0` | `initial_scale_y = 0;` | Zero-height cylinder before the grow transition. |
 | `opening_entity_transition` | 386 | `1` | `entity_index = TRANSITION_ENTITY_COUNT - 1;` | Last entity index for the decrement-to-minus-one loop. |
@@ -575,9 +575,9 @@ from ignored bytes; ignored storage is not automatically named padding.
 | `opening_ending_scroll_run` | 737 | `8` | `cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);` | Ordinal of this unrolled panel CLUT entry. |
 | `opening_ending_scroll_run` | 737 | `0` | `cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);` | VRAM X origin of the panel CLUT. |
 | `opening_ending_scroll_run` | 737 | `8` | `cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);` | Panel ordinal added to the first CLUT row; one row per panel. |
-| `opening_ending_scroll_run` | 744 | `0` | `background_blend = 0;` | Zero starts the background gradient interpolation. |
-| `opening_ending_scroll_run` | 746 | `0` | `scrolling = 0;` | False scroll-enable flag before the disk reaches its final Y. |
-| `opening_ending_scroll_run` | 747 | `0` | `scroll_phase = 0;` | Start position of the numeric 0,3,2,1 cycle. |
+| `opening_ending_scroll_run` | 747 | `0` | `background_blend = 0;` | Zero starts the background gradient interpolation. |
+| `opening_ending_scroll_run` | 749 | `0` | `scrolling = 0;` | False scroll-enable flag before the disk reaches its final Y. |
+| `opening_ending_scroll_run` | 750 | `0` | `scroll_phase = 0;` | Start position of the numeric 0,3,2,1 cycle. |
 | `opening_ending_scroll_run` | 752 | `0` | `SetBackColor(0, 0, 0);` | Black red component passed to the SDK. |
 | `opening_ending_scroll_run` | 752 | `0` | `SetBackColor(0, 0, 0);` | Black green component passed to the SDK. |
 | `opening_ending_scroll_run` | 752 | `0` | `SetBackColor(0, 0, 0);` | Black blue component passed to the SDK. |

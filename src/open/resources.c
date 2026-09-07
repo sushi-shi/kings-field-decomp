@@ -157,7 +157,7 @@ void opening_resources_load_scene0(void)
     u8 *vab_chunk;
     const u32 *source;
 
-    audio_stop_sequence(1);
+    audio_stop_sequence(KF_AUDIO_STOP_FADE);
     audio_close_vab();
     memory_allocation_reset();
     cd_file_load_allocated((void **)&stream, "B0\\MIXA0.");
@@ -198,7 +198,7 @@ void opening_resources_load_scene1(void)
     u8 *stream;
     u8 *vab_chunk;
 
-    audio_stop_sequence(1);
+    audio_stop_sequence(KF_AUDIO_STOP_FADE);
     audio_close_vab();
     memory_allocation_reset();
     cd_file_load_allocated((void **)&stream, "B0\\MIXA1.");
@@ -286,7 +286,7 @@ void opening_resources_load_ending_sequence(void)
     u8 *vab_chunk;
     u8 **arena_cursor = &memory_arena_cursor;
 
-    audio_stop_sequence(0);
+    audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
     audio_close_vab();
     memory_allocation_reset();
     *arena_cursor = opening_ending_arena_cursor;

@@ -106,12 +106,12 @@ opening_scene1:
         goto opening_scene0;
 
 opening_scene3:
-        audio_stop_sequence(1);
+        audio_stop_sequence(KF_AUDIO_STOP_FADE);
         opening_input_action = KF_OPENING_INPUT_NONE;
         opening_scene3_run();
 
 opening_complete:
-        audio_stop_sequence(1);
+        audio_stop_sequence(KF_AUDIO_STOP_FADE);
         break;
 
     case KF_OPEN_MODE_ENDING:

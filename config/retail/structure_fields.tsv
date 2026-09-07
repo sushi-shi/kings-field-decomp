@@ -105,7 +105,7 @@ KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	audio.h;asm;xrefs	padding or unre
 KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	audio.h;asm;xrefs	allocated SEQ buffer
 KfAudioState	0x0c	0x02	sequence_id	s16	supported	audio.h;asm;xrefs	open sequence identifier
 KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
-KfAudioState	0x10	0x04	sequence_active	s32	supported	audio.h;asm;xrefs	one while a map sequence plays
+KfAudioState	0x10	0x04	sequence_active	KfAudioSequenceState	supported	audio.h;asm;xrefs	bookkeeping state: 0 inactive, 1 active after issuing playback; stop routines require exactly 1
 KfAudioState	0x14	0x10	listener_position	VECTOR	supported	audio.h;asm;xrefs	listener position for spatial voices
 KfAudioState	0x24	0x08	listener_rotation	SVECTOR	supported	audio.h;asm;xrefs	listener rotation for spatial voices
 KfAudioState	0x2c	0x64	voice_slots	KfAudioVoiceSlots	supported	audio.h;asm;xrefs	ten voice slots
