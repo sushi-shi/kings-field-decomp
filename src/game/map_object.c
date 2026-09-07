@@ -7,9 +7,6 @@
 /* Distances are world units; motion is per action update. */
 enum {
     MAP_DOOR_INTERACTION_LOCAL_Z = 550,
-    MAP_DROP_TIP_ID_END = 43,
-    MAP_DROP_SPIN_ID_END = 48,
-    MAP_DROP_BOUNCE_ID_END = 65,
     MAP_DROP_RANDOM_YAW_SHIFT = 3,
     MAP_GOLD_DROP_SCATTER_RADIUS = 600,
     MAP_GOLD_DROP_INITIAL_VELOCITY_Y = -120,
@@ -174,13 +171,13 @@ void map_object_spawn_effect(u8 kind, u8 object_id, const struct KfVec3i *positi
     object->rotation.x = 0;
     object->rotation.y = rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
     object->action = KF_MAP_OBJECT_ACTION_IDLE;
-    if (object_id < MAP_DROP_TIP_ID_END) {
+    if (object_id < KF_MAP_DROP_TIP_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
         object->link.vertical_velocity = 0;
-    } else if (object_id < MAP_DROP_SPIN_ID_END) {
+    } else if (object_id < KF_MAP_DROP_SPIN_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_SPIN);
         object->link.vertical_velocity = 0;
-    } else if (object_id < MAP_DROP_BOUNCE_ID_END) {
+    } else if (object_id < KF_MAP_DROP_BOUNCE_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_BOUNCE);
         object->link.vertical_velocity = 0;
     }

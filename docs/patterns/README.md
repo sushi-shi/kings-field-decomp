@@ -259,8 +259,11 @@ promotes a probe to a proven historical toolchain.
   type-0..8 link predicate and aligned whole-link reset close both clearing
   functions; the earlier memset control emitted an unsupported call.
 - [game-map-object-constants.md](game-map-object-constants.md): interaction
-  types, running actions, switch phases and transient drop groups; all 267
-  retained literals in the two map-object modules have consumer-specific reasons.
+  types, running actions, switch phases and transient drop groups; the linked
+  motion follow-up maintains the complete remaining-literal ledger.
+- [game-map-effect-identities.md](game-map-effect-identities.md): shared
+  map-switch effect identity across construction and loading; drop action-band
+  limits propagated into saved-floor orientation restoration.
 - [game-map-forward-probe.md](game-map-forward-probe.md): shared collision
   block and result join; partial reconstruction improved, not exact.
 - [game-map-collision-edge.md](game-map-collision-edge.md): chained

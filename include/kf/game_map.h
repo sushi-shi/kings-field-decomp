@@ -130,6 +130,13 @@ enum {
     KF_MAP_OBJECT_SWITCH_REVERSE = 3
 };
 
+/* Exclusive object-ID bounds shared by drop animation and saved orientation. */
+enum {
+    KF_MAP_DROP_TIP_ID_END = 43,
+    KF_MAP_DROP_SPIN_ID_END = 48,
+    KF_MAP_DROP_BOUNCE_ID_END = 65
+};
+
 /* Positive Y hides the piece; five settling updates undo the reveal overshoot. */
 enum {
     KF_MAP_OBJECT_REVEAL_DEPTH = 10000,

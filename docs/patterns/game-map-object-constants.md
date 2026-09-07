@@ -2,7 +2,8 @@
 
 The later [motion-constant pass](game-map-object-motion-constants.md) names
 the interaction distances and motion/timing units left inline here. Its
-171-occurrence ledger and verification supersede this historical census.
+ledger (now 170 occurrences after the shared-identity follow-up) and
+verification supersede this historical census.
 
 ## Function Match Plan
 

@@ -8,7 +8,10 @@ expression and reason agree. Minus signs are C operators, so `-1` has one
 numeric token, recorded as `1` below. Ownership claims and named constant
 definitions are accounted for separately in the campaign note.
 
-All **145 retained occurrences** are mapped below; no fallback category is used.
+The original 145-occurrence review is retained below, with the two drop-band
+occurrences subsequently named by the [map-effect follow-up](game-map-effect-identities.md)
+removed. The remaining expressions retain their reviewed consumer reasons;
+later shared-name substitutions elsewhere are recorded in their own dossiers.
 
 | Source / function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -101,8 +104,6 @@ All **145 retained occurrences** are mapped below; no fallback category is used.
 | `map_load.c` / `map_restore_floor_state` | 99, 121 | `0 × 2` | `object->link.spawn_sequence = 0;` | Initialize the transient drop sequence to zero. |
 | `map_load.c` / `map_restore_floor_state` | 100, 122 | `0 × 2` | `object->link.vertical_velocity = 0;` | Start the transient drop with zero vertical velocity. |
 | `map_load.c` / `map_restore_floor_state` | 104 | `0, 2` | `for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based record traversal; multiplier 2 spans the adjacent definition-drop and placement-drop groups. |
-| `map_load.c` / `map_restore_floor_state` | 113 | `43` | `if (object->object_id < 43) {` | Authored model-ID boundary below which restored drop models receive quarter-turn pitch; narrower item-category meaning is unproven. |
-| `map_load.c` / `map_restore_floor_state` | 115 | `48` | `} else if (object->object_id < 48) {` | Authored second model-ID boundary: IDs 43..47 receive zero pitch; higher IDs retain the prior pitch. |
 | `map_load.c` / `map_restore_floor_state` | 120 | `0` | `*(u16 *)&object->link = 0;` | Initialize both bytes of the transient drop's link prefix to zero, not the absent-link encoding 255. |
 | `map_load.c` / `map_restore_floor_state` | 127 | `1` | `case 1:` | Dungeon floor number directly selects that floor's script. |
 | `map_load.c` / `map_restore_floor_state` | 129 | `1` | `map_apply_copy_region(1);` | Authored copy-region index for that floor-1 passage. |

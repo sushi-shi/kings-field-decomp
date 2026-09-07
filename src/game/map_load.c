@@ -110,9 +110,9 @@ void map_restore_floor_state(void)
                 object->cell_z * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> 15);
             object->position_y =
                 -(map_floor_height_grid[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
-            if (object->object_id < 43) {
+            if (object->object_id < KF_MAP_DROP_TIP_ID_END) {
                 object->rotation.x = KF_ANGLE_QUARTER_TURN;
-            } else if (object->object_id < 48) {
+            } else if (object->object_id < KF_MAP_DROP_SPIN_ID_END) {
                 object->rotation.x = 0;
             }
             object->rotation.z = 0;

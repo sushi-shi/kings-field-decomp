@@ -1,5 +1,9 @@
 # Effect construction constants and remainder ledger
 
+The [map-effect follow-up](game-map-effect-identities.md) subsequently names
+the map-switch kind and updates the complete pool ledger to 225 occurrences.
+The counts below describe this earlier constructor campaign.
+
 ## Function Match Plan
 
 Starting at `333f135`, review all four GAME effect-pool functions and propagate

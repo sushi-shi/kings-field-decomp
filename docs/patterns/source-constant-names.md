@@ -29,7 +29,8 @@ The [effect-constructor review](game-effect-pool-constants.md) names lightning
 impact/blast and ground-branch visual kinds, scales/orientation, propagation
 delay, sound ranges and the live floor-controller tag. It shares emergence
 depth/step and orbit-center quantization through their consumers, removing
-40 inline occurrences. The complete pool ledger covers all 226 retained uses,
+40 inline occurrences. After the [map-effect follow-up](game-map-effect-identities.md),
+the complete pool ledger covers all 225 retained uses,
 including existing alignment/offset witnesses and unresolved render variants.
 
 The [player-update review](game-player-update-constants.md) names movement
@@ -86,7 +87,9 @@ offsets formerly called velocities. The wider source audit remains open.
 The [map-object motion follow-up](game-map-object-motion-constants.md) names
 88 further inline uses in the two map-object modules: interaction distances,
 drop routing, door timing, emitter and falling motion, and reveal geometry.
-Its full ledger accounts for the 171 remaining occurrences.
+The [shared-identity follow-up](game-map-effect-identities.md) additionally
+names switch effect 48 and propagates drop-band limits into save restoration.
+The map-object ledger now accounts for 170 remaining occurrences.
 
 The [map-object review](game-map-object-constants.md) separates definition
 behaviors from running actions, names switch phases and drop groups across

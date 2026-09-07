@@ -1,7 +1,9 @@
 # Effect-pool remainder literal ledger
 
-Complete per-occurrence account of **226 retained numeric literals** in `src/game/effect_pool.c`,
-including the existing alignment/offset witnesses. The [constructor review](game-effect-pool-constants.md)
+Complete per-occurrence account of **225 retained numeric literals** in `src/game/effect_pool.c`,
+including the existing alignment/offset witnesses. The
+[map-effect follow-up](game-map-effect-identities.md) names the former kind-48
+occurrence and updates this ledger. The [constructor review](game-effect-pool-constants.md)
 records named values, effect identities and verification. Named definitions and retail claims
 are excluded; comments/strings/identifier digits are not literals, and signs are operators.
 `effect_pool_set_current` has no remaining numeric literals.
@@ -135,7 +137,6 @@ are excluded; comments/strings/identifier digits are not literals, and signs are
 | `effect_pool_construct` | 241 | `4` | `record->base_render_id = 4;` | Authored render-resource index for 0xe: the branch chooses billboard or model mode separately. Base and current selector start equal. Keep the resource ordinal until the corresponding sprite/model asset has an independent semantic identity; equal indices in different modes do not identify the same resource. |
 | `effect_pool_construct` | 242 | `4` | `record->render_id = 4;` | Authored render-resource index for 0xe: the branch chooses billboard or model mode separately. Base and current selector start equal. Keep the resource ordinal until the corresponding sprite/model asset has an independent semantic identity; equal indices in different modes do not identify the same resource. |
 | `effect_pool_construct` | 243 | `1` | `record->rotation = *(const SVECTOR *)va[1];` | Slot one after the saved direction argument is argument six, a pointer to the supplied SVECTOR rotation. Preserve its pointer interpretation and SDK copy. |
-| `effect_pool_construct` | 245 | `0x30` | `case 0x30:` | Kind 48 selects model 5 and copies a supplied rotation; the current dispatcher has no kind-48 update arm. No specific effect identity is supported. |
 | `effect_pool_construct` | 246 | `0` | `record->animation_clip = 0;` | Select the first animation clip in this model resource. It is a resource ordinal; the billboard mode uses its own named sentinel. |
 | `effect_pool_construct` | 247 | `5` | `record->base_render_id = 5;` | Authored render-resource index for 0x30: the branch chooses billboard or model mode separately. Base and current selector start equal. Keep the resource ordinal until the corresponding sprite/model asset has an independent semantic identity; equal indices in different modes do not identify the same resource. |
 | `effect_pool_construct` | 248 | `5` | `record->render_id = 5;` | Authored render-resource index for 0x30: the branch chooses billboard or model mode separately. Base and current selector start equal. Keep the resource ordinal until the corresponding sprite/model asset has an independent semantic identity; equal indices in different modes do not identify the same resource. |

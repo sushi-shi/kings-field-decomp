@@ -242,7 +242,7 @@ KfEffectRecord *effect_pool_construct(
             record->render_id = 4;
             record->rotation = *(const SVECTOR *)va[1];
             break;
-        case 0x30:
+        case KF_EFFECT_KIND_MAP_SWITCH:
             record->animation_clip = 0;
             record->base_render_id = 5;
             record->render_id = 5;

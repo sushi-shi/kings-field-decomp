@@ -89,17 +89,18 @@ constructor's variadic argument counts and sound behavior stay unchanged.
 ## Remaining occurrence ledger
 
 This census supersedes the original dossier's 259-occurrence ledger for these
-two source modules: **171 remain**, comprising 77 in `map_object.c` and 94 in
-`map_object_pool.c`. The pass removes **88 inline numeric uses**. Thirty of
+two source modules. After the [map-effect follow-up](game-map-effect-identities.md),
+**170 remain**, comprising 77 in `map_object.c` and 93 in `map_object_pool.c`.
+The motion pass removed **88 inline numeric uses**; the follow-up names one
+more effect-kind argument. Thirty of
 the remaining occurrences are authored map-copy bytes. The lexer excludes
 comments, strings, digits in identifiers, retail claims, enums and named
 macro definitions. Signs are operators; a listed token `1` can belong to
 the no-result expression `-1`. Repeated tokens each receive their own row.
 
-The 0x20 effect class, effect 14 and switch effect 48 remain explicit protocol
-identities; broader effect naming is still open. The local use of 48 is known
-to be a switch visual, but this pass does not claim a complete shared kind
-identity audit. Object IDs and floor/copy-region bindings remain authored
+The 0x20 effect class and effect 14 remain explicit protocol identities;
+broader effect naming is still open. The follow-up establishes kind 48 as
+`KF_EFFECT_KIND_MAP_SWITCH` and removes that occurrence from this ledger. Object IDs and floor/copy-region bindings remain authored
 data, without invented asset names. All other retained occurrences have
 their specific arithmetic, initialization, geometry or state role below.
 
@@ -107,83 +108,83 @@ their specific arithmetic, initialization, geometry or state role below.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| map_object_pool_find_interaction_from | 80 | `0` | `offset.vy = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_find_interaction_from | 88 | `1` | `!= -1) {` | Established negative-one distance-query miss result. |
-| map_object_pool_find_interaction_from | 93 | `0` | `offset.vy = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_find_interaction_from | 101 | `1` | `!= -1) {` | Established negative-one distance-query miss result. |
-| map_object_pool_find_interaction_from | 106 | `1` | `!= -1) {` | Established negative-one distance-query miss result. |
-| map_object_pool_find_interaction_from | 110 | `1` | `return -1;` | Established negative-one distance-query miss result. |
-| map_object_start_action_if_idle | 118 | `0` | `object->action_timer = 0;` | Start this selected action at its initial timer. |
-| map_object_effect_pool_acquire | 126 | `0` | `KfMapObject *oldest = 0;` | Null object pointer initialization or presence check. |
-| map_object_effect_pool_acquire | 127 | `0` | `s32 oldest_age = 0;` | Initial greatest age; strict improvement preserves the first winner and can leave no winner. |
-| map_object_effect_pool_acquire | 135 | `0` | `if (age < 0) {` | Negative difference detects halfword sequence wrap. |
-| map_object_effect_pool_acquire | 136 | `0x10000` | `age += 0x10000;` | Halfword modulus 65536 corrects a negative sequence-age difference. |
-| map_object_effect_pool_acquire | 143 | `0` | `} while (--count != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
-| map_object_spawn_effect | 173 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_spawn_effect | 174 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_find_interaction_from | 77 | `0` | `offset.vy = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_find_interaction_from | 85 | `1` | `!= -1) {` | Established negative-one distance-query miss result. |
+| map_object_pool_find_interaction_from | 90 | `0` | `offset.vy = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_find_interaction_from | 98 | `1` | `!= -1) {` | Established negative-one distance-query miss result. |
+| map_object_pool_find_interaction_from | 103 | `1` | `!= -1) {` | Established negative-one distance-query miss result. |
+| map_object_pool_find_interaction_from | 107 | `1` | `return -1;` | Established negative-one distance-query miss result. |
+| map_object_start_action_if_idle | 115 | `0` | `object->action_timer = 0;` | Start this selected action at its initial timer. |
+| map_object_effect_pool_acquire | 123 | `0` | `KfMapObject *oldest = 0;` | Null object pointer initialization or presence check. |
+| map_object_effect_pool_acquire | 124 | `0` | `s32 oldest_age = 0;` | Initial greatest age; strict improvement preserves the first winner and can leave no winner. |
+| map_object_effect_pool_acquire | 132 | `0` | `if (age < 0) {` | Negative difference detects halfword sequence wrap. |
+| map_object_effect_pool_acquire | 133 | `0x10000` | `age += 0x10000;` | Halfword modulus 65536 corrects a negative sequence-age difference. |
+| map_object_effect_pool_acquire | 140 | `0` | `} while (--count != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
+| map_object_spawn_effect | 170 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_spawn_effect | 171 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_spawn_effect | 176 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
 | map_object_spawn_effect | 179 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
 | map_object_spawn_effect | 182 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
-| map_object_spawn_effect | 185 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
-| map_object_spawn_actor_debris | 200 | `39` | `object->object_id = 39;` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
-| map_object_spawn_actor_debris | 209 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_spawn_actor_debris | 210 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_trigger_link | 225 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
-| map_object_pool_trigger_link | 246 | `0` | `} while (count-- != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
-| map_object_pool_clear_link | 254 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
-| map_object_pool_clear_link | 264 | `0` | `} while (count-- != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
-| map_object_pool_update | 289 | `0` | `for (count = KF_MAP_OBJECT_CAPACITY; count != 0; object++, count--) {` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
-| map_object_pool_update | 299 | `0` | `pair = 0;` | Null object pointer initialization or presence check. |
-| map_object_pool_update | 304 | `0` | `if (pair != 0) {` | Null object pointer initialization or presence check. |
-| map_object_pool_update | 307 | `0` | `if (timer == 0) {` | First swing-opening update plays the sound. |
-| map_object_pool_update | 308 | `0x77` | `if (object->object_id == 0x77) {` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
-| map_object_pool_update | 316 | `1` | `if (timer == MAP_SWING_DOOR_OPEN_UPDATES - 1) {` | Last zero-based opening update, when the collision edge opens. |
-| map_object_pool_update | 325 | `1` | `if (map_object_probe_forward(object, object->rotation.y - KF_ANGLE_QUARTER_TURN) != -1) {` | Established negative-one distance-query miss result. |
-| map_object_pool_update | 330 | `0x77` | `if (object->object_id == 0x77) {` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
-| map_object_pool_update | 339 | `0` | `if (pair != 0) {` | Null object pointer initialization or presence check. |
-| map_object_pool_update | 348 | `0` | `if (elapsed == 0) {` | First lift-opening update plays the sound. |
-| map_object_pool_update | 352 | `1` | `if (elapsed == MAP_LIFT_DOOR_OPEN_UPDATES - 1) {` | Last zero-based opening update, when the collision edge opens. |
-| map_object_pool_update | 361 | `1` | `if (map_object_probe_forward(object, object->rotation.y) != -1) {` | Established negative-one distance-query miss result. |
-| map_object_pool_update | 373 | `0` | `if (object->action_timer == 0) {` | Zero timer selects falling before floor contact. |
-| map_object_pool_update | 383 | `1` | `object->action_timer = 1;` | One selects tipping after floor contact; same halfword now carries angular velocity. |
-| map_object_pool_update | 403 | `1` | `object->action_timer = 1;` | Completion write before the spin action becomes idle. |
-| map_object_pool_update | 412 | `0` | `if (object->action_timer == 0) {` | Zero timer selects positive bounce pitch direction. |
-| map_object_pool_update | 423 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_update | 426 | `1` | `object->link.vertical_velocity = -(object->link.vertical_velocity >> 1);` | Arithmetic division by two before sign reversal at a bounce. |
-| map_object_pool_update | 427 | `0` | `object->action_timer = object->action_timer == 0;` | Boolean inversion switches bounce pitch direction. |
-| map_object_pool_update | 434 | `0` | `if (object->action_timer == 0) {` | Zero countdown permits a new range check and emission. |
-| map_object_pool_update | 436 | `0` | `object->position_x, KF_COLLISION_IGNORE_HEIGHT, object->position_z, MAP_EMITTER_PLAYER_RANGE, 0)` | Zero vertical extent of the height-ignored distance/collision query. |
-| map_object_pool_update | 437 | `1` | `== -1) {` | Established negative-one distance-query miss result. |
-| map_object_pool_update | 441 | `137` | `case 137:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
-| map_object_pool_update | 442 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_update | 447 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
-| map_object_pool_update | 448 | `0xe` | `0xe,` | Effect kind 14 emitted by object 137; independent behavioral identity unresolved. |
-| map_object_pool_update | 454 | `124` | `case 124:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
-| map_object_pool_update | 455 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_update | 463 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
-| map_object_pool_update | 470 | `125` | `case 125:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
-| map_object_pool_update | 471 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_update | 479 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
-| map_object_pool_update | 484 | `1` | `1);` | True requests Wind Cutter sound through the seventh constructor argument. |
-| map_object_pool_update | 487 | `115` | `case 115:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
-| map_object_pool_update | 491 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| map_object_pool_update | 495 | `0` | `case 0:` | Zero yaw, the angular coordinate origin for this cardinal geometry branch. |
-| map_object_pool_update | 507 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
-| map_object_pool_update | 522 | `0` | `if (object->link.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {` | Zero means the one-shot effect-release request has not been sent. |
-| map_object_pool_update | 524 | `1` | `object->action_timer = 1;` | One records that the release request was sent. |
-| map_object_pool_update | 532 | `1` | `effect_pool_records[object->link.action_parameter].visual.animation_phase = (KF_FIXED12_ONE - 1);` | Greatest animation phase below Q12 unity; also the reverse departure endpoint. |
-| map_object_pool_update | 538 | `0` | `if (record->visual.animation_phase == 0) {` | Zero interpolation endpoint: departure sound test or reset after reverse underflow. |
-| map_object_pool_update | 544 | `1` | `record->visual.animation_phase = (KF_FIXED12_ONE - 1);` | Greatest animation phase below Q12 unity; also the reverse departure endpoint. |
-| map_object_pool_update | 554 | `1` | `if (record->visual.animation_phase == (KF_FIXED12_ONE - 1)) {` | Greatest animation phase below Q12 unity; also the reverse departure endpoint. |
-| map_object_pool_update | 560 | `0` | `record->visual.animation_phase = 0;` | Zero interpolation endpoint: departure sound test or reset after reverse underflow. |
-| map_object_pool_update | 566 | `0` | `if (object->link.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {` | Zero means the one-shot region copy has not been processed. |
-| map_object_pool_update | 570 | `1` | `object->action_timer = 1;` | One records completion even when the copy parameter was absent. |
-| map_object_pool_update | 577 | `0` | `if (object->action_timer == 0) {` | Zero selects the initial reveal displacement. |
-| map_object_pool_update | 579 | `1` | `object->action_timer = 1;` | First settling timer; updates 1 through 5 restore the overshoot. |
-| map_object_pool_update | 584 | `3` | `if (player_state.progress_state.current_floor == 3) {` | Authored floor number selects its persistent reveal-completion script. |
-| map_object_pool_update | 591 | `2` | `map_apply_copy_region(2);` | Authored copy-region table index applied when floor 3 completes four reveals. |
-| map_object_pool_update | 592 | `3` | `map_apply_copy_region(3);` | Authored copy-region table index applied when floor 3 completes four reveals. |
-| map_object_pool_update | 597 | `1` | `} else if (player_state.progress_state.current_floor == 1) {` | Authored floor number selects its persistent reveal-completion script. |
-| map_object_pool_update | 609 | `0x7b` | `object->object_id = 0x7b;` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
+| map_object_spawn_actor_debris | 197 | `39` | `object->object_id = 39;` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
+| map_object_spawn_actor_debris | 206 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_spawn_actor_debris | 207 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_trigger_link | 222 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
+| map_object_pool_trigger_link | 243 | `0` | `} while (count-- != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
+| map_object_pool_clear_link | 251 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
+| map_object_pool_clear_link | 261 | `0` | `} while (count-- != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
+| map_object_pool_update | 286 | `0` | `for (count = KF_MAP_OBJECT_CAPACITY; count != 0; object++, count--) {` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
+| map_object_pool_update | 296 | `0` | `pair = 0;` | Null object pointer initialization or presence check. |
+| map_object_pool_update | 301 | `0` | `if (pair != 0) {` | Null object pointer initialization or presence check. |
+| map_object_pool_update | 304 | `0` | `if (timer == 0) {` | First swing-opening update plays the sound. |
+| map_object_pool_update | 305 | `0x77` | `if (object->object_id == 0x77) {` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
+| map_object_pool_update | 313 | `1` | `if (timer == MAP_SWING_DOOR_OPEN_UPDATES - 1) {` | Last zero-based opening update, when the collision edge opens. |
+| map_object_pool_update | 322 | `1` | `if (map_object_probe_forward(object, object->rotation.y - KF_ANGLE_QUARTER_TURN) != -1) {` | Established negative-one distance-query miss result. |
+| map_object_pool_update | 327 | `0x77` | `if (object->object_id == 0x77) {` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
+| map_object_pool_update | 336 | `0` | `if (pair != 0) {` | Null object pointer initialization or presence check. |
+| map_object_pool_update | 345 | `0` | `if (elapsed == 0) {` | First lift-opening update plays the sound. |
+| map_object_pool_update | 349 | `1` | `if (elapsed == MAP_LIFT_DOOR_OPEN_UPDATES - 1) {` | Last zero-based opening update, when the collision edge opens. |
+| map_object_pool_update | 358 | `1` | `if (map_object_probe_forward(object, object->rotation.y) != -1) {` | Established negative-one distance-query miss result. |
+| map_object_pool_update | 370 | `0` | `if (object->action_timer == 0) {` | Zero timer selects falling before floor contact. |
+| map_object_pool_update | 380 | `1` | `object->action_timer = 1;` | One selects tipping after floor contact; same halfword now carries angular velocity. |
+| map_object_pool_update | 400 | `1` | `object->action_timer = 1;` | Completion write before the spin action becomes idle. |
+| map_object_pool_update | 409 | `0` | `if (object->action_timer == 0) {` | Zero timer selects positive bounce pitch direction. |
+| map_object_pool_update | 420 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_update | 423 | `1` | `object->link.vertical_velocity = -(object->link.vertical_velocity >> 1);` | Arithmetic division by two before sign reversal at a bounce. |
+| map_object_pool_update | 424 | `0` | `object->action_timer = object->action_timer == 0;` | Boolean inversion switches bounce pitch direction. |
+| map_object_pool_update | 431 | `0` | `if (object->action_timer == 0) {` | Zero countdown permits a new range check and emission. |
+| map_object_pool_update | 433 | `0` | `object->position_x, KF_COLLISION_IGNORE_HEIGHT, object->position_z, MAP_EMITTER_PLAYER_RANGE, 0)` | Zero vertical extent of the height-ignored distance/collision query. |
+| map_object_pool_update | 434 | `1` | `== -1) {` | Established negative-one distance-query miss result. |
+| map_object_pool_update | 438 | `137` | `case 137:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
+| map_object_pool_update | 439 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_update | 444 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
+| map_object_pool_update | 445 | `0xe` | `0xe,` | Effect kind 14 emitted by object 137; independent behavioral identity unresolved. |
+| map_object_pool_update | 451 | `124` | `case 124:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
+| map_object_pool_update | 452 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_update | 460 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
+| map_object_pool_update | 467 | `125` | `case 125:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
+| map_object_pool_update | 468 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_update | 476 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
+| map_object_pool_update | 481 | `1` | `1);` | True requests Wind Cutter sound through the seventh constructor argument. |
+| map_object_pool_update | 484 | `115` | `case 115:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
+| map_object_pool_update | 488 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| map_object_pool_update | 492 | `0` | `case 0:` | Zero yaw, the angular coordinate origin for this cardinal geometry branch. |
+| map_object_pool_update | 504 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
+| map_object_pool_update | 519 | `0` | `if (object->link.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {` | Zero means the one-shot effect-release request has not been sent. |
+| map_object_pool_update | 521 | `1` | `object->action_timer = 1;` | One records that the release request was sent. |
+| map_object_pool_update | 529 | `1` | `effect_pool_records[object->link.action_parameter].visual.animation_phase = (KF_FIXED12_ONE - 1);` | Greatest animation phase below Q12 unity; also the reverse departure endpoint. |
+| map_object_pool_update | 535 | `0` | `if (record->visual.animation_phase == 0) {` | Zero interpolation endpoint: departure sound test or reset after reverse underflow. |
+| map_object_pool_update | 541 | `1` | `record->visual.animation_phase = (KF_FIXED12_ONE - 1);` | Greatest animation phase below Q12 unity; also the reverse departure endpoint. |
+| map_object_pool_update | 551 | `1` | `if (record->visual.animation_phase == (KF_FIXED12_ONE - 1)) {` | Greatest animation phase below Q12 unity; also the reverse departure endpoint. |
+| map_object_pool_update | 557 | `0` | `record->visual.animation_phase = 0;` | Zero interpolation endpoint: departure sound test or reset after reverse underflow. |
+| map_object_pool_update | 563 | `0` | `if (object->link.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {` | Zero means the one-shot region copy has not been processed. |
+| map_object_pool_update | 567 | `1` | `object->action_timer = 1;` | One records completion even when the copy parameter was absent. |
+| map_object_pool_update | 574 | `0` | `if (object->action_timer == 0) {` | Zero selects the initial reveal displacement. |
+| map_object_pool_update | 576 | `1` | `object->action_timer = 1;` | First settling timer; updates 1 through 5 restore the overshoot. |
+| map_object_pool_update | 581 | `3` | `if (player_state.progress_state.current_floor == 3) {` | Authored floor number selects its persistent reveal-completion script. |
+| map_object_pool_update | 588 | `2` | `map_apply_copy_region(2);` | Authored copy-region table index applied when floor 3 completes four reveals. |
+| map_object_pool_update | 589 | `3` | `map_apply_copy_region(3);` | Authored copy-region table index applied when floor 3 completes four reveals. |
+| map_object_pool_update | 594 | `1` | `} else if (player_state.progress_state.current_floor == 1) {` | Authored floor number selects its persistent reveal-completion script. |
+| map_object_pool_update | 606 | `0x7b` | `object->object_id = 0x7b;` | Authored object resource selector: gold drop 39, door sound variant 119, or enabled restore point 123; asset identity not inferred. |
 
 ### `src/game/map_object_pool.c`
 
@@ -267,8 +268,7 @@ their specific arithmetic, initialization, geometry or state role below.
 | map_object_pool_load | 262 | `139` | `case 139:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
 | map_object_pool_load | 265 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
 | map_object_pool_load | 273 | `135` | `case 135:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
-| map_object_pool_load | 276 | `0` | `0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x30, &object->position_x,` | Stored effect ID zero for the switch visual. |
-| map_object_pool_load | 276 | `0x30` | `0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, 0x30, &object->position_x,` | Effect kind 48 creates this switch visual; shared kind identity audit remains open. |
+| map_object_pool_load | 276 | `0` | `0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object->position_x,` | Stored effect ID zero for the switch visual. |
 | map_object_pool_load | 281 | `56` | `case 56:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
 | map_object_pool_load | 282 | `63` | `case 63:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
 | map_object_pool_load | 283 | `64` | `case 64:` | Authored object ID selecting the loader/emitter binding in the original dossier; asset identity unresolved. |
