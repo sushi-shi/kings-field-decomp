@@ -318,8 +318,8 @@ KfMapEvent	0x0b	0x01	dialogue_page_delay	u8	supported	game_map.h;asm;xrefs;game-
 KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x0e	0x01	behavior	KfMapEventBehavior	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-map-dialogue-state.md	0 shop interaction; 1 wander; 2 looping animation with optional interaction clip
-KfMapEvent	0x0f	0x01	animation_clip	u8	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	clip index passed to render_bind_animated_instance
-KfMapEvent	0x10	0x01	collision_turn_pending	u8	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	collision selected a yaw; suppresses another random heading until the turn completes
+KfMapEvent	0x0f	0x01	animation_clip	KfMapEventAnimationClip	supported	game_map.h;map-event-animation-turn-domains.md;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	clip index passed to render_bind_animated_instance
+KfMapEvent	0x10	0x01	collision_turn_pending	KfMapEventCollisionTurn	supported	game_map.h;map-event-animation-turn-domains.md;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	collision selected a yaw; suppresses another random heading until the turn completes
 KfMapEvent	0x11	0x01	unknown_11	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x12	0x02	animation_phase	u16	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	u16 animation keyframe phase, modulo 4096 during continuous playback; separate from yaw
 KfMapEvent	0x14	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x

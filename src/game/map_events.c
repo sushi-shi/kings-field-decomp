@@ -71,14 +71,14 @@ void map_event_update_wander(void)
         event->reference_z = point.vz;
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
         event->cell_z = point.vz / KF_MAP_TILE_SIZE;
-        event->collision_turn_pending = 0;
+        event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
         if (event->rotation == event->rotation_target && rand() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
             event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
         }
     } else {
-        if (event->collision_turn_pending == 0 || event->rotation == event->rotation_target) {
+        if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation == event->rotation_target) {
             event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
-            event->collision_turn_pending = 1;
+            event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_PENDING;
         }
     }
 

@@ -522,7 +522,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
                 event->animation_phase = 0;
-                event->animation_clip = 0;
+                event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(MAP_SHOP_SEQUENCE_INDEX);
                 map_event_interact(event);
@@ -537,14 +537,14 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 result = result < 2;
                 if (result == 0) {
                     event->animation_phase = 0;
-                    event->animation_clip = 1;
+                    event->animation_clip = KF_MAP_EVENT_CLIP_INTERACTION;
                     map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 map_event_interact(event);
                 if (result == 0) {
                     map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
-                event->animation_clip = 0;
+                event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
 clear_event_phase:
                 event->animation_phase = 0;
                 player_clear_motion();

@@ -81,10 +81,10 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
                 event->dialogue_stage = KF_DIALOGUE_FIRST_STAGE;
                 event->dialogue_page_delay = 0;
-                event->animation_clip = 0;
+                event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
                 event->animation_phase = 0;
                 event->rotation_target = 0;
-                event->collision_turn_pending = 0;
+                event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
                 collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
             } else {
                 exhausted = 1;

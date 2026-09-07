@@ -1,8 +1,10 @@
 # Retained map-event literals
 
-Complete account of **117 numeric occurrences** in `map_event.c`,
+Complete account of **112 numeric occurrences** in `map_event.c`,
 `map_events.c` and `map_load.c` after the
 [motion and sound follow-up](game-map-event-motion-constants.md).
+The [animation/turn type review](map-event-animation-turn-domains.md) names
+the remaining clip selectors and collision-turn state.
 Comments, strings, identifier digits, enums and retail claims are excluded.
 Each repeated token has its own row; signs remain expression operators.
 
@@ -12,7 +14,7 @@ explicit numeric boundaries.
 
 ## `src/game/map_event.c`
 
-28 retained occurrences.
+26 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -27,10 +29,8 @@ explicit numeric boundaries.
 | `map_event_pool_load` | 79 | `0` | `event->rotation_z = 0;` | Angular origin initializes the indicated rotation lane; no separate state encoding. |
 | `map_event_pool_load` | 80 | `0` | `event->rotation_x = 0;` | Angular origin initializes the indicated rotation lane; no separate state encoding. |
 | `map_event_pool_load` | 83 | `0` | `event->dialogue_page_delay = 0;` | No pending page advance; ordinary zero countdown, reset on initialization or stage change. |
-| `map_event_pool_load` | 84 | `0` | `event->animation_clip = 0;` | First resource animation clip; clip indices are resource IDs, not actor-action enum values. |
 | `map_event_pool_load` | 85 | `0` | `event->animation_phase = 0;` | Start at the beginning of that animation clip. |
 | `map_event_pool_load` | 86 | `0` | `event->rotation_target = 0;` | Initial yaw target at the angular origin. |
-| `map_event_pool_load` | 87 | `0` | `event->collision_turn_pending = 0;` | Clear the boolean indicating a collision-selected heading. |
 | `map_event_pool_load` | 88 | `1` | `collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);` | Add one event to the destination cell count. |
 | `map_event_pool_load` | 90 | `1` | `exhausted = 1;` | Set the local list-exhausted boolean after the free/end marker. |
 | `map_event_pool_load` | 95 | `0` | `} while (count-- != 0);` | Post-decrement zero endpoint visits the final slot before ending the fixed-size walk. |
@@ -47,16 +47,13 @@ explicit numeric boundaries.
 
 ## `src/game/map_events.c`
 
-36 retained occurrences.
+33 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `map_event_update_wander` | 56 | `1` | `collision_adjust_cell_occupancy(event->cell_x, event->cell_z, -1);` | Remove this event from its previous cell count before testing its movement. |
 | `map_event_update_wander` | 67 | `0` | `point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,` | Zero query height is passed with the height-ignore sentinel; preserve the observed collision argument. |
 | `map_event_update_wander` | 68 | `0x80` | `KF_COLLISION_SKIP_MAP_EVENTS \| (0x80 << KF_COLLISION_CELL_FLAG_SHIFT))` | Select collision-cell flag bit 7 for rejection; the bit's authored map meaning is unresolved. |
-| `map_event_update_wander` | 74 | `0` | `event->collision_turn_pending = 0;` | Clear the boolean indicating a collision-selected heading. |
-| `map_event_update_wander` | 79 | `0` | `if (event->collision_turn_pending == 0 \|\| event->rotation == event->rotation_target) {` | Boolean clear test permits a new collision heading; the other branch detects completion of the prior turn. |
-| `map_event_update_wander` | 81 | `1` | `event->collision_turn_pending = 1;` | Set that boolean to avoid repeatedly selecting a new heading during the same turn. |
 | `map_event_update_wander` | 88 | `1` | `collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);` | Add one event to the destination cell count. |
 | `map_event_update_animation_loop` | 101 | `0` | `&& event == &map_event_pool[0]` | First event slot owns this floor-specific sound. |
 | `map_event_update_animation_loop` | 102 | `0` | `&& map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {` | Test that same first slot for animation wrap. |

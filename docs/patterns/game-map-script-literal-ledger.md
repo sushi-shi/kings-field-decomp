@@ -1,6 +1,6 @@
 # Retained floor-script literals
 
-Complete account of **232 numeric/character occurrences** in
+Complete account of **229 numeric/character occurrences** in
 `src/game/map_scripts.c` after the
 [image-group and current-source review](map-image-groups.md).
 Comments, strings, identifier digits, enum/macro definitions and retail
@@ -222,13 +222,10 @@ explicit numeric boundaries.
 | `map_show_screen_image` | 468 | `'0'` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
 | `map_interaction_dispatch` | 515 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
 | `map_interaction_dispatch` | 519 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 520 | `0` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 537 | `2` | `result = result < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The count is loaded from model_index plus the named map-event asset base before the animation update; this boolean checks for a second clip. |
 | `map_interaction_dispatch` | 538 | `0` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
 | `map_interaction_dispatch` | 539 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 540 | `1` | `event->animation_clip = 1;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 544 | `0` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
-| `map_interaction_dispatch` | 547 | `0` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 548 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 558 | `0` | `for (index = 0;; index++) {` | Start the interaction search at zero-based pool index zero. |
 | `map_interaction_dispatch` | 560 | `1` | `if (index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |

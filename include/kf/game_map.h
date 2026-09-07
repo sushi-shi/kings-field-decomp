@@ -312,6 +312,16 @@ KF_ENUM_BEGIN(KfMapEventBehavior, u8)
     KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP = 2
 KF_ENUM_END(KfMapEventBehavior)
 
+KF_ENUM_BEGIN(KfMapEventAnimationClip, u8)
+    KF_MAP_EVENT_CLIP_BASE = 0,
+    KF_MAP_EVENT_CLIP_INTERACTION = 1
+KF_ENUM_END(KfMapEventAnimationClip)
+
+KF_ENUM_BEGIN(KfMapEventCollisionTurn, u8)
+    KF_MAP_EVENT_COLLISION_TURN_NONE = 0,
+    KF_MAP_EVENT_COLLISION_TURN_PENDING = 1
+KF_ENUM_END(KfMapEventCollisionTurn)
+
 enum {
     KF_DIALOGUE_STAGE_COUNT = 5,
     KF_DIALOGUE_FIRST_STAGE = 1,
@@ -361,8 +371,8 @@ typedef struct KfMapEvent {
     u8 unknown_0c;
     u8 unknown_0d;
     KfMapEventBehavior behavior;
-    u8 animation_clip;
-    u8 collision_turn_pending;
+    KfMapEventAnimationClip animation_clip;
+    KfMapEventCollisionTurn collision_turn_pending;
     u8 unknown_11;
     u16 animation_phase;
     s32 position_x;

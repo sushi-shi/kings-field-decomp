@@ -40,7 +40,7 @@ void render_map_event(KfMapEvent *event)
     asset_registry_select(asset);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
-            &event->animation_cache, asset, event->animation_clip, event->animation_phase,
+            &event->animation_cache, asset, KF_ENUM_ENCODE(u16, event->animation_clip), event->animation_phase,
             object->vertex_count) == 0) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);
