@@ -154,7 +154,8 @@ extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias);
-extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag);
+extern void render_enqueue_sprite(
+    KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_map_cell(s32 col, s32 row, KfCellVisibility cell);
 extern void render_enqueue_map(u16 object_index);

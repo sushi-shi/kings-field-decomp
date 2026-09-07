@@ -290,9 +290,9 @@ void display_present_frame(void)
 }
 
 ADDRESS(0x8001c0e8, 0x2c)
-void tmd_select(u16 index)
+void tmd_select(KfTmdSlot slot)
 {
-    tmd_state.current_asset = tmd_state.slots[index];
+    tmd_state.current_asset = tmd_state.slots[KF_ENUM_ENCODE(u16, slot)];
 }
 
 ADDRESS(0x8001c114, 0x24)
@@ -455,14 +455,14 @@ void tmd_prepare_primitive_indices(void)
 }
 
 ADDRESS(0x8001c5b0, 0x3c)
-void tmd_register(u16 slot, u8 *tmd)
+void tmd_register(KfTmdSlot slot, u8 *tmd)
 {
-    tmd_state.current_asset = tmd_state.slots[slot] = tmd;
+    tmd_state.current_asset = tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();
 }
 
 ADDRESS(0x8001c5ec, 0x20)
-void tmd_release_last_allocation(s32 slot)
+void tmd_release_last_allocation(KF_ENUM_PARAM(KfTmdSlot, s32) slot)
 {
     memory_release_last();
 }

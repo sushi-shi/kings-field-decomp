@@ -4,13 +4,14 @@
 /* Shared TMD payload, primitive packet, projection layouts, and game APIs. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 #include <kf/psyq.h>
 
-enum {
+KF_ENUM_BEGIN(KfTmdSlot, u16)
     KF_TMD_SLOT_MAP = 0,
     KF_TMD_SLOT_ENTITIES = 1,
     KF_TMD_SLOT_MENU_ITEM = 4
-};
+KF_ENUM_END(KfTmdSlot)
 
 enum {
     KF_TMD_HEADER_BYTES = 12,
@@ -222,9 +223,9 @@ typedef struct KfScreenVertex {
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern void tmd_prepare_primitive_indices(void);
 extern void tmd_project_vertices(s32 count);
-extern void tmd_register(u16 slot, u8 *tmd);
-extern void tmd_release_last_allocation(s32 slot);
-extern void tmd_select(u16 slot);
+extern void tmd_register(KfTmdSlot slot, u8 *tmd);
+extern void tmd_release_last_allocation(KF_ENUM_PARAM(KfTmdSlot, s32) slot);
+extern void tmd_select(KfTmdSlot slot);
 extern void tmd_select_object_vertices(u16 object_index);
 extern void tmd_set_current_vertices(SVECTOR *vertices);
 

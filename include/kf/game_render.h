@@ -209,7 +209,8 @@ extern void render_effect_sprites(void);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_enqueue_map(u16 object_index);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);
-extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag);
+extern void render_enqueue_sprite(
+    KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_entities(void);
 extern void render_frame(

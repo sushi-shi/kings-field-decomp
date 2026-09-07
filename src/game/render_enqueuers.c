@@ -765,12 +765,13 @@ void render_enqueue_map(u16 object_index)
  * projected depth biased by the caller's depth_bias.
  */
 ADDRESS(0x8001e230, 0x250)
-void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
+void render_enqueue_sprite(
+    KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode)
 {
     SVECTOR corners[4];
     SVECTOR anchor;
     long anchor_sxy;
-    long p;
+    long depth_cue;
     long clip_flag;
     long sxy0;
     long sxy1;
@@ -785,9 +786,9 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
     corners[2].vy = corners[3].vy = sprite->y + sprite->h;
     corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;
     anchor.vx = anchor.vy = anchor.vz = 0;
-    otz = RotTransPers(&anchor, &anchor_sxy, &p, &clip_flag);
+    otz = RotTransPers(&anchor, &anchor_sxy, &depth_cue, &clip_flag);
     RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],
-                  &sxy0, &sxy1, &sxy2, &sxy3, &p, &clip_flag);
+                  &sxy0, &sxy1, &sxy2, &sxy3, &depth_cue, &clip_flag);
 
     prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
@@ -806,11 +807,11 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
     prim->v0 = prim->v1 = sprite->v;
     prim->v2 = prim->v3 = sprite->v + sprite->v_span;
     active_render_code = prim->code;
-    if (flag == 1) {
-        p += p >> 1;
+    if (depth_cue_mode == KF_SPRITE_DEPTH_CUE_BOOSTED) {
+        depth_cue += depth_cue >> 1;
     }
     /* WIP graphics ownership: retail derives the CVECTOR from CLUT + 4 bytes. */
-    NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&active_render_clut + 2), p,
+    NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&active_render_clut + 2), depth_cue,
                    (CVECTOR *)&prim->r0);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(

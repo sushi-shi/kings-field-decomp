@@ -6,6 +6,12 @@
 #include <kf/game_types.h>
 #include <kf/enum.h>
 
+/* Boosted sprites add half the signed GTE depth-cue factor before shading. */
+KF_ENUM_BEGIN(KfSpriteDepthCueMode, s32)
+    KF_SPRITE_DEPTH_CUE_NORMAL = 0,
+    KF_SPRITE_DEPTH_CUE_BOOSTED = 1
+KF_ENUM_END(KfSpriteDepthCueMode)
+
 enum {
     KF_VRAM_WIDTH = 1024,
     KF_VRAM_HEIGHT = 512,

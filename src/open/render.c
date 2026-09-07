@@ -40,9 +40,9 @@ void display_present_frame(void)
 }
 
 ADDRESS(0x80016e68, 0x2c)
-void tmd_select(u16 index)
+void tmd_select(KfTmdSlot slot)
 {
-    open_graphics_runtime.tmd_state.current_asset = open_graphics_runtime.tmd_state.slots[index];
+    open_graphics_runtime.tmd_state.current_asset = open_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)];
 }
 
 ADDRESS(0x80016e94, 0x24)
@@ -204,18 +204,18 @@ void tmd_prepare_primitive_indices(void)
             } while (primitives_left-- != 0);
         }
         object++;
-    } while (objects_left-- != 0);
+    } while (objects_left--);
 }
 
 ADDRESS(0x80017330, 0x3c)
-void tmd_register(u16 slot, u8 *tmd)
+void tmd_register(KfTmdSlot slot, u8 *tmd)
 {
-    open_graphics_runtime.tmd_state.current_asset = open_graphics_runtime.tmd_state.slots[slot] = tmd;
+    open_graphics_runtime.tmd_state.current_asset = open_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();
 }
 
 ADDRESS(0x8001736c, 0x20)
-void tmd_release_last_allocation(s32 slot)
+void tmd_release_last_allocation(KF_ENUM_PARAM(KfTmdSlot, s32) slot)
 {
     memory_release_last();
 }

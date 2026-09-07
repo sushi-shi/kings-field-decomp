@@ -66,7 +66,7 @@ class OpenFloorItemRenderTests(unittest.TestCase):
         expected = {
             0x800190F4: ("render_floor_item", "KfFloorItem *item"),
             0x800189A0: (
-                "render_enqueue_sprite", "KfSpriteQuad *sprite;s16 depth_bias;s32 flag",
+                "render_enqueue_sprite", "KfSpriteQuad *sprite;s16 depth_bias;KfSpriteDepthCueMode depth_cue_mode",
             ),
         }
         self.assertTrue(set(expected) <= {parse_int(row["va"]) for row in rows})

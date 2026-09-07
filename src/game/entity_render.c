@@ -90,7 +90,7 @@ void render_floor_item(KfFloorItem *item)
     SetTransMatrix(&model);
     render_enqueue_sprite(
         &floor_item_sprites[item->item_id + item->animation_frame],
-        depth_bias, 1);
+        depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
     next_frame = item->animation_frame + 1;
     frame_count = item->facing_and_frame_count;
     item->animation_frame = next_frame;
@@ -134,7 +134,7 @@ void render_actor_sprite(KfEffectRenderView *sprite)
         MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, 0);
+        render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     } else {
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
         SetRotMatrix(&model);

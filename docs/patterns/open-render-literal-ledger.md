@@ -48,7 +48,8 @@ constants and retains its separate earlier literal audit.
 
 ## `src/open/entity_render.c`
 
-78 retained occurrences.
+77 retained occurrences. The [sprite cue review](sprite-cue-tmd-slots.md) names
+the floor-item depth-cue argument.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -123,7 +124,6 @@ constants and retains its separate earlier literal audit.
 | `opening_entity_render` | 88 | `0` | `render_enqueue_tmd(KF_ENUM_ENCODE(u16, object_id), 0);` | Zero additional ordering-table depth bias. |
 | `opening_entity_render` | 101 | `0` | `depth = 0;` | Zero additional ordering-table depth bias. |
 | `render_floor_item` | 128 | `0` | `if ((u8)facing != 0) {` | Zero packed facing selects billboard rotation; nonzero values select fixed yaw. |
-| `render_floor_item` | 141 | `1` | `&floor_item_sprites[item->item_id + item->animation_frame], depth_bias, 1);` | True sprite perspective-adjustment flag; the callee boosts its perspective/fog input by one half. |
 | `render_floor_item` | 142 | `1` | `next_frame = item->animation_frame + 1;` | Advance by one animation frame after rendering the current descriptor. |
 | `render_floor_item` | 145 | `0xff` | `if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {` | Explicit byte narrowing before comparing the packed frame count; preserve the current increment/wrap ordering. |
 | `render_floor_item` | 146 | `0` | `item->animation_frame = 0;` | Restart at the first zero-based frame after reaching the frame count. |

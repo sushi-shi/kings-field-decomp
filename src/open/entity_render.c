@@ -138,7 +138,7 @@ void render_floor_item(KfFloorItem *item)
     }
     SetTransMatrix(&model);
     render_enqueue_sprite(
-        &floor_item_sprites[item->item_id + item->animation_frame], depth_bias, 1);
+        &floor_item_sprites[item->item_id + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
     next_frame = item->animation_frame + 1;
     frame_count = item->facing_and_frame_count;
     item->animation_frame = next_frame;

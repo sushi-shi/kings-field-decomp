@@ -205,7 +205,8 @@ replaces the raw mode comparison with a typed visibility-grid member.
 
 ## `src/game/render_frame.c`
 
-41 retained occurrences.
+38 retained occurrences. The [sprite cue review](sprite-cue-tmd-slots.md) names
+the three notification depth-cue arguments.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -241,12 +242,9 @@ replaces the raw mode comparison with a typed visibility-grid member.
 | `render_frame` | 125 | `0` | `spin.vz = 0;` | Zero rotation around this axis; notification effect supplies only X rotation. |
 | `render_frame` | 126 | `0` | `spin.vy = 0;` | Zero rotation around this axis; notification effect supplies only X rotation. |
 | `render_frame` | 135 | `1` | `if (record[KF_NOTIFICATION_TEXT_SPRITE].active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
-| `render_frame` | 136 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, 0);` | Zero additional ordering-table depth bias. |
-| `render_frame` | 136 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
+| `render_frame` | 136 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);` | Zero additional ordering-table depth bias. |
 | `render_frame` | 138 | `1` | `if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
-| `render_frame` | 139 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, 0);` | Zero additional ordering-table depth bias. |
-| `render_frame` | 139 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
+| `render_frame` | 139 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);` | Zero additional ordering-table depth bias. |
 | `render_frame` | 144 | `1` | `for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
 | `render_frame` | 145 | `1` | `if (record->active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
-| `render_frame` | 146 | `0` | `render_enqueue_sprite(&record->sprite, 0, 0);` | Zero additional ordering-table depth bias. |
-| `render_frame` | 146 | `0` | `render_enqueue_sprite(&record->sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
+| `render_frame` | 146 | `0` | `render_enqueue_sprite(&record->sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);` | Zero additional ordering-table depth bias. |

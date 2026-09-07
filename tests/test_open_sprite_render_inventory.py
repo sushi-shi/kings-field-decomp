@@ -65,7 +65,7 @@ class OpenSpriteRenderTests(unittest.TestCase):
         identity = functions[("OPEN.EXE", 0x800189A0)]
         self.assertEqual((identity.name, identity.return_type, identity.parameters),
                          ("render_enqueue_sprite", "void",
-                          "KfSpriteQuad *sprite;s16 depth_bias;s32 flag"))
+                          "KfSpriteQuad *sprite;s16 depth_bias;KfSpriteDepthCueMode depth_cue_mode"))
         self.assertIn("open_semantic_sprite_render.tsv", identity.evidence)
         data = load_data_identities(RETAIL_CONFIG)
         for va, name, datatype, size, storage in (
