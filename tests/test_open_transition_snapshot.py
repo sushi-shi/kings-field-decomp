@@ -74,7 +74,7 @@ class OpenTransitionSnapshotTests(unittest.TestCase):
                          (0x8D220000, 0x8D230004, 0x8D240008, 0x8D25000C))
         self.assertEqual(words[-2:], (0x03E00008, 0x27BD0038))
 
-    def test_compiled_body_has_only_the_documented_frame_residue(self) -> None:
+    def test_compiled_body_matches_retail(self) -> None:
         unit = load_manifest().by_identity()["OPEN.EXE", START]
         target_path = BUILD / "delink/open/modules" / unit.object_name
         source_path = BUILD / "objdiff/open/base" / unit.object_name
@@ -87,21 +87,7 @@ class OpenTransitionSnapshotTests(unittest.TestCase):
                                     target_symbol.value)
         compiled = struct.unpack_from(f"<{SIZE // 4}I", source.sections[".text"],
                                       source_symbol.value)
-        differences = [(index * 4, left, right) for index, (left, right)
-                       in enumerate(zip(retail, compiled)) if left != right]
-        # This is a NON-EXACT residue assertion, never a matching/banking mask.
-        self.assertEqual(differences, [
-            (0x000, 0x27BDFFC8, 0x27BDFFD0),
-            (0x004, 0xAFBF0034, 0xAFBF002C),
-            (0x008, 0xAFB20030, 0xAFB20028),
-            (0x00C, 0xAFB1002C, 0xAFB10024),
-            (0x010, 0xAFB00028, 0xAFB00020),
-            (0x1E4, 0x8FBF0034, 0x8FBF002C),
-            (0x1E8, 0x8FB20030, 0x8FB20028),
-            (0x1EC, 0x8FB1002C, 0x8FB10024),
-            (0x1F0, 0x8FB00028, 0x8FB00020),
-            (0x1F8, 0x27BD0038, 0x27BD0030),
-        ])
+        self.assertEqual(compiled, retail)
         relocations = []
         for obj in (target, source):
             symbol = obj.named_symbol(SYMBOL)
