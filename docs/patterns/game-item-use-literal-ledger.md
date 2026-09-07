@@ -35,12 +35,12 @@ explicit numeric boundaries.
 | `map_event_show_person_image` | 44 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
 | `map_event_show_person_image` | 45 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
 | `map_event_show_person_image` | 45 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position/rotation for the two frames preceding the target image. |
-| `map_event_show_person_image` | 46 | `8` | `person_image_path_template[8] = '0' + event->character_id / 10;` | Path byte 8 is the character decimal tens digit; base ten and ASCII zero are representation constants. |
-| `map_event_show_person_image` | 46 | `'0'` | `person_image_path_template[8] = '0' + event->character_id / 10;` | Path byte 8 is the character decimal tens digit; base ten and ASCII zero are representation constants. |
-| `map_event_show_person_image` | 46 | `10` | `person_image_path_template[8] = '0' + event->character_id / 10;` | Path byte 8 is the character decimal tens digit; base ten and ASCII zero are representation constants. |
-| `map_event_show_person_image` | 47 | `9` | `person_image_path_template[9] = '0' + event->character_id % 10;` | Path byte 9 is the character decimal ones digit; modulo ten and ASCII zero are representation constants. |
-| `map_event_show_person_image` | 47 | `'0'` | `person_image_path_template[9] = '0' + event->character_id % 10;` | Path byte 9 is the character decimal ones digit; modulo ten and ASCII zero are representation constants. |
-| `map_event_show_person_image` | 47 | `10` | `person_image_path_template[9] = '0' + event->character_id % 10;` | Path byte 9 is the character decimal ones digit; modulo ten and ASCII zero are representation constants. |
+| `map_event_show_person_image` | 46 | `8` | `person_image_path_template[8] = '0' + KF_ENUM_ENCODE(u8, event->character_id) / 10;` | Path byte 8 is the character decimal tens digit; base ten and ASCII zero are representation constants. |
+| `map_event_show_person_image` | 46 | `'0'` | `person_image_path_template[8] = '0' + KF_ENUM_ENCODE(u8, event->character_id) / 10;` | Path byte 8 is the character decimal tens digit; base ten and ASCII zero are representation constants. |
+| `map_event_show_person_image` | 46 | `10` | `person_image_path_template[8] = '0' + KF_ENUM_ENCODE(u8, event->character_id) / 10;` | Path byte 8 is the character decimal tens digit; base ten and ASCII zero are representation constants. |
+| `map_event_show_person_image` | 47 | `9` | `person_image_path_template[9] = '0' + KF_ENUM_ENCODE(u8, event->character_id) % 10;` | Path byte 9 is the character decimal ones digit; modulo ten and ASCII zero are representation constants. |
+| `map_event_show_person_image` | 47 | `'0'` | `person_image_path_template[9] = '0' + KF_ENUM_ENCODE(u8, event->character_id) % 10;` | Path byte 9 is the character decimal ones digit; modulo ten and ASCII zero are representation constants. |
+| `map_event_show_person_image` | 47 | `10` | `person_image_path_template[9] = '0' + KF_ENUM_ENCODE(u8, event->character_id) % 10;` | Path byte 9 is the character decimal ones digit; modulo ten and ASCII zero are representation constants. |
 | `player_use_item` | 69 | `0` | `u8 used = 0;` | No applicable use action has been acknowledged yet; Boolean false. |
 | `player_use_item` | 73 | `0` | `index = 0;` | Begin the object-pool search at zero-based slot zero. |
 | `player_use_item` | 81 | `1` | `if (index == -1) {` | Negative query-miss sentinel ends the object scan, outside nonnegative pool indices. |

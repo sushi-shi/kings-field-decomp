@@ -838,10 +838,10 @@ void screen_show_image_until_input(const char *path)
 }
 
 ADDRESS(0x8002c9d4, 0xa4)
-void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, s32 character_id, u8 page)
+void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, KF_ENUM_PARAM(KfCharacterId, s32) character_id, u8 page)
 {
-    s32 tens = character_id / 10;
-    s32 ones = character_id % 10;
+    s32 tens = KF_ENUM_ENCODE(s32, character_id) / 10;
+    s32 ones = KF_ENUM_ENCODE(s32, character_id) % 10;
 
     char *directory_character = &talk_image_path_template[6];
 

@@ -308,7 +308,7 @@ KfMapCopyRegion	0x03	0x01	destination_z	u8	supported	game_map.h;asm;xrefs	destin
 KfMapCopyRegion	0x04	0x01	width	u8	supported	game_map.h;asm;xrefs	region width
 KfMapCopyRegion	0x05	0x01	height	u8	supported	game_map.h;asm;xrefs	region height
 KfMapEvent	0x00	0x01	state	KfMapEventState	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	0 authored inactive; 1 active; 3 runtime disabled; 255 free/end marker
-KfMapEvent	0x01	0x01	character_id	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
+KfMapEvent	0x01	0x01	character_id	KfCharacterId	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
 KfMapEvent	0x02	0x01	model_index	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	model index relative to the map-event asset bank
 KfMapEvent	0x03	0x05	dialogue_pages	KfDialoguePageLimits	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page for each of five one-based dialogue stages
 KfMapEvent	0x08	0x01	dialogue_stage_limit	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	maximum dialogue stage allowed by this record
@@ -340,7 +340,7 @@ KfMapEvent	0x3c	0x04	animation_cache	KfPoolRecord *	supported	game_map.h;asm;gam
 KfMapEvent	0x40	0x02	rotation_target	s16	supported	game_map.h;asm;xrefs	target rotation
 KfMapEvent	0x42	0x02	unknown_42	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x00	0x01	state	KfMapEventState	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	0 authored inactive; 1 active; 3 runtime disabled; 255 free/end marker
-KfMapEventDefinition	0x01	0x01	character_id	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
+KfMapEventDefinition	0x01	0x01	character_id	KfCharacterId	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
 KfMapEventDefinition	0x02	0x01	model_index	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	model index relative to the map-event asset bank
 KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	game_map.h;asm;xrefs	map cell z
 KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	game_map.h;asm;xrefs	map cell x

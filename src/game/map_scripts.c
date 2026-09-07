@@ -399,7 +399,7 @@ ADDRESS(0x80034a80, 0x2d4)
 void map_event_interact(KfMapEvent *event)
 {
     switch (event->character_id) {
-    case 3:
+    case KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE:
         if (item_stock[0][KF_ITEM_GOLD_CROSS] != 0 && map_event_pool[2].dialogue_stage == 1
             && map_event_pool[2].dialogue_page < 3) {
             item_stock[0][KF_ITEM_KEY_OF_THE_DEAD] = 1;
@@ -414,7 +414,7 @@ void map_event_interact(KfMapEvent *event)
             return;
         }
         break;
-    case 8:
+    case KF_CHARACTER_HEALING_EXCHANGE:
         if (item_stock[0][KF_ITEM_MIRROR_OF_TRUTH] != 0 && map_event_pool[2].dialogue_stage == 2
             && map_event_pool[2].dialogue_page < 2) {
             magic_records[KF_MAGIC_HEALING].learned = KF_MAGIC_LEARNED;
@@ -430,7 +430,7 @@ void map_event_interact(KfMapEvent *event)
             return;
         }
         break;
-    case 7:
+    case KF_CHARACTER_HARP_EXCHANGE:
         if (item_stock[0][KF_ITEM_DRAGON_KING_GRASS_FRUIT] != 0 && map_event_pool[1].dialogue_stage == 2
             && map_event_pool[1].dialogue_page < 2) {
             item_stock[0][KF_ITEM_HARP] = 1;
@@ -445,7 +445,7 @@ void map_event_interact(KfMapEvent *event)
             return;
         }
         break;
-    case 12:
+    case KF_ENUM_DECODE(KfCharacterId, 12):
         map_object_pool_clear_link(0x37);
         break;
     default:
@@ -526,7 +526,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(MAP_SHOP_SEQUENCE_INDEX);
                 map_event_interact(event);
-                menu_enter_mode(KF_MENU_MODE_SHOP, event->character_id);
+                menu_enter_mode(KF_MENU_MODE_SHOP, KF_ENUM_ENCODE(u8, event->character_id));
                 audio_play_current_map_sequence();
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 goto clear_event_phase;

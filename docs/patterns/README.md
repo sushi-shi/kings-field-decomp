@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [map-character-domain.md](map-character-domain.md): character IDs through
+  map records and dialogue, with three exchange roles and explicit encodings.
 - [map-event-animation-turn-domains.md](map-event-animation-turn-domains.md):
   byte enum fields for base/interaction clips and pending collision turns.
 - [floor-item-billboard-selector.md](floor-item-billboard-selector.md): shared

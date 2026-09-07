@@ -299,6 +299,13 @@ typedef struct KfCameraPathState {
     s32 frames_remaining;
 } KfCameraPathState;
 
+/* Role identities established by the interaction exchanges. */
+KF_ENUM_BEGIN(KfCharacterId, u8)
+    KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE = 3,
+    KF_CHARACTER_HARP_EXCHANGE = 7,
+    KF_CHARACTER_HEALING_EXCHANGE = 8
+KF_ENUM_END(KfCharacterId)
+
 KF_ENUM_BEGIN(KfMapEventState, u8)
     KF_MAP_EVENT_INACTIVE = 0,
     KF_MAP_EVENT_ACTIVE = 1,
@@ -343,7 +350,7 @@ typedef struct KfDialoguePageLimits {
 
 typedef struct KfMapEventDefinition {
     KfMapEventState state;
-    u8 character_id;
+    KfCharacterId character_id;
     u8 model_index;
     u8 cell_z;
     u8 cell_x;
@@ -361,7 +368,7 @@ typedef struct KfMapEventDefinition {
 
 typedef struct KfMapEvent {
     KfMapEventState state;
-    u8 character_id;
+    KfCharacterId character_id;
     u8 model_index;
     KfDialoguePageLimits dialogue_pages;
     u8 dialogue_stage_limit;
