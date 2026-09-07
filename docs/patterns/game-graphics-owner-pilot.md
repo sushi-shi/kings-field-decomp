@@ -380,3 +380,23 @@ game.render_scene; full `kf build` retains the known source-data failures
 six conflicting-section cases, incomplete reference ownership and zero
 artifact failures. Concurrent player/effect/map naming edits are not part of
 this campaign; its only production C change is the floor-count lifetime.
+
+### Shipped-resource lower bounds at `333f135`
+
+A read-only census using the existing `tmd_oracle` chunk/archive walkers
+inspected 246 shipped TMD cases and all 1911 object tables. Each vertex table
+was checked to fit its enclosing payload. The largest object is B1 MIXB raw
+chunk 0, object 123, with 664 vertices; the largest archive object is B5
+CHR3 asset 5, object 0, with 651. These are observed counts, not allocation
+capacities. They do not establish either a 1000-record projection allocation
+or a 1001-vector morph allocation.
+
+The resource loader assigns map-event archives from slot 10, effects from
+30, and actor archives from zero. B1..B5 effect archives each contain 18
+assets, occupying slots 30..47. Map-event counts are 6/4/2/2/2; ordinary
+actor counts are 7/8/6/7 for B1..B4, while B5 loads its separate CHR1/2/3
+variants, each with six assets. Together with the separate weapon/common
+slots 20/21, this establishes shipped registry use through slot 47, not a
+60-entry declaration. The opaque intervals must not be replaced with guessed
+array capacities on this evidence. Continue matching remaining consumers and
+source lifetimes without treating the complete owner as ready for migration.

@@ -136,3 +136,37 @@ curated structure, so the inventory census assertion is updated from 88 to
 
 Final verification: Ruff and `git diff --check` pass; all 591 existing tests
 pass in 61.243 seconds with the final structure and field census assertions.
+
+## Phase-access Function Match Plan at `333f135`
+
+Refresh the six GAME views, complete retail body/CFG, sole caller at
+`8002018c`, digit/buffer-flip boundaries, shared headers and source history.
+The unchanged baseline is 99.385475%, 712 compiled versus 716 retail bytes.
+The supported no-argument state machine retains its 56-byte frame, five
+game-helper calls, 36 retail address pairs, five internal jumps, byte
+phase/queue/hold fields, signed narrowed angle test and common return with
+its frame-restoring delay slot. There are no strings, candidates, indirect
+transfers or SDK bodies to reconstruct. Keep all phase guards, modulo-eight
+dequeue, numeric-message exception, digit scratch and sprite side effects.
+
+Retail forms the dequeue control base from the phase address but loads the
+first tail independently at +240/+244. Current source keeps an explicit
+phase pointer throughout the switch and the compiler reuses it for that
+load. Test removing this pointer and using direct accesses to the existing
+phase member for dispatch and its two writes. This removes a source-level
+address lifetime without adding state, aliases, volatile loads or new field
+views. It is distinct from the earlier final-reset-through-pointer trial.
+Check canonical and unchanged complete-owner temporary declarations
+separately; neither guessed scratch capacities nor production ownership
+migration is authorized by this trial. Compare full linked words and ordered
+references, and preserve all three exact unit siblings. Only a canonical
+strict-100% result verified with full build and raw bytes may be banked.
+
+The four-way trial (explicit/direct phase access, each with canonical or
+unchanged complete-owner storage) produces identical linked updater bytes:
+712 bytes, still missing the independent tail address pair at +240/+244.
+All ordered calls/references and eighteen known successor lists agree across
+the trials; all three exact unit siblings retain their complete retail
+words. Moving the fixture root by four bytes breaks the reference control.
+Direct phase access therefore does not explain this residue. No production
+source, owner declaration, score or bank entry changes from this trial.
