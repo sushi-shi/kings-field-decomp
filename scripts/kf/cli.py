@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import sys
 from pathlib import Path
 
@@ -127,6 +128,14 @@ def parser() -> argparse.ArgumentParser:
     trial.add_argument("--unit", required=True)
     trial.add_argument("--source", type=Path)
     trial.add_argument("--context", type=int, default=2)
+    hypotheses = subs.add_parser(
+        "hypotheses", help="compile and strict-score a matrix of source hypotheses"
+    )
+    hypotheses.add_argument("manifest", type=Path)
+    hypotheses.add_argument("-j", "--jobs", type=int, default=min(8, os.cpu_count() or 1))
+    hypotheses.add_argument("--limit", type=int, default=256)
+    hypotheses.add_argument("--keep-top", type=int, default=8)
+    hypotheses.add_argument("--output", type=Path)
     match = subs.add_parser("match", help="build and summarize changed reconstruction units")
     match.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
     match.add_argument("--unit")
@@ -238,6 +247,13 @@ def main(argv: list[str] | None = None) -> int:
             from scripts.kf.trial import compare
 
             return compare(args.unit, args.source, args.context)
+        if args.command == "hypotheses":
+            from scripts.kf.hypotheses import run
+
+            if args.jobs < 1 or args.limit < 1 or args.keep_top < 1:
+                raise ValueError("--jobs, --limit, and --keep-top must be positive")
+            return run(args.manifest, jobs=args.jobs, limit=args.limit,
+                       keep_top=args.keep_top, output=args.output)
         if args.command == "match":
             return _match(args)
         if args.command == "status":
