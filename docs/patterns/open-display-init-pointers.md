@@ -1,5 +1,35 @@
 # OPEN display-initialization pointer lifetimes
 
+## Function Match Plan: linked SDK-object and member lifetimes
+
+After merging master `97b2184`, a fresh pinned build reports OPEN at 106/108.
+OPEN `80016adc display_initialize` remains 472 retail versus 484 probe bytes
+and strict 92.177960%.  The six image-qualified views, sole caller, complete
+seven-block CFG, eighteen calls, ordered references, adjacent exact unit
+controls, SDK declarations, complete graphics owner and source history were
+refreshed.  There are no strings or candidate references.  The first real
+divergence remains the 48/40-byte frame: retail retains the address of the
+first real `DRAWENV.dtd` member in `s0` across the mode branch and draw calls,
+whereas the probe discards it and emits four additional absolute address
+pairs for `dfe`.
+
+Test linked authentic lifetimes at the observed post-definition point: form
+the two existing `DRAWENV *` objects, form a typed pointer to the first
+object's actual `dtd` member, and perform the unchanged chained `dtd` write
+through that member and the second whole object.  Continue to use the two
+whole-object pointers for their genuine SDK fields and calls.  This introduces
+no aliasing view, raw offset, volatile carrier, call, field, constant or
+ownership change.  Retain it only if the full raw stream improves while all
+three exact sibling functions remain exact; otherwise restore the source and
+record the allocation result.
+
+The typed member pointer is folded away before allocation.  The probe instead
+anchors the whole first DRAWENV only at the mode branch, emits 21 address
+pairs, keeps the 40-byte frame, and drops the first `PutDrawEnv` argument from
+its delay slot.  Similarity falls to 78.8%; all three sibling listings remain
+exact.  The source is restored.  Linking the member and whole-object source
+lifetimes therefore does not reproduce retail's retained member base.
+
 ## Data-owner and register-qualification controls at 106/108
 
 Two non-overlapping owner hypotheses were compiled as diagnostics. Separate
