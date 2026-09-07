@@ -5,7 +5,8 @@ load/release pair, and initializers in their three edited modules. Named enum
 definitions and ADDRESS/DATA/RODATA claims are excluded. Other functions in
 the same source files are outside this focused ledger.
 
-All **204 occurrences** have a specific reason.
+All **196 occurrences** have a specific reason. The [drawing-layer review](game-menu-drawing-layers.md)
+names the eight former pickup-window/background depth literals.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -90,7 +91,6 @@ All **204 occurrences** have a specific reason.
 | `menu_draw_item_name_frame` | 126, 148 | `0x10 × 2` | `current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 127, 171 | `0x76 × 2` | `current_poly_ft4->x3 = menu_assets.window_backdrop.width + 0x76;` | Pickup tile anchor 118 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 128, 150 | `0x10 × 2` | `current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 137, 159, 181, 203 | `0xb54 × 4` | `primitive_buffer_commit_poly_ft4(0xb54);` | Authored ordering-table slot 2900 for the translucent pickup-window tiles. DrawOTag traverses from the end, so slot 3000 background precedes these tiles; original 100-slot spacing rationale unknown. |
 | `menu_draw_item_name_frame` | 143, 187 | `0xbd × 2` | `current_poly_ft4->x0 = 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 146, 190 | `0xbd × 2` | `current_poly_ft4->x2 = 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 147, 191 | `0xbd × 2` | `current_poly_ft4->x1 = menu_assets.window_backdrop.width + 0xbd;` | Pickup tile anchor 189 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
@@ -99,7 +99,6 @@ All **204 occurrences** have a specific reason.
 | `menu_draw_item_name_frame` | 167, 189 | `0x78 × 2` | `current_poly_ft4->y1 = 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 170, 192 | `0x78 × 2` | `current_poly_ft4->y2 = menu_assets.window_backdrop.height + 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 172, 194 | `0x78 × 2` | `current_poly_ft4->y3 = menu_assets.window_backdrop.height + 0x78;` | Pickup tile anchor 120 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
-| `menu_draw_item_name_frame` | 206, 209, 212, 215 | `3000 × 4` | `display_state.ordering_table + 3000,` | Authored background layer at slot 3000, drawn before the mirrored translucent tiles at 2900. The slot is render ordering, not world depth. |
 | `menu_draw_item_name_frame` | 207 | `3` | `&menu_assets.background_quads[display_state.buffer_index][3]);` | Persistent background-quad indices 3,2,1,0 inserted in reverse order; equal-depth AddPrim prepending reverses their submission order. |
 | `menu_draw_item_name_frame` | 210 | `2` | `&menu_assets.background_quads[display_state.buffer_index][2]);` | Persistent background-quad indices 3,2,1,0 inserted in reverse order; equal-depth AddPrim prepending reverses their submission order. |
 | `menu_draw_item_name_frame` | 213 | `1` | `&menu_assets.background_quads[display_state.buffer_index][1]);` | Persistent background-quad indices 3,2,1,0 inserted in reverse order; equal-depth AddPrim prepending reverses their submission order. |

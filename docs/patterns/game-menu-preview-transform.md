@@ -78,7 +78,8 @@ explain what the values do, without inventing the original placement rationale.
 ## Literal coverage
 
 The [per-occurrence ledger](game-menu-preview-literal-ledger.md) accounts for
-204 retained literals after the [shop price follow-up](game-shop-price-domains.md)
+196 retained literals after the [shop price follow-up](game-shop-price-domains.md)
+and [shared drawing-layer review](game-menu-drawing-layers.md)
 (initially 213) in the selected functions and edited-module initializers,
 down from 236 in the captured source. It distinguishes matrix indices and Q12
 coefficients, layout pixels and ordering-table positions, glyph data and field

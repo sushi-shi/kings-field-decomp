@@ -104,6 +104,15 @@ enum {
     MENU_CLASS_FIRST_GLYPH = 0x100
 };
 
+/* Shared ordering-table buckets; preserve insertion order within each bucket. */
+enum {
+    MENU_WIDGET_OT_DEPTH = 2000,
+    MENU_WINDOW_OT_DEPTH = 2900,
+    MENU_BACKGROUND_OT_DEPTH = 3000,
+    /* Zero-based: release held input after the third panel draw. */
+    MENU_PANEL_INPUT_RELEASE_FRAME = 2
+};
+
 /* Screen-space anchor shared by menu labels and sprite blitters. */
 typedef struct MenuPoint {
     u16 x;

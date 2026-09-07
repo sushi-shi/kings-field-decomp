@@ -3,6 +3,13 @@
 #include <kf/game.h>
 
 
+enum {
+    MENU_MAP_MARKER_OT_DEPTH = 500,
+    MENU_MAP_IMAGE_OT_DEPTH = 1000,
+    MENU_MAP_PIXELS_PER_CELL = 2,
+    MENU_MAP_MARKER_SPAN = 4
+};
+
 RODATA(0x800122e4, 0xc)
 
 /* Display the current-floor map image and player-position marker. */
@@ -10,8 +17,8 @@ ADDRESS(0x80022d7c, 0x400)
 void menu_map_viewer(s32 item_code)
 {
     s32 frame = 0;
-    POLY_FT4 poly_bg[2];
-    POLY_FT4 poly_marker[2];
+    POLY_FT4 poly_bg[KF_DISPLAY_BUFFER_COUNT];
+    POLY_FT4 poly_marker[KF_DISPLAY_BUFFER_COUNT];
     char path[16] = "MAP\\M00.";
     u8 *buffer;
     s32 map_number;
@@ -60,40 +67,40 @@ void menu_map_viewer(s32 item_code)
     poly_marker[0].tpage = 0x1b;
     poly_marker[0].u0 = 0;
     poly_marker[0].v0 = 0;
-    poly_marker[0].u1 = 4;
+    poly_marker[0].u1 = MENU_MAP_MARKER_SPAN;
     poly_marker[0].v1 = 0;
     poly_marker[0].u2 = 0;
-    poly_marker[0].v2 = 4;
-    poly_marker[0].u3 = 4;
-    poly_marker[0].v3 = 4;
-    poly_marker[0].x0 = player_state.map_cell.x * 2 + 58;
-    poly_marker[0].y0 = 0xd8 - player_state.map_cell.z * 2;
-    poly_marker[0].x1 = player_state.map_cell.x * 2 + 62;
-    poly_marker[0].y1 = 0xd8 - player_state.map_cell.z * 2;
-    poly_marker[0].x2 = player_state.map_cell.x * 2 + 58;
-    poly_marker[0].y2 = 0xdc - player_state.map_cell.z * 2;
-    poly_marker[0].x3 = player_state.map_cell.x * 2 + 62;
-    poly_marker[0].y3 = 0xdc - player_state.map_cell.z * 2;
+    poly_marker[0].v2 = MENU_MAP_MARKER_SPAN;
+    poly_marker[0].u3 = MENU_MAP_MARKER_SPAN;
+    poly_marker[0].v3 = MENU_MAP_MARKER_SPAN;
+    poly_marker[0].x0 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 58;
+    poly_marker[0].y0 = 0xd8 - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x1 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 62;
+    poly_marker[0].y1 = 0xd8 - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x2 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 58;
+    poly_marker[0].y2 = 0xdc - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x3 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + 62;
+    poly_marker[0].y3 = 0xdc - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
     poly_marker[1] = poly_marker[0];
 
     for (;;) {
         menu_frame_begin();
-        AddPrim(display_state.ordering_table + 500,
+        AddPrim(display_state.ordering_table + MENU_MAP_MARKER_OT_DEPTH,
                 &poly_marker[display_state.buffer_index]);
-        AddPrim(display_state.ordering_table + 1000,
+        AddPrim(display_state.ordering_table + MENU_MAP_IMAGE_OT_DEPTH,
                 &poly_bg[display_state.buffer_index]);
-        AddPrim(display_state.ordering_table + 3000,
+        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
                 &menu_assets.background_quads[display_state.buffer_index][3]);
-        AddPrim(display_state.ordering_table + 3000,
+        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
                 &menu_assets.background_quads[display_state.buffer_index][2]);
-        AddPrim(display_state.ordering_table + 3000,
+        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
                 &menu_assets.background_quads[display_state.buffer_index][1]);
-        AddPrim(display_state.ordering_table + 3000,
+        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
                 &menu_assets.background_quads[display_state.buffer_index][0]);
         menu_present_frame();
-        if (frame < 2) {
+        if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;
-        } else if (frame == 2) {
+        } else if (frame == MENU_PANEL_INPUT_RELEASE_FRAME) {
             while (PadRead(1) != 0)
                 ;
             frame++;

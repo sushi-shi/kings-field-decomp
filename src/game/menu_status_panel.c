@@ -41,7 +41,7 @@ void menu_status_panel(void)
         current_poly_ft4->v2 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
         current_poly_ft4->u3 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
         current_poly_ft4->v3 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
-        primitive_buffer_commit_poly_ft4(0xb54);
+        primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
         primitive_buffer_begin_poly_ft4();
         SetSemiTrans(current_poly_ft4, 1);
@@ -63,7 +63,7 @@ void menu_status_panel(void)
         current_poly_ft4->v2 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
         current_poly_ft4->u3 = menu_assets.window_backdrop.u;
         current_poly_ft4->v3 = menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
-        primitive_buffer_commit_poly_ft4(0xb54);
+        primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
         primitive_buffer_begin_poly_ft4();
         SetSemiTrans(current_poly_ft4, 1);
@@ -85,7 +85,7 @@ void menu_status_panel(void)
         current_poly_ft4->v2 = menu_assets.window_backdrop.v;
         current_poly_ft4->u3 = menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
         current_poly_ft4->v3 = menu_assets.window_backdrop.v;
-        primitive_buffer_commit_poly_ft4(0xb54);
+        primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
         primitive_buffer_begin_poly_ft4();
         SetSemiTrans(current_poly_ft4, 1);
@@ -107,14 +107,14 @@ void menu_status_panel(void)
         current_poly_ft4->v2 = menu_assets.window_backdrop.v;
         current_poly_ft4->u3 = menu_assets.window_backdrop.u;
         current_poly_ft4->v3 = menu_assets.window_backdrop.v;
-        primitive_buffer_commit_poly_ft4(0xb54);
+        primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
         menu_draw_window_backdrop();
         menu_present_frame();
-        if (frame < 2) {
+        if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             goto advance;
         }
-        if (frame == 2) {
+        if (frame == MENU_PANEL_INPUT_RELEASE_FRAME) {
             while (PadRead(1) != 0) {
             }
         advance:

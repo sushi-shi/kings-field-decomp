@@ -94,7 +94,7 @@ void menu_list_render(const KfMenuList *list)
     current_poly_ft4->u3 = tile->u + tile->width;
     current_poly_ft4->v3 = tile->v + tile->height;
     SetSemiTrans(current_poly_ft4, 1);
-    primitive_buffer_commit_poly_ft4(2000);
+    primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
 
     if (list->visible_rows != 0) {
         slot = 0;
@@ -125,7 +125,7 @@ void menu_list_render(const KfMenuList *list)
             current_poly_ft4->u3 = tile->u + tile->width;
             current_poly_ft4->v3 = tile->v + tile->height;
             SetSemiTrans(current_poly_ft4, 1);
-            primitive_buffer_commit_poly_ft4(2000);
+            primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
             yoff += 0xc;
         } while ((s32)slot < list->visible_rows);
     }
@@ -153,7 +153,7 @@ void menu_list_render(const KfMenuList *list)
     current_poly_ft4->u3 = tile->u + tile->width;
     current_poly_ft4->v3 = tile->v + tile->height;
     SetSemiTrans(current_poly_ft4, 1);
-    primitive_buffer_commit_poly_ft4(2000);
+    primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
 
     menu_draw_window_backdrop();
 }

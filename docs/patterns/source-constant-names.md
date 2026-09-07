@@ -83,7 +83,8 @@ structure, recovering the retail stack spacing without pointer casts.
 The [preview transform review](game-menu-preview-transform.md) replaces the
 interior yaw alias with its complete SDK rotation vector and names angle-rate,
 wrapping and Q12 lighting domains. Its six-function and initializer ledger
-explains 204 retained occurrences after the shop follow-up, down from 236, and distinguishes draw-call
+explains 196 retained occurrences after the shop and drawing-layer follow-ups,
+down from 236, and distinguishes draw-call
 rates from real-time frequency.
 
 The [shop price review](game-shop-price-domains.md) types buy/sell selection
@@ -97,6 +98,13 @@ nine four-cell title groups selected by base physical power and magic. It
 corrects the old color/rating interpretation in both status renderers, shares
 their threshold and atlas constants, and explains all 413 remaining numeric
 occurrences in the [status-text ledger](game-menu-status-literal-ledger.md).
+
+The [menu drawing-layer review](game-menu-drawing-layers.md) shares widget,
+window and background buckets, names the passive-panel input-release frame,
+and separates map scale from layer indices. Its
+[three-file ledger](game-menu-panel-literal-ledger.md) explains all 190
+retained occurrences in the status panel, map viewer and list renderer;
+the existing preview ledger drops eight newly named depth occurrences.
 
 ## Function Match Plan
 
