@@ -2,6 +2,23 @@
 
 ## Cross-image owner and flag controls at 106/108
 
+Pinned GCC 2.5.7 `-da` dumps localize the surviving discrepancy more narrowly
+than the final assembly.  Initial RTL contains the two source `DRAWENV *`
+pseudos.  The first CSE pass also creates a shared pseudo for
+`display_draw_environments[0].dtd`, derives both DRAWENV pointers at `-22` and
+`+70`, and rewrites the four later `dfe` stores as `+1` and `+93` from that
+base.  Before allocation, equivalence substitution turns those four memory
+uses back into absolute constants, so the DTD pseudo dies before the calls and
+is not assigned a saved register.  This identifies the responsible compiler
+stage without proving a source spelling or an optimizer defect.
+
+Compiling the current function against standalone typed `DRAWENV[2]` and
+`DISPENV[2]` symbols is a negative ownership control.  It shortens the
+candidate by 24 bytes, preserves absolute later `dfe` stores, and still does
+not keep the DTD base through the two `PutDrawEnv` calls.  The complete OPEN
+graphics owner remains the better supported model; the temporary declarations
+and references are removed.
+
 The GAME retail counterpart provides an independent ownership control: its
 initializer also anchors `DRAWENV[0].dtd`, derives the first `DISPENV` at
 `+162`, and retains that base through its later fog-state store. This supports
