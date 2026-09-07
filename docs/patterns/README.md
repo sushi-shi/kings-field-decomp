@@ -43,6 +43,10 @@ promotes a probe to a proven historical toolchain.
 - [renderer-literal-review.md](renderer-literal-review.md): named HUD layer and
   complete [packet](renderer-packet-literal-ledger.md) and
   [entity/HUD](entity-render-literal-ledger.md) retained-literal ledgers.
+- [menu-optional-argument.md](menu-optional-argument.md): named item/shop inputs
+  with promoted variadic access for modern compilation.
+- [floor-item-random-frame.md](floor-item-random-frame.md): the shared random
+  frame scale; [small-module ledger](small-module-literal-ledger.md).
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete

@@ -28,13 +28,36 @@ u32 menu_enter_mode(KfMenuMode mode, ...)
     case KF_MENU_MODE_ROOT:
         result = menu_root();
         break;
-    case KF_MENU_MODE_ITEM_PICKUP:
-        result = KF_ENUM_ENCODE(u32, item_pickup_confirm(*((u8 *)&mode + 4)));
+    case KF_MENU_MODE_ITEM_PICKUP: {
+#if KF_MODERN_TYPES
+        __builtin_va_list arguments;
+        u8 item_id;
+
+        __builtin_va_start(arguments, mode);
+        item_id = (u8)__builtin_va_arg(arguments, int);
+        __builtin_va_end(arguments);
+#else
+        /* The pinned compiler spills mode and the optional argument to homes. */
+        u8 item_id = *((u8 *)&mode + sizeof(mode));
+#endif
+        result = KF_ENUM_ENCODE(u32, item_pickup_confirm(item_id));
         break;
-    case KF_MENU_MODE_SHOP:
-        item_menu_root(*((u8 *)&mode + 4));
+    }
+    case KF_MENU_MODE_SHOP: {
+#if KF_MODERN_TYPES
+        __builtin_va_list arguments;
+        u8 shop_id;
+
+        __builtin_va_start(arguments, mode);
+        shop_id = (u8)__builtin_va_arg(arguments, int);
+        __builtin_va_end(arguments);
+#else
+        u8 shop_id = *((u8 *)&mode + sizeof(mode));
+#endif
+        item_menu_root(shop_id);
         result = 0;
         break;
+    }
     }
     memory_reset_system_heap();
     player_clear_motion();

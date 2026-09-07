@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [renderer literal review](renderer-literal-review.md):
+Working snapshot after the [small-module review](small-module-literal-ledger.md):
 **111 C files**, **112 source/image variants**,
-and **6,109 inline numeric/character occurrences**. The counts include authored
+and **6,105 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **100 files / 5,666 occurrences**, the explicit ledger rows were compared
+For **109 files / 5,724 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -62,7 +62,12 @@ domains, replacing ten control-value occurrences with named values and retaining
 one documented unit decrement: nine fewer inline literals. The renderer review
 names the fixed HUD sprite layer and adds complete accounting for another
 403 occurrences across seven files, including all 232 authored floor/effect
-sprite descriptor components and the TMD averaging formulas.
+sprite descriptor components and the TMD averaging formulas. The small-module
+review names both initial-frame random shifts, replaces two menu argument-home
+offsets with type-derived offsets and adds 59 retained-occurrence rows across
+nine more sources. Only `game/render.c` and `game/map_scripts.c` remain outside
+complete per-file literal accounting; unresolved semantic field identities and
+further domain propagation remain separate outstanding work.
 
 The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
 verified and normalized the death, item-use and notification accounting. Other
@@ -109,7 +114,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,884 occurrences.
+73 files; 4,881 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -134,7 +139,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [equipment.c](../../src/game/equipment.c) | 7 | [complete equipment ledger](game-equipment-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [game.c](../../src/game/game.c) | 12 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [geometry_render.c](../../src/game/geometry_render.c) | 146 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [item.c](../../src/game/item.c) | 157 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [item.c](../../src/game/item.c) | 156 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting.c](../../src/game/lighting.c) | 108 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting_presets.c](../../src/game/lighting_presets.c) | 1 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [magic.c](../../src/game/magic.c) | 9 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -155,7 +160,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_draw_stats_header.c](../../src/game/menu_draw_stats_header.c) | 104 | [status ledger](game-menu-status-literal-ledger.md); [layout evidence](game-status-text-layout.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_status_details.c](../../src/game/menu_draw_status_details.c) | 216 | [status ledger](game-menu-status-literal-ledger.md); [layout evidence](game-status-text-layout.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_window.c](../../src/game/menu_draw_window.c) | 3 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [menu_enter_mode.c](../../src/game/menu_enter_mode.c) | 4 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Expand the domain audit into current occurrence coverage. |
+| [menu_enter_mode.c](../../src/game/menu_enter_mode.c) | 2 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_detail.c](../../src/game/menu_item_detail.c) | 87 | [complete detail/dialog ledger](game-menu-detail-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_drop.c](../../src/game/menu_item_drop.c) | 121 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_item_model_preview.c](../../src/game/menu_item_model_preview.c) | 36 | [complete inventory-preview ledger](game-menu-inventory-preview-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -171,7 +176,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [player_core.c](../../src/game/player_core.c) | 74 | [complete ledger](game-player-core-literal-ledger.md); [sound slots](game-player-sound-slots.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death.c](../../src/game/player_death.c) | 190 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death_fade.c](../../src/game/player_death_fade.c) | 8 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [domain evidence](game-player-progression-literal-ledger.md) | No retained literal tokens. |
+| [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_use_item.c](../../src/game/player_use_item.c) | 42 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp.c](../../src/game/player_warp.c) | 96 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -189,7 +194,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## OPEN.EXE
 
-34 files; 1,203 occurrences.
+34 files; 1,202 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -199,23 +204,23 @@ fields and address-derived function names are separate from this ten-line count.
 | [audio_spatial.c](../../src/open/audio_spatial.c) | 6 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [camera_path.c](../../src/open/camera_path.c) | 3 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [debug.c](../../src/open/debug.c) | 0 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [display_adjust.c](../../src/open/display_adjust.c) | 19 | [domain notes](source-constant-names.md#allocator-formatter-and-vram-viewer-plan) | Expand the domain audit into current occurrence coverage. |
+| [display_adjust.c](../../src/open/display_adjust.c) | 19 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [entity_render.c](../../src/open/entity_render.c) | 77 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [fixed_vector2_length.c](../../src/open/fixed_vector2_length.c) | 0 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [format.c](../../src/open/format.c) | 43 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [item.c](../../src/open/item.c) | 2 | [domain evidence](game-entity-sprite-tables.md) | Expand the domain audit into current occurrence coverage. |
+| [item.c](../../src/open/item.c) | 1 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [main.c](../../src/open/main.c) | 2 | [complete allocator/startup ledger](allocator-startup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/open/matrix.c) | 8 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix_rotation.c](../../src/open/matrix_rotation.c) | 87 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_controller.c](../../src/open/opening_controller.c) | 7 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_entity_pool.c](../../src/open/opening_entity_pool.c) | 13 | [pool ledger](open-entity-pool-literal-ledger.md); [domain evidence](open-model-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_fade.c](../../src/open/opening_fade.c) | 15 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [opening_helpers.c](../../src/open/opening_helpers.c) | 4 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | Expand the domain audit into current occurrence coverage. |
+| [opening_helpers.c](../../src/open/opening_helpers.c) | 4 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_render.c](../../src/open/opening_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_render_entities.c](../../src/open/opening_render_entities.c) | 2 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_scene0_render.c](../../src/open/opening_scene0_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_scenes.c](../../src/open/opening_scenes.c) | 570 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [render.c](../../src/open/render.c) | 19 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
+| [render.c](../../src/open/render.c) | 19 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_init.c](../../src/open/render_init.c) | 154 | [complete initializer ledger](open-render-init-literal-ledger.md); [mode domain](overlay-mode-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map.c](../../src/open/render_map.c) | 6 | [complete renderer ledger](renderer-packet-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map_cells.c](../../src/open/render_map_cells.c) | 8 | [complete map-cell ledger](map-cell-literal-ledger.md); [visibility domain](visibility-screen-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -234,9 +239,9 @@ fields and address-derived function names are separate from this ten-line count.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
-| [game_libetc_intr_tail.c](../../src/vendor/game_libetc_intr_tail.c) | 0 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | No retained literal tokens. |
-| [game_libetc_pad.c](../../src/vendor/game_libetc_pad.c) | 7 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | Expand the domain audit into current occurrence coverage. |
-| [open_libetc_pad.c](../../src/vendor/open_libetc_pad.c) | 7 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | Expand the domain audit into current occurrence coverage. |
+| [game_libetc_intr_tail.c](../../src/vendor/game_libetc_intr_tail.c) | 0 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [game_libetc_pad.c](../../src/vendor/game_libetc_pad.c) | 7 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [open_libetc_pad.c](../../src/vendor/open_libetc_pad.c) | 7 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 
 ## Completion boundary
 

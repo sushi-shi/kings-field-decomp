@@ -31,7 +31,7 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
                 map_floor_height_grid[placements->tile_z][placements->tile_x] * KF_MAP_HEIGHT_STEP;
             item->position_y = placements->local_y - height;
             item->animation_frame =
-                (rand() * item->facing_and_frame_count) >> 15;
+                (rand() * item->facing_and_frame_count) >> KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS;
             item++;
             placements++;
         } while (placements->item_id != KF_FLOOR_ITEM_END);
