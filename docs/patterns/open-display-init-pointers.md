@@ -1,5 +1,23 @@
 # OPEN display-initialization pointer lifetimes
 
+## Cross-image owner and flag controls at 106/108
+
+The GAME retail counterpart provides an independent ownership control: its
+initializer also anchors `DRAWENV[0].dtd`, derives the first `DISPENV` at
+`+162`, and retains that base through its later fog-state store. This supports
+the physical DRAWENV/DISPENV family, but does not by itself prove a source
+pointer spelling.
+
+In OPEN, an explicit full-width enabled value emits the canonical candidate
+unchanged. Nesting the two DRAWENVs and two DISPENVs in a real typed aggregate
+also emits the same code: the four `dfe` stores remain absolute and the frame
+remains 40 bytes. A narrower pointer to the complete graphics owner, live only
+from the mode branch through the final render-state writes, instead expands the
+frame to 64 bytes and introduces additional address construction. All three
+controls are removed. The best source therefore remains at strict 92.177960%;
+no raw byte alias, overlapping view, volatile carrier, or compiler change is
+supported.
+
 ## Midpoint lifetime and supplied-profile controls (`ad5c075`)
 
 At strict 92.177960%, the retained retail base begins at the chained `dtd`

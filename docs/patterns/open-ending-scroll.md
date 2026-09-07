@@ -1,5 +1,21 @@
 # OPEN ending-scroll controller and data owners
 
+## Post-106 lighting-tail controls
+
+With OPEN at 106/108, the canonical candidate still has 51 blocks against
+retail's 49. A short-lived next-phase value again recovers the complete retail
+successor graph and branch count, but rotates the five persistent scene-state
+registers and shortens the body by four bytes. Moving its declaration after
+all persistent locals does not change the object. Narrowing it to `u8` adds an
+unsupported mask before the halfword store and remains worse. Both are removed.
+
+Spelling each phase as `if (blend > 4096) transition; else interpolate` is
+semantically equivalent and introduces no carrier. It reaches 50 blocks, but
+duplicates the transition jumps and moves the remainder of the loop farther
+from retail. The retained `<=` form remains the best supported source. These
+results strengthen the classification as an unattributed cross-branch-tail
+residue; they do not justify a register hint, fake local, or compiler change.
+
 ## Camera-call/local-initialization order (`073ada0`)
 
 OPEN `80014e28` began this pass at 1944 bytes and strict 97.129630%. The six
