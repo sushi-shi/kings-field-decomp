@@ -17,6 +17,13 @@ enum {
     ACTOR_ACTIVE_RANGE = 32000,
     /* World units per update squared; negative Y points upward. */
     ACTOR_GRAVITY = 20,
+    /* World units/update squared, then world units/update per axis. */
+    ACTOR_DRIFT_AXIS_ACCELERATION = 1,
+    ACTOR_DRIFT_AXIS_SPEED_LIMIT = 100,
+    /* Angle units/update; one turn is 4096 units. */
+    ACTOR_DRIFT_YAW_SPEED_LIMIT = 32,
+    /* Exclusive bound on each home-position difference in world units. */
+    ACTOR_HOME_AXIS_TOLERANCE = 200,
     /* Both query policies reject flag-grid bit 7; its broader role is unresolved. */
     ACTOR_WALK_COLLISION_FLAGS = (0x80 << KF_COLLISION_CELL_FLAG_SHIFT)
         | KF_COLLISION_SKIP_MAP_EVENTS,
@@ -1088,16 +1095,16 @@ void actor_update_current_action(void)
             actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
             actor->vertical_velocity = 0;
         }
-        actor_apply_random_movement(1, 100);
+        actor_apply_random_movement(ACTOR_DRIFT_AXIS_ACCELERATION, ACTOR_DRIFT_AXIS_SPEED_LIMIT);
         if (rand() < (RAND_MAX + 1) / 2) {
             actor->movement_yaw++;
-            if (actor->movement_yaw > 32) {
-                actor->movement_yaw = 32;
+            if (actor->movement_yaw > ACTOR_DRIFT_YAW_SPEED_LIMIT) {
+                actor->movement_yaw = ACTOR_DRIFT_YAW_SPEED_LIMIT;
             }
         } else {
             actor->movement_yaw--;
-            if (actor->movement_yaw < -32) {
-                actor->movement_yaw = -32;
+            if (actor->movement_yaw < -ACTOR_DRIFT_YAW_SPEED_LIMIT) {
+                actor->movement_yaw = -ACTOR_DRIFT_YAW_SPEED_LIMIT;
             }
         }
         actor->rotation.y = (actor->rotation.y + actor->movement_yaw) & KF_ANGLE_WRAP_MASK;
@@ -1130,7 +1137,8 @@ void actor_update_current_action(void)
             home_z = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
             home_dx = actor->position.vx - home_x;
             home_dz = actor->position.vz - home_z;
-            if (home_dx > -200 && home_dx < 200 && home_dz > -200 && home_dz < 200) {
+            if (home_dx > -ACTOR_HOME_AXIS_TOLERANCE && home_dx < ACTOR_HOME_AXIS_TOLERANCE
+                && home_dz > -ACTOR_HOME_AXIS_TOLERANCE && home_dz < ACTOR_HOME_AXIS_TOLERANCE) {
                 actor->movement_yaw = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
                 actor->rotation.y = angle_approach(
                     actor->rotation.y, actor->movement_yaw, definition->turn_rate);

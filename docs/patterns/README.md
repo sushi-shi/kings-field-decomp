@@ -204,6 +204,8 @@ promotes a probe to a proven historical toolchain.
   markers, jump phases and counters across updates, rendering and save data.
 - [game-actor-home-distances.md](game-actor-home-distances.md): dispatcher
   home-distance dependency control and explicit shared-epilogue exit audit.
+- [game-actor-motion-limits.md](game-actor-motion-limits.md): drift acceleration,
+  per-axis and yaw speed limits, exclusive home tolerance, and progress-byte roles.
 - [game-actor-constants.md](game-actor-constants.md): actor phase limits,
   sound/parameter slots, collision policies, damage units and packed flags;
   consumer explanations for all retained literals in the three actor modules.

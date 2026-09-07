@@ -16,6 +16,11 @@ damage units and packed flags. Its inventory at `01c741c` explains 517 retained 
 occurrences without claiming their original tuning rationale or unsupported
 effect identities.
 
+The [actor motion-limit review](game-actor-motion-limits.md) promotes four
+of those parameters to names: drift acceleration, per-axis speed, yaw speed,
+and the exclusive home-position tolerance. It gives their measured units
+and distinguishes the progress byte's state and counter roles.
+
 The [effect protocol review](game-effect-protocol.md) names eight decoded
 behaviors across construction, dispatch and callers, plus collision targets,
 power/render/homing selectors, branch roles and floor phases. It distinguishes
