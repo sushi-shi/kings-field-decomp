@@ -113,6 +113,26 @@ def _controls(graph: Graph) -> list[tuple[int, Instruction]]:
             for row in block.instructions if row.control is not None]
 
 
+def _return_frontier(graph: Graph) -> tuple[tuple[int, int, str], ...]:
+    """Identify every known edge entering a block that contains a return.
+
+    A single shared epilogue can represent many source-level exits, so counting
+    ``jr ra`` instructions alone is insufficient.  Block ordinals retain the
+    same diagnostic (rather than equivalence) contract as ``_edges``.
+    """
+    numbers = {block.start: number for number, block in enumerate(graph.blocks)}
+    returns = {
+        block.start for block in graph.blocks
+        if any(row.control is not None and row.control.kind == "return"
+               for row in block.instructions)
+    }
+    return tuple(sorted(
+        (numbers[edge.target_block], numbers[edge.source], edge.kind)
+        for edge in graph.edges
+        if edge.target_block in returns and edge.source != edge.target_block
+    ))
+
+
 def _operand_word(row: Instruction) -> int:
     assert row.control is not None
     if row.control.conditional:
@@ -153,6 +173,16 @@ def compare_flow(want: Flow, have: Flow) -> list[str]:
         f"{counts(a, 'branch')}/{counts(b, 'branch')} branches, "
         f"{counts(a, 'return')}/{counts(b, 'return')} returns (not exit-path counts)"
     )
+    frontier_a, frontier_b = _return_frontier(left), _return_frontier(right)
+    lines.append(
+        f"CFG return frontiers target/compiled: {len(frontier_a)}/{len(frontier_b)} "
+        "known incoming edges to return blocks"
+    )
+    if frontier_a != frontier_b:
+        lines.append(
+            f"CFG differing return frontiers by block order: "
+            f"target {frontier_a}; compiled {frontier_b}"
+        )
     edges_a, edges_b = _edges(left), _edges(right)
     edge_difference = edges_a != edges_b
     if edge_difference:

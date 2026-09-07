@@ -64,6 +64,18 @@ class TrialFlowTests(unittest.TestCase):
         self.assertTrue(graph.reachability_complete)
         self.assertEqual(sum(e.kind == "return" for e in graph.edges), 1)
         self.assertEqual(graph.blocks[-1].predecessors, [0x1008, 0x1010])
+        text = "\n".join(compare_flow(self.flow(payload, relocs), self.flow(payload, relocs)))
+        self.assertIn("return frontiers target/compiled: 2/2", text)
+
+    def test_return_frontier_exposes_missing_shared_exit(self):
+        retail = words(0x10800005, 0, 0x24020001, 0x08000006, 0, 0,
+                       0x03E00008, 0)
+        wrong = words(0x10800001, 0, 0x24020001, 0x08000006, 0, 0,
+                      0x03E00008, 0)
+        relocs = [MipsRelocation(12, "R_MIPS_26", ".text")]
+        text = "\n".join(compare_flow(
+            self.flow(retail, relocs), self.flow(wrong, relocs)))
+        self.assertIn("differing return frontiers", text)
 
     def test_internal_jump_uses_each_objects_symbol_offset(self):
         a = self.flow(words(0x08000002, 0, 0x03E00008, 0),

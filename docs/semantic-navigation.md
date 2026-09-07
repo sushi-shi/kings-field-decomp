@@ -98,6 +98,12 @@ ordered control instruction, including its register operands, destination,
 three preceding instruction words, and delay slot. If the controls agree,
 the first differing preceding-word/delay-slot window is shown instead.
 
+The paired report also counts every known edge entering a block that contains
+a return. This return frontier exposes early exits which share one `jr ra` and
+reports the complete frontier when target and candidate differ. Like the other
+paired CFG clues, its block-order correspondence is diagnostic rather than a
+proof of graph isomorphism.
+
 Each object supplies its own ELF function extent; terminal `nop` delay slots
 are retained, while padding outside the symbol is excluded. Direct J/JAL
 relocations are resolved before graph construction. Internal section addends
