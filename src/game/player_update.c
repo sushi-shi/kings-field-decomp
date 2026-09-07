@@ -466,7 +466,7 @@ void player_update(void)
                             PLAYER_WEAPON_MAGIC_TARGET_CONE, &distance);
                         actor_state.player_target = target;
                         if (target == 0) {
-                            attachment = KF_EFFECT_HOMING_WANDER;
+                            attachment = KF_ENUM_ENCODE(s32, KF_EFFECT_HOMING_WANDER);
                         } else {
                             attachment = target - actor_state.actors;
                         }

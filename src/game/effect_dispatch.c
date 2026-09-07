@@ -504,17 +504,17 @@ play_phase_sound:
         s32 target_distance;
 
         if (phase == 0) {
-randomize_kind20:
+randomize_homing_direction:
             effect->direction.words.x =
                 (effect->direction.words.x + (rand() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
             effect->direction.words.y =
                 (effect->direction.words.y + (rand() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
         } else if (phase > HOMING_INITIAL_PHASE_LAST) {
-            if ((u8)effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
+            if (effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
                 if (rand() < HOMING_WANDER_RANDOM_CUTOFF) {
-                    goto randomize_kind20;
+                    goto randomize_homing_direction;
                 }
-            } else if ((u8)effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
+            } else if (effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
                 effect->direction.words.y = vector_xz_to_angle(
                     player_state.camera_position.vx - effect->position.vx,
                     effect->position.vz - player_state.camera_position.vz);

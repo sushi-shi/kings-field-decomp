@@ -61,10 +61,10 @@ enum {
 };
 
 /* Other selector values request a fresh actor-cone query, not an actor index. */
-enum {
+KF_ENUM_BEGIN(KfEffectHomingMode, u8)
     KF_EFFECT_HOMING_WANDER = 0xff,
     KF_EFFECT_HOMING_PLAYER = 0xfe
-};
+KF_ENUM_END(KfEffectHomingMode)
 
 KF_ENUM_BEGIN(KfEffectGroundBranchRole, u16)
     KF_EFFECT_GROUND_BRANCH_ROOT = 0,
@@ -151,7 +151,7 @@ typedef union KfEffectControl {
     u16 frames_remaining;
     u16 orbit_angle;
     u8 parent_effect_index;
-    u8 target_mode;
+    KfEffectHomingMode target_mode;
     KfEffectControlBytes bytes;
 } KfEffectControl;
 

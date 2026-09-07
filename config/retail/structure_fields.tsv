@@ -164,7 +164,7 @@ KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	ope
 KfEffectControl	0x00	0x02	frames_remaining	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	countdown for kinds 4, 6, 9 and 10
 KfEffectControl	0x00	0x02	orbit_angle	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 17 sin/cos angle, advanced by 64 modulo 4096
 KfEffectControl	0x00	0x01	parent_effect_index	u8	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md;retail-byte-store-and-load	kind 19 parent pool index; dispatcher uses its low byte
-KfEffectControl	0x00	0x01	target_mode	u8	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md;retail-byte-store-and-load	kind 20: 0xff random, 0xfe player, other values select actor cone search
+KfEffectControl	0x00	0x01	target_mode	KfEffectHomingMode	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md;retail-byte-store-and-load;effect-homing-mode-domain.md	kind 20: 0xff random, 0xfe player, other values select actor cone search
 KfEffectControl	0x00	0x02	bytes	KfEffectControlBytes	opaque	game_effect.h;asm;effect_pool_construct;game-effect-constructor.md	kind 36 initializes both bytes; behavioral purpose remains unresolved
 KfEffectControlBytes	0x00	0x01	low	u8	opaque	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	record +0x38; kinds 0x13/0x14/0x18 write only this byte
 KfEffectControlBytes	0x01	0x01	high	u8	opaque	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	record +0x39; kind 0x24 initializes both bytes to 0xff

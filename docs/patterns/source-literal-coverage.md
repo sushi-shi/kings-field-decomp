@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [ground-effect branch review](ground-effect-branch-domain.md):
+Working snapshot after the [effect homing review](effect-homing-mode-domain.md):
 **111 C files**, **112 source/image variants**, and
 **5,997 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -57,6 +57,9 @@ two menu calls and the catalogue reader removes three more raw occurrences.
 The ground-effect review names both child-spawn helpers and carries the branch
 role through its halfword field, word helper argument and variadic boundaries.
 Its existing role values and positional reads leave literal counts unchanged.
+The homing review types the byte selector through both constructor cases and
+steering comparisons, retaining the callers' encoded mixed-word payloads and
+naming the shared direction-randomization label. Literal counts are unchanged.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

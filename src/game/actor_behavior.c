@@ -616,7 +616,7 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
                 burst_angles.z = actor->rotation.z;
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 24),
-                    &position, &direction, &burst_angles, KF_EFFECT_HOMING_PLAYER, 1);
+                    &position, &direction, &burst_angles, KF_ENUM_ENCODE(u8, KF_EFFECT_HOMING_PLAYER), 1);
             } else if (effect_kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,

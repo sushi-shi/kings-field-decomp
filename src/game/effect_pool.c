@@ -366,7 +366,7 @@ KfEffectRecord *effect_pool_construct(
             record->animation_clip = 0;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
-            record->control.target_mode = *(u8 *)(va + 2);
+            record->control.target_mode = KF_ENUM_DECODE(KfEffectHomingMode, *(u8 *)(va + 2));
             record->direction.vector = record->rotation;
             record->scale_y = KF_FIXED12_ONE / 2;
             record->scale_x = KF_FIXED12_ONE / 2;
@@ -382,7 +382,7 @@ KfEffectRecord *effect_pool_construct(
             record->animation_clip = 0;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
-            record->control.target_mode = *(u8 *)(va + 2);
+            record->control.target_mode = KF_ENUM_DECODE(KfEffectHomingMode, *(u8 *)(va + 2));
             record->direction.vector = record->rotation;
             record->scale_y = KF_FIXED12_ONE / 2;
             record->scale_x = KF_FIXED12_ONE / 2;
