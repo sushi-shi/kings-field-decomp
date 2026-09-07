@@ -1,5 +1,20 @@
 # OPEN ending-scroll controller and data owners
 
+## Opening-scenes scheduler control (`b46dd11` follow-up)
+
+The consolidated `open.opening_scenes` unit was rebuilt under
+`probe-gcc257-o2-plain` as a TU-wide control. It does not recover the retail
+lighting join in `opening_ending_scroll_run`: the probe still emits 51 blocks
+against retail's 49 and retains the broad instruction-order differences.
+It also introduces new scheduling differences in the otherwise frame-only
+`opening_entity_transition` and `opening_scene3_run`, and regresses exact
+`opening_ending_scene_run`. The pinned `probe-gcc257-o2-g0` profile is restored.
+
+This rejects a plain-versus-`g0` scheduler explanation for the scroll residue
+without attributing a historical compiler or optimizer mechanism. The exact
+sibling is the negative control; no source, profile, baseline, or bank change
+is retained.
+
 ## Function Match Plan: interpolation-path case exits (`4647acc`)
 
 OPEN `80014e28` remains 1944 bytes, strict 97.129630%, with 167 unequal

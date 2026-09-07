@@ -1,5 +1,14 @@
 # OPEN visible entity/item traversal
 
+## Scheduler-profile control (`b46dd11` follow-up)
+
+`probe-gcc257-o2-plain` does not fill the remaining item-window load delay.
+It retains the extra `nop`, broadly changes register assignment in the entity
+and item loops, and regresses the exact 552-byte `opening_entity_render`
+sibling. It also omits the same floor-item byte narrowing as the configured
+profile. Restore `probe-gcc257-o2-g0`; the traversal schedule and floor-item
+mask are not explained by the repository's plain scheduler control.
+
 ## Function Match Plan: material tpage base lifetime (`codex/open-10-functions`)
 
 OPEN `80019240`, 664 bytes, began at strict 96.759030%. All six semantic views,
@@ -20,7 +29,9 @@ candidate contracts from 668 to the retail 664 bytes. The remaining first
 divergence is the item-row/window load schedule; calls, CFG and referents stay
 correct. Split row statements, word-width wrapping, local declaration order,
 GAME-style loop spelling and later/independent member pointers were tested and
-rejected. The partial function is not banked.
+rejected. An assignment-expression row initialization is also byte-identical
+to the retained declaration initializer and does not fill the load delay. The
+partial function is not banked.
 
 ## Function Match Plan: current-window local at `11552f7`
 

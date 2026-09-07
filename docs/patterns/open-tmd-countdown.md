@@ -10,6 +10,13 @@ R3000 scheduling profile is retained. This rules out the repository's plain
 GCC 2.5.7 profile as an explanation for the two remaining frame instructions;
 it does not identify the historical compiler or justify source padding.
 
+The repository's `probe-gcc260-o2-g0` profile is also negative. It still
+emits `nop` at both frame positions, changes the switch CFG from 18 to 16
+known blocks, and broadly reorders the otherwise exact case bodies. Only two
+of the unit's fourteen function listings remain identical. The GCC 2.5.7
+profile is restored; compiler-version substitution does not explain the
+retail leaf frame.
+
 ## Function Match Plan (`8ac47fe`)
 
 OPEN `tmd_prepare_primitive_indices`, `0x80017030`, owns 768 bytes and is
