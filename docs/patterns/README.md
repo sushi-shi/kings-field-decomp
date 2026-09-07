@@ -521,3 +521,6 @@ promotes a probe to a proven historical toolchain.
 - [game-save-status-domain.md](game-save-status-domain.md): typed internal card/file statuses,
   preserved menu result mappings, signed-halfword message dispatch and the
   [complete save literal ledger](game-save-system-literal-ledger.md).
+
+- [Player sound-table slots](game-player-sound-slots.md): caller-proved weapon-attack,
+  death and level-up selectors and the [complete current core ledger](game-player-core-literal-ledger.md).

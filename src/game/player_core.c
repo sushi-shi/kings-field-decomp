@@ -134,7 +134,7 @@ void player_begin_weapon_attack(void)
     if (player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE
         && player_state.equipped_weapon_id != KF_ITEM_NONE) {
         player_state.weapon_attack_phase = 0;
-        sound_ref_play(&player_sound_refs[0], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_WEAPON_ATTACK], KF_AUDIO_MAX_VOLUME);
         player_state.attack_charge_state.committed = player_state.attack_charge_state.current;
         if (player_state.attack_charge_state.current == KF_PLAYER_CHARGE_FULL) {
             player_state.weapon_attack_fully_charged = 1;

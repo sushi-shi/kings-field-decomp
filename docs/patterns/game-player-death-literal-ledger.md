@@ -1,7 +1,7 @@
 # Retained player death, vitals and combat literals
 
 Complete current ledger for all thirteen functions and initializers in
-`src/game/player_death.c`: **193 numeric/character occurrences**. This combines
+`src/game/player_death.c`: **190 numeric/character occurrences**. This combines
 the previous death/combat remainder, startup and progression slices without
 changing their reasons. The [damage review](game-player-damage-units.md),
 [startup review](game-item-database-literal-ledger.md) and
@@ -17,9 +17,11 @@ The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
 through the current source; this ledger reflects its named comparisons and
 explicit numeric boundaries.
 
+The [sound-slot review](game-player-sound-slots.md) names the table bound
+and its death/level-up indices; the nine authored selector bytes remain below.
+
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 18 | `3` | `SoundRef player_sound_refs[3] = {` | Three packed program/tone/note selectors: weapon-attack start, death start and level-up, in the order consumed by their callers. |
 | `initializers` | 19 | `7` | `{7, 0, 80},` | Program 7, tone 0, note 80 for the weapon-attack-start cue selected by player_begin_weapon_attack. These are authored VAB selectors, not HP or animation units. |
 | `initializers` | 19 | `0` | `{7, 0, 80},` | Program 7, tone 0, note 80 for the weapon-attack-start cue selected by player_begin_weapon_attack. These are authored VAB selectors, not HP or animation units. |
 | `initializers` | 19 | `80` | `{7, 0, 80},` | Program 7, tone 0, note 80 for the weapon-attack-start cue selected by player_begin_weapon_attack. These are authored VAB selectors, not HP or animation units. |
@@ -31,7 +33,6 @@ explicit numeric boundaries.
 | `initializers` | 21 | `67` | `{13, 0, 67}` | Program 13, tone 0, note 67 for the level-up cue. Preserve the packed three-byte selector and its authored resource values. |
 | `player_death_begin` | 38 | `0` | `player_state.death_camera_pitch_step = 0;` | Zero starts the named death pitch-step or visual-blend counter before saving the current render state; these counters have distinct consumers. |
 | `player_death_begin` | 39 | `0` | `player_state.death_visual_blend = 0;` | Zero starts the named death pitch-step or visual-blend counter before saving the current render state; these counters have distinct consumers. |
-| `player_death_begin` | 40 | `1` | `sound_ref_play(&player_sound_refs[1], KF_AUDIO_MAX_VOLUME);` | Sound-reference row one selects the death-start cue. Volume uses the separately named full-scale audio input. |
 | `game_state_initialize` | 56 | `0` | `player_state.experience = 0;` | New session begins with no accumulated experience; the next threshold is loaded separately from growth row zero. |
 | `game_state_initialize` | 57 | `1` | `player_state.progress_state.level = 1;` | Initial displayed/player level is one; growth-table row zero supplies that level's base values. |
 | `game_state_initialize` | 60 | `0x96` | `player_state.gold = 0x96;` | Authored starting balance is 150 gold units. The original balance rationale is unproven; this startup field assignment retains the literal. |
@@ -195,7 +196,6 @@ explicit numeric boundaries.
 | `player_add_experience` | 436 | `1` | `if (player_state.vitals.maximum_mp >= KF_PLAYER_VITAL_MAX + 1) {` | One above the inclusive HP/MP cap preserves the original >=10000 test on the already narrowed halfword field. |
 | `player_add_experience` | 439 | `1` | `if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {` | One above the inclusive power cap preserves the original >=1000 test after the preceding halfword stores. Do not move the clamp before those stores. |
 | `player_add_experience` | 442 | `1` | `if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {` | One above the inclusive power cap preserves the original >=1000 test after the preceding halfword stores. Do not move the clamp before those stores. |
-| `player_add_experience` | 447 | `2` | `sound_ref_play(&player_sound_refs[2], KF_AUDIO_MAX_VOLUME);` | Sound-reference row two is the level-up cue, distinct from death and other player sounds. The volume argument uses the shared full-volume constant. |
 | `player_calculate_damage_component` | 459 | `0` | `if (attack == 0) {` | An absent attack channel contributes zero immediately, before division or defense arithmetic. |
 | `player_calculate_damage_component` | 460 | `0` | `return 0;` | An absent attack channel contributes zero immediately, before division or defense arithmetic. |
 | `player_calculate_damage_component` | 462 | `5` | `base_power = defense + base_power / 5;` | One-fifth of player physical power augments the defense threshold using signed integer division. This differs from the actor-target helper, which augments attack; original weighting rationale is unknown. |

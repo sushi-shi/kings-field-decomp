@@ -161,3 +161,8 @@ An independent lexer compares every function/line/token/expression
 multiplicity against the two ledgers. With the 32 occurrences removed from
 the four wider consumers, the batch removes 116 inline occurrences overall.
 The wider caller modules retain their separate remainder-audit scopes.
+
+The historical counts above precede floor-enum and player sound-slot naming.
+The [current complete ledger](game-player-core-literal-ledger.md) combines the
+core and motion slices and accounts for 78 retained occurrences after the
+[sound-slot review](game-player-sound-slots.md).

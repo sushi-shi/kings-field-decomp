@@ -161,7 +161,7 @@ class GamePlayerEffectDataTests(unittest.TestCase):
         gap = next(r for r in census if int(r['va'], 0) == 0x80055819)
         self.assertEqual((gap['kind'], int(gap['size'], 0)), ('unclassified', 3))
         self.assertNotIn(('GAME.EXE', 0x80055819), identities)
-        self.assertIn('extern SoundRef player_sound_refs[3];',
+        self.assertIn('extern SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT];',
                       (REPO / 'include/kf/game_player.h').read_text())
         headers = '\n'.join(p.read_text() for p in (REPO / 'include/kf').glob('*.h'))
         for name in ('DAT_80055858', 'DAT_80055878', *[owner[2] for owner in OWNERS[1:]]):

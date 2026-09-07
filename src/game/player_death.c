@@ -15,7 +15,7 @@ enum {
 };
 
 DATA(0x80055810, 0x9)
-SoundRef player_sound_refs[3] = {
+SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT] = {
     {7, 0, 80},
     {7, 1, 89},
     {13, 0, 67}
@@ -37,7 +37,7 @@ void player_death_begin(void)
     player_state.update_state = KF_PLAYER_UPDATE_DYING;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
-    sound_ref_play(&player_sound_refs[1], KF_AUDIO_MAX_VOLUME);
+    sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_DEATH], KF_AUDIO_MAX_VOLUME);
     ReadColorMatrix(&player_death_saved_color_matrix);
     player_death_saved_fog_near = render_state.fog_near_distance;
 }
@@ -444,7 +444,7 @@ void player_add_experience(s16 amount)
         }
         player_recalculate_combat_stats();
         notify_enqueue(KF_NOTIFICATION_LEVEL_UP);
-        sound_ref_play(&player_sound_refs[2], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_LEVEL_UP], KF_AUDIO_MAX_VOLUME);
     }
 }
 

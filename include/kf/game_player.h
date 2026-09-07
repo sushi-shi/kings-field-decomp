@@ -13,6 +13,13 @@
 struct KfPoolRecord;
 struct KfAssetHeader;
 
+enum {
+    KF_PLAYER_SOUND_WEAPON_ATTACK = 0,
+    KF_PLAYER_SOUND_DEATH = 1,
+    KF_PLAYER_SOUND_LEVEL_UP = 2,
+    KF_PLAYER_SOUND_COUNT = 3
+};
+
 KF_ENUM_BEGIN(KfPlayerVerticalState, u8)
     KF_PLAYER_VERTICAL_GROUNDED = 0,
     KF_PLAYER_VERTICAL_FALLING = 0x10,
@@ -237,7 +244,7 @@ typedef struct KfFloorEntryCell {
     u8 z;
 } KfFloorEntryCell;
 
-extern SoundRef player_sound_refs[3];
+extern SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT];
 extern KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT];
 extern MATRIX player_death_saved_color_matrix;
 extern s32 player_death_saved_fog_near;

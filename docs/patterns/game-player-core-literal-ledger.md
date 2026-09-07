@@ -1,13 +1,23 @@
-# Player core remainder literal ledger
+# Complete player-core retained-literal ledger
 
-Complete remainder outside the three functions in the [motion ledger](game-player-motion-literal-ledger.md): **73 occurrences**.
-Together both ledgers account for all **80** remaining numeric/character literals in `src/game/player_core.c`, including both data initializers.
-Claims, named definitions, comments and string contents are excluded; signs are operators.
-All fourteen functions are included in the [core review](game-player-core-constants.md).
-`player_update_transform_snapshot` and `player_update_view_bob` have no remaining literals.
+Current per-occurrence ledger for all fourteen functions and both initialized
+data claims in `src/game/player_core.c`: **78 numeric/character occurrences**.
+This combines the former core remainder and motion slices. The
+[core review](game-player-core-constants.md),
+[motion review](game-player-vertical-state.md),
+[floor domain](game-floor-enum-domain.md) and
+[sound-slot review](game-player-sound-slots.md) retain their evidence scopes.
+
+The earlier 80-occurrence total included an ordinal floor-five comparison
+that is now an enum member and the weapon-attack sound slot named in this
+batch. The current floor-to-entry index explicitly encodes its typed floor.
+Claims, named definitions, comments, string contents and identifier digits
+are excluded. Every repeated token has its own row; signs remain in expressions.
+`player_update_transform_snapshot` and `player_update_view_bob` contain no
+retained literals. Unknown environmental attributes remain explicitly unresolved.
 
 | Function | Line | Token | Expression | Reason |
-| --- | --- | --- | --- | --- |
+| --- | ---: | --- | --- | --- |
 | `initializers` | 46 | `16` | `char weapon_image_path_template[16] = "WEPON\\WEP00.MIM";` | Sixteen bytes contain the complete fifteen-character mutable weapon path and terminating NUL. The explicit buffer extent documents the string storage; no independent tuning parameter is involved. |
 | `initializers` | 50 | `15` | `{15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}` | Authored x/z entry cells for floors 1..5: (15,2), (29,56), (28,18), (7,22), (39,69). The warp helper multiplies each coordinate by tile size and adds the center; original placement choices are unproven. Keep the packed cell coordinates rather than inventing ten location names. |
 | `initializers` | 50 | `2` | `{15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}` | Authored x/z entry cells for floors 1..5: (15,2), (29,56), (28,18), (7,22), (39,69). The warp helper multiplies each coordinate by tile size and adds the center; original placement choices are unproven. Keep the packed cell coordinates rather than inventing ten location names. |
@@ -36,7 +46,6 @@ All fourteen functions are included in the [core review](game-player-core-consta
 | `player_equip_weapon` | 122 | `1` | `exit(1);` | Nonzero process exit status one reports weapon-asset loading failure. Preserve the SDK exit call and this conventional failure status. |
 | `player_equip_weapon` | 127 | `0` | `player_state.weapon_animation_cache = 0;` | Clear the cached animation-record pointer to null after selecting the weapon, so the renderer binds its resource on demand. |
 | `player_begin_weapon_attack` | 136 | `0` | `player_state.weapon_attack_phase = 0;` | Zero is the first phase of a newly started swing; later updates advance it by the named step. The inactive value is separately named -1. |
-| `player_begin_weapon_attack` | 137 | `0` | `sound_ref_play(&player_sound_refs[0], KF_AUDIO_MAX_VOLUME);` | Sound row zero is the weapon-attack-start cue in the three-row player sound table. The resource selectors are documented in the player death/combat ledger. |
 | `player_begin_weapon_attack` | 140 | `1` | `player_state.weapon_attack_fully_charged = 1;` | Encoded boolean one/zero records whether the committed swing started at full charge. Weapon-magic input later consumes this snapshot; it is not the current charge amount. |
 | `player_begin_weapon_attack` | 142 | `0` | `player_state.weapon_attack_fully_charged = 0;` | Encoded boolean one/zero records whether the committed swing started at full charge. Weapon-magic input later consumes this snapshot; it is not the current charge amount. |
 | `player_begin_weapon_attack` | 144 | `0` | `player_state.attack_charge_state.current = 0;` | Clear the current charge after copying it into the committed swing charge. The copy retains damage strength while this counter returns to zero. |
@@ -63,6 +72,10 @@ All fourteen functions are included in the [core review](game-player-core-consta
 | `player_clear_motion` | 239 | `0` | `player_state.motion_state.movement_speed = 0;` | Zero clears this named motion component: yaw/pitch increment, movement magnitude or signed forward/strafe velocity. Each halfword store is an arithmetic reset, not a lifecycle code. |
 | `player_clear_motion` | 240 | `0` | `player_state.motion_state.forward_velocity = 0;` | Zero clears this named motion component: yaw/pitch increment, movement magnitude or signed forward/strafe velocity. Each halfword store is an arithmetic reset, not a lifecycle code. |
 | `player_clear_motion` | 241 | `0` | `player_state.motion_state.strafe_velocity = 0;` | Zero clears this named motion component: yaw/pitch increment, movement magnitude or signed forward/strafe velocity. Each halfword store is an arithmetic reset, not a lifecycle code. |
+| `player_sync_position_to_map` | 253 | `0` | `player_state.equipment_effect_ticks = 0;` | Restart the equipment-effect timer when synchronizing to the map; zero is the initial counter value, not a vertical-state encoding. |
+| `player_sync_position_to_map` | 257 | `1` | `player_state.allow_near_actor_spawn = 1;` | Enable the existing near-actor-spawn boolean after relocating to a map cell; the main loop clears it after the actor sweep. |
+| `player_sync_position_to_map` | 263 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);` | Add one occupant to the destination cell. This is a signed occupancy delta, paired with decrements at movement/warp callers, not a state identifier. |
+| `player_sync_position_to_map` | 266 | `0` | `player_state.vertical_velocity = 0;` | Reset signed vertical velocity to rest during map synchronization or entry to falling. Landing only resets state and foot height; it does not clear this field. |
 | `player_distance_to_point_in_cone` | 280 | `0` | `distance = player_distance_to_point(point->x, KF_COLLISION_IGNORE_HEIGHT, point->z, max_distance, 0);` | Point height is zero because the Y argument explicitly disables the vertical interval test. The cone query constrains horizontal distance and angular tolerance only. |
 | `player_distance_to_point` | 317 | `1` | `point_height >>= 1;` | Arithmetic right shift by one forms the signed point half-height. Preserve its negative rounding rather than replacing it with C division. |
 | `player_distance_to_point` | 319 | `2` | `point_height += KF_COLLISION_PLAYER_HEIGHT / 2;` | Division by two forms the player half-height from the named full height. It participates separately in the combined interval extent and center; two is the geometric half ratio. |
@@ -79,5 +92,7 @@ All fourteen functions are included in the [core review](game-player-core-consta
 | `player_move_horizontal` | 445 | `0` | `if (dz < 0) {` | The sign test converts this displacement component to its magnitude before selecting the diagonal fallback direction. |
 | `player_move_horizontal` | 448 | `0` | `if (dx < 0) {` | The sign test converts this displacement component to its magnitude before selecting the diagonal fallback direction. |
 | `player_move_horizontal` | 497 | `1` | `return 1;` | Both the exhausted-retry exit and normal exit return one; all four reconstructed movement callers discard it. Do not infer a success/failure distinction that this return cannot express. |
-| `player_warp_to_floor_entry` | 591 | `1` | `entry = &floor_entry_cells[floor - 1];` | Translate the saved one-based floor ID to the zero-based entry-table index. One is an indexing-origin adjustment, not a floor-selection constant. |
-| `player_warp_to_floor_entry` | 598 | `5` | `if (floor == 5 && player_state.map_variant != KF_FLOOR5_ENTRY_VARIANT) {` | Floor five alone has this entry-variant/music branch. Keep its ordinal level identity and the already named resource variants; a story or location name is not proved. |
+| `player_update_vertical_motion` | 531 | `6999` | `} else if (target >= -6999` | Signed world-Y cutoff for the separate attribute-0x52 death rule. Sampled target heights are multiples of 100, so this admits targets -6900 or greater and excludes -7000. Keep the exact retail comparison until the associated environmental rule is identified. |
+| `player_update_vertical_motion` | 533 | `0x52` | `== 0x52) {` | Map attribute 82 selects the height-gated death path. Its environmental identity is not established by this consumer; do not label it lava, water or another pit without resource/interaction evidence. |
+| `player_update_vertical_motion` | 568 | `0` | `player_state.vertical_velocity = 0;` | Reset signed vertical velocity to rest during map synchronization or entry to falling. Landing only resets state and foot height; it does not clear this field. |
+| `player_warp_to_floor_entry` | 591 | `1` | `entry = &floor_entry_cells[KF_ENUM_ENCODE(u8, floor) - 1];` | Translate the saved one-based floor ID to the zero-based entry-table index. One is an indexing-origin adjustment, not a floor-selection constant. |

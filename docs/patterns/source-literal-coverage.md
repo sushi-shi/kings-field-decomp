@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [save-status review](game-save-status-domain.md):
+Working snapshot after the [player sound-slot review](game-player-sound-slots.md):
 **111 C files**, **112 source/image variants**,
-and **6,635 inline numeric/character occurrences**. The counts include authored
+and **6,631 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **39 files / 3,927 occurrences**, the explicit ledger rows were compared
+For **40 files / 4,002 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -73,7 +73,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 5,338 occurrences.
+73 files; 5,334 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -132,8 +132,8 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_status_panel.c](../../src/game/menu_status_panel.c) | 12 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 32 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [notify_queue.c](../../src/game/notify_queue.c) | 116 | [complete ledger](game-notification-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_core.c](../../src/game/player_core.c) | 79 | [game-player-core ledger](game-player-core-literal-ledger.md); [game-player-motion ledger](game-player-motion-literal-ledger.md) | Recent movement correction updated its ledger; include that combined core/motion ledger in the next coverage validation. |
-| [player_death.c](../../src/game/player_death.c) | 193 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_core.c](../../src/game/player_core.c) | 78 | [complete ledger](game-player-core-literal-ledger.md); [sound slots](game-player-sound-slots.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_death.c](../../src/game/player_death.c) | 190 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death_fade.c](../../src/game/player_death_fade.c) | 8 | [domain notes](source-constant-names.md#lighting-and-death-fade-plan) | Expand the domain audit into current occurrence coverage. |
 | [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [domain evidence](game-player-progression-literal-ledger.md) | No retained literal tokens. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
