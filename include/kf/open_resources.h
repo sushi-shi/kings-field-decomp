@@ -12,6 +12,16 @@ enum {
     KF_OPENING_ENTITY_FLOOR_HEIGHT = 0
 };
 
+/* Shared resource indices, named by their scene-script motion roles. */
+enum {
+    KF_OPENING_SCENE0_DECREASING_YAW_MODEL = 11,
+    KF_OPENING_SCENE0_INCREASING_YAW_MODEL = 12,
+    KF_OPENING_SCENE3_INCREASING_YAW_MODEL = 13,
+    KF_OPENING_SCENE3_DECREASING_YAW_MODEL = 14,
+    KF_OPENING_ENDING_TRANSLATING_MODEL = 26,
+    KF_OPENING_ENDING_ROTATING_MODEL = 27
+};
+
 /* OPEN title-scene entity and its 32-slot runtime pool. */
 typedef struct KfOpeningEntity {
     u8 object_id;

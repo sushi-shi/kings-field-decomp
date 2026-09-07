@@ -1,5 +1,10 @@
 # Source constant naming
 
+The [OPEN renderer review](open-render-constants.md) shares the six scene model
+identities with their renderer, names yaw/depth/material/gradient units and
+propagates projection/Q12/visibility constants. It replaces 21 inline uses and
+documents all 110 retained literals in the four renderer modules.
+
 The [HUD/rendering review](game-render-hud-constants.md) names atlas slots,
 lighting consumers, descriptor packing, culling and depth/brightness units.
 It replaces 108 inline occurrences and documents all 223 retained literals

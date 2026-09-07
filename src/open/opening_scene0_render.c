@@ -8,7 +8,7 @@ void opening_scene0_render_frame(
 {
     render_set_view_transform(position, rotation);
     display_begin_frame();
-    SetGeomScreen(200);
+    SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
     opening_render_map_cells();
     opening_render_entities_and_items();
     display_present_frame();

@@ -39,6 +39,9 @@ promotes a probe to a proven historical toolchain.
 - [game-render-hud-constants.md](game-render-hud-constants.md): atlas-backed HUD
   slots, lighting consumers, culling and depth units; complete
   [223-occurrence remainder ledger](game-render-hud-literal-ledger.md).
+- [open-render-constants.md](open-render-constants.md): shared scene model IDs,
+  render-time yaw, depth and gradient placement; complete
+  [110-occurrence renderer ledger](open-render-literal-ledger.md).
 - [game-notification-identities.md](game-notification-identities.md): all 32
   retail message labels, typed queue/link fields and variadic API, separate
   phase enum, and the [retained-literal ledger](game-notification-literal-ledger.md).

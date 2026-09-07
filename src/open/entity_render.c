@@ -1,10 +1,19 @@
 #include <kf/address.h>
+#include <kf/game_math.h>
 #include <kf/open_resources.h>
 #include <kf/map_data.h>
 #include <kf/open_opening_render.h>
 #include <kf/open_render.h>
 #include <kf/open_scene0.h>
 #include <kf/psyq.h>
+
+enum {
+    OPENING_MODEL_DEPTH_BIAS = -100,
+    OPENING_MODEL_YAW_STEP = 64,
+    ENDING_TRANSLATING_MODEL_DEPTH_BIAS = 1000,
+    ENDING_ROTATING_MODEL_DEPTH_BIAS = 10000,
+    FLOOR_ITEM_RENDER_BRIGHTNESS = 180
+};
 
 DATA(0x800358e0, 0x54)
 KfSpriteQuad floor_item_sprites[7] = {
@@ -19,7 +28,7 @@ KfSpriteQuad floor_item_sprites[7] = {
 
 DATA(0x800359e4, 0x20)
 MATRIX floor_item_light_matrix = {
-    {{0, 0, 0x1000}, {0, 0, 0x1000}, {0, 0, 0}}, {0, 0, 0},
+    {{0, 0, KF_FIXED12_ONE}, {0, 0, KF_FIXED12_ONE}, {0, 0, 0}}, {0, 0, 0},
 };
 
 /* Shared sweep caller and transform setup support this WIP contiguous module. */
@@ -57,20 +66,20 @@ void opening_entity_render(KfOpeningEntity *entity)
     object_id = entity->object_id;
     depth = 0;
     switch (entity->object_id) {
-    case 11:
-    case 12:
-    case 13:
-    case 14:
+    case KF_OPENING_SCENE0_DECREASING_YAW_MODEL:
+    case KF_OPENING_SCENE0_INCREASING_YAW_MODEL:
+    case KF_OPENING_SCENE3_INCREASING_YAW_MODEL:
+    case KF_OPENING_SCENE3_DECREASING_YAW_MODEL:
     case 20:
-        depth = -100;
+        depth = OPENING_MODEL_DEPTH_BIAS;
         break;
     case 21:
     case 22:
-        entity->rotation.y = (entity->rotation.y + 64) & 0xfff;
+        entity->rotation.y = (entity->rotation.y + OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     case 23:
     case 24:
-        entity->rotation.y = (entity->rotation.y - 64) & 0xfff;
+        entity->rotation.y = (entity->rotation.y - OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     case 25:
         tmd_select_object_vertices(object_id);
@@ -78,11 +87,11 @@ void opening_entity_render(KfOpeningEntity *entity)
             tmd_get_object(object_id)->vertex_count);
         render_enqueue_tmd(object_id, 0);
         return;
-    case 26:
-        depth = 1000;
+    case KF_OPENING_ENDING_TRANSLATING_MODEL:
+        depth = ENDING_TRANSLATING_MODEL_DEPTH_BIAS;
         goto render_alternate;
-    case 27:
-        depth = 10000;
+    case KF_OPENING_ENDING_ROTATING_MODEL:
+        depth = ENDING_ROTATING_MODEL_DEPTH_BIAS;
     render_alternate:
         tmd_select_object_vertices(object_id);
         tmd_project_vertices(tmd_get_object(object_id)->vertex_count);
@@ -158,7 +167,7 @@ void opening_render_entities_and_items(void)
             if (row < grid->height) {
                 u16 col = entity->cell_x - origin_x;
 
-                if (col < grid->width && grid->cells[row * grid->width + col] != 0) {
+                if (col < grid->width && grid->cells[row * grid->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     opening_entity_render(entity);
                 }
             }
@@ -168,7 +177,7 @@ void opening_render_entities_and_items(void)
 
     SetLightMatrix(&floor_item_light_matrix);
     open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
-        open_graphics_runtime.floor_item_state.material.color.b = 180;
+        open_graphics_runtime.floor_item_state.material.color.b = FLOOR_ITEM_RENDER_BRIGHTNESS;
     open_graphics_runtime.floor_item_state.material.tpage = open_graphics_runtime.floor_item_state.texture_tpage;
     open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
     item = open_graphics_runtime.floor_item_state.items;
@@ -180,7 +189,7 @@ void opening_render_entities_and_items(void)
         if (row < grid->height) {
             u16 col = item->position_x / KF_MAP_TILE_SIZE - origin_x;
 
-            if (col < grid->width && grid->cells[row * grid->width + col] != 0) {
+            if (col < grid->width && grid->cells[row * grid->width + col] != KF_CELL_WINDOW_HIDDEN) {
                 render_floor_item(item);
             }
         }

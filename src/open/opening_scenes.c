@@ -12,8 +12,6 @@
 #include <kf/psyq_audio.h>
 
 enum {
-    SCENE0_DECREASING_YAW_MODEL = 11,
-    SCENE0_INCREASING_YAW_MODEL = 12,
     SCENE0_ROTATION_START_POINT = 8,
     SCENE0_FADE_OUT_START_POINT = 15,
     SCENE0_YAW_STEP = 40,
@@ -41,8 +39,6 @@ enum {
 };
 
 enum {
-    SCENE3_INCREASING_YAW_MODEL = 13,
-    SCENE3_DECREASING_YAW_MODEL = 14,
     SCENE3_YAW_STEP = 0x10,
     SCENE_CAMERA_WAVE_SHIFT = 7,
     SCENE_CAMERA_WAVE_ANGLE_STEP = 100,
@@ -62,8 +58,6 @@ enum {
     ENDING_BACKGROUND_OT_DEPTH = 0x2f65,
     ENDING_SCROLL_PHASE_COUNT = 4,
     ENDING_TMD_PROJECTION_SHIFT = 2,
-    ENDING_TRANSLATING_MODEL = 26,
-    ENDING_ROTATING_MODEL = 27,
     ENDING_MODEL_START_Y_OFFSET = 1500,
     ENDING_MODEL_FINAL_Y = -8000,
     ENDING_MODEL_Y_STEP = 3,
@@ -202,9 +196,9 @@ void opening_scene0_run(void)
     blend = 0;
     opening_resources_load_scene0();
     entity_11 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, SCENE0_DECREASING_YAW_MODEL);
+        opening_entity_state.entities, KF_OPENING_SCENE0_DECREASING_YAW_MODEL);
     entity_12 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, SCENE0_INCREASING_YAW_MODEL);
+        opening_entity_state.entities, KF_OPENING_SCENE0_INCREASING_YAW_MODEL);
     entity_12->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
     entity_11->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
     opening_camera_path_begin(opening_scene0_camera_path);
@@ -475,9 +469,9 @@ void opening_scene3_run(void)
     cluts[1] = (u16)GetClut(0, PANEL_CLUT_FIRST_Y + 1);
 
     entity_13 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, SCENE3_INCREASING_YAW_MODEL);
+        opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
     entity_14 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, SCENE3_DECREASING_YAW_MODEL);
+        opening_entity_state.entities, KF_OPENING_SCENE3_DECREASING_YAW_MODEL);
     entity_14->rotation.y = 0;
     entity_13->rotation.y = 0;
     opening_camera_path_begin(opening_scene3_camera_path);
@@ -582,9 +576,9 @@ void opening_ending_scene_run(void)
     wave_angle = 0;
     opening_resources_load_ending();
     entity_13 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, SCENE3_INCREASING_YAW_MODEL);
+        opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
     entity_14 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, SCENE3_DECREASING_YAW_MODEL);
+        opening_entity_state.entities, KF_OPENING_SCENE3_DECREASING_YAW_MODEL);
     entity_14->rotation.y = 0;
     entity_13->rotation.y = 0;
     opening_camera_path_begin(opening_ending_camera_path);
@@ -745,9 +739,9 @@ void opening_ending_scroll_run(void)
     cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);
 
     entity_26 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, ENDING_TRANSLATING_MODEL);
+        opening_entity_state.entities, KF_OPENING_ENDING_TRANSLATING_MODEL);
     entity_27 = opening_entity_find_by_object_id(
-        opening_entity_state.entities, ENDING_ROTATING_MODEL);
+        opening_entity_state.entities, KF_OPENING_ENDING_ROTATING_MODEL);
     lighting_phase = ENDING_LIGHT_TO_MIDPOINT;
     background_blend = 0;
     sequence_phase = ENDING_SEQUENCE_WAIT_SCROLL;
@@ -820,7 +814,7 @@ void opening_ending_scroll_run(void)
         } else if (scrolling == 0) {
             entity_26->object_id = KF_OPENING_ENTITY_FREE;
             scrolling = 1;
-            entity_27->object_id = ENDING_ROTATING_MODEL;
+            entity_27->object_id = KF_OPENING_ENDING_ROTATING_MODEL;
         }
         render_set_view_transform(
             &opening_camera_path_state.position, &opening_camera_path_state.rotation);

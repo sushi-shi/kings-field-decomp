@@ -2,12 +2,16 @@
 #include <kf/open_opening_render.h>
 #include <kf/open_render.h>
 
+enum {
+    ENDING_GRADIENT_OT_DEPTH = 0x3fef
+};
+
 ADDRESS(0x800137c4, 0x40)
 void opening_render_frame(const VECTOR *position, const SVECTOR *rotation)
 {
     render_set_view_transform(position, rotation);
     display_begin_frame();
-    SetGeomScreen(200);
+    SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
     opening_render_entities();
     display_present_frame();
 }
@@ -40,5 +44,5 @@ void sprite_add_g4(const u16 *position, const u8 *color0, const u8 *color1,
     prim->r3 = color3[0];
     prim->g3 = color3[1];
     prim->b3 = color3[2];
-    AddPrim(&open_graphics_runtime.ordering_table[0x3fef], prim);
+    AddPrim(&open_graphics_runtime.ordering_table[ENDING_GRADIENT_OT_DEPTH], prim);
 }
