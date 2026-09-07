@@ -83,26 +83,26 @@ void player_use_item(u8 item_id)
             }
             object = &map_object_state.objects[index];
             switch (object->object_id) {
-            case 81:
-            case 83:
-            case 85:
-            case 89:
-            case 117:
-            case 118:
-            case 119:
-            case 120:
-            case 121:
-            case 122:
+            case KF_MAP_OBJECT_BEVELED_WOODEN_LID:
+            case KF_MAP_OBJECT_FLAT_WOODEN_LID:
+            case KF_MAP_OBJECT_STONE_CONTAINER_LID:
+            case KF_MAP_OBJECT_GRAVESTONE:
+            case KF_MAP_OBJECT_LIFTING_GATE:
+            case KF_MAP_OBJECT_PORTCULLIS:
+            case KF_MAP_OBJECT_HINGED_DOOR:
+            case KF_MAP_OBJECT_HINGED_DOOR_PARTNER:
+            case KF_MAP_OBJECT_TALL_HINGED_DOOR:
+            case KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER:
                 if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
-                } else if (object->object_id != 89
+                } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
                                player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, MAP_DOOR_FACING_TOLERANCE)) {
                     used = 1;
                     if (object->link.link_id == item_id) {
                         object->link.link_id = KF_MAP_LINK_NONE;
                         sound_ref_play(&gameplay_sound_ref_12, PLAYER_KEY_UNLOCK_VOLUME);
-                        if (object->object_id == 89) {
+                        if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
                             sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
@@ -125,11 +125,11 @@ void player_use_item(u8 item_id)
                 break;
             }
             object = &map_object_state.objects[index];
-            if (object->object_id == item_id) {
+            if (object->object_id == KF_ENUM_DECODE(KfMapObjectId, item_id)) {
                 if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
-                    item_stock[0][object->object_id] = 0;
+                    item_stock[0][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
                     used = 1;
                     map_object_pool_trigger_link(object->link.link_id);
                     object->link.link_id = KF_MAP_LINK_NONE;

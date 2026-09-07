@@ -10,7 +10,7 @@ KfActor	0x05	0x01	tile_x	u8	supported	game_actor.h;asm;xrefs;actor_pool_load_pla
 KfActor	0x06	0x01	lifecycle	KfActorLifecycle	supported	game_actor.h;asm;xrefs;game-actor-states.md	lifecycle: dormant 0, active 1, waiting for range exit 2, disabled 3; disabled is also used for scripted hiding
 KfActor	0x07	0x01	spawn_chance	u8	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	placement chance shifted by 7 and compared with rand in actor awareness
 KfActor	0x08	0x01	action	KfActorAction	supported	game_actor.h;asm;xrefs;game-actor-states.md	behavior action ID (KF_ACTOR_ACTION_*), distinct from animation-table slots and resource animation IDs
-KfActor	0x09	0x01	death_drop_object_id	u8	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
+KfActor	0x09	0x01	death_drop_object_id	KfMapObjectId	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
 KfActor	0x0a	0x01	animation_id	u8	supported	game_actor.h;asm;xrefs	animation selector
 KfActor	0x0b	0x01	vertical_state	KfActorVerticalState	supported	game_actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
@@ -70,7 +70,7 @@ KfActorPlacement	0x02	0x01	heading_quadrant	u8	supported	game_actor.h;asm;actor_
 KfActorPlacement	0x03	0x01	tile_z	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile z
 KfActorPlacement	0x04	0x01	tile_x	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile x
 KfActorPlacement	0x05	0x01	spawn_chance	u8	supported	game_actor.h;asm;actor_pool_load_placements;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfActor.spawn_chance
-KfActorPlacement	0x06	0x01	death_drop_object_id	u8	supported	game_actor.h;asm;actor_pool_load_placements;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfActor.death_drop_object_id
+KfActorPlacement	0x06	0x01	death_drop_object_id	KfMapObjectId	supported	game_actor.h;asm;actor_pool_load_placements;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfActor.death_drop_object_id
 KfActorPlacement	0x07	0x03	unknown_07	u8[3]	opaque	game_actor.h;asm;actor_pool_load_placements	not read by the loader
 KfActorPlacement	0x0a	0x02	local_z	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along z
 KfActorPlacement	0x0c	0x02	local_x	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along x
@@ -367,7 +367,7 @@ KfMapFloorScript	0x0	0xa	bytes	u8[10]	supported	game_map.h;asm;game-map-script-s
 KfMapFloorScript	0x0	0x4	floor1	KfMapFloor1Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 1 interpretation of the first four prefix bytes
 KfMapFloorScript	0x0	0x1	floor3	KfMapFloor3Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 3 interpretation of the first prefix byte
 KfMapFloorScript	0x0	0x4	floor5	KfMapFloor5Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 5 interpretation of the first four prefix bytes
-KfMapObject	0x00	0x01	object_id	u8	supported	game_map.h;asm;xrefs	object definition ID
+KfMapObject	0x00	0x01	object_id	KfMapObjectId	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
 KfMapObject	0x04	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z

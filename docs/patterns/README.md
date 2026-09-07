@@ -488,3 +488,6 @@ promotes a probe to a proven historical toolchain.
 
 - [GAME floor enum domain](game-floor-enum-domain.md): one floor identity across
   byte/word storage and APIs, explicit encoding boundaries and compiler rejection controls.
+
+- [GAME object-model domain](game-object-model-domain.md): resource-backed model
+  identities and enum propagation through runtime objects, actor drops and rendering.

@@ -4,7 +4,6 @@
 #include <kf/game_state.h>
 
 enum {
-    MAP_OBJECT_RENDER_ID_END = 133,
     ACTOR_VARIANT_WINDOW_HALF_WIDTH = 12,
     ACTOR_VARIANT_WINDOW_WIDTH = 2 * ACTOR_VARIANT_WINDOW_HALF_WIDTH,
     FLOOR_ITEM_RENDER_BRIGHTNESS = 180
@@ -31,7 +30,7 @@ void render_entities(void)
     /* Map objects. */
     object = map_object_state.objects;
     for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {
-        if (object->object_id < MAP_OBJECT_RENDER_ID_END) {
+        if (object->object_id < KF_MAP_OBJECT_RENDER_ID_END) {
             u16 row = object->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {

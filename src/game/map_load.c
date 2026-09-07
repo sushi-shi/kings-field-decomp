@@ -68,7 +68,7 @@ void map_restore_floor_state(void)
 
         object = &map_object_state.objects[0];
         for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
-            object->object_id = *in++;
+            object->object_id = KF_ENUM_DECODE(KfMapObjectId, *in++);
         }
 
         i = *in++;

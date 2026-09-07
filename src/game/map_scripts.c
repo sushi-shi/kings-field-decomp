@@ -118,7 +118,7 @@ void map_ambient_script_floor1(void)
             }
             object_index = map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
             if (object_index != -1) {
-                map_object_state.objects[object_index].object_id = 0x5c;
+                map_object_state.objects[object_index].object_id = KF_MAP_OBJECT_BROKEN_STONE_CROSS;
             }
         }
         break;
@@ -322,7 +322,7 @@ void map_floor5_transition_cutscene(void)
     ReadColorMatrix(&color_matrix);
     effect = map_object_effect_pool_acquire(
         KF_MAP_OBJECT_PLACEMENT_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, map_object_effect_sequence_180);
-    effect->object_id = KF_ITEM_DRAGON_SWORD;
+    effect->object_id = KF_MAP_OBJECT_DRAGON_SWORD;
     effect->cell_x = 85;
     effect->cell_z = 40;
     effect->position_x = effect->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
@@ -351,7 +351,7 @@ void map_floor5_transition_cutscene(void)
                     effect_pool_construct(
                         0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                         KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);
-                    effect->object_id = KF_ITEM_MOONLIGHT_SWORD;
+                    effect->object_id = KF_MAP_OBJECT_MOONLIGHT_SWORD;
                 }
             } else if (spin < MAP_WEAPON_TRANSFORM_MAX_YAW_STEP) {
                 spin += MAP_WEAPON_TRANSFORM_YAW_ACCELERATION;
@@ -561,7 +561,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             break;
         }
         object = &map_object_state.objects[index];
-        definition = &map_object_state.definitions[object->object_id];
+        definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
         switch (definition->behavior_type) {
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER:
             if (object->link.link_id != KF_MAP_LINK_NONE) {
@@ -675,7 +675,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 if (neighbor_index != index) {
                     neighbor = &map_object_state.objects[neighbor_index];
                     neighbor_definition =
-                        &map_object_state.definitions[neighbor->object_id];
+                        &map_object_state.definitions[KF_ENUM_ENCODE(u8, neighbor->object_id)];
                     if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR) {
                         if (neighbor->link.link_id != KF_MAP_LINK_NONE
                             && neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
@@ -694,7 +694,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:
-            pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id));
+            pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, KF_ENUM_ENCODE(u8, object->object_id)));
             if (pickup_result == KF_ITEM_PICKUP_ACQUIRED) {
                 object->object_id = KF_MAP_OBJECT_FREE;
             } else if (pickup_result == KF_ITEM_PICKUP_STACK_FULL) {
@@ -728,10 +728,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             if (notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
                 break;
             }
-            if (object->object_id == 0x82) {
+            if (object->object_id == KF_MAP_OBJECT_SIGNBOARD) {
                 result = 0;
             } else {
-                if (object->object_id != 0x83) {
+                if (object->object_id != KF_MAP_OBJECT_INSCRIPTION_PANEL) {
                     return;
                 }
                 result = 1;

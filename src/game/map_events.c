@@ -224,7 +224,7 @@ void map_world_state_persist(void)
 
     object = &map_object_state.objects[0];
     for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
-        *out++ = object->object_id;
+        *out++ = KF_ENUM_ENCODE(u8, object->object_id);
     }
 
     count_slot = out++;
@@ -232,14 +232,14 @@ void map_world_state_persist(void)
     object = &map_object_state.objects[0];
     definitions = map_object_state.definitions;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
-        u8 id = object->object_id;
+        KfMapObjectId id = object->object_id;
         u8 behavior;
 
         if (id == KF_MAP_OBJECT_FREE) {
             continue;
         }
 
-        behavior = definitions[id].behavior_type;
+        behavior = definitions[KF_ENUM_ENCODE(u8, id)].behavior_type;
         if ((behavior == KF_MAP_OBJECT_BEHAVIOR_NONE
                 || behavior == KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE
                 || behavior == KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP

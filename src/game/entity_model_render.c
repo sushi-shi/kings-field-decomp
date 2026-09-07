@@ -75,7 +75,7 @@ void render_map_object(KfMapObject *object)
     MATRIX model;
     MATRIX light;
     long flag;
-    u16 id;
+    KF_ENUM_STORAGE(KfMapObjectId, u16) id;
     s16 depth;
 
     SetRotMatrix(&render_state.view_matrix);
@@ -94,7 +94,7 @@ void render_map_object(KfMapObject *object)
     SetLightMatrix(&light);
 
     id = object->object_id;
-    switch (map_object_state.definitions[object->object_id].behavior_type) {
+    switch (map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case 3:
         depth = MAP_LIFT_DOOR_DEPTH_BIAS;
@@ -107,9 +107,9 @@ void render_map_object(KfMapObject *object)
         depth = 0;
         break;
     }
-    tmd_select_object_vertices(id);
-    tmd_project_vertices(tmd_get_object(id)->vertex_count);
-    render_enqueue_tmd(id, depth);
+    tmd_select_object_vertices(KF_ENUM_ENCODE(u16, id));
+    tmd_project_vertices(tmd_get_object(KF_ENUM_ENCODE(u16, id))->vertex_count);
+    render_enqueue_tmd(KF_ENUM_ENCODE(u16, id), depth);
 }
 
 ADDRESS(0x8001ed38, 0x58)

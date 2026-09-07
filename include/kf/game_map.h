@@ -122,7 +122,6 @@ enum {
 enum {
     KF_MAP_COPY_REGION_COUNT = 5,
     KF_MAP_COPY_REGION_NONE = 255,
-    KF_MAP_OBJECT_FREE = 255,
     KF_MAP_LINK_NONE = 255,
     KF_MAP_OBJECT_PARAMETER_NONE = 255,
     KF_MAP_LINK_REUSABLE_FIRST = 128,
@@ -138,12 +137,47 @@ enum {
     KF_MAP_OBJECT_SWITCH_REVERSE = 3
 };
 
-/* Exclusive object-ID bounds shared by drop animation and saved orientation. */
-enum {
+/* GAME model/definition IDs; OPEN's encoded placements use another table. */
+KF_ENUM_BEGIN(KfMapObjectId, u8)
+    KF_MAP_OBJECT_DRAGON_SWORD = 10,
+    KF_MAP_OBJECT_MOONLIGHT_SWORD = 11,
+    KF_MAP_OBJECT_GOLD_COIN = 39,
+    KF_MAP_OBJECT_DRAGON_CHALICE = 56,
+    KF_MAP_OBJECT_WATER_SEAL_STONE = 63,
+    KF_MAP_OBJECT_EARTH_SEAL_STONE = 64,
+    KF_MAP_OBJECT_FIRE_SEAL_STONE = 68,
+    KF_MAP_OBJECT_WIND_SEAL_STONE = 69,
+    KF_MAP_OBJECT_BEVELED_WOODEN_LID = 81,
+    KF_MAP_OBJECT_FLAT_WOODEN_LID = 83,
+    KF_MAP_OBJECT_STONE_CONTAINER_LID = 85,
+    KF_MAP_OBJECT_GRAVESTONE = 89,
+    KF_MAP_OBJECT_BROKEN_STONE_CROSS = 92,
+    KF_MAP_OBJECT_DROP_DISABLED = 99,
+    KF_MAP_OBJECT_DRY_FOUNTAIN = 111,
+    KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER = 115,
+    KF_MAP_OBJECT_LIFTING_GATE = 117,
+    KF_MAP_OBJECT_PORTCULLIS = 118,
+    KF_MAP_OBJECT_HINGED_DOOR = 119,
+    KF_MAP_OBJECT_HINGED_DOOR_PARTNER = 120,
+    KF_MAP_OBJECT_TALL_HINGED_DOOR = 121,
+    KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER = 122,
+    KF_MAP_OBJECT_FILLED_FOUNTAIN = 123,
+    KF_MAP_OBJECT_FIRE_BALL_EMITTER = 124,
+    KF_MAP_OBJECT_WIND_CUTTER_EMITTER = 125,
+    KF_MAP_OBJECT_SIGNBOARD = 130,
+    KF_MAP_OBJECT_INSCRIPTION_PANEL = 131,
+    KF_MAP_OBJECT_EFFECT_SWITCH = 135,
+    KF_MAP_OBJECT_ORBITING_PROJECTILE = 136,
+    KF_MAP_OBJECT_PROJECTILE_EMITTER = 137,
+    KF_MAP_OBJECT_SHORT_SWING = 138,
+    KF_MAP_OBJECT_LONG_SWING = 139,
+    KF_MAP_OBJECT_FREE = 255,
+    /* Exclusive rendering and drop-animation boundaries. */
+    KF_MAP_OBJECT_RENDER_ID_END = 133,
     KF_MAP_DROP_TIP_ID_END = 43,
     KF_MAP_DROP_SPIN_ID_END = 48,
     KF_MAP_DROP_BOUNCE_ID_END = 65
-};
+KF_ENUM_END(KfMapObjectId)
 
 /* Positive Y hides the piece; five settling updates undo the reveal overshoot. */
 enum {
@@ -175,6 +209,7 @@ typedef struct KfMapObjectLink {
     KfNotificationId default_notification;
 } KfMapObjectLink;
 
+/* Encoded model byte is decoded against the consuming image's model table. */
 typedef struct KfMapObjectPlacement {
     u8 object_id;
     u8 unknown_01;
@@ -196,7 +231,7 @@ typedef struct KfMapObjectDefinition {
 } KfMapObjectDefinition;
 
 typedef struct KfMapObject {
-    u8 object_id;
+    KfMapObjectId object_id;
     u8 unknown_01;
     u16 cell_x;
     u16 cell_z;
@@ -411,7 +446,7 @@ extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
 extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s32 y_offset);
-extern void map_object_spawn_effect(u8 kind, u8 object_id, const struct KfVec3i *position, s32 y_offset);
+extern void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const struct KfVec3i *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, u8 action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
 extern void *map_resource_load_file(const char *filename);

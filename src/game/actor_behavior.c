@@ -103,7 +103,6 @@ enum {
     ACTOR_MULTI_HIT_POSITIVE_YAW_PHASE = 3800,
     ACTOR_DEATH_DROP_PHASE = KF_ACTOR_ANIMATION_PHASE_PERIOD / 2,
     ACTOR_POST_DEATH_PROGRESS_END = 7,
-    ACTOR_DROP_DISABLED = 99,
     ACTOR_DEFINITION_DROP_UNSET = 255,
     ACTOR_GOLD_RANDOM_SHIFT = 15,
     ACTOR_DROP_CHANCE_RANDOM_SHIFT = 7,
@@ -968,15 +967,15 @@ void actor_update_current_action(void)
                     debris, (struct KfVec3i *)&actor->position, -(definition->collision_height >> 1));
             }
             if (actor->slot_state == KF_ACTOR_SLOT_DYNAMIC || actor->slot_state == KF_ACTOR_SLOT_RESPAWNING) {
-                if (definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != ACTOR_DROP_DISABLED && definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != ACTOR_DEFINITION_DROP_UNSET
+                if (definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_DROP_DISABLED) && definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != ACTOR_DEFINITION_DROP_UNSET
                     && (rand() >> ACTOR_DROP_CHANCE_RANDOM_SHIFT) <= definition->action_parameters[KF_ACTOR_PARAM_DROP_CHANCE]) {
                     map_object_spawn_effect(
                         KF_MAP_OBJECT_DROP_FROM_DEFINITION,
-                        definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT],
+                        KF_ENUM_DECODE(KfMapObjectId, definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT]),
                         (struct KfVec3i *)&actor->position,
                         -(definition->collision_height >> 1));
                 }
-            } else if (actor->death_drop_object_id != ACTOR_DROP_DISABLED) {
+            } else if (actor->death_drop_object_id != KF_MAP_OBJECT_DROP_DISABLED) {
                 map_object_spawn_effect(
                     KF_MAP_OBJECT_DROP_FROM_PLACEMENT,
                     actor->death_drop_object_id,

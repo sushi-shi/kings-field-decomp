@@ -5,6 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/enum.h>
+#include <kf/game_map.h>
 #include <kf/psyq.h>
 #include <kf/audio.h>
 #include <kf/game_math.h>
@@ -201,7 +202,7 @@ typedef struct KfActorPlacement {
     u8 tile_z;
     u8 tile_x;
     u8 spawn_chance;
-    u8 death_drop_object_id;
+    KfMapObjectId death_drop_object_id;
     u8 unknown_07[3];
     s16 local_z;
     s16 local_x;
@@ -218,7 +219,7 @@ typedef struct KfActor {
     KfActorLifecycle lifecycle;
     u8 spawn_chance;
     KfActorAction action;
-    u8 death_drop_object_id;
+    KfMapObjectId death_drop_object_id;
     u8 animation_id;
     KfActorVerticalState vertical_state;
     u8 unknown_0c[2];

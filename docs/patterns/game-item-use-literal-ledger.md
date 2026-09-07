@@ -1,15 +1,15 @@
 # Retained item-use literals
 
 Complete current ledger for `src/game/player_use_item.c`, including both image
-path buffers and all three functions: **54 numeric/character occurrences**.
+path buffers and all three functions: **42 numeric/character occurrences**.
 The [range and effect settings review](game-item-use-constants.md) names 23
 previously inline uses. The [special-item audit](game-item-special-identities.md)
 supplies item/resource identities and consumer evidence.
 
 Every token and complete source-line expression is accounted for, including
 duplicates. Claims, comments, strings, identifier digits and named definitions
-are excluded. Object identifiers remain pending domain typing; their ledger
-rows record current evidence, not an exemption from further naming.
+are excluded. The [object-model review](game-object-model-domain.md) names the referenced
+model identities and propagates their enum through GAME consumers.
 
 The [floor enum review](game-floor-enum-domain.md) propagates floor identifiers
 through the current source; this ledger reflects its named comparisons and
@@ -44,22 +44,10 @@ explicit numeric boundaries.
 | `player_use_item` | 69 | `0` | `u8 used = 0;` | No applicable use action has been acknowledged yet; Boolean false. |
 | `player_use_item` | 73 | `0` | `index = 0;` | Begin the object-pool search at zero-based slot zero. |
 | `player_use_item` | 81 | `1` | `if (index == -1) {` | Negative query-miss sentinel ends the object scan, outside nonnegative pool indices. |
-| `player_use_item` | 86 | `81` | `case 81:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 87 | `83` | `case 83:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 88 | `85` | `case 85:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 89 | `89` | `case 89:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 90 | `117` | `case 117:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 91 | `118` | `case 118:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 92 | `119` | `case 119:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 93 | `120` | `case 120:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 94 | `121` | `case 121:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 95 | `122` | `case 122:` | Authored object-model ID eligible for keyed-link handling. Model identities need mesh/resource evidence; these are not map behavior/action enum values with coincident numbers. |
-| `player_use_item` | 98 | `89` | `} else if (object->object_id != 89` | Only object model 89 applies the facing test before key use; proper model name remains unresolved. |
 | `player_use_item` | 101 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
-| `player_use_item` | 105 | `89` | `if (object->object_id == 89) {` | Only model 89 adds the second unlock sound; retain this authored model-specific rule without inventing a model name. |
 | `player_use_item` | 124 | `1` | `if (index == -1) {` | Negative query-miss sentinel ends the object scan, outside nonnegative pool indices. |
-| `player_use_item` | 132 | `0` | `item_stock[0][object->object_id] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
-| `player_use_item` | 132 | `0` | `item_stock[0][object->object_id] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
+| `player_use_item` | 132 | `0` | `item_stock[0][KF_ENUM_ENCODE(u8, object->object_id)] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
+| `player_use_item` | 132 | `0` | `item_stock[0][KF_ENUM_ENCODE(u8, object->object_id)] = 0;` | Clear all player-owned copies in stock bank zero when the matching chalice/seal-stone object triggers its link. |
 | `player_use_item` | 133 | `1` | `used = 1;` | Boolean true acknowledges an applicable action, including an examined door with a wrong key. |
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |
 | `player_use_item` | 143 | `1` | `for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {` | Inclusive countdown from the last of 48 records through slot 0, stopping at -1. Each step advances the record pointer once. |

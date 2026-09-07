@@ -75,7 +75,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     u8 cell_z;
     const KfMapObjectDefinition *definition;
 
-    definition = &map_object_state.definitions[object->object_id];
+    definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
     yaw &= KF_ANGLE_WRAP_MASK;
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
@@ -124,7 +124,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
 ADDRESS(0x80030eb8, 0xc4)
 s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 {
-    const KfMapObjectDefinition *definition = &map_object_state.definitions[object->object_id];
+    const KfMapObjectDefinition *definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
     s32 point_x = object->position_x;
     s32 point_z = object->position_z;
     s32 result;
@@ -205,15 +205,15 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
     KfMapObject *object = map_object_state.objects;
     KfMapObjectDefinition *definition;
     u32 effect_output[2];
-    u8 object_id;
+    KfMapObjectId object_id;
 
     remaining = KF_MAP_OBJECT_CAPACITY - 1;
     for (;;) {
         if (ended == 1) {
         fill:
             object->object_id = KF_MAP_OBJECT_FREE;
-        } else if (placement->object_id != KF_MAP_OBJECT_FREE) {
-            object_id = placement->object_id;
+        } else if (KF_ENUM_DECODE(KfMapObjectId, placement->object_id) != KF_MAP_OBJECT_FREE) {
+            object_id = KF_ENUM_DECODE(KfMapObjectId, placement->object_id);
             object->object_id = object_id;
             object->cell_x = placement->tile_x;
             object->cell_z = placement->tile_z;
@@ -227,12 +227,12 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             object->action = KF_MAP_OBJECT_ACTION_IDLE;
             /* The link block moves as two aligned words. */
             memcpy((u32 *)&object->link, (const u32 *)&placement->link, sizeof object->link);
-            definition = &map_object_state.definitions[object->object_id];
+            definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(object->cell_x, object->cell_z, 1);
             }
             switch (object_id) {
-            case 136:
+            case KF_MAP_OBJECT_ORBITING_PROJECTILE:
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -242,13 +242,13 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
-            case 115:
-            case 124:
-            case 125:
-            case 137:
+            case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
+            case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
+            case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
+            case KF_MAP_OBJECT_PROJECTILE_EMITTER:
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_PROJECTILE_EMITTER);
                 break;
-            case 138:
+            case KF_MAP_OBJECT_SHORT_SWING:
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -259,7 +259,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
-            case 139:
+            case KF_MAP_OBJECT_LONG_SWING:
                 object->link.action_parameter = effect_pool_construct(
                                                     *(u8 *)&object->link.spawn_sequence,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -270,7 +270,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING);
                 break;
-            case 135:
+            case KF_MAP_OBJECT_EFFECT_SWITCH:
                 object->link.action_parameter =
                     effect_pool_construct(
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object->position_x,
@@ -278,16 +278,16 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_EFFECT_SWITCH);
                 break;
-            case 56:
-            case 63:
-            case 64:
-            case 68:
-            case 69:
+            case KF_MAP_OBJECT_DRAGON_CHALICE:
+            case KF_MAP_OBJECT_WATER_SEAL_STONE:
+            case KF_MAP_OBJECT_EARTH_SEAL_STONE:
+            case KF_MAP_OBJECT_FIRE_SEAL_STONE:
+            case KF_MAP_OBJECT_WIND_SEAL_STONE:
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_REVEAL_MAP_PIECE);
                 object->position_y += KF_MAP_OBJECT_REVEAL_DEPTH;
                 break;
-            case 111:
-            case 123:
+            case KF_MAP_OBJECT_DRY_FOUNTAIN:
+            case KF_MAP_OBJECT_FILLED_FOUNTAIN:
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_ENABLE_RESTORE_POINT);
                 break;
             }
@@ -340,7 +340,7 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
         if (object->object_id == KF_MAP_OBJECT_FREE) {
             continue;
         }
-        radius = map_object_state.definitions[object->object_id].collision_radius;
+        radius = map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].collision_radius;
         if (radius == 0) {
             continue;
         }

@@ -124,7 +124,7 @@ u32 collision_query_world(
         if (hit != KF_COLLISION_NONE) {
             if (flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfMapObject *object = &map_object_state.objects[hit];
-                KfMapObjectDefinition *definition = &map_object_state.definitions[object->object_id];
+                KfMapObjectDefinition *definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
 
                 collision_target.position = *(VECTOR *)&object->position_x;
                 collision_target.rotation = *(SVECTOR *)&object->rotation;

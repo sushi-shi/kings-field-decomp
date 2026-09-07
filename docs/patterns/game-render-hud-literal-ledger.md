@@ -9,9 +9,9 @@ retained values and explicitly identifies unresolved type/behavior debt.
 
 ## `src/game/entity_model_render.c`
 
-21 → 14 retained occurrences.
+14 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `render_actor` | 50 | `0` | `object = tmd_get_object(0);` | First object within the selected TMD resource; local array origin, not a global asset ID. |
 | `render_actor` | 53 | `0` | `actor->animation_phase, object->vertex_count) == 0) {` | Animation-binding boolean success/failure predicate; preserve exact zero comparison. |
@@ -30,31 +30,31 @@ retained values and explicitly identifies unresolved type/behavior debt.
 
 ## `src/game/render_scene.c`
 
-25 → 15 retained occurrences.
+15 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `render_entities` | 33 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 33 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 39 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
-| `render_entities` | 49 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 49 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 54 | `0` | `if (actor->variant == 0) {` | Ordinary actor variant uses the active cell window; nonzero variants use the separately bounded square. |
-| `render_entities` | 76 | `0` | `if (visible != 0) {` | Boolean/nonzero visibility result gates the actor emitter. |
-| `render_entities` | 93 | `1` | `for (i--; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 98 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
-| `render_entities` | 109 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 109 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 118 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
-| `render_entities` | 130 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 130 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 136 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
+| `render_entities` | 32 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 32 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 38 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
+| `render_entities` | 48 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 48 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 53 | `0` | `if (actor->variant == 0) {` | Ordinary actor variant uses the active cell window; nonzero variants use the separately bounded square. |
+| `render_entities` | 75 | `0` | `if (visible != 0) {` | Boolean/nonzero visibility result gates the actor emitter. |
+| `render_entities` | 92 | `1` | `for (i--; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 97 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
+| `render_entities` | 108 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 108 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 117 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
+| `render_entities` | 129 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 129 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 135 | `0` | `if (col < g->width && g->cells[row * g->width + col] != 0) {` | Zero cell visibility rejects rendering; other cell classes remain accepted. |
 
 ## `src/game/geometry_render.c`
 
-170 → 147 retained occurrences.
+147 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `initializers` | 16 | `0` | `{KF_HUD_VISIBLE, 0, {0x50, 0x03, 1, 5, 0x1f, 0x15, 0x32, 5}},` | Opaque header byte +1 is authored zero; no consumer supports a semantic field identity. |
 | `initializers` | 16 | `0x50` | `{KF_HUD_VISIBLE, 0, {0x50, 0x03, 1, 5, 0x1f, 0x15, 0x32, 5}},` | Authored HUD u coordinate/span in the typed sprite tuple; atlas and screen layout supply its context, so retain as data. |
@@ -206,9 +206,9 @@ retained values and explicitly identifies unresolved type/behavior debt.
 
 ## `src/game/render_frame.c`
 
-115 → 47 retained occurrences.
+47 retained occurrences.
 
-| Function/data | Line | Literal | Source context | Reason retained |
+| Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `initializers` | 29 | `2` | `KfEffectSprite effect_sprites[2] = {` | One authored animated compass entry plus its terminating row; this is the complete local table extent. |
 | `initializers` | 30 | `1` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial true visibility; subsequently copied from the compass setting. |

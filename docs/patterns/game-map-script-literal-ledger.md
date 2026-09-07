@@ -1,6 +1,6 @@
 # Retained floor-script literals
 
-Complete account of **241 numeric/character occurrences** in
+Complete account of **238 numeric/character occurrences** in
 `src/game/map_scripts.c` after the
 [motion and interaction review](game-map-script-motion-constants.md).
 Comments, strings, identifier digits, enum/macro definitions and retail
@@ -62,7 +62,6 @@ explicit numeric boundaries.
 | `map_ambient_script_floor1` | 119 | `0x5208` | `object_index = map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);` | Authored search point X=21000, Z=67000 world units, with 3000 units of radius padding for the actor-activation script. |
 | `map_ambient_script_floor1` | 119 | `0x105b8` | `object_index = map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);` | Authored search point X=21000, Z=67000 world units, with 3000 units of radius padding for the actor-activation script. |
 | `map_ambient_script_floor1` | 120 | `1` | `if (object_index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_ambient_script_floor1` | 121 | `0x5c` | `map_object_state.objects[object_index].object_id = 0x5c;` | Authored replacement model/object ID 92; no proper object name is established. |
 | `map_ambient_script_floor1` | 129 | `2` | `if (player_state.map_cell.x >= 2 && player_state.map_cell.z >= 27` | Authored tile bounds for the entry/exit trigger: actor activation uses entry X[7,12),Z[31,41), exit outside X[2,14),Z[25,46); object removal uses entry X[2,5),Z[27,30), exit outside X[2,28),Z[11,41). |
 | `map_ambient_script_floor1` | 129 | `27` | `if (player_state.map_cell.x >= 2 && player_state.map_cell.z >= 27` | Authored tile bounds for the entry/exit trigger: actor activation uses entry X[7,12),Z[31,41), exit outside X[2,14),Z[25,46); object removal uses entry X[2,5),Z[27,30), exit outside X[2,28),Z[11,41). |
 | `map_ambient_script_floor1` | 130 | `5` | `&& player_state.map_cell.x < 5 && player_state.map_cell.z < 30) {` | Authored tile bounds for the entry/exit trigger: actor activation uses entry X[7,12),Z[31,41), exit outside X[2,14),Z[25,46); object removal uses entry X[2,5),Z[27,30), exit outside X[2,28),Z[11,41). |
@@ -250,7 +249,5 @@ explicit numeric boundaries.
 | `map_interaction_dispatch` | 667 | `0` | `neighbor_index = 0;` | Start the paired-door leaf search at the first pool slot. |
 | `map_interaction_dispatch` | 671 | `1` | `if (neighbor_index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
 | `map_interaction_dispatch` | 707 | `8` | `result = object->link.link_id \| object->link.action_parameter << 8;` | Reassemble little-endian gold amount from the first two link bytes; high byte shifts by eight bits. |
-| `map_interaction_dispatch` | 731 | `0x82` | `if (object->object_id == 0x82) {` | Authored object ID 130 selects screen-image group zero. |
 | `map_interaction_dispatch` | 732 | `0` | `result = 0;` | Screen-image group zero selected by object ID 130. |
-| `map_interaction_dispatch` | 734 | `0x83` | `if (object->object_id != 0x83) {` | Authored object ID 131 is the only other supported screen-image selector. |
 | `map_interaction_dispatch` | 737 | `1` | `result = 1;` | Screen-image group one selected by object ID 131. |
