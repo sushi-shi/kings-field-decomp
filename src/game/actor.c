@@ -394,7 +394,7 @@ void actor_pool_apply_radial_damage(
     s32 distance;
     u16 ratio;
     u16 weight;
-    u32 damage_scale;
+    u16 damage_scale;
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
@@ -418,12 +418,12 @@ void actor_pool_apply_radial_damage(
         if (distance == -1) {
             continue;
         }
-        if (falloff_value == KF_FIXED12_ONE) {
-            damage_scale = scale;
-        } else {
+        if (falloff_value != KF_FIXED12_ONE) {
             ratio = (distance << KF_FIXED12_BITS) / radius;
             weight = KF_FIXED12_ONE - ((u32)(ratio * remaining) >> KF_FIXED12_BITS);
             damage_scale = (u32)(scale * weight) >> KF_FIXED12_BITS;
+        } else {
+            damage_scale = scale;
         }
         actor_apply_damage(
             index,

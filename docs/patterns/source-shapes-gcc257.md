@@ -208,11 +208,16 @@ Shapes settled while reconstructing `src/game/actor.c` (band
 
 Open residues (not steered):
 
-- `actor_pool_apply_radial_damage`,
-  `actor_pool_find_overlap`, `actor_try_attack_player`,
+- `actor_pool_find_overlap`, `actor_try_attack_player`,
   `actor_play_sound_at_phase`: retail hoists argument-register copies
   (`move a1,s3`, `move s2,a0`) above independent loads; the 2.5.7 probe keeps
   them adjacent to their call or use.
+- `actor_pool_apply_radial_damage`: the
+  [calculated-first arm and halfword scale correction](game-actor-radial-falloff.md)
+  improve strict objdiff from 86.103170% to 90.087300%. The loop and epilogue
+  align after a one-word entry shift, including the mapped internal jump.
+  Entry setup still materializes 4096 twice and orders argument copies
+  differently; its cause remains unattributed.
 - `actor_apply_damage`: subsequently closed by the
   [boss guard, shared-exit and rounded-value corrections](game-actor-damage-exits.md).
   The zero-health guard belongs only to floor 5 / definition 7, not all actors.
