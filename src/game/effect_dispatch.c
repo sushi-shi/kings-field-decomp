@@ -5,6 +5,13 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+enum {
+    EFFECT_SHORT_SWING_PHASE_LIMIT = 40,
+    EFFECT_LONG_SWING_PHASE_LIMIT = 60,
+    EFFECT_ORBIT_PHASE_LIMIT = 40,
+    EFFECT_ORBIT_RADIUS = 6500
+};
+
 /* Dense effect-kind dispatch table for kinds 4 through 52. */
 RODATA(0x80012cf8, 0xc4)
 
@@ -680,11 +687,11 @@ rotate_kind9:
     }
 
     case KF_EFFECT_KIND_SWINGING_HAZARD_SHORT:
-        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_SHORT], 0x28);
+        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_SHORT], EFFECT_SHORT_SWING_PHASE_LIMIT);
         break;
 
     case KF_EFFECT_KIND_SWINGING_HAZARD_LONG:
-        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_LONG], 0x3c);
+        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_LONG], EFFECT_LONG_SWING_PHASE_LIMIT);
         break;
 
     case KF_EFFECT_KIND_FLOOR_DEFORMATION: {
@@ -736,7 +743,7 @@ invalidate_and_return:
     }
 
     case KF_EFFECT_KIND_ORBITING_PROJECTILE:
-        effect_projectile_update_2d(0x1964, 0x28);
+        effect_projectile_update_2d(EFFECT_ORBIT_RADIUS, EFFECT_ORBIT_PHASE_LIMIT);
         break;
 
     default:

@@ -1,5 +1,12 @@
 # Source constant naming
 
+The [effect-update review](game-effect-update-constants.md) names collision
+and sound distances, angular acceleration, orbit period/radius, withdrawal
+limits, floor-sound progress and child spacing. It removes 25 inline uses
+and documents all 105 remaining update-module literals. Shared helper
+declarations align with existing definitions and remove twenty modern
+compiler errors from the dispatcher.
+
 The [effect-constructor review](game-effect-pool-constants.md) names lightning
 impact/blast and ground-branch visual kinds, scales/orientation, propagation
 delay, sound ranges and the live floor-controller tag. It shares emergence

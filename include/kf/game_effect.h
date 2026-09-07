@@ -269,8 +269,14 @@ extern void effect_pool_set_current(KfEffectRecord *record);
 extern void effect_pool_reset(void);
 extern void effect_pool_sweep(void);
 extern void effect_update_dispatch(void);
-extern void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit);
-extern void effect_projectile_update_2d(s32 speed, s32 frame_limit);
+extern int effect_magic_power(KfEffectRecord *effect);
+extern void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit);
+extern void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit);
+extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
+extern void effect_scatter_triple(u16 *values);
+extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale);
+extern void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 distance);
+extern void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 branch_role);
 extern u32 effect_map_collision(VECTOR *position, s32 radius);
 
 #endif

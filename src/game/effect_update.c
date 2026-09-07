@@ -6,8 +6,26 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
+enum {
+    EFFECT_FIXED_MAGIC_POWER = 5,
+    EFFECT_SWING_COLLISION_RADIUS = 120,
+    EFFECT_ORBIT_COLLISION_RADIUS = 150,
+    EFFECT_SWING_ANGULAR_ACCEL = 10,
+    EFFECT_HAZARD_RISE_STEP = 60,
+    EFFECT_HAZARD_SOUND_RANDOM_CUTOFF = (RAND_MAX + 1) / 4,
+    EFFECT_SWING_SOUND_MAX_DISTANCE = 3000,
+    EFFECT_ORBIT_SOUND_MAX_DISTANCE = 5000,
+    EFFECT_ORBIT_SOUND_RESET_DISTANCE = 5000,
+    EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE = 14000,
+    EFFECT_ORBIT_UPDATES_PER_TURN = 64,
+    FLOOR_DEFORM_SOUND_PROGRESS = 3900,
+    FLOOR_DEFORM_SEGMENT_COUNT = 5,
+    TRAIL_UNIT_SCALE_DISTANCE = 800,
+    GROUND_BRANCH_CHILD_SPACING = 1500
+};
+
 DATA(0x80056268, 0x23)
-static KfFloorDeformSegment floor_deform_segments[5] = {
+static KfFloorDeformSegment floor_deform_segments[FLOOR_DEFORM_SEGMENT_COUNT] = {
     {65, 80, 1, 0, 2, 0, 100},
     {61, 73, 0, 255, 2, 0, 100},
     {75, 56, 1, 0, 3, 0, 100},
@@ -24,11 +42,11 @@ int effect_magic_power(KfEffectRecord *effect)
     if (effect->type & KF_EFFECT_USE_PLAYER_MAGIC) {
         return player_state.magic;
     }
-    return 5;
+    return EFFECT_FIXED_MAGIC_POWER;
 }
 
 ADDRESS(0x80037fe0, 0x2b8)
-void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit)
+void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
@@ -49,7 +67,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit)
         world.vx += record->position.vx;
         world.vy += record->position.vy;
         world.vz += record->position.vz;
-        collision = effect_map_collision(&world, 0x78);
+        collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
         if (collision != (u32)KF_COLLISION_NONE) {
             if ((collision >> 16) == (KF_COLLISION_ACTOR >> 16)) {
                 actor_apply_damage(collision & 0xffff, 0, magic->damage_components[0],
@@ -63,10 +81,10 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit)
             record->direction.words.x = -record->direction.words.x;
         }
         if (record->sound_played == 0) {
-            if (rand() < 8192) {
+            if (rand() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
                 record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &world, KF_AUDIO_MAX_VOLUME,
-                    0xbb8, 0x36b0);
+                    EFFECT_SWING_SOUND_MAX_DISTANCE, EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE);
             }
         }
         if (record->rotation.vx >= KF_ANGLE_EIGHTH_TURN) {
@@ -77,9 +95,9 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit)
             record->direction.words.x = 0;
         }
         if (record->rotation.vx > 0) {
-            record->direction.words.x -= 10;
+            record->direction.words.x -= EFFECT_SWING_ANGULAR_ACCEL;
         } else {
-            record->direction.words.x += 10;
+            record->direction.words.x += EFFECT_SWING_ANGULAR_ACCEL;
         }
         pitch = record->rotation.vx;
         next_pitch = (s16)(record->rotation.vx + record->direction.words.x);
@@ -92,14 +110,14 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 frame_limit)
             }
         }
         record->rotation.vx = next_pitch;
-    } else if (life >= (u32)KF_EFFECT_HAZARD_RISE_FIRST && (s16)frame_limit >= life) {
-        record->position.vy -= 60;
+    } else if (life >= (u32)KF_EFFECT_HAZARD_RISE_FIRST && (s16)phase_limit >= life) {
+        record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
 }
 
 ADDRESS(0x80038298, 0x260)
-void effect_projectile_update_2d(s32 speed, s32 frame_limit)
+void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
@@ -108,13 +126,14 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
 
     if ((life & 0xff) < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1) {
         record->position.vx = ((s16)record->direction.words.x << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (rsin((s16)record->control.orbit_angle) * speed >> KF_FIXED12_BITS);
+            + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = ((s16)record->direction.words.z << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (rcos((s16)record->control.orbit_angle) * speed >> KF_FIXED12_BITS);
+            + (rcos((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vy = (s16)record->direction.words.y
             + (rsin((s16)record->control.orbit_angle << 1) >> 2);
-        record->control.orbit_angle = (record->control.orbit_angle + KF_ANGLE_FULL_TURN / 64) & KF_ANGLE_WRAP_MASK;
-        collision = effect_map_collision(&record->position, 0x96);
+        record->control.orbit_angle = (record->control.orbit_angle
+            + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
+        collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
         if (collision != (u32)KF_COLLISION_NONE) {
             if ((collision >> 16) == (KF_COLLISION_ACTOR >> 16)) {
                 actor_apply_damage(collision & 0xffff, 0, magic->damage_components[0],
@@ -127,21 +146,22 @@ void effect_projectile_update_2d(s32 speed, s32 frame_limit)
             }
         }
         if (record->sound_played == 0) {
-            if (rand() < 8192) {
+            if (rand() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
                 record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &record->position,
-                    KF_AUDIO_MAX_VOLUME, 0x1388, 0x36b0);
+                    KF_AUDIO_MAX_VOLUME, EFFECT_ORBIT_SOUND_MAX_DISTANCE,
+                    EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE);
             }
         } else {
             s32 dx = (record->position.vx - player_state.camera_position.vx) >> KF_LENGTH_SQUARE_DOWNSHIFT;
             s32 dy = (record->position.vy - player_state.camera_position.vy) >> KF_LENGTH_SQUARE_DOWNSHIFT;
             s32 dz = (record->position.vz - player_state.camera_position.vz) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-            if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT) >= 0x1388) {
+            if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT) >= EFFECT_ORBIT_SOUND_RESET_DISTANCE) {
                 record->sound_played = 0;
             }
         }
-    } else if ((life & 0xff) != KF_EFFECT_HAZARD_RUNNING && (s16)frame_limit >= (int)(life & 0xff)) {
-        record->position.vy -= 60;
+    } else if ((life & 0xff) != KF_EFFECT_HAZARD_RUNNING && (s16)phase_limit >= (int)(life & 0xff)) {
+        record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
 }
@@ -172,8 +192,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
             progress = 0;
         } else if (progress >= KF_FIXED12_ONE + 1) {
             progress = KF_FIXED12_ONE;
-        } else if (progress >= 3900 && progress < range + 3900) {
-            /* Sound begins at 3900/4096 (~95.2%); its exact tuning is unresolved. */
+        } else if (progress >= FLOOR_DEFORM_SOUND_PROGRESS && progress < range + FLOOR_DEFORM_SOUND_PROGRESS) {
             sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;
             sound_position.vz = KF_MAP_TILE_SIZE * row + KF_MAP_TILE_CENTER;
             audio_play_spatial_default_range(&gameplay_sound_ref_4,
@@ -236,7 +255,7 @@ void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 dis
 {
     VECTOR position;
     s32 index;
-    s32 scale = (distance << KF_FIXED12_BITS) / 800;
+    s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
     effect_rotate_scale_offset_y(&record->direction.vector, &position, angle, scale);
     index = record - effect_pool_records;
@@ -247,18 +266,18 @@ void effect_spawn_trail_kind13(u8 id, KfEffectRecord *record, s16 angle, s32 dis
 }
 
 ADDRESS(0x800388b4, 0x184)
-void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 arg6)
+void effect_spawn_ground_kind6(u8 id, KfEffectRecord *record, s16 angle_offset, s32 branch_role)
 {
     VECTOR position;
     s32 angle = -(s16)(record->direction.words.y + angle_offset);
     s32 cell_x;
     s32 cell_z;
 
-    position.vx = record->position.vx + (1500 * rsin(angle) >> KF_FIXED12_BITS);
-    position.vz = record->position.vz + (1500 * rcos(angle) >> KF_FIXED12_BITS);
+    position.vx = record->position.vx + (GROUND_BRANCH_CHILD_SPACING * rsin(angle) >> KF_FIXED12_BITS);
+    position.vz = record->position.vz + (GROUND_BRANCH_CHILD_SPACING * rcos(angle) >> KF_FIXED12_BITS);
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_BRANCH, &position,
-        &record->direction.vector, arg6);
+        &record->direction.vector, branch_role);
 }

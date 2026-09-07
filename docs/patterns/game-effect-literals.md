@@ -1,5 +1,10 @@
 # GAME effect literal audit
 
+The [update follow-up](game-effect-update-constants.md) supplies current
+helper parameter names, typed declarations and a complete
+[105-occurrence update ledger](game-effect-update-literal-ledger.md).
+Its update counts supersede this historical census.
+
 The [constructor follow-up](game-effect-pool-constants.md) supplies current
 names and a complete [per-occurrence pool ledger](game-effect-pool-literal-ledger.md).
 Its pool counts supersede the historical census below, which also predates

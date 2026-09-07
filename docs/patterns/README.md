@@ -10,6 +10,9 @@ promotes a probe to a proven historical toolchain.
   and the remaining serialized-field questions.
 - [source-constant-names.md](source-constant-names.md): domain-specific constant
   names and the reasons for retaining individual classes of inline literals.
+- [game-effect-update-constants.md](game-effect-update-constants.md): effect
+  motion, collision/audio units, typed helper boundaries and the complete
+  [105-occurrence remainder ledger](game-effect-update-literal-ledger.md).
 - [modern-type-checking.md](modern-type-checking.md): modern compiler adoption,
   enum storage requirements, and consumer-backed vector pointer corrections.
 - [game-selected-magic-types.md](game-selected-magic-types.md): selected-spell
