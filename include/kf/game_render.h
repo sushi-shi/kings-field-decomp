@@ -22,12 +22,12 @@ KF_ENUM_BEGIN(KfGameColorPreset, s32)
     KF_GAME_COLOR_BLUE = 6
 KF_ENUM_END(KfGameColorPreset)
 
-enum {
+KF_ENUM_BEGIN(KfSystemScreen, s32)
     KF_SYSTEM_SCREEN_CD_SEARCH_FAILED = 0,
     KF_SYSTEM_SCREEN_CD_READ_FAILED = 1,
     KF_SYSTEM_SCREEN_NO_MEMORY_CARD = 2,
     KF_SYSTEM_SCREEN_PAUSE = 3
-};
+KF_ENUM_END(KfSystemScreen)
 
 enum {
     KF_SYSTEM_SCREEN_LEFT = 32,
@@ -190,7 +190,7 @@ extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
 extern void display_play_transition(void);
 extern void display_present_frame(void);
-extern void display_show_error_screen(s32 stage);
+extern void display_show_error_screen(KfSystemScreen stage);
 extern void effect5_texture_cache_prepare(KfFloorId floor);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
@@ -216,7 +216,8 @@ extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void render_hud_gauges(KfHudSprite *table);
 extern void render_initialize(void);
-extern void render_map_cell(s32 col, s32 row, char cell);
+extern void render_map_cell(
+    s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cell);
 extern void render_map_cells(void);
 extern void render_map_event(KfMapEvent *event);
 extern void render_map_object(KfMapObject *object);

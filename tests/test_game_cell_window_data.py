@@ -107,7 +107,9 @@ class GameCellWindowDataTests(unittest.TestCase):
         source = load_manifest().by_name()['game.render_map_cells'].source_path.read_text()
         initializer = re.search(r'render_fixed_cell_window = \{(.*?)\};', source, re.S)
         self.assertIsNotNone(initializer)
-        values = [int(v) for v in re.findall(r'\d+', initializer[1])]
+        legend = {'H': 0, 'D': 1, 'N': 2}
+        values = [legend[v] if v in legend else int(v)
+                  for v in re.findall(r'\b(?:\d+|H|D|N)\b', initializer[1])]
         self.assertEqual(values[:4], [13, 13, 6, 6])
         self.assertEqual(len(values), 4 + 13 * 13)
         payload = struct.pack('<4H', *values[:4]) + bytes(values[4:]) + bytes(196 - 169)

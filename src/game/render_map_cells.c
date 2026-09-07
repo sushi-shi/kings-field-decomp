@@ -3,26 +3,32 @@
 #include <kf/game_render.h>
 #include <kf/game.h>
 
-/* Authored mask: 0 hidden, 1 distant mesh bank, 2 near mesh bank. */
+/* Local legend preserves the authored grid shape. */
+#define H KF_CELL_WINDOW_HIDDEN
+#define D KF_CELL_WINDOW_DISTANT
+#define N KF_CELL_WINDOW_NEAR
 DATA(0x80055e9c, 0xcc)
 static KfCellWindow render_fixed_cell_window = {
     13, 13, 6, 6,
     {
-        0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-        0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-        0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-        0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+        H, H, H, H, D, D, D, D, D, D, H, H, H,
+        H, H, H, D, D, D, D, D, D, D, D, H, H,
+        H, H, D, D, D, D, D, D, D, D, D, D, H,
+        H, D, D, D, D, D, D, D, D, D, D, D, D,
+        D, D, D, D, D, D, D, D, D, D, D, D, D,
+        D, D, D, D, D, N, N, N, D, D, D, D, D,
+        D, D, D, D, D, N, N, N, D, D, D, D, D,
+        D, D, D, D, D, N, N, N, D, D, D, D, D,
+        D, D, D, D, D, D, D, D, D, D, D, D, D,
+        H, D, D, D, D, D, D, D, D, D, D, D, D,
+        H, H, D, D, D, D, D, D, D, D, D, D, H,
+        H, H, H, D, D, D, D, D, D, D, D, H, H,
+        H, H, H, H, D, D, D, D, D, D, H, H, H,
     }
 };
+#undef H
+#undef D
+#undef N
 
 DATA(0x80095860, 0x4)
 const KfCellWindow *active_cell_window;
@@ -32,7 +38,7 @@ const KfCellWindow *active_cell_window;
  * before MulMatrix0 fills its rotation without overwriting that translation.
  */
 ADDRESS(0x8001e5ec, 0x250)
-void render_map_cell(s32 col, s32 row, char cell)
+void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cell)
 {
     MATRIX cell_matrix;
     SVECTOR position;
@@ -106,7 +112,7 @@ void render_map_cell(s32 col, s32 row, char cell)
 ADDRESS(0x8001e83c, 0x168)
 void render_map_cells(void)
 {
-    u8 *cell;
+    const KfCellVisibility *cell;
     int row;
     int col_base;
     int col;

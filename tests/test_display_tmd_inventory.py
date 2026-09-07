@@ -18,7 +18,7 @@ PAIRS = (
         0x8001B7B0,
         "display_show_error_screen",
         "void",
-        "s32 stage",
+        "KfSystemScreen stage",
     ),
     (
         "GAME.EXE",

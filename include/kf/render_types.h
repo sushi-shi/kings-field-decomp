@@ -4,6 +4,7 @@
 /* Rendering layouts shared by GAME.EXE and OPEN.EXE. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 
 enum {
     KF_VRAM_WIDTH = 1024,
@@ -75,11 +76,11 @@ typedef struct KfOrderingTable {
     u32 entries[KF_ORDERING_TABLE_LENGTH];
 } KfOrderingTable;
 
-enum {
+KF_ENUM_BEGIN(KfCellVisibility, u8)
     KF_CELL_WINDOW_HIDDEN = 0,
     KF_CELL_WINDOW_DISTANT = 1,
     KF_CELL_WINDOW_NEAR = 2
-};
+KF_ENUM_END(KfCellVisibility)
 
 /* Per-yaw row-major cell classes shared by GAME and OPEN. */
 typedef struct KfCellWindow {
@@ -87,7 +88,7 @@ typedef struct KfCellWindow {
     u16 height;
     u16 origin_x;
     u16 origin_z;
-    u8 cells[196];
+    KfCellVisibility cells[196];
 } KfCellWindow;
 
 #endif

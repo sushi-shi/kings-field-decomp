@@ -7,7 +7,7 @@ DATA(0x800439d8, 0xcc0)
 KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 
 ADDRESS(0x80018bbc, 0x1d0)
-void render_map_cell(s32 col, s32 row, u8 cell)
+void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
 {
     MATRIX cell_matrix;
     SVECTOR position;
@@ -57,7 +57,7 @@ void render_map_cell(s32 col, s32 row, u8 cell)
 ADDRESS(0x80018d8c, 0x140)
 void opening_render_map_cells(void)
 {
-    const u8 *cell;
+    const KfCellVisibility *cell;
     s32 row;
     s32 col_base;
     s32 col;

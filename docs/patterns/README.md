@@ -29,6 +29,9 @@ promotes a probe to a proven historical toolchain.
   [154-occurrence OPEN initializer ledger](open-render-init-literal-ledger.md).
 - [open-input-action-domain.md](open-input-action-domain.md): typed opening
   input actions through the shared state and controller; verification deferred.
+- [visibility-screen-domains.md](visibility-screen-domains.md): shared byte
+  visibility classes through GAME/OPEN and typed system-screen selection;
+  [complete map-cell remainder ledger](map-cell-literal-ledger.md).
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete

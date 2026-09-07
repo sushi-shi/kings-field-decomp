@@ -35,7 +35,7 @@ void render_entities(void)
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = object->cell_x - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != 0) {
+                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     render_map_object(object);
                 }
             }
@@ -61,7 +61,8 @@ void render_entities(void)
                 if (col >= g->width) {
                     goto next_actor;
                 }
-                visible = g->cells[row * g->width + col];
+                /* This join also carries the square-culling predicate below. */
+                visible = KF_ENUM_ENCODE(u8, g->cells[row * g->width + col]);
             }
         } else {
             u16 dz = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
@@ -94,7 +95,7 @@ next_actor:
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = (items->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != 0) {
+                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     render_floor_item(items);
                 }
             }
@@ -114,7 +115,7 @@ next_actor:
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = (*(s32 *)&sprite->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != 0) {
+                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     render_actor_sprite(sprite);
                 }
             }
@@ -132,7 +133,7 @@ next_sprite:
             const KfCellWindow *g = active_cell_window;
             if (row < g->height) {
                 u16 col = event->cell_x - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != 0) {
+                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     render_map_event(event);
                 }
             }

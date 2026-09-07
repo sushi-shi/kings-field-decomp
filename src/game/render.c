@@ -48,7 +48,7 @@ DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
  * Called by cd_file_load_into on disc failure and by game_main_loop on a save
  * error. */
 ADDRESS(0x8001b7b0, 0x308)
-void display_show_error_screen(s32 stage)
+void display_show_error_screen(KfSystemScreen stage)
 {
     POLY_FT4 prim;
     s32 back;
@@ -80,7 +80,7 @@ void display_show_error_screen(s32 stage)
         KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
     memcpy(cd_path_buffer, error_screen_path, sizeof error_screen_path);
-    cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = stage + '0';
+    cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = KF_ENUM_ENCODE(s32, stage) + '0';
     brightness = SYSTEM_SCREEN_BRIGHTNESS;
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == 0) {
         exit(1);

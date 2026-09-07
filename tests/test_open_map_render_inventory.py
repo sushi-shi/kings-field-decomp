@@ -20,7 +20,7 @@ class OpenMapRenderTests(unittest.TestCase):
         evidence = CONFIG / "evidence/open_semantic_map_render.tsv"
         _, rows = read_tsv(evidence)
         expected = {
-            0x80018BBC: ("render_map_cell", "s32 col;s32 row;u8 cell"),
+            0x80018BBC: ("render_map_cell", "s32 col;s32 row;KfCellVisibility cell"),
             0x80018D8C: ("opening_render_map_cells", ""),
         }
         self.assertEqual({parse_int(row["va"]) for row in rows}, set(expected))
@@ -77,7 +77,7 @@ class OpenMapRenderTests(unittest.TestCase):
             "height": (2, 2, "u16"),
             "origin_x": (4, 2, "u16"),
             "origin_z": (6, 2, "u16"),
-            "cells": (8, 196, "u8[196]"),
+            "cells": (8, 196, "KfCellVisibility[196]"),
         })
         data = load_data_identities(RETAIL_CONFIG)
         table = data[("OPEN.EXE", 0x800439D8)]
