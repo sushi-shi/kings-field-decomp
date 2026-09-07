@@ -225,10 +225,10 @@ void game_initialize_session(void)
     player_state.weapon_asset_buffer = (KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
-    player_state.audio_effects_enabled = 1;
-    player_state.audio_music_enabled = 1;
-    player_state.hud_gauges_enabled = 1;
-    player_state.compass_enabled = 1;
+    player_state.audio_effects_enabled = KF_PLAYER_OPTION_ON;
+    player_state.audio_music_enabled = KF_PLAYER_OPTION_ON;
+    player_state.hud_gauges_enabled = KF_PLAYER_OPTION_ON;
+    player_state.compass_enabled = KF_PLAYER_OPTION_ON;
 }
 
 ADDRESS(0x80016eb8, 0x30)

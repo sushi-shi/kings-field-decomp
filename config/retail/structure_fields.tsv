@@ -548,10 +548,10 @@ KfPlayerState	0x92	0x01	equipped_shield_id	u8	supported	game_player.h;data_ident
 KfPlayerState	0x93	0x01	equipped_arm_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x94	0x01	equipped_leg_armor_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x95	0x01	equipped_accessory_id	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x96	0x01	audio_effects_enabled	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x97	0x01	audio_music_enabled	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x98	0x01	hud_gauges_enabled	u8	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	config row 2; controls HP/MP/charge/status sprites
-KfPlayerState	0x99	0x01	compass_enabled	u8	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	config row 3; controls compass components and needle at negative view yaw
+KfPlayerState	0x96	0x01	audio_effects_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x97	0x01	audio_music_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x98	0x01	hud_gauges_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	config row 2; controls HP/MP/charge/status sprites
+KfPlayerState	0x99	0x01	compass_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	config row 3; controls compass components and needle at negative view yaw
 KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xa2	0x01	update_state	u8	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	game_player.h;data_identities.tsv	unresolved bytes

@@ -2,9 +2,16 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    CONFIG_OPTION_ON_X = 180,
+    CONFIG_OPTION_OFF_X = 240,
+    CONFIG_OPTION_FIRST_Y = 41,
+    CONFIG_OPTION_ROW_STEP = 22
+};
+
 /* The two labels are private by-value copies; only their Y positions advance. */
 void menu_config_panel_draw(
-    MenuGlyphString option_a, MenuGlyphString option_b, s32 *values);
+    MenuGlyphString option_a, MenuGlyphString option_b, KfPlayerOption *values);
 
 
 /*
@@ -15,7 +22,7 @@ void menu_config_panel_draw(
 ADDRESS(0x8002589c, 0x504)
 void menu_config_panel(void)
 {
-    s32 states[KF_MENU_CONFIG_SETTING_COUNT];
+    KfPlayerOption states[KF_MENU_CONFIG_SETTING_COUNT];
     MenuGlyphString option_a;
     MenuGlyphString option_b;
     s32 row = 0;
@@ -23,18 +30,18 @@ void menu_config_panel(void)
     u32 pad = 0;
     u32 prev;
     KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
-    s32 music_orig;
+    KfPlayerOption music_orig;
 
     while (PadRead(1) != 0) {
     }
 
-    option_a.x = 0xb4;
-    option_a.y = 0x29;
+    option_a.x = CONFIG_OPTION_ON_X;
+    option_a.y = CONFIG_OPTION_FIRST_Y;
     option_a.codes[0] = 0xf9;
     option_a.codes[1] = 0xfa;
     option_a.codes[2] = MENU_TEXT_END;
-    option_b.x = 0xf0;
-    option_b.y = 0x29;
+    option_b.x = CONFIG_OPTION_OFF_X;
+    option_b.y = CONFIG_OPTION_FIRST_Y;
     option_b.codes[0] = 0xf9;
     option_b.codes[1] = 0xfb;
     option_b.codes[2] = 0xfb;
@@ -92,7 +99,7 @@ void menu_config_panel(void)
                 phase = KF_MENU_PANEL_CLOSED;
             } else {
             toggle:
-                states[row] = (states[row] == 0);
+                states[row] = KF_ENUM_DECODE(KfPlayerOption, states[row] == KF_PLAYER_OPTION_OFF);
             }
         } else if ((pad & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -108,7 +115,7 @@ void menu_config_panel(void)
     player_state.hud_gauges_enabled = states[KF_MENU_CONFIG_GAUGES_ROW];
     player_state.compass_enabled = states[KF_MENU_CONFIG_COMPASS_ROW];
     if (player_state.audio_music_enabled != music_orig) {
-        if (player_state.audio_music_enabled == 0) {
+        if (player_state.audio_music_enabled == KF_PLAYER_OPTION_OFF) {
             audio_stop_sequence_fade();
         } else {
             audio_play_current_map_sequence();
@@ -125,16 +132,16 @@ void menu_config_panel(void)
  */
 ADDRESS(0x80025da0, 0x198)
 void menu_config_panel_draw(
-    MenuGlyphString option_a, MenuGlyphString option_b, s32 *values)
+    MenuGlyphString option_a, MenuGlyphString option_b, KfPlayerOption *values)
 {
     s32 i;
-    s32 *states;
+    KfPlayerOption *states;
     const MenuSpriteDef *box_b;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     states = values;
     for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
-        if (*states == 1) {
+        if (*states == KF_PLAYER_OPTION_ON) {
             menu_blit_sprite_translucent(&menu_assets.option_highlight, (const MenuPoint *)&option_a);
             box_b = &menu_assets.option_background;
         } else {
@@ -149,8 +156,8 @@ void menu_config_panel_draw(
             &menu_assets.glyph_atlas,
             &option_b);
         states++;
-        option_a.y += 22;
-        option_b.y += 22;
+        option_a.y += CONFIG_OPTION_ROW_STEP;
+        option_b.y += CONFIG_OPTION_ROW_STEP;
     }
     AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
             &menu_assets.background_quads[display_state.buffer_index][3]);

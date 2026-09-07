@@ -524,3 +524,7 @@ promotes a probe to a proven historical toolchain.
 
 - [Player sound-table slots](game-player-sound-slots.md): caller-proved weapon-attack,
   death and level-up selectors and the [complete current core ledger](game-player-core-literal-ledger.md).
+
+- [Player option domain](game-player-option-domain.md): saved configuration bytes,
+  typed menu copies, exact-one versus nonzero consumers and the
+  [complete configuration ledger](game-menu-config-literal-ledger.md).

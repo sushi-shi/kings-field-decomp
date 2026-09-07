@@ -20,6 +20,12 @@ enum {
     KF_PLAYER_SOUND_COUNT = 3
 };
 
+/* Saved bytes and signed-word configuration copies share these option values. */
+KF_ENUM_BEGIN(KfPlayerOption, s32)
+    KF_PLAYER_OPTION_OFF = 0,
+    KF_PLAYER_OPTION_ON = 1
+KF_ENUM_END(KfPlayerOption)
+
 KF_ENUM_BEGIN(KfPlayerVerticalState, u8)
     KF_PLAYER_VERTICAL_GROUNDED = 0,
     KF_PLAYER_VERTICAL_FALLING = 0x10,
@@ -211,10 +217,10 @@ typedef struct KfPlayerState {
     u8 equipped_arm_armor_id;
     u8 equipped_leg_armor_id;
     u8 equipped_accessory_id;
-    u8 audio_effects_enabled;
-    u8 audio_music_enabled;
-    u8 hud_gauges_enabled;
-    u8 compass_enabled;
+    KF_ENUM_STORAGE(KfPlayerOption, u8) audio_effects_enabled;
+    KF_ENUM_STORAGE(KfPlayerOption, u8) audio_music_enabled;
+    KF_ENUM_STORAGE(KfPlayerOption, u8) hud_gauges_enabled;
+    KF_ENUM_STORAGE(KfPlayerOption, u8) compass_enabled;
     SVECTOR view_rotation_offset;
     u8 update_state;
     u8 unknown_a3;

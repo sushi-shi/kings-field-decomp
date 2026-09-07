@@ -1,7 +1,7 @@
 # Complete player-core retained-literal ledger
 
 Current per-occurrence ledger for all fourteen functions and both initialized
-data claims in `src/game/player_core.c`: **78 numeric/character occurrences**.
+data claims in `src/game/player_core.c`: **74 numeric/character occurrences**.
 This combines the former core remainder and motion slices. The
 [core review](game-player-core-constants.md),
 [motion review](game-player-vertical-state.md),
@@ -9,12 +9,15 @@ This combines the former core remainder and motion slices. The
 [sound-slot review](game-player-sound-slots.md) retain their evidence scopes.
 
 The earlier 80-occurrence total included an ordinal floor-five comparison
-that is now an enum member and the weapon-attack sound slot named in this
-batch. The current floor-to-entry index explicitly encodes its typed floor.
+that is now an enum member and the subsequently named weapon-attack sound
+slot. The current floor-to-entry index explicitly encodes its typed floor.
 Claims, named definitions, comments, string contents and identifier digits
 are excluded. Every repeated token has its own row; signs remain in expressions.
 `player_update_transform_snapshot` and `player_update_view_bob` contain no
 retained literals. Unknown environmental attributes remain explicitly unresolved.
+
+The [option-domain review](game-player-option-domain.md) names the four
+fresh-session ON assignments; those values no longer contribute literal rows.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -63,10 +66,6 @@ retained literals. Unknown environmental attributes remain explicitly unresolved
 | `game_initialize_session` | 222 | `0x7918` | `player_state.camera_position.vx = 0x7918;` | Initial session X is 31000 world units. It shares the floor-one entry X but remains an authored startup placement, not a general map dimension. |
 | `game_initialize_session` | 223 | `0` | `player_state.camera_position.vy = 0;` | Initialize camera Y to the coordinate origin before map resource synchronization derives its actual floor-relative height. |
 | `game_initialize_session` | 224 | `0xfa0` | `player_state.camera_position.vz = 0xfa0;` | Initial session Z is 4000 world units. The death restart and floor-one entry use 5000 instead; preserve this distinct startup coordinate rather than unifying them by assumption. |
-| `game_initialize_session` | 228 | `1` | `player_state.audio_effects_enabled = 1;` | Encoded true enables the named audio or HUD option for a fresh session. Retain the separate saved bytes and existing consumers. |
-| `game_initialize_session` | 229 | `1` | `player_state.audio_music_enabled = 1;` | Encoded true enables the named audio or HUD option for a fresh session. Retain the separate saved bytes and existing consumers. |
-| `game_initialize_session` | 230 | `1` | `player_state.hud_gauges_enabled = 1;` | Encoded true enables the named audio or HUD option for a fresh session. Retain the separate saved bytes and existing consumers. |
-| `game_initialize_session` | 231 | `1` | `player_state.compass_enabled = 1;` | Encoded true enables the named audio or HUD option for a fresh session. Retain the separate saved bytes and existing consumers. |
 | `player_clear_motion` | 237 | `0` | `player_state.motion_state.yaw_step = 0;` | Zero clears this named motion component: yaw/pitch increment, movement magnitude or signed forward/strafe velocity. Each halfword store is an arithmetic reset, not a lifecycle code. |
 | `player_clear_motion` | 238 | `0` | `player_state.motion_state.pitch_step = 0;` | Zero clears this named motion component: yaw/pitch increment, movement magnitude or signed forward/strafe velocity. Each halfword store is an arithmetic reset, not a lifecycle code. |
 | `player_clear_motion` | 239 | `0` | `player_state.motion_state.movement_speed = 0;` | Zero clears this named motion component: yaw/pitch increment, movement magnitude or signed forward/strafe velocity. Each halfword store is an arithmetic reset, not a lifecycle code. |

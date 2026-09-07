@@ -81,8 +81,10 @@ The four configuration bindings are explicit on both import and publication:
 
 Return row 4 never indexes the working array. Both exit inputs publish all
 four values; a changed music value stops the sequence if zero and starts the
-current map sequence otherwise. Working values and the helper pointer remain
-`s32`: untoggled values are copied unchanged, toggling uses `value == 0`, and
+current map sequence otherwise. The
+[option-domain review](game-player-option-domain.md) now types working
+values and the helper pointer as `KfPlayerOption`, retaining signed-word
+storage: untoggled values are copied unchanged, toggling tests OFF, and
 the renderer highlights ON only for exact value 1. Other nonzero values
 therefore highlight OFF and toggle to zero. Converting this storage to Boolean
 would erase a distinction present in the retail instructions.
@@ -95,9 +97,9 @@ The glyph texture begins at byte 232096 and the used palette at 231572;
 14-by-12 cells are addressed on a sixteen-column grid. Their X anchors are
 180 and 240 screen pixels. Both begin at Y=41 and advance by 22 per row,
 producing 41, 63, 85 and 107, in agreement with the loaded configuration
-window. Its return row at Y=129 is outside the editable set. These placements
-and encoded character values remain local literals with measured meanings;
-the original layout rationale is not established.
+window. Its return row at Y=129 is outside the editable set. The option-domain
+review names the local placement parameters and preserves
+the encoded character literals. The original layout rationale is not established.
 
 The helper uses the existing `MENU_BACKGROUND_OT_DEPTH` for all four frame
 packets and retains their prepend order 3,2,1,0. Item, magic, equipment-magic
@@ -155,3 +157,7 @@ There are six conflicting section bases and no artifact failures. No new
 match is banked by this naming batch. Reproduction artifacts, six-view
 snapshots, literal censuses and comparison results remain under ignored
 `build/constant-names/menu-choice-state/`.
+
+The numeric counts above describe the historical choice campaign. The
+[current configuration ledger](game-menu-config-literal-ledger.md) supersedes
+its two config-function slices after option values and layout parameters were named.

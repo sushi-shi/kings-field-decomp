@@ -206,7 +206,7 @@ retained values and explicitly identifies unresolved type/behavior debt.
 
 ## `src/game/render_frame.c`
 
-47 retained occurrences.
+46 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -236,10 +236,9 @@ retained values and explicitly identifies unresolved type/behavior debt.
 | `initializers` | 39 | `499` | `RECT notification_palette_rect = {0, 499, 16, 1};` | Palette rectangle Y selects the authored HUD/message CLUT row in VRAM. |
 | `initializers` | 39 | `16` | `RECT notification_palette_rect = {0, 499, 16, 1};` | Palette rectangle width is 16 colors for this four-bit texture material. |
 | `initializers` | 39 | `1` | `RECT notification_palette_rect = {0, 499, 16, 1};` | Palette rectangle height is one CLUT row. |
-| `render_frame` | 62 | `1` | `if (player_state.hud_gauges_enabled == 1) {` | Exact true value of the player HUD setting; independent of sprite state codes. |
 | `render_frame` | 73 | `1` | `+ (player_state.vitals.maximum_hp - 1) / HUD_GAUGE_WIDTH)` | Arithmetic endpoint in the retail gauge correction term (maximum minus one)/width; preserve its division placement. |
 | `render_frame` | 76 | `1` | `+ (player_state.vitals.maximum_mp - 1) / HUD_GAUGE_WIDTH)` | Arithmetic endpoint in the retail gauge correction term (maximum minus one)/width; preserve its division placement. |
-| `render_frame` | 103 | `0` | `effect_sprites[0].state = player_state.compass_enabled;` | First and sole authored animated compass model entry; the following entry terminates the table. |
+| `render_frame` | 103 | `0` | `effect_sprites[0].state = KF_ENUM_ENCODE(u8, player_state.compass_enabled);` | First and sole authored animated compass model entry; the following entry terminates the table. |
 | `render_frame` | 104 | `0` | `effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;` | First and sole authored animated compass model entry; the following entry terminates the table. |
 | `render_frame` | 120 | `0` | `model.t[0] = 0;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
 | `render_frame` | 120 | `0` | `model.t[0] = 0;` | Zero X translation centers the notification model transform. |

@@ -67,7 +67,7 @@ void audio_play_map_sequence(u8 sequence_id)
     char path[20] = "B0\\SND0.SEQ";
 
     audio_stop_sequence_fade();
-    if (player_state.audio_music_enabled) {
+    if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[6] = sequence_id + '0';
         path[1] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
         if (cd_file_load_into(audio_state.sequence_buffer, path) == 0) {
@@ -270,7 +270,7 @@ void audio_play_voice(
     if (program == 0 && tone == 0 && note == 0) {
         return;
     }
-    if (!player_state.audio_effects_enabled) {
+    if (player_state.audio_effects_enabled == KF_PLAYER_OPTION_OFF) {
         return;
     }
     audio_voice_slot_index++;

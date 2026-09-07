@@ -1,7 +1,11 @@
 # Root, equipment-root and configuration literal ledger
 
-Complete ledger for `menu_root`, `menu_option_root`, `menu_config_panel`
+Historical grouped ledger for `menu_root`, `menu_option_root`, `menu_config_panel`
 and `menu_config_panel_draw`: **96 retained occurrences**, down from 154.
+The [current configuration ledger](game-menu-config-literal-ledger.md) supersedes
+its two config-function slices after option-domain propagation. Root/equipment
+rows retain their original scope; this historical total is not current coverage.
+
 Named constant definitions and retail address/extent claims are excluded.
 Negative signs are operators, so -1 contributes one numeric token.
 See the [choice and phase review](game-menu-choice-state.md) for evidence

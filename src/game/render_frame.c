@@ -59,7 +59,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     hud_sprites[KF_HUD_SLOWED_ICON].state = KF_HUD_HIDDEN;
     hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_HUD_HIDDEN;
     hud_sprites[KF_HUD_CURSE_ICON].state = KF_HUD_HIDDEN;
-    if (player_state.hud_gauges_enabled == 1) {
+    if (player_state.hud_gauges_enabled == KF_PLAYER_OPTION_ON) {
         u16 flags;
         hud_sprites[KF_HUD_HP_GAUGE].state = KF_HUD_VISIBLE;
         hud_sprites[KF_HUD_MP_GAUGE].state = KF_HUD_VISIBLE;
@@ -99,8 +99,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     }
 
     auxiliary_sprite = &hud_sprites[KF_HUD_COMPASS];
-    auxiliary_sprite->state = player_state.compass_enabled;
-    effect_sprites[0].state = player_state.compass_enabled;
+    auxiliary_sprite->state = KF_ENUM_ENCODE(u8, player_state.compass_enabled);
+    effect_sprites[0].state = KF_ENUM_ENCODE(u8, player_state.compass_enabled);
     effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
     render_effect_sprites();
 
