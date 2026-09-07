@@ -1,5 +1,9 @@
 # GAME actor constants and retained literals
 
+The [core follow-up](game-actor-core-constants.md) names the remaining supported
+combat and selection roles, shares actor contact bounds and explains all
+174 retained core occurrences in its complete ledger.
+
 The [complete behavior follow-up](game-actor-behavior-constants.md) names the
 remaining supported movement, timing, selection and effect parameters in
 `actor_behavior.c`. Its [173-occurrence ledger](game-actor-behavior-literal-ledger.md)

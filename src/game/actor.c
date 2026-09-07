@@ -12,6 +12,30 @@ enum {
     ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
 };
 
+enum {
+    COMBAT_BASE_POWER_WEIGHT_DIVISOR = 5,
+    ACTOR_DYING_DAMAGE_CUTOFF_PHASE = 1548,
+    ACTOR_STATUS_CHANCE_RANDOM_SHIFT = 7,
+    ACTOR_CONE_INITIAL_BEST_ERROR = 30000,
+    ACTOR_BOSS_SOUND_MAX_DISTANCE = 20000,
+    ACTOR_BOSS_SOUND_ATTENUATION_DISTANCE = 60000,
+    ACTOR_SELECTION_RANDOM_SHIFT = 4,
+    ACTOR_SELECTION_FACING_BYPASS_LIMIT = 1638,
+    ACTOR_PROFILE_FACING_BYPASS_LIMIT = 819,
+    ACTOR_SELECTION_FAR_RANGE_FACTOR = 4,
+    ACTOR_SELECTION_FAR_CHANCE_SHIFT = 4,
+    ACTOR_SELECTION_NEAR_CHANCE_SHIFT = 2,
+    ACTOR_SELECTION_MIDDLE_CHANCE_SHIFT = 1,
+    ACTOR_SELECTION_OUTER_CHANCE_SHIFT = 2,
+    ACTOR_GROUND_SELECTION_FAR_RANGE = 7000,
+    ACTOR_GROUND_SELECTION_MIN_RANGE = 4001,
+    ACTOR_GROUND_FAR_CHANCE_SHIFT = 1,
+    ACTOR_GROUND_NEAR_CHANCE_SHIFT = 3,
+    ACTOR_MULTI_HIT_FAR_CHANCE_SHIFT = 4,
+    ACTOR_MULTI_HIT_NEAR_CHANCE_SHIFT = 2,
+    ACTOR_SPAWNER_POPULATION_LIMIT = 2
+};
+
 /*
  * Twenty-five ten-byte action-selection profiles indexed by profile_index in
  * actor_try_select_profiled_action: {far_distance, far_weight, near_distance,
@@ -51,7 +75,7 @@ KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT] = {
  * The last record's three 88 bytes are retained literal data.
  */
 DATA(0x8005617c, 0xc)
-SoundRef boss_death_phase_sounds[4] = {
+SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT] = {
     {27, 1, 88},
     {27, 2, 88},
     {27, 3, 88},
@@ -143,7 +167,7 @@ void actor_initialize(KfActor *actor)
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
         actor->rotation.y = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
     } else {
-        actor->rotation.y = rand() >> 3;
+        actor->rotation.y = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
     }
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
@@ -274,7 +298,7 @@ s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
     if (attack == 0) {
         return 0;
     }
-    attack += base_power / 5;
+    attack += base_power / COMBAT_BASE_POWER_WEIGHT_DIVISOR;
     difference = attack - defense;
     if (difference < 0) {
         difference = 0;
@@ -311,7 +335,7 @@ void actor_apply_damage(
             return;
         }
     }
-    if (actor->action == KF_ACTOR_ACTION_DYING && actor->animation_phase >= 1548) {
+    if (actor->action == KF_ACTOR_ACTION_DYING && actor->animation_phase >= ACTOR_DYING_DAMAGE_CUTOFF_PHASE) {
         return;
     }
     if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
@@ -473,7 +497,7 @@ void actor_try_attack_player(
     }
     status_effect = 0;
     if (definition->status_effect_chance != 0
-        && (rand() >> 7) < definition->status_effect_chance) {
+        && (rand() >> ACTOR_STATUS_CHANCE_RANDOM_SHIFT) < definition->status_effect_chance) {
         status_effect = definition->status_effect;
     }
     player_apply_damage(
@@ -496,7 +520,7 @@ KfActor *actor_pool_find_target_in_cone(
     s32 *distance_out)
 {
     KfActor *best = 0;
-    s16 best_difference = 30000;
+    s16 best_difference = ACTOR_CONE_INITIAL_BEST_ERROR;
     s32 best_distance = 0;
     KfActor *actor = actor_state.actors;
     u16 count = KF_ACTOR_CAPACITY - 1;
@@ -677,7 +701,7 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     }
     if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
         audio_play_spatial_range(
-            sound, &actor->position, KF_AUDIO_MAX_VOLUME, 20000, 60000);
+            sound, &actor->position, KF_AUDIO_MAX_VOLUME, ACTOR_BOSS_SOUND_MAX_DISTANCE, ACTOR_BOSS_SOUND_ATTENUATION_DISTANCE);
     } else {
         audio_play_spatial_default_range(
             sound, &actor->position, KF_AUDIO_MAX_VOLUME);
@@ -697,23 +721,23 @@ KfActorAction actor_try_select_action_distance_facing(
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
-    if (distance_scale * 4 < distance) {
+    if (distance_scale * ACTOR_SELECTION_FAR_RANGE_FACTOR < distance) {
         if (actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
             return KF_ACTOR_ACTION_NONE;
         }
-        odds >>= 4;
+        odds >>= ACTOR_SELECTION_FAR_CHANCE_SHIFT;
     }
     if (distance < distance_scale) {
-        odds <<= 2;
+        odds <<= ACTOR_SELECTION_NEAR_CHANCE_SHIFT;
     } else if (distance < distance_scale + distance_scale / 2) {
-        odds <<= 1;
+        odds <<= ACTOR_SELECTION_MIDDLE_CHANCE_SHIFT;
     } else {
-        odds >>= 2;
+        odds >>= ACTOR_SELECTION_OUTER_CHANCE_SHIFT;
     }
-    if (!((rand() >> 4) < odds)) {
+    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
-    if (rand() < 1638) {
+    if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
         return action;
     }
     if (angle_within_tolerance(
@@ -744,18 +768,18 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         actor_state.player_target = 0;
         return action;
     }
-    if (distance > 7000) {
-        odds >>= 1;
+    if (distance > ACTOR_GROUND_SELECTION_FAR_RANGE) {
+        odds >>= ACTOR_GROUND_FAR_CHANCE_SHIFT;
     } else {
-        if (distance < 4001) {
+        if (distance < ACTOR_GROUND_SELECTION_MIN_RANGE) {
             goto rejected;
         }
-        odds <<= 3;
+        odds <<= ACTOR_GROUND_NEAR_CHANCE_SHIFT;
     }
-    if (!((rand() >> 4) < odds)) {
+    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         goto rejected;
     }
-    if (rand() < 1638) {
+    if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
         return action;
     }
     if (angle_within_tolerance(
@@ -779,15 +803,15 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
-    if (distance > 11000) {
-        odds >>= 4;
+    if (distance > KF_ACTOR_MULTI_HIT_MAX_RANGE) {
+        odds >>= ACTOR_MULTI_HIT_FAR_CHANCE_SHIFT;
     } else {
-        if (distance < 8000) {
+        if (distance < KF_ACTOR_MULTI_HIT_FORWARD_MIN_RANGE) {
             return KF_ACTOR_ACTION_NONE;
         }
-        odds <<= 2;
+        odds <<= ACTOR_MULTI_HIT_NEAR_CHANCE_SHIFT;
     }
-    if (!((rand() >> 4) < odds)) {
+    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
@@ -825,7 +849,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         }
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
-    if (!((rand() >> 4) < odds)) {
+    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (!angle_within_tolerance(
@@ -834,7 +858,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
             KF_ACTOR_AIM_TOLERANCE)
-        && rand() >= 819) {
+        && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (profile != KF_EFFECT_KIND_ACTOR_SPAWNER) {
@@ -857,7 +881,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         }
         record++;
     } while (--index != -1);
-    if (count < 2) {
+    if (count < ACTOR_SPAWNER_POPULATION_LIMIT) {
         return action;
     }
     return KF_ACTOR_ACTION_NONE;

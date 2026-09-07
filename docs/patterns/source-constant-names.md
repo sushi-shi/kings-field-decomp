@@ -1,5 +1,9 @@
 # Source constant naming
 
+The [actor-core follow-up](game-actor-core-constants.md) names combat weights,
+selection bands and odds, shared multi-hit ranges, yaw extraction and sound
+table extent. Its complete ledger explains 174 retained core occurrences.
+
 The [actor-behavior review](game-actor-behavior-constants.md) names movement
 and jump units, animation contacts, selection cutoffs, effect speeds and
 boss-death timing. It propagates three existing spell-effect identities,

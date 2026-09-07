@@ -237,6 +237,9 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-behavior-constants.md](game-actor-behavior-constants.md): actor
   movement and jump units, animation contacts, selection cutoffs, projectile
   parameters and boss-death timing; complete 173-occurrence behavior ledger.
+- [game-actor-core-constants.md](game-actor-core-constants.md): combat weighting,
+  selection bands and odds, shared contact ranges and sound-table extent;
+  complete 174-occurrence core ledger and unchanged 40-function verification.
 - [game-animation-phase.md](game-animation-phase.md): exact short-circuit
   phase predicate; eleven-caller audit and rejected cache/early-return controls.
 - [game-effect-state.md](game-effect-state.md): complete startup-cleared effect

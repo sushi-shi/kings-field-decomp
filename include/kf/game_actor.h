@@ -107,6 +107,14 @@ enum {
     KF_ACTOR_SOUND_COUNT = 3
 };
 
+/* Shared actor selection/action ranges and random-angle extraction. */
+enum {
+    KF_ACTOR_MULTI_HIT_FORWARD_MIN_RANGE = 8000,
+    KF_ACTOR_MULTI_HIT_MAX_RANGE = 11000,
+    KF_ACTOR_RANDOM_YAW_SHIFT = 3,
+    KF_ACTOR_BOSS_DEATH_SOUND_COUNT = 4
+};
+
 /* Definition flags in the placement stream; unrelated to effect-code bits. */
 enum {
     KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
@@ -264,7 +272,7 @@ typedef struct KfActorState {
 extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
 extern KfActorState actor_state;
 extern const SoundRef boss_death_loop_sound;
-extern SoundRef boss_death_phase_sounds[4];
+extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
 
 extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);

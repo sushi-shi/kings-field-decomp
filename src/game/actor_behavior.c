@@ -41,7 +41,6 @@ enum {
     ACTOR_WANDER_TO_IDLE_RANDOM_LIMIT = 1092,
     ACTOR_REMAIN_IDLE_RANDOM_MIN = 8193,
     ACTOR_SPAWN_CHANCE_SHIFT = 7,
-    ACTOR_RANDOM_YAW_SHIFT = 3,
     ACTOR_WANDER_TURN_RANDOM_LIMIT = 2048,
     ACTOR_PURSUIT_TURN_RANDOM_LIMIT = 4096,
     ACTOR_HOME_TURN_RANDOM_LIMIT = 2048,
@@ -102,8 +101,6 @@ enum {
     ACTOR_MULTI_HIT_FORWARD_PHASE4 = 3584,
     ACTOR_MULTI_HIT_NEGATIVE_YAW_PHASE = 3500,
     ACTOR_MULTI_HIT_POSITIVE_YAW_PHASE = 3800,
-    ACTOR_MULTI_HIT_FORWARD_MIN_RANGE = 8000,
-    ACTOR_MULTI_HIT_MAX_RANGE = 11000,
     ACTOR_DEATH_DROP_PHASE = KF_ACTOR_ANIMATION_PHASE_PERIOD / 2,
     ACTOR_POST_DEATH_PROGRESS_END = 7,
     ACTOR_DROP_DISABLED = 99,
@@ -892,9 +889,9 @@ void actor_update_current_action(void)
                 actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
-            actor->movement_yaw = rand() >> ACTOR_RANDOM_YAW_SHIFT;
+            actor->movement_yaw = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
         } else if (actor->collision_state == KF_ACTOR_COLLISION_CLEAR && rand() < ACTOR_WANDER_TURN_RANDOM_LIMIT) {
-            actor->movement_yaw = rand() >> ACTOR_RANDOM_YAW_SHIFT;
+            actor->movement_yaw = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
         }
         actor_move_along_heading(1, 0);
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
@@ -1263,13 +1260,13 @@ void actor_update_current_action(void)
         if (actor_animation_crossed_phase(actor, ACTOR_MULTI_HIT_FORWARD_PHASE1) || actor_animation_crossed_phase(actor, ACTOR_MULTI_HIT_FORWARD_PHASE2)
             || actor_animation_crossed_phase(actor, ACTOR_MULTI_HIT_FORWARD_PHASE3)
             || actor_animation_crossed_phase(actor, ACTOR_MULTI_HIT_FORWARD_PHASE4)) {
-            actor_try_attack_player(ACTOR_MULTI_HIT_FORWARD_MIN_RANGE, ACTOR_MULTI_HIT_MAX_RANGE, 0, KF_ACTOR_AIM_TOLERANCE);
+            actor_try_attack_player(KF_ACTOR_MULTI_HIT_FORWARD_MIN_RANGE, KF_ACTOR_MULTI_HIT_MAX_RANGE, 0, KF_ACTOR_AIM_TOLERANCE);
         }
         if (actor_animation_crossed_phase(actor, ACTOR_MULTI_HIT_NEGATIVE_YAW_PHASE)) {
-            actor_try_attack_player(0, ACTOR_MULTI_HIT_MAX_RANGE, -KF_ANGLE_EIGHTH_TURN, KF_ACTOR_AIM_TOLERANCE);
+            actor_try_attack_player(0, KF_ACTOR_MULTI_HIT_MAX_RANGE, -KF_ANGLE_EIGHTH_TURN, KF_ACTOR_AIM_TOLERANCE);
         }
         if (actor_animation_crossed_phase(actor, ACTOR_MULTI_HIT_POSITIVE_YAW_PHASE)) {
-            actor_try_attack_player(0, ACTOR_MULTI_HIT_MAX_RANGE, KF_ANGLE_EIGHTH_TURN, KF_ACTOR_AIM_TOLERANCE);
+            actor_try_attack_player(0, KF_ACTOR_MULTI_HIT_MAX_RANGE, KF_ANGLE_EIGHTH_TURN, KF_ACTOR_AIM_TOLERANCE);
         }
         if (actor->animation_phase >= KF_ACTOR_ANIMATION_PHASE_MAX) {
             actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
