@@ -84,6 +84,11 @@ line count separately, including glyph positions and glyph values.
 
 ## menu_draw_status_details
 
+This ledger records the class-title review snapshot. The later
+[rating-arithmetic correction](game-status-rating-arithmetic.md) replaces
+the outer attack shift with signed division by eight and removes the
+unsigned defense cast; its arithmetic discussion supersedes those rows below.
+
 283 occurrences.
 
 | Lines | Tokens | Expression | Reason |

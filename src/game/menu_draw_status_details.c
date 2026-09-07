@@ -14,6 +14,7 @@ void menu_draw_status_details(void)
     MenuGlyphString gs;
     s32 class_glyph_offset;
     s32 i;
+    s32 attack_rating;
 
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
 
@@ -187,16 +188,16 @@ void menu_draw_status_details(void)
     gs.y += 0x10;
     menu_format_number(player_state.magic, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
+    attack_rating = (((u32)player_state.cutting_attack + player_state.striking_attack +
+                      player_state.piercing_attack) * 3 >> 1) +
+                    (player_state.holy_attack + player_state.fire_attack) * 2;
+    attack_rating = attack_rating * 10 / 8;
     gs.y += 0x10;
-    menu_format_number(
-        (s32)(((((u32)player_state.cutting_attack + player_state.striking_attack +
-                 player_state.piercing_attack) * 3 >> 1) +
-               ((u32)player_state.holy_attack + player_state.fire_attack) * 2) * 10) >> 3,
-        6, 0, gs.codes);
+    menu_format_number(attack_rating, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += 0x10;
     menu_format_number(
-        (((u32)player_state.cutting_defense + player_state.striking_defense +
+        ((player_state.cutting_defense + player_state.striking_defense +
           player_state.piercing_defense + player_state.poison_resistance / 5 +
           player_state.magic_defense + player_state.fire_defense) * 10) / 7,
         6, 0, gs.codes);
