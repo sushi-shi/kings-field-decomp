@@ -482,3 +482,6 @@ promotes a probe to a proven historical toolchain.
 
 - [Grouped retained-literal reconciliation](game-retained-ledger-reconciliation.md):
   complete current accounting for player death/vitals, item use and notifications.
+
+- [GAME item-use range and effect settings](game-item-use-constants.md):
+  shared interaction policy, mirror targeting, staff reload and harp recipes.

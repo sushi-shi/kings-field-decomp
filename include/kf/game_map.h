@@ -11,6 +11,13 @@
 
 struct KfPoolRecord;
 
+/* Shared forward probe and door-facing policy for interaction and item use. */
+enum {
+    MAP_INTERACTION_PROBE_DISTANCE = 1000,
+    MAP_INTERACTION_RADIUS_PADDING = 800,
+    MAP_DOOR_FACING_TOLERANCE = KF_ANGLE_FULL_TURN / 12
+};
+
 enum {
     KF_MAP_OBJECT_DEFINITION_COUNT = 160,
     KF_MAP_OBJECT_CAPACITY = 190,

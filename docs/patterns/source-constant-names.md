@@ -2333,3 +2333,9 @@ The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
 verifies 392 current occurrences across player death/vitals, item use and
 notifications. Their normalized ledgers retain the existing reasons and give
 each occurrence its own row; the death ledger now covers the full module.
+
+The [item-use settings review](game-item-use-constants.md) names 23 inline uses:
+shared map-interaction reach/padding and door tolerance, mirror targeting limits,
+unlock volume, illusion-staff timer reload and both harp deformation recipes.
+The complete item-use ledger now records 56 retained occurrences; floor and
+object identifiers still require typed domain propagation.

@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md):
+Working snapshot after the [item-use settings review](game-item-use-constants.md):
 **111 C files**, **112 source/image variants**,
-and **6,903 inline numeric/character occurrences**. The counts include authored
+and **6,880 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **26 files / 2,404 occurrences**, the explicit ledger rows were compared
+For **26 files / 2,381 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -35,8 +35,8 @@ subtracting the verified subtotal from the source census.
 ## Next coverage work
 
 1. Refresh the status-text ledgers after their later reconstruction changes.
-2. Name and propagate the remaining item-use interaction/range/timer values;
-   complete retained-literal accounting does not exhaust useful naming.
+2. Type and propagate floor/object identifier domains, using named enum
+   members in comparisons and switches as well as typed storage and APIs.
 3. Audit the remaining warp motion/timing values against retail and complete
    per-function accounting for files currently covered only by domain notes.
 4. Verify every retained occurrence against its reason before marking a file
@@ -71,7 +71,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 5,757 occurrences.
+73 files; 5,734 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -135,7 +135,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [player_death_fade.c](../../src/game/player_death_fade.c) | 8 | [domain notes](source-constant-names.md#lighting-and-death-fade-plan) | Expand the domain audit into current occurrence coverage. |
 | [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [domain evidence](game-player-progression-literal-ledger.md) | No retained literal tokens. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_use_item.c](../../src/game/player_use_item.c) | 79 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_use_item.c](../../src/game/player_use_item.c) | 56 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp.c](../../src/game/player_warp.c) | 113 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Domain note covers states; audit remaining motion/timing and authored coordinate uses per function. |
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [domain evidence](semantic-field-names.md) | No retained literal tokens. |
 | [pool.c](../../src/game/pool.c) | 35 | [domain notes](source-constant-names.md#animation-cache-camera-and-audio-plan) | Expand the domain audit into current occurrence coverage. |

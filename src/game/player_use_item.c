@@ -2,6 +2,23 @@
 #include <kf/game_player.h>
 #include <kf/game.h>
 
+enum {
+    PLAYER_KEY_UNLOCK_VOLUME = 110,
+    PLAYER_ILLUSION_STAFF_TIMER_RELOAD = 1000,
+    PLAYER_MIRROR_TARGET_DISTANCE = 6000,
+    PLAYER_MIRROR_ANGLE_TOLERANCE = KF_ANGLE_FULL_TURN / 12,
+    PLAYER_HARP_PROGRESS_PER_UPDATE = 150,
+    PLAYER_HARP_CELL_STAGGER = 800,
+    PLAYER_HARP_FLOOR2_FIRST_SEGMENT = 0,
+    PLAYER_HARP_FLOOR2_SEGMENT_COUNT = 4,
+    PLAYER_HARP_FLOOR2_SWEEP_UPDATES = 43,
+    PLAYER_HARP_FLOOR2_HOLD_COUNTDOWN = 70,
+    PLAYER_HARP_FLOOR3_FIRST_SEGMENT = 4,
+    PLAYER_HARP_FLOOR3_SEGMENT_COUNT = 1,
+    PLAYER_HARP_FLOOR3_SWEEP_UPDATES = 88,
+    PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN = 270
+};
+
 RODATA(0x80012048, 0x130)
 
 DATA(0x80055838, 0xe)
@@ -51,8 +68,8 @@ void player_use_item(u8 item_id)
     s16 slot;
     u8 used = 0;
 
-    reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * 1000) >> KF_FIXED12_BITS);
-    reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * 1000) >> KF_FIXED12_BITS);
+    reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
+    reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
     index = 0;
     switch (item_id) {
     case KF_ITEM_KEY_OF_THE_DEAD:
@@ -60,7 +77,7 @@ void player_use_item(u8 item_id)
     case KF_ITEM_DUNGEON_KEY:
     case KF_ITEM_SORCERER_KEY:
         for (;;) {
-            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, 800);
+            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
@@ -80,11 +97,11 @@ void player_use_item(u8 item_id)
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != 89
                            || angle_within_tolerance(
-                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, KF_ANGLE_FULL_TURN / 12)) {
+                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, MAP_DOOR_FACING_TOLERANCE)) {
                     used = 1;
                     if (object->link.link_id == item_id) {
                         object->link.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(&gameplay_sound_ref_12, 0x6e);
+                        sound_ref_play(&gameplay_sound_ref_12, PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == 89) {
                             sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
                         }
@@ -103,7 +120,7 @@ void player_use_item(u8 item_id)
     case KF_ITEM_FIRE_SEAL_STONE:
     case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
-            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, 800);
+            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
@@ -132,9 +149,15 @@ void player_use_item(u8 item_id)
             }
         }
         if (player_state.progress_state.current_floor == 2) {
-            effect_pool_spawn_typed(0, 4, 0x96, 0x320, 0x2b, 0x46);
+            effect_pool_spawn_typed(
+                PLAYER_HARP_FLOOR2_FIRST_SEGMENT, PLAYER_HARP_FLOOR2_SEGMENT_COUNT,
+                PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
+                PLAYER_HARP_FLOOR2_SWEEP_UPDATES, PLAYER_HARP_FLOOR2_HOLD_COUNTDOWN);
         } else if (player_state.progress_state.current_floor == 3) {
-            effect_pool_spawn_typed(4, 1, 0x96, 0x320, 0x58, 0x10e);
+            effect_pool_spawn_typed(
+                PLAYER_HARP_FLOOR3_FIRST_SEGMENT, PLAYER_HARP_FLOOR3_SEGMENT_COUNT,
+                PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
+                PLAYER_HARP_FLOOR3_SWEEP_UPDATES, PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN);
         } else {
             break;
         }
@@ -152,7 +175,7 @@ void player_use_item(u8 item_id)
         player_warp_to_floor_entry();
         return;
     case KF_ITEM_ILLUSION_STAFF:
-        player_state.illusion_staff_timer = 1000;
+        player_state.illusion_staff_timer = PLAYER_ILLUSION_STAFF_TIMER_RELOAD;
         if (item_stock[0][KF_ITEM_ILLUSION_STAFF] != 0) {
             item_stock[0][KF_ITEM_ILLUSION_STAFF]--;
         }
@@ -161,8 +184,8 @@ void player_use_item(u8 item_id)
         actor = actor_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
             player_state.camera_rotation.vy,
-            6000,
-            KF_ANGLE_FULL_TURN / 12,
+            PLAYER_MIRROR_TARGET_DISTANCE,
+            PLAYER_MIRROR_ANGLE_TOLERANCE,
             &distance);
         if (actor != 0) {
             actor_show_info_image(actor);
@@ -171,8 +194,8 @@ void player_use_item(u8 item_id)
         event = map_event_pool_find_target_in_cone(
             (struct KfVec3i *)&player_state.camera_position,
             player_state.camera_rotation.vy,
-            6000,
-            KF_ANGLE_FULL_TURN / 12,
+            PLAYER_MIRROR_TARGET_DISTANCE,
+            PLAYER_MIRROR_ANGLE_TOLERANCE,
             &distance);
         if (event == 0) {
             break;
