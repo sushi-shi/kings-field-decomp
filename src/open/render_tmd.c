@@ -14,6 +14,8 @@ ADDRESS(0x8001764c, 0xcf8)
 void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object = tmd_get_object(object_index);
+    s32 vertex_offset_delta;
+    u32 header;
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
@@ -23,7 +25,6 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
     KfScreenVertex *vertex3;
-    u32 header;
     s32 depth;
 
     while (remaining-- != 0) {
@@ -35,10 +36,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuFT3 *prim;
+            u16 vertex1_offset;
+            u16 vertex2_offset;
 
             vertex0 = (KfScreenVertex *)(polygon->ft3.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->ft3.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->ft3.v2 + vertices);
+            vertex1_offset = polygon->ft3.v1;
+            vertex1 = (KfScreenVertex *)(vertex1_offset + vertices);
+            vertex2_offset = polygon->ft3.v2;
+            vertex_offset_delta = (s32)vertex2_offset - vertex1_offset;
+            vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
+                vertex_offset_delta);
             if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
                 goto next_packet;
             }

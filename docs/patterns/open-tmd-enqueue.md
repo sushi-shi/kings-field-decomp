@@ -1,5 +1,36 @@
 # OPEN general TMD polygon emission
 
+## Exact related-offset declaration-order closure
+
+OPEN `render_enqueue_tmd` at `8001764c` now reaches strict
+**100.000000000%** under the pinned GCC 2.5.7 probe. Retail and reconstruction
+are both 3320 bytes with the same 96-byte frame, 80 known CFG blocks, 43
+branches, 57 direct calls, switch-table addends, ordered physical referents,
+return, and delay slots.
+
+The prior 99.967470% source had an 88-byte frame. In the first FT3 arm, naming
+the two prepared `u16` vertex offsets and deriving vertex two from vertex one
+plus their offset difference preserves the actual prepared-index semantics.
+GCC combines the address back into the same direct projected-buffer addition.
+Declaring the real signed offset delta at function scope before the packet
+header and primitive countdown recovers retail's local homes: delta at
+`sp+32`, header at `sp+40`, and countdown at `sp+48`. This is the same
+independently verified source relationship that closed the adjacent unlit
+renderer, and it removes all remaining general-renderer differences.
+
+Placing the relationship in F3 instead is byte-identical; placing it in both
+arms creates two stale slots and a 104-byte frame. Function-scope offset
+declarations, split count initialization, a separate stored-count value, a
+typed pointer to the real count field, and named primitive/normal offsets are
+all byte-identical to the retained candidate. A typed pointer to the current
+asset slot rotates the signed-bias and asset-base registers and is rejected.
+Deriving the normal stream from the packet stream retains subtraction code and
+is also rejected. These controls do not establish which original triangle arm
+owned the related expression, so FT3 is retained as the more natural textured
+packet view. The signed delta is live source data rather than an unused local;
+no padding, volatile carrier, assembly, or compiler change is introduced. The
+function is exact and banked, moving OPEN from 104 to 105 exact game functions.
+
 ## Function Match Plan: prepared-offset address base
 
 OPEN `render_enqueue_tmd` at `8001764c` resumed at strict 99.171080%, with
