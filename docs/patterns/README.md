@@ -36,6 +36,8 @@ promotes a probe to a proven historical toolchain.
   modes and TMD registry slots; [OPEN sprite literals](open-sprite-literal-ledger.md).
 - [quad-color-types.md](quad-color-types.md): SDK RGB fields through simple
   quad APIs and fade callers; [retained literals](fade-quad-literal-ledger.md).
+- [quad-rectangle-types.md](quad-rectangle-types.md): unsigned screen rectangle
+  fields through quad builders, fades and scrolling scene callers.
 - [palette-domains.md](palette-domains.md): distinct GAME/OPEN palette enums,
   typed selector APIs and explicit table-index boundaries.
 - [game-lighting-literal-ledger.md](game-lighting-literal-ledger.md): complete

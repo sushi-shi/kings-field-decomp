@@ -1,6 +1,6 @@
 # OPEN scene retained-literal ledger
 
-Companion to [the scene-domain evidence](open-scene-domains.md). All **591**
+Companion to [the scene-domain evidence](open-scene-domains.md). All **579**
 current numeric/character occurrences in `src/open/opening_scenes.c` have
 individual rows, including duplicate tokens within one expression. Comments,
 strings, identifier digits, named enum/macro definitions and address claims
@@ -9,7 +9,7 @@ are identified by their DATA names. This documents authored data and observed
 uses without claiming a semantic identity for unconsumed bytes or counters.
 
 The camera helper checks the named X terminator before consuming a segment.
-The sprite helpers consume four rectangle halfwords and only the even bytes
+The sprite helpers consume named unsigned rectangle fields and only the even bytes
 of each UV descriptor. These contracts distinguish coordinates and lengths
 from ignored bytes; ignored storage is not automatically named padding.
 
@@ -345,7 +345,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene0_sound` | 131 | `9` | `SoundRef opening_scene0_sound = {9, 0, 0x43};` | Authored sound program byte; no independently supported sound-asset name. |
 | `opening_scene0_sound` | 131 | `0` | `SoundRef opening_scene0_sound = {9, 0, 0x43};` | Authored sound tone byte; zero selects a tone, not silence. |
 | `opening_scene0_sound` | 131 | `0x43` | `SoundRef opening_scene0_sound = {9, 0, 0x43};` | Authored sound note byte; no independently supported sound-asset name. |
-| `opening_scene3_overlay_rects` | 134 | `4` | `u16 opening_scene3_overlay_rects[KF_OPENING_SCENE3_OVERLAY_COUNT][4] = {` | Four halfwords per rectangle: X, Y, width, height. |
 | `opening_scene3_overlay_rects` | 135 | `32` | `{32, 256, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_scene3_overlay_rects` | 135 | `256` | `{32, 256, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_scene3_overlay_rects` | 135 | `255` | `{32, 256, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
@@ -354,7 +353,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene3_overlay_rects` | 136 | `512` | `{32, 512, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_scene3_overlay_rects` | 136 | `255` | `{32, 512, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_scene3_overlay_rects` | 136 | `254` | `{32, 512, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_ending_scroll_panels` | 140 | `4` | `static u16 opening_ending_scroll_panels[ENDING_PANEL_COUNT][4] = {` | Four halfwords per rectangle: X, Y, width, height. |
 | `opening_ending_scroll_panels` | 141 | `32` | `{32, 256, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 141 | `256` | `{32, 256, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 141 | `255` | `{32, 256, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
@@ -404,8 +402,7 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
 | `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
 | `opening_scene3_overlay_color` | 156 | `0` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
-| `opening_ending_scroll_backgrounds` | 159 | `2` | `static u16 opening_ending_scroll_backgrounds[2][4] = {` | Two explicitly initialized background rectangles. |
-| `opening_ending_scroll_backgrounds` | 159 | `4` | `static u16 opening_ending_scroll_backgrounds[2][4] = {` | Four halfwords per rectangle: X, Y, width, height. |
+| `opening_ending_scroll_backgrounds` | 159 | `2` | `static KfScreenRect opening_ending_scroll_backgrounds[2] = {` | Two explicitly initialized background rectangles. |
 | `opening_ending_scroll_backgrounds` | 160 | `0` | `{0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_backgrounds` | 160 | `0` | `{0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_backgrounds` | 160 | `160` | `{0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
@@ -494,10 +491,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene3_run` | 477 | `0` | `blend = 0;` | Zero blend accumulator at the start of this interpolation or intermediate counter. |
 | `opening_scene3_run` | 487 | `1` | `if (blend >= KF_FIXED12_ONE + 1) {` | One-past bound keeps the full Q12 endpoint in the fade. |
 | `opening_scene3_run` | 519 | `0` | `overlay_index = 0;` | First overlay index. |
-| `opening_scene3_run` | 520 | `0` | `overlay_rect = opening_scene3_overlay_rects[0];` | First rectangle begins the contiguous overlay traversal. |
-| `opening_scene3_run` | 521 | `1` | `overlay_y = (s16 *)&overlay_rect[1];` | Y component of the four-halfword rectangle, viewed signed while scrolling. |
-| `opening_scene3_run` | 534 | `4` | `overlay_y += 4;` | Advance one four-halfword rectangle while retaining the Y-component offset. |
-| `opening_scene3_run` | 535 | `4` | `overlay_rect += 4;` | Advance one four-halfword X/Y/width/height rectangle. |
 | `opening_scene3_run` | 548 | `0` | `blend = 0;` | Zero blend accumulator at the start of this interpolation or intermediate counter. |
 | `opening_scene3_run` | 557 | `1` | `} while (blend < KF_FIXED12_ONE + 1);` | One-past bound keeps the full Q12 endpoint in the fade. |
 | `opening_ending_scene_run` | 574 | `0` | `wave_angle = 0;` | Zero phase of the camera sine wave. |
@@ -593,19 +586,14 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_run` | 808 | `0` | `opening_camera_path_step(0);` | No added world-space Y displacement for this camera step. |
 | `opening_ending_scroll_run` | 812 | `0` | `} else if (scrolling == 0) {` | False scroll-enable flag prevents repeating the disk/starfield visibility swap. |
 | `opening_ending_scroll_run` | 814 | `1` | `scrolling = 1;` | True scroll-enable flag after the disk reaches its final Y. |
-| `opening_ending_scroll_run` | 831 | `0` | `sprite_add_g4(opening_ending_scroll_backgrounds[0],` | First authored background rectangle receives the vertical gradient. |
-| `opening_ending_scroll_run` | 833 | `1` | `sprite_add_f4(opening_ending_scroll_backgrounds[1],` | Second authored background rectangle receives the uniform color. |
+| `opening_ending_scroll_run` | 831 | `0` | `sprite_add_g4(&opening_ending_scroll_backgrounds[0],` | First authored background rectangle receives the vertical gradient. |
+| `opening_ending_scroll_run` | 833 | `1` | `sprite_add_f4(&opening_ending_scroll_backgrounds[1],` | Second authored background rectangle receives the uniform color. |
 | `opening_ending_scroll_run` | 836 | `0` | `if (scroll_phase == 0) {` | Start position of the 0,3,2,1 four-step cycle; starfield roll/color update once per cycle. |
 | `opening_ending_scroll_run` | 837 | `1` | `entity_27->rotation.z = (entity_27->rotation.z - 1) & KF_ANGLE_WRAP_MASK;` | Unit decrement is one of 4096 angle units per selected update (0.087890625 degrees); the cycle selects one update in four. |
 | `opening_ending_scroll_run` | 847 | `0` | `if (scrolling > 0) {` | Positive boolean scroll-enable value. |
 | `opening_ending_scroll_run` | 848 | `0` | `panel_index = 0;` | First ending-panel index. |
-| `opening_ending_scroll_run` | 849 | `0` | `panel = opening_ending_scroll_panels[0];` | First rectangle begins the contiguous ending-panel traversal. |
 | `opening_ending_scroll_run` | 851 | `0` | `if (scroll_phase == 0 \|\| scroll_phase == 2) {` | Cycle start selects the first of two panel updates per four-step cycle. |
 | `opening_ending_scroll_run` | 851 | `2` | `if (scroll_phase == 0 \|\| scroll_phase == 2) {` | Cycle midpoint selects the second of two panel updates per four-step cycle. |
-| `opening_ending_scroll_run` | 852 | `1` | `if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1][1] >` | Last panel index selects the stopping reference for the entire scroll. |
-| `opening_ending_scroll_run` | 852 | `1` | `if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1][1] >` | Y component of the last rectangle, compared as signed screen coordinates. |
-| `opening_ending_scroll_run` | 854 | `1` | `--panel[1];` | Unit decrement of the rectangle Y component moves the panel up one pixel. |
-| `opening_ending_scroll_run` | 860 | `1` | `if ((u16)(panel[1] + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {` | Rectangle Y component in the existing biased unsigned clipping predicate. |
-| `opening_ending_scroll_run` | 866 | `4` | `panel += 4;` | Advance one four-halfword X/Y/width/height rectangle. |
+| `opening_ending_scroll_run` | 852 | `1` | `if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1].y >` | Last panel index selects the stopping reference for the entire scroll. |
 | `opening_ending_scroll_run` | 868 | `1` | `if (--scroll_phase == -1) {` | Minus one triggers wrap after cycle position zero. |
 | `opening_ending_scroll_run` | 869 | `1` | `scroll_phase = ENDING_SCROLL_PHASE_COUNT - 1;` | Last cycle position restores the 0,3,2,1 countdown. |

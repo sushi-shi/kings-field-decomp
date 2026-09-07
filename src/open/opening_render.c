@@ -17,21 +17,21 @@ void opening_render_frame(const VECTOR *position, const SVECTOR *rotation)
 }
 
 ADDRESS(0x80013804, 0x198)
-void sprite_add_g4(const u16 *position, const CVECTOR *color0, const CVECTOR *color1,
+void sprite_add_g4(const KfScreenRect *position, const CVECTOR *color0, const CVECTOR *color1,
                    const CVECTOR *color2, const CVECTOR *color3)
 {
     POLY_G4 *prim = (POLY_G4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
 
     open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
     SetPolyG4(prim);
-    prim->x0 = position[0];
-    prim->y0 = position[1];
-    prim->x1 = position[0] + position[2];
-    prim->y1 = position[1];
-    prim->x2 = position[0];
-    prim->y2 = position[1] + position[3];
-    prim->x3 = position[0] + position[2];
-    prim->y3 = position[1] + position[3];
+    prim->x0 = position->x;
+    prim->y0 = position->y;
+    prim->x1 = position->x + position->w;
+    prim->y1 = position->y;
+    prim->x2 = position->x;
+    prim->y2 = position->y + position->h;
+    prim->x3 = position->x + position->w;
+    prim->y3 = position->y + position->h;
     prim->r0 = color0->r;
     prim->g0 = color0->g;
     prim->b0 = color0->b;

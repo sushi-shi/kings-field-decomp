@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [quad color review](quad-color-types.md):
+Working snapshot after the [quad rectangle review](quad-rectangle-types.md):
 **111 C files**, **112 source/image variants**,
-and **6,181 inline numeric/character occurrences**. The counts include authored
+and **6,119 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **93 files / 5,334 occurrences**, the explicit ledger rows were compared
+For **93 files / 5,272 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -52,7 +52,11 @@ The notification sprite-state review names 27 visibility values and propagates
 the byte enum through all six rows and their producer/renderer. The census also
 corrects the OPEN render module to 19 occurrences for its current TMD loop form.
 The quad color review replaces 35 component indices with RGB fields, removes
-three redundant color extents and adds complete 97-occurrence fade/quad coverage.
+three redundant color extents and adds complete fade/quad coverage. The
+rectangle review then replaces 48 position-component indices, five array
+extents and nine scene cursor/index literals with typed fields and traversal.
+Current fade/quad coverage is 59 occurrences; all six changed C files retain
+complete accounting, including the now literal-free G4 module.
 
 The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
 verified and normalized the death, item-use and notification accounting. Other
@@ -99,7 +103,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,898 occurrences.
+73 files; 4,885 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -114,7 +118,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [collision_grid.c](../../src/game/collision_grid.c) | 5 | [complete ledger](game-world-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [color_lerp_rgb555.c](../../src/game/color_lerp_rgb555.c) | 0 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [debug_text.c](../../src/game/debug_text.c) | 45 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [display_play_transition.c](../../src/game/display_play_transition.c) | 21 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [display_play_transition.c](../../src/game/display_play_transition.c) | 20 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_dispatch.c](../../src/game/effect_dispatch.c) | 153 | [game-effect-dispatch ledger](game-effect-dispatch-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_map_collision.c](../../src/game/effect_map_collision.c) | 43 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_pool.c](../../src/game/effect_pool.c) | 224 | [game-effect-pool ledger](game-effect-pool-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -175,11 +179,11 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_sprite.c](../../src/game/render_sprite.c) | 1 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
 | [resources.c](../../src/game/resources.c) | 14 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [save_system.c](../../src/game/save_system.c) | 135 | [complete ledger](game-save-system-literal-ledger.md); [status domain](game-save-status-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [sprite_add_ft4.c](../../src/game/sprite_add_ft4.c) | 24 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [sprite_add_ft4.c](../../src/game/sprite_add_ft4.c) | 12 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
 
 ## OPEN.EXE
 
-34 files; 1,261 occurrences.
+34 files; 1,212 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -199,12 +203,12 @@ fields and address-derived function names are separate from this ten-line count.
 | [matrix_rotation.c](../../src/open/matrix_rotation.c) | 87 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_controller.c](../../src/open/opening_controller.c) | 7 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_entity_pool.c](../../src/open/opening_entity_pool.c) | 13 | [pool ledger](open-entity-pool-literal-ledger.md); [domain evidence](open-model-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [opening_fade.c](../../src/open/opening_fade.c) | 16 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [opening_fade.c](../../src/open/opening_fade.c) | 15 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_helpers.c](../../src/open/opening_helpers.c) | 4 | [domain notes](source-constant-names.md#controller-mask-and-opening-input-plan) | Expand the domain audit into current occurrence coverage. |
-| [opening_render.c](../../src/open/opening_render.c) | 12 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [opening_render.c](../../src/open/opening_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_render_entities.c](../../src/open/opening_render_entities.c) | 2 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_scene0_render.c](../../src/open/opening_scene0_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [opening_scenes.c](../../src/open/opening_scenes.c) | 591 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [opening_scenes.c](../../src/open/opening_scenes.c) | 579 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render.c](../../src/open/render.c) | 19 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
 | [render_init.c](../../src/open/render_init.c) | 154 | [complete initializer ledger](open-render-init-literal-ledger.md); [mode domain](overlay-mode-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map.c](../../src/open/render_map.c) | 6 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
@@ -214,7 +218,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [render_unlit.c](../../src/open/render_unlit.c) | 5 | [domain notes](source-constant-names.md#tmd-packet-and-scene-depth-constants) | Expand the domain audit into current occurrence coverage. |
 | [resources.c](../../src/open/resources.c) | 31 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [sound_ref.c](../../src/open/sound_ref.c) | 0 | [complete resource/audio ledger](resource-audio-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [sprite_add_ft4.c](../../src/open/sprite_add_ft4.c) | 36 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [sprite_add_ft4.c](../../src/open/sprite_add_ft4.c) | 12 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [vector_math.c](../../src/open/vector_math.c) | 6 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [vector_xz_to_angle.c](../../src/open/vector_xz_to_angle.c) | 3 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 

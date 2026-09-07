@@ -2,7 +2,7 @@
 #include <kf/open_render.h>
 
 DATA(0x800372c0, 0x8)
-u16 opening_fade_rect[4] = {
+KfScreenRect opening_fade_rect = {
     KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
 };
 DATA(0x800372c8, 0x8)
@@ -35,7 +35,7 @@ void opening_fade_in(void)
         color.b = color.r;
         color.g = color.r;
         sprite_add_ft4(
-            opening_fade_rect, opening_fade_uv, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
+            &opening_fade_rect, opening_fade_uv, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
         frame++;
     } while (frame < KF_TRANSITION_FADE_FRAMES);

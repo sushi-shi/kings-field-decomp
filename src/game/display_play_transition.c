@@ -2,11 +2,7 @@
 #include <kf/game_render.h>
 #include <kf/game.h>
 
-/* Screen-quad descriptor blocks for the faded full-screen image. They keep
- * sub-word alignment so the retail copies them with unaligned word moves. */
-typedef struct {
-    u16 v[4];
-} FadeRect;
+/* The texture descriptor keeps byte alignment for retail's unaligned copies. */
 typedef struct {
     u8 v[8];
 } FadeUv;
@@ -14,9 +10,9 @@ typedef struct {
 /* Position rect {x, y, w, h}, texture-coordinate rect (even bytes u, v, w, h),
  * and the fade modulation color that ramps up from black. */
 DATA(0x80057b14, 0x8)
-FadeRect fade_screen_rect = {{
+KfScreenRect fade_screen_rect = {
     KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
-}};
+};
 DATA(0x80057b1c, 0x8)
 FadeUv fade_screen_uv = {{
     0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
@@ -31,7 +27,7 @@ char fade_screen_path[7] = "B0\\L0.";
 ADDRESS(0x800144d4, 0x1a0)
 void display_play_transition(void)
 {
-    FadeRect rect = fade_screen_rect;
+    KfScreenRect rect = fade_screen_rect;
     FadeUv uv = fade_screen_uv;
     CVECTOR color = fade_screen_color;
     int tpage;
@@ -62,7 +58,7 @@ void display_play_transition(void)
         }
         color.b = color.r;
         color.g = color.r;
-        sprite_add_ft4(rect.v, uv.v, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
+        sprite_add_ft4(&rect, uv.v, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
     }
     DrawSync(0);

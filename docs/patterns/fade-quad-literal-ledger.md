@@ -1,6 +1,7 @@
 # Fade and simple-quad retained literals
 
-Companion to [the quad color review](quad-color-types.md). All 97 remaining
+Companion to the [quad color review](quad-color-types.md) and
+[rectangle type review](quad-rectangle-types.md). All 59 remaining
 numeric occurrences in these four modules are listed, including duplicate
 indices and initialized data. Claims and named definitions are excluded.
 
@@ -8,7 +9,6 @@ indices and initialized data. Claims and named definitions are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 8 | `4` | `u16 v[4];` | Four unsigned-halfword rectangle entries encode X, Y, width and height. |
 | `initializers` | 11 | `8` | `u8 v[8];` | Eight-byte texture descriptor with U, V and spans in even bytes; preserve the unused odd bytes. |
 | `initializers` | 18 | `0` | `KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT` | Authored top-of-screen rectangle Y origin. |
 | `initializers` | 22 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Texture U origin is zero. |
@@ -34,7 +34,6 @@ indices and initialized data. Claims and named definitions are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 5 | `4` | `u16 opening_fade_rect[4] = {` | Four unsigned-halfword rectangle entries encode X, Y, width and height. |
 | `initializers` | 6 | `0` | `KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT` | Authored top-of-screen rectangle Y origin. |
 | `initializers` | 9 | `8` | `u8 opening_fade_uv[8] = {` | Eight-byte texture descriptor with U, V and spans in even bytes; preserve the unused odd bytes. |
 | `initializers` | 10 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Texture U origin is zero. |
@@ -55,18 +54,6 @@ indices and initialized data. Claims and named definitions are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `sprite_add_ft4` | 14 | `0` | `prim->x0 = position[0];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 15 | `1` | `prim->y0 = position[1];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 16 | `0` | `prim->x1 = position[0] + position[2];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 16 | `2` | `prim->x1 = position[0] + position[2];` | Rectangle width slot, added to X to form the right edge. |
-| `sprite_add_ft4` | 17 | `1` | `prim->y1 = position[1];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 18 | `0` | `prim->x2 = position[0];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 19 | `1` | `prim->y2 = position[1] + position[3];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 19 | `3` | `prim->y2 = position[1] + position[3];` | Rectangle height slot, added to Y to form the bottom edge. |
-| `sprite_add_ft4` | 20 | `0` | `prim->x3 = position[0] + position[2];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 20 | `2` | `prim->x3 = position[0] + position[2];` | Rectangle width slot, added to X to form the right edge. |
-| `sprite_add_ft4` | 21 | `1` | `prim->y3 = position[1] + position[3];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 21 | `3` | `prim->y3 = position[1] + position[3];` | Rectangle height slot, added to Y to form the bottom edge. |
 | `sprite_add_ft4` | 22 | `0` | `prim->u0 = texcoords[0];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
 | `sprite_add_ft4` | 23 | `2` | `prim->v0 = texcoords[2];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
 | `sprite_add_ft4` | 24 | `0` | `prim->u1 = texcoords[0] + texcoords[4];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
@@ -84,18 +71,6 @@ indices and initialized data. Claims and named definitions are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `sprite_add_ft4` | 14 | `0` | `prim->x0 = position[0];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 15 | `1` | `prim->y0 = position[1];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 16 | `0` | `prim->x1 = position[0] + position[2];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 16 | `2` | `prim->x1 = position[0] + position[2];` | Rectangle width slot, added to X to form the right edge. |
-| `sprite_add_ft4` | 17 | `1` | `prim->y1 = position[1];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 18 | `0` | `prim->x2 = position[0];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 19 | `1` | `prim->y2 = position[1] + position[3];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 19 | `3` | `prim->y2 = position[1] + position[3];` | Rectangle height slot, added to Y to form the bottom edge. |
-| `sprite_add_ft4` | 20 | `0` | `prim->x3 = position[0] + position[2];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_ft4` | 20 | `2` | `prim->x3 = position[0] + position[2];` | Rectangle width slot, added to X to form the right edge. |
-| `sprite_add_ft4` | 21 | `1` | `prim->y3 = position[1] + position[3];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_ft4` | 21 | `3` | `prim->y3 = position[1] + position[3];` | Rectangle height slot, added to Y to form the bottom edge. |
 | `sprite_add_ft4` | 22 | `0` | `prim->u0 = texcoords[0];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
 | `sprite_add_ft4` | 23 | `2` | `prim->v0 = texcoords[2];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
 | `sprite_add_ft4` | 24 | `0` | `prim->u1 = texcoords[0] + texcoords[4];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
@@ -108,15 +83,3 @@ indices and initialized data. Claims and named definitions are excluded.
 | `sprite_add_ft4` | 28 | `4` | `prim->u3 = texcoords[0] + texcoords[4];` | Byte offset of the texture U span, added to the U origin. |
 | `sprite_add_ft4` | 29 | `2` | `prim->v3 = texcoords[2] + texcoords[6];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
 | `sprite_add_ft4` | 29 | `6` | `prim->v3 = texcoords[2] + texcoords[6];` | Byte offset of the texture V span, added to the V origin. |
-| `sprite_add_f4` | 46 | `0` | `prim->x0 = position[0];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_f4` | 47 | `1` | `prim->y0 = position[1];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_f4` | 48 | `0` | `prim->x1 = position[0] + position[2];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_f4` | 48 | `2` | `prim->x1 = position[0] + position[2];` | Rectangle width slot, added to X to form the right edge. |
-| `sprite_add_f4` | 49 | `1` | `prim->y1 = position[1];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_f4` | 50 | `0` | `prim->x2 = position[0];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_f4` | 51 | `1` | `prim->y2 = position[1] + position[3];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_f4` | 51 | `3` | `prim->y2 = position[1] + position[3];` | Rectangle height slot, added to Y to form the bottom edge. |
-| `sprite_add_f4` | 52 | `0` | `prim->x3 = position[0] + position[2];` | Rectangle X origin slot; both left vertices use it and right vertices add the width. |
-| `sprite_add_f4` | 52 | `2` | `prim->x3 = position[0] + position[2];` | Rectangle width slot, added to X to form the right edge. |
-| `sprite_add_f4` | 53 | `1` | `prim->y3 = position[1] + position[3];` | Rectangle Y origin slot; both top vertices use it and bottom vertices add the height. |
-| `sprite_add_f4` | 53 | `3` | `prim->y3 = position[1] + position[3];` | Rectangle height slot, added to Y to form the bottom edge. |

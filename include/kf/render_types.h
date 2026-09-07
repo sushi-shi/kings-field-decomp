@@ -58,6 +58,14 @@ enum {
     KF_TRANSITION_OT_DEPTH = 4
 };
 
+/* Quad input coordinates; scrolling callers interpret wrapped Y as signed. */
+typedef struct KfScreenRect {
+    u16 x;
+    u16 y;
+    u16 w;
+    u16 h;
+} KfScreenRect;
+
 /* Texture rectangle followed by its screen-space or projected rectangle. */
 typedef struct KfSpriteQuad {
     u8 u;

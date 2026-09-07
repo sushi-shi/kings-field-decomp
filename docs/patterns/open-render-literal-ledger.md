@@ -10,23 +10,12 @@ constants and retains its separate earlier literal audit.
 
 ## `src/open/opening_render.c`
 
-12 retained occurrences. Color components now use SDK fields; see
-[quad color types](quad-color-types.md).
+0 retained occurrences. Colors and positions now use named fields; see
+[quad color types](quad-color-types.md) and
+[rectangle types](quad-rectangle-types.md).
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `sprite_add_g4` | 27 | `0` | `prim->x0 = position[0];` | Rectangle X halfword index. |
-| `sprite_add_g4` | 28 | `1` | `prim->y0 = position[1];` | Rectangle Y halfword index. |
-| `sprite_add_g4` | 29 | `0` | `prim->x1 = position[0] + position[2];` | Rectangle X halfword index. |
-| `sprite_add_g4` | 29 | `2` | `prim->x1 = position[0] + position[2];` | Rectangle width halfword index. |
-| `sprite_add_g4` | 30 | `1` | `prim->y1 = position[1];` | Rectangle Y halfword index. |
-| `sprite_add_g4` | 31 | `0` | `prim->x2 = position[0];` | Rectangle X halfword index. |
-| `sprite_add_g4` | 32 | `1` | `prim->y2 = position[1] + position[3];` | Rectangle Y halfword index. |
-| `sprite_add_g4` | 32 | `3` | `prim->y2 = position[1] + position[3];` | Rectangle height halfword index. |
-| `sprite_add_g4` | 33 | `0` | `prim->x3 = position[0] + position[2];` | Rectangle X halfword index. |
-| `sprite_add_g4` | 33 | `2` | `prim->x3 = position[0] + position[2];` | Rectangle width halfword index. |
-| `sprite_add_g4` | 34 | `1` | `prim->y3 = position[1] + position[3];` | Rectangle Y halfword index. |
-| `sprite_add_g4` | 34 | `3` | `prim->y3 = position[1] + position[3];` | Rectangle height halfword index. |
 
 ## `src/open/opening_scene0_render.c`
 

@@ -132,13 +132,13 @@ DATA(0x80035874, 0x3)
 SoundRef opening_scene0_sound = {9, 0, 0x43};
 
 DATA(0x80035878, 0x10)
-u16 opening_scene3_overlay_rects[KF_OPENING_SCENE3_OVERLAY_COUNT][4] = {
+KfScreenRect opening_scene3_overlay_rects[KF_OPENING_SCENE3_OVERLAY_COUNT] = {
     {32, 256, 255, 254},
     {32, 512, 255, 254},
 };
 
 DATA(0x80035888, 0x48)
-static u16 opening_ending_scroll_panels[ENDING_PANEL_COUNT][4] = {
+static KfScreenRect opening_ending_scroll_panels[ENDING_PANEL_COUNT] = {
     {32, 256, 255, 254},
     {32, 512, 255, 254},
     {32, 768, 255, 254},
@@ -157,7 +157,7 @@ DATA(0x8003728c, 0x4)
 CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};
 
 DATA(0x80037290, 0x10)
-static u16 opening_ending_scroll_backgrounds[2][4] = {
+static KfScreenRect opening_ending_scroll_backgrounds[2] = {
     {0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},
 };
 
@@ -454,8 +454,7 @@ void opening_scene3_run(void)
     u32 texture_pages[KF_OPENING_SCENE3_OVERLAY_COUNT];
     /* Retail reserves six CLUT work slots; this scene populates the first two. */
     u32 cluts[SCENE3_CLUT_WORK_CAPACITY];
-    u16 *overlay_rect;
-    s16 *overlay_y;
+    KfScreenRect *overlay_rect;
     s16 blend;
     s16 overlay_index;
     s32 wave_angle;
@@ -522,11 +521,10 @@ void opening_scene3_run(void)
         SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
         opening_render_entities();
         overlay_index = 0;
-        overlay_rect = opening_scene3_overlay_rects[0];
-        overlay_y = (s16 *)&overlay_rect[1];
+        overlay_rect = opening_scene3_overlay_rects;
         do {
             /* Retain quads while their signed Y span can still cross the screen. */
-            if ((u16)(--*overlay_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
+            if ((u16)((s16)--overlay_rect->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
                     overlay_rect,
                     opening_scene3_overlay_uv,
@@ -536,8 +534,7 @@ void opening_scene3_run(void)
                     PANEL_OT_DEPTH);
             }
             overlay_index++;
-            overlay_y += 4;
-            overlay_rect += 4;
+            overlay_rect++;
         } while (overlay_index < KF_OPENING_SCENE3_OVERLAY_COUNT);
         display_present_frame();
         opening_poll_input();
@@ -699,7 +696,7 @@ void opening_ending_scroll_run(void)
     s16 background_blend;
     s16 scroll_phase;
     s16 panel_index;
-    u16 *panel;
+    KfScreenRect *panel;
 
     open_graphics_runtime.render_state.light_matrix = light_matrix;
     lighting_blend = 0;
@@ -833,9 +830,9 @@ void opening_ending_scroll_run(void)
                           &opening_ending_scroll_top_end, &top_color, background_blend);
         color_lerp_cvector(&opening_ending_scroll_bottom_start,
                           &opening_ending_scroll_bottom_end, &bottom_color, background_blend);
-        sprite_add_g4(opening_ending_scroll_backgrounds[0],
+        sprite_add_g4(&opening_ending_scroll_backgrounds[0],
                       &top_color, &top_color, &bottom_color, &bottom_color);
-        sprite_add_f4(opening_ending_scroll_backgrounds[1],
+        sprite_add_f4(&opening_ending_scroll_backgrounds[1],
                       &opening_ending_scroll_background_color, ENDING_BACKGROUND_OT_DEPTH);
 
         if (scroll_phase == 0) {
@@ -851,24 +848,24 @@ void opening_ending_scroll_run(void)
         }
         if (scrolling > 0) {
             panel_index = 0;
-            panel = opening_ending_scroll_panels[0];
+            panel = opening_ending_scroll_panels;
             do {
                 if (scroll_phase == 0 || scroll_phase == 2) {
-                    if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1][1] >
+                    if ((s16)opening_ending_scroll_panels[ENDING_PANEL_COUNT - 1].y >
                         ENDING_PANEL_STOP_Y) {
-                        --panel[1];
+                        --panel->y;
                     } else if (sequence_phase == ENDING_SEQUENCE_WAIT_SCROLL) {
                         sequence_phase = ENDING_SEQUENCE_DELAY;
                         sequence_delay = ENDING_SEQUENCE_DELAY_START;
                     }
                 }
-                if ((u16)(panel[1] + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
+                if ((u16)(panel->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                     sprite_add_ft4(panel, opening_ending_scroll_uv,
                                    texture_pages[panel_index], cluts[panel_index],
                                    &opening_ending_scroll_panel_color, PANEL_OT_DEPTH);
                 }
                 ++panel_index;
-                panel += 4;
+                panel++;
             } while (panel_index < ENDING_PANEL_COUNT);
             if (--scroll_phase == -1) {
                 scroll_phase = ENDING_SCROLL_PHASE_COUNT - 1;

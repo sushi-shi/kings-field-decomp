@@ -1928,7 +1928,7 @@ class InventoryTests(unittest.TestCase):
         data = load_data_identities(RETAIL_CONFIG)
         expected_data = {
             0x800356D0: ("opening_scene3_camera_path", "KfCameraPathPoint[3]", 0x54),
-            0x80035878: ("opening_scene3_overlay_rects", "u16[2][4]", 0x10),
+            0x80035878: ("opening_scene3_overlay_rects", "KfScreenRect[2]", 0x10),
             0x80037284: ("opening_scene3_overlay_uv", "u8[8]", 0x08),
             0x8003728C: ("opening_scene3_overlay_color", "CVECTOR", 0x04),
         }

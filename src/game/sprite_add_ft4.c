@@ -2,7 +2,7 @@
 #include <kf/game_render.h>
 
 ADDRESS(0x80014314, 0x1c0)
-void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
+void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 clut,
                    const CVECTOR *color, u16 ot_index)
 {
     POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;
@@ -11,14 +11,14 @@ void sprite_add_ft4(u16 *position, u8 *texcoords, u32 tpage, u32 clut,
     SetPolyFT4(prim);
     prim->clut = clut;
     prim->tpage = tpage;
-    prim->x0 = position[0];
-    prim->y0 = position[1];
-    prim->x1 = position[0] + position[2];
-    prim->y1 = position[1];
-    prim->x2 = position[0];
-    prim->y2 = position[1] + position[3];
-    prim->x3 = position[0] + position[2];
-    prim->y3 = position[1] + position[3];
+    prim->x0 = position->x;
+    prim->y0 = position->y;
+    prim->x1 = position->x + position->w;
+    prim->y1 = position->y;
+    prim->x2 = position->x;
+    prim->y2 = position->y + position->h;
+    prim->x3 = position->x + position->w;
+    prim->y3 = position->y + position->h;
     prim->u0 = texcoords[0];
     prim->v0 = texcoords[2];
     prim->u1 = texcoords[0] + texcoords[4];
