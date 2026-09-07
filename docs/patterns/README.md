@@ -543,3 +543,7 @@ promotes a probe to a proven historical toolchain.
 - [Resource loading and remaining OPEN audio coverage](resource-audio-coverage.md):
   CD completion semantics, path offsets and voice dispatch, with a
   [complete five-module ledger](resource-audio-literal-ledger.md).
+
+- [Equipment confirmation and name-column layout](game-equipment-confirm-layout.md):
+  typed pending requests, fixed category rows and the
+  [complete equipment ledger](game-equipment-literal-ledger.md).

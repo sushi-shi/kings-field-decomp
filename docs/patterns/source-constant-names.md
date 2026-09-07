@@ -2365,3 +2365,8 @@ current occurrence accounting for GAME CD/resource loading and the remaining
 OPEN spatial/voice wrappers. Its [ledger](resource-audio-literal-ledger.md)
 records 61 retained occurrences; map-sequence and variant-selector type
 propagation remain separate outstanding work.
+
+The [equipment confirmation/layout review](game-equipment-confirm-layout.md)
+names seventeen request-state and coordinate uses. Its reconciled
+[equipment ledger](game-equipment-literal-ledger.md) individually accounts
+for all 103 remaining occurrences across the three modules.

@@ -5,6 +5,11 @@ the earlier shield/head/body labels using both item rows and menu text. The
 slot numbers, physical offsets and code were preserved; the domain names
 below reflect that correction.
 
+The later [confirmation/layout review](game-equipment-confirm-layout.md)
+types the panels' local request state and names the fixed status-name rows;
+its [current ledger](game-equipment-literal-ledger.md) supersedes the older
+grouped occurrence totals.
+
 ## Function Match Plan
 
 Start at `cae2910` with freshly verified GAME retail hashes. Review the
