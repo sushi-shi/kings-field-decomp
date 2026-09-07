@@ -1,5 +1,22 @@
 # OPEN display-initialization pointer lifetimes
 
+## Data-owner and register-qualification controls at 106/108
+
+Two non-overlapping owner hypotheses were compiled as diagnostics. Separate
+external DRAWENV and DISPENV arrays keep the 40-byte frame and expand the
+initializer because GCC cannot derive the display array from the draw array.
+A compact external aggregate containing exactly `DRAWENV[2]` followed by
+`DISPENV[2]` recovers the `+162` cross-array derivation, but still keeps the
+first base in a caller-saved register and rematerializes all four `dfe`
+addresses. Moving the existing typed pointers to cover the aggregate's whole
+customization lifetime does not change that outcome.
+
+Qualifying the existing authentic first-DRAWENV pointer with legacy C
+`register` is byte-identical to the canonical candidate. All diagnostic source
+changes are removed. These results reject both separate data ownership and a
+register-qualification explanation for retail's fourth saved register; the
+complete graphics runtime owner remains the supported model.
+
 ## Cross-image owner and flag controls at 106/108
 
 Pinned GCC 2.5.7 `-da` dumps localize the surviving discrepancy more narrowly

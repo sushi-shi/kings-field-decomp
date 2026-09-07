@@ -1,5 +1,21 @@
 # OPEN ending-scroll controller and data owners
 
+## Dispatch/value-allocation controls at 106/108
+
+The two-condition `if` spelling preserves retail's five long-lived scene-state
+registers and emits 49 CFG blocks, but lays each phase body directly after its
+test and is eight bytes shorter than retail. Explicit forward labels without a
+next-phase value compile byte-identically to the canonical 51-block switch,
+so label syntax alone does not recover the shared phase store. A per-frame
+typed snapshot of the phase is likewise byte-identical to the canonical form.
+
+Combining explicit retail-shaped dispatch labels with an unsigned-halfword
+next-phase join emits the same 49-block, four-byte-short carrier-family object
+already seen with the typed and full-word joins: lighting blend moves to `s8`,
+and sequence, scroll tick, entity 27 and background blend rotate through
+`s4`-`s7`. The unsigned width does not change that result. All controls are
+removed; the canonical switch remains the highest strict match.
+
 ## Post-106 lighting-tail controls
 
 With OPEN at 106/108, the canonical candidate still has 51 blocks against
