@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [menu-sound-cue-domain.md](menu-sound-cue-domain.md): typed feedback cues across
+  90 callers, the shared stereo volume and corrected retail call accounting.
 - [shop-id-domain.md](shop-id-domain.md): shop identity through the optional-byte
   reader, buy/sell panels and price drawing, preserving legacy word parameters.
 - [save-slot-overlay-domain.md](save-slot-overlay-domain.md): signed overlay

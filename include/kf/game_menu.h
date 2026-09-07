@@ -189,11 +189,11 @@ KF_ENUM_BEGIN(KfItemPickupResult, s32)
 KF_ENUM_END(KfItemPickupResult)
 
 /* Feedback styles; the cursor cue is also reused for opening/config actions. */
-enum {
+KF_ENUM_BEGIN(KfMenuSoundCue, s32)
     MENU_SOUND_CURSOR = 0,
     MENU_SOUND_CONFIRM = 1,
     MENU_SOUND_CANCEL_OR_ERROR = 2
-};
+KF_ENUM_END(KfMenuSoundCue)
 
 /* Signed glyph streams share a terminator; each atlas has its own blank. */
 enum {
@@ -427,7 +427,7 @@ extern KfMenuConfirmResult menu_load_panel(void);
 extern s32 menu_magic_panel(void);
 extern void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code);
 extern void menu_option_root(void);
-extern void menu_play_input_sound(s32 cue);
+extern void menu_play_input_sound(KfMenuSoundCue cue);
 extern void menu_present_frame(void);
 extern s32 menu_root(void);
 extern void menu_save_confirm(void);

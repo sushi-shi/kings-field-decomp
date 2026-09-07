@@ -31,6 +31,10 @@ enum {
 };
 
 enum {
+    MENU_INPUT_SOUND_VOLUME = 0x40
+};
+
+enum {
     IMAGE_WAIT_INITIAL_BRIGHTNESS = 32,
     IMAGE_WAIT_MAX_BRIGHTNESS = 127
 };
@@ -98,7 +102,7 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
 }
 
 ADDRESS(0x8002b150, 0x84)
-void menu_play_input_sound(s32 cue)
+void menu_play_input_sound(KfMenuSoundCue cue)
 {
     SoundRef sound;
 
@@ -113,7 +117,7 @@ void menu_play_input_sound(s32 cue)
         sound.note = 0x3f;
     }
     /* Bank 0, zero fine pitch; equal channels at 64/127 volume. */
-    SsVoKeyOn(sound.program, sound.note << 8, 0x40, 0x40);
+    SsVoKeyOn(sound.program, sound.note << 8, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);
     VSync(0);
     SsVoKeyOff(sound.program, sound.note << 8);
 }
