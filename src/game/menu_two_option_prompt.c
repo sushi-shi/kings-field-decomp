@@ -5,13 +5,13 @@
 /*
  * Interactive two-option confirm dialog.  Draws the window and the two labels
  * every frame, toggling the selected option on an up/down edge, and returns
- * once the player confirms (result -selected) or cancels (result -1).  Kinds 4
- * and 5 forward the caller's save summaries to the frame builder; all others
+ * once the player confirms (result -selected) or cancels (result -1).  Save
+ * and load windows forward the caller's save summaries to the frame builder; all others
  * suppress the composite-frame selection (-1).
  */
 ADDRESS(0x800286d4, 0x240)
 s32 menu_two_option_prompt(
-    s32 kind, s32 count, s32 highlight_row,
+    KfMenuWindowKind kind, s32 count, s32 highlight_row,
     const KfSaveSlotSummary *summaries)
 {
     MenuGlyphString label_a;
@@ -26,7 +26,7 @@ s32 menu_two_option_prompt(
     while (PadRead(1) != 0)
         ;
 
-    if ((u32)(kind - 4) < 2)
+    if (kind == KF_MENU_WINDOW_SAVE || kind == KF_MENU_WINDOW_LOAD)
         composite = highlight_row;
 
     label_a.x = 0x60;

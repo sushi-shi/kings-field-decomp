@@ -70,7 +70,7 @@ the mode dispatcher, and removes six numeric outcomes from the map ledger.
 The [equipment domain review](game-equipment-domains.md) separates menu
 categories from player slots, types both APIs, names empty item/spell/texture
 selections, and shares record extents and menu ranges. Its three-module
-ledger explains all 147 retained literals after the menu and price follow-ups,
+ledger explains all 139 retained literals after the type and menu follow-ups,
 down from 209; other consumers
 also replace the shared empty values and armor-record origin.
 
@@ -105,6 +105,12 @@ and separates map scale from layer indices. Its
 [three-file ledger](game-menu-panel-literal-ledger.md) explains all 190
 retained occurrences in the status panel, map viewer and list renderer;
 the existing preview ledger drops eight newly named depth occurrences.
+
+The [window-kind review](game-menu-window-kinds.md) decodes the loaded layout
+bank and propagates its enum through drawing, prompts and list initialization.
+It distinguishes the System window from the unreferenced Save/Load record,
+replaces 37 source literals, and explains the 16 retained occurrences in the
+[window/list initializer ledger](game-menu-window-literal-ledger.md).
 
 ## Function Match Plan
 

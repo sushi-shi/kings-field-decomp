@@ -566,14 +566,14 @@ void primitive_buffer_commit_poly_ft4(s32 depth)
 
 /* Initialize a menu list header and copy its label glyphs from the table. */
 ADDRESS(0x8002ad6c, 0x8c)
-void menu_list_init(KfMenuList *list, s32 row, s32 column)
+void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row)
 {
     s32 i;
 
     list->title_x = 12;
     list->title_y = 19;
     for (i = 0; i < 10; i++) {
-        list->title_glyphs[i] = menu_window_layouts[row].rows[column].codes[i];
+        list->title_glyphs[i] = menu_window_layouts[KF_ENUM_ENCODE(s32, kind)].rows[row].codes[i];
     }
     list->list_x = 0x16;
     list->list_y = 0x26;

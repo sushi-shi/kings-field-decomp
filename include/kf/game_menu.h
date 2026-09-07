@@ -50,9 +50,26 @@ KF_ENUM_BEGIN(KfItemPriceMode, s32)
     KF_ITEM_PRICE_SELL = 1
 KF_ENUM_END(KfItemPriceMode)
 
+/* Indices in the window bank loaded from COM/STAT.DAT. */
+KF_ENUM_BEGIN(KfMenuWindowKind, s32)
+    KF_MENU_WINDOW_ROOT = 0,
+    KF_MENU_WINDOW_EQUIPMENT = 1,
+    KF_MENU_WINDOW_SYSTEM = 2,
+    /* Present in the resource; no confirmed caller selects this layout. */
+    KF_MENU_WINDOW_SAVE_LOAD = 3,
+    KF_MENU_WINDOW_SAVE = 4,
+    KF_MENU_WINDOW_LOAD = 5,
+    KF_MENU_WINDOW_CONFIG = 6,
+    KF_MENU_WINDOW_SHOP = 7
+KF_ENUM_END(KfMenuWindowKind)
+
+enum {
+    /* Includes the final zero-filled record. */
+    KF_MENU_WINDOW_LAYOUT_COUNT = 9
+};
+
 /* Rows in the loaded shop window; the gold row is not a menu choice. */
 enum {
-    KF_MENU_WINDOW_SHOP = 7,
     KF_SHOP_ROW_BUY = 0,
     KF_SHOP_ROW_SELL = 1,
     KF_SHOP_ROW_RETURN = 2,
@@ -227,7 +244,7 @@ enum {
 
 extern SVECTOR menu_item_preview_rotation;
 extern KfMenuAssets menu_assets;
-extern MenuWindowLayout menu_window_layouts[9];
+extern MenuWindowLayout menu_window_layouts[KF_MENU_WINDOW_LAYOUT_COUNT];
 extern MenuGlyphRow item_name_rows[80];
 extern MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
 extern u16 item_buy_prices[80][2];
@@ -258,7 +275,7 @@ extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
     s32 selected, s32 highlight);
-extern void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag);
+extern void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, s32 flag);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 count, s32 pad_zero, s16 *out);
@@ -267,7 +284,7 @@ extern u32 menu_enter_mode(KfMenuMode mode, ...);
 extern void menu_equip_select(KfEquipmentMenuCategory category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(s32 item_id);
-extern void menu_list_init(KfMenuList *list, s32 row, s32 column);
+extern void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row);
 extern KfMenuConfirmResult menu_list_interact(
     const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
     s32 item_id, u32 shop_id, KfItemPriceMode price_mode);
@@ -288,7 +305,7 @@ extern s32 menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);
 extern s32 menu_two_option_prompt(
-    s32 kind, s32 count, s32 highlight,
+    KfMenuWindowKind kind, s32 count, s32 highlight,
     const KfSaveSlotSummary *summaries);
 extern void talk_show_dialogue_page(u8 floor, u8 stage, s32 character_id, u8 page);
 

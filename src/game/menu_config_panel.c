@@ -47,13 +47,13 @@ void menu_config_panel(void)
 
     menu_frame_begin();
     menu_config_panel_draw(option_a, option_b, states);
-    menu_draw_window(6, 5, row, confirm);
+    menu_draw_window(KF_MENU_WINDOW_CONFIG, 5, row, confirm);
     menu_present_frame();
     do {
         if (confirm == 1 || phase == -1) {
             menu_frame_begin();
             menu_config_panel_draw(option_a, option_b, states);
-            menu_draw_window(6, 5, row, confirm);
+            menu_draw_window(KF_MENU_WINDOW_CONFIG, 5, row, confirm);
             menu_present_frame();
             while (PadRead(1) != 0) {
             }
@@ -99,7 +99,7 @@ void menu_config_panel(void)
             phase = -1;
         }
         menu_config_panel_draw(option_a, option_b, states);
-        menu_draw_window(6, 5, row, confirm);
+        menu_draw_window(KF_MENU_WINDOW_CONFIG, 5, row, confirm);
         menu_present_frame();
     } while (1);
 

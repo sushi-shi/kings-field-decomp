@@ -261,6 +261,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-class-titles.md](game-menu-class-titles.md): decoded SOLDIER/MAGE
   title grid, shared base-stat thresholds and atlas strides, and the complete
   [status-text literal ledger](game-menu-status-literal-ledger.md).
+- [game-menu-window-kinds.md](game-menu-window-kinds.md): decoded window layouts,
+  enum propagation through drawing/prompt/list APIs, and retained initializer
+  literals with their measured units.
 - [game-menu-drawing-layers.md](game-menu-drawing-layers.md): shared ordering
   buckets, passive-panel input-release timing, map scale and texture placements,
   with a complete [panel/map/list ledger](game-menu-panel-literal-ledger.md).

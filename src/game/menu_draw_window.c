@@ -5,18 +5,18 @@
 /*
  * Draw one menu window: an optional title label (drawn when the record's first
  * halfword is non-zero), then `count` selectable rows, then the shared
- * translucent backdrop for every window kind but 6.  The highlighted row
+ * translucent backdrop for every window kind but the configuration window.  The highlighted row
  * (index `highlight`) takes the confirmed-selection background when `flag` is
  * 1 and always gets the selection-cursor sprite overlaid.  Rows advance one
  * MenuGlyphString per step starting at the record's first row.
  */
 ADDRESS(0x80028914, 0x15c)
-void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
+void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, s32 flag)
 {
     const MenuWindowLayout *layout;
     s32 row;
 
-    layout = &menu_window_layouts[kind];
+    layout = &menu_window_layouts[KF_ENUM_ENCODE(s32, kind)];
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     if ((s16)layout->title.x != 0) {
         menu_blit_sprite_translucent(
@@ -40,7 +40,7 @@ void menu_draw_window(s32 kind, s32 count, s32 highlight, s32 flag)
             row++;
         } while (row < count);
     }
-    if (kind != 6) {
+    if (kind != KF_MENU_WINDOW_CONFIG) {
         menu_draw_window_backdrop();
     }
 }

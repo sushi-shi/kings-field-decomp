@@ -91,7 +91,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     codes[k] = KF_ITEM_NONE;
     k++;
 
-    menu_list_init(&ctx, 1, KF_ENUM_ENCODE(s32, category));
+    menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, category));
     ctx.entry_count = k;
     ctx.glyphs_per_entry = 10;
     ctx.glyph_rows = &labels[0][0];
@@ -254,7 +254,7 @@ void menu_spell_select(void)
     codes[k] = KF_MAGIC_NONE;
     k++;
 
-    menu_list_init(&ctx, 1, 1);
+    menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, 1);
     ctx.entry_count = k;
     ctx.glyphs_per_entry = 10;
     ctx.glyph_rows = &labels[0][0];

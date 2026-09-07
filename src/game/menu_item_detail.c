@@ -91,11 +91,11 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
 
     menu_blit_sprite_translucent(
         &menu_assets.row_background,
-        (const MenuPoint *)&menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD]);
-    menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD]);
+        (const MenuPoint *)&menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
+    menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
 
-    gs.x = menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD].x + 28;
-    gs.y = menu_window_layouts[KF_MENU_WINDOW_SHOP].rows[KF_SHOP_ROW_GOLD].y;
+    gs.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].x + 28;
+    gs.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].y;
     menu_format_number(player_state.gold, 6, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }

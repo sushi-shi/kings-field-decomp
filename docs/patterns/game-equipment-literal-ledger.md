@@ -5,7 +5,9 @@ after the [equipment domain audit](game-equipment-domains.md) and [shop price fo
 and extents are separate. Negative signs are operators, so -99 contributes
 one numeric token. Line numbers locate this source version.
 
-All **141 retained occurrences** have specific reasons.
+All **139 retained occurrences** have specific reasons.
+
+The [window-kind review](game-menu-window-kinds.md) names the two layout-selector literals.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -20,15 +22,14 @@ All **141 retained occurrences** have specific reasons.
 | `menu_equip_select` | 38 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
 | `menu_equip_select` | 40 | `99` | `s32 selection = -99;` | Pending-selection sentinel outside item/spell codes and cancellation -1; retained pending a shared list-result protocol audit. The choice of -99 is unproven. |
 | `menu_equip_select` | 42, 116 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
-| `menu_equip_select` | 76 | `0` | `k = 0;` | Start appending selected rows at the first workspace entry. |
 | `menu_equip_select` | 45 | `0` | `owned = item_stock[0];` | Player-owned stock bank zero, acquired after the release wait and before the category switch; its item index follows the category bounds. |
+| `menu_equip_select` | 77 | `0` | `k = 0;` | Start appending selected rows at the first workspace entry. |
 | `menu_equip_select` | 79 | `0` | `if (owned[i] != 0) {` | Any nonzero owned quantity includes that item in the selection list. |
 | `menu_equip_select` | 81 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
 | `menu_equip_select` | 87 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-shop-price-domains.md; atlas code 89. |
 | `menu_equip_select` | 88 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_equip_select` | 89 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_equip_select` | 90 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
-| `menu_equip_select` | 94 | `1` | `menu_list_init(&ctx, 1, KF_ENUM_ENCODE(s32, category));` | Menu-window layout 1 is the equipment title bank; its row index follows the menu category, not the player slot. |
 | `menu_equip_select` | 96 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
 | `menu_equip_select` | 97 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_equip_select` | 98 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
@@ -72,7 +73,7 @@ All **141 retained occurrences** have specific reasons.
 | `menu_spell_select` | 251 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_spell_select` | 252 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_spell_select` | 253 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
-| `menu_spell_select` | 257 | `1 × 2` | `menu_list_init(&ctx, 1, 1);` | Equipment title bank 1, row 1 for magic; positional layout indices at the shared widget boundary. |
+| `menu_spell_select` | 257 | `1` | `menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, 1);` | Row one of the named equipment window supplies the magic heading, matching equipment category MAGIC; the row remains an integer index in the generic label-copy API. |
 | `menu_spell_select` | 259 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
 | `menu_spell_select` | 260 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_spell_select` | 261 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |

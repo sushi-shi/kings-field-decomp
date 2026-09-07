@@ -36,7 +36,7 @@ void menu_drop_item(void)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, 0, 4);
+    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, 4);
 
     found = 0;
     code = 0;
@@ -176,7 +176,7 @@ s32 menu_save_load_hub(void)
     for (;;) {
         if (action != -1 || result == action) {
             menu_frame_begin();
-            menu_draw_window(2, 3, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_SYSTEM, 3, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
@@ -189,14 +189,14 @@ s32 menu_save_load_hub(void)
                 result = -3;
             break;
         case 1:
-            result = menu_two_option_prompt(2, 3, cursor, 0);
+            result = menu_two_option_prompt(KF_MENU_WINDOW_SYSTEM, 3, cursor, 0);
             if (result == 0) {
                 menu_load_item_texture(0x3e6);
                 audio_stop_sequence_fade();
                 for (;;) {
                     menu_frame_begin();
                     menu_add_frame_quad();
-                    menu_draw_window(2, 3, cursor, confirm);
+                    menu_draw_window(KF_MENU_WINDOW_SYSTEM, 3, cursor, confirm);
                     menu_present_frame();
                 }
             }
@@ -240,7 +240,7 @@ s32 menu_save_load_hub(void)
         }
 
         menu_frame_begin();
-        menu_draw_window(2, 3, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_SYSTEM, 3, cursor, confirm);
         menu_present_frame();
     }
     return result;
@@ -273,7 +273,7 @@ s32 menu_save_panel(void)
             menu_frame_begin();
             menu_add_frame_quad();
             menu_draw_dialog_frame(summaries, cursor);
-            menu_draw_window(4, 5, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
             menu_present_frame();
         }
         menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -286,7 +286,7 @@ s32 menu_save_panel(void)
         if (confirm == 1 || result == -1) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, cursor);
-            menu_draw_window(4, 5, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
@@ -301,7 +301,7 @@ s32 menu_save_panel(void)
                         menu_frame_begin();
                         menu_add_frame_quad();
                         menu_draw_dialog_frame(summaries, cursor);
-                        menu_draw_window(4, 5, cursor, confirm);
+                        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
                         menu_present_frame();
                     }
                 }
@@ -310,7 +310,7 @@ s32 menu_save_panel(void)
                     ;
             }
 
-            result = menu_two_option_prompt(4, 5, cursor, summaries);
+            result = menu_two_option_prompt(KF_MENU_WINDOW_SAVE, 5, cursor, summaries);
             if (result == -1) {
                 result = -99;
             } else {
@@ -320,7 +320,7 @@ s32 menu_save_panel(void)
                         menu_frame_begin();
                         menu_add_frame_quad();
                         menu_draw_dialog_frame(summaries, cursor);
-                        menu_draw_window(4, 5, cursor, confirm);
+                        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
                         menu_present_frame();
                     }
                     status = save_system_write_slot(cursor + 1);
@@ -330,7 +330,7 @@ s32 menu_save_panel(void)
                         menu_frame_begin();
                         menu_add_frame_quad();
                         menu_draw_dialog_frame(summaries, cursor);
-                        menu_draw_window(4, 5, cursor, confirm);
+                        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
                         menu_present_frame();
                     }
                     status = memory_card_check_or_format(1);
@@ -342,7 +342,7 @@ s32 menu_save_panel(void)
                         menu_frame_begin();
                         menu_add_frame_quad();
                         menu_draw_dialog_frame(summaries, cursor);
-                        menu_draw_window(4, 5, cursor, confirm);
+                        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
                         menu_present_frame();
                     }
                     menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -385,7 +385,7 @@ s32 menu_save_panel(void)
 
         menu_frame_begin();
         menu_draw_dialog_frame(summaries, cursor);
-        menu_draw_window(4, 5, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, cursor, confirm);
         menu_present_frame();
     }
     return result;
@@ -416,7 +416,7 @@ s32 menu_load_panel(void)
             menu_frame_begin();
             menu_add_frame_quad();
             menu_draw_dialog_frame(summaries, cursor);
-            menu_draw_window(5, 4, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_LOAD, 4, cursor, confirm);
             menu_present_frame();
         }
         menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -429,14 +429,14 @@ s32 menu_load_panel(void)
         if (confirm == 1 || result == -1) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, cursor);
-            menu_draw_window(5, 4, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_LOAD, 4, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
         }
 
         if (confirm == 1 && cursor != 3) {
-            result = menu_two_option_prompt(5, 4, cursor, summaries);
+            result = menu_two_option_prompt(KF_MENU_WINDOW_LOAD, 4, cursor, summaries);
             if (result == -1) {
                 result = -99;
             } else {
@@ -445,7 +445,7 @@ s32 menu_load_panel(void)
                     menu_frame_begin();
                     menu_add_frame_quad();
                     menu_draw_dialog_frame(summaries, cursor);
-                    menu_draw_window(5, 4, cursor, confirm);
+                    menu_draw_window(KF_MENU_WINDOW_LOAD, 4, cursor, confirm);
                     menu_present_frame();
                 }
                 if (save_system_read_slot(cursor + 1) != 1) {
@@ -453,7 +453,7 @@ s32 menu_load_panel(void)
                         menu_frame_begin();
                         menu_add_frame_quad();
                         menu_draw_dialog_frame(summaries, cursor);
-                        menu_draw_window(5, 4, cursor, confirm);
+                        menu_draw_window(KF_MENU_WINDOW_LOAD, 4, cursor, confirm);
                         menu_present_frame();
                     }
                     menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -500,7 +500,7 @@ s32 menu_load_panel(void)
 
         menu_frame_begin();
         menu_draw_dialog_frame(summaries, cursor);
-        menu_draw_window(5, 4, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_LOAD, 4, cursor, confirm);
         menu_present_frame();
     }
     return result;

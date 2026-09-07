@@ -15,7 +15,7 @@ DATA(0x800580e8, 0x390)
 KfMenuAssets menu_assets;
 
 DATA(0x80058478, 0x948)
-MenuWindowLayout menu_window_layouts[9];
+MenuWindowLayout menu_window_layouts[KF_MENU_WINDOW_LAYOUT_COUNT];
 
 DATA(0x80058dc0, 0x640)
 MenuGlyphRow item_name_rows[80];

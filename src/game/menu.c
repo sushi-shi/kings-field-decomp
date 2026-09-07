@@ -24,7 +24,7 @@ void menu_save_confirm(void)
         i++;
         menu_frame_begin();
         menu_draw_dialog_frame(0, 3);
-        menu_draw_window(4, 5, 0, 0);
+        menu_draw_window(KF_MENU_WINDOW_SAVE, 5, 0, 0);
         menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -56,7 +56,7 @@ s32 menu_root(void)
         i++;
         menu_frame_begin();
         menu_draw_stats_header();
-        menu_draw_window(0, 8, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_ROOT, 8, cursor, confirm);
         menu_present_frame();
     } while (i < 3);
     menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -67,7 +67,7 @@ s32 menu_root(void)
         if (selection != -1 || result == selection) {
             menu_frame_begin();
             menu_draw_stats_header();
-            menu_draw_window(0, 8, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_ROOT, 8, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
@@ -135,7 +135,7 @@ s32 menu_root(void)
         }
         menu_frame_begin();
         menu_draw_stats_header();
-        menu_draw_window(0, 8, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_ROOT, 8, cursor, confirm);
         menu_present_frame();
     }
 }
@@ -165,7 +165,7 @@ s32 menu_use_item_panel(void)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, 0, 0);
+    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, 0);
 
     inv = item_stock[0];
     found = 0;

@@ -36,7 +36,7 @@ s32 menu_magic_panel(void)
 
     while (PadRead(1) != 0)
         ;
-    menu_list_init(&ctx, 0, 1);
+    menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, 1);
 
     found = 0;
     for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
@@ -172,14 +172,14 @@ void menu_option_root(void)
 
     menu_frame_begin();
     menu_draw_name_list();
-    menu_draw_window(1, 9, 0, 0);
+    menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, 9, 0, 0);
 
     for (;;) {
         menu_present_frame();
         if (selection != -1 || result == selection) {
             menu_frame_begin();
             menu_draw_name_list();
-            menu_draw_window(1, 9, cursor, confirm);
+            menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, 9, cursor, confirm);
             menu_present_frame();
             while (PadRead(1) != 0)
                 ;
@@ -234,6 +234,6 @@ void menu_option_root(void)
             result = -1;
         }
         menu_draw_name_list();
-        menu_draw_window(1, 9, cursor, confirm);
+        menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, 9, cursor, confirm);
     }
 }
