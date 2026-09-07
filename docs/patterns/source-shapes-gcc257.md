@@ -208,11 +208,15 @@ Shapes settled while reconstructing `src/game/actor.c` (band
 
 Open residues (not steered):
 
-- `actor_apply_damage`, `actor_pool_apply_radial_damage`,
+- `actor_pool_apply_radial_damage`,
   `actor_pool_find_overlap`, `actor_try_attack_player`,
   `actor_play_sound_at_phase`: retail hoists argument-register copies
   (`move a1,s3`, `move s2,a0`) above independent loads; the 2.5.7 probe keeps
   them adjacent to their call or use.
+- `actor_apply_damage`: subsequently closed by the
+  [boss guard, shared-exit and rounded-value corrections](game-actor-damage-exits.md).
+  The zero-health guard belongs only to floor 5 / definition 7, not all actors.
+  The former argument-scheduling description was not a sufficient diagnosis.
 - `actor_try_select_*`: retail keeps every
   prologue register save together and loads the current actor into `s1`
   afterwards; the probe schedules that load right after the `s1` save.

@@ -303,12 +303,13 @@ void actor_apply_damage(
     s32 health;
     s32 remaining;
 
-    if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7
-        && map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
-        return;
-    }
-    if (actor->health == 0) {
-        return;
+    if (player_state.progress_state.current_floor == 5 && actor->definition_id == 7) {
+        if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+            return;
+        }
+        if (actor->health == 0) {
+            return;
+        }
     }
     if (actor->action == KF_ACTOR_ACTION_DYING && actor->animation_phase >= 1548) {
         return;
@@ -336,12 +337,12 @@ void actor_apply_damage(
         base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         component4 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[4] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
-    damage = (damage + ACTOR_DAMAGE_SUBUNITS_PER_HP / 2) / ACTOR_DAMAGE_SUBUNITS_PER_HP;
-    damage = damage * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
+    damage += ACTOR_DAMAGE_SUBUNITS_PER_HP / 2;
+    damage = (damage / ACTOR_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
+    hit_flags &= KF_ACTOR_DAMAGE_CREDIT_MASK;
     if (damage == 0) {
         return;
     }
-    hit_flags &= KF_ACTOR_DAMAGE_CREDIT_MASK;
     if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
         if (component0 == 0 && component1 == 0 && component2 == 0) {
             player_increment_magic_training();
@@ -355,17 +356,17 @@ void actor_apply_damage(
     }
     health = actor->health;
     remaining = health - damage;
-    if (remaining > 0) {
-        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION] != KF_ACTOR_ANIMATION_NONE) {
-            actor_set_action(actor, KF_ACTOR_ACTION_HIT_REACTION);
-        }
-    } else {
+    if (remaining <= 0) {
         remaining = 0;
         if (health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
             player_add_experience(definition->experience_reward);
         }
         if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
             actor_set_action(actor, KF_ACTOR_ACTION_DYING);
+        }
+    } else {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION] != KF_ACTOR_ANIMATION_NONE) {
+            actor_set_action(actor, KF_ACTOR_ACTION_HIT_REACTION);
         }
     }
     actor->health = remaining;
