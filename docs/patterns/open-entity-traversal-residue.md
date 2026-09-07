@@ -1,5 +1,27 @@
 # OPEN visible entity/item traversal
 
+## Function Match Plan: material tpage base lifetime (`codex/open-10-functions`)
+
+OPEN `80019240`, 664 bytes, began at strict 96.759030%. All six semantic views,
+the complete 25-block CFG, sole exact scene-frame caller, renderer neighbors,
+SDK provider boundary, layouts and history were rechecked. The four calls,
+fifteen validated address pairs, signed countdowns, halfword-wrapped window
+coordinates and checked signed divisions remain unchanged. This is authored
+visibility/material policy, not the independently attributed SetLightMatrix
+provider.
+
+Retail retains the address of `floor_item_state.material.tpage` across the
+selector copy and then derives the item record and X-coordinate cursors at
++22 and +26. The probe instead retained `material.color.r`, derived +20/+24,
+and rematerialized tpage. Preparing an ordinary `u16 *` to the real tpage
+member before the chained color initialization recovers the complete retail
+material-address sequence. Strict objdiff rises to **98.885544%** and the
+candidate contracts from 668 to the retail 664 bytes. The remaining first
+divergence is the item-row/window load schedule; calls, CFG and referents stay
+correct. Split row statements, word-width wrapping, local declaration order,
+GAME-style loop spelling and later/independent member pointers were tested and
+rejected. The partial function is not banked.
+
 ## Function Match Plan: current-window local at `11552f7`
 
 Refresh the six OPEN views and full 664-byte body, sole scene-0 caller,

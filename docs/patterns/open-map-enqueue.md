@@ -1,5 +1,24 @@
 # OPEN map polygon emission
 
+## Exact closure: header declaration lifetime (`codex/open-10-functions`)
+
+OPEN `800185e8`, 952 bytes, began this pass at strict 99.978990%. The six
+image-qualified semantic views, full CFG, sole map-cell caller, neighboring
+emitters, source history, SDK boundaries and current object comparison were
+refreshed. Its `u16` object index, 18 calls, two validated data pairs, one
+internal jump, two packet modes, clipping/depth guards and 80-byte frame all
+already agreed. LIBGTE/LIBGPU callees remain separately attributed; the custom
+packet traversal is game code. Exactly five words differed: retail assigned
+the real packet header to sp+24 and normal-stream pointer to sp+32, while the
+probe assigned those same two live values to the opposite slots.
+
+The focused hypothesis declares the packet header before constructing the
+normal-stream pointer. This reflects their source roles without changing a
+type, expression, lifetime, call, branch, referent or adding storage. A
+TU-only `kf try` produced an identical listing; strict `kf match` confirms
+**100.000000%**, with all 952 bytes and relocations exact. OPEN moved from
+98/108 to 99/108 exact, and only this function was banked.
+
 ## Function Match Plan: mode-discriminated output pointer (`6a25ae8`)
 
 OPEN `800185e8` remains 952 bytes, strict 99.663864%, with five normal/header

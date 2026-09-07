@@ -155,6 +155,7 @@ void opening_render_entities_and_items(void)
     u16 origin_x = (u16)open_graphics_runtime.render_state.view_cell.x - window->origin_x;
     KfOpeningEntity *entity;
     KfFloorItem *item;
+    u16 *material_tpage;
     s16 remaining;
 
     tmd_select(KF_TMD_SLOT_ENTITIES);
@@ -176,9 +177,10 @@ void opening_render_entities_and_items(void)
     }
 
     SetLightMatrix(&floor_item_light_matrix);
+    material_tpage = &open_graphics_runtime.floor_item_state.material.tpage;
     open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
         open_graphics_runtime.floor_item_state.material.color.b = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    open_graphics_runtime.floor_item_state.material.tpage = open_graphics_runtime.floor_item_state.texture_tpage;
+    *material_tpage = open_graphics_runtime.floor_item_state.texture_tpage;
     open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
     item = open_graphics_runtime.floor_item_state.items;
     remaining = open_graphics_runtime.floor_item_state.count;

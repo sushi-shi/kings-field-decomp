@@ -18,6 +18,7 @@ ADDRESS(0x800185e8, 0x3b8)
 void render_enqueue_map(u16 object_index)
 {
     KfTmdObject *object = tmd_get_object(object_index);
+    u32 header;
     u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
         (object->normal_offset + KF_TMD_HEADER_BYTES);
     u8 *packet;
@@ -27,7 +28,6 @@ void render_enqueue_map(u16 object_index)
     KfScreenVertex *vertex3;
     CVECTOR shade;
     u32 remaining;
-    u32 header;
 
     tmd_project_vertices(object->vertex_count);
     remaining = object->primitive_count;
