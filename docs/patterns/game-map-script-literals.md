@@ -1,5 +1,9 @@
 # GAME floor-script literal audit
 
+The [motion and interaction follow-up](game-map-script-motion-constants.md)
+names 26 further numeric uses and refreshes the complete ledger to 246
+occurrences. Counts and verification below describe this earlier campaign.
+
 ## Function Match Plan
 
 Starting at `a1f9e05`, audit the complete `map_scripts.c` module, including

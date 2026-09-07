@@ -1,5 +1,10 @@
 # Source constant naming
 
+The [floor-script motion review](game-map-script-motion-constants.md) names
+fade and rotation steps, transform heights, camera bounds, sound mixing and
+interaction-query distances. It replaces 26 inline uses and refreshes the
+complete sixteen-function ledger to 246 numeric/character occurrences.
+
 The [map-event motion follow-up](game-map-event-motion-constants.md) names
 wandering turn/vector parameters, random extraction, cone ranking, sound
 distances and restored drop-position scaling. It replaces twelve inline uses
