@@ -12,7 +12,6 @@
 #include <kf/game_types.h>
 #include <kf/psyq.h>
 
-extern u8 DAT_80055afc[];
 extern u32 DAT_80057d24;
 extern u32 DAT_80095698;
 extern u32 DAT_8009569c;

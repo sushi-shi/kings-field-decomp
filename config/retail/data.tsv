@@ -2633,17 +2633,9 @@ GAME.EXE	0x800558b8	0x440b8	0x1fe	defined	reviewed	map_cell_attribute_height_tab
 GAME.EXE	0x80055ab6	0x442b6	0x2	unclassified	reviewed			manual:game_collision_attribute_data	zero halfword between consumed height entries and rectangle records; unused element versus alignment remains unresolved
 GAME.EXE	0x80055ab8	0x442b8	0x38	defined	reviewed	map_cell_height_records	KfCellHeightRecord[7]	manual:game_collision_attribute_data	seven four-s16 rectangles selected by nonnegative height entries; complete 8-byte field family and selectors 0..6
 GAME.EXE	0x80055af0	0x442f0	0xc	defined	reviewed	map_resource_path	char[12]	manual:game_semantic_map_resources	mutable B0\\ path; floor digit is byte one and a filename of at most nine bytes including NUL begins at byte three
-GAME.EXE	0x80055afc	0x442fc	0x95	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055b91	0x44391	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0//4
-GAME.EXE	0x80055b95	0x44395	0x13	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055ba8	0x443a8	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 0`//
-GAME.EXE	0x80055bac	0x443ac	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055bb4	0x443b4	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: `0//
-GAME.EXE	0x80055bb8	0x443b8	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055bc0	0x443c0	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: 00//
-GAME.EXE	0x80055bc4	0x443c4	0x8	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80055bcc	0x443cc	0x4	string	byte-pattern		ascii	investigation:string-census	escaped text: ``//
-GAME.EXE	0x80055bd0	0x443d0	0x8c	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80055afc	0x442fc	0x4	unclassified	reviewed			manual:game-entity-sprite-tables	four zero bytes before the floor-sprite table; no reviewed consumer or padding ownership
+GAME.EXE	0x80055b00	0x44300	0x54	defined	reviewed	floor_item_sprites	KfSpriteQuad[7]	manual:game-entity-sprite-tables	seven logical floor descriptors identical to OPEN; normal animation selectors proven by all five floor resources; initial random-frame bounds remain an original-code limitation
+GAME.EXE	0x80055b54	0x44354	0x108	defined	reviewed	effect_billboard_sprites	KfSpriteQuad[22]	manual:game-entity-sprite-tables	twenty-two twelve-byte effect descriptors; constructor seed 19 and three-frame dispatch reach final row; former byte-pattern strings are texture coordinates
 GAME.EXE	0x80055c5c	0x4445c	0xc4	data	reviewed	hud_sprites	KfHudSprite[14]	manual:game_semantic_hud_sprites	thirteen initialized HUD gauge/status sprite rows followed by a 0xff sentinel row; consumed by render_hud_gauges and updated by render_frame
 GAME.EXE	0x80055d20	0x44520	0x54	data	reviewed	notification_sprites	KfNotificationSprite[6]	manual:game_semantic_notification_sprites	six initialized 14-byte notification sprite descriptors consumed by notify_effect_update and render_frame
 GAME.EXE	0x80055d74	0x44574	0x38	data	reviewed	effect_sprites	KfEffectSprite[2]	manual:game_semantic_effect_sprites	one initialized live sprite followed by a zeroed 0xff terminator record; 28-byte runtime stride proven by render_effect_sprites

@@ -875,6 +875,12 @@ names these cached globals and recovers two SDK palette records. It decodes
 `7a40` as CLUT `(0,489)` and `1c` as the 4-bit page `(768,256)`, and documents
 all eight retained coordinate/dimension literals in the palette initializers.
 
+The [entity sprite-table campaign](game-entity-sprite-tables.md) replaces the
+raw descriptor offsets/stride with two typed owners, names the shared packed
+facing/count constants and three depth biases, and corrects `screen_scale` to
+`depth_bias`. Its ledger explains the authored descriptor components, remaining
+entity-renderer literals and the loader's unmasked initial-frame calculation.
+
 This completes the literal audit of GAME `render.c` and
 `display_play_transition.c` and OPEN `opening_fade.c`. Their remaining
 inline values have these specific roles:

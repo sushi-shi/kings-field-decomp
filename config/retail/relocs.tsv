@@ -3453,7 +3453,7 @@ GAME.EXE	0x8001ee48	0xd648		mips26	reachable-code	0x8004d784	load	SetRotMatrix	j
 GAME.EXE	0x8001ee50	0xd650		mips26	reachable-code	0x8001ee64	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ee58	0xd658		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ee64	0xd664		mips26	reachable-code	0x8004d814	load	SetTransMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001ee8c	0xd68c	0x8001ee90	mips_hi16_lo16	reachable-code	0x80055b00	load		lui+addiu	v0	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001ee8c	0xd68c	0x8001ee90	mips_hi16_lo16	reachable-code	0x80055b00	load	floor_item_sprites	lui+addiu	v0	paired-reviewed	reviewed	manual:game-entity-sprite-tables
 GAME.EXE	0x8001ee94	0xd694		mips26	reachable-code	0x8001e230	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001ef08	0xd708	0x8001ef0c	mips_hi16_lo16	reachable-code	0x800956a0	bss	render_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_geometry_render
 GAME.EXE	0x8001ef10	0xd710		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
@@ -3468,7 +3468,7 @@ GAME.EXE	0x8001efa8	0xd7a8		mips26	reachable-code	0x8004d53c	load		jal		control-
 GAME.EXE	0x8001efc4	0xd7c4		mips26	reachable-code	0x8004d11c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001efcc	0xd7cc		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001efd4	0xd7d4		mips26	reachable-code	0x8004d814	load	SetTransMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001eff4	0xd7f4	0x8001eff8	mips_hi16_lo16	reachable-code	0x80055b54	load		lui+addiu	v0	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8001eff4	0xd7f4	0x8001eff8	mips_hi16_lo16	reachable-code	0x80055b54	load	effect_billboard_sprites	lui+addiu	v0	paired-reviewed	reviewed	manual:game-entity-sprite-tables
 GAME.EXE	0x8001effc	0xd7fc		mips26	reachable-code	0x8001e230	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f004	0xd804		mips26	reachable-code	0x8001f0a8	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f00c	0xd80c		mips26	reachable-code	0x8004d11c	load		jal		control-flow	candidate	investigation:relocs.tsv

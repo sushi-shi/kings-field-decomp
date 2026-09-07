@@ -762,10 +762,10 @@ void render_enqueue_map(u16 object_index)
  * corners are projected through the GTE, the primitive's colour is the light
  * normal shade depth-cued by the projected perspective term (optionally scaled
  * by 1.5 when flag selects it), and it sorts into the ordering table at the
- * projected depth biased by the caller's screen_scale.
+ * projected depth biased by the caller's depth_bias.
  */
 ADDRESS(0x8001e230, 0x250)
-void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
+void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag)
 {
     SVECTOR corners[4];
     SVECTOR anchor;
@@ -812,9 +812,9 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag)
     /* WIP graphics ownership: retail derives the CVECTOR from CLUT + 4 bytes. */
     NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&active_render_clut + 2), p,
                    (CVECTOR *)&prim->r0);
-    if (otz + screen_scale >= KF_SCENE_MIN_OT_DEPTH) {
+    if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
-            &display_state.ordering_table[(otz + screen_scale) & KF_ORDERING_TABLE_INDEX_MASK],
+            &display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
             prim);
     }
 }

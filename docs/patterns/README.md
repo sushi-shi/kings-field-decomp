@@ -18,6 +18,9 @@ promotes a probe to a proven historical toolchain.
 - [game-magic-learning-state.md](game-magic-learning-state.md): byte learning
   enum propagated through runtime records and saves, exact-one versus nonzero
   predicates, and the retail resource's initial learning state.
+- [game-entity-sprite-tables.md](game-entity-sprite-tables.md): typed floor-item
+  and effect descriptor tables, packed facing/count constants, depth-bias
+  names, and the retail initial-frame bounds limitation.
 - [game-render-material-identities.md](game-render-material-identities.md): HUD,
   notification and floor-item material names; SDK palette records and their
   ownership evidence.

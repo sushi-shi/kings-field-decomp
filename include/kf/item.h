@@ -81,6 +81,16 @@ enum {
     KF_ITEM_NONE = 0xff
 };
 
+/* High nibble: zero billboard or biased quarter-turn facing; low: frame count. */
+enum {
+    KF_FLOOR_ITEM_FACING_MASK = 0xf0,
+    KF_FLOOR_ITEM_FACING_ZERO_YAW = 0x10,
+    KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT = 6,
+    KF_FLOOR_ITEM_FRAME_COUNT_MASK = 0x0f,
+    KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS = 150,
+    KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS = 200
+};
+
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
  * stream, and the runtime floor-item entry (24 bytes) the loader expands it

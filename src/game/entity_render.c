@@ -10,15 +10,46 @@
  * sweep (render_entities).  Each transforms one live entry into view space, binds
  * the matching asset, and hands the result to the shared sprite/model draw
  * helpers.
- *
- * WIP: the sprite descriptor tables in the 0x80055afc load-data blob retain
- * byte views until their enclosing owner is reconstructed.
  */
 
-/*
- * Sprite-descriptor blob; ed90 indexes the 12-byte records four bytes in and
- * eedc's billboard path indexes them 0x58 bytes in.
- */
+enum { EFFECT_MODEL_DEPTH_BIAS = 100 };
+
+DATA(0x80055b00, 0x54)
+KfSpriteQuad floor_item_sprites[7] = {
+    {0x90, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0xb0, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0xd0, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0xb0, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0x90, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+    {0xb0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+    {0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+};
+
+DATA(0x80055b54, 0x108)
+KfSpriteQuad effect_billboard_sprites[22] = {
+    {0x0, 0x0, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0x30, 0x0, 0x2f, 0x2f, 0xfde7, 0xfde7, 0x433, 0x433},
+    {0x30, 0x0, 0x2f, 0x2f, 0xfd74, 0xfd74, 0x519, 0x519},
+    {0x60, 0x0, 0x2f, 0x2f, 0xfd4d, 0xfd4d, 0x566, 0x566},
+    {0x60, 0x0, 0x2f, 0x2f, 0xfd3a, 0xfd3a, 0x58c, 0x58c},
+    {0x0, 0x30, 0x2f, 0x2f, 0xfe34, 0xfe34, 0x399, 0x399},
+    {0x0, 0x60, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0x30, 0x60, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0x60, 0x30, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0x30, 0x30, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0x60, 0x60, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0xe0, 0x48, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
+    {0xe0, 0x76, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
+    {0xe0, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
+    {0xe0, 0x48, 0x17, 0x5c, 0xfed4, 0xec78, 0x258, 0x1388},
+    {0xe0, 0x76, 0x17, 0x5c, 0xfed4, 0xec78, 0x258, 0x1388},
+    {0xe0, 0xa2, 0x17, 0x5c, 0xfed4, 0xec78, 0x258, 0x1388},
+    {0x0, 0x90, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0x30, 0x90, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},
+    {0xc8, 0x48, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
+    {0xc8, 0x76, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
+    {0xc8, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
+};
 
 /*
  * Emits one floor decoration.  The record's world position is carried into the
@@ -36,7 +67,7 @@ void render_floor_item(KfFloorItem *item)
     u8 facing;
     u32 next_frame;
     u32 frame_count;
-    s16 screen_scale;
+    s16 depth_bias;
 
     SetRotMatrix(&render_state.view_matrix);
     SetTransMatrix(&render_state.view_matrix);
@@ -44,25 +75,26 @@ void render_floor_item(KfFloorItem *item)
     screen.vy = (u16)item->position_y - (u16)render_state.view_position.vy;
     screen.vz = (u16)item->position_z - (u16)render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    facing = item->facing_and_frame_count & 0xf0;
+    facing = item->facing_and_frame_count & KF_FLOOR_ITEM_FACING_MASK;
     if (facing != 0) {
-        matrix_set_rotation_y((facing - 16) << 6, &model);
+        matrix_set_rotation_y(
+            (facing - KF_FLOOR_ITEM_FACING_ZERO_YAW) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
+            &model);
         MulMatrix2(&render_state.view_matrix, &model);
         SetRotMatrix(&model);
-        screen_scale = 0x96;
+        depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
     } else {
         SetRotMatrix(&render_state.pitch_matrix);
-        screen_scale = 0xc8;
+        depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
     }
     SetTransMatrix(&model);
     render_enqueue_sprite(
-        (KfSpriteQuad *)&DAT_80055afc[
-            4 + (item->item_id + item->animation_frame) * 12],
-        screen_scale, 1);
+        &floor_item_sprites[item->item_id + item->animation_frame],
+        depth_bias, 1);
     next_frame = item->animation_frame + 1;
     frame_count = item->facing_and_frame_count;
     item->animation_frame = next_frame;
-    if ((next_frame & 0xff) >= (frame_count & 0xf)) {
+    if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {
         item->animation_frame = 0;
     }
 }
@@ -102,7 +134,7 @@ void render_actor_sprite(KfEffectRenderView *sprite)
         MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        render_enqueue_sprite((KfSpriteQuad *)&DAT_80055afc[0x58 + sprite->sprite_id * 12], 0, 0);
+        render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, 0);
     } else {
         MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
         SetRotMatrix(&model);
@@ -118,6 +150,6 @@ void render_actor_sprite(KfEffectRenderView *sprite)
         } else {
             tmd_project_vertices(object->vertex_count);
         }
-        render_enqueue_tmd(0, 100);
+        render_enqueue_tmd(0, EFFECT_MODEL_DEPTH_BIAS);
     }
 }

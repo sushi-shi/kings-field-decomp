@@ -105,6 +105,8 @@ extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern const KfCellWindow *active_cell_window;
 extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];
+extern KfSpriteQuad floor_item_sprites[7];
+extern KfSpriteQuad effect_billboard_sprites[22];
 extern KfEffectSprite effect_sprites[2];
 extern KfHudSprite hud_sprites[14];
 extern MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
@@ -158,7 +160,7 @@ extern void render_effect_sprites(void);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_enqueue_map(u16 object_index);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias);
-extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 screen_scale, s32 flag);
+extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, s32 flag);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_entities(void);
 extern void render_frame(

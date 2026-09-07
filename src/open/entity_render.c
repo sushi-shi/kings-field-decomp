@@ -115,15 +115,17 @@ void render_floor_item(KfFloorItem *item)
     screen.vy = (u16)item->position_y - (u16)open_graphics_runtime.render_state.view_position.vy;
     screen.vz = (u16)item->position_z - (u16)open_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    facing = item->facing_and_frame_count & 0xf0;
+    facing = item->facing_and_frame_count & KF_FLOOR_ITEM_FACING_MASK;
     if (facing != 0) {
-        matrix_set_rotation_y((facing - 16) << 6, &model);
+        matrix_set_rotation_y(
+            (facing - KF_FLOOR_ITEM_FACING_ZERO_YAW) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
+            &model);
         MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
-        depth_bias = 150;
+        depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
     } else {
         SetRotMatrix(&open_graphics_runtime.render_state.pitch_matrix);
-        depth_bias = 200;
+        depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
     }
     SetTransMatrix(&model);
     render_enqueue_sprite(
@@ -131,7 +133,7 @@ void render_floor_item(KfFloorItem *item)
     next_frame = item->animation_frame + 1;
     frame_count = item->facing_and_frame_count;
     item->animation_frame = next_frame;
-    if ((next_frame & 0xff) >= (frame_count & 0xf)) {
+    if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {
         item->animation_frame = 0;
     }
 }
