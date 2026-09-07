@@ -15,6 +15,10 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [map-image-groups.md](map-image-groups.md): typed signboard/inscription image
+  groups, the shop sequence index and current map-script ledger reconciliation.
+- [game-render-setup-literal-ledger.md](game-render-setup-literal-ledger.md):
+  complete retained-literal accounting for GAME renderer setup and frame resets.
 - [game-effect-update-constants.md](game-effect-update-constants.md): effect
   motion, collision/audio units, typed helper boundaries and the complete
   [105-occurrence remainder ledger](game-effect-update-literal-ledger.md).

@@ -1,90 +1,42 @@
 # Source literal coverage map
 
-Working snapshot after the [small-module review](small-module-literal-ledger.md):
-**111 C files**, **112 source/image variants**,
-and **6,105 inline numeric/character occurrences**. The counts include authored
+Working snapshot after the [map image-group review](map-image-groups.md):
+**111 C files**, **112 source/image variants**, and
+**6,102 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
-counts**. Vendor sources remain listed for source coverage, not game progress.
-
-This map makes the scope of earlier work visible. A ledger link means that the
-file or one of its functions has an explicit ledger reference; it does not
-prove that every current occurrence has a valid reason. Several ledgers are
-focused or historical. Domain notes explain shared contracts and retained
-classes, but require a scope check before claiming complete file coverage.
-Zero means no retained literal tokens under this census; it says nothing about
-function matching or completeness of semantic identities.
+counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **109 files / 5,724 occurrences**, the explicit ledger rows were compared
+For **all 111 files / 6,102 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
-each row has a reason. Line-number drift is excluded from the comparison; source
-expressions and multiplicity establish content coverage. These files are marked
-below. This validates retained-literal accounting, not proof that every possible
-semantic improvement has been exhausted.
-This includes the reviewed warp forwarding wrapper, which has zero retained
-literal occurrences.
-The actor culling review names seven literal uses, reconciles two existing
-ledgers and adds complete six-occurrence coverage for the actor pool.
-The collision reconciliation verifies 322 already-documented occurrences across
-four files and corrects the omitted actor jump consumer of the height table.
-The menu confirmation review names 67 raw state occurrences and verifies the
-remaining 265 occurrences across four more menu files. The save-result review
-names another 20 values in those reviewed modules and the save system, bringing
-the current root/list/save ledger to 259 occurrences. `map_scripts.c` remains
-excluded until its rows and referent evidence are reconciled. The lighting/fade
-review adds complete accounting for 117 occurrences across three files; their
-palette data, null arguments and arithmetic origins remain literal with
-individual reasons. The palette-domain review promotes the twelve named GAME/OPEN
-selectors into distinct enum types and retains the same literal counts. The
-overlay-mode review adds complete accounting for 154 OPEN renderer initializer
-occurrences while typing the mode flow across GAME, PSX and OPEN.
-The visibility-domain review names 169 fixed-window classes and four hidden-cell
-predicates, adds complete 30-occurrence map-cell accounting, and types the shared
-GAME/OPEN grid and system-screen selector. Compilation and match verification
-are deferred until the naming pass finishes; ledger coverage is a source-content
-audit only. The sprite cue/TMD-slot review names eight mode values and adds
-complete 23-occurrence OPEN sprite accounting, with the same deferred-build policy.
-The notification sprite-state review names 27 visibility values and propagates
-the byte enum through all six rows and their producer/renderer. The census also
-corrects the OPEN render module to 19 occurrences for its current TMD loop form.
-The quad color review replaces 35 component indices with RGB fields, removes
-three redundant color extents and adds complete fade/quad coverage. The
-rectangle review then replaces 48 position-component indices, five array
-extents and nine scene cursor/index literals with typed fields and traversal.
-Current fade/quad coverage is 59 occurrences; all six changed C files retain
-complete accounting, including the now literal-free G4 module. The ending
-scroll review then gives the enable state and four cadence ticks distinct enum
-domains, replacing ten control-value occurrences with named values and retaining
-one documented unit decrement: nine fewer inline literals. The renderer review
-names the fixed HUD sprite layer and adds complete accounting for another
-403 occurrences across seven files, including all 232 authored floor/effect
-sprite descriptor components and the TMD averaging formulas. The small-module
-review names both initial-frame random shifts, replaces two menu argument-home
-offsets with type-derived offsets and adds 59 retained-occurrence rows across
-nine more sources. Only `game/render.c` and `game/map_scripts.c` remain outside
-complete per-file literal accounting; unresolved semantic field identities and
-further domain propagation remain separate outstanding work.
+each row has a reason. Line-number drift is excluded from the comparison;
+expressions and multiplicity establish content coverage. The tables below link
+the current ledgers. Zero means no retained literal tokens under this census;
+it does not establish complete semantic identities or binary matching.
 
-The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
-verified and normalized the death, item-use and notification accounting. Other
-focused and historical audits remain outside this subtotal until their current
-scope and expressions are checked. No missing-name total can be derived by
-subtracting the verified subtotal from the source census.
+The final file reviews add the 146-occurrence
+[GAME renderer setup ledger](game-render-setup-literal-ledger.md) and reconcile
+all 232 current [map-script occurrences](game-map-script-literal-ledger.md).
+The latter also names the two image-group selectors and the shop sequence index.
+Historical ledgers and domain notes may describe earlier source, so their old
+counts are not current totals. This comparison establishes literal accounting,
+not proof that every possible semantic improvement has been exhausted.
+Builds, compiler checks, tests and post-edit matches remain deferred until the
+naming pass finishes, as requested.
 
-## Next coverage work
+## Remaining semantic work
 
-1. Expand remaining partial menu and gameplay audits into complete current ledgers.
-2. Continue domain propagation beyond the typed GAME/OPEN model IDs and floor
-   identity; audit remaining selector fields and their consumers.
-3. Complete per-function accounting for files currently covered only by domain
-   notes; investigate unresolved resource identities before naming selectors.
-4. Verify every retained occurrence against its reason before marking a file
-   complete. File-name mentions, table totals and unchanged object bytes alone
-   cannot establish semantic coverage.
+1. Investigate the unresolved field families below using actual consumers and
+   resource evidence; serialization or a reset alone does not establish a name.
+2. Continue enum propagation through selector fields, locals and APIs, preserving
+   the encoded widths and explicit boundaries used by the retail code.
+3. Review the semantic adequacy of retained-literal reasons and unresolved
+   resource selectors. A reason being present does not prove that a value should
+   remain unnamed; promote it when evidence establishes a useful domain or role.
 
 ## Unresolved source fields
 
@@ -114,7 +66,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,881 occurrences.
+73 files; 4,878 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -150,7 +102,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [map_load.c](../../src/game/map_load.c) | 53 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object.c](../../src/game/map_object.c) | 67 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_scripts.c](../../src/game/map_scripts.c) | 235 | [game-map-script ledger](game-map-script-literal-ledger.md) | Reconcile current expressions and referent evidence before restoring complete coverage. |
+| [map_scripts.c](../../src/game/map_scripts.c) | 232 | [game-map-script ledger](game-map-script-literal-ledger.md); [image groups](map-image-groups.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/game/matrix.c) | 2 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix_rotation.c](../../src/game/matrix_rotation.c) | 82 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [memory.c](../../src/game/memory.c) | 11 | [complete allocator/startup ledger](allocator-startup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -182,7 +134,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [player_warp.c](../../src/game/player_warp.c) | 96 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [pool.c](../../src/game/pool.c) | 35 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [render.c](../../src/game/render.c) | 146 | [domain notes](source-constant-names.md#gpu-setup-system-screens-and-transition-fades) | Expand the domain audit into current occurrence coverage. |
+| [render.c](../../src/game/render.c) | 146 | [complete renderer setup ledger](game-render-setup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_enqueuers.c](../../src/game/render_enqueuers.c) | 94 | [complete renderer ledger](renderer-packet-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_frame.c](../../src/game/render_frame.c) | 35 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map_cells.c](../../src/game/render_map_cells.c) | 22 | [complete map-cell ledger](map-cell-literal-ledger.md); [visibility domain](visibility-screen-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -247,7 +199,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 The naming goal remains open. Completion requires evidence-supported names for
 all unknown fields and all constants that warrant names, plus a reason for
-every retained literal across
-all source files. The unresolved field families above and the scope checks in
-this map are outstanding work. A green compiler or unchanged runtime contents
+every retained literal across all source files. Current occurrence accounting
+is complete; the unresolved field families, further type propagation and semantic
+adequacy review above remain outstanding work. A green compiler or unchanged runtime contents
 proves neither semantic identity nor documentation completeness.

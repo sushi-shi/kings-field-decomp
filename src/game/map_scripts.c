@@ -15,11 +15,17 @@ KF_ENUM_BEGIN(KfMapWeaponTransformPhase, s32)
     MAP_WEAPON_TRANSFORM_SPIN_DOWN = 1
 KF_ENUM_END(KfMapWeaponTransformPhase)
 
+KF_ENUM_BEGIN(KfMapImageGroup, s32)
+    MAP_IMAGE_GROUP_SIGNBOARD = 0,
+    MAP_IMAGE_GROUP_INSCRIPTION = 1
+KF_ENUM_END(KfMapImageGroup)
+
 enum {
     MAP_WEAPON_TRANSFORM_HOLD_UPDATES = 40,
     MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN = 20,
     MAP_CONTAINER_ITEM_COUNT = 4,
-    MAP_CONTAINER_ITEM_NONE = 255
+    MAP_CONTAINER_ITEM_NONE = 255,
+    MAP_SHOP_SEQUENCE_INDEX = 2
 };
 
 enum {
@@ -458,11 +464,11 @@ void map_event_interact(KfMapEvent *event)
 }
 
 ADDRESS(0x80034d54, 0x90)
-void map_show_screen_image(s32 group, s32 index)
+void map_show_screen_image(KfMapImageGroup group, s32 index)
 {
     char *directory_floor = &map_screen_image_path[5];
 
-    map_screen_image_path[8] = group + '0';
+    map_screen_image_path[8] = KF_ENUM_ENCODE(s32, group) + '0';
     *directory_floor = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
     map_screen_image_path[9] = index / 10 + '0';
     map_screen_image_path[10] = index % 10 + '0';
@@ -518,7 +524,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 event->animation_phase = 0;
                 event->animation_clip = 0;
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
-                audio_play_map_sequence(2);
+                audio_play_map_sequence(MAP_SHOP_SEQUENCE_INDEX);
                 map_event_interact(event);
                 menu_enter_mode(KF_MENU_MODE_SHOP, event->character_id);
                 audio_play_current_map_sequence();
@@ -740,18 +746,18 @@ notify_linked:
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE: {
-            s32 image_group;
+            KfMapImageGroup image_group;
 
             if (notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
                 break;
             }
             if (object->object_id == KF_MAP_OBJECT_SIGNBOARD) {
-                image_group = 0;
+                image_group = MAP_IMAGE_GROUP_SIGNBOARD;
             } else {
                 if (object->object_id != KF_MAP_OBJECT_INSCRIPTION_PANEL) {
                     return;
                 }
-                image_group = 1;
+                image_group = MAP_IMAGE_GROUP_INSCRIPTION;
             }
             map_show_screen_image(image_group, object->link.link_id);
             player_clear_motion();

@@ -1,8 +1,8 @@
 # Retained floor-script literals
 
-Complete account of **238 numeric/character occurrences** in
+Complete account of **232 numeric/character occurrences** in
 `src/game/map_scripts.c` after the
-[motion and interaction review](game-map-script-motion-constants.md).
+[image-group and current-source review](map-image-groups.md).
 Comments, strings, identifier digits, enum/macro definitions and retail
 claims are excluded. Each repeated token has its own row; signs remain
 expression operators. Initializer tuples retain their authored values.
@@ -211,8 +211,8 @@ explicit numeric boundaries.
 | `map_event_interact` | 450 | `0` | `if (event->dialogue_pages.last_page[event->dialogue_stage - 1] != 0) {` | Convert one-based stage to a zero-based limit index; zero page limit disables that stage. |
 | `map_event_interact` | 453 | `0` | `if (event->dialogue_page_delay == 0) {` | Reload page delay only when no delay remains. |
 | `map_show_screen_image` | 463 | `5` | `char *directory_floor = &map_screen_image_path[5];` | Character position 5 is the floor digit in KAN\Bf\Kgnn.TIM. |
-| `map_show_screen_image` | 465 | `8` | `map_screen_image_path[8] = group + '0';` | Character position 8 is the group digit; ASCII zero converts the numeric selector. |
-| `map_show_screen_image` | 465 | `'0'` | `map_screen_image_path[8] = group + '0';` | Character position 8 is the group digit; ASCII zero converts the numeric selector. |
+| `map_show_screen_image` | 465 | `8` | `map_screen_image_path[8] = KF_ENUM_ENCODE(s32, group) + '0';` | Character position 8 is the group digit; ASCII zero converts the numeric selector. |
+| `map_show_screen_image` | 465 | `'0'` | `map_screen_image_path[8] = KF_ENUM_ENCODE(s32, group) + '0';` | Character position 8 is the group digit; ASCII zero converts the numeric selector. |
 | `map_show_screen_image` | 466 | `'0'` | `*directory_floor = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';` | Convert the one-based floor number to its ASCII path digit. |
 | `map_show_screen_image` | 467 | `9` | `map_screen_image_path[9] = index / 10 + '0';` | Character position 9 is the decimal tens digit; base ten and ASCII zero are representation constants. |
 | `map_show_screen_image` | 467 | `10` | `map_screen_image_path[9] = index / 10 + '0';` | Character position 9 is the decimal tens digit; base ten and ASCII zero are representation constants. |
@@ -223,20 +223,17 @@ explicit numeric boundaries.
 | `map_interaction_dispatch` | 515 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
 | `map_interaction_dispatch` | 519 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 520 | `0` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 522 | `2` | `audio_play_map_sequence(2);` | Authored music sequence 2 during the shop interaction; original track name unknown. |
-| `map_interaction_dispatch` | 527 | `0` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 528 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 537 | `2` | `result = asset_registry_entries[event->model_index]->animation_clip_count < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The existing registry-index expression is preserved. |
+| `map_interaction_dispatch` | 537 | `2` | `result = result < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The count is loaded from model_index plus the named map-event asset base before the animation update; this boolean checks for a second clip. |
 | `map_interaction_dispatch` | 538 | `0` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
 | `map_interaction_dispatch` | 539 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 540 | `1` | `event->animation_clip = 1;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 544 | `0` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
 | `map_interaction_dispatch` | 547 | `0` | `event->animation_clip = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 548 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 558 | `0` | `for (slot = 0;; slot++) {` | Start the interaction search at zero-based pool index zero. |
+| `map_interaction_dispatch` | 558 | `0` | `for (index = 0;; index++) {` | Start the interaction search at zero-based pool index zero. |
 | `map_interaction_dispatch` | 560 | `1` | `if (index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
 | `map_interaction_dispatch` | 575 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
-| `map_interaction_dispatch` | 578 | `1` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
+| `map_interaction_dispatch` | 578 | `1` | `if (--item_index == -1) {` | The signed-halfword pre-decrement reaches minus one after the four-step scan when the action-parameter byte stays empty. |
 | `map_interaction_dispatch` | 586 | `1` | `while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {` | Exclusive negative quarter-turn endpoint; from zero, 32-unit steps end at -1024. |
 | `map_interaction_dispatch` | 595 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
 | `map_interaction_dispatch` | 607 | `1` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
@@ -248,6 +245,3 @@ explicit numeric boundaries.
 | `map_interaction_dispatch` | 636 | `0` | `if (found_item == 0) {` | An empty container takes its authored default-notification path. |
 | `map_interaction_dispatch` | 667 | `0` | `neighbor_index = 0;` | Start the paired-door leaf search at the first pool slot. |
 | `map_interaction_dispatch` | 671 | `1` | `if (neighbor_index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_interaction_dispatch` | 707 | `8` | `result = object->link.link_id \| object->link.action_parameter << 8;` | Reassemble little-endian gold amount from the first two link bytes; high byte shifts by eight bits. |
-| `map_interaction_dispatch` | 732 | `0` | `result = 0;` | Screen-image group zero selected by object ID 130. |
-| `map_interaction_dispatch` | 737 | `1` | `result = 1;` | Screen-image group one selected by object ID 131. |
