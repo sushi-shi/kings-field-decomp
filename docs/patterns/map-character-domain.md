@@ -1,5 +1,9 @@
 # Character IDs and exchange roles
 
+This records the initial character-domain review at `ffd2609`. The subsequent
+[floor-3 placement review](floor3-dialogue-door-link.md) resolves the character-12
+and link-55 identities left open here.
+
 ## Function Match Plan
 
 Use a byte-backed `KfCharacterId` in map-event definitions and live records,
@@ -40,7 +44,7 @@ Preserve the existing inventory quantities, dialogue stages/pages, branch order,
 signedness, return paths and ordered referents. Builds, compiler checks, tests,
 post-edit matches and banking remain deferred until the naming pass finishes.
 
-## Source review result
+## Source review result at ffd2609
 
 The three exchange selectors now have role names. Definition-to-live assignment
 and all four dialogue calls carry the character domain directly. Portrait and

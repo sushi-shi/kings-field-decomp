@@ -1,6 +1,6 @@
 # Retained floor-script literals
 
-Complete account of **226 numeric/character occurrences** in
+Complete account of **224 numeric/character occurrences** in
 `src/game/map_scripts.c` after the
 [image-group and current-source review](map-image-groups.md).
 Comments, strings, identifier digits, enum/macro definitions and retail
@@ -201,8 +201,6 @@ explicit numeric boundaries.
 | `map_event_interact` | 437 | `1` | `map_event_pool[1].dialogue_stage_limit = 2;` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
 | `map_event_interact` | 437 | `2` | `map_event_pool[1].dialogue_stage_limit = 2;` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
 | `map_event_interact` | 438 | `1` | `map_event_refresh_dialogue_stage(&map_event_pool[1]);` | Authored exchange dialogue progression: character 3 uses slot 2/stage 1, shows page 3 then advances to 4 (limit 7, stage cap 5); character 8 uses slot 2/stage 2, shows 2 then advances to 3 (limit 7, cap 5); character 7 uses slot 1/stage 2, shows 2 then advances to 3 (limit 5, cap 2). Limit-array indices are zero-based; delay zero clears pending advance. |
-| `map_event_interact` | 442 | `12` | `case KF_ENUM_DECODE(KfCharacterId, 12):` | Authored character ID 12 selects the link-clear action; its character/object identity remains unresolved. Decode the retained byte into the character domain explicitly. |
-| `map_event_interact` | 443 | `0x37` | `map_object_pool_clear_link(0x37);` | Authored link ID 55 cleared by character 12; proper linked-object identity unresolved. |
 | `map_event_interact` | 449 | `0` | `if (event->dialogue_stage_limit != 0) {` | Zero cap disables the generic dialogue path. |
 | `map_event_interact` | 450 | `1` | `if (event->dialogue_pages.last_page[event->dialogue_stage - 1] != 0) {` | Convert one-based stage to a zero-based limit index; zero page limit disables that stage. |
 | `map_event_interact` | 450 | `0` | `if (event->dialogue_pages.last_page[event->dialogue_stage - 1] != 0) {` | Convert one-based stage to a zero-based limit index; zero page limit disables that stage. |

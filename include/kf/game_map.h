@@ -299,11 +299,12 @@ typedef struct KfCameraPathState {
     s32 frames_remaining;
 } KfCameraPathState;
 
-/* Role identities established by the interaction exchanges. */
+/* Role identities established by interaction and placement evidence. */
 KF_ENUM_BEGIN(KfCharacterId, u8)
     KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE = 3,
     KF_CHARACTER_HARP_EXCHANGE = 7,
-    KF_CHARACTER_HEALING_EXCHANGE = 8
+    KF_CHARACTER_HEALING_EXCHANGE = 8,
+    KF_CHARACTER_FLOOR3_DOOR_UNLOCKER = 12
 KF_ENUM_END(KfCharacterId)
 
 KF_ENUM_BEGIN(KfMapEventState, u8)

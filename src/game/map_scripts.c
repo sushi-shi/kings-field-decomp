@@ -25,7 +25,8 @@ enum {
     MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN = 20,
     MAP_CONTAINER_ITEM_COUNT = 4,
     MAP_CONTAINER_ITEM_NONE = 255,
-    MAP_SHOP_SEQUENCE_INDEX = 2
+    MAP_SHOP_SEQUENCE_INDEX = 2,
+    MAP_FLOOR3_DIALOGUE_DOOR_LINK = 0x37
 };
 
 enum {
@@ -445,8 +446,8 @@ void map_event_interact(KfMapEvent *event)
             return;
         }
         break;
-    case KF_ENUM_DECODE(KfCharacterId, 12):
-        map_object_pool_clear_link(0x37);
+    case KF_CHARACTER_FLOOR3_DOOR_UNLOCKER:
+        map_object_pool_clear_link(MAP_FLOOR3_DIALOGUE_DOOR_LINK);
         break;
     default:
         break;
