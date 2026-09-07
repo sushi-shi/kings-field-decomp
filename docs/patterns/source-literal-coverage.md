@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [OPEN scene-domain review](open-scene-domains.md):
+Working snapshot after the [statistics-layout review](game-status-text-layout.md):
 **111 C files**, **112 source/image variants**,
-and **6,786 inline numeric/character occurrences**. The counts include authored
+and **6,693 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -18,7 +18,7 @@ function matching or completeness of semantic identities.
 
 ## Current ledger coverage verified
 
-For **30 files / 3,086 occurrences**, the explicit ledger rows were compared
+For **32 files / 3,406 occurrences**, the explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison; source
@@ -34,7 +34,7 @@ subtracting the verified subtotal from the source census.
 
 ## Next coverage work
 
-1. Refresh the status-text ledgers after their later reconstruction changes.
+1. Expand remaining partial menu and gameplay audits into complete current ledgers.
 2. Continue domain propagation beyond the typed GAME/OPEN model IDs and floor
    identity; audit remaining selector fields and their consumers.
 3. Audit the remaining warp motion/timing values against retail and complete
@@ -71,7 +71,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 5,489 occurrences.
+73 files; 5,396 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -114,8 +114,8 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu.c](../../src/game/menu.c) | 87 | [game-menu-choice ledger](game-menu-choice-literal-ledger.md); [game-menu-item-list ledger](game-menu-item-list-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_config_panel.c](../../src/game/menu_config_panel.c) | 52 | [game-menu-choice ledger](game-menu-choice-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_draw_name_list.c](../../src/game/menu_draw_name_list.c) | 9 | [game-equipment ledger](game-equipment-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
-| [menu_draw_stats_header.c](../../src/game/menu_draw_stats_header.c) | 130 | [game-menu-status ledger](game-menu-status-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
-| [menu_draw_status_details.c](../../src/game/menu_draw_status_details.c) | 283 | [game-menu-status ledger](game-menu-status-literal-ledger.md) | Historical ledger predates the signed-rating correction; refresh arithmetic occurrences. |
+| [menu_draw_stats_header.c](../../src/game/menu_draw_stats_header.c) | 104 | [status ledger](game-menu-status-literal-ledger.md); [layout evidence](game-status-text-layout.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu_draw_status_details.c](../../src/game/menu_draw_status_details.c) | 216 | [status ledger](game-menu-status-literal-ledger.md); [layout evidence](game-status-text-layout.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_draw_window.c](../../src/game/menu_draw_window.c) | 4 | [game-menu-window ledger](game-menu-window-literal-ledger.md) | Check current per-function and initializer coverage; linked ledgers may cover only a subset. |
 | [menu_enter_mode.c](../../src/game/menu_enter_mode.c) | 4 | [domain notes](source-constant-names.md#game-lifecycle-warp-modes-and-card-events) | Expand the domain audit into current occurrence coverage. |
 | [menu_item_detail.c](../../src/game/menu_item_detail.c) | 100 | [complete detail/dialog ledger](game-menu-detail-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |

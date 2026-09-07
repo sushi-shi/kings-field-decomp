@@ -503,3 +503,7 @@ promotes a probe to a proven historical toolchain.
 - [OPEN scene control domains](open-scene-domains.md): transition, lighting
   and sequence enum propagation; [complete scene ledger](open-scene-literal-ledger.md)
   accounts for all 595 retained occurrences, including initialized data.
+
+- [GAME statistics text layout](game-status-text-layout.md): view-specific row
+  spacing, shared decimal widths and digit advance; the
+  [current status ledger](game-menu-status-literal-ledger.md) includes corrected rating arithmetic.

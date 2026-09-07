@@ -172,6 +172,12 @@ enum {
     MENU_NUMBER_ADVANCE = 7
 };
 
+/* Decimal field widths shared by the header and detailed statistics views. */
+enum {
+    MENU_STATS_VITAL_DIGITS = 4,
+    MENU_STATS_VALUE_DIGITS = 6
+};
+
 /* Displayed class titles: physical tier rows, magic tier columns. */
 enum {
     MENU_CLASS_MIDDLE_STAT_MIN = 40,

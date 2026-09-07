@@ -2,6 +2,10 @@
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
+enum {
+    STATS_HEADER_ROW_STEP = 23
+};
+
 /*
  * Draw the main menu's player statistics: experience, level, displayed class,
  * floor, HP/MP pairs, status-effect icons and gold. The class title occupies
@@ -27,36 +31,36 @@ void menu_draw_stats_header(void)
     gs.codes[1] = MENU_TEXT_DAKUTEN | 0x1c;
     gs.codes[2] = 0x2a;
     gs.codes[3] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.codes[0] = 7;
     gs.codes[1] = 0x28;
     gs.codes[2] = 0xc;
     gs.codes[3] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.codes[0] = 0xcc;
     gs.codes[1] = 0xcd;
     gs.codes[2] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.codes[0] = 0xf0;
     gs.codes[1] = 0xf2;
     gs.codes[2] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.codes[0] = 0xf1;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.codes[0] = 0x85;
     gs.codes[1] = 0x86;
     gs.codes[2] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
@@ -64,20 +68,20 @@ void menu_draw_stats_header(void)
     gs.codes[2] = 0x2a;
     gs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
     gs.codes[4] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0xfb;
     gs.y = 0x24;
-    menu_format_number(player_state.experience, 6, 0, gs.codes);
+    menu_format_number(player_state.experience, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
-    gs.y += 0x17;
-    menu_format_number(player_state.progress_state.level, 6, 0, gs.codes);
+    gs.y += STATS_HEADER_ROW_STEP;
+    menu_format_number(player_state.progress_state.level, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xed;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
         glyph_index = 0;
     } else {
@@ -102,32 +106,32 @@ void menu_draw_stats_header(void)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0xfb;
-    gs.y += 0x17;
-    menu_format_number(KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor), 6, 0, gs.codes);
+    gs.y += STATS_HEADER_ROW_STEP;
+    menu_format_number(KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor), MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xe6;
-    gs.y += 0x17;
-    menu_format_number(player_state.vitals.current_hp, 4, 0, gs.codes);
+    gs.y += STATS_HEADER_ROW_STEP;
+    menu_format_number(player_state.vitals.current_hp, MENU_STATS_VITAL_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.codes[0] = MENU_NUMBER_SLASH;
     gs.codes[1] = MENU_TEXT_END;
-    gs.x += 0x1c;
+    gs.x += MENU_STATS_VITAL_DIGITS * MENU_NUMBER_ADVANCE;
     menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.x += 7;
-    menu_format_number(player_state.vitals.maximum_hp, 4, 0, gs.codes);
+    gs.x += MENU_NUMBER_ADVANCE;
+    menu_format_number(player_state.vitals.maximum_hp, MENU_STATS_VITAL_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xe6;
-    gs.y += 0x17;
-    menu_format_number(player_state.vitals.current_mp, 4, 0, gs.codes);
+    gs.y += STATS_HEADER_ROW_STEP;
+    menu_format_number(player_state.vitals.current_mp, MENU_STATS_VITAL_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.codes[0] = MENU_NUMBER_SLASH;
     gs.codes[1] = MENU_TEXT_END;
-    gs.x += 0x1c;
+    gs.x += MENU_STATS_VITAL_DIGITS * MENU_NUMBER_ADVANCE;
     menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.x += 7;
-    menu_format_number(player_state.vitals.maximum_mp, 4, 0, gs.codes);
+    gs.x += MENU_NUMBER_ADVANCE;
+    menu_format_number(player_state.vitals.maximum_mp, MENU_STATS_VITAL_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xdf;
@@ -137,7 +141,7 @@ void menu_draw_stats_header(void)
     gs.codes[3] = MENU_TEXT_BLANK;
     gs.codes[4] = MENU_TEXT_BLANK;
     gs.codes[5] = MENU_TEXT_END;
-    gs.y += 0x17;
+    gs.y += STATS_HEADER_ROW_STEP;
     if (player_state.status_effect_flags == 0) {
         gs.codes[3] = 0xc5;
         gs.codes[4] = 0xc6;
@@ -161,7 +165,7 @@ void menu_draw_stats_header(void)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.x = 0xfb;
-    gs.y += 0x17;
-    menu_format_number(player_state.gold, 6, 0, gs.codes);
+    gs.y += STATS_HEADER_ROW_STEP;
+    menu_format_number(player_state.gold, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }
