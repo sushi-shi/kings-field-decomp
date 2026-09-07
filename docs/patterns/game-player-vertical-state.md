@@ -16,7 +16,7 @@ Feather Boots exception to the interaction notification.
 | `80016ee8 / 344` | `player_sync_position_to_map` | 100 | Signed cell division, unsigned grid byte, negative floor height; `addiu -1500` at `80016fe4`, state reset at `80017024`. Retain two calls and their argument slots. |
 | `80017a24 / 92` | `player_update_view_bob` | 100 | `lbu`/nonzero skip; unsigned speed and phase, doubled phase increment, twelve-bit wrap, signed sine shift by six. Name the state and bob conversion. |
 | `80017a80 / 632` | `player_update_vertical_motion` | 100 | Byte switch 16/32/0; signed velocity `lh`/`sh`, floor `lw`/`sw`, signed speed comparison at 181. Preserve shared case labels, comparison strictness and one death call. |
-| `80018540 / 388` | `player_death_update` | 93.298965 | Shared camera subtraction at `80018628`, followed by vertical motion. Replace the private duplicate; preserve existing non-exact instructions. |
+| `80018540 / 388` | `player_death_update` | 100 | Signed-halfword bob snapshot, ordered clamp/rest writes, and a distinct camera-Y intermediate reproduce all 97 retail words. |
 | `8002d6a0 / 344` | `actor_try_attack_player` | 100 | Snapshot camera Y plus 1500 at `8002d708`, height 1700 in the seventh argument. Reuse camera height without conflating it with collision height. |
 | `80034de4 / 2308` | `map_interaction_dispatch` | 83.436745 | Attribute 93 branches to notification 24 at `80034f3c..80034f74`. Share its identity with the vertical-motion exception; preserve the rest of the dispatcher. |
 
@@ -120,3 +120,20 @@ named constants; the duplicate private death-camera definition is removed.
 Other player-core, actor and map-dispatcher literals still need their broader
 audits. The separate actor multiplier-unity call site from the preceding
 [damage-unit review](game-player-damage-units.md) is also integrated here.
+
+## Death-update exact closure at `f45b075`
+
+The six GAME views and canonical object were refreshed from the 93.298965%
+source. Retail's apparently unused 1000 bob store is not padding: the source
+clamps the signed-halfword bob, subtracts the current pitch step from camera
+pitch, then writes the 1060 rest position. Moving that second write after the
+camera operation restores the retail store and branch extent.
+
+Changing the retained bob snapshot from `s32` to its observed `s16` width
+restores the entry load/copy, the 32-byte frame, and every instruction through
+the pitch clamp. Ending the earlier pointer lifetime and forming a real
+`camera_y = view_bob_offset - 1500` intermediate before adding floor height
+then restores the last address pair and operand order. Strict objdiff is
+**100.000000%** for all 388 bytes, with ten CFG blocks, four branches, two
+known return-frontier edges, six call sites and all 21 ordered address pairs.
+The function is banked; GAME advances from 315/362 to 316/362 exact.

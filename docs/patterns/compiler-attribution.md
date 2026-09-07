@@ -172,8 +172,9 @@ is **false** for 2.4.1.
 **Frame size — neither reproduces retail.** `render_actor` retail allocates
 `addiu sp,sp,-168` and saves at `160..144`; both 2.5.7 and 2.4.1 allocate
 `-160` (8 bytes smaller) with the same saves shifted down. This 8-byte
-"phantom" frame slack (also seen on `player_death_update`) is unreproduced by
-either compiler at any flag.
+"phantom" frame slack remains unreproduced for `render_actor`; the former
+`player_death_update` example was instead closed by correcting source width,
+operation order, and intermediate ownership.
 
 **Branch structure / argument scheduling — same residue in 2.4.1.**
 `render_map_object`: retail forms an argument address (`addiu a0,sp,16`) *before*

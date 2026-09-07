@@ -133,9 +133,10 @@ Open residues recorded during the same campaign (not steered):
   (`matrix_set_rotation_yxz`, `pitch_yaw_to_forward_vector`), and forms an
   argument address before the first call's other operands
   (`player_death_update_reverse_fade`, `player_death_apply_visual_fade`).
-- `player_death_update`: retail has an 8-byte larger frame with no stack
-  traffic and loads `camera_rotation.x` with `lhu` before subtracting, so the
-  original field is unsigned or accessed through a different type.
+- `player_death_update`: the former 8-byte frame residue was source-caused,
+  not phantom compiler slack. A true `s16` bob snapshot, the clamp/rest writes
+  separated by camera subtraction, and a distinct bob-minus-camera-height
+  intermediate reproduce the complete 388-byte retail body.
 - `angle_within_tolerance`: the old result-materialization assessment was
   superseded by a [CFG correction](game-angle-tolerance.md). The GAME source
   rejected `delta <= range`, although retail branches to the true block.

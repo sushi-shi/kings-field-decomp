@@ -32,13 +32,14 @@ ADDRESS(0x80018540, 0x184)
 void player_death_update(void)
 {
     s16 *bob = &player_state.view_bob_offset;
-    s32 previous = *bob;
+    s16 previous = *bob;
     s32 blend;
+    s32 camera_y;
 
     if (previous >= PLAYER_DEATH_BOB_THRESHOLD) {
         *bob = PLAYER_DEATH_BOB_THRESHOLD;
-        *bob = PLAYER_DEATH_BOB_REST;
         player_state.camera_rotation.vx -= player_state.death_camera_pitch_step;
+        *bob = PLAYER_DEATH_BOB_REST;
         player_state.death_camera_pitch_step += PLAYER_DEATH_REST_PITCH_ACCELERATION;
     } else {
         player_state.camera_rotation.vx -= PLAYER_DEATH_INITIAL_PITCH_STEP;
@@ -52,8 +53,9 @@ void player_death_update(void)
         player_state.camera_rotation.vx = PLAYER_DEATH_PITCH_MIN;
         player_state.death_camera_pitch_step = 0;
     }
-    player_state.camera_position.vy =
-        *bob - KF_PLAYER_CAMERA_HEIGHT + player_state.floor_height;
+    camera_y = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
+    camera_y += player_state.floor_height;
+    player_state.camera_position.vy = camera_y;
     player_update_vertical_motion();
     player_state.death_visual_blend += PLAYER_DEATH_FADE_STEP;
     blend = player_state.death_visual_blend;
