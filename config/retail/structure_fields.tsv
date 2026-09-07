@@ -218,7 +218,7 @@ KfEffectRenderView	0x28	0x02	scale_z	s16	supported	game_effect.h;asm;render_acto
 KfEffectRenderView	0x2a	0x0a	unknown_2a	u8[10]	opaque	game_effect.h;asm;render_actor_sprite	unresolved bytes before animation_cache
 KfEffectRenderView	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by render_bind_animated_instance and cleared through the record owner_slot on release
 KfEffectRenderView	0x38	0x04	unknown_38	u8[4]	opaque	game_effect.h;asm;render_actor_sprite	unresolved tail
-KfEffectSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is live, while 0xff terminates the two-entry list
+KfEffectSprite	0x00	0x01	state	KfEffectSpriteState	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
 KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	game_render.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
 KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game_render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
 KfEffectSprite	0x04	0x02	scale	u16	supported	game_render.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
@@ -290,7 +290,7 @@ KfGraphicsRuntimeOpen	0x24700	0x80	light_quadrant_matrices	MATRIX[4]	supported	o
 KfGraphicsRuntimeOpen	0x24780	0x4	active_cell_window	KfCellWindow *	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset; source pointer is const-qualified
 KfGraphicsRuntimeOpen	0x24784	0x2	tmd_projection_shift	s16	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x24786	0x2	unknown_24786	u8[2]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
-KfHudSprite	0x00	0x01	state	u8	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
+KfHudSprite	0x00	0x01	state	KfHudSpriteState	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game_render.h;retail-initializers	unread byte before the sprite descriptor
 KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game_render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
 KfMagicRecord	0x00	0x01	learned	KfMagicLearningState	supported	magic.h;asm;player_recalculate_combat_stats;player_update;game-magic-learning-state.md;save_file_write_slot;save_file_read_slot	byte learning state: unlearned0/learned1; menus require exactly1 while progression and Flame Sword preserve nonzero tests; saved verbatim for all24 records

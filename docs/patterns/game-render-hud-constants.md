@@ -154,3 +154,8 @@ matches PSX 0/1, GAME 9/42 and OPEN 2/19; target relinks PSX 1/1, GAME 75/77
 and OPEN 34/38. Six conflicting section bases remain, with zero artifact
 failures. No tooling/flake configuration changed. The ten `unknown_` source
 lines and the broader constant/type audit remain open.
+
+The [sprite-state review](game-hud-sprite-state.md) now propagates distinct
+HUD/effect byte enums, names the effect compass slot and table bound, and
+refreshes the [current rendering ledger](game-render-hud-literal-ledger.md).
+The counts above remain historical to this constants campaign.

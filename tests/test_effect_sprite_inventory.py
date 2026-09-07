@@ -24,7 +24,7 @@ class EffectSpriteInventoryTests(unittest.TestCase):
         self.assertEqual(
             actual,
             {
-                "state": (0x00, 1, "u8"),
+                "state": (0x00, 1, "KfEffectSpriteState"),
                 "visibility_tag": (0x01, 1, "u8"),
                 "asset_variant": (0x02, 2, "u16"),
                 "scale": (0x04, 2, "u16"),

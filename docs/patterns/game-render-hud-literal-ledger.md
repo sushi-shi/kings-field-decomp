@@ -7,6 +7,9 @@ ADDRESS/DATA/RODATA claims are excluded. Repeated tokens are listed separately
 in source order; unary minus belongs to the context. This ledger documents
 retained values and explicitly identifies unresolved type/behavior debt.
 
+The [sprite-state review](game-hud-sprite-state.md) types both state fields
+and names the effect table state values, compass slot and bound.
+
 ## `src/game/entity_model_render.c`
 
 14 retained occurrences.
@@ -52,7 +55,7 @@ retained values and explicitly identifies unresolved type/behavior debt.
 
 ## `src/game/geometry_render.c`
 
-147 retained occurrences.
+146 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -195,7 +198,6 @@ retained values and explicitly identifies unresolved type/behavior debt.
 | `render_weapon` | 77 | `0` | `object->vertex_count) != 0) {` | Animation-binding boolean success/failure predicate; preserve exact zero comparison. |
 | `render_weapon` | 80 | `32` | `(s16)*(const u16 *)((const u8 *)player_state.equipped_weapon_record + 32) >> WEAPON_DEPTH_BIAS_SHIFT;` | Proven weapon Z-translation offset, explicitly sign-extended before shifting; shared object-type recovery remains open. |
 | `render_weapon` | 81 | `0` | `render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS);` | First object within the selected TMD resource. |
-| `render_effect_sprites` | 106 | `1` | `while (entry->state == 1) {` | True/live effect entry. Every non-1 state stops traversal, unlike the HUD skip-hidden protocol. |
 | `render_effect_sprites` | 107 | `0` | `model.t[0] = entry->translation_x;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
 | `render_effect_sprites` | 108 | `1` | `model.t[1] = entry->translation_y;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
 | `render_effect_sprites` | 109 | `2` | `model.t[2] = entry->translation_z;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
@@ -206,28 +208,25 @@ retained values and explicitly identifies unresolved type/behavior debt.
 
 ## `src/game/render_frame.c`
 
-46 retained occurrences.
+41 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 29 | `2` | `KfEffectSprite effect_sprites[2] = {` | One authored animated compass entry plus its terminating row; this is the complete local table extent. |
-| `initializers` | 30 | `1` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial true visibility; subsequently copied from the compass setting. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial animation visibility tag zero, passed to the animation binder. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial asset variant zero in the authored animation descriptor. |
-| `initializers` | 30 | `0x33` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass X/Y scale numerator 51 in Q12 units; preserve the model-specific scale. |
-| `initializers` | 30 | `0x11e` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass model X translation 286; model geometry and view coordinates determine placement. |
-| `initializers` | 30 | `0x22` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass model Y translation 34; preserve its placement tuple. |
-| `initializers` | 30 | `0xc8` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass model Z translation 200; a position, not an alias for projection distance. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +12 is authored zero; no semantic name is established. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +13 is authored zero; no semantic name is established. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial rotation X is zero angle. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial rotation Y is zero angle. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial rotation Z is zero angle; the frame replaces it with wrapped negative view yaw. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | SDK SVECTOR pad is zero in the authored rotation tuple. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +22 is authored zero; no semantic name is established. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +23 is authored zero; no semantic name is established. |
-| `initializers` | 30 | `0` | `{1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Null initial animation-cache pointer; the binder owns allocation. |
-| `initializers` | 31 | `0xff` | `{0xff},` | Authored non-live terminator state. The effect iterator stops on every state other than 1, including hidden zero; distinct from the HUD state protocol. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial animation visibility tag zero, passed to the animation binder. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial asset variant zero in the authored animation descriptor. |
+| `initializers` | 30 | `0x33` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass X/Y scale numerator 51 in Q12 units; preserve the model-specific scale. |
+| `initializers` | 30 | `0x11e` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass model X translation 286; model geometry and view coordinates determine placement. |
+| `initializers` | 30 | `0x22` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass model Y translation 34; preserve its placement tuple. |
+| `initializers` | 30 | `0xc8` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Authored compass model Z translation 200; a position, not an alias for projection distance. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +12 is authored zero; no semantic name is established. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +13 is authored zero; no semantic name is established. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial rotation X is zero angle. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial rotation Y is zero angle. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Initial rotation Z is zero angle; the frame replaces it with wrapped negative view yaw. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | SDK SVECTOR pad is zero in the authored rotation tuple. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +22 is authored zero; no semantic name is established. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Opaque byte +23 is authored zero; no semantic name is established. |
+| `initializers` | 30 | `0` | `{KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},` | Null initial animation-cache pointer; the binder owns allocation. |
 | `initializers` | 36 | `0` | `RECT hud_palette_rect = {0, 500, 16, 1};` | Palette rectangle X origin in VRAM; authored material data. |
 | `initializers` | 36 | `500` | `RECT hud_palette_rect = {0, 500, 16, 1};` | Palette rectangle Y selects the authored HUD/message CLUT row in VRAM. |
 | `initializers` | 36 | `16` | `RECT hud_palette_rect = {0, 500, 16, 1};` | Palette rectangle width is 16 colors for this four-bit texture material. |
@@ -238,21 +237,19 @@ retained values and explicitly identifies unresolved type/behavior debt.
 | `initializers` | 39 | `1` | `RECT notification_palette_rect = {0, 499, 16, 1};` | Palette rectangle height is one CLUT row. |
 | `render_frame` | 73 | `1` | `+ (player_state.vitals.maximum_hp - 1) / HUD_GAUGE_WIDTH)` | Arithmetic endpoint in the retail gauge correction term (maximum minus one)/width; preserve its division placement. |
 | `render_frame` | 76 | `1` | `+ (player_state.vitals.maximum_mp - 1) / HUD_GAUGE_WIDTH)` | Arithmetic endpoint in the retail gauge correction term (maximum minus one)/width; preserve its division placement. |
-| `render_frame` | 103 | `0` | `effect_sprites[0].state = KF_ENUM_ENCODE(u8, player_state.compass_enabled);` | First and sole authored animated compass model entry; the following entry terminates the table. |
-| `render_frame` | 104 | `0` | `effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;` | First and sole authored animated compass model entry; the following entry terminates the table. |
-| `render_frame` | 120 | `0` | `model.t[0] = 0;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
-| `render_frame` | 120 | `0` | `model.t[0] = 0;` | Zero X translation centers the notification model transform. |
-| `render_frame` | 121 | `1` | `model.t[1] = NOTIFICATION_MODEL_Y;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
-| `render_frame` | 122 | `2` | `model.t[2] = NOTIFICATION_MODEL_Z;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
-| `render_frame` | 123 | `0` | `spin.vz = 0;` | Zero rotation around this axis; notification effect supplies only X rotation. |
-| `render_frame` | 124 | `0` | `spin.vy = 0;` | Zero rotation around this axis; notification effect supplies only X rotation. |
-| `render_frame` | 133 | `1` | `if (record[KF_NOTIFICATION_TEXT_SPRITE].active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
-| `render_frame` | 134 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, 0);` | Zero additional ordering-table depth bias. |
-| `render_frame` | 134 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
-| `render_frame` | 136 | `1` | `if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
-| `render_frame` | 137 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, 0);` | Zero additional ordering-table depth bias. |
-| `render_frame` | 137 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
-| `render_frame` | 142 | `1` | `for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_frame` | 143 | `1` | `if (record->active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
-| `render_frame` | 144 | `0` | `render_enqueue_sprite(&record->sprite, 0, 0);` | Zero additional ordering-table depth bias. |
-| `render_frame` | 144 | `0` | `render_enqueue_sprite(&record->sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
+| `render_frame` | 122 | `0` | `model.t[0] = 0;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
+| `render_frame` | 122 | `0` | `model.t[0] = 0;` | Zero X translation centers the notification model transform. |
+| `render_frame` | 123 | `1` | `model.t[1] = NOTIFICATION_MODEL_Y;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
+| `render_frame` | 124 | `2` | `model.t[2] = NOTIFICATION_MODEL_Z;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
+| `render_frame` | 125 | `0` | `spin.vz = 0;` | Zero rotation around this axis; notification effect supplies only X rotation. |
+| `render_frame` | 126 | `0` | `spin.vy = 0;` | Zero rotation around this axis; notification effect supplies only X rotation. |
+| `render_frame` | 135 | `1` | `if (record[KF_NOTIFICATION_TEXT_SPRITE].active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
+| `render_frame` | 136 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, 0);` | Zero additional ordering-table depth bias. |
+| `render_frame` | 136 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
+| `render_frame` | 138 | `1` | `if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
+| `render_frame` | 139 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, 0);` | Zero additional ordering-table depth bias. |
+| `render_frame` | 139 | `0` | `render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |
+| `render_frame` | 144 | `1` | `for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_frame` | 145 | `1` | `if (record->active == 1) {` | Exact true predicate for notification visibility, independent of the HUD sentinel domain. |
+| `render_frame` | 146 | `0` | `render_enqueue_sprite(&record->sprite, 0, 0);` | Zero additional ordering-table depth bias. |
+| `render_frame` | 146 | `0` | `render_enqueue_sprite(&record->sprite, 0, 0);` | False perspective-adjustment flag; preserves unboosted fog/perspective input. |

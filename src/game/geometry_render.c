@@ -103,7 +103,7 @@ void render_effect_sprites(void)
     SetColorMatrix(&render_state.effect_color_matrix);
     scale.vz = KF_FIXED12_ONE;
     entry = effect_sprites;
-    while (entry->state == 1) {
+    while (entry->state == KF_EFFECT_SPRITE_ACTIVE) {
         model.t[0] = entry->translation_x;
         model.t[1] = entry->translation_y;
         model.t[2] = entry->translation_z;

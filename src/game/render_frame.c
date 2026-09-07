@@ -26,9 +26,9 @@ enum {
  */
 
 DATA(0x80055d74, 0x38)
-KfEffectSprite effect_sprites[2] = {
-    {1, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},
-    {0xff},
+KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
+    {KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},
+    {KF_EFFECT_SPRITE_END},
 };
 
 /* One 16-colour palette row per HUD/message material. */
@@ -99,9 +99,11 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     }
 
     auxiliary_sprite = &hud_sprites[KF_HUD_COMPASS];
-    auxiliary_sprite->state = KF_ENUM_ENCODE(u8, player_state.compass_enabled);
-    effect_sprites[0].state = KF_ENUM_ENCODE(u8, player_state.compass_enabled);
-    effect_sprites[0].rotation.vz = -render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
+    auxiliary_sprite->state = KF_ENUM_DECODE(KfHudSpriteState,
+        KF_ENUM_ENCODE(u8, player_state.compass_enabled));
+    effect_sprites[KF_EFFECT_SPRITE_COMPASS].state = KF_ENUM_DECODE(KfEffectSpriteState,
+        KF_ENUM_ENCODE(u8, player_state.compass_enabled));
+    effect_sprites[KF_EFFECT_SPRITE_COMPASS].rotation.vz = -render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
     render_effect_sprites();
 
     active_render_tpage = hud_tpage;

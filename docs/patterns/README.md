@@ -528,3 +528,6 @@ promotes a probe to a proven historical toolchain.
 - [Player option domain](game-player-option-domain.md): saved configuration bytes,
   typed menu copies, exact-one versus nonzero consumers and the
   [complete configuration ledger](game-menu-config-literal-ledger.md).
+
+- [HUD and effect-sprite states](game-hud-sprite-state.md): separate byte enum
+  domains, preserved traversal rules and explicit compass-option conversion.

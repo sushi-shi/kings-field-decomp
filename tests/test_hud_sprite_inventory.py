@@ -24,7 +24,7 @@ class HudSpriteInventoryTests(unittest.TestCase):
         self.assertEqual(
             hud,
             {
-                "state": (0x00, 1, "u8"),
+                "state": (0x00, 1, "KfHudSpriteState"),
                 "unknown_01": (0x01, 1, "u8"),
                 "sprite": (0x02, 0x0C, "KfSpriteQuad"),
             },

@@ -3,6 +3,7 @@
 
 /* GAME.EXE rendering, display, lighting, and TMD state and operations. */
 
+#include <kf/enum.h>
 #include <kf/game_actor.h>
 #include <kf/game_effect.h>
 #include <kf/game_map.h>
@@ -58,10 +59,22 @@ enum {
     KF_HUD_TABLE_ROWS = 14 /* Thirteen sprites and the terminating row. */
 };
 
-enum {
+KF_ENUM_BEGIN(KfHudSpriteState, u8)
     KF_HUD_HIDDEN = 0,
     KF_HUD_VISIBLE = 1,
     KF_HUD_END = 0xff
+KF_ENUM_END(KfHudSpriteState)
+
+/* Every non-active effect state stops traversal, including hidden zero. */
+KF_ENUM_BEGIN(KfEffectSpriteState, u8)
+    KF_EFFECT_SPRITE_HIDDEN = 0,
+    KF_EFFECT_SPRITE_ACTIVE = 1,
+    KF_EFFECT_SPRITE_END = 0xff
+KF_ENUM_END(KfEffectSpriteState)
+
+enum {
+    KF_EFFECT_SPRITE_COMPASS = 0,
+    KF_EFFECT_SPRITE_TABLE_ROWS = 2
 };
 
 enum {
@@ -76,14 +89,14 @@ enum {
 
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */
 typedef struct KfHudSprite {
-    u8 state;
+    KfHudSpriteState state;
     u8 unknown_01;
     KfSpriteQuad sprite;
 } KfHudSprite;
 
-/* Animated screen-facing model entry; state 0xff terminates the list. */
+/* Animated screen-facing model entry; only ACTIVE continues traversal. */
 typedef struct KfEffectSprite {
-    u8 state;
+    KfEffectSpriteState state;
     u8 visibility_tag;
     u16 asset_variant;
     u16 scale;
@@ -140,7 +153,7 @@ extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];
 extern KfSpriteQuad floor_item_sprites[7];
 extern KfSpriteQuad effect_billboard_sprites[22];
-extern KfEffectSprite effect_sprites[2];
+extern KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS];
 extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
 extern MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
 extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
