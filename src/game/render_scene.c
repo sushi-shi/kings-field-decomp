@@ -11,8 +11,8 @@ ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
 {
     const KfCellWindow *grid = active_cell_window;
-    int window_origin_z = (u16)render_state.view_cell.z - grid->origin_z;
-    int window_origin_x = (u16)render_state.view_cell.x - grid->origin_x;
+    u16 window_origin_z = (u16)render_state.view_cell.z - grid->origin_z;
+    u16 window_origin_x = (u16)render_state.view_cell.x - grid->origin_x;
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
@@ -39,21 +39,21 @@ void render_entities(void)
 
     /* Actors. */
     actor = actor_state.actors;
-    for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--, actor++) {
+    for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {
         u8 visible;
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
-            continue;
+            goto next_actor;
         }
         if (actor->variant == 0) {
             u16 row = actor->cell_z - window_origin_z;
             const KfCellWindow *g = active_cell_window;
             if (row >= g->height) {
-                continue;
+                goto next_actor;
             }
             {
                 u16 col = actor->cell_x - window_origin_x;
                 if (col >= g->width) {
-                    continue;
+                    goto next_actor;
                 }
                 visible = g->cells[row * g->width + col];
             }
@@ -61,7 +61,7 @@ void render_entities(void)
             u16 dz = actor->cell_z + 12;
             u16 dx;
             if ((u16)(dz - (u16)render_state.view_cell.z) >= 24) {
-                continue;
+                goto next_actor;
             }
             dx = actor->cell_x + 12;
             visible = (u16)(dx - (u16)render_state.view_cell.x) < 24;
@@ -69,6 +69,8 @@ void render_entities(void)
         if (visible != 0) {
             render_actor(actor);
         }
+next_actor:
+        actor++;
     }
 
     /* Floor items. */
@@ -96,9 +98,9 @@ void render_entities(void)
     /* Actor sprites. */
     SetLightMatrix(&render_light_matrices[2]);
     sprite = (KfEffectRenderView *)effect_pool_records;
-    for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--, sprite++) {
+    for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {
         if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->sprite_id == KF_EFFECT_RENDER_NONE) {
-            continue;
+            goto next_sprite;
         }
         {
             u16 row = (*(s32 *)&sprite->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
@@ -110,6 +112,8 @@ void render_entities(void)
                 }
             }
         }
+next_sprite:
+        sprite++;
     }
 
     /* Map events. */

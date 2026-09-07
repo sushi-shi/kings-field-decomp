@@ -140,6 +140,9 @@ promotes a probe to a proven historical toolchain.
 - [open-entity-traversal-residue.md](open-entity-traversal-residue.md): visible
   entity/item traversal, the wider floor-item state owner, and the remaining
   entry/material-base instruction differences.
+- [game-entity-traversal.md](game-entity-traversal.md): wrapped cell origins and
+  shared actor/effect continuations recover retail loop tails; floor-item
+  ownership and remaining instruction differences stay explicit.
 - [notification-state.md](notification-state.md): retail payload/control
   base relationships, the variadic enqueue signature, and the distinction
   between the recovered notification fields and the wider graphics object.
