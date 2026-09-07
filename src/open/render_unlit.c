@@ -26,10 +26,16 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *triangle = (KfTmdPrimitive *)packet;
             KfGpuFT3 *prim;
+            u16 vertex1_offset;
+            u16 vertex2_offset;
 
             vertex0 = (KfScreenVertex *)(vertices + triangle->ft3.v0);
-            vertex1 = (KfScreenVertex *)(vertices + triangle->ft3.v1);
-            vertex2 = (KfScreenVertex *)(vertices + triangle->ft3.v2);
+            vertex1_offset = triangle->ft3.v1;
+            vertex1 = (KfScreenVertex *)(vertices + vertex1_offset);
+            vertex2_offset = triangle->ft3.v2;
+            /* Prepared indices are byte offsets into the same projected array. */
+            vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
+                ((s32)vertex2_offset - vertex1_offset));
             if (NormalClip(vertex0->sxy, vertex1->sxy,
                            vertex2->sxy) <= 0) {
                 goto next_packet;
@@ -75,7 +81,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         default:
             goto next_packet;
         }
-        depth = ((vertex0->sz + vertex2->sz + vertex1->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
+        depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
         depth += bias;
         if (depth >= KF_SCENE_MIN_OT_DEPTH) {
             /* The projected array and active OT share this complete owner. */
