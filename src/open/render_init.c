@@ -36,9 +36,9 @@ KfGraphicsRuntimeOpen open_graphics_runtime;
 RODATA(0x80012110, 0x28)
 
 ADDRESS(0x800168dc, 0x2c)
-void lighting_set_active_color_matrix(s32 index)
+void lighting_set_active_color_matrix(KfOpenColorPreset preset)
 {
-    SetColorMatrix(&color_matrix_table[index]);
+    SetColorMatrix(&color_matrix_table[KF_ENUM_ENCODE(s32, preset)]);
 }
 
 ADDRESS(0x80016908, 0x1d4)

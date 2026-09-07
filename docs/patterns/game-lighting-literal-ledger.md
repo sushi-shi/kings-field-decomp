@@ -228,4 +228,8 @@ dossiers and verification reports are under
 | `player_death_update` | 65 | `0` | `render_frame(0, 0);` | Null position override; render_set_view_transform retains the current view position. Keep both calls at the death endpoint. |
 | `player_death_update` | 65 | `0` | `render_frame(0, 0);` | Null rotation override; render_set_view_transform retains the current view rotation. Keep both calls at the death endpoint. |
 | `player_death_update_reverse_fade` | 81 | `0` | `fog_interpolate_near(0, player_death_saved_fog_near, *blend);` | Zero near-fog distance is the starting endpoint of the signed Q12 distance interpolation, not a selector. |
-| `player_death_update_reverse_fade` | 85 | `0` | `player_death_apply_visual_fade(&color_matrix_table[KF_GAME_COLOR_DEFAULT], 0);` | Zero interpolation blend restores the unmodified default color matrix, saved near-fog distance and normal HUD brightness before normal updates resume. |
+| `player_death_update_reverse_fade` | 85 | `0` | `player_death_apply_visual_fade(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], 0);` | Zero interpolation blend restores the unmodified default color matrix, saved near-fog distance and normal HUD brightness before normal updates resume. |
+
+The [palette-domain review](palette-domains.md) types GAME and OPEN selectors
+separately. The zero-blend row above now includes the explicit enum-to-index
+conversion; its arithmetic meaning and the 117-occurrence count are unchanged.

@@ -20,9 +20,9 @@ enum {
 ADDRESS(0x800184b0, 0x90)
 void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend)
 {
-    lighting_set_color_matrix(color_from, &color_matrix_table[KF_GAME_COLOR_BLACK], blend);
-    matrix_interpolate(&color_matrix_table[KF_GAME_COLOR_WHITE],
-        &color_matrix_table[KF_GAME_COLOR_BLACK], &render_state.effect_color_matrix, blend);
+    lighting_set_color_matrix(color_from, &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], blend);
+    matrix_interpolate(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)],
+        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], &render_state.effect_color_matrix, blend);
     fog_interpolate_near(player_death_saved_fog_near, 0, blend);
     hud_brightness = ((blend * -KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS)
         + KF_HUD_DEFAULT_BRIGHTNESS;
@@ -74,18 +74,18 @@ void player_death_update_reverse_fade(void)
 {
     s16 *blend = &player_state.death_visual_blend;
 
-    lighting_set_color_matrix(&color_matrix_table[KF_GAME_COLOR_BLACK],
-        &color_matrix_table[KF_GAME_COLOR_DEFAULT], *blend);
-    matrix_interpolate(&color_matrix_table[KF_GAME_COLOR_BLACK],
-        &color_matrix_table[KF_GAME_COLOR_WHITE], &render_state.effect_color_matrix, *blend);
+    lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)],
+        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], *blend);
+    matrix_interpolate(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)],
+        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], &render_state.effect_color_matrix, *blend);
     fog_interpolate_near(0, player_death_saved_fog_near, *blend);
     hud_brightness = (*blend * KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS;
     *blend += PLAYER_DEATH_FADE_STEP;
     if (*blend >= KF_FIXED12_ONE) {
-        player_death_apply_visual_fade(&color_matrix_table[KF_GAME_COLOR_DEFAULT], 0);
+        player_death_apply_visual_fade(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], 0);
         player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     } else {
         player_death_apply_visual_fade(
-            &color_matrix_table[KF_GAME_COLOR_DEFAULT], KF_FIXED12_ONE - *blend);
+            &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], KF_FIXED12_ONE - *blend);
     }
 }

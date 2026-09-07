@@ -219,7 +219,7 @@ void map_load_floor(void)
     map_restore_floor_state();
     map_refresh_dialogue_stages();
     effect5_texture_cache_prepare(player_state.progress_state.current_floor);
-    render_state.effect_color_matrix = color_matrix_table[KF_GAME_COLOR_WHITE];
+    render_state.effect_color_matrix = color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)];
 }
 
 ADDRESS(0x800365f8, 0x20)

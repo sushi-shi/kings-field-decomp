@@ -126,9 +126,9 @@ void display_show_error_screen(s32 stage)
 }
 
 ADDRESS(0x8001bab8, 0x2c)
-void lighting_set_active_color_matrix(s32 index)
+void lighting_set_active_color_matrix(KfGameColorPreset preset)
 {
-    SetColorMatrix(&color_matrix_table[index]);
+    SetColorMatrix(&color_matrix_table[KF_ENUM_ENCODE(s32, preset)]);
 }
 
 ADDRESS(0x8001bae4, 0xb0)

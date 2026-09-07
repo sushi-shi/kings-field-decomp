@@ -12,6 +12,16 @@
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
+KF_ENUM_BEGIN(KfGameColorPreset, s32)
+    KF_GAME_COLOR_DEFAULT = 0,
+    KF_GAME_COLOR_DAMAGE = 1,
+    KF_GAME_COLOR_DEFENSE_EFFECT = 2,
+    KF_GAME_COLOR_WHITE = 3,
+    KF_GAME_COLOR_BLACK = 4,
+    KF_GAME_COLOR_GREEN = 5,
+    KF_GAME_COLOR_BLUE = 6
+KF_ENUM_END(KfGameColorPreset)
+
 enum {
     KF_SYSTEM_SCREEN_CD_SEARCH_FAILED = 0,
     KF_SYSTEM_SCREEN_CD_READ_FAILED = 1,
@@ -32,13 +42,6 @@ enum {
 
 enum {
     KF_GAME_COLOR_PRESET_COUNT = 7,
-    KF_GAME_COLOR_DEFAULT = 0,
-    KF_GAME_COLOR_DAMAGE = 1,
-    KF_GAME_COLOR_DEFENSE_EFFECT = 2,
-    KF_GAME_COLOR_WHITE = 3,
-    KF_GAME_COLOR_BLACK = 4,
-    KF_GAME_COLOR_GREEN = 5,
-    KF_GAME_COLOR_BLUE = 6,
     KF_HUD_DEFAULT_BRIGHTNESS = 86
 };
 
@@ -194,7 +197,7 @@ extern void fog_set_near(s32 distance);
 extern void lighting_apply_color_preset6(void);
 extern void lighting_apply_timed_player_effect(void);
 extern void lighting_apply_weapon9_environment(void);
-extern void lighting_set_active_color_matrix(s32 index);
+extern void lighting_set_active_color_matrix(KfGameColorPreset preset);
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
 extern void menu_render_item_model(void);

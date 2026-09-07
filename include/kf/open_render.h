@@ -3,19 +3,23 @@
 
 /* OPEN.EXE display, render, and TMD state shared across render units. */
 
+#include <kf/enum.h>
 #include <kf/game_math.h>
 #include <kf/item.h>
 #include <kf/render_types.h>
 #include <kf/tmd.h>
 
-enum {
-    KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000,
-    KF_OPEN_COLOR_PRESET_COUNT = 5,
+KF_ENUM_BEGIN(KfOpenColorPreset, s32)
     KF_OPEN_COLOR_DEFAULT = 0,
     KF_OPEN_COLOR_BLACK = 1,
     KF_OPEN_COLOR_WHITE = 2,
     KF_OPEN_COLOR_ENDING_MIDPOINT = 3,
     KF_OPEN_COLOR_ENDING_GREEN = 4
+KF_ENUM_END(KfOpenColorPreset)
+
+enum {
+    KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000,
+    KF_OPEN_COLOR_PRESET_COUNT = 5,
 };
 
 /* OPEN.EXE display subobject; the active OT pointer follows this record. */
@@ -121,7 +125,7 @@ extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern u32 primitive_allocation_count;
 
 extern void display_initialize(s32 mode);
-extern void lighting_set_active_color_matrix(s32 index);
+extern void lighting_set_active_color_matrix(KfOpenColorPreset preset);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void lighting_set_color_matrix(

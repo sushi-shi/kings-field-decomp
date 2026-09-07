@@ -25,7 +25,7 @@ PAIRS = (
         0x8001BAB8,
         "lighting_set_active_color_matrix",
         "void",
-        "s32 index",
+        "KfGameColorPreset preset",
     ),
     (
         "GAME.EXE",

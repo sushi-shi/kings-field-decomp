@@ -1,6 +1,6 @@
 # Source literal coverage map
 
-Working snapshot after the [lighting/fade review](game-lighting-literal-ledger.md):
+Working snapshot after the [palette-domain review](palette-domains.md):
 **111 C files**, **112 source/image variants**,
 and **6,428 inline numeric/character occurrences**. The counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
@@ -38,7 +38,8 @@ the current root/list/save ledger to 259 occurrences. `map_scripts.c` remains
 excluded until its rows and referent evidence are reconciled. The lighting/fade
 review adds complete accounting for 117 occurrences across three files; their
 palette data, null arguments and arithmetic origins remain literal with
-individual reasons.
+individual reasons. The palette-domain review promotes the twelve named GAME/OPEN
+selectors into distinct enum types and retains the same literal counts.
 
 The [grouped-ledger reconciliation](game-retained-ledger-reconciliation.md)
 verified and normalized the death, item-use and notification accounting. Other
