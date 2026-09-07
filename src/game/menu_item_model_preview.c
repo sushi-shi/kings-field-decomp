@@ -51,7 +51,7 @@ void menu_item_model_preview(s32 item_id)
         gs.x = 0xae;
         gs.y = 0x24;
         name = item_name_rows[item_id].codes;
-        for (i = 0; i < 10; i++) {
+        for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
             gs.codes[i] = name[i];
         }
         menu_draw_string(&menu_assets.glyph_atlas, &gs);

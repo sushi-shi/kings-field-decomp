@@ -5,6 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/game_map.h>
+#include <kf/item.h>
 #include <kf/magic.h>
 
 enum {
@@ -69,7 +70,7 @@ typedef struct KfSavePayload {
     u32 player_state[56];
     u8 unknown_0e0[556];
     KfMapSavedWorld world_state;
-    u8 item_stock[3][80];
+    u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
     KfMagicLearningState magic_flags[KF_MAGIC_RECORD_COUNT];
     u8 unknown_2548[56];
 } KfSavePayload;

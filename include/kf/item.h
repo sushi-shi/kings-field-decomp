@@ -5,6 +5,13 @@
 
 #include <kf/game_types.h>
 
+/* Database IDs exclude the no-item sentinel; stock adds the player bank. */
+enum {
+    KF_ITEM_COUNT = 80,
+    KF_ITEM_SHOP_COUNT = 2,
+    KF_ITEM_STOCK_BANK_COUNT = 3
+};
+
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
     KF_FLOOR_ITEM_END = 0xffff,
@@ -122,7 +129,7 @@ typedef struct KfFloorItem {
 } KfFloorItem;
 
 /* GAME: player quantities, followed by two shop-stock/availability banks. */
-extern u8 item_stock[3][80];
+extern u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
 
 /* GAME globals; OPEN places these fields in KfFloorItemStateOpen. */
 extern u16 floor_item_count;

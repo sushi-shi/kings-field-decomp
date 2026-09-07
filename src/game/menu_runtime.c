@@ -109,7 +109,7 @@ void menu_draw_item_name_frame(s32 item_id)
     current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
     string.x = 0x80;
     string.y = 0x24;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
         string.codes[i] = name[i];
     }
     menu_draw_string(&menu_assets.glyph_atlas, &string);
@@ -560,7 +560,7 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row)
 
     list->title_x = 12;
     list->title_y = 19;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
         list->title_glyphs[i] = menu_window_layouts[KF_ENUM_ENCODE(s32, kind)].rows[row].codes[i];
     }
     list->list_x = 0x16;

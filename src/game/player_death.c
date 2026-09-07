@@ -16,7 +16,7 @@ SoundRef player_sound_refs[3] = {
 };
 
 DATA(0x800652a8, 0xf0)
-u8 item_stock[3][80];
+u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
 
 /*
  * Player death, vitals, and combat run, one contiguous band
@@ -88,12 +88,12 @@ void game_state_initialize(void)
     player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     cursor = MAP_WORLD_STATE_BYTES;
-    count = 0x2133;
+    count = sizeof(map_runtime_state.world_state) - 1;
     do {
         *cursor++ = 0;
     } while (--count != -1);
     cursor = (u8 *)&item_stock;
-    count = 0xef;
+    count = sizeof(item_stock) - 1;
     do {
         *cursor++ = 0;
     } while (--count != -1);

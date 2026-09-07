@@ -5,7 +5,7 @@ after the [equipment domain audit](game-equipment-domains.md) and [shop price fo
 and extents are separate. Negative signs are operators, so -99 contributes
 one numeric token. Line numbers locate this source version.
 
-All **126 retained occurrences** have specific reasons.
+All **120 retained occurrences** have specific reasons.
 
 The [window-kind review](game-menu-window-kinds.md) names the two layout-selector literals.
 
@@ -14,9 +14,12 @@ The [choice-domain review](game-menu-choice-state.md) also names the equipment m
 The [list-result review](game-menu-list-results.md) names pending/no-selection
 controls and recovery amounts, and refreshes earlier window/choice substitutions.
 
+The [shared-dimension review](game-item-menu-dimensions.md) names the database
+extents and glyph-row width while preserving local workspace capacities.
+
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
-| `menu_equip_select` | 28 | `20, 10` | `s16 labels[20][10];` | Twenty-row local workspace with ten signed glyphs per row, matching the shared label format; current equipment ranges need at most fourteen rows including none, and spell selection at most six. Original over-allocation rationale is unknown. |
+| `menu_equip_select` | 28 | `20` | `s16 labels[20][MENU_GLYPHS_PER_ROW];` | Twenty-row local workspace with the shared named glyph width. Equipment needs at most fourteen entries including unequip, and ranged magic at most six; original over-allocation rationale is unproven. |
 | `menu_equip_select` | 29 | `20` | `u8 codes[20];` | Parallel twenty-entry code workspace, indexed with the label rows; original capacity choice is unproven. |
 | `menu_equip_select` | 37 | `0` | `s32 confirm = 0;` | Initially no pending confirmation; this is a UI highlight/request flag, not an equipment category. |
 | `menu_equip_select` | 38 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
@@ -24,12 +27,11 @@ controls and recovery amounts, and refreshes earlier window/choice substitutions
 | `menu_equip_select` | 45 | `0` | `owned = item_stock[0];` | Player-owned stock bank zero, acquired after the release wait and before the category switch; its item index follows the category bounds. |
 | `menu_equip_select` | 77 | `0` | `k = 0;` | Start appending selected rows at the first workspace entry. |
 | `menu_equip_select` | 79 | `0` | `if (owned[i] != 0) {` | Any nonzero owned quantity includes that item in the selection list. |
-| `menu_equip_select` | 81 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
+| `menu_equip_select` | 81 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
 | `menu_equip_select` | 87 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-shop-price-domains.md; atlas code 89. |
 | `menu_equip_select` | 88 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_equip_select` | 89 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_equip_select` | 90 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
-| `menu_equip_select` | 96 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
 | `menu_equip_select` | 97 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_equip_select` | 98 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_equip_select` | 100 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
@@ -56,18 +58,17 @@ controls and recovery amounts, and refreshes earlier window/choice substitutions
 | `menu_equip_select` | 165 | `1` | `confirm = 1;` | Set the UI confirmation/highlight request on the confirm edge. |
 | `menu_equip_select` | 166 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |
 | `menu_equip_select` | 172 | `0` | `if (ctx.entry_count != 0)` | Only preview an item when the list has entries. |
-| `menu_spell_select` | 228 | `20, 10` | `s16 labels[20][10];` | Twenty-row local workspace with ten signed glyphs per row, matching the shared label format; current equipment ranges need at most fourteen rows including none, and spell selection at most six. Original over-allocation rationale is unknown. |
+| `menu_spell_select` | 228 | `20` | `s16 labels[20][MENU_GLYPHS_PER_ROW];` | Twenty-row local workspace with the shared named glyph width. Equipment needs at most fourteen entries including unequip, and ranged magic at most six; original over-allocation rationale is unproven. |
 | `menu_spell_select` | 229 | `20` | `KfSelectedMagicId codes[20];` | Twenty byte-sized selected-spell entries; preserves the evidenced workspace capacity while rejecting unrelated enum values in modern compilation. Original over-allocation rationale unknown. |
 | `menu_spell_select` | 233 | `0` | `s32 confirm = 0;` | Initially no pending confirmation; this is a UI highlight/request flag, not an equipment category. |
 | `menu_spell_select` | 234 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
 | `menu_spell_select` | 238, 283 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_spell_select` | 241 | `0` | `k = 0;` | Start appending selected rows at the first workspace entry. |
-| `menu_spell_select` | 244 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
+| `menu_spell_select` | 244 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
 | `menu_spell_select` | 250 | `0, 0x59` | `labels[k][0] = 0x59;` | First glyph in はずす (unequip), decoded from the retail font in game-shop-price-domains.md; atlas code 89. |
 | `menu_spell_select` | 251 | `1, 0x4c` | `labels[k][1] = MENU_TEXT_DAKUTEN \| 0x4c;` | Second glyph position: authored atlas code 76 plus the named dakuten bit. |
 | `menu_spell_select` | 252 | `2, 0x4c` | `labels[k][2] = 0x4c;` | Third glyph position repeats atlas code 76 without dakuten. |
 | `menu_spell_select` | 253 | `3` | `labels[k][3] = MENU_TEXT_END;` | Terminator position immediately after the three authored none-label glyphs. |
-| `menu_spell_select` | 259 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
 | `menu_spell_select` | 260 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_spell_select` | 261 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_spell_select` | 264, 340 | `0 × 2` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |

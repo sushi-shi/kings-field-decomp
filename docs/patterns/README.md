@@ -293,6 +293,9 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
   and shared signed point/dimension recovery; the genuine SDK rectangle macro
   closes both blitters while preserving every narrow load and ordered store.
+- [game-item-menu-dimensions.md](game-item-menu-dimensions.md): shared item,
+  stock and glyph-row extents, complete-object startup clears, CD sector units,
+  and the [database/startup literal ledger](game-item-database-literal-ledger.md).
 - [game-screen-image-loop.md](game-screen-image-loop.md): three admitted
   DRAWENV address pairs and unconditional per-frame RGB stores close the
   screen-image/input helper.

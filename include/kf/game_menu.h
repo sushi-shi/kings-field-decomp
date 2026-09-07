@@ -194,6 +194,11 @@ typedef struct MenuPoint {
     s16 y;
 } MenuPoint;
 
+enum {
+    MENU_GLYPHS_PER_ROW = 10,
+    MENU_WINDOW_ROW_CAPACITY = 10
+};
+
 /*
  * Positioned menu text: screen origin followed by the usual ten-code label.
  * Capacity-specific workspaces use the same proven origin/code prefix.
@@ -201,7 +206,7 @@ typedef struct MenuPoint {
 typedef struct MenuGlyphString {
     u16 x;
     u16 y;
-    s16 codes[10];
+    s16 codes[MENU_GLYPHS_PER_ROW];
 } MenuGlyphString;
 
 /* The configuration draw ABI passes two complete halfword-aligned labels. */
@@ -214,12 +219,12 @@ typedef char check_menu_glyph_prefix[
 /* One title and ten selectable labels in a runtime-loaded menu window. */
 typedef struct MenuWindowLayout {
     MenuGlyphString title;
-    MenuGlyphString rows[10];
+    MenuGlyphString rows[MENU_WINDOW_ROW_CAPACITY];
 } MenuWindowLayout;
 
 /* One runtime-loaded menu name: ten glyph codes selected by item or spell ID. */
 typedef struct MenuGlyphRow {
-    s16 codes[10];
+    s16 codes[MENU_GLYPHS_PER_ROW];
 } MenuGlyphRow;
 
 /*
@@ -281,7 +286,7 @@ typedef enum MenuListTileIndex {
 typedef struct KfMenuList {
     s16 title_x;
     u16 title_y;
-    s16 title_glyphs[10];
+    s16 title_glyphs[MENU_GLYPHS_PER_ROW];
     u8 list_x;
     u8 list_y;
     u8 entry_count;
@@ -303,10 +308,10 @@ enum {
 extern SVECTOR menu_item_preview_rotation;
 extern KfMenuAssets menu_assets;
 extern MenuWindowLayout menu_window_layouts[KF_MENU_WINDOW_LAYOUT_COUNT];
-extern MenuGlyphRow item_name_rows[80];
+extern MenuGlyphRow item_name_rows[KF_ITEM_COUNT];
 extern MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
-extern u16 item_buy_prices[80][2];
-extern u16 item_sell_prices[80][2];
+extern u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
+extern u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 extern s32 menu_item_model_allocation_pending;
 
 extern void item_load_database(void);

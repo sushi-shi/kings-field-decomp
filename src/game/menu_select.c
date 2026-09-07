@@ -25,7 +25,7 @@ ADDRESS(0x800238d8, 0x5c4)
 void menu_equip_select(KfEquipmentMenuCategory category)
 {
     KfMenuList ctx;
-    s16 labels[20][10];
+    s16 labels[20][MENU_GLYPHS_PER_ROW];
     u8 codes[20];
     s16 *name;
     u8 *owned;
@@ -78,7 +78,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     for (i = start; i < end; i++) {
         if (owned[i] != 0) {
             name = item_name_rows[i].codes;
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[k][j] = name[j];
             codes[k] = i;
             k++;
@@ -93,7 +93,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, category));
     ctx.entry_count = k;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = 0;
 
@@ -225,7 +225,7 @@ ADDRESS(0x80023e9c, 0x470)
 void menu_spell_select(void)
 {
     KfMenuList ctx;
-    s16 labels[20][10];
+    s16 labels[20][MENU_GLYPHS_PER_ROW];
     KfSelectedMagicId codes[20];
     s32 code;
     s32 j;
@@ -241,7 +241,7 @@ void menu_spell_select(void)
     k = 0;
     for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++) {
         if (magic_records[code].learned == KF_MAGIC_LEARNED) {
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[k][j] = magic_name_rows[code].codes[j];
             codes[k] = KF_ENUM_DECODE(KfSelectedMagicId, code);
             k++;
@@ -256,7 +256,7 @@ void menu_spell_select(void)
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, KF_EQUIP_MENU_MAGIC));
     ctx.entry_count = k;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = 0;
 

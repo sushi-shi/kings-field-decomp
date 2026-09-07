@@ -159,7 +159,7 @@ ADDRESS(0x80022608, 0x774)
 s32 menu_use_item_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[50][10];
+    s16 labels[50][MENU_GLYPHS_PER_ROW];
     u8 counts[56];
     u8 codes[56];
     u8 *inv;
@@ -178,14 +178,14 @@ s32 menu_use_item_panel(void)
     inv = item_stock[0];
     found = 0;
     if (inv[KF_ITEM_WATCHMAN_MAP] != 0) {
-        for (j = 0; j < 10; j++)
+        for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
             labels[found][j] = item_name_rows[KF_ITEM_WATCHMAN_MAP].codes[j];
         counts[found] = inv[KF_ITEM_WATCHMAN_MAP];
         codes[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
     if (inv[KF_ITEM_SORCERER_MAP] != 0) {
-        for (j = 0; j < 10; j++)
+        for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
             labels[found][j] = item_name_rows[KF_ITEM_SORCERER_MAP].codes[j];
         counts[found] = inv[KF_ITEM_SORCERER_MAP];
         codes[found] = KF_ITEM_SORCERER_MAP;
@@ -193,16 +193,16 @@ s32 menu_use_item_panel(void)
     }
     for (code = KF_ITEM_VERDITE; code < KF_ITEM_LIGHT_RING; code++) {
         if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = item_name_rows[code].codes[j];
             counts[found] = inv[code];
             codes[found] = code;
             found++;
         }
     }
-    for (code = KF_ITEM_GOLD_CROSS; code < 0x50; code++) {
+    for (code = KF_ITEM_GOLD_CROSS; code < KF_ITEM_COUNT; code++) {
         if (code != KF_ITEM_WATCHMAN_MAP && code != KF_ITEM_SORCERER_MAP && inv[code] != 0) {
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = item_name_rows[code].codes[j];
             counts[found] = inv[code];
             codes[found] = code;
@@ -210,7 +210,7 @@ s32 menu_use_item_panel(void)
         }
     }
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = counts;
 

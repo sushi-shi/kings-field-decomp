@@ -7,23 +7,25 @@ are operators. The function/expression identifies each use; lines locate this
 source version. Positional resource indices, representation arithmetic and
 authored tuning retain their numeric form with the specific reasons below.
 
-All **97 retained occurrences** in **72 expression groups** have explicit reasons.
+All **94 retained occurrences** in **71 expression groups** have explicit reasons.
 The [magic-panel flow audit](game-magic-panel-flow.md) refreshes its source
 locations and exit/cursor predicates; direct name indexing removes one literal.
 
 The [list-result review](game-menu-list-results.md) names pending/no-selection
 controls and recovery amounts, and refreshes earlier window/choice substitutions.
 
+The [shared-dimension review](game-item-menu-dimensions.md) names the database
+extents and glyph-row width while preserving local workspace capacities.
+
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
-| `menu_magic_panel` | 31 | `10 × 2` | `s16 labels[10][10];` | Ten-row stack workspace with ten glyph halfwords per row; the instant panel currently offers at most four spells. Preserve the evidenced capacity; original over-allocation rationale unknown. |
+| `menu_magic_panel` | 31 | `10` | `s16 labels[10][MENU_GLYPHS_PER_ROW];` | Ten-row local workspace, distinct from the named number of glyphs in each row. At most four learned instant spells are appended; original over-allocation rationale is unknown. |
 | `menu_magic_panel` | 32 | `16` | `u8 codes[16];` | Sixteen-byte parallel spell-code workspace; only four learned instant spells can be appended here. Original capacity choice unknown. |
 | `menu_magic_panel` | 36 | `0` | `s32 confirm = 0;` | Initially no pending confirmation; this is a UI highlight/request flag, not an equipment category. |
 | `menu_magic_panel` | 37 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
 | `menu_magic_panel` | 41, 78 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_magic_panel` | 45 | `0` | `found = 0;` | Start appending learned spell rows at the first workspace entry. |
-| `menu_magic_panel` | 48 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
-| `menu_magic_panel` | 55 | `10` | `ctx.glyphs_per_entry = 10;` | The shared name-row representation has ten glyph halfwords per entry. |
+| `menu_magic_panel` | 48 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at index zero, from the shared fixed-width name row. |
 | `menu_magic_panel` | 56 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_magic_panel` | 57 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_magic_panel` | 60 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |

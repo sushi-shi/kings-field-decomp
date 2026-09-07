@@ -5,8 +5,11 @@ load/release pair, and initializers in their three edited modules. Named enum
 definitions and ADDRESS/DATA/RODATA claims are excluded. Other functions in
 the same source files are outside this focused ledger.
 
-All **196 occurrences** have a specific reason. The [drawing-layer review](game-menu-drawing-layers.md)
+All **192 occurrences** have a specific reason. The [drawing-layer review](game-menu-drawing-layers.md)
 names the eight former pickup-window/background depth literals.
+
+The [shared-dimension review](game-item-menu-dimensions.md) names the database
+extents and glyph-row width while preserving local workspace capacities.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -25,7 +28,7 @@ names the eight former pickup-window/background depth literals.
 | `menu_item_model_preview` | 42 | `2 × 2, 0` | `lsrc.m[2][2] = 0;` | Matrix row/column indices select the 3×3 directional coefficients: first two rows use named negative Q12 unity; third row is zero and contributes no direction. |
 | `menu_item_model_preview` | 51 | `0xae` | `gs.x = 0xae;` | Authored text-origin x coordinate 174 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_item_model_preview` | 52 | `0x24` | `gs.y = 0x24;` | Authored text-origin y coordinate 36 screen pixels; retained as local layout data, with original placement rationale unknown. |
-| `menu_item_model_preview` | 54 | `0, 10` | `for (i = 0; i < 10; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
+| `menu_item_model_preview` | 54 | `0` | `for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
 | `menu_item_model_preview` | 59 | `0xe6` | `gs.x = 0xe6;` | Authored text-origin x coordinate 230 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_item_model_preview` | 60 | `0, 0xca` | `gs.codes[0] = 0xca;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
 | `menu_item_model_preview` | 61 | `1, 0xcb` | `gs.codes[1] = 0xcb;` | Consecutive glyph or terminator position in the authored gold/held-quantity labels. Numeric right-hand sides are font-atlas codes; named diacritic/terminator bits retain their distinct encoding meanings. |
@@ -33,7 +36,6 @@ names the eight former pickup-window/background depth literals.
 | `menu_item_model_preview` | 63 | `18` | `gs.y += 18;` | Advance the price/quantity baseline by 18 screen pixels; authored line spacing. |
 | `menu_item_model_preview` | 66 | `0x117` | `gs.x = 0x117;` | Authored text-origin x coordinate 279 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_item_model_preview` | 67 | `0 × 2, 2` | `menu_format_number(item_stock[0][item_id], 2, 0, gs.codes);` | Player-owned stock bank zero; two quantity digits fit the known 99 stack capacity, with blank leading padding. |
-| `menu_draw_item_detail` | 26 | `2` | `u16 (*prices)[2];` | Two shop-price columns in each item row; this is an array shape, not a numeric shop identifier. |
 | `menu_draw_item_detail` | 34 | `0, 0x230` | `rot.t[0] = 0x230;` | GTE translation x component 560, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
 | `menu_draw_item_detail` | 35 | `1, 0x8c` | `rot.t[1] = 0x8c;` | GTE translation y component 140, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
 | `menu_draw_item_detail` | 36 | `2, 0x5dc` | `rot.t[2] = 0x5dc;` | GTE translation z component 1500, in the transform coordinate units; authored preview placement, not an angle or Q12 coefficient. |
@@ -48,7 +50,7 @@ names the eight former pickup-window/background depth literals.
 | `menu_draw_item_detail` | 50 | `2 × 2, 0` | `lsrc.m[2][2] = 0;` | Matrix row/column indices select the 3×3 directional coefficients: first two rows use named negative Q12 unity; third row is zero and contributes no direction. |
 | `menu_draw_item_detail` | 59 | `0xae` | `gs.x = 0xae;` | Authored text-origin x coordinate 174 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_draw_item_detail` | 60 | `0x24` | `gs.y = 0x24;` | Authored text-origin y coordinate 36 screen pixels; retained as local layout data, with original placement rationale unknown. |
-| `menu_draw_item_detail` | 62 | `0, 10` | `for (i = 0; i < 10; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
+| `menu_draw_item_detail` | 62 | `0` | `for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
 | `menu_draw_item_detail` | 67 | `0xc8` | `gs.x = 0xc8;` | Authored text-origin x coordinate 200 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_draw_item_detail` | 68, 85 | `18 × 2` | `gs.y += 18;` | Advance the price/quantity baseline by 18 screen pixels; authored line spacing. |
 | `menu_draw_item_detail` | 70 | `1, 6, 0` | `menu_format_number(prices[item_id][shop_id - 1], 6, 0, gs.codes);` | Convert one-based shop column to a zero-based array index; render six price digits with blank rather than zero padding. |
@@ -81,7 +83,7 @@ names the eight former pickup-window/background depth literals.
 | `menu_draw_item_name_frame` | 101 | `2 × 2, 0` | `light_source.m[2][2] = 0;` | Matrix row/column indices select the 3×3 directional coefficients: first two rows use named negative Q12 unity; third row is zero and contributes no direction. |
 | `menu_draw_item_name_frame` | 110 | `0x80` | `string.x = 0x80;` | Authored text-origin x coordinate 128 screen pixels; retained as local layout data, with original placement rationale unknown. |
 | `menu_draw_item_name_frame` | 111 | `0x24` | `string.y = 0x24;` | Authored text-origin y coordinate 36 screen pixels; retained as local layout data, with original placement rationale unknown. |
-| `menu_draw_item_name_frame` | 112 | `0, 10` | `for (i = 0; i < 10; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
+| `menu_draw_item_name_frame` | 112 | `0` | `for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {` | Copy the ten signed glyph halfwords of the shared name-row representation, starting at its first entry. |
 | `menu_draw_item_name_frame` | 118, 140, 162, 184 | `1 × 4` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean enables semi-transparency on each of the four mirrored pickup-window quads. |
 | `menu_draw_item_name_frame` | 121, 165 | `0x76 × 2` | `current_poly_ft4->x0 = 0x76;` | Pickup tile anchor 118 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |
 | `menu_draw_item_name_frame` | 122, 144 | `0x10 × 2` | `current_poly_ft4->y0 = 0x10;` | Pickup tile anchor 16 screen pixels. The four quadrants use X=118/189 and Y=16/120; right/bottom edges add descriptor width/height, while UV order mirrors the source tile. Authored layout, not a protocol value. |

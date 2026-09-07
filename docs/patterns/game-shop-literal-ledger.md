@@ -1,8 +1,11 @@
 # Retained shop-menu literals
 
 Complete root/buy/sell ledger after the [price-domain audit](game-shop-price-domains.md) and [consumable/accessory identities](game-item-consumables-accessories.md), refreshed by the [shop-panel flow audit](game-shop-panel-flow.md).
-All **153 remaining occurrences**, down from 188, have specific reasons. Claims
+All **139 remaining occurrences**, down from 188, have specific reasons. Claims
 and named enum definitions are separate; signs do not count as numeric tokens.
+
+The [shared-dimension review](game-item-menu-dimensions.md) names the database
+extents and glyph-row width while preserving local workspace capacities.
 
 | Function | Lines | Tokens | Expression | Reason |
 | --- | --- | --- | --- | --- |
@@ -23,28 +26,23 @@ and named enum definitions are separate; signs do not count as numeric tokens.
 | `item_menu_root` | 191 | `1` | `confirm = 1;` | Set the Boolean confirmation/highlight request on a fresh confirm-button edge. |
 | `item_menu_root` | 195, 198 | `1 × 2` | `done = -1;` | Mark the root closed by return-row confirmation or the cancel button. |
 | `item_menu_root` | 196 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 213 | `80, 10` | `s16 entries[80][10];` | Workspace has one ten-halfword glyph row for each of the 80 item IDs in the loaded database. |
-| `item_menu_buy` | 214 | `80` | `u8 available[80];` | One byte per possible item row: shop availability bytes on buy, unequipped player quantities on sell. The buy copy remains unused by display; preserve the retail stores. |
-| `item_menu_buy` | 215 | `80` | `u8 index[80];` | Parallel mapping from each possible displayed row back to its byte item ID. |
-| `item_menu_buy` | 221 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_buy` | 220 | `0` | `s32 confirm = 0;` | Clear the pending confirmation/highlight flag before processing input. |
+| `item_menu_buy` | 221 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_buy` | 223 | `99` | `s32 selection = -99;` | Pending item selection, outside the 0..79 item IDs and cancellation -1. This is the outer list protocol, not the confirmation-widget result; original -99 choice unproven. |
 | `item_menu_buy` | 225, 275 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_buy` | 230 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
-| `item_menu_buy` | 231 | `80` | `for (slot = KF_ITEM_VERDITE; slot < 80; slot++) {` | Authored buy ordering puts IDs 42..79 first, then 0..41; 80 is the database endpoint. Row 42 is Verdite. Do not invent a uniform item category for this mixed band. |
 | `item_menu_buy` | 232, 241 | `0 × 4` | `if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
-| `item_menu_buy` | 233, 242 | `0 × 2, 10 × 2` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
+| `item_menu_buy` | 233, 242 | `0 × 2` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
 | `item_menu_buy` | 240 | `0` | `for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
 | `item_menu_buy` | 250 | `9` | `ctx.visible_rows = 9;` | Authored shop viewport shows nine rows; this overrides the generic initializer’s eleven-row capacity. Original layout choice is unproven. |
-| `item_menu_buy` | 251 | `10` | `ctx.glyphs_per_entry = 10;` | Each item name is the full ten-halfword row copied from the database. |
 | `item_menu_buy` | 252 | `0 × 2` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
 | `item_menu_buy` | 253 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
 | `item_menu_buy` | 256 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
 | `item_menu_buy` | 257, 305, 320 | `0 × 3` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
 | `item_menu_buy` | 265 | `1` | `if (confirm == 1) {` | Enter the confirmation widget only for the exact set value one; this also proves the former sell-price argument was one. |
 | `item_menu_buy` | 269 | `99` | `selection = -99;` | A cancelled confirmation leaves the outer selection pending; assign after the widget call, as its return-branch delay slot requires. |
-| `item_menu_buy` | 274 | `99` | `if (selection != -99) {` | A chosen item or cancellation completes the outer modal selection; pending -99 continues input. |
 | `item_menu_buy` | 273 | `0` | `confirm = 0;` | Unconditionally clear the request before the exit guard, including when the panel remains open after a declined confirmation. |
+| `item_menu_buy` | 274 | `99` | `if (selection != -99) {` | A chosen item or cancellation completes the outer modal selection; pending -99 continues input. |
 | `item_menu_buy` | 281 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
 | `item_menu_buy` | 282 | `0` | `if (ctx.entry_count == 0) {` | Handle an empty list without reading a selected item. |
 | `item_menu_buy` | 283 | `0` | `if (input != 0) {` | Any button press acknowledges an empty list and exits its panel. |
@@ -69,11 +67,8 @@ and named enum definitions are separate; signs do not count as numeric tokens.
 | `item_menu_buy` | 342 | `1` | `if (selection != -1) {` | Apply inventory/gold changes only for a completed item selection, not cancellation. |
 | `item_menu_buy` | 345 | `1` | `player_state.gold -= item_buy_prices[selection][shop_id - 1];` | Subtract the selected item’s unsigned halfword price in the shop’s zero-based column. |
 | `item_menu_buy` | 346 | `0` | `item_stock[0][selection]++;` | Increment the player-owned stock bank, distinct from shop availability. |
-| `item_menu_sell` | 359 | `80, 10` | `s16 entries[80][10];` | Workspace has one ten-halfword glyph row for each of the 80 item IDs in the loaded database. |
-| `item_menu_sell` | 360 | `80` | `u8 available[80];` | One byte per possible item row: shop availability bytes on buy, unequipped player quantities on sell. The buy copy remains unused by display; preserve the retail stores. |
-| `item_menu_sell` | 361 | `80` | `u8 index[80];` | Parallel mapping from each possible displayed row back to its byte item ID. |
-| `item_menu_sell` | 367 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_sell` | 366 | `0` | `s32 confirm = 0;` | Clear the pending confirmation/highlight flag before processing input. |
+| `item_menu_sell` | 367 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
 | `item_menu_sell` | 369 | `99` | `s32 selection = -99;` | Pending item selection, outside the 0..79 item IDs and cancellation -1. This is the outer list protocol, not the confirmation-widget result; original -99 choice unproven. |
 | `item_menu_sell` | 371, 422 | `1 × 2, 0 × 2` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
 | `item_menu_sell` | 375 | `0` | `inv = item_stock[0];` | Sell from the player-owned quantity bank zero. |
@@ -81,17 +76,16 @@ and named enum definitions are separate; signs do not count as numeric tokens.
 | `item_menu_sell` | 377 | `0` | `for (slot = 0; slot < KF_ITEM_GOLD_CROSS; slot++) {` | Start with item zero and stop before Gold Cross ID 52; the Gold Cross and later key/quest-item band is excluded from selling. |
 | `item_menu_sell` | 378 | `0` | `if (inv[slot] != 0) {` | Only possessed player items can become sale candidates. |
 | `item_menu_sell` | 388 | `0` | `if (available[found] != 0) {` | After subtracting an equipped copy, retain the row only if another copy remains available. |
-| `item_menu_sell` | 389 | `0, 10` | `for (j = 0; j < 10; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
+| `item_menu_sell` | 389 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
 | `item_menu_sell` | 397 | `9` | `ctx.visible_rows = 9;` | Authored shop viewport shows nine rows; this overrides the generic initializer’s eleven-row capacity. Original layout choice is unproven. |
-| `item_menu_sell` | 398 | `10` | `ctx.glyphs_per_entry = 10;` | Each item name is the full ten-halfword row copied from the database. |
 | `item_menu_sell` | 399 | `0 × 2` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
 | `item_menu_sell` | 400 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
 | `item_menu_sell` | 403 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
 | `item_menu_sell` | 404, 452, 467 | `0 × 3` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
 | `item_menu_sell` | 412 | `1` | `if (confirm == 1) {` | Enter the confirmation widget only for the exact set value one; this also proves the former sell-price argument was one. |
 | `item_menu_sell` | 416 | `99` | `selection = -99;` | A cancelled confirmation leaves the outer selection pending; assign after the widget call, as its return-branch delay slot requires. |
-| `item_menu_sell` | 421 | `99` | `if (selection != -99) {` | A chosen item or cancellation completes the outer modal selection; pending -99 continues input. |
 | `item_menu_sell` | 420 | `0` | `confirm = 0;` | Unconditionally clear the request before the exit guard, including when the panel remains open after a declined confirmation. |
+| `item_menu_sell` | 421 | `99` | `if (selection != -99) {` | A chosen item or cancellation completes the outer modal selection; pending -99 continues input. |
 | `item_menu_sell` | 428 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
 | `item_menu_sell` | 429 | `0` | `if (ctx.entry_count == 0) {` | Handle an empty list without reading a selected item. |
 | `item_menu_sell` | 430 | `0` | `if (input != 0) {` | Any button press acknowledges an empty list and exits its panel. |

@@ -28,7 +28,7 @@ ADDRESS(0x8002317c, 0x530)
 s32 menu_magic_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[10][10];
+    s16 labels[10][MENU_GLYPHS_PER_ROW];
     u8 codes[16];
     s32 found;
     s32 code;
@@ -45,14 +45,14 @@ s32 menu_magic_panel(void)
     found = 0;
     for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
         if (magic_records[code].learned == KF_MAGIC_LEARNED) {
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = magic_name_rows[code].codes[j];
             codes[found] = code;
             found++;
         }
     }
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = 0;
 

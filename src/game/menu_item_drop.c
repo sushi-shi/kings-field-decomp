@@ -30,9 +30,9 @@ ADDRESS(0x800249a8, 0x4bc)
 void menu_drop_item(void)
 {
     KfMenuList ctx;
-    s16 labels[80][10];
-    u8 counts[80];
-    u8 codes[80];
+    s16 labels[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
+    u8 counts[KF_ITEM_COUNT];
+    u8 codes[KF_ITEM_COUNT];
     u8 *inv;
     KfPlayerState *player;
     s32 found;
@@ -51,7 +51,7 @@ void menu_drop_item(void)
     code = 0;
     player = &player_state;
     inv = item_stock[0];
-    for (; code < 80; code++) {
+    for (; code < KF_ITEM_COUNT; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
             if (code == player->equipped_weapon_id ||
@@ -63,7 +63,7 @@ void menu_drop_item(void)
                 code == player->equipped_accessory_id)
                 counts[found]--;
             if (counts[found] != 0) {
-                for (j = 0; j < 10; j++)
+                for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                     labels[found][j] = item_name_rows[code].codes[j];
                 codes[found] = code;
                 found++;
@@ -72,7 +72,7 @@ void menu_drop_item(void)
     }
 
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = 0;
 

@@ -18,16 +18,16 @@ DATA(0x80058478, 0x948)
 MenuWindowLayout menu_window_layouts[KF_MENU_WINDOW_LAYOUT_COUNT];
 
 DATA(0x80058dc0, 0x640)
-MenuGlyphRow item_name_rows[80];
+MenuGlyphRow item_name_rows[KF_ITEM_COUNT];
 
 DATA(0x80059400, 0xb4)
 MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
 
 DATA(0x800594b8, 0x140)
-u16 item_buy_prices[80][2];
+u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
 DATA(0x800595f8, 0x140)
-u16 item_sell_prices[80][2];
+u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
 /*
  * Expands the map resource stream's floor-item placement chunk into the runtime
@@ -102,7 +102,7 @@ void item_load_database(void)
 
     memory_release_last();
 
-    for (i = 0; i < 80; i++) {
+    for (i = 0; i < KF_ITEM_COUNT; i++) {
         s32 n = i + 1;
         s32 rem;
 
@@ -112,9 +112,9 @@ void item_load_database(void)
         name[12] = rem / 10 + '0';
         name[13] = rem % 10 + '0';
         if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != 0) {
-            if ((cd_file_table[i].size & 0x7ff) != 0)
+            if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)
                 cd_file_table[i].size =
-                    ((cd_file_table[i].size >> 11) + 1) << 11;
+                    ((cd_file_table[i].size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
         }
     }
 }
@@ -210,9 +210,9 @@ ADDRESS(0x80021538, 0x5c4)
 void item_menu_buy(s32 shop_id)
 {
     KfMenuList ctx;
-    s16 entries[80][10];
-    u8 available[80];
-    u8 index[80];
+    s16 entries[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
+    u8 available[KF_ITEM_COUNT];
+    u8 index[KF_ITEM_COUNT];
     u8 *inv;
     s32 slot;
     s32 found;
@@ -228,9 +228,9 @@ void item_menu_buy(s32 shop_id)
 
     inv = item_stock[shop_id];
     found = 0;
-    for (slot = KF_ITEM_VERDITE; slot < 80; slot++) {
+    for (slot = KF_ITEM_VERDITE; slot < KF_ITEM_COUNT; slot++) {
         if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             available[found] = inv[slot];
             index[found] = slot;
@@ -239,7 +239,7 @@ void item_menu_buy(s32 shop_id)
     }
     for (slot = 0; slot < KF_ITEM_VERDITE; slot++) {
         if (inv[slot] != 0 && item_stock[0][slot] < KF_ITEM_STACK_CAPACITY) {
-            for (j = 0; j < 10; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             available[found] = inv[slot];
             index[found] = slot;
@@ -248,7 +248,7 @@ void item_menu_buy(s32 shop_id)
     }
     ctx.entry_count = found;
     ctx.visible_rows = 9;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &entries[0][0];
     ctx.quantities = 0;
 
@@ -356,9 +356,9 @@ ADDRESS(0x80021afc, 0x500)
 void item_menu_sell(s32 shop_id)
 {
     KfMenuList ctx;
-    s16 entries[80][10];
-    u8 available[80];
-    u8 index[80];
+    s16 entries[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
+    u8 available[KF_ITEM_COUNT];
+    u8 index[KF_ITEM_COUNT];
     u8 *inv;
     s32 slot;
     s32 found;
@@ -386,7 +386,7 @@ void item_menu_sell(s32 shop_id)
                     || slot == player_state.equipped_accessory_id)
                 available[found]--;
             if (available[found] != 0) {
-                for (j = 0; j < 10; j++)
+                for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                     entries[found][j] = item_name_rows[slot].codes[j];
                 index[found] = slot;
                 found++;
@@ -395,7 +395,7 @@ void item_menu_sell(s32 shop_id)
     }
     ctx.entry_count = found;
     ctx.visible_rows = 9;
-    ctx.glyphs_per_entry = 10;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &entries[0][0];
     ctx.quantities = 0;
 

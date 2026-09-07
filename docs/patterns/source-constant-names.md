@@ -70,7 +70,7 @@ the mode dispatcher, and removes six numeric outcomes from the map ledger.
 The [equipment domain review](game-equipment-domains.md) separates menu
 categories from player slots, types both APIs, names empty item/spell/texture
 selections, and shares record extents and menu ranges. Its three-module
-ledger explains all 126 retained literals after the type and menu follow-ups,
+ledger explains all 120 retained literals after the type and menu follow-ups,
 down from 209; other consumers
 also replace the shared empty values and armor-record origin.
 
@@ -83,14 +83,15 @@ structure, recovering the retail stack spacing without pointer casts.
 The [preview transform review](game-menu-preview-transform.md) replaces the
 interior yaw alias with its complete SDK rotation vector and names angle-rate,
 wrapping and Q12 lighting domains. Its six-function and initializer ledger
-explains 196 retained occurrences after the shop and drawing-layer follow-ups,
+explains 192 retained occurrences after the shop, drawing-layer and dimension
+follow-ups,
 down from 236, and distinguishes draw-call
 rates from real-time frequency.
 
 The [shop price review](game-shop-price-domains.md) types buy/sell selection
 through every price-preview consumer, names the shop-window rows, and decodes
 Gold Cross and Key of the Dead from the retail item names. It propagates those
-IDs through their actual consumers and explains all 155 retained shop literals,
+IDs through their actual consumers and explains all 139 retained shop literals,
 down from 188. Shop bank IDs remain indices rather than invented merchant names.
 
 The [displayed class-title review](game-menu-class-titles.md) decodes the
@@ -109,7 +110,8 @@ the existing preview ledger drops eight newly named depth occurrences.
 The [window-kind review](game-menu-window-kinds.md) decodes the loaded layout
 bank and propagates its enum through drawing, prompts and list initialization.
 It distinguishes the System window from the unreferenced Save/Load record,
-replaces 37 source literals, and explains the 16 retained occurrences in the
+replaces 37 source literals, and explains the 15 retained occurrences after the
+dimension follow-up in the
 [window/list initializer ledger](game-menu-window-literal-ledger.md).
 
 The [save-result review](game-menu-save-results.md) propagates typed
@@ -131,8 +133,16 @@ The [list-result and recovery review](game-menu-list-results.md) names the
 pending/no-selection controls without conflating integer item IDs, spell IDs
 and list rows. It also names five item HP additions and Bless's MAGIC-to-HP
 multiplier, replacing 43 numeric uses. Its new
-[item-use/discard ledger](game-menu-item-list-literal-ledger.md) explains 115
+[item-use/discard ledger](game-menu-item-list-literal-ledger.md) explains 101
 retained literals and refreshes the equipment, spell and root-choice ledgers.
+
+The [item and menu dimension review](game-item-menu-dimensions.md) shares the
+item-table, shop-column, stock-bank and glyph-row extents across definitions,
+saved state and consumers. It derives startup clear lengths from their owners
+and reuses the CD sector units. Its
+[database/startup ledger](game-item-database-literal-ledger.md) explains all
+120 retained numeric uses in those two functions; six existing ledgers are
+refreshed, including 94 retained occurrences in the spell ledger.
 
 ## Function Match Plan
 

@@ -23,7 +23,7 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     MATRIX rot;
     MATRIX lsrc;
     MATRIX lres;
-    u16 (*prices)[2];
+    u16 (*prices)[KF_ITEM_SHOP_COUNT];
     s16 *name;
     s32 i;
 
@@ -59,7 +59,7 @@ void menu_draw_item_detail(s32 item_id, s32 shop_id, KfItemPriceMode price_mode)
     gs.x = 0xae;
     gs.y = 0x24;
     name = item_name_rows[item_id].codes;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
         gs.codes[i] = name[i];
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
