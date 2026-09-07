@@ -1,5 +1,22 @@
 # OPEN ending-scroll controller and data owners
 
+## R3000 and combined-live-range controls
+
+Compiling the complete opening-scenes unit with GCC 2.5.7 `-mcpu=r3000` is
+byte-identical to the configured r2000 probe. The exact scene 0/1 and ending
+scene functions stay exact; `opening_entity_transition` and
+`opening_scene3_run` retain their eight- and sixteen-byte frame deficits, and
+the ending scroll retains its 51-block residue. The temporary profile is
+removed.
+
+The independently observed ending-scroll facts were also tested together: a
+typed camera-path pointer initialized after the second entity lookup, plus an
+`s16` next-lighting-phase value joining both completed interpolation cases.
+The result has retail's 49-block CFG, but the camera address is still delayed,
+every long-lived scene-state register rotates, and the body is four bytes
+shorter. This is the same substantive divergence as the earlier carrier
+control, not a complementary live-range fix. Both locals are removed.
+
 ## Complete camera-array and signed carrier controls (`82320b9` follow-up)
 
 A pointer to the complete three-element ending camera-path array, assigned at
