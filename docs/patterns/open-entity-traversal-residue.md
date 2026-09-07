@@ -1,5 +1,16 @@
 # OPEN visible entity/item traversal
 
+## Item-window declaration and R3000 controls
+
+With the retained tpage-member pointer, declaring the item loop's current
+window before its row expression is byte-identical. GCC still hoists the
+window load above the row subtraction and leaves a load-delay `nop`; source
+declaration order is not the missing dependency. An OPEN-TU-only
+`-mcpu=r3000` control is also byte-identical to the configured r2000 probe for
+all three functions: the exact entity and floor-item renderers remain exact,
+and the traversal retains the same 664-byte candidate and item-row residue.
+Both temporary changes are removed.
+
 ## Direct active-window expression control (`82320b9` follow-up)
 
 Removing the item loop's local `grid` name and spelling its three accesses
