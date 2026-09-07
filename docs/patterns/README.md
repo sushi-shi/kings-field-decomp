@@ -15,6 +15,8 @@ promotes a probe to a proven historical toolchain.
   names and the reasons for retaining individual classes of inline literals.
 - [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
   current literal counts, verified ledger coverage and remaining audit scopes.
+- [progress-controlled-map-links.md](progress-controlled-map-links.md): shared
+  weapon-door and boss-emitter link names backed by shipped placements.
 - [floor3-dialogue-door-link.md](floor3-dialogue-door-link.md): shipped placement
   and retail consumer evidence for character 12 unlocking the floor-3 door pair.
 - [map-character-domain.md](map-character-domain.md): character IDs through

@@ -133,6 +133,13 @@ constexpr KfMapObjectAction map_object_action_from_behavior(KfMapObjectBehavior 
 #define map_object_action_from_behavior(behavior) ((KfMapObjectAction)(behavior))
 #endif
 
+/* Authored groups selected by weapon and boss progress. */
+enum {
+    KF_MAP_LINK_BOSS_EMITTERS = 13,
+    KF_MAP_LINK_WEAPON_TRANSFORM_DOORS = 51,
+    KF_MAP_LINK_FLOOR5_SWORD_DOOR = 52
+};
+
 /* Link IDs 128..254 permit repeated switch/door activation; 255 is absent. */
 enum {
     KF_MAP_COPY_REGION_COUNT = 5,

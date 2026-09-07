@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [floor-3 dialogue-door review](floor3-dialogue-door-link.md):
+Working snapshot after the [progress-link review](progress-controlled-map-links.md):
 **111 C files**, **112 source/image variants**, and
-**6,087 inline numeric/character occurrences**. Counts include authored
+**6,081 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 6,087 occurrences**, explicit ledger rows were compared
+For **all 111 files / 6,081 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -28,7 +28,8 @@ names eight raw clip/control values. The character review adds a byte ID domain
 through map records and dialogue, names three exchange selectors and preserves
 the integer representation at filename and shop boundaries. Shipped placement
 evidence then resolves character 12 and link 55 as the floor-3 dialogue door
-unlock, removing two more raw selectors.
+unlock, removing two more raw selectors. The progress-link review names six
+weapon-door and boss-emitter link uses from shipped placements and consumers.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -73,12 +74,12 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,864 occurrences.
+73 files; 4,858 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
 | [actor.c](../../src/game/actor.c) | 171 | [game-actor-core ledger](game-actor-core-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [actor_behavior.c](../../src/game/actor_behavior.c) | 171 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [actor_behavior.c](../../src/game/actor_behavior.c) | 170 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [actor_pool.c](../../src/game/actor_pool.c) | 6 | [complete actor-pool ledger](actor-pool-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [asset_registry.c](../../src/game/asset_registry.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [audio.c](../../src/game/audio.c) | 39 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -106,7 +107,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [map_event.c](../../src/game/map_event.c) | 26 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [complete renderer ledger](entity-render-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_events.c](../../src/game/map_events.c) | 33 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_load.c](../../src/game/map_load.c) | 53 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_load.c](../../src/game/map_load.c) | 48 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object.c](../../src/game/map_object.c) | 67 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_scripts.c](../../src/game/map_scripts.c) | 224 | [game-map-script ledger](game-map-script-literal-ledger.md); [image groups](map-image-groups.md) | Current token/expression coverage verified; every occurrence has a reason. |

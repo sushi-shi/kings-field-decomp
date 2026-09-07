@@ -1,6 +1,6 @@
 # Actor-behavior remainder literal ledger
 
-Complete account of **171 numeric occurrences** in `src/game/actor_behavior.c`.
+Complete account of **170 numeric occurrences** in `src/game/actor_behavior.c`.
 The [behavior review](game-actor-behavior-constants.md) records the names, units,
 evidence and verification. Comments, strings, identifier digits, enums and retail
 claims are excluded. Repeated tokens have separate rows; signs stay in expressions.
@@ -81,7 +81,6 @@ explicit numeric boundaries.
 | `actor_update_boss_death_sequence` | 825 | `1` | `actor_play_sound_at_phase(&boss_death_phase_sounds[1], ACTOR_BOSS_DEATH_SOUND_PHASE1);` | Authored sound-record index 1, 2 or 3; the packed fourth record is consumed and is not padding. |
 | `actor_update_boss_death_sequence` | 826 | `2` | `actor_play_sound_at_phase(&boss_death_phase_sounds[2], ACTOR_BOSS_DEATH_SOUND_PHASE2);` | Authored sound-record index 1, 2 or 3; the packed fourth record is consumed and is not padding. |
 | `actor_update_boss_death_sequence` | 827 | `3` | `actor_play_sound_at_phase(&boss_death_phase_sounds[3], ACTOR_BOSS_DEATH_SOUND_PHASE3);` | Authored sound-record index 1, 2 or 3; the packed fourth record is consumed and is not padding. |
-| `actor_update_boss_death_sequence` | 833 | `13` | `map_object_pool_trigger_link(13);` | Authored link 13 fired at boss-death completion. |
 | `actor_update_boss_death_sequence` | 834 | `0` | `actor_pool_begin_death_by_definition(0);` | Authored actor-definition cleanup selector from the set 0,2,3,4. |
 | `actor_update_boss_death_sequence` | 835 | `2` | `actor_pool_begin_death_by_definition(2);` | Authored actor-definition cleanup selector from the set 0,2,3,4. |
 | `actor_update_boss_death_sequence` | 836 | `3` | `actor_pool_begin_death_by_definition(3);` | Authored actor-definition cleanup selector from the set 0,2,3,4. |
