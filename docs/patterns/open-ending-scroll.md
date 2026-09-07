@@ -315,3 +315,15 @@ vendor-source controls and 63 exact data-owning units. No C, retail model or
 banked baseline change is retained by this follow-up.
 Staged `nix flake check -L` also passes; its isolated 383-test run skips the
 43 controls that require local artifacts.
+
+## Ending-data linkage control
+
+The focused listing renders references to the ten ending-scroll-only initialized
+objects as `.data+offset` in the candidate and as curated object identities in
+the delinked target. Removing internal linkage from the camera path, panel and
+background rectangles, four gradient colors, panel/background colors, and UV
+bytes makes the relocations retain those names and raises listing similarity
+from 82.8% to 90.0%. Strict resolved objdiff remains exactly **97.129630%**:
+all physical targets and code bytes are unchanged. Restore `static`, which
+matches their supported single-TU ownership. Symbol presentation is not the
+remaining camera-setup, phase-join, or register-lifetime source fact.

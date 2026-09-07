@@ -450,3 +450,23 @@ panel verification passes all 651 tests, Ruff and diff checks, with no OPEN
 score change across the full 484-row comparison. Existing full-build data
 and placement failures remain documented in
 [the panel audit](game-config-panel-abi.md); no OPEN source change is kept.
+
+## Same-function row and byte-local controls
+
+With the retained tpage-member pointer, the item traversal agrees through the
+first signed division and remains 668 bytes against retail's 664. The entity
+loop in this same function is an exact source/code control: its direct
+halfword row subtraction fills the active-window pointer load delay. The item
+loop instead leaves a nop there, then loads height before subtracting the
+division result. Naming `grid->height` as a `u16` local and reversing the
+equivalent comparison to `grid->height > row` both emit the identical baseline.
+Neither spelling changes the first divergence, registers, branches, or size.
+
+The adjacent floor-item renderer still differs only by retail's second
+`andi 0xff` after `andi 0xf0`. Exact `render_map_cell` demonstrates that this
+probe can preserve repeated byte narrowing when a `u8` local is decremented
+and consumed later. Splitting facing extraction into assignment followed by
+`facing &= KF_FLOOR_ITEM_FACING_MASK`, and separately widening the arithmetic
+local with an explicit `u8` conversion, both collapse to the same 328-byte
+candidate. Restore the direct expression. These controls do not explain the
+retail truncation and do not justify a volatile or artificial consumer.
