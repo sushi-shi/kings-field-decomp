@@ -364,3 +364,20 @@ finds only this function's score change. Exact counts remain GAME 313/362,
 OPEN 98/108 and PSX 1/1; all thirteen vendored verification functions stay
 exact. There are still 59 non-exact GAME/OPEN functions. No banked function,
 baseline, unrelated source or configuration is changed by this correction.
+
+## Remaining-CFG controls at `5f3eebf`
+
+The 98.221054% source was refreshed with all six image-qualified views. A
+positive conjunction branching to an in-bounds label and the equivalent pair
+of nested positive guards both normalize to the existing bounds CFG: the two
+failures still share the later negative-height return. They do not emit the
+retail local bounds-rejection block and are not retained.
+
+Retail also selects the oriented rectangle coordinate as a word before its
+single halfword conversion. Modeling that as distinct `s32` selection and
+`s16` conversion locals changes register allocation from the entry onward and
+worsens the paired listing to 49.6%; it does not recover the local sequence.
+The direct signed-halfword selection remains canonical. These controls leave
+the existing twelve-byte deficit and one missing known return frontier
+unattributed; no source, compiler profile, target referent or bank entry is
+changed.

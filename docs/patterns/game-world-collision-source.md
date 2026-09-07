@@ -161,6 +161,23 @@ bytes. No independent source fact presently explains this entry, and it is
 an **unattributed codegen residue**, not an exact result or a compiler wall.
 No partial result is banked.
 
+## Stack-argument continuation at `5f3eebf`
+
+The live `probe-gcc257-o2-g0` source was rechecked against both other admitted
+2.5.7 scheduling profiles before another C change. `probe-gcc257-o2-plain`
+falls to 83.5% paired similarity and `probe-gcc257-o2-nosched` to 60.3%; both
+rotate additional long-lived values and neither emits the retail stack-flag
+copy. The existing per-unit profile remains the supported control.
+
+A full-word `query_flags` snapshot raises strict comparison from 97.943924%
+to 98.386290% and assigns that value to retail's s0, but the compiler loads it
+directly into s0 and still omits retail's `lw v1; nop; move s0,v1`. Keeping the
+first terrain test on the original parameter, projecting its terrain bit into
+a separate value, splitting the cell quotients, and adding a narrowed cell
+index all emit the same shortened entry. Those source forms do not explain the
+observed copy and are not retained. The canonical source and strict report are
+restored; no artificial carrier is admitted or banked.
+
 The four optional publication blocks are word-for-word equal after resolving
 their real references: retail-relative ranges 0x1f4..0x260 (player),
 0x2a4..0x33c (actor), 0x37c..0x40c (map object) and 0x44c..0x4c8 (event)
