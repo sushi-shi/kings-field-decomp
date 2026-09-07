@@ -136,6 +136,13 @@ First raw differences in the unchanged partial functions:
 | --- | --- | --- |
 | `opening_entity_transition`, `80014608` | Stack frame -48 | Stack frame -56 |
 | `opening_scene3_run`, `80014804` | Stack frame -96 | Stack frame -112 |
+
+The scene-3 frame gap is not unused capacity in its paired tpage and CLUT
+arrays. Doubling both arrays from two to four entries creates the 112-byte
+frame, but moves the live CLUT base from stack offset 48 to 56 and its second
+entry from 52 to 60; the indexed overlay load likewise moves from 24 to 32.
+Retail and the original candidate agree at 48, 52, and 24. Restore the proven
+two-entry arrays. Their extent cannot explain the otherwise frame-only residue.
 | `opening_ending_scroll_run`, `800150c0` | `sh zero,176(sp)` | `lui a0,0x8003` |
 | `render_floor_item`, `80019184` | `beqz v0,800191b8` | `andi v0,v0,0xff` |
 | `opening_render_entities_and_items`, `80019370` | `lui a0,0x8007` | `lui at,0x8007` |
