@@ -67,6 +67,15 @@ typedef struct KfScreenRect {
     u16 h;
 } KfScreenRect;
 
+/* Byte descriptor consumed by sprite_add_ft4; odd bytes remain unclassified. */
+enum {
+    KF_QUAD_TEX_U = 0,
+    KF_QUAD_TEX_V = 2,
+    KF_QUAD_TEX_U_SPAN = 4,
+    KF_QUAD_TEX_V_SPAN = 6,
+    KF_QUAD_TEX_DESCRIPTOR_BYTES = 8
+};
+
 /* Texture rectangle followed by its screen-space or projected rectangle. */
 typedef struct KfSpriteQuad {
     u8 u;

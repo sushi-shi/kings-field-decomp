@@ -165,7 +165,7 @@ static KfScreenRect opening_ending_scroll_panels[ENDING_PANEL_COUNT] = {
 };
 
 DATA(0x80037284, 0x8)
-u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};
+u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};
 
 DATA(0x8003728c, 0x4)
 CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};
@@ -194,7 +194,7 @@ DATA(0x800372b4, 0x4)
 static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};
 
 DATA(0x800372b8, 0x8)
-static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};
+static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};
 
 RODATA(0x80012000, 0x20)
 

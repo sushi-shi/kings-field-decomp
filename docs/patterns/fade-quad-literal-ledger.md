@@ -1,7 +1,7 @@
 # Fade and simple-quad retained literals
 
 Companion to the [quad color review](quad-color-types.md) and
-[rectangle type review](quad-rectangle-types.md). All 59 remaining
+[rectangle type review](quad-rectangle-types.md). All 33 remaining
 numeric occurrences in these four modules are listed, including duplicate
 indices and initialized data. Claims and named definitions are excluded.
 
@@ -9,7 +9,6 @@ indices and initialized data. Claims and named definitions are excluded.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 11 | `8` | `u8 v[8];` | Eight-byte texture descriptor with U, V and spans in even bytes; preserve the unused odd bytes. |
 | `initializers` | 18 | `0` | `KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT` | Authored top-of-screen rectangle Y origin. |
 | `initializers` | 22 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Texture U origin is zero. |
 | `initializers` | 22 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Unused descriptor byte one retains its authored zero. |
@@ -35,7 +34,6 @@ indices and initialized data. Claims and named definitions are excluded.
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
 | `initializers` | 6 | `0` | `KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT` | Authored top-of-screen rectangle Y origin. |
-| `initializers` | 9 | `8` | `u8 opening_fade_uv[8] = {` | Eight-byte texture descriptor with U, V and spans in even bytes; preserve the unused odd bytes. |
 | `initializers` | 10 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Texture U origin is zero. |
 | `initializers` | 10 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Unused descriptor byte one retains its authored zero. |
 | `initializers` | 10 | `0` | `0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0` | Texture V origin is zero. |
@@ -52,34 +50,8 @@ indices and initialized data. Claims and named definitions are excluded.
 
 ## `src/game/sprite_add_ft4.c`
 
-| Function | Line | Token | Expression | Reason |
-| --- | ---: | --- | --- | --- |
-| `sprite_add_ft4` | 22 | `0` | `prim->u0 = texcoords[0];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 23 | `2` | `prim->v0 = texcoords[2];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 24 | `0` | `prim->u1 = texcoords[0] + texcoords[4];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 24 | `4` | `prim->u1 = texcoords[0] + texcoords[4];` | Byte offset of the texture U span, added to the U origin. |
-| `sprite_add_ft4` | 25 | `2` | `prim->v1 = texcoords[2];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 26 | `0` | `prim->u2 = texcoords[0];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 27 | `2` | `prim->v2 = texcoords[2] + texcoords[6];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 27 | `6` | `prim->v2 = texcoords[2] + texcoords[6];` | Byte offset of the texture V span, added to the V origin. |
-| `sprite_add_ft4` | 28 | `0` | `prim->u3 = texcoords[0] + texcoords[4];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 28 | `4` | `prim->u3 = texcoords[0] + texcoords[4];` | Byte offset of the texture U span, added to the U origin. |
-| `sprite_add_ft4` | 29 | `2` | `prim->v3 = texcoords[2] + texcoords[6];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 29 | `6` | `prim->v3 = texcoords[2] + texcoords[6];` | Byte offset of the texture V span, added to the V origin. |
+Zero retained occurrences after naming the texture-descriptor offsets.
 
 ## `src/open/sprite_add_ft4.c`
 
-| Function | Line | Token | Expression | Reason |
-| --- | ---: | --- | --- | --- |
-| `sprite_add_ft4` | 22 | `0` | `prim->u0 = texcoords[0];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 23 | `2` | `prim->v0 = texcoords[2];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 24 | `0` | `prim->u1 = texcoords[0] + texcoords[4];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 24 | `4` | `prim->u1 = texcoords[0] + texcoords[4];` | Byte offset of the texture U span, added to the U origin. |
-| `sprite_add_ft4` | 25 | `2` | `prim->v1 = texcoords[2];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 26 | `0` | `prim->u2 = texcoords[0];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 27 | `2` | `prim->v2 = texcoords[2] + texcoords[6];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 27 | `6` | `prim->v2 = texcoords[2] + texcoords[6];` | Byte offset of the texture V span, added to the V origin. |
-| `sprite_add_ft4` | 28 | `0` | `prim->u3 = texcoords[0] + texcoords[4];` | Byte offset of the texture U origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 28 | `4` | `prim->u3 = texcoords[0] + texcoords[4];` | Byte offset of the texture U span, added to the U origin. |
-| `sprite_add_ft4` | 29 | `2` | `prim->v3 = texcoords[2] + texcoords[6];` | Byte offset of the texture V origin in the existing even-byte descriptor. |
-| `sprite_add_ft4` | 29 | `6` | `prim->v3 = texcoords[2] + texcoords[6];` | Byte offset of the texture V span, added to the V origin. |
+Zero retained occurrences after naming the texture-descriptor offsets.

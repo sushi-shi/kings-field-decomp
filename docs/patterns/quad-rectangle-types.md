@@ -1,5 +1,33 @@
 # Typed screen rectangles for simple quads
 
+## Texture-descriptor offset naming follow-up
+
+Function Match Plan: name the existing eight-byte descriptor extent and its
+four consumed byte offsets: U at zero, V at two, U span at four, V span at six.
+Keep the odd bytes opaque, the byte-aligned GAME copy wrapper, all authored
+descriptor bytes and the existing pointer API. These names describe decoded
+byte positions, not a newly inferred halfword type or original field layout.
+
+Fresh six-view image-specific dossiers, source history, all four callers and
+adjacent helpers were reviewed. GAME `80014314 / 0x1c0` reads the twelve
+texture bytes at `800143f4..80014464`; OPEN `8001399c / 0x1c0` reads the same
+offset sequence at `80013a7c..80013aec`. Both use `lbu`, add the origin to
+the span before packet-byte stores, make two proven SDK calls and have two
+validated state references. Preserve each 48-byte frame and restoring return
+delay slot. Both stored scores are 100%; neither game-owned packet builder
+is a vendored body.
+
+Use one shared integer offset/count enum in `render_types.h`, all twenty-four
+helper accesses, the GAME fade wrapper and all three OPEN descriptor arrays.
+The exported OPEN array declaration uses the same extent name. Builds,
+compiler checks, tests and post-edit matches remain deferred by user request.
+
+Final verdict: both helpers now have zero inline literal occurrences. All
+twenty-four byte accesses and four descriptor bounds use the planned names;
+source review preserves values, load widths, addition order, alignment and
+authored bytes. All 111 C-file ledgers reconcile at 5,768 occurrences. No
+post-edit binary claim is made.
+
 ## Function Match Plan
 
 Propagate a shared `KfScreenRect` with unsigned halfword `x`, `y`, `w`, `h`

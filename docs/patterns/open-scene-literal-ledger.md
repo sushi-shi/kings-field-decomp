@@ -1,6 +1,6 @@
 # OPEN scene retained-literal ledger
 
-Companion to [the scene-domain evidence](open-scene-domains.md). All **566**
+Companion to [the scene-domain evidence](open-scene-domains.md). All **564**
 current numeric/character occurrences in `src/open/opening_scenes.c` have
 individual rows, including duplicate tokens within one expression. Comments,
 strings, identifier digits, named enum/macro definitions and address claims
@@ -385,15 +385,14 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_panels` | 149 | `2258` | `{32, 2258, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 149 | `255` | `{32, 2258, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 149 | `254` | `{32, 2258, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_uv` | 153 | `8` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Eight authored descriptor bytes; the FT4 helper reads offsets 0, 2, 4 and 6. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_uv` | 153 | `255` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_uv` | 153 | `254` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[8] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_overlay_uv` | 153 | `255` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_overlay_uv` | 153 | `254` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
 | `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored red color component; preserve the gradient endpoint or material modulation. |
 | `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
 | `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
@@ -429,15 +428,14 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_background_color` | 179 | `0` | `static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
 | `opening_ending_scroll_background_color` | 179 | `0` | `static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
 | `opening_ending_scroll_background_color` | 179 | `0` | `static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
-| `opening_ending_scroll_uv` | 182 | `8` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Eight authored descriptor bytes; the FT4 helper reads offsets 0, 2, 4 and 6. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_ending_scroll_uv` | 182 | `1` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_ending_scroll_uv` | 182 | `255` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_ending_scroll_uv` | 182 | `254` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[8] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_uv` | 182 | `1` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_uv` | 182 | `255` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_uv` | 182 | `254` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
 | `opening_scene0_run` | 194 | `0` | `blend = 0;` | Zero blend accumulator at the start of this interpolation or intermediate counter. |
 | `opening_scene0_run` | 206 | `0` | `opening_camera_path_step(0);` | No added world-space Y displacement for this camera step. |
 | `opening_scene0_run` | 223 | `0` | `if (blend < 0) {` | Signed blend falling below zero ends the scene fade-out. |

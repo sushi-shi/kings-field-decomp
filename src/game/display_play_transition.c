@@ -4,7 +4,7 @@
 
 /* The texture descriptor keeps byte alignment for retail's unaligned copies. */
 typedef struct {
-    u8 v[8];
+    u8 v[KF_QUAD_TEX_DESCRIPTOR_BYTES];
 } FadeUv;
 
 /* Position rect {x, y, w, h}, texture-coordinate rect (even bytes u, v, w, h),

@@ -26,7 +26,7 @@ extern KfCameraPathPoint opening_scene3_camera_path[KF_OPENING_SCENE3_CAMERA_POI
 extern KfCameraPathPoint opening_ending_camera_path[KF_OPENING_ENDING_CAMERA_POINT_COUNT];
 extern SoundRef opening_scene0_sound;
 extern KfScreenRect opening_scene3_overlay_rects[KF_OPENING_SCENE3_OVERLAY_COUNT];
-extern u8 opening_scene3_overlay_uv[8];
+extern u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES];
 extern CVECTOR opening_scene3_overlay_color;
 
 extern void opening_scene0_run(void);
