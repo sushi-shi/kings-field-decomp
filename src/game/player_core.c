@@ -75,31 +75,31 @@ void player_set_equipment_slot(KfItemId item_id, KfEquipmentSlot slot)
         break;
     }
     if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
-        player_state.equipped_head_armor_record = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];
+        player_state.equipped_head_armor_record = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_head_armor_record = 0;
     }
     if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
         player_state.equipped_body_armor_record =
-            &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ARMOR_ITEM_FIRST];
+            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_body_armor_record = 0;
     }
     if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
         player_state.equipped_arm_armor_record =
-            &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ARMOR_ITEM_FIRST];
+            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_arm_armor_record = 0;
     }
     if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
         player_state.equipped_leg_armor_record =
-            &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ARMOR_ITEM_FIRST];
+            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_leg_armor_record = 0;
     }
     if (player_state.equipped_shield_id != KF_ITEM_NONE) {
         player_state.equipped_shield_record =
-            &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ARMOR_ITEM_FIRST];
+            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ARMOR_ITEM_FIRST];
     } else {
         player_state.equipped_shield_record = 0;
     }
@@ -115,7 +115,7 @@ void player_equip_weapon(KfItemId weapon_id)
     player_state.weapon_charge_delay = PLAYER_WEAPON_CHARGE_DELAY_UPDATES;
     player_state.equipped_weapon_id = weapon_id;
     if (weapon_id != KF_ITEM_NONE) {
-        player_state.equipped_weapon_record = &weapon_records[KF_ENUM_ENCODE(u8, weapon_id)];
+        player_state.equipped_weapon_record = &weapon_records.entries[KF_ENUM_ENCODE(u8, weapon_id)];
         weapon_image_path_template[9] = '0' + KF_ENUM_ENCODE(u32, weapon_id) / 10;
         weapon_image_path_template[10] = '0' + KF_ENUM_ENCODE(u32, weapon_id) % 10;
         if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_image_path_template) != 0) {

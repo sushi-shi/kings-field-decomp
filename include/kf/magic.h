@@ -16,6 +16,7 @@ enum {
     KF_MAGIC_BLESS = 3,
     KF_MAGIC_PLAYER_COUNT = 9,
     KF_MAGIC_RECORD_COUNT = 24,
+    KF_MAGIC_TABLE_WORD_COUNT = 120,
     KF_MAGIC_SOUND_COUNT = 2,
     KF_MAGIC_DAMAGE_COMPONENT_COUNT = 4
 };
@@ -46,7 +47,15 @@ typedef struct KfMagicRecord {
     u8 unknown_12[0x02];
 } KfMagicRecord;
 
-extern void magic_load_records(const u32 *source);
+/* Entry access and the complete resource-copy word span share one owner. */
+typedef union KfMagicTable {
+    KfMagicRecord entries[KF_MAGIC_RECORD_COUNT];
+    u32 words[KF_MAGIC_TABLE_WORD_COUNT];
+} KfMagicTable;
+
+typedef char check_magic_table_size[sizeof(KfMagicTable) == 0x1e0 ? 1 : -1];
+
+extern void magic_load_records(const KfMagicTable *table);
 extern void magic_cast(void);
 
 #endif

@@ -272,7 +272,7 @@ void player_recalculate_combat_stats(void)
         player_state.physical_power = power;
     }
     if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
-        weapon = &weapon_records[KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id)];
+        weapon = &weapon_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id)];
         player_state.cutting_attack += weapon->attack_components[KF_WEAPON_ATTACK_CUTTING];
         player_state.striking_attack += weapon->attack_components[KF_WEAPON_ATTACK_STRIKING];
         player_state.piercing_attack += weapon->attack_components[KF_WEAPON_ATTACK_PIERCING];
@@ -280,7 +280,7 @@ void player_recalculate_combat_stats(void)
         player_state.fire_attack += weapon->attack_components[KF_WEAPON_ATTACK_FIRE];
     }
     if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -290,7 +290,7 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ARMOR_ITEM_FIRST];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -300,7 +300,7 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ARMOR_ITEM_FIRST];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -310,7 +310,7 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ARMOR_ITEM_FIRST];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -320,7 +320,7 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_shield_id != KF_ITEM_NONE) {
-        armor = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ARMOR_ITEM_FIRST];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ARMOR_ITEM_FIRST];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;

@@ -71,9 +71,9 @@ void common_resources_load(void)
     memcpy(render_cell_windows, block + KF_RESOURCE_CHUNK_HEADER_BYTES,
         sizeof render_cell_windows);
     weapon_records_load_and_mirror_angles(
-        (const KfWeaponRecord *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     armor_records_load(
-        (const KfArmorRecord *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     magic_load_records(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     map_object_definitions_load(
         (KfMapObjectDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));

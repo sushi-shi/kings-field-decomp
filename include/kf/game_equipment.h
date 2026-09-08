@@ -31,6 +31,8 @@ enum {
 enum {
     KF_WEAPON_RECORD_COUNT = 16,
     KF_ARMOR_RECORD_COUNT = 42,
+    KF_WEAPON_TABLE_WORD_COUNT = 176,
+    KF_ARMOR_TABLE_WORD_COUNT = 294,
     KF_ARMOR_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK),
     KF_WEAPON_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD),
     KF_WEAPON_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK),
@@ -90,11 +92,25 @@ KF_WEAPON_OFFSET_CHECK(unknown_22, 0x22);
 KF_WEAPON_OFFSET_CHECK(render_rotation, 0x24);
 #undef KF_WEAPON_OFFSET_CHECK
 
-extern KfWeaponRecord weapon_records[KF_WEAPON_RECORD_COUNT];
-extern KfArmorRecord armor_records[KF_ARMOR_RECORD_COUNT];
+/* The resource loaders copy the complete tables in aligned words. */
+typedef union KfWeaponTable {
+    KfWeaponRecord entries[KF_WEAPON_RECORD_COUNT];
+    u32 words[KF_WEAPON_TABLE_WORD_COUNT];
+} KfWeaponTable;
+
+typedef union KfArmorTable {
+    KfArmorRecord entries[KF_ARMOR_RECORD_COUNT];
+    u32 words[KF_ARMOR_TABLE_WORD_COUNT];
+} KfArmorTable;
+
+typedef char check_weapon_table_size[sizeof(KfWeaponTable) == 0x2c0 ? 1 : -1];
+typedef char check_armor_table_size[sizeof(KfArmorTable) == 0x498 ? 1 : -1];
+
+extern KfWeaponTable weapon_records;
+extern KfArmorTable armor_records;
 
 extern void weapon_records_load_and_mirror_angles(
-    const KfWeaponRecord *source);
-extern void armor_records_load(const KfArmorRecord *source);
+    const KfWeaponTable *source);
+extern void armor_records_load(const KfArmorTable *source);
 
 #endif

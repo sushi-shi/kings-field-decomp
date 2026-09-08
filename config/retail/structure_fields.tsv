@@ -93,6 +93,8 @@ KfArmorRecord	0x0c	0x02	fire_defense	u16	supported	game_equipment.h;asm;player_r
 KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
 KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
+KfArmorTable	0x00	0x498	entries	KfArmorRecord[42]	supported	game_equipment.h;asm;typed-record-tables.md	typed records selected by the game consumers
+KfArmorTable	0x00	0x498	words	u32[294]	supported	game_equipment.h;asm;typed-record-tables.md	complete aligned resource-copy span
 KfAssetHeader	0x00	0x04	byte_size	u32	supported	game_asset.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
 KfAssetHeader	0x04	0x04	animation_clip_count	s32	supported	game_asset.h;asm;game-asset-animation-layout.md	clip-table entry count agrees with independent table extents in all 70 animated assets; zero in 99 static assets; retail retains a signed comparison below two
 KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	game_asset.h;asm;asset_registry_select	byte offset from header to TMD payload
@@ -212,7 +214,7 @@ KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	game_render.h;asm;retail-initia
 KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	game_render.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
 KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game_render.h;asm;retail-initializer	unread bytes before animation_cache
 KfEffectSprite	0x18	0x04	animation_cache	KfPoolRecord *	supported	game_render.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by the binder; both retail effect_sprites initializers contain null pointers
-KfEffectState	0x000	0x1e0	magic	KfMagicRecord[24]	supported	game_effect.h;asm;magic_load_records:120-words;game_main_loop:whole-clear	runtime-loaded magic rows; player selection and weapon-bound indices 5/8/18/20
+KfEffectState	0x000	0x1e0	magic	KfMagicTable	supported	game_effect.h;asm;magic_load_records:120-words;game_main_loop:whole-clear;typed-record-tables.md	runtime-loaded magic rows; player selection and weapon-bound indices 5/8/18/20
 KfEffectState	0x1e0	0xb40	records	KfEffectRecord[48]	supported	game_effect.h;asm;effect_pool_sweep;effect_pool_reset	48 live effect records with 60-byte stride
 KfEffectState	0xd20	0x4	current_magic	KfMagicRecord *	supported	game_effect.h;asm;effect_pool_set_current;effect_update_dispatch	magic row selected from the current effect kind
 KfEffectState	0xd24	0x4	current_record	KfEffectRecord *	supported	game_effect.h;asm;effect_pool_set_current;effect_pool_sweep;effect_update_dispatch	active effect record; selector derives the magic base by subtracting 3364 from this slot address
@@ -318,6 +320,8 @@ KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_d
 KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	magic.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
 KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared with and subtracted from vitals.current_mp when casting
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
+KfMagicTable	0x00	0x1e0	entries	KfMagicRecord[24]	supported	magic.h;asm;typed-record-tables.md	typed records selected by the game consumers
+KfMagicTable	0x00	0x1e0	words	u32[120]	supported	magic.h;asm;typed-record-tables.md	complete aligned resource-copy span
 KfMapCell	0x00	0x02	coords	KfMapCellCoordinates	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned z/x byte coordinates
 KfMapCell	0x00	0x02	word	u16	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned halfword comparison in main loop
 KfMapCellCoordinates	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
@@ -799,6 +803,8 @@ KfWeaponRecord	0x14	0x08	unknown_14	u8[8]	opaque	game_equipment.h;asm;xrefs;type
 KfWeaponRecord	0x1c	0x06	render_translation	KfVec3s	supported	game_equipment.h;asm;typed-weapon-render.md	signed XYZ halfwords copied into the view model translation; Z also biases depth
 KfWeaponRecord	0x22	0x02	unknown_22	u16	opaque	game_equipment.h;asm;typed-weapon-render.md	unresolved halfword between translation and rotation
 KfWeaponRecord	0x24	0x08	render_rotation	SVECTOR	supported	game_equipment.h;asm;typed-weapon-render.md	SDK RotMatrix input; resource loader negates its Y component at record+0x26
+KfWeaponTable	0x00	0x2c0	entries	KfWeaponRecord[16]	supported	game_equipment.h;asm;typed-record-tables.md	typed records selected by the game consumers
+KfWeaponTable	0x00	0x2c0	words	u32[176]	supported	game_equipment.h;asm;typed-record-tables.md	complete aligned resource-copy span
 MenuGlyphRow	0x0	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	ten glyph codes; item/name copy and indexed 20-byte stride
 MenuGlyphString	0x0	0x4	position	MenuPoint	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	shared signed screen point passed to sprite blitters; retail title guard uses lh; complete label stride remains 24 bytes
 MenuGlyphString	0x4	0x14	glyphs	MenuGlyphRow	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	complete ten-code row copied from item and magic tables; halfword alignment preserves retail unaligned word-copy sequences

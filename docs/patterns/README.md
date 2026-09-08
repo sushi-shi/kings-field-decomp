@@ -709,3 +709,6 @@ promotes a probe to a proven historical toolchain.
 
 - [Typed resource allocation boundaries](typed-resource-boundaries.md): generic
   allocation outputs and stream variables share the actual void-pointer contract.
+
+- [Typed equipment and magic tables](typed-record-tables.md): full word-copy
+  spans and typed record arrays share the proven complete table extents.

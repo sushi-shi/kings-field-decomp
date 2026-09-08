@@ -182,3 +182,9 @@ allocator outputs use actual generic pointer storage and removes the last
 incompatible-pointer diagnostic. All 25 compared functions are unchanged;
 482 C pointer casts remain, down 324 from the starting count. Fixed table
 copy views and the other animation/renderer families still need review.
+
+The [record-table stage](typed-record-tables.md) gives weapon, armor and magic
+storage complete entry/word views and propagates their table input types.
+Seven more pointer casts disappear, with all 92 compared functions unchanged.
+The cumulative reduction is 331 C pointer casts; 475 remain for the continuing
+animation, SDK, generic-storage and renderer-boundary audit.

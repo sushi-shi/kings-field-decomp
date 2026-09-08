@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 112)
-        self.assertEqual(counts["structure_fields"], 822)
-        self.assertEqual(counts["structure_fields_named"], 735)
+        self.assertEqual(counts["structures"], 115)
+        self.assertEqual(counts["structure_fields"], 828)
+        self.assertEqual(counts["structure_fields_named"], 741)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -2685,7 +2685,7 @@ class InventoryTests(unittest.TestCase):
         weapon_records = game.datum(0x8009FF10)
         self.assertEqual(
             (weapon_records.name, weapon_records.datatype, weapon_records.size),
-            ("weapon_records", "KfWeaponRecord[16]", 0x2C0),
+            ("weapon_records", "KfWeaponTable", 0x2C0),
         )
         self.assertEqual(game.data_owner(0x800A00DC), weapon_records)
         collision_target = game.datum(0x800A01D0)

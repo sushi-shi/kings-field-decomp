@@ -34,9 +34,10 @@ void effect_pool_reset(void)
 }
 
 ADDRESS(0x8003a274, 0x2c)
-void magic_load_records(const u32 *source)
+void magic_load_records(const KfMagicTable *table)
 {
-    u32 *destination = (u32 *)magic_records;
+    const u32 *source = table->words;
+    u32 *destination = effect_state.magic.words;
     s32 count;
 
     for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {

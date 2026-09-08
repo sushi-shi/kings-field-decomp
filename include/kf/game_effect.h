@@ -275,7 +275,7 @@ KF_EFFECT_OFFSET_CHECK(propagation, propagation, 0x3a);
 /* Startup clears this whole object; selection derives the magic array from
  * the current-record slot by a fixed member offset. */
 typedef struct KfEffectState {
-    KfMagicRecord magic[KF_MAGIC_RECORD_COUNT];
+    KfMagicTable magic;
     KfEffectRecord records[KF_EFFECT_CAPACITY];
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;
@@ -284,7 +284,7 @@ typedef struct KfEffectState {
 extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
 extern KfEffectState effect_state;
 /* Consumer spellings are members, not separately owned globals. */
-#define magic_records (effect_state.magic)
+#define magic_records (effect_state.magic.entries)
 #define effect_pool_records (effect_state.records)
 #define current_effect_magic_record (effect_state.current_magic)
 #define current_effect (effect_state.current_record)
