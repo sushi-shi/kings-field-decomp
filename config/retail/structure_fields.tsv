@@ -249,7 +249,7 @@ KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into pre
 KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
 KfFloorItem	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; animation_frame is added by rendering
 KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
-KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
+KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c;semantic-field-names.md:unresolved-consumer-audit	Copied unchanged from placement +3: GAME load/store 0x80020bf4/0x80020bfc; OPEN 0x8001988c/0x80019894. Runtime base is biased by +20; no behavioral consumer established.
 KfFloorItem	0x04	0x04	position_x	s32	supported	item.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
 KfFloorItem	0x08	0x04	position_y	s32	supported	item.h;asm;func_80020b4c	world y = local_y - floor_height*100
 KfFloorItem	0x0c	0x04	position_z	s32	supported	item.h;asm;func_80020b4c	world z = tile_z*2000 + local_z
@@ -258,7 +258,7 @@ KfFloorItem	0x14	0x01	animation_frame	u8	supported	item.h;asm;item_load_floor_pl
 KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	item.h;func_80020b4c	not written by the loader
 KfFloorItemPlacement	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; 0xffff terminates the placement stream
 KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
-KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c	meaning unresolved
+KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c;semantic-field-names.md:unresolved-consumer-audit	Copied to runtime +3 in GAME and OPEN; source pointer is placement+10, load displacement -7. Reviewed values include 8,28,32,64; values alone do not establish flags, scale or units.
 KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	item.h;asm;func_80020b4c	map tile z (floor-height grid row)
 KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	item.h;asm;func_80020b4c	map tile x (floor-height grid column)
 KfFloorItemPlacement	0x06	0x02	local_z	s16	supported	item.h;asm;func_80020b4c	offset within the tile
@@ -315,8 +315,8 @@ KfMapEvent	0x08	0x01	dialogue_stage_limit	u8	supported	game_map.h;asm;xrefs;game
 KfMapEvent	0x09	0x01	dialogue_stage	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	one-based dialogue stage advanced with highest-floor progress
 KfMapEvent	0x0a	0x01	dialogue_page	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	one-based dialogue page; incremented and capped by the current stage limit
 KfMapEvent	0x0b	0x01	dialogue_page_delay	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	remaining gated ticks before advancing one dialogue page; one tick per four pool updates
-KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs;semantic-field-names.md:unresolved-consumer-audit	Copied from definition +0x0b by GAME 0x8003397c/0x80033984 (source base+18, runtime base+30); no behavioral consumer established.
+KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs;semantic-field-names.md:unresolved-consumer-audit	Copied from definition +0x0c at GAME 0x80033988/0x80033990; serialized at 0x80035bfc and restored at 0x80035f10. Persistence is proven by accesses; gameplay meaning unresolved.
 KfMapEvent	0x0e	0x01	behavior	KfMapEventBehavior	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-map-dialogue-state.md	0 shop interaction; 1 wander; 2 looping animation with optional interaction clip
 KfMapEvent	0x0f	0x01	animation_clip	KfMapEventAnimationClip	supported	game_map.h;map-event-animation-turn-domains.md;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	clip index passed to render_bind_animated_instance
 KfMapEvent	0x10	0x01	collision_turn_pending	KfMapEventCollisionTurn	supported	game_map.h;map-event-animation-turn-domains.md;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	collision selected a yaw; suppresses another random heading until the turn completes
@@ -346,8 +346,8 @@ KfMapEventDefinition	0x03	0x01	cell_z	u8	supported	game_map.h;asm;xrefs	map cell
 KfMapEventDefinition	0x04	0x01	cell_x	u8	supported	game_map.h;asm;xrefs	map cell x
 KfMapEventDefinition	0x05	0x05	dialogue_pages	KfDialoguePageLimits	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page for each of five one-based dialogue stages
 KfMapEventDefinition	0x0a	0x01	dialogue_stage_limit	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	maximum dialogue stage allowed by this record
-KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapEventDefinition	0x0b	0x01	unknown_0b	u8	opaque	game_map.h;asm;xrefs;semantic-field-names.md:unresolved-consumer-audit	Source byte for runtime KfMapEvent +0x0c; GAME 0x8003397c reads base+18-7. Reviewed floor resources contain zero; no behavior established.
+KfMapEventDefinition	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs;semantic-field-names.md:unresolved-consumer-audit	Source byte for runtime KfMapEvent +0x0d; GAME 0x80033988 reads base+18-6. The runtime byte survives world-state save/restore; meaning unresolved.
 KfMapEventDefinition	0x0d	0x01	behavior	KfMapEventBehavior	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-map-dialogue-state.md	0 shop interaction; 1 wander; 2 looping animation with optional interaction clip
 KfMapEventDefinition	0x0e	0x02	position_z_offset	s16	supported	game_map.h;asm;xrefs	z position offset
 KfMapEventDefinition	0x10	0x02	position_x_offset	s16	supported	game_map.h;asm;xrefs	x position offset
@@ -463,9 +463,9 @@ KfOpeningEntity	0x1e	0x02	unknown_1e	u16	opaque	open_resources.h;open_semantic_r
 KfOpeningEntity	0x20	0x08	scale	SVECTOR	supported	open_resources.h;open_semantic_resources.tsv;asm	xyz initialized to 0x1000; trailing SVECTOR pad remains untouched
 KfOpeningEntityState	0x000	0x500	entities	KfOpeningEntity[32]	supported	open_resources.h;open_semantic_resources.tsv;asm;40-byte-stride	opening entity runtime records
 KfOpeningEntityState	0x500	0x0a	unknown_500	u8[10]	opaque	open_resources.h;open_semantic_resources.tsv	unreferenced gap between the records and controls
-KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
-KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
-KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm	meaning unresolved; cleared by opening_entity_pool_reset
+KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a42: individual zero store at 0x800199d4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
+KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a44: individual zero store at 0x800199cc, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
+KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
 KfPitchYaw	0x00	0x02	pitch	s16	supported	game_math.h;asm;xrefs	pitch angle
 KfPitchYaw	0x02	0x02	yaw	s16	supported	game_math.h;asm;xrefs	yaw angle

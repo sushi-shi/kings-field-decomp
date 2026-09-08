@@ -311,3 +311,31 @@ fire-defense boost. The private darkness matrix and fire-defense helper share
 the evidence-backed names in source and curated identities. See the
 [status dossier](game-player-statuses.md) for masks, widths, direct consumers
 and distinct countdown endpoints.
+
+## Unresolved consumer audit
+
+The remaining ten source lines still have no supported semantic replacement.
+The field inventory now records exact access instructions for all nine shared
+field identities involved (the clip header is local to `pool.c`).
+
+- OPEN +0x50a/+0x50c/+0x50e: exact admitted relocations identify only three
+  reset stores. `kf sema xref` on an interior address returns the whole owner's
+  references, not a field-specific read census. The analogous GAME pool tail
+  remains a candidate; an OPEN consumer or shared source definition is missing.
+- Floor placement/runtime +3: GAME `0x80020bf4/0x80020bfc` and OPEN
+  `0x8001988c/0x80019894` copy the byte. The source pointer is biased by +10,
+  destination by +20, so the displacements are -7/-17. A behavioral use or
+  authored format description is needed to distinguish flags, scale or metadata.
+- Map-event definition +0x0b/+0x0c: GAME `0x8003397c/0x80033988` reads them;
+  `0x80033984/0x80033990` stores runtime +0x0c/+0x0d. Runtime +0x0d is read
+  at `0x80035bfc` for persistence and written at `0x80035f10` during restore.
+  These latter pointers are biased by +13. Neither copying nor persistence
+  establishes a gameplay role; a value-dependent consumer is missing.
+- Animation clip +2: the existing 214-header resource census reports value 20
+  throughout. The binder consumes clip count/offsets and keyframe durations,
+  not this halfword. A format definition or another consumer is required before
+  naming it duration, frame rate or a format tag.
+
+This audit changes evidence descriptions only, without promoting opaque fields,
+renaming them speculatively or claiming exhaustive absence of indirect retail
+accesses. No source/build/test changes were made for this audit.
