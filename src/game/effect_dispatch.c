@@ -257,13 +257,13 @@ advance_shared_projectile:
             effect->position.vy += (s16)effect->direction.words.y;
             effect->position.vz += (s16)effect->direction.words.z;
             if (kind == KF_EFFECT_KIND_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
-                effect->rotation.vz = (effect->rotation.vz + FIRE_DARKNESS_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                effect->rotation.vector.vz = (effect->rotation.vector.vz + FIRE_DARKNESS_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
                 s32 remaining;
 
-                effect->rotation.vz = (effect->rotation.vz + LIGHTNING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                effect->rotation.vector.vz = (effect->rotation.vector.vz + LIGHTNING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 remaining = effect->control.frames_remaining - 1;
                 effect->control.frames_remaining = remaining;
                 if ((u16)remaining == 0) {
@@ -279,11 +279,11 @@ lightning_impact:
                     if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
                         effect_pool_construct(
                             effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
-                            &impact_position, &effect->rotation);
+                            &impact_position, &effect->rotation.vector);
                     } else {
                         effect_pool_construct(
                             effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE,
-                            &impact_position, &effect->rotation);
+                            &impact_position, &effect->rotation.vector);
                     }
                 } else {
                     effect->render_id =
@@ -292,7 +292,7 @@ lightning_impact:
                 return;
             }
             if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                SVECTOR scatter;
+                KfEffectDirection scatter;
                 s32 pulse_angle;
 
                 if (--effect->control.frames_remaining == 0) {
@@ -303,14 +303,14 @@ lightning_impact:
                         effect->scale_y = next;
                         effect->scale_x = next;
                         effect->propagation.generations_remaining--;
-                        scatter = effect->direction.vector;
-                        effect_scatter_triple((u16 *)&scatter);
+                        scatter.vector = effect->direction.vector;
+                        effect_scatter_triple(&scatter.words);
                         effect->control.frames_remaining = effect->propagation.generations_remaining == 0 ? SCATTER_FINAL_COUNTDOWN : SCATTER_BRANCH_COUNTDOWN;
                         effect_pool_construct(
-                            effect->id, effect->type, kind, &effect->position, &scatter,
+                            effect->id, effect->type, kind, &effect->position, &scatter.vector,
                             effect->propagation.generations_remaining, effect->control.frames_remaining,
                             (s16)effect->scale_x);
-                        effect_scatter_triple(&effect->direction.words.x);
+                        effect_scatter_triple(&effect->direction.words);
                     } else {
                         effect->type = KF_EFFECT_SLOT_FREE;
                     }
@@ -327,7 +327,7 @@ lightning_impact:
                 return;
             }
             if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-                effect->rotation.vz = (effect->rotation.vz + EMERGING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                effect->rotation.vector.vz = (effect->rotation.vector.vz + EMERGING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE) {
@@ -341,7 +341,7 @@ lightning_impact:
             if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 return;
             }
-            effect->rotation.vz = (effect->rotation.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+            effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
             return;
         }
 
@@ -527,7 +527,7 @@ randomize_homing_direction:
             } else {
                 target = actor_pool_find_target_in_cone(
                     (const struct KfVec3i *)&effect->position,
-                    (s16)effect->rotation.vy, HOMING_TARGET_MAX_DISTANCE, HOMING_TARGET_CONE_ANGLE, &target_distance);
+                    effect->rotation.vector.vy, HOMING_TARGET_MAX_DISTANCE, HOMING_TARGET_CONE_ANGLE, &target_distance);
                 if (target != 0) {
                     KfActorDefinition *definition =
                         &actor_state.definitions[target->definition_id];
@@ -548,25 +548,25 @@ randomize_homing_direction:
             effect->phase = HOMING_TRACKING_PHASE;
         }
 
-        effect->rotation.vx = angle_approach(
-            effect->rotation.vx, (s16)effect->direction.words.x, HOMING_TURN_STEP);
-        effect->rotation.vy = angle_approach(
-            effect->rotation.vy, (s16)effect->direction.words.y, HOMING_TURN_STEP);
+        effect->rotation.vector.vx = angle_approach(
+            effect->rotation.vector.vx, (s16)effect->direction.words.x, HOMING_TURN_STEP);
+        effect->rotation.vector.vy = angle_approach(
+            effect->rotation.vector.vy, (s16)effect->direction.words.y, HOMING_TURN_STEP);
         local_motion.vx = 0;
         local_motion.vy = 0;
         local_motion.vz = HOMING_FORWARD_STEP;
-        matrix_set_rotation_x(effect->rotation.vx, &matrix);
+        matrix_set_rotation_x(effect->rotation.vector.vx, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
         local_motion.vx = movement.vx;
         local_motion.vy = movement.vy;
         local_motion.vz = movement.vz;
-        matrix_set_rotation_y(effect->rotation.vy, &matrix);
+        matrix_set_rotation_y(effect->rotation.vector.vy, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
         effect->position.vx += movement.vx;
         effect->position.vy += movement.vy;
         effect->position.vz += movement.vz;
         effect->phase++;
-        effect->rotation.vz = (effect->rotation.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
             if (effect->base_render_id == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
                 effect_pool_construct(
@@ -594,11 +594,11 @@ randomize_homing_direction:
             if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
-                    &effect->position, &effect->rotation);
+                    &effect->position, &effect->rotation.vector);
             } else {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE,
-                    &effect->position, &effect->rotation);
+                    &effect->position, &effect->rotation.vector);
             }
             if (phase == LIGHTNING_IMPACT_EMIT_FIRST) {
                 phase_sound = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1];
@@ -617,7 +617,7 @@ randomize_homing_direction:
         effect->scale_x = next;
         effect->scale_z = next;
         effect->scale_y = next;
-        effect->rotation.vy = (effect->rotation.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vy = (effect->rotation.vector.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         if (phase & 1) {
             u32 damage_radius;
 
@@ -696,7 +696,7 @@ advance_effect_phase:
                 spawn_position.vy = effect->position.vy;
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_GROUND_BRANCH_VISUAL,
-                    &spawn_position, &effect->rotation);
+                    &spawn_position, &effect->rotation.vector);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
@@ -714,7 +714,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vy = (effect->rotation.vy + GROUND_BRANCH_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_BRANCH_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
@@ -727,7 +727,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vy = (effect->rotation.vy + GROUND_VISUAL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_VISUAL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
@@ -796,9 +796,9 @@ publish_actor_spawner_scale:
             effect->type = KF_EFFECT_SLOT_FREE;
         }
 rotate_actor_spawner:
-        effect->rotation.vy = (effect->rotation.vy + ACTOR_SPAWNER_YAW_STEP) & KF_ANGLE_WRAP_MASK;
-        effect->rotation.vx = (effect->rotation.vx + ACTOR_SPAWNER_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
-        effect->rotation.vz = (effect->rotation.vz + ACTOR_SPAWNER_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vy = (effect->rotation.vector.vy + ACTOR_SPAWNER_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vx = (effect->rotation.vector.vx + ACTOR_SPAWNER_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vz = (effect->rotation.vector.vz + ACTOR_SPAWNER_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     }
 
@@ -822,10 +822,10 @@ rotate_actor_spawner:
                 effect->phase = KF_EFFECT_FLOOR_DEFORM_HOLD;
                 return;
             }
-            effect->direction.words.z += effect->rotation.vz;
-            for (column = 0; column < effect->rotation.vy; column++) {
+            effect->direction.words.z += effect->rotation.vector.vz;
+            for (column = 0; column < effect->rotation.vector.vy; column++) {
                 effect_floor_deform_line(
-                    effect->rotation.vx + column,
+                    effect->rotation.vector.vx + column,
                     (s16)effect->direction.words.z,
                     -(s16)effect->direction.words.y);
             }
@@ -846,10 +846,10 @@ invalidate_and_return:
                 effect->type = KF_EFFECT_SLOT_FREE;
                 return;
             }
-            effect->direction.words.z -= effect->rotation.vz;
-            for (column = 0; column < effect->rotation.vy; column++) {
+            effect->direction.words.z -= effect->rotation.vector.vz;
+            for (column = 0; column < effect->rotation.vector.vy; column++) {
                 effect_floor_deform_line(
-                    effect->rotation.vx + column,
+                    effect->rotation.vector.vx + column,
                     (s16)effect->direction.words.z,
                     (s16)effect->direction.words.y);
             }

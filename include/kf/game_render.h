@@ -174,7 +174,7 @@ extern void menu_render_item_model(void);
 extern void primitive_buffer_begin_poly_ft4(void);
 extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
-extern void render_actor_sprite(KfEffectRenderView *sprite);
+extern void render_actor_sprite(KfEffectRecord *sprite);
 extern void render_effect_sprites(void);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_enqueue_map(u16 object_index);

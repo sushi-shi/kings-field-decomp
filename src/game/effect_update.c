@@ -59,9 +59,9 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
     s16 next_pitch;
 
     if (life < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1u) {
-        RotMatrix(&record->rotation, &rotation_matrix);
-        matrix_set_rotation_x(record->rotation.vx, &rotation_matrix);
-        matrix_set_rotation_y(record->rotation.vy, &yaw_matrix);
+        RotMatrix(&record->rotation.vector, &rotation_matrix);
+        matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
+        matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
         MulMatrix2(&yaw_matrix, &rotation_matrix);
         ApplyMatrix(&rotation_matrix, probe_offset, &world);
         world.vx += record->position.vx;
@@ -87,20 +87,20 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
                     EFFECT_SWING_SOUND_MAX_DISTANCE, EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE);
             }
         }
-        if (record->rotation.vx >= KF_ANGLE_EIGHTH_TURN) {
-            record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
+        if (record->rotation.vector.vx >= KF_ANGLE_EIGHTH_TURN) {
+            record->rotation.vector.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
-        } else if (record->rotation.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
-            record->rotation.vx = -KF_ANGLE_EIGHTH_TURN;
+        } else if (record->rotation.vector.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+            record->rotation.vector.vx = -KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
         }
-        if (record->rotation.vx > 0) {
+        if (record->rotation.vector.vx > 0) {
             record->direction.words.x -= EFFECT_SWING_ANGULAR_ACCEL;
         } else {
             record->direction.words.x += EFFECT_SWING_ANGULAR_ACCEL;
         }
-        pitch = record->rotation.vx;
-        next_pitch = (s16)(record->rotation.vx + record->direction.words.x);
+        pitch = record->rotation.vector.vx;
+        next_pitch = (s16)(record->rotation.vector.vx + record->direction.words.x);
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
             if (life == KF_EFFECT_HAZARD_RELEASE_REQUEST) {
                 next_pitch = 0;
@@ -109,7 +109,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
                 record->sound_played = 0;
             }
         }
-        record->rotation.vx = next_pitch;
+        record->rotation.vector.vx = next_pitch;
     } else if (life >= (u32)KF_EFFECT_HAZARD_RISE_FIRST && (s16)phase_limit >= life) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
@@ -214,23 +214,23 @@ enum {
 };
 
 ADDRESS(0x800386c4, 0x68)
-void effect_scatter_triple(u16 *values)
+void effect_scatter_triple(KfEffectDirectionWords *values)
 {
     int random;
     int centered;
 
     random = rand();
-    centered = values[0] - SCATTER_VELOCITY_BIAS;
+    centered = values->x - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    values[0] = centered;
+    values->x = centered;
     random = rand();
-    centered = values[1] - SCATTER_VELOCITY_BIAS;
+    centered = values->y - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    values[1] = centered;
+    values->y = centered;
     random = rand();
-    centered = values[2] - SCATTER_VELOCITY_BIAS;
+    centered = values->z - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    values[2] = centered;
+    values->z = centered;
 }
 
 ADDRESS(0x8003872c, 0x90)

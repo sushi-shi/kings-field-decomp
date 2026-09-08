@@ -92,8 +92,8 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
-            effect->rotation.vy =
-                (effect->rotation.vy + WARP_SHIMMER_YAW_STEP)
+            effect->rotation.vector.vy =
+                (effect->rotation.vector.vy + WARP_SHIMMER_YAW_STEP)
                 & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);

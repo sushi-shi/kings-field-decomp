@@ -135,7 +135,10 @@ class InventoryTests(unittest.TestCase):
 
     def test_effect_union_views_preserve_record_layout(self) -> None:
         layouts = _header_structure_layouts()
-        for name, size, members in (("KfEffectDirection", 8, 2), ("KfEffectControl", 2, 5)):
+        for name, size, members in (
+            ("KfEffectDirection", 8, 2), ("KfEffectRotation", 8, 2),
+            ("KfEffectControl", 2, 5),
+        ):
             layout = layouts[name]
             self.assertEqual((layout.size, layout.alignment), (size, 2))
             self.assertEqual([f.offset for f in layout.fields], [0] * members)
@@ -251,15 +254,14 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 106)
-        self.assertEqual(counts["structure_fields"], 838)
-        self.assertEqual(counts["structure_fields_named"], 737)
+        self.assertEqual(counts["structure_fields"], 818)
+        self.assertEqual(counts["structure_fields_named"], 725)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
         slots = (
             ("KfActor", 0x48, 0x34, "animation_cache"),
             ("KfEffectRecord", 0x3C, 0x34, "animation_cache"),
-            ("KfEffectRenderView", 0x3C, 0x34, "animation_cache"),
             ("KfMapEvent", 0x44, 0x3C, "animation_cache"),
             ("KfPlayerState", 0xE0, 0x74, "weapon_animation_cache"),
             ("KfEffectSprite", 0x1C, 0x18, "animation_cache"),
@@ -672,7 +674,7 @@ class InventoryTests(unittest.TestCase):
 
     def test_effect_layouts_live_in_the_effect_owner_header(self) -> None:
         effect_header = (REPO / "include/kf/game_effect.h").read_text()
-        for structure in ("KfEffectRecord", "KfEffectRenderView"):
+        for structure in ("KfEffectRecord", "KfEffectState"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, effect_header)
 

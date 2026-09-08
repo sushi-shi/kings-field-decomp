@@ -9,6 +9,8 @@ promotes a probe to a proven historical toolchain.
   models, complete cast accounting, and verified packet/colour conversions.
 - [typed-menu-records.md](typed-menu-records.md): shared screen points, complete
   glyph rows and list titles through all menu consumers and by-value labels.
+- [typed-effect-records.md](typed-effect-records.md): one shared effect pool
+  record for construction, rendering, rotation and direction mutation.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.

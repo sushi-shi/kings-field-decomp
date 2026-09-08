@@ -133,3 +133,10 @@ units retain their complete linked instructions. The cumulative C-file pointer
 count is 591, down 215 from 806. Packed map fields, vector/angle interfaces,
 effect records, allocation/resource APIs and the documented exact-code
 residues remain part of the active repository-wide modelling objective.
+
+The [shared effect record stage](typed-effect-records.md) then removes the
+duplicate rendering layout and models SDK/Euler rotation and direction
+mutation through the owning types. Eight more pointer casts and one redundant
+scalar cast disappear. All 21 affected-unit functions retain their linked
+words. C-file pointer casts now total 583, down 223 from 806; the remaining
+vector-prefix interfaces and other families above are still open.

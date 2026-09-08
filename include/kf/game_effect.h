@@ -182,6 +182,12 @@ typedef union KfEffectDirection {
     KfEffectDirectionWords words;
 } KfEffectDirection;
 
+/* SDK transfers include pad; the game Euler helper reads only x/y/z. */
+typedef union KfEffectRotation {
+    SVECTOR vector;
+    struct KfEulerAngles angles;
+} KfEffectRotation;
+
 /* Each kind selects the interpretation of the shared storage. */
 typedef union KfEffectVisualState {
     u16 animation_phase;
@@ -239,7 +245,7 @@ typedef struct KfEffectRecord {
     KfEffectVisualState visual; /* 0x08: animation phase, or kind-10 pulse scale */
     u16 unknown_0a;      /* 0x0a */
     VECTOR position;     /* 0x0c */
-    SVECTOR rotation;    /* 0x1c */
+    KfEffectRotation rotation; /* 0x1c */
     u16 scale_x;         /* 0x24 */
     u16 scale_y;         /* 0x26 */
     u16 scale_z;         /* 0x28 */
@@ -253,10 +259,17 @@ typedef struct KfEffectRecord {
 #define KF_EFFECT_OFFSET_CHECK(label, member, offset) \
     typedef char check_effect_##label[ \
         ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
+typedef char check_effect_record_size[sizeof(KfEffectRecord) == 60 ? 1 : -1];
+typedef char check_effect_rotation_size[sizeof(KfEffectRotation) == 8 ? 1 : -1];
+KF_EFFECT_OFFSET_CHECK(position, position, 0x0c);
 KF_EFFECT_OFFSET_CHECK(rotation, rotation, 0x1c);
-KF_EFFECT_OFFSET_CHECK(rotation_y, rotation.vy, 0x1e);
-KF_EFFECT_OFFSET_CHECK(rotation_z, rotation.vz, 0x20);
-KF_EFFECT_OFFSET_CHECK(rotation_pad, rotation.pad, 0x22);
+KF_EFFECT_OFFSET_CHECK(rotation_vector, rotation.vector, 0x1c);
+KF_EFFECT_OFFSET_CHECK(rotation_angles, rotation.angles, 0x1c);
+KF_EFFECT_OFFSET_CHECK(rotation_angle_y, rotation.angles.y, 0x1e);
+KF_EFFECT_OFFSET_CHECK(rotation_angle_z, rotation.angles.z, 0x20);
+KF_EFFECT_OFFSET_CHECK(rotation_y, rotation.vector.vy, 0x1e);
+KF_EFFECT_OFFSET_CHECK(rotation_z, rotation.vector.vz, 0x20);
+KF_EFFECT_OFFSET_CHECK(rotation_pad, rotation.vector.pad, 0x22);
 KF_EFFECT_OFFSET_CHECK(direction, direction, 0x2c);
 KF_EFFECT_OFFSET_CHECK(direction_pad, direction.words.pad, 0x32);
 KF_EFFECT_OFFSET_CHECK(visual, visual, 0x08);
@@ -273,34 +286,6 @@ typedef struct KfEffectState {
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;
 } KfEffectState;
-
-/* Rendering view of the same 60-byte effect-pool record. The renderer reads
- * the low halfwords of the VECTOR position and interprets kind-specific header
- * bytes as sprite selectors. */
-typedef struct KfEffectRenderView {
-    u8 type;
-    KfEffectKind kind;
-    u8 base_render_id;
-    u8 sprite_id;
-    u8 mode;
-    u8 unknown_05[3];
-    u16 asset_variant;
-    u8 unknown_0a[2];
-    u16 position_x;
-    u16 unknown_0e;
-    u16 position_y;
-    u16 unknown_12;
-    u16 position_z;
-    u8 unknown_16[6];
-    struct KfEulerAngles rotation;
-    u8 unknown_22[2];
-    s16 scale_x;
-    s16 scale_y;
-    s16 scale_z;
-    u8 unknown_2a[10];
-    struct KfPoolRecord *animation_cache;
-    u8 unknown_38[4];
-} KfEffectRenderView;
 
 extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
 extern KfEffectState effect_state;
@@ -325,7 +310,7 @@ extern int effect_magic_power(KfEffectRecord *effect);
 extern void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit);
 extern void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
-extern void effect_scatter_triple(u16 *values);
+extern void effect_scatter_triple(KfEffectDirectionWords *values);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale);
 extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *record, s16 angle, s32 distance);
 extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role);
