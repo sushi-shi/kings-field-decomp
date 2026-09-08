@@ -7,6 +7,9 @@ promotes a probe to a proven historical toolchain.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
+- [gcc257-stack-object-alignment.md](gcc257-stack-object-alignment.md): OPEN
+  automatic aggregate spacing, used extents and limits on inferring capacities
+  or compact local groupings from stack gaps.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
 - [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration and
@@ -531,6 +534,8 @@ promotes a probe to a proven historical toolchain.
 - [open-ending-scroll.md](open-ending-scroll.md): complete ending-scroll C,
   initialized panel/camera/color owners, the unreachable epilogue correction,
   and the remaining short-state and branch-join comparison.
+- [open-sentinel-sharing.md](open-sentinel-sharing.md): retained color-argument
+  lifetime, seven-word working residue, and shared-sentinel source controls.
 - [open-tmd-enqueue.md](open-tmd-enqueue.md): all twelve general TMD polygon
   modes, SDK-preserving packed views, static compiled/retail call-path controls,
   and the remaining shared graphics-base and instruction differences.
@@ -650,3 +655,7 @@ promotes a probe to a proven historical toolchain.
 - [Actor culling and placement stream state](actor-culling-domain.md): recover
   actor byte +2 as a visibility policy, type it through both writers and its
   renderer, and complete the [actor-pool ledger](actor-pool-literal-ledger.md).
+
+- [GCC 2.5.7 typedef comparisons](gcc257-typedef-comparisons.md): a real-function
+  control separates the s32 typedef from bare long, with limits on its
+  relevance to the two remaining OPEN mismatches.

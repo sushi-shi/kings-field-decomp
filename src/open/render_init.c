@@ -103,9 +103,9 @@ ADDRESS(0x80016adc, 0x1d8)
 void display_initialize(KfOpenMode mode)
 {
     s32 framebuffer_height;
-    s32 lower_buffer_y = KF_DISPLAY_HEIGHT;
+    s16 lower_buffer_y = KF_DISPLAY_HEIGHT;
     DRAWENV *first_draw;
-    DRAWENV *second_draw;
+    DRAWENV *second_draw = &open_graphics_runtime.display_draw_environments[1];
 
     if (mode == KF_OPEN_MODE_ENDING) {
         ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
@@ -142,8 +142,7 @@ void display_initialize(KfOpenMode mode)
     open_graphics_runtime.display_draw_environments[1].r0 = 0;
     open_graphics_runtime.display_draw_environments[1].g0 = 0;
     open_graphics_runtime.display_draw_environments[1].b0 = 0;
-    first_draw = &open_graphics_runtime.display_draw_environments[0];
-    second_draw = &open_graphics_runtime.display_draw_environments[1];
+    first_draw = second_draw - 1;
     if (mode == KF_OPEN_MODE_ENDING) {
         PutDispEnv(&open_graphics_runtime.display_disp_environments[0]);
         SetDispMask(1);
