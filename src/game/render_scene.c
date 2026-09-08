@@ -83,9 +83,9 @@ next_actor:
 
     /* Floor items. */
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
-    game_graphics_runtime.active_render_blue = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_green = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_red = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.b = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.g = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.r = FLOOR_ITEM_RENDER_BRIGHTNESS;
     i = game_graphics_runtime.floor_item_count;
     game_graphics_runtime.active_render_tpage = game_graphics_runtime.floor_item_tpage;
     game_graphics_runtime.active_render_clut = game_graphics_runtime.floor_item_clut;

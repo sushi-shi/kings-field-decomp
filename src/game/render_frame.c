@@ -109,17 +109,17 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
 
     game_graphics_runtime.active_render_tpage = game_graphics_runtime.hud_tpage;
     game_graphics_runtime.active_render_clut = game_graphics_runtime.hud_clut;
-    game_graphics_runtime.active_render_blue = game_graphics_runtime.hud_brightness;
-    game_graphics_runtime.active_render_green = game_graphics_runtime.hud_brightness;
-    game_graphics_runtime.active_render_red = game_graphics_runtime.hud_brightness;
+    game_graphics_runtime.active_render_color.b = game_graphics_runtime.hud_brightness;
+    game_graphics_runtime.active_render_color.g = game_graphics_runtime.hud_brightness;
+    game_graphics_runtime.active_render_color.r = game_graphics_runtime.hud_brightness;
     render_hud_gauges(auxiliary_sprite - KF_HUD_COMPASS);
 
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION]);
     notify_effect_update();
 
-    game_graphics_runtime.active_render_red = NOTIFICATION_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_green = NOTIFICATION_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_blue = NOTIFICATION_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.r = NOTIFICATION_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.g = NOTIFICATION_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.b = NOTIFICATION_RENDER_BRIGHTNESS;
     model.t[0] = 0;
     model.t[1] = NOTIFICATION_MODEL_Y;
     model.t[2] = NOTIFICATION_MODEL_Z;

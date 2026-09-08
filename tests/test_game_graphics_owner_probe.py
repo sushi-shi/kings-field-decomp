@@ -72,6 +72,11 @@ def standalone_source(unit):
     defines one owner and retains no overlapping globals.
     """
     source = unit.source_path.read_text()
+    # Historical separate-owner controls retain their original byte fields.
+    for member, old in (('r', 'red'), ('g', 'green'), ('b', 'blue'), ('cd', 'code')):
+        source = source.replace('active_render_color.' + member, 'active_render_' + old)
+    source = source.replace('&game_graphics_runtime.active_render_color',
+                            '(CVECTOR *)(&game_graphics_runtime.active_render_clut + 2)')
     morph_offset_name = 'MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE'
     if morph_offset_name in source:
         definition = re.search(r'\b' + morph_offset_name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*[,}]', source)

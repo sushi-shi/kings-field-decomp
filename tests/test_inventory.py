@@ -251,8 +251,8 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 106)
-        self.assertEqual(counts["structure_fields"], 844)
-        self.assertEqual(counts["structure_fields_named"], 743)
+        self.assertEqual(counts["structure_fields"], 841)
+        self.assertEqual(counts["structure_fields_named"], 740)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)

@@ -173,10 +173,7 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         expected = {
             0x80095058: ("active_render_clut", 2, "u16"),
             0x8009505A: ("active_render_tpage", 2, "u16"),
-            0x8009505C: ("active_render_red", 1, "u8"),
-            0x8009505D: ("active_render_green", 1, "u8"),
-            0x8009505E: ("active_render_blue", 1, "u8"),
-            0x8009505F: ("active_render_code", 1, "u8"),
+            0x8009505C: ("active_render_color", 4, "CVECTOR"),
         }
         identities = load_data_identities(RETAIL_CONFIG)
         fields = {0x80070E98 + row.offset: row
@@ -187,6 +184,9 @@ class DisplayTmdInventoryTests(unittest.TestCase):
             field = fields[va]
             self.assertEqual((field.name, field.size, field.datatype), shape)
             self.assertIn("game_semantic_render_material.tsv", field.evidence)
+        for va in range(0x8009505D, 0x80095060):
+            self.assertNotIn(("GAME.EXE", va), identities)
+            self.assertNotIn(va, fields)  # The SDK vector owns all colour bytes.
 
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         references = [

@@ -26,10 +26,7 @@ typedef struct KfGraphicsRuntimeGame {
     u8 unknown_241b6[10];
     u16 active_render_clut;
     u16 active_render_tpage;
-    u8 active_render_red;
-    u8 active_render_green;
-    u8 active_render_blue;
-    u8 active_render_code;
+    CVECTOR active_render_color;
     u16 hud_clut;
     u16 hud_tpage;
     u8 hud_brightness;
@@ -54,9 +51,11 @@ typedef struct KfGraphicsRuntimeGame {
 
 extern KfGraphicsRuntimeGame game_graphics_runtime;
 
+#define KF_GAME_GRAPHICS_OFFSET(member) \
+    ((unsigned long)&((KfGraphicsRuntimeGame *)0)->member)
 #define KF_GAME_GRAPHICS_OFFSET_CHECK(member, offset) \
     typedef char check_game_graphics_##member[ \
-        ((unsigned long)&((KfGraphicsRuntimeGame *)0)->member == (offset)) ? 1 : -1]
+        (KF_GAME_GRAPHICS_OFFSET(member) == (offset)) ? 1 : -1]
 KF_GAME_GRAPHICS_OFFSET_CHECK(display_state, 0x0);
 KF_GAME_GRAPHICS_OFFSET_CHECK(display_draw_environments, 0x20028);
 KF_GAME_GRAPHICS_OFFSET_CHECK(display_disp_environments, 0x200e0);
@@ -72,10 +71,7 @@ KF_GAME_GRAPHICS_OFFSET_CHECK(effect5_texture_cluts, 0x241b0);
 KF_GAME_GRAPHICS_OFFSET_CHECK(unknown_241b6, 0x241b6);
 KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_clut, 0x241c0);
 KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_tpage, 0x241c2);
-KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_red, 0x241c4);
-KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_green, 0x241c5);
-KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_blue, 0x241c6);
-KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_code, 0x241c7);
+KF_GAME_GRAPHICS_OFFSET_CHECK(active_render_color, 0x241c4);
 KF_GAME_GRAPHICS_OFFSET_CHECK(hud_clut, 0x241c8);
 KF_GAME_GRAPHICS_OFFSET_CHECK(hud_tpage, 0x241ca);
 KF_GAME_GRAPHICS_OFFSET_CHECK(hud_brightness, 0x241cc);
@@ -97,6 +93,13 @@ KF_GAME_GRAPHICS_OFFSET_CHECK(render_state, 0x24808);
 KF_GAME_GRAPHICS_OFFSET_CHECK(light_quadrant_matrices, 0x24948);
 KF_GAME_GRAPHICS_OFFSET_CHECK(active_cell_window, 0x249c8);
 #undef KF_GAME_GRAPHICS_OFFSET_CHECK
+typedef char check_game_graphics_active_color[
+    sizeof(CVECTOR) == 4 &&
+    KF_GAME_GRAPHICS_OFFSET(active_render_color.r) == 0x241c4 &&
+    KF_GAME_GRAPHICS_OFFSET(active_render_color.g) == 0x241c5 &&
+    KF_GAME_GRAPHICS_OFFSET(active_render_color.b) == 0x241c6 &&
+    KF_GAME_GRAPHICS_OFFSET(active_render_color.cd) == 0x241c7 ? 1 : -1];
+#undef KF_GAME_GRAPHICS_OFFSET
 typedef char check_game_graphics_size[sizeof(KfGraphicsRuntimeGame) == 0x249cc ? 1 : -1];
 
 #endif
