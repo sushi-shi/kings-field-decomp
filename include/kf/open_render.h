@@ -21,6 +21,7 @@ KF_ENUM_END(KfOpenColorPreset)
 enum {
     KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000,
     KF_OPEN_COLOR_PRESET_COUNT = 5,
+    KF_OPEN_TMD_SLOT_COUNT = 2,
 };
 
 /* OPEN.EXE display subobject; the active OT pointer follows this record. */
@@ -35,7 +36,7 @@ typedef struct KfDisplayStateOpen {
 
 /* Two registered TMD slots and the selected asset. */
 typedef struct KfTmdStateOpen {
-    u8 *slots[2];
+    u8 *slots[KF_OPEN_TMD_SLOT_COUNT];
     void *current_asset;
 } KfTmdStateOpen;
 

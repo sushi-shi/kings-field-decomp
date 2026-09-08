@@ -27,6 +27,7 @@ enum {
     KF_TEXTURE_BASE_BRIGHTNESS = 128,
     KF_VIEW_QUADRANT_COUNT = 4,
     KF_CELL_WINDOW_YAW_COUNT = 16,
+    KF_CELL_WINDOW_CELL_CAPACITY = 196,
     KF_CELL_WINDOW_YAW_SHIFT = 8,
     KF_DEFAULT_PROJECTION_DISTANCE = 200,
     KF_INITIAL_FOG_NEAR_DISTANCE = 11000,
@@ -102,7 +103,7 @@ typedef struct KfCellWindow {
     u16 height;
     u16 origin_x;
     u16 origin_z;
-    KfCellVisibility cells[196];
+    KfCellVisibility cells[KF_CELL_WINDOW_CELL_CAPACITY];
 } KfCellWindow;
 
 #endif

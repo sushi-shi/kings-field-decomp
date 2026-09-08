@@ -9,6 +9,7 @@
 enum {
     KF_NOTIFICATION_CAPACITY = 8,
     KF_NOTIFICATION_SPRITE_COUNT = 6,
+    KF_NOTIFICATION_DIGIT_CAPACITY = 12,
     KF_NOTIFICATION_TEXT_SPRITE = 0,
     KF_NOTIFICATION_GOLD_SPRITE = 1,
     KF_NOTIFICATION_ONES_SPRITE = 2,
@@ -34,8 +35,8 @@ typedef struct KfNotificationSprite {
  * notification renderer reads the four decimal cells with lhu.
  */
 typedef union KfNotificationDigitBuffer {
-    s16 formatted[12];
-    u16 values[12];
+    s16 formatted[KF_NOTIFICATION_DIGIT_CAPACITY];
+    u16 values[KF_NOTIFICATION_DIGIT_CAPACITY];
 } KfNotificationDigitBuffer;
 
 /* The dequeue operation addresses tail and phase through this control base. */

@@ -42,6 +42,7 @@ enum {
 
 enum {
     KF_GAME_COLOR_PRESET_COUNT = 7,
+    KF_GAME_TMD_SLOT_COUNT = 8,
     KF_HUD_DEFAULT_BRIGHTNESS = 86
 };
 
@@ -125,7 +126,7 @@ typedef struct KfDisplayState {
 
 /* Eight registered TMD slots and the selected asset. */
 typedef struct KfTmdState {
-    u8 *slots[8];
+    u8 *slots[KF_GAME_TMD_SLOT_COUNT];
     void *current_asset;
 } KfTmdState;
 

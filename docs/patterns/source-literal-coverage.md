@@ -83,6 +83,9 @@ The representation review names charge scaling, spawn-sequence wraparound,
 warp-model scale and packed audio notes, removing eight raw occurrences.
 The renderer follow-up names three sprite-table bounds and the two staff
 remapping phase values, removing five raw occurrences.
+The [header-capacity follow-up](source-constant-names.md#header-array-capacity-follow-up)
+separately names twelve bounds in TMD, visibility, notification and menu types.
+It changes no C-body occurrences; header literals are outside this census.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.

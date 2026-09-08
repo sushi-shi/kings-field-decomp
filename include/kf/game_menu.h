@@ -12,6 +12,7 @@
 #include <kf/game_save.h>
 #include <kf/psyq.h>
 #include <kf/magic.h>
+#include <kf/render_types.h>
 
 KF_ENUM_BEGIN(KfMenuMode, s32)
     KF_MENU_MODE_ROOT = 0,
@@ -307,12 +308,25 @@ typedef struct MenuTileSprite {
     u16 height;
 } MenuTileSprite;
 
+typedef enum MenuListTileIndex {
+    MENU_LIST_TILE_BACKDROP,
+    MENU_LIST_TILE_ROW,
+    MENU_LIST_TILE_END,
+    MENU_LIST_TILE_SELECTED,
+    MENU_LIST_TILE_COUNT
+} MenuListTileIndex;
+
+enum {
+    MENU_BACKGROUND_QUAD_COUNT = 4,
+    MENU_DIALOG_QUAD_COUNT = 6
+};
+
 /* Complete first block loaded from COM\\STAT.DAT; GPU packets are mutable. */
 typedef struct KfMenuAssets {
-    POLY_FT4 background_quads[2][4];
-    POLY_FT4 mid_depth_quads[2];
-    POLY_FT4 foreground_quads[2];
-    POLY_F4 dialog_quads[2][6];
+    POLY_FT4 background_quads[KF_DISPLAY_BUFFER_COUNT][MENU_BACKGROUND_QUAD_COUNT];
+    POLY_FT4 mid_depth_quads[KF_DISPLAY_BUFFER_COUNT];
+    POLY_FT4 foreground_quads[KF_DISPLAY_BUFFER_COUNT];
+    POLY_F4 dialog_quads[KF_DISPLAY_BUFFER_COUNT][MENU_DIALOG_QUAD_COUNT];
     MenuSpriteDef number_atlas;
     MenuSpriteDef glyph_atlas;
     MenuTileSprite window_backdrop;
@@ -320,16 +334,9 @@ typedef struct KfMenuAssets {
     MenuSpriteDef option_highlight;
     MenuSpriteDef row_background;
     MenuSpriteDef row_confirmed_background;
-    MenuTileSprite list_tiles[4];
+    MenuTileSprite list_tiles[MENU_LIST_TILE_COUNT];
     MenuSpriteDef selection_cursor;
 } KfMenuAssets;
-
-typedef enum MenuListTileIndex {
-    MENU_LIST_TILE_BACKDROP,
-    MENU_LIST_TILE_ROW,
-    MENU_LIST_TILE_END,
-    MENU_LIST_TILE_SELECTED,
-} MenuListTileIndex;
 
 /*
  * Scrollable menu-list state. The first 24 bytes are a positioned title,

@@ -1,5 +1,30 @@
 # Source constant naming
 
+## Header array-capacity follow-up
+
+Naming plan: retain the existing header layouts and name their repeated or
+domain-specific array bounds. This pass changes declarations only; it does not
+edit function bodies, enum argument domains, storage widths or data owners.
+
+| Header owner | Bound | Evidence and scope |
+| --- | ---: | --- |
+| `KfTmdState` / `KfTmdStateOpen` | 8 / 2 pointer slots | The [TMD registry dossier](../../config/evidence/game_semantic_display_tmd.tsv) and current register/select consumers establish separate per-image tables before `current_asset`. Keep separate GAME/OPEN capacity names. |
+| `KfCellWindow` | 196 cells | The [complete record evidence](../../config/evidence/game_cell_window_data.md) establishes 204 bytes: four halfwords plus 196 byte cells. Capacity includes unused cells in smaller windows; it is not their active width times height. |
+| `KfNotificationDigitBuffer` | 12 halfwords per view | Name the existing common workspace capacity in both signed formatter and unsigned renderer views. Only four displayed digits are consumed; this does not claim twelve displayed digits or a newly proved original local declaration. |
+| `KfMenuAssets` packet arrays | 2 buffers, 4 background / 6 dialog packets per buffer | Reuse `KF_DISPLAY_BUFFER_COUNT`; the [912-byte owner evidence](../../config/evidence/game_menu_assets.md) establishes 160-byte background and 144-byte dialog buffer strides with authentic SDK packets. |
+| `KfMenuAssets.list_tiles` | 4 descriptors | Put the existing four-member `MenuListTileIndex` before the owner and add its count enumerator. Member order and values remain unchanged. |
+
+These are game-owned workspaces and asset layouts; supplied SDK types remain
+unchanged. Source history, current declarations, consumers and the cited raw
+layout evidence were reviewed. Builds, compiler checks and tests remain
+deferred under the user's instruction. C-body literal counts do not change;
+header-bound substitutions are separate from the 111-file source census.
+
+Final verdict: twelve raw header bounds now use named capacities. Every bound
+retains its integer value; the four original tile-enum members retain values
+0..3, and all field types/order remain unchanged. No function or initializer
+is edited and no post-edit binary result is claimed.
+
 The [source coverage map](source-literal-coverage.md) inventories all 111 C files,
 links their existing audits, and records the outstanding scope checks. Its
 current inline-occurrence count includes authored data and already explained
