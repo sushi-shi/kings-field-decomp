@@ -977,8 +977,11 @@ and configuration stay unchanged; no new match or compilation is claimed.
 
 A planned control adds only `case ENDING_SEQUENCE_REPLACED: break` to the
 kept sequence switch. That terminal state is explicitly assigned by the fade
-completion path. Prior corpus searches found an explicit WAIT_SCROLL trial
-but no REPLACED case. This tests the existing terminal exit's switch lowering,
+completion path. The initial two-corpus search found an explicit WAIT_SCROLL
+trial but no REPLACED case. A subsequent all-worktree audit found the REPLACED
+construct in open-remaining on a biased-countdown base; this was a new
+composition with the retained top pointer, not a previously untried construct.
+This tests the existing terminal exit's switch lowering,
 without changing the state transition or adding a source operation.
 
 The result is 1944 bytes at98.401240%, with22 unequal aligned words. The
@@ -1115,3 +1118,60 @@ with6/6 vendored source functions exact. No new banking occurs. This commit
 preserves nonexact source improvements and evidence, not closure of either
 function. Fresh logs are `precommit-{ending,display,raw,ruff,tests,full-build}`
 under the campaign build directory. Generated products are not committed.
+
+## Broader generated-corpus coverage correction
+
+An all-registered-worktree search found additional generated target sources
+outside this worktree and gcc257-trace: 692 in main, 1943 in open-remaining,
+20 display-named sources in game-362, and 3 each in data-matching and
+unknown-names. A function name alone does not establish the OPEN image; the
+game-362 display sources must retain their GAME identity. Main's dominant
+constant-names directory contains 687 sources; the remaining main controls
+include the earlier color-scope and DFE-pair experiments, both recorded as
+neutral against their own older baselines.
+
+The open-remaining hypothesis inventory contains 125 reports for the two
+OPEN targets. Its maximum recorded display score is 96.652540%/476B and
+ending score 99.781890%/1944B. These historical percentages are discovery
+metadata, not closure evidence under the corrected branch comparator. No
+report exceeds the retained results, and no old candidate is adopted here.
+In particular open-scroll-inactive-cases-16 already tested explicit sequence
+REPLACED cases with a biased countdown. The recent terminal-case test's
+original novelty claim was too broad and is corrected above. Future searches
+must include this corpus before calling a source construct untested.
+
+Generated path and report inventories are
+`other-worktree-generated-sources.json` and
+`other-worktree-result-frontiers.json` in the campaign build directory.
+This audit changes the exclusion corpus, not production code or banked scores.
+
+### Additional display trace coverage
+
+The newly inventoried open-remaining corpus has five display trace summaries:
+three copies of the 96.652540% baseline and two lower-scoring candidates.
+The branch-pointer candidate is 90.652540% with a 40-byte frame; its identified
+DTD root crosses zero calls. The late-second complete-fields candidate is
+90.957630% with a 40-byte frame and no uniquely identified DTD-root pseudo.
+Neither summary supplies the required 48-byte frame together with a retained
+DTD root across PutDrawEnv. Zero store counters or an unavailable pseudo
+are not treated as proof that a particular memory operation is absent.
+
+The hypothesis directory retains no object files; the gcc257 directory has
+28 objects including target copies and ending controls. Thus the 125 score
+reports are not 125 independently available object audits. Do not elevate
+those historical scores or missing features into a raw-byte verdict, and do
+not recompile their source spellings without an independent reason.
+
+### Default-environment return values
+
+The SDK-return audit extends to SetDefDrawEnv and SetDefDispEnv, rather than
+assuming the earlier PutDrawEnv exclusion covers them. Pinned LIBGPU.H:605–606
+returns DISPENV* and DRAWENV* respectively; each takes four int coordinates
+and dimensions after its environment pointer. The display caller's four
+calls are at 80016b44, 80016b60, 80016b7c, and 80016b98. Their delay slots all set a3
+to 320. No following instruction reads the returned v0: setup proceeds from
+s0/s1 and fresh immediate addresses, and v0 is explicitly replaced with 254
+at 80016bfc. Thus deriving retained draw pointers from these SDK return values
+would introduce a dependency absent from retail's separate-compilation call
+sequence. No return-capturing candidate is generated. This excludes a
+specific pointer-origin proposal; it does not change the authentic API types.
