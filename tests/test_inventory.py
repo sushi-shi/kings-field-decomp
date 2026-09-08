@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 108)
-        self.assertEqual(counts["structure_fields"], 815)
-        self.assertEqual(counts["structure_fields_named"], 728)
+        self.assertEqual(counts["structures"], 112)
+        self.assertEqual(counts["structure_fields"], 822)
+        self.assertEqual(counts["structure_fields_named"], 735)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -379,7 +379,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfActor"].size, 0x48)
         self.assertEqual(structures["KfPlayerLevelGrowth"].size, 0x0C)
         self.assertEqual(structures["KfMapCell"].size, 0x02)
-        self.assertEqual(structures["KfPlayerMotionState"].size, 0x0A)
+        self.assertEqual(structures["KfPlayerMotionState"].size, 0x0C)
         self.assertEqual(structures["KfWeaponRecord"].size, 0x2C)
         self.assertEqual(structures["KfCollisionTarget"].size, 0x20)
         self.assertEqual(structures["KfPlayerState"].size, 0xE0)
@@ -410,7 +410,7 @@ class InventoryTests(unittest.TestCase):
         }
         self.assertEqual(definition_fields["experience_reward"].offset, 0x84)
         motion_fields = {
-            row.name: row for row in fields if row.structure == "KfPlayerMotionState"
+            row.name: row for row in fields if row.structure == "KfPlayerMotionFields"
         }
         self.assertEqual(motion_fields["movement_speed"].offset, 0x04)
         self.assertEqual(motion_fields["pitch_step"].offset, 0x08)
@@ -697,12 +697,13 @@ class InventoryTests(unittest.TestCase):
             "KfPlayerLevelGrowth",
             "KfPlayerVitals",
             "KfPlayerAttackChargeState",
-            "KfPlayerMotionState",
+            "KfPlayerMotionFields",
             "KfPlayerState",
             "KfFloorEntryCell",
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, player_header)
+        self.assertIn("typedef union KfPlayerMotionState", player_header)
 
     def test_collision_layout_lives_in_the_collision_owner_header(self) -> None:
         collision_header = (
@@ -2672,11 +2673,11 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0xC0),
-            ("motion_state", "KfPlayerMotionState", 0x0A),
+            ("motion_state", "KfPlayerMotionState", 0x0C),
         )
         self.assertEqual(game.data_owner(0x800A0848), state)
         self.assertEqual(
-            _structure_field("KfPlayerState", 0xCA), ("map_cell", "KfMapCell", 2)
+            _structure_field("KfPlayerMotionFields", 0x0A), ("map_cell", "KfMapCell", 2)
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0x68)[1], "KfWeaponRecord *"

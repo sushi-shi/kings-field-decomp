@@ -17,16 +17,16 @@ void map_event_set_current(KfMapEvent *event)
 ADDRESS(0x800337ac, 0x74)
 void map_event_refresh_dialogue_stage(KfMapEvent *event)
 {
-    if (event->dialogue_stage_limit > event->dialogue_stage) {
-        if (KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor) < event->dialogue_stage_limit) {
-            if (event->dialogue_stage != KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor)) {
-                event->dialogue_stage = KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor);
+    if (event->dialogue.fields.stage_limit > event->dialogue.fields.stage) {
+        if (KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor) < event->dialogue.fields.stage_limit) {
+            if (event->dialogue.fields.stage != KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor)) {
+                event->dialogue.fields.stage = KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor);
             reset_dialogue_page:
-                event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
-                event->dialogue_page_delay = 0;
+                event->dialogue.fields.page = KF_DIALOGUE_FIRST_PAGE;
+                event->dialogue.fields.page_delay = 0;
             }
-        } else if (event->dialogue_stage != event->dialogue_stage_limit) {
-            event->dialogue_stage = event->dialogue_stage_limit;
+        } else if (event->dialogue.fields.stage != event->dialogue.fields.stage_limit) {
+            event->dialogue.fields.stage = event->dialogue.fields.stage_limit;
             goto reset_dialogue_page;
         }
     }
@@ -61,7 +61,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->character_id = definitions->character_id;
                 event->model_index = definitions->model_index;
                 event->dialogue_pages = definitions->dialogue_pages;
-                event->dialogue_stage_limit = definitions->dialogue_stage_limit;
+                event->dialogue.fields.stage_limit = definitions->dialogue_stage_limit;
                 event->unknown_0c = definitions->unknown_0b;
                 event->unknown_0d = definitions->unknown_0c;
                 event->behavior = definitions->behavior;
@@ -78,9 +78,9 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 definitions++;
                 event->rotation.vz = 0;
                 event->rotation.vx = 0;
-                event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
-                event->dialogue_stage = KF_DIALOGUE_FIRST_STAGE;
-                event->dialogue_page_delay = 0;
+                event->dialogue.fields.page = KF_DIALOGUE_FIRST_PAGE;
+                event->dialogue.fields.stage = KF_DIALOGUE_FIRST_STAGE;
+                event->dialogue.fields.page_delay = 0;
                 event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
                 event->animation_phase = 0;
                 event->rotation_target = 0;

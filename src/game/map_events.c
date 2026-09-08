@@ -131,13 +131,13 @@ void map_event_pool_update(void)
         call_animation_loop:
             map_event_update_animation_loop();
         advance_dialogue:
-            if (map_dialogue_advance_gate == 0 && event->dialogue_page_delay != 0) {
-                event->dialogue_page_delay--;
-                if (event->dialogue_page_delay == 0) {
-                    s32 limit = event->dialogue_pages.last_page[event->dialogue_stage - 1];
-                    event->dialogue_page++;
-                    if (event->dialogue_page >= limit) {
-                        event->dialogue_page = limit;
+            if (map_dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
+                event->dialogue.fields.page_delay--;
+                if (event->dialogue.fields.page_delay == 0) {
+                    s32 limit = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
+                    event->dialogue.fields.page++;
+                    if (event->dialogue.fields.page >= limit) {
+                        event->dialogue.fields.page = limit;
                     }
                 }
             }
@@ -198,11 +198,11 @@ void map_world_state_persist(void)
     event = map_runtime_state.events;
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         *out++ = KF_ENUM_ENCODE(u8, event->state);
-        *out++ = event->dialogue_stage_limit;
-        *out++ = event->dialogue_stage;
-        *out++ = event->dialogue_page;
-        *out++ = event->dialogue_pages.last_page[event->dialogue_stage - 1];
-        *out++ = event->dialogue_page_delay;
+        *out++ = event->dialogue.fields.stage_limit;
+        *out++ = event->dialogue.fields.stage;
+        *out++ = event->dialogue.fields.page;
+        *out++ = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
+        *out++ = event->dialogue.fields.page_delay;
         *out++ = event->unknown_0d;
     }
 

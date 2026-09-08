@@ -126,7 +126,7 @@ void player_update(void)
         player_death_update_reverse_fade();
         return;
     }
-    collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, -1);
     input = PadRead(1);
     if (input & PADh) {
         display_show_error_screen(KF_SYSTEM_SCREEN_PAUSE);
@@ -144,8 +144,8 @@ void player_update(void)
             audio_close_vab();
             func_800365f8();
             player_sync_position_to_map();
-            player_state.previous_map_cell.x = player_state.map_cell.x;
-            player_state.previous_map_cell.z = player_state.map_cell.z;
+            player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
+            player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
             player_equip_weapon(player_state.equipped_weapon_id);
             player_select_magic(player_state.selected_magic_id);
         } else if (item == KF_MENU_ROOT_RETURN_TO_INTRO) {
@@ -165,66 +165,66 @@ void player_update(void)
             player_turn_step_limit = PLAYER_NORMAL_TURN_LIMIT;
         }
         if (input & PADLup) {
-            forward = player_state.motion_state.forward_velocity
+            forward = player_state.motion_state.fields.forward_velocity
                 + (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
             if (forward > player_movement_velocity_limit) {
-                player_state.motion_state.forward_velocity = player_movement_velocity_limit;
+                player_state.motion_state.fields.forward_velocity = player_movement_velocity_limit;
             } else {
-                player_state.motion_state.forward_velocity = forward;
+                player_state.motion_state.fields.forward_velocity = forward;
             }
         } else if (input & PADLdown) {
-            forward = player_state.motion_state.forward_velocity
+            forward = player_state.motion_state.fields.forward_velocity
                 - (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
             if (forward >= -player_movement_velocity_limit) {
-                player_state.motion_state.forward_velocity = forward;
+                player_state.motion_state.fields.forward_velocity = forward;
             } else {
-                player_state.motion_state.forward_velocity = -player_movement_velocity_limit;
+                player_state.motion_state.fields.forward_velocity = -player_movement_velocity_limit;
             }
-        } else if (player_state.motion_state.forward_velocity > 0) {
-            player_state.motion_state.forward_velocity -=
+        } else if (player_state.motion_state.fields.forward_velocity > 0) {
+            player_state.motion_state.fields.forward_velocity -=
                 player_movement_velocity_limit >> PLAYER_FORWARD_DECEL_SHIFT;
-            if (player_state.motion_state.forward_velocity < 0) {
-                player_state.motion_state.forward_velocity = 0;
+            if (player_state.motion_state.fields.forward_velocity < 0) {
+                player_state.motion_state.fields.forward_velocity = 0;
             }
-        } else if (player_state.motion_state.forward_velocity < 0) {
-            player_state.motion_state.forward_velocity +=
+        } else if (player_state.motion_state.fields.forward_velocity < 0) {
+            player_state.motion_state.fields.forward_velocity +=
                 player_movement_velocity_limit >> PLAYER_FORWARD_DECEL_SHIFT;
-            if (player_state.motion_state.forward_velocity > 0) {
-                player_state.motion_state.forward_velocity = 0;
+            if (player_state.motion_state.fields.forward_velocity > 0) {
+                player_state.motion_state.fields.forward_velocity = 0;
             }
         }
         if (input & PADl) {
-            strafe = player_state.motion_state.strafe_velocity
+            strafe = player_state.motion_state.fields.strafe_velocity
                 + (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
             if (strafe > player_movement_velocity_limit) {
-                player_state.motion_state.strafe_velocity = player_movement_velocity_limit;
+                player_state.motion_state.fields.strafe_velocity = player_movement_velocity_limit;
             } else {
-                player_state.motion_state.strafe_velocity = strafe;
+                player_state.motion_state.fields.strafe_velocity = strafe;
             }
         } else if (input & PADn) {
-            strafe = player_state.motion_state.strafe_velocity
+            strafe = player_state.motion_state.fields.strafe_velocity
                 - (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
             if (strafe >= -player_movement_velocity_limit) {
-                player_state.motion_state.strafe_velocity = strafe;
+                player_state.motion_state.fields.strafe_velocity = strafe;
             } else {
-                player_state.motion_state.strafe_velocity = -player_movement_velocity_limit;
+                player_state.motion_state.fields.strafe_velocity = -player_movement_velocity_limit;
             }
-        } else if (player_state.motion_state.strafe_velocity > 0) {
-            player_state.motion_state.strafe_velocity -=
+        } else if (player_state.motion_state.fields.strafe_velocity > 0) {
+            player_state.motion_state.fields.strafe_velocity -=
                 player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT;
-            if (player_state.motion_state.strafe_velocity < 0) {
-                player_state.motion_state.strafe_velocity = 0;
+            if (player_state.motion_state.fields.strafe_velocity < 0) {
+                player_state.motion_state.fields.strafe_velocity = 0;
             }
-        } else if (player_state.motion_state.strafe_velocity < 0) {
-            player_state.motion_state.strafe_velocity +=
+        } else if (player_state.motion_state.fields.strafe_velocity < 0) {
+            player_state.motion_state.fields.strafe_velocity +=
                 player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT;
-            if (player_state.motion_state.strafe_velocity > 0) {
-                player_state.motion_state.strafe_velocity = 0;
+            if (player_state.motion_state.fields.strafe_velocity > 0) {
+                player_state.motion_state.fields.strafe_velocity = 0;
             }
         }
-        strafe_sq = player_state.motion_state.strafe_velocity;
+        strafe_sq = player_state.motion_state.fields.strafe_velocity;
         strafe_sq *= strafe_sq;
-        forward_sq = player_state.motion_state.forward_velocity;
+        forward_sq = player_state.motion_state.fields.forward_velocity;
         forward_sq *= forward_sq;
         magnitude = SquareRoot0(strafe_sq + forward_sq);
         if (magnitude == 0) {
@@ -232,15 +232,15 @@ void player_update(void)
             strafe = 0;
         } else {
             strafe = strafe_sq / magnitude;
-            if (player_state.motion_state.strafe_velocity < 0) {
+            if (player_state.motion_state.fields.strafe_velocity < 0) {
                 strafe = -(strafe_sq / magnitude);
             }
             forward = forward_sq / magnitude;
-            if (player_state.motion_state.forward_velocity < 0) {
+            if (player_state.motion_state.fields.forward_velocity < 0) {
                 forward = -(forward_sq / magnitude);
             }
         }
-        player_state.motion_state.movement_speed = SquareRoot0(strafe * strafe + forward * forward);
+        player_state.motion_state.fields.movement_speed = SquareRoot0(strafe * strafe + forward * forward);
         if (forward > 0) {
             player_move_horizontal(player_state.camera_rotation.vy, forward);
         } else if (forward < 0) {
@@ -256,56 +256,56 @@ void player_update(void)
         }
         player_update_view_bob();
         if (input & PADLleft) {
-            player_state.motion_state.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-            if (player_state.motion_state.yaw_step > player_turn_step_limit) {
-                player_state.motion_state.yaw_step = player_turn_step_limit;
+            player_state.motion_state.fields.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
+            if (player_state.motion_state.fields.yaw_step > player_turn_step_limit) {
+                player_state.motion_state.fields.yaw_step = player_turn_step_limit;
             }
         } else if (input & PADLright) {
-            player_state.motion_state.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-            if (player_state.motion_state.yaw_step < -player_turn_step_limit) {
-                player_state.motion_state.yaw_step = -player_turn_step_limit;
+            player_state.motion_state.fields.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
+            if (player_state.motion_state.fields.yaw_step < -player_turn_step_limit) {
+                player_state.motion_state.fields.yaw_step = -player_turn_step_limit;
             }
-        } else if (player_state.motion_state.yaw_step > 0) {
-            player_state.motion_state.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-            if (player_state.motion_state.yaw_step < 0) {
-                player_state.motion_state.yaw_step = 0;
+        } else if (player_state.motion_state.fields.yaw_step > 0) {
+            player_state.motion_state.fields.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
+            if (player_state.motion_state.fields.yaw_step < 0) {
+                player_state.motion_state.fields.yaw_step = 0;
             }
-        } else if (player_state.motion_state.yaw_step < 0) {
-            player_state.motion_state.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-            if (player_state.motion_state.yaw_step > 0) {
-                player_state.motion_state.yaw_step = 0;
+        } else if (player_state.motion_state.fields.yaw_step < 0) {
+            player_state.motion_state.fields.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
+            if (player_state.motion_state.fields.yaw_step > 0) {
+                player_state.motion_state.fields.yaw_step = 0;
             }
         }
         player_state.camera_rotation.vy =
-            (player_state.camera_rotation.vy + player_state.motion_state.yaw_step) & KF_ANGLE_WRAP_MASK;
+            (player_state.camera_rotation.vy + player_state.motion_state.fields.yaw_step) & KF_ANGLE_WRAP_MASK;
         if (input & PADm) {
-            player_state.motion_state.pitch_step += PLAYER_PITCH_ACCEL;
-            if (player_state.motion_state.pitch_step >= PLAYER_PITCH_STEP_LIMIT + 1) {
-                player_state.motion_state.pitch_step = PLAYER_PITCH_STEP_LIMIT;
+            player_state.motion_state.fields.pitch_step += PLAYER_PITCH_ACCEL;
+            if (player_state.motion_state.fields.pitch_step >= PLAYER_PITCH_STEP_LIMIT + 1) {
+                player_state.motion_state.fields.pitch_step = PLAYER_PITCH_STEP_LIMIT;
             }
         } else if (input & PADo) {
-            player_state.motion_state.pitch_step -= PLAYER_PITCH_ACCEL;
-            if (player_state.motion_state.pitch_step < -PLAYER_PITCH_STEP_LIMIT) {
-                player_state.motion_state.pitch_step = -PLAYER_PITCH_STEP_LIMIT;
+            player_state.motion_state.fields.pitch_step -= PLAYER_PITCH_ACCEL;
+            if (player_state.motion_state.fields.pitch_step < -PLAYER_PITCH_STEP_LIMIT) {
+                player_state.motion_state.fields.pitch_step = -PLAYER_PITCH_STEP_LIMIT;
             }
-        } else if (player_state.motion_state.pitch_step > 0) {
-            player_state.motion_state.pitch_step -= PLAYER_PITCH_DECEL;
-            if (player_state.motion_state.pitch_step < 0) {
-                player_state.motion_state.pitch_step = 0;
+        } else if (player_state.motion_state.fields.pitch_step > 0) {
+            player_state.motion_state.fields.pitch_step -= PLAYER_PITCH_DECEL;
+            if (player_state.motion_state.fields.pitch_step < 0) {
+                player_state.motion_state.fields.pitch_step = 0;
             }
-        } else if (player_state.motion_state.pitch_step < 0) {
-            player_state.motion_state.pitch_step += PLAYER_PITCH_DECEL;
-            if (player_state.motion_state.pitch_step > 0) {
-                player_state.motion_state.pitch_step = 0;
+        } else if (player_state.motion_state.fields.pitch_step < 0) {
+            player_state.motion_state.fields.pitch_step += PLAYER_PITCH_DECEL;
+            if (player_state.motion_state.fields.pitch_step > 0) {
+                player_state.motion_state.fields.pitch_step = 0;
             }
         }
-        if (player_state.motion_state.pitch_step > 0) {
-            player_state.camera_rotation.vx += player_state.motion_state.pitch_step;
+        if (player_state.motion_state.fields.pitch_step > 0) {
+            player_state.camera_rotation.vx += player_state.motion_state.fields.pitch_step;
             if (player_state.camera_rotation.vx >= PLAYER_CAMERA_PITCH_LIMIT + 1) {
                 player_state.camera_rotation.vx = PLAYER_CAMERA_PITCH_LIMIT;
             }
-        } else if (player_state.motion_state.pitch_step < 0) {
-            player_state.camera_rotation.vx += player_state.motion_state.pitch_step;
+        } else if (player_state.motion_state.fields.pitch_step < 0) {
+            player_state.camera_rotation.vx += player_state.motion_state.fields.pitch_step;
             if (player_state.camera_rotation.vx < -PLAYER_CAMERA_PITCH_LIMIT) {
                 player_state.camera_rotation.vx = -PLAYER_CAMERA_PITCH_LIMIT;
             }
@@ -502,7 +502,7 @@ void player_update(void)
         player_previous_input = input;
         player_update_vertical_motion();
     }
-    collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, 1);
     player_update_weapon_attack();
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
@@ -607,7 +607,7 @@ void player_update(void)
         }
     }
     player_state.equipment_effect_ticks++;
-    attribute = map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x];
+    attribute = map_cell_attribute_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
     switch (attribute) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {

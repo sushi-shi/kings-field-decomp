@@ -85,14 +85,14 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
     poly_marker[0].v2 = MENU_MAP_MARKER_SPAN;
     poly_marker[0].u3 = MENU_MAP_MARKER_SPAN;
     poly_marker[0].v3 = MENU_MAP_MARKER_SPAN;
-    poly_marker[0].x0 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
-    poly_marker[0].y0 = MENU_MAP_MARKER_ORIGIN_Y - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
-    poly_marker[0].x1 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + (MENU_MAP_MARKER_ORIGIN_X + MENU_MAP_MARKER_SPAN);
-    poly_marker[0].y1 = MENU_MAP_MARKER_ORIGIN_Y - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
-    poly_marker[0].x2 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
-    poly_marker[0].y2 = (MENU_MAP_MARKER_ORIGIN_Y + MENU_MAP_MARKER_SPAN) - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
-    poly_marker[0].x3 = player_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + (MENU_MAP_MARKER_ORIGIN_X + MENU_MAP_MARKER_SPAN);
-    poly_marker[0].y3 = (MENU_MAP_MARKER_ORIGIN_Y + MENU_MAP_MARKER_SPAN) - player_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x0 = player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    poly_marker[0].y0 = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x1 = player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + (MENU_MAP_MARKER_ORIGIN_X + MENU_MAP_MARKER_SPAN);
+    poly_marker[0].y1 = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x2 = player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    poly_marker[0].y2 = (MENU_MAP_MARKER_ORIGIN_Y + MENU_MAP_MARKER_SPAN) - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL;
+    poly_marker[0].x3 = player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + (MENU_MAP_MARKER_ORIGIN_X + MENU_MAP_MARKER_SPAN);
+    poly_marker[0].y3 = (MENU_MAP_MARKER_ORIGIN_Y + MENU_MAP_MARKER_SPAN) - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL;
     poly_marker[1] = poly_marker[0];
 
     for (;;) {

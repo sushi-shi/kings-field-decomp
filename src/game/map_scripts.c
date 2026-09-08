@@ -106,14 +106,14 @@ void map_ambient_script_floor1(void)
 
     switch (map_floor1_script.actor_activation_stage) {
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
-        if (player_state.map_cell.x >= 7 && player_state.map_cell.z >= 31
-            && player_state.map_cell.x < 12 && player_state.map_cell.z < 41) {
+        if (player_state.motion_state.fields.map_cell.coords.x >= 7 && player_state.motion_state.fields.map_cell.coords.z >= 31
+            && player_state.motion_state.fields.map_cell.coords.x < 12 && player_state.motion_state.fields.map_cell.coords.z < 41) {
             map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
     case KF_MAP_TRIGGER_AWAIT_EXIT:
-        if (player_state.map_cell.x < 2 || player_state.map_cell.z < 25
-            || player_state.map_cell.x >= 14 || player_state.map_cell.z >= 46) {
+        if (player_state.motion_state.fields.map_cell.coords.x < 2 || player_state.motion_state.fields.map_cell.coords.z < 25
+            || player_state.motion_state.fields.map_cell.coords.x >= 14 || player_state.motion_state.fields.map_cell.coords.z >= 46) {
             s32 actor_index;
             s32 object_index;
 
@@ -133,14 +133,14 @@ void map_ambient_script_floor1(void)
 
     switch (map_floor1_script.object_removal_stage) {
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
-        if (player_state.map_cell.x >= 2 && player_state.map_cell.z >= 27
-            && player_state.map_cell.x < 5 && player_state.map_cell.z < 30) {
+        if (player_state.motion_state.fields.map_cell.coords.x >= 2 && player_state.motion_state.fields.map_cell.coords.z >= 27
+            && player_state.motion_state.fields.map_cell.coords.x < 5 && player_state.motion_state.fields.map_cell.coords.z < 30) {
             map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
     case KF_MAP_TRIGGER_AWAIT_EXIT:
-        if (player_state.map_cell.x < 2 || player_state.map_cell.z < 11
-            || player_state.map_cell.x >= 28 || player_state.map_cell.z >= 41) {
+        if (player_state.motion_state.fields.map_cell.coords.x < 2 || player_state.motion_state.fields.map_cell.coords.z < 11
+            || player_state.motion_state.fields.map_cell.coords.x >= 28 || player_state.motion_state.fields.map_cell.coords.z >= 41) {
             s32 object_index;
 
             map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
@@ -157,7 +157,7 @@ void map_ambient_script_floor1(void)
 ADDRESS(0x800341ec, 0x70)
 void map_ambient_script_floor2(void)
 {
-    if (map_event_pool[1].dialogue_stage == 2 && map_event_pool[1].dialogue_page < 3
+    if (map_event_pool[1].dialogue.fields.stage == 2 && map_event_pool[1].dialogue.fields.page < 3
         && rand() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
         audio_play_spatial_default_range(
             &gameplay_sound_ref_8, &map_event_pool[1].reference_position, KF_AUDIO_MAX_VOLUME);
@@ -168,8 +168,8 @@ void map_ambient_script_floor2(void)
 ADDRESS(0x8003425c, 0x88)
 void map_ambient_script_floor3(void)
 {
-    if (player_state.map_cell.x >= 15 && player_state.map_cell.x < 18
-        && player_state.map_cell.z == 0x40) {
+    if (player_state.motion_state.fields.map_cell.coords.x >= 15 && player_state.motion_state.fields.map_cell.coords.x < 18
+        && player_state.motion_state.fields.map_cell.coords.z == 0x40) {
         player_restore_vitals_with_color_cycle();
         if (magic_records[KF_MAGIC_RESIST_FIRE].learned == KF_MAGIC_UNLEARNED || magic_records[KF_MAGIC_BLESS].learned == KF_MAGIC_UNLEARNED) {
             magic_records[KF_MAGIC_RESIST_FIRE].learned = KF_MAGIC_LEARNED;
@@ -191,8 +191,8 @@ void map_ambient_script_floor5(void)
 {
     KfMapScriptFlag *encounter_started = &map_floor5_script.boss_encounter_started;
 
-    if (*encounter_started == KF_MAP_SCRIPT_UNSET && player_state.map_cell.x >= 38
-        && player_state.map_cell.x < 41 && player_state.map_cell.z == 7
+    if (*encounter_started == KF_MAP_SCRIPT_UNSET && player_state.motion_state.fields.map_cell.coords.x >= 38
+        && player_state.motion_state.fields.map_cell.coords.x < 41 && player_state.motion_state.fields.map_cell.coords.z == 7
         && (u16)player_state.camera_rotation.vy >= MAP_BOSS_REVEAL_YAW_MIN
         && (u16)player_state.camera_rotation.vy < MAP_BOSS_REVEAL_YAW_END) {
         *encounter_started = KF_MAP_SCRIPT_SET;
@@ -260,7 +260,7 @@ void map_reveal_fade(void)
 ADDRESS(0x800345bc, 0x54)
 void map_action_script_floor2(void)
 {
-    if ((*(u32 *)&map_event_pool[3].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
+    if ((map_event_pool[3].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(2)
         && map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {
         map_reveal_fade();
@@ -277,7 +277,7 @@ void map_action_script_floor3(void)
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
-    if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
+    if ((map_event_pool[1].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(3)) {
         if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
             magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = KF_MAGIC_LEARNED;
@@ -309,7 +309,7 @@ void map_floor5_transition_cutscene(void)
         player_equip_weapon(KF_ITEM_NONE);
     }
     item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)] = 0;
-    collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, -1);
 
     camera_path_begin(&path, map_floor5_camera_path);
     for (;;) {
@@ -322,9 +322,9 @@ void map_floor5_transition_cutscene(void)
 
     player_state.camera_position = path.position;
     player_state.camera_rotation = path.rotation;
-    player_state.map_cell.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
-    player_state.map_cell.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
-    collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
+    player_state.motion_state.fields.map_cell.coords.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
+    player_state.motion_state.fields.map_cell.coords.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, 1);
 
     ReadColorMatrix(&color_matrix);
     effect = map_object_effect_pool_acquire(
@@ -389,7 +389,7 @@ done:
 ADDRESS(0x80034a34, 0x4c)
 void map_action_script_floor5(void)
 {
-    if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)
+    if ((map_event_pool[1].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(5)) {
         map_floor5_transition_cutscene();
         map_floor5_script.weapon_transformed = KF_MAP_SCRIPT_SET;
@@ -401,47 +401,47 @@ void map_event_interact(KfMapEvent *event)
 {
     switch (event->character_id) {
     case KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE:
-        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] != 0 && map_event_pool[2].dialogue_stage == 1
-            && map_event_pool[2].dialogue_page < 3) {
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] != 0 && map_event_pool[2].dialogue.fields.stage == 1
+            && map_event_pool[2].dialogue.fields.page < 3) {
             item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_KEY_OF_THE_DEAD)] = 1;
             map_event_pool[2].dialogue_pages.last_page[0] = 7;
             item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue_stage, event->character_id, 3);
-            map_event_pool[2].dialogue_page = 4;
-            map_event_pool[2].dialogue_page_delay = 0;
-            map_event_pool[2].dialogue_stage_limit = 5;
+                                    event->dialogue.fields.stage, event->character_id, 3);
+            map_event_pool[2].dialogue.fields.page = 4;
+            map_event_pool[2].dialogue.fields.page_delay = 0;
+            map_event_pool[2].dialogue.fields.stage_limit = 5;
             map_event_refresh_dialogue_stage(&map_event_pool[2]);
             return;
         }
         break;
     case KF_CHARACTER_HEALING_EXCHANGE:
-        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_event_pool[2].dialogue_stage == 2
-            && map_event_pool[2].dialogue_page < 2) {
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_event_pool[2].dialogue.fields.stage == 2
+            && map_event_pool[2].dialogue.fields.page < 2) {
             magic_records[KF_MAGIC_HEALING].learned = KF_MAGIC_LEARNED;
             item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)]--;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue_stage, event->character_id, 2);
-            map_event_pool[2].dialogue_page = 3;
-            map_event_pool[2].dialogue_page_delay = 0;
-            map_event_pool[2].dialogue_stage_limit = 5;
+                                    event->dialogue.fields.stage, event->character_id, 2);
+            map_event_pool[2].dialogue.fields.page = 3;
+            map_event_pool[2].dialogue.fields.page_delay = 0;
+            map_event_pool[2].dialogue.fields.stage_limit = 5;
             map_event_refresh_dialogue_stage(&map_event_pool[2]);
             return;
         }
         break;
     case KF_CHARACTER_HARP_EXCHANGE:
-        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0 && map_event_pool[1].dialogue_stage == 2
-            && map_event_pool[1].dialogue_page < 2) {
+        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0 && map_event_pool[1].dialogue.fields.stage == 2
+            && map_event_pool[1].dialogue.fields.page < 2) {
             item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_HARP)] = 1;
             map_event_pool[1].dialogue_pages.last_page[1] = 5;
             item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue_stage, event->character_id, 2);
-            map_event_pool[1].dialogue_page = 3;
-            map_event_pool[1].dialogue_page_delay = 0;
-            map_event_pool[1].dialogue_stage_limit = 2;
+                                    event->dialogue.fields.stage, event->character_id, 2);
+            map_event_pool[1].dialogue.fields.page = 3;
+            map_event_pool[1].dialogue.fields.page_delay = 0;
+            map_event_pool[1].dialogue.fields.stage_limit = 2;
             map_event_refresh_dialogue_stage(&map_event_pool[1]);
             return;
         }
@@ -453,12 +453,12 @@ void map_event_interact(KfMapEvent *event)
         break;
     }
 
-    if (event->dialogue_stage_limit != 0) {
-        if (event->dialogue_pages.last_page[event->dialogue_stage - 1] != 0) {
+    if (event->dialogue.fields.stage_limit != 0) {
+        if (event->dialogue_pages.last_page[event->dialogue.fields.stage - 1] != 0) {
             talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue_stage, event->character_id, event->dialogue_page);
-            if (event->dialogue_page_delay == 0) {
-                event->dialogue_page_delay = KF_DIALOGUE_PAGE_DELAY_TICKS;
+                                    event->dialogue.fields.stage, event->character_id, event->dialogue.fields.page);
+            if (event->dialogue.fields.page_delay == 0) {
+                event->dialogue.fields.page_delay = KF_DIALOGUE_PAGE_DELAY_TICKS;
             }
         }
     }

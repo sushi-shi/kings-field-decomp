@@ -217,9 +217,15 @@ enum {
     KF_MAP_OBJECT_REVEAL_SETTLE_STEP = 40
 };
 
-typedef struct KfMapCell {
+typedef struct KfMapCellCoordinates {
     u8 z;
     u8 x;
+} KfMapCellCoordinates;
+
+/* Little-endian z/x bytes are also compared as a packed halfword. */
+typedef union KfMapCell {
+    KfMapCellCoordinates coords;
+    u16 word;
 } KfMapCell;
 
 typedef struct KfMapCopyRegion {
@@ -415,15 +421,25 @@ typedef struct KfMapEventDefinition {
     u16 unknown_16;
 } KfMapEventDefinition;
 
+typedef struct KfDialogueFields {
+    u8 stage_limit;
+    u8 stage;
+    u8 page;
+    u8 page_delay;
+} KfDialogueFields;
+
+/* Script triggers compare stage, page and delay with one masked word load. */
+typedef union KfDialogueState {
+    KfDialogueFields fields;
+    u32 word;
+} KfDialogueState;
+
 typedef struct KfMapEvent {
     KfMapEventState state;
     KfCharacterId character_id;
     u8 model_index;
     KfDialoguePageLimits dialogue_pages;
-    u8 dialogue_stage_limit;
-    u8 dialogue_stage;
-    u8 dialogue_page;
-    u8 dialogue_page_delay;
+    KfDialogueState dialogue;
     u8 unknown_0c;
     u8 unknown_0d;
     KfMapEventBehavior behavior;
@@ -445,6 +461,8 @@ typedef struct KfMapEvent {
 } KfMapEvent;
 
 typedef char check_map_object_size[sizeof(KfMapObject) == 0x2c ? 1 : -1];
+typedef char check_map_cell_size[sizeof(KfMapCell) == 2 ? 1 : -1];
+typedef char check_dialogue_state_size[sizeof(KfDialogueState) == 4 ? 1 : -1];
 typedef char check_map_event_size[sizeof(KfMapEvent) == 0x44 ? 1 : -1];
 #define KF_MAP_TRANSFORM_OFFSET_CHECK(type, label, member, offset) \
     typedef char check_map_transform_##label[ \
@@ -453,6 +471,10 @@ KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_position, position, 0x08);
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_position_pad, position.pad, 0x14);
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_rotation, rotation, 0x18);
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_rotation_pad, rotation.vector.pad, 0x1e);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue, dialogue.word, 0x08);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue_stage, dialogue.fields.stage, 0x09);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue_page, dialogue.fields.page, 0x0a);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue_delay, dialogue.fields.page_delay, 0x0b);
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_position, reference_position, 0x24);
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_position_pad, reference_position.pad, 0x30);
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_rotation, rotation, 0x34);

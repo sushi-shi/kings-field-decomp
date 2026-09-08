@@ -703,3 +703,6 @@ promotes a probe to a proven historical toolchain.
 - [Actor culling and placement stream state](actor-culling-domain.md): recover
   actor byte +2 as a visibility policy, type it through both writers and its
   renderer, and complete the [actor-pool ledger](actor-pool-literal-ledger.md).
+
+- [Typed player and dialogue packed state](typed-packed-state.md): shared byte,
+  halfword and word views preserve packed comparisons and physical owners.

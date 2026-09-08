@@ -192,8 +192,8 @@ void player_death_restart(void)
     player_state.view_rotation_offset.vz = 0;
     player_state.view_rotation_offset.vy = 0;
     player_state.view_rotation_offset.vx = 0;
-    player_state.previous_map_cell.x = player_state.map_cell.x;
-    player_state.previous_map_cell.z = player_state.map_cell.z;
+    player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
+    player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
     player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;
 }
 

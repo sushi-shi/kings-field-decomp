@@ -170,3 +170,9 @@ The [screen-coordinate stage](typed-screen-coordinates.md) gives shared
 projected vertices real packed-word and SDK halfword views, removes four
 pointer reinterpretations and three redundant MATRIX casts, and preserves
 all 41 compared bodies. The running C pointer count is 505, down 301.
+
+The [packed-state stage](typed-packed-state.md) models player motion/cell and
+live dialogue word views across every producer and consumer. It removes ten
+more pointer casts and preserves all 71 compared functions. C pointer casts
+now total 495, down 311 from the initial count; the resource, animation and
+remaining renderer boundary review continues.

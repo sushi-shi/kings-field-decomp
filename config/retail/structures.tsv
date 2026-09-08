@@ -16,7 +16,9 @@ KfCdFileEntry	0x14	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CD file record 
 KfCellHeightRecord	0x08	supported	game_collision.h;game_collision_attribute_data.md;asm;effect_map_collision	four signed-halfword bounds selected by height-table entries with an 8-byte stride
 KfCellWindow	0xcc	supported	render_types.h;game_semantic_render_cell_windows.tsv;open_semantic_map_render.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	visible-cell window: four-halfword header followed by a 196-byte row-major visibility grid shared by GAME and OPEN
 KfCollisionTarget	0x20	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
+KfDialogueFields	0x04	supported	game_map.h;asm;xrefs;typed-packed-state.md	dialogue cap, current stage, page and delay bytes
 KfDialoguePageLimits	0x05	supported	game_map.h;game_semantic_camera_events.tsv;asm	five dialogue-stage last-page limits copied as one block by map_event_pool_load
+KfDialogueState	0x04	supported	game_map.h;asm;xrefs;typed-packed-state.md	live event dialogue byte fields and masked word trigger view
 KfDisplayState	0x20028	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	double-buffer display state: display_begin_frame derives the primitive buffer and ordering table of the frame from the buffer index through one base register
 KfDisplayStateOpen	0x20024	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer follows this subobject in KfGraphicsRuntimeOpen
 KfEffectControl	0x02	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md	overlapping halfword countdown/orbit and byte parent/target selectors; kind 36 byte pair remains unresolved
@@ -38,7 +40,8 @@ KfGraphicsRuntimeGame	0x249cc	supported	game_graphics.h;asm;startup-clear;docs/p
 KfGraphicsRuntimeOpen	0x24788	supported	open_render.h;asm;opening_run-memset;docs/patterns/open-graphics-runtime-owner.md	complete OPEN graphics state with independently cleared extent and cross-field address chains; historical aggregate spelling and unclassified interval ownership remain WIP
 KfHudSprite	0x0e	supported	game_render.h;game_semantic_hud_sprites.tsv;asm;retail-initializers;14-byte-stride	HUD table row with state byte and complete screen-sprite descriptor; state 0xff terminates the array
 KfMagicRecord	0x14	supported	magic.h;asm;player_select_magic;player_update;player_recalculate_combat_stats	20-byte magic record; magic_records[24] is indexed by selected_magic_id and by weapon-bound spell indices 5/8/18/20
-KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
+KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-packed-state.md	packed player map-cell coordinates and unsigned halfword comparison view
+KfMapCellCoordinates	0x02	supported	game_map.h;asm;xrefs;typed-packed-state.md	map row z then column x bytes
 KfMapCopyRegion	0x06	supported	game_map.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
@@ -68,7 +71,8 @@ KfOpeningEntityState	0x510	supported	open_resources.h;open_semantic_resources.ts
 KfOrderingTable	0x10000	supported	render_types.h;asm;ClearOTagR-0x4000	one reversed ordering table; display_begin_frame clears 0x4000 entries and display_present_frame draws from entry 0x3fff
 KfPlayerAttackChargeState	0x04	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
 KfPlayerLevelGrowth	0x0c	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
-KfPlayerMotionState	0x0a	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	five-halfword movement and camera-input state cleared as one complete group
+KfPlayerMotionFields	0x0c	supported	game_player.h;asm;xrefs;typed-packed-state.md	motion halfwords followed by current map-cell bytes
+KfPlayerMotionState	0x0c	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-packed-state.md	five motion halfwords and current cell; third aligned word is masked for warp comparisons
 KfPlayerProgressState	0x04	supported	game_player.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
 KfPlayerState	0xe0	supported	game_player.h;data_identities.tsv;game_main_loop-base-register;0xe0-memset	player state block; one aggregate (player_state) in the original source
 KfPlayerVitals	0x08	supported	game_player.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords

@@ -136,14 +136,21 @@ typedef struct KfPlayerAttackChargeState {
 /*
  * The player input loop ramps the two signed movement components, derives the
  * unsigned horizontal speed, and independently ramps the yaw and pitch steps.
- * The grouped clear routine proves the complete five-halfword extent.
+ * The clear routine resets these five halfwords while retaining the cell.
  */
-typedef struct KfPlayerMotionState {
+typedef struct KfPlayerMotionFields {
     s16 strafe_velocity;
     s16 forward_velocity;
     u16 movement_speed;
     s16 yaw_step;
     s16 pitch_step;
+    KfMapCell map_cell;
+} KfPlayerMotionFields;
+
+/* The third aligned word spans pitch and the current map-cell halfword. */
+typedef union KfPlayerMotionState {
+    KfPlayerMotionFields fields;
+    u32 words[3];
 } KfPlayerMotionState;
 
 /*
@@ -228,7 +235,6 @@ typedef struct KfPlayerState {
     s32 floor_height;
     SVECTOR camera_rotation;
     KfPlayerMotionState motion_state;
-    KfMapCell map_cell;
     KfMapCell previous_map_cell;
     u8 unknown_ce[6];
     s16 view_bob_offset;
@@ -240,9 +246,21 @@ typedef struct KfPlayerState {
     u8 unknown_df[1];
 } KfPlayerState;
 
+typedef char check_player_state_size[sizeof(KfPlayerState) == 0xe0 ? 1 : -1];
+typedef char check_player_motion_size[sizeof(KfPlayerMotionState) == 0x0c ? 1 : -1];
+#define KF_PLAYER_MOTION_OFFSET_CHECK(label, member, offset) \
+    typedef char check_player_motion_##label[ \
+        ((unsigned long)&((KfPlayerState *)0)->member == (offset)) ? 1 : -1]
+KF_PLAYER_MOTION_OFFSET_CHECK(word, motion_state.words[2], 0xc8);
+KF_PLAYER_MOTION_OFFSET_CHECK(pitch, motion_state.fields.pitch_step, 0xc8);
+KF_PLAYER_MOTION_OFFSET_CHECK(cell_z, motion_state.fields.map_cell.coords.z, 0xca);
+KF_PLAYER_MOTION_OFFSET_CHECK(cell_x, motion_state.fields.map_cell.coords.x, 0xcb);
+KF_PLAYER_MOTION_OFFSET_CHECK(previous_cell, previous_map_cell.word, 0xcc);
+#undef KF_PLAYER_MOTION_OFFSET_CHECK
+
 /*
  * Per-floor entry cell (one-based floor number). player_warp_to_floor_entry
- * copies byte 0 into previous_map_cell.x and byte 1 into .z, so this table
+ * copies byte 0 into previous_map_cell.coords.x and byte 1 into .coords.z, so this table
  * stores x first, unlike KfMapCell.
  */
 typedef struct KfFloorEntryCell {

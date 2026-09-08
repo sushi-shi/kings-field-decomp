@@ -55,11 +55,11 @@ void map_restore_floor_state(void)
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
             event->state = KF_ENUM_DECODE(KfMapEventState, *in++);
-            event->dialogue_stage_limit = *in++;
-            event->dialogue_stage = *in++;
-            event->dialogue_page = *in++;
-            event->dialogue_pages.last_page[event->dialogue_stage - 1] = *in++;
-            event->dialogue_page_delay = *in++;
+            event->dialogue.fields.stage_limit = *in++;
+            event->dialogue.fields.stage = *in++;
+            event->dialogue.fields.page = *in++;
+            event->dialogue_pages.last_page[event->dialogue.fields.stage - 1] = *in++;
+            event->dialogue.fields.page_delay = *in++;
             event->unknown_0d = *in++;
         }
 

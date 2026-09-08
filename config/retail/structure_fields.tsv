@@ -146,7 +146,13 @@ KfCollisionTarget	0x00	0x10	position	VECTOR	supported	game_collision.h;game_sema
 KfCollisionTarget	0x10	0x08	rotation	SVECTOR	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	transform rotation copied from the selected collision owner
 KfCollisionTarget	0x18	0x02	radius	u16	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	collision radius selected from the matching object family
 KfCollisionTarget	0x1a	0x06	unknown_1a	u8[6]	opaque	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	unaccessed tail before the next independently referenced state
+KfDialogueFields	0x00	0x01	stage_limit	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md;typed-packed-state.md	maximum dialogue stage allowed by this record
+KfDialogueFields	0x01	0x01	stage	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md;typed-packed-state.md	one-based dialogue stage advanced with highest-floor progress
+KfDialogueFields	0x02	0x01	page	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md;typed-packed-state.md	one-based dialogue page; incremented and capped by the current stage limit
+KfDialogueFields	0x03	0x01	page_delay	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md;typed-packed-state.md	remaining gated ticks before advancing one dialogue page; one tick per four pool updates
 KfDialoguePageLimits	0x00	0x05	last_page	u8[5]	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page per dialogue stage; zero disables dialogue at that stage
+KfDialogueState	0x00	0x04	fields	KfDialogueFields	supported	game_map.h;asm;xrefs;typed-packed-state.md	byte view used by dialogue progression and save encoding
+KfDialogueState	0x00	0x04	word	u32	supported	game_map.h;asm;xrefs;typed-packed-state.md	script trigger word whose low cap byte is masked away
 KfDisplayState	0x00	0x01	buffer_index	u8	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
@@ -312,8 +318,10 @@ KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_d
 KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	magic.h;asm;effect_update_dispatch;actor_apply_damage;player_apply_damage	four magic damage components, permuted by effect kind
 KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared with and subtracted from vitals.current_mp when casting
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
-KfMapCell	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
-KfMapCell	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
+KfMapCell	0x00	0x02	coords	KfMapCellCoordinates	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned z/x byte coordinates
+KfMapCell	0x00	0x02	word	u16	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned halfword comparison in main loop
+KfMapCellCoordinates	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
+KfMapCellCoordinates	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x
 KfMapCopyRegion	0x01	0x01	source_z	u8	supported	game_map.h;asm;xrefs	source z
 KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destination x
@@ -324,10 +332,7 @@ KfMapEvent	0x00	0x01	state	KfMapEventState	supported	game_map.h;asm;xrefs;game-m
 KfMapEvent	0x01	0x01	character_id	KfCharacterId	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	TALK directory and filename character ID; also shop and interaction-script selector
 KfMapEvent	0x02	0x01	model_index	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	model index relative to the map-event asset bank
 KfMapEvent	0x03	0x05	dialogue_pages	KfDialoguePageLimits	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	last accessible page for each of five one-based dialogue stages
-KfMapEvent	0x08	0x01	dialogue_stage_limit	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	maximum dialogue stage allowed by this record
-KfMapEvent	0x09	0x01	dialogue_stage	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	one-based dialogue stage advanced with highest-floor progress
-KfMapEvent	0x0a	0x01	dialogue_page	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	one-based dialogue page; incremented and capped by the current stage limit
-KfMapEvent	0x0b	0x01	dialogue_page_delay	u8	supported	game_map.h;asm;xrefs;game-map-dialogue-state.md	remaining gated ticks before advancing one dialogue page; one tick per four pool updates
+KfMapEvent	0x08	0x04	dialogue	KfDialogueState	supported	game_map.h;asm;xrefs;typed-packed-state.md	live dialogue cap, stage, page and delay state
 KfMapEvent	0x0c	0x01	unknown_0c	u8	opaque	game_map.h;asm;xrefs;semantic-field-names.md:unresolved-consumer-audit	Copied from definition +0x0b by GAME 0x8003397c/0x80033984 (source base+18, runtime base+30); no behavioral consumer established.
 KfMapEvent	0x0d	0x01	unknown_0d	u8	opaque	game_map.h;asm;xrefs;semantic-field-names.md:unresolved-consumer-audit	Copied from definition +0x0c at GAME 0x80033988/0x80033990; serialized at 0x80035bfc and restored at 0x80035f10. Persistence is proven by accesses; gameplay meaning unresolved.
 KfMapEvent	0x0e	0x01	behavior	KfMapEventBehavior	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-map-dialogue-state.md	0 shop interaction; 1 wander; 2 looping animation with optional interaction clip
@@ -485,11 +490,14 @@ KfPlayerLevelGrowth	0x02	0x02	maximum_mp	u16	supported	game_player.h;asm;xrefs	l
 KfPlayerLevelGrowth	0x04	0x02	physical_power_step	u16	supported	game_player.h;asm;xrefs	physical-power increment
 KfPlayerLevelGrowth	0x06	0x02	magic_step	u16	supported	game_player.h;asm;xrefs	magic increment
 KfPlayerLevelGrowth	0x08	0x04	experience_threshold	u32	supported	game_player.h;asm;xrefs	cumulative level threshold
-KfPlayerMotionState	0x00	0x02	strafe_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
-KfPlayerMotionState	0x02	0x02	forward_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
-KfPlayerMotionState	0x04	0x02	movement_speed	u16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
-KfPlayerMotionState	0x06	0x02	yaw_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
-KfPlayerMotionState	0x08	0x02	pitch_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
+KfPlayerMotionFields	0x00	0x02	strafe_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped shoulder-button strafe component
+KfPlayerMotionFields	0x02	0x02	forward_velocity	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad forward/back component
+KfPlayerMotionFields	0x04	0x02	movement_speed	u16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	unsigned magnitude derived from the normalized horizontal components
+KfPlayerMotionFields	0x06	0x02	yaw_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped directional-pad turn step added to camera yaw
+KfPlayerMotionFields	0x08	0x02	pitch_step	s16	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	ramped trigger-button step added to clamped camera pitch
+KfPlayerMotionFields	0x0a	0x02	map_cell	KfMapCell	supported	game_player.h;data_identities.tsv;typed-packed-state.md	member of the player_state aggregate
+KfPlayerMotionState	0x00	0x0c	fields	KfPlayerMotionFields	supported	game_player.h;asm;xrefs;typed-packed-state.md	five input motion halfwords and current map cell
+KfPlayerMotionState	0x00	0x0c	words	u32[3]	supported	game_player.h;asm;xrefs;typed-packed-state.md	third aligned word spans pitch and cell for warp key mask
 KfPlayerProgressState	0x00	0x01	level	u8	supported	game_player.h;asm;xrefs	player level
 KfPlayerProgressState	0x01	0x01	unknown_01	u8	opaque	game_player.h;asm;xrefs	meaning unresolved
 KfPlayerProgressState	0x02	0x01	current_floor	KF_ENUM_STORAGE(KfFloorId, u8)	supported	game_player.h;asm;xrefs;game-floor-enum-domain.md	current dungeon floor
@@ -567,8 +575,7 @@ KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	game_player.h;data_identities.tsv	u
 KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xb4	0x04	floor_height	s32	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xc0	0x0a	motion_state	KfPlayerMotionState	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xca	0x02	map_cell	KfMapCell	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xc0	0x0c	motion_state	KfPlayerMotionState	supported	game_player.h;data_identities.tsv;typed-packed-state.md	member of the player_state aggregate
 KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xce	0x06	unknown_ce	u8[6]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0xd4	0x02	view_bob_offset	s16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
