@@ -188,7 +188,7 @@ shared_projectile:
                 impact_magic = current_effect_magic_record;
                 collision_kind = collision >> 16;
                 if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
-                    goto effect_kind4_impact;
+                    goto lightning_impact;
                 }
                 power = effect_magic_power(effect);
                 if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
@@ -267,7 +267,7 @@ advance_shared_projectile:
                 remaining = effect->control.frames_remaining - 1;
                 effect->control.frames_remaining = remaining;
                 if ((u16)remaining == 0) {
-effect_kind4_impact:
+lightning_impact:
                     audio_play_spatial_default_range(
                         &magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                     effect->phase = KF_EFFECT_PROJECTILE_DISSIPATE_FIRST;
@@ -738,7 +738,7 @@ advance_effect_phase:
         if (phase < ACTOR_SPAWNER_TRAVEL_FIRST) {
             scale = effect->scale_x + ACTOR_SPAWNER_SCALE_STEP;
             scale_phase = effect->phase;
-            goto publish_kind9_scale;
+            goto publish_actor_spawner_scale;
         } else if (phase < ACTOR_SPAWNER_TRAVEL_LAST + 1) {
             struct KfVec3i position;
 
@@ -756,9 +756,9 @@ advance_effect_phase:
                 effect->control.frames_remaining--;
             }
             if (phase == ACTOR_SPAWNER_TRAVEL_LAST) {
-                goto rotate_kind9;
+                goto rotate_actor_spawner;
             }
-            goto advance_kind9_phase;
+            goto advance_actor_spawner_phase;
         } else if (phase < ACTOR_SPAWNER_SHRINK_FIRST) {
             if (phase == ACTOR_SPAWNER_CREATE_PHASE) {
                 struct KfVec3s actor_rotation;
@@ -781,13 +781,13 @@ advance_effect_phase:
                     actor_pool_spawn(0, &position, &actor_rotation);
                 }
             }
-advance_kind9_phase:
+advance_actor_spawner_phase:
             effect->phase++;
-            goto rotate_kind9;
+            goto rotate_actor_spawner;
         } else if (phase < ACTOR_SPAWNER_PHASE_END) {
             scale = effect->scale_x - ACTOR_SPAWNER_SCALE_STEP;
             scale_phase = effect->phase;
-publish_kind9_scale:
+publish_actor_spawner_scale:
             effect->scale_x = scale;
             effect->scale_z = scale;
             effect->scale_y = scale;
@@ -795,7 +795,7 @@ publish_kind9_scale:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-rotate_kind9:
+rotate_actor_spawner:
         effect->rotation.vy = (effect->rotation.vy + ACTOR_SPAWNER_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->rotation.vx = (effect->rotation.vx + ACTOR_SPAWNER_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
         effect->rotation.vz = (effect->rotation.vz + ACTOR_SPAWNER_ROLL_STEP) & KF_ANGLE_WRAP_MASK;

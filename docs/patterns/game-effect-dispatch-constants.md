@@ -141,3 +141,13 @@ failures: data matches PSX 0/1, GAME 9/42, OPEN 2/19; target relinks PSX 1/1,
 GAME 75/77, OPEN 34/38; six conflicting section bases, zero artifact failures.
 This does not claim a passing full build or completion of the wider naming
 goal. No permanent tests or size assertions were added.
+
+## Semantic label follow-up
+
+Plan for `effect_update_dispatch` (GAME.EXE `0x80038a38`, extent `0x180c`):
+replace the four remaining numeric effect labels with lightning-impact and
+actor-spawner operation names. The current cases, callers and cached retail
+CFG support those identities; the spawner scale, age and rotation blocks are
+described above. This changes label spellings only, retaining every jump target,
+expression and literal. Post-edit compiler/match verification remains deferred
+with the naming pass.
