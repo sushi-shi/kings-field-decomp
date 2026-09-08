@@ -34,7 +34,6 @@ void menu_drop_item(void)
     u8 counts[KF_ITEM_COUNT];
     KfItemId codes[KF_ITEM_COUNT];
     u8 *inv;
-    KfPlayerState *player;
     s32 found;
     s32 code;
     s32 j;
@@ -49,18 +48,17 @@ void menu_drop_item(void)
 
     found = 0;
     code = 0;
-    player = &player_state;
     inv = item_stock[KF_ITEM_STOCK_PLAYER];
     for (; code < KF_ITEM_COUNT; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
-            if (code == KF_ENUM_ENCODE(u8, player->equipped_weapon_id) ||
-                code == KF_ENUM_ENCODE(u8, player->equipped_head_armor_id) ||
-                code == KF_ENUM_ENCODE(u8, player->equipped_body_armor_id) ||
-                code == KF_ENUM_ENCODE(u8, player->equipped_shield_id) ||
-                code == KF_ENUM_ENCODE(u8, player->equipped_arm_armor_id) ||
-                code == KF_ENUM_ENCODE(u8, player->equipped_leg_armor_id) ||
-                code == KF_ENUM_ENCODE(u8, player->equipped_accessory_id))
+            if (code == KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id) ||
+                code == KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) ||
+                code == KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) ||
+                code == KF_ENUM_ENCODE(u8, player_state.equipped_accessory_id))
                 counts[found]--;
             if (counts[found] != 0) {
                 for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
@@ -87,9 +85,9 @@ void menu_drop_item(void)
     for (;;) {
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
-                    == KF_MENU_CONFIRM_CANCELLED)
+            selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
+                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY));
+            if (selection == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_CANCELLED))
                 selection = KF_MENU_LIST_PENDING;
             else
                 selection = KF_ENUM_ENCODE(u8, codes[ctx.selected_index]);

@@ -12,6 +12,9 @@ promotes a probe to a proven historical toolchain.
 - [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration and
   buy/sell panels through shared control flow and the real selection-result
   channel; rejected notification-tail and sell-navigation trials.
+- [game-selection-trace-matches.md](game-selection-trace-matches.md): exact
+  drop-item and active-spell selectors through the confirmation-result channel
+  and direct equipment-field references; all six unit functions verified.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
@@ -489,8 +492,8 @@ promotes a probe to a proven historical toolchain.
   resets, shared returns, empty-slot arm order and the explicit format-row
   guard recover both panels without register or constant carriers.
 - [game-drop-item-flow.md](game-drop-item-flow.md): observed initialization
-  and traversal order recover the inventory back-edge delay slot; the
-  remaining three register roles are an unattributed, non-exact residue.
+  and traversal order recover the inventory back-edge delay slot; the later
+  selection-trace campaign closes the remaining register and address differences.
 - [game-status-panel-flow.md](game-status-panel-flow.md): reviewed frame-head
   jump, shared settling increment and natural corner order recover the
   status-panel CFG; descriptor addressing and frame extent remain non-exact.
@@ -511,7 +514,8 @@ promotes a probe to a proven historical toolchain.
   return close the magic panel while preserving its distinct failure exits.
 - [game-equipment-spell-selector-flow.md](game-equipment-spell-selector-flow.md):
   pre-switch stock-bank acquisition closes equipment selection and its two
-  tables; indexed spell names remove a separate cursor-order mismatch.
+  tables; indexed spell names restore cursor order, and the later
+  selection-trace campaign closes the active-spell panel.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.
