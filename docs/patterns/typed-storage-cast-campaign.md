@@ -234,3 +234,7 @@ The [redundant-cast cleanup](typed-redundant-casts.md) removes one pointer
 cast and six redundant scalar casts left by earlier type recovery. All 27
 compared bodies are unchanged. C pointer casts total 453, down 353; the
 remaining complete workspace boundaries are reviewed next.
+
+The [ordering-table stage](typed-ordering-index.md) replaces byte scaling
+with typed element indexing. Both pointer casts disappear and all sixteen
+compared bodies remain unchanged; 451 C pointer casts remain, down 355.

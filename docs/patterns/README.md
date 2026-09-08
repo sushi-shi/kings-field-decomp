@@ -733,3 +733,5 @@ promotes a probe to a proven historical toolchain.
 - [Shared allocator state](typed-memory-owner.md): one arena owner per image, shared cursor/stack fields, exact instruction controls and explicit OPEN BSS placement residue.
 
 - [Redundant casts after type propagation](typed-redundant-casts.md): seven identity conversions removed with all 27 compared bodies unchanged.
+
+- [Typed menu ordering-table indexing](typed-ordering-index.md): two byte-pointer casts removed, with all sixteen compared bodies unchanged.

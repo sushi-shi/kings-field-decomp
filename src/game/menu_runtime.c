@@ -558,9 +558,8 @@ void primitive_buffer_begin_poly_ft4(void)
 ADDRESS(0x8002ad1c, 0x50)
 void primitive_buffer_commit_poly_ft4(s32 depth)
 {
-    depth <<= 2;
     AddPrim(
-        (u32 *)((u8 *)game_graphics_runtime.display_state.ordering_table + depth),
+        &game_graphics_runtime.display_state.ordering_table[depth],
         current_poly_ft4);
     current_poly_ft4++;
     game_graphics_runtime.display_state.primitive_buffer->cursor = (u8 *)current_poly_ft4;
