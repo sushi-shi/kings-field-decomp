@@ -13,25 +13,10 @@
 #include <kf/psyq_pad.h>
 #include <kf/resources.h>
 
-
-/*
- * Cursor-relative retail accesses prove this allocator prefix layout. Its
- * canonical data ownership stays split until the allocator TU is resolved.
- */
-typedef struct {
-    u8 *cursor;
-    u32 stack[KF_MEMORY_STACK_WORDS];
-} OpeningAllocationState;
-
-typedef struct {
-    u8 *start;
-    u8 *end;
-    OpeningAllocationState allocation;
-} OpeningArenaState;
-
+/* Retail retains the allocation subobject base across scene calls. */
 #define OPENING_ARENA_FROM_ALLOCATION(state) \
-    ((OpeningArenaState *)((u8 *)(state) - \
-                           (u32)&((OpeningArenaState *)0)->allocation))
+    ((KfMemoryArena *)((u8 *)(state) - \
+                       (u32)&((KfMemoryArena *)0)->allocation))
 
 DATA(0x800372d4, 0x6)
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = "B0\\L0.";
@@ -42,7 +27,7 @@ ADDRESS(0x800156bc, 0x214)
 void opening_run(KfOpenMode display_mode)
 {
     void *tim_data;
-    OpeningAllocationState *allocation_state;
+    KfMemoryAllocationState *allocation_state;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) skip_action;
 
@@ -71,7 +56,7 @@ void opening_run(KfOpenMode display_mode)
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
-        allocation_state = (OpeningAllocationState *)&memory_arena_cursor;
+        allocation_state = &memory_arena.allocation;
         tim_upload_images(tim_data);
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;

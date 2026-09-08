@@ -183,7 +183,7 @@ void opening_resources_load_scene0(void)
         KF_OPENING_ENTITY_FLOOR_HEIGHT);
     STREAM_NEXT(stream.bytes);
     memory_release_last();
-    memory_arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
+    memory_arena.allocation.cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file("B0\\OPEN0.");
     cd_file_load_allocated(&stream.storage, "B0\\MIXB0.");
     tmd_register(KF_TMD_SLOT_ENTITIES,
@@ -209,7 +209,7 @@ void opening_resources_load_scene1(void)
     STREAM_NEXT(stream.bytes);
     memory_release_last();
     opening_scene1_arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
-    memory_arena_cursor = opening_scene1_arena_cursor;
+    memory_arena.allocation.cursor = opening_scene1_arena_cursor;
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
     audio_play_sequence_file("B0\\OPEN1.");
 }
@@ -221,7 +221,7 @@ void opening_resources_load_scene3(void)
     KfResourcePointer stream;
 
     memory_allocation_reset();
-    memory_arena_cursor = opening_scene1_arena_cursor;
+    memory_arena.allocation.cursor = opening_scene1_arena_cursor;
     audio_play_sequence_file("B0\\OPEN3.");
     cd_file_load_allocated(&tim_stream.storage, "B0\\MIX3.");
     tim_upload_images(tim_stream.tim_data);
@@ -246,7 +246,7 @@ void opening_resources_load_ending(void)
     KfResourcePointer tim_stream;
     KfResourcePointer stream;
     u8 *vab_chunk;
-    u8 **arena_cursor = &memory_arena_cursor;
+    u8 **arena_cursor = &memory_arena.allocation.cursor;
 
     memory_allocation_reset();
     cd_file_load_allocated(&tim_stream.storage, "B0\\MIX9.");
@@ -288,7 +288,7 @@ void opening_resources_load_ending_sequence(void)
 {
     KfResourcePointer stream;
     u8 *vab_chunk;
-    u8 **arena_cursor = &memory_arena_cursor;
+    u8 **arena_cursor = &memory_arena.allocation.cursor;
 
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
     audio_close_vab();

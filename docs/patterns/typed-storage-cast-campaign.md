@@ -223,3 +223,9 @@ sprite color cast through the shared SDK packet union, preserving all seven
 compared bodies. Its controlled probes record the remaining byte-address,
 container-recovery and sprite XY residues. The C pointer total is 455, down
 351; allocator ownership and the final boundary audit remain active.
+
+The [allocator-owner stage](typed-memory-owner.md) replaces the opening-only
+layout with shared arena/allocation types and one 80-byte owner per image.
+All 33 compared bodies remain exact; C pointer casts total 454, down 352.
+The controller takes the typed allocation subobject directly, while its
+container recovery retains the documented exact-instruction residue.

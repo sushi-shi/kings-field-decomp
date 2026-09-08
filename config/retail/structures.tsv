@@ -65,6 +65,8 @@ KfMapObjectState	0x25a8	supported	game_map.h;asm;base-register;map_object_pool_c
 KfMapRuntimeState	0x2360	supported	game_map.h;game_main_loop:0x2360-clear;world-state-pool-relative-addresses;spinner-current-minus-544	eight map events, two pointers, two halfword timers and the complete saved world region
 KfMapSavedFloor	0x6a4	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	one 1700-byte saved floor slot
 KfMapSavedWorld	0x2134	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five saved floors sharing the word-aligned save I/O representation
+KfMemoryAllocationState	0x48	supported	memory.h;asm;open_semantic_opening_controller.tsv;typed-memory-owner.md	arena cursor and existing 17-word depth/allocation stack
+KfMemoryArena	0x50	supported	memory.h;asm;open_semantic_opening_controller.tsv;typed-memory-owner.md	complete arena state ending before the independent system heap start
 KfMenuAssets	0x390	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuList	0x28	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfNotificationControl	0x06	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	queue cursors and presentation controls; dequeue addresses tail at zero and phase at plus two; historical nesting remains WIP

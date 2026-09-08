@@ -82,7 +82,7 @@ void common_resources_load(void)
         (KfPlayerLevelGrowth *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof player_level_growth_table);
     memory_release_last();
-    memory_arena_cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
+    memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
 }
 
 ADDRESS(0x8001b390, 0x14)
@@ -192,7 +192,7 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
     map_event_pool_load(
         (KfMapEventDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memory_release_last();
-    memory_arena_cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
+    memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
     stream = map_resource_load_file("MIXB.DAT");
     tmd_register(KF_TMD_SLOT_ENTITIES,
         (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));

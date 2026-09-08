@@ -444,6 +444,11 @@ KfMapSavedFloor	0xa	0x69a	records	u8[1690]	supported	game_map.h;asm;game-map-scr
 KfMapSavedWorld	0x0	0x2134	words	u32[2125]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	2125 aligned words copied verbatim to and from the save payload
 KfMapSavedWorld	0x00	0x2134	bytes	u8[8500]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapSavedWorld	0x0	0x2134	floors	KfMapSavedFloor[5]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five 1700-byte saved slots selected by one-based current floor minus one
+KfMemoryAllocationState	0x0	0x4	cursor	u8 *	supported	memory.h;asm;typed-memory-owner.md	null selects heap allocations; otherwise next arena byte
+KfMemoryAllocationState	0x4	0x44	stack	u32[17]	supported	memory.h;asm;typed-memory-owner.md	depth at index zero and generic size-or-heap-pointer entries after it
+KfMemoryArena	0x0	0x4	start	u8 *	supported	memory.h;asm;typed-memory-owner.md	base restored by allocation reset
+KfMemoryArena	0x4	0x4	end	u8 *	supported	memory.h;asm;typed-memory-owner.md	inclusive arena end
+KfMemoryArena	0x8	0x48	allocation	KfMemoryAllocationState	supported	memory.h;asm;typed-memory-owner.md	cursor-relative retail reset accesses start at -8 and stack depth at +4
 KfMenuAssets	0x0	0x140	background_quads	POLY_FT4[2][4]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x140	0x50	mid_depth_quads	POLY_FT4[2]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x190	0x50	foreground_quads	POLY_FT4[2]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
