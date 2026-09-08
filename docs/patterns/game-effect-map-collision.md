@@ -1,5 +1,9 @@
 # GAME effect/map collision
 
+The later [GCC trace revisit](game-effect-collision-traces.md) recovers the
+oriented coordinate's register/conversion sequence through the lower-bound
+operand order. The bounds return and final flag/default sequence remain open.
+
 ## Function Match Plan at `51ebe75`
 
 GAME `80037850 effect_map_collision` owns 1900 bytes (`0x76c`) and six

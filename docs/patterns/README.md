@@ -403,6 +403,9 @@ promotes a probe to a proven historical toolchain.
 - [game-effect-map-collision.md](game-effect-map-collision.md): signed cell
   coordinates, direct neighbor indexing, selected rectangle and backward span
   join recover the collision helper; return/join differences remain non-exact.
+- [game-effect-collision-traces.md](game-effect-collision-traces.md): coordinate
+  operand order recovers the rectangle conversion and selected-value registers;
+  bounds-return sharing and final query/default scheduling remain non-exact.
 - [game-world-collision-source.md](game-world-collision-source.md): early
   typed definition pointers, shared hit value and separate query mask recover
   world-query instructions; entry differences remain non-exact.

@@ -73,7 +73,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
                 case KF_MAP_ORIENT_UNROTATED:
                     coordinate = subz;
 rectangle_span:
-                    if (record->x_min <= coordinate && coordinate <= record->x_max) {
+                    if (coordinate >= record->x_min && coordinate <= record->x_max) {
                         goto collide;
                     }
                     break;
