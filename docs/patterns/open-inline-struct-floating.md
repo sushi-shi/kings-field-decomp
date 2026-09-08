@@ -289,9 +289,40 @@ produces shorter code, not retail's 472-byte addressing schedule. The control
 is rejected without modifying the target inventory. Evidence is under
 `display-prepare-return/prepare-return-first/`.
 
+## Narrow starfield angle update followed by wrapping
+
+The shared rotation field is `s16`. Retail loads its halfword, decrements,
+masks to twelve bits and stores once at `80015418` through `80015428`.
+A control spells the update as `--entity_27->rotation.z` followed by its
+compound mask assignment. For wrapped angles 0..4095 the intermediate value
+is representable in the signed halfword; the source does not change the
+field type or introduce a temporary, call or volatile store.
+
+The pinned compiler combines the statements into the identical full resolved
+ending body, including retail's single angle store. Calls and references
+match retained, with 1944 bytes at 99.917694%, the same seven differences,
+264-byte frame/save homes, six exact siblings and native/traced ELF parity.
+This update-boundary control is neutral and is not adopted. The explicit
+retained comparison is under `starfield-angle-update/decrement-then-wrap/`.
+
+## Starfield brightness assignment-result chain
+
+Retail reloads red, increments it and stores its low byte to red, blue and
+green in order. A control expresses that actual shared value as `g = b = ++r`
+using the original complete material-member expressions. The existing guard
+keeps red below 255; no byte type, reload-producing guard or call changes.
+
+The complete resolved body, calls and references remain identical to the
+retained ending source, including the retail reload and all three stores.
+The result is 1944 bytes at 99.917694%, the same seven dispatch differences,
+264-byte frame/save homes, six exact siblings and whole native/traced ELF
+parity. The assignment-result form is neutral here and is not adopted.
+Evidence and retained comparison are under
+`starfield-brightness-chain/brightness-assignment-chain/`.
+
 ## Verification and limits
 
-All twenty-six native/traced compilations have whole-ELF parity. Each candidate's
+All twenty-eight native/traced compilations have whole-ELF parity. Each candidate's
 calls, referents and raw code were inspected; frame size/save homes were
 checked separately. The initialized RECT's sibling assertion correctly failed;
 a read-only follow-up audited both completed objects and recorded the shifted
