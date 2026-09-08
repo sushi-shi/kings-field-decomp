@@ -463,9 +463,7 @@ KfMenuAssets	0x33c	0xc	row_background	MenuSpriteDef	supported	game_menu.h;game_m
 KfMenuAssets	0x348	0xc	row_confirmed_background	MenuSpriteDef	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x354	0x30	list_tiles	MenuTileSprite[4]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x384	0xc	selection_cursor	MenuSpriteDef	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
-KfMenuList	0x0	0x2	title_x	s16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
-KfMenuList	0x2	0x2	title_y	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
-KfMenuList	0x4	0x14	title_glyphs	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
+KfMenuList	0x0	0x18	title	MenuGlyphString	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	complete positioned title passed to menu_draw_string; its point passed to menu_blit_sprite_translucent
 KfMenuList	0x18	0x1	list_x	u8	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfMenuList	0x19	0x1	list_y	u8	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfMenuList	0x1a	0x1	entry_count	u8	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
@@ -818,9 +816,8 @@ KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	game_equipment.h;asm;xrefs	mea
 KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	game_equipment.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
 KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
 MenuGlyphRow	0x0	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	ten glyph codes; item/name copy and indexed 20-byte stride
-MenuGlyphString	0x0	0x2	x	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
-MenuGlyphString	0x2	0x2	y	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
-MenuGlyphString	0x4	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
+MenuGlyphString	0x0	0x4	position	MenuPoint	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	shared signed screen point passed to sprite blitters; retail title guard uses lh; complete label stride remains 24 bytes
+MenuGlyphString	0x4	0x14	glyphs	MenuGlyphRow	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	complete ten-code row copied from item and magic tables; halfword alignment preserves retail unaligned word-copy sequences
 MenuPoint	0x0	0x2	x	s16	supported	game_menu.h;game-menu-sprite-blit.md;asm;STAT.DAT;LIBGPU.H	signed screen-coordinate interpretation reproduces the blitters' negative inset arithmetic while retaining narrowed lhu loads
 MenuPoint	0x2	0x2	y	s16	supported	game_menu.h;game-menu-sprite-blit.md;asm;STAT.DAT;LIBGPU.H	signed screen-coordinate interpretation reproduces the blitters' negative inset arithmetic while retaining narrowed lhu loads
 MenuSpriteDef	0x0	0x2	tpage	u16	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	six halfword texture descriptor consumed by sprite/font blitters

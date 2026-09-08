@@ -7,6 +7,8 @@ promotes a probe to a proven historical toolchain.
 
 - [typed-storage-cast-campaign.md](typed-storage-cast-campaign.md): shared object
   models, complete cast accounting, and verified packet/colour conversions.
+- [typed-menu-records.md](typed-menu-records.md): shared screen points, complete
+  glyph rows and list titles through all menu consumers and by-value labels.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.

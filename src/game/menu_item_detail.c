@@ -76,16 +76,16 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    gs.x = MENU_ITEM_PREVIEW_NAME_X;
-    gs.y = MENU_ITEM_PREVIEW_NAME_Y;
+    gs.position.x = MENU_ITEM_PREVIEW_NAME_X;
+    gs.position.y = MENU_ITEM_PREVIEW_NAME_Y;
     name = item_name_rows[KF_ENUM_ENCODE(s32, item_id)].codes;
     for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        gs.codes[i] = name[i];
+        gs.glyphs.codes[i] = name[i];
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.x = MENU_ITEM_DETAIL_PRICE_X;
-    gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
+    gs.position.x = MENU_ITEM_DETAIL_PRICE_X;
+    gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     if (price_mode == KF_ITEM_PRICE_BUY) {
         price = item_buy_prices[KF_ENUM_ENCODE(s32, item_id)]
             [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
@@ -93,36 +93,36 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
         price = item_sell_prices[KF_ENUM_ENCODE(s32, item_id)]
             [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
     }
-    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
+    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
-    gs.x = MENU_ITEM_DETAIL_LABEL_X;
-    gs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
-    gs.codes[1] = 0x2d;
-    gs.codes[2] = 0x2a;
-    gs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
-    gs.codes[4] = MENU_TEXT_END;
+    gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
+    gs.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
+    gs.glyphs.codes[1] = 0x2d;
+    gs.glyphs.codes[2] = 0x2a;
+    gs.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
+    gs.glyphs.codes[4] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.x = MENU_ITEM_DETAIL_LABEL_X;
-    gs.codes[0] = 0xca;
-    gs.codes[1] = 0xcb;
-    gs.codes[2] = MENU_TEXT_END;
-    gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
+    gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
+    gs.glyphs.codes[0] = 0xca;
+    gs.glyphs.codes[1] = 0xcb;
+    gs.glyphs.codes[2] = MENU_TEXT_END;
+    gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.x = MENU_ITEM_DETAIL_QUANTITY_X;
-    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
+    gs.position.x = MENU_ITEM_DETAIL_QUANTITY_X;
+    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(
         &menu_assets.row_background,
-        (const MenuPoint *)&menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
+        &menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position);
     menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
 
-    gs.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].x + MENU_ITEM_DETAIL_GOLD_X_OFFSET;
-    gs.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].y;
-    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, 0, gs.codes);
+    gs.position.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.x + MENU_ITEM_DETAIL_GOLD_X_OFFSET;
+    gs.position.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.y;
+    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, 0, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }
 
@@ -198,68 +198,68 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
     }
 
     for (i = 0; i < KF_SAVE_SLOT_COUNT; i++) {
-        gs.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;
+        gs.position.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;
         if ((s32)rows[i].current_hp > 0) {
-            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.codes[0] = 0x82;
-            gs.codes[1] = 0x83;
-            gs.codes[2] = 0x84;
-            gs.codes[3] = MENU_TEXT_END;
+            gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            gs.glyphs.codes[0] = 0x82;
+            gs.glyphs.codes[1] = 0x83;
+            gs.glyphs.codes[2] = 0x84;
+            gs.glyphs.codes[3] = MENU_TEXT_END;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-            gs.x = 251;
-            menu_format_number(rows[i].experience, 6, 0, gs.codes);
+            gs.position.x = 251;
+            menu_format_number(rows[i].experience, 6, 0, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.codes[0] = 0xcc;
-            gs.codes[1] = 0xcd;
-            gs.codes[2] = MENU_TEXT_END;
-            gs.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
+            gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            gs.glyphs.codes[0] = 0xcc;
+            gs.glyphs.codes[1] = 0xcd;
+            gs.glyphs.codes[2] = MENU_TEXT_END;
+            gs.position.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-            gs.x = 286;
-            menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, 0, gs.codes);
+            gs.position.x = 286;
+            menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, 0, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.codes[0] = 0xf0;
-            gs.codes[1] = 242;
-            gs.codes[2] = MENU_TEXT_END;
-            gs.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
+            gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            gs.glyphs.codes[0] = 0xf0;
+            gs.glyphs.codes[1] = 242;
+            gs.glyphs.codes[2] = MENU_TEXT_END;
+            gs.position.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-            gs.x = MENU_SAVE_SUMMARY_VALUE_X;
-            menu_format_number(rows[i].current_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
+            gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
+            menu_format_number(rows[i].current_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.codes[0] = MENU_NUMBER_SLASH;
-            gs.codes[1] = MENU_TEXT_END;
-            gs.x += MENU_SAVE_STATUS_DIGITS * MENU_NUMBER_ADVANCE;
+            gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
+            gs.glyphs.codes[1] = MENU_TEXT_END;
+            gs.position.x += MENU_SAVE_STATUS_DIGITS * MENU_NUMBER_ADVANCE;
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x += MENU_NUMBER_ADVANCE;
-            menu_format_number(rows[i].maximum_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
+            gs.position.x += MENU_NUMBER_ADVANCE;
+            menu_format_number(rows[i].maximum_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.codes[0] = 0xf1;
-            gs.codes[1] = 242;
-            gs.codes[2] = MENU_TEXT_END;
-            gs.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
+            gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            gs.glyphs.codes[0] = 0xf1;
+            gs.glyphs.codes[1] = 242;
+            gs.glyphs.codes[2] = MENU_TEXT_END;
+            gs.position.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-            gs.x = MENU_SAVE_SUMMARY_VALUE_X;
-            menu_format_number(rows[i].current_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
+            gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
+            menu_format_number(rows[i].current_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.codes[0] = MENU_NUMBER_SLASH;
-            gs.codes[1] = MENU_TEXT_END;
-            gs.x += MENU_SAVE_STATUS_DIGITS * MENU_NUMBER_ADVANCE;
+            gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
+            gs.glyphs.codes[1] = MENU_TEXT_END;
+            gs.position.x += MENU_SAVE_STATUS_DIGITS * MENU_NUMBER_ADVANCE;
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
-            gs.x += MENU_NUMBER_ADVANCE;
-            menu_format_number(rows[i].maximum_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.codes);
+            gs.position.x += MENU_NUMBER_ADVANCE;
+            menu_format_number(rows[i].maximum_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
         }
     }

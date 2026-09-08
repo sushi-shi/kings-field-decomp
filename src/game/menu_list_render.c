@@ -34,11 +34,11 @@ void menu_list_render(const KfMenuList *list)
     counts = list->quantities;
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    if (list->title_x != 0) {
+    if (list->title.position.x != 0) {
         menu_blit_sprite_translucent(
-            &menu_assets.row_background, (const MenuPoint *)list);
+            &menu_assets.row_background, &list->title.position);
         menu_draw_string(
-            &menu_assets.glyph_atlas, (const MenuGlyphString *)list);
+            &menu_assets.glyph_atlas, &list->title);
     }
 
     counts = counts + list->scroll_offset;
@@ -46,25 +46,25 @@ void menu_list_render(const KfMenuList *list)
     row = 0;
     if (row < list->visible_rows && row < list->entry_count) {
         do {
-            gs.x = list->list_x + MENU_LIST_TEXT_INSET;
-            gs.y = list->list_y + MENU_LIST_TEXT_INSET;
-            gs.y += row * MENU_LIST_ROW_HEIGHT;
+            gs.position.x = list->list_x + MENU_LIST_TEXT_INSET;
+            gs.position.y = list->list_y + MENU_LIST_TEXT_INSET;
+            gs.position.y += row * MENU_LIST_ROW_HEIGHT;
             for (i = 0; i < list->glyphs_per_entry; i++) {
-                gs.codes[i] = *src++;
+                gs.glyphs.codes[i] = *src++;
             }
             menu_draw_string(
                 &menu_assets.glyph_atlas, &gs);
             if (list->quantities != 0) {
                 tens = *counts / 10u;
                 ones = *counts % 10u;
-                gs.x += MENU_LIST_QUANTITY_X_OFFSET;
-                gs.y += MENU_LIST_QUANTITY_Y_OFFSET;
-                gs.codes[0] = tens;
+                gs.position.x += MENU_LIST_QUANTITY_X_OFFSET;
+                gs.position.y += MENU_LIST_QUANTITY_Y_OFFSET;
+                gs.glyphs.codes[0] = tens;
                 if (tens == 0) {
-                    gs.codes[0] = MENU_NUMBER_BLANK;
+                    gs.glyphs.codes[0] = MENU_NUMBER_BLANK;
                 }
-                gs.codes[1] = ones;
-                gs.codes[2] = MENU_TEXT_END;
+                gs.glyphs.codes[1] = ones;
+                gs.glyphs.codes[2] = MENU_TEXT_END;
                 menu_draw_number(
                     &menu_assets.number_atlas, &gs);
                 counts++;

@@ -253,33 +253,35 @@ enum {
     MENU_WINDOW_ROW_CAPACITY = 10
 };
 
+/* One runtime-loaded menu name: ten glyph codes selected by item or spell ID. */
+typedef struct MenuGlyphRow {
+    s16 codes[MENU_GLYPHS_PER_ROW];
+} MenuGlyphRow;
+
 /*
  * Positioned menu text: screen origin followed by the usual ten-code label.
  * Capacity-specific workspaces use the same proven origin/code prefix.
  */
 typedef struct MenuGlyphString {
-    u16 x;
-    u16 y;
-    s16 codes[MENU_GLYPHS_PER_ROW];
+    MenuPoint position;
+    MenuGlyphRow glyphs;
 } MenuGlyphString;
 
 /* The configuration draw ABI passes two complete halfword-aligned labels. */
+typedef char check_menu_point_size[sizeof(MenuPoint) == 4 ? 1 : -1];
+typedef char check_menu_glyph_row_size[sizeof(MenuGlyphRow) == 20 ? 1 : -1];
+typedef char check_menu_glyph_size[sizeof(MenuGlyphString) == 24 ? 1 : -1];
 typedef char check_menu_glyph_alignment[__alignof__(MenuGlyphString) == 2 ? 1 : -1];
 typedef char check_menu_glyph_prefix[
-    (unsigned long)&((MenuGlyphString *)0)->x == 0 &&
-    (unsigned long)&((MenuGlyphString *)0)->y == 2 &&
-    (unsigned long)&((MenuGlyphString *)0)->codes == 4 ? 1 : -1];
+    (unsigned long)&((MenuGlyphString *)0)->position.x == 0 &&
+    (unsigned long)&((MenuGlyphString *)0)->position.y == 2 &&
+    (unsigned long)&((MenuGlyphString *)0)->glyphs.codes == 4 ? 1 : -1];
 
 /* One title and ten selectable labels in a runtime-loaded menu window. */
 typedef struct MenuWindowLayout {
     MenuGlyphString title;
     MenuGlyphString rows[MENU_WINDOW_ROW_CAPACITY];
 } MenuWindowLayout;
-
-/* One runtime-loaded menu name: ten glyph codes selected by item or spell ID. */
-typedef struct MenuGlyphRow {
-    s16 codes[MENU_GLYPHS_PER_ROW];
-} MenuGlyphRow;
 
 /*
  * Texture-page, CLUT, texel-origin, and extent descriptor shared by menu
@@ -344,9 +346,7 @@ typedef struct KfMenuAssets {
  * quantity sources consumed by the shared list renderer.
  */
 typedef struct KfMenuList {
-    s16 title_x;
-    u16 title_y;
-    s16 title_glyphs[MENU_GLYPHS_PER_ROW];
+    MenuGlyphString title;
     u8 list_x;
     u8 list_y;
     u8 entry_count;
@@ -358,6 +358,13 @@ typedef struct KfMenuList {
     s16 *glyph_rows;
     u8 *quantities;
 } KfMenuList;
+
+typedef char check_menu_list_layout[
+    sizeof(KfMenuList) == 40 &&
+    (unsigned long)&((KfMenuList *)0)->title == 0 &&
+    (unsigned long)&((KfMenuList *)0)->list_x == 24 &&
+    (unsigned long)&((KfMenuList *)0)->glyph_rows == 32 &&
+    (unsigned long)&((KfMenuList *)0)->quantities == 36 ? 1 : -1];
 
 /* Angle units per preview draw; a full revolution is 4096 units. */
 enum {

@@ -125,3 +125,11 @@ positive/negative controls and packed SDK layout checks pass. Ruff and
 units and retains all 439 exact functions across the three images. It still
 fails the same pre-existing data ownership/reference closure and target
 placement gates; no complete-build pass is claimed.
+
+The next completed family is [shared menu records](typed-menu-records.md):
+25 additional pointer casts and one redundant scalar cast are removed through
+actual point, glyph-row and list-title members. All 36 functions in those
+units retain their complete linked instructions. The cumulative C-file pointer
+count is 591, down 215 from 806. Packed map fields, vector/angle interfaces,
+effect records, allocation/resource APIs and the documented exact-code
+residues remain part of the active repository-wide modelling objective.
