@@ -107,7 +107,7 @@ Other documented retained selectors may still need a future semantic domain.
 
 ## `src/game/item.c`
 
-147 retained occurrences.
+146 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -177,7 +177,6 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_menu_buy` | 306 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
 | `item_menu_buy` | 307 | `1` | `ctx.cursor_row = ctx.entry_count - 1;` | Bottom row of a list shorter than the viewport. |
 | `item_menu_buy` | 310 | `1` | `ctx.cursor_row = ctx.visible_rows - 1;` | Last zero-based row of the full viewport. |
-| `item_menu_buy` | 313 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
 | `item_menu_buy` | 315 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 315 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
 | `item_menu_buy` | 317 | `1` | `if (ctx.selected_index < ctx.entry_count - 1) {` | Test the last-entry boundary before moving downward or wrapping. |

@@ -499,7 +499,7 @@ s32 actor_move_along_heading(s32 direction, s32 stop_on_collision)
  * Bit 5 of the code spawns a mirrored pair.
  */
 ADDRESS(0x8002edd4, 0x454)
-void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
+void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
@@ -533,9 +533,9 @@ void actor_spawn_action_effect(s32 effect_code, s32 attachment_index)
         case KF_ENUM_DECODE(KfEffectKind, 22):
         case KF_ENUM_DECODE(KfEffectKind, 23):
         case KF_ENUM_DECODE(KfEffectKind, 24):
-            offset.vx = definition->attachment_offsets[attachment_index].x;
-            offset.vy = definition->attachment_offsets[attachment_index].y;
-            offset.vz = definition->attachment_offsets[attachment_index].z;
+            offset.vx = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x;
+            offset.vy = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].y;
+            offset.vz = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].z;
             if (repeat == 2) {
                 if (i == 0) {
                     offset.vx = offset.vx + ACTOR_PAIRED_EFFECT_X_OFFSET;
@@ -688,13 +688,13 @@ void actor_apply_horizontal_movement(void)
     actor->cell_z = actor->position.vz / KF_MAP_TILE_SIZE;
 }
 
-/* ACTION indexes a configured effect; the dispatcher passes 0, 1 or 2. */
+/* EFFECT_SLOT selects matching effect parameters, animation and attachment. */
 ADDRESS(0x8002f468, 0xf0)
-void actor_update_effect_action(s32 action)
+void actor_update_effect_action(KfActorEffectSlot effect_slot)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
-    s32 index = action + KF_ACTOR_ANIM_SLOT_EFFECT0;
+    s32 index = KF_ENUM_ENCODE(s32, effect_slot) + KF_ACTOR_ANIM_SLOT_EFFECT0;
 
     if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
         actor->action_progress = KF_ACTOR_PROGRESS_LOCKED;
@@ -703,7 +703,7 @@ void actor_update_effect_action(s32 action)
     }
     actor_advance_animation_clamped(actor, definition->action_animation_steps[index]);
     if (actor_animation_crossed_phase(actor, definition->action_animation_phases[index])) {
-        actor_spawn_action_effect(definition->action_parameters[action], action);
+        actor_spawn_action_effect(definition->action_parameters[KF_ENUM_ENCODE(s32, effect_slot)], effect_slot);
     }
     if (actor->animation_phase >= KF_ACTOR_ANIMATION_PHASE_MAX) {
         actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
@@ -1197,13 +1197,13 @@ void actor_update_current_action(void)
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DRIFT]);
         break;
     case KF_ACTOR_ACTION_EFFECT0:
-        actor_update_effect_action(0);
+        actor_update_effect_action(KF_ACTOR_EFFECT_SLOT_FIRST);
         break;
     case KF_ACTOR_ACTION_EFFECT1:
-        actor_update_effect_action(1);
+        actor_update_effect_action(KF_ACTOR_EFFECT_SLOT_SECOND);
         break;
     case KF_ACTOR_ACTION_EFFECT2:
-        actor_update_effect_action(2);
+        actor_update_effect_action(KF_ACTOR_EFFECT_SLOT_THIRD);
         break;
     case KF_ACTOR_ACTION_RETURN_HOME:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {

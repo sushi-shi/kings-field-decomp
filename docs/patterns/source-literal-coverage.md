@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [effect homing review](effect-homing-mode-domain.md):
+Working snapshot after the [actor effect-slot review](game-actor-behavior-constants.md#configured-effect-slot-enum):
 **111 C files**, **112 source/image variants**, and
-**5,997 inline numeric/character occurrences**. Counts include authored
+**5,993 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,997 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,993 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -60,6 +60,10 @@ Its existing role values and positional reads leave literal counts unchanged.
 The homing review types the byte selector through both constructor cases and
 steering comparisons, retaining the callers' encoded mixed-word payloads and
 naming the shared direction-randomization label. Literal counts are unchanged.
+The actor effect-slot review names three dispatcher arguments and carries the
+word-sized slot enum through selection and spawning. Ledger reconciliation also
+accounts for an intervening shared shop-model-load branch (one fewer literal)
+and word-preserving weapon/effect expressions.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -104,12 +108,12 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,774 occurrences.
+73 files; 4,770 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
 | [actor.c](../../src/game/actor.c) | 171 | [game-actor-core ledger](game-actor-core-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [actor_behavior.c](../../src/game/actor_behavior.c) | 170 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [actor_behavior.c](../../src/game/actor_behavior.c) | 167 | [game-actor-behavior ledger](game-actor-behavior-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [actor_pool.c](../../src/game/actor_pool.c) | 6 | [complete actor-pool ledger](actor-pool-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [asset_registry.c](../../src/game/asset_registry.c) | 1 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [audio.c](../../src/game/audio.c) | 39 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -129,7 +133,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [equipment.c](../../src/game/equipment.c) | 7 | [complete equipment ledger](game-equipment-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [game.c](../../src/game/game.c) | 12 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [geometry_render.c](../../src/game/geometry_render.c) | 146 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [item.c](../../src/game/item.c) | 147 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [item.c](../../src/game/item.c) | 146 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting.c](../../src/game/lighting.c) | 108 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting_presets.c](../../src/game/lighting_presets.c) | 1 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [magic.c](../../src/game/magic.c) | 9 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |

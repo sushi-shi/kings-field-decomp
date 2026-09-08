@@ -1,6 +1,6 @@
 # Actor-behavior remainder literal ledger
 
-Complete account of **170 numeric occurrences** in `src/game/actor_behavior.c`.
+Complete account of **167 numeric occurrences** in `src/game/actor_behavior.c`.
 The [behavior review](game-actor-behavior-constants.md) records the names, units,
 evidence and verification. Comments, strings, identifier digits, enums and retail
 claims are excluded. Repeated tokens have separate rows; signs stay in expressions.
@@ -47,20 +47,20 @@ explicit numeric boundaries.
 | `actor_spawn_action_effect` | 540 | `0` | `if (i == 0) {` | First paired emission chooses the positive local-X offset. |
 | `actor_spawn_action_effect` | 557 | `1` | `if (distance == -1) {` | Established negative-one miss from distance/overlap queries. |
 | `actor_spawn_action_effect` | 558 | `0` | `angles.x = 0;` | Zero pitch/roll coordinate before any kind-specific aiming adjustment. |
-| `actor_spawn_action_effect` | 559 | `23` | `if (effect_kind == KF_ENUM_DECODE(KfEffectKind, 23)) {` | Input kind 23 selects alternate Lightning Bolt billboard 17, then becomes kind 4; particular resource identity unresolved. |
-| `actor_spawn_action_effect` | 575 | `23` | `if (effect_kind == KF_ENUM_DECODE(KfEffectKind, 23)) {` | Input kind 23 selects alternate Lightning Bolt billboard 17, then becomes kind 4; particular resource identity unresolved. |
+| `actor_spawn_action_effect` | 559 | `23` | `if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 23)) {` | Input kind 23 selects alternate Lightning Bolt billboard 17, then becomes kind 4; particular resource identity unresolved. |
+| `actor_spawn_action_effect` | 575 | `23` | `if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 23)) {` | Input kind 23 selects alternate Lightning Bolt billboard 17, then becomes kind 4; particular resource identity unresolved. |
 | `actor_spawn_action_effect` | 589 | `1` | `distance = 1;` | Minimum movement count when the standoff-adjusted distance is at most one speed step. |
 | `actor_spawn_action_effect` | 602 | `0` | `angles.z = 0;` | Zero pitch/roll coordinate before any kind-specific aiming adjustment. |
-| `actor_spawn_action_effect` | 608 | `22` | `if (effect_kind == KF_EFFECT_KIND_LIGHT_NEEDLE \|\| effect_kind == KF_ENUM_DECODE(KfEffectKind, 22)) {` | Input kind 22 uses model 14 and the shared physical-projectile path; specific asset identity unresolved. |
+| `actor_spawn_action_effect` | 608 | `22` | `if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE \|\| KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 22)) {` | Input kind 22 uses model 14 and the shared physical-projectile path; specific asset identity unresolved. |
 | `actor_spawn_action_effect` | 610 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |
-| `actor_spawn_action_effect` | 611 | `1` | `effect_kind, &position, &direction, &angles, 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
-| `actor_spawn_action_effect` | 612 | `24` | `} else if (effect_kind == KF_ENUM_DECODE(KfEffectKind, 24)) {` | Input kind 24 selects alternate homing model 16, then becomes kind 20; particular resource identity unresolved. |
+| `actor_spawn_action_effect` | 611 | `1` | `KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &angles, 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
+| `actor_spawn_action_effect` | 612 | `24` | `} else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 24)) {` | Input kind 24 selects alternate homing model 16, then becomes kind 20; particular resource identity unresolved. |
 | `actor_spawn_action_effect` | 617 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 24),` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |
 | `actor_spawn_action_effect` | 617 | `24` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 24),` | Input kind 24 selects alternate homing model 16, then becomes kind 20; particular resource identity unresolved. |
 | `actor_spawn_action_effect` | 618 | `1` | `&position, &direction, &burst_angles, KF_ENUM_ENCODE(u8, KF_EFFECT_HOMING_PLAYER), 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
 | `actor_spawn_action_effect` | 621 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |
 | `actor_spawn_action_effect` | 625 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |
-| `actor_spawn_action_effect` | 626 | `1` | `effect_kind, &position, &direction, distance, 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
+| `actor_spawn_action_effect` | 626 | `1` | `KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, distance, 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
 | `actor_prepare_charge_toward_player` | 644 | `0` | `if (angle_within_tolerance(actor->rotation.y, (s16)actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE) == 0) {` | False cone test keeps the actor current yaw rather than targeting the player. |
 | `actor_apply_horizontal_movement` | 676 | `16` | `if ((result >> 16) != (KF_COLLISION_PLAYER >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
 | `actor_apply_horizontal_movement` | 676 | `16` | `if ((result >> 16) != (KF_COLLISION_PLAYER >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
@@ -151,9 +151,6 @@ explicit numeric boundaries.
 | `actor_update_current_action` | 1182 | `0` | `actor->vertical_velocity = 0;` | Clear vertical velocity at initialization, landing or transition. |
 | `actor_update_current_action` | 1185 | `1` | `if (rand() < (RAND_MAX + 1) / 2) {` | Add one to count all 32768 SDK outcomes, then divide by two for the equal-size sign-selection intervals. |
 | `actor_update_current_action` | 1185 | `2` | `if (rand() < (RAND_MAX + 1) / 2) {` | Add one to count all 32768 SDK outcomes, then divide by two for the equal-size sign-selection intervals. |
-| `actor_update_current_action` | 1200 | `0` | `actor_update_effect_action(0);` | Positional effect/attachment index 0,1,2; named action cases select the corresponding definition entry. |
-| `actor_update_current_action` | 1203 | `1` | `actor_update_effect_action(1);` | Positional effect/attachment index 0,1,2; named action cases select the corresponding definition entry. |
-| `actor_update_current_action` | 1206 | `2` | `actor_update_effect_action(2);` | Positional effect/attachment index 0,1,2; named action cases select the corresponding definition entry. |
 | `actor_update_current_action` | 1213 | `0` | `actor->animation_phase = 0;` | Reset the selected animation cycle to its initial phase. |
 | `actor_update_current_action` | 1236 | `0` | `actor->animation_phase = 0;` | Reset the selected animation cycle to its initial phase. |
 | `actor_update_current_action` | 1248 | `1` | `actor_move_along_heading(1, 0);` | Direction sign: positive one moves forward, negative one reverses both horizontal components. |

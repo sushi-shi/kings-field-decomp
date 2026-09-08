@@ -134,6 +134,13 @@ enum {
     KF_ACTOR_EFFECT_PAIRED = 0x20
 };
 
+/* Matching effect parameters, animation entries and attachment selections. */
+KF_ENUM_BEGIN(KfActorEffectSlot, s32)
+    KF_ACTOR_EFFECT_SLOT_FIRST = 0,
+    KF_ACTOR_EFFECT_SLOT_SECOND = 1,
+    KF_ACTOR_EFFECT_SLOT_THIRD = 2
+KF_ENUM_END(KfActorEffectSlot)
+
 enum {
     KF_ACTOR_PARAM_EFFECT0 = 0,
     KF_ACTOR_PARAM_EFFECT1 = 1,
@@ -332,7 +339,7 @@ extern void actor_try_attack_player(
     s16 angle_offset, s16 angle_tolerance);
 extern void actor_update_awareness(void);
 extern void actor_update_current_action(void);
-extern void actor_update_effect_action(s32 action);
+extern void actor_update_effect_action(KfActorEffectSlot effect_slot);
 extern void actor_transform_definition5_to6(KfActor *actor);
 
 #endif

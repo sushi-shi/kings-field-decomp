@@ -144,3 +144,25 @@ placement failures: source data PSX 0/1, GAME 9/42, OPEN 2/19; target relink
 PSX 1/1, GAME 75/77, OPEN 34/38, six conflicting section bases and no artifact
 failures. No tests, size assertions, flake/tooling changes or banking were
 added. The wider naming objective remains open.
+
+## Configured effect-slot enum
+
+Plan: in GAME `actor_update_current_action` (0x8002fa88/0xd90), name the
+three effect-slot arguments. Carry `KfActorEffectSlot` through
+`actor_update_effect_action` (0x8002f468/0xf0) and
+`actor_spawn_action_effect` (0x8002edd4/0x454). The former retains the incoming
+word in s3, adds eight for its animation slot and forwards the original slot
+as the latter's attachment argument. These are configured first/second/third
+slots, distinct from actor action IDs, animation IDs and effect kinds.
+
+Use s32 enum storage to retain both legacy parameter widths. Encode only for
+array indices and animation-slot arithmetic; forward the typed slot directly.
+The existing two-element attachment view is not resized: retail can compute
+the third slot's address, and this enum change preserves that existing access.
+Source review covers all three callers and the single spawning call. Builds,
+compiler checks, tests and post-edit matches remain deferred as requested.
+
+Result: the three planned functions now use the slot domain at every call.
+The three raw selectors are named; retained-literal accounting is reconciled
+across 111 C files (5,993 occurrences). Source/reference review and whitespace
+checks passed; no compiler or binary-match result is claimed for this edit.
