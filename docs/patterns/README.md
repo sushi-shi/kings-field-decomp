@@ -9,6 +9,8 @@ promotes a probe to a proven historical toolchain.
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
+- [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration
+  panel through its shared exit assignment; notification-tail byte trial.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,

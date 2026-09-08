@@ -199,3 +199,12 @@ comparison was weakened to obtain the improved text result.
 The bank refresh selects only GAME `80025da0`, the previously exact helper
 with its corrected source signature. The partial panel's bank row is not
 updated or promoted.
+
+## Strict closure with the instrumented probe
+
+The [UI trace follow-up](game-ui-trace-matches.md) reconstructs the single
+exit-phase assignment shared by confirmation and cancellation. The compiler
+previously merged the duplicate assignments only after register allocation.
+Sharing them in C restores the retail register roles and closes the panel at
+strict 100%, while the draw helper remains exact. The preceding 99.859810%
+verdict is the historical baseline for that follow-up.

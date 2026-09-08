@@ -57,8 +57,8 @@ compiler or optimizer that produced `SLPS-00017`.
    it can be inspected with `gdb` without changing its target optimization
    flags or generated MIPS semantics.
 3. Confirm the uninstrumented debug build emits objects byte-identical to the
-   currently pinned native compiler on an exact control corpus and both
-   remaining OPEN units.
+   currently pinned native compiler on an exact control corpus, both remaining
+   OPEN units, and each GAME unit selected for a matching campaign.
 4. Add opt-in trace hooks around only the relevant compiler stages:
 
    - RTL/pseudo creation and source expression ownership;
@@ -98,7 +98,7 @@ state toward retail, but the final retained game source must remain humane and
 evidence-supported.
 
 Use small synthetic functions to validate every trace interpretation before
-applying it to OPEN. In particular, construct controls that deliberately:
+applying it to OPEN or GAME. In particular, construct controls that deliberately:
 
 - create or remove one call-crossing pseudo;
 - force two equivalent constants to compete for `t0`/`t1`;
@@ -126,9 +126,10 @@ through the existing workflow.
   validated by a controlled probe.
 - `kf hypotheses` can compare dozens of isolated TU states while retaining a
   small, interpretable internal-state frontier.
-- A trace explains the first decisive divergence in each remaining OPEN
-  function and identifies a semantic source hypothesis, or establishes a
-  bounded probe limitation without inventing a compiler mechanism.
+- For each remaining OPEN or GAME function, a trace explains the first decisive
+  divergence and identifies a semantic source hypothesis, or records a bounded
+  probe limitation without inventing a compiler mechanism. A limitation leaves
+  that function open; it does not replace the strict 100% completion criterion.
 
 ## Non-goals
 

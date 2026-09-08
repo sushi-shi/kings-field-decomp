@@ -52,7 +52,7 @@ class GameConfigPanelTests(unittest.TestCase):
                 self.assertEqual(rows[site]["status"], "reviewed")
                 self.assertEqual(rows[site]["channel"], "reachable-code")
 
-    def test_label_abi_keeps_helper_exact_and_panel_input_calls_correct(self):
+    def test_label_abi_and_shared_exit_keep_both_functions_exact(self):
         image = self.retail()
         if not shutil.which("cc1psx-257") or "PSYQ_INCLUDE" not in os.environ:
             self.skipTest("pinned compiler and SDK headers required")
@@ -86,10 +86,10 @@ class GameConfigPanelTests(unittest.TestCase):
                     retail = list(struct.unpack(
                         f"<{claim.body_size // 4}I", image.require(claim.va, claim.body_size)))
                     self.assertEqual(target, retail)
+                    self.assertEqual(actual, retail)
                     self.assertEqual(calls, target_calls)
                     self.assertEqual(addresses, target_addresses)
                     if claim.symbol == "menu_config_panel_draw":
-                        self.assertEqual(actual, retail)
                         wrong = dict(functions)
                         wrong["menu_draw_string"] += 4
                         corrupted, _, _ = linked_words(candidate, unit, claim, data, wrong)
