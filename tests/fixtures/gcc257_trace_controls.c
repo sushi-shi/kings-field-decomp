@@ -263,3 +263,68 @@ long long constant_competition(int *p, int count)
     }
     return (long long)v0 * v1 + v2 + v3 + v4 + v5 + v6 + v7 + v8 + v9;
 }
+
+/* Spilled scalar homes follow the existing declaration pair. */
+int spill_order_declared(int *input)
+{
+    int value_0;
+    int value_1;
+    int value_2;
+    int value_3;
+    int value_4;
+    int value_5;
+    int value_6;
+    int value_7;
+    int value_8;
+    int value_9;
+    int value_10;
+    int value_11;
+
+    value_0 = input[0];
+    value_1 = input[1];
+    value_2 = input[2];
+    value_3 = input[3];
+    value_4 = input[4];
+    value_5 = input[5];
+    value_6 = input[6];
+    value_7 = input[7];
+    value_8 = input[8];
+    value_9 = input[9];
+    value_10 = input[10];
+    value_11 = input[11];
+    observe(0);
+    return value_0 + value_1 + value_2 + value_3 + value_4 + value_5
+        + value_6 + value_7 + value_8 + value_9 + value_10 + value_11;
+}
+
+int spill_order_reversed(int *input)
+{
+    int value_0;
+    int value_1;
+    int value_2;
+    int value_3;
+    int value_4;
+    int value_5;
+    int value_6;
+    int value_7;
+    int value_8;
+    int value_10;
+    int value_9;
+    int value_11;
+
+    value_0 = input[0];
+    value_1 = input[1];
+    value_2 = input[2];
+    value_3 = input[3];
+    value_4 = input[4];
+    value_5 = input[5];
+    value_6 = input[6];
+    value_7 = input[7];
+    value_8 = input[8];
+    value_9 = input[9];
+    value_10 = input[10];
+    value_11 = input[11];
+    observe(0);
+    return value_0 + value_1 + value_2 + value_3 + value_4 + value_5
+        + value_6 + value_7 + value_8 + value_9 + value_10 + value_11;
+}

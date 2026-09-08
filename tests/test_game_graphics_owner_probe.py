@@ -85,6 +85,17 @@ def standalone_source(unit):
                                 '    KfFloorItem *item;\n    u16 *count = &floor_item_count;\n', 1)
         source = source.replace('    floor_item_count = 0;', '    *count = 0;', 1)
         source = source.replace('        floor_item_count++;', '        (*count)++;', 1)
+    if unit.unit == 'game.render_enqueue':
+        # Preserve the old owner-only probes independently of the later
+        # retail-evidenced header declaration order.
+        source = source.replace(
+            '    u32 header;\n    u32 remaining;\n',
+            '    u32 remaining;\n    u32 header;\n')
+        source = source.replace(
+            '    KfTmdObject *object;\n    u32 header;\n    u8 *normals;\n'
+            '    u8 *packet;\n    u32 remaining;\n    CVECTOR shade;\n',
+            '    KfTmdObject *object;\n    u8 *normals;\n    u8 *packet;\n'
+            '    u32 remaining;\n    u32 header;\n    CVECTOR shade;\n')
     return '#include "game_graphics_standalone.h"\n' + source
 
 
@@ -671,8 +682,6 @@ extern KfMaterialProbe material_probe;
             'notify_effect_update',
             'player_add_experience',
             'player_move_horizontal',
-            'render_enqueue_map',
-            'render_enqueue_model',
             'render_enqueue_tmd',
             'render_entities',
             'render_map_cell',
@@ -711,7 +720,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (173, 152))
+        self.assertEqual((checked, exact), (173, 154))
 
 
 if __name__ == '__main__':

@@ -449,8 +449,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     KfTmdObject *object;
     u8 *normals;
     u8 *packet;
-    u32 remaining;
     u32 header;
+    u32 remaining;
     s32 type;
     s32 otz;
     KfScreenVertex *va;
@@ -646,10 +646,10 @@ ADDRESS(0x8001de18, 0x418)
 void render_enqueue_map(u16 object_index)
 {
     KfTmdObject *object;
+    u32 header;
     u8 *normals;
     u8 *packet;
     u32 remaining;
-    u32 header;
     CVECTOR shade;
     POLY_GT4 *prim;
     KfScreenVertex *va;

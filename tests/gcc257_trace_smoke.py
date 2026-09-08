@@ -57,6 +57,38 @@ def validate_reload(trace: Trace) -> None:
                 "reload selected a conflicting register")
 
 
+
+def input_stack_homes(instructions: tuple[int, ...]) -> dict[int, int]:
+    """Decode the straight-line input-to-spill prefix of the scalar controls."""
+    registers = {4: ("input", 0), 29: ("stack", 0)}
+    slots = {}
+    for word in instructions:
+        opcode = word >> 26
+        rs, rt, rd = (word >> 21) & 31, (word >> 16) & 31, (word >> 11) & 31
+        immediate = (word & 0xFFFF) - (0x10000 if word & 0x8000 else 0)
+        if opcode == 3:
+            return slots
+        if opcode == 9:
+            if rs in registers:
+                kind, offset = registers[rs]
+                registers[rt] = kind, offset + immediate
+            else:
+                registers.pop(rt, None)
+        elif opcode == 0 and word & 63 in (33, 37) and (rs == 0 or rt == 0):
+            registers[rd] = registers.get(rt if rs == 0 else rs, ("unknown", 0))
+        elif opcode == 35:
+            kind, offset = registers.get(rs, ("unknown", 0))
+            if kind == "input":
+                registers[rt] = "value", (offset + immediate) // 4
+            else:
+                registers.pop(rt, None)
+        elif opcode == 43 and rs == 29:
+            kind, index = registers.get(rt, ("unknown", 0))
+            if kind == "value":
+                slots[index] = immediate
+    raise RuntimeError("scalar stack control has no observe call")
+
+
 def validate_controls(path: Path, obj: Path) -> None:
     # One reader pass validates every serialized row. Then group the controlled
     # functions without reparsing the complete TU once per assertion.
@@ -125,6 +157,26 @@ def validate_controls(path: Path, obj: Path) -> None:
     require(len(acquired) == 2 and acquired[0]["x"]["ops"] == acquired[1]["x"]["ops"]
             and len(reused.select("stack.reuse")) == 1
             and len(reused.select("stack.release")) == 2, "stack lifetime/reuse control failed")
+
+    for name, expected in (("spill_order_declared", {9: 16, 10: 24, 11: 32}),
+                           ("spill_order_reversed", {9: 24, 10: 16, 11: 32})):
+        trace = traces[name]
+        allocated = {row["pseudo"]: row["hard_reg"]
+                     for row in trace.select("allocation.pseudo", stage="global-alloc")}
+        pseudos = {index: next(iter(trace.source_pseudos(f"value_{index}")))
+                   for index in expected}
+        require(all(allocated[p] == -1 for p in pseudos.values()),
+                "scalar control values were not left for stack allocation")
+        by_pseudo = sorted(expected, key=pseudos.get)
+        require([expected[index] for index in by_pseudo] == [16, 24, 32],
+                "declaration/pseudo order does not predict the controlled stack homes")
+        require(input_stack_homes(words(obj, name)) == expected,
+                "emitted input-to-stack stores disagree with scalar allocation")
+        # stack.allocate has a pass tag, not a stage-name reason.
+        allocations = [row for row in trace.select("stack.allocate")
+                       if row["pass"] == "reload" and row["values"][0]]
+        require([row["values"][:2] for row in allocations] == [[8, 8]] * 3,
+                "scalar slots do not have the observed eight-byte allocation")
 
     feature = [{"name": "phase", "kind": "constant_registers",
                 "source_value": "phase", "constants": [1, 2]}]

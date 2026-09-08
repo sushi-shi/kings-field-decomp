@@ -309,6 +309,9 @@ promotes a probe to a proven historical toolchain.
 - [game-graphics-owner-pilot.md](game-graphics-owner-pilot.md): complete-clear
   ownership pilot, preserved initializer/traversal controls, and the exact
   unconditional view-matrix rebuild; the production migration is documented below.
+- [game-enqueue-stack-order.md](game-enqueue-stack-order.md): controlled GCC
+  declaration/pseudo/stack evidence closes both remaining textured polygon
+  enqueuers without changing expressions or compiler options.
 - [game-graphics-runtime-owner.md](game-graphics-runtime-owner.md): production
   graphics owner closes floor placement, sprite enqueue and actor rendering;
   all 173 affected-unit bodies checked, with data placement limits retained.
