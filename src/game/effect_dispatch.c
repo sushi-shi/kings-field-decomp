@@ -282,7 +282,7 @@ lightning_impact:
                             &impact_position, &effect->rotation);
                     } else {
                         effect_pool_construct(
-                            effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x29),
+                            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE,
                             &impact_position, &effect->rotation);
                     }
                 } else {
@@ -570,7 +570,7 @@ randomize_homing_direction:
         if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
             if (effect->base_render_id == 0x10) {
                 effect_pool_construct(
-                    effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x2c),
+                    effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
                     &effect->position, &effect->direction.vector, 1);
             } else {
                 effect_pool_construct(
@@ -597,7 +597,7 @@ randomize_homing_direction:
                     &effect->position, &effect->rotation);
             } else {
                 effect_pool_construct(
-                    effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x2a),
+                    effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE,
                     &effect->position, &effect->rotation);
             }
             if (phase == LIGHTNING_IMPACT_EMIT_FIRST) {

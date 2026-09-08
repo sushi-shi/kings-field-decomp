@@ -531,8 +531,8 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
         case KF_EFFECT_KIND_CURSE_PROJECTILE:
         case KF_EFFECT_KIND_EMERGING_PROJECTILE:
         case KF_ENUM_DECODE(KfEffectKind, 22):
-        case KF_ENUM_DECODE(KfEffectKind, 23):
-        case KF_ENUM_DECODE(KfEffectKind, 24):
+        case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
+        case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
             offset.vx = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x;
             offset.vy = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].y;
             offset.vz = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].z;
@@ -556,7 +556,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 (struct KfVec3i *)&position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
             if (distance == -1) {
                 angles.x = 0;
-                if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 23)) {
+                if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
                     angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
@@ -572,7 +572,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 angles.y = vector_xz_to_angle(
                     actor_state.player_position.vx - position.vx,
                     position.vz - actor_state.player_position.vz);
-                if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 23)) {
+                if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
                     angles.x = vector_xz_to_angle(
                         position.vy - (actor_state.player_position.vy - ACTOR_LIGHTNING_TARGET_Y_OFFSET), -distance);
@@ -609,12 +609,12 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &angles, 1);
-            } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 24)) {
+            } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE) {
                 burst_angles.x = actor->rotation.x;
                 burst_angles.y = facing;
                 burst_angles.z = actor->rotation.z;
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 24),
+                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
                     &position, &direction, &burst_angles, KF_ENUM_ENCODE(u8, KF_EFFECT_HOMING_PLAYER), 1);
             } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
@@ -842,7 +842,7 @@ void actor_update_boss_death_sequence(void)
         position.vy = actor->position.vy - (rand() & ACTOR_BOSS_DEATH_SCATTER_Y_MASK);
         /* Retail leaves this kind's direction and the position pad unwritten. */
         effect_pool_construct(
-            0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_ENUM_DECODE(KfEffectKind, 0x2c),
+            0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
             &position, &direction, 0);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * ACTOR_BOSS_DEATH_SOUND_PERIOD) == 0) {
             sound_ref_play(&boss_death_loop_sound, ACTOR_BOSS_DEATH_LOOP_VOLUME);

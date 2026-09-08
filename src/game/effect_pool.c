@@ -91,7 +91,7 @@ KfEffectRecord *effect_pool_construct(
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0x17):
+        case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
             record->base_render_id = 0x11;
             record->render_id = 0x11;
             record->kind = KF_EFFECT_KIND_LIGHTNING_BOLT;
@@ -113,7 +113,7 @@ KfEffectRecord *effect_pool_construct(
                     EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0x29):
+        case KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE:
             record->base_render_id = 0x13;
             record->render_id = 0x13;
             record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
@@ -132,7 +132,7 @@ KfEffectRecord *effect_pool_construct(
                 EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
                 EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0x2a):
+        case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE:
             record->base_render_id = 0xf;
             record->render_id = 0xf;
             record->kind = KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST;
@@ -334,7 +334,7 @@ KfEffectRecord *effect_pool_construct(
                 record->control.parent_effect_index = argument;
             }
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0x2c):
+        case KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE:
             record->base_render_id = 0x11;
             record->render_id = 0x11;
             record->kind = KF_EFFECT_KIND_RADIAL_BLAST;
@@ -359,7 +359,7 @@ KfEffectRecord *effect_pool_construct(
                     EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             }
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0x18):
+        case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
             record->base_render_id = 0x10;
             record->render_id = 0x10;
             record->kind = KF_EFFECT_KIND_HOMING_PROJECTILE;

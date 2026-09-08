@@ -189,3 +189,33 @@ OPEN 34/38. The six conflicting section-base cases remain, with zero artifact
 failures. These failures do not change or invalidate the identical function
 objects; they remain required unfinished project work. No tooling or flake
 change was made.
+
+## Alternate effect-kind names
+
+Plan: name the five constructor variants below throughout GAME construction,
+dispatch and actor emission. Reviewed functions are `effect_pool_construct`
+(0x80036f44/0x82c), `effect_update_dispatch` (0x80038a38/0x180c),
+`actor_spawn_action_effect` (0x8002edd4/0x454), and
+`actor_update_boss_death_sequence` (0x8002f8cc/0x1bc). Their existing dossiers,
+constructor cases and call paths establish the normalization independently of
+any artwork identity. Replace only literal enum decodes; retain values and flow.
+
+| Input | Named variant | Normalized kind | Selected render resource |
+| ---: | --- | ---: | --- |
+| 23 | `LIGHTNING_BOLT_ALTERNATE` | 4 | Billboard 17 instead of 6 |
+| 24 | `HOMING_PROJECTILE_ALTERNATE` | 20 | Model 16 instead of 12 |
+| 41 | `LIGHTNING_IMPACT_ALTERNATE` | 32 | Billboard 19 instead of 11 |
+| 42 | `LIGHTNING_RADIAL_BLAST_ALTERNATE` | 33 | Model 15 instead of 0 |
+| 44 | `RADIAL_BLAST_ALTERNATE` | 18 | Model 17 instead of 11 |
+
+Names use the `KF_EFFECT_KIND_` prefix. Alternate denotes the constructor's
+explicit relationship to the base kind, not an inferred element, monster or
+artwork. Variant 44 also uses extended sound range; naming does not merge its
+constructor with the base constructor. The effect-code word boundary and byte
+kind storage remain unchanged. Builds, compiler checks, tests and post-edit
+matches remain deferred; this is source naming, not a new matching result.
+
+Result: all fifteen uses now name their variant. The four planned functions
+retain their expressions and calls apart from replacing literal enum decodes;
+source review and ledger reconciliation cover all 111 C files and 5,978 retained
+literal occurrences. No build, compiler check, test or post-edit match ran.

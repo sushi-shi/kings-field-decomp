@@ -1,6 +1,6 @@
 # Effect-dispatch remainder literal ledger
 
-Complete per-occurrence account of **153 retained numeric literals** in
+Complete per-occurrence account of **150 retained numeric literals** in
 `src/game/effect_dispatch.c`: six initialized probe zeros and 147 function uses.
 Named definitions and retail claims are excluded. Comments, strings and identifier
 digits are not numeric literals; signs are operators. The
@@ -66,7 +66,6 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 269 | `0` | `if ((u16)remaining == 0) {` | Zero is exhaustion of the updated halfword countdown; retain the decrement and storage order. |
 | `effect_update_dispatch` | 272 | `1` | `&magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);` | Second magic sound slot supplies impact playback; fixed-row selection remains separately named where applicable. |
 | `effect_update_dispatch` | 279 | `6` | `if (effect->base_render_id == 6) {` | Billboard base 6 selects the ordinary Lightning Impact child; the alternate Lightning Bolt resource selects constructor variant 41. Keep the resource ordinal until its asset is independently identified. |
-| `effect_update_dispatch` | 285 | `0x29` | `effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x29),` | Constructor variant 41 uses the alternate Lightning Impact render base and stores kind 32; the alternate asset identity is unresolved. |
 | `effect_update_dispatch` | 290 | `1` | `effect->base_render_id + ((u8)effect->control.frames_remaining & 1);` | Countdown parity alternates the two Lightning Bolt billboard entries; one is the low-bit mask. |
 | `effect_update_dispatch` | 298 | `0` | `if (--effect->control.frames_remaining == 0) {` | Zero is exhaustion of the updated halfword countdown; retain the decrement and storage order. |
 | `effect_update_dispatch` | 299 | `0` | `if (effect->propagation.generations_remaining != 0) {` | Zero means no further scatter descendants, selecting the final countdown or freeing the expired slot. |
@@ -114,11 +113,9 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 555 | `0` | `local_motion.vx = 0;` | Zero local X/Y leaves only the named forward displacement before pitch/yaw transforms. |
 | `effect_update_dispatch` | 556 | `0` | `local_motion.vy = 0;` | Zero local X/Y leaves only the named forward displacement before pitch/yaw transforms. |
 | `effect_update_dispatch` | 571 | `0x10` | `if (effect->base_render_id == 0x10) {` | Homing model base 16 selects radial child variant 44; ordinary homing chooses kind 18. This resource ordinal is distinct from a kind or state. |
-| `effect_update_dispatch` | 573 | `0x2c` | `effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x2c),` | Constructor variant 44 uses alternate radial model 17 and stores kind 18; the homing model-16 caller relationship does not identify the visual asset. |
 | `effect_update_dispatch` | 574 | `1` | `&effect->position, &effect->direction.vector, 1);` | True requests the radial-blast constructor sound via its sixth variadic slot; not a phase or actor identifier. |
 | `effect_update_dispatch` | 578 | `1` | `&effect->position, &effect->direction.vector, 1);` | True requests the radial-blast constructor sound via its sixth variadic slot; not a phase or actor identifier. |
 | `effect_update_dispatch` | 594 | `11` | `if (effect->base_render_id == 11) {` | Impact billboard base 11 selects ordinary Lightning Radial Blast; the alternate resource selects constructor variant 42. Its asset-specific identity remains unresolved. |
-| `effect_update_dispatch` | 600 | `0x2a` | `effect->id, effect->type, KF_ENUM_DECODE(KfEffectKind, 0x2a),` | Constructor variant 42 uses alternate radial model 15 and stores kind 33; the alternate asset identity is unresolved. |
 | `effect_update_dispatch` | 604 | `1` | `phase_sound = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1];` | Second magic sound slot supplies impact playback; fixed-row selection remains separately named where applicable. |
 | `effect_update_dispatch` | 621 | `1` | `if (phase & 1) {` | Oddness of the old lightning-blast phase gates damage; the shared increment happens afterward. |
 | `effect_update_dispatch` | 630 | `0` | `&position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,` | Zero damage arguments omit channels or status on this specific call. Named actor/player scales and any nonzero status preserve their separate argument positions. |
