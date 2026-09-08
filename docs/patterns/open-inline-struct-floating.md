@@ -151,9 +151,147 @@ return. They do not establish an optimizer mechanism. Neither is retained.
 Generated evidence is under `gradient-interpolate-inline/` and
 `gradient-blend-inline/`.
 
+## Lighting step with mixed pointer/value state
+
+Retail stores the lighting phase as a stack halfword and keeps its blend in
+`s4`. A further control passes only the phase by pointer, takes the blend as
+an `s16` value, executes the original complete lighting switch and returns the
+updated blend. This removes the earlier two-pointer helper's requirement for
+an addressable blend without changing the state encodings or SDK calls.
+
+The mixed helper restores the retail 264-byte frame and every save home,
+preserves 40 calls and 31 ordered references, and keeps six siblings raw exact.
+Native/traced whole-ELF parity holds. However, it emits 1948 bytes at
+94.207820%, with 317 unequal aligned words. Its first difference is +0xc0:
+the retained/retail blend initialization `move s4,zero` is replaced by a
+halfword stack store. Matching the frame therefore does not recover the
+retail value allocation. This control is rejected; generated evidence is
+under `lighting-mixed-inline/phase-pointer-blend-value/`.
+
+## Value-only panel cadence predicate
+
+A static inline `int` predicate takes the existing short tick and returns
+its original `tick == 0 || tick == 2` condition. The caller uses the Boolean
+result in the existing panel-update guard; no state test or consumer is added.
+This tests an actual predicate return/control boundary instead of changing
+which cadence states the source compares.
+
+With the retained top-color pointer, it produces 1960 bytes at 99.074070%.
+All seven original dispatch differences remain (first +0x398); the panel
+region adds four instructions. There are 81 unequal aligned retail words.
+A separately planned composition restores direct top-color arguments, using
+the previously established invariant-movement sensitivity. This still emits
+1960 bytes but falls to 97.098760%, with 229 unequal aligned words and first
+difference +0x2b4 in pointer construction. It does not recover the earlier
+hold-state guard's useful result. Both retain all 40 calls, 31 references,
+264-byte frame/save homes, six exact siblings and native/traced ELF parity.
+Neither is retained. The evidence directories are `tick-predicate-inline/`
+and `tick-predicate-direct-top/`.
+
+## Inline panel movement operation
+
+An ordinary static inline void helper takes the existing `KfScreenRect *`
+and performs exactly `--panel->y`. The caller retains the original cadence
+and stop guards, cursor, clipping and sequence transitions. It introduces no
+Boolean result, movement parameter or alternative state representation.
+
+This produces the identical complete resolved ending body, calls and
+references as the retained source: 1944 bytes at 99.917694%, with the same
+seven dispatch differences. The retail 264-byte frame and save homes, six
+raw-exact siblings and native/traced whole-ELF parity all pass. Thus this
+pointer-based movement boundary is neutral, unlike the Boolean predicate
+boundary. It is not retained as a source reconstruction without additional
+evidence. The complete retained-object comparison is under
+`panel-step-inline/panel-step-inline/`.
+
+## Inline panel visibility predicate
+
+The rectangle's `y` field is `u16`; the stop-bound check explicitly views it
+as signed, while clipping adds the bias and narrows back to `u16` before an
+unsigned span comparison. A static inline `int` helper taking a const
+rectangle pointer preserves that exact clipping expression and replaces only
+the draw visibility predicate. No coordinate type or cadence test changes.
+
+Unlike the two-comparison cadence helper, this produces the identical full
+resolved words, calls and references as the retained ending body. It stays
+1944 bytes at 99.917694%, with the same seven differences, retail frame/save
+homes, six exact siblings and whole native/traced ELF parity. It is neutral
+and is not adopted. The explicit retained comparison is under
+`panel-visibility-inline/panel-visibility-inline/`.
+
+## Phase-derived destination matrix index
+
+The two lighting phases 0/1 target consecutive matrix presets 3/4. A separate
+source control replaces each destination's literal index with midpoint-preset
+index plus the current short phase; source-matrix arguments and both call
+sites remain unchanged. The case-conditioned expression has the same actual
+matrix destinations, without an invented table or merged call.
+
+The compiler folds the index arithmetic completely. The resulting body is
+1944 bytes at 99.843620%, with ten unequal retail words. Seven are the retained
+dispatch differences. The other three, +0x3c8/+0x3cc/+0x3d4, reverse the address
+base of the first matrix pair: the candidate forms midpoint in `a1`, then
+black in `a0` by subtracting 64; retail forms black in `a0`, then midpoint in
+`a1` by adding 64. Thus the address-construction referent changes even though
+the final call arguments do not. The target inventory is not changed.
+
+All 40 calls, the 264-byte frame/save homes, six raw-exact siblings and native/traced
+ELF parity pass. The seven dispatch differences remain and this control is
+rejected. Evidence is under `lighting-target-index/phase-target-index/`.
+
+## Traversal-owned panel declarations
+
+A main-branch audit through `3ff5011` finds no newly exact OPEN target; its
+recent GAME dispatcher lifetime work (`85f127c`) supplies a reason to inspect
+ownership but not an OPEN compiler attribution. The ending panel counter and
+cursor are reset and used only within each admitted traversal. A control
+moves their existing declarations from function scope into that block,
+leaving their types, assignments, order and every use unchanged. Searches of
+the two main generated corpora found no equivalent scoped declaration form.
+
+The complete resolved body, calls and references remain identical to retained:
+1944 bytes, 99.917694%, the same seven dispatch differences. The 264-byte frame,
+save homes, six exact siblings and native/traced ELF parity pass. This lexical
+scope change is neutral; the GAME role-splitting result cannot be assumed to
+transfer. No main-branch source or tooling changes are merged for this test.
+Evidence is under `panel-traversal-scope/panel-traversal-scope/`.
+
+## Inline display activation branch
+
+An ordinary static inline void helper takes mode and both existing DRAWENV
+pointers and contains the complete final mode-dependent activation branch.
+Its DFE stores, intervening PutDrawEnv calls, global DISPENV submission and
+SetDispMask calls remain in original order. The caller keeps both pointer
+lifetimes and its existing first-equals-second-minus-one assignment.
+
+The complete resolved display body, calls and references equal the retained
+object: 476 bytes at 96.652540%, with the same 102 unequal aligned retail words
+and retained extra address reference. The 48-byte frame/save map, 18 calls,
+three raw-exact siblings and native/traced ELF parity pass. This activation
+boundary is neutral and is not adopted. Evidence and retained comparison are
+under `display-activation-inline/display-activation-inline/`.
+
+## Draw-pair setup returning the first environment
+
+A static inline DRAWENV-pointer helper takes the retained second-environment
+pointer, derives first as second-minus-one, performs the original paired
+DTD/ISBG/RGB writes and returns first for the existing activation consumer.
+The caller's second-pointer lifetime and all field-write/call ordering remain.
+This gives the helper the established in-array relationship instead of two
+independent absolute pointer arguments.
+
+It produces 440 bytes at 84.525420%, preserving 18 calls, the 48-byte frame and
+all save homes, three raw-exact siblings and native/traced ELF parity. It
+reduces address references to 8 (retail 16, retained 17); flag and color stores
+reuse signed offsets from the second environment. The first raw divergence
+is still +0x1c and 103 aligned retail words differ. This valid pointer relation
+produces shorter code, not retail's 472-byte addressing schedule. The control
+is rejected without modifying the target inventory. Evidence is under
+`display-prepare-return/prepare-return-first/`.
+
 ## Verification and limits
 
-All seventeen native/traced compilations have whole-ELF parity. Each candidate's
+All twenty-six native/traced compilations have whole-ELF parity. Each candidate's
 calls, referents and raw code were inspected; frame size/save homes were
 checked separately. The initialized RECT's sibling assertion correctly failed;
 a read-only follow-up audited both completed objects and recorded the shifted
@@ -167,8 +305,9 @@ No candidate improves the retained source. These results constrain the tested
 abstractions and arithmetic sites; they do not exhaust inlining, aggregate
 modelling, or other source-level explanations. No function is newly banked.
 
-The final full `kf build` attempt confirms OPEN 106/108, GAME 320/362 and
-PSX 1/1 exact functions, but exits 1 on image data/closure checks. It reports
+After the first seventeen controls, the full `kf build` attempt confirms
+OPEN 106/108, GAME 320/362 and PSX 1/1 exact functions, but exits 1 on image
+data/closure checks. It reports
 OPEN target relink 34/38, GAME 75/77 and PSX 1/1, with data placement, conflicting
 section bases and incomplete ownership among the failures. No production
 source, profile or inventory changed in this campaign. Function-level
@@ -177,3 +316,8 @@ controls do not establish a clean full build or linked-image closure.
 `ruff check scripts tests` and `git diff --check` pass. Repository unittest
 discovery passes all 703 tests, with nine skips. No tooling or flake changes
 are included, and no exact result is newly banked.
+
+After control 26, all 26 native/traced object pairs were compared again and
+remain byte-identical. Production source, headers, configuration, tooling and
+tests are unchanged from the preceding full verification; its build failure
+and test results remain the applicable baseline, not a new successful build.
