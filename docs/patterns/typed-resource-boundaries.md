@@ -81,3 +81,51 @@ All 713 repository tests pass with nine skips. Ruff and diff checks pass.
 The full build was run after the source changes and keeps the pre-existing
 data/reference/placement failures without artifact failures or exact-function
 regressions. Only the seven directly edited exact loaders are banked.
+
+
+## Typed cursor follow-up: Function Match Plan
+
+Baseline `d0075b4` retains the same linked instructions for every function in
+this dossier. The editor's C++ checking view rejects void-pointer arithmetic
+and implicit conversions that the target C accepts. Replace the seven loader
+functions' generic pointer locals with one shared `KfResourcePointer` union:
+`storage` is the allocator's `void *` output, `bytes` is the byte cursor, and
+`tim_data` is the authentic SDK `u_long *` input. These are alternative views
+of one four-byte pointer slot, not extra stream variables. R3000 pointers
+share that representation; union type punning is used by the target C source.
+The editor mode checks syntax/types and is not an alternative runtime target.
+
+The existing per-function snapshots and vendor negative controls above apply.
+Recheck their retail calls, escaped slot loads/stores, byte increments, typed
+consumer boundaries and delay slots against the fresh saved objects under
+`build/cast-model/resource-pointer-views/`. The three complete record table
+payloads need explicit conversions from generic serialized bytes. Preserve
+those genuine storage boundaries. No field or allocation extent is invented.
+Every listed function requires an individual raw and strict-match verdict.
+Run both target-C and editor-C++ parses, the affected-unit matches, complete
+build, tests and lint before banking the seven edited exact functions.
+
+
+### Typed cursor verdict
+
+The seven edited loaders in the table above each remain strictly 100% and
+retain every linked instruction, call and ordered reference. All 25 reviewed
+functions are unchanged (24 exact, one unchanged `magic_cast` partial).
+Three explicit conversions now mark the generic serialized table payloads;
+all thirteen allocator output casts remain removed. No void-pointer arithmetic
+remains in these resource units. The target-C census parses all 112 variants
+without errors. Its 739 written casts include 43 in headers; C pointer casts
+are 478, down 328 from the initial 806.
+
+A separate editor-C++ parse of both resource units was compared against the
+`bba263a` source and headers. The new void-pointer arithmetic/conversion errors
+are gone, and the earlier magic input mismatch is also resolved. Seven GAME
+and six OPEN diagnostics remain from the pre-existing SDK/implicit-allocation
+interfaces; this stage does not claim a clean editor-mode repository.
+
+The shared pointer union has a four-byte static layout check and all three
+views are covered by the curated structure inventory. The layout validator
+now includes its resource header. All 713 repository tests pass (nine skips),
+Ruff and diff checks pass, and `nix flake check -L` passes. The full build keeps
+439/471 exact functions with the existing ownership/placement/reference gates
+and no artifact failures. Only the seven edited exact loaders are banked.

@@ -28,8 +28,7 @@ RODATA(0x80012178, 0x3c)
 /*
  * Advances a chunked stream to its next chunk: each chunk is a byte length
  * followed by the payload. The macro assigns so callers can pass
- * the next chunk's payload as an argument. GNU C advances generic void *
- * allocation storage in bytes.
+ * the next chunk's payload as an argument.
  */
 #define STREAM_NEXT(stream) \
     ((stream) += *(u32 *)(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES)
@@ -57,29 +56,30 @@ void tim_upload_images(u_long *tim_data)
 ADDRESS(0x8001b180, 0x210)
 void common_resources_load(void)
 {
-    void *images;
-    void *stream;
+    KfResourcePointer images;
+    KfResourcePointer stream;
     u8 *block;
 
-    cd_file_load_allocated(&images, "COM\\MIX.TIM");
-    tim_upload_images(images);
+    cd_file_load_allocated(&images.storage, "COM\\MIX.TIM");
+    tim_upload_images(images.tim_data);
     memory_release_last();
-    cd_file_load_allocated(&stream, "COM\\COM.DAT");
+    cd_file_load_allocated(&stream.storage, "COM\\COM.DAT");
     asset_registry_set(
-        KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
-    block = STREAM_NEXT(stream);
+        KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    block = STREAM_NEXT(stream.bytes);
     memcpy(render_cell_windows, block + KF_RESOURCE_CHUNK_HEADER_BYTES,
         sizeof render_cell_windows);
     weapon_records_load_and_mirror_angles(
-        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+        (const KfWeaponTable *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     armor_records_load(
-        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
-    magic_load_records(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+        (const KfArmorTable *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    magic_load_records(
+        (const KfMagicTable *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_definitions_load(
-        (KfMapObjectDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfMapObjectDefinition *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memcpy(
         player_level_growth_table,
-        (KfPlayerLevelGrowth *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        (KfPlayerLevelGrowth *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof player_level_growth_table);
     memory_release_last();
     memory_arena_cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;

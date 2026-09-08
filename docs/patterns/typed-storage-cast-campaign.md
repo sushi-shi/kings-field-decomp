@@ -188,3 +188,11 @@ storage complete entry/word views and propagates their table input types.
 Seven more pointer casts disappear, with all 92 compared functions unchanged.
 The cumulative reduction is 331 C pointer casts; 475 remain for the continuing
 animation, SDK, generic-storage and renderer-boundary audit.
+
+
+The resource pointer follow-up preserves the allocator's generic output while
+providing byte/TIM cursor views of the same four-byte slot. It removes the
+new editor-mode void-pointer errors and restores three explicit serialized
+table conversions. All 25 compared functions remain unchanged; 478 C pointer
+casts remain, 328 fewer than the starting count. The editor's older SDK
+interface diagnostics are tracked separately from the clean target-C census.
