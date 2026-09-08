@@ -536,6 +536,9 @@ promotes a probe to a proven historical toolchain.
   and the remaining short-state and branch-join comparison.
 - [open-sentinel-sharing.md](open-sentinel-sharing.md): retained color-argument
   lifetime, seven-word working residue, and shared-sentinel source controls.
+- [open-inline-struct-floating.md](open-inline-struct-floating.md): inline
+  helper boundaries, local lighting/geometry structs, and bounded float/double
+  arithmetic controls for the two remaining OPEN functions.
 - [open-tmd-enqueue.md](open-tmd-enqueue.md): all twelve general TMD polygon
   modes, SDK-preserving packed views, static compiled/retail call-path controls,
   and the remaining shared graphics-base and instruction differences.
