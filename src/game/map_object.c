@@ -272,7 +272,6 @@ void map_object_pool_update(void)
     KfMapObject *object = map_object_state.objects;
     KfMapObject *pair;
     KfEffectRecord *record;
-    const SoundRef *sound;
     u8 *counter;
     struct KfVec3s direction;
     struct KfVec3i point;
@@ -302,12 +301,12 @@ void map_object_pool_update(void)
                 }
                 if (timer == 0) {
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
-                        sound = &gameplay_sound_ref_1;
+                        audio_play_spatial_default_range(
+                            &gameplay_sound_ref_1, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                     } else {
-                        sound = &gameplay_sound_ref_7;
+                        audio_play_spatial_default_range(
+                            &gameplay_sound_ref_7, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                     }
-                    audio_play_spatial_default_range(
-                        sound, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                 }
                 if (timer == MAP_SWING_DOOR_OPEN_UPDATES - 1) {
                     map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.y - KF_ANGLE_QUARTER_TURN);
@@ -324,12 +323,12 @@ void map_object_pool_update(void)
                     }
                     map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.y - KF_ANGLE_QUARTER_TURN);
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
-                        sound = &gameplay_sound_ref_1;
+                        audio_play_spatial_default_range(
+                            &gameplay_sound_ref_1, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                     } else {
-                        sound = &gameplay_sound_ref_7;
+                        audio_play_spatial_default_range(
+                            &gameplay_sound_ref_7, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                     }
-                    audio_play_spatial_default_range(
-                        sound, (VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
                 }
                 object->rotation.y -= MAP_SWING_DOOR_YAW_STEP;
                 if (pair != 0) {

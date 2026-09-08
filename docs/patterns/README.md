@@ -24,6 +24,9 @@ promotes a probe to a proven historical toolchain.
 - [game-root-item-use-traces.md](game-root-item-use-traces.md): exact root and
   item-use panels through the magic-result channel and HP-first recovery;
   all three unit functions and the seven switch pointers match retail.
+- [game-map-door-sounds.md](game-map-door-sounds.md): direct conditional
+  sound calls close the map-object updater; sixteen JSON states and full raw
+  sibling/reference controls.
 - [game-map-drop-initialization.md](game-map-drop-initialization.md): dropped
   object velocity initialization through the common action-selection exit.
 - [game-actor-awareness.md](game-actor-awareness.md): exact actor lifecycle
