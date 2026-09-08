@@ -712,3 +712,6 @@ promotes a probe to a proven historical toolchain.
 
 - [Typed equipment and magic tables](typed-record-tables.md): full word-copy
   spans and typed record arrays share the proven complete table extents.
+
+- [Typed matrix elements](typed-matrix-elements.md): GAME adopts the SDK cell
+  pointers of its exact OPEN twin; all 12 functions retain their retail words.

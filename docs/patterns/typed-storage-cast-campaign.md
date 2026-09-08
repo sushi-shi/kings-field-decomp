@@ -196,3 +196,7 @@ new editor-mode void-pointer errors and restores three explicit serialized
 table conversions. All 25 compared functions remain unchanged; 478 C pointer
 casts remain, 328 fewer than the starting count. The editor's older SDK
 interface diagnostics are tracked separately from the clean target-C census.
+
+The [matrix stage](typed-matrix-elements.md) replaces three whole-MATRIX
+reinterpretations with the SDK's element pointers. Both units remain exact;
+475 C pointer casts remain, down 331 from the start.
