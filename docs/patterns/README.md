@@ -737,3 +737,5 @@ promotes a probe to a proven historical toolchain.
 - [Typed menu ordering-table indexing](typed-ordering-index.md): two byte-pointer casts removed, with all sixteen compared bodies unchanged.
 
 - [Allocated save workspace](typed-save-workspace.md): complete header/payload allocation with independent public buffer views and exact null-path behavior.
+
+- [Final typed-storage cast audit](typed-cast-audit.md): complete 451-site classification, whole-campaign byte preservation and explicit remaining evidence limits.

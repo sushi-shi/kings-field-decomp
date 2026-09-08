@@ -243,3 +243,9 @@ The [save-workspace stage](typed-save-workspace.md) models the complete
 allocation while preserving the separate stack-backed header/payload callers.
 All 31 compared bodies remain unchanged; 451 C pointer casts remain. The
 former field reinterpretation is now an explicit generic allocator boundary.
+
+The [final audit](typed-cast-audit.md) covers every remaining cast and all
+484 compiled bodies against the original source. Every linked instruction,
+call and physical reference is unchanged. The final C pointer count is
+451 (355 removed); retained generic/SDK boundaries, unresolved storage
+extents and controlled non-exact substitutions have explicit verdicts.
