@@ -1,10 +1,10 @@
 # LNK alignment tags are not ELF byte alignments
 
-The later [PSX executable campaign](psx-exact-link.md) adds an opt-in bridge
-that preserves compiler `.align` directives without GNU's ordinary-section
-minimums. It retains populated BSS constraints and tests both native compiler
-probes. The original ASPSX attribution remains open; the measurements and
-unchanged-state statements below describe this earlier SDK-only campaign.
+The later [PSX executable campaign](psx-exact-link.md) now uses ASPSX 1.07
+and PSYLINK directly. It confirms that PSX's compiler `.align 2` becomes native
+LNK tag 8 and four-byte placement, without an ELF section rewrite. Historical
+tool attribution remains open; the measurements and unchanged-state statements
+below describe this earlier SDK-only comparison campaign.
 
 ## Campaign and evidence boundary
 

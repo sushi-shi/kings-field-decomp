@@ -104,7 +104,6 @@ def compare(unit_name: str, source: Path | None, context: int) -> int:
             profile.compiler,
             profile.maspsx_flags,
             defines=unit.defines,
-            section_alignment=profile.section_alignment,
         )
         base_object = _load_object(output)
         base = listing(output, base_object)

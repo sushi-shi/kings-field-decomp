@@ -62,26 +62,14 @@ retail startup zeros `[80010230, 80010234)` before using that slot to save
 `$ra`; the bytes are not an initialized SDK datum. The following four bytes
 are still an address-only census hypothesis, not a proved source allocation.
 
-The [PSX layout experiment](../executable-linking.md#psx-difference-investigation)
-matches all code and initialized data with complete SDK objects and a scratch
-source alignment change. Its seven remaining differing bytes are exactly the
-nonzero bytes of this prefix; all following page bytes agree as zeros.
+The [direct PSX build](psx-exact-link.md) compiles C with GCC, assembles it
+with ASPSX 1.07 and links the native object with original LIBSN/LIBAPI archives
+through PSYLINK 1.17. All code and initialized data agree without changing
+compiler output or converting object formats.
 
-The supplied native `CPE2X.EXE` identifies itself as **CPE2X 1.3**. A control
-encodes the diagnostic linked `.rodata`, `.text` and `.data` as CPE v1 load
-records, with select-unit-zero and a 32-bit PC record for `80010100`, and runs
-that executable under the pinned DOSBox-X. It creates a 4096-byte PS-X EXE with
-the correct entry and load range, but emits **zeros** at the tail. Its default
-header also differs from retail in 59 bytes. Consequently the supplied
-converter does not reproduce the retail tail under this control. The shared
-CPE signature supports container residue; the exact historical converter,
-record ordering/options and mechanism remain unproved. Do not copy the prefix
-into generated output and call the result independently reproduced.
-
-The later [PSX layout work](psx-exact-link.md) also tests the distinct Runtime
-2.6 CPE2X 1.3 binary; it emits zeros too. An optional diagnostic encodes the
-observed CPE prefix at the linked load end and zero-fills the remaining sector.
-Its report labels the mechanism as inferred and keeps historical-converter
-reproduction false. This gives diagnostic file equality while preserving the
-BSS model and native negative controls. Normal links use zeros and retain
-seven differences; the diagnostic does not establish historical reproduction.
+The original CPE2X 1.3 writes zero padding. Its EXE differs in these seven
+nonzero tail bytes and in 59 header bytes. Earlier controls with a distinct
+Runtime 2.6 copy of CPE2X 1.3 also produced zeros. The exact historical
+converter/environment remains unproved. No output path copies the prefix or
+retail header into a generated executable; the former inferred-padding mode
+and output adapters have been removed.

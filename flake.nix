@@ -98,16 +98,16 @@
           --stage-dir "$out"
       '';
 
-      runtime26Media = pkgs.fetchurl {
-        name = "psyq-runtime-2.6.zip";
-        url = "https://archive.org/download/ps1_sdks/Programmer%20Tool%20-%20Runtime%20Library%20Version%202.6%20%28Japan%29%20%28En%2CJa%29_DTL-S2170_redump.zip";
-        hash = "sha256-eROgCPwsPjBZuKOJ9N+3Nzd6NbcrQ8sIsz8PVSR4W9M=";
+      aspsxArchive = pkgs.fetchurl {
+        name = "aspsx-binaries.tar.gz";
+        url = "https://github.com/mkst/maspsx/releases/download/aspsx/aspsx-binaries.tar.gz";
+        hash = "sha256-fHU4wq+SMzjdxaevXFfSgLGTBmDpj5xDDm6iq3XlLno=";
       };
-
-      runtime26Tools = pkgs.runCommand "kings-field-runtime26-host-tools" {
-        nativeBuildInputs = [ pkgs.python3 pkgs.p7zip ];
+      aspsxNative = pkgs.runCommand "kings-field-aspsx-native" {
+        nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
       } ''
-        python3 ${./scripts/stage-runtime26-tools.py} ${runtime26Media} "$out"
+        mkdir -p "$out"
+        tar -xzf ${aspsxArchive} -C "$out" ./1.07/ASPSX.EXE
       '';
 
       psy-k = pkgs.rustPlatform.buildRustPackage {
@@ -499,7 +499,7 @@
         shellHook = ''
           export KINGS_FIELD_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
           export PSYQ_DIR="${psyqToolchain}"
-          export PSYQ_RUNTIME26_BIN="${runtime26Tools}/bin"
+          export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
           export PSYQ_BIN="$PSYQ_DIR/psyq/bin"
           export PSYQ_INCLUDE="$PSYQ_DIR/psyq/include"
           export PSYQ_LIB="$PSYQ_DIR/psyq/lib"
@@ -525,7 +525,8 @@
           echo "[kings-field] compiler probes : GCC 2.4.1; two distinct GCC 2.6.0 builds" >&2
           echo "[kings-field] native C probes  : cc1psx-260/cpppsx-260 and cc1psx-257/cpppsx-257 (Decompals rebuild 0.17)" >&2
           echo "[kings-field] analysis        : ghidra + PSX loader, pyghidra, psy-k, radare2, mipsel binutils" >&2
-          echo "[kings-field] assembly        : maspsx + mipsel-linux-gnu-as" >&2
+          echo "[kings-field] executable link : ASPSX 1.07 + PSYLINK 1.17 + CPE2X; original SDK libraries" >&2
+          echo "[kings-field] objdiff objects : maspsx + mipsel-linux-gnu-as" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
           echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-fid-census; kf-vendored-seed" >&2
           echo "[kings-field] matching        : kf init/build/match/status/check/bank; objdiff GUI" >&2
@@ -536,13 +537,14 @@
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
         nativeBuildInputs = [
           analysisPython mipsBinutilsAliases psy-k objdiff-cli pkgs.dosbox-x
+          cc1psx257 cpppsx257
           pkgs.llvmPackages.clang-unwrapped
         ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
         PSYQ_LIB = "${psyqToolchain}/psyq/lib";
         PSYQ_INCLUDE = "${psyqToolchain}/psyq/include";
         PSYQ_BIN = "${psyqToolchain}/psyq/bin";
-        PSYQ_RUNTIME26_BIN = "${runtime26Tools}/bin";
+        PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts

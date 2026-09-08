@@ -173,16 +173,11 @@ def compile_source(
     maspsx_flags: tuple[str, ...] = (),
     defines: tuple[str, ...] = (),
     *,
-    section_alignment: str = "gnu",
     cc1_override: Path | None = None,
     trace_path: Path | None = None,
     trace_function: str | None = None,
 ) -> Path:
     source = source.resolve()
-    if section_alignment not in {"gnu", "directives"}:
-        raise ValueError(f"unknown section alignment model: {section_alignment}")
-    if section_alignment != "gnu" and source.suffix.lower() != ".c":
-        raise ValueError("directive section alignment requires compiler-generated assembly")
     if not source.is_file():
         raise ValueError(f"{source}: source is missing")
     if trace_path is not None and (cc1_override is None or compiler != "gcc257-native"):
@@ -301,14 +296,7 @@ def compile_source(
                 for claim in data_claims:
                     stream.write(f"\t.type\t{claim.name},@object\n")
                     stream.write(f"\t.size\t{claim.name},{source_sizes[claim.name]}\n")
-        if section_alignment == "directives":
-            from scripts.kf.asm_sections import assemble
-
-            expansion = _run([arg for arg in assembler_arguments if arg != '--run-assembler'],
-                             input_data=assembly.read_bytes()).decode()
-            metadata['compiler_sections'] = assemble(expansion, staged)
-        else:
-            _run([*assembler_arguments, '-o', str(staged)], input_data=assembly.read_bytes())
+        _run([*assembler_arguments, '-o', str(staged)], input_data=assembly.read_bytes())
         metadata.update({
             "language": "c",
             "compiler": compiler_label,
@@ -323,7 +311,6 @@ def compile_source(
             "small_data": small_data,
             "cc1_flags": list(cc1_flags),
             "maspsx_flags": list(maspsx_flags),
-            "section_alignment": section_alignment,
             "data_claims": [
                 {"name": claim.name, "va": f"{claim.va:#x}", "size": claim.size}
                 for claim in data_claims
@@ -364,7 +351,6 @@ def main() -> int:
         "--compiler", choices=tuple(C_COMPILERS), default="gcc260-native"
     )
     parser.add_argument("--maspsx-flag", action="append", default=[])
-    parser.add_argument("--section-alignment", choices=("gnu", "directives"), default="gnu")
     parser.add_argument("--define", action="append", default=[])
     args = parser.parse_args()
 
@@ -392,7 +378,6 @@ def main() -> int:
         args.compiler,
         tuple(args.maspsx_flag),
         defines=tuple(args.define),
-        section_alignment=args.section_alignment,
     )
     print(result)
     return 0

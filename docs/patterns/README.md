@@ -5,9 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
-- [psx-exact-link.md](psx-exact-link.md): matching PSX code/data layout,
-  compiler-directed section constraints, whole SDK order and unresolved
-  packing; inferred padding stays diagnostic, with two native negative controls.
+- [psx-exact-link.md](psx-exact-link.md): direct C -> ASPSX -> PSYLINK ->
+  CPE2X build using original SDK libraries; exact initialized PSX bytes and
+  unresolved header/padding differences, with no output adapters.
 - [typed-storage-cast-campaign.md](typed-storage-cast-campaign.md): shared object
   models, complete cast accounting, and verified packet/colour conversions.
 - [typed-menu-records.md](typed-menu-records.md): shared screen points, complete

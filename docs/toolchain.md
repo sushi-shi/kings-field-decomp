@@ -25,6 +25,7 @@ The Nix flake therefore exposes a **candidate matrix**:
 | --- | --- |
 | `PSYQ_DIR` | Root of the staged candidate bundle |
 | `PSYQ_BIN` | Release 2.5 DOS host tools |
+| `PSYQ_ASPSX` | Pinned working ASPSX 1.07 DOS executable for direct EXE builds |
 | `PSYQ_INCLUDE` | Release 2.5 headers |
 | `PSYQ_LIB` | Release 2.5 Psy-Q libraries |
 | `PSYQ_GCC241_DIR` | Release 2.5 extensionless GCC 2.4.1 frontends |
@@ -32,10 +33,16 @@ The Nix flake therefore exposes a **candidate matrix**:
 | `PSYQ_GCC260_DISK_DIR` | Independent GNU C 2.60 disk frontends |
 | `KF_GCC260_NATIVE` | Decompals old-gcc 0.17 native GCC 2.6.0 PSX rebuild |
 
-The old host tools are DOS executables. DOSBox is included for controlled
-execution, but ASPSX is key-protected. maspsx and GNU MIPS binutils provide the
-practical, scriptable assembly route while we compare their output against the
-retail programs and the original tools.
+The old host tools are DOS executables. The Release 2.5 media copy of ASPSX
+stops with a software-key/network-manager error. A distinct preserved 1.07
+copy from the assembler project's test archive runs successfully under
+DOSBox-X and is now pinned as `PSYQ_ASPSX`. `kf link` uses it directly, then
+PSYLINK 1.17 and CPE2X with the original SDK libraries. There are no ELF
+adapters or retail output-byte inputs in executable generation. See
+[the executable build](executable-linking.md).
+
+maspsx and GNU MIPS binutils remain the separate ELF-based objdiff analysis
+route. Those generated ELF objects do not feed the executable link.
 
 The practical assembler path uses `-no-pad-sections` to retain explicit assembly
 extents without GNU-as automatic end padding. Explicit zero bytes, alignment

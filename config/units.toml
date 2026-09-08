@@ -35,18 +35,6 @@ aspsx_version = "1.07"
 cc1_flags = []
 maspsx_flags = ["--expand-div"]
 
-# The PSX link pilot preserves compiler .align directives without GNU ELF's
-# extra .text/.data minimums and removes empty default BSS contributions.
-[profiles.probe-gcc257-o2-g0-sections]
-language = "c"
-compiler = "gcc257-native"
-optimization = "O2"
-small_data = 0
-aspsx_version = "1.07"
-cc1_flags = ["-mcpu=r2000"]
-maspsx_flags = ["--expand-div"]
-section_alignment = "directives"
-
 # Per-TU scheduling-model probes. `-mcpu=r2000` (the default g0) is a per-unit
 # discriminator, not a global truth: some TUs reach byte-exact only under a
 # different R3000A scheduling model. `-fno-schedule-insns` disables the cc1
@@ -74,7 +62,7 @@ cc1_flags = []
 unit = "psx.main"
 image = "PSX.EXE"
 source = "src/psx/main.c"
-profile = "probe-gcc257-o2-g0-sections"
+profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "game.main"

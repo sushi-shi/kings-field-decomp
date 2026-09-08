@@ -73,10 +73,6 @@ def input_hash(unit: Unit, manifest: Manifest, scanner: IncludeScanner | None = 
         digest.update(path.read_bytes())
         digest.update(b"\0")
     profile = asdict(manifest.profiles[unit.profile])
-    # Preserve fingerprints of existing GNU-section profiles when the opt-in
-    # compiler-directive model is not selected.
-    if profile['section_alignment'] == 'gnu':
-        del profile['section_alignment']
     digest.update(json.dumps(profile, sort_keys=True).encode("utf-8"))
     digest.update(b"\0")
     digest.update(toolchain_identity().encode("utf-8"))

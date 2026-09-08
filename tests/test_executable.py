@@ -1,46 +1,24 @@
-"""Complete-file comparison and PS-X serialization controls."""
+"""Direct source -> ASPSX -> PSYLINK -> CPE2X executable controls."""
 
 from __future__ import annotations
 
+import contextlib
 import io
 import os
 from pathlib import Path
 import shutil
 import struct
-import subprocess
 import tempfile
 import unittest
 from unittest import mock
 
-from elftools.elf.elffile import ELFFile
-
-from scripts.kf.executable import compare, sector_padding, serialize, undefined
 from scripts.kf import executable
-from scripts.kf.mips_elf import DefinedSymbol, write_mips_elf
+from scripts.kf.executable import build_image, compare, cpe_loads
+from scripts.kf.manifest import Manifest, Profile, Unit
 from scripts.kf.sema.image import RetailImage
 
 
 class ComparisonTests(unittest.TestCase):
-    def test_diagnostic_padding_cannot_replace_normal_output_or_report(self):
-        with tempfile.TemporaryDirectory() as directory, mock.patch.object(executable, 'BUILD', Path(directory)):
-            normal = Path(directory) / 'link' / 'psx'
-            normal.mkdir(parents=True)
-            (normal / 'PSX.EXE').write_bytes(b'normal executable')
-            (normal / 'comparison.json').write_text('normal comparison')
-            image = RetailImage.synthetic('PSX.EXE', 0x80010000, bytes(8))
-            report = {'linked': True, 'comparison': {'linked_size': 4096, 'differing_bytes': 0}}
-            with (mock.patch('scripts.kf.graph.configure_if_needed'),
-                  mock.patch('scripts.kf.graph.run_ninja', return_value=0),
-                  mock.patch.object(executable.RetailImage, 'load', return_value=image),
-                  mock.patch.object(executable, 'archives', return_value=([], {})),
-                  mock.patch.object(executable, 'link_image', return_value=report) as linker,
-                  mock.patch('builtins.print')):
-                self.assertEqual(executable.main(['--image', 'psx', '--diagnostic-cpe-padding']), 0)
-            self.assertTrue(linker.call_args.kwargs['diagnostic_cpe_padding'])
-            self.assertEqual((normal / 'PSX.EXE').read_bytes(), b'normal executable')
-            self.assertEqual((normal / 'comparison.json').read_text(), 'normal comparison')
-            self.assertTrue((Path(directory) / 'link/diagnostic-cpe-padding/comparison.json').is_file())
-
     def test_file_tail_and_header_are_compared_without_masks(self):
         image = RetailImage.synthetic('PSX.EXE', 0x80010000, b'abcdefgh')
         self.assertTrue(compare(image.data, image)['file_equal'])
@@ -60,92 +38,80 @@ class ComparisonTests(unittest.TestCase):
         report = compare(image.data[:-1] + b'!', image)
         self.assertEqual(report['first_difference_va'], 0x80012007)
 
-    def test_linker_missing_symbols_are_deduplicated(self):
-        self.assertEqual(undefined("undefined reference to `x'\nundefined reference to `x'\n"
-                                   "undefined reference to `y'"), ['x', 'y'])
+    def test_inferred_padding_mode_is_no_longer_available(self):
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+            executable.main(['--diagnostic-cpe-padding'])
+        self.assertEqual(error.exception.code, 2)
 
-    def test_relocatable_object_cannot_be_packaged_as_an_executable(self):
-        image = RetailImage.synthetic('PSX.EXE', 0x80010000, bytes(8))
-        obj = write_mips_elf(bytes(8), 'entry', 8)
-        with self.assertRaisesRegex(ValueError, 'linked little-endian'):
-            serialize(ELFFile(io.BytesIO(obj)), image)
-
-    def test_container_prefix_is_bounded_by_the_remaining_sector(self):
-        prefix = b'CPE\x01\x08\x00\x03\x90\x00'
-        for remaining in (0, 1, 4, 8, 9, 10, 2047):
-            with self.subTest(remaining=remaining):
-                padding = sector_padding(4096 - remaining, 'cpe-v1-prefix')
-                self.assertEqual(len(padding), remaining)
-                self.assertEqual(padding[:9], prefix[:remaining])
-                self.assertEqual(padding[9:], bytes(max(0, remaining - 9)))
-        with self.assertRaises(ValueError):
-            sector_padding(0, 'unknown')
+    def test_cpe_inspection_keeps_load_order_and_rejects_truncation(self):
+        entry = 0x80010020
+        cpe = (b'CPE\x01\x08\x00\x03\x90\x00' + struct.pack('<I', entry)
+               + b'\x01' + struct.pack('<II', entry, 3) + b'ABC'
+               + b'\x01' + struct.pack('<II', 0x80010000, 4) + b'DATA' + b'\0')
+        self.assertEqual(cpe_loads(cpe), (entry, [(entry, b'ABC'), (0x80010000, b'DATA')]))
+        for broken in (cpe[:-1], cpe[:-2], cpe + b'\0', b'CPE\x01\xff\0'):
+            with self.subTest(broken=broken), self.assertRaises(ValueError):
+                cpe_loads(broken)
 
 
-@unittest.skipUnless(shutil.which('mipsel-linux-gnu-ld'), 'requires pinned GNU MIPS linker')
-class SerializationTests(unittest.TestCase):
-    def test_linked_load_bytes_entry_sector_padding_and_bss_extent(self):
+@unittest.skipUnless(all(shutil.which(tool) for tool in ('cpppsx-257', 'cc1psx-257', 'dosbox-x'))
+                     and all(os.environ.get(key) for key in ('PSYQ_ASPSX', 'PSYQ_BIN', 'PSYQ_LIB',
+                                                             'PSYQ_INCLUDE')),
+                     'requires pinned compiler, original DOS tools and SDK libraries')
+class NativeBuildControls(unittest.TestCase):
+    def manifest(self, root: Path, sources: tuple[str, ...]) -> Manifest:
+        profile = Profile('native-control', 'c', 'gcc257-native', 'O2', 0, '1.07', ('-mcpu=r2000',))
+        units = []
+        for index, source in enumerate(sources):
+            path = root / f'source{index}.c'
+            path.write_text(source)
+            units.append(Unit(f'psx.control{index}', 'PSX.EXE', str(path), profile.name, ()))
+        return Manifest({profile.name: profile}, tuple(units))
+
+    def test_source_objects_and_original_archives_link_without_retail_inputs(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            text = struct.pack('<2I', 0x03e00008, 0)
-            obj = write_mips_elf(text, 'entry', len(text), data=b'DATA', bss_size=32,
-                                 bss_symbols=(DefinedSymbol('state', 0, 32),))
-            (root / 'input.o').write_bytes(obj)
-            (root / 'link.ld').write_text(
-                'SECTIONS { .text 0x80010000 : { *(.text) } '
-                '.data 0x80010008 : { *(.data) } '
-                '.bss 0x80011000 : { *(.bss) } /DISCARD/ : { *(*) } }')
-            subprocess.run(['mipsel-linux-gnu-ld', '-EL', '--entry', 'entry',
-                            '-T', str(root / 'link.ld'), '-o', str(root / 'linked.elf'),
-                            str(root / 'input.o')], check=True, capture_output=True)
-            image = RetailImage.synthetic('PSX.EXE', 0x80010000, bytes(8))
-            linked = ELFFile(io.BytesIO((root / 'linked.elf').read_bytes()))
-            actual, sections = serialize(linked, image)
-            self.assertEqual(len(actual), 0x1000)
+            manifest = self.manifest(root, (
+                'extern int helper(void); int main(void) { return helper(); }\n',
+                'int value = 7; int helper(void) { return value; }\n',
+            ))
+            output = root / 'output'
+            with mock.patch.object(RetailImage, 'load', side_effect=AssertionError('retail input used')):
+                report = build_image('PSX.EXE', manifest, output)
+            self.assertTrue(report['linked'], report.get('error'))
+            self.assertFalse(report['output_rewritten'])
+            self.assertEqual(report['retail_payload_inputs'], [])
+            self.assertEqual([row['file'] for row in report['libraries']], ['LIBSN.LIB', 'LIBAPI.LIB'])
+            self.assertTrue((output / 'U0000.OBJ').read_bytes().startswith(b'LNK\x02'))
+            self.assertTrue((output / 'U0001.OBJ').read_bytes().startswith(b'LNK\x02'))
+            entry, loads = cpe_loads((output / 'PSX.CPE').read_bytes())
+            actual = (output / 'PSX.EXE').read_bytes()
             self.assertEqual(actual[:8], b'PS-X EXE')
-            self.assertEqual(struct.unpack_from('<I', actual, 0x10)[0], 0x80010000)
-            self.assertEqual(struct.unpack_from('<II', actual, 0x18), (0x80010000, 0x800))
-            self.assertEqual(actual[0x800:0x80c], text + b'DATA')
-            self.assertEqual(actual[0x80c:], bytes(0x7f4))
-            self.assertIn({'name': '.bss', 'address': 0x80011000, 'size': 32,
-                           'storage': 'bss'}, sections)
-            # The compatibility tail follows this synthetic link's actual end,
-            # with no retail data available to copy or fixed retail VA to use.
-            compatible, compatible_sections = serialize(linked, image, padding_policy='cpe-v1-prefix')
-            self.assertEqual(compatible[:0x80c], actual[:0x80c])
-            self.assertEqual(compatible[0x80c:0x815], b'CPE\x01\x08\x00\x03\x90\x00')
-            self.assertEqual(compatible[0x815:], bytes(0x7eb))
-            self.assertEqual(compatible_sections, sections)
+            self.assertEqual(struct.unpack_from('<I', actual, 0x10)[0], entry)
+            base = struct.unpack_from('<I', actual, 0x18)[0]
+            for address, payload in loads:
+                offset = 2048 + address - base
+                self.assertEqual(actual[offset:offset + len(payload)], payload)
+            end = max(address + len(payload) for address, payload in loads)
+            self.assertEqual(actual[2048 + end - base:], bytes(len(actual) - 2048 - end + base))
+            for row in report['libraries']:
+                self.assertEqual((output / row['file']).read_bytes(), Path(row['path']).read_bytes())
 
-
-@unittest.skipUnless(shutil.which('dosbox-x') and os.environ.get('PSYQ_RUNTIME26_BIN')
-                     and os.environ.get('PSYQ_BIN'), 'requires both pinned native CPE2X candidates')
-class NativeConverterControls(unittest.TestCase):
-    def test_both_native_converters_emit_zero_tail_under_this_control(self):
-        # This deliberately does NOT establish native provenance for our
-        # inferred retail compatibility rule, despite the matching CPE prefix.
-        for variable in ('PSYQ_BIN', 'PSYQ_RUNTIME26_BIN'):
-            with self.subTest(candidate=variable), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory)
-                shutil.copy2(Path(os.environ[variable]) / 'CPE2X.EXE', root / 'CPE2X.EXE')
-                entry = 0x80010000
-                payload = struct.pack('<II', 0x03e00008, 0)
-                cpe = (b'CPE\x01\x08\x00\x03\x90\x00' + struct.pack('<I', entry)
-                       + b'\x01' + struct.pack('<II', entry, len(payload)) + payload + b'\0')
-                (root / 'TEST.CPE').write_bytes(cpe)
-                (root / 'RUN.BAT').write_bytes(b'cpe2x TEST.CPE > TEST.TXT\r\n')
-                environment = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy',
-                                   XDG_CONFIG_HOME=str(root / 'config'))
-                subprocess.run(['dosbox-x', '-silent', '-fastlaunch', '-set', 'sdl output=surface',
-                                '-c', f'mount c {root}', '-c', 'c:', '-c', 'RUN.BAT', '-exit'],
-                               cwd=root, env=environment, check=True, capture_output=True, timeout=30)
-                self.assertIn('CPE2X Ver1.3', (root / 'TEST.TXT').read_text())
-                actual = (root / 'TEST.EXE').read_bytes()
-                self.assertEqual(len(actual), 4096)
-                self.assertEqual(struct.unpack_from('<I', actual, 0x10)[0], entry)
-                self.assertEqual(struct.unpack_from('<II', actual, 0x18), (entry, 2048))
-                self.assertEqual(actual[2048:2056], payload)
-                self.assertEqual(actual[2056:], bytes(2040))
+    def test_unresolved_source_symbol_fails_without_fallback_or_stale_executable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.manifest(root, (
+                'extern int missing_function(void); int main(void) { return missing_function(); }\n',
+            ))
+            output = root / 'output'
+            output.mkdir()
+            (output / 'PSX.EXE').write_bytes(b'stale result')
+            report = build_image('PSX.EXE', manifest, output)
+            self.assertFalse(report['linked'])
+            self.assertEqual(report['phase'], 'link')
+            self.assertIn('missing_function', report['error'])
+            self.assertFalse((output / 'PSX.EXE').exists())
+            self.assertEqual(report['retail_payload_inputs'], [])
 
 
 if __name__ == '__main__':

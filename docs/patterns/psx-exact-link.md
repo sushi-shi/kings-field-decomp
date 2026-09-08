@@ -1,169 +1,103 @@
-# PSX executable layout and unresolved historical packing
+# PSX source and original-tool executable link
 
-The normal link has **seven differing padding bytes**. Its code and initialized
-data match retail, but historical build reproduction remains open. An inferred
-padding rule can make the file equal; that experiment is opt-in and does not
-establish executable closure from the original toolchain.
+## Match plan and evidence boundary
 
-## Link Match Plan
+Use the existing exact C source and the original library archives. Feed the
+compiler's assembly directly to ASPSX, its object directly to PSYLINK, and
+PSYLINK's CPE directly to CPE2X. Retain remaining file differences. No injected
+padding, copied retail header, ELF section adjustment or library object-format
+conversion is part of executable generation.
 
-Keep the existing exact C body and its SDK/API types unchanged. PSX `main` is
-208 bytes at `80010028`, with fifteen text relocations and two pointer-table
-relocations. The complete source unit owns both 20-byte path strings and the
-eight-byte pointer table. The seven SDK text members and SNDEF data are
-independently identified supplied library inputs, not game progress.
+PSX `main` is 208 bytes at `80010028`, with fifteen text relocation sites.
+Its C unit also owns two 20-byte path arrays and an 8-byte two-pointer table.
+The seven SDK text members and SDK stack-size datum are library inputs, not
+reconstructed game functions. The C source and SDK/API types are unchanged.
 
-1. Preserve the native compiler's explicit section directives in the ELF
-   bridge, checking larger alignment requests, typed word alignment, extents,
-   symbols and actual linked relocation targets with synthetic inputs.
-2. Link complete SDK objects in the independently recovered PSX order.
-3. Account for container metadata and final-sector padding separately from
-   initialized source data and BSS. Use full-file equality without masks.
-4. Rebuild and strictly match PSX, run the repository checks and full build,
-   and report the exact boundaries of any retained compatibility model.
+## Tools and ordinary commands
 
-## Compiler-directed sections
+The compiler is the pinned GCC 2.5.7 PSX rebuild, using the existing `-O2 -G0
+-mcpu=r2000` profile. The preserved ASPSX binary used by upstream's assembler
+[test suite](https://github.com/mkst/maspsx/tree/746b895f02929ecd148af7b1f4ff05b69f973878/aspsx)
+identifies itself as 1.07 and runs under DOSBox-X. Its SHA-256 is:
 
-The real GCC 2.5.7 output places `.align 2` before the path strings, pointer
-table and `main`. GNU ELF assigns ordinary `.text` and `.data` a sixteen-byte
-minimum in addition to those directives. Reassembling the same expanded input
-using neutral section names and then restoring their names produces four-byte
-constraints, with all 208 text, eight pointer-table and forty literal bytes
-unchanged. This uses no retail address to select an alignment.
+```text
+83cfea6712cc444780614b111db6d5cf6046bb25d5070c734a8ae967641050c5
+```
 
-The opt-in `section_alignment = "directives"` profile implements that bridge
-for PSX. Explicit `.align 3` remains eight-byte alignment, `.balign 32` remains
-32, and typed `.word` data still causes GAS's ordinary word alignment. Symbols
-and relocations survive a real GNU link at a four-mod-sixteen text address.
-The bridge does not rewrite `sh_addralign` fields after assembly.
+The flake pins the upstream assembler archive by SHA-256 and extracts only
+this binary. It differs from both previously tested SDK-media ASPSX copies,
+which stopped with a software-key/network-manager error. The exact protection
+mechanism in those copies was not established. The working binary's historical
+use by FromSoftware remains unproved; no modification is applied to it here.
 
-COMMON allocation remains a separate contract. maspsx's expansion can rely on
-implicit BSS alignment, so populated ordinary BSS retains the existing GNU
-constraint. An unused default BSS section is removed; it has no reservation
-and must not round the SDK's BSS end. PSX has no source COMMON allocation.
-The other compiler profiles retain their existing behavior.
+The compiler writes Unix line endings. ASPSX's DOS text reader requires CRLF,
+so file line endings are changed; all directives, instructions, labels and
+literal contents pass through unchanged. ASPSX produces LNK v2 directly.
+The PSX command file is ordinary linker input:
 
-The exact compiler/assembler attribution remains open, as for the existing
-probe. This is a source-assembly-to-ELF contract, not evidence that the rebuilt
-host programs are byte-identical to the historical tools.
+```text
+        org $80010000
+        include "U0000.OBJ"
+        inclib "LIBSN.LIB"
+        inclib "LIBAPI.LIB"
+        regs pc=__SN_ENTRY_POINT
+```
 
-## Whole-object link and container boundary
+The original tools then run:
 
-`kf link --image psx` now passes the complete SDK objects in the recovered
-order: `SNMAIN, A36, C113, C57, C66, C67, C114, SNDEF`. The
-[object-order evidence](../object-link-order.md) predates the executable
-comparison. GNU ld still honors each input's section constraints and applies
-its relocations normally; the linker does not assign individual SDK function
-addresses. All eight original SDK members are independently verified after
-linking: **304 provided bytes and 18 native patch expressions**.
+```text
+aspsx -G0 -o U0000.OBJ U0000.S
+psylink /c @LINK.LNK,PSX.CPE,PSX.SYM,PSX.MAP
+cpe2x PSX.CPE
+```
 
-The resulting initialized image is 560 bytes:
+No library-member extraction order is supplied. Native PSYLINK selects and
+places the original members through its own archive processing. No post-link
+operation modifies its CPE or CPE2X's EXE.
 
-| Range | Provider | Bytes |
+## Result
+
+The native map is:
+
+| Range | Contents | Bytes |
 | --- | --- | ---: |
-| `80010000–80010028` | Compiled C path literals | 40 |
+| `80010000–80010028` | Compiled C path arrays | 40 |
 | `80010028–800100f8` | Compiled C `main` | 208 |
-| `800100f8–80010224` | Seven complete SDK text contributions | 300 |
+| `800100f8–80010224` | Original SDK text | 300 |
 | `80010224–8001022c` | Compiled C pointer table | 8 |
-| `8001022c–80010230` | SDK `SNDEF` stack-size word | 4 |
+| `8001022c–80010230` | SDK stack-size word | 4 |
+| `80010230–80010234` | SDK uninitialized `.sbss` | 4 |
 
-There is no PSX inventory payload or retail-delinked startup input. The entry
-is `80010100`; SDK `.sbss` is four uninitialized bytes at `80010230`, ending
-at `80010234`. All code, data, constants, referents and linked source symbol
-placements agree with retail before container padding is considered.
+All 560 initialized bytes agree with retail at their actual addresses.
+The source's `.align 2` directives become native LNK alignment tag 8, which
+PSYLINK's independent controls establish as four-byte alignment. No GNU ELF
+minimum or section-renaming workaround affects this path.
 
-The 2048-byte header remains an explicit retail template. It contains region
-metadata and apparent uninitialized converter state, including a CPE prefix
-at header offset `88`; entry and load extent are regenerated from the link.
-The final sector contains another CPE v1 prefix immediately after initialized
-data, as independently observed in all three retail images. An optional diagnostic models
-that prefix as magic/version, select-unit-zero and the start of a PC register
-record, followed by zero padding to the sector boundary. It uses the **actual
-linked load end**, without reading retail payload bytes or fixing a retail
-address, and truncates the prefix if fewer than nine padding bytes remain.
-It neither extends a source section nor initializes BSS.
+The unchanged CPE2X 1.3 output is 4096 bytes and has the correct load origin,
+load size and entry (`80010100`). It differs in 59 header bytes and seven
+padding bytes. These are not repaired by copying retail metadata or inserting
+the CPE-shaped tail. Header contents outside defined loader fields appear to
+contain converter runtime residue; exact historical behavior remains open.
+The [tail/BSS evidence](psyq-cpe-tail-and-bss.md) explains why the tail is not
+an initialized source global.
 
-This is an **inferred container compatibility rule**. The report calls its
-mechanism `candidate` and leaves `historical_converter_reproduced` false.
-It does not prove the historical converter or complete source reconstruction.
-The normal command uses zero padding, as both tested native converters do
-under the controlled inputs. On PSX it differs in exactly seven nonzero
-prefix bytes. The assembly bridge and retail header template also remain
-explicit reconstruction inputs; the normal command is not claimed to be the
-historical build process merely because padding inference is disabled.
+## Verification
 
-## Native converter negative controls
+`tests/test_executable.py` compiles two independent C source units and links
+native objects with the unchanged SDK archives, with retail access disabled.
+It verifies original CPE records against the unchanged EXE, and separately
+checks that an undefined source symbol fails without synthesized storage,
+retail fallback or a stale executable. CPE inspection rejects truncated or
+unknown records, and file comparison includes the whole header and tail.
 
-Two distinct supplied binaries both identify themselves as CPE2X 1.3:
+The repository suite passes 720 tests, the native executable controls pass,
+and `ruff check scripts tests` and `nix flake check -L` pass. The PSX function
+remains strict objdiff 100%; no game function is newly reconstructed here.
+Full `kf build` still fails data/ownership/target-placement gates. In
+particular, removing the ELF section adapter restores the GNU analysis path's
+16-byte `.data` alignment mismatch for PSX. Native ASPSX/PSYLINK placement
+is independently correct as shown above; the analysis gate is not bypassed.
 
-| Candidate | SHA-256 |
-| --- | --- |
-| Release 2.5 tool archive | `8ee3df02d30d9269bba8c570d69f3c9d2b59aff98af0fbf796367526bc02ef20` |
-| Runtime 2.6 CD | `641d95ebe8131c3503407518cb6110ed311cb5f87943d866296660ab98938af2` |
-
-The flake pins the [preserved Runtime 2.6 CD](https://archive.org/download/ps1_sdks/Programmer%20Tool%20-%20Runtime%20Library%20Version%202.6%20%28Japan%29%20%28En%2CJa%29_DTL-S2170_redump.zip)
-and verifies each extracted tool hash. `PSYQ_RUNTIME26_BIN` exposes its
-assembler/converter candidates separately from the original archive. Both
-ASPSX candidates remain software-key protected; the second candidate's visible
-version label does not establish its directive behavior.
-
-`tests/test_executable.py` runs both unmodified converters through the pinned
-DOSBox-X on synthetic CPE records. Both produce correct load bytes, entry and
-sector size, but **zero tail padding**. The PSX-sized investigative control
-also produces zeros with each converter. The compatibility rule is therefore
-not attributed to either native binary. The runtime is never executed.
-
-## Result and reproduction
-
-The normal command emits a 4096-byte `PSX.EXE` with **seven differing bytes**,
-all in final-sector padding. Its SHA-256 is:
-
-```text
-ea798637bdebb11e9fe569e0656aa809c8681063808baf6a61d9ab7410417651
-```
-
-`kf link --image psx --diagnostic-cpe-padding` enables the inferred rule and
-writes exclusively under `build/link/diagnostic-cpe-padding/`. Its output and
-reports cannot overwrite the normal link. That diagnostic equals retail:
-
-```text
-670f0ca702570fdb814a73ffa840b97a6584d2753072ea3b55c35541a7cec276
-```
-
-Run in `nix develop` after `kf init`:
-
-```sh
-kf try --unit psx.main
-kf match --unit psx.main
-kf link --image psx
-python3 -m unittest tests.test_asm_sections tests.test_executable tests.test_workflow
-```
-
-Inspect `build/link/psx/comparison.json` for the full-file comparison, section
-extents, source placements, whole-SDK verification and container provenance.
-No game C change or new function match is needed: `main` remains strict 100%.
-Executable closure requires reproducing the assembler/linker/converter
-behavior, rather than adding retail-shaped bytes to obtain this diagnostic hash.
-
-At the initial compatibility checkpoint, all **733 local repository tests**, Ruff, whitespace checks and
-`nix flake check -L` pass. The flake test run has 147 expected skips for local
-retail/artifact-dependent checks; the local run has none. A fresh focused
-compile and repeated compatibility link preserved the exact file hash. Only the
-PSX `main` ledger fingerprint is re-banked for its new profile; its score and
-the exact function count are unchanged, with no banked exact regression.
-
-The full `kf build` remains red on existing reconstruction gates. Source data
-now passes **15/61** units (PSX 1/1, GAME 11/41, OPEN 3/19), SDK data passes
-4/4 contributions, and target relinking passes 110/116 units. PSX's remaining
-known-reference gate records four unresolved indirect BIOS controls; its data
-and target placement checks both pass. There are no comparison artifact
-failures. All three executable links succeed, but GAME and OPEN remain
-non-identical. No game execution is used as validation.
-
-With inferred padding disabled by default, all **734 local tests**, Ruff and
-`nix flake check -L` pass (147 expected flake skips, no local skips). Fresh
-normal and diagnostic links retain seven and zero differing bytes respectively,
-and their complete linked ELF files are byte-identical. The diagnostic cannot
-overwrite normal executables or reports. The full build retains the same
-data/ownership/placement failures above; this correction changes no function
-source, compiler profile or match ledger row.
+Run `kf link --image psx` in `nix develop` after `kf init`. The commands,
+logs, native objects and complete-file report are under `build/link/psx/`.
+The artifact has not been executed as a game.

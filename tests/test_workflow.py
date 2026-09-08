@@ -1,20 +1,17 @@
 from __future__ import annotations
 
 import json
-import hashlib
 import os
-from dataclasses import asdict, replace
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
-from types import SimpleNamespace
 
 from scripts.kf import graph, progress
 from scripts.kf.cli import _bank_functions
 from scripts.kf.delink import Function
 from scripts.kf.graph import _build_line, _script_inputs, _write_generator
-from scripts.kf.manifest import Profile, Unit, load as load_manifest
+from scripts.kf.manifest import Unit, load as load_manifest
 from scripts.kf.objdiff import generate_report
 from scripts.kf.progress import (
     Current,
@@ -111,26 +108,6 @@ class ManifestTests(unittest.TestCase):
 
 
 class ProgressTests(unittest.TestCase):
-    def test_optional_alignment_preserves_old_fingerprints_and_tracks_opt_in(self) -> None:
-        row = sample_current(100.0)
-        profile = Profile(row.unit.profile, 'c', 'gcc260-native', 'O2', 0, '1.07', ())
-        legacy = asdict(profile)
-        del legacy['section_alignment']
-        expected = hashlib.sha256(row.unit.source.encode() + b'\0int sample;\0'
-                                  + json.dumps(legacy, sort_keys=True).encode() + b'\0toolchain').hexdigest()
-        scanner = mock.Mock()
-        scanner.headers.return_value = []
-        with (tempfile.TemporaryDirectory() as directory,
-              mock.patch.object(progress, 'REPO', Path(directory)),
-              mock.patch.object(progress, 'toolchain_identity', return_value='toolchain')):
-            source = Path(directory) / row.unit.source
-            source.parent.mkdir(parents=True)
-            source.write_text('int sample;')
-            manifest = SimpleNamespace(profiles={profile.name: profile})
-            self.assertEqual(progress.input_hash(row.unit, manifest, scanner), expected)
-            manifest.profiles[profile.name] = replace(profile, section_alignment='directives')
-            self.assertNotEqual(progress.input_hash(row.unit, manifest, scanner), expected)
-
     def test_vendored_verification_rows_do_not_enter_progress(self) -> None:
         row = sample_current(100.0)
         vendored = Current(

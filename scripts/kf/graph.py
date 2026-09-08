@@ -404,7 +404,6 @@ def edge_compile(unit_name: str, output: Path) -> int:
         profile.compiler,
         profile.maspsx_flags,
         defines=unit.defines,
-        section_alignment=profile.section_alignment,
     )
     return 0
 
