@@ -269,16 +269,16 @@ void player_sync_position_to_map(void)
 
 ADDRESS(0x80017040, 0xc8)
 s32 player_distance_to_point_in_cone(
-    const struct KfVec3i *point, s16 facing, s32 max_distance, s32 angle_tolerance)
+    const VECTOR *point, s16 facing, s32 max_distance, s32 angle_tolerance)
 {
     s32 distance;
     s16 delta;
 
-    distance = player_distance_to_point(point->x, KF_COLLISION_IGNORE_HEIGHT, point->z, max_distance, 0);
+    distance = player_distance_to_point(point->vx, KF_COLLISION_IGNORE_HEIGHT, point->vz, max_distance, 0);
     if (distance != KF_COLLISION_NONE) {
         delta = (vector_xz_to_angle(
-                     player_state.camera_position.vx - point->x,
-                     point->z - player_state.camera_position.vz)
+                     player_state.camera_position.vx - point->vx,
+                     point->vz - player_state.camera_position.vz)
                  - facing) & KF_ANGLE_WRAP_MASK;
         if (delta > KF_ANGLE_HALF_TURN) {
             delta = KF_ANGLE_FULL_TURN - delta;

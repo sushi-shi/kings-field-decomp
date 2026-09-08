@@ -108,7 +108,7 @@ void player_update(void)
     s32 attachment;
     KfMagicRecord *record;
     KfActor *target;
-    const struct KfVec3i *origin;
+    const VECTOR *origin;
     SVECTOR direction;
     SVECTOR spawn_offset;
     KfRotation effect_rotation;
@@ -448,7 +448,7 @@ void player_update(void)
                     position.vz += player_state.camera_position.vz;
                     effect_rotation.angles.x = player_state.camera_rotation.vx;
                     effect_rotation.angles.z = player_state.camera_rotation.vz;
-                    origin = (const struct KfVec3i *)&player_state.camera_position;
+                    origin = &player_state.camera_position;
                     if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
                         && player_state.weapon_magic_shots_remaining != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
@@ -461,7 +461,7 @@ void player_update(void)
                         attachment = player_state.weapon_magic_shots_remaining & 1;
                     } else {
                         target = actor_pool_find_target_in_cone(
-                            (const struct KfVec3i *)&player_state.camera_position,
+                            &player_state.camera_position,
                             player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
                             PLAYER_WEAPON_MAGIC_TARGET_CONE, &distance);
                         actor_state.player_target = target;

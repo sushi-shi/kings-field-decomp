@@ -372,7 +372,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
     s32 threshold;
 
     target = actor->position;
-    vector3i_add_xz((struct KfVec3i *)&target, delta);
+    vector3i_add_xz(&target, delta);
     result = collision_query_world(
         target.vx,
         target.vy,
@@ -552,7 +552,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
             position.vz += actor->position.vz;
             facing = (KF_ANGLE_HALF_TURN - actor->rotation.angles.y) & KF_ANGLE_WRAP_MASK;
             distance = player_distance_to_point_in_cone(
-                (struct KfVec3i *)&position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
+                &position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
             if (distance == -1) {
                 effect_rotation.angles.x = 0;
                 if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
@@ -658,16 +658,16 @@ void actor_apply_horizontal_movement(void)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition;
-    struct KfVec3i target;
+    VECTOR target;
     s32 result;
 
-    target.x = actor->movement_x + actor->position.vx;
-    target.z = actor->movement_z + actor->position.vz;
+    target.vx = actor->movement_x + actor->position.vx;
+    target.vz = actor->movement_z + actor->position.vz;
     definition = actor_state.current_definition;
     result = collision_query_world(
-        target.x,
+        target.vx,
         actor->position.vy,
-        target.z,
+        target.vz,
         definition->collision_radius,
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
@@ -680,8 +680,8 @@ void actor_apply_horizontal_movement(void)
             actor->movement_x = 0;
         }
     } else {
-        actor->position.vx = target.x;
-        actor->position.vz = target.z;
+        actor->position.vx = target.vx;
+        actor->position.vz = target.vz;
     }
     actor->cell_x = actor->position.vx / KF_MAP_TILE_SIZE;
     actor->cell_z = actor->position.vz / KF_MAP_TILE_SIZE;
@@ -860,7 +860,7 @@ void actor_update_current_action(void)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     struct KfVecXZs direction;
-    struct KfVec3i target;
+    VECTOR target;
     s32 result;
     s32 hit;
     s32 floor_height;
@@ -963,7 +963,7 @@ void actor_update_current_action(void)
             debris = ((u32)rand() * definition->gold_drop_limit) >> ACTOR_GOLD_RANDOM_SHIFT;
             if (debris != 0) {
                 map_object_spawn_actor_debris(
-                    debris, (struct KfVec3i *)&actor->position, -(definition->collision_height >> 1));
+                    debris, &actor->position, -(definition->collision_height >> 1));
             }
             if (actor->slot_state == KF_ACTOR_SLOT_DYNAMIC || actor->slot_state == KF_ACTOR_SLOT_RESPAWNING) {
                 if (definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_DROP_DISABLED) && definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != ACTOR_DEFINITION_DROP_UNSET
@@ -971,14 +971,14 @@ void actor_update_current_action(void)
                     map_object_spawn_effect(
                         KF_MAP_OBJECT_DROP_FROM_DEFINITION,
                         KF_ENUM_DECODE(KfMapObjectId, definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT]),
-                        (struct KfVec3i *)&actor->position,
+                        &actor->position,
                         -(definition->collision_height >> 1));
                 }
             } else if (actor->death_drop_object_id != KF_MAP_OBJECT_DROP_DISABLED) {
                 map_object_spawn_effect(
                     KF_MAP_OBJECT_DROP_FROM_PLACEMENT,
                     actor->death_drop_object_id,
-                    (struct KfVec3i *)&actor->position,
+                    &actor->position,
                     -(definition->collision_height >> 1));
             }
         }
@@ -1153,15 +1153,15 @@ void actor_update_current_action(void)
         result = collision_query_world(
             actor->position.vx, KF_COLLISION_IGNORE_HEIGHT, actor->position.vz, definition->collision_radius, 0, ACTOR_WALK_COLLISION_FLAGS);
         if (result != KF_COLLISION_NONE) {
-            target.x = actor->position.vx;
-            target.z = actor->position.vz;
+            target.vx = actor->position.vx;
+            target.vz = actor->position.vz;
             angle_to_forward_xz(actor->rotation.angles.y, &direction);
             vector2s_scale_shift11(definition->move_speed, &direction);
             vector3i_add_xz(&target, &direction);
-            if (actor_pool_find_overlap(target.x, KF_COLLISION_IGNORE_HEIGHT, target.z, definition->collision_radius, 0)
+            if (actor_pool_find_overlap(target.vx, KF_COLLISION_IGNORE_HEIGHT, target.vz, definition->collision_radius, 0)
                 == -1) {
-                actor->position.vx = target.x;
-                actor->position.vz = target.z;
+                actor->position.vx = target.vx;
+                actor->position.vz = target.vz;
             }
         } else {
             actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;

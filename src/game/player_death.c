@@ -566,7 +566,7 @@ void player_apply_damage(
 
 ADDRESS(0x800166b4, 0x130)
 void player_apply_radial_damage(
-    const struct KfVec3i *origin,
+    const VECTOR *origin,
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
@@ -582,7 +582,7 @@ void player_apply_radial_damage(
     u16 attenuation;
     u32 value;
 
-    distance = player_distance_to_point(origin->x, origin->y, origin->z, radius, radius);
+    distance = player_distance_to_point(origin->vx, origin->vy, origin->vz, radius, radius);
     if (distance == -1) {
         return;
     }

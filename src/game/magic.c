@@ -78,7 +78,7 @@ void magic_cast(void)
         world_pos.vy += player_state.camera_position.vy;
         world_pos.vz += player_state.camera_position.vz;
         target = actor_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         actor_state.player_target = target;
         if (target == 0) {
@@ -136,7 +136,7 @@ void magic_cast(void)
         KfActor *target;
 
         target = actor_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         if (target != 0) {
             effect_pool_construct(

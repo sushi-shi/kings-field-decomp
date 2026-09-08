@@ -268,7 +268,7 @@ extern void player_apply_damage(
     u16 scale_q12, u16 multiplier_tenths);
 extern void player_begin_weapon_attack(void);
 extern void player_apply_radial_damage(
-    const struct KfVec3i *origin, u32 radius, u16 falloff_q12, u16 base_power,
+    const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
     u16 component0, u16 component1, u16 component2, u16 component3, u16 component4,
     u16 scale_q12, u16 multiplier_tenths);
 extern s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack);
@@ -282,7 +282,7 @@ extern s32 player_distance_to_point(
     s32 point_x, s32 point_y, s32 point_z, s32 max_distance,
     s32 point_height);
 extern s32 player_distance_to_point_in_cone(
-    const struct KfVec3i *point, s16 facing, s32 max_distance,
+    const VECTOR *point, s16 facing, s32 max_distance,
     s32 angle_tolerance);
 extern void player_equip_weapon(KfItemId weapon_id);
 extern void game_initialize_session(void);

@@ -182,7 +182,7 @@ void player_use_item(KfItemId item_id)
         return;
     case KF_ITEM_MIRROR_OF_TRUTH:
         actor = actor_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy,
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,
@@ -192,7 +192,7 @@ void player_use_item(KfItemId item_id)
             return;
         }
         event = map_event_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy,
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,

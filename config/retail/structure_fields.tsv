@@ -774,9 +774,6 @@ KfTmdState	0x00	0x20	slots	u8 *[8]	supported	game_render.h;game_semantic_display
 KfTmdState	0x20	0x04	current_asset	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
 KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfVec3i	0x00	0x04	x	s32	supported	game_math.h;asm;xrefs	x coordinate
-KfVec3i	0x04	0x04	y	s32	supported	game_math.h;asm;xrefs	y coordinate
-KfVec3i	0x08	0x04	z	s32	supported	game_math.h;asm;xrefs	z coordinate
 KfVec3s	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
 KfVec3s	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y coordinate
 KfVec3s	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate

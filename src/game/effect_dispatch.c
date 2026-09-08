@@ -482,12 +482,12 @@ play_phase_sound:
             power = effect_magic_power(effect);
             if (effect->phase & 1) {
                 actor_pool_apply_radial_damage(
-                    (const struct KfVec3i *)&effect->position,
+                    &effect->position,
                     radius, KF_FIXED12_ONE, power,
                     0, 0, 0, magic->damage_components[0],
                     magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
-                    (const struct KfVec3i *)&effect->position,
+                    &effect->position,
                     radius, KF_FIXED12_ONE, power,
                     0, 0, 0, magic->damage_components[0],
                     magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
@@ -526,7 +526,7 @@ randomize_homing_direction:
                 effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
             } else {
                 target = actor_pool_find_target_in_cone(
-                    (const struct KfVec3i *)&effect->position,
+                    &effect->position,
                     effect->rotation.vector.vy, HOMING_TARGET_MAX_DISTANCE, HOMING_TARGET_CONE_ANGLE, &target_distance);
                 if (target != 0) {
                     KfActorDefinition *definition =
@@ -608,7 +608,7 @@ randomize_homing_direction:
         goto advance_effect_phase;
 
     case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST: {
-        struct KfVec3i position;
+        VECTOR position;
 
         if (phase > LIGHTNING_BLAST_PHASE_LAST) {
             goto invalidate_and_advance;
@@ -621,9 +621,9 @@ randomize_homing_direction:
         if (phase & 1) {
             u32 damage_radius;
 
-            position.x = effect->position.vx;
-            position.y = KF_COLLISION_IGNORE_HEIGHT;
-            position.z = effect->position.vz;
+            position.vx = effect->position.vx;
+            position.vy = KF_COLLISION_IGNORE_HEIGHT;
+            position.vz = effect->position.vz;
             damage_radius = phase * LIGHTNING_BLAST_RADIUS_STEP;
             power = effect_magic_power(effect);
             actor_pool_apply_radial_damage(
@@ -699,12 +699,12 @@ advance_effect_phase:
                     &spawn_position, &effect->rotation.vector);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
-                    (const struct KfVec3i *)&effect->position,
+                    &effect->position,
                     GROUND_BRANCH_DAMAGE_RADIUS, KF_FIXED12_ONE, power, 0, 0, 0,
                     magic->damage_components[0],
                     magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
-                    (const struct KfVec3i *)&effect->position,
+                    &effect->position,
                     GROUND_BRANCH_DAMAGE_RADIUS, KF_FIXED12_ONE, power, 0, 0, 0,
                     magic->damage_components[0],
                     magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
@@ -740,19 +740,19 @@ advance_effect_phase:
             scale_phase = effect->phase;
             goto publish_actor_spawner_scale;
         } else if (phase < ACTOR_SPAWNER_TRAVEL_LAST + 1) {
-            struct KfVec3i position;
+            VECTOR position;
 
-            position.x = effect->position.vx + (s16)effect->direction.words.x;
-            position.z = effect->position.vz + (s16)effect->direction.words.z;
-            position.y = effect->position.vy;
+            position.vx = effect->position.vx + (s16)effect->direction.words.x;
+            position.vz = effect->position.vz + (s16)effect->direction.words.z;
+            position.vy = effect->position.vy;
             value = collision_query_world(
-                position.x, position.y, position.z, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
+                position.vx, position.vy, position.vz, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
                 KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
             if ((phase == ACTOR_SPAWNER_TRAVEL_LAST && value != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
                 effect->phase = ACTOR_SPAWNER_WAIT_FIRST;
             } else {
-                effect->position.vx = position.x;
-                effect->position.vz = position.z;
+                effect->position.vx = position.vx;
+                effect->position.vz = position.vz;
                 effect->control.frames_remaining--;
             }
             if (phase == ACTOR_SPAWNER_TRAVEL_LAST) {
@@ -762,16 +762,16 @@ advance_effect_phase:
         } else if (phase < ACTOR_SPAWNER_SHRINK_FIRST) {
             if (phase == ACTOR_SPAWNER_CREATE_PHASE) {
                 struct KfVec3s actor_rotation;
-                struct KfVec3i position;
+                VECTOR position;
 
-                position.x = effect->position.vx;
-                position.y = effect->position.vy + ACTOR_SPAWNER_CREATE_Y_OFFSET;
-                position.z = effect->position.vz;
+                position.vx = effect->position.vx;
+                position.vy = effect->position.vy + ACTOR_SPAWNER_CREATE_Y_OFFSET;
+                position.vz = effect->position.vz;
                 actor_rotation.x = 0;
                 actor_rotation.z = 0;
                 actor_rotation.y = vector_xz_to_angle(
-                    player_state.camera_position.vx - position.x,
-                    player_state.camera_position.vz - position.z);
+                    player_state.camera_position.vx - position.vx,
+                    player_state.camera_position.vz - position.vz);
                 value = rand();
                 if (value < ACTOR_SPAWNER_SELECTION_RANDOM_CUTOFF) {
                     actor_pool_spawn(2, &position, &actor_rotation);

@@ -120,7 +120,7 @@ s32 map_event_distance_to_point(
 
 ADDRESS(0x80033b8c, 0x144)
 KfMapEvent *map_event_pool_find_target_in_cone(
-    const struct KfVec3i *origin,
+    const VECTOR *origin,
     s16 facing,
     s32 max_distance,
     s32 angle_tolerance,
@@ -139,12 +139,12 @@ KfMapEvent *map_event_pool_find_target_in_cone(
         if (event->state != KF_MAP_EVENT_ACTIVE) {
             continue;
         }
-        distance = map_event_distance_to_point(event, origin->x, origin->z, max_distance);
+        distance = map_event_distance_to_point(event, origin->vx, origin->vz, max_distance);
         if (distance == -1) {
             continue;
         }
         angle = vector_xz_to_angle(
-            event->reference_position.vx - origin->x, origin->z - event->reference_position.vz) - facing;
+            event->reference_position.vx - origin->vx, origin->vz - event->reference_position.vz) - facing;
         angle &= KF_ANGLE_WRAP_MASK;
         folded = angle;
         if (angle >= KF_ANGLE_HALF_TURN + 1) {

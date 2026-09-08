@@ -147,7 +147,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
  * the 170.. or 180.. effect range, then starts its action by id band.
  */
 ADDRESS(0x80031834, 0x194)
-void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const struct KfVec3i *position, s32 y_offset)
+void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset)
 {
     u16 *sequence;
     u16 first_index;
@@ -163,9 +163,9 @@ void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const struct KfVe
     object = map_object_effect_pool_acquire(first_index, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
     object->object_id = object_id;
-    object->position.vx = position->x;
-    object->position.vy = y_offset + position->y;
-    object->position.vz = position->z;
+    object->position.vx = position->vx;
+    object->position.vy = y_offset + position->vy;
+    object->position.vz = position->vz;
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
@@ -184,7 +184,7 @@ void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const struct KfVe
 
 /* Spawns debris object 39 for SOURCE at a random bearing 600 units from POSITION. */
 ADDRESS(0x800319c8, 0x18c)
-void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s32 y_offset)
+void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset)
 {
     KfMapObject *object;
     u16 *sequence;
@@ -197,9 +197,9 @@ void map_object_spawn_actor_debris(u16 source, const struct KfVec3i *position, s
     /* Gold drops store their amount across the link and parameter bytes. */
     object->link.gold_amount = source;
     angle = (u32)rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
-    object->position.vx = ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->x;
-    object->position.vy = y_offset + position->y;
-    object->position.vz = ((rcos(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->z;
+    object->position.vx = ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx;
+    object->position.vy = y_offset + position->vy;
+    object->position.vz = ((rcos(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz;
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
@@ -274,8 +274,8 @@ void map_object_pool_update(void)
     KfEffectRecord *record;
     const SoundRef *sound;
     u8 *counter;
-    struct KfVec3s direction;
-    struct KfVec3i point;
+    SVECTOR direction;
+    VECTOR point;
     s16 count;
     u16 timer;
     u16 elapsed;
@@ -435,25 +435,25 @@ void map_object_pool_update(void)
                 }
                 switch (object->object_id) {
             case KF_MAP_OBJECT_PROJECTILE_EMITTER:
-                direction.y = 0;
-                direction.x = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.z = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vy = 0;
+                direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
-                    &object->position.vx,
+                    &object->position,
                     &direction,
                     &object->rotation.vector);
                 object->action_timer = (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
-                direction.y = 0;
-                direction.x = (rsin(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
-                direction.z = (-rcos(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
-                point.x = object->position.vx;
-                point.z = object->position.vz;
-                point.y = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
+                direction.vy = 0;
+                direction.vx = (rsin(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-rcos(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                point.vx = object->position.vx;
+                point.vz = object->position.vz;
+                point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -464,12 +464,12 @@ void map_object_pool_update(void)
                 object->action_timer = (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
-                direction.y = 0;
-                direction.x = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.z = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                point.x = object->position.vx;
-                point.z = object->position.vz;
-                point.y = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
+                direction.vy = 0;
+                direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                point.vx = object->position.vx;
+                point.vz = object->position.vz;
+                point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -484,20 +484,20 @@ void map_object_pool_update(void)
                 if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
                     break;
                 }
-                direction.y = 0;
-                direction.x = (rsin(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.z = (-rcos(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vy = 0;
+                direction.vx = (rsin(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-rcos(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 switch (object->rotation.angles.y) {
                 case 0:
-                    point.x = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
-                    point.z = object->position.vz + MAP_BOSS_EMITTER_Z_OFFSET;
+                    point.vx = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
+                    point.vz = object->position.vz + MAP_BOSS_EMITTER_Z_OFFSET;
                     break;
                 case KF_ANGLE_HALF_TURN:
-                    point.x = object->position.vx - MAP_BOSS_EMITTER_X_OFFSET;
-                    point.z = object->position.vz - MAP_BOSS_EMITTER_Z_OFFSET;
+                    point.vx = object->position.vx - MAP_BOSS_EMITTER_X_OFFSET;
+                    point.vz = object->position.vz - MAP_BOSS_EMITTER_Z_OFFSET;
                     break;
                 }
-                point.y = object->position.vy + MAP_BOSS_EMITTER_Y_OFFSET;
+                point.vy = object->position.vy + MAP_BOSS_EMITTER_Y_OFFSET;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,

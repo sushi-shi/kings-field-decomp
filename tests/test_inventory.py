@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 108)
-        self.assertEqual(counts["structure_fields"], 816)
-        self.assertEqual(counts["structure_fields_named"], 729)
+        self.assertEqual(counts["structures"], 107)
+        self.assertEqual(counts["structure_fields"], 813)
+        self.assertEqual(counts["structure_fields_named"], 726)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -624,7 +624,6 @@ class InventoryTests(unittest.TestCase):
         for structure in (
             "KfVecXZs",
             "KfVec3s",
-            "KfVec3i",
             "KfEulerAngles",
         ):
             declaration = f"struct {structure} {{"

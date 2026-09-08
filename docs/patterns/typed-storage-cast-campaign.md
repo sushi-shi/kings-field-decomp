@@ -159,3 +159,9 @@ The [weapon render stage](typed-weapon-render.md) types the proven projection,
 translation and SDK rotation fields, identifies the loader's mirrored Y angle,
 and removes nine more C pointer casts. All 20 compared bodies are unchanged;
 the C pointer count is 530, down 276 from the original count.
+
+The [position-interface stage](typed-position-interfaces.md) removes the
+remaining duplicate three-word position type and eighteen C pointer casts,
+while retaining genuine six-byte vector types at their separate boundaries.
+Map-emitter SDK inputs now have complete SDK extents. All 107 compared bodies
+are unchanged; 512 C pointer casts remain, down 294 from the initial count.

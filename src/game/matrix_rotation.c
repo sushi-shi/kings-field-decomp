@@ -202,10 +202,10 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
 
 ADDRESS(0x80014f40, 0x2c)
 void vector3i_add_xz(
-    struct KfVec3i *destination, const struct KfVecXZs *delta)
+    VECTOR *destination, const struct KfVecXZs *delta)
 {
-    destination->x += delta->x;
-    destination->z += delta->z;
+    destination->vx += delta->x;
+    destination->vz += delta->z;
 }
 
 ADDRESS(0x80014f6c, 0x3c)

@@ -98,7 +98,6 @@ KfTmdHeader	0xc	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Forma
 KfTmdObject	0x1c	supported	tmd.h;game_semantic_display_tmd.tsv;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	seven-word object record shared by both overlays; full primitive count used by renderers and narrowed by preparation
 KfTmdState	0x24	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 KfTmdStateOpen	0xc	supported	open_render.h;asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
-KfVec3i	0x0c	supported	game_math.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	game_math.h;asm;xrefs	three signed halfword coordinates
 KfVecXZs	0x04	supported	game_math.h;asm;xrefs	two signed horizontal halfword coordinates
 KfWeaponRecord	0x2c	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with combat fields, projection distance, signed render translation and SDK rotation
