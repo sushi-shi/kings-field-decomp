@@ -84,8 +84,10 @@ Recorded residues (not steered):
   table base as `&asset_load_buffer + 0x20` and keeps `&asset_load_buffer`
   and later `&ordering_table` in `s2` across calls; the first needs a display
   state struct spanning `0x80070e9c..0x80090ebc`.
-- `memory_card_show_status_message`: the probe copies the call result to
-  `a0`/`v1` before the `!= 1` test; retail keeps it in `v0`.
+- `memory_card_show_status_message` is now **100%** with its
+  [incomplete C return contract](game-status-result-traces.md). All five
+  callers discard the result; retaining only the explicit failure return
+  removes the invented forwarding return and the extra call-result copy.
 - `talk_show_indexed_image` `0x8002c9d4`: retail materializes
   `&talk_image_path_template[6]` and derives the call argument as `-6`; the
   probe anchors on the first store (`[0xa]`); chained assignments did not
@@ -652,7 +654,7 @@ the pointer/register differences remain unattributed.
 | --- | --- | --- |
 | `bne mv,3 -> L; nop; jal audio_play_current_map_sequence; L: jal func_80020a2c` | only the sequence call is conditional on `map_variant == 3`; `func_80020a2c()` runs on both paths. The earlier reconstruction nested both calls, which also let reorg copy the target's `li v0,1` into the branch slot | `player_warp_to_floor_entry` `0x80017cf8` |
 | `beq distance,-1 -> ret; move v0,s1` and the epilogue starting with `move v0,s1` | one `return distance;` at the end with the cone test nested under `if (distance != -1)`; reorg copies the epilogue's move into both branch slots. An early `return distance;` yields a separate return block and an empty slot | `player_distance_to_point_in_cone` `0x80017108` |
-| residue: `li v1,1; bne v0,v1; nop; li v0,-1` with the call result never copied out of `v0` | every spelling tried (`if (r != 1) return r; return -1;`, the flipped test, `if (r == 1) r = -1;`, `?:`, `goto`) copies the result to another register first because the constant 1 takes `v0` in local-alloc. Unattributed | `memory_card_show_status_message` `0x8002c510` |
+| `li v1,1; bne v0,v1; nop; li v0,-1` with the call result never copied out of `v0` | [Exact source](game-status-result-traces.md) has only `if (r == 1) return -1;` and falls through otherwise; every retail caller discards the result. Earlier explicit-success-return trials imposed an unsupported C contract. | `memory_card_show_status_message` `0x8002c510` |
 
 ### Display initialization (`func_8001bb94`)
 

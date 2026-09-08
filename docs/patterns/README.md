@@ -18,6 +18,9 @@ promotes a probe to a proven historical toolchain.
   the rejected scroll-enable equality's new reload requirement.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
+- [game-status-result-traces.md](game-status-result-traces.md): exact status
+  message mapper through its incomplete C return contract; all callers discard
+  the result, with raw-byte and forwarding/fallthrough controls.
 - [game-dialogue-path-traces.md](game-dialogue-path-traces.md): rejected
   independent directory-byte and advancing-cursor controls, with three-compiler
   parity and preservation of all 23 sibling bodies.

@@ -1,5 +1,11 @@
 # GAME save/message presentation matching
 
+The [status return-contract follow-up](game-status-result-traces.md) closes
+GAME `8002c510` at strict 100%. The inferred explicit success return was not
+supported by its five callers, all of which discard the result. The retained
+C returns -1 only on loader failure and otherwise falls through. The dialogue
+path remains open at 98.780490%; the earlier trials below are historical.
+
 ## Function Match Plan
 
 Continue the GCC 2.5.7 instrumentation campaign with the two remaining

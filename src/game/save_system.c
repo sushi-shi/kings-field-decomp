@@ -730,10 +730,10 @@ s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status)
         break;
     }
     result = menu_load_message_image(message);
-    if (result != 1) {
-        return result;
+    if (result == 1) {
+        return -1;
     }
-    return -1;
+    /* All retail callers discard the result; success falls through. */
 }
 
 ADDRESS(0x8002c5e0, 0x12c)

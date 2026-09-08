@@ -225,11 +225,12 @@ remains a candidate pending a caller or translation-unit boundary.
 
 The band is reconstructed as the single module `src/game/save_system.c`
 (unit `game.save_system`, 24 claimed functions, `0x8002b078..0x8002ca78`).
-Twenty-two functions are strict 100%. The remaining two carry recorded
-residues listed under "save" in
-[`patterns/source-shapes-gcc257.md`](patterns/source-shapes-gcc257.md):
-`memory_card_show_status_message` (97.980770%) and `talk_show_indexed_image`
-(98.780490%). `KfSavePayload` names the four copied ranges by their established
+Twenty-three functions are strict 100%. `talk_show_dialogue_page` remains
+98.780490%. The [status-message closure](patterns/game-status-result-traces.md)
+recovers a non-void C function with only an explicit failure return; its
+success path falls through and every retail caller discards the result.
+The missing-return warning is retained, and no successful C return value
+is promised. `KfSavePayload` names the four copied ranges by their established
 state owners while retaining the measured word-copy alignment. Graphics
 references use the shared display-state declarations. The summary-field
 and workspace naming changes preserve every instruction and relocation.
