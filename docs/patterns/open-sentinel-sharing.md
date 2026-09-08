@@ -1175,3 +1175,21 @@ at 80016bfc. Thus deriving retained draw pointers from these SDK return values
 would introduce a dependency absent from retail's separate-compilation call
 sequence. No return-capturing candidate is generated. This excludes a
 specific pointer-origin proposal; it does not change the authentic API types.
+
+### Earlier color-consumer roles versus frame-loop scope
+
+Two additional open-remaining reports, `20260908-041354` and
+`20260908-051201`, contain 40 color-pointer role states each, respectively on
+the canonical and biased-countdown sources. They already cover draw-only,
+interpolation-only and bottom-only roles using `top_color_arg` and
+`bottom_color_arg`. Searches tied to the newer variable names would miss them.
+
+The reports retain 20 and 25 C files. In all 45 saved sources, any explicit
+color pointer is declared outside the frame loop. For example state16 in
+041354 initializes the interpolation-only top pointer beside the color
+objects; state3 does the same for a bottom-only pointer, and state32 declares
+top there but assigns its address immediately before the frame loop. None of
+those saved sources declares the pointer inside that loop. This limits the
+recent controls' novelty to frame-loop scope/lifetime with the retained
+source, not the consumer-role idea itself. Missing saved states are not
+inferred from report names alone, and no old source is recompiled here.
