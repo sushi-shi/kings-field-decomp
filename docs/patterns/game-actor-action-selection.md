@@ -293,3 +293,79 @@ helper: fresh raw controls preserve every other actor body and ordered
 relocation, and this selector remains 96.333336%. All 678 tests, Ruff and
 diff checks pass; the full build retains the existing data/ownership/placement
 failures. No profile-selector source or signature change is kept or banked.
+
+## GCC 2.5.7 shared-exit closure
+
+Function Match Plan at `695d1ae`: revisit GAME `8002e0f0 / 504` with the
+current pinned compiler and unchanged O2/G0/R2000 profile. Refresh all six
+semantic views, all three callers, angle callees, exact neighbors, shared
+owners and source history. The actor unit now has 27 exact siblings. The
+selector starts at 95.539680%, 508 bytes: the later enum-domain conversion
+introduced a byte cast before assignment to the existing halfword local.
+Retail requires a five-bit mask followed by a halfword use, without that
+intervening byte narrowing. Decode directly to the existing promoted
+`KF_ENUM_PARAM(KfEffectKind, u16)` type; preserve the signature and callers.
+
+Then investigate the shared address and exit structure. CSE1 and CSE2 both
+leave the actor cursor as an independent constant in the baseline, unlike
+OPEN's address that is initially shared and later folded. Test the retail
+rejection join, the observed cursor-before-count initialization, and finally
+the common accepted return, one source fact per focused compile. No pointer
+arithmetic, extra value carriers, register hints, profile changes or broad
+source permutations are involved.
+
+| Retained composition | Strict objdiff | Bytes | Differing resolved words |
+| --- | ---: | ---: | ---: |
+| Halfword enum conversion | 96.333336% | 504 | 32 |
+| Shared rejected return | 98.055560% | 504 | 11 |
+| Cursor before count initialization | 99.642860% | 504 | 9 |
+| Shared accepted return | **100%** | 504 | **0** |
+
+The rejected return makes the facing-success label single-use before CSE.
+The uninstrumented debugger observes branch UID166 to label179 with status
+`AROUND` in both passes. The former two-use success label was not followed.
+`use_related_value` now returns `player_position_pseudo - 9216` for the actor
+cursor; previously it returned no related value in either pass. Subsequent
+path rescans can still return null, so the positive observation is checked
+against the surviving RTL and final object. The player-position base remains
+in s0 across three calls, and all five retail address pairs agree.
+
+Only the s2/s3 exchange remains after correcting the two initializers.
+The real allocation records explain the successful-return control:
+
+| Value and source form | References | Calls crossed | Live length | Hard register |
+| --- | ---: | ---: | ---: | --- |
+| Action, separate accepted returns | 4 | 4 | 93 | s2 |
+| Profile, separate accepted returns | 3 | 4 | 55 | s3 |
+| Action, shared accepted return | 3 | 4 | 92 | s3 |
+| Profile, shared accepted return | 3 | 4 | 55 | s2 |
+
+`global.c:allocno_compare` orders these measured reference/lifetime values;
+the shared result lowers action's priority below profile's. Final delay-slot
+placement still emits the retail's separate byte masks. Source result uses
+and final instruction occurrences therefore cannot be counted interchangeably.
+This explains the current Decompals probe, without claiming historical GCC
+attribution or a general register-allocation workaround.
+
+Native, instrumented and uninstrumented-debugger compilations agree as whole
+objects for the width, rejection and final controls. A reduced selector with
+the same gate/scan shape independently acquires a related object-base
+expression when its rejection exits are shared. Its retained base and
+allocation differ from the real selector; it is an address-sharing control,
+not an assertion that every shared exit produces the same registers.
+Generated plans, all four trials, debugger observations and raw audits are
+under `build/gcc257/game-actor-revisit/`.
+
+Final verdict: all 126 words match literal retail after resolving curated
+relocations, including all constants, branches, calls, loads and delay slots.
+Every other actor function is unchanged; all 27 prior exact siblings remain
+raw exact. The radial-damage helper was inspected as a related constant-sharing
+case but is unchanged at 90.087300% and is not banked. The selector remains
+custom game policy; its BIOS RNG calls are not counted as reconstructed code.
+
+Focused recompilation and full `kf build` move GAME from **329/362 to
+330/362 exact**, with OPEN 106/108 and PSX 1/1 unchanged. Ruff, all 710 tests
+(nine skips), `nix flake check -L` and diff checks pass. The full build still
+exits nonzero on the already documented data extent, ownership and section
+placement failures; there are no function-report failures or lost exact
+functions. Only GAME `8002e0f0` receives the new strict-100% bank entry.

@@ -828,7 +828,7 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
 ADDRESS(0x8002e0f0, 0x1f8)
 KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, u16 profile_index, u16 chance)
 {
-    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KfEffectKind, profile_index & KF_ACTOR_EFFECT_KIND_MASK);
+    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16), profile_index & KF_ACTOR_EFFECT_KIND_MASK);
     KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
     s32 odds;
@@ -850,7 +850,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
     if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
-        return KF_ACTOR_ACTION_NONE;
+        goto rejected;
     }
     if (!angle_within_tolerance(
             actor->rotation.y,
@@ -859,13 +859,13 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
                 actor_state.player_position.vz - actor->position.vz),
             KF_ACTOR_AIM_TOLERANCE)
         && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
-        return KF_ACTOR_ACTION_NONE;
+        goto rejected;
     }
     if (profile != KF_EFFECT_KIND_ACTOR_SPAWNER) {
-        return action;
+        goto accepted;
     }
-    count = 0;
     candidate = actor_state.actors;
+    count = 0;
     index = KF_ACTOR_CAPACITY - 1;
     do {
         if (candidate->slot_state != KF_ACTOR_SLOT_FREE && candidate->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
@@ -881,8 +881,11 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         }
         record++;
     } while (--index != -1);
-    if (count < ACTOR_SPAWNER_POPULATION_LIMIT) {
-        return action;
+    if (count >= ACTOR_SPAWNER_POPULATION_LIMIT) {
+        goto rejected;
     }
+accepted:
+    return action;
+rejected:
     return KF_ACTOR_ACTION_NONE;
 }
