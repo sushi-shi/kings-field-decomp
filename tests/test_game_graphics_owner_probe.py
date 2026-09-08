@@ -256,6 +256,15 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'game.geometry_render': {
                 'render_weapon', 'render_effect_sprites', 'render_hud_gauges',
             },
+            'game.pool': {
+                'pool_reset', 'pool_mark_allocated', 'pool_release_all',
+                'pool_release_stale', 'pool_allocate',
+            },
+        }
+        controls = {'game.pool': {'render_bind_animated_instance', 'pool_record_release'}}
+        pool_base_lows = {
+            'pool_reset': 0x4, 'pool_mark_allocated': 0x4, 'pool_release_all': 0x18,
+            'pool_release_stale': 0x1C, 'pool_allocate': 0x4,
         }
         # Size and first raw divergence are observed symptoms, not attributed
         # compiler mechanisms. The remaining partial suffix is not banked.
@@ -271,7 +280,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             with self.subTest(unit=name), tempfile.TemporaryDirectory() as directory:
                 obj = self.compile(Path(directory), unit, candidate_source(unit, names))
                 for claim in unit.functions:
-                    if claim.symbol not in names:
+                    if claim.symbol not in names | controls.get(name, set()):
                         continue
                     with self.subTest(function=claim.symbol):
                         actual, calls, targets = linked_words(obj, unit, claim, data, functions)
@@ -290,10 +299,20 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                             self.assertEqual(targets, addresses)
                         else:
                             self.assertEqual(actual, expected)
-                            if any(ORIGIN <= target < ORIGIN + EXTENT for target in targets):
+                            if (claim.symbol in controls.get(name, set())
+                                    or any(ORIGIN <= target < ORIGIN + EXTENT for target in targets)):
                                 wrong, same_calls, _ = linked_words(
                                     obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
-                                self.assertNotEqual(wrong, expected)
+                                if claim.symbol in controls.get(name, set()):
+                                    self.assertEqual(wrong, expected)
+                                else:
+                                    self.assertNotEqual(wrong, expected)
+                                if claim.symbol in pool_base_lows:
+                                    self.assertEqual(targets, [0x800910C0])
+                                    self.assertEqual(
+                                        [4 * i for i, (a, b) in enumerate(zip(wrong, expected)) if a != b],
+                                        [pool_base_lows[claim.symbol]],
+                                    )
                                 self.assertEqual(same_calls, calls)
 
     def test_floor_item_counter_requires_direct_member_access(self):

@@ -514,3 +514,59 @@ target relinks 1/1, 75/77 and 34/38 for PSX/GAME/OPEN, respectively. Its six
 conflicting section bases and incomplete ownership remain; there are zero
 artifact failures. No production source, header, fixture layout, inventory or
 banking entry changes.
+
+### Pool lifecycle consumer audit at `81fa559`
+
+Function Match Plan: extend the unchanged complete-owner fixture to the five
+pool scans in `game.pool`. Their shared twelve-record cache, initialization
+and frame sweep connect this campaign. Read all six GAME semantic views for
+the scans and release helper, all fifteen caller windows, adjacent binder/item
+boundaries, current source/history and the existing animation-cache dossier.
+The binder and record-release helper remain unmodified whole-unit controls.
+No registry, projection or morph capacity is inferred, and no production
+source, DATA claim, signature, profile or relocation inventory changes.
+
+| GAME function | Retail bytes; frame; calls | Preserved evidence |
+| --- | --- | --- |
+| `80020978 pool_reset` | 48; leaf; 0 | Clear state and cached-vertex pointer across twelve 20-byte records; unsigned-halfword countdown, pointer step in branch slot. |
+| `800209a8 pool_mark_allocated` | 60; leaf; 0 | Signed-halfword state read; change every nonzero state to stale 1, retaining the twelve-record scan and delay slots. |
+| `80020a2c pool_release_all` | 108; 32; 1 | Signed-halfword 11-to-minus-one loop, release nonzero states, preserve repeated decrement and record argument in call slot. |
+| `80020a98 pool_release_stale` | 108; 40; 1 | Unsigned-halfword twelve-count loop, release only state 1; decrement in predicate slot and record step in backedge slot. |
+| `80020b04 pool_allocate` | 72; leaf; 0 | Return first free record after setting clip=255; do not mark it live. Exhaustion returns null through the validated internal jump. |
+| `800209e4 pool_record_release` | 72; 24; 1 | Independent control: clear state and caller's slot, free a nonnull vertex allocation, then clear that pointer. |
+
+All scans have one validated pool address pair; only allocation has an internal
+J relocation. None has strings, candidate outgoing references or unresolved
+transfers. Their interfaces have no arguments, with only allocation returning a
+record; release takes the real record pointer from its four call sites. Each
+function retains its full return delay slot. This is game cache policy; the
+release helper's twelve-byte free service at GAME 8005048c retains the supplied
+LIBAPI/C52 exact archive evidence and authentic MALLOC.H declaration.
+
+The existing loop/field evidence proves the complete 240-byte pool at 800910c0.
+Test only expressing its base as fixture root 80070e98 plus 20228. Preserve its
+actual record type and all operations. Compile current and candidate TUs,
+compare all 1400 retail bytes across seven functions and ordered referents,
+and shift the candidate root by four as a negative control. The two unmodified
+controls must remain unchanged under that shift. Native/traced parity must
+hold; strict production exact counts cannot increase from this fixture audit.
+Add these witnesses to the existing owner control only if every word agrees.
+
+The canonical and owner forms each reproduce all 1400 retail bytes across
+seven functions. The delinked target independently resolves to those same
+bytes, with identical ordered calls and addresses. Moving the candidate root
+by four changes exactly one low instruction in each scan: +4 in reset, mark
+and allocate, +18 in release-all and +1c in release-stale (hex offsets).
+The binder and record-release control remain unchanged under that shift.
+The existing extended-owner test now preserves all seven comparisons and
+these five negative controls; the shared fixture layout remains unchanged.
+
+Fresh native, traced and repeated traced builds produce identical whole ELFs
+per source, and the two traces are byte-identical. Evidence is retained under
+`build/gcc257/pool-owner/`. The focused control, Ruff, whitespace checks and
+all 703 repository tests pass (116.696 seconds, nine optional skips). Full
+`kf build` retains source-data results PSX 0/1, GAME 10/42, OPEN 3/19 and
+target relinks 1/1, 75/77, 34/38, with the known ownership/placement failures
+and zero artifact failures. GAME remains 324/362 and OPEN 106/108 exact.
+These five newly audited consumers were already exact; no function or data
+claim is banked, and the complete-owner migration remains unfinished.
