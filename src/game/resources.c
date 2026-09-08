@@ -28,7 +28,8 @@ RODATA(0x80012178, 0x3c)
 /*
  * Advances a chunked stream to its next chunk: each chunk is a byte length
  * followed by the payload. The macro assigns so callers can pass
- * the next chunk's payload as an argument.
+ * the next chunk's payload as an argument. GNU C advances generic void *
+ * allocation storage in bytes.
  */
 #define STREAM_NEXT(stream) \
     ((stream) += *(u32 *)(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES)
@@ -56,14 +57,14 @@ void tim_upload_images(u_long *tim_data)
 ADDRESS(0x8001b180, 0x210)
 void common_resources_load(void)
 {
-    u_long *images;
-    u8 *stream;
+    void *images;
+    void *stream;
     u8 *block;
 
-    cd_file_load_allocated((void **)&images, "COM\\MIX.TIM");
+    cd_file_load_allocated(&images, "COM\\MIX.TIM");
     tim_upload_images(images);
     memory_release_last();
-    cd_file_load_allocated((void **)&stream, "COM\\COM.DAT");
+    cd_file_load_allocated(&stream, "COM\\COM.DAT");
     asset_registry_set(
         KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     block = STREAM_NEXT(stream);

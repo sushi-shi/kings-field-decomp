@@ -706,3 +706,6 @@ promotes a probe to a proven historical toolchain.
 
 - [Typed player and dialogue packed state](typed-packed-state.md): shared byte,
   halfword and word views preserve packed comparisons and physical owners.
+
+- [Typed resource allocation boundaries](typed-resource-boundaries.md): generic
+  allocation outputs and stream variables share the actual void-pointer contract.

@@ -176,3 +176,9 @@ live dialogue word views across every producer and consumer. It removes ten
 more pointer casts and preserves all 71 compared functions. C pointer casts
 now total 495, down 311 from the initial count; the resource, animation and
 remaining renderer boundary review continues.
+
+The [resource-boundary stage](typed-resource-boundaries.md) makes thirteen
+allocator outputs use actual generic pointer storage and removes the last
+incompatible-pointer diagnostic. All 25 compared functions are unchanged;
+482 C pointer casts remain, down 324 from the starting count. Fixed table
+copy views and the other animation/renderer families still need review.
