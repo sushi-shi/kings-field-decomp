@@ -167,6 +167,9 @@ promotes a probe to a proven historical toolchain.
 - [game-map-script-motion-constants.md](game-map-script-motion-constants.md):
   fade/rotation rates, transform heights, camera interval and interaction
   probes; complete 246-occurrence floor-script ledger.
+- [game-map-interaction-loops.md](game-map-interaction-loops.md): container
+  traversal ownership, modular pitch samples, partner-search joins and
+  controlled prescan/CSE evidence; dispatcher retained at 99.211440%.
 - [game-asset-animation-layout.md](game-asset-animation-layout.md): resource-backed
   clip counts, typed asset ownership/cache states and the pool/registry literal audit.
 - [game-item-pickup-outcomes.md](game-item-pickup-outcomes.md): corrected pickup

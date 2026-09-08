@@ -202,25 +202,25 @@ explicit numeric boundaries.
 | `map_show_screen_image` | 468 | `10` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
 | `map_show_screen_image` | 468 | `10` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
 | `map_show_screen_image` | 468 | `'0'` | `map_screen_image_path[10] = index % 10 + '0';` | Character position 10 is the decimal ones digit; base ten and ASCII zero are representation constants. |
-| `map_interaction_dispatch` | 515 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_interaction_dispatch` | 519 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
+| `map_interaction_dispatch` | 520 | `1` | `if (index != -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
+| `map_interaction_dispatch` | 524 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 537 | `2` | `result = result < 2;` | Signed count test for availability of a second animation clip; the [asset-header audit](game-asset-animation-layout.md) supports the count using all 70 animated assets. The count is loaded from model_index plus the named map-event asset base before the animation update; this boolean checks for a second clip. |
 | `map_interaction_dispatch` | 538 | `0` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
 | `map_interaction_dispatch` | 539 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
 | `map_interaction_dispatch` | 544 | `0` | `if (result == 0) {` | False header-threshold result permits the optional second animation clip. |
-| `map_interaction_dispatch` | 548 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
-| `map_interaction_dispatch` | 558 | `0` | `for (index = 0;; index++) {` | Start the interaction search at zero-based pool index zero. |
-| `map_interaction_dispatch` | 560 | `1` | `if (index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
-| `map_interaction_dispatch` | 575 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
-| `map_interaction_dispatch` | 578 | `1` | `if (--item_index == -1) {` | The signed-halfword pre-decrement reaches minus one after the four-step scan when the action-parameter byte stays empty. |
-| `map_interaction_dispatch` | 586 | `1` | `while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {` | Exclusive negative quarter-turn endpoint; from zero, 32-unit steps end at -1024. |
-| `map_interaction_dispatch` | 595 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
-| `map_interaction_dispatch` | 607 | `1` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
-| `map_interaction_dispatch` | 612 | `0` | `object->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
-| `map_interaction_dispatch` | 618 | `0` | `found_item = 0;` | Initialize the local any-item-present boolean to false. |
-| `map_interaction_dispatch` | 619 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
-| `map_interaction_dispatch` | 622 | `1` | `found_item = 1;` | Record that at least one nonempty item byte was found. |
-| `map_interaction_dispatch` | 631 | `1` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
-| `map_interaction_dispatch` | 636 | `0` | `if (found_item == 0) {` | An empty container takes its authored default-notification path. |
-| `map_interaction_dispatch` | 667 | `0` | `neighbor_index = 0;` | Start the paired-door leaf search at the first pool slot. |
-| `map_interaction_dispatch` | 671 | `1` | `if (neighbor_index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
+| `map_interaction_dispatch` | 549 | `0` | `event->animation_phase = 0;` | Animation begins at phase zero; resource clip zero is the base loop and clip one the optional interaction clip. |
+| `map_interaction_dispatch` | 563 | `0` | `for (index = 0;; index++) {` | Start the interaction search at zero-based pool index zero. |
+| `map_interaction_dispatch` | 565 | `1` | `if (index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |
+| `map_interaction_dispatch` | 582 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
+| `map_interaction_dispatch` | 589 | `1` | `if (--item_index == -1) {` | The signed-halfword pre-decrement reaches minus one after the four-step scan when the action-parameter byte stays empty. |
+| `map_interaction_dispatch` | 597 | `1` | `while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {` | Exclusive negative quarter-turn endpoint; from zero, 32-unit steps end at -1024. |
+| `map_interaction_dispatch` | 611 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
+| `map_interaction_dispatch` | 627 | `1` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
+| `map_interaction_dispatch` | 632 | `0` | `object->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
+| `map_interaction_dispatch` | 647 | `0` | `found_item = 0;` | Initialize the local any-item-present boolean to false. |
+| `map_interaction_dispatch` | 648 | `1` | `item_index = MAP_CONTAINER_ITEM_COUNT - 1;` | Inclusive countdown begins at the last of four item-byte positions. |
+| `map_interaction_dispatch` | 651 | `1` | `found_item = 1;` | Record that at least one nonempty item byte was found. |
+| `map_interaction_dispatch` | 665 | `1` | `if ((s16)item_index == -1) {` | Negative exhausted-count endpoint after the fourth byte; preserve the signed narrowing. |
+| `map_interaction_dispatch` | 670 | `0` | `if (found_item == 0) {` | An empty container takes its authored default-notification path. |
+| `map_interaction_dispatch` | 703 | `0` | `neighbor_index = 0;` | Start the paired-door leaf search at the first pool slot. |
+| `map_interaction_dispatch` | 707 | `1` | `if (neighbor_index == -1) {` | Recognize the negative pool-query miss result before dereferencing an index. |

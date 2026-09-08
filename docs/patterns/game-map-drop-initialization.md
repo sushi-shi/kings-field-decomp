@@ -87,3 +87,36 @@ Generated reproduction inputs, traces and raw audits are retained under
 `build/gcc257/map-drop-trace/`.
 After staging the correction, `kf bank` refreshes only the six already-exact
 sibling input hashes. Both partial functions remain outside that selection.
+
+## Acquisition-branch control at `382cca6`
+
+A fresh six-view dossier, all caller/callee constraints, native/traced ELF
+parity and complete raw audit reproduce the retained 94.504950%, 400-byte
+constructor. The pool updater has since been independently closed, so all
+seven siblings now provide exact controls. The velocity-clear scope above
+remains correct and is preserved.
+
+Test acquiring the effect inside each of the two existing pool-selection
+arms, keeping their sequence/index assignments and the shared post-increment
+after the join. This is an observed call/selection-boundary hypothesis for
+retail's distinct sequence and object lifetimes, not a new value carrier.
+The isolated source reaches 93.712870%, 408 bytes, with the same five ordered
+calls and two physical references. It recovers separate pointer registers
+but assigns sequence/object to s1/s0 instead of retail's s0/s1. The post-call
+object copy precedes the sequence halfword load and adds a nop, whereas
+retail puts the copy in that load's delay slot. Reject the control.
+
+Its SCHED1 trace still has both acquisition calls; they merge only later.
+The sequence pseudo has six references, two crossed calls and live length
+22; the object has nineteen references, four crossed calls and live length
+54. The retained baseline has five/one/fourteen and eighteen/four/forty-nine,
+respectively. These measured lifetimes do not justify forcing either source
+value to stay live. The exact debris sibling remains a control showing that
+reuse of one register can be legitimate.
+
+Native/traced whole ELFs agree per source, and all seven siblings retain
+literal retail words. No production source, type, owner, profile or bank
+entry changes. The isolated plan, source and raw/trace evidence remain under
+`build/gcc257/game-drop-revisit/`. The unchanged constructor is included in
+the 725-test and full-build verification recorded in the
+[interaction campaign](game-map-interaction-loops.md#verification-and-unit-verdicts).
