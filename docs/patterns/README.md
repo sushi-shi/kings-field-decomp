@@ -727,3 +727,5 @@ promotes a probe to a proven historical toolchain.
 - [Typed selected TMD headers](typed-tmd-headers.md): registration and selected
   assets use the 12-byte header type; serialized byte offsets keep explicit
   decoding boundaries, and all 76 compared functions retain their words.
+
+- [Projected addresses and sprite packets](typed-projected-addresses.md): exact OPEN sprite color view and controlled byte-pointer, owner and packed-XY residue comparisons.

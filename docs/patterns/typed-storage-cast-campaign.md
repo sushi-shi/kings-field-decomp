@@ -95,8 +95,9 @@ Fresh strict objdiff and independently linked raw-word comparison give:
 | `render_entities` | 96.667610 / 96.667610 | All 1,416 compiled bytes unchanged; existing non-exact result remains open. |
 | `render_frame` | 100 / 100 | All 1,304 bytes and ordered references unchanged and retail-exact. |
 
-The four sprite XY conversions are an explicitly unfinished part of the wider
-campaign. Replacing those scalar-output stores with direct packed members
+The four sprite XY conversions are a recorded residue of the wider campaign,
+rechecked with the OPEN sibling in [projected addresses](typed-projected-addresses.md).
+Replacing those scalar-output stores with direct packed members
 preloads all four outputs and emits 584 bytes instead of 592; objdiff falls to
 93.770270%. Calls, physical referents and CFG successor lists agree. The first
 branch displacement changes at `+118`, with the first changed material-base
@@ -216,3 +217,9 @@ registration interface. Four header/object casts disappear; eight explicit
 resource-boundary conversions are added. All 76 compared functions remain
 unchanged. C pointer casts total 456, down 350 from the original 806; the
 net increase preserves real serialized decoding boundaries.
+
+The [projected-address stage](typed-projected-addresses.md) removes one OPEN
+sprite color cast through the shared SDK packet union, preserving all seven
+compared bodies. Its controlled probes record the remaining byte-address,
+container-recovery and sprite XY residues. The C pointer total is 455, down
+351; allocator ownership and the final boundary audit remain active.
