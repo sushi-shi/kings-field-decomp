@@ -390,12 +390,20 @@ KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meanin
 KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
 KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapObjectLink	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load	trigger link id
-KfMapObjectLink	0x01	0x01	action_parameter	u8	supported	game_map.h;asm;map_object_pool_load	per-behavior parameter; effect slot index for spawned effects
-KfMapObjectLink	0x02	0x02	spawn_sequence	u16	supported	game_map.h;asm;map_object_pool_load	effect spawn sequence; byte 2 feeds the effect kind for placed effects
-KfMapObjectLink	0x04	0x02	vertical_velocity	s16	supported	game_map.h;asm;map_object_pool_load	vertical velocity
-KfMapObjectLink	0x06	0x01	linked_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas	notification ID for behavior 8 with a live link; byte message domain propagated directly to the promoted enqueue API
-KfMapObjectLink	0x07	0x01	default_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas	default notification ID in map interaction; byte message domain propagated directly to the promoted enqueue API
+KfMapObjectHingedContainer	0x00	0x01	link_id	u8	supported	game_map.h;asm;typed-map-links.md	trigger link byte
+KfMapObjectHingedContainer	0x01	0x04	item_ids	u8[4]	supported	game_map.h;asm;typed-map-links.md	four encoded item IDs
+KfMapObjectLink	0x00	0x08	fields	KfMapObjectLinkFields	supported	game_map.h;asm;typed-map-links.md	behavior-dependent byte and halfword fields
+KfMapObjectLink	0x00	0x02	gold_amount	u16	supported	game_map.h;asm;typed-map-links.md	gold-coin amount loaded and stored as one halfword
+KfMapObjectLink	0x00	0x05	hinged_container	KfMapObjectHingedContainer	supported	game_map.h;asm;typed-map-links.md	trigger byte followed by four encoded item IDs
+KfMapObjectLink	0x00	0x04	item_ids	u8[4]	supported	game_map.h;asm;typed-map-links.md	four encoded item IDs for ordinary containers
+KfMapObjectLink	0x00	0x08	words	u32[2]	supported	game_map.h;asm;typed-map-links.md	aligned placement copies and pool resets
+KfMapObjectLink	0x00	0x08	bytes	u8[8]	supported	game_map.h;asm;typed-map-links.md	complete saved-floor byte serialization
+KfMapObjectLinkFields	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	trigger link id
+KfMapObjectLinkFields	0x01	0x01	action_parameter	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	per-behavior parameter; effect slot index for spawned effects
+KfMapObjectLinkFields	0x02	0x02	spawn	KfMapObjectSpawn	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	unsigned drop sequence or byte effect ID, selected by object behavior
+KfMapObjectLinkFields	0x04	0x02	vertical_velocity	s16	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	vertical velocity
+KfMapObjectLinkFields	0x06	0x01	linked_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas;typed-map-links.md	notification ID for behavior 8 with a live link; byte message domain propagated directly to the promoted enqueue API
+KfMapObjectLinkFields	0x07	0x01	default_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas;typed-map-links.md	default notification ID in map interaction; byte message domain propagated directly to the promoted enqueue API
 KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	game_map.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
 KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
 KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	game_map.h;asm;map_object_pool_load	map tile z
@@ -405,6 +413,8 @@ KfMapObjectPlacement	0x06	0x02	local_z	s16	supported	game_map.h;asm;map_object_p
 KfMapObjectPlacement	0x08	0x02	local_x	s16	supported	game_map.h;asm;map_object_pool_load	offset within the tile
 KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	game_map.h;asm;map_object_pool_load	height offset above the floor height grid
 KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied into the pool object
+KfMapObjectSpawn	0x00	0x02	sequence	u16	supported	game_map.h;asm;typed-map-links.md	unsigned wrapping sequence for dropped objects
+KfMapObjectSpawn	0x00	0x01	effect_id	u8	supported	game_map.h;asm;typed-map-links.md	effect constructor first argument for placed objects
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records

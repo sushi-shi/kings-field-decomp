@@ -164,7 +164,7 @@ void map_object_pool_clear(void)
     u16 index = KF_MAP_OBJECT_CAPACITY - 1;
 
     do {
-        u32 *link_words = (u32 *)&object->link;
+        u32 *link_words = object->link.words;
 
         object->object_id = KF_MAP_OBJECT_FREE;
         object->action = KF_MAP_OBJECT_ACTION_IDLE;
@@ -226,15 +226,15 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 - map_floor_height_grid[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object->action = KF_MAP_OBJECT_ACTION_IDLE;
             /* The link block moves as two aligned words. */
-            memcpy((u32 *)&object->link, (const u32 *)&placement->link, sizeof object->link);
+            memcpy(object->link.words, placement->link.words, sizeof object->link);
             definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(object->cell_x, object->cell_z, 1);
             }
             switch (object_id) {
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
-                object->link.action_parameter = effect_pool_construct(
-                                                    *(u8 *)&object->link.spawn_sequence,
+                object->link.fields.action_parameter = effect_pool_construct(
+                                                    object->link.fields.spawn.effect_id,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object->position,
@@ -249,8 +249,8 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_PROJECTILE_EMITTER);
                 break;
             case KF_MAP_OBJECT_SHORT_SWING:
-                object->link.action_parameter = effect_pool_construct(
-                                                    *(u8 *)&object->link.spawn_sequence,
+                object->link.fields.action_parameter = effect_pool_construct(
+                                                    object->link.fields.spawn.effect_id,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
                                                     &object->position,
@@ -260,8 +260,8 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
-                object->link.action_parameter = effect_pool_construct(
-                                                    *(u8 *)&object->link.spawn_sequence,
+                object->link.fields.action_parameter = effect_pool_construct(
+                                                    object->link.fields.spawn.effect_id,
                                                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
                                                     &object->position,
@@ -271,7 +271,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
-                object->link.action_parameter =
+                object->link.fields.action_parameter =
                     effect_pool_construct(
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object->position,
                         &effect_direction, &object->rotation.vector)

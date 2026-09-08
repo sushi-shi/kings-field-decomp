@@ -24,7 +24,6 @@ KF_ENUM_END(KfMapImageGroup)
 enum {
     MAP_WEAPON_TRANSFORM_HOLD_UPDATES = 40,
     MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN = 20,
-    MAP_CONTAINER_ITEM_COUNT = 4,
     MAP_CONTAINER_ITEM_NONE = 255,
     MAP_SHOP_SEQUENCE_INDEX = 2,
     MAP_FLOOR3_DIALOGUE_DOOR_LINK = 0x37
@@ -373,7 +372,7 @@ void map_floor5_transition_cutscene(void)
                 spin -= MAP_WEAPON_TRANSFORM_YAW_ACCELERATION;
             } else {
                 map_object_start_action_if_idle(effect, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
-                effect->link.vertical_velocity = 0;
+                effect->link.fields.vertical_velocity = 0;
                 goto done;
             }
             break;
@@ -571,15 +570,15 @@ clear_event_phase:
         definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
         switch (definition->behavior_type) {
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER:
-            if (object->link.link_id != KF_MAP_LINK_NONE) {
+            if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
                 goto notify_linked;
             }
             if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, KF_ANGLE_EIGHTH_TURN)) {
                 break;
             }
 
-            item_index = MAP_CONTAINER_ITEM_COUNT - 1;
-            while (object->link.action_parameter == KF_MAP_OBJECT_PARAMETER_NONE) {
+            item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
+            while (object->link.hinged_container.item_ids[0] == KF_MAP_OBJECT_PARAMETER_NONE) {
                 if (--item_index == -1) {
                     goto notify_default;
                 }
@@ -597,8 +596,8 @@ clear_event_phase:
                 frame_pacer_wait();
             }
 
-            item_index = MAP_CONTAINER_ITEM_COUNT - 1;
-            item_id = &object->link.action_parameter;
+            item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
+            item_id = object->link.hinged_container.item_ids;
             for (;;) {
                 if (*item_id != MAP_CONTAINER_ITEM_NONE) {
                     pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
@@ -624,13 +623,13 @@ clear_event_phase:
             break;
 
 notify_linked:
-            notify_enqueue(object->link.linked_notification);
+            notify_enqueue(object->link.fields.linked_notification);
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER:
-            item_id = &object->link.link_id;
+            item_id = object->link.item_ids;
             found_item = 0;
-            item_index = MAP_CONTAINER_ITEM_COUNT - 1;
+            item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
             for (;;) {
                 if (*item_id != MAP_CONTAINER_ITEM_NONE) {
                     found_item = 1;
@@ -666,7 +665,7 @@ notify_linked:
             if (object->action != KF_MAP_OBJECT_ACTION_IDLE) {
                 break;
             }
-            if (object->link.link_id != KF_MAP_LINK_NONE) {
+            if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
                 goto notify_default;
             }
             map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_LIFT_DOOR);
@@ -679,7 +678,7 @@ notify_linked:
                     rotation->vy, object->rotation.angles.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                 break;
             }
-            if (object->link.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
+            if (object->link.fields.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
                 goto notify_default;
             }
 
@@ -688,7 +687,7 @@ notify_linked:
                 neighbor_index = map_object_pool_find_interaction_from(
                     neighbor_index, object->position.vx, object->position.vz, MAP_DOOR_PARTNER_SEARCH_PADDING);
                 if (neighbor_index == -1) {
-                    object->link.action_parameter = KF_MAP_OBJECT_PARAMETER_NONE;
+                    object->link.fields.action_parameter = KF_MAP_OBJECT_PARAMETER_NONE;
                     break;
                 }
                 if (neighbor_index != index) {
@@ -696,14 +695,14 @@ notify_linked:
                     neighbor_definition =
                         &map_object_state.definitions[KF_ENUM_ENCODE(u8, neighbor->object_id)];
                     if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_END) {
-                        if (neighbor->link.link_id != KF_MAP_LINK_NONE
+                        if (neighbor->link.fields.link_id != KF_MAP_LINK_NONE
                             && neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
                             goto notify_default;
                         }
                         map_object_start_action_if_idle(
                             neighbor, map_object_action_from_behavior(neighbor_definition->behavior_type));
-                        object->link.action_parameter = neighbor_index;
-                        neighbor->link.action_parameter = index;
+                        object->link.fields.action_parameter = neighbor_index;
+                        neighbor->link.fields.action_parameter = index;
                         break;
                     }
                 }
@@ -727,21 +726,21 @@ notify_linked:
             break;
 
         case KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP:
-            result = *(u16 *)&object->link.link_id;
+            result = object->link.gold_amount;
             notify_enqueue(KF_NOTIFICATION_GOLD, result);
             player_state.gold += result;
             object->object_id = KF_MAP_OBJECT_FREE;
             break;
 
         case KF_MAP_OBJECT_BEHAVIOR_EFFECT_SWITCH:
-            if (object->link.link_id == KF_MAP_LINK_NONE) {
+            if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                 goto notify_default;
             }
             object->action_timer = KF_MAP_OBJECT_SWITCH_FORWARD;
             break;
 
         case KF_MAP_OBJECT_BEHAVIOR_RESTORE_POINT:
-            if (object->link.link_id != KF_MAP_LINK_NONE) {
+            if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
                 goto notify_default;
             }
             player_restore_vitals_with_color_cycle();
@@ -761,7 +760,7 @@ notify_linked:
                 }
                 image_group = MAP_IMAGE_GROUP_INSCRIPTION;
             }
-            map_show_screen_image(image_group, object->link.link_id);
+            map_show_screen_image(image_group, object->link.fields.link_id);
             player_clear_motion();
             continue;
         }
@@ -773,7 +772,7 @@ notify_linked:
 
         default:
 notify_default:
-            notify_enqueue(object->link.default_notification);
+            notify_enqueue(object->link.fields.default_notification);
             break;
         }
     }

@@ -148,3 +148,9 @@ angle-prefix interfaces. Its 26 pointer-cast removals bring the C-file count
 to 557 (249 removed overall). All 129 affected-unit functions retain their
 reference-resolved instruction streams. Packed map fields, remaining vector
 interfaces, animation/projection views and exact-code residues remain open.
+
+The [map link stage](typed-map-links.md) adds whole-record byte/word views,
+gold amounts, behavior-dependent spawn values and bounded container item
+arrays. It removes another 18 C pointer casts while preserving all 45 compared
+function bodies. The running reduction is 267 of the initial 806 C pointer
+casts; 539 remain for boundary and model review.

@@ -14,6 +14,8 @@ promotes a probe to a proven historical toolchain.
 - [typed-world-transforms.md](typed-world-transforms.md): complete map vectors,
   shared actor/effect rotations and compatible angle helper interfaces.
 
+- [typed-map-links.md](typed-map-links.md): shared byte, word, gold, spawn and
+  bounded item-array views for complete map link records.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE

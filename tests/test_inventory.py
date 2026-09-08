@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 105)
-        self.assertEqual(counts["structure_fields"], 805)
-        self.assertEqual(counts["structure_fields_named"], 717)
+        self.assertEqual(counts["structures"], 108)
+        self.assertEqual(counts["structure_fields"], 815)
+        self.assertEqual(counts["structure_fields_named"], 727)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -646,7 +646,8 @@ class InventoryTests(unittest.TestCase):
         for structure in (
             "KfMapCell",
             "KfMapCopyRegion",
-            "KfMapObjectLink",
+            "KfMapObjectLinkFields",
+            "KfMapObjectHingedContainer",
             "KfMapObjectPlacement",
             "KfMapObjectDefinition",
             "KfMapObject",
@@ -659,6 +660,9 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, map_header)
+
+        for union in ("KfMapObjectLink", "KfMapObjectSpawn"):
+            self.assertIn(f"typedef union {union}", map_header)
 
     def test_floor_item_layouts_live_in_the_item_owner_header(self) -> None:
         item_header = (REPO / "include/kf/item.h").read_text()

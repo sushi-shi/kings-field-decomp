@@ -23,6 +23,7 @@ enum {
     KF_MAP_OBJECT_DEFINITION_COUNT = 160,
     KF_MAP_RESOURCE_PATH_BYTES = 12,
     KF_MAP_OBJECT_CAPACITY = 190,
+    KF_MAP_CONTAINER_ITEM_COUNT = 4,
     KF_MAP_OBJECT_EFFECT_FIRST = 160,
     KF_MAP_EVENT_CAPACITY = 8
 };
@@ -231,14 +232,49 @@ typedef struct KfMapCopyRegion {
 } KfMapCopyRegion;
 
 
-typedef struct KfMapObjectLink {
+typedef union KfMapObjectSpawn {
+    u16 sequence;
+    u8 effect_id;
+} KfMapObjectSpawn;
+
+typedef struct KfMapObjectLinkFields {
     u8 link_id;
     u8 action_parameter;
-    u16 spawn_sequence;
+    KfMapObjectSpawn spawn;
     s16 vertical_velocity;
     KfNotificationId linked_notification;
     KfNotificationId default_notification;
+} KfMapObjectLinkFields;
+
+typedef struct KfMapObjectHingedContainer {
+    u8 link_id;
+    u8 item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
+} KfMapObjectHingedContainer;
+
+/* Placements copy two words; saved floors preserve all eight bytes. */
+typedef union KfMapObjectLink {
+    KfMapObjectLinkFields fields;
+    u16 gold_amount;
+    KfMapObjectHingedContainer hinged_container;
+    u8 item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
+    u32 words[2];
+    u8 bytes[8];
 } KfMapObjectLink;
+
+typedef char check_map_object_spawn_size[sizeof(KfMapObjectSpawn) == 2 ? 1 : -1];
+typedef char check_map_object_link_fields_size[sizeof(KfMapObjectLinkFields) == 8 ? 1 : -1];
+typedef char check_map_object_hinged_container_size[
+    sizeof(KfMapObjectHingedContainer) == 5 ? 1 : -1];
+#define KF_MAP_LINK_OFFSET(field, offset) \
+    typedef char check_map_link_##field[ \
+        (unsigned long)&((KfMapObjectLinkFields *)0)->field == (offset) ? 1 : -1]
+KF_MAP_LINK_OFFSET(link_id, 0);
+KF_MAP_LINK_OFFSET(action_parameter, 1);
+KF_MAP_LINK_OFFSET(spawn, 2);
+KF_MAP_LINK_OFFSET(vertical_velocity, 4);
+KF_MAP_LINK_OFFSET(linked_notification, 6);
+KF_MAP_LINK_OFFSET(default_notification, 7);
+#undef KF_MAP_LINK_OFFSET
 
 /* Encoded model byte is decoded against the consuming image's model table. */
 typedef struct KfMapObjectPlacement {

@@ -252,7 +252,7 @@ void map_world_state_persist(void)
         active++;
         *out++ = i;
         {
-            u8 *link = (u8 *)&object->link;
+            u8 *link = object->link.bytes;
             s32 k = sizeof(object->link) - 1;
 
             do {
@@ -266,8 +266,8 @@ void map_world_state_persist(void)
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;
-        *out++ = object->link.link_id;
-        *out++ = (u8)(*(const u16 *)&object->link >> 8);
+        *out++ = object->link.fields.link_id;
+        *out++ = (u8)(object->link.gold_amount >> 8);
     }
 
     object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];

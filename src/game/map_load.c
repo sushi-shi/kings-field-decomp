@@ -85,7 +85,7 @@ void map_restore_floor_state(void)
 
             index = *in++;
             object = &map_object_state.objects[index];
-            link = (u8 *)&object->link;
+            link = object->link.bytes;
             k = sizeof(object->link) - 1;
             do {
                 *link++ = *in++;
@@ -105,10 +105,10 @@ void map_restore_floor_state(void)
             object->rotation.angles.z = 0;
             object->rotation.angles.y = 0;
             object->rotation.angles.x = 0;
-            *(u16 *)&object->link = *in++;
-            *(u16 *)&object->link |= *in++ << 8;
-            object->link.spawn_sequence = 0;
-            object->link.vertical_velocity = 0;
+            object->link.gold_amount = *in++;
+            object->link.gold_amount |= *in++ << 8;
+            object->link.fields.spawn.sequence = 0;
+            object->link.fields.vertical_velocity = 0;
         }
 
         object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
@@ -128,9 +128,9 @@ void map_restore_floor_state(void)
             }
             object->rotation.angles.z = 0;
             object->rotation.angles.y = *in++ << KF_MAP_SAVED_YAW_SHIFT;
-            *(u16 *)&object->link = 0;
-            object->link.spawn_sequence = 0;
-            object->link.vertical_velocity = 0;
+            object->link.gold_amount = 0;
+            object->link.fields.spawn.sequence = 0;
+            object->link.fields.vertical_velocity = 0;
         }
     }
 
