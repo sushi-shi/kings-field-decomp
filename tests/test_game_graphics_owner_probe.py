@@ -72,6 +72,21 @@ def standalone_source(unit):
     defines one owner and retains no overlapping globals.
     """
     source = unit.source_path.read_text()
+    if unit.unit == 'game.render_enqueue':
+        # Keep the historical owner-only control independent of TMD closure.
+        source = source.replace(
+            '#define VTX(off) ((KfScreenVertex *)((off) + vertices))',
+            '#define VTX(off) ((KfScreenVertex *)((u8 *)vertices + (off)))')
+        source = source.replace(
+            'u32 vertices = (u32)game_graphics_runtime.unknown_projection_morph_20318;',
+            'KfScreenVertex *vertices = '
+            '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);')
+        source = source.replace(
+            '                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(\n'
+            '                        (u32)vertices - '
+            '(u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);\n', '')
+        source = source.replace('&graphics->display_state.ordering_table[',
+                                '&game_graphics_runtime.display_state.ordering_table[')
     morph_offset_name = 'MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE'
     if morph_offset_name in source:
         definition = re.search(r'\b' + morph_offset_name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*[,}]', source)
@@ -705,7 +720,6 @@ extern KfMaterialProbe material_probe;
             'notify_effect_update',
             'player_add_experience',
             'player_move_horizontal',
-            'render_enqueue_tmd',
             'render_entities',
             'render_map_cell',
             'talk_show_dialogue_page',
@@ -743,7 +757,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (173, 154))
+        self.assertEqual((checked, exact), (173, 155))
 
 
 if __name__ == '__main__':

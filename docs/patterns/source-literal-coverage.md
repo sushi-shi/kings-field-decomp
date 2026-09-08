@@ -3,7 +3,7 @@
 Final naming/accounting snapshot, including the graphics-owner integration and
 [shared-bound review](source-constant-names.md#final-shared-bound-review):
 **111 C files**, **112 source/image variants**, and
-**5,766 inline numeric/character occurrences**. Counts include authored
+**5,778 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -11,11 +11,11 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 The separate [header ledger](header-literal-ledger.md) covers **53 headers /
 169 retained occurrences**, including 36 headers with zero retained tokens.
-Together the C and header ledgers account for **5,935 retained occurrences**.
+Together the C and header ledgers account for **5,947 retained occurrences**.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,766 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,778 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -211,7 +211,7 @@ retained literal reasons preserve these limitations without inventing semantics.
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [pool.c](../../src/game/pool.c) | 35 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render.c](../../src/game/render.c) | 146 | [complete renderer setup ledger](game-render-setup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [render_enqueuers.c](../../src/game/render_enqueuers.c) | 94 | [complete renderer ledger](renderer-packet-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [render_enqueuers.c](../../src/game/render_enqueuers.c) | 106 | [complete renderer ledger](renderer-packet-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_frame.c](../../src/game/render_frame.c) | 35 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map_cells.c](../../src/game/render_map_cells.c) | 20 | [complete map-cell ledger](map-cell-literal-ledger.md); [visibility domain](visibility-screen-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_scene.c](../../src/game/render_scene.c) | 10 | [game-render-hud ledger](game-render-hud-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |

@@ -1,5 +1,41 @@
 # GAME TMD mode entries and shared lighting tails
 
+## Strict closure (2026-09-08)
+
+GAME `8001c7f8 render_enqueue_tmd` now matches all 3896 bytes (strict
+objdiff 100%). The historical partial findings below are superseded by the
+complete graphics owner and this source reconstruction. Eight JSON hypotheses
+combined three independently supported facts: a 32-bit prepared-vertex base
+address, recovery of its complete `KfGraphicsRuntimeGame` owner to access the
+ordering table, and header-before-countdown declaration order. Only their
+combination was exact; owner plus address alone reached 99.992810%.
+The exact OPEN sibling supports the address/owner relationship; the previously
+verified GAME emitter spill analysis predicts the declaration order.
+
+The owner expression subtracts the actual projected-member offset, making
+retail's OT load at projected base minus 756 a typed field access. It adds no
+storage claim, artificial local, volatile, assembly or compiler option.
+All twelve accepted polygon paths retain their own lighting and AddPrim calls.
+
+Raw relocation-aware comparison checks all four functions in
+`game.render_enqueue`: 1826 words, 81 calls and 58 address constructions agree
+with the retail image in both delinked and compiled objects. All 29 switch
+pointers agree after relocation. Perturbing the NormalClip referent by four
+bytes changes exactly twelve call instructions, confirming the check resolves
+actual callees. The complete restore/return tails and overflow branches are
+included. Model/map/sprite remain strict 100%; GAME moves 335 to 336 of 362.
+SDK providers remain excluded from game progress.
+
+Fresh focused compilation, Ruff and `git diff --check` pass. All 713 repository
+tests pass in 216.788 seconds with nine optional skips. The historical
+owner-only test reconstructs its prior source independently; the production
+owner test now requires exact TMD bytes. Full `kf build -j4` completes its
+checks but exits 1 on existing data/ownership/placement gates: GAME data
+11/41, target relink 75/77; PSX 0/1 and 1/1, OPEN 3/19 and 34/38,
+respectively, with zero artifact failures. Only this exact emitter unit is
+banked (one new exact and three refreshed sibling hashes).
+
+
 ## Function Match Plan (2026-09-06)
 
 GAME `8001c7f8` / `0xf38` (3896 bytes), `render_enqueue_tmd`, starts

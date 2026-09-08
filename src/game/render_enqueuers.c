@@ -10,7 +10,7 @@ CVECTOR tmd_textured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, 0
 };
 
-#define VTX(off) ((KfScreenVertex *)((u8 *)vertices + (off)))
+#define VTX(off) ((KfScreenVertex *)((off) + vertices))
 
 RODATA(0x8001222c, 0x74)
 
@@ -20,8 +20,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     KfTmdObject *object;
     u8 *normals;
     u8 *packet;
-    u32 remaining;
     u32 header;
+    u32 remaining;
     s32 otz;
     KfScreenVertex *va;
     KfScreenVertex *vb;
@@ -33,7 +33,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
     normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
-        KfScreenVertex *vertices = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+        u32 vertices = (u32)game_graphics_runtime.unknown_projection_morph_20318;
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
@@ -65,8 +65,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -95,8 +97,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -124,8 +128,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -157,8 +163,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -192,8 +200,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -232,8 +242,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -262,8 +274,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -299,8 +313,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -327,8 +343,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -360,8 +378,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->n3), (CVECTOR *)&p->r, va->p2, (CVECTOR *)&prim->r3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -389,8 +409,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }
@@ -420,8 +442,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
+                        (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         prim);
                 }
             }

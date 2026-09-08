@@ -1,110 +1,122 @@
 # TMD and projected-sprite retained literals
 
-Companion to [the renderer review](renderer-literal-review.md). All **153**
+Companion to [the renderer review](renderer-literal-review.md). All **165**
 remaining numeric occurrences in the listed files have individual reasons.
 Claims, comments, strings and named constant definitions are excluded.
 Repeated tokens have separate rows in source order.
 
 ## `src/game/render_enqueuers.c`
 
-94 retained occurrences.
+106 retained occurrences.
 
 | Function / data owner | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `tmd_textured_primitive_color` | 9 | `0` | `KF_TEXTURE_BASE_BRIGHTNESS, 0` | Initial SDK color command byte; the allocated primitive code replaces it before the lighting call. |
-| `render_enqueue_tmd` | 34 | `0` | `while (remaining-- != 0) {` | Zero terminates the packet-count traversal; preserve the post-decrement and unsigned count behavior. |
-| `render_enqueue_tmd` | 46 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 64 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 65 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 66 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 80 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 94 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
-| `render_enqueue_tmd` | 95 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_tmd` | 96 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 110 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 124 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 125 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 139 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 157 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_tmd` | 158 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 172 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 192 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 193 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 207 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 232 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_tmd` | 233 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 247 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 255 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
-| `render_enqueue_tmd` | 262 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 263 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 277 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 298 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
-| `render_enqueue_tmd` | 299 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_tmd` | 300 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 314 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 326 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 327 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 328 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 342 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 351 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
-| `render_enqueue_tmd` | 360 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_tmd` | 361 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 375 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 383 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
-| `render_enqueue_tmd` | 388 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 389 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_tmd` | 390 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_tmd` | 404 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_tmd` | 413 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
-| `render_enqueue_tmd` | 419 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
-| `render_enqueue_tmd` | 420 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_tmd` | 421 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `model_textured_primitive_color` | 439 | `0` | `KF_TEXTURE_BASE_BRIGHTNESS, 0` | Initial SDK color command byte; the allocated primitive code replaces it before the lighting call. |
-| `render_enqueue_model` | 464 | `0` | `while (remaining-- != 0) {` | Zero terminates the packet-count traversal; preserve the post-decrement and unsigned count behavior. |
-| `render_enqueue_model` | 477 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_model` | 497 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_model` | 498 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_model` | 512 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_model` | 537 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_model` | 538 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_model` | 552 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_model` | 570 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_model` | 571 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_model` | 572 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `render_enqueue_model` | 586 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_model` | 607 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
-| `render_enqueue_model` | 608 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_model` | 609 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
-| `map_textured_primitive_color` | 625 | `0` | `KF_TEXTURE_BASE_BRIGHTNESS, 0` | Initial SDK color command byte; the allocated primitive code replaces it before the lighting call. |
-| `render_sprite_light_normal` | 629 | `0` | `SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};` | Zero X component of the positive-Z Q12 light normal. |
-| `render_sprite_light_normal` | 629 | `0` | `SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};` | Zero Y component of the positive-Z Q12 light normal. |
-| `render_sprite_light_normal` | 629 | `0` | `SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};` | Authored zero in the SDK vector padding halfword; it is not a normal component. |
-| `render_enqueue_map` | 664 | `0` | `while (remaining-- != 0) {` | Zero terminates the packet-count traversal; preserve the post-decrement and unsigned count behavior. |
-| `render_enqueue_map` | 677 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_map` | 702 | `2` | `>> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + KF_MAP_OT_DEPTH_BIAS;` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
-| `render_enqueue_map` | 721 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
-| `render_enqueue_map` | 742 | `3` | `otz = ((va->sz + vb->sz + vc->sz) / 3` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
-| `render_enqueue_sprite` | 771 | `4` | `SVECTOR corners[4];` | Four vertices of the explicit rectangular sprite; this local extent follows the four-argument projection API. |
-| `render_enqueue_sprite` | 783 | `0` | `corners[0].vx = corners[2].vx = sprite->x;` | The upper-left corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 783 | `2` | `corners[0].vx = corners[2].vx = sprite->x;` | The lower-left corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 784 | `1` | `corners[1].vx = corners[3].vx = sprite->x + sprite->w;` | The upper-right corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 784 | `3` | `corners[1].vx = corners[3].vx = sprite->x + sprite->w;` | The lower-right corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 785 | `0` | `corners[0].vy = corners[1].vy = sprite->y;` | The upper-left corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 785 | `1` | `corners[0].vy = corners[1].vy = sprite->y;` | The upper-right corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 786 | `2` | `corners[2].vy = corners[3].vy = sprite->y + sprite->h;` | The lower-left corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 786 | `3` | `corners[2].vy = corners[3].vy = sprite->y + sprite->h;` | The lower-right corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 787 | `0` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The upper-left corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 787 | `1` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The upper-right corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 787 | `2` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The lower-left corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 787 | `3` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The lower-right corner index in the explicit four-vertex rectangle. |
-| `render_enqueue_sprite` | 787 | `0` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The sprite lies in its local XY plane, so every corner has zero local Z. |
-| `render_enqueue_sprite` | 788 | `0` | `anchor.vx = anchor.vy = anchor.vz = 0;` | Local origin anchors the separate perspective/depth projection for sorting the sprite. |
-| `render_enqueue_sprite` | 790 | `0` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The upper-left corner is passed in the SDK four-vertex projection order. |
-| `render_enqueue_sprite` | 790 | `1` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The upper-right corner is passed in the SDK four-vertex projection order. |
-| `render_enqueue_sprite` | 790 | `2` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The lower-left corner is passed in the SDK four-vertex projection order. |
-| `render_enqueue_sprite` | 790 | `3` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The lower-right corner is passed in the SDK four-vertex projection order. |
-| `render_enqueue_sprite` | 811 | `1` | `depth_cue += depth_cue >> 1;` | One-bit signed shift supplies half the depth-cue factor for the named boosted mode, preserving its rounding. |
-| `render_enqueue_sprite` | 814 | `2` | `NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&game_graphics_runtime.active_render_clut + 2), depth_cue,` | Two halfwords reach the measured four-byte-offset color span; enclosing GAME graphics ownership remains unresolved (render-material.md). |
+| `tmd_textured_primitive_color` | 10 | `0` | `KF_TEXTURE_BASE_BRIGHTNESS, 0` | Initial SDK color command byte; the allocated primitive code replaces it before the lighting call. |
+| `render_enqueue_tmd` | 35 | `0` | `while (remaining-- != 0) {` | Zero terminates the packet-count traversal; preserve the post-decrement and unsigned count behavior. |
+| `render_enqueue_tmd` | 47 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 65 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 66 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 67 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 69 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 83 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 97 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
+| `render_enqueue_tmd` | 98 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_tmd` | 99 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 101 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 115 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 129 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 130 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 132 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 146 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 164 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_tmd` | 165 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 167 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 181 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 201 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 202 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 204 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 218 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 243 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_tmd` | 244 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 246 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 260 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 268 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
+| `render_enqueue_tmd` | 275 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 276 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 278 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 292 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 313 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
+| `render_enqueue_tmd` | 314 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_tmd` | 315 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 317 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 331 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 343 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 344 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 345 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 347 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 361 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 370 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
+| `render_enqueue_tmd` | 379 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_tmd` | 380 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 382 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 396 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 404 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
+| `render_enqueue_tmd` | 409 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 410 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_tmd` | 411 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 413 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `render_enqueue_tmd` | 427 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_tmd` | 436 | `1` | `SetSemiTrans(prim, 1);` | Boolean true enables the authentic SDK primitive semi-transparency flag; it is separate from the TMD mode bit. |
+| `render_enqueue_tmd` | 442 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
+| `render_enqueue_tmd` | 443 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_tmd` | 444 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_tmd` | 446 | `0` | `(u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);` | Null-base member-offset expression recovers the proven complete graphics owner from its projected-storage member; no runtime null dereference. |
+| `model_textured_primitive_color` | 464 | `0` | `KF_TEXTURE_BASE_BRIGHTNESS, 0` | Initial SDK color command byte; the allocated primitive code replaces it before the lighting call. |
+| `render_enqueue_model` | 489 | `0` | `while (remaining-- != 0) {` | Zero terminates the packet-count traversal; preserve the post-decrement and unsigned count behavior. |
+| `render_enqueue_model` | 502 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_model` | 522 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_model` | 523 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_model` | 537 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_model` | 562 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_model` | 563 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_model` | 577 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_model` | 595 | `3` | `(va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);` | Divide the three explicit vertex depth-cue factors by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_model` | 596 | `3` | `otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_model` | 597 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `render_enqueue_model` | 611 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_model` | 632 | `2` | `(va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);` | Average four explicit vertex terms by shifting two bits; retain signed right-shift rounding of the depth-cue sum. |
+| `render_enqueue_model` | 633 | `2` | `otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_model` | 634 | `1` | `if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {` | Subtract one from the named inclusive minimum to preserve the existing strict-greater-than comparison. |
+| `map_textured_primitive_color` | 650 | `0` | `KF_TEXTURE_BASE_BRIGHTNESS, 0` | Initial SDK color command byte; the allocated primitive code replaces it before the lighting call. |
+| `render_sprite_light_normal` | 654 | `0` | `SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};` | Zero X component of the positive-Z Q12 light normal. |
+| `render_sprite_light_normal` | 654 | `0` | `SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};` | Zero Y component of the positive-Z Q12 light normal. |
+| `render_sprite_light_normal` | 654 | `0` | `SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};` | Authored zero in the SDK vector padding halfword; it is not a normal component. |
+| `render_enqueue_map` | 689 | `0` | `while (remaining-- != 0) {` | Zero terminates the packet-count traversal; preserve the post-decrement and unsigned count behavior. |
+| `render_enqueue_map` | 702 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_map` | 727 | `2` | `>> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + KF_MAP_OT_DEPTH_BIAS;` | Average four explicit vertex terms by shifting two bits; combine with the separately named depth-to-OT shift in the original single shift. |
+| `render_enqueue_map` | 746 | `0` | `if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {` | Signed projected-area zero separates accepted positive winding from rejected winding or a degenerate triangle. |
+| `render_enqueue_map` | 767 | `3` | `otz = ((va->sz + vb->sz + vc->sz) / 3` | Divide the three explicit vertex depths by three for their arithmetic mean; this is not a mesh-capacity selector. |
+| `render_enqueue_sprite` | 796 | `4` | `SVECTOR corners[4];` | Four vertices of the explicit rectangular sprite; this local extent follows the four-argument projection API. |
+| `render_enqueue_sprite` | 808 | `0` | `corners[0].vx = corners[2].vx = sprite->x;` | The upper-left corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 808 | `2` | `corners[0].vx = corners[2].vx = sprite->x;` | The lower-left corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 809 | `1` | `corners[1].vx = corners[3].vx = sprite->x + sprite->w;` | The upper-right corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 809 | `3` | `corners[1].vx = corners[3].vx = sprite->x + sprite->w;` | The lower-right corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 810 | `0` | `corners[0].vy = corners[1].vy = sprite->y;` | The upper-left corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 810 | `1` | `corners[0].vy = corners[1].vy = sprite->y;` | The upper-right corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 811 | `2` | `corners[2].vy = corners[3].vy = sprite->y + sprite->h;` | The lower-left corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 811 | `3` | `corners[2].vy = corners[3].vy = sprite->y + sprite->h;` | The lower-right corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 812 | `0` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The upper-left corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 812 | `1` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The upper-right corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 812 | `2` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The lower-left corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 812 | `3` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The lower-right corner index in the explicit four-vertex rectangle. |
+| `render_enqueue_sprite` | 812 | `0` | `corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;` | The sprite lies in its local XY plane, so every corner has zero local Z. |
+| `render_enqueue_sprite` | 813 | `0` | `anchor.vx = anchor.vy = anchor.vz = 0;` | Local origin anchors the separate perspective/depth projection for sorting the sprite. |
+| `render_enqueue_sprite` | 815 | `0` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The upper-left corner is passed in the SDK four-vertex projection order. |
+| `render_enqueue_sprite` | 815 | `1` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The upper-right corner is passed in the SDK four-vertex projection order. |
+| `render_enqueue_sprite` | 815 | `2` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The lower-left corner is passed in the SDK four-vertex projection order. |
+| `render_enqueue_sprite` | 815 | `3` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The lower-right corner is passed in the SDK four-vertex projection order. |
+| `render_enqueue_sprite` | 836 | `1` | `depth_cue += depth_cue >> 1;` | One-bit signed shift supplies half the depth-cue factor for the named boosted mode, preserving its rounding. |
+| `render_enqueue_sprite` | 839 | `2` | `NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&game_graphics_runtime.active_render_clut + 2), depth_cue,` | Two halfwords reach the measured four-byte-offset color span; enclosing GAME graphics ownership remains unresolved (render-material.md). |
 
 ## `src/open/render_tmd.c`
 
