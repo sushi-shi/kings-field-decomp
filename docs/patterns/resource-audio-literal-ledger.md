@@ -1,6 +1,6 @@
 # Resource loading and remaining OPEN audio literal ledger
 
-Complete current accounting for five modules: 61 retained numeric/character
+Complete current accounting for five modules: 60 retained numeric/character
 occurrences, including authored initializers. See the [evidence review](resource-audio-coverage.md).
 Each duplicate token has its own row. Claims, definitions and string contents
 are excluded. Coverage records why literals remain; outstanding selector type
@@ -78,7 +78,6 @@ propagation is identified separately in the review.
 | `audio_play_spatial` | 32 | `0` | `return 0;` | Outside the strict distance cutoff, no voice request is dispatched; return false. |
 | `audio_play_spatial` | 44 | `1` | `angle >>= 1;` | Halve the folded half-turn bearing into a quarter turn for the sine/cosine pan pair; one is the divide-by-two shift. |
 | `audio_play_spatial` | 59 | `1` | `return 1;` | Return true after dispatching to the void voice helper, even if it suppresses the all-zero tuple; this does not certify SDK voice allocation or audible playback. |
-| `sound_ref_key_off_bank0` | 92 | `8` | `SsVoKeyOff(sound->program, sound->note << 8);` | Pack the note into the upper byte of the SDK argument, leaving fine pitch zero; eight is the byte boundary rather than a gameplay scale. |
 | `audio_set_listener_transform` | 100 | `0` | `if (position_or_null != 0) {` | A nonnull optional position supplies a replacement listener position. |
 | `audio_set_listener_transform` | 103 | `0` | `if (rotation_or_null != 0) {` | A nonnull optional rotation supplies a replacement listener rotation. |
 

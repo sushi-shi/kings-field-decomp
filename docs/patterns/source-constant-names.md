@@ -2,8 +2,36 @@
 
 The [source coverage map](source-literal-coverage.md) inventories all 111 C files,
 links their existing audits, and records the outstanding scope checks. Its
-6,903 inline occurrences include authored data and already explained values;
-the number is not a missing-name count.
+current inline-occurrence count includes authored data and already explained
+values; the number is not a missing-name count.
+
+## Representation constants follow-up
+
+Function Match Plan: name the existing six-bit fixed-point scale, effect-object
+spawn-sequence modulus, warp-shimmer horizontal scale and SDK packed-note shift.
+The fresh image-qualified disassembly/CFG, xrefs, strings and stored-match views,
+source history and neighboring functions were inspected. This is naming-only
+work on game-owned resource/charge/audio glue; the SDK bodies stay external.
+
+| Image / VA / bytes | Function | Literal evidence |
+| --- | --- | --- |
+| GAME `80015128 / 0x3c` | `fixed6_ratio_step` | `sll` by six at entry; preserve signed division and the final +1 in the return delay slot. Weapon and magic charge callers establish the scale. No calls or data references. |
+| GAME `800317a4 / 0x90` | `map_object_effect_pool_acquire` | `lui t2,1` at `800317d8` provides 65536 for a negative difference between unsigned-halfword sequence values. Three proven callers, no calls, one validated state reference and `jr`/`nop` return. |
+| GAME `80036f44 / 0x82c` | `effect_pool_construct` | `8003771c..80037724` writes 0x1800 to Z/X scale, after clearing Y. This is 1.5 Q12 unity. Keep both stores, all eight calls, 37 validated references and the 56-byte return-frame release. |
+| GAME `80033014 / 0x28` | `sound_ref_key_off_bank0` | `80033028` shifts the note byte by eight in the single SDK call's delay slot. No current incoming references or data references; return releases 24 bytes. |
+| OPEN `8001a188 / 0x28` | `sound_ref_key_off_bank0` | Same note-byte packing at `8001a19c`, with the OPEN SDK target and identical signature/frame structure. |
+| GAME `8002b150 / 0x84` | `menu_play_input_sound` | `8002b1a8`/`8002b1c0` pack the note for key-on/key-off, leaving fine pitch zero. Preserve all three calls, two validated internal branches, byte locals and the 32-byte frame. |
+
+Use shared fixed-point/audio constants for the established representation
+boundaries and local constants for the object-sequence and warp-scale roles.
+Do not replace arithmetic, normalize guards or add storage. Each stored
+pre-edit score is 100%; builds, compiler checks, tests and post-edit matching
+are deferred by the user's explicit instruction.
+
+Final verdict: the six functions now use the planned constants with identical
+literal values, operators and operand widths. Eight raw occurrences were
+removed and all 111 current file ledgers reconcile. No new binary-match claim
+is made.
 
 The [OPEN renderer review](open-render-constants.md) shares the six scene model
 identities with their renderer, names yaw/depth/material/gradient units and

@@ -17,6 +17,7 @@ enum {
     EFFECT_EMERGING_INITIAL_SCALE = 1500,
     EFFECT_SHORT_SWING_SCALE = 2600,
     EFFECT_ORBIT_SCALE = 2800,
+    EFFECT_WARP_HORIZONTAL_SCALE = 0x1800,
     EFFECT_EXTENDED_SOUND_MAX_DISTANCE = 20000,
     EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE = 60000
 };
@@ -397,8 +398,8 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = KF_EFFECT_MODEL_WARP_SHIMMER;
             record->render_id = KF_EFFECT_MODEL_WARP_SHIMMER;
             record->scale_y = 0;
-            record->scale_z = 0x1800;
-            record->scale_x = 0x1800;
+            record->scale_z = EFFECT_WARP_HORIZONTAL_SCALE;
+            record->scale_x = EFFECT_WARP_HORIZONTAL_SCALE;
             record->rotation.vx = 0;
             record->rotation.vy = player_state.camera_rotation.vy;
             record->rotation.vz = 0;

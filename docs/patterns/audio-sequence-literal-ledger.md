@@ -5,7 +5,7 @@ Every row is one retained token, including duplicates. Named definitions, string
 
 ## `src/game/audio.c`
 
-39 retained occurrences.
+38 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -39,7 +39,6 @@ Every row is one retained token, including duplicates. Named definitions, string
 | `audio_play_spatial` | 191 | `1` | `if (left >= KF_AUDIO_MAX_VOLUME + 1) {` | Clamp the computed left-channel amplitude at the inclusive named maximum. |
 | `audio_play_spatial` | 195 | `1` | `if (right >= KF_AUDIO_MAX_VOLUME + 1) {` | Clamp the computed right-channel amplitude at the inclusive named maximum. |
 | `audio_play_spatial` | 205 | `1` | `return 1;` | A spatial dispatch was requested; this Boolean result does not independently confirm SDK voice playback. |
-| `sound_ref_key_off_bank0` | 238 | `8` | `SsVoKeyOff(sound->program, sound->note << 8);` | The SDK key-off argument packs the note in the upper byte and zero fine pitch below it; eight is the byte-packing boundary. |
 | `audio_set_listener_transform` | 246 | `0` | `if (position_or_null != 0) {` | A nonnull optional listener-position pointer requests a transform update. |
 | `audio_set_listener_transform` | 249 | `0` | `if (rotation_or_null != 0) {` | A nonnull optional listener-rotation pointer requests a transform update. |
 | `audio_play_voice` | 270 | `0` | `if (program == 0 && tone == 0 && note == 0) {` | The all-zero sound triple suppresses voice dispatch. Individual zero program/tone/note values remain valid when the whole triple is not zero. |

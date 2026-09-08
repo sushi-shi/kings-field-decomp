@@ -2,7 +2,7 @@
 
 Complete current ledger for `equipment.c`, `menu_select.c` and
 `menu_draw_name_list.c` after the [confirmation/layout review](game-equipment-confirm-layout.md).
-All **102 retained occurrences** have an individual row and reason. Duplicate
+All **101 retained occurrences** have an individual row and reason. Duplicate
 tokens remain separate; line numbers locate this version, while the complete
 expression and multiplicity establish coverage. Claims, definitions and string
 contents are excluded.
@@ -18,7 +18,7 @@ and menu boundaries. Broader source-domain review remains open.
 
 ## `src/game/equipment.c`
 
-7 retained occurrences.
+6 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -26,9 +26,8 @@ and menu boundaries. Broader source-domain review remains open.
 | `weapon_records_load_and_mirror_angles` | 17 | `1` | `remaining = KF_WEAPON_RECORD_COUNT - 1;` | Inclusive record countdown starts at count minus one so the post-decrement loop visits all sixteen records. |
 | `weapon_records_load_and_mirror_angles` | 22 | `0` | `} while (remaining-- != 0);` | Post-decrement termination includes record countdown zero; the final decrement occurs after its body. |
 | `armor_records_load` | 34 | `0` | `} while (--remaining != 0);` | Pre-decrement word-copy countdown stops at zero after the complete declared record array. |
-| `fixed6_ratio_step` | 40 | `6` | `return (value << 6) / (span + 1) + 1;` | Multiply the numerator by 64 before signed division. For the reviewed bounded nonnegative stat/rate inputs, denominator plus one avoids zero and final plus one supplies a positive minimum step. Weapon charge uses it directly; magic charge doubles it. The helper name identifies the six-bit scaling; the original choice of 64 is unproven. |
-| `fixed6_ratio_step` | 40 | `1` | `return (value << 6) / (span + 1) + 1;` | Multiply the numerator by 64 before signed division. For the reviewed bounded nonnegative stat/rate inputs, denominator plus one avoids zero and final plus one supplies a positive minimum step. Weapon charge uses it directly; magic charge doubles it. The helper name identifies the six-bit scaling; the original choice of 64 is unproven. |
-| `fixed6_ratio_step` | 40 | `1` | `return (value << 6) / (span + 1) + 1;` | Multiply the numerator by 64 before signed division. For the reviewed bounded nonnegative stat/rate inputs, denominator plus one avoids zero and final plus one supplies a positive minimum step. Weapon charge uses it directly; magic charge doubles it. The helper name identifies the six-bit scaling; the original choice of 64 is unproven. |
+| `fixed6_ratio_step` | 40 | `1` | `return (value << KF_FIXED6_BITS) / (span + 1) + 1;` | Multiply the numerator by 64 before signed division. For the reviewed bounded nonnegative stat/rate inputs, denominator plus one avoids zero and final plus one supplies a positive minimum step. Weapon charge uses it directly; magic charge doubles it. The helper name identifies the six-bit scaling; the original choice of 64 is unproven. |
+| `fixed6_ratio_step` | 40 | `1` | `return (value << KF_FIXED6_BITS) / (span + 1) + 1;` | Multiply the numerator by 64 before signed division. For the reviewed bounded nonnegative stat/rate inputs, denominator plus one avoids zero and final plus one supplies a positive minimum step. Weapon charge uses it directly; magic charge doubles it. The helper name identifies the six-bit scaling; the original choice of 64 is unproven. |
 
 ## `src/game/menu_select.c`
 

@@ -10,6 +10,7 @@ enum {
     MAP_DROP_RANDOM_YAW_SHIFT = 3,
     MAP_GOLD_DROP_SCATTER_RADIUS = 600,
     MAP_GOLD_DROP_INITIAL_VELOCITY_Y = -120,
+    MAP_EFFECT_SPAWN_SEQUENCE_MODULUS = 0x10000,
     MAP_DOOR_HOLD_FIRST = 250,
     MAP_DOOR_CLOSE_FIRST = 300,
     MAP_SWING_DOOR_OPEN_UPDATES = 32,
@@ -130,7 +131,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
         }
         age = sequence - object->link.spawn_sequence;
         if (age < 0) {
-            age += 0x10000;
+            age += MAP_EFFECT_SPAWN_SEQUENCE_MODULUS;
         }
         if (oldest_age < age) {
             oldest = object;

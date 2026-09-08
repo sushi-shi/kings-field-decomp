@@ -1,6 +1,6 @@
 # Effect-pool remainder literal ledger
 
-Complete per-occurrence account of **140 retained numeric literals** in `src/game/effect_pool.c`,
+Complete per-occurrence account of **138 retained numeric literals** in `src/game/effect_pool.c`,
 including the existing alignment/offset witnesses. The
 [map-effect follow-up](game-map-effect-identities.md) names the former kind-48
 occurrence and updates this ledger. The [constructor review](game-effect-pool-constants.md)
@@ -146,8 +146,6 @@ its Y-scale and yaw consumers; its model asset remains unidentified.
 | `effect_pool_construct` | 389 | `0` | `if (va[3] != 0) {` | Zero suppresses this optional constructor sound; any nonzero word enables the call. This is a boolean test of the selected argument slot. |
 | `effect_pool_construct` | 391 | `0` | `&magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],` | Select the first stored SoundRef for this construction path. Other effect kinds use the same slot at different events, so no universal cast/impact enum is inferred. |
 | `effect_pool_construct` | 399 | `0` | `record->scale_y = 0;` | This branch begins the indicated visual scale at zero for its later growth. Scale zero is a numeric origin, independently of pool liveness. |
-| `effect_pool_construct` | 400 | `0x1800` | `record->scale_z = 0x1800;` | Warp-shimmer X/Z scale is 6144 Q12 units, exactly 1.5 unity; Y begins at zero. Preserve this authored model scale; the original tuning rationale is unresolved. |
-| `effect_pool_construct` | 401 | `0x1800` | `record->scale_x = 0x1800;` | Warp-shimmer X/Z scale is 6144 Q12 units, exactly 1.5 unity; Y begins at zero. Preserve this authored model scale; the original tuning rationale is unresolved. |
 | `effect_pool_construct` | 402 | `0` | `record->rotation.vx = 0;` | Zero the indicated Euler angle in this branch. These are neutral orientation components; other branches copy supplied angles or camera yaw. |
 | `effect_pool_construct` | 404 | `0` | `record->rotation.vz = 0;` | Zero the indicated Euler angle in this branch. These are neutral orientation components; other branches copy supplied angles or camera yaw. |
 | `effect_pool_spawn_typed` | 421 | `0` | `if (record != 0) {` | Only a non-null result from the free-slot scan may be initialized; zero is the allocation-miss pointer. |

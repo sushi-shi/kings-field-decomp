@@ -117,9 +117,9 @@ void menu_play_input_sound(KfMenuSoundCue cue)
         sound.note = 0x3f;
     }
     /* Bank 0, zero fine pitch; equal channels at 64/127 volume. */
-    SsVoKeyOn(sound.program, sound.note << 8, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);
+    SsVoKeyOn(sound.program, sound.note << KF_SOUND_PACKED_NOTE_SHIFT, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);
     VSync(0);
-    SsVoKeyOff(sound.program, sound.note << 8);
+    SsVoKeyOff(sound.program, sound.note << KF_SOUND_PACKED_NOTE_SHIFT);
 }
 
 ADDRESS(0x8002b1d4, 0x100)

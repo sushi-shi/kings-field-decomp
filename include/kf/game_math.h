@@ -8,6 +8,7 @@
 
 enum {
     KF_FIXED4_BITS = 4,
+    KF_FIXED6_BITS = 6,
     KF_FIXED7_BITS = 7,
     KF_FIXED7_ONE = 128,
     KF_FIXED8_BITS = 8,

@@ -6,7 +6,7 @@ comments, string contents and identifier digits are excluded. Signs remain in
 expressions; repeated tokens have separate rows. Retained encoded statuses
 and unconsumed storage do not acquire invented semantic identities.
 
-**132 retained occurrences.**
+**130 retained occurrences.**
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -19,9 +19,7 @@ and unconsumed storage do not acquire invented semantic identities.
 | `menu_play_input_sound` | 110 | `0x3c` | `sound.note = 0x3c;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |
 | `menu_play_input_sound` | 112 | `0xf` | `sound.program = 0xf;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |
 | `menu_play_input_sound` | 113 | `0x3f` | `sound.note = 0x3f;` | Authored VAB program/note pair for cursor (14/68), confirm (13/60) or cancel/error (15/63), independently identified by callers; these are audio recipe values rather than menu-state codes. |
-| `menu_play_input_sound` | 116 | `8` | `SsVoKeyOn(sound.program, sound.note << 8, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);` | The SDK note argument packs the note number in the high byte and zero fine tuning in the low byte; shift eight encodes that representation. |
 | `menu_play_input_sound` | 117 | `0` | `VSync(0);` | SDK vertical-sync wait mode zero. |
-| `menu_play_input_sound` | 118 | `8` | `SsVoKeyOff(sound.program, sound.note << 8);` | The SDK note argument packs the note number in the high byte and zero fine tuning in the low byte; shift eight encodes that representation. |
 | `memory_card_initialize` | 124 | `0x80` | `u8 buffer[0x80];` | Retail retains this 128-byte initialized local without passing it to any service or otherwise reading it. Its purpose remains unresolved; equal card-sector size does not identify a sector buffer. |
 | `memory_card_initialize` | 126 | `0xff` | `memset(buffer, 0xff, sizeof(buffer));` | Fill the unconsumed local with all-one bytes as retail does; no established consumer explains that initialization policy. |
 | `memory_card_initialize` | 127 | `0` | `memory_card_io_end_event = OpenEvent(HwCARD, EvSpIOE, EvMdNOINTR, 0);` | Null callback for the selected non-interrupt BIOS event mode; each event specification already names its role. |

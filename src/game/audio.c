@@ -235,7 +235,7 @@ ADDRESS(0x80033014, 0x28)
 void sound_ref_key_off_bank0(const SoundRef *sound)
 {
     /* Bank 0; note occupies the upper byte, with zero fine pitch. */
-    SsVoKeyOff(sound->program, sound->note << 8);
+    SsVoKeyOff(sound->program, sound->note << KF_SOUND_PACKED_NOTE_SHIFT);
 }
 
 ADDRESS(0x8003303c, 0x70)

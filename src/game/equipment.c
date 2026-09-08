@@ -37,5 +37,5 @@ void armor_records_load(const KfArmorRecord *source)
 ADDRESS(0x80015128, 0x3c)
 s32 fixed6_ratio_step(s32 value, s32 span)
 {
-    return (value << 6) / (span + 1) + 1;
+    return (value << KF_FIXED6_BITS) / (span + 1) + 1;
 }

@@ -1,7 +1,7 @@
 # Retained GAME map-object literals
 
 Complete current occurrence ledger for `src/game/map_object.c` and
-`src/game/map_object_pool.c`: **142 numeric/character occurrences**.
+`src/game/map_object_pool.c`: **141 numeric/character occurrences**.
 The [motion review](game-map-object-motion-constants.md) supplies the original
 reasons; [model identities](game-object-model-domain.md) and
 [behavior/action typing](game-map-object-state-domains.md) account for later
@@ -16,7 +16,7 @@ The presence of a ledger reason does not declare those domains complete.
 
 ## `src/game/map_object.c`
 
-64 retained occurrences.
+63 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -30,7 +30,6 @@ The presence of a ledger reason does not declare those domains complete.
 | `map_object_effect_pool_acquire` | 123 | `0` | `KfMapObject *oldest = 0;` | Null object pointer initialization or presence check. |
 | `map_object_effect_pool_acquire` | 124 | `0` | `s32 oldest_age = 0;` | Initial greatest age; strict improvement preserves the first winner and can leave no winner. |
 | `map_object_effect_pool_acquire` | 132 | `0` | `if (age < 0) {` | Negative difference detects halfword sequence wrap. |
-| `map_object_effect_pool_acquire` | 133 | `0x10000` | `age += 0x10000;` | Halfword modulus 65536 corrects a negative sequence-age difference. |
 | `map_object_effect_pool_acquire` | 140 | `0` | `} while (--count != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
 | `map_object_spawn_effect` | 170 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_spawn_effect` | 171 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
