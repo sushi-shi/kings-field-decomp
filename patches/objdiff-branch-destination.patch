@@ -1,0 +1,31 @@
+Compare aligned branch destinations before accepting equal instruction bytes.
+A moved function can encode a different local destination at the same section
+address. Zero-sized compiler labels can also make those relocations compare
+equal, so the raw instruction/relocation fast path must check the CFG edge.
+
+--- a/objdiff-core/src/diff/code.rs
++++ b/objdiff-core/src/diff/code.rs
+@@ -457,8 +457,11 @@
+ 
+     if left_resolved.code != right_resolved.code
+         || !reloc_eq(left_obj, right_obj, left_resolved, right_resolved, diff_config)
++        || left_row.branch_to.as_ref().map(|branch| branch.ins_idx)
++            != right_row.branch_to.as_ref().map(|branch| branch.ins_idx)
+     {
+-        // If either the raw code bytes or relocations don't match, process instructions and compare args
++        // Equal section-relative bytes and relocations can hide a changed local branch target.
++        // Compare aligned destination rows too before skipping argument comparison.
+         let left_ins = left_obj.arch.process_instruction(left_resolved, diff_config)?;
+         let right_ins = right_obj.arch.process_instruction(right_resolved, diff_config)?;
+         if left_ins.args.len() != right_ins.args.len() {
+--- a/objdiff-core/tests/snapshots/arch_ppc__diff_ppc.snap
++++ b/objdiff-core/tests/snapshots/arch_ppc__diff_ppc.snap
+@@ -49,7 +49,7 @@
+         name: ".text",
+         size: 3060,
+         match_percent: Some(
+-            58.466667,
++            58.460133,
+         ),
+         symbols: [
+             SectionDisplaySymbol {

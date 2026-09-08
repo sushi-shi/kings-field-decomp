@@ -12,7 +12,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.kf.mips_elf import MipsRelocation, write_mips_elf
+from scripts.kf.mips_elf import (
+    STB_LOCAL, STT_FUNC, STT_NOTYPE, DefinedSymbol, MipsRelocation, write_mips_elf,
+)
 
 
 LEAF_ASSEMBLY = """\
@@ -65,20 +67,10 @@ RELOCATION_TEXT = struct.pack(
 )
 
 
-def _match_percentages(value: object) -> list[float]:
-    found: list[float] = []
-    if isinstance(value, dict):
-        for key, item in value.items():
-            if key == "match_percent" and isinstance(item, (int, float)):
-                found.append(float(item))
-            found.extend(_match_percentages(item))
-    elif isinstance(value, list):
-        for item in value:
-            found.extend(_match_percentages(item))
-    return found
-
-
-def _run_diff(objdiff: str, target: Path, base: Path, symbol: str, output: Path) -> None:
+def _run_diff(
+    objdiff: str, target: Path, base: Path, symbol: str, output: Path,
+    *, exact: bool = True,
+) -> None:
     output.unlink(missing_ok=True)
     process = subprocess.run(
         [
@@ -105,9 +97,34 @@ def _run_diff(objdiff: str, target: Path, base: Path, symbol: str, output: Path)
             f"objdiff produced no output (exit {process.returncode}): "
             f"{process.stderr or process.stdout}"
         )
-    percentages = _match_percentages(json.loads(output.read_text(encoding="utf-8")))
-    if 100.0 not in percentages:
-        raise RuntimeError(f"{symbol} calibration did not byte-match: {percentages!r}")
+    report = json.loads(output.read_text(encoding="utf-8"))
+    row = next(row for row in report["right"]["symbols"] if row.get("name") == symbol)
+    percentage = row["match_percent"]
+    if (percentage == 100.0) != exact:
+        raise RuntimeError(
+            f"{symbol} calibration expected exact={exact}, got {percentage}%"
+        )
+
+
+def _branch_object(prefix_size: int, destination: int, local_alias: bool) -> bytes:
+    # The jump chooses return 1 (+8) or return 2 (+16). Moving the function
+    # must not hide a changed destination behind equal section-relative bytes.
+    prefix = [0x03E00008, 0] if prefix_size else []
+    words = prefix + [
+        0x08000000 | ((prefix_size + destination) // 4), 0,
+        0x03E00008, 0x24020001, 0x03E00008, 0x24020002,
+    ]
+    definitions = (
+        [DefinedSymbol("branch_probe", prefix_size, 24, STT_FUNC)]
+        if prefix_size else []
+    )
+    if local_alias:
+        definitions.append(DefinedSymbol("LM7", prefix_size, 0, STT_NOTYPE, STB_LOCAL))
+    return write_mips_elf(
+        struct.pack(f"<{len(words)}I", *words),
+        "prefix" if prefix_size else "branch_probe", prefix_size or 24,
+        [MipsRelocation(prefix_size, "R_MIPS_26", ".text")], definitions,
+    )
 
 
 def main() -> int:
@@ -149,8 +166,17 @@ def main() -> int:
             check=True,
         )
         _run_diff(objdiff, target, base, "relocation_test", output)
+        target.write_bytes(_branch_object(0, 16, False))
+        for local_alias in (False, True):
+            for prefix_size in (0, 8):
+                for destination in (8, 16):
+                    base.write_bytes(_branch_object(prefix_size, destination, local_alias))
+                    _run_diff(
+                        objdiff, target, base, "branch_probe", output,
+                        exact=destination == 16,
+                    )
     print(
-        "objdiff MIPS calibration: calibration_leaf and relocation_test=100.0%"
+        "objdiff MIPS calibration: leaf, relocations, and branch destination controls passed"
     )
     return 0
 

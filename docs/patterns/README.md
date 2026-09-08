@@ -219,6 +219,9 @@ promotes a probe to a proven historical toolchain.
 - [retail initialized packing](../../config/evidence/open_sound_data_extent.md):
   carve actual inter-object bytes, including nonzero controls, and separate
   OPEN's three-byte SoundRef from its following census byte.
+- [objdiff-local-branch-comparison.md](objdiff-local-branch-comparison.md):
+  reject a false exact MIPS jump hidden by a function shift and local label;
+  compare aligned destinations before accepting equal instruction bytes.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
   inclusion of custom allocated NOBITS sections; matching data must also admit
