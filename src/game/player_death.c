@@ -14,6 +14,20 @@ enum {
     PLAYER_POISON_ROLL_SHIFT = 15
 };
 
+enum {
+    PLAYER_STARTING_GOLD = 150,
+    PLAYER_STARTING_DEFENSE = 5,
+    LIGHT_RING_HOLY_ATTACK_BONUS = 5,
+    MOON_AMULET_MAGIC_DEFENSE_BONUS = 7,
+    WIND_BLADE_BRACELET_FIRE_DEFENSE_BONUS = 7,
+    TWO_HEADED_DRAGON_RING_MAGIC_BONUS = 8,
+    VERDITE_EQUIPPED_MAGIC_BONUS = 1,
+    GOLD_CROSS_HOLY_ATTACK_BONUS = 3,
+    BLACK_MASK_PHYSICAL_POWER_PENALTY = 8,
+    PLAYER_DAMAGE_POWER_DIVISOR = 5,
+    PLAYER_DAMAGE_THRESHOLD_MULTIPLIER = 2
+};
+
 DATA(0x80055810, 0x9)
 SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT] = {
     {7, 0, 80},
@@ -57,16 +71,16 @@ void game_state_initialize(void)
     player_state.progress_state.level = 1;
     player_state.progress_state.current_floor = KF_FLOOR_1;
     player_state.progress_state.highest_floor = KF_FLOOR_1;
-    player_state.gold = 0x96;
+    player_state.gold = PLAYER_STARTING_GOLD;
     player_state.attack_charge_state.current = 0;
     player_state.magic_charge = 0;
     player_state.weapon_charge_delay = 0;
-    player_state.cutting_defense = 5;
-    player_state.striking_defense = 5;
-    player_state.piercing_defense = 5;
-    player_state.poison_resistance = 5;
-    player_state.magic_defense = 5;
-    player_state.fire_defense = 5;
+    player_state.cutting_defense = PLAYER_STARTING_DEFENSE;
+    player_state.striking_defense = PLAYER_STARTING_DEFENSE;
+    player_state.piercing_defense = PLAYER_STARTING_DEFENSE;
+    player_state.poison_resistance = PLAYER_STARTING_DEFENSE;
+    player_state.magic_defense = PLAYER_STARTING_DEFENSE;
+    player_state.fire_defense = PLAYER_STARTING_DEFENSE;
     player_state.view_bob_offset = 0;
     player_state.view_bob_phase = 0;
     player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
@@ -318,26 +332,26 @@ void player_recalculate_combat_stats(void)
     }
     switch (player_state.equipped_accessory_id) {
     case KF_ITEM_LIGHT_RING:
-        player_state.holy_attack += 5;
+        player_state.holy_attack += LIGHT_RING_HOLY_ATTACK_BONUS;
         break;
     case KF_ITEM_MOON_AMULET:
-        player_state.magic_defense += 7;
+        player_state.magic_defense += MOON_AMULET_MAGIC_DEFENSE_BONUS;
         break;
     case KF_ITEM_WIND_BLADE_BRACELET:
-        player_state.fire_defense += 7;
+        player_state.fire_defense += WIND_BLADE_BRACELET_FIRE_DEFENSE_BONUS;
         break;
     case KF_ITEM_TWO_HEADED_DRAGON_RING:
-        player_state.magic += 8;
+        player_state.magic += TWO_HEADED_DRAGON_RING_MAGIC_BONUS;
         break;
     case KF_ITEM_VERDITE:
-        player_state.magic += 1;
+        player_state.magic += VERDITE_EQUIPPED_MAGIC_BONUS;
         break;
     case KF_ITEM_GOLD_CROSS:
-        player_state.holy_attack += 3;
+        player_state.holy_attack += GOLD_CROSS_HOLY_ATTACK_BONUS;
         break;
     }
     if (player_state.equipped_head_armor_id == KF_ITEM_BLACK_MASK) {
-        player_state.physical_power -= 8;
+        player_state.physical_power -= BLACK_MASK_PHYSICAL_POWER_PENALTY;
     }
     if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
@@ -459,7 +473,7 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
     if (attack == 0) {
         return 0;
     }
-    base_power = defense + base_power / 5;
+    base_power = defense + base_power / PLAYER_DAMAGE_POWER_DIVISOR;
     defense = attack - base_power;
     if (defense < 0) {
         defense = 0;
@@ -467,7 +481,7 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
     if (base_power == 0) {
         base_power = 1;
     }
-    return defense + (attack * attack) / (base_power * 2);
+    return defense + (attack * attack) / (base_power * PLAYER_DAMAGE_THRESHOLD_MULTIPLIER);
 }
 
 

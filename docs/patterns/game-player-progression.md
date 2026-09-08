@@ -1,5 +1,31 @@
 # Player progression limits and growth records
 
+## Combat-tuning naming follow-up
+
+Function Match Plan: name starting gold/defense, each accessory bonus and the
+Black Mask penalty, and the two player damage-formula weights. Keep these
+local to the owning module. They describe observed effects, not an inferred
+balance rationale. The fresh GAME dossiers, callers, neighboring bodies and
+source history agree with the existing player-owned state and formula evidence.
+These functions are absent from the vendored inventory.
+
+| GAME VA / bytes | Function | Stored pre-edit score | Constant evidence |
+| --- | --- | ---: | --- |
+| `800151cc / 0x2e4` | `game_state_initialize` | 100% | `800151f8` loads 150 gold; `8001521c` loads five for six initial defense/resistance fields. Three direct calls, 77 validated references; return delay slot releases 24 bytes. |
+| `80015714 / 0x814` | `player_recalculate_combat_stats` | 100% | Accessory arms at `80015d48..80015dbc` add 5/7/7/8/1/3 to their selected halfword fields; `80015dd4` subtracts eight for Black Mask. Four direct calls, 135 validated references including the switch; return delay slot releases 24 bytes. |
+| `8001627c / 0xa8` | `player_calculate_damage_component` | 100% | `80016280..8001628c` divides base power by five, then adds it to defense; `800162e4` doubles the guarded threshold for the squared-attack denominator. Five proven caller sites in `player_apply_damage`; no calls/data references, one validated internal branch, `jr`/`nop` return. |
+
+Preserve all stores, duplicate cutting-defense additions, signed divisions,
+parameter reuse, zero guards, control flow and delay slots. In particular,
+Black Mask's subtraction remains a halfword update without a new lower clamp.
+The player-target formula's power contribution goes into defense; it must not
+be conflated with the actor-target formula. Builds, compiler checks, tests and
+post-edit matching are deferred by the user's explicit instruction.
+
+Final verdict: all three functions use the planned constant values with their
+original operations and widths. Sixteen raw occurrences were removed; all
+111 current file ledgers reconcile. No post-edit binary result is claimed.
+
 ## Function Match Plan
 
 At `2f1f04a`, name the shared power, vital, experience and level caps, the

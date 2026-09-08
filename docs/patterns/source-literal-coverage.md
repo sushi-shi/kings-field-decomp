@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [status-rating weight review](game-status-text-layout.md#rating-weight-naming-follow-up):
+Working snapshot after the [player combat-tuning review](game-player-progression.md#combat-tuning-naming-follow-up):
 **111 C files**, **112 source/image variants**, and
-**5,843 inline numeric/character occurrences**. Counts include authored
+**5,827 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,843 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,827 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -75,6 +75,8 @@ The transformation review names its 64 blend intervals and 40-unit Y step,
 removing six raw occurrences while retaining both endpoint updates.
 The status-rating review names eight attack/defense formula weights, retaining
 the original unsigned subtotal, signed divisions and truncation points.
+The player combat-tuning review names starting gold/defense, seven equipment
+effects and two damage weights, removing sixteen raw occurrences.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -119,7 +121,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,620 occurrences.
+73 files; 4,604 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -179,7 +181,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 26 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [notify_queue.c](../../src/game/notify_queue.c) | 92 | [complete ledger](game-notification-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_core.c](../../src/game/player_core.c) | 74 | [complete ledger](game-player-core-literal-ledger.md); [sound slots](game-player-sound-slots.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_death.c](../../src/game/player_death.c) | 155 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_death.c](../../src/game/player_death.c) | 139 | [complete ledger](game-player-death-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_death_fade.c](../../src/game/player_death_fade.c) | 8 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
