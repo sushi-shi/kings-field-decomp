@@ -7,6 +7,9 @@ promotes a probe to a proven historical toolchain.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
+- [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE
+  address inputs and quantity constants, independent debugger controls, and
+  production assembler-profile parity.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
 - [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration and

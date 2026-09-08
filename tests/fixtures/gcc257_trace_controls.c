@@ -47,6 +47,16 @@ void member_retained(struct TraceObject *first, struct TraceObject *second)
     second->visible = 1;
 }
 
+void member_root_and_offset(void)
+{
+    object.words[0] = 1;
+    object.words[1] = 2;
+    consume_object(&object);
+    object.words[0] = 1;
+    object.words[1] = 2;
+    consume_object(&object);
+}
+
 void member_absolute(void)
 {
     object.enabled = 1;

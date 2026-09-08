@@ -272,6 +272,41 @@ def _constants(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
             "tails_equal": comparisons[-1] if comparisons else None}, evidence
 
 
+def _address_inputs(trace: Trace, stage: str, uids: set[int]) -> tuple[dict, list[int]]:
+    """Count observed store-address inputs, including repeated CSE path scans.
+
+    A missing hook is unavailable evidence. A present hook with no recorded
+    quantity constant is a different state; neither proves folding impossible.
+    """
+    observations = {}
+    observed = set()
+    evidence = []
+    for row in trace.select("cse.address"):
+        if row["pass"] != stage or row["uid"] not in uids or row["reason"] != "store":
+            continue
+        form = "register" if reg(row["x"]) is not None else "expression"
+        if row["pseudo"] < 0:
+            quantity = "unidentified-base"
+        elif not row["values"][1]:
+            quantity = "unassigned"
+        else:
+            quantity = "constant" if row["y"] is not None else "no-constant"
+        mode_matches = bool(row["values"][2]) if row["values"][2] >= 0 else None
+        key = form, quantity, mode_matches
+        observations[key] = observations.get(key, 0) + 1
+        observed.add(row["uid"])
+        evidence.append(row["seq"])
+    return {
+        "status": "unavailable" if not observed else "observed" if observed == uids else "partial",
+        "stores_without_observation": len(uids - observed),
+        "observations": [{"form": form, "quantity": quantity,
+                          "mode_matches": matches, "count": count}
+                         for (form, quantity, matches), count in sorted(
+                             observations.items(), key=lambda item: (
+                                 item[0][0], item[0][1], str(item[0][2])))],
+    }, evidence
+
+
 def _address(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
     root = spec["symbol"], spec["offset"]
     pseudos = set()
@@ -285,6 +320,7 @@ def _address(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
         return {"status": "unavailable", "reason": "address root has no unique CSE pseudo"}, evidence
     pseudo = next(iter(pseudos))
     stores = {}
+    inputs = {}
     for stage in ("cse1", "cse2", "global-alloc"):
         snapshot = trace.snapshot(stage)
         # Only propagate single-definition pseudo addresses. Hard registers
@@ -312,6 +348,7 @@ def _address(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
             if not added:
                 break
         counts = {"relative": 0, "other_base_relative": 0, "absolute": 0}
+        store_uids = set()
         for row in snapshot:
             parts = assignment(row["x"])
             if not parts or parts[0].get("code") != "mem":
@@ -319,18 +356,23 @@ def _address(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
             addr = parts[0]["ops"][0]
             relative = register_offset(addr)
             absolute = symbolic(addr)
+            kind = None
             if relative and relative[0] == pseudo and root[1] + relative[1] in spec["members"]:
-                counts["relative"] += 1
-                evidence.append(row["seq"])
+                kind = "relative"
             elif absolute and absolute[0] == root[0] and absolute[1] in spec["members"]:
-                counts["absolute"] += 1
-                evidence.append(row["seq"])
+                kind = "absolute"
             elif relative and relative[0] in roots:
                 name, offset = roots[relative[0]]
                 if name == root[0] and offset + relative[1] in spec["members"]:
-                    counts["other_base_relative"] += 1
-                    evidence.append(row["seq"])
+                    kind = "other_base_relative"
+            if kind:
+                counts[kind] += 1
+                store_uids.add(row["uid"])
+                evidence.append(row["seq"])
         stores[stage] = counts
+        if stage in {"cse1", "cse2"}:
+            inputs[stage], input_evidence = _address_inputs(trace, stage, store_uids)
+            evidence.extend(input_evidence)
     rewrites = []
     for row in trace.select("change.commit"):
         before, after = register_offset(row["x"]), symbolic(row["y"])
@@ -339,7 +381,7 @@ def _address(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
             rewrites.append({"pass": row["pass"], "context": row["context"]})
             evidence.append(row["seq"])
     return {"status": "observed", "stores": stores, "allocation": _lifetime(trace, pseudos),
-            "absolute_rewrites": rewrites}, evidence
+            "absolute_rewrites": rewrites, "address_inputs": inputs}, evidence
 
 
 def object_frame(path: Path, symbol: str) -> dict:

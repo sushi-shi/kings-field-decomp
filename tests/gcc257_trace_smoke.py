@@ -125,10 +125,38 @@ def validate_controls(path: Path, obj: Path) -> None:
             "member rewrites were attributed to the wrong CSE decision")
     require(all(row["calls_crossed"] == 0 for row in folded["allocation"]["global-alloc"]),
             "folded address incorrectly reported live across calls")
+    require(folded["address_inputs"]["cse2"] == {
+        "status": "observed", "stores_without_observation": 0,
+        "observations": [{"form": "expression", "quantity": "constant",
+                          "mode_matches": True, "count": 4}],
+    }, "folded members did not enter CSE2 with recorded base constants")
     retained = summarize(traces["member_retained"], [{"name": "p", "kind": "source_lifetime",
                          "source_value": "first"}], obj, obj)["p"]["value"]
     require(any(row["calls_crossed"] >= 2 for row in retained["allocation"]["global-alloc"]),
             "unknown struct pointer did not retain its real call-crossing lifetime")
+    inputs = traces["member_retained"].select("cse.address")
+    require(len(inputs) == 12 and all(row["reason"] == "store" and row["y"] is None
+            and row["values"][1:] == [1, 1] for row in inputs),
+            "dynamic pointer incorrectly acquired a recorded quantity constant")
+
+    mixed = summarize(traces["member_root_and_offset"], [{
+        "name": "root", "kind": "address_lifetime", "symbol": "object", "offset": 0,
+        "members": [0, 4],
+    }], obj, obj)["root"]["value"]
+    require(mixed["stores"]["cse1"]["relative"] == 4
+            and mixed["stores"]["cse2"] == {
+                "relative": 2, "other_base_relative": 0, "absolute": 2},
+            "direct-root and offset stores lost their distinct CSE outcomes")
+    require(mixed["address_inputs"]["cse2"] == {
+        "status": "observed", "stores_without_observation": 0,
+        "observations": [{"form": form, "quantity": "constant",
+                          "mode_matches": True, "count": 2}
+                         for form in ("expression", "register")],
+    }, "direct-root/offset control did not observe both recorded base constants")
+    require(any(row["calls_crossed"] == 1 for row in mixed["allocation"]["global-alloc"]),
+            "direct root did not retain its call-crossing lifetime")
+    require(mixed["absolute_rewrites"] == [{"pass": "cse2", "context": "cse.fold-address"}] * 2,
+            "offset-store rewrites were attributed to the wrong decision")
     require(bool(traces["member_folded"].select("cse.constant"))
             and bool(traces["member_folded"].select("cse.invalidate"))
             and bool(traces["member_folded"].select("cse.remove")),
@@ -279,6 +307,8 @@ def main() -> None:
         includes += (Path(os.environ["PSYQ_INCLUDE"]),)
     report = []
     for name, source, object_name, delink, defines, unit in corpus:
+        assembler_version = manifest.profiles[unit.profile].aspsx_version if unit else "1.07"
+        assembler_flags = manifest.profiles[unit.profile].maspsx_flags if unit else ()
         reference = None
         trace_reference = None
         records = []
@@ -288,8 +318,8 @@ def main() -> None:
                             ("enabled-2", args.instrumented)):
             output = args.output / name / mode / object_name
             trace = output.with_suffix(".jsonl") if mode.startswith("enabled") else None
-            compile_source(source, "OPEN.EXE", output, delink, "O2", 0, "1.07",
-                           includes, ("-mcpu=r2000",), "gcc257-native", defines=defines,
+            compile_source(source, "OPEN.EXE", output, delink, "O2", 0, assembler_version,
+                           includes, ("-mcpu=r2000",), "gcc257-native", assembler_flags, defines=defines,
                            cc1_override=probe, trace_path=trace)
             blob = output.read_bytes()
             if reference is None:
@@ -307,7 +337,8 @@ def main() -> None:
                     raise RuntimeError(f"{name}: invalid source provenance")
         row = {"unit": name, "object_sha256": hashlib.sha256(reference).hexdigest(),
                "trace_sha256": hashlib.sha256(trace_reference).hexdigest(),
-               "events": len(records), "strict_scores": {}}
+               "events": len(records), "strict_scores": {},
+               "aspsx_version": assembler_version, "maspsx_flags": list(assembler_flags)}
         if unit:
             target = delink / "open/modules" / object_name
             for function in unit.functions:
