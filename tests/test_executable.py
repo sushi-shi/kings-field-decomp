@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import os
 from pathlib import Path
 import shutil
 import struct
@@ -12,7 +13,7 @@ import unittest
 
 from elftools.elf.elffile import ELFFile
 
-from scripts.kf.executable import compare, serialize, undefined
+from scripts.kf.executable import compare, sector_padding, serialize, undefined
 from scripts.kf.mips_elf import DefinedSymbol, write_mips_elf
 from scripts.kf.sema.image import RetailImage
 
@@ -47,6 +48,17 @@ class ComparisonTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'linked little-endian'):
             serialize(ELFFile(io.BytesIO(obj)), image)
 
+    def test_container_prefix_is_bounded_by_the_remaining_sector(self):
+        prefix = b'CPE\x01\x08\x00\x03\x90\x00'
+        for remaining in (0, 1, 4, 8, 9, 10, 2047):
+            with self.subTest(remaining=remaining):
+                padding = sector_padding(4096 - remaining, 'cpe-v1-prefix')
+                self.assertEqual(len(padding), remaining)
+                self.assertEqual(padding[:9], prefix[:remaining])
+                self.assertEqual(padding[9:], bytes(max(0, remaining - 9)))
+        with self.assertRaises(ValueError):
+            sector_padding(0, 'unknown')
+
 
 @unittest.skipUnless(shutil.which('mipsel-linux-gnu-ld'), 'requires pinned GNU MIPS linker')
 class SerializationTests(unittest.TestCase):
@@ -75,6 +87,43 @@ class SerializationTests(unittest.TestCase):
             self.assertEqual(actual[0x80c:], bytes(0x7f4))
             self.assertIn({'name': '.bss', 'address': 0x80011000, 'size': 32,
                            'storage': 'bss'}, sections)
+            # The compatibility tail follows this synthetic link's actual end,
+            # with no retail data available to copy or fixed retail VA to use.
+            compatible, compatible_sections = serialize(linked, image, padding_policy='cpe-v1-prefix')
+            self.assertEqual(compatible[:0x80c], actual[:0x80c])
+            self.assertEqual(compatible[0x80c:0x815], b'CPE\x01\x08\x00\x03\x90\x00')
+            self.assertEqual(compatible[0x815:], bytes(0x7eb))
+            self.assertEqual(compatible_sections, sections)
+
+
+@unittest.skipUnless(shutil.which('dosbox-x') and os.environ.get('PSYQ_RUNTIME26_BIN')
+                     and os.environ.get('PSYQ_BIN'), 'requires both pinned native CPE2X candidates')
+class NativeConverterControls(unittest.TestCase):
+    def test_both_native_converters_emit_zero_tail_under_this_control(self):
+        # This deliberately does NOT establish native provenance for our
+        # inferred retail compatibility rule, despite the matching CPE prefix.
+        for variable in ('PSYQ_BIN', 'PSYQ_RUNTIME26_BIN'):
+            with self.subTest(candidate=variable), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                shutil.copy2(Path(os.environ[variable]) / 'CPE2X.EXE', root / 'CPE2X.EXE')
+                entry = 0x80010000
+                payload = struct.pack('<II', 0x03e00008, 0)
+                cpe = (b'CPE\x01\x08\x00\x03\x90\x00' + struct.pack('<I', entry)
+                       + b'\x01' + struct.pack('<II', entry, len(payload)) + payload + b'\0')
+                (root / 'TEST.CPE').write_bytes(cpe)
+                (root / 'RUN.BAT').write_bytes(b'cpe2x TEST.CPE > TEST.TXT\r\n')
+                environment = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy',
+                                   XDG_CONFIG_HOME=str(root / 'config'))
+                subprocess.run(['dosbox-x', '-silent', '-fastlaunch', '-set', 'sdl output=surface',
+                                '-c', f'mount c {root}', '-c', 'c:', '-c', 'RUN.BAT', '-exit'],
+                               cwd=root, env=environment, check=True, capture_output=True, timeout=30)
+                self.assertIn('CPE2X Ver1.3', (root / 'TEST.TXT').read_text())
+                actual = (root / 'TEST.EXE').read_bytes()
+                self.assertEqual(len(actual), 4096)
+                self.assertEqual(struct.unpack_from('<I', actual, 0x10)[0], entry)
+                self.assertEqual(struct.unpack_from('<II', actual, 0x18), (entry, 2048))
+                self.assertEqual(actual[2048:2056], payload)
+                self.assertEqual(actual[2056:], bytes(2040))
 
 
 if __name__ == '__main__':

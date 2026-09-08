@@ -1,5 +1,11 @@
 # Executable links and complete-file comparisons
 
+PSX now produces a byte-identical 4096-byte executable. See the
+[PSX closure record](patterns/psx-exact-link.md) for the compiler-directive
+alignment bridge, recovered SDK order and explicit container provenance:
+the header is a retail template and the CPE padding mechanism remains inferred.
+The tables below retain the earlier investigation results.
+
 Run `kf link` inside `nix develop` after `kf init`. Use `kf link --image game`
 to select one program. The command refreshes source and target objects, links
 each selected image, and writes:
@@ -81,7 +87,11 @@ These generated inputs are provisional link storage, not independently
 reconstructed data. Their evidence and unresolved extent/linkage boundary stay
 visible. The PS-X header retains retail loader/region metadata while regenerating
 the entry and load size. Those template bytes and the retail startup are also
-declared in each report. The executables have not been tested by running them.
+declared in each report. Final-sector padding models the CPE v1 prefix observed
+after initialized data in all three retail images, followed by zeros, at the
+actual linked load end. Reports explicitly mark the mechanism as inferred;
+neither tested native converter reproduces it. The executables have not been
+tested by running them.
 
 ## First verified executable comparison
 
@@ -116,7 +126,7 @@ psx.main` rebuild and strict `kf match --unit psx.main` retain the exact
 208-byte `main`. No game C or library instruction change is needed in the
 following diagnostic links.
 
-The production archive search extracts `A36, C113, C114, C66, C67, SNMAIN,
+The initial production archive search extracted `A36, C113, C114, C66, C67, SNMAIN,
 SNDEF, C57`. The separately established
 [retail text order](object-link-order.md) is `SNMAIN, A36, C113, C57, C66,
 C67, C114`; `SNDEF` contributes only the four-byte `_stacksize` datum.
@@ -176,10 +186,12 @@ above to `scripts.kf.executable.script`. Link with the same GNU ld flags as
 `kf link`, then use `serialize`, `compare` and `sdk_link.verify_linked` to check
 the complete file and original SDK expressions.
 
-These results isolate the causes; they do not establish original ASPSX section
-metadata or reproduce the retail converter's tail policy. The production
-compiler and executable link remain unchanged at 431 differences. No scratch
-object is banked, and no complete-executable exactness is claimed.
+These diagnostic results isolated the causes without establishing original
+ASPSX metadata or reproducing the retail converter. At that checkpoint the
+production link stayed at 431 differences and no scratch object was banked.
+The subsequent [PSX closure](patterns/psx-exact-link.md) implements a compiler
+directive contract and explicit container compatibility model, with their
+evidence limits retained in the production report.
 
 The rebuilt source and repeated diagnostic links reproduce all counts and
 hashes above. Ruff and all 725 repository tests pass. The required full build

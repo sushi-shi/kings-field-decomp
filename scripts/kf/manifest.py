@@ -41,6 +41,7 @@ class Profile:
     aspsx_version: str
     cc1_flags: tuple[str, ...]
     maspsx_flags: tuple[str, ...] = ()
+    section_alignment: str = "gnu"
 
 
 # Native probe compilers. Each is a Decompals old-gcc rebuild of a PSX GCC
@@ -127,7 +128,7 @@ def _profile(name: str, row: object) -> Profile:
         raise ValueError(f"profile {name!r} must be a TOML table")
     allowed = {
         "language", "compiler", "optimization", "small_data",
-        "aspsx_version", "cc1_flags", "maspsx_flags",
+        "aspsx_version", "cc1_flags", "maspsx_flags", "section_alignment",
     }
     extra = set(row) - allowed
     if extra:
@@ -163,6 +164,11 @@ def _profile(name: str, row: object) -> Profile:
         raise ValueError(f"profile {name!r}: maspsx_flags must be an array of strings")
     if language == "assembly" and maspsx_flags:
         raise ValueError(f"profile {name!r}: assembly profiles do not run maspsx")
+    section_alignment = row.get("section_alignment", "gnu")
+    if not isinstance(section_alignment, str) or section_alignment not in {"gnu", "directives"}:
+        raise ValueError(f"profile {name!r}: unknown section alignment model")
+    if language != "c" and section_alignment != "gnu":
+        raise ValueError(f"profile {name!r}: directive alignment requires C compilation")
     return Profile(
         name=name,
         language=language,
@@ -172,6 +178,7 @@ def _profile(name: str, row: object) -> Profile:
         aspsx_version=str(row.get("aspsx_version", "1.07")),
         cc1_flags=tuple(flags),
         maspsx_flags=tuple(maspsx_flags),
+        section_alignment=section_alignment,
     )
 
 

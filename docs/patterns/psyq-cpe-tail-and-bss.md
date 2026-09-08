@@ -77,3 +77,11 @@ converter does not reproduce the retail tail under this control. The shared
 CPE signature supports container residue; the exact historical converter,
 record ordering/options and mechanism remain unproved. Do not copy the prefix
 into generated output and call the result independently reproduced.
+
+The later [PSX executable closure](psx-exact-link.md) also tests the distinct
+Runtime 2.6 CPE2X 1.3 binary; it emits zeros too. The normal packer now has an
+explicit compatibility model that encodes the observed CPE prefix at the linked
+load end and zero-fills the remaining sector. Its report labels the mechanism
+as inferred and keeps historical-converter reproduction false. This gives
+complete-file equality for PSX while preserving the BSS model and the native
+negative controls; it does not independently prove the historical mechanism.

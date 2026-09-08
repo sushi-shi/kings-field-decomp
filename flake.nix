@@ -98,6 +98,18 @@
           --stage-dir "$out"
       '';
 
+      runtime26Media = pkgs.fetchurl {
+        name = "psyq-runtime-2.6.zip";
+        url = "https://archive.org/download/ps1_sdks/Programmer%20Tool%20-%20Runtime%20Library%20Version%202.6%20%28Japan%29%20%28En%2CJa%29_DTL-S2170_redump.zip";
+        hash = "sha256-eROgCPwsPjBZuKOJ9N+3Nzd6NbcrQ8sIsz8PVSR4W9M=";
+      };
+
+      runtime26Tools = pkgs.runCommand "kings-field-runtime26-host-tools" {
+        nativeBuildInputs = [ pkgs.python3 pkgs.p7zip ];
+      } ''
+        python3 ${./scripts/stage-runtime26-tools.py} ${runtime26Media} "$out"
+      '';
+
       psy-k = pkgs.rustPlatform.buildRustPackage {
         pname = "psy-k";
         version = "0.4.0-git";
@@ -483,6 +495,7 @@
         shellHook = ''
           export KINGS_FIELD_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
           export PSYQ_DIR="${psyqToolchain}"
+          export PSYQ_RUNTIME26_BIN="${runtime26Tools}/bin"
           export PSYQ_BIN="$PSYQ_DIR/psyq/bin"
           export PSYQ_INCLUDE="$PSYQ_DIR/psyq/include"
           export PSYQ_LIB="$PSYQ_DIR/psyq/lib"
@@ -525,6 +538,7 @@
         PSYQ_LIB = "${psyqToolchain}/psyq/lib";
         PSYQ_INCLUDE = "${psyqToolchain}/psyq/include";
         PSYQ_BIN = "${psyqToolchain}/psyq/bin";
+        PSYQ_RUNTIME26_BIN = "${runtime26Tools}/bin";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts

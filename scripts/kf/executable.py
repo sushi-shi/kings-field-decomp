@@ -29,6 +29,12 @@ from scripts.kf.sema.image import RetailImage
 RUNTIME = ('.rodata', '.text', '.data', '.sdata', '.sbss', '.bss')
 METADATA = '.reginfo .MIPS.abiflags .pdr .mdebug.* .comment .note.GNU-stack .gnu.attributes'
 
+# Complete-object text placements prove this contiguous PSX chain; SNDEF has
+# no text and supplies the SDK's default stack-size datum. See object-link-order.md.
+PSX_SDK_ORDER = (('LIBSN', 'SNMAIN'), ('LIBAPI', 'A36'), ('LIBAPI', 'C113'),
+                 ('LIBAPI', 'C57'), ('LIBAPI', 'C66'), ('LIBAPI', 'C67'),
+                 ('LIBAPI', 'C114'), ('LIBSN', 'SNDEF'))
+
 
 def elf(path: Path) -> ELFFile:
     return ELFFile(io.BytesIO(path.read_bytes()))
@@ -193,7 +199,24 @@ def data_inputs(image: RetailImage, missing: list[str], units: list[Unit],
     return root / 'inventory.o', definitions, rows
 
 
-def serialize(linked: ELFFile, image: RetailImage) -> tuple[bytes, list[dict]]:
+def sector_padding(extent: int, policy: str) -> bytes:
+    """Container compatibility, independent of source data and retail payload.
+
+    All three retail tails retain CPE v1 magic, unit zero and the start of a
+    PC register record. The stale-buffer mechanism is inferred, not reproduced
+    by either supplied CPE2X 1.3 binary. Keep that provenance in link reports.
+    """
+    size = (-extent) % 0x800
+    if policy == 'zero':
+        return bytes(size)
+    if policy != 'cpe-v1-prefix':
+        raise ValueError(f'unknown sector padding policy: {policy}')
+    prefix = b'CPE\x01' + b'\x08\x00' + b'\x03\x90\x00'
+    return (prefix + bytes(size))[:size]
+
+
+def serialize(linked: ELFFile, image: RetailImage, *,
+              padding_policy: str = 'zero') -> tuple[bytes, list[dict]]:
     """Write full linked load sections, a PS-X header and explicit sector padding."""
     if (linked.elfclass != 32 or not linked.little_endian
             or linked['e_machine'] != 'EM_MIPS' or linked['e_type'] != 'ET_EXEC'):
@@ -219,8 +242,9 @@ def serialize(linked: ELFFile, image: RetailImage) -> tuple[bytes, list[dict]]:
                < s['address'] + s['size'] for s in loaded):
         raise ValueError('entry is outside linked code')
     extent = max(s['address'] + s['size'] for s in loaded) - image.load_start
-    size = (extent + 0x7ff) & ~0x7ff
-    payload = bytearray(size)
+    padding = sector_padding(extent, padding_policy)
+    size = extent + len(padding)
+    payload = bytearray(extent) + padding
     for section in loaded:
         offset = section['address'] - image.load_start
         payload[offset:offset + section['size']] = linked.get_section_by_name(section['name']).data()
@@ -293,8 +317,15 @@ def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_repo
               'sdk_library_report': str(sdk_root / 'libraries.json'),
               'inventory_data': [], 'sdk_aliases': [], 'attempts': [],
               'header_provider': 'retail-template-with-linked-entry-and-load-size',
+              'padding_provider': 'inferred-cpe-v1-prefix-at-linked-load-end',
+              'historical_converter_reproduced': False,
               'complete_source_reconstruction_proven': False, 'game_execution_tested': False}
     entry = '__SN_ENTRY_POINT'
+    if key == 'psx':
+        ordered = [sdk_root / library / (member + '.o') for library, member in PSX_SDK_ORDER]
+        objects.extend(ordered)
+        report['sdk_explicit_order'] = [f'{library}.LIB/{member}.OBJ'
+                                        for library, member in PSX_SDK_ORDER]
     if key != 'psx':
         catalog = load_catalog(RETAIL_CONFIG)
         for function in catalog.functions[image.image]:
@@ -321,7 +352,12 @@ def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_repo
             entries = linked.get_section_by_name('.symtab').get_symbol_by_name(entry) or []
             if len(entries) != 1 or entries[0]['st_value'] != linked['e_entry']:
                 raise ValueError('linker did not resolve the requested entry symbol')
-            actual, sections = serialize(linked, image)
+            actual, sections = serialize(linked, image, padding_policy='cpe-v1-prefix')
+            load_end = max(s['address'] + s['size'] for s in sections if s['storage'] == 'load')
+            report['container_padding'] = {
+                'address': load_end, 'size': len(actual) - 0x800 - (load_end - image.load_start),
+                'policy': 'cpe-v1-prefix', 'mechanism_evidence': 'candidate',
+            }
             report['sdk_verification'] = verify_linked(linked, library_report)
             candidate.write_bytes(actual)
             report.update(executable=str(candidate), elf=str(output), sections=sections,
