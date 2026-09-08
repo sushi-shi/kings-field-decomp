@@ -174,3 +174,13 @@ callees and referents alongside source history and the resource evidence.
 The [cache/camera coverage review](game-animation-cache-camera-coverage.md)
 reconciles the current registry/cache expressions in a [complete ledger](game-animation-cache-camera-literal-ledger.md)
 and records all 813 shipped keyframe reversal references as zero.
+
+## External clip-format lead
+
+Reviewed [KingsFieldRE model.cpp at 33a8a275](https://github.com/IvanDSM/KingsFieldRE/blob/33a8a2750d9c24c956d8360a7429145d2cb50690/Tools/KFModTool/datahandlers/model.cpp):
+`loadMIM` returns immediately after loading the embedded TMD, before its
+animation parsing. Its separate `loadMO` reader consumes a 32-bit frame count,
+where this game's retail binder consumes a 16-bit count beside the unresolved
+halfword. That reader therefore does not identify KF1J clip +2 or support a
+frame-rate name. This external lead is exhausted at that revision; the field
+remains opaque pending a compatible parser, format specification or consumer.
