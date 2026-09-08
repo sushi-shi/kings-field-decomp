@@ -28,8 +28,8 @@ void game_main_loop(void)
     s32 vsync_event;
 
     memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);
-    memset(actor_state.definitions, 0, INITIAL_ACTOR_CLEAR_BYTES);
-    memset(map_object_state.definitions, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
+    memset(&actor_state, 0, INITIAL_ACTOR_CLEAR_BYTES);
+    memset(&map_object_state, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
     memset(&effect_state, 0, sizeof(KfEffectState));
     memset(map_event_pool, 0, INITIAL_MAP_EVENT_CLEAR_BYTES);
     memset(&player_state, 0, sizeof(KfPlayerState));
@@ -71,7 +71,7 @@ void game_main_loop(void)
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.allow_near_actor_spawn = 0;
         frame_pacer_wait();
-        if (map_cell_attribute_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
+        if (map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
             == KF_MAP_ATTRIBUTE_WARP) {
             if (player_state.previous_map_cell.word
                 != player_state.motion_state.fields.map_cell.word) {

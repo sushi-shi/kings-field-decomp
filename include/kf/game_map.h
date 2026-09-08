@@ -21,6 +21,7 @@ enum {
 
 enum {
     KF_MAP_OBJECT_DEFINITION_COUNT = 160,
+    KF_MAP_OBJECT_DEFINITION_WORD_COUNT = 320,
     KF_MAP_RESOURCE_PATH_BYTES = 12,
     KF_MAP_OBJECT_CAPACITY = 190,
     KF_MAP_CONTAINER_ITEM_COUNT = 4,
@@ -35,6 +36,7 @@ enum {
     KF_MAP_SAVED_RECORDS_OFFSET = 10,
     KF_MAP_SAVED_RECORD_BYTES = 1690,
     KF_MAP_SAVED_WORLD_WORDS = 2125,
+    KF_MAP_SAVED_WORLD_BYTES = 8500,
     KF_MAP_SAVED_YAW_SHIFT = 4,
     KF_MAP_FLOOR3_REQUIRED_REVEALS = 4
 };
@@ -84,6 +86,7 @@ typedef struct KfMapSavedFloor {
 /* Save I/O copies aligned words; scripts address typed bytes within slots. */
 typedef union KfMapSavedWorld {
     u32 words[KF_MAP_SAVED_WORLD_WORDS];
+    u8 bytes[KF_MAP_SAVED_WORLD_BYTES];
     KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
 } KfMapSavedWorld;
 
@@ -303,6 +306,13 @@ typedef struct KfMapObjectDefinition {
     u8 unknown_06[2];
 } KfMapObjectDefinition;
 
+typedef union KfMapObjectDefinitionTable {
+    KfMapObjectDefinition entries[KF_MAP_OBJECT_DEFINITION_COUNT];
+    u32 words[KF_MAP_OBJECT_DEFINITION_WORD_COUNT];
+} KfMapObjectDefinitionTable;
+typedef char check_map_object_definition_table_size[
+    sizeof(KfMapObjectDefinitionTable) == 0x500 ? 1 : -1];
+
 typedef struct KfMapObject {
     KfMapObjectId object_id;
     u8 unknown_01;
@@ -484,7 +494,7 @@ KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_animation_cache, animation_cache
 
 /* Definitions and the live pool form one base-register-relative aggregate. */
 typedef struct KfMapObjectState {
-    KfMapObjectDefinition definitions[KF_MAP_OBJECT_DEFINITION_COUNT];
+    KfMapObjectDefinitionTable definitions;
     KfMapObject objects[KF_MAP_OBJECT_CAPACITY];
 } KfMapObjectState;
 
@@ -507,7 +517,6 @@ extern KfMapRuntimeState map_runtime_state;
 #define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
 #define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
 #define map_world_state_base (map_runtime_state.world_state.words[0])
-#define MAP_WORLD_STATE_BYTES ((u8 *)map_runtime_state.world_state.words)
 #define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
 #define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
 #define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
@@ -545,7 +554,7 @@ extern void map_interaction_dispatch(
     const VECTOR *position, SVECTOR *rotation);
 extern void func_800365f8(void);
 extern void map_load_floor(void);
-extern void map_object_definitions_load(const KfMapObjectDefinition *definitions);
+extern void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions);
 extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence);
 extern void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw);

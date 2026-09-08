@@ -200,11 +200,11 @@ void map_ambient_script_floor5(void)
         render_frame(0, 0);
         render_frame(0, 0);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
-        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = 2;
-        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = 3;
-        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = 3;
-        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = 3;
-        actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = 2;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = 3;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = 3;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = 3;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;
         map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
     }
 }
@@ -334,7 +334,7 @@ void map_floor5_transition_cutscene(void)
     effect->cell_z = 40;
     effect->position.vx = effect->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     effect->position.vz = effect->cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
-    grid_height = map_floor_height_grid[effect->cell_z][effect->cell_x];
+    grid_height = map_floor_height_grid.cells[effect->cell_z][effect->cell_x];
     effect->rotation.angles.z = 0;
     effect->rotation.angles.x = 0;
     effect->rotation.angles.y = KF_ANGLE_HALF_TURN;
@@ -497,7 +497,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE >> KF_FIXED12_BITS);
     sound_z = position->vz + (rcos(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE >> KF_FIXED12_BITS);
-    switch (map_cell_attribute_grid[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
+    switch (map_cell_attribute_grid.cells[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         notify_enqueue(KF_NOTIFICATION_PITFALL);
         break;
@@ -567,7 +567,7 @@ clear_event_phase:
             break;
         }
         object = &map_object_state.objects[index];
-        definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
+        definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
         switch (definition->behavior_type) {
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER:
             if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
@@ -693,7 +693,7 @@ notify_linked:
                 if (neighbor_index != index) {
                     neighbor = &map_object_state.objects[neighbor_index];
                     neighbor_definition =
-                        &map_object_state.definitions[KF_ENUM_ENCODE(u8, neighbor->object_id)];
+                        &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, neighbor->object_id)];
                     if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_END) {
                         if (neighbor->link.fields.link_id != KF_MAP_LINK_NONE
                             && neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {

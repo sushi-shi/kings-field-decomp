@@ -4,6 +4,7 @@ name	size	layout_confidence	evidence	note
 KfActor	0x48	supported	game_actor.h;game_semantic_actor_core.tsv;asm;xrefs	live actor record; several field meanings remain opaque
 KfActorActionProfile	0x0a	supported	game_actor.h;game_semantic_actor_ai.tsv;asm;xrefs	five-halfword actor action weighting record
 KfActorDefinition	0x98	supported	game_actor.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
+KfActorDefinitionTable	0x720	supported	game_actor.h;asm;typed-map-tables.md	twelve complete actor definitions and 456 copy words
 KfActorPlacement	0x10	supported	game_actor.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
 KfActorState	0x2b48	supported	game_actor.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
 KfArmorRecord	0x1c	supported	game_equipment.h;asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
@@ -51,8 +52,10 @@ KfMapFloor1Script	0x4	supported	game_map.h;asm;game-map-script-state.md;save-rea
 KfMapFloor3Script	0x1	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-3 reveal completion counter
 KfMapFloor5Script	0x4	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-5 persistent character, weapon and boss progression
 KfMapFloorScript	0xa	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-selected interpretations of the ten-byte saved script prefix
+KfMapGrid	0x2710	supported	map_data.h;asm;typed-map-tables.md	10000 cells with row/column, flat byte and 2500-word views
 KfMapObject	0x2c	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
 KfMapObjectDefinition	0x08	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
+KfMapObjectDefinitionTable	0x500	supported	game_map.h;asm;typed-map-tables.md	160 complete map object definitions and 320 copy words
 KfMapObjectHingedContainer	0x05	supported	game_map.h;asm;typed-map-links.md	link byte followed by four encoded item IDs
 KfMapObjectLink	0x08	supported	game_map.h;asm;map_object_pool_load	eight-byte link block shared by map object placements (0x0c) and pool objects (0x20)
 KfMapObjectLinkFields	0x08	supported	game_map.h;asm;typed-map-links.md	typed behavior fields within the complete link

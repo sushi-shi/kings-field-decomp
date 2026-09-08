@@ -95,7 +95,7 @@ void magic_cast(void)
             speed = MAGIC_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 if (map_cell_attribute_height_table[
-                        map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]
+                        map_cell_attribute_grid.cells[target->cell_z][target->cell_x] - 1]
                         >= LIGHTNING_HEIGHT_CLASS_THRESHOLD) {
                     angles.x = vector_xz_to_angle(
                         world_pos.vy + LIGHTNING_DEFAULT_TARGET_Y_OFFSET - target->position.vy, -distance);
@@ -155,7 +155,7 @@ void magic_cast(void)
                        + (rcos(player_state.camera_rotation.vy) * FIRE_WALL_UNTARGETED_DISTANCE >> KF_FIXED12_BITS);
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
-            spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
+            spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &spawn, &player_state.camera_rotation,

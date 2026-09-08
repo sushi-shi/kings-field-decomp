@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 117)
-        self.assertEqual(counts["structure_fields"], 833)
-        self.assertEqual(counts["structure_fields_named"], 746)
+        self.assertEqual(counts["structures"], 120)
+        self.assertEqual(counts["structure_fields"], 841)
+        self.assertEqual(counts["structure_fields_named"], 754)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -1132,12 +1132,12 @@ class InventoryTests(unittest.TestCase):
         occupancy = game.datum(0x800668E8)
         self.assertEqual(
             (orientation.name, orientation.datatype, orientation.size),
-            ("map_cell_orientation_grid", "u8[100][100]", 0x2710),
+            ("map_cell_orientation_grid", "KfMapGrid", 0x2710),
         )
         self.assertEqual(game.data_owner(0x8006B727), orientation)
         self.assertEqual(
             (occupancy.name, occupancy.datatype, occupancy.size),
-            ("map_collision_flag_grid", "u8[100][100]", 0x2710),
+            ("map_collision_flag_grid", "KfMapGrid", 0x2710),
         )
 
     def test_menu_frame_campaign_matches_curated_identities(self) -> None:
@@ -2484,7 +2484,7 @@ class InventoryTests(unittest.TestCase):
             identity = data[("OPEN.EXE", va)]
             self.assertEqual(
                 (identity.name, identity.storage, identity.datatype, identity.size),
-                (name, "bss", "u8[100][100]", 0x2710),
+                (name, "bss", "KfMapGrid", 0x2710),
             )
 
     def test_open_render_init_campaign_is_exactly_modeled(self) -> None:
@@ -3036,7 +3036,7 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(game.data_owner(0x8006C4B8), actor_state)
         self.assertEqual(
-            _structure_field("KfActorState", 0x0), ("definitions", "KfActorDefinition[12]", 0x720)
+            _structure_field("KfActorState", 0x0), ("definitions", "KfActorDefinitionTable", 0x720)
         )
         self.assertEqual(
             _structure_field("KfActorState", 0x720), ("actors", "KfActor[128]", 0x2400)

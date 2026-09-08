@@ -607,7 +607,7 @@ void player_update(void)
         }
     }
     player_state.equipment_effect_ticks++;
-    attribute = map_cell_attribute_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+    attribute = map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
     switch (attribute) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {

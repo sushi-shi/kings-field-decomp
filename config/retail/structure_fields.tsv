@@ -63,6 +63,8 @@ KfActorDefinition	0x84	0x02	experience_reward	u16	supported	game_actor.h;asm;xre
 KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	game_actor.h;asm;xrefs	three attack components
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	game_actor.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	gold_drop_limit	u16	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	exclusive upper bound of randomized gold amount: rand * limit >> 15; object 39 behavior 0x41 credits player gold
+KfActorDefinitionTable	0x00	0x720	entries	KfActorDefinition[12]	supported	asm;typed-map-tables.md	complete alternate table view
+KfActorDefinitionTable	0x00	0x720	words	u32[456]	supported	asm;typed-map-tables.md	complete alternate table view
 KfActorPlacement	0x00	0x01	slot_state	KfActorSlotState	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
 KfActorPlacement	0x01	0x01	definition_flags	u8	supported	game_actor.h;asm;actor_pool_load_placements;render_entities;actor-culling-domain.md	low five bits are the definition id; bit 5 selects near-square actor culling instead of the active visibility grid
 KfActorPlacement	0x02	0x01	heading_quadrant	u8	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.heading_quadrant
@@ -74,7 +76,7 @@ KfActorPlacement	0x07	0x03	unknown_07	u8[3]	opaque	game_actor.h;asm;actor_pool_l
 KfActorPlacement	0x0a	0x02	local_z	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along z
 KfActorPlacement	0x0c	0x02	local_x	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along x
 KfActorPlacement	0x0e	0x02	unknown_0e	u8[2]	opaque	game_actor.h;asm;actor_pool_load_placements	not read by the loader
-KfActorState	0x0000	0x720	definitions	KfActorDefinition[12]	supported	game_actor.h;asm;xrefs	map-loaded actor definitions
+KfActorState	0x0000	0x720	definitions	KfActorDefinitionTable	supported	game_actor.h;asm;xrefs;typed-map-tables.md	map-loaded actor definitions
 KfActorState	0x0720	0x2400	actors	KfActor[128]	supported	game_actor.h;asm;xrefs	live actor records
 KfActorState	0x2b20	0x10	player_position	VECTOR	supported	game_actor.h;asm;xrefs	player position snapshot copied each frame
 KfActorState	0x2b30	0x08	player_rotation	SVECTOR	supported	game_actor.h;asm;xrefs	player rotation snapshot copied each frame
@@ -383,6 +385,9 @@ KfMapFloorScript	0x0	0xa	bytes	u8[10]	supported	game_map.h;asm;game-map-script-s
 KfMapFloorScript	0x0	0x4	floor1	KfMapFloor1Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 1 interpretation of the first four prefix bytes
 KfMapFloorScript	0x0	0x1	floor3	KfMapFloor3Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 3 interpretation of the first prefix byte
 KfMapFloorScript	0x0	0x4	floor5	KfMapFloor5Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 5 interpretation of the first four prefix bytes
+KfMapGrid	0x00	0x2710	cells	u8[100][100]	supported	asm;typed-map-tables.md	complete alternate table view
+KfMapGrid	0x00	0x2710	bytes	u8[10000]	supported	asm;typed-map-tables.md	complete alternate table view
+KfMapGrid	0x00	0x2710	words	u32[2500]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapObject	0x00	0x01	object_id	KfMapObjectId	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
@@ -399,6 +404,8 @@ KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meanin
 KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
 KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObjectDefinitionTable	0x00	0x500	entries	KfMapObjectDefinition[160]	supported	asm;typed-map-tables.md	complete alternate table view
+KfMapObjectDefinitionTable	0x00	0x500	words	u32[320]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapObjectHingedContainer	0x00	0x01	link_id	u8	supported	game_map.h;asm;typed-map-links.md	trigger link byte
 KfMapObjectHingedContainer	0x01	0x04	item_ids	u8[4]	supported	game_map.h;asm;typed-map-links.md	four encoded item IDs
 KfMapObjectLink	0x00	0x08	fields	KfMapObjectLinkFields	supported	game_map.h;asm;typed-map-links.md	behavior-dependent byte and halfword fields
@@ -424,7 +431,7 @@ KfMapObjectPlacement	0x0a	0x02	local_y	s16	supported	game_map.h;asm;map_object_p
 KfMapObjectPlacement	0x0c	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied into the pool object
 KfMapObjectSpawn	0x00	0x02	sequence	u16	supported	game_map.h;asm;typed-map-links.md	unsigned wrapping sequence for dropped objects
 KfMapObjectSpawn	0x00	0x01	effect_id	u8	supported	game_map.h;asm;typed-map-links.md	effect constructor first argument for placed objects
-KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinition[160]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinitionTable	supported	game_map.h;asm;base-register;map_object_pool_clear_link;typed-map-tables.md	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records
 KfMapRuntimeState	0x220	0x004	current_event	KfMapEvent *	supported	game_map.h;asm;map_event_set_current;spinner-current-minus-544	selected event pointer
@@ -435,6 +442,7 @@ KfMapRuntimeState	0x22c	0x2134	world_state	KfMapSavedWorld	supported	game_map.h;
 KfMapSavedFloor	0x0	0xa	script	KfMapFloorScript	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	ten-byte persistent prefix before the sparse runtime stream
 KfMapSavedFloor	0xa	0x69a	records	u8[1690]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	1690-byte capacity for variable-length saved event, actor and object records
 KfMapSavedWorld	0x0	0x2134	words	u32[2125]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	2125 aligned words copied verbatim to and from the save payload
+KfMapSavedWorld	0x00	0x2134	bytes	u8[8500]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapSavedWorld	0x0	0x2134	floors	KfMapSavedFloor[5]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five 1700-byte saved slots selected by one-based current floor minus one
 KfMenuAssets	0x0	0x140	background_quads	POLY_FT4[2][4]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x140	0x50	mid_depth_quads	POLY_FT4[2]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block

@@ -274,7 +274,7 @@ lightning_impact:
                     impact_position.vx = effect->position.vx;
                     impact_position.vz = effect->position.vz;
                     impact_position.vy =
-                        -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
+                        -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                                [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
                     if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
                         effect_pool_construct(
@@ -370,7 +370,7 @@ play_phase_sound:
             effect->direction.words.y += EMERGING_FALL_ACCELERATION;
             effect->position.vy += (s16)effect->direction.words.y;
             if (effect->position.vy
-                > -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
+                > -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                         [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP)
                     + EMERGING_RETIRE_DEPTH) {
                 effect->type = KF_EFFECT_SLOT_FREE;
@@ -446,7 +446,7 @@ play_phase_sound:
         effect->position.vy += (s16)effect->direction.words.y;
         effect->position.vz += (s16)effect->direction.words.z;
         effect->position.vy =
-            -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
+            -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
         switch (phase) {
         case KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT:
@@ -530,7 +530,7 @@ randomize_homing_direction:
                     effect->rotation.vector.vy, HOMING_TARGET_MAX_DISTANCE, HOMING_TARGET_CONE_ANGLE, &target_distance);
                 if (target != 0) {
                     KfActorDefinition *definition =
-                        &actor_state.definitions[target->definition_id];
+                        &actor_state.definitions.entries[target->definition_id];
 
                     effect->direction.words.y = vector_xz_to_angle(
                         target->position.vx - effect->position.vx,

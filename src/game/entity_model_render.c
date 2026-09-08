@@ -45,7 +45,7 @@ void render_actor(KfActor *actor)
     SetTransMatrix(&model);
     SetLightMatrix(&light);
 
-    descriptor = actor_state.definitions[actor->definition_id].model_and_texture;
+    descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
     object = tmd_get_object(0);
@@ -95,7 +95,7 @@ void render_map_object(KfMapObject *object)
     SetLightMatrix(&light);
 
     id = object->object_id;
-    switch (map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
+    switch (map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case KF_ENUM_DECODE(KfMapObjectBehavior, 3):
         depth = MAP_LIFT_DOOR_DEPTH_BIAS;

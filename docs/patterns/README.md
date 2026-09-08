@@ -719,3 +719,7 @@ promotes a probe to a proven historical toolchain.
 - [Typed animation vertices](typed-animation-vertices.md): shared SDK/word
   vertex views, a typed cache-record result and the VDF header blend; all 51
   compared functions preserve their linked instructions.
+
+- [Typed map grids and definition tables](typed-map-tables.md): complete grid
+  byte/cell/word views and actor/map-definition table inputs; all 177 compared
+  functions retain their instructions and referents.

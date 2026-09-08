@@ -198,7 +198,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
             audio_play_spatial_default_range(&gameplay_sound_ref_4,
                 &sound_position, KF_AUDIO_MAX_VOLUME);
         }
-        map_floor_height_grid[row][col] =
+        map_floor_height_grid.cells[row][col] =
             ((height_delta * progress) >> KF_FIXED12_BITS) + segment->start_height;
         col += segment->column_step;
         row += segment->row_step;
@@ -277,7 +277,7 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset,
     position.vz = record->position.vz + (GROUND_BRANCH_CHILD_SPACING * rcos(angle) >> KF_FIXED12_BITS);
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
-    position.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
+    position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_BRANCH, &position,
         &record->direction.vector, KF_ENUM_ENCODE(s32, branch_role));
 }

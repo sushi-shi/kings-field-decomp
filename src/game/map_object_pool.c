@@ -52,14 +52,14 @@ void map_apply_copy_region(KfMapCopyRegionId region_id)
         destination_x = region->destination_x;
         source_x = region->source_x;
         while (width-- != 0) {
-            map_cell_attribute_grid[destination_z][destination_x] =
-                map_cell_attribute_grid[source_z][source_x];
-            map_floor_height_grid[destination_z][destination_x] =
-                map_floor_height_grid[source_z][source_x];
-            map_cell_orientation_grid[destination_z][destination_x] = map_cell_orientation_grid[source_z][source_x];
-            map_collision_grid[destination_z][destination_x] =
-                map_collision_grid[source_z][source_x];
-            map_collision_flag_grid[destination_z][destination_x] = map_collision_flag_grid[source_z][source_x];
+            map_cell_attribute_grid.cells[destination_z][destination_x] =
+                map_cell_attribute_grid.cells[source_z][source_x];
+            map_floor_height_grid.cells[destination_z][destination_x] =
+                map_floor_height_grid.cells[source_z][source_x];
+            map_cell_orientation_grid.cells[destination_z][destination_x] = map_cell_orientation_grid.cells[source_z][source_x];
+            map_collision_grid.cells[destination_z][destination_x] =
+                map_collision_grid.cells[source_z][source_x];
+            map_collision_flag_grid.cells[destination_z][destination_x] = map_collision_flag_grid.cells[source_z][source_x];
             source_x++;
             destination_x++;
         }
@@ -75,13 +75,13 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     u8 cell_z;
     const KfMapObjectDefinition *definition;
 
-    definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
+    definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
     yaw &= KF_ANGLE_WRAP_MASK;
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case KF_ENUM_DECODE(KfMapObjectBehavior, 3):
-        map_collision_grid[cell_z][cell_x] = value;
+        map_collision_grid.cells[cell_z][cell_x] = value;
         switch (yaw) {
         case 0x000:
             cell_z++;
@@ -96,25 +96,25 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
             cell_x--;
             break;
         }
-        map_collision_grid[cell_z][cell_x] = value;
+        map_collision_grid.cells[cell_z][cell_x] = value;
         break;
     case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
         switch (yaw) {
         case 0x000:
-            map_collision_grid[cell_z][cell_x + 1] =
-                map_collision_grid[cell_z - 1][cell_x + 1] = value;
+            map_collision_grid.cells[cell_z][cell_x + 1] =
+                map_collision_grid.cells[cell_z - 1][cell_x + 1] = value;
             break;
         case KF_ANGLE_QUARTER_TURN:
-            map_collision_grid[cell_z + 1][cell_x] = value;
-            map_collision_grid[cell_z + 1][cell_x + 1] = value;
+            map_collision_grid.cells[cell_z + 1][cell_x] = value;
+            map_collision_grid.cells[cell_z + 1][cell_x + 1] = value;
             break;
         case KF_ANGLE_HALF_TURN:
-            map_collision_grid[cell_z][cell_x - 1] =
-                map_collision_grid[cell_z + 1][cell_x - 1] = value;
+            map_collision_grid.cells[cell_z][cell_x - 1] =
+                map_collision_grid.cells[cell_z + 1][cell_x - 1] = value;
             break;
         case KF_ANGLE_THREE_QUARTER_TURN:
-            map_collision_grid[cell_z - 1][cell_x] = value;
-            map_collision_grid[cell_z - 1][cell_x - 1] = value;
+            map_collision_grid.cells[cell_z - 1][cell_x] = value;
+            map_collision_grid.cells[cell_z - 1][cell_x - 1] = value;
             break;
         }
         break;
@@ -124,7 +124,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
 ADDRESS(0x80030eb8, 0xc4)
 s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 {
-    const KfMapObjectDefinition *definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
+    const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
     s32 result;
@@ -179,10 +179,10 @@ void map_object_pool_clear(void)
 }
 
 ADDRESS(0x80030fdc, 0x2c)
-void map_object_definitions_load(const KfMapObjectDefinition *definitions)
+void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 {
-    const u32 *source = (const u32 *)definitions;
-    u32 *destination = (u32 *)map_object_state.definitions;
+    const u32 *source = definitions->words;
+    u32 *destination = map_object_state.definitions.words;
     s32 count = sizeof map_object_state.definitions / sizeof *source;
 
     do {
@@ -223,11 +223,11 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             object->position.vx = placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
             object->position.vz = placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
             object->position.vy = placement->local_y
-                - map_floor_height_grid[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
+                - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object->action = KF_MAP_OBJECT_ACTION_IDLE;
             /* The link block moves as two aligned words. */
             memcpy(object->link.words, placement->link.words, sizeof object->link);
-            definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
+            definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(object->cell_x, object->cell_z, 1);
             }
@@ -340,7 +340,7 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
         if (object->object_id == KF_MAP_OBJECT_FREE) {
             continue;
         }
-        radius = map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].collision_radius;
+        radius = map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)].collision_radius;
         if (radius == 0) {
             continue;
         }

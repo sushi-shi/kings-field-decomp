@@ -165,17 +165,17 @@ void opening_resources_load_scene0(void)
         (vab_chunk = STREAM_NEXT(stream.bytes)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     STREAM_NEXT(stream.bytes);
     source = resource_stream_copy_words(
-        (u32 *)map_cell_attribute_grid,
+        map_cell_attribute_grid.words,
         (const u32 *)(stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (u32 *)map_floor_height_grid, source, MAP_GRID_WORDS);
+        map_floor_height_grid.words, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (u32 *)map_cell_orientation_grid, source, MAP_GRID_WORDS);
+        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (u32 *)map_collision_flag_grid, source, MAP_GRID_WORDS);
+        map_collision_flag_grid.words, source, MAP_GRID_WORDS);
     resource_stream_copy_words(
-        (u32 *)map_collision_grid, source, MAP_GRID_WORDS);
+        map_collision_grid.words, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     opening_entity_pool_load_placements(

@@ -251,7 +251,7 @@ void player_sync_position_to_map(void)
     player_state.equipment_effect_ticks = 0;
     player_state.motion_state.fields.map_cell.coords.x = cell_x;
     player_state.motion_state.fields.map_cell.coords.z = cell_z;
-    floor = map_floor_height_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+    floor = map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
     player_state.allow_near_actor_spawn = 1;
     floor_height = -(floor * KF_MAP_HEIGHT_STEP);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
@@ -392,20 +392,20 @@ s32 player_move_horizontal(s32 heading, s32 distance)
         }
     }
     cell_z = new_z / KF_MAP_TILE_SIZE;
-    if (cell_z < KF_MAP_ROWS && map_collision_grid[cell_z][player_state.motion_state.fields.map_cell.coords.x] != KF_MAP_CELL_BLOCKED
-        && -(map_floor_height_grid[cell_z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
+    if (cell_z < KF_MAP_ROWS && map_collision_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x] != KF_MAP_CELL_BLOCKED
+        && -(map_floor_height_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
                >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vz = new_z;
         player_state.motion_state.fields.map_cell.coords.z = cell_z;
     }
     cell_x = new_x / KF_MAP_TILE_SIZE;
-    if (cell_x < KF_MAP_COLUMNS && map_collision_grid[player_state.motion_state.fields.map_cell.coords.z][cell_x] != KF_MAP_CELL_BLOCKED
-        && -(map_floor_height_grid[player_state.motion_state.fields.map_cell.coords.z][cell_x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
+    if (cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x] != KF_MAP_CELL_BLOCKED
+        && -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
                >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vx = new_x;
         player_state.motion_state.fields.map_cell.coords.x = cell_x;
     }
-    type = map_collision_grid[cell_z0][cell_x0];
+    type = map_collision_grid.cells[cell_z0][cell_x0];
     if (type >= KF_MAP_CELL_X_GE_Z && type <= KF_MAP_CELL_SUM_GE_SIZE) {
         if (player_state.motion_state.fields.map_cell.coords.x == cell_x0 && player_state.motion_state.fields.map_cell.coords.z == cell_z0) {
             remainder_z = player_state.camera_position.vz % KF_MAP_TILE_SIZE;
@@ -438,14 +438,14 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             player_state.motion_state.fields.map_cell.coords.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
             player_state.motion_state.fields.map_cell.coords.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
         }
-        if (map_collision_grid[cell_z][cell_x] == KF_MAP_CELL_BLOCKED) {
+        if (map_collision_grid.cells[cell_z][cell_x] == KF_MAP_CELL_BLOCKED) {
             if (dz < 0) {
                 dz = -dz;
             }
             if (dx < 0) {
                 dx = -dx;
             }
-            type = map_collision_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+            type = map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
             if (type == KF_MAP_CELL_X_GE_Z) {
                 if (dz < dx) {
                     dx = -(distance * PLAYER_DIAGONAL_COMPONENT_Q12) >> KF_FIXED12_BITS;
@@ -483,7 +483,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             cell_z = new_z / KF_MAP_TILE_SIZE;
             new_x = dx + player_state.camera_position.vx;
             cell_x = new_x / KF_MAP_TILE_SIZE;
-            if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS && map_collision_grid[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
+            if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
                 player_state.camera_position.vz = new_z;
                 player_state.camera_position.vx = new_x;
                 player_state.motion_state.fields.map_cell.coords.z = cell_z;
@@ -514,17 +514,17 @@ void player_update_vertical_motion(void)
     s32 target;
     s32 view_offset;
 
-    target = -(map_floor_height_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP);
+    target = -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP);
     if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
         if (player_state.floor_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
             if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
-                && map_cell_attribute_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
+                && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
                     == KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT) {
                 goto done;
             }
             player_death_begin();
         } else if (target >= -6999
-                   && map_cell_attribute_grid[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
+                   && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
                        == 0x52) {
             player_death_begin();
         }

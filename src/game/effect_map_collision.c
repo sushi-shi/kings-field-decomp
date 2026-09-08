@@ -50,11 +50,11 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         return KF_COLLISION_TERRAIN;
     }
     y = position->vy;
-    floor = (u8)map_floor_height_grid[z][x] * -KF_MAP_HEIGHT_STEP;
+    floor = (u8)map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
         return KF_COLLISION_TERRAIN;
     }
-    attr = map_cell_attribute_grid[z][x];
+    attr = map_cell_attribute_grid.cells[z][x];
     if (attr != KF_MAP_ATTRIBUTE_NONE) {
         height = map_cell_attribute_height_table[attr];
         if (height < 0) {
@@ -65,7 +65,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         } else {
             record = &map_cell_height_records[height];
             if (floor + record->y_min <= y && y <= floor + record->y_max) {
-                u8 orient = map_cell_orientation_grid[z][x];
+                u8 orient = map_cell_orientation_grid.cells[z][x];
                 s16 coordinate;
 
                 subx = position->vx % KF_MAP_TILE_SIZE;
@@ -94,19 +94,19 @@ rectangle_span:
     }
 
 grid_shape:
-    switch (map_collision_grid[z][x]) {
+    switch (map_collision_grid.cells[z][x]) {
     case KF_MAP_CELL_BLOCKED:
-        if (((map_collision_grid[z + 1][x] != KF_MAP_CELL_FLOOR
-                && map_collision_grid[z + 1][x] != KF_MAP_CELL_STEP)
+        if (((map_collision_grid.cells[z + 1][x] != KF_MAP_CELL_FLOOR
+                && map_collision_grid.cells[z + 1][x] != KF_MAP_CELL_STEP)
                 || position->vz % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) &&
-            ((map_collision_grid[z - 1][x] != KF_MAP_CELL_FLOOR
-                && map_collision_grid[z - 1][x] != KF_MAP_CELL_STEP)
+            ((map_collision_grid.cells[z - 1][x] != KF_MAP_CELL_FLOOR
+                && map_collision_grid.cells[z - 1][x] != KF_MAP_CELL_STEP)
                 || KF_MAP_TILE_CENTER < position->vz % KF_MAP_TILE_SIZE) &&
-            ((map_collision_grid[z][x + 1] != KF_MAP_CELL_FLOOR
-                && map_collision_grid[z][x + 1] != KF_MAP_CELL_STEP)
+            ((map_collision_grid.cells[z][x + 1] != KF_MAP_CELL_FLOOR
+                && map_collision_grid.cells[z][x + 1] != KF_MAP_CELL_STEP)
                 || position->vx % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER)) {
-            if (map_collision_grid[z][x - 1] != KF_MAP_CELL_FLOOR
-                    && map_collision_grid[z][x - 1] != KF_MAP_CELL_STEP) {
+            if (map_collision_grid.cells[z][x - 1] != KF_MAP_CELL_FLOOR
+                    && map_collision_grid.cells[z][x - 1] != KF_MAP_CELL_STEP) {
                 return KF_COLLISION_TERRAIN;
             }
             if (KF_MAP_TILE_CENTER < position->vx % KF_MAP_TILE_SIZE) {

@@ -76,7 +76,7 @@ void common_resources_load(void)
     magic_load_records(
         (const KfMagicTable *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_definitions_load(
-        (KfMapObjectDefinition *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfMapObjectDefinitionTable *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memcpy(
         player_level_growth_table,
         (KfPlayerLevelGrowth *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES),
@@ -170,17 +170,17 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
     STREAM_NEXT(stream);
     audio_play_current_map_sequence();
     source = map_resource_copy_words(
-        (u32 *)map_cell_attribute_grid,
+        map_cell_attribute_grid.words,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (u32 *)map_floor_height_grid, source, MAP_GRID_WORDS);
+        map_floor_height_grid.words, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (u32 *)map_cell_orientation_grid, source, MAP_GRID_WORDS);
+        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (u32 *)map_collision_flag_grid, source, MAP_GRID_WORDS);
+        map_collision_flag_grid.words, source, MAP_GRID_WORDS);
     map_resource_copy_words(
-        (u32 *)map_collision_grid, source, MAP_GRID_WORDS);
+        map_collision_grid.words, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_pool_load(
@@ -188,7 +188,7 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
     actor_pool_load_placements(
         (KfActorPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     actor_definitions_load(
-        (KfActorDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfActorDefinitionTable *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_event_pool_load(
         (KfMapEventDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memory_release_last();

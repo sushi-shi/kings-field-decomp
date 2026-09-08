@@ -205,3 +205,8 @@ The [animation-vertex stage](typed-animation-vertices.md) removes nine more
 casts using complete SDK/word vertex views and a record-pointer binder
 result. All 51 compared functions retain their instructions; 466 C pointer
 casts remain, down 340 from the starting count.
+
+The [map-table stage](typed-map-tables.md) models five complete grids, both
+resource definition tables and saved-world byte initialization. It removes
+fourteen C pointer casts and one header cast, keeping all 177 compared
+functions unchanged. C pointer casts now total 452, down 354 from the start.

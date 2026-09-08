@@ -181,7 +181,7 @@ void map_event_pool_update(void)
 ADDRESS(0x80035b5c, 0x2b8)
 void map_world_state_persist(void)
 {
-    u8 *base = MAP_WORLD_STATE_BYTES;
+    u8 *base = map_runtime_state.world_state.bytes;
     u8 *out;
     u8 *count_slot;
     KfMapEvent *event;
@@ -230,7 +230,7 @@ void map_world_state_persist(void)
     count_slot = out++;
     active = 0;
     object = &map_object_state.objects[0];
-    definitions = map_object_state.definitions;
+    definitions = map_object_state.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         KfMapObjectId id = object->object_id;
         KfMapObjectBehavior behavior;

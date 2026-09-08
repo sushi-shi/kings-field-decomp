@@ -1060,7 +1060,7 @@ void actor_update_current_action(void)
             actor->action_progress = ACTOR_JUMP_RISING;
             actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK];
             actor->animation_phase = 0;
-            attribute = map_cell_attribute_grid[actor->cell_z][actor->cell_x];
+            attribute = map_cell_attribute_grid.cells[actor->cell_z][actor->cell_x];
             if (map_cell_attribute_height_table[attribute - 1] > ACTOR_JUMP_HEIGHT_THRESHOLD) {
                 actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
                 actor->vertical_velocity = ACTOR_JUMP_SHORT_VELOCITY_Y;

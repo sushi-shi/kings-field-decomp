@@ -73,7 +73,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->cell_z = definitions->cell_z;
                 event->radius = definitions->radius;
                 event->reference_position.vy =
-                    -(map_floor_height_grid[event->cell_z][event->cell_x] * KF_MAP_HEIGHT_STEP);
+                    -(map_floor_height_grid.cells[event->cell_z][event->cell_x] * KF_MAP_HEIGHT_STEP);
                 event->rotation.vy = definitions->initial_rotation;
                 definitions++;
                 event->rotation.vz = 0;

@@ -8,6 +8,8 @@
 enum {
     KF_MAP_COLUMNS = 100,
     KF_MAP_ROWS = 100,
+    KF_MAP_CELL_COUNT = 10000,
+    KF_MAP_GRID_WORD_COUNT = 2500,
     KF_MAP_TILE_SIZE = 2000,
     KF_MAP_TILE_CENTER = 1000,
     KF_MAP_HEIGHT_STEP = 100,
@@ -46,10 +48,18 @@ enum {
     KF_MAP_ORIENT_THREE_QUARTER_TURN = 4
 };
 
-extern u8 map_cell_attribute_grid[KF_MAP_ROWS][KF_MAP_COLUMNS];
-extern u8 map_cell_orientation_grid[KF_MAP_ROWS][KF_MAP_COLUMNS];
-extern u8 map_collision_flag_grid[KF_MAP_ROWS][KF_MAP_COLUMNS];
-extern u8 map_collision_grid[KF_MAP_ROWS][KF_MAP_COLUMNS];
-extern u8 map_floor_height_grid[KF_MAP_ROWS][KF_MAP_COLUMNS];
+/* Full resource-copy, row/column and linear-cell views of one grid. */
+typedef union KfMapGrid {
+    u8 cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
+    u8 bytes[KF_MAP_CELL_COUNT];
+    u32 words[KF_MAP_GRID_WORD_COUNT];
+} KfMapGrid;
+typedef char check_map_grid_size[sizeof(KfMapGrid) == 0x2710 ? 1 : -1];
+
+extern KfMapGrid map_cell_attribute_grid;
+extern KfMapGrid map_cell_orientation_grid;
+extern KfMapGrid map_collision_flag_grid;
+extern KfMapGrid map_collision_grid;
+extern KfMapGrid map_floor_height_grid;
 
 #endif

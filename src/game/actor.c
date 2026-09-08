@@ -162,7 +162,7 @@ void actor_initialize(KfActor *actor)
     actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
     actor->action = KF_ACTOR_ACTION_NONE;
     actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
-    actor->health = actor_state.definitions[actor->definition_id].initial_health;
+    actor->health = actor_state.definitions.entries[actor->definition_id].initial_health;
     if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
         || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
@@ -275,7 +275,7 @@ ADDRESS(0x8002cf84, 0xf4)
 void actor_pool_begin_death_by_definition(u16 definition_id)
 {
     KfActor *actor = actor_state.actors;
-    KfActorDefinition *definition = &actor_state.definitions[definition_id];
+    KfActorDefinition *definition = &actor_state.definitions.entries[definition_id];
     s16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
@@ -323,7 +323,7 @@ void actor_apply_damage(
     u16 hit_flags)
 {
     KfActor *actor = &actor_state.actors[actor_index];
-    KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
+    KfActorDefinition *definition = &actor_state.definitions.entries[actor->definition_id];
     s32 damage;
     s32 health;
     s32 remaining;
@@ -432,7 +432,7 @@ void actor_pool_apply_radial_damage(
         if (actor == actor_state.current) {
             continue;
         }
-        definition = &actor_state.definitions[actor->definition_id];
+        definition = &actor_state.definitions.entries[actor->definition_id];
         distance = actor_distance_to_point(
             actor,
             origin->vx,
@@ -629,7 +629,7 @@ s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_hei
         if (actor == actor_state.current) {
             continue;
         }
-        definition = &actor_state.definitions[actor->definition_id];
+        definition = &actor_state.definitions.entries[actor->definition_id];
         if (actor_distance_to_point(
                 actor,
                 x,
@@ -651,7 +651,7 @@ void actor_bind_current(KfActor *actor)
 
     actor_state.current = actor;
     index = actor - actor_state.actors;
-    actor_state.current_definition = &actor_state.definitions[actor->definition_id];
+    actor_state.current_definition = &actor_state.definitions.entries[actor->definition_id];
     actor_state.current_index = index;
     actor_state.current_definition_id = actor->definition_id;
 }
@@ -762,7 +762,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
-    if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
+    if (-(map_floor_height_grid.cells[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
         != actor->position.vy) {
         goto rejected;
     }
