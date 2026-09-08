@@ -35,12 +35,21 @@ enum {
     KF_TMD_MODE_GT4 = 0x3c
 };
 
+/* Eight-byte vertex copied as aligned words and passed to the SDK as SVECTOR. */
+typedef union KfPackedSVector {
+    SVECTOR vector;
+    u32 words[2];
+} KfPackedSVector;
+typedef char check_packed_svector_size[sizeof(KfPackedSVector) == 8 ? 1 : -1];
+
 /* On-disk counts are words; individual consumers may narrow them. */
 typedef struct KfTmdHeader {
     u32 id;
     u32 flags;
     u32 object_count;
 } KfTmdHeader;
+typedef char check_tmd_header_size[
+    sizeof(KfTmdHeader) == KF_TMD_HEADER_BYTES ? 1 : -1];
 
 /* Standard 0x1c-byte object-table record in an unlinked TMD payload. */
 typedef struct KfTmdObject {
@@ -225,21 +234,30 @@ typedef union KfTmdPrimitive {
     } texture;
 } KfTmdPrimitive;
 
+/* SDK packed result and its two signed screen coordinates share four bytes. */
+typedef union KfScreenXY {
+    long word;
+    DVECTOR vector;
+} KfScreenXY;
+
 /* One GTE-projected vertex consumed by the polygon enqueue paths. */
 typedef struct KfScreenVertex {
-    long sxy; /* SDK packed screen X/Y word; non-perspective paths write its halves. */
+    KfScreenXY sxy;
     s16 sz;
     s16 p2;
 } KfScreenVertex;
+
+typedef char check_screen_xy_size[sizeof(KfScreenXY) == 4 ? 1 : -1];
+typedef char check_screen_vertex_size[sizeof(KfScreenVertex) == 8 ? 1 : -1];
 
 /* GAME.EXE and OPEN.EXE implement this interface with separate state. */
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern void tmd_prepare_primitive_indices(void);
 extern void tmd_project_vertices(s32 count);
-extern void tmd_register(KfTmdSlot slot, u8 *tmd);
+extern void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd);
 extern void tmd_release_last_allocation(KF_ENUM_PARAM(KfTmdSlot, s32) slot);
 extern void tmd_select(KfTmdSlot slot);
 extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_set_current_vertices(SVECTOR *vertices);
+extern void tmd_set_current_vertices(KfPackedSVector *vertices);
 
 #endif

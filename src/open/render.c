@@ -12,7 +12,7 @@
  */
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
-#define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + KF_TMD_HEADER_BYTES))
+#define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
 /* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
 #define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
 
@@ -52,7 +52,7 @@ KfTmdObject *tmd_get_object(u16 index)
 }
 
 ADDRESS(0x80016eb8, 0x10)
-void tmd_set_current_vertices(SVECTOR *vertices)
+void tmd_set_current_vertices(KfPackedSVector *vertices)
 {
     open_graphics_runtime.current_tmd_vertices = vertices;
 }
@@ -61,7 +61,7 @@ ADDRESS(0x80016ec8, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     open_graphics_runtime.current_tmd_vertices =
-        (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_asset
+        (KfPackedSVector *)((u8 *)open_graphics_runtime.tmd_state.current_asset
             + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
 }
 
@@ -104,7 +104,7 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     KfTmdPacketHeader header;
 
-    object_count = (u16)((KfTmdHeader *)open_graphics_runtime.tmd_state.current_asset)->object_count;
+    object_count = (u16)open_graphics_runtime.tmd_state.current_asset->object_count;
     objects_left = object_count - 1;
     object = TMD_OBJECTS(open_graphics_runtime.tmd_state.current_asset);
     if (object_count == 0) {
@@ -208,7 +208,7 @@ void tmd_prepare_primitive_indices(void)
 }
 
 ADDRESS(0x80017330, 0x3c)
-void tmd_register(KfTmdSlot slot, u8 *tmd)
+void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd)
 {
     open_graphics_runtime.tmd_state.current_asset = open_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();
@@ -224,7 +224,7 @@ ADDRESS(0x8001738c, 0xcc)
 void tmd_project_vertices(s32 count)
 {
     KfScreenVertex *out;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     long perspective;
     long flag;
     long depth;
@@ -237,7 +237,7 @@ void tmd_project_vertices(s32 count)
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy, &perspective, &flag);
+        RotTransPers(&vertex->vector, &out->sxy.word, &perspective, &flag);
         out->p2 = perspective << open_graphics_runtime.tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
         out->sz = (u16)depth;
@@ -250,7 +250,7 @@ ADDRESS(0x80017458, 0xa4)
 void tmd_project_vertices_perspective_right(s32 count)
 {
     KfScreenVertex *out;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     long perspective;
     long flag;
     long depth;
@@ -259,7 +259,7 @@ void tmd_project_vertices_perspective_right(s32 count)
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy, &perspective, &flag);
+        RotTransPers(&vertex->vector, &out->sxy.word, &perspective, &flag);
         out->p2 = perspective >> open_graphics_runtime.tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
         out->sz = (u16)depth;
@@ -272,7 +272,7 @@ ADDRESS(0x800174fc, 0xac)
 void tmd_project_vertices_shift(s32 count, u8 shift)
 {
     KfScreenVertex *out;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     long perspective;
     long flag;
     long depth;
@@ -281,7 +281,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy, &perspective, &flag);
+        RotTransPers(&vertex->vector, &out->sxy.word, &perspective, &flag);
         out->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         out->sz = depth >> shift;
@@ -294,16 +294,16 @@ ADDRESS(0x800175a8, 0xa4)
 void tmd_transform_vertices(s32 count)
 {
     KfScreenVertex *out;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     VECTOR position;
     long flag;
 
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTrans(vertex, &position, &flag);
-        ((DVECTOR *)&out->sxy)->vx = position.vx;
-        ((DVECTOR *)&out->sxy)->vy = position.vy;
+        RotTrans(&vertex->vector, &position, &flag);
+        out->sxy.vector.vx = position.vx;
+        out->sxy.vector.vy = position.vy;
         out->p2 = position.vz;
         out->sz = position.vz;
         out++;

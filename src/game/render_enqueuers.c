@@ -3,6 +3,7 @@
 #include <kf/psyq.h>
 #include <kf/game_render.h>
 #include <kf/tmd.h>
+#include <kf/gpu_packets.h>
 
 DATA(0x80057b58, 0x4)
 CVECTOR tmd_textured_primitive_color = {
@@ -39,414 +40,414 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
         packet += KF_TMD_PACKET_HEADER_BYTES;
         switch (header >> KF_TMD_MODE_SHIFT) {
         case KF_TMD_MODE_FT3: {
-            KfTmdFt3 *p = (KfTmdFt3 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->ft3.v0);
+            vb = VTX(p->ft3.v1);
+            vc = VTX(p->ft3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_FT3 *prim = (POLY_FT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyFT3(prim);
-                prim->clut = p->cba;
-                prim->tpage = p->tsb;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&p->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
-                tmd_textured_primitive_color.cd = prim->code;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), &tmd_textured_primitive_color,
-                               (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
+                SetPolyFT3(&prim->sdk);
+                prim->sdk.clut = p->ft3.cba;
+                prim->sdk.tpage = p->ft3.tsb;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.uv0 = p->texture.uv0;
+                prim->packed.uv1 = p->texture.uv1;
+                prim->packed.uv2 = p->texture.uv2;
+                tmd_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + p->ft3.n0), &tmd_textured_primitive_color,
+                               (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_F4: {
-            KfTmdF4 *p = (KfTmdF4 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->f4.v0);
+            vb = VTX(p->f4.v1);
+            vc = VTX(p->f4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_F4 *prim = (POLY_F4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuF4 *prim = (KfGpuF4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = VTX(p->v3);
+                vd = VTX(p->f4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyF4(prim);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), (CVECTOR *)&p->r,
-                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
+                SetPolyF4(&prim->sdk);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
+                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_G3: {
-            KfTmdG3 *p = (KfTmdG3 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->g3.v0);
+            vb = VTX(p->g3.v1);
+            vc = VTX(p->g3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_G3 *prim = (POLY_G3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyG3(prim);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                NormalColorDpq3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), (CVECTOR *)&p->r, va->p2,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
+                SetPolyG3(&prim->sdk);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                NormalColorDpq3((SVECTOR *)(normals + p->g3.n0), (SVECTOR *)(normals + p->g3.n1),
+                                (SVECTOR *)(normals + p->g3.n2), &p->color, va->p2,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_G4: {
-            KfTmdG4 *p = (KfTmdG4 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->g4.v0);
+            vb = VTX(p->g4.v1);
+            vc = VTX(p->g4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_G4 *prim = (POLY_G4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuG4 *prim = (KfGpuG4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = VTX(p->v3);
+                vd = VTX(p->g4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyG4(prim);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                NormalColorDpq3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), (CVECTOR *)&p->r, va->p2,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
-                NormalColorDpq((SVECTOR *)(normals + p->n3), (CVECTOR *)&p->r, va->p2,
-                               (CVECTOR *)&prim->r3);
+                SetPolyG4(&prim->sdk);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                NormalColorDpq3((SVECTOR *)(normals + p->g4.n0), (SVECTOR *)(normals + p->g4.n1),
+                                (SVECTOR *)(normals + p->g4.n2), &p->color, va->p2,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
+                NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2,
+                               &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_GT3: {
-            KfTmdGt3 *p = (KfTmdGt3 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->gt3.v0);
+            vb = VTX(p->gt3.v1);
+            vc = VTX(p->gt3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_GT3 *prim = (POLY_GT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyGT3(prim);
-                prim->clut = p->cba;
-                prim->tpage = p->tsb;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&p->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
-                tmd_textured_primitive_color.cd = prim->code;
-                NormalColorDpq3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), &tmd_textured_primitive_color, va->p2,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
+                SetPolyGT3(&prim->sdk);
+                prim->sdk.clut = p->gt3.cba;
+                prim->sdk.tpage = p->gt3.tsb;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.uv0 = p->texture.uv0;
+                prim->packed.uv1 = p->texture.uv1;
+                prim->packed.uv2 = p->texture.uv2;
+                tmd_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq3((SVECTOR *)(normals + p->gt3.n0), (SVECTOR *)(normals + p->gt3.n1),
+                                (SVECTOR *)(normals + p->gt3.n2), &tmd_textured_primitive_color, va->p2,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_GT4: {
-            KfTmdGt4 *p = (KfTmdGt4 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->gt4.v0);
+            vb = VTX(p->gt4.v1);
+            vc = VTX(p->gt4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_GT4 *prim = (POLY_GT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuGT4 *prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = VTX(p->v3);
+                vd = VTX(p->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyGT4(prim);
-                prim->clut = p->cba;
-                prim->tpage = p->tsb;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&p->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
-                *(u16 *)&prim->u3 = *(u16 *)&p->tu3;
-                tmd_textured_primitive_color.cd = prim->code;
-                NormalColorDpq3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), &tmd_textured_primitive_color, va->p2,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
-                NormalColorDpq((SVECTOR *)(normals + p->n3), &tmd_textured_primitive_color, va->p2,
-                               (CVECTOR *)&prim->r3);
+                SetPolyGT4(&prim->sdk);
+                prim->sdk.clut = p->gt4.cba;
+                prim->sdk.tpage = p->gt4.tsb;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                prim->packed.uv0 = p->texture.uv0;
+                prim->packed.uv1 = p->texture.uv1;
+                prim->packed.uv2 = p->texture.uv2;
+                prim->packed.uv3 = p->texture.uv3;
+                tmd_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq3((SVECTOR *)(normals + p->gt4.n0), (SVECTOR *)(normals + p->gt4.n1),
+                                (SVECTOR *)(normals + p->gt4.n2), &tmd_textured_primitive_color, va->p2,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
+                NormalColorDpq((SVECTOR *)(normals + p->gt4.n3), &tmd_textured_primitive_color, va->p2,
+                               &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case (KF_TMD_MODE_G3 | KF_TMD_MODE_SEMITRANS): {
-            KfTmdG3 *p = (KfTmdG3 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->g3.v0);
+            vb = VTX(p->g3.v1);
+            vc = VTX(p->g3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_G3 *prim = (POLY_G3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyG3(prim);
-                SetSemiTrans(prim, 1);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                NormalColorCol3((SVECTOR *)(normals + p->n0), (SVECTOR *)(normals + p->n1),
-                                (SVECTOR *)(normals + p->n2), (CVECTOR *)&p->r,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
+                SetPolyG3(&prim->sdk);
+                SetSemiTrans(&prim->sdk, 1);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                NormalColorCol3((SVECTOR *)(normals + p->g3.n0), (SVECTOR *)(normals + p->g3.n1),
+                                (SVECTOR *)(normals + p->g3.n2), &p->color,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_FT4: {
-            KfTmdFt4 *p = (KfTmdFt4 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->ft4.v0);
+            vb = VTX(p->ft4.v1);
+            vc = VTX(p->ft4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_FT4 *prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuFT4 *prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = VTX(p->v3);
+                vd = VTX(p->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyFT4(prim);
-                prim->clut = p->cba;
-                prim->tpage = p->tsb;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&p->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&p->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&p->tu2;
-                *(u16 *)&prim->u3 = *(u16 *)&p->tu3;
-                tmd_textured_primitive_color.cd = prim->code;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), &tmd_textured_primitive_color,
-                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
+                SetPolyFT4(&prim->sdk);
+                prim->sdk.clut = p->ft4.cba;
+                prim->sdk.tpage = p->ft4.tsb;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                prim->packed.uv0 = p->texture.uv0;
+                prim->packed.uv1 = p->texture.uv1;
+                prim->packed.uv2 = p->texture.uv2;
+                prim->packed.uv3 = p->texture.uv3;
+                tmd_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + p->ft4.n0), &tmd_textured_primitive_color,
+                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_F3: {
-            KfTmdF3 *p = (KfTmdF3 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->f3.v0);
+            vb = VTX(p->f3.v1);
+            vc = VTX(p->f3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_F3 *prim = (POLY_F3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyF3(prim);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), (CVECTOR *)&p->r,
-                               (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
+                SetPolyF3(&prim->sdk);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
+                               (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case (KF_TMD_MODE_G4 | KF_TMD_MODE_SEMITRANS): {
-            KfTmdG4 *p = (KfTmdG4 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->g4.v0);
+            vb = VTX(p->g4.v1);
+            vc = VTX(p->g4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_G4 *prim = (POLY_G4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuG4 *prim = (KfGpuG4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = VTX(p->v3);
+                vd = VTX(p->g4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyG4(prim);
-                SetSemiTrans(prim, 1);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), (CVECTOR *)&p->r, va->p2, (CVECTOR *)&prim->r0);
-                NormalColorDpq((SVECTOR *)(normals + p->n1), (CVECTOR *)&p->r, va->p2, (CVECTOR *)&prim->r1);
-                NormalColorDpq((SVECTOR *)(normals + p->n2), (CVECTOR *)&p->r, va->p2, (CVECTOR *)&prim->r2);
-                NormalColorDpq((SVECTOR *)(normals + p->n3), (CVECTOR *)&p->r, va->p2, (CVECTOR *)&prim->r3);
+                SetPolyG4(&prim->sdk);
+                SetSemiTrans(&prim->sdk, 1);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                NormalColorDpq((SVECTOR *)(normals + p->g4.n0), &p->color, va->p2, &prim->packed.color0);
+                NormalColorDpq((SVECTOR *)(normals + p->g4.n1), &p->color, va->p2, &prim->packed.color1);
+                NormalColorDpq((SVECTOR *)(normals + p->g4.n2), &p->color, va->p2, &prim->packed.color2);
+                NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2, &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case (KF_TMD_MODE_F3 | KF_TMD_MODE_SEMITRANS): {
-            KfTmdF3 *p = (KfTmdF3 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->f3.v0);
+            vb = VTX(p->f3.v1);
+            vc = VTX(p->f3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_F3 *prim = (POLY_F3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyF3(prim);
-                SetSemiTrans(prim, 1);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), (CVECTOR *)&p->r,
-                               (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
+                SetPolyF3(&prim->sdk);
+                SetSemiTrans(&prim->sdk, 1);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
+                               (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case (KF_TMD_MODE_F4 | KF_TMD_MODE_SEMITRANS): {
-            KfTmdF4 *p = (KfTmdF4 *)packet;
-            va = VTX(p->v0);
-            vb = VTX(p->v1);
-            vc = VTX(p->v2);
+            KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
+            va = VTX(p->f4.v0);
+            vb = VTX(p->f4.v1);
+            vc = VTX(p->f4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_F4 *prim = (POLY_F4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuF4 *prim = (KfGpuF4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = VTX(p->v3);
+                vd = VTX(p->f4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyF4(prim);
-                SetSemiTrans(prim, 1);
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                NormalColorDpq((SVECTOR *)(normals + p->n0), (CVECTOR *)&p->r,
-                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
+                SetPolyF4(&prim->sdk);
+                SetSemiTrans(&prim->sdk, 1);
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
+                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
                         (u32)vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
@@ -494,147 +495,147 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
         type = header >> KF_TMD_MODE_SHIFT;
         switch (type) {
         case KF_TMD_MODE_GT3: {
-            KfTmdGt3 *gt = (KfTmdGt3 *)packet;
+            KfTmdPrimitive *gt = (KfTmdPrimitive *)packet;
 
-            va = (KfScreenVertex *)((u8 *)vertices + gt->v0);
-            vb = (KfScreenVertex *)((u8 *)vertices + gt->v1);
-            vc = (KfScreenVertex *)((u8 *)vertices + gt->v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_GT3 *prim = (POLY_GT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            va = (KfScreenVertex *)((u8 *)vertices + gt->gt3.v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + gt->gt3.v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + gt->gt3.v2);
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyGT3(prim);
-                prim->clut = game_graphics_runtime.active_render_clut;
-                prim->tpage = game_graphics_runtime.active_render_tpage;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&gt->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&gt->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&gt->tu2;
-                model_textured_primitive_color.cd = prim->code;
-                NormalColorDpq3((SVECTOR *)(normals + gt->n0), (SVECTOR *)(normals + gt->n1),
-                                (SVECTOR *)(normals + gt->n2), &model_textured_primitive_color, va->p2,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
+                SetPolyGT3(&prim->sdk);
+                prim->sdk.clut = game_graphics_runtime.active_render_clut;
+                prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.uv0 = gt->texture.uv0;
+                prim->packed.uv1 = gt->texture.uv1;
+                prim->packed.uv2 = gt->texture.uv2;
+                model_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq3((SVECTOR *)(normals + gt->gt3.n0), (SVECTOR *)(normals + gt->gt3.n1),
+                                (SVECTOR *)(normals + gt->gt3.n2), &model_textured_primitive_color, va->p2,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
                         &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_GT4: {
-            KfTmdGt4 *gt = (KfTmdGt4 *)packet;
+            KfTmdPrimitive *gt = (KfTmdPrimitive *)packet;
 
-            va = (KfScreenVertex *)((u8 *)vertices + gt->v0);
-            vb = (KfScreenVertex *)((u8 *)vertices + gt->v1);
-            vc = (KfScreenVertex *)((u8 *)vertices + gt->v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_GT4 *prim = (POLY_GT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            va = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v2);
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuGT4 *prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = (KfScreenVertex *)((u8 *)vertices + gt->v3);
+                vd = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyGT4(prim);
-                prim->clut = game_graphics_runtime.active_render_clut;
-                prim->tpage = game_graphics_runtime.active_render_tpage;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&gt->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&gt->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&gt->tu2;
-                *(u16 *)&prim->u3 = *(u16 *)&gt->tu3;
-                model_textured_primitive_color.cd = prim->code;
-                NormalColorDpq3((SVECTOR *)(normals + gt->n0), (SVECTOR *)(normals + gt->n1),
-                                (SVECTOR *)(normals + gt->n2), &model_textured_primitive_color, va->p2,
-                                (CVECTOR *)&prim->r0, (CVECTOR *)&prim->r1, (CVECTOR *)&prim->r2);
-                NormalColorDpq((SVECTOR *)(normals + gt->n3), &model_textured_primitive_color, va->p2,
-                               (CVECTOR *)&prim->r3);
+                SetPolyGT4(&prim->sdk);
+                prim->sdk.clut = game_graphics_runtime.active_render_clut;
+                prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                prim->packed.uv0 = gt->texture.uv0;
+                prim->packed.uv1 = gt->texture.uv1;
+                prim->packed.uv2 = gt->texture.uv2;
+                prim->packed.uv3 = gt->texture.uv3;
+                model_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq3((SVECTOR *)(normals + gt->gt4.n0), (SVECTOR *)(normals + gt->gt4.n1),
+                                (SVECTOR *)(normals + gt->gt4.n2), &model_textured_primitive_color, va->p2,
+                                &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
+                NormalColorDpq((SVECTOR *)(normals + gt->gt4.n3), &model_textured_primitive_color, va->p2,
+                               &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
                         &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_FT3: {
-            KfTmdFt3 *ft = (KfTmdFt3 *)packet;
+            KfTmdPrimitive *ft = (KfTmdPrimitive *)packet;
 
-            va = (KfScreenVertex *)((u8 *)vertices + ft->v0);
-            vb = (KfScreenVertex *)((u8 *)vertices + ft->v1);
-            vc = (KfScreenVertex *)((u8 *)vertices + ft->v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_FT3 *prim = (POLY_FT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            va = (KfScreenVertex *)((u8 *)vertices + ft->ft3.v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + ft->ft3.v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + ft->ft3.v2);
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyFT3(prim);
-                prim->clut = game_graphics_runtime.active_render_clut;
-                prim->tpage = game_graphics_runtime.active_render_tpage;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&ft->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&ft->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&ft->tu2;
-                model_textured_primitive_color.cd = prim->code;
-                NormalColorDpq((SVECTOR *)(normals + ft->n0), &model_textured_primitive_color,
-                               (va->p2 + vb->p2 + vc->p2) / 3, (CVECTOR *)&prim->r0);
+                SetPolyFT3(&prim->sdk);
+                prim->sdk.clut = game_graphics_runtime.active_render_clut;
+                prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.uv0 = ft->texture.uv0;
+                prim->packed.uv1 = ft->texture.uv1;
+                prim->packed.uv2 = ft->texture.uv2;
+                model_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + ft->ft3.n0), &model_textured_primitive_color,
+                               (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
                         &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
         }
         case KF_TMD_MODE_FT4: {
-            KfTmdFt4 *ft = (KfTmdFt4 *)packet;
+            KfTmdPrimitive *ft = (KfTmdPrimitive *)packet;
 
-            va = (KfScreenVertex *)((u8 *)vertices + ft->v0);
-            vb = (KfScreenVertex *)((u8 *)vertices + ft->v1);
-            vc = (KfScreenVertex *)((u8 *)vertices + ft->v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_FT4 *prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            va = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v2);
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuFT4 *prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = (KfScreenVertex *)((u8 *)vertices + ft->v3);
+                vd = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
-                SetPolyFT4(prim);
-                prim->clut = game_graphics_runtime.active_render_clut;
-                prim->tpage = game_graphics_runtime.active_render_tpage;
-                *(long *)&prim->x0 = va->sxy;
-                *(long *)&prim->x1 = vb->sxy;
-                *(long *)&prim->x2 = vc->sxy;
-                *(long *)&prim->x3 = vd->sxy;
-                *(u16 *)&prim->u0 = *(u16 *)&ft->tu0;
-                *(u16 *)&prim->u1 = *(u16 *)&ft->tu1;
-                *(u16 *)&prim->u2 = *(u16 *)&ft->tu2;
-                *(u16 *)&prim->u3 = *(u16 *)&ft->tu3;
-                model_textured_primitive_color.cd = prim->code;
-                NormalColorDpq((SVECTOR *)(normals + ft->n0), &model_textured_primitive_color,
-                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, (CVECTOR *)&prim->r0);
+                SetPolyFT4(&prim->sdk);
+                prim->sdk.clut = game_graphics_runtime.active_render_clut;
+                prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
+                prim->packed.uv0 = ft->texture.uv0;
+                prim->packed.uv1 = ft->texture.uv1;
+                prim->packed.uv2 = ft->texture.uv2;
+                prim->packed.uv3 = ft->texture.uv3;
+                model_textured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + ft->ft4.n0), &model_textured_primitive_color,
+                               (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
                         &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        prim);
+                        &prim->sdk);
                 }
             }
             break;
@@ -675,7 +676,7 @@ void render_enqueue_map(u16 object_index)
     u8 *packet;
     u32 remaining;
     CVECTOR shade;
-    POLY_GT4 *prim;
+    KfGpuGT4 *prim;
     KfScreenVertex *va;
     KfScreenVertex *vb;
     KfScreenVertex *vc;
@@ -693,42 +694,42 @@ void render_enqueue_map(u16 object_index)
         packet += KF_TMD_PACKET_HEADER_BYTES;
         switch (header >> KF_TMD_MODE_SHIFT) {
         case KF_TMD_MODE_FT4: {
-            KfTmdFt4 *ft4 = (KfTmdFt4 *)packet;
+            KfTmdPrimitive *ft4 = (KfTmdPrimitive *)packet;
             s32 otz;
 
-            va = (KfScreenVertex *)((u8 *)vertices + ft4->v0);
-            vb = (KfScreenVertex *)((u8 *)vertices + ft4->v1);
-            vc = (KfScreenVertex *)((u8 *)vertices + ft4->v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                prim = (POLY_GT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
-                vd = (KfScreenVertex *)((u8 *)vertices + ft4->v3);
+            va = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v2);
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+                vd = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor <=
                     game_graphics_runtime.display_state.primitive_buffer->end) {
-                    SetPolyGT4(prim);
-                    prim->clut = ft4->cba;
-                    prim->tpage = ft4->tsb;
-                    *(long *)&prim->x0 = va->sxy;
-                    *(long *)&prim->x1 = vb->sxy;
-                    *(long *)&prim->x2 = vc->sxy;
-                    *(long *)&prim->x3 = vd->sxy;
-                    *(u16 *)&prim->u0 = *(u16 *)&ft4->tu0;
-                    *(u16 *)&prim->u1 = *(u16 *)&ft4->tu1;
-                    *(u16 *)&prim->u2 = *(u16 *)&ft4->tu2;
-                    *(u16 *)&prim->u3 = *(u16 *)&ft4->tu3;
-                    map_textured_primitive_color.cd = prim->code;
-                    NormalColorCol((SVECTOR *)(normals + ft4->n0),
+                    SetPolyGT4(&prim->sdk);
+                    prim->sdk.clut = ft4->ft4.cba;
+                    prim->sdk.tpage = ft4->ft4.tsb;
+                    prim->packed.xy0 = va->sxy.word;
+                    prim->packed.xy1 = vb->sxy.word;
+                    prim->packed.xy2 = vc->sxy.word;
+                    prim->packed.xy3 = vd->sxy.word;
+                    prim->packed.uv0 = ft4->texture.uv0;
+                    prim->packed.uv1 = ft4->texture.uv1;
+                    prim->packed.uv2 = ft4->texture.uv2;
+                    prim->packed.uv3 = ft4->texture.uv3;
+                    map_textured_primitive_color.cd = prim->sdk.code;
+                    NormalColorCol((SVECTOR *)(normals + ft4->ft4.n0),
                                    &map_textured_primitive_color, &shade);
-                    DpqColor(&shade, va->p2, (CVECTOR *)&prim->r0);
-                    DpqColor(&shade, vb->p2, (CVECTOR *)&prim->r1);
-                    DpqColor(&shade, vc->p2, (CVECTOR *)&prim->r2);
-                    DpqColor(&shade, vd->p2, (CVECTOR *)&prim->r3);
+                    DpqColor(&shade, va->p2, &prim->packed.color0);
+                    DpqColor(&shade, vb->p2, &prim->packed.color1);
+                    DpqColor(&shade, vc->p2, &prim->packed.color2);
+                    DpqColor(&shade, vd->p2, &prim->packed.color3);
                     otz = ((va->sz + vb->sz + vc->sz + vd->sz)
                         >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + KF_MAP_OT_DEPTH_BIAS;
                     if (otz < KF_ORDERING_TABLE_LENGTH) {
                         AddPrim(
                             &game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
-                            prim);
+                            &prim->sdk);
                     }
                 } else {
                     return;
@@ -737,39 +738,39 @@ void render_enqueue_map(u16 object_index)
             break;
         }
         case KF_TMD_MODE_FT3: {
-            KfTmdFt3 *ft3 = (KfTmdFt3 *)packet;
+            KfTmdPrimitive *ft3 = (KfTmdPrimitive *)packet;
             s32 otz;
 
-            va = (KfScreenVertex *)((u8 *)vertices + ft3->v0);
-            vb = (KfScreenVertex *)((u8 *)vertices + ft3->v1);
-            vc = (KfScreenVertex *)((u8 *)vertices + ft3->v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
-                POLY_GT3 *gt3 = (POLY_GT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+            va = (KfScreenVertex *)((u8 *)vertices + ft3->ft3.v0);
+            vb = (KfScreenVertex *)((u8 *)vertices + ft3->ft3.v1);
+            vc = (KfScreenVertex *)((u8 *)vertices + ft3->ft3.v2);
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
+                KfGpuGT3 *gt3 = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor <=
                     game_graphics_runtime.display_state.primitive_buffer->end) {
-                    SetPolyGT3(gt3);
-                    gt3->clut = ft3->cba;
-                    gt3->tpage = ft3->tsb;
-                    *(long *)&gt3->x0 = va->sxy;
-                    *(long *)&gt3->x1 = vb->sxy;
-                    *(long *)&gt3->x2 = vc->sxy;
-                    *(u16 *)&gt3->u0 = *(u16 *)&ft3->tu0;
-                    *(u16 *)&gt3->u1 = *(u16 *)&ft3->tu1;
-                    *(u16 *)&gt3->u2 = *(u16 *)&ft3->tu2;
-                    map_textured_primitive_color.cd = gt3->code;
-                    NormalColorCol((SVECTOR *)(normals + ft3->n0),
+                    SetPolyGT3(&gt3->sdk);
+                    gt3->sdk.clut = ft3->ft3.cba;
+                    gt3->sdk.tpage = ft3->ft3.tsb;
+                    gt3->packed.xy0 = va->sxy.word;
+                    gt3->packed.xy1 = vb->sxy.word;
+                    gt3->packed.xy2 = vc->sxy.word;
+                    gt3->packed.uv0 = ft3->texture.uv0;
+                    gt3->packed.uv1 = ft3->texture.uv1;
+                    gt3->packed.uv2 = ft3->texture.uv2;
+                    map_textured_primitive_color.cd = gt3->sdk.code;
+                    NormalColorCol((SVECTOR *)(normals + ft3->ft3.n0),
                                    &map_textured_primitive_color, &shade);
-                    DpqColor(&shade, va->p2, (CVECTOR *)&gt3->r0);
-                    DpqColor(&shade, vb->p2, (CVECTOR *)&gt3->r1);
-                    DpqColor(&shade, vc->p2, (CVECTOR *)&gt3->r2);
+                    DpqColor(&shade, va->p2, &gt3->packed.color0);
+                    DpqColor(&shade, vb->p2, &gt3->packed.color1);
+                    DpqColor(&shade, vc->p2, &gt3->packed.color2);
                     otz = ((va->sz + vb->sz + vc->sz) / 3
                         >> KF_GTE_DEPTH_TO_OT_SHIFT) + KF_MAP_OT_DEPTH_BIAS;
                     if (otz < KF_ORDERING_TABLE_LENGTH) {
                         AddPrim(
                             &game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
-                            gt3);
+                            &gt3->sdk);
                     }
                 } else {
                     return;
@@ -802,7 +803,7 @@ void render_enqueue_sprite(
     long sxy1;
     long sxy2;
     long sxy3;
-    POLY_FT4 *prim;
+    KfGpuFT4 *prim;
     s32 otz;
 
     corners[0].vx = corners[2].vx = sprite->x;
@@ -815,32 +816,32 @@ void render_enqueue_sprite(
     RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],
                   &sxy0, &sxy1, &sxy2, &sxy3, &depth_cue, &clip_flag);
 
-    prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
+    prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
     if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
         return;
     }
-    SetPolyFT4(prim);
-    prim->clut = game_graphics_runtime.active_render_clut;
-    prim->tpage = game_graphics_runtime.active_render_tpage;
-    *(long *)&prim->x0 = sxy0;
-    *(long *)&prim->x1 = sxy1;
-    *(long *)&prim->x2 = sxy2;
-    *(long *)&prim->x3 = sxy3;
-    prim->u0 = prim->u2 = sprite->u;
-    prim->u1 = prim->u3 = sprite->u + sprite->u_span;
-    prim->v0 = prim->v1 = sprite->v;
-    prim->v2 = prim->v3 = sprite->v + sprite->v_span;
-    game_graphics_runtime.active_render_code = prim->code;
+    SetPolyFT4(&prim->sdk);
+    prim->sdk.clut = game_graphics_runtime.active_render_clut;
+    prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
+    /* Each packed GTE word spans the SDK packet's x/y halfwords. */
+    *(long *)&prim->sdk.x0 = sxy0;
+    *(long *)&prim->sdk.x1 = sxy1;
+    *(long *)&prim->sdk.x2 = sxy2;
+    *(long *)&prim->sdk.x3 = sxy3;
+    prim->sdk.u0 = prim->sdk.u2 = sprite->u;
+    prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
+    prim->sdk.v0 = prim->sdk.v1 = sprite->v;
+    prim->sdk.v2 = prim->sdk.v3 = sprite->v + sprite->v_span;
+    game_graphics_runtime.active_render_color.cd = prim->sdk.code;
     if (depth_cue_mode == KF_SPRITE_DEPTH_CUE_BOOSTED) {
         depth_cue += depth_cue >> 1;
     }
-    /* WIP graphics ownership: retail derives the CVECTOR from CLUT + 4 bytes. */
-    NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&game_graphics_runtime.active_render_clut + 2), depth_cue,
-                   (CVECTOR *)&prim->r0);
+    NormalColorDpq(&render_sprite_light_normal, &game_graphics_runtime.active_render_color, depth_cue,
+                   &prim->packed.color0);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
             &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-            prim);
+            &prim->sdk);
     }
 }

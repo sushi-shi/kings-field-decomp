@@ -35,17 +35,17 @@ void menu_config_panel(void)
     while (PadRead(1) != 0) {
     }
 
-    option_a.x = CONFIG_OPTION_ON_X;
-    option_a.y = CONFIG_OPTION_FIRST_Y;
-    option_a.codes[0] = 0xf9;
-    option_a.codes[1] = 0xfa;
-    option_a.codes[2] = MENU_TEXT_END;
-    option_b.x = CONFIG_OPTION_OFF_X;
-    option_b.y = CONFIG_OPTION_FIRST_Y;
-    option_b.codes[0] = 0xf9;
-    option_b.codes[1] = 0xfb;
-    option_b.codes[2] = 0xfb;
-    option_b.codes[3] = MENU_TEXT_END;
+    option_a.position.x = CONFIG_OPTION_ON_X;
+    option_a.position.y = CONFIG_OPTION_FIRST_Y;
+    option_a.glyphs.codes[0] = 0xf9;
+    option_a.glyphs.codes[1] = 0xfa;
+    option_a.glyphs.codes[2] = MENU_TEXT_END;
+    option_b.position.x = CONFIG_OPTION_OFF_X;
+    option_b.position.y = CONFIG_OPTION_FIRST_Y;
+    option_b.glyphs.codes[0] = 0xf9;
+    option_b.glyphs.codes[1] = 0xfb;
+    option_b.glyphs.codes[2] = 0xfb;
+    option_b.glyphs.codes[3] = MENU_TEXT_END;
     states[KF_MENU_CONFIG_EFFECTS_ROW] = player_state.audio_effects_enabled;
     states[KF_MENU_CONFIG_MUSIC_ROW] = player_state.audio_music_enabled;
     states[KF_MENU_CONFIG_GAUGES_ROW] = player_state.hud_gauges_enabled;
@@ -143,13 +143,13 @@ void menu_config_panel_draw(
     states = values;
     for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
         if (*states == KF_PLAYER_OPTION_ON) {
-            menu_blit_sprite_translucent(&menu_assets.option_highlight, (const MenuPoint *)&option_a);
+            menu_blit_sprite_translucent(&menu_assets.option_highlight, &option_a.position);
             box_b = &menu_assets.option_background;
         } else {
-            menu_blit_sprite_translucent(&menu_assets.option_background, (const MenuPoint *)&option_a);
+            menu_blit_sprite_translucent(&menu_assets.option_background, &option_a.position);
             box_b = &menu_assets.option_highlight;
         }
-        menu_blit_sprite_translucent(box_b, (const MenuPoint *)&option_b);
+        menu_blit_sprite_translucent(box_b, &option_b.position);
         menu_draw_string(
             &menu_assets.glyph_atlas,
             &option_a);
@@ -157,8 +157,8 @@ void menu_config_panel_draw(
             &menu_assets.glyph_atlas,
             &option_b);
         states++;
-        option_a.y += CONFIG_OPTION_ROW_STEP;
-        option_b.y += CONFIG_OPTION_ROW_STEP;
+        option_a.position.y += CONFIG_OPTION_ROW_STEP;
+        option_b.position.y += CONFIG_OPTION_ROW_STEP;
     }
     AddPrim(&game_graphics_runtime.display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
             &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][3]);

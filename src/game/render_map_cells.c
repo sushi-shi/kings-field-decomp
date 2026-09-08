@@ -50,7 +50,7 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
     u8 object_index;
     s16 staff_timer;
 
-    object_index = map_cell_attribute_grid[row][col];
+    object_index = map_cell_attribute_grid.cells[row][col];
     if (object_index == KF_MAP_ATTRIBUTE_NONE) {
         return;
     }
@@ -74,13 +74,13 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
-    orient = map_cell_orientation_grid[row][col] - 1;
+    orient = map_cell_orientation_grid.cells[row][col] - 1;
     if (cell == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
         col * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vx,
-        map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP
+        map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP
             - (u16)game_graphics_runtime.render_state.view_position.vy,
         row * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vz);
     if (orient == KF_MAP_ORIENT_QUARTER_TURN - 1) {
@@ -92,10 +92,10 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
         position.vx += KF_MAP_TILE_SIZE;
     }
 
-    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     RotTrans(&position, (VECTOR *)&cell_matrix.t, &flag);
-    MulMatrix0((MATRIX *)&game_graphics_runtime.render_state.view_matrix,
+    MulMatrix0(&game_graphics_runtime.render_state.view_matrix,
                &game_graphics_runtime.render_state.quadrant_matrices[orient], &cell_matrix);
     SetRotMatrix(&cell_matrix);
     SetTransMatrix(&cell_matrix);

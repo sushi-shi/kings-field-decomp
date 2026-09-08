@@ -36,8 +36,8 @@ void render_actor(KfActor *actor)
     screen.vy = (u16)actor->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy;
     screen.vz = (u16)actor->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    matrix_set_rotation_x(actor->rotation.x, &model);
-    matrix_set_rotation_y(-actor->rotation.y, &rot_y);
+    matrix_set_rotation_x(actor->rotation.angles.x, &model);
+    matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
     MulMatrix2(&rot_y, &model);
     MulMatrix0(&render_light_matrices[KF_RENDER_LIGHT_ACTOR], &model, &light);
     MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
@@ -45,7 +45,7 @@ void render_actor(KfActor *actor)
     SetTransMatrix(&model);
     SetLightMatrix(&light);
 
-    descriptor = actor_state.definitions[actor->definition_id].model_and_texture;
+    descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
     object = tmd_get_object(0);
@@ -81,12 +81,12 @@ void render_map_object(KfMapObject *object)
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    screen.vx = (u16)object->position_x - (u16)game_graphics_runtime.render_state.view_position.vx;
-    screen.vy = (u16)object->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
-    screen.vz = (u16)object->position_z - (u16)game_graphics_runtime.render_state.view_position.vz;
+    screen.vx = (u16)object->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)object->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)object->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    matrix_set_rotation_x(object->rotation.x, &rot_x);
-    matrix_set_rotation_y(object->rotation.y, &model);
+    matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
+    matrix_set_rotation_y(object->rotation.angles.y, &model);
     MulMatrix(&model, &rot_x);
     MulMatrix0(&game_graphics_runtime.render_state.light_matrix, &model, &light);
     MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
@@ -95,7 +95,7 @@ void render_map_object(KfMapObject *object)
     SetLightMatrix(&light);
 
     id = object->object_id;
-    switch (map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
+    switch (map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
     case KF_ENUM_DECODE(KfMapObjectBehavior, 3):
         depth = MAP_LIFT_DOOR_DEPTH_BIAS;

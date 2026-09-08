@@ -27,9 +27,9 @@ enum {
 };
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
-#define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + KF_TMD_HEADER_BYTES))
+#define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
 /* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
-#define TMD_PACKET_BODY(packet) ((u8 *)(packet) + KF_TMD_PACKET_HEADER_BYTES)
+#define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
 
 /* tmd_register primitive-mode dispatch table. */
 RODATA(0x800121b4, 0x74)
@@ -300,7 +300,7 @@ KfTmdObject *tmd_get_object(u16 index)
 }
 
 ADDRESS(0x8001c138, 0x10)
-void tmd_set_current_vertices(SVECTOR *vertices)
+void tmd_set_current_vertices(KfPackedSVector *vertices)
 {
     game_graphics_runtime.current_tmd_vertices = vertices;
 }
@@ -309,7 +309,7 @@ ADDRESS(0x8001c148, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     game_graphics_runtime.current_tmd_vertices =
-        (SVECTOR *)((u8 *)game_graphics_runtime.tmd_state.current_asset
+        (KfPackedSVector *)((u8 *)game_graphics_runtime.tmd_state.current_asset
             + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
 }
 
@@ -350,7 +350,7 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     KfTmdPacketHeader header;
 
-    object_count = (u16)((KfTmdHeader *)game_graphics_runtime.tmd_state.current_asset)->object_count;
+    object_count = (u16)game_graphics_runtime.tmd_state.current_asset->object_count;
     objects_left = object_count - 1;
     object = TMD_OBJECTS(game_graphics_runtime.tmd_state.current_asset);
     if (object_count == 0) {
@@ -453,7 +453,7 @@ void tmd_prepare_primitive_indices(void)
 }
 
 ADDRESS(0x8001c5b0, 0x3c)
-void tmd_register(KfTmdSlot slot, u8 *tmd)
+void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd)
 {
     game_graphics_runtime.tmd_state.current_asset = game_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();
@@ -470,7 +470,7 @@ ADDRESS(0x8001c60c, 0x9c)
 void tmd_project_vertices(s32 count)
 {
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     long perspective;
     long gte_flags;
     long depth;
@@ -479,7 +479,7 @@ void tmd_project_vertices(s32 count)
     projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
+        RotTransPers(&vertex->vector, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = (u16)depth;
@@ -492,7 +492,7 @@ ADDRESS(0x8001c6a8, 0xac)
 void tmd_project_vertices_shift(s32 count, u8 shift)
 {
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     long perspective;
     long gte_flags;
     long depth;
@@ -501,7 +501,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
+        RotTransPers(&vertex->vector, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = depth >> shift;
@@ -514,7 +514,7 @@ ADDRESS(0x8001c754, 0xa4)
 void tmd_transform_vertices(s32 count)
 {
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    KfPackedSVector *vertex;
     VECTOR transformed;
     long gte_flags;
     s32 remaining;
@@ -522,9 +522,9 @@ void tmd_transform_vertices(s32 count)
     projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
-        RotTrans(vertex, &transformed, &gte_flags);
-        ((DVECTOR *)&projected->sxy)->vx = transformed.vx;
-        ((DVECTOR *)&projected->sxy)->vy = transformed.vy;
+        RotTrans(&vertex->vector, &transformed, &gte_flags);
+        projected->sxy.vector.vx = transformed.vx;
+        projected->sxy.vector.vy = transformed.vy;
         projected->p2 = transformed.vz;
         projected->sz = transformed.vz;
         projected++;

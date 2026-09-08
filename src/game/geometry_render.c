@@ -43,17 +43,14 @@ KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS] = {
  * Draws the equipped weapon model held in the player's view.  Skips entirely
  * while no weapon swing is in progress (attack phase -1).  The weapon record
  * carries its own geometry-screen distance, an in-view translation, and a
- * rotation vector; the record's render-transform fields overlap the currently
- * opaque interior of KfWeaponRecord, so they are read through byte views until
- * that object's render block is modelled.  The projected depth is biased by the
- * record's Z translation before the model is enqueued.
+ * rotation vector. The projected depth is biased by the record's Z translation
+ * before the model is enqueued.
  */
 ADDRESS(0x8001f798, 0x118)
 void render_weapon(void)
 {
     MATRIX model;
-    const KfWeaponRecord *weapon;
-    const u8 *fields;
+    KfWeaponRecord *weapon;
     KfTmdObject *object;
     s32 depth_bias;
 
@@ -61,13 +58,12 @@ void render_weapon(void)
         return;
     }
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_WEAPON]);
-    SetGeomScreen(*(const u16 *)((const u8 *)player_state.equipped_weapon_record + 16));
+    SetGeomScreen(player_state.equipped_weapon_record->projection_distance);
     weapon = player_state.equipped_weapon_record;
-    fields = (const u8 *)weapon;
-    model.t[0] = *(const s16 *)(fields + 28);
-    model.t[1] = *(const s16 *)(fields + 30);
-    model.t[2] = *(const s16 *)(fields + 32);
-    RotMatrix((SVECTOR *)(fields + 36), &model);
+    model.t[0] = weapon->render_translation.x;
+    model.t[1] = weapon->render_translation.y;
+    model.t[2] = weapon->render_translation.z;
+    RotMatrix(&weapon->render_rotation, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
     asset_registry_select(KF_ASSET_WEAPON);
@@ -78,7 +74,7 @@ void render_weapon(void)
             object->vertex_count) != 0) {
         tmd_project_vertices_shift(object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT);
         depth_bias =
-            (s16)*(const u16 *)((const u8 *)player_state.equipped_weapon_record + 32) >> WEAPON_DEPTH_BIAS_SHIFT;
+            player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
         render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS);
     }
 }

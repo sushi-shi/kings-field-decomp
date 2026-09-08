@@ -64,7 +64,7 @@ u32 collision_query_world(
     u16 query_flags = flags;
 
     if ((query_flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
-        hit = map_collision_grid[0][(u16)cell];
+        hit = map_collision_grid.bytes[(u16)cell];
 
         if (hit != KF_MAP_CELL_FLOOR && hit != KF_MAP_CELL_STEP) {
             return hit | KF_COLLISION_TERRAIN;
@@ -75,7 +75,7 @@ u32 collision_query_world(
             if (floor_height < point_y) {
                 return KF_COLLISION_BELOW_FLOOR;
             }
-            attribute = map_cell_attribute_grid[0][(u16)cell];
+            attribute = map_cell_attribute_grid.bytes[(u16)cell];
             if (attribute == KF_MAP_ATTRIBUTE_NONE) {
                 return KF_COLLISION_MISSING_ATTRIBUTE;
             }
@@ -85,7 +85,7 @@ u32 collision_query_world(
             }
         }
     }
-    cell_flags = map_collision_flag_grid[0][(u16)cell];
+    cell_flags = map_collision_flag_grid.bytes[(u16)cell];
     rejection_mask = (query_flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK;
     hit = cell_flags & rejection_mask;
     if (hit != 0) {
@@ -111,10 +111,10 @@ u32 collision_query_world(
         if (hit != KF_COLLISION_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfActor *actor = &actor_state.actors[hit];
-                KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
+                KfActorDefinition *definition = &actor_state.definitions.entries[actor->definition_id];
 
                 collision_target.position = actor->position;
-                collision_target.rotation = *(SVECTOR *)&actor->rotation;
+                collision_target.rotation = actor->rotation.vector;
                 collision_target.radius = definition->collision_radius;
             }
             return hit | KF_COLLISION_ACTOR;
@@ -125,10 +125,10 @@ u32 collision_query_world(
         if (hit != KF_COLLISION_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfMapObject *object = &map_object_state.objects[hit];
-                KfMapObjectDefinition *definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
+                KfMapObjectDefinition *definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
 
-                collision_target.position = *(VECTOR *)&object->position_x;
-                collision_target.rotation = *(SVECTOR *)&object->rotation;
+                collision_target.position = object->position;
+                collision_target.rotation = object->rotation.vector;
                 collision_target.radius = definition->collision_radius;
             }
             return hit | KF_COLLISION_MAP_OBJECT;
@@ -142,8 +142,8 @@ u32 collision_query_world(
         if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
             KfMapEvent *event = &map_event_pool[hit];
 
-            collision_target.position = *(VECTOR *)&event->reference_x;
-            collision_target.rotation = *(SVECTOR *)&event->rotation_x;
+            collision_target.position = event->reference_position;
+            collision_target.rotation = event->rotation;
             collision_target.radius = event->radius;
         }
         return hit | KF_COLLISION_MAP_EVENT;

@@ -14,6 +14,7 @@ struct KfPoolRecord;
 
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
+    KF_ACTOR_DEFINITION_WORD_COUNT = 456,
     KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
     KF_ACTOR_CAPACITY = 128
 };
@@ -216,6 +217,13 @@ typedef struct KfActorDefinition {
     u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
 
+typedef union KfActorDefinitionTable {
+    KfActorDefinition entries[KF_ACTOR_DEFINITION_COUNT];
+    u32 words[KF_ACTOR_DEFINITION_WORD_COUNT];
+} KfActorDefinitionTable;
+typedef char check_actor_definition_table_size[
+    sizeof(KfActorDefinitionTable) == 0x720 ? 1 : -1];
+
 typedef struct KfActorActionProfile {
     s16 far_distance;
     s16 far_weight;
@@ -261,8 +269,7 @@ typedef struct KfActor {
     u16 cell_z;
     s16 unknown_1a;
     VECTOR position;
-    struct KfEulerAngles rotation;
-    u16 unknown_32;
+    KfRotation rotation;
     struct KfPoolRecord *animation_cache;
     u8 action_progress;
     KfActorCollisionState collision_state;
@@ -274,6 +281,16 @@ typedef struct KfActor {
     s16 movement_y;
     u8 unknown_46[2];
 } KfActor;
+
+typedef char check_actor_size[sizeof(KfActor) == 0x48 ? 1 : -1];
+#define KF_ACTOR_OFFSET_CHECK(label, member, offset) \
+    typedef char check_actor_##label[ \
+        ((unsigned long)&((KfActor *)0)->member == (offset)) ? 1 : -1]
+KF_ACTOR_OFFSET_CHECK(position, position, 0x1c);
+KF_ACTOR_OFFSET_CHECK(rotation, rotation, 0x2c);
+KF_ACTOR_OFFSET_CHECK(rotation_pad, rotation.vector.pad, 0x32);
+KF_ACTOR_OFFSET_CHECK(animation_cache, animation_cache, 0x34);
+#undef KF_ACTOR_OFFSET_CHECK
 
 #if KF_MODERN_TYPES
 static_assert(__builtin_offsetof(KfActorPlacement, slot_state) == 0);
@@ -289,7 +306,7 @@ static_assert(__builtin_offsetof(KfActor, collision_state) == 0x39);
  * live-actor base through one register, proving this complete aggregate.
  */
 typedef struct KfActorState {
-    KfActorDefinition definitions[KF_ACTOR_DEFINITION_COUNT];
+    KfActorDefinitionTable definitions;
     KfActor actors[KF_ACTOR_CAPACITY];
     VECTOR player_position;
     SVECTOR player_rotation;
@@ -314,7 +331,7 @@ extern void actor_bind_current(KfActor *actor);
 extern void actor_apply_damage(
     u16 actor_index, u16 base_power, u16 component0, u16 component1,
     u16 component2, u16 component3, u16 component4, u16 scale, u16 hit_flags);
-extern void actor_definitions_load(const KfActorDefinition *definitions);
+extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
 extern void actor_initialize(KfActor *actor);
 extern void actor_initialize_current(void);
 extern void actor_initialize_slot(u16 actor_index);
@@ -324,17 +341,17 @@ extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void actor_pool_clear(void);
 extern void actor_pool_apply_radial_damage(
-    const struct KfVec3i *origin, u32 radius, u16 falloff, u16 base_power,
+    const VECTOR *origin, u32 radius, u16 falloff, u16 base_power,
     u16 component0, u16 component1, u16 component2, u16 component3,
     u16 component4, u16 scale, u16 hit_flags);
 extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern KfActor *actor_pool_find_target_in_cone(
-    const struct KfVec3i *origin, s16 facing, u32 max_distance,
+    const VECTOR *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
 extern void actor_pool_load_placements(const KfActorPlacement *placements);
 extern void actor_pool_spawn(
-    u8 definition_id, const struct KfVec3i *position,
+    u8 definition_id, const VECTOR *position,
     const struct KfVec3s *rotation);
 extern void actor_pool_update(void);
 extern s32 actor_distance_to_point(

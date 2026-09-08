@@ -28,8 +28,8 @@ void game_main_loop(void)
     s32 vsync_event;
 
     memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);
-    memset(actor_state.definitions, 0, INITIAL_ACTOR_CLEAR_BYTES);
-    memset(map_object_state.definitions, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
+    memset(&actor_state, 0, INITIAL_ACTOR_CLEAR_BYTES);
+    memset(&map_object_state, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
     memset(&effect_state, 0, sizeof(KfEffectState));
     memset(map_event_pool, 0, INITIAL_MAP_EVENT_CLEAR_BYTES);
     memset(&player_state, 0, sizeof(KfPlayerState));
@@ -71,10 +71,10 @@ void game_main_loop(void)
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.allow_near_actor_spawn = 0;
         frame_pacer_wait();
-        if (map_cell_attribute_grid[player_state.map_cell.z][player_state.map_cell.x]
+        if (map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
             == KF_MAP_ATTRIBUTE_WARP) {
-            if (*(u16 *)&player_state.previous_map_cell
-                != *(u16 *)&player_state.map_cell) {
+            if (player_state.previous_map_cell.word
+                != player_state.motion_state.fields.map_cell.word) {
                 if (player_warp_trigger_update() != 0) {
                     game_exit_code = KF_GAME_EXIT_ENDING;
                     player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
@@ -82,12 +82,12 @@ void game_main_loop(void)
                     audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8);
                     break;
                 }
-                player_state.previous_map_cell.x = player_state.map_cell.x;
-                player_state.previous_map_cell.z = player_state.map_cell.z;
+                player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
+                player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
             }
         } else {
-            player_state.previous_map_cell.z = KF_MAP_CELL_COORD_INVALID;
-            player_state.previous_map_cell.x = KF_MAP_CELL_COORD_INVALID;
+            player_state.previous_map_cell.coords.z = KF_MAP_CELL_COORD_INVALID;
+            player_state.previous_map_cell.coords.x = KF_MAP_CELL_COORD_INVALID;
         }
     }
     CloseEvent(vsync_event);

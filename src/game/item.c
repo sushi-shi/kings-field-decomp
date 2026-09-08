@@ -66,7 +66,7 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
             item->unknown_03 = placements->unknown_03;
             item->position_x = placements->tile_x * KF_MAP_TILE_SIZE + placements->local_x;
             item->position_z = placements->tile_z * KF_MAP_TILE_SIZE + placements->local_z;
-            height = map_floor_height_grid[placements->tile_z][placements->tile_x] * KF_MAP_HEIGHT_STEP;
+            height = map_floor_height_grid.cells[placements->tile_z][placements->tile_x] * KF_MAP_HEIGHT_STEP;
             item->position_y = placements->local_y - height;
             item->animation_frame =
                 (rand() * item->facing_and_frame_count) >> KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS;
@@ -515,17 +515,17 @@ KfItemPickupResult item_pickup_confirm(KF_ENUM_PARAM(KfItemId, s32) item_id)
     if (menu_load_item_model(item_id) != 0)
         return KF_ITEM_PICKUP_NOT_ACQUIRED;
 
-    accept_label.x = MENU_PICKUP_CONFIRM_TEXT_X;
-    accept_label.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
-    accept_label.codes[0] = 0x53;
-    accept_label.codes[1] = 0x6a;
-    accept_label.codes[2] = MENU_TEXT_END;
-    decline_label.x = MENU_PICKUP_CONFIRM_TEXT_X;
-    decline_label.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
-    decline_label.codes[0] = 0x63;
-    decline_label.codes[1] = 0x61;
-    decline_label.codes[2] = 0x6a;
-    decline_label.codes[3] = MENU_TEXT_END;
+    accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
+    accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
+    accept_label.glyphs.codes[0] = 0x53;
+    accept_label.glyphs.codes[1] = 0x6a;
+    accept_label.glyphs.codes[2] = MENU_TEXT_END;
+    decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
+    decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
+    decline_label.glyphs.codes[0] = 0x63;
+    decline_label.glyphs.codes[1] = 0x61;
+    decline_label.glyphs.codes[2] = 0x6a;
+    decline_label.glyphs.codes[3] = MENU_TEXT_END;
 
     menu_frame_begin();
     menu_draw_item_name_frame(item_id);

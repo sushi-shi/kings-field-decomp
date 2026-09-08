@@ -476,14 +476,14 @@ void opening_scene3_run(void)
 
     wave_angle = 0;
     opening_resources_load_scene3();
-    texture_pages[0] = (u16)GetTPage(
+    texture_pages[0] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         PANEL_TPAGE_FIRST_X, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[0] = (u16)GetClut(0, PANEL_CLUT_FIRST_Y);
-    texture_pages[1] = (u16)GetTPage(
+    cluts[0] = GetClut(0, PANEL_CLUT_FIRST_Y);
+    texture_pages[1] = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         PANEL_TPAGE_FIRST_X + PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[1] = (u16)GetClut(0, PANEL_CLUT_FIRST_Y + 1);
+    cluts[1] = GetClut(0, PANEL_CLUT_FIRST_Y + 1);
 
     entity_13 = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);

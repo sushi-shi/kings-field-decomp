@@ -26,18 +26,12 @@ PAIRS = (
 
 STATE = {
     "GAME.EXE": {
-        0x800A01F0: ("memory_arena_start", 0x04, "u8 *"),
-        0x800A01F4: ("memory_arena_end", 0x04, "u8 *"),
-        0x800A01F8: ("memory_arena_cursor", 0x04, "u8 *"),
-        0x800A01FC: ("memory_allocation_stack", 0x44, "u32[17]"),
+        0x800A01F0: ("memory_arena", 0x50, "KfMemoryArena"),
         0x800A0240: ("memory_system_heap_start", 0x04, "u8 *"),
         0x800A0244: ("memory_system_heap_size", 0x04, "s32"),
     },
     "OPEN.EXE": {
-        0x80075848: ("memory_arena_start", 0x04, "u8 *"),
-        0x8007584C: ("memory_arena_end", 0x04, "u8 *"),
-        0x80075850: ("memory_arena_cursor", 0x04, "u8 *"),
-        0x80075854: ("memory_allocation_stack", 0x44, "u32[17]"),
+        0x80075848: ("memory_arena", 0x50, "KfMemoryArena"),
         0x80075898: ("memory_system_heap_start", 0x04, "u8 *"),
         0x8007589C: ("memory_system_heap_size", 0x04, "s32"),
     },
@@ -68,8 +62,9 @@ class MemoryAllocatorInventoryTests(unittest.TestCase):
                 row = identities[(image, va)]
                 self.assertEqual((row.name, row.size, row.datatype), shape)
                 self.assertEqual(row.owner, "memory")
-        self.assertEqual(STATE["GAME.EXE"][0x800A01FC][1], 17 * 4)
-        self.assertEqual(STATE["OPEN.EXE"][0x80075854][1], 17 * 4)
+        for image, base in (("GAME.EXE", 0x800A01F0), ("OPEN.EXE", 0x80075848)):
+            for offset in (4, 8, 12):
+                self.assertNotIn((image, base + offset), identities)
 
     def test_malloc_wrappers_are_exact_release_25_vendored_members(self) -> None:
         _fields, rows = read_tsv(RETAIL_CONFIG / "functions_vendored.tsv")

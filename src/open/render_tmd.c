@@ -46,16 +46,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex_offset_delta = (s32)vertex2_offset - vertex1_offset;
             vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
                 vertex_offset_delta);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_FT3));
             SetPolyFT3(&prim->sdk);
             prim->packed.clut = polygon->ft3.cba;
             prim->packed.tpage = polygon->ft3.tsb;
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             prim->packed.uv0 = polygon->texture.uv0;
             prim->packed.uv1 = polygon->texture.uv1;
             prim->packed.uv2 = polygon->texture.uv2;
@@ -82,16 +82,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->f4.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->f4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f4.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(polygon->f4.v3 + vertices);
             prim = primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
-            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
+            prim->packed.xy3 = vertex3->sxy.word;
             NormalColorDpq((SVECTOR *)(normals + polygon->f4.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2 + vertex3->p2) >> 2,
                            &prim->packed.color0);
@@ -114,14 +114,14 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->g3.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->g3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g3.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             NormalColorDpq3((SVECTOR *)(normals + polygon->g3.n0),
                             (SVECTOR *)(normals + polygon->g3.n1),
                             (SVECTOR *)(normals + polygon->g3.n2), &polygon->color,
@@ -146,16 +146,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->g4.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->g4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g4.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(polygon->g4.v3 + vertices);
             prim = primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
-            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
+            prim->packed.xy3 = vertex3->sxy.word;
             NormalColorDpq3((SVECTOR *)(normals + polygon->g4.n0),
                             (SVECTOR *)(normals + polygon->g4.n1),
                             (SVECTOR *)(normals + polygon->g4.n2), &polygon->color,
@@ -182,16 +182,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->gt3.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->gt3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->gt3.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->sdk);
             prim->packed.clut = polygon->gt3.cba;
             prim->packed.tpage = polygon->gt3.tsb;
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             prim->packed.uv0 = polygon->texture.uv0;
             prim->packed.uv1 = polygon->texture.uv1;
             prim->packed.uv2 = polygon->texture.uv2;
@@ -220,7 +220,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->gt4.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->gt4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->gt4.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(polygon->gt4.v3 + vertices);
@@ -228,10 +228,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             SetPolyGT4(&prim->sdk);
             prim->packed.clut = polygon->gt4.cba;
             prim->packed.tpage = polygon->gt4.tsb;
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
-            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
+            prim->packed.xy3 = vertex3->sxy.word;
             prim->packed.uv0 = polygon->texture.uv0;
             prim->packed.uv1 = polygon->texture.uv1;
             prim->packed.uv2 = polygon->texture.uv2;
@@ -263,15 +263,15 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->g3.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->g3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g3.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             NormalColorCol3((SVECTOR *)(normals + polygon->g3.n0),
                             (SVECTOR *)(normals + polygon->g3.n1),
                             (SVECTOR *)(normals + polygon->g3.n2), &polygon->color,
@@ -296,7 +296,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->ft4.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->ft4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->ft4.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(polygon->ft4.v3 + vertices);
@@ -304,10 +304,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             SetPolyFT4(&prim->sdk);
             prim->packed.clut = polygon->ft4.cba;
             prim->packed.tpage = polygon->ft4.tsb;
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
-            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
+            prim->packed.xy3 = vertex3->sxy.word;
             prim->packed.uv0 = polygon->texture.uv0;
             prim->packed.uv1 = polygon->texture.uv1;
             prim->packed.uv2 = polygon->texture.uv2;
@@ -335,14 +335,14 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->f3.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->f3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f3.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             NormalColorDpq((SVECTOR *)(normals + polygon->f3.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2) / 3,
                            &prim->packed.color0);
@@ -365,17 +365,17 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->g4.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->g4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g4.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(polygon->g4.v3 + vertices);
             prim = primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
-            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
+            prim->packed.xy3 = vertex3->sxy.word;
             NormalColorDpq((SVECTOR *)(normals + polygon->g4.n0), &polygon->color,
                            vertex0->p2, &prim->packed.color0);
             NormalColorDpq((SVECTOR *)(normals + polygon->g4.n1), &polygon->color,
@@ -403,15 +403,15 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->f3.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->f3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f3.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             NormalColorDpq((SVECTOR *)(normals + polygon->f3.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2) / 3,
                            &prim->packed.color0);
@@ -434,17 +434,17 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(polygon->f4.v0 + vertices);
             vertex1 = (KfScreenVertex *)(polygon->f4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f4.v2 + vertices);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(polygon->f4.v3 + vertices);
             prim = primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
-            prim->packed.xy3 = vertex3->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
+            prim->packed.xy3 = vertex3->sxy.word;
             NormalColorDpq((SVECTOR *)(normals + polygon->f4.n0), &polygon->color,
                            (vertex0->p2 + vertex1->p2 + vertex2->p2 + vertex3->p2) >> 2,
                            &prim->packed.color0);

@@ -36,8 +36,8 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             /* Prepared indices are byte offsets into the same projected array. */
             vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
                 ((s32)vertex2_offset - vertex1_offset));
-            if (NormalClip(vertex0->sxy, vertex1->sxy,
-                           vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
+                           vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_FT3));
@@ -45,9 +45,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             SetPolyFT3(&prim->sdk);
             prim->packed.clut = triangle->ft3.cba;
             prim->packed.tpage = triangle->ft3.tsb;
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             prim->packed.uv0 = triangle->texture.uv0;
             prim->packed.uv1 = triangle->texture.uv1;
             prim->packed.uv2 = triangle->texture.uv2;
@@ -63,16 +63,16 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             vertex0 = (KfScreenVertex *)(vertices + triangle->f3.v0);
             vertex1 = (KfScreenVertex *)(vertices + triangle->f3.v1);
             vertex2 = (KfScreenVertex *)(vertices + triangle->f3.v2);
-            if (NormalClip(vertex0->sxy, vertex1->sxy,
-                           vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
+                           vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_F3));
             primitive = &prim->sdk;
             SetPolyF3(&prim->sdk);
-            prim->packed.xy0 = vertex0->sxy;
-            prim->packed.xy1 = vertex1->sxy;
-            prim->packed.xy2 = vertex2->sxy;
+            prim->packed.xy0 = vertex0->sxy.word;
+            prim->packed.xy1 = vertex1->sxy.word;
+            prim->packed.xy2 = vertex2->sxy.word;
             prim->sdk.r0 = triangle->f3.r;
             prim->sdk.g0 = triangle->f3.g;
             prim->sdk.b0 = triangle->f3.b;

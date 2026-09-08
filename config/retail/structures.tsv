@@ -4,9 +4,11 @@ name	size	layout_confidence	evidence	note
 KfActor	0x48	supported	game_actor.h;game_semantic_actor_core.tsv;asm;xrefs	live actor record; several field meanings remain opaque
 KfActorActionProfile	0x0a	supported	game_actor.h;game_semantic_actor_ai.tsv;asm;xrefs	five-halfword actor action weighting record
 KfActorDefinition	0x98	supported	game_actor.h;game_semantic_actor_core.tsv;asm;xrefs	loaded actor definition record; unaccessed spans remain opaque
+KfActorDefinitionTable	0x720	supported	game_actor.h;asm;typed-map-tables.md	twelve complete actor definitions and 456 copy words
 KfActorPlacement	0x10	supported	game_actor.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
 KfActorState	0x2b48	supported	game_actor.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
 KfArmorRecord	0x1c	supported	game_equipment.h;asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
+KfArmorTable	0x498	supported	game_equipment.h;asm;typed-record-tables.md	42 armor/accessory records; complete 294-word resource copy
 KfAssetHeader	0x14	supported	game_asset.h;asm;asset_registry;render_bind_animated_instance	model asset header shared by static and animated registry entries
 KfAudioState	0x90	supported	audio.h;game_semantic_audio_control.tsv;asm;xrefs;audio_initialize-addiu-54	audio runtime aggregate; audio_initialize addresses the voice-id slots relative to the sequence-buffer field
 KfAudioVoiceSlots	0x64	supported	audio.h;game_semantic_audio_spatial.tsv;asm;xrefs	five parallel arrays of ten signed halfwords
@@ -16,7 +18,9 @@ KfCdFileEntry	0x14	supported	game_cd.h;asm;func_8001ae60;LIBCD.H	CD file record 
 KfCellHeightRecord	0x08	supported	game_collision.h;game_collision_attribute_data.md;asm;effect_map_collision	four signed-halfword bounds selected by height-table entries with an 8-byte stride
 KfCellWindow	0xcc	supported	render_types.h;game_semantic_render_cell_windows.tsv;open_semantic_map_render.tsv;asm;render_map_cells;render_entities;render_cell_windows-stride	visible-cell window: four-halfword header followed by a 196-byte row-major visibility grid shared by GAME and OPEN
 KfCollisionTarget	0x20	supported	game_collision.h;game_semantic_player_interactions.tsv;asm;xrefs	optional transform and radius output from the world collision query; trailing bytes remain opaque
+KfDialogueFields	0x04	supported	game_map.h;asm;xrefs;typed-packed-state.md	dialogue cap, current stage, page and delay bytes
 KfDialoguePageLimits	0x05	supported	game_map.h;game_semantic_camera_events.tsv;asm	five dialogue-stage last-page limits copied as one block by map_event_pool_load
+KfDialogueState	0x04	supported	game_map.h;asm;xrefs;typed-packed-state.md	live event dialogue byte fields and masked word trigger view
 KfDisplayState	0x20028	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	double-buffer display state: display_begin_frame derives the primitive buffer and ordering table of the frame from the buffer index through one base register
 KfDisplayStateOpen	0x20024	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	OPEN.EXE display state: display_begin_frame reaches the primitive buffers (+8) and ordering tables (+0x24) from the buffer index through one base register; unlike GAME.EXE the ordering-table pointer follows this subobject in KfGraphicsRuntimeOpen
 KfEffectControl	0x02	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-effect-constructor.md	overlapping halfword countdown/orbit and byte parent/target selectors; kind 36 byte pair remains unresolved
@@ -25,7 +29,6 @@ KfEffectDirection	0x08	supported	game_effect.h;asm;effect_pool_construct;effect_
 KfEffectDirectionWords	0x08	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	unsigned halfword view of the effect direction region; the last halfword is copied SDK padding
 KfEffectPropagation	0x02	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	overlapping u16 alternatives selected by effect kind; names describe observed consumers
 KfEffectRecord	0x3c	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;map_object_pool_update	60-byte record in effect_pool_records; constructors fix the header, VECTOR position and rotation/scale/direction triples
-KfEffectRenderView	0x3c	supported	game_effect.h;asm;render_actor_sprite;render_entities	60-byte rendering view of an effect_pool_records entry; reads low position halfwords and the sprite-specific header selectors
 KfEffectSprite	0x1c	supported	game_render.h;game_semantic_effect_sprites.tsv;asm;retail-initializer;runtime-stride	animated screen-facing model entry; effect_sprites contains one initialized row and one 0xff terminator row
 KfEffectState	0xd28	supported	game_effect.h;asm;game_main_loop:whole-clear;magic_load_records;effect_pool_sweep;effect_pool_set_current:derived-base	complete magic/effect owner: 24 magic rows, 48 effects, selected magic and effect pointers; no internal gaps
 KfEffectVisualState	0x02	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	overlapping u16 alternatives selected by effect kind; names describe observed consumers
@@ -39,7 +42,9 @@ KfGraphicsRuntimeGame	0x249cc	supported	game_graphics.h;asm;startup-clear;docs/p
 KfGraphicsRuntimeOpen	0x24788	supported	open_render.h;asm;opening_run-memset;docs/patterns/open-graphics-runtime-owner.md	complete OPEN graphics state with independently cleared extent and cross-field address chains; historical aggregate spelling and unclassified interval ownership remain WIP
 KfHudSprite	0x0e	supported	game_render.h;game_semantic_hud_sprites.tsv;asm;retail-initializers;14-byte-stride	HUD table row with state byte and complete screen-sprite descriptor; state 0xff terminates the array
 KfMagicRecord	0x14	supported	magic.h;asm;player_select_magic;player_update;player_recalculate_combat_stats	20-byte magic record; magic_records[24] is indexed by selected_magic_id and by weapon-bound spell indices 5/8/18/20
-KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	packed player map-cell coordinates in z then x order
+KfMagicTable	0x1e0	supported	magic.h;asm;typed-record-tables.md	24 magic records and complete 120-word resource copy inside effect_state
+KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-packed-state.md	packed player map-cell coordinates and unsigned halfword comparison view
+KfMapCellCoordinates	0x02	supported	game_map.h;asm;xrefs;typed-packed-state.md	map row z then column x bytes
 KfMapCopyRegion	0x06	supported	game_map.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
@@ -47,14 +52,21 @@ KfMapFloor1Script	0x4	supported	game_map.h;asm;game-map-script-state.md;save-rea
 KfMapFloor3Script	0x1	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-3 reveal completion counter
 KfMapFloor5Script	0x4	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-5 persistent character, weapon and boss progression
 KfMapFloorScript	0xa	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-selected interpretations of the ten-byte saved script prefix
+KfMapGrid	0x2710	supported	map_data.h;asm;typed-map-tables.md	10000 cells with row/column, flat byte and 2500-word views
 KfMapObject	0x2c	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
 KfMapObjectDefinition	0x08	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
+KfMapObjectDefinitionTable	0x500	supported	game_map.h;asm;typed-map-tables.md	160 complete map object definitions and 320 copy words
+KfMapObjectHingedContainer	0x05	supported	game_map.h;asm;typed-map-links.md	link byte followed by four encoded item IDs
 KfMapObjectLink	0x08	supported	game_map.h;asm;map_object_pool_load	eight-byte link block shared by map object placements (0x0c) and pool objects (0x20)
+KfMapObjectLinkFields	0x08	supported	game_map.h;asm;typed-map-links.md	typed behavior fields within the complete link
 KfMapObjectPlacement	0x14	supported	game_map.h;game_semantic_map_objects.tsv;runtime-stride	placement record extent; fields remain opaque
+KfMapObjectSpawn	0x02	supported	game_map.h;asm;typed-map-links.md	behavior-dependent sequence halfword or effect-ID byte
 KfMapObjectState	0x25a8	supported	game_map.h;asm;base-register;map_object_pool_clear_link	map object definitions followed by the object pool; map_object_pool_clear_link derives the definition table 1280 bytes below the pool base through one register, so both are one object
 KfMapRuntimeState	0x2360	supported	game_map.h;game_main_loop:0x2360-clear;world-state-pool-relative-addresses;spinner-current-minus-544	eight map events, two pointers, two halfword timers and the complete saved world region
 KfMapSavedFloor	0x6a4	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	one 1700-byte saved floor slot
 KfMapSavedWorld	0x2134	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five saved floors sharing the word-aligned save I/O representation
+KfMemoryAllocationState	0x48	supported	memory.h;asm;open_semantic_opening_controller.tsv;typed-memory-owner.md	arena cursor and existing 17-word depth/allocation stack
+KfMemoryArena	0x50	supported	memory.h;asm;open_semantic_opening_controller.tsv;typed-memory-owner.md	complete arena state ending before the independent system heap start
 KfMenuAssets	0x390	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuList	0x28	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfNotificationControl	0x06	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	queue cursors and presentation controls; dequeue addresses tail at zero and phase at plus two; historical nesting remains WIP
@@ -64,10 +76,11 @@ KfNotificationState	0x16	supported	notify.h;game_semantic_notification_state.tsv
 KfOpeningEntity	0x28	supported	open_resources.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	OPEN runtime entity record initialized by the exact placement loader and refined by the transition helper's full VECTOR copy
 KfOpeningEntityState	0x510	supported	open_resources.h;open_semantic_resources.tsv;asm;controller-memset-0x510	OPEN opening entity aggregate: 32 records followed by an unresolved gap and three halfword controls
 KfOrderingTable	0x10000	supported	render_types.h;asm;ClearOTagR-0x4000	one reversed ordering table; display_begin_frame clears 0x4000 entries and display_present_frame draws from entry 0x3fff
-KfPitchYaw	0x04	supported	game_math.h;asm;xrefs	two signed halfword angles
+KfPackedSVector	0x08	supported	tmd.h;asm;typed-animation-vertices.md	eight-byte vertex with authentic SDK and aligned word-copy views
 KfPlayerAttackChargeState	0x04	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
 KfPlayerLevelGrowth	0x0c	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
-KfPlayerMotionState	0x0a	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs	five-halfword movement and camera-input state cleared as one complete group
+KfPlayerMotionFields	0x0c	supported	game_player.h;asm;xrefs;typed-packed-state.md	motion halfwords followed by current map-cell bytes
+KfPlayerMotionState	0x0c	supported	game_player.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-packed-state.md	five motion halfwords and current cell; third aligned word is masked for warp comparisons
 KfPlayerProgressState	0x04	supported	game_player.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
 KfPlayerState	0xe0	supported	game_player.h;data_identities.tsv;game_main_loop-base-register;0xe0-memset	player state block; one aggregate (player_state) in the original source
 KfPlayerVitals	0x08	supported	game_player.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
@@ -76,12 +89,16 @@ KfPrimitiveBuffer	0x0c	supported	render_types.h;game_semantic_display_tmd.tsv;as
 KfPsxSaveHeader	0x200	supported	game_save.h;save_file_initialize_buffers;asm;ICO1.TIM;ICO2.TIM;ICO3.TIM;Sony-LIBOVR46-tables-5-6-and-5-7	PlayStation memory-card header with the three icon frames used by this game
 KfRenderState	0x140	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register
 KfRenderStateOpen	0x100	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	OPEN.EXE render state: render_set_view_transform reaches the view and pitch matrices 116 and 84 bytes below the rotation and render_initialize reaches the quadrant matrices 64 bytes past the light matrix through one base register; no light-matrix copy members
+KfResourcePointer	0x04	supported	resources.h;asm;typed-resource-boundaries.md	generic allocator output and byte/TIM views of one escaped pointer slot
+KfRotation	0x08	supported	game_math.h;asm;effect_pool_construct;render_actor_sprite;matrix_set_rotation_yxz;typed-effect-records.md	complete SDK rotation vector and game Euler view of the same signed components; actor/map collision copies; typed-world-transforms.md
 KfSaveDirectory	0x80	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs	four-slot save directory
 KfSaveHeader	0x280	supported	game_save.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
 KfSavePayload	0x2580	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
 KfSaveSlotSummary	0x18	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs	six serialized words: experience, floor, current/maximum HP and MP
+KfSaveWorkspace	0x2800	supported	game_save.h;asm;save_workspace_allocate;typed-save-workspace.md	allocated header followed by payload; public buffer pointers may instead refer to independent stack objects
 KfScreenRect	0x08	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;OPEN:sprite_add_g4;asm;lhu;retail-bytes	four unsigned halfwords for screen position and spans; scrolling callers explicitly reinterpret wrapped Y as signed
 KfScreenVertex	0x08	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;xrefs	eight-byte GTE projection result shared by TMD projection producers and polygon enqueue consumers
+KfScreenXY	0x04	supported	tmd.h;asm;RotTransPers;RotTrans;typed-screen-coordinates.md	SDK packed screen word and signed DVECTOR coordinate views
 KfSpriteMaterial	0x08	supported	open_render.h;open_semantic_sprite_render.tsv;asm;base-register;NormalColorDpq	OPEN projected sprite texture selectors and SDK color; supported eight-byte object extent
 KfSpriteQuad	0x0c	supported	render_types.h;game_semantic_notification_sprites.tsv;asm;render_screen_sprite;render_enqueue_sprite	texture and screen rectangles shared by HUD, notification and projected sprite renderers
 KfTmdF3	0xc	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	flat triangle packet body (mode 0x20): colour word then n0 v0 v1 v2
@@ -96,10 +113,10 @@ KfTmdHeader	0xc	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Forma
 KfTmdObject	0x1c	supported	tmd.h;game_semantic_display_tmd.tsv;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	seven-word object record shared by both overlays; full primitive count used by renderers and narrowed by preparation
 KfTmdState	0x24	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 KfTmdStateOpen	0xc	supported	open_render.h;asm;base-register;tmd_register	OPEN.EXE TMD state: tmd_register reaches the two slots 8 bytes below the current asset pointer through one base register
-KfVec3i	0x0c	supported	game_math.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	game_math.h;asm;xrefs	three signed halfword coordinates
 KfVecXZs	0x04	supported	game_math.h;asm;xrefs	two signed horizontal halfword coordinates
-KfWeaponRecord	0x2c	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
+KfWeaponRecord	0x2c	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with combat fields, projection distance, signed render translation and SDK rotation
+KfWeaponTable	0x2c0	supported	game_equipment.h;asm;typed-record-tables.md	16 weapon records; complete 176-word copy followed by rotation-Y mirroring
 MenuGlyphRow	0x14	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	ten glyph codes; item/name copy and indexed 20-byte stride
 MenuGlyphString	0x18	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
 MenuPoint	0x4	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	sprite blitters read two screen-coordinate halfwords

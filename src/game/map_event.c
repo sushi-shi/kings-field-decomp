@@ -17,16 +17,16 @@ void map_event_set_current(KfMapEvent *event)
 ADDRESS(0x800337ac, 0x74)
 void map_event_refresh_dialogue_stage(KfMapEvent *event)
 {
-    if (event->dialogue_stage_limit > event->dialogue_stage) {
-        if (KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor) < event->dialogue_stage_limit) {
-            if (event->dialogue_stage != KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor)) {
-                event->dialogue_stage = KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor);
+    if (event->dialogue.fields.stage_limit > event->dialogue.fields.stage) {
+        if (KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor) < event->dialogue.fields.stage_limit) {
+            if (event->dialogue.fields.stage != KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor)) {
+                event->dialogue.fields.stage = KF_ENUM_ENCODE(u8, player_state.progress_state.highest_floor);
             reset_dialogue_page:
-                event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
-                event->dialogue_page_delay = 0;
+                event->dialogue.fields.page = KF_DIALOGUE_FIRST_PAGE;
+                event->dialogue.fields.page_delay = 0;
             }
-        } else if (event->dialogue_stage != event->dialogue_stage_limit) {
-            event->dialogue_stage = event->dialogue_stage_limit;
+        } else if (event->dialogue.fields.stage != event->dialogue.fields.stage_limit) {
+            event->dialogue.fields.stage = event->dialogue.fields.stage_limit;
             goto reset_dialogue_page;
         }
     }
@@ -61,26 +61,26 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->character_id = definitions->character_id;
                 event->model_index = definitions->model_index;
                 event->dialogue_pages = definitions->dialogue_pages;
-                event->dialogue_stage_limit = definitions->dialogue_stage_limit;
+                event->dialogue.fields.stage_limit = definitions->dialogue_stage_limit;
                 event->unknown_0c = definitions->unknown_0b;
                 event->unknown_0d = definitions->unknown_0c;
                 event->behavior = definitions->behavior;
                 event->position_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
-                event->reference_x = event->position_x;
+                event->reference_position.vx = event->position_x;
                 event->position_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
-                event->reference_z = event->position_z;
+                event->reference_position.vz = event->position_z;
                 event->cell_x = definitions->cell_x;
                 event->cell_z = definitions->cell_z;
                 event->radius = definitions->radius;
-                event->position_y =
-                    -(map_floor_height_grid[event->cell_z][event->cell_x] * KF_MAP_HEIGHT_STEP);
-                event->rotation = definitions->initial_rotation;
+                event->reference_position.vy =
+                    -(map_floor_height_grid.cells[event->cell_z][event->cell_x] * KF_MAP_HEIGHT_STEP);
+                event->rotation.vy = definitions->initial_rotation;
                 definitions++;
-                event->rotation_z = 0;
-                event->rotation_x = 0;
-                event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
-                event->dialogue_stage = KF_DIALOGUE_FIRST_STAGE;
-                event->dialogue_page_delay = 0;
+                event->rotation.vz = 0;
+                event->rotation.vx = 0;
+                event->dialogue.fields.page = KF_DIALOGUE_FIRST_PAGE;
+                event->dialogue.fields.stage = KF_DIALOGUE_FIRST_STAGE;
+                event->dialogue.fields.page_delay = 0;
                 event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
                 event->animation_phase = 0;
                 event->rotation_target = 0;
@@ -99,12 +99,12 @@ ADDRESS(0x80033ae4, 0xa8)
 s32 map_event_distance_to_point(
     const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance)
 {
-    s32 delta_x = event->reference_x - point_x;
+    s32 delta_x = event->reference_position.vx - point_x;
     s32 delta_z;
     s32 distance;
 
     if (delta_x >= -max_distance && delta_x <= max_distance) {
-        delta_z = event->reference_z - point_z;
+        delta_z = event->reference_position.vz - point_z;
         if (delta_z >= -max_distance && delta_z <= max_distance) {
             delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
             delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
@@ -120,7 +120,7 @@ s32 map_event_distance_to_point(
 
 ADDRESS(0x80033b8c, 0x144)
 KfMapEvent *map_event_pool_find_target_in_cone(
-    const struct KfVec3i *origin,
+    const VECTOR *origin,
     s16 facing,
     s32 max_distance,
     s32 angle_tolerance,
@@ -139,12 +139,12 @@ KfMapEvent *map_event_pool_find_target_in_cone(
         if (event->state != KF_MAP_EVENT_ACTIVE) {
             continue;
         }
-        distance = map_event_distance_to_point(event, origin->x, origin->z, max_distance);
+        distance = map_event_distance_to_point(event, origin->vx, origin->vz, max_distance);
         if (distance == -1) {
             continue;
         }
         angle = vector_xz_to_angle(
-            event->reference_x - origin->x, origin->z - event->reference_z) - facing;
+            event->reference_position.vx - origin->vx, origin->vz - event->reference_position.vz) - facing;
         angle &= KF_ANGLE_WRAP_MASK;
         folded = angle;
         if (angle >= KF_ANGLE_HALF_TURN + 1) {

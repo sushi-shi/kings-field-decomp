@@ -101,14 +101,14 @@ void render_floor_item(KfFloorItem *item)
 }
 
 /*
- * Emits one pooled effect sprite. Empty slots (sprite_id 0xff) are skipped. The record is
- * carried into the view, oriented from its Euler angles and scaled in place.
- * A mode of 0xff draws a fixed billboard sprite through render_enqueue_sprite against
- * the render pitch matrix; otherwise the asset that follows the id by 30 is
- * bound, tested for visibility, and projected against the view matrix.
+ * Emits one pooled effect sprite. Entries with render id 0xff are skipped.
+ * The record is carried into the view, oriented and scaled in place. An
+ * animation clip of 0xff selects a billboard against the render pitch matrix;
+ * otherwise the asset that follows the id by 30 is bound, tested for visibility
+ * and projected against the view matrix.
  */
 ADDRESS(0x8001eedc, 0x1e8)
-void render_actor_sprite(KfEffectRenderView *sprite)
+void render_actor_sprite(KfEffectRecord *sprite)
 {
     SVECTOR screen;
     VECTOR scale;
@@ -117,34 +117,34 @@ void render_actor_sprite(KfEffectRenderView *sprite)
     u16 asset;
     KfTmdObject *object;
 
-    if (sprite->sprite_id == KF_EFFECT_RENDER_NONE) {
+    if (sprite->render_id == KF_EFFECT_RENDER_NONE) {
         return;
     }
-    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
-    screen.vx = sprite->position_x - (u16)game_graphics_runtime.render_state.view_position.vx;
-    screen.vy = sprite->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
-    screen.vz = sprite->position_z - (u16)game_graphics_runtime.render_state.view_position.vz;
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)sprite->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)sprite->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)sprite->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    matrix_set_rotation_yxz(&sprite->rotation, &model);
-    scale.vx = sprite->scale_x;
-    scale.vy = sprite->scale_y;
-    scale.vz = sprite->scale_z;
+    matrix_set_rotation_yxz(&sprite->rotation.angles, &model);
+    scale.vx = (s16)sprite->scale_x;
+    scale.vy = (s16)sprite->scale_y;
+    scale.vz = (s16)sprite->scale_z;
     ScaleMatrix(&model, &scale);
-    if (sprite->mode == KF_EFFECT_ANIMATION_BILLBOARD) {
-        MulMatrix2((MATRIX *)&game_graphics_runtime.render_state.pitch_matrix, &model);
+    if (sprite->animation_clip == KF_EFFECT_ANIMATION_BILLBOARD) {
+        MulMatrix2(&game_graphics_runtime.render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+        render_enqueue_sprite(&effect_billboard_sprites[sprite->render_id], 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     } else {
-        MulMatrix2((MATRIX *)&game_graphics_runtime.render_state.view_matrix, &model);
+        MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        asset = sprite->sprite_id + KF_ASSET_EFFECT_FIRST;
+        asset = sprite->render_id + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
         object = tmd_get_object(0);
         if (render_bind_animated_instance(
-                &sprite->animation_cache, asset, sprite->mode, sprite->asset_variant,
+                &sprite->animation_cache, asset, sprite->animation_clip, sprite->visual.animation_phase,
                 object->vertex_count) == 0) {
             tmd_select_object_vertices(0);
             tmd_project_vertices(tmd_get_object(0)->vertex_count);

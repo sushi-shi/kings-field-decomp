@@ -92,8 +92,8 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
-            effect->rotation.vy =
-                (effect->rotation.vy + WARP_SHIMMER_YAW_STEP)
+            effect->rotation.vector.vy =
+                (effect->rotation.vector.vy + WARP_SHIMMER_YAW_STEP)
                 & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
@@ -146,8 +146,8 @@ void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
     position.vz = player_state.camera_position.vz;
     position.vy = player_state.floor_height;
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
-    collision_adjust_cell_occupancy(player_state.map_cell.x,
-                                    player_state.map_cell.z, -1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
+                                    player_state.motion_state.fields.map_cell.coords.z, -1);
     pool_release_all();
     previous_variant = player_state.map_variant;
     player_state.map_variant = variant;
@@ -180,7 +180,7 @@ u32 player_warp_trigger_update(void)
     /* The aligned word spans pitch_step and map_cell; mask out pitch_step. */
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(29, 56)) {
             destination_floor = KF_FLOOR_2;
 change_floor:
@@ -197,7 +197,7 @@ change_floor:
         }
         break;
     case KF_FLOOR_2:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(29, 56)) {
             destination_floor = KF_FLOOR_1;
             goto change_floor;
@@ -207,7 +207,7 @@ change_floor:
         }
         break;
     case KF_FLOOR_3:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(25, 11)) {
             destination_floor = KF_FLOOR_1;
             goto change_floor;
@@ -221,7 +221,7 @@ change_to_floor4:
         }
         break;
     case KF_FLOOR_4:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(39, 35)) {
             destination_floor = KF_FLOOR_1;
             goto change_floor;
@@ -238,7 +238,7 @@ change_to_floor4:
         }
         break;
     case KF_FLOOR_5:
-        cell = *(u32 *)&player_state.motion_state.pitch_step & WARP_CELL_KEY_MASK;
+        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == WARP_CELL_KEY(39, 69)) {
             goto change_to_floor4;
         } else if (cell == WARP_CELL_KEY(70, 61)) {
@@ -278,7 +278,7 @@ void actor_transform_definition5_to6(KfActor *actor)
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
-        actor->rotation.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
+        actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(0, 0);
         frame_pacer_wait();
     }
@@ -286,7 +286,7 @@ void actor_transform_definition5_to6(KfActor *actor)
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
-        actor->rotation.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
+        actor->rotation.angles.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(0, 0);
         frame_pacer_wait();
     }

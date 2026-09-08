@@ -44,12 +44,12 @@ CHECK_OFFSET(TargetLongAlignment, after, 8);
 
 long screen_vertex_read_xy(const KfScreenVertex *vertex)
 {
-    return vertex->sxy;
+    return vertex->sxy.word;
 }
 
 void screen_vertex_write_xy(KfScreenVertex *vertex, long xy)
 {
-    vertex->sxy = xy;
+    vertex->sxy.word = xy;
 }
 
 typedef char primitive_count_size[

@@ -10,9 +10,7 @@ enum {
     FLOOR_ITEM_RENDER_BRIGHTNESS = 180
 };
 
-/* Cull each pool against the active cell window before dispatching its emitter.
- * Effect records remain a temporary view of the shared pool storage.
- */
+/* Cull each pool against the active cell window before dispatching its emitter. */
 
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
@@ -23,7 +21,7 @@ void render_entities(void)
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
-    KfEffectRenderView *sprite;
+    KfEffectRecord *sprite;
     s16 i;
     u16 *active_tpage;
     u16 row;
@@ -92,9 +90,9 @@ next_actor:
     /* Floor items. */
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
     active_tpage = &game_graphics_runtime.active_render_tpage;
-    game_graphics_runtime.active_render_blue = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_green = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_red = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.b = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.g = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.r = FLOOR_ITEM_RENDER_BRIGHTNESS;
     i = game_graphics_runtime.floor_item_count;
     *active_tpage = game_graphics_runtime.floor_item_tpage;
     game_graphics_runtime.active_render_clut = game_graphics_runtime.floor_item_clut;
@@ -117,18 +115,18 @@ next_actor:
 
     /* Actor sprites. */
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
-    sprite = (KfEffectRenderView *)effect_pool_records;
+    sprite = effect_pool_records;
     for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {
-        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->sprite_id == KF_EFFECT_RENDER_NONE) {
+        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id == KF_EFFECT_RENDER_NONE) {
             goto next_sprite;
         }
         {
             const KfCellWindow *g;
 
-            row = (*(s32 *)&sprite->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
+            row = (sprite->position.vz / KF_MAP_TILE_SIZE) - window_origin_z;
             g = game_graphics_runtime.active_cell_window;
             if (row < g->height) {
-                col = (*(s32 *)&sprite->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
+                col = (sprite->position.vx / KF_MAP_TILE_SIZE) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
                     render_actor_sprite(sprite);
                 }

@@ -133,7 +133,7 @@ void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix)
  * writes a VECTOR of longs; only their low halves are carried on.
  */
 ADDRESS(0x80014d34, 0xd4)
-void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, SVECTOR *direction)
+void pitch_yaw_to_forward_vector(const struct KfEulerAngles *angles, SVECTOR *direction)
 {
     MATRIX pitch_matrix;
     MATRIX yaw_matrix;
@@ -143,12 +143,12 @@ void pitch_yaw_to_forward_vector(const struct KfPitchYaw *angles, SVECTOR *direc
     source.vx = 0;
     source.vy = 0;
     source.vz = KF_FIXED12_ONE;
-    matrix_set_rotation_x(-angles->pitch & KF_ANGLE_WRAP_MASK, &pitch_matrix);
+    matrix_set_rotation_x(-angles->x & KF_ANGLE_WRAP_MASK, &pitch_matrix);
     ApplyMatrix(&pitch_matrix, &source, &result);
     source.vx = result.vx;
     source.vy = result.vy;
     source.vz = result.vz;
-    matrix_set_rotation_y(angles->yaw, &yaw_matrix);
+    matrix_set_rotation_y(angles->y, &yaw_matrix);
     ApplyMatrix(&yaw_matrix, &source, &result);
     direction->vx = result.vx;
     direction->vy = result.vy;
@@ -202,10 +202,10 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
 
 ADDRESS(0x80014f40, 0x2c)
 void vector3i_add_xz(
-    struct KfVec3i *destination, const struct KfVecXZs *delta)
+    VECTOR *destination, const struct KfVecXZs *delta)
 {
-    destination->x += delta->x;
-    destination->z += delta->z;
+    destination->vx += delta->x;
+    destination->vz += delta->z;
 }
 
 ADDRESS(0x80014f6c, 0x3c)

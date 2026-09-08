@@ -135,7 +135,10 @@ class InventoryTests(unittest.TestCase):
 
     def test_effect_union_views_preserve_record_layout(self) -> None:
         layouts = _header_structure_layouts()
-        for name, size, members in (("KfEffectDirection", 8, 2), ("KfEffectControl", 2, 5)):
+        for name, size, members in (
+            ("KfEffectDirection", 8, 2), ("KfRotation", 8, 2),
+            ("KfEffectControl", 2, 5),
+        ):
             layout = layouts[name]
             self.assertEqual((layout.size, layout.alignment), (size, 2))
             self.assertEqual([f.offset for f in layout.fields], [0] * members)
@@ -238,7 +241,7 @@ class InventoryTests(unittest.TestCase):
         layout = _header_structure_layouts()["KfScreenVertex"]
         self.assertEqual((layout.size, layout.alignment), (8, 4))
         self.assertEqual([(f.offset, f.size, f.name, f.datatype) for f in layout.fields],
-                         [(0, 4, "sxy", "long"), (4, 2, "sz", "s16"),
+                         [(0, 4, "sxy", "KfScreenXY"), (4, 2, "sz", "s16"),
                           (6, 2, "p2", "s16")])
 
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
@@ -247,19 +250,18 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 2920)
+        self.assertEqual(counts["data"], 2914)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 106)
-        self.assertEqual(counts["structure_fields"], 844)
-        self.assertEqual(counts["structure_fields_named"], 743)
+        self.assertEqual(counts["structures"], 123)
+        self.assertEqual(counts["structure_fields"], 848)
+        self.assertEqual(counts["structure_fields_named"], 761)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
         slots = (
             ("KfActor", 0x48, 0x34, "animation_cache"),
             ("KfEffectRecord", 0x3C, 0x34, "animation_cache"),
-            ("KfEffectRenderView", 0x3C, 0x34, "animation_cache"),
             ("KfMapEvent", 0x44, 0x3C, "animation_cache"),
             ("KfPlayerState", 0xE0, 0x74, "weapon_animation_cache"),
             ("KfEffectSprite", 0x1C, 0x18, "animation_cache"),
@@ -270,8 +272,8 @@ class InventoryTests(unittest.TestCase):
                 self.assertEqual(_structure_field(structure, offset),
                                  (name, "KfPoolRecord *", 4))
         # The rotation view occupies 0x34..0x3b, not the cache pointer.
-        self.assertEqual(_structure_field("KfMapEvent", 0x3A),
-                         ("unknown_3a", "u8[2]", 2))
+        self.assertEqual(_structure_field("KfMapEvent", 0x34),
+                         ("rotation", "SVECTOR", 8))
         self.assertEqual(_structure_field("KfMapEvent", 0x40),
                          ("rotation_target", "s16", 2))
 
@@ -282,7 +284,7 @@ class InventoryTests(unittest.TestCase):
                          "u16 phase;u16 vertex_count")
         pool_header = (REPO / "include/kf/pool.h").read_text()
         render_header = (REPO / "include/kf/game_render.h").read_text()
-        self.assertIn("extern u16 *render_bind_animated_instance(\n"
+        self.assertIn("extern KfPoolRecord *render_bind_animated_instance(\n"
                       "    KfPoolRecord **owner_slot", pool_header)
         self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
         self.assertIn("#include <kf/pool.h>", render_header)
@@ -302,7 +304,7 @@ class InventoryTests(unittest.TestCase):
             (0x04, "clip_index", "u16", 2),
             (0x06, "keyframe_index", "u16", 2),
             (0x08, "rest_morph", "KfMorphObject *", 4),
-            (0x0C, "cached_vertices", "SVECTOR *", 4),
+            (0x0C, "cached_vertices", "KfPackedSVector *", 4),
             (0x10, "owner_slot", "KfPoolRecord **", 4),
         )
         for offset, name, datatype, size in fields:
@@ -377,7 +379,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(structures["KfActor"].size, 0x48)
         self.assertEqual(structures["KfPlayerLevelGrowth"].size, 0x0C)
         self.assertEqual(structures["KfMapCell"].size, 0x02)
-        self.assertEqual(structures["KfPlayerMotionState"].size, 0x0A)
+        self.assertEqual(structures["KfPlayerMotionState"].size, 0x0C)
         self.assertEqual(structures["KfWeaponRecord"].size, 0x2C)
         self.assertEqual(structures["KfCollisionTarget"].size, 0x20)
         self.assertEqual(structures["KfPlayerState"].size, 0xE0)
@@ -408,7 +410,7 @@ class InventoryTests(unittest.TestCase):
         }
         self.assertEqual(definition_fields["experience_reward"].offset, 0x84)
         motion_fields = {
-            row.name: row for row in fields if row.structure == "KfPlayerMotionState"
+            row.name: row for row in fields if row.structure == "KfPlayerMotionFields"
         }
         self.assertEqual(motion_fields["movement_speed"].offset, 0x04)
         self.assertEqual(motion_fields["pitch_step"].offset, 0x08)
@@ -419,11 +421,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(weapon_fields["attack_components"].size, 0x0A)
         self.assertEqual(weapon_fields["attack_z_offset"].offset, 0x12)
         self.assertEqual(weapon_fields["unknown_14"].meaning_confidence, "opaque")
-        self.assertEqual(weapon_fields["mirrored_angle"].offset, 0x26)
-        self.assertEqual(
-            weapon_fields["mirrored_angle"].meaning_confidence,
-            "candidate",
-        )
+        self.assertEqual(weapon_fields["projection_distance"].offset, 0x10)
+        self.assertEqual(weapon_fields["render_translation"].offset, 0x1C)
+        self.assertEqual(weapon_fields["render_translation"].size, 6)
+        self.assertEqual(weapon_fields["render_rotation"].offset, 0x24)
+        self.assertEqual(weapon_fields["render_rotation"].size, 8)
+        self.assertEqual(weapon_fields["render_rotation"].meaning_confidence, "supported")
         collision_fields = {
             row.name: row for row in fields if row.structure == "KfCollisionTarget"
         }
@@ -545,6 +548,7 @@ class InventoryTests(unittest.TestCase):
             "KfSaveDirectory",
             "KfSaveHeader",
             "KfSavePayload",
+            "KfSaveWorkspace",
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, save_header)
@@ -577,11 +581,11 @@ class InventoryTests(unittest.TestCase):
             "tmd_get_object": ("KfTmdObject *", "u16 object_index"),
             "tmd_prepare_primitive_indices": ("void", ""),
             "tmd_project_vertices": ("void", "s32 count"),
-            "tmd_register": ("void", "KfTmdSlot slot;u8 *tmd"),
+            "tmd_register": ("void", "KfTmdSlot slot;KfTmdHeader *tmd"),
             "tmd_release_last_allocation": ("void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
             "tmd_select": ("void", "KfTmdSlot slot"),
             "tmd_select_object_vertices": ("void", "u16 object_index"),
-            "tmd_set_current_vertices": ("void", "SVECTOR *vertices"),
+            "tmd_set_current_vertices": ("void", "KfPackedSVector *vertices"),
         }
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         common = (REPO / "include/kf/tmd.h").read_text()
@@ -621,8 +625,6 @@ class InventoryTests(unittest.TestCase):
         for structure in (
             "KfVecXZs",
             "KfVec3s",
-            "KfVec3i",
-            "KfPitchYaw",
             "KfEulerAngles",
         ):
             declaration = f"struct {structure} {{"
@@ -645,7 +647,8 @@ class InventoryTests(unittest.TestCase):
         for structure in (
             "KfMapCell",
             "KfMapCopyRegion",
-            "KfMapObjectLink",
+            "KfMapObjectLinkFields",
+            "KfMapObjectHingedContainer",
             "KfMapObjectPlacement",
             "KfMapObjectDefinition",
             "KfMapObject",
@@ -658,6 +661,9 @@ class InventoryTests(unittest.TestCase):
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, map_header)
+
+        for union in ("KfMapObjectLink", "KfMapObjectSpawn"):
+            self.assertIn(f"typedef union {union}", map_header)
 
     def test_floor_item_layouts_live_in_the_item_owner_header(self) -> None:
         item_header = (REPO / "include/kf/item.h").read_text()
@@ -672,7 +678,7 @@ class InventoryTests(unittest.TestCase):
 
     def test_effect_layouts_live_in_the_effect_owner_header(self) -> None:
         effect_header = (REPO / "include/kf/game_effect.h").read_text()
-        for structure in ("KfEffectRecord", "KfEffectRenderView"):
+        for structure in ("KfEffectRecord", "KfEffectState"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, effect_header)
 
@@ -692,12 +698,13 @@ class InventoryTests(unittest.TestCase):
             "KfPlayerLevelGrowth",
             "KfPlayerVitals",
             "KfPlayerAttackChargeState",
-            "KfPlayerMotionState",
+            "KfPlayerMotionFields",
             "KfPlayerState",
             "KfFloorEntryCell",
         ):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, player_header)
+        self.assertIn("typedef union KfPlayerMotionState", player_header)
 
     def test_collision_layout_lives_in_the_collision_owner_header(self) -> None:
         collision_header = (
@@ -1126,12 +1133,12 @@ class InventoryTests(unittest.TestCase):
         occupancy = game.datum(0x800668E8)
         self.assertEqual(
             (orientation.name, orientation.datatype, orientation.size),
-            ("map_cell_orientation_grid", "u8[100][100]", 0x2710),
+            ("map_cell_orientation_grid", "KfMapGrid", 0x2710),
         )
         self.assertEqual(game.data_owner(0x8006B727), orientation)
         self.assertEqual(
             (occupancy.name, occupancy.datatype, occupancy.size),
-            ("map_collision_flag_grid", "u8[100][100]", 0x2710),
+            ("map_collision_flag_grid", "KfMapGrid", 0x2710),
         )
 
     def test_menu_frame_campaign_matches_curated_identities(self) -> None:
@@ -1475,7 +1482,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
 
         self.assertEqual(
-            _structure_field("KfScreenVertex", 0x00), ("sxy", "long", 4)
+            _structure_field("KfScreenVertex", 0x00), ("sxy", "KfScreenXY", 4)
         )
         self.assertEqual(
             _structure_field("KfScreenVertex", 0x04), ("sz", "s16", 2)
@@ -2075,7 +2082,7 @@ class InventoryTests(unittest.TestCase):
                 "opening_run",
                 "opening_initial_tim_path",
                 "open_graphics_runtime",
-                "memory_arena_cursor",
+                "memory_arena",
             },
         )
 
@@ -2478,7 +2485,7 @@ class InventoryTests(unittest.TestCase):
             identity = data[("OPEN.EXE", va)]
             self.assertEqual(
                 (identity.name, identity.storage, identity.datatype, identity.size),
-                (name, "bss", "u8[100][100]", 0x2710),
+                (name, "bss", "KfMapGrid", 0x2710),
             )
 
     def test_open_render_init_campaign_is_exactly_modeled(self) -> None:
@@ -2667,11 +2674,11 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0xC0),
-            ("motion_state", "KfPlayerMotionState", 0x0A),
+            ("motion_state", "KfPlayerMotionState", 0x0C),
         )
         self.assertEqual(game.data_owner(0x800A0848), state)
         self.assertEqual(
-            _structure_field("KfPlayerState", 0xCA), ("map_cell", "KfMapCell", 2)
+            _structure_field("KfPlayerMotionFields", 0x0A), ("map_cell", "KfMapCell", 2)
         )
         self.assertEqual(
             _structure_field("KfPlayerState", 0x68)[1], "KfWeaponRecord *"
@@ -2679,7 +2686,7 @@ class InventoryTests(unittest.TestCase):
         weapon_records = game.datum(0x8009FF10)
         self.assertEqual(
             (weapon_records.name, weapon_records.datatype, weapon_records.size),
-            ("weapon_records", "KfWeaponRecord[16]", 0x2C0),
+            ("weapon_records", "KfWeaponTable", 0x2C0),
         )
         self.assertEqual(game.data_owner(0x800A00DC), weapon_records)
         collision_target = game.datum(0x800A01D0)
@@ -3030,7 +3037,7 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(game.data_owner(0x8006C4B8), actor_state)
         self.assertEqual(
-            _structure_field("KfActorState", 0x0), ("definitions", "KfActorDefinition[12]", 0x720)
+            _structure_field("KfActorState", 0x0), ("definitions", "KfActorDefinitionTable", 0x720)
         )
         self.assertEqual(
             _structure_field("KfActorState", 0x720), ("actors", "KfActor[128]", 0x2400)

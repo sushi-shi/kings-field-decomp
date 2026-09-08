@@ -54,23 +54,23 @@ void menu_item_model_preview(KF_ENUM_PARAM(KfItemId, s32) item_id)
 
         current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-        gs.x = MENU_ITEM_PREVIEW_NAME_X;
-        gs.y = MENU_ITEM_PREVIEW_NAME_Y;
+        gs.position.x = MENU_ITEM_PREVIEW_NAME_X;
+        gs.position.y = MENU_ITEM_PREVIEW_NAME_Y;
         name = item_name_rows[KF_ENUM_ENCODE(s32, item_id)].codes;
         for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-            gs.codes[i] = name[i];
+            gs.glyphs.codes[i] = name[i];
         }
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-        gs.x = MENU_INVENTORY_QUANTITY_LABEL_X;
-        gs.codes[0] = 0xca;
-        gs.codes[1] = 0xcb;
-        gs.codes[2] = MENU_TEXT_END;
-        gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
+        gs.position.x = MENU_INVENTORY_QUANTITY_LABEL_X;
+        gs.glyphs.codes[0] = 0xca;
+        gs.glyphs.codes[1] = 0xcb;
+        gs.glyphs.codes[2] = MENU_TEXT_END;
+        gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-        gs.x = MENU_INVENTORY_QUANTITY_VALUE_X;
-        menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.codes);
+        gs.position.x = MENU_INVENTORY_QUANTITY_VALUE_X;
+        menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.glyphs.codes);
         menu_draw_number(&menu_assets.number_atlas, &gs);
     }
 }

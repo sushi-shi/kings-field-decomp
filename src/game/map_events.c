@@ -55,28 +55,28 @@ void map_event_update_wander(void)
 
     collision_adjust_cell_occupancy(event->cell_x, event->cell_z, -1);
 
-    heading = angle_approach(event->rotation, event->rotation_target, MAP_EVENT_WANDER_TURN_STEP);
-    event->rotation = heading;
+    heading = angle_approach(event->rotation.vy, event->rotation_target, MAP_EVENT_WANDER_TURN_STEP);
+    event->rotation.vy = heading;
     angle_to_forward_xz(heading, &forward);
     vector2s_scale_shift11(MAP_EVENT_WANDER_VECTOR_SCALE, &forward);
 
-    point.vx = forward.x + event->reference_x;
-    point.vz = forward.z + event->reference_z;
+    point.vx = forward.x + event->reference_position.vx;
+    point.vz = forward.z + event->reference_position.vz;
 
     if (collision_query_world(
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
             KF_COLLISION_SKIP_MAP_EVENTS | (0x80 << KF_COLLISION_CELL_FLAG_SHIFT))
             == (u32)KF_COLLISION_NONE) {
-        event->reference_x = point.vx;
-        event->reference_z = point.vz;
+        event->reference_position.vx = point.vx;
+        event->reference_position.vz = point.vz;
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
         event->cell_z = point.vz / KF_MAP_TILE_SIZE;
         event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
-        if (event->rotation == event->rotation_target && rand() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
+        if (event->rotation.vy == event->rotation_target && rand() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
             event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
         }
     } else {
-        if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation == event->rotation_target) {
+        if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation.vy == event->rotation_target) {
             event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
             event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_PENDING;
         }
@@ -101,7 +101,7 @@ void map_event_update_animation_loop(void)
             && event == &map_event_pool[0]
             && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_ref_10,
-            (const VECTOR *)&map_event_pool[0].reference_x,
+            &map_event_pool[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }
 }
@@ -131,13 +131,13 @@ void map_event_pool_update(void)
         call_animation_loop:
             map_event_update_animation_loop();
         advance_dialogue:
-            if (map_dialogue_advance_gate == 0 && event->dialogue_page_delay != 0) {
-                event->dialogue_page_delay--;
-                if (event->dialogue_page_delay == 0) {
-                    s32 limit = event->dialogue_pages.last_page[event->dialogue_stage - 1];
-                    event->dialogue_page++;
-                    if (event->dialogue_page >= limit) {
-                        event->dialogue_page = limit;
+            if (map_dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
+                event->dialogue.fields.page_delay--;
+                if (event->dialogue.fields.page_delay == 0) {
+                    s32 limit = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
+                    event->dialogue.fields.page++;
+                    if (event->dialogue.fields.page >= limit) {
+                        event->dialogue.fields.page = limit;
                     }
                 }
             }
@@ -181,7 +181,7 @@ void map_event_pool_update(void)
 ADDRESS(0x80035b5c, 0x2b8)
 void map_world_state_persist(void)
 {
-    u8 *base = MAP_WORLD_STATE_BYTES;
+    u8 *base = map_runtime_state.world_state.bytes;
     u8 *out;
     u8 *count_slot;
     KfMapEvent *event;
@@ -204,11 +204,11 @@ void map_world_state_persist(void)
     event = map_runtime_state.events;
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         *out++ = KF_ENUM_ENCODE(u8, event->state);
-        *out++ = event->dialogue_stage_limit;
-        *out++ = event->dialogue_stage;
-        *out++ = event->dialogue_page;
-        *out++ = event->dialogue_pages.last_page[event->dialogue_stage - 1];
-        *out++ = event->dialogue_page_delay;
+        *out++ = event->dialogue.fields.stage_limit;
+        *out++ = event->dialogue.fields.stage;
+        *out++ = event->dialogue.fields.page;
+        *out++ = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
+        *out++ = event->dialogue.fields.page_delay;
         *out++ = event->unknown_0d;
     }
 
@@ -236,7 +236,7 @@ void map_world_state_persist(void)
     count_slot = out++;
     active = 0;
     object = &map_object_state.objects[0];
-    definitions = map_object_state.definitions;
+    definitions = map_object_state.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         KfMapObjectId id = object->object_id;
         KfMapObjectBehavior behavior;
@@ -258,7 +258,7 @@ void map_world_state_persist(void)
         active++;
         *out++ = i;
         {
-            u8 *link = (u8 *)&object->link;
+            u8 *link = object->link.bytes;
             s32 k = sizeof(object->link) - 1;
 
             do {
@@ -272,15 +272,15 @@ void map_world_state_persist(void)
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;
-        *out++ = object->link.link_id;
-        *out++ = (u8)(*(const u16 *)&object->link >> 8);
+        *out++ = object->link.fields.link_id;
+        *out++ = (u8)(object->link.gold_amount >> 8);
     }
 
     object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         *out++ = (u8)object->cell_x;
         *out++ = (u8)object->cell_z;
-        *out++ = (u8)((u16)object->rotation.y >> KF_MAP_SAVED_YAW_SHIFT);
+        *out++ = (u8)((u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT);
     }
 }
 

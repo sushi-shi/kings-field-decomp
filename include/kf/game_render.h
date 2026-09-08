@@ -126,8 +126,8 @@ typedef struct KfDisplayState {
 
 /* Eight registered TMD slots and the selected asset. */
 typedef struct KfTmdState {
-    u8 *slots[KF_GAME_TMD_SLOT_COUNT];
-    void *current_asset;
+    KfTmdHeader *slots[KF_GAME_TMD_SLOT_COUNT];
+    KfTmdHeader *current_asset;
 } KfTmdState;
 
 /* GAME.EXE view, lighting, fog, and quadrant matrices. */
@@ -174,7 +174,7 @@ extern void menu_render_item_model(void);
 extern void primitive_buffer_begin_poly_ft4(void);
 extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
-extern void render_actor_sprite(KfEffectRenderView *sprite);
+extern void render_actor_sprite(KfEffectRecord *sprite);
 extern void render_effect_sprites(void);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_enqueue_map(u16 object_index);

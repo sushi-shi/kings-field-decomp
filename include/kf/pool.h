@@ -8,6 +8,7 @@
 #include <kf/game_types.h>
 #include <kf/enum.h>
 #include <kf/psyq.h>
+#include <kf/tmd.h>
 
 struct KfMorphObject;
 
@@ -29,12 +30,12 @@ typedef struct KfPoolRecord {
     u16 clip_index;
     u16 keyframe_index;
     struct KfMorphObject *rest_morph;
-    SVECTOR *cached_vertices;
+    KfPackedSVector *cached_vertices;
     struct KfPoolRecord **owner_slot;
 } KfPoolRecord;
 
 /* Returns zero on pool exhaustion, one for a static asset, or the live record. */
-extern u16 *render_bind_animated_instance(
+extern KfPoolRecord *render_bind_animated_instance(
     KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
     u16 vertex_count);
 extern void pool_reset(void);

@@ -8,6 +8,23 @@ promotes a probe to a proven historical toolchain.
 - [psx-exact-link.md](psx-exact-link.md): matching PSX code/data layout,
   compiler-directed section constraints, whole SDK order and unresolved
   packing; inferred padding stays diagnostic, with two native negative controls.
+- [typed-storage-cast-campaign.md](typed-storage-cast-campaign.md): shared object
+  models, complete cast accounting, and verified packet/colour conversions.
+- [typed-menu-records.md](typed-menu-records.md): shared screen points, complete
+  glyph rows and list titles through all menu consumers and by-value labels.
+- [typed-effect-records.md](typed-effect-records.md): one shared effect pool
+  record for construction, rendering, rotation and direction mutation.
+- [typed-world-transforms.md](typed-world-transforms.md): complete map vectors,
+  shared actor/effect rotations and compatible angle helper interfaces.
+
+- [typed-map-links.md](typed-map-links.md): shared byte, word, gold, spawn and
+  bounded item-array views for complete map link records.
+- [typed-weapon-render.md](typed-weapon-render.md): typed weapon projection,
+  translation and SDK rotation fields, with all compared bodies unchanged.
+- [typed-position-interfaces.md](typed-position-interfaces.md): shared SDK
+  vectors across actor, effect, player, map and targeting interfaces.
+- [typed-screen-coordinates.md](typed-screen-coordinates.md): shared packed
+  word and SDK halfword views across GAME and OPEN projection consumers.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE
@@ -718,3 +735,39 @@ promotes a probe to a proven historical toolchain.
 - [Actor culling and placement stream state](actor-culling-domain.md): recover
   actor byte +2 as a visibility policy, type it through both writers and its
   renderer, and complete the [actor-pool ledger](actor-pool-literal-ledger.md).
+
+- [Typed player and dialogue packed state](typed-packed-state.md): shared byte,
+  halfword and word views preserve packed comparisons and physical owners.
+
+- [Typed resource allocation boundaries](typed-resource-boundaries.md): generic
+  allocation outputs and stream variables share the actual void-pointer contract.
+
+- [Typed equipment and magic tables](typed-record-tables.md): full word-copy
+  spans and typed record arrays share the proven complete table extents.
+
+- [Typed matrix elements](typed-matrix-elements.md): GAME adopts the SDK cell
+  pointers of its exact OPEN twin; all 12 functions retain their retail words.
+
+- [Typed animation vertices](typed-animation-vertices.md): shared SDK/word
+  vertex views, a typed cache-record result and the VDF header blend; all 51
+  compared functions preserve their linked instructions.
+
+- [Typed map grids and definition tables](typed-map-tables.md): complete grid
+  byte/cell/word views and actor/map-definition table inputs; all 177 compared
+  functions retain their instructions and referents.
+
+- [Typed selected TMD headers](typed-tmd-headers.md): registration and selected
+  assets use the 12-byte header type; serialized byte offsets keep explicit
+  decoding boundaries, and all 76 compared functions retain their words.
+
+- [Projected addresses and sprite packets](typed-projected-addresses.md): exact OPEN sprite color view and controlled byte-pointer, owner and packed-XY residue comparisons.
+
+- [Shared allocator state](typed-memory-owner.md): one arena owner per image, shared cursor/stack fields, exact instruction controls and explicit OPEN BSS placement residue.
+
+- [Redundant casts after type propagation](typed-redundant-casts.md): seven identity conversions removed with all 27 compared bodies unchanged.
+
+- [Typed menu ordering-table indexing](typed-ordering-index.md): two byte-pointer casts removed, with all sixteen compared bodies unchanged.
+
+- [Allocated save workspace](typed-save-workspace.md): complete header/payload allocation with independent public buffer views and exact null-path behavior.
+
+- [Final typed-storage cast audit](typed-cast-audit.md): complete 451-site classification, whole-campaign byte preservation and explicit remaining evidence limits.

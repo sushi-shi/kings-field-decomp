@@ -37,7 +37,7 @@ class GameMapDropInitializationTests(unittest.TestCase):
         start = source.index('ADDRESS(0x80031834,')
         end = source.index('ADDRESS(0x800319c8,', start)
         body = source[start:end]
-        reset = '    object->link.vertical_velocity = 0;\n'
+        reset = '    object->link.fields.vertical_velocity = 0;\n'
         self.assertEqual(body.count(reset), 1)
         old_body = body.replace(reset, '')
         for action in ('FALL_AND_TIP', 'FALL_AND_SPIN', 'BOUNCE'):

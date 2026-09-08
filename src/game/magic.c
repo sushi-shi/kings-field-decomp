@@ -34,9 +34,10 @@ void effect_pool_reset(void)
 }
 
 ADDRESS(0x8003a274, 0x2c)
-void magic_load_records(const u32 *source)
+void magic_load_records(const KfMagicTable *table)
 {
-    u32 *destination = (u32 *)magic_records;
+    const u32 *source = table->words;
+    u32 *destination = effect_state.magic.words;
     s32 count;
 
     for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {
@@ -78,7 +79,7 @@ void magic_cast(void)
         world_pos.vy += player_state.camera_position.vy;
         world_pos.vz += player_state.camera_position.vz;
         target = actor_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         actor_state.player_target = target;
         if (target == 0) {
@@ -95,7 +96,7 @@ void magic_cast(void)
             speed = MAGIC_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 if (map_cell_attribute_height_table[
-                        map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]
+                        map_cell_attribute_grid.cells[target->cell_z][target->cell_x] - 1]
                         >= LIGHTNING_HEIGHT_CLASS_THRESHOLD) {
                     s32 aim_y = world_pos.vy + LIGHTNING_DEFAULT_TARGET_Y_OFFSET;
                     angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);
@@ -114,7 +115,7 @@ void magic_cast(void)
         }
         angles.y = player_state.camera_rotation.vy;
         angles.z = player_state.camera_rotation.vz;
-        pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
+        pitch_yaw_to_forward_vector(&angles, &direction);
         vector3s_scale_shift12(speed, &direction);
         if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
             SVECTOR rotation;
@@ -137,13 +138,13 @@ void magic_cast(void)
         KfActor *target;
 
         target = actor_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         if (target != 0) {
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &target->position,
-                (SVECTOR *)&player_state.camera_rotation, KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
+                &player_state.camera_rotation, KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
         } else {
             VECTOR spawn;
             s32 cell_x;
@@ -155,10 +156,10 @@ void magic_cast(void)
                        + (rcos(player_state.camera_rotation.vy) * FIRE_WALL_UNTARGETED_DISTANCE >> KF_FIXED12_BITS);
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
-            spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
+            spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &spawn, (SVECTOR *)&player_state.camera_rotation,
+                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &spawn, &player_state.camera_rotation,
                 KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
         }
         break;

@@ -14,7 +14,7 @@ typedef struct KfGraphicsOwnerProbe {
     u8 unknown_20108[8];
     KfTmdState tmd_state;
     u8 unknown_registry_20134[0xf0];
-    SVECTOR *current_tmd_vertices;
+    KfPackedSVector *current_tmd_vertices;
     KfPoolRecord pool_records[12];
     u8 unknown_projection_morph_20318[0x3e88];
     u16 effect5_texture_pages[3];

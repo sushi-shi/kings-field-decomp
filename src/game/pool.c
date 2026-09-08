@@ -28,11 +28,22 @@ typedef struct KfAnimKeyframe {
     u16 morph_indices[1]; /* +8: object-table indices of the morph targets */
 } KfAnimKeyframe;
 
+/* The rest blend also consumes these two VDF range words as one SDK vector. */
+typedef struct KfMorphRange {
+    u32 base_vertex;
+    u32 vertex_count;
+} KfMorphRange;
+
+typedef union KfMorphPrefix {
+    KfMorphRange range;
+    SVECTOR vector;
+} KfMorphPrefix;
+typedef char check_morph_prefix_size[sizeof(KfMorphPrefix) == 8 ? 1 : -1];
+
 /* asset base + object_table[index]: one VDF-format morph/rest object. */
 typedef struct KfMorphObject {
     u32 tmd_object_index; /* +0: ignored; retail always selects TMD object zero */
-    u32 base_vertex;      /* +4: first vertex index (byte offset == index << 3) */
-    u32 vertex_count;     /* +8 */
+    KfMorphPrefix prefix; /* +4: first vertex index and affected count */
     SVECTOR deltas[1];    /* +12: signed vertex deltas */
 } KfMorphObject;
 
@@ -43,10 +54,11 @@ typedef struct KfMorphObject {
  * before pool_release_stale frees whatever was not touched.
  */
 
-static inline void copy_vertices(SVECTOR *output, const SVECTOR *input, u16 count)
+static inline void copy_vertices(
+    KfPackedSVector *output, const KfPackedSVector *input, u16 count)
 {
-    const u32 *source = (const u32 *)input;
-    u32 *destination = (u32 *)output;
+    const u32 *source = input->words;
+    u32 *destination = output->words;
 
     do {
         *destination++ = *source++;
@@ -55,7 +67,7 @@ static inline void copy_vertices(SVECTOR *output, const SVECTOR *input, u16 coun
 }
 
 ADDRESS(0x800205d4, 0x3a4)
-u16 *render_bind_animated_instance(
+KfPoolRecord *render_bind_animated_instance(
     KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
     u16 vertex_count)
 {
@@ -80,7 +92,7 @@ u16 *render_bind_animated_instance(
         }
         asset_registry_select(asset_index);
         tmd_select_object_vertices(0);
-        return (u16 *)KF_ANIMATION_BIND_STATIC;
+        return (KfPoolRecord *)KF_ANIMATION_BIND_STATIC;
     }
 
     if (record != 0) {
@@ -88,14 +100,15 @@ u16 *render_bind_animated_instance(
     }
     record = pool_allocate();
     if (record == 0) {
-        return (u16 *)0;
+        return 0;
     }
 
 reinitialize_record:
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
 retry_allocation:
-    record->cached_vertices = (SVECTOR *)memory_malloc_checked(vertex_count * sizeof(SVECTOR));
+    record->cached_vertices = (KfPackedSVector *)memory_malloc_checked(
+        vertex_count * sizeof(KfPackedSVector));
     if (record->cached_vertices == 0) {
         pool_release_all();
         goto retry_allocation;
@@ -160,8 +173,8 @@ update_vertex_cache:
             morph_object = (KfMorphObject *)(
                 (char *)asset_header + object_table[*morph_indices]);
             morph_indices++;
-            gteMIMefunc(&record->cached_vertices[morph_object->base_vertex],
-                        morph_object->deltas, morph_object->vertex_count, KF_FIXED12_ONE);
+            gteMIMefunc(&record->cached_vertices[morph_object->prefix.range.base_vertex].vector,
+                        morph_object->deltas, morph_object->prefix.range.vertex_count, KF_FIXED12_ONE);
         }
     }
 
@@ -172,23 +185,23 @@ blend_scratch:
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(&((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1], record->cached_vertices, vertex_count);
+    copy_vertices(&((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1], record->cached_vertices, vertex_count);
 
     morph_object = record->rest_morph;
     {
-        SVECTOR *scratch_vertex = &((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[morph_object->base_vertex];
-        u32 saved_xy_word = ((u32 *)scratch_vertex)[0];
-        u32 saved_z_pad_word = ((u32 *)scratch_vertex)[1];
+        KfPackedSVector *scratch_vertex = &((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[morph_object->prefix.range.base_vertex];
+        u32 saved_xy_word = scratch_vertex->words[0];
+        u32 saved_z_pad_word = scratch_vertex->words[1];
 
         /* Blend the header-sized extra vector too, then restore its scratch entry. */
-        gteMIMefunc(scratch_vertex, (SVECTOR *)&morph_object->base_vertex,
-                    morph_object->vertex_count + 1, blend_fraction);
-        ((u32 *)scratch_vertex)[0] = saved_xy_word;
-        ((u32 *)scratch_vertex)[1] = saved_z_pad_word;
+        gteMIMefunc(&scratch_vertex->vector, &morph_object->prefix.vector,
+                    morph_object->prefix.range.vertex_count + 1, blend_fraction);
+        scratch_vertex->words[0] = saved_xy_word;
+        scratch_vertex->words[1] = saved_z_pad_word;
     }
-    tmd_set_current_vertices(&((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1]);
+    tmd_set_current_vertices(&((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1]);
     record->state = KF_ANIMATION_CACHE_LIVE;
-    return (u16 *)record;
+    return record;
 }
 
 ADDRESS(0x80020978, 0x30)

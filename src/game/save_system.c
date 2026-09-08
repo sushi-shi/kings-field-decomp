@@ -638,11 +638,13 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
 ADDRESS(0x8002c27c, 0x68)
 s32 save_workspace_allocate(void)
 {
-    save_header_buffer = memory_allocate(sizeof(KfSaveHeader) + sizeof(KfSavePayload));
+    KfSaveWorkspace *workspace = (KfSaveWorkspace *)memory_allocate(sizeof(KfSaveWorkspace));
+
+    save_header_buffer = workspace != 0 ? &workspace->header : 0;
     if (save_header_buffer == 0) {
         return -1;
     }
-    save_payload_buffer = (KfSavePayload *)(save_header_buffer + 1);
+    save_payload_buffer = &workspace->payload;
     memset(save_header_buffer, 0, sizeof(KfSaveHeader));
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
     return 0;

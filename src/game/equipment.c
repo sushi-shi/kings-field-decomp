@@ -3,10 +3,10 @@
 #include <kf/game_math.h>
 
 ADDRESS(0x800150a8, 0x54)
-void weapon_records_load_and_mirror_angles(const KfWeaponRecord *source)
+void weapon_records_load_and_mirror_angles(const KfWeaponTable *source)
 {
-    u32 *destination_word = (u32 *)weapon_records;
-    const u32 *source_word = (const u32 *)source;
+    u32 *destination_word = weapon_records.words;
+    const u32 *source_word = source->words;
     s32 remaining = sizeof weapon_records / sizeof *source_word;
     KfWeaponRecord *record;
 
@@ -15,18 +15,18 @@ void weapon_records_load_and_mirror_angles(const KfWeaponRecord *source)
     } while (--remaining != 0);
 
     remaining = KF_WEAPON_RECORD_COUNT - 1;
-    record = weapon_records;
+    record = weapon_records.entries;
     do {
-        record->mirrored_angle = -record->mirrored_angle;
+        record->render_rotation.vy = -record->render_rotation.vy;
         record++;
     } while (remaining-- != 0);
 }
 
 ADDRESS(0x800150fc, 0x2c)
-void armor_records_load(const KfArmorRecord *source)
+void armor_records_load(const KfArmorTable *source)
 {
-    u32 *destination_word = (u32 *)armor_records;
-    const u32 *source_word = (const u32 *)source;
+    u32 *destination_word = armor_records.words;
+    const u32 *source_word = source->words;
     s32 remaining = sizeof armor_records / sizeof *source_word;
 
     do {

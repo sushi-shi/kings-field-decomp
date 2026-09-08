@@ -18,10 +18,27 @@ enum {
     KF_MEMORY_STACK_FIRST_ENTRY = 1
 };
 
-extern u8 *memory_arena_start;
-extern u8 *memory_arena_end;
-extern u8 *memory_arena_cursor;
-extern u32 memory_allocation_stack[KF_MEMORY_STACK_WORDS];
+typedef struct KfMemoryAllocationState {
+    u8 *cursor;
+    u32 stack[KF_MEMORY_STACK_WORDS];
+} KfMemoryAllocationState;
+
+typedef struct KfMemoryArena {
+    u8 *start;
+    u8 *end;
+    KfMemoryAllocationState allocation;
+} KfMemoryArena;
+
+typedef char KfMemoryAllocationStateSizeCheck[
+    sizeof(KfMemoryAllocationState) == 0x48 ? 1 : -1];
+typedef char KfMemoryArenaSizeCheck[
+    sizeof(KfMemoryArena) == 0x50 ? 1 : -1];
+typedef char KfMemoryArenaAllocationOffsetCheck[
+    (unsigned long)&((KfMemoryArena *)0)->allocation == 8 ? 1 : -1];
+typedef char KfMemoryStackOffsetCheck[
+    (unsigned long)&((KfMemoryAllocationState *)0)->stack == 4 ? 1 : -1];
+
+extern KfMemoryArena memory_arena;
 extern u8 *memory_system_heap_start;
 extern s32 memory_system_heap_size;
 

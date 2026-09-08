@@ -93,14 +93,14 @@ void player_use_item(KfItemId item_id)
             case KF_MAP_OBJECT_HINGED_DOOR_PARTNER:
             case KF_MAP_OBJECT_TALL_HINGED_DOOR:
             case KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER:
-                if (object->link.link_id == KF_MAP_LINK_NONE) {
+                if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
-                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.y, MAP_DOOR_FACING_TOLERANCE)) {
+                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
                     used = 1;
-                    if (object->link.link_id == KF_ENUM_ENCODE(u8, item_id)) {
-                        object->link.link_id = KF_MAP_LINK_NONE;
+                    if (object->link.fields.link_id == KF_ENUM_ENCODE(u8, item_id)) {
+                        object->link.fields.link_id = KF_MAP_LINK_NONE;
                         sound_ref_play(&gameplay_sound_ref_12, PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
                             sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
@@ -126,13 +126,13 @@ void player_use_item(KfItemId item_id)
             }
             object = &map_object_state.objects[index];
             if (object->object_id == KF_ENUM_DECODE(KfMapObjectId, KF_ENUM_ENCODE(u8, item_id))) {
-                if (object->link.link_id == KF_MAP_LINK_NONE) {
+                if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
                     item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
                     used = 1;
-                    map_object_pool_trigger_link(object->link.link_id);
-                    object->link.link_id = KF_MAP_LINK_NONE;
+                    map_object_pool_trigger_link(object->link.fields.link_id);
+                    object->link.fields.link_id = KF_MAP_LINK_NONE;
                 }
             }
             index++;
@@ -182,7 +182,7 @@ void player_use_item(KfItemId item_id)
         return;
     case KF_ITEM_MIRROR_OF_TRUTH:
         actor = actor_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy,
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,
@@ -192,7 +192,7 @@ void player_use_item(KfItemId item_id)
             return;
         }
         event = map_event_pool_find_target_in_cone(
-            (struct KfVec3i *)&player_state.camera_position,
+            &player_state.camera_position,
             player_state.camera_rotation.vy,
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,

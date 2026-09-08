@@ -130,13 +130,13 @@ void actor_update_cell_from_position(KfActor *actor)
 }
 
 ADDRESS(0x8002cbb8, 0x9c)
-void actor_set_position(KfActor *actor, const struct KfVec3i *position)
+void actor_set_position(KfActor *actor, const VECTOR *position)
 {
-    actor->position.vx = position->x;
-    actor->position.vz = position->z;
-    actor->position.vy = position->y;
-    actor->cell_x = position->x / KF_MAP_TILE_SIZE;
-    actor->cell_z = position->z / KF_MAP_TILE_SIZE;
+    actor->position.vx = position->vx;
+    actor->position.vz = position->vz;
+    actor->position.vy = position->vy;
+    actor->cell_x = position->vx / KF_MAP_TILE_SIZE;
+    actor->cell_z = position->vz / KF_MAP_TILE_SIZE;
 }
 
 ADDRESS(0x8002cc54, 0x10)
@@ -146,9 +146,9 @@ void actor_set_rotation(
     s16 y,
     s16 z)
 {
-    actor->rotation.x = x;
-    actor->rotation.y = y;
-    actor->rotation.z = z;
+    actor->rotation.angles.x = x;
+    actor->rotation.angles.y = y;
+    actor->rotation.angles.z = z;
 }
 
 ADDRESS(0x8002cc64, 0xc4)
@@ -162,13 +162,13 @@ void actor_initialize(KfActor *actor)
     actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
     actor->action = KF_ACTOR_ACTION_NONE;
     actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
-    actor->health = actor_state.definitions[actor->definition_id].initial_health;
+    actor->health = actor_state.definitions.entries[actor->definition_id].initial_health;
     if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
         || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
-        actor->rotation.y = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
+        actor->rotation.angles.y = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
     } else {
-        actor->rotation.y = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
+        actor->rotation.angles.y = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
     }
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
@@ -182,19 +182,19 @@ ADDRESS(0x8002cd28, 0xa4)
 void actor_initialize_current(void)
 {
     KfActor *actor = actor_state.current;
-    struct KfVec3i position;
+    VECTOR position;
     s32 coordinate;
     s32 world;
 
     coordinate = actor->tile_x;
     world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_x;
-    position.x = world + coordinate;
+    position.vx = world + coordinate;
     coordinate = actor->tile_z;
     world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_z;
-    position.z = world + coordinate;
-    position.y = map_floor_height_at_position((const VECTOR *)&position);
+    position.vz = world + coordinate;
+    position.vy = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
     actor_initialize(actor);
@@ -204,7 +204,7 @@ ADDRESS(0x8002cdcc, 0xbc)
 void actor_initialize_slot(u16 actor_index)
 {
     KfActor *actor = &actor_state.actors[actor_index];
-    struct KfVec3i position;
+    VECTOR position;
     s32 coordinate;
     s32 world;
 
@@ -212,12 +212,12 @@ void actor_initialize_slot(u16 actor_index)
     coordinate = actor->tile_x;
     world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_x;
-    position.x = world + coordinate;
+    position.vx = world + coordinate;
     coordinate = actor->tile_z;
     world = coordinate * KF_MAP_TILE_SIZE;
     coordinate = actor->local_z;
-    position.z = world + coordinate;
-    position.y = map_floor_height_at_position((const VECTOR *)&position);
+    position.vz = world + coordinate;
+    position.vy = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
     actor_initialize(actor);
@@ -246,7 +246,7 @@ void actor_set_action(KfActor *actor, KfActorAction action)
 ADDRESS(0x8002ced4, 0xb0)
 void actor_pool_spawn(
     u8 definition_id,
-    const struct KfVec3i *position,
+    const VECTOR *position,
     const struct KfVec3s *rotation)
 {
     KfActor *actor = actor_state.actors;
@@ -275,7 +275,7 @@ ADDRESS(0x8002cf84, 0xf4)
 void actor_pool_begin_death_by_definition(u16 definition_id)
 {
     KfActor *actor = actor_state.actors;
-    KfActorDefinition *definition = &actor_state.definitions[definition_id];
+    KfActorDefinition *definition = &actor_state.definitions.entries[definition_id];
     s16 count = KF_ACTOR_CAPACITY - 1;
 
     do {
@@ -323,7 +323,7 @@ void actor_apply_damage(
     u16 hit_flags)
 {
     KfActor *actor = &actor_state.actors[actor_index];
-    KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
+    KfActorDefinition *definition = &actor_state.definitions.entries[actor->definition_id];
     s32 damage;
     s32 health;
     s32 remaining;
@@ -399,7 +399,7 @@ void actor_apply_damage(
 
 ADDRESS(0x8002d4a8, 0x1f8)
 void actor_pool_apply_radial_damage(
-    const struct KfVec3i *origin,
+    const VECTOR *origin,
     u32 radius,
     u16 falloff,
     u16 base_power,
@@ -432,12 +432,12 @@ void actor_pool_apply_radial_damage(
         if (actor == actor_state.current) {
             continue;
         }
-        definition = &actor_state.definitions[actor->definition_id];
+        definition = &actor_state.definitions.entries[actor->definition_id];
         distance = actor_distance_to_point(
             actor,
-            origin->x,
-            origin->y,
-            origin->z,
+            origin->vx,
+            origin->vy,
+            origin->vz,
             radius,
             definition->collision_height,
             radius);
@@ -494,7 +494,7 @@ void actor_try_attack_player(
     angle = vector_xz_to_angle(
         actor_state.player_position.vx - actor->position.vx,
         actor_state.player_position.vz - actor->position.vz);
-    if (!angle_within_tolerance(actor->rotation.y + angle_offset, angle, angle_tolerance)) {
+    if (!angle_within_tolerance(actor->rotation.angles.y + angle_offset, angle, angle_tolerance)) {
         return;
     }
     status_effect = 0;
@@ -515,7 +515,7 @@ void actor_try_attack_player(
 
 ADDRESS(0x8002d7f8, 0x184)
 KfActor *actor_pool_find_target_in_cone(
-    const struct KfVec3i *origin,
+    const VECTOR *origin,
     s16 facing,
     u32 max_distance,
     s32 angle_tolerance,
@@ -541,12 +541,12 @@ KfActor *actor_pool_find_target_in_cone(
             continue;
         }
         distance = actor_distance_to_point(
-            actor, origin->x, KF_COLLISION_IGNORE_HEIGHT, origin->z, max_distance, 0, 0);
+            actor, origin->vx, KF_COLLISION_IGNORE_HEIGHT, origin->vz, max_distance, 0, 0);
         if (distance == -1) {
             continue;
         }
         delta = vector_xz_to_angle(
-            actor->position.vx - origin->x, origin->z - actor->position.vz) - facing;
+            actor->position.vx - origin->vx, origin->vz - actor->position.vz) - facing;
         delta &= KF_ANGLE_WRAP_MASK;
         folded = delta;
         if (delta > KF_ANGLE_HALF_TURN) {
@@ -629,7 +629,7 @@ s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_hei
         if (actor == actor_state.current) {
             continue;
         }
-        definition = &actor_state.definitions[actor->definition_id];
+        definition = &actor_state.definitions.entries[actor->definition_id];
         if (actor_distance_to_point(
                 actor,
                 x,
@@ -651,7 +651,7 @@ void actor_bind_current(KfActor *actor)
 
     actor_state.current = actor;
     index = actor - actor_state.actors;
-    actor_state.current_definition = &actor_state.definitions[actor->definition_id];
+    actor_state.current_definition = &actor_state.definitions.entries[actor->definition_id];
     actor_state.current_index = index;
     actor_state.current_definition_id = actor->definition_id;
 }
@@ -743,7 +743,7 @@ KfActorAction actor_try_select_action_distance_facing(
         return action;
     }
     if (angle_within_tolerance(
-            actor->rotation.y,
+            actor->rotation.angles.y,
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
@@ -762,7 +762,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
-    if (-(map_floor_height_grid[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
+    if (-(map_floor_height_grid.cells[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
         != actor->position.vy) {
         goto rejected;
     }
@@ -785,7 +785,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         return action;
     }
     if (angle_within_tolerance(
-            actor->rotation.y,
+            actor->rotation.angles.y,
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
@@ -817,7 +817,7 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
-            actor->rotation.y,
+            actor->rotation.angles.y,
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),
@@ -855,7 +855,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         goto rejected;
     }
     if (!angle_within_tolerance(
-            actor->rotation.y,
+            actor->rotation.angles.y,
             vector_xz_to_angle(
                 actor_state.player_position.vx - actor->position.vx,
                 actor_state.player_position.vz - actor->position.vz),

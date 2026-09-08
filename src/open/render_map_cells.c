@@ -15,7 +15,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
     s32 orientation;
     u8 object_index;
 
-    object_index = map_cell_attribute_grid[row][col];
+    object_index = map_cell_attribute_grid.cells[row][col];
     if (object_index == KF_MAP_ATTRIBUTE_NONE) {
         return;
     }
@@ -23,13 +23,13 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
-    orientation = map_cell_orientation_grid[row][col] - 1;
+    orientation = map_cell_orientation_grid.cells[row][col] - 1;
     if (cell == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
         col * KF_MAP_TILE_SIZE - (u16)open_graphics_runtime.render_state.view_position.vx,
-        map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP -
+        map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP -
             (u16)open_graphics_runtime.render_state.view_position.vy,
         row * KF_MAP_TILE_SIZE - (u16)open_graphics_runtime.render_state.view_position.vz);
     if (orientation == KF_MAP_ORIENT_QUARTER_TURN - 1) {

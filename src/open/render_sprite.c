@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/gpu_packets.h>
 #include <kf/open_render.h>
 
 DATA(0x800372fc, 0x8)
@@ -17,7 +18,7 @@ void render_enqueue_sprite(
     long sxy1;
     long sxy2;
     long sxy3;
-    POLY_FT4 *prim;
+    KfGpuFT4 *prim;
     s32 otz;
 
     corners[0].vx = corners[2].vx = sprite->x;
@@ -31,27 +32,27 @@ void render_enqueue_sprite(
                   &sxy0, &sxy1, &sxy2, &sxy3, &depth_cue, &clip_flag);
 
     prim = primitive_buffer_allocate(sizeof(POLY_FT4));
-    SetPolyFT4(prim);
-    prim->clut = open_graphics_runtime.floor_item_state.material.clut;
-    prim->tpage = open_graphics_runtime.floor_item_state.material.tpage;
+    SetPolyFT4(&prim->sdk);
+    prim->sdk.clut = open_graphics_runtime.floor_item_state.material.clut;
+    prim->sdk.tpage = open_graphics_runtime.floor_item_state.material.tpage;
     /* GTE screen coordinates are copied into the GPU packet as packed words. */
-    *(long *)&prim->x0 = sxy0;
-    *(long *)&prim->x1 = sxy1;
-    *(long *)&prim->x2 = sxy2;
-    *(long *)&prim->x3 = sxy3;
-    prim->u0 = prim->u2 = sprite->u;
-    prim->u1 = prim->u3 = sprite->u + sprite->u_span;
-    prim->v0 = prim->v1 = sprite->v;
-    prim->v2 = prim->v3 = sprite->v + sprite->v_span;
-    open_graphics_runtime.floor_item_state.material.color.cd = prim->code;
+    *(long *)&prim->sdk.x0 = sxy0;
+    *(long *)&prim->sdk.x1 = sxy1;
+    *(long *)&prim->sdk.x2 = sxy2;
+    *(long *)&prim->sdk.x3 = sxy3;
+    prim->sdk.u0 = prim->sdk.u2 = sprite->u;
+    prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
+    prim->sdk.v0 = prim->sdk.v1 = sprite->v;
+    prim->sdk.v2 = prim->sdk.v3 = sprite->v + sprite->v_span;
+    open_graphics_runtime.floor_item_state.material.color.cd = prim->sdk.code;
     if (depth_cue_mode == KF_SPRITE_DEPTH_CUE_BOOSTED) {
         depth_cue += depth_cue >> 1;
     }
     NormalColorDpq(&render_sprite_light_normal, &open_graphics_runtime.floor_item_state.material.color,
-                   depth_cue, (CVECTOR *)&prim->r0);
+                   depth_cue, &prim->packed.color0);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
             &open_graphics_runtime.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-            prim);
+            &prim->sdk);
     }
 }

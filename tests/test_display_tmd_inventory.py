@@ -40,7 +40,7 @@ PAIRS = (
     ("GAME.EXE", 0x8001C050, "display_present_frame", "void", ""),
     ("GAME.EXE", 0x8001C0E8, "tmd_select", "void", "KfTmdSlot slot"),
     ("GAME.EXE", 0x8001C114, "tmd_get_object", "KfTmdObject *", "u16 object_index"),
-    ("GAME.EXE", 0x8001C138, "tmd_set_current_vertices", "void", "SVECTOR *vertices"),
+    ("GAME.EXE", 0x8001C138, "tmd_set_current_vertices", "void", "KfPackedSVector *vertices"),
     ("GAME.EXE", 0x8001C148, "tmd_select_object_vertices", "void", "u16 object_index"),
     (
         "GAME.EXE",
@@ -50,14 +50,14 @@ PAIRS = (
         "const VECTOR *position;const SVECTOR *rotation",
     ),
     ("GAME.EXE", 0x8001C2B0, "tmd_prepare_primitive_indices", "void", ""),
-    ("GAME.EXE", 0x8001C5B0, "tmd_register", "void", "KfTmdSlot slot;u8 *tmd"),
+    ("GAME.EXE", 0x8001C5B0, "tmd_register", "void", "KfTmdSlot slot;KfTmdHeader *tmd"),
     ("GAME.EXE", 0x8001C5EC, "tmd_release_last_allocation", "void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
     ("OPEN.EXE", 0x80016908, "render_initialize", "void", ""),
     ("OPEN.EXE", 0x80016D38, "display_begin_frame", "void", ""),
     ("OPEN.EXE", 0x80016DD0, "display_present_frame", "void", ""),
     ("OPEN.EXE", 0x80016E68, "tmd_select", "void", "KfTmdSlot slot"),
     ("OPEN.EXE", 0x80016E94, "tmd_get_object", "KfTmdObject *", "u16 object_index"),
-    ("OPEN.EXE", 0x80016EB8, "tmd_set_current_vertices", "void", "SVECTOR *vertices"),
+    ("OPEN.EXE", 0x80016EB8, "tmd_set_current_vertices", "void", "KfPackedSVector *vertices"),
     ("OPEN.EXE", 0x80016EC8, "tmd_select_object_vertices", "void", "u16 object_index"),
     (
         "OPEN.EXE",
@@ -67,7 +67,7 @@ PAIRS = (
         "const VECTOR *position;const SVECTOR *rotation",
     ),
     ("OPEN.EXE", 0x80017030, "tmd_prepare_primitive_indices", "void", ""),
-    ("OPEN.EXE", 0x80017330, "tmd_register", "void", "KfTmdSlot slot;u8 *tmd"),
+    ("OPEN.EXE", 0x80017330, "tmd_register", "void", "KfTmdSlot slot;KfTmdHeader *tmd"),
     ("OPEN.EXE", 0x8001736C, "tmd_release_last_allocation", "void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
 )
 
@@ -173,10 +173,7 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         expected = {
             0x80095058: ("active_render_clut", 2, "u16"),
             0x8009505A: ("active_render_tpage", 2, "u16"),
-            0x8009505C: ("active_render_red", 1, "u8"),
-            0x8009505D: ("active_render_green", 1, "u8"),
-            0x8009505E: ("active_render_blue", 1, "u8"),
-            0x8009505F: ("active_render_code", 1, "u8"),
+            0x8009505C: ("active_render_color", 4, "CVECTOR"),
         }
         identities = load_data_identities(RETAIL_CONFIG)
         fields = {0x80070E98 + row.offset: row
@@ -187,6 +184,9 @@ class DisplayTmdInventoryTests(unittest.TestCase):
             field = fields[va]
             self.assertEqual((field.name, field.size, field.datatype), shape)
             self.assertIn("game_semantic_render_material.tsv", field.evidence)
+        for va in range(0x8009505D, 0x80095060):
+            self.assertNotIn(("GAME.EXE", va), identities)
+            self.assertNotIn(va, fields)  # The SDK vector owns all colour bytes.
 
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         references = [

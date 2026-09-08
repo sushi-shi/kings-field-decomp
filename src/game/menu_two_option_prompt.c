@@ -34,17 +34,17 @@ KfMenuConfirmResult menu_two_option_prompt(
     if (kind == KF_MENU_WINDOW_SAVE || kind == KF_MENU_WINDOW_LOAD)
         overlay = KF_ENUM_DECODE(KfSaveSlotOverlay, highlight_row);
 
-    label_a.x = MENU_CONFIRM_TEXT_X;
-    label_a.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_ACCEPT_Y_OFFSET;
-    label_a.codes[0] = 0x59;
-    label_a.codes[1] = 0x41;
-    label_a.codes[2] = MENU_TEXT_END;
-    label_b.x = MENU_CONFIRM_TEXT_X;
-    label_b.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_DECLINE_Y_OFFSET;
-    label_b.codes[0] = 0x41;
-    label_b.codes[1] = 0x41;
-    label_b.codes[2] = 0x43;
-    label_b.codes[3] = MENU_TEXT_END;
+    label_a.position.x = MENU_CONFIRM_TEXT_X;
+    label_a.position.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_ACCEPT_Y_OFFSET;
+    label_a.glyphs.codes[0] = 0x59;
+    label_a.glyphs.codes[1] = 0x41;
+    label_a.glyphs.codes[2] = MENU_TEXT_END;
+    label_b.position.x = MENU_CONFIRM_TEXT_X;
+    label_b.position.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_DECLINE_Y_OFFSET;
+    label_b.glyphs.codes[0] = 0x41;
+    label_b.glyphs.codes[1] = 0x41;
+    label_b.glyphs.codes[2] = 0x43;
+    label_b.glyphs.codes[3] = MENU_TEXT_END;
 
     for (;;) {
         if (result != KF_MENU_CONFIRM_PENDING) {
