@@ -78,15 +78,25 @@ enum {
     KF_SAVE_ICON_THREE_FRAMES = 0x13
 };
 
+enum {
+    KF_SAVE_MAGIC_BYTES = 2,
+    KF_SAVE_TITLE_BYTES = 64,
+    KF_SAVE_ICON_PALETTE_COLORS = 16,
+    KF_SAVE_ICON_FRAME_COUNT = 3,
+    KF_SAVE_ICON_FRAME_BYTES = 128,
+    KF_SAVE_PLAYER_STATE_WORDS = 56
+};
+
 /* PlayStation card header with the three icon frames used by this game. */
 typedef struct KfPsxSaveHeader {
-    u8 magic[2];
+    u8 magic[KF_SAVE_MAGIC_BYTES];
     u8 icon_type;
     u8 block_count;
-    u8 title[64];
+    u8 title[KF_SAVE_TITLE_BYTES];
     u8 zero_pad[28];
-    u16 clut[16];
-    u8 icon_frames[3][128]; /* Each 16-by-16 image has two 4-bit pixels per byte. */
+    u16 clut[KF_SAVE_ICON_PALETTE_COLORS];
+    /* Each 16-by-16 image has two 4-bit pixels per byte. */
+    u8 icon_frames[KF_SAVE_ICON_FRAME_COUNT][KF_SAVE_ICON_FRAME_BYTES];
 } KfPsxSaveHeader;
 
 /* On-card summaries widen the player's byte/halfword values to words. */
@@ -117,7 +127,7 @@ typedef struct KfSaveHeader {
  * and their alignment; unresolved ranges deliberately remain byte arrays.
  */
 typedef struct KfSavePayload {
-    u32 player_state[56];
+    u32 player_state[KF_SAVE_PLAYER_STATE_WORDS];
     u8 unknown_0e0[556];
     KfMapSavedWorld world_state;
     u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];

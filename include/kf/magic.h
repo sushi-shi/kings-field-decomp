@@ -15,7 +15,9 @@ enum {
     KF_MAGIC_RESIST_FIRE = 2,
     KF_MAGIC_BLESS = 3,
     KF_MAGIC_PLAYER_COUNT = 9,
-    KF_MAGIC_RECORD_COUNT = 24
+    KF_MAGIC_RECORD_COUNT = 24,
+    KF_MAGIC_SOUND_COUNT = 2,
+    KF_MAGIC_DAMAGE_COMPONENT_COUNT = 4
 };
 
 /* Only ranged spells and unequip are stored as the selected spell. */
@@ -38,8 +40,8 @@ KF_ENUM_END(KfMagicLearningState)
 typedef struct KfMagicRecord {
     KfMagicLearningState learned;
     u8 charge_rate;
-    SoundRef sounds[2];
-    u16 damage_components[4];
+    SoundRef sounds[KF_MAGIC_SOUND_COUNT];
+    u16 damage_components[KF_MAGIC_DAMAGE_COMPONENT_COUNT];
     u16 mp_cost;
     u8 unknown_12[0x02];
 } KfMagicRecord;

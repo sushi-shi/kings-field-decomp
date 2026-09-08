@@ -60,7 +60,8 @@ enum {
     ENDING_LIGHT_GREEN_STEP = 3,
     ENDING_BACKGROUND_BLEND_STEP = 3,
     ENDING_SEQUENCE_DELAY_START = 20,
-    ENDING_SEQUENCE_VOLUME_DIVISOR = 3
+    ENDING_SEQUENCE_VOLUME_DIVISOR = 3,
+    ENDING_SCROLL_CAMERA_POINT_COUNT = 3
 };
 
 KF_ENUM_BEGIN(KfEndingLightingPhase, s16)
@@ -94,7 +95,7 @@ typedef char KfOpeningEntityPositionOffsetCheck[
     (u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];
 
 DATA(0x800354f4, 0x1dc)
-KfCameraPathPoint opening_scene0_camera_path[17] = {
+KfCameraPathPoint opening_scene0_camera_path[KF_OPENING_SCENE0_CAMERA_POINT_COUNT] = {
     {{101000, -13000, 101000, 0}, {256, 0, 200, 0}, 0, 0},
     {{101000, -12000, 117000, 0}, {0, 128, -200, 0}, 400, 0},
     {{101000, -11700, 127000, 0}, {0, 1024, 100, 0}, 400, 0},
@@ -115,14 +116,14 @@ KfCameraPathPoint opening_scene0_camera_path[17] = {
 };
 
 DATA(0x800356d0, 0x54)
-KfCameraPathPoint opening_scene3_camera_path[3] = {
+KfCameraPathPoint opening_scene3_camera_path[KF_OPENING_SCENE3_CAMERA_POINT_COUNT] = {
     {{101000, -11500, 115200, 0}, {0, 0x800, 0, 0}, 0, 0},
     {{101000, -11500, 101000, 0}, {0, 0x800, 0, 0}, 0x10, 0},
     {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
 DATA(0x80035724, 0xfc)
-KfCameraPathPoint opening_ending_camera_path[9] = {
+KfCameraPathPoint opening_ending_camera_path[KF_OPENING_ENDING_CAMERA_POINT_COUNT] = {
     {{101000, -11500, 101000, 0}, {0, 0, 0, 0}, 0, 0},
     {{101000, -11500, 108600, 0}, {0, 0, 0, 0}, 35, 0},
     {{101000, -11500, 108800, 0}, {0, 0, 0, 0}, 20, 0},
@@ -135,7 +136,7 @@ KfCameraPathPoint opening_ending_camera_path[9] = {
 };
 
 DATA(0x80035820, 0x54)
-static KfCameraPathPoint opening_ending_scroll_camera_path[3] = {
+static KfCameraPathPoint opening_ending_scroll_camera_path[ENDING_SCROLL_CAMERA_POINT_COUNT] = {
     {{101000, -8500, 89000, 0}, {0, 0, 0, 0}, 0, 0},
     {{101000, -12000, 89000, 0}, {0, 0, 0, 0}, 2, 0},
     {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},

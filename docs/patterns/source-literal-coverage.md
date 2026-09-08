@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [sprite-table and staff-phase review](game-entity-sprite-tables.md#table-count-and-staff-phase-naming-follow-up):
+Working snapshot after the [save/resource array-count review](source-constant-names.md#save-and-resource-array-count-follow-up):
 **111 C files**, **112 source/image variants**, and
-**5,800 inline numeric/character occurrences**. Counts include authored
+**5,796 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,800 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,796 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -86,6 +86,8 @@ remapping phase values, removing five raw occurrences.
 The [header-capacity follow-up](source-constant-names.md#header-array-capacity-follow-up)
 separately names twelve bounds in TMD, visibility, notification and menu types.
 It changes no C-body occurrences; header literals are outside this census.
+The save/resource array review names twelve more header bounds and four OPEN
+camera-path definition bounds, including each path's terminal record.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -210,7 +212,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## OPEN.EXE
 
-34 files; 1,199 occurrences.
+34 files; 1,195 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -235,7 +237,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [opening_render.c](../../src/open/opening_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_render_entities.c](../../src/open/opening_render_entities.c) | 2 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_scene0_render.c](../../src/open/opening_scene0_render.c) | 0 | [open-render ledger](open-render-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [opening_scenes.c](../../src/open/opening_scenes.c) | 570 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [opening_scenes.c](../../src/open/opening_scenes.c) | 566 | [scene ledger](open-scene-literal-ledger.md); [domain evidence](open-scene-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render.c](../../src/open/render.c) | 19 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_init.c](../../src/open/render_init.c) | 154 | [complete initializer ledger](open-render-init-literal-ledger.md); [mode domain](overlay-mode-domains.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render_map.c](../../src/open/render_map.c) | 6 | [complete renderer ledger](renderer-packet-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |

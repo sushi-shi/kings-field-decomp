@@ -1,5 +1,31 @@
 # Source constant naming
 
+## Save and resource array-count follow-up
+
+Naming plan: replace established storage bounds in the save, CD and magic
+headers, then name all four OPEN camera-path record counts in their existing
+declarations/definitions. No function bodies, signatures, widths or resource
+contents change. The current sources, source history and image-qualified
+curated layouts were reviewed before editing.
+
+| Owner | Named bounds | Evidence / limitation |
+| --- | --- | --- |
+| `KfPsxSaveHeader` | Two magic bytes, 64 title bytes, 16 palette entries, three 128-byte icon frames | `save_file_initialize_buffers` writes SC, copies the title, and loads ICO1/2/3 into the three frames. Existing offset witnesses and GAME save-file dossiers fix the layout. Padding ranges retain their explicit byte extents. |
+| `KfSavePayload.player_state` | 56 words | The read/write pair copies exactly 224 bytes between this member and player state. This is a serialized extent, independent of the similarly sized unresolved tail. |
+| `KfCdFileEntry.name` | 12 bytes | The existing twenty-byte GAME directory record follows the older CdlFILE layout; this does not replace the authentic newer SDK type. |
+| `KfMagicRecord` | Two sound references, four damage words | Existing resource layout and consumers establish the array extents. Damage-word interpretations remain effect-dependent; the count introduces no per-component meaning. |
+| OPEN camera paths | 17 / 3 / 9 / 3 records | Owners at `800354f4 / 1dc`, `800356d0 / 54`, `80035724 / fc`, `80035820 / 54`; each count includes its complete terminal record. Keep the scroll path's count local and share the three exported counts. |
+
+The save/CD/magic formats and camera paths are game-owned models, with SDK
+services remaining external. This names existing dimensions without claiming
+new original-source ownership or bound safety. Builds, compiler checks, tests
+and post-edit matching remain deferred under the user's instruction.
+
+Final verdict: twelve header bounds and four C array-definition bounds now
+use the planned names. Values, record order, field types and terminal records
+remain unchanged; all 111 C-file ledgers reconcile at 5,796 occurrences.
+No post-edit binary result is claimed.
+
 ## Header array-capacity follow-up
 
 Naming plan: retain the existing header layouts and name their repeated or

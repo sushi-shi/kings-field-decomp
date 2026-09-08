@@ -5,7 +5,8 @@
 #include <kf/cd_file.h>
 
 enum {
-    KF_CD_FILE_TABLE_ENTRIES = 80
+    KF_CD_FILE_TABLE_ENTRIES = 80,
+    KF_CD_FILE_NAME_BYTES = 12
 };
 
 /* Shared by the normal CD loaders and GAME's fatal-error screen loader. */
@@ -21,7 +22,7 @@ typedef struct KfCdFileEntry {
     u8 sector;
     u8 track;
     u32 size;
-    u8 name[12];
+    u8 name[KF_CD_FILE_NAME_BYTES];
 } KfCdFileEntry;
 
 /*

@@ -1,6 +1,6 @@
 # OPEN scene retained-literal ledger
 
-Companion to [the scene-domain evidence](open-scene-domains.md). All **570**
+Companion to [the scene-domain evidence](open-scene-domains.md). All **566**
 current numeric/character occurrences in `src/open/opening_scenes.c` have
 individual rows, including duplicate tokens within one expression. Comments,
 strings, identifier digits, named enum/macro definitions and address claims
@@ -22,7 +22,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `initializers` | 80 | `0x08` | `(u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];` | Measured position offset within the opening entity; this is an offset check, not a size assertion. |
 | `initializers` | 80 | `1` | `(u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];` | Positive array extent when the offset agrees. |
 | `initializers` | 80 | `1` | `(u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];` | Negative array extent makes an offset mismatch a compile error. |
-| `opening_scene0_camera_path` | 83 | `17` | `KfCameraPathPoint opening_scene0_camera_path[17] = {` | Exact authored camera-path record count, including the terminating row; not a runtime pool capacity. |
 | `opening_scene0_camera_path` | 84 | `101000` | `{{101000, -13000, 101000, 0}, {256, 0, 200, 0}, 0, 0},` | Authored world-space position X sample in this trajectory; preserve the numeric path shape. |
 | `opening_scene0_camera_path` | 84 | `13000` | `{{101000, -13000, 101000, 0}, {256, 0, 200, 0}, 0, 0},` | Authored world-space position Y sample in this trajectory; preserve the numeric path shape. |
 | `opening_scene0_camera_path` | 84 | `101000` | `{{101000, -13000, 101000, 0}, {256, 0, 200, 0}, 0, 0},` | Authored world-space position Z sample in this trajectory; preserve the numeric path shape. |
@@ -192,7 +191,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene0_camera_path` | 100 | `0` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Zero SVECTOR fourth lane; preserve the SDK vector representation. |
 | `opening_scene0_camera_path` | 100 | `1` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Terminator-row segment speed fill; the X sentinel prevents this field from defining a segment. |
 | `opening_scene0_camera_path` | 100 | `0` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Zero record halfword +0x1a; the reviewed camera consumer does not establish its purpose. |
-| `opening_scene3_camera_path` | 104 | `3` | `KfCameraPathPoint opening_scene3_camera_path[3] = {` | Exact authored camera-path record count, including the terminating row; not a runtime pool capacity. |
 | `opening_scene3_camera_path` | 105 | `101000` | `{{101000, -11500, 115200, 0}, {0, 0x800, 0, 0}, 0, 0},` | Authored world-space position X sample in this trajectory; preserve the numeric path shape. |
 | `opening_scene3_camera_path` | 105 | `11500` | `{{101000, -11500, 115200, 0}, {0, 0x800, 0, 0}, 0, 0},` | Authored world-space position Y sample in this trajectory; preserve the numeric path shape. |
 | `opening_scene3_camera_path` | 105 | `115200` | `{{101000, -11500, 115200, 0}, {0, 0x800, 0, 0}, 0, 0},` | Authored world-space position Z sample in this trajectory; preserve the numeric path shape. |
@@ -222,7 +220,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene3_camera_path` | 107 | `0` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Zero SVECTOR fourth lane; preserve the SDK vector representation. |
 | `opening_scene3_camera_path` | 107 | `1` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Terminator-row segment speed fill; the X sentinel prevents this field from defining a segment. |
 | `opening_scene3_camera_path` | 107 | `0` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Zero record halfword +0x1a; the reviewed camera consumer does not establish its purpose. |
-| `opening_ending_camera_path` | 111 | `9` | `KfCameraPathPoint opening_ending_camera_path[9] = {` | Exact authored camera-path record count, including the terminating row; not a runtime pool capacity. |
 | `opening_ending_camera_path` | 112 | `101000` | `{{101000, -11500, 101000, 0}, {0, 0, 0, 0}, 0, 0},` | Authored world-space position X sample in this trajectory; preserve the numeric path shape. |
 | `opening_ending_camera_path` | 112 | `11500` | `{{101000, -11500, 101000, 0}, {0, 0, 0, 0}, 0, 0},` | Authored world-space position Y sample in this trajectory; preserve the numeric path shape. |
 | `opening_ending_camera_path` | 112 | `101000` | `{{101000, -11500, 101000, 0}, {0, 0, 0, 0}, 0, 0},` | Authored world-space position Z sample in this trajectory; preserve the numeric path shape. |
@@ -312,7 +309,6 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_camera_path` | 120 | `0` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Zero SVECTOR fourth lane; preserve the SDK vector representation. |
 | `opening_ending_camera_path` | 120 | `1` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Terminator-row segment speed fill; the X sentinel prevents this field from defining a segment. |
 | `opening_ending_camera_path` | 120 | `0` | `{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},` | Zero record halfword +0x1a; the reviewed camera consumer does not establish its purpose. |
-| `opening_ending_scroll_camera_path` | 124 | `3` | `static KfCameraPathPoint opening_ending_scroll_camera_path[3] = {` | Exact authored camera-path record count, including the terminating row; not a runtime pool capacity. |
 | `opening_ending_scroll_camera_path` | 125 | `101000` | `{{101000, -8500, 89000, 0}, {0, 0, 0, 0}, 0, 0},` | Authored world-space position X sample in this trajectory; preserve the numeric path shape. |
 | `opening_ending_scroll_camera_path` | 125 | `8500` | `{{101000, -8500, 89000, 0}, {0, 0, 0, 0}, 0, 0},` | Authored world-space position Y sample in this trajectory; preserve the numeric path shape. |
 | `opening_ending_scroll_camera_path` | 125 | `89000` | `{{101000, -8500, 89000, 0}, {0, 0, 0, 0}, 0, 0},` | Authored world-space position Z sample in this trajectory; preserve the numeric path shape. |
