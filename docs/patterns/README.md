@@ -9,8 +9,9 @@ promotes a probe to a proven historical toolchain.
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
-- [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration
-  panel through its shared exit assignment; notification-tail byte trial.
+- [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration and
+  buy/sell panels through shared control flow and the real selection-result
+  channel; rejected notification-tail and sell-navigation trials.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
@@ -503,8 +504,8 @@ promotes a probe to a proven historical toolchain.
   confirmation reset and long-list upward wrap; direct name-row indexing and
   loop shape recover all transfers, leaving one seven-word healing residue.
 - [game-shop-panel-flow.md](game-shop-panel-flow.md): restores buy/sell
-  confirmation reset and long-list upward wrap, with matching transfer
-  destinations and ordered referents; 17/25 register-operand words remain.
+  confirmation reset and long-list upward wrap; subsequent GCC trace work
+  closes both panels with all 689 retail instruction words matching.
 - [game-magic-panel-flow.md](game-magic-panel-flow.md): direct spell-name
   indexing, cancellation-first handling, cursor branches and a shared normal
   return close the magic panel while preserving its distinct failure exits.

@@ -310,8 +310,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfShopId, s32) shop_id)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_model(index[ctx.selected_index]) != 0)
-                return;
+            goto load_selected_model;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
@@ -325,6 +324,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfShopId, s32) shop_id)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
+        load_selected_model:
             if (menu_load_item_model(index[ctx.selected_index]) != 0)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
@@ -418,9 +418,9 @@ void item_menu_sell(KF_ENUM_PARAM(KfShopId, s32) shop_id)
     for (;;) {
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, KF_ENUM_ENCODE(u8, index[ctx.selected_index]), KF_ENUM_ENCODE(s32, shop_id), KF_ITEM_PRICE_SELL)
-                    == KF_MENU_CONFIRM_CANCELLED)
+            selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
+                    KF_MENU_PREVIEW_ITEM_DETAIL, KF_ENUM_ENCODE(u8, index[ctx.selected_index]), KF_ENUM_ENCODE(s32, shop_id), KF_ITEM_PRICE_SELL));
+            if (selection == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_CANCELLED))
                 selection = KF_MENU_LIST_PENDING;
             else
                 selection = KF_ENUM_ENCODE(u8, index[ctx.selected_index]);

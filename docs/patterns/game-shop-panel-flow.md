@@ -138,3 +138,13 @@ section bases and incomplete known-reference coverage remain; artifact
 failures remain zero. The shop unit's existing 40/37-byte RODATA extent and
 BSS placement failures are unchanged. No bank entries change, and unrelated
 worktree edits are excluded from this campaign.
+
+
+## Strict closure follow-up
+
+The [GCC trace campaign](game-ui-trace-matches.md#shop-results) closes both shop
+panels at strict 100%. The buy source shares the navigation model-load join;
+the sell source consumes the confirmation return through its existing numeric
+selection channel. Both retain the flow corrections above, and complete
+relocation-resolved comparison verifies all 689 retail words. The historical
+17/25-word residues recorded here are resolved by those retained changes.

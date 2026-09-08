@@ -92,3 +92,106 @@ verification logs stay under `build/gcc257/ui-baselines/`.
 `kf bank --unit game.menu_config_panel` records only these two verified exact
 rows: the newly closed panel and the unchanged exact helper under the new unit
 source hash. No notification or graphics-owner experiment is banked.
+
+
+## Function Match Plan: shop navigation join
+
+Refresh all six GAME views, full buy/sell disassemblies, sole root call sites,
+adjacent root/pickup boundaries, shared list/item/shop interfaces, source
+history and vendor controls at `b99b38c`. The unchanged item unit has whole-ELF
+native/traced parity; root and pickup reproduce all 326 retail words.
+
+| GAME function | Retail bytes / strict baseline | References and first difference |
+| --- | --- | --- |
+| `80021538 item_menu_buy` | 1476 / 99.769646% | 21 direct calls, 12 internal jumps, 11 address pairs; +30 selects s2 instead of s1 for the pending selection. |
+| `80021afc item_menu_sell` | 1280 / 99.609375% | 20 direct calls, 11 internal jumps, 5 address pairs; +2c initializes input in s2 instead of s3. |
+
+Both frames are 1856 bytes with seven saved S registers and ra. They retain
+signed-word shop arguments from the root's a0 delay slots, byte stock and item
+IDs, ten-halfword label rows, unsigned-halfword prices and unsigned-word gold.
+No strings, candidate outgoing references or indirect transfers occur. These
+are game shop policies, with the separately attributed LIBETC PAD.OBJ PadRead
+at GAME `8005012c` as an SDK boundary. All data identities and source claims
+remain unchanged.
+
+Fresh numeric relocation resolution finds 17 buy and 25 sell unequal words,
+all in GPR operands. Every call, transfer destination, immediate, memory offset
+and ordered referent agrees. The trace identifies the loop's index-array base
+as buy pseudo 162 (13 weighted references, length 171, hard s1) and sell pseudo
+150 (11, 155, s1). Both source navigation arms still have separate index reads
+and model calls at global allocation; final output merges them. Retail's seven
+navigation paths meet at buy `80021950` / sell `80021ed4`, then execute exactly
+one model load and its failure-to-epilogue edge.
+
+Test that decoded join explicitly: the upward arm jumps to a `load_selected_model`
+label at the downward arm's existing model load. Preserve both cursor updates,
+all viewport wrap stores, the earlier initial model load, early returns and
+redraw/release/transaction ordering. No value, cast, call or storage is added.
+Compare each function independently, including selection/input/base lifetimes,
+strict objdiff and complete resolved raw words. The other four unit functions
+are unchanged controls; bank only strict-100% closures after focused/full checks.
+
+
+The shared navigation join reaches buy strict 100% and sell 99.687500%.
+Buy's selection/base weighted references become 16/11 with lengths 285/165:
+selection receives s1, base s2 and input stays s3, all matching retail.
+Sell now places the base correctly in s2, but input receives s1 and selection
+s3; their priorities remain ordered opposite to retail. Keep the verified buy
+source for normal focused checks. The sell trial stays disposable.
+
+### Sell confirmation-result hypothesis
+
+Retail's `80021d20` call returns a signed-word confirmation result in v0,
+compares it with -1, then replaces it with pending (-99) or the selected byte
+item ID before the outer loop's pending test. Test using the existing numeric
+selection channel for that actual result and comparison, then the same two
+replacement assignments. The channel already carries control sentinels and
+item IDs; it is not an item-only enum. Encode the typed confirmation result
+and comparison explicitly for modern checking, preserving the signed-word
+legacy interface. This adds no result local or game operation and leaves the
+navigation source at its original baseline. Inspect whether the compiler
+eliminates the intermediate copy and preserves the post-call delay-slot reset;
+reject changed calls, extra instructions or a moved pending assignment.
+
+
+### Shop results
+
+Both retained panels reach canonical strict **100%** after `game.item` actually
+rebuilds. Buy retains the shared navigation model-load join. Sell retains the
+original navigation source and assigns the real confirmation return to the
+numeric selection channel before remapping cancellation or acceptance. The
+intermediate v0-to-selection copy disappears before allocation; no extra MIPS
+instruction survives. Its measured selection references rise from 14 to 18,
+with live length 240 and eighteen crossed calls unchanged. The observed global
+priority becomes 3000, ahead of the index base's 2129 and input's 1807. Their
+hard registers become retail's s1/s2/s3. These facts describe the pinned probe;
+they do not prove a historical compiler or original variable spelling.
+
+Native/traced whole ELF parity holds for the combined production source.
+Independent relocation resolution checks the source and delinked target against
+all **689 retail words**, including the return and every other delay slot.
+All 41 calls and sixteen address pairs agree in order and numeric destination;
+a deliberately wrong model-loader target breaks the raw comparison. The two
+exact controls, root and pickup, still reproduce all 326 words, and both partial
+loaders retain their complete previous instruction bytes and ordered referents.
+
+The rejected shared-navigation sell candidate is not composed into the retained
+source. Function identity notes now describe the two source structures without
+changing signatures, names, addresses or evidence tiers. No relocation contract,
+compiler flag, global owner, SDK body or comparison criterion changes.
+
+
+Ruff, whitespace checks and all 703 repository tests pass (120.179 seconds,
+nine optional skips). The full build completes its comparisons but exits with
+the existing data ownership/placement, known-reference coverage and target-relink
+failures; artifact failures remain zero. Target relinks remain GAME 75/77,
+OPEN 34/38 and PSX 1/1. No banked function regresses. Fresh reports have no stale
+or missing input failures and show GAME **320/362**, OPEN **106/108**, and
+PSX **1/1**: 427/471 overall, with 42 GAME and two OPEN functions still open.
+Generated evidence, traces and logs are under `build/gcc257/shop-panels/`.
+
+
+Banking selects only GAME `800212d8`, `80021538`, `80021afc` and `80021ffc`:
+the two newly exact panels and the unchanged exact root/pickup controls. All
+four rows use the current complete unit input hash. The two partial loader
+rows, rejected sell trial and OPEN experiments are not banked.
