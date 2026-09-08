@@ -30,6 +30,8 @@ promotes a probe to a proven historical toolchain.
   source controls, per-function verdicts and exact actor-awareness wait join.
 - [game-branch-integration.md](game-branch-integration.md): integration verdicts,
   preserved newer source models and current validation of four partial functions.
+- [game-low-trial-campaign.md](game-low-trial-campaign.md): fixed campaign of
+  eight non-exact functions with fewer than six recorded JSON trials at selection.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE

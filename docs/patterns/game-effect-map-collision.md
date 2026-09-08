@@ -404,3 +404,8 @@ pairs: 1888 bytes, strict 98.221054%. No extra helper call is emitted. The
 first raw difference remains the bounds-rejection branch at `+0x94`.
 Reject both no-effect boundaries and leave canonical source unchanged; neither
 the missing return block nor the orientation/default residues are explained.
+
+The later [guarded-operation campaign](game-low-trial-campaign.md#effect-collision-guarded-operation-boundaries)
+recovers the local bounds rejection and orientation sequence through a larger
+in-cell helper. Current strict similarity is 98.684210%; negative-height and
+final class/default scheduling remain non-exact.

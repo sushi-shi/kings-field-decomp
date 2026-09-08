@@ -18,37 +18,18 @@ KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {
 /* Switch jump table for the diagonal-wall cell shapes. */
 RODATA(0x80012ce0, 0x18)
 
-/*
- * Probe whether a world position collides with the map geometry at its cell.
- * Converts x/z to a 100x100 cell, rejects out-of-range cells and positions
- * below the cell floor, then tests the cell's attribute-driven height/step
- * shape and its collision-grid shape (flat, four diagonal half-cells, or the
- * neighbour-aware corner cell 0).  A surviving hit is forwarded to
- * collision_query_world with the flags selected from the active effect record.
- * Geometry rejection returns KF_COLLISION_TERRAIN; callers recognize
- * KF_COLLISION_NONE as no collision.
- */
-ADDRESS(0x80037850, 0x76c)
-u32 effect_map_collision(VECTOR *position, s32 radius)
+/* Geometry and target query for an already validated cell. */
+static inline u32 effect_collision_in_cell(
+    VECTOR *position, s32 radius, s16 x, s16 z, s32 subz,
+    KfEffectRecord *effect)
 {
     KfCellHeightRecord *record;
-    KfEffectRecord *effect;
-    s16 x;
-    s16 z;
     s32 subx;
-    s32 subz;
     s32 y;
     s32 floor;
     s32 height;
     u8 attr;
 
-    x = position->vx / KF_MAP_TILE_SIZE;
-    z = position->vz / KF_MAP_TILE_SIZE;
-    subz = position->vz % KF_MAP_TILE_SIZE;
-    effect = current_effect;
-    if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
-        return KF_COLLISION_TERRAIN;
-    }
     y = position->vy;
     floor = map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
@@ -157,4 +138,32 @@ collide:
     default:
         return 1;
     }
+}
+
+/*
+ * Probe whether a world position collides with the map geometry at its cell.
+ * Converts x/z to a 100x100 cell, rejects out-of-range cells and positions
+ * below the cell floor, then tests the cell's attribute-driven height/step
+ * shape and its collision-grid shape (flat, four diagonal half-cells, or the
+ * neighbour-aware corner cell 0).  A surviving hit is forwarded to
+ * collision_query_world with the flags selected from the active effect record.
+ * Geometry rejection returns KF_COLLISION_TERRAIN; callers recognize
+ * KF_COLLISION_NONE as no collision.
+ */
+ADDRESS(0x80037850, 0x76c)
+u32 effect_map_collision(VECTOR *position, s32 radius)
+{
+    KfEffectRecord *effect;
+    s16 x;
+    s16 z;
+    s32 subz;
+
+    x = position->vx / KF_MAP_TILE_SIZE;
+    z = position->vz / KF_MAP_TILE_SIZE;
+    subz = position->vz % KF_MAP_TILE_SIZE;
+    effect = current_effect;
+    if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
+        return KF_COLLISION_TERRAIN;
+    }
+    return effect_collision_in_cell(position, radius, x, z, subz, effect);
 }
