@@ -20,6 +20,45 @@ void control(KfActor *actor) { BODY }
 
 
 class EnumTypeTests(unittest.TestCase):
+    def test_promoted_arguments_keep_distinct_enum_domains(self) -> None:
+        sdk = os.environ.get("PSYQ_INCLUDE")
+        compiler = shutil.which("clang")
+        if not sdk or not compiler:
+            self.skipTest("Clang and pinned SDK headers are required")
+        source = """
+            #include <kf/game_save.h>
+            #include <kf/game_effect.h>
+            void control(int value) { BODY }
+        """
+        cases = {
+            "valid": """
+                save_system_read_slot(KF_ENUM_DECODE(KfSaveSlotArgument, value + 1));
+                effect_pool_construct(0, 0,
+                    KF_ENUM_DECODE(KfEffectKindArgument, value & 31), 0, 0);
+            """,
+            "wrong_slot_domain": """
+                save_system_read_slot(KF_ENUM_DECODE(KfEffectKindArgument, value));
+            """,
+            "wrong_kind_domain": """
+                effect_pool_construct(0, 0,
+                    KF_ENUM_DECODE(KfSaveSlotArgument, value), 0, 0);
+            """,
+        }
+        with TemporaryDirectory(prefix="kf-promoted-enums-") as directory:
+            path = Path(directory) / "control.c"
+            for name, body in cases.items():
+                with self.subTest(control=name):
+                    path.write_text(source.replace("BODY", body))
+                    result = subprocess.run(
+                        [compiler, *FLAGS, *MODES["modern"], "-fsyntax-only",
+                         "-I", str(REPO / "include"), "-isystem", sdk, str(path)],
+                        capture_output=True, text=True,
+                    )
+                    if name == "valid":
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                    else:
+                        self.assertNotEqual(result.returncode, 0, name)
+
     def test_modern_enum_constraints_are_enabled(self) -> None:
         sdk = os.environ.get("PSYQ_INCLUDE")
         if not sdk or not Path(sdk).is_dir():

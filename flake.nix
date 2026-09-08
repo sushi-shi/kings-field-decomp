@@ -141,6 +141,8 @@
         text = ''exec ${gcc257Native}/bin/cpp "$@"'';
       };
 
+      gcc257Probe = import ./nix/gcc257.nix { inherit pkgs; };
+
       ghidraPsxLoader = pkgs.stdenvNoCC.mkDerivation {
         pname = "ghidra-psx-loader";
         version = "2026.07.08";
@@ -533,6 +535,23 @@
         touch "$out"
       '';
 
+      gcc257TraceTests = pkgs.runCommand "kings-field-gcc257-trace-tests" {
+        nativeBuildInputs = [
+          analysisPython cc1psx257 cpppsx257 maspsx mipsBinutilsAliases
+        ];
+      } ''
+        mkdir -p project/tests/fixtures
+        cp -r ${./scripts} project/scripts
+        cp ${./tests/gcc257_trace_smoke.py} project/tests/gcc257_trace_smoke.py
+        cp ${./tests/fixtures/gcc257_trace_controls.c} project/tests/fixtures/gcc257_trace_controls.c
+        cd project
+        python3 tests/gcc257_trace_smoke.py \
+          --debug ${gcc257Probe.debug}/bin/cc1psx-257-debug \
+          --instrumented ${gcc257Probe.instrumented}/bin/cc1psx-257-trace \
+          --output build/verification
+        touch "$out"
+      '';
+
       ghidraPluginTests = pkgs.runCommand "kings-field-ghidra-plugin-tests" {
         nativeBuildInputs = [ analysisPython pkgs.jdk21 ];
         GHIDRA_INSTALL_DIR = "${pkgs.ghidra}/lib/ghidra";
@@ -620,6 +639,9 @@
       '';
     in {
       packages.${system} = {
+        gcc257Debug = gcc257Probe.debug;
+        gcc257Instrumented = gcc257Probe.instrumented;
+        gcc257Source = gcc257Probe.source;
         inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
         default = psyqToolchain;
       };
@@ -627,11 +649,17 @@
       devShells.${system} = {
         default = shell;
         build = shell;
+        instrumentation = pkgs.mkShell {
+          inputsFrom = [ shell ];
+          packages = [ gcc257Probe.debug gcc257Probe.instrumented ];
+          shellHook = shell.shellHook;
+        };
       };
 
       checks.${system} = {
         toolchain = psyqToolchain;
         toolchain-builder-tests = toolchainTests;
+        gcc257-trace = gcc257TraceTests;
         ghidra-psx-loader = ghidraPsxLoader;
         ghidra-psx-loader-discovery = ghidraPluginTests;
         retail-config = retailConfigTests;

@@ -1,2 +1,4 @@
 # Unified diffs use a single space to mark an empty context line.
 patches/*.patch whitespace=-blank-at-eol
+# GCC context lines retain upstream tabs after the unified-diff space marker.
+patches/gcc257-trace.patch whitespace=-blank-at-eol,-space-before-tab

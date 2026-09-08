@@ -84,9 +84,10 @@ class GameItemStockDataTests(unittest.TestCase):
                 r'\b(KF_ITEM_\w+)\s*=\s*(0x[0-9a-f]+|\d+)\b',
                 (REPO / 'include/kf/item.h').read_text())
         }
-        seeds = [(int(bank), item_constants[slot] if slot in item_constants else int(slot, 0))
+        seeds = [(item_constants[bank], item_constants[slot])
                  for bank, slot in re.findall(
-                     r'item_stock\[(\d)\]\[(\w+)\] = 1;', source)]
+                     r'item_stock\[(KF_ITEM_STOCK_\w+)\]'
+                     r'\[KF_ENUM_ENCODE\(u8, (KF_ITEM_\w+)\)\] = 1;', source)]
         self.assertEqual([bank * 80 + slot for bank, slot in seeds], list(SEEDS))
         self.assertTrue(all(0 <= bank < 3 and 0 <= slot < 80 for bank, slot in seeds))
 

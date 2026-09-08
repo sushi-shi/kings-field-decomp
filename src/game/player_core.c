@@ -116,8 +116,8 @@ void player_equip_weapon(KfItemId weapon_id)
     player_state.equipped_weapon_id = weapon_id;
     if (weapon_id != KF_ITEM_NONE) {
         player_state.equipped_weapon_record = &weapon_records[KF_ENUM_ENCODE(u8, weapon_id)];
-        weapon_image_path_template[9] = '0' + KF_ENUM_ENCODE(u8, weapon_id) / 10;
-        weapon_image_path_template[10] = '0' + KF_ENUM_ENCODE(u8, weapon_id) % 10;
+        weapon_image_path_template[9] = '0' + KF_ENUM_ENCODE(u32, weapon_id) / 10;
+        weapon_image_path_template[10] = '0' + KF_ENUM_ENCODE(u32, weapon_id) % 10;
         if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_image_path_template) != 0) {
             exit(1);
         }

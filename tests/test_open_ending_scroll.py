@@ -54,7 +54,7 @@ class OpenEndingScrollTests(unittest.TestCase):
             self.assertNotIn(("OPEN.EXE", va), data)
         for va in (0x8003588A, 0x80035892, 0x800358CA):
             self.assertNotIn(("OPEN.EXE", va), data)
-        self.assertEqual(data["OPEN.EXE", 0x80035888].datatype, "u16[9][4]")
+        self.assertEqual(data["OPEN.EXE", 0x80035888].datatype, "KfScreenRect[9]")
         self.assertEqual(data["OPEN.EXE", 0x800372A0].datatype, "CVECTOR")
 
     def test_reviewed_calls_and_raw_relocation_targets(self) -> None:

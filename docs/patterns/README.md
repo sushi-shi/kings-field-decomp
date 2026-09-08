@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
+  compiler, observational trace contract, controlled probes and OPEN residues.
+
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
   and rejected cell-pointer/angle-update controls.

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -46,12 +47,22 @@ def _tool(name: str) -> str:
     return path
 
 
-def _run(arguments: list[str], *, input_data: bytes | None = None) -> bytes:
+def _run(
+    arguments: list[str], *, input_data: bytes | None = None,
+    trace_environment: dict[str, str] | None = None,
+) -> bytes:
+    # Trace only the explicitly selected compiler invocation. Inherited trace
+    # settings must not contaminate normal builds or the auxiliary sizeof TU.
+    environment = {key: value for key, value in os.environ.items()
+                   if not key.startswith("KF_GCC257_TRACE")
+                   and key != "KF_GCC257_SOURCE_SHA256"}
+    environment.update(trace_environment or {})
     process = subprocess.run(
         arguments,
         input=input_data,
         capture_output=True,
         check=False,
+        env=environment,
     )
     if process.returncode:
         details = (process.stderr or process.stdout).decode(errors="replace")
@@ -161,10 +172,20 @@ def compile_source(
     compiler: str = "gcc260-native",
     maspsx_flags: tuple[str, ...] = (),
     defines: tuple[str, ...] = (),
+    *,
+    cc1_override: Path | None = None,
+    trace_path: Path | None = None,
+    trace_function: str | None = None,
 ) -> Path:
     source = source.resolve()
     if not source.is_file():
         raise ValueError(f"{source}: source is missing")
+    if trace_path is not None and (cc1_override is None or compiler != "gcc257-native"):
+        raise ValueError("tracing requires an explicit GCC 2.5.7 cc1 override")
+    if trace_path is not None and source.suffix.lower() != ".c":
+        raise ValueError("compiler tracing requires a C source")
+    if trace_function is not None and trace_path is None:
+        raise ValueError("trace_function requires trace_path")
     object_name = output.name
     if object_name not in _target_names(delink_dir, image):
         raise ValueError(
@@ -208,7 +229,7 @@ def compile_source(
             raise ValueError(f"unknown C compiler probe {compiler!r}")
         cpp_name, cc1_name, compiler_label = C_COMPILERS[compiler]
         preprocessor = _tool(cpp_name)
-        cc1 = _tool(cc1_name)
+        cc1 = _tool(str(cc1_override)) if cc1_override is not None else _tool(cc1_name)
         maspsx = _tool("maspsx")
         intermediate = scratch / "intermediates"
         intermediate.mkdir(parents=True, exist_ok=True)
@@ -245,7 +266,22 @@ def compile_source(
             "-mabi=32",
             *GNU_AS_SECTION_FLAGS,
         ]
-        _run([*compiler_arguments, str(preprocessed), '-o', str(assembly)])
+        trace_environment = None
+        if trace_path is not None:
+            trace_path = trace_path.resolve()
+            trace_path.parent.mkdir(parents=True, exist_ok=True)
+            if trace_path.exists():
+                raise ValueError(f"refusing to overwrite compiler trace: {trace_path}")
+            trace_environment = {
+                "KF_GCC257_TRACE": str(trace_path),
+                "KF_GCC257_SOURCE_SHA256": hashlib.sha256(source.read_bytes()).hexdigest(),
+            }
+            if trace_function is not None:
+                trace_environment["KF_GCC257_TRACE_FUNCTION"] = trace_function
+        _run([*compiler_arguments, str(preprocessed), '-o', str(assembly)],
+             trace_environment=trace_environment)
+        if trace_path is not None and (not trace_path.is_file() or not trace_path.stat().st_size):
+            raise RuntimeError("instrumented compiler produced no trace")
         data_claims = scan_data_claims(source)
         source_sizes: dict[str, int] = {}
         if data_claims:
@@ -265,6 +301,12 @@ def compile_source(
             "language": "c",
             "compiler": compiler_label,
             "compiler_probe": compiler,
+            **({"cc1_override": str(cc1_override.resolve())}
+               if cc1_override is not None else {}),
+            **({"trace": str(trace_path),
+                "source_sha256": trace_environment["KF_GCC257_SOURCE_SHA256"],
+                "preprocessed_sha256": hashlib.sha256(preprocessed.read_bytes()).hexdigest()}
+               if trace_path is not None else {}),
             "optimization": optimization,
             "small_data": small_data,
             "cc1_flags": list(cc1_flags),

@@ -625,6 +625,10 @@ KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game_save.h;save_file_write
 KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
 KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-MP halfword; stored and copied as a word
 KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
+KfScreenRect	0x00	0x02	x	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_g4;asm;lhu	screen X origin
+KfScreenRect	0x02	0x02	y	u16	supported	render_types.h;quad-rectangle-types.md;OPEN:opening_ending_scroll_run;asm;lhu;lh;sh	screen Y origin; scrolling updates wrap as halfwords and the final-panel stop test reads signed Y
+KfScreenRect	0x04	0x02	w	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen width added to X for right vertices
+KfScreenRect	0x06	0x02	h	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen height added to Y for lower vertices
 KfScreenVertex	0x00	0x04	sxy	long	supported	tmd.h;game_semantic_projection_scratch.tsv;game_open_semantic_packed_projection.tsv;asm;RotTransPers;NormalClip	SDK packed signed screen x/y word written by RotTransPers and consumed by clipping and GPU packets; non-perspective writers use its two DVECTOR halfwords
 KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing

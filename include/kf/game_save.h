@@ -71,6 +71,9 @@ KF_ENUM_BEGIN(KfSaveSlotId, s16)
     KF_SAVE_SLOT_SPARE = 4
 KF_ENUM_END(KfSaveSlotId)
 
+/* MIPS promotes the signed-halfword formal before converting call arguments. */
+typedef KF_ENUM_PROMOTED(KfSaveSlotId) KfSaveSlotArgument;
+
 enum {
     KF_SAVE_ICON_THREE_FRAMES = 0x13
 };

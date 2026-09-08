@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "unit": "open.render_init",
+  "function": "display_initialize",
+  "trace_features": [
+    {
+      "name": "dtd",
+      "kind": "address_lifetime",
+      "symbol": "open_graphics_runtime",
+      "offset": 131134,
+      "members": [
+        131135,
+        131227
+      ]
+    },
+    {
+      "name": "frame",
+      "kind": "frame"
+    }
+  ],
+  "axes": [
+    {
+      "name": "dtd_expression",
+      "find": "    open_graphics_runtime.display_draw_environments[0].dtd = open_graphics_runtime.display_draw_environments[1].dtd = 1;",
+      "options": [
+        {
+          "name": "baseline"
+        },
+        {
+          "name": "alternative",
+          "replace": "    open_graphics_runtime.display_draw_environments[1].dtd = 1;\n    open_graphics_runtime.display_draw_environments[0].dtd = 1;"
+        }
+      ]
+    },
+    {
+      "name": "background_enable",
+      "find": "    open_graphics_runtime.display_draw_environments[0].isbg = 1;\n    open_graphics_runtime.display_draw_environments[1].isbg = 1;",
+      "options": [
+        {
+          "name": "baseline"
+        },
+        {
+          "name": "alternative",
+          "replace": "    open_graphics_runtime.display_draw_environments[1].isbg = open_graphics_runtime.display_draw_environments[0].isbg = 1;"
+        }
+      ]
+    },
+    {
+      "name": "sdk_rgb",
+      "find": "    open_graphics_runtime.display_draw_environments[0].r0 = 0;\n    open_graphics_runtime.display_draw_environments[0].g0 = 0;\n    open_graphics_runtime.display_draw_environments[0].b0 = 0;\n    open_graphics_runtime.display_draw_environments[1].r0 = 0;\n    open_graphics_runtime.display_draw_environments[1].g0 = 0;\n    open_graphics_runtime.display_draw_environments[1].b0 = 0;",
+      "options": [
+        {
+          "name": "baseline"
+        },
+        {
+          "name": "alternative",
+          "replace": "    setRGB0(&open_graphics_runtime.display_draw_environments[0], 0, 0, 0);\n    setRGB0(&open_graphics_runtime.display_draw_environments[1], 0, 0, 0);"
+        }
+      ]
+    },
+    {
+      "name": "dfe_expression",
+      "find": "        first_draw->dfe = 0;\n        second_draw->dfe = 0;",
+      "options": [
+        {
+          "name": "baseline"
+        },
+        {
+          "name": "alternative",
+          "replace": "        second_draw->dfe = first_draw->dfe = 0;",
+          "extra_edits": [
+            {
+              "find": "        first_draw->dfe = 1;\n        second_draw->dfe = 1;",
+              "replace": "        second_draw->dfe = first_draw->dfe = 1;"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pointer_lifetime",
+      "find": "    DRAWENV *first_draw;\n    DRAWENV *second_draw;",
+      "options": [
+        {
+          "name": "baseline"
+        },
+        {
+          "name": "alternative",
+          "replace": "    DRAWENV *first_draw = &open_graphics_runtime.display_draw_environments[0];\n    DRAWENV *second_draw = &open_graphics_runtime.display_draw_environments[1];",
+          "extra_edits": [
+            {
+              "find": "    first_draw = &open_graphics_runtime.display_draw_environments[0];\n    second_draw = &open_graphics_runtime.display_draw_environments[1];\n",
+              "replace": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

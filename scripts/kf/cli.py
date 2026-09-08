@@ -136,6 +136,8 @@ def parser() -> argparse.ArgumentParser:
     hypotheses.add_argument("--limit", type=int, default=256)
     hypotheses.add_argument("--keep-top", type=int, default=8)
     hypotheses.add_argument("--output", type=Path)
+    hypotheses.add_argument("--instrumented-compiler", type=Path)
+    hypotheses.add_argument("--trace-dir", type=Path)
     match = subs.add_parser("match", help="build and summarize changed reconstruction units")
     match.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
     match.add_argument("--unit")
@@ -253,7 +255,8 @@ def main(argv: list[str] | None = None) -> int:
             if args.jobs < 1 or args.limit < 1 or args.keep_top < 1:
                 raise ValueError("--jobs, --limit, and --keep-top must be positive")
             return run(args.manifest, jobs=args.jobs, limit=args.limit,
-                       keep_top=args.keep_top, output=args.output)
+                       keep_top=args.keep_top, output=args.output,
+                       instrumented_compiler=args.instrumented_compiler, trace_dir=args.trace_dir)
         if args.command == "match":
             return _match(args)
         if args.command == "status":

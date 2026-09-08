@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from scripts.kf import compile as compiler
+from scripts.kf import gcc_trace
 from scripts.kf.manifest import Unit, load as load_manifest
 from scripts.kf.paths import BUILD, REPO
 
@@ -50,6 +51,12 @@ class Variant:
     name: str
     labels: dict[str, str]
     source: bytes
+
+
+@dataclass(frozen=True)
+class TraceOptions:
+    compiler: Path
+    features: list[dict]
 
 
 def _unique_span(original: bytes, value: object, context: str) -> tuple[int, int]:
@@ -174,7 +181,10 @@ def variants(original: bytes, axes: tuple[Axis, ...]) -> list[Variant]:
     return result
 
 
-def _compile(unit: Unit, source: Path, source_dir: Path, output: Path) -> None:
+def _compile(
+    unit: Unit, source: Path, source_dir: Path, output: Path,
+    *, trace: TraceOptions | None = None, symbol: str | None = None,
+) -> None:
     profile = load_manifest().profiles[unit.profile]
     # Preserve quoted-include lookup from the configured source's directory
     # while compiling the disposable source outside the worktree's src tree.
@@ -185,6 +195,9 @@ def _compile(unit: Unit, source: Path, source_dir: Path, output: Path) -> None:
         source, unit.image, output, BUILD / "delink", profile.optimization,
         profile.small_data, profile.aspsx_version, tuple(includes), profile.cc1_flags,
         profile.compiler, profile.maspsx_flags, defines=unit.defines,
+        cc1_override=trace.compiler if trace else None,
+        trace_path=output.with_suffix(".trace.jsonl") if trace else None,
+        trace_function=symbol if trace else None,
     )
 
 
@@ -214,6 +227,7 @@ def strict_score(target: Path, candidate: Path, symbol: str) -> tuple[float, int
 
 def _run_variant(
     variant: Variant, unit: Unit, symbol: str, source: Path, target: Path, scratch: Path,
+    trace: TraceOptions | None = None,
 ) -> tuple[dict, bytes | None]:
     directory = scratch / f"{variant.index:04d}"
     directory.mkdir()
@@ -221,7 +235,12 @@ def _run_variant(
     output = directory / unit.object_name
     try:
         candidate_source.write_bytes(variant.source)
-        _compile(unit, candidate_source, source.parent, output)
+        _compile(unit, candidate_source, source.parent, output, trace=trace, symbol=symbol)
+        if trace:
+            normal = directory / "normal" / unit.object_name
+            _compile(unit, candidate_source, source.parent, normal)
+            if normal.read_bytes() != output.read_bytes():
+                raise RuntimeError("instrumented compiler changes complete object bytes")
         score, size, error = strict_score(target, output, symbol)
         row = {
             "index": variant.index,
@@ -233,6 +252,16 @@ def _run_variant(
             "candidate_size": size,
             "error": error,
         }
+        if trace:
+            trace_path = output.with_suffix(".trace.jsonl")
+            records = gcc_trace.read_trace(trace_path, symbol, source_sha256=row["source_sha256"])
+            row["features"] = gcc_trace.summarize(records, trace.features, output, target)
+            row["frontier_key"] = gcc_trace.frontier_key(row["features"])
+            row["compiler_source_sha256"] = records.compiler_source_sha256
+            metadata = json.loads(output.with_suffix(output.suffix + ".json").read_text())
+            row["preprocessed_sha256"] = metadata["preprocessed_sha256"]
+            row["trace_sha256"] = hashlib.sha256(trace_path.read_bytes()).hexdigest()
+            row["trace_retained"] = None
         return row, variant.source
     except (OSError, RuntimeError, ValueError) as error:
         return {
@@ -245,8 +274,36 @@ def _run_variant(
         candidate_source.unlink(missing_ok=True)
 
 
-def run(path: Path, *, jobs: int, limit: int, keep_top: int, output: Path | None) -> int:
+def trace_frontier(rows: list[dict]) -> set[int]:
+    """Keep the strict-best representative of each explicitly selected state."""
+    retained = {row["index"] for row in rows if row.get("exact") and not row["error"]}
+    seen = set()
+    for row in sorted(rows, key=lambda item: (-item["score"], item["index"])):
+        if row["error"] or "frontier_key" not in row:
+            continue
+        key = row["frontier_key"]
+        if key not in seen:
+            retained.add(row["index"])
+            seen.add(key)
+    return retained
+
+
+def run(
+    path: Path, *, jobs: int, limit: int, keep_top: int, output: Path | None,
+    instrumented_compiler: Path | None = None, trace_dir: Path | None = None,
+) -> int:
     payload, unit, symbol, source, original, axes = parse_manifest(path)
+    trace = None
+    if trace_dir is not None and instrumented_compiler is None:
+        raise ValueError("--trace-dir requires --instrumented-compiler")
+    if instrumented_compiler is not None:
+        if load_manifest().profiles[unit.profile].compiler != "gcc257-native":
+            raise ValueError("instrumented compiler requires the unit's GCC 2.5.7 profile")
+        executable = shutil.which(str(instrumented_compiler))
+        if executable is None:
+            raise ValueError(f"instrumented compiler is not executable: {instrumented_compiler}")
+        trace = TraceOptions(Path(executable).resolve(),
+                             gcc_trace.validate_features(payload.get("trace_features")))
     candidates = variants(original, axes)
     combinations = 1
     for axis in axes:
@@ -256,23 +313,63 @@ def run(path: Path, *, jobs: int, limit: int, keep_top: int, output: Path | None
     target = BUILD / "delink" / unit.image_key / "modules" / unit.object_name
     if not target.is_file():
         raise ValueError(f"{target}: target is missing; run `kf build` first")
+    target_digest = hashlib.sha256(target.read_bytes()).hexdigest()
     stamp = time.strftime("%Y%m%d-%H%M%S")
     output = output or BUILD / "hypotheses" / f"{stamp}-{unit.unit.replace('.', '-')}-{symbol}"
+    if trace:
+        trace_dir = (trace_dir or output / "traces").resolve()
+        if not trace_dir.is_relative_to(BUILD.resolve()):
+            raise ValueError("compiler traces must be stored under build/")
+        if trace_dir.exists():
+            raise ValueError(f"trace directory already exists: {trace_dir}")
     output.mkdir(parents=True, exist_ok=False)
+    if trace:
+        trace_dir.mkdir(parents=True, exist_ok=False)
     (output / "manifest.json").write_text(json.dumps(payload, indent=2) + "\n")
     print(f"[hypotheses] {len(candidates)} unique/{combinations} states; "
           f"{jobs} compile job(s); source remains {source.relative_to(REPO)}", flush=True)
     with tempfile.TemporaryDirectory(prefix="kf-hypotheses-", dir=output) as temporary:
         scratch = Path(temporary)
+        baseline = None
+        if trace:
+            baseline, _ = _run_variant(
+                Variant(-1, "baseline", {}, original), unit, symbol, source, target, scratch, trace,
+            )
+            if baseline["error"]:
+                (output / "baseline-error.json").write_text(json.dumps(baseline, indent=2) + "\n")
+                raise RuntimeError(f"baseline trace failed: {baseline['error']}")
         with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
             completed = list(pool.map(
                 lambda candidate: _run_variant(
-                    candidate, unit, symbol, source, target, scratch,
+                    candidate, unit, symbol, source, target, scratch, trace,
                 ),
                 candidates,
             ))
+        if trace:
+            traced_rows = [baseline, *(item[0] for item in completed)]
+            fingerprints = {row["compiler_source_sha256"] for row in traced_rows
+                            if "compiler_source_sha256" in row}
+            if len(fingerprints) != 1:
+                raise RuntimeError("compiler source changed during hypothesis batch")
+            retained = trace_frontier(traced_rows) | {-1}
+            sources_by_index = {-1: original, **{item[0]["index"]: item[1] for item in completed}}
+            for row in traced_rows:
+                if row["index"] not in retained or row["error"]:
+                    continue
+                directory = scratch / f"{row['index']:04d}"
+                destination = trace_dir / ("baseline" if row["index"] == -1 else f"{row['index']:04d}")
+                destination.mkdir()
+                shutil.copyfile(directory / unit.object_name, destination / unit.object_name)
+                shutil.copyfile((directory / unit.object_name).with_suffix(".trace.jsonl"),
+                                destination / "trace.jsonl")
+                (destination / source.name).write_bytes(sources_by_index[row["index"]])
+                row["trace_retained"] = str((destination / "trace.jsonl").relative_to(REPO))
+                (destination / "summary.json").write_text(json.dumps(row, indent=2) + "\n")
+            shutil.copyfile(target, trace_dir / "baseline" / "target.o")
     if source.read_bytes() != original:
         raise RuntimeError(f"configured source changed during batch: {source}")
+    if hashlib.sha256(target.read_bytes()).hexdigest() != target_digest:
+        raise RuntimeError(f"strict target changed during batch: {target}")
     rows = [item[0] for item in completed]
     sources = {item[0]["index"]: item[1] for item in completed if item[1] is not None}
     ranked = sorted(rows, key=lambda row: (-row["score"], row["index"]))
@@ -282,8 +379,11 @@ def run(path: Path, *, jobs: int, limit: int, keep_top: int, output: Path | None
             (output / f"rank-{rank:02d}-{row['index']:04d}{source.suffix}").write_bytes(candidate)
     report = {
         "schema": 1, "unit": unit.unit, "function": symbol,
+        "target_sha256": target_digest,
         "source": str(source.relative_to(REPO)), "states": combinations,
         "unique_states": len(candidates), "results": ranked,
+        **({"baseline": baseline, "trace_features": trace.features,
+            "retained_traces": len(retained)} if trace else {}),
     }
     (output / "results.json").write_text(json.dumps(report, indent=2) + "\n")
     for row in ranked[:keep_top]:
@@ -295,6 +395,9 @@ def run(path: Path, *, jobs: int, limit: int, keep_top: int, output: Path | None
     except ValueError:
         output_label = output
     print(f"[hypotheses] {len(exact)} exact; results: {output_label}")
+    if trace:
+        print(f"[hypotheses] retained {len(retained)} traces, including baseline; "
+              "selected internal features are in results.json")
     return 0 if exact else 1
 
 
@@ -307,11 +410,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=256)
     parser.add_argument("--keep-top", type=int, default=8)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--instrumented-compiler", type=Path)
+    parser.add_argument("--trace-dir", type=Path)
     args = parser.parse_args(argv)
     if args.jobs < 1 or args.limit < 1 or args.keep_top < 1:
         parser.error("--jobs, --limit, and --keep-top must be positive")
     return run(args.manifest, jobs=args.jobs, limit=args.limit,
-               keep_top=args.keep_top, output=args.output)
+               keep_top=args.keep_top, output=args.output,
+               instrumented_compiler=args.instrumented_compiler, trace_dir=args.trace_dir)
 
 
 if __name__ == "__main__":

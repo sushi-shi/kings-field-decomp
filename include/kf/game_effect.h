@@ -45,6 +45,9 @@ KF_ENUM_BEGIN(KfEffectKind, u8)
     KF_EFFECT_KIND_FLOOR_DEFORMATION = 52
 KF_ENUM_END(KfEffectKind)
 
+/* Normalized packed codes retain word arithmetic before the byte API boundary. */
+typedef KF_ENUM_PROMOTED(KfEffectKind) KfEffectKindArgument;
+
 /* Low type bits select actors/player after the separate terrain checks.
  * The power bit alone does not imply the actor-damage player-credit class. */
 enum {

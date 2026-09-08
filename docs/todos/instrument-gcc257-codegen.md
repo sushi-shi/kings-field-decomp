@@ -113,6 +113,12 @@ through the existing workflow.
 
 ## Success criteria
 
+- Complete the remaining OPEN.EXE and GAME.EXE function matches at strict
+  objdiff **100%**. Controlled probes, deterministic traces, compiler parity,
+  partial score improvements and bounded explanations support the campaign;
+  they do not satisfy this closure requirement. Verify each retained source
+  against retail, preserve banked functions, rebuild the affected unit, then
+  run the full build and bank only exact results.
 - The instrumented and normal GCC 2.5.7 builds emit byte-identical objects when
   tracing is disabled and enabled.
 - Traces are deterministic across repeated builds of the same source hash.

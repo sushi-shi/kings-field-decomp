@@ -1,0 +1,613 @@
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -414,7 +414,7 @@
+ BC_OBJS = bc-emit.o bc-optab.o
+ 
+ # Language-independent object files.
+-OBJS = toplev.o version.o tree.o print-tree.o stor-layout.o fold-const.o \
++OBJS = kf-trace.o toplev.o version.o tree.o print-tree.o stor-layout.o fold-const.o \
+  function.o stmt.o expr.o calls.o expmed.o explow.o optabs.o varasm.o \
+  rtl.o print-rtl.o rtlanal.o emit-rtl.o real.o \
+  dbxout.o sdbout.o dwarfout.o xcoffout.o \
+--- a/cse.c
++++ b/cse.c
+@@ -1076,6 +1076,8 @@
+   if (elt == 0)
+     return;
+ 
++  KF_TRACE ("cse.remove", this_insn, -1, -1, 0, elt->exp, 0, elt->cost, 0, 0);
++
+   /* Mark this element as removed.  See cse_insn.  */
+   elt->first_same_value = 0;
+ 
+@@ -1276,6 +1278,9 @@
+   elt = get_element ();
+   elt->exp = x;
+   elt->cost = COST (x);
++  KF_TRACE ("cse.insert", this_insn, GET_CODE (x) == REG ? REGNO (x) : -1, -1,
++            classp ? "equivalence" : "new-class", x, classp ? classp->exp : 0,
++            elt->cost, classp ? classp->cost : -1, 0);
+   elt->next_same_value = 0;
+   elt->prev_same_value = 0;
+   elt->next_same_hash = table[hash];
+@@ -1477,6 +1482,8 @@
+   register struct table_elt *p;
+   rtx base;
+   HOST_WIDE_INT start, end;
++
++  KF_TRACE ("cse.invalidate", this_insn, GET_CODE (x) == REG ? REGNO (x) : -1, -1, 0, x, 0, 0, 0, 0);
+ 
+   /* If X is a register, dependencies on its contents
+      are recorded through the qty number mechanism.
+@@ -2531,9 +2538,14 @@
+      sometimes simplify the expression.  Many simplifications
+      will not be valid, but some, usually applying the associative rule, will
+      be valid and produce better code.  */
+-  if (GET_CODE (addr) != REG
+-      && validate_change (insn, loc, fold_rtx (addr, insn), 0))
+-    addr = *loc;
++  if (GET_CODE (addr) != REG)
++    {
++      const char *saved_context = kf_trace_context;
++      kf_trace_context = "cse.fold-address";
++      if (validate_change (insn, loc, fold_rtx (addr, insn), 0))
++        addr = *loc;
++      kf_trace_context = saved_context;
++    }
+ 	
+   /* If this address is not in the hash table, we can't look for equivalences
+      of the whole address.  Also, ignore if volatile.  */
+@@ -4949,6 +4961,9 @@
+ 	    const_arg = equiv_constant (folded_arg);
+ 	  }
+ 
++	if (const_arg && GET_CODE (arg) == REG)
++	  KF_TRACE ("cse.constant", this_insn, REGNO (arg), -1, "fold-operand", arg, const_arg, i, 0, 0);
++
+ 	/* For the first three operands, see if the operand
+ 	   is constant or equivalent to a constant.  */
+ 	switch (i)
+--- a/emit-rtl.c
++++ b/emit-rtl.c
+@@ -496,6 +496,7 @@
+ 
+   val = gen_rtx (REG, mode, reg_rtx_no);
+   regno_reg_rtx[reg_rtx_no++] = val;
++  KF_TRACE ("pseudo.create", 0, REGNO (val), -1, 0, val, 0, 0, 0, 0);
+   return val;
+ }
+ 
+@@ -2025,6 +2026,7 @@
+   INSN_CODE (insn) = -1;
+   LOG_LINKS (insn) = NULL;
+   REG_NOTES (insn) = NULL;
++  KF_TRACE ("insn.create", insn, -1, -1, 0, GET_CODE (pattern) == SEQUENCE ? 0 : pattern, 0, 0, 0, 0);
+ 
+   return insn;
+ }
+@@ -2045,6 +2047,7 @@
+   LOG_LINKS (insn) = NULL;
+   REG_NOTES (insn) = NULL;
+   JUMP_LABEL (insn) = NULL;
++  KF_TRACE ("insn.create", insn, -1, -1, "jump", pattern, 0, 0, 0, 0);
+ 
+   return insn;
+ }
+--- a/expr.c
++++ b/expr.c
+@@ -3608,8 +3608,32 @@
+    It also makes a ZERO_EXTEND or SIGN_EXTEND instead of emitting extend insns.
+    This is used for outputting expressions used in initializers.  */
+ 
++static rtx kf_expand_expr_impl (tree, rtx, enum machine_mode, enum expand_modifier);
++
+ rtx
+-expand_expr (exp, target, tmode, modifier)
++expand_expr (tree exp, rtx target, enum machine_mode tmode, enum expand_modifier modifier)
++{
++  rtx result;
++  unsigned long parent = kf_trace_expression;
++  KF_TRACE ("expression.enter", 0, -1, -1, tree_code_name[TREE_CODE (exp)],
++            target, 0, (int) tmode, (int) modifier,
++            TREE_CODE_CLASS (TREE_CODE (exp)) == 'd' ? DECL_UID (exp) : -1);
++  kf_trace_expression = kf_trace_sequence;
++  result = kf_expand_expr_impl (exp, target, tmode, modifier);
++  if (TREE_CODE_CLASS (TREE_CODE (exp)) == 'd' && DECL_NAME (exp))
++    KF_TRACE ("source.value", 0,
++              result && GET_CODE (result) == REG && REGNO (result) >= FIRST_PSEUDO_REGISTER ? REGNO (result) : -1,
++              -1, IDENTIFIER_POINTER (DECL_NAME (exp)), result, 0,
++              DECL_UID (exp), DECL_SOURCE_LINE (exp), 0);
++  KF_TRACE ("expression.result", 0,
++            result && GET_CODE (result) == REG && REGNO (result) >= FIRST_PSEUDO_REGISTER ? REGNO (result) : -1,
++            -1, tree_code_name[TREE_CODE (exp)], result, 0, 0, 0, 0);
++  kf_trace_expression = parent;
++  return result;
++}
++
++static rtx
++kf_expand_expr_impl (exp, target, tmode, modifier)
+      register tree exp;
+      rtx target;
+      enum machine_mode tmode;
+--- a/function.c
++++ b/function.c
+@@ -661,6 +661,7 @@
+   x = gen_rtx (MEM, mode, addr);
+ 
+   stack_slot_list = gen_rtx (EXPR_LIST, VOIDmode, x, stack_slot_list);
++  KF_TRACE ("stack.allocate", 0, -1, -1, 0, x, 0, size, alignment, frame_offset);
+ 
+   return x;
+ }
+@@ -799,6 +800,9 @@
+     }
+ 	      
+ 
++  if (p)
++    KF_TRACE ("stack.reuse", 0, -1, -1, 0, p->slot, 0, size, p->size, temp_slot_level);
++
+   /* If we still didn't find one, make a new temporary.  */
+   if (p == 0)
+     {
+@@ -815,6 +819,7 @@
+   p->rtl_expr = sequence_rtl_expr;
+   p->level = temp_slot_level;
+   p->keep = keep;
++  KF_TRACE ("stack.acquire", 0, -1, -1, 0, p->slot, 0, p->size, p->level, keep);
+   return p->slot;
+ }
+ 
+@@ -927,7 +932,7 @@
+   for (p = temp_slots; p; p = p->next)
+     if (p->in_use && p->level == temp_slot_level && ! p->keep
+ 	&& p->rtl_expr == 0)
+-      p->in_use = 0;
++      { KF_TRACE ("stack.release", 0, -1, -1, "in_use=0", p->slot, 0, p->size, p->level, 0); p->in_use = 0; }
+ 
+   combine_temp_slots ();
+ }
+@@ -942,7 +947,7 @@
+ 
+   for (p = temp_slots; p; p = p->next)
+     if (p->rtl_expr == t)
+-      p->in_use = 0;
++      { KF_TRACE ("stack.release", 0, -1, -1, "in_use=0", p->slot, 0, p->size, p->level, 0); p->in_use = 0; }
+ 
+   combine_temp_slots ();
+ }
+@@ -965,7 +970,7 @@
+ 
+   for (p = temp_slots; p; p = p->next)
+     if (p->in_use && p->level == temp_slot_level && p->rtl_expr == 0)
+-      p->in_use = 0;
++      { KF_TRACE ("stack.release", 0, -1, -1, "in_use=0", p->slot, 0, p->size, p->level, 0); p->in_use = 0; }
+ 
+   combine_temp_slots ();
+ 
+--- a/global.c
++++ b/global.c
+@@ -549,6 +549,9 @@
+ 	      find_reg (allocno_order[i], HARD_CONST (0), 1, 0, 0);
+ 	  }
+     }
++
++  kf_trace_snapshot ("global-alloc", get_insns (), 1);
++  kf_trace_pass = "reload";
+ 
+   /* Do the reloads now while the allocno data still exist, so that we can
+      try to assign new hard regs to any pseudo regs that are spilled.  */
+@@ -940,6 +943,9 @@
+ #else
+ 	  int regno = i;
+ #endif
++	  KF_TRACE ("global.candidate", 0, allocno_reg[allocno], regno,
++	            TEST_HARD_REG_BIT (used, regno) ? "used-mask" : "available-mask",
++	            0, 0, pass, i, class);
+ 	  if (! TEST_HARD_REG_BIT (used, regno)
+ 	      && HARD_REGNO_MODE_OK (regno, mode))
+ 	    {
+@@ -1115,6 +1121,8 @@
+ 
+       /* Yes.  Record it as the hard register of this pseudo-reg.  */
+       reg_renumber[allocno_reg[allocno]] = best_reg;
++      KF_TRACE ("global.select", 0, allocno_reg[allocno], best_reg, 0, 0, 0,
++                allocno_n_refs[allocno], allocno_calls_crossed[allocno], allocno_live_length[allocno]);
+       /* Also of any pseudo-regs that share with it.  */
+       if (reg_may_share[allocno_reg[allocno]])
+ 	for (j = FIRST_PSEUDO_REGISTER; j < max_regno; j++)
+--- a/jump.c
++++ b/jump.c
+@@ -2334,6 +2334,10 @@
+ 		}
+ 	    }
+ 
++	  KF_TRACE ("crossjump.reject", i1, -1, -1,
++	            lose ? "death-notes" : (GET_CODE (p1) != GET_CODE (p2) ? "pattern-code" : "renumbered-rtl"),
++	            i1, i2, minimum, 0, 0);
++
+ 	  /* Insns fail to match; cross jumping is limited to the following
+ 	     insns.  */
+ 
+@@ -2357,6 +2361,7 @@
+ 	}
+ 
+     win:
++      KF_TRACE ("crossjump.equal", i1, -1, -1, 0, i1, i2, minimum, 0, 0);
+       if (GET_CODE (p1) != USE && GET_CODE (p1) != CLOBBER)
+ 	{
+ 	  /* Ok, this insn is potentially includable in a cross-jump here.  */
+@@ -2394,6 +2399,8 @@
+ 
+   if (minimum <= 0 && last1 != 0 && last1 != e1)
+     *f1 = last1, *f2 = last2;
++  KF_TRACE ("crossjump.result", e1, -1, -1, *f1 ? "shareable" : "minimum-or-boundary",
++            *f1, *f2, minimum, 0, 0);
+ }
+ 
+ static void
+@@ -2403,6 +2410,8 @@
+   /* Find an existing label at this point
+      or make a new one if there is none.  */
+   register rtx label = get_label_before (newlpos);
++
++  KF_TRACE ("crossjump.apply", insn, -1, -1, 0, newjpos, newlpos, 0, 0, 0);
+ 
+   /* Make the same jump insn jump to the new point.  */
+   if (GET_CODE (PATTERN (insn)) == RETURN)
+--- a/local-alloc.c
++++ b/local-alloc.c
+@@ -1457,7 +1457,9 @@
+     if (qty_phys_reg[q] >= 0)
+       {
+ 	for (i = qty_first_reg[q]; i >= 0; i = reg_next_in_qty[i])
+-	  reg_renumber[i] = qty_phys_reg[q] + reg_offset[i];
++	  { reg_renumber[i] = qty_phys_reg[q] + reg_offset[i];
++          KF_TRACE ("local.select", 0, i, reg_renumber[i], 0, 0, 0,
++                    qty_birth[q], qty_death[q], qty_n_calls_crossed[q]); }
+ 	if (qty_scratch_rtx[q])
+ 	  {
+ 	    if (GET_CODE (qty_scratch_rtx[q]) == REG)
+@@ -1982,6 +1984,9 @@
+ #else
+       int regno = i;
+ #endif
++      KF_TRACE ("local.candidate", 0, qty_first_reg[qty], regno,
++                TEST_HARD_REG_BIT (first_used, regno) ? "used-mask" : "available-mask",
++                0, 0, just_try_suggested, born_index, dead_index);
+       if (! TEST_HARD_REG_BIT (first_used, regno)
+ 	  && HARD_REGNO_MODE_OK (regno, mode))
+ 	{
+--- a/recog.c
++++ b/recog.c
+@@ -176,6 +176,7 @@
+       || (in_group == 0 && num_changes != 0))
+     abort ();
+ 
++  KF_TRACE ("change.propose", object, -1, -1, 0, old, new, num_changes, in_group, 0);
+   *loc = new;
+ 
+   /* Save the information describing this change.  */
+@@ -287,6 +288,8 @@
+ 
+   if (i == num_changes)
+     {
++      for (i = 0; i < num_changes; i++)
++        KF_TRACE ("change.commit", change_objects[i], -1, -1, 0, change_olds[i], *change_locs[i], i, num_changes, 0);
+       num_changes = 0;
+       return 1;
+     }
+@@ -317,6 +320,7 @@
+      they were made.  */
+   for (i = num_changes - 1; i >= num; i--)
+     {
++      KF_TRACE ("change.cancel", change_objects[i], -1, -1, 0, change_olds[i], *change_locs[i], i, num_changes, 0);
+       *change_locs[i] = change_olds[i];
+       if (change_objects[i] && GET_CODE (change_objects[i]) != MEM)
+ 	INSN_CODE (change_objects[i]) = change_old_codes[i];
+--- a/reload1.c
++++ b/reload1.c
+@@ -1105,6 +1105,9 @@
+ 			  && ! reload_secondary_p[i]))
+   		    continue;
+ 
++		  KF_TRACE ("reload.required", insn, -1, -1, "counted",
++		            reload_in[i], reload_out[i], i, class, reload_when_needed[i]);
++
+ 		  /* Show that a reload register of this class is needed
+ 		     in this basic block.  We do not use insn_needs and
+ 		     insn_groups because they are overly conservative for
+@@ -1425,6 +1428,9 @@
+ 
+ 	      for (i = 0; i < N_REG_CLASSES; i++)
+ 		{
++		  if (insn_needs[i] || insn_groups[i])
++		    KF_TRACE ("reload.requirements", insn, -1, -1, "class-maximum",
++		              insn, 0, i, insn_needs[i], insn_groups[i]);
+ 		  if (max_needs[i] < insn_needs[i])
+ 		    {
+ 		      max_needs[i] = insn_needs[i];
+@@ -2282,6 +2288,7 @@
+     val = 1;
+ 
+   regs_ever_live[spill_regs[n_spills]] = 1;
++  KF_TRACE ("reload.reserve", 0, -1, regno, "spill-register", 0, 0, n_spills, global, 0);
+   n_spills++;
+ 
+   return val;
+@@ -3615,6 +3622,12 @@
+   for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
+     if (hard_reg_n_uses[i].uses != 0)
+       potential_reload_regs[o++] = hard_reg_n_uses[i].regno;
++  for (i = 0; i < FIRST_PSEUDO_REGISTER; i++)
++    KF_TRACE ("reload.spill-cost", 0, -1, hard_reg_n_uses[i].regno, "weighted-uses",
++              0, 0, i, hard_reg_n_uses[i].uses,
++              TEST_HARD_REG_BIT (bad_spill_regs, hard_reg_n_uses[i].regno) != 0);
++  for (i = 0; i < o; i++)
++    KF_TRACE ("reload.spill-order", 0, -1, potential_reload_regs[i], 0, 0, 0, i, 0, 0);
+ }
+ 
+ /* Reload pseudo-registers into hard regs around each insn as needed.
+@@ -4124,8 +4137,20 @@
+ /* 1 if reg REGNO is free as a reload reg for a reload of the sort
+    specified by OPNUM and TYPE.  */
+ 
++static int kf_reload_reg_free_impl (int, int, enum reload_type);
++static rtx kf_reload_insn;
++
+ static int
+-reload_reg_free_p (regno, opnum, type)
++reload_reg_free_p (int regno, int opnum, enum reload_type type)
++{
++  int result = kf_reload_reg_free_impl (regno, opnum, type);
++  KF_TRACE ("reload.free", kf_reload_insn, -1, regno,
++            result ? "available" : "operand-lifetime-conflict", 0, 0, opnum, type, result);
++  return result;
++}
++
++static int
++kf_reload_reg_free_impl (regno, opnum, type)
+      int regno;
+      int opnum;
+      enum reload_type type;
+@@ -4528,12 +4553,19 @@
+ 	 equally, so that inherited reloads have a chance
+ 	 of leapfrogging each other.  */
+ 
++      KF_TRACE ("reload.search", insn, -1, -1, "round-robin", reload_in[r], reload_out[r], r, last_spill_reg, n_spills);
+       for (count = 0, i = last_spill_reg; count < n_spills; count++)
+ 	{
+ 	  int class = (int) reload_reg_class[r];
+ 
+ 	  i = (i + 1) % n_spills;
+-
++	  KF_TRACE ("reload.usage", insn, -1, spill_regs[i], "masks", reload_in[r], 0,
++	            TEST_HARD_REG_BIT (reload_reg_used_at_all, spill_regs[i]) != 0,
++	            TEST_HARD_REG_BIT (reload_reg_used_for_inherit, spill_regs[i]) != 0,
++	            TEST_HARD_REG_BIT (reg_class_contents[class], spill_regs[i]) != 0);
++
++	  KF_TRACE ("reload.candidate", insn, -1, spill_regs[i], "round-robin",
++	            reload_in[r], reload_out[r], r, pass, i);
+ 	  if (reload_reg_free_p (spill_regs[i], reload_opnum[r],
+ 				 reload_when_needed[r])
+ 	      && TEST_HARD_REG_BIT (reg_class_contents[class], spill_regs[i])
+@@ -4635,6 +4667,7 @@
+ 
+ 	    reload_reg_rtx[r] = new;
+ 	    reload_spill_index[r] = i;
++	    KF_TRACE ("reload.select", insn, -1, regno, "allocate", reload_in[r], reload_out[r], r, pass, i);
+ 	    return 1;
+ 	  }
+     }
+@@ -4693,6 +4726,7 @@
+   HARD_REG_SET save_reload_reg_used_in_other_addr;
+   HARD_REG_SET save_reload_reg_used_at_all;
+ 
++  kf_reload_insn = insn;
+   bzero (reload_inherited, MAX_RELOADS);
+   bzero (reload_inheritance_insn, MAX_RELOADS * sizeof (rtx));
+   bzero (reload_override_in, MAX_RELOADS * sizeof (rtx));
+--- a/reorg.c
++++ b/reorg.c
+@@ -870,6 +870,7 @@
+       /* Show that this copy of the insn isn't deleted.  */
+       INSN_DELETED_P (tem) = 0;
+ 
++      KF_TRACE ("delay.place", insn, -1, -1, 0, delay_insn, tem, i, length, avail);
+       XVECEXP (seq, 0, i) = tem;
+       PREV_INSN (tem) = XVECEXP (seq, 0, i - 1);
+       NEXT_INSN (XVECEXP (seq, 0, i - 1)) = tem;
+--- a/rtl.h
++++ b/rtl.h
+@@ -939,3 +939,5 @@
+ /* Translates rtx code to tree code, for those codes needed by
+    REAL_ARITHMETIC.  */
+ extern int rtx_to_tree_code ();
++
++#include "kf-trace.h"
+--- a/sched.c
++++ b/sched.c
+@@ -934,6 +934,7 @@
+   PUT_REG_NOTE_KIND (link, dep_type);
+   XEXP (link, 0) = elem;
+   XEXP (link, 1) = LOG_LINKS (insn);
++  KF_TRACE ("schedule.dependency", insn, -1, -1, 0, insn, elem, dep_type, 0, 0);
+   LOG_LINKS (insn) = link;
+ }
+ 
+@@ -1405,6 +1406,7 @@
+       cost = ncost;
+     }
+ #endif
++  KF_TRACE ("schedule.cost", insn, -1, -1, 0, insn, used, cost, REG_NOTE_KIND (link), 0);
+   return cost;
+ }
+ 
+@@ -3076,6 +3078,15 @@
+   LOG_LINKS (sched_before_next_call) = 0;
+ 
+   n_insns += sched_analyze (head, tail);
++  if (kf_trace_active ())
++    {
++      rtx trace_insn, trace_link;
++      for (trace_insn = head; trace_insn != next_tail; trace_insn = NEXT_INSN (trace_insn))
++        if (GET_RTX_CLASS (GET_CODE (trace_insn)) == 'i')
++          for (trace_link = LOG_LINKS (trace_insn); trace_link; trace_link = XEXP (trace_link, 1))
++            KF_TRACE ("schedule.graph", trace_insn, -1, -1, "analyzed",
++                      trace_insn, XEXP (trace_link, 0), REG_NOTE_KIND (trace_link), b, 0);
++    }
+   if (n_insns == 0)
+     {
+       free_pending_lists ();
+@@ -3556,7 +3567,10 @@
+ 	    }
+ 	}
+       n_ready = new_ready;
++      for (i = 0; i < n_ready; i++)
++        KF_TRACE ("schedule.ready", ready[i], -1, -1, "sorted", ready[i], 0, i, INSN_PRIORITY (ready[i]), clock);
+       last_scheduled_insn = insn = ready[0];
++      KF_TRACE ("schedule.select", insn, -1, -1, "backward", insn, 0, clock, b, INSN_PRIORITY (insn));
+ 
+       /* The first insn scheduled becomes the new tail.  */
+       if (tail == 0)
+--- a/toplev.c
++++ b/toplev.c
+@@ -2440,6 +2440,8 @@
+ #endif
+ 
+   insns = get_insns ();
++  kf_trace_snapshot ("expand", insns, 0);
++  kf_trace_pass = "jump1";
+ 
+   /* Copy any shared structure that should not be shared.  */
+ 
+@@ -2481,6 +2483,9 @@
+ 	       fflush (jump_opt_dump_file);
+ 	     });
+ 
++  kf_trace_snapshot ("jump1", insns, 0);
++  kf_trace_pass = "cse1";
++
+   /* Perform common subexpression elimination.
+      Nonzero value from `cse_main' means that jumps were simplified
+      and some code may now be unreachable, so do
+@@ -2525,6 +2530,9 @@
+ 			IDENTIFIER_POINTER (DECL_NAME (decl)));
+ 	     });
+ 
++  kf_trace_snapshot ("cse1", insns, 0);
++  kf_trace_pass = "loop";
++
+   /* Move constant computations out of loops.  */
+ 
+   if (optimize > 0)
+@@ -2551,6 +2559,9 @@
+ 			IDENTIFIER_POINTER (DECL_NAME (decl)));
+ 	     });
+ 
++  kf_trace_snapshot ("loop", insns, 0);
++  kf_trace_pass = "cse2";
++
+   if (optimize > 0 && flag_rerun_cse_after_loop)
+     {
+       TIMEVAR (cse2_time, reg_scan (insns, max_reg_num (), 0));
+@@ -2574,6 +2585,9 @@
+ 	       print_rtl (cse2_dump_file, insns);
+ 	       fflush (cse2_dump_file);
+ 	     });
++
++  kf_trace_snapshot ("cse2", insns, 0);
++  kf_trace_pass = "flow";
+ 
+   /* We are no longer anticipating cse in this function, at least.  */
+ 
+@@ -2629,6 +2643,9 @@
+ 	       print_rtl (flow_dump_file, insns);
+ 	       fflush (flow_dump_file);
+ 	     });
++
++  kf_trace_snapshot ("flow", insns, 0);
++  kf_trace_pass = "combine";
+ 
+   /* If -opt, try combining insns through substitution.  */
+ 
+@@ -2647,6 +2664,9 @@
+ 	       fflush (combine_dump_file);
+ 	     });
+ 
++  kf_trace_snapshot ("combine", insns, 0);
++  kf_trace_pass = "sched1";
++
+   /* Print function header into sched dump now
+      because doing the sched analysis makes some of the dump.  */
+ 
+@@ -2673,6 +2693,9 @@
+ 	       print_rtl (sched_dump_file, insns);
+ 	       fflush (sched_dump_file);
+ 	     });
++
++  kf_trace_snapshot ("sched1", insns, 0);
++  kf_trace_pass = "local-alloc";
+ 
+   /* Unless we did stupid register allocation,
+      allocate pseudo-regs that are used only within 1 basic block.  */
+@@ -2702,6 +2725,9 @@
+ 	     fprintf (global_reg_dump_file, "\n;; Function %s\n\n",
+ 		      IDENTIFIER_POINTER (DECL_NAME (decl))));
+ 
++  kf_trace_snapshot ("local-alloc", insns, 1);
++  kf_trace_pass = "global-alloc";
++
+   /* Unless we did stupid register allocation,
+      allocate remaining pseudo-regs, then do the reload pass
+      fixing up any insns that are invalid.  */
+@@ -2725,6 +2751,9 @@
+   if (failure)
+     goto exit_rest_of_compilation;
+ 
++  kf_trace_snapshot ("reload", insns, 1);
++  kf_trace_pass = "sched2";
++
+   reload_completed = 1;
+ 
+   /* On some machines, the prologue and epilogue code, or parts thereof,
+@@ -2763,6 +2792,9 @@
+   if (optimize > 0 && only_leaf_regs_used () && leaf_function_p ())
+     leaf_function = 1;
+ #endif
++
++  kf_trace_snapshot ("sched2", insns, 0);
++  kf_trace_pass = "jump2";
+ 
+   /* One more attempt to remove jumps to .+1
+      left by dead-store-elimination.
+@@ -2784,6 +2816,9 @@
+ 	       print_rtl (jump2_opt_dump_file, insns);
+ 	       fflush (jump2_opt_dump_file);
+ 	     });
++
++  kf_trace_snapshot ("jump2", insns, 0);
++  kf_trace_pass = "delay";
+ 
+   /* If a scheduling pass for delayed branches is to be done,
+      call the scheduling code. */
+@@ -2805,6 +2840,9 @@
+     }
+ #endif
+ 
++  kf_trace_snapshot ("delay", insns, 0);
++  kf_trace_pass = "final";
++
+   if (optimize > 0)
+     /* Shorten branches.  */
+     TIMEVAR (shorten_branch_time,
+@@ -2873,7 +2911,10 @@
+     TIMEVAR (symout_time, dwarfout_file_scope_decl (decl, 0));
+ #endif
+ 
++  kf_trace_snapshot ("final", get_insns (), 0);
++
+  exit_rest_of_compilation:
++  kf_trace_pass = "expand";
+ 
+   /* In case the function was not output,
+      don't leave any temporary anonymous types
