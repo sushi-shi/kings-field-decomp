@@ -32,6 +32,9 @@ promotes a probe to a proven historical toolchain.
 - [game-actor-awareness.md](game-actor-awareness.md): exact actor lifecycle
   update through the shared suppression store, with CSE traversal and small
   constant-sharing controls.
+- [game-effect-dispatch-traces.md](game-effect-dispatch-traces.md): effect
+  collision/radius ownership, halfword scale assignments and scalar updates;
+  all instructions align structurally, with 42 register-word differences.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
@@ -86,7 +89,7 @@ promotes a probe to a proven historical toolchain.
   [105-occurrence remainder ledger](game-effect-update-literal-ledger.md).
 - [game-effect-dispatch-constants.md](game-effect-dispatch-constants.md): full
   dispatcher tuning/phase audit, parent-child timing, random-call order and
-  the [153-occurrence remainder ledger](game-effect-dispatch-literal-ledger.md).
+  the [133-occurrence remainder ledger](game-effect-dispatch-literal-ledger.md).
 - [game-magic-collision-constants.md](game-magic-collision-constants.md): magic
   launch/targeting units, shared collision-rectangle capacity and the complete
   [52-occurrence remainder ledger](game-magic-collision-literal-ledger.md).

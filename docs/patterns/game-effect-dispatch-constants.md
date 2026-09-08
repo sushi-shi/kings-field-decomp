@@ -1,5 +1,9 @@
 # Effect dispatcher constants and remainder ledger
 
+The later [value-lifetime reconstruction](game-effect-dispatch-traces.md)
+preserves these constants and records the current 99.827810% result. The
+sections below describe the earlier constant-naming campaign.
+
 ## Function Match Plan
 
 Start at `29d1ddb`, with freshly initialized hash-validated retail and the

@@ -148,7 +148,6 @@ void effect_update_dispatch(void)
     KfEffectRecord *effect = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
     KfMagicRecord *impact_magic;
-    KfEffectRecord *linked_effect;
     KfActor *target;
     const SoundRef *phase_sound;
     VECTOR impact_position;
@@ -185,12 +184,14 @@ shared_projectile:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
             collision = effect_map_collision(&effect->position, radius);
             if (collision != (u32)KF_COLLISION_NONE) {
+                u16 impact_power;
+
                 impact_magic = current_effect_magic_record;
                 collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
                 if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
                     goto lightning_impact;
                 }
-                power = effect_magic_power(effect);
+                impact_power = effect_magic_power(effect);
                 if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                     audio_play_spatial_default_range(
                         &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
@@ -198,14 +199,14 @@ shared_projectile:
                 if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
                     if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         actor_apply_damage(
-                            (u16)collision, power,
+                            (u16)collision, impact_power,
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
                             impact_magic->damage_components[1],
                             0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                     } else if (kind != KF_EFFECT_KIND_EMERGING_PROJECTILE) {
                         actor_apply_damage(
-                            (u16)collision, power,
+                            (u16)collision, impact_power,
                             0, 0, 0, impact_magic->damage_components[0],
                             impact_magic->damage_components[1],
                             KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
@@ -305,7 +306,11 @@ lightning_impact:
                         effect->propagation.generations_remaining--;
                         scatter = effect->direction.vector;
                         effect_scatter_triple((u16 *)&scatter);
-                        effect->control.frames_remaining = effect->propagation.generations_remaining == 0 ? SCATTER_FINAL_COUNTDOWN : SCATTER_BRANCH_COUNTDOWN;
+                        if (effect->propagation.generations_remaining == 0) {
+                            effect->control.frames_remaining = SCATTER_FINAL_COUNTDOWN;
+                        } else {
+                            effect->control.frames_remaining = SCATTER_BRANCH_COUNTDOWN;
+                        }
                         effect_pool_construct(
                             effect->id, effect->type, kind, &effect->position, &scatter,
                             effect->propagation.generations_remaining, effect->control.frames_remaining,
@@ -317,8 +322,8 @@ lightning_impact:
                 }
                 pulse_angle = effect->control.frames_remaining << SCATTER_PULSE_ANGLE_SHIFT;
                 value = rsin(pulse_angle);
-                next = effect->visual.pulse_base_scale
-                    + ((effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1));
+                value = (effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1);
+                next = effect->visual.pulse_base_scale + value;
                 effect->scale_z = next;
                 effect->scale_x = next;
                 value = rcos(pulse_angle);
@@ -429,7 +434,12 @@ play_phase_sound:
         }
         goto advance_effect_phase;
 
-    case KF_EFFECT_KIND_GROUND_TRAIL:
+    case KF_EFFECT_KIND_GROUND_TRAIL: {
+        KfEffectRecord *linked_effect;
+        u32 collision;
+        u16 collision_kind;
+        u16 power;
+
         linked_effect = &effect_pool_records[(u8)effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
         if (collision != (u32)KF_COLLISION_NONE) {
@@ -458,8 +468,7 @@ play_phase_sound:
             s32 scale = effect->scale_x - GROUND_TRAIL_SHRINK_STEP;
 
             effect->scale_x = scale;
-            effect->scale_z = scale;
-            effect->scale_y = scale;
+            effect->scale_y = effect->scale_z = scale;
             if ((s16)scale <= 0) {
                 effect->type = KF_EFFECT_SLOT_FREE;
             }
@@ -471,24 +480,25 @@ play_phase_sound:
             effect->render_id = effect->base_render_id;
         }
         break;
+    }
 
     case KF_EFFECT_KIND_RADIAL_BLAST:
         if (++effect->phase < RADIAL_BLAST_PHASE_END) {
-            next = effect->scale_x + RADIAL_BLAST_SCALE_STEP;
-            effect->scale_x = next;
-            effect->scale_z = next;
-            effect->scale_y = next;
-            radius = phase * RADIAL_BLAST_RADIUS_STEP;
+            u32 damage_radius;
+
+            effect->scale_y = effect->scale_z =
+                effect->scale_x += RADIAL_BLAST_SCALE_STEP;
+            damage_radius = phase * RADIAL_BLAST_RADIUS_STEP;
             power = effect_magic_power(effect);
             if (effect->phase & 1) {
                 actor_pool_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
-                    radius, KF_FIXED12_ONE, power,
+                    damage_radius, KF_FIXED12_ONE, power,
                     0, 0, 0, magic->damage_components[0],
                     magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
                     (const struct KfVec3i *)&effect->position,
-                    radius, KF_FIXED12_ONE, power,
+                    damage_radius, KF_FIXED12_ONE, power,
                     0, 0, 0, magic->damage_components[0],
                     magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
             }
@@ -515,11 +525,14 @@ randomize_homing_direction:
                     goto randomize_homing_direction;
                 }
             } else if (effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
+                s32 aim_height;
+
                 effect->direction.words.y = vector_xz_to_angle(
                     player_state.camera_position.vx - effect->position.vx,
                     effect->position.vz - player_state.camera_position.vz);
+                aim_height = effect->position.vy - HOMING_PLAYER_AIM_Y_OFFSET;
                 desired_pitch = vector_xz_to_angle(
-                    effect->position.vy - HOMING_PLAYER_AIM_Y_OFFSET - player_state.camera_position.vy,
+                    aim_height - player_state.camera_position.vy,
                     /* Retail reads the shared distance slot before this branch
                      * has initialized it; preserve that original behavior. */
                     -target_distance);
@@ -552,8 +565,8 @@ randomize_homing_direction:
             effect->rotation.vx, (s16)effect->direction.words.x, HOMING_TURN_STEP);
         effect->rotation.vy = angle_approach(
             effect->rotation.vy, (s16)effect->direction.words.y, HOMING_TURN_STEP);
-        local_motion.vx = 0;
         local_motion.vy = 0;
+        local_motion.vx = 0;
         local_motion.vz = HOMING_FORWARD_STEP;
         matrix_set_rotation_x(effect->rotation.vx, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
@@ -613,27 +626,27 @@ randomize_homing_direction:
         if (phase > LIGHTNING_BLAST_PHASE_LAST) {
             goto invalidate_and_advance;
         }
-        next = effect->scale_x + LIGHTNING_BLAST_SCALE_STEP;
-        effect->scale_x = next;
-        effect->scale_z = next;
-        effect->scale_y = next;
+        effect->scale_y = effect->scale_z =
+            effect->scale_x += LIGHTNING_BLAST_SCALE_STEP;
         effect->rotation.vy = (effect->rotation.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         if (phase & 1) {
             u32 damage_radius;
+            KfMagicRecord *lightning_magic;
 
             position.x = effect->position.vx;
             position.y = KF_COLLISION_IGNORE_HEIGHT;
             position.z = effect->position.vz;
             damage_radius = phase * LIGHTNING_BLAST_RADIUS_STEP;
             power = effect_magic_power(effect);
+            lightning_magic = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)];
             actor_pool_apply_radial_damage(
                 &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[0],
-                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+                lightning_magic->damage_components[0],
+                lightning_magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             player_apply_radial_damage(
                 &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[0],
-                magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
+                lightning_magic->damage_components[0],
+                lightning_magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
         }
         goto advance_effect_phase;
     }
@@ -791,7 +804,8 @@ publish_actor_spawner_scale:
             effect->scale_x = scale;
             effect->scale_z = scale;
             effect->scale_y = scale;
-            effect->phase = scale_phase + 1;
+            scale_phase++;
+            effect->phase = scale_phase;
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }

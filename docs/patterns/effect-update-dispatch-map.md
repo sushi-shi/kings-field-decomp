@@ -5,6 +5,10 @@ GAME's per-kind effect dispatcher belongs to `game.effect_dispatch`
 first pass covers all 16 switch destinations and owns the 49-entry jump
 table, but neither that coverage nor matching call counts proves its semantics.
 
+The subsequent [value-lifetime reconstruction](game-effect-dispatch-traces.md)
+records the current 99.827810% result, full raw/control/data audit and the
+remaining 42 register-field differences.
+
 ## Function Match Plan (2026-09-06)
 
 - Identity: GAME.EXE `0x80038a38`, body/extent `0x180c` (6,156 bytes),

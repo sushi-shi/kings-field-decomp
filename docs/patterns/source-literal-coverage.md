@@ -3,7 +3,7 @@
 Final naming/accounting snapshot, including the graphics-owner integration and
 [shared-bound review](source-constant-names.md#final-shared-bound-review):
 **111 C files**, **112 source/image variants**, and
-**5,778 inline numeric/character occurrences**. Counts include authored
+**5,777 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -11,11 +11,11 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 The separate [header ledger](header-literal-ledger.md) covers **53 headers /
 169 retained occurrences**, including 36 headers with zero retained tokens.
-Together the C and header ledgers account for **5,947 retained occurrences**.
+Together the C and header ledgers account for **5,946 retained occurrences**.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,778 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,777 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -106,6 +106,11 @@ Historical ledgers and domain notes may describe earlier source; their old
 counts are not current totals. No builds, compiler checks, tests, post-edit
 matches or banking were run for this naming completion.
 
+The later [dispatcher reconstruction](game-effect-dispatch-traces.md) replaces
+one explicit phase `+1` with the increment of its byte snapshot. Its 133
+remaining token/expression occurrences are independently reconciled, and the
+current C census is 5,777. Its matching verification is separate from naming.
+
 ## Retained literals and separate reconstruction work
 
 The naming/accounting pass is complete under the requested “accounted for or
@@ -158,7 +163,7 @@ retained literal reasons preserve these limitations without inventing semantics.
 | [color_lerp_rgb555.c](../../src/game/color_lerp_rgb555.c) | 0 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [debug_text.c](../../src/game/debug_text.c) | 45 | [complete formatter ledger](formatter-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [display_play_transition.c](../../src/game/display_play_transition.c) | 19 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [effect_dispatch.c](../../src/game/effect_dispatch.c) | 134 | [game-effect-dispatch ledger](game-effect-dispatch-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [effect_dispatch.c](../../src/game/effect_dispatch.c) | 133 | [game-effect-dispatch ledger](game-effect-dispatch-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_map_collision.c](../../src/game/effect_map_collision.c) | 43 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_pool.c](../../src/game/effect_pool.c) | 138 | [game-effect-pool ledger](game-effect-pool-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [effect_update.c](../../src/game/effect_update.c) | 95 | [game-effect-update ledger](game-effect-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
