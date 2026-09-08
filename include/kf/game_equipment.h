@@ -17,6 +17,16 @@ KF_ENUM_BEGIN(KfEquipmentSlot, u8)
     KF_EQUIPMENT_SLOT_REFRESH_ONLY = 0xff
 KF_ENUM_END(KfEquipmentSlot)
 
+/* Halfword positions in the weapon record's attack array. */
+enum {
+    KF_WEAPON_ATTACK_CUTTING = 0,
+    KF_WEAPON_ATTACK_STRIKING = 1,
+    KF_WEAPON_ATTACK_PIERCING = 2,
+    KF_WEAPON_ATTACK_HOLY = 3,
+    KF_WEAPON_ATTACK_FIRE = 4,
+    KF_WEAPON_ATTACK_COMPONENT_COUNT = 5
+};
+
 enum {
     KF_WEAPON_RECORD_COUNT = 16,
     KF_ARMOR_RECORD_COUNT = 42,
@@ -59,7 +69,7 @@ typedef struct KfArmorRecord {
 typedef struct KfWeaponRecord {
     u8 unknown_00;
     u8 charge_rate;
-    u16 attack_components[5];
+    u16 attack_components[KF_WEAPON_ATTACK_COMPONENT_COUNT];
     u16 hp_regen_interval;
     u16 mp_regen_interval;
     u8 unknown_10[0x02];

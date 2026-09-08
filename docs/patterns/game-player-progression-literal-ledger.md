@@ -1,6 +1,6 @@
 # Player progression and combat-stat literal ledger
 
-Complete ledger for the four functions below: **38 retained occurrences**,
+Complete ledger for the four functions below: **33 retained occurrences**,
 down from 63. Claims and named definitions are excluded; signs are operators.
 Other functions and initializers in `player_death.c` remain outside this ledger.
 See the [progression review](game-player-progression.md) for evidence and verification.
@@ -20,11 +20,6 @@ See the [progression review](game-player-progression.md) for evidence and verifi
 | `player_recalculate_combat_stats` | 252 | `0` | `player_state.fire_defense = 0;` | Clear this named attack/defense/resistance accumulator before rebuilding equipment contributions; zero is the additive origin, not a shared state code. |
 | `player_recalculate_combat_stats` | 257 | `0` | `if (power < 0) {` | Clamp curse-reduced power at the arithmetic zero floor before narrowing back to the player field. |
 | `player_recalculate_combat_stats` | 258 | `0` | `power = 0;` | Clamp curse-reduced power at the arithmetic zero floor before narrowing back to the player field. |
-| `player_recalculate_combat_stats` | 264 | `0` | `player_state.cutting_attack += weapon->attack_components[0];` | Weapon-record component 0 is the positional field for cutting_attack; the array order is cutting, striking, piercing, holy, fire. Preserve the existing resource representation. |
-| `player_recalculate_combat_stats` | 265 | `1` | `player_state.striking_attack += weapon->attack_components[1];` | Weapon-record component 1 is the positional field for striking_attack; the array order is cutting, striking, piercing, holy, fire. Preserve the existing resource representation. |
-| `player_recalculate_combat_stats` | 266 | `2` | `player_state.piercing_attack += weapon->attack_components[2];` | Weapon-record component 2 is the positional field for piercing_attack; the array order is cutting, striking, piercing, holy, fire. Preserve the existing resource representation. |
-| `player_recalculate_combat_stats` | 267 | `3` | `player_state.holy_attack += weapon->attack_components[3];` | Weapon-record component 3 is the positional field for holy_attack; the array order is cutting, striking, piercing, holy, fire. Preserve the existing resource representation. |
-| `player_recalculate_combat_stats` | 268 | `4` | `player_state.fire_attack += weapon->attack_components[4];` | Weapon-record component 4 is the positional field for fire_attack; the array order is cutting, striking, piercing, holy, fire. Preserve the existing resource representation. |
 | `player_recalculate_combat_stats` | 358 | `1` | `if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {` | One above the inclusive power cap preserves the original >=1000 test after the preceding halfword stores. Do not move the clamp before those stores. |
 | `player_recalculate_combat_stats` | 361 | `1` | `if (player_state.magic >= KF_PLAYER_POWER_MAX + 1) {` | One above the inclusive power cap preserves the original >=1000 test after the preceding halfword stores. Do not move the clamp before those stores. |
 | `player_increment_physical_power_training` | 372 | `0` | `player_state.physical_power_training = 0;` | Reset the completed training counter to zero; excess points are discarded rather than carried to another gain. The raw reset occupies the subsequent cap-branch delay slot. |

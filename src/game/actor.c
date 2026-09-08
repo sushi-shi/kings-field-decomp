@@ -14,6 +14,7 @@ enum {
 
 enum {
     COMBAT_BASE_POWER_WEIGHT_DIVISOR = 5,
+    COMBAT_DEFENSE_DENOMINATOR_MULTIPLIER = 2,
     ACTOR_DYING_DAMAGE_CUTOFF_PHASE = 1548,
     ACTOR_STATUS_CHANCE_RANDOM_SHIFT = 7,
     ACTOR_CONE_INITIAL_BEST_ERROR = 30000,
@@ -306,7 +307,7 @@ s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
     if (defense == 0) {
         defense = 1;
     }
-    return difference + attack * attack / (defense * 2);
+    return difference + attack * attack / (defense * COMBAT_DEFENSE_DENOMINATOR_MULTIPLIER);
 }
 
 ADDRESS(0x8002d120, 0x388)
@@ -344,23 +345,23 @@ void actor_apply_damage(
     damage = combat_calculate_damage_component(
         base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         component0 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[0] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        definition->defenses[KF_ACTOR_DEFENSE_CUTTING] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         component1 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[1] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        definition->defenses[KF_ACTOR_DEFENSE_STRIKING] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         component2 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[2] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        definition->defenses[KF_ACTOR_DEFENSE_PIERCING] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         component3 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[3] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        definition->defenses[KF_ACTOR_DEFENSE_HOLY] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
         component4 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[4] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        definition->defenses[KF_ACTOR_DEFENSE_FIRE] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
     damage += ACTOR_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (damage / ACTOR_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
     hit_flags &= KF_ACTOR_DAMAGE_CREDIT_MASK;
@@ -501,9 +502,9 @@ void actor_try_attack_player(
         status_effect = definition->status_effect;
     }
     player_apply_damage(
-        definition->attack_components[0],
-        definition->attack_components[1],
-        definition->attack_components[2],
+        definition->attack_components[KF_ACTOR_ATTACK_CUTTING],
+        definition->attack_components[KF_ACTOR_ATTACK_STRIKING],
+        definition->attack_components[KF_ACTOR_ATTACK_PIERCING],
         status_effect,
         0,
         0,

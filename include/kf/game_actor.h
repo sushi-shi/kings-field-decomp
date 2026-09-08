@@ -113,6 +113,23 @@ enum {
     KF_ACTOR_SOUND_COUNT = 3
 };
 
+/* Halfword positions in the actor definition's attack and defense arrays. */
+enum {
+    KF_ACTOR_ATTACK_CUTTING = 0,
+    KF_ACTOR_ATTACK_STRIKING = 1,
+    KF_ACTOR_ATTACK_PIERCING = 2,
+    KF_ACTOR_ATTACK_COMPONENT_COUNT = 3
+};
+
+enum {
+    KF_ACTOR_DEFENSE_CUTTING = 0,
+    KF_ACTOR_DEFENSE_STRIKING = 1,
+    KF_ACTOR_DEFENSE_PIERCING = 2,
+    KF_ACTOR_DEFENSE_HOLY = 3,
+    KF_ACTOR_DEFENSE_FIRE = 4,
+    KF_ACTOR_DEFENSE_COMPONENT_COUNT = 5
+};
+
 /* Shared actor selection/action ranges and random-angle extraction. */
 enum {
     KF_ACTOR_MULTI_HIT_FORWARD_MIN_RANGE = 8000,
@@ -193,8 +210,8 @@ typedef struct KfActorDefinition {
     u16 initial_health;
     u16 effect_owner_id;
     u16 experience_reward;
-    u16 attack_components[3];
-    u16 defenses[5];
+    u16 attack_components[KF_ACTOR_ATTACK_COMPONENT_COUNT];
+    u16 defenses[KF_ACTOR_DEFENSE_COMPONENT_COUNT];
     u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
 

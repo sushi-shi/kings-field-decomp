@@ -274,11 +274,11 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
         weapon = &weapon_records[KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id)];
-        player_state.cutting_attack += weapon->attack_components[0];
-        player_state.striking_attack += weapon->attack_components[1];
-        player_state.piercing_attack += weapon->attack_components[2];
-        player_state.holy_attack += weapon->attack_components[3];
-        player_state.fire_attack += weapon->attack_components[4];
+        player_state.cutting_attack += weapon->attack_components[KF_WEAPON_ATTACK_CUTTING];
+        player_state.striking_attack += weapon->attack_components[KF_WEAPON_ATTACK_STRIKING];
+        player_state.piercing_attack += weapon->attack_components[KF_WEAPON_ATTACK_PIERCING];
+        player_state.holy_attack += weapon->attack_components[KF_WEAPON_ATTACK_HOLY];
+        player_state.fire_attack += weapon->attack_components[KF_WEAPON_ATTACK_FIRE];
     }
     if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
         armor = &armor_records[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];

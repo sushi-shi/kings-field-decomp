@@ -1,7 +1,7 @@
 # Actor-core remainder literal ledger
 
-Complete account of **171 numeric occurrences** in `src/game/actor.c`: 89
-authored initializer occurrences and 82 function occurrences. The
+Complete account of **162 numeric occurrences** in `src/game/actor.c`: 89
+authored initializer occurrences and 73 function occurrences. The
 [core review](game-actor-core-constants.md) records names, units and verification.
 Comments, strings, identifier digits, enums and retail claims are excluded.
 Signs stay in expressions; repeated tokens each have their own row.
@@ -132,14 +132,8 @@ culling policy; the earlier asset-variant description was incorrect.
 | `combat_calculate_damage_component` | 304 | `0` | `difference = 0;` | Clamp the attack-minus-defense term at zero. |
 | `combat_calculate_damage_component` | 306 | `0` | `if (defense == 0) {` | Replace zero defense with one before dividing; retain the formula boundary. |
 | `combat_calculate_damage_component` | 307 | `1` | `defense = 1;` | Replace zero defense with one before dividing; retain the formula boundary. |
-| `combat_calculate_damage_component` | 309 | `2` | `return difference + attack * attack / (defense * 2);` | The squared-attack term divides by twice defense; explicit arithmetic in the damage formula. |
 | `actor_apply_damage` | 330 | `7` | `if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {` | Authored floor 5 / actor definition 7 selects the boss-specific damage or audio policy. |
 | `actor_apply_damage` | 334 | `0` | `if (actor->health == 0) {` | Zero-health guard distinguishes existing death from a newly credited hit/kill. |
-| `actor_apply_damage` | 347 | `0` | `definition->defenses[0] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
-| `actor_apply_damage` | 351 | `1` | `definition->defenses[1] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
-| `actor_apply_damage` | 355 | `2` | `definition->defenses[2] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
-| `actor_apply_damage` | 359 | `3` | `definition->defenses[3] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
-| `actor_apply_damage` | 363 | `4` | `definition->defenses[4] * ACTOR_DAMAGE_SUBUNITS_PER_HP);` | Fixed defense component index matching this API argument position; later payload meanings are caller-dependent. |
 | `actor_apply_damage` | 364 | `2` | `damage += ACTOR_DAMAGE_SUBUNITS_PER_HP / 2;` | Add half an HP in subunits before integer rounding. |
 | `actor_apply_damage` | 367 | `0` | `if (damage == 0) {` | A rounded zero-damage hit has no effect. |
 | `actor_apply_damage` | 370 | `0` | `if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {` | Zero-health guard distinguishes existing death from a newly credited hit/kill. |
@@ -157,9 +151,6 @@ culling policy; the earlier asset-variant description was incorrect.
 | `actor_try_attack_player` | 486 | `1` | `if (distance == -1) {` | Established negative-one miss from distance/overlap queries. |
 | `actor_try_attack_player` | 498 | `0` | `status_effect = 0;` | No status payload unless the chance test succeeds. |
 | `actor_try_attack_player` | 499 | `0` | `if (definition->status_effect_chance != 0` | Zero chance skips the status RNG draw. |
-| `actor_try_attack_player` | 504 | `0` | `definition->attack_components[0],` | Physical attack component index: cutting, striking, piercing in slots 0,1,2. |
-| `actor_try_attack_player` | 505 | `1` | `definition->attack_components[1],` | Physical attack component index: cutting, striking, piercing in slots 0,1,2. |
-| `actor_try_attack_player` | 506 | `2` | `definition->attack_components[2],` | Physical attack component index: cutting, striking, piercing in slots 0,1,2. |
 | `actor_try_attack_player` | 508 | `0` | `0,` | No payload in the two remaining damage channels. |
 | `actor_try_attack_player` | 509 | `0` | `0,` | No payload in the two remaining damage channels. |
 | `actor_pool_find_target_in_cone` | 522 | `0` | `KfActor *best = 0;` | Null pointer: no free/selected actor, cleared animation cache, or consumed player target. |

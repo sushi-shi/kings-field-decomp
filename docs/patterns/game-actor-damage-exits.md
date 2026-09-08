@@ -1,5 +1,34 @@
 # GAME actor damage guards and shared exits
 
+## Combat-component naming follow-up
+
+Function Match Plan: replace raw weapon/actor component indices with local
+record-domain index enums and use their counts in the existing array extents.
+Also name the actor-target formula's denominator multiplier. Do not change
+arrays to differently laid-out objects, alter API arguments, or reuse these
+indices for the mode-dependent magic-record payload.
+
+| GAME VA / bytes | Function | Reviewed constant/slot evidence |
+| --- | --- | --- |
+| `80015714 / 0x814` | `player_recalculate_combat_stats` | The five weapon halfwords at +2..+0a feed named cutting/striking/piercing/holy/fire player fields in order. The current player-combat dossier covers this unchanged slot sequence. |
+| `8002d078 / 0xa8` | `combat_calculate_damage_component` | `8002d0e0` doubles defense for the squared-attack denominator. Keep signed division, the zero-defense guard and the base-power contribution to attack. No calls/data references; one validated internal branch and `jr`/`nop` return. |
+| `8002d120 / 0x388` | `actor_apply_damage` | `8002d234..8002d2d8` read five halfwords at definition +8c..+94. The player's weapon call binds them to cutting/striking/piercing/holy/fire. The holy slot also receives non-fire magic payload; the index name denotes the weapon channel, not immunity to other damage sources. Ten proven calls, five validated references and an 88-byte frame. |
+| `8002d6a0 / 0x158` | `actor_try_attack_player` | `8002d7ac..8002d7b4` load actor attack +86/+88/+8a into a0/a1/a2 for `player_apply_damage`, whose corresponding arguments use cutting/striking/piercing defenses. Five proven calls, seven validated references and a 56-byte frame. |
+
+Fresh GAME disassembly/CFG, xrefs, strings and stored match views, callers,
+adjacent functions and history agree with these game-owned record consumers;
+none is a vendored body. Keep the first three actor attack slots independent
+of the five-slot weapon record, and leave every `u16` field and argument width
+unchanged. Preserve all control flow, calls, referents and delay slots. Current
+scores are historical observations only; builds, compiler checks, tests and
+post-edit matches are deferred by the user's instruction.
+
+Final verdict: the four functions retain their values, halfword arrays,
+argument order and arithmetic. All thirteen component indices and the
+denominator multiplier are named; all 111 current file ledgers reconcile.
+The stored pre-edit scores are 100% for all four; no post-edit binary claim
+is made.
+
 ## Function Match Plan
 
 Target: `GAME.EXE` `0x8002d120`, `actor_apply_damage`, 0x388 bytes,
