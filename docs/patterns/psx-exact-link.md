@@ -1,4 +1,9 @@
-# PSX executable closure campaign
+# PSX executable layout and unresolved historical packing
+
+The normal link has **seven differing padding bytes**. Its code and initialized
+data match retail, but historical build reproduction remains open. An inferred
+padding rule can make the file equal; that experiment is opt-in and does not
+establish executable closure from the original toolchain.
 
 ## Link Match Plan
 
@@ -71,7 +76,7 @@ The 2048-byte header remains an explicit retail template. It contains region
 metadata and apparent uninitialized converter state, including a CPE prefix
 at header offset `88`; entry and load extent are regenerated from the link.
 The final sector contains another CPE v1 prefix immediately after initialized
-data, as independently observed in all three retail images. The packer models
+data, as independently observed in all three retail images. An optional diagnostic models
 that prefix as magic/version, select-unit-zero and the start of a PC register
 record, followed by zero padding to the sector boundary. It uses the **actual
 linked load end**, without reading retail payload bytes or fixing a retail
@@ -81,8 +86,11 @@ It neither extends a source section nor initializes BSS.
 This is an **inferred container compatibility rule**. The report calls its
 mechanism `candidate` and leaves `historical_converter_reproduced` false.
 It does not prove the historical converter or complete source reconstruction.
-The zero-padding serializer remains available as the comparison control; on
-PSX it differs in exactly seven nonzero prefix bytes.
+The normal command uses zero padding, as both tested native converters do
+under the controlled inputs. On PSX it differs in exactly seven nonzero
+prefix bytes. The assembly bridge and retail header template also remain
+explicit reconstruction inputs; the normal command is not claimed to be the
+historical build process merely because padding inference is disabled.
 
 ## Native converter negative controls
 
@@ -107,8 +115,16 @@ not attributed to either native binary. The runtime is never executed.
 
 ## Result and reproduction
 
-The normal command emits a 4096-byte `PSX.EXE` with **zero differing bytes**,
-including header and padding. Linked and retail SHA-256 are both:
+The normal command emits a 4096-byte `PSX.EXE` with **seven differing bytes**,
+all in final-sector padding. Its SHA-256 is:
+
+```text
+ea798637bdebb11e9fe569e0656aa809c8681063808baf6a61d9ab7410417651
+```
+
+`kf link --image psx --diagnostic-cpe-padding` enables the inferred rule and
+writes exclusively under `build/link/diagnostic-cpe-padding/`. Its output and
+reports cannot overwrite the normal link. That diagnostic equals retail:
 
 ```text
 670f0ca702570fdb814a73ffa840b97a6584d2753072ea3b55c35541a7cec276
@@ -126,11 +142,13 @@ python3 -m unittest tests.test_asm_sections tests.test_executable tests.test_wor
 Inspect `build/link/psx/comparison.json` for the full-file comparison, section
 extents, source placements, whole-SDK verification and container provenance.
 No game C change or new function match is needed: `main` remains strict 100%.
+Executable closure requires reproducing the assembler/linker/converter
+behavior, rather than adding retail-shaped bytes to obtain this diagnostic hash.
 
-All **733 local repository tests**, Ruff, whitespace checks and
+At the initial compatibility checkpoint, all **733 local repository tests**, Ruff, whitespace checks and
 `nix flake check -L` pass. The flake test run has 147 expected skips for local
 retail/artifact-dependent checks; the local run has none. A fresh focused
-compile and repeated production link preserve the exact file hash. Only the
+compile and repeated compatibility link preserved the exact file hash. Only the
 PSX `main` ledger fingerprint is re-banked for its new profile; its score and
 the exact function count are unchanged, with no banked exact regression.
 
@@ -141,3 +159,11 @@ known-reference gate records four unresolved indirect BIOS controls; its data
 and target placement checks both pass. There are no comparison artifact
 failures. All three executable links succeed, but GAME and OPEN remain
 non-identical. No game execution is used as validation.
+
+With inferred padding disabled by default, all **734 local tests**, Ruff and
+`nix flake check -L` pass (147 expected flake skips, no local skips). Fresh
+normal and diagnostic links retain seven and zero differing bytes respectively,
+and their complete linked ELF files are byte-identical. The diagnostic cannot
+overwrite normal executables or reports. The full build retains the same
+data/ownership/placement failures above; this correction changes no function
+source, compiler profile or match ledger row.

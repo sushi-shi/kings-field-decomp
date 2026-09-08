@@ -10,15 +10,37 @@ import struct
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 from elftools.elf.elffile import ELFFile
 
 from scripts.kf.executable import compare, sector_padding, serialize, undefined
+from scripts.kf import executable
 from scripts.kf.mips_elf import DefinedSymbol, write_mips_elf
 from scripts.kf.sema.image import RetailImage
 
 
 class ComparisonTests(unittest.TestCase):
+    def test_diagnostic_padding_cannot_replace_normal_output_or_report(self):
+        with tempfile.TemporaryDirectory() as directory, mock.patch.object(executable, 'BUILD', Path(directory)):
+            normal = Path(directory) / 'link' / 'psx'
+            normal.mkdir(parents=True)
+            (normal / 'PSX.EXE').write_bytes(b'normal executable')
+            (normal / 'comparison.json').write_text('normal comparison')
+            image = RetailImage.synthetic('PSX.EXE', 0x80010000, bytes(8))
+            report = {'linked': True, 'comparison': {'linked_size': 4096, 'differing_bytes': 0}}
+            with (mock.patch('scripts.kf.graph.configure_if_needed'),
+                  mock.patch('scripts.kf.graph.run_ninja', return_value=0),
+                  mock.patch.object(executable.RetailImage, 'load', return_value=image),
+                  mock.patch.object(executable, 'archives', return_value=([], {})),
+                  mock.patch.object(executable, 'link_image', return_value=report) as linker,
+                  mock.patch('builtins.print')):
+                self.assertEqual(executable.main(['--image', 'psx', '--diagnostic-cpe-padding']), 0)
+            self.assertTrue(linker.call_args.kwargs['diagnostic_cpe_padding'])
+            self.assertEqual((normal / 'PSX.EXE').read_bytes(), b'normal executable')
+            self.assertEqual((normal / 'comparison.json').read_text(), 'normal comparison')
+            self.assertTrue((Path(directory) / 'link/diagnostic-cpe-padding/comparison.json').is_file())
+
     def test_file_tail_and_header_are_compared_without_masks(self):
         image = RetailImage.synthetic('PSX.EXE', 0x80010000, b'abcdefgh')
         self.assertTrue(compare(image.data, image)['file_equal'])

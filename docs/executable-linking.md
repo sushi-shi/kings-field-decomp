@@ -1,9 +1,9 @@
 # Executable links and complete-file comparisons
 
-PSX now produces a byte-identical 4096-byte executable. See the
-[PSX closure record](patterns/psx-exact-link.md) for the compiler-directive
-alignment bridge, recovered SDK order and explicit container provenance:
-the header is a retail template and the CPE padding mechanism remains inferred.
+PSX's normal 4096-byte executable differs in seven padding bytes. See the
+[PSX layout record](patterns/psx-exact-link.md) for the compiler-directive
+alignment bridge, recovered SDK order and unresolved container behavior:
+the header is a retail template and historical packing remains unproved.
 The tables below retain the earlier investigation results.
 
 Run `kf link` inside `nix develop` after `kf init`. Use `kf link --image game`
@@ -21,6 +21,12 @@ compared. Check `comparison.file_equal` for byte equality. This command does not
 bank function or data progress, replace strict `kf build` gates, or run the game.
 Existing executables are removed before retrying a link, so a failed attempt
 cannot leave an earlier candidate looking current.
+
+`--diagnostic-cpe-padding` explicitly enables an inferred CPE prefix in the
+final padding. It writes separate executables and reports under
+`build/link/diagnostic-cpe-padding/`, labels console output as diagnostic and
+cannot replace normal results. Its byte equality does not prove the original
+developers' build process. Normal links use zero padding.
 
 The campaign links each image independently from its compiled game objects and
 the supplied Psy-Q libraries, then compares the generated PS-X EXE with verified
@@ -87,9 +93,9 @@ These generated inputs are provisional link storage, not independently
 reconstructed data. Their evidence and unresolved extent/linkage boundary stay
 visible. The PS-X header retains retail loader/region metadata while regenerating
 the entry and load size. Those template bytes and the retail startup are also
-declared in each report. Final-sector padding models the CPE v1 prefix observed
-after initialized data in all three retail images, followed by zeros, at the
-actual linked load end. Reports explicitly mark the mechanism as inferred;
+declared in each report. The optional diagnostic models the CPE v1 prefix
+observed after initialized data in all three retail images at the actual
+linked load end. Reports explicitly mark the mechanism as inferred;
 neither tested native converter reproduces it. The executables have not been
 tested by running them.
 
@@ -189,9 +195,9 @@ the complete file and original SDK expressions.
 These diagnostic results isolated the causes without establishing original
 ASPSX metadata or reproducing the retail converter. At that checkpoint the
 production link stayed at 431 differences and no scratch object was banked.
-The subsequent [PSX closure](patterns/psx-exact-link.md) implements a compiler
-directive contract and explicit container compatibility model, with their
-evidence limits retained in the production report.
+The subsequent [PSX layout work](patterns/psx-exact-link.md) implements a compiler
+directive contract. Its inferred container model is confined to an optional
+diagnostic; normal links retain the seven unresolved tail bytes.
 
 The rebuilt source and repeated diagnostic links reproduce all counts and
 hashes above. Ruff and all 725 repository tests pass. The required full build

@@ -300,11 +300,17 @@ def symbol_placements(linked: ELFFile, units: list[Unit]) -> list[dict]:
     return rows
 
 
-def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_report: dict) -> dict:
+def link_root(diagnostic_cpe_padding: bool = False) -> Path:
+    root = BUILD / 'link'
+    return root / 'diagnostic-cpe-padding' if diagnostic_cpe_padding else root
+
+
+def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_report: dict,
+               *, diagnostic_cpe_padding: bool = False) -> dict:
     manifest = load_manifest()
     units = [u for u in manifest.units if u.image == image.image and u.scope != 'vendored']
     key = image.image[:-4].lower()
-    root = BUILD / 'link' / key
+    root = link_root(diagnostic_cpe_padding) / key
     root.mkdir(parents=True, exist_ok=True)
     candidate = root / image.image
     output = root / 'linked.elf'
@@ -317,7 +323,9 @@ def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_repo
               'sdk_library_report': str(sdk_root / 'libraries.json'),
               'inventory_data': [], 'sdk_aliases': [], 'attempts': [],
               'header_provider': 'retail-template-with-linked-entry-and-load-size',
-              'padding_provider': 'inferred-cpe-v1-prefix-at-linked-load-end',
+              'padding_provider': ('inferred-cpe-v1-prefix-at-linked-load-end'
+                                   if diagnostic_cpe_padding else 'zero-fill'),
+              'diagnostic_cpe_padding': diagnostic_cpe_padding,
               'historical_converter_reproduced': False,
               'complete_source_reconstruction_proven': False, 'game_execution_tested': False}
     entry = '__SN_ENTRY_POINT'
@@ -352,12 +360,15 @@ def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_repo
             entries = linked.get_section_by_name('.symtab').get_symbol_by_name(entry) or []
             if len(entries) != 1 or entries[0]['st_value'] != linked['e_entry']:
                 raise ValueError('linker did not resolve the requested entry symbol')
-            actual, sections = serialize(linked, image, padding_policy='cpe-v1-prefix')
+            policy = 'cpe-v1-prefix' if diagnostic_cpe_padding else 'zero'
+            actual, sections = serialize(linked, image, padding_policy=policy)
             load_end = max(s['address'] + s['size'] for s in sections if s['storage'] == 'load')
             report['container_padding'] = {
                 'address': load_end, 'size': len(actual) - 0x800 - (load_end - image.load_start),
-                'policy': 'cpe-v1-prefix', 'mechanism_evidence': 'candidate',
+                'policy': policy,
             }
+            if diagnostic_cpe_padding:
+                report['container_padding']['mechanism_evidence'] = 'candidate'
             report['sdk_verification'] = verify_linked(linked, library_report)
             candidate.write_bytes(actual)
             report.update(executable=str(candidate), elf=str(output), sections=sections,
@@ -382,17 +393,21 @@ def link_image(image: RetailImage, sdk: list[Path], sdk_root: Path, library_repo
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--image', choices=('psx', 'game', 'open'), action='append')
+    parser.add_argument('--diagnostic-cpe-padding', action='store_true',
+                        help='try inferred retail CPE padding in a separate diagnostic directory; '
+                             'does not reproduce a verified historical converter')
     args = parser.parse_args(argv)
     images = [key.upper() + '.EXE' for key in args.image] if args.image else list(IMAGE_LAYOUTS)
+    destination = link_root(args.diagnostic_cpe_padding)
     try:
         from scripts.kf.graph import configure_if_needed, run_ninja
 
         for name in images:
-            root = BUILD / 'link' / name[:-4].lower()
+            root = destination / name[:-4].lower()
             root.mkdir(parents=True, exist_ok=True)
             for filename in (name, 'linked.elf', 'comparison.json'):
                 (root / filename).unlink(missing_ok=True)
-        (BUILD / 'link' / 'comparison.json').unlink(missing_ok=True)
+        (destination / 'comparison.json').unlink(missing_ok=True)
         # Comparison gates remain separate: a source/data mismatch must not
         # prevent generating the very executable needed to diagnose it.
         configure_if_needed()
@@ -404,16 +419,18 @@ def main(argv: list[str] | None = None) -> int:
         reports = []
         for image in verified:
             try:
-                report = link_image(image, sdk, sdk_root, library_report)
+                report = link_image(image, sdk, sdk_root, library_report,
+                                    diagnostic_cpe_padding=args.diagnostic_cpe_padding)
             except (OSError, ValueError, subprocess.SubprocessError) as error:
                 report = {'image': image.image, 'linked': False, 'error': str(error)}
-                root = BUILD / 'link' / image.image[:-4].lower()
+                root = destination / image.image[:-4].lower()
                 (root / image.image).unlink(missing_ok=True)
                 (root / 'comparison.json').write_text(json.dumps(report, indent=2) + '\n')
             reports.append(report)
             if report['linked']:
                 diff = report['comparison']
-                print(f'{image.image}: linked {diff["linked_size"]} bytes; '
+                mode = ' [diagnostic CPE padding]' if args.diagnostic_cpe_padding else ''
+                print(f'{image.image}{mode}: linked {diff["linked_size"]} bytes; '
                       f'{diff["differing_bytes"]} file bytes differ from retail')
             elif report.get('attempts'):
                 last = report['attempts'][-1]
@@ -421,7 +438,7 @@ def main(argv: list[str] | None = None) -> int:
                       f'see {last["log"]}')
             else:
                 print(f'{image.image}: {report["error"]}')
-        (BUILD / 'link' / 'comparison.json').write_text(json.dumps(reports, indent=2) + '\n')
+        (destination / 'comparison.json').write_text(json.dumps(reports, indent=2) + '\n')
         return int(any(not report['linked'] for report in reports))
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         parser.error(str(error))

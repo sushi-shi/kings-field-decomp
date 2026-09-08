@@ -5,9 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
-- [psx-exact-link.md](psx-exact-link.md): byte-identical PSX executable,
-  compiler-directed section constraints, whole SDK order and explicit inferred
-  container padding, with two native converter negative controls.
+- [psx-exact-link.md](psx-exact-link.md): matching PSX code/data layout,
+  compiler-directed section constraints, whole SDK order and unresolved
+  packing; inferred padding stays diagnostic, with two native negative controls.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE
