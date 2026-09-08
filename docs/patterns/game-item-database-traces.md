@@ -83,3 +83,43 @@ where retail uses a2. The real file number remains a2, where retail uses v0,
 and its hundreds quotient stays a2 rather than v1. This is a bounded negative
 result for these source forms, not a proved optimizer limitation. The loader
 remains open at strict 99.746666%; only a 100% match can close it.
+
+## Remainder-width Function Match Plan at `34890aa`
+
+Refresh all six GAME views, all 375 retail and candidate words, the caller,
+adjacent boundaries, resource-loader interfaces, literal bytes, shared types
+and source history. The baseline still has native/traced whole-ELF parity,
+six internal jumps, ten ordered address pairs and five calls. Its sixteen
+register-field differences start at `800211b8`; no referent, CFG, call or
+immediate difference precedes them. All five siblings now reproduce retail
+exactly, including the previously partial floor-placement loader. Preserve
+the SDK CD/BIOS interfaces and their recorded library-lineage attribution.
+
+Test only the remainder working value's width. Signed `n % 100` lies in
+[-99, 99] for every signed-word n, so a signed-byte remainder represents
+every possible result without changing either subsequent decimal operation.
+The actual loop uses n = 1..80. This bound permits a source hypothesis; it
+does not establish the original declaration. Keep n, the loop index and all
+divisions signed-word, preserving retail's divide checks, byte positions,
+40-byte name buffer, six copies and conditional sector rounding.
+
+First compare reduced word/byte remainder controls with native/debug/traced
+parity. Inspect whether the narrowing survives as instructions absent from
+retail before applying this axis to an isolated copy of the complete unit.
+Do not enumerate alternative widths or retain an ineffective type change.
+Require raw words and exact siblings before any strict-100% banking claim.
+
+The reduced controls emit identical 220-byte instruction streams. The byte
+control initially expands its promoted remainder into a left/right shift
+pair. Those shifts survive both CSE passes and disappear in COMBINE; the
+division by ten then consumes the original signed remainder. The complete
+item unit reproduces that same change at UIDs 320/321 and 324. This agrees
+with the pinned `combine.c` sign-bit analysis of signed remainder results;
+it does not establish the historical declaration or compiler.
+
+The isolated byte-remainder trial emits all 375 baseline words and the same
+ten ordered referents, retaining the sixteen register-field differences and
+strict 99.746666%. All five exact siblings reproduce retail. Baseline, trial
+and both reduced controls have native/debug/traced whole-ELF parity. Reject
+the ineffective width change; no production C or bank entry changes.
+Generated evidence is under `build/gcc257/game-item-remainder-traces/`.
