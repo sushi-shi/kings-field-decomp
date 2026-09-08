@@ -237,7 +237,7 @@ void tmd_project_vertices(s32 count)
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy, &perspective, &flag);
+        RotTransPers(vertex, &out->sxy.word, &perspective, &flag);
         out->p2 = perspective << open_graphics_runtime.tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
         out->sz = (u16)depth;
@@ -259,7 +259,7 @@ void tmd_project_vertices_perspective_right(s32 count)
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy, &perspective, &flag);
+        RotTransPers(vertex, &out->sxy.word, &perspective, &flag);
         out->p2 = perspective >> open_graphics_runtime.tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
         out->sz = (u16)depth;
@@ -281,7 +281,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     out = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy, &perspective, &flag);
+        RotTransPers(vertex, &out->sxy.word, &perspective, &flag);
         out->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         out->sz = depth >> shift;
@@ -302,8 +302,8 @@ void tmd_transform_vertices(s32 count)
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         RotTrans(vertex, &position, &flag);
-        ((DVECTOR *)&out->sxy)->vx = position.vx;
-        ((DVECTOR *)&out->sxy)->vy = position.vy;
+        out->sxy.vector.vx = position.vx;
+        out->sxy.vector.vy = position.vy;
         out->p2 = position.vz;
         out->sz = position.vz;
         out++;

@@ -20,6 +20,8 @@ promotes a probe to a proven historical toolchain.
   translation and SDK rotation fields, with all compared bodies unchanged.
 - [typed-position-interfaces.md](typed-position-interfaces.md): shared SDK
   vectors across actor, effect, player, map and targeting interfaces.
+- [typed-screen-coordinates.md](typed-screen-coordinates.md): shared packed
+  word and SDK halfword views across GAME and OPEN projection consumers.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE

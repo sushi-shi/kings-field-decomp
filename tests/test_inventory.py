@@ -241,7 +241,7 @@ class InventoryTests(unittest.TestCase):
         layout = _header_structure_layouts()["KfScreenVertex"]
         self.assertEqual((layout.size, layout.alignment), (8, 4))
         self.assertEqual([(f.offset, f.size, f.name, f.datatype) for f in layout.fields],
-                         [(0, 4, "sxy", "long"), (4, 2, "sz", "s16"),
+                         [(0, 4, "sxy", "KfScreenXY"), (4, 2, "sz", "s16"),
                           (6, 2, "p2", "s16")])
 
     def test_curated_inventories_cover_the_wip_universe(self) -> None:
@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 107)
-        self.assertEqual(counts["structure_fields"], 813)
-        self.assertEqual(counts["structure_fields_named"], 726)
+        self.assertEqual(counts["structures"], 108)
+        self.assertEqual(counts["structure_fields"], 815)
+        self.assertEqual(counts["structure_fields_named"], 728)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -1480,7 +1480,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
 
         self.assertEqual(
-            _structure_field("KfScreenVertex", 0x00), ("sxy", "long", 4)
+            _structure_field("KfScreenVertex", 0x00), ("sxy", "KfScreenXY", 4)
         )
         self.assertEqual(
             _structure_field("KfScreenVertex", 0x04), ("sz", "s16", 2)

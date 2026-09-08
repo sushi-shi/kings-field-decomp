@@ -165,3 +165,8 @@ remaining duplicate three-word position type and eighteen C pointer casts,
 while retaining genuine six-byte vector types at their separate boundaries.
 Map-emitter SDK inputs now have complete SDK extents. All 107 compared bodies
 are unchanged; 512 C pointer casts remain, down 294 from the initial count.
+
+The [screen-coordinate stage](typed-screen-coordinates.md) gives shared
+projected vertices real packed-word and SDK halfword views, removes four
+pointer reinterpretations and three redundant MATRIX casts, and preserves
+all 41 compared bodies. The running C pointer count is 505, down 301.

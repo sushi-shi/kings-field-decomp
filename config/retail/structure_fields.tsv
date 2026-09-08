@@ -640,9 +640,11 @@ KfScreenRect	0x00	0x02	x	u16	supported	render_types.h;quad-rectangle-types.md;GA
 KfScreenRect	0x02	0x02	y	u16	supported	render_types.h;quad-rectangle-types.md;OPEN:opening_ending_scroll_run;asm;lhu;lh;sh	screen Y origin; scrolling updates wrap as halfwords and the final-panel stop test reads signed Y
 KfScreenRect	0x04	0x02	w	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen width added to X for right vertices
 KfScreenRect	0x06	0x02	h	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen height added to Y for lower vertices
-KfScreenVertex	0x00	0x04	sxy	long	supported	tmd.h;game_semantic_projection_scratch.tsv;game_open_semantic_packed_projection.tsv;asm;RotTransPers;NormalClip	SDK packed signed screen x/y word written by RotTransPers and consumed by clipping and GPU packets; non-perspective writers use its two DVECTOR halfwords
+KfScreenVertex	0x00	0x04	sxy	KfScreenXY	supported	tmd.h;game_semantic_projection_scratch.tsv;game_open_semantic_packed_projection.tsv;asm;RotTransPers;NormalClip	SDK packed signed screen x/y word written by RotTransPers and consumed by clipping and GPU packets; non-perspective writers use its two DVECTOR halfwords
 KfScreenVertex	0x04	0x02	sz	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	projection depth read with lh for ordering-table arithmetic
 KfScreenVertex	0x06	0x02	p2	s16	supported	tmd.h;game_semantic_projection_scratch.tsv;asm	doubled perspective term, or view-space z on the non-perspective path, read with lh for depth cueing
+KfScreenXY	0x00	0x04	word	long	supported	tmd.h;asm;RotTransPers;NormalClip;typed-screen-coordinates.md	SDK packed output and polygon/clipping input
+KfScreenXY	0x00	0x04	vector	DVECTOR	supported	tmd.h;asm;RotTrans;typed-screen-coordinates.md	two signed screen halfwords written by non-perspective paths
 KfSpriteMaterial	0x00	0x02	clut	u16	supported	open_render.h;open_semantic_sprite_render.tsv;asm;lhu;POLY_FT4	CLUT selector copied to GPU packet offset 14
 KfSpriteMaterial	0x02	0x02	tpage	u16	supported	open_render.h;open_semantic_sprite_render.tsv;asm;lhu;POLY_FT4	texture page selector copied to GPU packet offset 22
 KfSpriteMaterial	0x04	0x04	color	CVECTOR	supported	open_render.h;open_semantic_sprite_render.tsv;asm;NormalColorDpq	RGB bytes set by scene writers and command byte copied from the initialized primitive

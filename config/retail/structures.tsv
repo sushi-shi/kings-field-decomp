@@ -84,6 +84,7 @@ KfSavePayload	0x2580	supported	game_save.h;game_semantic_save_system.tsv;asm;xre
 KfSaveSlotSummary	0x18	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs	six serialized words: experience, floor, current/maximum HP and MP
 KfScreenRect	0x08	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;OPEN:sprite_add_g4;asm;lhu;retail-bytes	four unsigned halfwords for screen position and spans; scrolling callers explicitly reinterpret wrapped Y as signed
 KfScreenVertex	0x08	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;xrefs	eight-byte GTE projection result shared by TMD projection producers and polygon enqueue consumers
+KfScreenXY	0x04	supported	tmd.h;asm;RotTransPers;RotTrans;typed-screen-coordinates.md	SDK packed screen word and signed DVECTOR coordinate views
 KfSpriteMaterial	0x08	supported	open_render.h;open_semantic_sprite_render.tsv;asm;base-register;NormalColorDpq	OPEN projected sprite texture selectors and SDK color; supported eight-byte object extent
 KfSpriteQuad	0x0c	supported	render_types.h;game_semantic_notification_sprites.tsv;asm;render_screen_sprite;render_enqueue_sprite	texture and screen rectangles shared by HUD, notification and projected sprite renderers
 KfTmdF3	0xc	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	flat triangle packet body (mode 0x20): colour word then n0 v0 v1 v2

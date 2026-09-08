@@ -225,12 +225,21 @@ typedef union KfTmdPrimitive {
     } texture;
 } KfTmdPrimitive;
 
+/* SDK packed result and its two signed screen coordinates share four bytes. */
+typedef union KfScreenXY {
+    long word;
+    DVECTOR vector;
+} KfScreenXY;
+
 /* One GTE-projected vertex consumed by the polygon enqueue paths. */
 typedef struct KfScreenVertex {
-    long sxy; /* SDK packed screen X/Y word; non-perspective paths write its halves. */
+    KfScreenXY sxy;
     s16 sz;
     s16 p2;
 } KfScreenVertex;
+
+typedef char check_screen_xy_size[sizeof(KfScreenXY) == 4 ? 1 : -1];
+typedef char check_screen_vertex_size[sizeof(KfScreenVertex) == 8 ? 1 : -1];
 
 /* GAME.EXE and OPEN.EXE implement this interface with separate state. */
 extern KfTmdObject *tmd_get_object(u16 object_index);

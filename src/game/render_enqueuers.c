@@ -45,7 +45,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->ft3.v1);
             vc = VTX(p->ft3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
@@ -55,9 +55,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 SetPolyFT3(&prim->sdk);
                 prim->sdk.clut = p->ft3.cba;
                 prim->sdk.tpage = p->ft3.tsb;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 prim->packed.uv0 = p->texture.uv0;
                 prim->packed.uv1 = p->texture.uv1;
                 prim->packed.uv2 = p->texture.uv2;
@@ -79,7 +79,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->f4.v1);
             vc = VTX(p->f4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuF4 *prim = (KfGpuF4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = VTX(p->f4.v3);
@@ -88,10 +88,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyF4(&prim->sdk);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
@@ -109,7 +109,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->g3.v1);
             vc = VTX(p->g3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
@@ -117,9 +117,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyG3(&prim->sdk);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 NormalColorDpq3((SVECTOR *)(normals + p->g3.n0), (SVECTOR *)(normals + p->g3.n1),
                                 (SVECTOR *)(normals + p->g3.n2), &p->color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
@@ -138,7 +138,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->g4.v1);
             vc = VTX(p->g4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuG4 *prim = (KfGpuG4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = VTX(p->g4.v3);
@@ -147,10 +147,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyG4(&prim->sdk);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 NormalColorDpq3((SVECTOR *)(normals + p->g4.n0), (SVECTOR *)(normals + p->g4.n1),
                                 (SVECTOR *)(normals + p->g4.n2), &p->color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
@@ -171,7 +171,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->gt3.v1);
             vc = VTX(p->gt3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
@@ -181,9 +181,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 SetPolyGT3(&prim->sdk);
                 prim->sdk.clut = p->gt3.cba;
                 prim->sdk.tpage = p->gt3.tsb;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 prim->packed.uv0 = p->texture.uv0;
                 prim->packed.uv1 = p->texture.uv1;
                 prim->packed.uv2 = p->texture.uv2;
@@ -206,7 +206,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->gt4.v1);
             vc = VTX(p->gt4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT4 *prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = VTX(p->gt4.v3);
@@ -217,10 +217,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 SetPolyGT4(&prim->sdk);
                 prim->sdk.clut = p->gt4.cba;
                 prim->sdk.tpage = p->gt4.tsb;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 prim->packed.uv0 = p->texture.uv0;
                 prim->packed.uv1 = p->texture.uv1;
                 prim->packed.uv2 = p->texture.uv2;
@@ -246,7 +246,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->g3.v1);
             vc = VTX(p->g3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
@@ -255,9 +255,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 }
                 SetPolyG3(&prim->sdk);
                 SetSemiTrans(&prim->sdk, 1);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 NormalColorCol3((SVECTOR *)(normals + p->g3.n0), (SVECTOR *)(normals + p->g3.n1),
                                 (SVECTOR *)(normals + p->g3.n2), &p->color,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
@@ -276,7 +276,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->ft4.v1);
             vc = VTX(p->ft4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuFT4 *prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = VTX(p->ft4.v3);
@@ -287,10 +287,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 SetPolyFT4(&prim->sdk);
                 prim->sdk.clut = p->ft4.cba;
                 prim->sdk.tpage = p->ft4.tsb;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 prim->packed.uv0 = p->texture.uv0;
                 prim->packed.uv1 = p->texture.uv1;
                 prim->packed.uv2 = p->texture.uv2;
@@ -313,7 +313,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->f3.v1);
             vc = VTX(p->f3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
@@ -321,9 +321,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyF3(&prim->sdk);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
@@ -341,7 +341,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->g4.v1);
             vc = VTX(p->g4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuG4 *prim = (KfGpuG4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = VTX(p->g4.v3);
@@ -351,10 +351,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 }
                 SetPolyG4(&prim->sdk);
                 SetSemiTrans(&prim->sdk, 1);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n0), &p->color, va->p2, &prim->packed.color0);
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n1), &p->color, va->p2, &prim->packed.color1);
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n2), &p->color, va->p2, &prim->packed.color2);
@@ -374,7 +374,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->f3.v1);
             vc = VTX(p->f3.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
@@ -383,9 +383,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 }
                 SetPolyF3(&prim->sdk);
                 SetSemiTrans(&prim->sdk, 1);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
@@ -403,7 +403,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vb = VTX(p->f4.v1);
             vc = VTX(p->f4.v2);
 
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuF4 *prim = (KfGpuF4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = VTX(p->f4.v3);
@@ -413,10 +413,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 }
                 SetPolyF4(&prim->sdk);
                 SetSemiTrans(&prim->sdk, 1);
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
@@ -476,7 +476,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             va = (KfScreenVertex *)((u8 *)vertices + gt->gt3.v0);
             vb = (KfScreenVertex *)((u8 *)vertices + gt->gt3.v1);
             vc = (KfScreenVertex *)((u8 *)vertices + gt->gt3.v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
@@ -486,9 +486,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 SetPolyGT3(&prim->sdk);
                 prim->sdk.clut = game_graphics_runtime.active_render_clut;
                 prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 prim->packed.uv0 = gt->texture.uv0;
                 prim->packed.uv1 = gt->texture.uv1;
                 prim->packed.uv2 = gt->texture.uv2;
@@ -511,7 +511,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             va = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v0);
             vb = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v1);
             vc = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT4 *prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = (KfScreenVertex *)((u8 *)vertices + gt->gt4.v3);
@@ -522,10 +522,10 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 SetPolyGT4(&prim->sdk);
                 prim->sdk.clut = game_graphics_runtime.active_render_clut;
                 prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 prim->packed.uv0 = gt->texture.uv0;
                 prim->packed.uv1 = gt->texture.uv1;
                 prim->packed.uv2 = gt->texture.uv2;
@@ -551,7 +551,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             va = (KfScreenVertex *)((u8 *)vertices + ft->ft3.v0);
             vb = (KfScreenVertex *)((u8 *)vertices + ft->ft3.v1);
             vc = (KfScreenVertex *)((u8 *)vertices + ft->ft3.v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
@@ -561,9 +561,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 SetPolyFT3(&prim->sdk);
                 prim->sdk.clut = game_graphics_runtime.active_render_clut;
                 prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
                 prim->packed.uv0 = ft->texture.uv0;
                 prim->packed.uv1 = ft->texture.uv1;
                 prim->packed.uv2 = ft->texture.uv2;
@@ -585,7 +585,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             va = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v0);
             vb = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v1);
             vc = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuFT4 *prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 vd = (KfScreenVertex *)((u8 *)vertices + ft->ft4.v3);
@@ -596,10 +596,10 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 SetPolyFT4(&prim->sdk);
                 prim->sdk.clut = game_graphics_runtime.active_render_clut;
                 prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
-                prim->packed.xy0 = va->sxy;
-                prim->packed.xy1 = vb->sxy;
-                prim->packed.xy2 = vc->sxy;
-                prim->packed.xy3 = vd->sxy;
+                prim->packed.xy0 = va->sxy.word;
+                prim->packed.xy1 = vb->sxy.word;
+                prim->packed.xy2 = vc->sxy.word;
+                prim->packed.xy3 = vd->sxy.word;
                 prim->packed.uv0 = ft->texture.uv0;
                 prim->packed.uv1 = ft->texture.uv1;
                 prim->packed.uv2 = ft->texture.uv2;
@@ -676,7 +676,7 @@ void render_enqueue_map(u16 object_index)
             va = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v0);
             vb = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v1);
             vc = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
                 vd = (KfScreenVertex *)((u8 *)vertices + ft4->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
@@ -685,10 +685,10 @@ void render_enqueue_map(u16 object_index)
                     SetPolyGT4(&prim->sdk);
                     prim->sdk.clut = ft4->ft4.cba;
                     prim->sdk.tpage = ft4->ft4.tsb;
-                    prim->packed.xy0 = va->sxy;
-                    prim->packed.xy1 = vb->sxy;
-                    prim->packed.xy2 = vc->sxy;
-                    prim->packed.xy3 = vd->sxy;
+                    prim->packed.xy0 = va->sxy.word;
+                    prim->packed.xy1 = vb->sxy.word;
+                    prim->packed.xy2 = vc->sxy.word;
+                    prim->packed.xy3 = vd->sxy.word;
                     prim->packed.uv0 = ft4->texture.uv0;
                     prim->packed.uv1 = ft4->texture.uv1;
                     prim->packed.uv2 = ft4->texture.uv2;
@@ -720,7 +720,7 @@ void render_enqueue_map(u16 object_index)
             va = (KfScreenVertex *)((u8 *)vertices + ft3->ft3.v0);
             vb = (KfScreenVertex *)((u8 *)vertices + ft3->ft3.v1);
             vc = (KfScreenVertex *)((u8 *)vertices + ft3->ft3.v2);
-            if (NormalClip(va->sxy, vb->sxy, vc->sxy) > 0) {
+            if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT3 *gt3 = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
@@ -729,9 +729,9 @@ void render_enqueue_map(u16 object_index)
                     SetPolyGT3(&gt3->sdk);
                     gt3->sdk.clut = ft3->ft3.cba;
                     gt3->sdk.tpage = ft3->ft3.tsb;
-                    gt3->packed.xy0 = va->sxy;
-                    gt3->packed.xy1 = vb->sxy;
-                    gt3->packed.xy2 = vc->sxy;
+                    gt3->packed.xy0 = va->sxy.word;
+                    gt3->packed.xy1 = vb->sxy.word;
+                    gt3->packed.xy2 = vc->sxy.word;
                     gt3->packed.uv0 = ft3->texture.uv0;
                     gt3->packed.uv1 = ft3->texture.uv1;
                     gt3->packed.uv2 = ft3->texture.uv2;
@@ -800,7 +800,7 @@ void render_enqueue_sprite(
     SetPolyFT4(&prim->sdk);
     prim->sdk.clut = game_graphics_runtime.active_render_clut;
     prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
-    /* Packed XY field conversion remains pending the byte-exact typed form. */
+    /* Each packed GTE word spans the SDK packet's x/y halfwords. */
     *(long *)&prim->sdk.x0 = sxy0;
     *(long *)&prim->sdk.x1 = sxy1;
     *(long *)&prim->sdk.x2 = sxy2;

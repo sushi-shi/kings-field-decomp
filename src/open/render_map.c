@@ -47,7 +47,7 @@ void render_enqueue_map(u16 object_index)
             vertex0 = (KfScreenVertex *)(vertices + polygon->ft4.v0);
             vertex1 = (KfScreenVertex *)(vertices + polygon->ft4.v1);
             vertex2 = (KfScreenVertex *)(vertices + polygon->ft4.v2);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             vertex3 = (KfScreenVertex *)(vertices + polygon->ft4.v3);
@@ -55,10 +55,10 @@ void render_enqueue_map(u16 object_index)
             SetPolyGT4(&prim->quad.sdk);
             prim->quad.packed.clut = polygon->ft4.cba;
             prim->quad.packed.tpage = polygon->ft4.tsb;
-            prim->quad.packed.xy0 = vertex0->sxy;
-            prim->quad.packed.xy1 = vertex1->sxy;
-            prim->quad.packed.xy2 = vertex2->sxy;
-            prim->quad.packed.xy3 = vertex3->sxy;
+            prim->quad.packed.xy0 = vertex0->sxy.word;
+            prim->quad.packed.xy1 = vertex1->sxy.word;
+            prim->quad.packed.xy2 = vertex2->sxy.word;
+            prim->quad.packed.xy3 = vertex3->sxy.word;
             prim->quad.packed.uv0 = polygon->texture.uv0;
             prim->quad.packed.uv1 = polygon->texture.uv1;
             prim->quad.packed.uv2 = polygon->texture.uv2;
@@ -87,16 +87,16 @@ void render_enqueue_map(u16 object_index)
             vertex0 = (KfScreenVertex *)(vertices + polygon->ft3.v0);
             vertex1 = (KfScreenVertex *)(vertices + polygon->ft3.v1);
             vertex2 = (KfScreenVertex *)(vertices + polygon->ft3.v2);
-            if (NormalClip(vertex0->sxy, vertex1->sxy, vertex2->sxy) <= 0) {
+            if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
             prim = primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->triangle.sdk);
             prim->triangle.packed.clut = polygon->ft3.cba;
             prim->triangle.packed.tpage = polygon->ft3.tsb;
-            prim->triangle.packed.xy0 = vertex0->sxy;
-            prim->triangle.packed.xy1 = vertex1->sxy;
-            prim->triangle.packed.xy2 = vertex2->sxy;
+            prim->triangle.packed.xy0 = vertex0->sxy.word;
+            prim->triangle.packed.xy1 = vertex1->sxy.word;
+            prim->triangle.packed.xy2 = vertex2->sxy.word;
             prim->triangle.packed.uv0 = polygon->texture.uv0;
             prim->triangle.packed.uv1 = polygon->texture.uv1;
             prim->triangle.packed.uv2 = polygon->texture.uv2;

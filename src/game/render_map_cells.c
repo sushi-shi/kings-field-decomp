@@ -92,10 +92,10 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
         position.vx += KF_MAP_TILE_SIZE;
     }
 
-    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     RotTrans(&position, (VECTOR *)&cell_matrix.t, &flag);
-    MulMatrix0((MATRIX *)&game_graphics_runtime.render_state.view_matrix,
+    MulMatrix0(&game_graphics_runtime.render_state.view_matrix,
                &game_graphics_runtime.render_state.quadrant_matrices[orient], &cell_matrix);
     SetRotMatrix(&cell_matrix);
     SetTransMatrix(&cell_matrix);

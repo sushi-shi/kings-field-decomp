@@ -479,7 +479,7 @@ void tmd_project_vertices(s32 count)
     projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
+        RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = (u16)depth;
@@ -501,7 +501,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
+        RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = depth >> shift;
@@ -523,8 +523,8 @@ void tmd_transform_vertices(s32 count)
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTrans(vertex, &transformed, &gte_flags);
-        ((DVECTOR *)&projected->sxy)->vx = transformed.vx;
-        ((DVECTOR *)&projected->sxy)->vy = transformed.vy;
+        projected->sxy.vector.vx = transformed.vx;
+        projected->sxy.vector.vy = transformed.vy;
         projected->p2 = transformed.vz;
         projected->sz = transformed.vz;
         projected++;
