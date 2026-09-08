@@ -16,6 +16,8 @@ from typing import Iterator
 
 from elftools.elf.elffile import ELFFile
 
+from scripts.kf.sema.mips import decode_control
+
 
 STAGES = ("expand", "jump1", "cse1", "loop", "cse2", "flow", "combine", "sched1",
           "local-alloc", "global-alloc", "reload", "sched2", "jump2", "delay", "final")
@@ -341,7 +343,12 @@ def _address(trace: Trace, spec: dict) -> tuple[dict, list[int]]:
 
 
 def object_frame(path: Path, symbol: str) -> dict:
-    """Decode the O32 prologue, stopping at the first control transfer."""
+    """Observe the entry prologue through the first transfer's delay slot.
+
+    This does not follow branches. If the entry prefix has no allocation and
+    does not reach a return, the frame is unknown, not necessarily zero: the
+    assembler's signed-divide guards can precede the entire prologue.
+    """
     with path.open("rb") as stream:
         elf = ELFFile(stream)
         rows = elf.get_section_by_name(".symtab").get_symbol_by_name(symbol) or []
@@ -351,19 +358,35 @@ def object_frame(path: Path, symbol: str) -> dict:
         section = elf.get_section(row["st_shndx"])
         start = row["st_value"] - section["sh_addr"]
         data = section.data()[start:start + row["st_size"]]
+    if len(data) % 4:
+        raise ValueError(f"{path}: unaligned function extent for {symbol}")
     words = struct.unpack(f"<{len(data) // 4}I", data)
     size = 0
     saved = []
-    for word in words:
+    terminal = None
+    for index, word in enumerate(words):
+        control = decode_control(index * 4, word)
+        if control is not None:
+            if terminal is not None or control.annulled:
+                return {"status": "unavailable", "size": None, "saved": None}
+            terminal = control
+            if not control.delay_slot:
+                break
+            continue
         op, rs, rt = word >> 26, (word >> 21) & 31, (word >> 16) & 31
         immediate = (word & 0x7fff) - (word & 0x8000)
-        if op in {1, 2, 3, 4, 5, 6, 7} or (op == 0 and word & 63 in {8, 9}):
-            break
         if op == 9 and rs == rt == 29 and immediate < 0:
-            size = -immediate
+            size -= immediate
         if op == 43 and rs == 29 and rt in {*range(16, 24), 30, 31}:
             saved.append([rt, immediate])
-    return {"size": size, "saved": sorted(saved)}
+        if terminal is not None:
+            break
+    else:
+        # Missing terminal/delay slot is an incomplete prologue observation.
+        return {"status": "unavailable", "size": None, "saved": None}
+    if not size and (terminal is None or terminal.kind != "return"):
+        return {"status": "unavailable", "size": None, "saved": None}
+    return {"status": "observed", "size": size, "saved": sorted(saved)}
 
 
 def summarize(trace: Trace, specs: list[dict], candidate: Path, target: Path) -> dict:
@@ -373,9 +396,10 @@ def summarize(trace: Trace, specs: list[dict], candidate: Path, target: Path) ->
         evidence = []
         if kind == "frame":
             actual, expected = object_frame(candidate, trace.function), object_frame(target, trace.function)
+            observed = actual["status"] == expected["status"] == "observed"
             value = {"candidate": actual, "target": expected,
-                     "frame_agrees": actual["size"] == expected["size"],
-                     "saved_agree": actual["saved"] == expected["saved"]}
+                     "frame_agrees": actual["size"] == expected["size"] if observed else None,
+                     "saved_agree": actual["saved"] == expected["saved"] if observed else None}
         elif kind == "constant_registers":
             value, evidence = _constants(trace, spec)
         elif kind == "address_lifetime":

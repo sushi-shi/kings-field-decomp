@@ -103,7 +103,7 @@ manifest must explicitly select `trace_features`, each with a unique `name`:
 
 | `kind` | Required selector | Report |
 | --- | --- | --- |
-| `frame` | none | Decoded candidate/retail prologue and saved-register agreement |
+| `frame` | none | Entry prologue through the first transfer's delay slot; unavailable if allocation is behind a branch |
 | `source_lifetime` | `source_value` | Named source pseudo's allocation, references and crossed calls |
 | `constant_registers` | `source_value`, distinct `constants` | Hard registers after reload and observed spill-tail equality/rejection |
 | `address_lifetime` | `symbol`, `offset`, `members` | CSE root, relative/absolute member stores, accepted rewrites and allocation |
@@ -117,6 +117,14 @@ are retained only for baseline, the highest-scoring representative of each
 selected internal state, and every exact result. UIDs and event numbers remain
 in evidence but do not split the frontier. Unavailable/ambiguous selectors
 remain explicitly unavailable. No candidate is applied or banked automatically.
+
+Frame comparison uses the shared MIPS control decoder and includes the first
+transfer's delay slot, where a saved-register store can be scheduled. It does
+not follow branches or propagate divisor constants. A transfer before stack
+allocation therefore makes the frame unavailable unless it is a complete leaf
+return; two unavailable results produce null agreement fields. Missing delay
+slots and annulled/control-transfer slots also remain unavailable. The observed
+save list describes this entry prefix, not path-dependent later saves.
 
 ## Event contract
 
@@ -312,6 +320,21 @@ retail setup lifetimes would reject the simple label form.
 
 The label form gives 93.792180%; it is not retained. The nine-word ending
 residue remains open, as does the display initializer.
+
+The original ending-loop body remains the baseline. Next test the two actual
+state dispatches independently as `if`/`else if` chains. Retail's equality
+branches support the same two active arms and inactive fallthrough, while
+source history does not prove the original switch construct. Keep the signed
+word countdown and literal -1 comparison, all state widths, update ordering,
+calls, and referents. Inspect whether the different dispatch expansion changes
+the loop-hoisted -1 lifetime and two-register reload requirement before
+considering a composed state. Do not retain a changed CFG merely because its
+allocation state is closer.
+
+The lighting and sequence chains give 96.625510% and 96.078186%, respectively.
+Both retain the baseline's selected lighting-constant and two-spill-register
+state, so neither supplies an independent correction to compose. Both are
+rejected; the production ending source remains at 97.952675%.
 
 ### Function Match Plan: GAME save/load argument promotion
 

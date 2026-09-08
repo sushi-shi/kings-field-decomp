@@ -7,6 +7,8 @@ promotes a probe to a proven historical toolchain.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
+- [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
+  pathname trials, plus delay-slot and unseen-prologue trace controls.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,

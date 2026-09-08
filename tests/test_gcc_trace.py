@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import json
+import struct
 import tempfile
 import unittest
 from pathlib import Path
 
 from scripts.kf.compile import compile_source
-from scripts.kf.gcc_trace import STAGES, frontier_key, read_trace, validate_features
+from scripts.kf.gcc_trace import (
+    STAGES, frontier_key, object_frame, read_trace, summarize, validate_features,
+)
 from scripts.kf.hypotheses import trace_frontier
+from scripts.kf.mips_elf import write_mips_elf
 
 
 def trace_rows() -> list[dict]:
@@ -20,6 +24,50 @@ def trace_rows() -> list[dict]:
 
 
 class TraceTests(unittest.TestCase):
+    def object(self, words):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        path = Path(directory.name) / "sample.o"
+        data = struct.pack(f"<{len(words)}I", *words)
+        path.write_bytes(write_mips_elf(data, "sample", len(data)))
+        return path
+
+    def test_frame_includes_branch_and_call_delay_slot_saves(self):
+        for transfer in (0x14400022, 0x0c000000, 0x45000002):
+            with self.subTest(transfer=hex(transfer)):
+                # GAME 8002c510 saves ra in the first bnez delay slot.
+                path = self.object([0x27bdffe8, transfer, 0xafbf0010,
+                                    0xafb00014])
+                self.assertEqual(object_frame(path, "sample"),
+                                 {"status": "observed", "size": 24,
+                                  "saved": [[31, 16]]})
+
+    def test_divide_guard_before_frame_is_unknown(self):
+        # GAME 8002c9d4: li v0,10; div a2,v0; bnez v0; nop; break 7.
+        # This reader does not propagate the divisor and follow the guard.
+        path = self.object([0x3402000a, 0x00c2001a, 0x14400002, 0,
+                            0x0007000d, 0x27bdffe8, 0xafbf0010,
+                            0x0c000000, 0])
+        self.assertEqual(object_frame(path, "sample"),
+                         {"status": "unavailable", "size": None, "saved": None})
+        feature = summarize(self.read(trace_rows()), [{"name": "frame", "kind": "frame"}],
+                            path, path)["frame"]["value"]
+        self.assertIsNone(feature["frame_agrees"])
+        self.assertIsNone(feature["saved_agree"])
+
+    def test_complete_leaf_can_have_zero_frame(self):
+        path = self.object([0x03e00008, 0x24020001])
+        self.assertEqual(object_frame(path, "sample"),
+                         {"status": "observed", "size": 0, "saved": []})
+
+    def test_incomplete_or_conditional_slot_is_not_prologue_evidence(self):
+        for words in ([0x27bdffe8], [0x27bdffe8, 0x0c000000],
+                      [0x27bdffe8, 0x50400002, 0xafbf0010],
+                      [0x27bdffe8, 0x14400002, 0x03e00008]):
+            with self.subTest(words=words):
+                self.assertEqual(object_frame(self.object(words), "sample")["status"],
+                                 "unavailable")
+
     def test_rejects_trace_request_for_assembly_before_building(self):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "sample.s"
