@@ -107,3 +107,82 @@ The full `kf build` still fails its existing data/ownership/placement checks:
 13/61 source data units match, four SDK data contributions pass, and target
 roundtrip is 110/116. No comparison artifact failure is reported. Creating a
 linked comparison candidate does not close those reconstruction requirements.
+
+## PSX difference investigation
+
+The first PSX candidate's 431 differing bytes are explained by object order,
+source-section alignment and the padded load tail. A fresh `kf try --unit
+psx.main` rebuild and strict `kf match --unit psx.main` retain the exact
+208-byte `main`. No game C or library instruction change is needed in the
+following diagnostic links.
+
+The production archive search extracts `A36, C113, C114, C66, C67, SNMAIN,
+SNDEF, C57`. The separately established
+[retail text order](object-link-order.md) is `SNMAIN, A36, C113, C57, C66,
+C67, C114`; `SNDEF` contributes only the four-byte `_stacksize` datum.
+The order experiment passes those eight complete converted objects directly,
+after the compiled source object, instead of searching the archives. It does
+not place individual SDK functions or replace their relocations with constants.
+
+Each subsequent experiment changes one section-alignment field on a **scratch
+copy** of the source ELF with GNU objcopy. All source payloads, symbols and
+relocation rows are unchanged. The normal generated linker script still honors
+each input's stated alignment and links whole sections.
+
+| Cumulative diagnostic change | Differing file bytes | First differing load VA |
+| --- | ---: | --- |
+| Production candidate | 431 | `80010028` |
+| Recovered SDK object order | 398 | `80010028` |
+| Source `.text` alignment 16 → 4 | 22 | `80010050` |
+| Source `.data` alignment 16 → 4 | 9 | `8001010c` |
+| Source empty `.bss` alignment 16 → 4 | 7 | `80010230` |
+
+The `.text` constraint initially moves `main` from `80010028` to `80010030`.
+With only SDK order corrected, the entry moves from retail `80010100` to
+`80010108`; in the production candidate it is `80010158`. After fixing text
+placement diagnostically, `.data` still places `overlay_path_table` at
+`80010230` instead of `80010224`, moving `_stacksize` and `.sbss` by twelve
+bytes. Finally, the source object's **empty** `.bss` still rounds its start/end
+from `80010234` to `80010240`. SNMAIN refers to that section end twice, leaving
+two changed low-immediate bytes at `8001010c` and `8001015c` until the scratch
+`.bss` constraint is changed too.
+
+Every diagnostic link independently verifies all eight selected SDK members:
+304 original payload bytes and 18 native patch expressions. In the last
+experiment, the header, both literal paths, the complete 508-byte text range,
+the two-pointer table and `_stacksize` agree with retail at their actual file
+offsets. Its only differences are seven nonzero retail bytes in this tail:
+
+```text
+PSX.EXE file 0x0a30 / VA 0x80010230:
+retail: 43 50 45 01 08 00 03 90 00 00 00 00
+linked: 00 00 00 00 00 00 00 00 00 00 00 00
+```
+
+This is the same CPE-shaped prefix already observed after initialized data in
+GAME and OPEN. It overlaps SNMAIN's independently proved four-byte `.sbss`
+reservation; startup clears that word. It must not become a source initializer.
+See [CPE tail evidence](patterns/psyq-cpe-tail-and-bss.md) for the original
+converter control and its limit.
+
+The scratch comparison SHA-256 is
+`ea798637bdebb11e9fe569e0656aa809c8681063808baf6a61d9ab7410417651`.
+Reports, maps and experimental inputs are under `build/link/psx-investigation/`.
+To reproduce the layout experiment after `kf link --image psx`, copy
+`build/objdiff/psx/base/80010028_main.o`, apply cumulative
+`mipsel-linux-gnu-objcopy --set-section-alignment .text=4` / `.data=4` /
+`.bss=4` options, and pass that copy plus the complete SDK objects in the order
+above to `scripts.kf.executable.script`. Link with the same GNU ld flags as
+`kf link`, then use `serialize`, `compare` and `sdk_link.verify_linked` to check
+the complete file and original SDK expressions.
+
+These results isolate the causes; they do not establish original ASPSX section
+metadata or reproduce the retail converter's tail policy. The production
+compiler and executable link remain unchanged at 431 differences. No scratch
+object is banked, and no complete-executable exactness is claimed.
+
+The rebuilt source and repeated diagnostic links reproduce all counts and
+hashes above. Ruff and all 725 repository tests pass. The required full build
+retains the existing data/ownership/placement failures: 14/61 source data units,
+4/4 SDK data contributions and 110/116 target relinks pass, with no artifact
+failures. PSX `main` remains 100%; this investigation banks no new function.

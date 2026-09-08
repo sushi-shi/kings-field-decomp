@@ -1,4 +1,4 @@
-# Psy-Q CPE residue at the overlay initialized-data boundaries
+# Psy-Q CPE residue at initialized-data boundaries
 
 `GAME.EXE` contains these bytes at virtual address `0x80057e68` (file offset
 `0x46668`):
@@ -52,3 +52,28 @@ error-screen consumer. The real four-byte SDK type is retained, without an
 explicit initializer. OPEN's nearby arena pointers are saved before their
 scene/ending consumers restore them. This proves only the reviewed objects;
 it does not classify every zero or gap following the CPE prefix.
+
+## PSX and converter provenance
+
+PSX has the identical twelve-byte prefix at `0x80010230`, file offset `0xa30`,
+immediately after the pointer table and SDK `_stacksize` word. Supplied
+`LIBSN.LIB/SNMAIN.OBJ` allocates four uninitialized `.sbss` bytes there. The
+retail startup zeros `[80010230, 80010234)` before using that slot to save
+`$ra`; the bytes are not an initialized SDK datum. The following four bytes
+are still an address-only census hypothesis, not a proved source allocation.
+
+The [PSX layout experiment](../executable-linking.md#psx-difference-investigation)
+matches all code and initialized data with complete SDK objects and a scratch
+source alignment change. Its seven remaining differing bytes are exactly the
+nonzero bytes of this prefix; all following page bytes agree as zeros.
+
+The supplied native `CPE2X.EXE` identifies itself as **CPE2X 1.3**. A control
+encodes the diagnostic linked `.rodata`, `.text` and `.data` as CPE v1 load
+records, with select-unit-zero and a 32-bit PC record for `80010100`, and runs
+that executable under the pinned DOSBox-X. It creates a 4096-byte PS-X EXE with
+the correct entry and load range, but emits **zeros** at the tail. Its default
+header also differs from retail in 59 bytes. Consequently the supplied
+converter does not reproduce the retail tail under this control. The shared
+CPE signature supports container residue; the exact historical converter,
+record ordering/options and mechanism remain unproved. Do not copy the prefix
+into generated output and call the result independently reproduced.
